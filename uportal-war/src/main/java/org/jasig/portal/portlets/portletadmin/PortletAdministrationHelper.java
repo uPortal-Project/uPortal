@@ -734,7 +734,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	    
 	    final String redirectLocation = delegationResponse.getRedirectLocation();
 	    final DelegateState delegateState = delegationResponse.getDelegateState();
-        if (redirectLocation == null || 
+        if (redirectLocation != null || 
 	            (delegationResponse.getPortletMode() != null && !IPortletRenderer.CONFIG.equals(delegationResponse.getPortletMode())) ||
 	            !IPortletRenderer.CONFIG.equals(delegateState.getPortletMode())) {
 	        

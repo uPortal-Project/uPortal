@@ -99,6 +99,12 @@ public class ParameterMap extends LinkedHashMap<String, String[]> {
         return newMap;
     }
     
+    public static void putAll(Map<String, List<String>> dest, Map<String, String[]> src) {
+        for (final Map.Entry<String, String[]> parameterEntry : src.entrySet()) {
+            dest.put(parameterEntry.getKey(), Arrays.asList(parameterEntry.getValue()));
+        }
+    }
+    
     @Override
     public boolean equals(Object o) {
         if (o == this)

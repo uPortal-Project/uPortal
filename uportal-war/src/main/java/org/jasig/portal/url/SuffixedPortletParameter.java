@@ -21,14 +21,12 @@ package org.jasig.portal.url;
 
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Set;
-
-import org.jasig.portal.portlet.PortletUtils;
 
 /**
  * Utility enum used in {@link UrlSyntaxProviderImpl} to simplify URL parsing a bit. Lists all of the portlet
- * parameters that can be suffixed with a portlet window id and 
+ * parameters that can be suffixed with a portlet window id. Also specifies which {@link UrlType}s each parameter
+ * is valid for.
  * 
  * @author Eric Dalquist
  * @version $Revision$
@@ -36,6 +34,7 @@ import org.jasig.portal.portlet.PortletUtils;
 enum SuffixedPortletParameter {
     RESOURCE_ID(UrlSyntaxProviderImpl.PARAM_RESOURCE_ID, UrlType.RESOURCE),
     CACHEABILITY(UrlSyntaxProviderImpl.PARAM_CACHEABILITY, UrlType.RESOURCE),
+    DELEGATE_PARENT(UrlSyntaxProviderImpl.PARAM_DELEGATE_PARENT, UrlType.RENDER, UrlType.ACTION),
     WINDOW_STATE(UrlSyntaxProviderImpl.PARAM_WINDOW_STATE, UrlType.RENDER, UrlType.ACTION),
     PORTLET_MODE(UrlSyntaxProviderImpl.PARAM_PORTLET_MODE, UrlType.RENDER, UrlType.ACTION);
     
@@ -59,32 +58,5 @@ enum SuffixedPortletParameter {
      */
     public String getParameterPrefix() {
         return this.parameterPrefix;
-    }
-    
-    /**
-     * Stores the parameter value on the {@link PortletRequestInfoImpl} based on the parameter type.
-     */
-    public void storeParameter(PortletRequestInfoImpl portletRequestInfo, List<String> values) {
-        switch (this) {
-            case RESOURCE_ID: {
-                portletRequestInfo.setResourceId(values.get(0));
-                break;
-            }
-            case CACHEABILITY: {
-                portletRequestInfo.setCacheability(values.get(0));
-                break;
-            }
-            case WINDOW_STATE: {
-                portletRequestInfo.setWindowState(PortletUtils.getWindowState(values.get(0)));
-                break;
-            }
-            case PORTLET_MODE: {
-                portletRequestInfo.setPortletMode(PortletUtils.getPortletMode(values.get(0)));
-                break;
-            }
-            default: {
-                throw new IllegalStateException("Unknown SuffixedPortletParameter: " + this);
-            }
-        }
     }
 }

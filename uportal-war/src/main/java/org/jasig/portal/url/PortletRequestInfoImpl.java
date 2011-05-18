@@ -47,6 +47,7 @@ class PortletRequestInfoImpl implements IPortletRequestInfo {
     private Map<String, List<String>> portletParameters = new LinkedHashMap<String, List<String>>();
     private WindowState windowState;
     private PortletMode portletMode;
+    private IPortletWindowId delegateParentWindowId;
     private String resourceId;
     private String cacheability = ResourceURL.PAGE;
     
@@ -82,7 +83,19 @@ class PortletRequestInfoImpl implements IPortletRequestInfo {
         return this.portletParameters;
     }
 
-	@Override
+    @Override
+	public IPortletWindowId getDelegateParentWindowId() {
+	    final UrlType urlType = this.portalRequestInfo.getUrlType();
+        Preconditions.checkArgument(urlType != UrlType.RESOURCE, "UrlType must not be %s but was", urlType);
+        return delegateParentWindowId;
+    }
+
+    public void setDelegateParentWindowId(IPortletWindowId delegateParentWindowId) {
+        this.checkReadOnly();
+        this.delegateParentWindowId = delegateParentWindowId;
+    }
+
+    @Override
     public WindowState getWindowState() {
 	    final UrlType urlType = this.portalRequestInfo.getUrlType();
         Preconditions.checkArgument(urlType != UrlType.RESOURCE, "UrlType must not be %s but was", urlType);

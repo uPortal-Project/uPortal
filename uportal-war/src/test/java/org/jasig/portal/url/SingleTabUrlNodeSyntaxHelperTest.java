@@ -19,10 +19,9 @@
 
 package org.jasig.portal.url;
 
-import static org.mockito.Mockito.when;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.when;
 
 import org.jasig.portal.mock.portlet.om.MockPortletEntityId;
 import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
@@ -78,13 +77,9 @@ public class SingleTabUrlNodeSyntaxHelperTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final String folder = "fname";
         
-        final MockPortletEntityId portletEntityId = new MockPortletEntityId("eid");
         final MockPortletWindowId portletWindowId = new MockPortletWindowId("wid");
         
-        when(this.userInstanceManager.getUserInstance(request)).thenReturn(this.userInstance);
-        when(this.portletEntityRegistry.getOrCreatePortletEntityByFname(request, userInstance, "fname")).thenReturn(portletEntity);
-        when(this.portletEntity.getPortletEntityId()).thenReturn(portletEntityId);
-        when(this.portletWindowRegistry.getOrCreateDefaultPortletWindow(request, portletEntityId)).thenReturn(portletWindow);
+        when(this.portletWindowRegistry.getOrCreateDefaultPortletWindowByFname(request, folder)).thenReturn(portletWindow);
         when(portletWindow.getPortletWindowId()).thenReturn(portletWindowId);
         
         final IPortletWindowId parsedPortletWindowId = this.urlNodeSyntaxHelper.getPortletForFolderName(request, folder);

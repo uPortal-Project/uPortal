@@ -23,6 +23,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,6 +41,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.portlet.PortletUtils;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
@@ -68,6 +71,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
     public static final String PORTLET_PUBLIC_RENDER_PARAM_PREFIX   = "plG" + SEPARATOR;
     public static final String PARAM_TARGET_PORTLET                 = PORTLET_CONTROL_PREFIX + "t";
     public static final String PARAM_ADDITIONAL_PORTLET             = PORTLET_CONTROL_PREFIX + "a";
+    public static final String PARAM_DELEGATE_PARENT                = PORTLET_CONTROL_PREFIX + "d";
     public static final String PARAM_RESOURCE_ID                    = PORTLET_CONTROL_PREFIX + "r";
     public static final String PARAM_CACHEABILITY                   = PORTLET_CONTROL_PREFIX + "c";
     public static final String PARAM_WINDOW_STATE                   = PORTLET_CONTROL_PREFIX + "s";
@@ -320,8 +324,15 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             final String[] additionalPortletIdArray = parameterMap.remove(PARAM_ADDITIONAL_PORTLET);
             final Set<String> additionalPortletIds = Sets.newHashSet(additionalPortletIdArray != null ? additionalPortletIdArray : new String[0]);
             
+            //Used if there is delegation to capture form-submit and other non-prefixed parameters
+            //Map of parent id to delegate id
+            final Map<IPortletWindowId, IPortletWindowId> delegateIdMappings = new LinkedHashMap<IPortletWindowId, IPortletWindowId>(0);
+            
             //Parse all remaining parameters from the request
-            for (final Entry<String, String[]> parameterEntry : parameterMap.entrySet()) {
+            final Set<Entry<String, String[]>> parameterEntrySet = parameterMap.entrySet();
+            for (final Iterator<Entry<String, String[]>> parameterEntryItr = parameterEntrySet.iterator(); parameterEntryItr.hasNext(); ) {
+                final Entry<String, String[]> parameterEntry = parameterEntryItr.next();
+                
                 final String name = parameterEntry.getKey();
                 final List<String> values = Arrays.asList(parameterEntry.getValue());
                 
@@ -331,12 +342,12 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                 if (name.startsWith(PORTAL_PARAM_PREFIX)) {
                     final Map<String, List<String>> portalParameters = portalRequestInfo.getPortalParameters();
                     portalParameters.put(this.safeSubstringAfter(PORTAL_PARAM_PREFIX, name), values);
+                    parameterEntryItr.remove();
                     continue;
                 }
                 
                 //Generic portlet parameters, have to remove the prefix and see if there was a portlet windowId between the prefix and parameter name
                 if (name.startsWith(PORTLET_PARAM_PREFIX)) {
-                    
                     final Tuple<String, IPortletWindowId> portletParameterParts = this.parsePortletParameterName(request, name, additionalPortletIds);
                     final IPortletWindowId portletWindowId = portletParameterParts.second;
                     final String paramName = portletParameterParts.first;
@@ -346,6 +357,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                     if (portletWindowId == null) {
                         if (targetedPortletRequestInfo == null) {
                             this.logger.warn("Parameter " + name + " is for the targeted portlet but no portlet is targeted by the request. The parameter will be ignored. Value: " + values);
+                            parameterEntryItr.remove();
                             break;
                         }
                         
@@ -357,11 +369,11 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                     }
                     
                     portletParameters.put(paramName, values);
+                    parameterEntryItr.remove();
                     continue;
                 }
                 
                 //Portlet control parameters are either used directly or as a prefix to a windowId. Use the SuffixedPortletParameter to simplify their parsing
-                boolean consumed = false;
                 for (final SuffixedPortletParameter suffixedPortletParameter : SuffixedPortletParameter.values()) {
                     final String parameterPrefix = suffixedPortletParameter.getParameterPrefix();
                     //Skip to the next parameter prefix if the current doesn't match
@@ -390,26 +402,85 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                         break;
                     }
                     
+                    parameterEntryItr.remove();
+                    
                     //Use the enum helper to store the parameter values on the requet info
-                    suffixedPortletParameter.storeParameter(portletRequestInfo, values);
-                    consumed = true;
+                    switch (suffixedPortletParameter) {
+                        case RESOURCE_ID: {
+                            portletRequestInfo.setResourceId(values.get(0));
+                            break;
+                        }
+                        case CACHEABILITY: {
+                            portletRequestInfo.setCacheability(values.get(0));
+                            break;
+                        }
+                        case DELEGATE_PARENT: {
+                            try {
+                                final IPortletWindowId delegateParentWindowId = this.portletWindowRegistry.getPortletWindowId(request, values.get(0));
+                                portletRequestInfo.setDelegateParentWindowId(delegateParentWindowId);
+                                final IPortletWindowId delegateWindowId = portletRequestInfo.getPortletWindowId();
+                                delegateIdMappings.put(delegateParentWindowId, delegateWindowId);
+                            }
+                            catch (IllegalArgumentException e) {
+                                this.logger.warn("Failed to parse delegate portlet window ID '" + values.get(0) + "', the delegation window parameter will be ignored", e);
+                            }
+                            
+                            break;
+                        }
+                        case WINDOW_STATE: {
+                            portletRequestInfo.setWindowState(PortletUtils.getWindowState(values.get(0)));
+                            break;
+                        }
+                        case PORTLET_MODE: {
+                            portletRequestInfo.setPortletMode(PortletUtils.getPortletMode(values.get(0)));
+                            break;
+                        }
+                        default: {
+                            //Uhoh, a new SuffixedPortletParameter was added without updating this switch block, don't fail but log a warning
+                            this.logger.warn("Programming Error: An unknown SuffixedPortletParameter " + name + " was seen in the UrlSyntaxProvider, it will be ignored. ALL possible SuffixedPortletParameter should be handled. " + suffixedPortletParameter);
+                        }
+                    }
+                    
                     break;
                 }
-                
-                //Have to put the continue for the previous loop here
-                if (consumed) {
-                    continue;
-                }
+            }
 
-                //If the parameter was not ignored by a previous parser add it to whatever was targeted (portlet or portal) 
+            //Any non-namespaced parameters still need processing?
+            if (!parameterMap.isEmpty()) {
+                //If the parameter was not ignored by a previous parser add it to whatever was targeted (portlet or portal)
                 final Map<String, List<String>> parameters;
-                if (targetedPortletRequestInfo != null) {
+                if (!delegateIdMappings.isEmpty()) {
+                    //Resolve the last portlet window in the chain of delegation
+                    PortletRequestInfoImpl delegatePortletRequestInfo = null;
+                    for (final IPortletWindowId delegatePortletWindowId : delegateIdMappings.values()) {
+                        if (!delegateIdMappings.containsKey(delegatePortletWindowId)) {
+                            delegatePortletRequestInfo = portalRequestInfo.getPortletRequestInfo(delegatePortletWindowId);
+                            break;
+                        }
+                    }
+                    
+                    if (delegatePortletRequestInfo != null) {
+                        parameters = delegatePortletRequestInfo.getPortletParameters();
+                    }
+                    else {
+                        this.logger.warn("No root delegate portlet could be resolved, non-namespaced parameters will be sent to the targeted portlet. THIS SHOULD NEVER HAPPEN. Delegate parent/child mapping: " + delegateIdMappings);
+                        
+                        if (targetedPortletRequestInfo != null) {
+                            parameters = targetedPortletRequestInfo.getPortletParameters();
+                        }
+                        else {
+                            parameters = portalRequestInfo.getPortalParameters();
+                        }
+                    }
+                }
+                else if (targetedPortletRequestInfo != null) {
                     parameters = targetedPortletRequestInfo.getPortletParameters();
                 }
                 else {
                     parameters = portalRequestInfo.getPortalParameters();
                 }
-                parameters.put(name, values);
+                
+                ParameterMap.putAll(parameters, parameterMap);
             }
             
             //If a portlet is targeted but no layout node is targeted must be maximized
@@ -494,7 +565,12 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
         //Extract the windowId string and see if it was listed as an additional windowId
         final String portletWindowIdStr = name.substring(windowIdStartIdx + SEPARATOR.length());
         if (additionalPortletIds.contains(portletWindowIdStr)) {
-            return this.portletWindowRegistry.getPortletWindowId(request, portletWindowIdStr);
+            try {
+                return this.portletWindowRegistry.getPortletWindowId(request, portletWindowIdStr);
+            }
+            catch (IllegalArgumentException e) {
+                this.logger.warn("Failed to parse portlet window id: " + portletWindowIdStr + " null will be returned", e);
+            }
         }
 
         return null;
@@ -720,6 +796,8 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
         final IPortletWindowId portletWindowId = portletUrlBuilder.getPortletWindowId();
         final boolean targeted = portletWindowId.equals(targetedPortletWindowId);
         
+        IPortletWindow portletWindow = null;
+        
         //The targeted portlet doesn't need namespaced parameters
         final String prefixedPortletWindowId;
         final String suffixedPortletWindowId;
@@ -732,6 +810,13 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             prefixedPortletWindowId = SEPARATOR + portletWindowIdStr;
             suffixedPortletWindowId = portletWindowIdStr + SEPARATOR;
             url.addParameter(PARAM_ADDITIONAL_PORTLET, portletWindowIdStr);
+
+            //targeted portlets can never be delegates (it is always the top most parent that is targeted)
+            portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
+            final IPortletWindowId delegationParentId = portletWindow.getDelegationParentId();
+            if (delegationParentId != null) {
+                url.addParameter(PARAM_DELEGATE_PARENT + prefixedPortletWindowId, delegationParentId.getStringId());
+            }
         }
 
         switch (urlType) {
@@ -755,8 +840,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                     url.addParameter(PARAM_PORTLET_MODE + prefixedPortletWindowId, portletMode.toString());
                 }
                 else if (targeted && statelessUrl) {
-                    //TODO deal with delegates of the targeted window, they will be stateless as well
-                    final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
+                    portletWindow = portletWindow != null ? portletWindow : this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
                     final PortletMode currentPortletMode = portletWindow.getPortletMode();
                     url.addParameter(PARAM_PORTLET_MODE + prefixedPortletWindowId, currentPortletMode.toString());
                 }
@@ -773,8 +857,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             
         final Map<String, String[]> parameters = portletUrlBuilder.getParameters();
         if (targeted && statelessUrl && parameters.size() == 0) {
-            //TODO deal with delegates of the targeted window, they will be stateless as well
-            final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
+            portletWindow = portletWindow != null ? portletWindow : this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
             final Map<String, String[]> currentParameters = portletWindow.getRenderParameters();
             url.addParametersArray(PORTLET_PARAM_PREFIX + suffixedPortletWindowId, currentParameters);
         }

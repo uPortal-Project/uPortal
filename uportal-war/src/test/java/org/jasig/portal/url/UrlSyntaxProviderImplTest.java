@@ -67,8 +67,10 @@ public class UrlSyntaxProviderImplTest {
     @Mock private IUrlNodeSyntaxHelper urlNodeSyntaxHelper;
     @Mock private IPortletEntityRegistry portletEntityRegistry;
     @Mock private IPortletWindowRegistry portletWindowRegistry;
-    @Mock private IPortletEntity portletEntity;
-    @Mock private IPortletWindow portletWindow;
+    @Mock private IPortletEntity portletEntity1;
+    @Mock private IPortletEntity portletEntity2;
+    @Mock private IPortletWindow portletWindow1;
+    @Mock private IPortletWindow portletWindow2;
 
     @Test
     public void getCleanedContextPath() throws Exception {
@@ -134,9 +136,9 @@ public class UrlSyntaxProviderImplTest {
         when(urlNodeSyntaxHelper.getFolderNamesForLayoutNode(request, subscribeId)).thenReturn(Arrays.asList(layoutNodeId));
         when(urlNodeSyntaxHelper.getFolderNameForPortlet(request, portletWindowId)).thenReturn(fname + "." + subscribeId);
         
-        when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
-        when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
-        when(portletEntity.getLayoutNodeId()).thenReturn(subscribeId);
+        when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow1);
+        when(portletWindow1.getPortletEntity()).thenReturn(portletEntity1);
+        when(portletEntity1.getLayoutNodeId()).thenReturn(subscribeId);
         
         final PortalUrlBuilder portalUrlBuilder = new PortalUrlBuilder(urlSyntaxProvider, request, layoutNodeId, portletWindowId, UrlType.RENDER);
         
@@ -161,9 +163,9 @@ public class UrlSyntaxProviderImplTest {
         when(urlNodeSyntaxHelper.getFolderNamesForLayoutNode(request, subscribeId)).thenReturn(Arrays.asList(layoutNodeId));
         when(urlNodeSyntaxHelper.getFolderNameForPortlet(request, portletWindowId)).thenReturn(fname + "." + subscribeId);
         
-        when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
-        when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
-        when(portletEntity.getLayoutNodeId()).thenReturn(subscribeId);
+        when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow1);
+        when(portletWindow1.getPortletEntity()).thenReturn(portletEntity1);
+        when(portletEntity1.getLayoutNodeId()).thenReturn(subscribeId);
         
         final PortalUrlBuilder portalUrlBuilder = new PortalUrlBuilder(urlSyntaxProvider, request, layoutNodeId, portletWindowId, UrlType.ACTION);
         final IPortletUrlBuilder portletUrlBuilder = portalUrlBuilder.getPortletUrlBuilder(portletWindowId);
@@ -190,9 +192,9 @@ public class UrlSyntaxProviderImplTest {
         when(urlNodeSyntaxHelper.getFolderNamesForLayoutNode(request, subscribeId)).thenReturn(Arrays.asList(layoutNodeId));
         when(urlNodeSyntaxHelper.getFolderNameForPortlet(request, portletWindowId)).thenReturn(fname + "." + subscribeId);
         
-        when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
-        when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
-        when(portletEntity.getLayoutNodeId()).thenReturn(subscribeId);
+        when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow1);
+        when(portletWindow1.getPortletEntity()).thenReturn(portletEntity1);
+        when(portletEntity1.getLayoutNodeId()).thenReturn(subscribeId);
         
         final PortalUrlBuilder portalUrlBuilder = new PortalUrlBuilder(urlSyntaxProvider, request, layoutNodeId, portletWindowId, UrlType.RENDER);
         final IPortletUrlBuilder portletUrlBuilder = portalUrlBuilder.getPortletUrlBuilder(portletWindowId);
@@ -221,10 +223,10 @@ public class UrlSyntaxProviderImplTest {
         when(urlNodeSyntaxHelper.getFolderNamesForLayoutNode(request, subscribeId)).thenReturn(Arrays.asList(layoutNodeId));
         when(urlNodeSyntaxHelper.getFolderNameForPortlet(request, portletWindowId1)).thenReturn(fname + "." + subscribeId);
         
-        when(portletWindowRegistry.getPortletWindow(request, portletWindowId1)).thenReturn(portletWindow);
-        when(portletWindowRegistry.getPortletWindow(request, portletWindowId2)).thenReturn(portletWindow);
-        when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
-        when(portletEntity.getLayoutNodeId()).thenReturn(subscribeId);
+        when(portletWindowRegistry.getPortletWindow(request, portletWindowId1)).thenReturn(portletWindow1);
+        when(portletWindowRegistry.getPortletWindow(request, portletWindowId2)).thenReturn(portletWindow2);
+        when(portletWindow1.getPortletEntity()).thenReturn(portletEntity1);
+        when(portletEntity1.getLayoutNodeId()).thenReturn(subscribeId);
         
         final PortalUrlBuilder portalUrlBuilder = new PortalUrlBuilder(urlSyntaxProvider, request, layoutNodeId, portletWindowId1, UrlType.RENDER);
         final IPortletUrlBuilder portletUrlBuilder1 = portalUrlBuilder.getPortletUrlBuilder(portletWindowId1);
@@ -254,6 +256,7 @@ public class UrlSyntaxProviderImplTest {
         request.addParameter("plCm_pw2", "help");
         request.addParameter("plP_pw2_a", "b");
         request.addParameter("plP_pw2_b", "c");
+        request.addParameter("postedParameter", "foobar");
         
         final MockPortletWindowId portletWindowId = new MockPortletWindowId("s3");
         final MockPortletWindowId portletWindowId2 = new MockPortletWindowId("pw2");
@@ -279,16 +282,113 @@ public class UrlSyntaxProviderImplTest {
         final IPortletRequestInfo portletRequestInfo = portletRequestInfoMap.get(portletWindowId);
         assertNotNull(portletRequestInfo);
         assertEquals(portletWindowId, portletRequestInfo.getPortletWindowId());
-        assertEquals(ImmutableMap.builder().put("action", Arrays.asList("dashboard")).build(), portletRequestInfo.getPortletParameters());
+        assertEquals(ImmutableMap.of("action", Arrays.asList("dashboard"), "postedParameter", Arrays.asList("foobar")), portletRequestInfo.getPortletParameters());
         assertEquals(WindowState.MINIMIZED, portletRequestInfo.getWindowState());
         assertNull(portletRequestInfo.getPortletMode());
         
         final IPortletRequestInfo portletRequestInfo2 = portletRequestInfoMap.get(portletWindowId2);
         assertNotNull(portletRequestInfo2);
         assertEquals(portletWindowId2, portletRequestInfo2.getPortletWindowId());
-        assertEquals(ImmutableMap.builder().put("a", Arrays.asList("b")).put("b", Arrays.asList("c")).build(), portletRequestInfo2.getPortletParameters());
+        assertEquals(ImmutableMap.of("a", Arrays.asList("b"), "b", Arrays.asList("c")), portletRequestInfo2.getPortletParameters());
         assertNull(portletRequestInfo2.getWindowState());
         assertEquals(PortletMode.HELP, portletRequestInfo2.getPortletMode());
+    }
+
+    @Test
+    public void testSingleFolderPortletDelegationFnameSubscribeIdMinimizedRenderUrlGeneration() throws Exception {
+        final String layoutNodeId = "n2";
+        final String subscribeId1 = "s3";
+        final String subscribeId2 = "dlg-71-44";
+        final String fname = "fname";
+        
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setContextPath("/uPortal");
+        
+        final MockPortletWindowId portletWindowId1 = new MockPortletWindowId("pw1");
+        final MockPortletWindowId portletWindowId2 = new MockPortletWindowId("pw2");
+
+        when(portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
+        when(urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request)).thenReturn(urlNodeSyntaxHelper);
+        when(urlNodeSyntaxHelper.getFolderNamesForLayoutNode(request, subscribeId1)).thenReturn(Arrays.asList(layoutNodeId));
+        when(urlNodeSyntaxHelper.getFolderNameForPortlet(request, portletWindowId1)).thenReturn(fname + "." + subscribeId1);
+        
+        when(portletWindowRegistry.getPortletWindow(request, portletWindowId1)).thenReturn(portletWindow1);
+        when(portletWindow1.getPortletEntity()).thenReturn(portletEntity1);
+        when(portletEntity1.getLayoutNodeId()).thenReturn(subscribeId1);
+        
+        when(portletWindowRegistry.getPortletWindow(request, portletWindowId2)).thenReturn(portletWindow2);
+        when(portletWindow2.getPortletEntity()).thenReturn(portletEntity2);
+        when(portletWindow2.getDelegationParentId()).thenReturn(portletWindowId1);
+        when(portletEntity2.getLayoutNodeId()).thenReturn(subscribeId2);
+        
+        final PortalUrlBuilder portalUrlBuilder = new PortalUrlBuilder(urlSyntaxProvider, request, layoutNodeId, portletWindowId1, UrlType.RENDER);
+        final IPortletUrlBuilder portletUrlBuilder1 = portalUrlBuilder.getPortletUrlBuilder(portletWindowId1);
+        portletUrlBuilder1.setWindowState(WindowState.MINIMIZED);
+        portletUrlBuilder1.setParameter("action", "dashboard");
+        final IPortletUrlBuilder portletUrlBuilder2 = portalUrlBuilder.getPortletUrlBuilder(portletWindowId2);
+        portletUrlBuilder2.setParameter("a", "b");
+        portletUrlBuilder2.setParameter("b", "c");
+        portletUrlBuilder2.setPortletMode(PortletMode.HELP);
+        
+        
+        final String url = portalUrlBuilder.getUrlString();
+                     
+        assertEquals("/uPortal/f/n2/normal/render.uP?plCt=fname.s3&plCs=minimized&plP_action=dashboard&plCa=pw2&plCd_pw2=pw1&plCm_pw2=help&plP_pw2_a=b&plP_pw2_b=c", url);
+    }
+    
+    @Test
+    public void testSingleFolderPortletDelegationFnameSubscribeIdMinimizedRenderUrlParsing() throws Exception {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setContextPath("/uPortal");
+        request.setRequestURI("/f/n2/normal/render.uP");
+        request.setQueryString("?plCt=fname.s3&plCs=minimized&plP_action=dashboard&plCa=pw2&plCd_pw2=pw1&plCm_pw2=help&plP_pw2_a=b&plP_pw2_b=c");
+        request.addParameter("plCt", "fname.s3");
+        request.addParameter("plCs", "minimized");
+        request.addParameter("plP_action", "dashboard");
+        request.addParameter("plCa", "pw2");
+        request.addParameter("plCd_pw2", "pw1");
+        request.addParameter("plCm_pw2", "help");
+        request.addParameter("plP_pw2_a", "b");
+        request.addParameter("plP_pw2_b", "c");
+        request.addParameter("postedParameter", "foobar");
+        
+        final MockPortletWindowId portletWindowId1 = new MockPortletWindowId("pw1");
+        final MockPortletWindowId portletWindowId2 = new MockPortletWindowId("pw2");
+        
+        when(this.portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
+        when(urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request)).thenReturn(urlNodeSyntaxHelper);
+        when(this.urlNodeSyntaxHelper.getLayoutNodeForFolderNames(request, Arrays.asList("n2"))).thenReturn("n2");
+        when(this.urlNodeSyntaxHelper.getPortletForFolderName(request, "fname.s3")).thenReturn(portletWindowId1);
+        when(this.portletWindowRegistry.getPortletWindowId(request, "pw2")).thenReturn(portletWindowId2);
+        when(this.portletWindowRegistry.getPortletWindowId(request, "pw1")).thenReturn(portletWindowId1);
+        
+        final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
+        
+        assertNotNull(portalRequestInfo);
+        assertEquals("n2", portalRequestInfo.getTargetedLayoutNodeId());
+        assertEquals(portletWindowId1, portalRequestInfo.getTargetedPortletWindowId());
+        assertEquals(UrlState.NORMAL, portalRequestInfo.getUrlState());
+        assertEquals(UrlType.RENDER, portalRequestInfo.getUrlType());
+        
+        final Map<IPortletWindowId, ? extends IPortletRequestInfo> portletRequestInfoMap = portalRequestInfo.getPortletRequestInfoMap();
+        assertNotNull(portletRequestInfoMap);
+        assertEquals(2, portletRequestInfoMap.size());
+        
+        final IPortletRequestInfo portletRequestInfo = portletRequestInfoMap.get(portletWindowId1);
+        assertNotNull(portletRequestInfo);
+        assertEquals(portletWindowId1, portletRequestInfo.getPortletWindowId());
+        assertEquals(ImmutableMap.of("action", Arrays.asList("dashboard")), portletRequestInfo.getPortletParameters());
+        assertEquals(WindowState.MINIMIZED, portletRequestInfo.getWindowState());
+        assertNull(portletRequestInfo.getPortletMode());
+        assertNull(portletRequestInfo.getDelegateParentWindowId());
+        
+        final IPortletRequestInfo portletRequestInfo2 = portletRequestInfoMap.get(portletWindowId2);
+        assertNotNull(portletRequestInfo2);
+        assertEquals(portletWindowId2, portletRequestInfo2.getPortletWindowId());
+        assertEquals(ImmutableMap.of("a", Arrays.asList("b"), "b", Arrays.asList("c"), "postedParameter", Arrays.asList("foobar")), portletRequestInfo2.getPortletParameters());
+        assertNull(portletRequestInfo2.getWindowState());
+        assertEquals(PortletMode.HELP, portletRequestInfo2.getPortletMode());
+        assertEquals(portletWindowId1, portletRequestInfo2.getDelegateParentWindowId());
     }
 
     @Test

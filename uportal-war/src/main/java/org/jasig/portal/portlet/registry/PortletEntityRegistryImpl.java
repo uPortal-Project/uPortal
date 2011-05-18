@@ -80,7 +80,9 @@ import com.google.common.base.Function;
 public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     static final char ID_PART_SEPERATOR = '_';
     static final Pattern ID_PART_SEPERATOR_PATTERN = Pattern.compile(Pattern.quote(String.valueOf(ID_PART_SEPERATOR)));
-    static final String DELEGATE_LAYOUT_NODE_ID_PREFIX = "dlg";
+    
+    static final char DELEGATE_LAYOUT_NODE_ID_SEPERATOR = '-';
+    static final String DELEGATE_LAYOUT_NODE_ID_PREFIX = "dlg" + DELEGATE_LAYOUT_NODE_ID_SEPERATOR;
     
     static final String PORTLET_ENTITY_DATA_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY_DATA";
     static final String PORTLET_ENTITY_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY.thread-";
@@ -172,18 +174,23 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     }
     
     @Override
-    public IPortletEntity getOrCreatePortletEntity(HttpServletRequest request, IUserInstance userInstance, String channelSubscribeId) {
+    public IPortletEntity getOrCreatePortletEntity(HttpServletRequest request, IUserInstance userInstance, String layoutNodeId) {
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
         
         //Find the channel and portlet definitions
-        final IUserLayoutChannelDescription channelNode = (IUserLayoutChannelDescription)userLayoutManager.getNode(channelSubscribeId);
+        final IUserLayoutChannelDescription channelNode = (IUserLayoutChannelDescription)userLayoutManager.getNode(layoutNodeId);
+        if (channelNode == null) {
+            this.logger.warn("No layout node exists for id " + layoutNodeId + ", no portlet entity will be returned.");
+            return null;
+        }
+        
         final String channelPublishId = channelNode.getChannelPublishId();
         
         final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(channelPublishId);
         
         final IPerson person = userInstance.getPerson();
-        return this.getOrCreatePortletEntity(request, portletDefinition.getPortletDefinitionId(), channelSubscribeId, person.getID());
+        return this.getOrCreatePortletEntity(request, portletDefinition.getPortletDefinitionId(), layoutNodeId, person.getID());
     }
     
     /* (non-Javadoc)
@@ -246,7 +253,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     @Override
     public IPortletEntity getOrCreateDelegatePortletEntity(HttpServletRequest request, IPortletWindowId parentPortletWindowId, IPortletDefinitionId delegatePortletDefinitionId) {
         //Create a special synthetic layout node ID for the delegate entity
-        final String layoutNodeId = DELEGATE_LAYOUT_NODE_ID_PREFIX + "-" + delegatePortletDefinitionId + "-" + parentPortletWindowId;
+        final String layoutNodeId = DELEGATE_LAYOUT_NODE_ID_PREFIX + parentPortletWindowId.getStringId().replace(ID_PART_SEPERATOR, DELEGATE_LAYOUT_NODE_ID_SEPERATOR);
         
         //Grab the current user
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
@@ -581,18 +588,21 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
         
-        //Verify the layout node id exists and is for a portlet
+        //Verify non-delegate layout node id exists and is for a portlet
         final String layoutNodeId = idParts[1];
-        final IUserLayoutNodeDescription node = userLayoutManager.getNode(layoutNodeId);
-        if (node == null || node.getType() != IUserLayoutNodeDescription.CHANNEL) {
-            throw new IllegalArgumentException("No portlet layout node found for " + layoutNodeId + " from entity id string: " + consistentEntityIdString);
-        }
+        if (!layoutNodeId.startsWith(DELEGATE_LAYOUT_NODE_ID_PREFIX)) {
+            final IUserLayoutNodeDescription node = userLayoutManager.getNode(layoutNodeId);
+            if (node == null || node.getType() != IUserLayoutNodeDescription.CHANNEL) {
+                throw new IllegalArgumentException("No portlet layout node found for " + layoutNodeId + " from entity id string: " + consistentEntityIdString);
+            }
         
-        //Verify the portlet definition matches
-        final IUserLayoutChannelDescription portletNode = (IUserLayoutChannelDescription)node;
-        final String channelPublishId = portletNode.getChannelPublishId();
-        if (!portletDefinitionId.getStringId().equals(channelPublishId)) {
-            throw new IllegalArgumentException("The portlet layout node found for " + layoutNodeId + " does not match the IPortletDefinitionId " + portletDefinitionId + " specified in entity id string: " + consistentEntityIdString);
+            //TODO is this doable for delegation?
+            //Verify the portlet definition matches
+            final IUserLayoutChannelDescription portletNode = (IUserLayoutChannelDescription)node;
+            final String channelPublishId = portletNode.getChannelPublishId();
+            if (!portletDefinitionId.getStringId().equals(channelPublishId)) {
+                throw new IllegalArgumentException("The portlet layout node found for " + layoutNodeId + " does not match the IPortletDefinitionId " + portletDefinitionId + " specified in entity id string: " + consistentEntityIdString);
+            }
         }
 
         //TODO when there is a JPA backed user dao actually verify this mapping

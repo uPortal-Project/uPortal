@@ -404,7 +404,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         // get fname from subscribe id
         final String fname = getFname(nodeId);
         if (null == fname || fname.equals("")) {
-            throw new PortalException("Could not find a transient node for id: " + nodeId);
+            return null;
         }
 
         try {

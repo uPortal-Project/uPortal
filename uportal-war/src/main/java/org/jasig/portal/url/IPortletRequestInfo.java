@@ -42,6 +42,13 @@ public interface IPortletRequestInfo {
      * @return The portlet parameters from the request, will never return null.
      */
     public Map<String, List<String>> getPortletParameters();
+    
+    /**
+     * @return The delegation parent window id, null if the portlet is not a delegate
+     * @throws IllegalStateException If parent {@link IPortalRequestInfo#getUrlType()} returns {@link UrlType#RESOURCE}
+     */
+    public IPortletWindowId getDelegateParentWindowId();
+    
     /**
      * @return The requested WindowState, null if no change to the WindowState is requested
      * @throws IllegalStateException If parent {@link IPortalRequestInfo#getUrlType()} returns {@link UrlType#RESOURCE}

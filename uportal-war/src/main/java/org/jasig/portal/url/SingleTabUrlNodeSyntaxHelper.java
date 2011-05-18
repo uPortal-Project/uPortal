@@ -217,10 +217,10 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
         final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
         
         final String fname = portletDefinition.getFName();
-        final String channelSubscribeId = portletEntity.getLayoutNodeId();
+        final String layoutNodeId = portletEntity.getLayoutNodeId();
         
         //Build the targeted portlet string (fname + subscribeId)
-        return fname + PORTLET_PATH_ELEMENT_SEPERATOR + channelSubscribeId;
+        return fname + PORTLET_PATH_ELEMENT_SEPERATOR + layoutNodeId;
     }
 
     /* (non-Javadoc)
@@ -230,23 +230,31 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
     public IPortletWindowId getPortletForFolderName(HttpServletRequest request, String folderName) {
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         
-        final String fname;
-        final IPortletEntity portletEntity;
+        final IPortletWindow portletWindow;
         
         final int seperatorIndex = folderName.indexOf(PORTLET_PATH_ELEMENT_SEPERATOR);
         if (seperatorIndex <= 0 || seperatorIndex + 1 == folderName.length()) {
-            fname = folderName;
-            portletEntity = this.portletEntityRegistry.getOrCreatePortletEntityByFname(request, userInstance, fname);
+            portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByFname(request, folderName);
         }
         else {
-            fname = folderName.substring(0, seperatorIndex);
+            //Get the subscribe ID and find the entity first
+            final String fname = folderName.substring(0, seperatorIndex);
             final String subscribeId = folderName.substring(seperatorIndex + 1);
+    
+            final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntityByFname(request, userInstance, fname, subscribeId);
+            if (portletEntity == null) {
+                return null;
+            }
             
-            portletEntity = this.portletEntityRegistry.getOrCreatePortletEntityByFname(request, userInstance, fname, subscribeId);
+            final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
+            
+            portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindow(request, portletEntityId);
         }
         
-        final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
-        final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindow(request, portletEntityId);
+        if (portletWindow == null) {
+            return null;
+        }
+        
         return portletWindow.getPortletWindowId();
     }
 
