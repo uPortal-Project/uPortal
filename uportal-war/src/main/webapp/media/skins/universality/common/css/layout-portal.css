@@ -44,158 +44,20 @@
  * For more information on FSS themes, refer to:
  * http://wiki.fluidproject.org/x/egNS
  * The FSS theme created for uPortal is "fl-theme-uportal", and is a class of the <body> tag, used for namespacing.
- */
 
-.fl-col-flex6 {width:6%; float:left; display:inline;}
-.fl-col-flex7 {width:7%; float:left; display:inline;}
-.fl-col-flex8 {width:8%; float:left; display:inline;}
-.fl-col-flex9 {width:9%; float:left; display:inline;}
-.fl-col-flex10 {width:10%; float:left; display:inline;}
-.fl-col-flex11 {width:11%; float:left; display:inline;}
-.fl-col-flex12 {width:12%; float:left; display:inline;}
-.fl-col-flex13 {width:13%; float:left; display:inline;}
-.fl-col-flex14 {width:14%; float:left; display:inline;}
-.fl-col-flex15 {width:15%; float:left; display:inline;}
-.fl-col-flex16 {width:16%; float:left; display:inline;}
-.fl-col-flex17 {width:17%; float:left; display:inline;}
-.fl-col-flex18 {width:18%; float:left; display:inline;}
-.fl-col-flex19 {width:19%; float:left; display:inline;}
-.fl-col-flex20 {width:20%; float:left; display:inline;}
-.fl-col-flex21 {width:21%; float:left; display:inline;}
-.fl-col-flex22 {width:22%; float:left; display:inline;}
-.fl-col-flex23 {width:23%; float:left; display:inline;}
-.fl-col-flex24 {width:24%; float:left; display:inline;}
-.fl-col-flex25 {width:25%; float:left; display:inline;}
-.fl-col-flex26 {width:26%; float:left; display:inline;}
-.fl-col-flex27 {width:27%; float:left; display:inline;}
-.fl-col-flex28 {width:28%; float:left; display:inline;}
-.fl-col-flex29 {width:29%; float:left; display:inline;}
-.fl-col-flex30 {width:30%; float:left; display:inline;}
-.fl-col-flex31 {width:31%; float:left; display:inline;}
-.fl-col-flex32 {width:32%; float:left; display:inline;}
-.fl-col-flex33 {width:33%; float:left; display:inline;}
-.fl-col-flex34 {width:34%; float:left; display:inline;}
-.fl-col-flex35 {width:35%; float:left; display:inline;}
-.fl-col-flex36 {width:36%; float:left; display:inline;}
-.fl-col-flex37 {width:37%; float:left; display:inline;}
-.fl-col-flex38 {width:38%; float:left; display:inline;}
-.fl-col-flex39 {width:39%; float:left; display:inline;}
-.fl-col-flex40 {width:40%; float:left; display:inline;}
-.fl-col-flex41 {width:41%; float:left; display:inline;}
-.fl-col-flex42 {width:42%; float:left; display:inline;}
-.fl-col-flex43 {width:43%; float:left; display:inline;}
-.fl-col-flex44 {width:44%; float:left; display:inline;}
-.fl-col-flex45 {width:45%; float:left; display:inline;}
-.fl-col-flex46 {width:46%; float:left; display:inline;}
-.fl-col-flex47 {width:47%; float:left; display:inline;}
-.fl-col-flex48 {width:48%; float:left; display:inline;}
-.fl-col-flex49 {width:49%; float:left; display:inline;}
-.fl-col-flex50 {width:50%; float:left; display:inline;}
-*:first-child+html .fl-col-flex50 {width:49%;} /* hack needed for IE7 */
-.fl-col-flex51 {width:51%; float:left; display:inline;}
-.fl-col-flex52 {width:52%; float:left; display:inline;}
-.fl-col-flex53 {width:53%; float:left; display:inline;}
-.fl-col-flex54 {width:54%; float:left; display:inline;}
-.fl-col-flex55 {width:55%; float:left; display:inline;}
-.fl-col-flex56 {width:56%; float:left; display:inline;}
-.fl-col-flex57 {width:57%; float:left; display:inline;}
-.fl-col-flex58 {width:58%; float:left; display:inline;}
-.fl-col-flex59 {width:59%; float:left; display:inline;}
-.fl-col-flex60 {width:60%; float:left; display:inline;}
-.fl-col-flex61 {width:61%; float:left; display:inline;}
-.fl-col-flex62 {width:62%; float:left; display:inline;}
-.fl-col-flex63 {width:63%; float:left; display:inline;}
-.fl-col-flex64 {width:64%; float:left; display:inline;}
-.fl-col-flex65 {width:65%; float:left; display:inline;}
-.fl-col-flex66 {width:66%; float:left; display:inline;}
-.fl-col-flex67 {width:67%; float:left; display:inline;}
-.fl-col-flex68 {width:68%; float:left; display:inline;}
-.fl-col-flex69 {width:69%; float:left; display:inline;}
-.fl-col-flex70 {width:70%; float:left; display:inline;}
-.fl-col-flex71 {width:71%; float:left; display:inline;}
-.fl-col-flex72 {width:72%; float:left; display:inline;}
-.fl-col-flex73 {width:73%; float:left; display:inline;}
-.fl-col-flex74 {width:74%; float:left; display:inline;}
-.fl-col-flex75 {width:75%; float:left; display:inline;}
-.fl-col-flex76 {width:76%; float:left; display:inline;}
-.fl-col-flex77 {width:77%; float:left; display:inline;}
-.fl-col-flex78 {width:78%; float:left; display:inline;}
-.fl-col-flex79 {width:79%; float:left; display:inline;}
-.fl-col-flex80 {width:80%; float:left; display:inline;}
-.fl-col-flex81 {width:81%; float:left; display:inline;}
-.fl-col-flex82 {width:82%; float:left; display:inline;}
-.fl-col-flex83 {width:83%; float:left; display:inline;}
-.fl-col-flex84 {width:84%; float:left; display:inline;}
-.fl-col-flex85 {width:85%; float:left; display:inline;}
-.fl-col-flex86 {width:86%; float:left; display:inline;}
-.fl-col-flex87 {width:87%; float:left; display:inline;}
-.fl-col-flex88 {width:88%; float:left; display:inline;}
-.fl-col-flex89 {width:89%; float:left; display:inline;}
-.fl-col-flex90 {width:90%; float:left; display:inline;}
-.fl-col-flex91 {width:91%; float:left; display:inline;}
-.fl-col-flex92 {width:92%; float:left; display:inline;}
-.fl-col-flex93 {width:93%; float:left; display:inline;}
-.fl-col-flex94 {width:94%; float:left; display:inline;}
-.fl-col-flex95 {width:95%; float:left; display:inline;}
-.fl-col-flex96 {width:96%; float:left; display:inline;}
-.fl-col-flex97 {width:97%; float:left; display:inline;}
-.fl-col-flex98 {width:98%; float:left; display:inline;}
-.fl-col-flex99 {width:99%; float:left; display:inline;}
-
-
-/* Removes padding and margin compensations for padding. */
-.fl-col-mixed .fl-col-flex-left {margin-left:200px;}
-.fl-col-mixed .fl-col-flex-right {margin-right:200px;}
-.fl-col-mixed-100 .fl-col-flex-left {margin-left:100px;}
-.fl-col-mixed-100 .fl-col-flex-right {margin-right:100px;}
-.fl-col-mixed-150 .fl-col-flex-left {margin-left:150px;}
-.fl-col-mixed-150 .fl-col-flex-right {margin-right:150px;}
-.fl-col-mixed-200 .fl-col-flex-left {margin-left:200px;}
-.fl-col-mixed-200 .fl-col-flex-right {margin-right:200px;}
-.fl-col-mixed-250 .fl-col-flex-left {margin-left:250px;}
-.fl-col-mixed-250 .fl-col-flex-right {margin-right:250px;}
-.fl-col-mixed-300 .fl-col-flex-left {margin-left:300px;}
-.fl-col-mixed-300 .fl-col-flex-right {margin-right:300px;}
-
-
-/* Prevent cascading margins of nested column layouts. */
-.layout-1-columns #portalPageBodyColumns.fl-col-flex,
-.layout-1-columns #portalPageBodyColumns .fl-col-flex {margin:0;}
-
-
-/* Prevent scrollbars on fluid containers. */
-/* start: clearfix */
-.fl-fix:after,.fl-col-justified:after,.fl-col-flex2:after,
-.fl-col-flex3:after,.fl-col-flex4:after,.fl-col-flex5:after,
-.fl-col-mixed:after,.fl-col-mixed2:after,.fl-col-mixed3:after,
-.fl-listmenu li:after,.fl-list-menu li:after,.fl-listmenu a:after,
-.fl-list-menu a:after,ul.fl-grid:after,.fl-grid ul:after,
-.fl-grid li:after,.fl-icon:after,.fl-widget .fl-widget-options ul:after,
-.fl-widget .fl-widget-content:after,.fl-offScreen-hidden:after
-{overflow: visible; content: "."; display: block; height: 0; clear: both; visibility: hidden;}
-
-.fl-fix,.fl-col-justified,.fl-col-flex2,.fl-col-flex3,
-.fl-col-flex4,.fl-col-flex5,.fl-col-mixed,.fl-col-mixed2,
-.fl-col-mixed3,.fl-listmenu li,.fl-list-menu li,.fl-listmenu a,
-.fl-list-menu a,ul.fl-grid,.fl-grid ul,.fl-grid li,.fl-icon,
-.fl-widget .fl-widget-options ul,.fl-widget .fl-widget-content,
-.fl-offScreen-hidden {display: inline-block; overflow: visible;}
-
-/* required comment for clearfix to work in Opera \*/
-
-* html .fl-fix,* html .fl-col-justified,* html .fl-col-flex2,
-* html .fl-col-flex3,* html .fl-col-flex4,* html .fl-col-flex5,
-* html .fl-col-mixed,* html .fl-col-mixed2,* html .fl-col-mixed3,
-* html .fl-listmenu li,* html .fl-list-menu li,* html .fl-listmenu a,
-* html .fl-list-menu a,* html ul.fl-grid,* html .fl-grid ul,
-* html .fl-grid li,* html .fl-icon,* html .fl-widget .fl-widget-options ul,
-* html .fl-widget .fl-widget-content,* html .fl-offScreen-hidden {height:1%;}
-.fl-fix,.fl-col-justified,.fl-col-flex2,.fl-col-flex3,
-.fl-col-flex4,.fl-col-flex5,.fl-col-mixed,.fl-col-mixed2,.fl-col-mixed3,
-.fl-listmenu li,.fl-list-menu li,.fl-listmenu a,.fl-list-menu a,
-ul.fl-grid,.fl-grid ul,.fl-grid li,.fl-icon,.fl-widget .fl-widget-options ul,
-.fl-widget .fl-widget-content,.fl-offScreen-hidden {display:block;}
-/* end: clearfix */
+/* Custom fl classes for use with the Sidebar. */
+.fl-col-mixed .fl-container-flex-left {margin-left:200px;}
+.fl-col-mixed .fl-container-flex-right {margin-right:200px;}
+.fl-col-mixed-100 .fl-container-flex-left {margin-left:100px;}
+.fl-col-mixed-100 .fl-container-flex-right {margin-right:100px;}
+.fl-col-mixed-150 .fl-container-flex-left {margin-left:150px;}
+.fl-col-mixed-150 .fl-container-flex-right {margin-right:150px;}
+.fl-col-mixed-200 .fl-container-flex-left {margin-left:200px;}
+.fl-col-mixed-200 .fl-container-flex-right {margin-right:200px;}
+.fl-col-mixed-250 .fl-container-flex-left {margin-left:250px;}
+.fl-col-mixed-250 .fl-container-flex-right {margin-right:250px;}
+.fl-col-mixed-300 .fl-container-flex-left {margin-left:300px;}
+.fl-col-mixed-300 .fl-container-flex-right {margin-right:300px;}
 
 
 /* Reset: tabs. */
@@ -214,29 +76,29 @@ ul.fl-grid,.fl-grid ul,.fl-grid li,.fl-icon,.fl-widget .fl-widget-options ul,
 .fl-theme-mist .fl-tabs {border: none; border-bottom: none; margin: 0; padding-bottom: 0;}
 .fl-theme-mist .fl-tabs li,
 .fl-theme-mist .fl-tabs li a {font-weight: bold; border: none; background-color: transparent; color: #555555;}
-.fl-theme-mist .fl-tabs li a:hover {background-color: transparent; color: #222222 !important;}
+.fl-theme-mist .fl-tabs li a:hover {background-color: transparent; color: #222222;}
 .fl-theme-mist .fl-tabs li.fl-activeTab,
 .fl-theme-mist .fl-tabs li.fl-activeTab:hover,
 .fl-theme-mist .fl-tabs li.fl-activeTab a,
 .fl-theme-mist .fl-tabs li.fl-activeTab a:hover,
 .fl-theme-mist .fl-tabs li.fl-tabs-active,
 .fl-theme-mist .fl-tabs li.fl-tabs-active a,
-.fl-theme-mist .fl-tabs li.fl-tabs-active a:hover {background-color: transparent; color: #222222 !important;}
+.fl-theme-mist .fl-tabs li.fl-tabs-active a:hover {background-color: transparent; color: #222222;}
 .fl-theme-mist .fl-tabs-content {background-color: transparent; border: none; margin-top: 0;}
 
 
 /* Reset: coal theme. */
 .fl-theme-coal .fl-tabs {}
 .fl-theme-coal .fl-tabs li,
-.fl-theme-coal .fl-tabs li a {font-weight: bold; color: #FFF !important; background-color: transparent; text-decoration: none;}
-.fl-theme-coal .fl-tabs li a:hover {background-color: transparent; color:#FFF !important;}
+.fl-theme-coal .fl-tabs li a {font-weight: bold; color: #FFF; background-color: transparent; text-decoration: none;}
+.fl-theme-coal .fl-tabs li a:hover {background-color: transparent; color:#FFF;}
 .fl-theme-coal .fl-tabs li.fl-activeTab,
 .fl-theme-coal .fl-tabs li.fl-activeTab:hover,
 .fl-theme-coal .fl-tabs li.fl-activeTab a,
 .fl-theme-coal .fl-tabs li.fl-activeTab a:hover,
 .fl-theme-coal .fl-tabs li.fl-tabs-active,
 .fl-theme-coal .fl-tabs li.fl-tabs-active a,
-.fl-theme-coal .fl-tabs li.fl-tabs-active a:hover {background-color: transparent; color:#000 !important;}
+.fl-theme-coal .fl-tabs li.fl-tabs-active a:hover {background-color: transparent; color:#000;}
 .fl-theme-coal .fl-tabs-content {background-color: transparent; color:#000; border: none;}
 
 
@@ -262,11 +124,11 @@ ul.fl-grid,.fl-grid ul,.fl-grid li,.fl-icon,.fl-widget .fl-widget-options ul,
 .fl-theme-coal .fl-tabs li.fl-activeTab:hover {background-color: #EBEBEB;}
 
 
-/* Redefine: focus */
+/* Redefine: focus
 :focus,
 .fl-theme-mist :focus, .fl-theme-mist .selectable,
 .fl-theme-coal :focus, .fl-theme-coal .selectable {outline:1px dotted #CCC;}
-
+ */
 /* 
 ------------------------------------
   uPortal Layout and Structure.
@@ -313,6 +175,9 @@ table.purpose-layout td {margin:0; padding:0;}
 #portalPageHeader {position:relative;}
 #portalPageBar {padding:0.5em 0;}
 #portalPageBar h2 {margin:0; padding:0.5em 0 0 1em; position:absolute; top:0; left:0;}
+#portalPageBarLinks ul,
+#portalPageBarLinks li {margin:0; padding:0; display:inline;}
+#portalPageBarLinks li {list-style-type:none;}
 #portalPageBarLinks a {padding:0 0.5em;}
 #portalSkipNav a, 
 #portalSkipNav a:hover, 
@@ -331,53 +196,42 @@ table.purpose-layout td {margin:0; padding:0;}
 
 
 /* Columns */
-.portal-page-column-inner {padding-left:1em; min-height:100px;}
-#portalPageBodyColumns .single .portal-page-column-inner, 
-#portalPageBodyColumns .right .portal-page-column-inner {}
-#portalPageBodyColumns .single .portal-page-column-inner, 
-#portalPageBodyColumns .left .portal-page-column-inner {padding-left:0;}
-/* Focused */
-.focused #portalPageBodyTitleRow {padding:1em 1em 0 1em;}
-#portalPageBodyBreadcrumb {margin-bottom:0.5em;}
-.focused .portal-page-column-inner {padding:0em 2em 2em 2em;}
-.focused .up-portlet-content {padding:0;}
-
+.portal-page-column {float:left; display:inline;}
+.portal-page-column-inner {padding-bottom:1em; min-height:100px;}
+.columns-1 .column-1 {width:100%;}
+.columns-2 .column-1 .portal-page-column-inner,
+.columns-3 .column-1 .portal-page-column-inner,
+.columns-4 .column-1 .portal-page-column-inner,
+.columns-3 .column-2 .portal-page-column-inner,
+.columns-4 .column-2 .portal-page-column-inner,
+.columns-4 .column-3 .portal-page-column-inner {margin-right:5px}
+.columns-2 .column-2 .portal-page-column-inner,
+.columns-3 .column-3 .portal-page-column-inner,
+.columns-4 .column-4 .portal-page-column-inner {margin-left:5px}
 
 /* Sidebar */
 #portalSidebar {padding:0;}
 #portalSidebarInner {padding:0 1em 2em 1em;}
 #portalSidebar #portalCustomizationLinks .portal-pipe {display:none;}
-/* Sidebar Widgets & Navigation */
-#portalSidebar .fl-widget {padding:7px; font-size:85%; background:transparent; border:1px solid #CCC;}
+/* Sidebar Widgets & Navigation*/
+#portalSidebar .fl-widget {padding:7px; font-size:85%;}
 #portalSidebar .fl-widget .fl-widget-titlebar {margin:0;}
-#portalSidebar .fl-widget .fl-widget-titlebar h2 {color:#808080; font-size:1em; font-weight:bold; border:none;}
+#portalSidebar .fl-widget .fl-widget-titlebar h2 {font-size:1em; font-weight:bold; border:none;}
 #portalSidebar .fl-widget-content,
-#portalSidebar .fl-widget .fl-listmenu {background-color:#CCC; padding: .1em; border-width: 0px; border-bottom-width: 1px; border-color: #AAA;}
+#portalSidebar .fl-widget .fl-listmenu {padding: .1em; border-width: 0px; border-bottom-width: 1px;}
 #portalSidebar .fl-widget .fl-listmenu ul{margin: 0;}
 #portalSidebar .fl-widget .fl-listmenu a {padding-left:28px; background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/application.png); background-position:0.5em 0.5em; background-repeat:no-repeat;}
 #portalSidebar .fl-widget .fl-listmenu li,
-#portalSidebar .fl-widget .fl-listmenu li a {background-color:#CCC; color:#000 !important; overflow: visible; *overflow: hidden; border: none;}
+#portalSidebar .fl-widget .fl-listmenu li a {overflow: visible; *overflow: hidden; border: none;}
 #portalSidebar .fl-widget .fl-listmenu li {border: none; position: relative;}
 #portalSidebar .fl-widget .fl-listmenu li.first {border-left: none;}
 #portalSidebar .fl-widget .fl-listmenu li:hover,
 #portalSidebar .fl-widget .fl-listmenu li:focus,
 #portalSidebar .fl-widget .fl-listmenu li a:hover,
-#portalSidebar .fl-widget .fl-listmenu li a:focus {color:#000 !important; background-color:#EFEFEF; outline:none;}
-#portalSidebar .fl-widget .fl-listmenu li.fl-activemenu,
-#portalSidebar .fl-widget .fl-listmenu li.fl-activemenu a {background-color:#000; color:#FFF !important;}
-#portalSidebar .fl-widget .fl-listmenu li.fl-activemenu:hover,
-#portalSidebar .fl-widget .fl-listmenu li.fl-activemenu:focus,
-#portalSidebar .fl-widget .fl-listmenu li.fl-activemenu a:hover,
-#portalSidebar .fl-widget .fl-listmenu li.fl-activemenu a:focus {background-color:#000; color:#FFF !important;}
+#portalSidebar .fl-widget .fl-listmenu li a:focus {outline:none;}
 /* Sidebar Subnavigation */
-#portalSidebar #portalNavigationInner {padding: 0 0 0 0; background-color: transparent;}
+#portalSidebar #portalNavigationInner {padding:0; background-color: transparent;}
 #portalSidebar .fl-widget .fl-listmenu li.fl-activemenu .portal-subnav-list a {padding-left:40px; padding-bottom: 7px; background-position:1.7em 0.5em; font-size: 83%;}
-#portalSidebar .fl-widget .fl-listmenu li.fl-activemenu .portal-subnav-list,
-#portalSidebar .fl-widget .fl-listmenu li.fl-activemenu .portal-subnav-list a {background-color:#000; color:#FFF !important;}
-#portalSidebar .fl-widget .fl-listmenu li.fl-activemenu .portal-subnav-list:hover,
-#portalSidebar .fl-widget .fl-listmenu li.fl-activemenu .portal-subnav-list:focus,
-#portalSidebar .fl-widget .fl-listmenu li.fl-activemenu .portal-subnav-list a:hover,
-#portalSidebar .fl-widget .fl-listmenu li.fl-activemenu .portal-subnav-list a:focus {color:#FFF !important; background-color:#333; outline:none;}
 /* Sidebar Navigation: Icons */
 #portalSidebar #portalNavigation .portal-navigation-add,
 #portalSidebar #portalNavigation .portal-navigation-delete,
@@ -418,7 +272,6 @@ table.purpose-layout td {margin:0; padding:0;}
 #portalLogin input {margin-bottom:1em;}
 
 /* Navigation */
-#portalNavigation, #portalNavigationInner {background-color: transparent;}
 #portalNavigationInner {position: relative;}
 /* Navigation: Icons (common) */
 #portalNavigation .portal-navigation-gripper { display: none }
@@ -492,12 +345,10 @@ table.purpose-layout td {margin:0; padding:0;}
 
 /* Web Search */
 #webSearchContainer form {}
-#webSearchContainer input, 
-#webSearchContainer select {margin-bottom:0.5em;}
 #portalPageHeader #webSearchContainer {position:absolute; top:3em; right:2em;}
 #portalPageHeader #webSearchContainer h2 {display:none;}
 #portalPageHeader #webSearchContainer input,
-#portalPageHeader #webSearchContainer select {margin-left:0.3em;}
+#portalPageHeader #webSearchContainer select {float:left; margin-left:0.3em;}
 
 
 /* Tooltip */
@@ -538,11 +389,11 @@ table.purpose-layout td {margin:0; padding:0;}
 /* Gallery Layout 
  * Includes Fluid layout overides.
  * Generally the overall layout should not need to be altered.
- * If needed, override these vales on a per-skin basis by adding the overrides to portal.css within the desired skin folder.
+ * If needed, override these values on a per-skin basis by adding the overrides to portal.css within the desired skin folder.
  */
 .clear-float {clear:both;}
 .up-gallery {position:relative;}
-.up-gallery .gallery-inner {display:none; overflow: hidden; padding-top:7px; background:url(../images/gallery-bar.png) top left repeat-x; height:200px;  position:relative;}
+.up-gallery .gallery-inner {display:none; overflow: hidden; padding-top:7px; height:200px;  position:relative;}
 .up-gallery .column-inner {position:relative;}
 .up-gallery .menu-wrapper {width:130px; display:block; height:200px; position:relative;}
 .up-gallery .content-wrapper {margin:0 0 0 127px; padding:8px 0; display:block; height:174px;}
@@ -560,29 +411,17 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .content .use-content {overflow-y: hidden;}
 
 
-/* Gallery General Coloring
- * Override these vales on a per-skin basis by adding the overrides to portal.css within the desired skin folder.
- */
-.up-gallery {background:#333; color:#eee;}
-.up-gallery .gallery-inner {background:url(../images/gallery-bar.png) top left repeat-x;}
-.up-gallery .content-wrapper .content-filters-wrapper {padding-right:5px; background:transparent url(../images/gallery-search-active-arrow.png) right 20% no-repeat;}
-.up-gallery .content-wrapper .content-filters-wrapper .categories-column,
-.up-gallery .content-wrapper .content-filters-wrapper .packages-column {background:#424243; /*border:3px solid #424243; -webkit-border-radius:3px; -moz-border-radius:3px; border-radius:3px;*/}
-
-
 /* Gallery Menu Items 
  * The navigation menu of gallery views.
  */
-.up-gallery .menu {height:190px; background:#424243; padding:10px 0 0 0; position:relative; margin-top:0; margin-bottom:0; margin-left:15px; margin-right:auto; width:100px; border-left:1px solid #979797; border-right:1px solid #979797;}
-.up-gallery .menu li {position:relative; height:28px; cursor:pointer; list-style:none; margin:0; background:#525252; border-top:1px solid #979797;}
+.up-gallery .menu {height:190px; padding:10px 0 0 0; position:relative; margin-top:0; margin-bottom:0; margin-left:15px; margin-right:auto; width:100px; border-left-width:1px; border-left-style:solid; border-right-width:1px; border-right-style:solid;}
+.up-gallery .menu li {position:relative; height:28px; cursor:pointer; list-style:none; margin:0; border-top-width:1px; border-top-style:solid;}
 .up-gallery .menu li a {text-decoration: none; cursor: pointer;}
-.up-gallery .menu li.last {border-bottom:1px solid #979797;}
-.up-gallery .menu li.active {background:#333}
-.up-gallery .menu li span {padding:7px; display:block; height:14px; width:110px; bottom:0; font-weight:bold; color:#fff; font-size:12px;}
-.up-gallery .menu li.active span {position:relative; background:#333 url(../images/gallery-arrow-right.png) 90% 50% no-repeat;}
-.up-gallery .menu li:hover {background-color:transparent;}
+.up-gallery .menu li.last {border-bottom-width:1px; border-bottom-style:solid;}
+.up-gallery .menu li span {padding:7px; display:block; height:14px; width:110px; bottom:0; font-weight:bold; font-size:12px;}
+.up-gallery .menu li.active span {position:relative;}
 .up-gallery .menu li.active:hover,
-.up-gallery .menu li.active:focus {background-color:#333; outline:none;}
+.up-gallery .menu li.active:focus {outline:none;}
 .up-gallery .menu li :focus {outline:none;}
 *:first-child+html .up-gallery .menu li {height:25px;}
 
@@ -590,27 +429,23 @@ table.purpose-layout td {margin:0; padding:0;}
 /* Gallery Handle 
  * Clickable handle that opens the drawer. Once open, the handle can be clicked to close the drawer.
  */
-.up-gallery .handle {margin:0; padding:0; position:absolute; bottom:-7px; left:0; right:0; background:#000 url(../images/gallery-bar.png) bottom left repeat-x; height:7px; clear:both;}
-.up-gallery .handle a {box-shadow: 0px 1px 2px #ccc; -moz-box-shadow: 0px 1px 2px #ccc; -webkit-box-shadow: 0px 1px 2px #ccc; width:100px; -webkit-border-bottom-right-radius: 3px;-webkit-border-bottom-left-radius: 03px;-moz-border-radius-bottomright: 3px;-moz-border-radius-bottomleft: 03px;border-bottom-right-radius: 3px;border-bottom-left-radius: 03px; cursor:pointer; font-size:10px; border: 1px solid #c5c5c5; border-top:0px; position:absolute; top:6px; left:0; margin-left:25px; background: scroll #fff url(../images/gallery-handle.png) 0 0 repeat-x;}
+.up-gallery .handle {margin:0; padding:0; position:absolute; bottom:-7px; left:0; right:0; height:7px; clear:both;}
+.up-gallery .handle a {width:100px; cursor:pointer; font-size:10px; border-top:0px; position:absolute; top:6px; left:0; margin-left:25px;}
 .up-gallery .handle a:hover {text-decoration: none;}
-.up-gallery .handle a span {text-transform:uppercase; color:#888; font-weight:bold; padding:1px 25px 2px 10px; margin-right:5px; display:block; background-image: url(../images/gallery-handle-arrow-down.png); background-position: right center; background-repeat: no-repeat;}
-.up-gallery .handle-arrow-up {background-image: url(../images/gallery-handle-arrow-up.png) !important;}
+.up-gallery .handle a span {text-transform:uppercase; font-weight:bold; padding:1px 25px 2px 10px; margin-right:5px; display:block;}
 
 
 /* Gallery Modal Loaders 
  * Preloaders while the content loads, following the opening of the drawer.
  */
-.up-gallery .gallery-loader {display: block; margin: 7px 0px 0px 127px; position: absolute; top: 0px; bottom: 0px; left: 0px; right: 0px; background: #333 url("../images/gallery-content-preloader.gif") 50% 50% no-repeat;}
+.up-gallery .gallery-loader {display: block; margin: 7px 0px 0px 127px; position: absolute; top: 0px; bottom: 0px; left: 0px; right: 0px; background-image:url("../images/gallery-content-preloader.gif"); background-position:50% 50%; background-repeat:no-repeat;}
 .up-gallery .gallery-loader span {display: none;}
 
 
 /* Gallery Close Button 
  * An explicit close button, that closes the drawer.
  */
-.up-gallery .close-button {width:84px; padding:1px 5px 1px 5px; position:absolute; left:28px; bottom:3px; background-color:#F68A25; background-image:-moz-linear-gradient(90deg,#F68A25,#fcf8d9); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#FCF8D9), to(#F68A25)); cursor:pointer; border:1px solid #000; text-align:center; }
-.up-gallery .close-button a {color: #000;}
-.up-gallery .close-button a:hover {color:#fff; text-decoration: none;}
-.up-gallery .close-button span{font-weight:bold; font-size:13px;}
+.up-gallery .close-button {position:absolute; left:32px; bottom:5px;}
 
 
 /* Gallery Add/Use Portlet Filters 
@@ -619,163 +454,87 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .portlet-search-form {margin-bottom:10px;}
 .up-gallery .portlet-search-form label,
 .up-gallery .portlet-search-form .portlet-search-submit {display:none;}
-.up .up-gallery .portlet-search-form .portlet-search-input {width:157px; padding:2px 4px; background:#e6e6e6; color:#999; border:1px solid #000; font-size:11px; -moz-box-shadow:inset 0px 1px 3px #000000; box-shadow: inset 0 0 10px #000000;}
-.up .up-gallery .portlet-search-form .portlet-search-input:hover {background:#fff;}
-.up .up-gallery .portlet-search-form .portlet-search-input:focus {background:#fff; color:#000;}
+.up .up-gallery .portlet-search-form .portlet-search-input {width:157px;}
 .up-gallery .categories-column,.up-gallery .packages-column {padding:0;}
 .up-gallery .categories,.up-gallery .packages {}
-.up-gallery .categories-column, .up-gallery .packages-column{clear:both;}
-.up-gallery .content-filters-wrapper h3 {margin:0; padding:7px 0 0 0; cursor:pointer; font-size:12px; color:#c5c5c6;}
-.up-gallery .categories-column h3 {background:#333; -webkit-border-top-left-radius: 2px; -webkit-border-top-right-radius: 2px; -moz-border-radius-topleft: 2px; -moz-border-radius-topright: 2px; 
-    border-top-left-radius: 2px; border-top-right-radius: 2px;}
+.up-gallery .categories-column, .up-gallery .packages-column {clear:both;}
+.up-gallery .content-filters-wrapper h3 {margin:0; padding:5px 0 0 0; cursor:pointer; font-size:12px;}
+.up-gallery .content-filters-wrapper h3 span {padding:1px 10px}
 .up-gallery .packages-column h3 {position:absolute; top:0; left:56px;}
-.up-gallery .content-filters-wrapper .active h3 {color:#f68923;}
-.up-gallery .content-filters-wrapper h3 span {padding:1px 10px; border:2px solid #424243; border-bottom:none; -webkit-border-top-left-radius: 5px; -webkit-border-top-right-radius: 5px;
-    -moz-border-radius-topleft: 5px; -moz-border-radius-topright: 5px; border-top-left-radius: 5px; border-top-right-radius: 5px;}
-.up-gallery .content-filters-wrapper .active h3 span {background:#424243;}
-.up-gallery .content-filters-wrapper h3 span:hover,
-.up-gallery .content-filters-wrapper h3 span:focus {background:#000; color:#f68923;}
 .up-gallery .categories-column .categories-wrapper, .up-gallery .packages-column .packages-wrapper {display:none;}
 .up-gallery .categories-column.active .categories-wrapper, .up-gallery .packages-column.active .packages-wrapper {display:block;}
 .up-gallery .packages-wrapper, .up-gallery .categories-wrapper {padding:10px;}
-.up-gallery .packages p {margin:0; color:#aaa; font-size:11px;}
-.up-gallery .categories-column h4 {color:#ccc; padding-bottom:1px; margin-bottom:3px; font-size:10px; text-transform:uppercase; border-bottom:1px dotted #666;}
-.up-gallery .categories ul, .up-gallery .categories li, .up-gallery .categories a {list-style:none; margin:0; padding:0; color:#aaa; font-size:10px; text-decoration:none;}
+.up-gallery .packages p {margin:0; font-size:11px;}
+.up-gallery .categories-column h4 {padding-bottom:1px; margin-bottom:3px; font-size:10px; text-transform:uppercase;}
+.up-gallery .categories ul, .up-gallery .categories li, .up-gallery .categories a {list-style:none; margin:0; padding:0; font-size:10px; text-decoration:none;}
 .up-gallery .categories li {float:left; padding:1px 0 1px 2px;  text-align:left; cursor:pointer;}
 .up-gallery .categories li:after {content:", ";}
 .up-gallery .categories li:last-child:after {content:"";}
-.up-gallery .categories li a {}
-.up-gallery .categories li a:hover, .up-gallery .categories li a:focus, .up-gallery .categories li.active a {color:#fff;}
-.up-gallery .categories li a:hover, .up-gallery .categories li a:focus {background-color:rgba(0,0,0,.25);}
 .up-gallery .categories li.active a {text-decoration:underline;}
 
 
 /* Gallery List Pager 
  * Pagination controls for lists in the gallery.
  */
-.up-gallery .content-pager-wrapper {padding:2px; background:#424243;}
-.up-gallery .content-pager-wrapper .column-inner {padding:0px; margin:0px;}
 .up-gallery .pager-button-up span,
 .up-gallery .pager-button-down span {display:none;}
-.up-gallery .pager-pagination {height:38px; color:#FFF; margin:2px 0 2px 0; font-size:10px;}
+.up-gallery .pager-pagination {height:38px; margin:2px 0 2px 0; font-size:10px;}
 .up-gallery .pager-button-up-inner {display:block; height:59px; background: url(../images/gallery-pager-up-active.png) center 85% no-repeat;}
 .up-gallery .pager-button-down-inner {display:block; height:59px; background: url(../images/gallery-pager-down-active.png) center 15% no-repeat;}
 .up-gallery .pager-button-up.fl-pager-disabled .pager-button-up-inner {background-image: url(../images/gallery-pager-up-inactive.png);}
 .up-gallery .pager-button-down.fl-pager-disabled .pager-button-down-inner {background-image: url(../images/gallery-pager-down-inactive.png);}
 .up-gallery .pager-button-up,
-.up-gallery .pager-button-down {cursor:pointer; border-radius:3px; -moz-border-radius:3px; -webkit-border-radius:3px; position:relative; border:1px solid #666666; height:62px; background-image:none; background:transparent;}
-.up-gallery .pager-button-up,
-.up-gallery .pager-button-down {background-color:#666666; background-image:-moz-linear-gradient(90deg,#424243,#666666); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#424243), to(#666666));}
-.up-gallery .pager-button-up:hover,
-.up-gallery .pager-button-down:hover,
-.up-gallery .pager-button-up:focus,
-.up-gallery .pager-button-down:focus {background-image:-moz-linear-gradient(90deg,#424243,#888888); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#424243), to(#888888)); border-color:#fff;}
-.up-gallery .pager-button-up-inner:focus,
-.up-gallery .pager-button-down-inner:focus {outline:none;}
-.up-gallery .pager-button-up.fl-pager-disabled,
-.up-gallery .pager-button-down.fl-pager-disabled,
-.up-gallery .pager-button-up.fl-pager-disabled:hover,
-.up-gallery .pager-button-down.fl-pager-disabled:hover,
-.up-gallery .pager-button-up.fl-pager-disabled:focus,
-.up-gallery .pager-button-down.fl-pager-disabled:focus {background:#333; border-color:#666;}
+.up-gallery .pager-button-down {cursor:pointer; position:relative; height:62px;}
 
 
-/* Gallery Portlet List 
- * The list of portlets for add and use.
+/* Gallery Results List 
+ * General formatting for results lists (portlets, packages, skins, and layouts).
  */
-.up-gallery .results-wrapper {font-size:10px; position:relative; color:#AAA;}
-.up-gallery .results-wrapper .portlet-list {list-style:none; padding:0; margin:0; position:relative;}
-.up-gallery .results-wrapper .portlet-list li {display:block; list-style:none; padding:0; maring:0; position:relative; float:left; /*width:25%;*/ width: 33%; height:50%;}
-.up-gallery .results-wrapper .portlet-list li .portlet-wrapper {height:75px; padding:0px; margin:5px 5px 0 0; overflow:hidden; position:relative;}
+.up-gallery .results-wrapper {font-size:10px; position:relative;}
+.up-gallery .results-wrapper-inner {padding: 0px 5px;}
+.up-gallery .results-wrapper .results-list {list-style:none; padding:0; margin:0; position:relative; width:100%}
+.up-gallery .results-wrapper .results-list li {display:block; list-style:none; padding:0; maring:0; position:relative; float:left;}
+.up-gallery .results-wrapper .results-list li .ri-wrapper {padding:0px; margin:5px 5px 0 0; overflow:hidden; position:relative;}
 .up-gallery .results-wrapper a {text-decoration:none;}
 .up-gallery .results-column.fl-col-main {margin:0 74px 0 0; padding:0px; position:relative;}
 .up-gallery .results-wrapper .pager-column.fl-col-side {float:right; width:74px; margin:0px; padding:0px;}
-.up-gallery .results-wrapper .portlet-list {position:relative; width:100%;}
-.up-gallery .portlet-wrapper {
-    background: #333; border:1px solid #666; border-radius:5px; -moz-border-radius:5px; -webkit-border-radius:5px; border-radius-topright:0px; -moz-border-radius-topright:0px; -webkit-border-top-right-radius:0px;
-    -moz-box-shadow: 0px 0px 2px 0px #000; -webkit-box-shadow: 0px 0px 2px 0px #000; box-shadow: 0px 0px 2px 0px #000;}
-.up-gallery .portlet-wrapper:hover {border:1px solid #f68923; background:#111; background-image:-moz-linear-gradient(90deg,#000000,#333333); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#333333)); border-top-right-radius:0px;    -moz-border-radius-topright:0px; -webkit-border-top-right-radius:0px;}
-.up-gallery .portlet-wrapper:hover .portlet-thumb-link {color: #000; text-decoration: none; background:#f68923; background-image:-moz-linear-gradient(90deg,#f68923,#ffffff); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#f68923), to(#ffffff));}
-.up-gallery .portlet-wrapper-inner{padding: 0px 5px 0px 5px;}
-/* Add Link */
-.up-gallery .portlet-thumb-link {position: absolute; top: 0px; right: 0px; display: block; cursor:pointer; color:#000; padding:2px 8px; background:#666;
-    background-image:-moz-linear-gradient(90deg,#666,#ffffff); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#666), to(#ffffff)); text-align: center;}
-.up-gallery .portlet-thumb-link:hover {color: #000; background: #F68923; background-image:-moz-linear-gradient(90deg,#F68923,#FFF); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#F68923),to(#FFF));}
+.up-gallery .ri-titlebar {font-size:11px; font-weight:bold;}
+.up-gallery .ri-titlebar,
+.up-gallery .ri-content {padding: 5px 8px 3px 8px;}
+.up-gallery .ri-icon {float:left; margin:0 15px 5px 0;}
+.up-gallery .ri-icon span {visibility: hidden;}
+.up-gallery .ri-description {clear:right; display:inline;}
+
+/* Gallery Portlet and Package Lists
+ * The list of portlets and packages for add and use.
+ */
+.up-gallery .portlet-list li,
+.up-gallery .package-list li {width: 33%; height:50%;}
+.up-gallery .portlet-list li .portlet-wrapper,
+.up-gallery .package-list li .package-wrapper {height:80px;}
+.up-gallery .portlet-wrapper .ri-link,
+.up-gallery .package-wrapper .ri-link {position: absolute; top: 0px; right: 0px; display: block; cursor:pointer; padding:2px 8px; text-align:center;}
+.up-gallery .portlet-wrapper .ri-icon,
+.up-gallery .package-wrapper .ri-icon {width:32px; height:32px;}
 /* Drag Handle */
-.up-gallery .portlet-thumb-gripper {display: block; background: #444444 url("../images/gripper.png") 5px 0px no-repeat; -moz-border-radius-topleft: 5px; -webkit-border-top-left-radius: 5px;
-    border-top-left-radius: 5px; cursor: move;}
-.up-gallery .add-content .portlet-thumb-gripper {background: #444444 url("../images/gripper.png") 5px 0px no-repeat;}
-.up-gallery .use-content .portlet-thumb-gripper {background: transparent; cursor: default;}
+.up-gallery .portlet-thumb-gripper {display: block; cursor: move;}
 .up-gallery .portlet-thumb-gripper span {display: block; width: 16px; height: 16px; overflow: hidden; visibility: hidden;}
-.up-gallery .portlet-thumb-titlebar {padding: 5px 8px 3px 8px; font-size:11px; font-weight:bold; color:#DDD;}
-.up-gallery .portlet-thumb-content {padding: 0px 8px 0px 8px;}
-.up-gallery .portlet-thumb-icon {width:37px; height:37px;}
-.up-gallery .portlet-thumb-icon span {visibility: hidden;}
-.up-gallery .portlet-thumb-description {color: #AAA; padding: 0; margin-left: 36px;}
-/* Temporary Icon */
-.up-gallery .results-wrapper .package-list {list-style:none; padding:0; margin:0; position:relative;}
-.up-gallery .results-wrapper .package-list li {display:block; list-style:none; padding:0; maring:0; position:relative; float:left; width:33%; height:50%;}
-.up-gallery .results-wrapper .package-list li .package-wrapper {height:66px; padding:5px 8px 5px 8px; margin:5px 5px 0 0; overflow:hidden; position:relative;}
-.up-gallery .results-wrapper .package-list {position:relative; width:100%;}
 /* IE7 adjustments*/
-*:first-child+html .up-gallery .results-wrapper .portlet-list li {width:24%;} 
+*:first-child+html .up-gallery .results-wrapper .portlet-list li, 
 *:first-child+html .up-gallery .results-wrapper .package-list li {width:24%;} 
-.up-gallery .package-wrapper {background: #333; border:1px solid #666; border-radius:5px; -moz-border-radius:5px; -webkit-border-radius:5px; border-radius-topright:0px; -moz-border-radius-topright:0px;
-    -webkit-border-top-right-radius:0px; -moz-box-shadow: 0px 0px 2px 0px #000; -webkit-box-shadow: 0px 0px 2px 0px #000; box-shadow: 0px 0px 2px 0px #000;}
-.up-gallery .package-wrapper:hover {
-    border:1px solid #f68923; background:#111; background-image:-moz-linear-gradient(90deg,#000000,#333333); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#333333));
-    border-top-right-radius:0px; -moz-border-radius-topright:0px; -webkit-border-top-right-radius:0px;}
-.up-gallery .package-wrapper .package-link {position: absolute; top: 0px; right: 0px; display: block; cursor:pointer; color:#000; padding:2px 8px; background:#666; display: block;
-    background-image:-moz-linear-gradient(90deg,#666,#ffffff); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#666), to(#ffffff)); text-align: center;}
-.up-gallery .package-wrapper .package-link:hover,
-.up-gallery .package-wrapper:hover .package-link {color: #000; text-decoration: none; background: #F68923; background-image:-moz-linear-gradient(90deg,#F68923,#FFF); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#F68923),to(#FFF));}
-.up-gallery .package-titlebar {padding:16px 0 3px 0; font-size:11px; font-weight:bold; color:#DDD;}
-.up-gallery .package-content {}
-.up-gallery .package-icon {width:37px; height:37px;}
-.up-gallery .package-icon span {visibility: hidden;}
-.up-gallery .package-description {color: #AAA; padding: 0; margin-left: 36px;}
 
 
 /* Gallery Skin List 
  * The list of skins.
  */
-.up-gallery .results-wrapper {font-size:10px; position:relative; color:#AAA;}
-.up-gallery .results-wrapper .skins-list {list-style:none; padding:0; margin:0; position:relative;}
-.up-gallery .results-wrapper .skins-list li {display:block; list-style:none; padding:0; maring:0; position:relative; float:left; width:140px; height:75%;}
-.up-gallery .results-wrapper .skins-list li .skins-wrapper {height:100px; padding:5px; margin:5px 5px 0 0; overflow:hidden; position:relative;}
-.up-gallery .skins-wrapper a {cursor:pointer; top:0; right:0; color:transparent;}
-.up-gallery .skins-wrapper a:hover {text-decoration: none;}
-.up-gallery .skins-wrapper img {border:none;}
-.up-gallery .skin-titlebar {padding:5px 0 3px 0; font-size:12px; font-weight:bold; color:#DDD;}
-.up-gallery .skins-wrapper  {border:1px solid #333; border-radius:5px; -moz-border-radius:5px; -webkit-border-radius:5px;}
-.up-gallery .skins-wrapper:hover {border:1px solid #f68923; background:#111; background-image:-moz-linear-gradient(90deg,#000000,#333333); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#333333));}
-.up-gallery .skins-wrapper:hover a {display:block;}
-.up-gallery .skins-wrapper.selected {border:1px solid #f68923; background:#f68d29; background-image:-moz-linear-gradient(90deg,#d87516,#222222); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#d87516), to(#222222)); color:#fff;}
-.up-gallery .selected .skin-titlebar {color:#fff;}
+.up-gallery .results-wrapper .skins-list li {width:140px; height:75%;}
 .up-gallery .skins-wrapper .skin-thumb {width: 120px; height: 70px;}
-.up-gallery .skins-wrapper .skin-thumb span {visibility: hidden;}
-
 
 /* Gallery Layout List 
  * The list of page layouts.
  */
-.up-gallery .results-wrapper {font-size:10px; position:relative; color:#AAA;}
-.up-gallery .results-wrapper .layouts-list {list-style:none; padding:0; margin:0; position:relative;}
-.up-gallery .results-wrapper .layouts-list li {display:block; list-style:none; padding:0; maring:0; position:relative; float:left; width:140px; height:50%;}
-.up-gallery .results-wrapper .layouts-list li .layout-wrapper {height:66px; padding:5px 10px 5px 10px; margin:5px 5px 0 0; overflow:hidden; position:relative;}
-.up-gallery .layout-wrapper a {cursor:pointer; top:0; right:0; color:transparent;}
-.up-gallery .layout-wrapper a:hover {text-decoration: none;}
-.up-gallery .layout-wrapper img {border:none;}
-.up-gallery .layout-titlebar {padding:5px 0 3px 0; font-size:12px; font-weight:bold; color:#DDD;}
-.up-gallery .layout-description {clear:right; color:#AAA; display:inline;}
-.up-gallery .layout-thumb {float:left; margin:0 5px 5px 0;}
-.up-gallery .layout-wrapper  {border:1px solid #333; border-radius:5px; -moz-border-radius:5px; -webkit-border-radius:5px;}
-.up-gallery .layout-wrapper:hover {border:1px solid #f68923; background:#111; background-image:-moz-linear-gradient(90deg,#000000,#333333); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#333333));}
-.up-gallery .layout-wrapper:hover a {display:block;}
-.up-gallery .layout-wrapper.selected {border:1px solid #f68923; background:#f68d29; background-image:-moz-linear-gradient(90deg,#d87516,#222222); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#d87516), to(#222222));}
-.up-gallery .selected .layout-titlebar {color:#fff;}
+.up-gallery .results-wrapper .layouts-list li {width:140px; height:50%;}
 .up-gallery .layout-wrapper .layout-thumb {width: 27px; height:27px;}
-.up-gallery .layout-wrapper .layout-thumb span {visibility: hidden;}
 
 
 /* Gallery: Avatar */
