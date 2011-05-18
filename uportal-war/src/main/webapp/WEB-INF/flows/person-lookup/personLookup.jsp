@@ -21,7 +21,7 @@
 
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 
-<portlet:actionURL var="selectPersonUrl">
+<portlet:actionURL var="selectPersonUrl" escapeXml="false">
     <portlet:param name="execution" value="${flowExecutionKey}" />
     <portlet:param name="_eventId" value="select"/>
     <portlet:param name="username" value="USERNAME"/>
@@ -70,7 +70,6 @@
                 
             </form>
         </div>
-        
         <div id="${n}searchResults" style="display:none">
             <ul class="person-search-results">
                 <li class="person-search-result">
