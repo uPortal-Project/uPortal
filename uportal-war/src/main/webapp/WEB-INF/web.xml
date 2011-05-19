@@ -249,6 +249,10 @@
         <url-pattern>/media/*</url-pattern>
         <url-pattern>*.js</url-pattern>
         <url-pattern>*.css</url-pattern>
+        <url-pattern>*.png</url-pattern>
+        <url-pattern>*.gif</url-pattern>
+        <url-pattern>*.jpg</url-pattern>
+        <url-pattern>*.ico</url-pattern>
     </filter-mapping>
 
     <filter-mapping>

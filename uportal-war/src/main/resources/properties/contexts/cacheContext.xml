@@ -91,6 +91,10 @@
                         <entry key="/**/*.aggr.min.css" value="31536000"/>
                         <entry key="/**/*.min.js" value="31536000"/>
                         <entry key="/**/*.min.css" value="31536000"/>
+                        <entry key="/**/*.jpg" value="1800"/>
+                        <entry key="/**/*.gif" value="1800"/>
+                        <entry key="/**/*.png" value="1800"/>
+                        <entry key="/**/*.ico" value="1800"/>
                     </map>
                 </property>
             </bean>
