@@ -74,7 +74,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       </div>
       <div class="fl-col fl-text-align-right portlet-search-view">
         <form class="portlet-search-form" style="display:inline">
-            <input class="portlet-search-input"/>
+            <input type="text" class="portlet-search-input"/>
             <input type="submit" value="<spring:message code="search"/>"/>
         </form>
       </div>
