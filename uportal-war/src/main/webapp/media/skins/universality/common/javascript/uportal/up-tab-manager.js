@@ -77,7 +77,7 @@ var up = up || {};
                     afterFinishEdit: function (newValue, oldValue, editNode, viewNode) {
                         // Show gripper & remove icon.
                         remove.show();
-                        gripper.show();
+                        gripper.filter(".active").show();
                         
                         // Fire afterFinishEdit event.
                         that.events.onTabEdit.fire(newValue, oldValue, editNode, viewNode);

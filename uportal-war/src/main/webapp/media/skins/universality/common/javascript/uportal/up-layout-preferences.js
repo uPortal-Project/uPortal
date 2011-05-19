@@ -415,7 +415,8 @@ var uportal = uportal || {};
         that.components.tabManager = up.TabManager("#portalNavigation", {
             listeners: {
                 onTabEdit: function (newValue, oldValue, editNode, viewNode) {
-                    that.persistence.update({action: 'renameTab', tabId: getActiveTabId(), tabName: newValue});
+                // TODO: temporarily commenting out persistence for tab editing
+                //    that.persistence.update({action: 'renameTab', tabId: getActiveTabId(), tabName: newValue});
                 },
                 onTabRemove: function (anchor) {
                     if (!confirm(that.options.messages.confirmRemoveTab)) return false;

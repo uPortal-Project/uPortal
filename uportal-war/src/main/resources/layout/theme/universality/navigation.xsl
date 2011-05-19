@@ -176,12 +176,12 @@
   -->
   <xsl:template match="tab">
   	<xsl:param name="CONTEXT"/>  <!-- Catches the context parameter. -->
-  
+
     <xsl:variable name="NAV_POSITION"> <!-- Determine the position of the navigation option within the whole navigation list and add css hooks for the first and last positions. -->
       <xsl:choose>
-        <xsl:when test="position()=1 and position()=last()">single</xsl:when>
-        <xsl:when test="position()=1">first</xsl:when>
-        <xsl:when test="position()=last()">last</xsl:when>
+        <xsl:when test="count(/layout/navigation/tab) = 1">single</xsl:when>
+        <xsl:when test="/layout/navigation/tab[1] = .">first</xsl:when>
+        <xsl:when test="/layout/navigation/tab[last()] = .">last</xsl:when>
         <xsl:otherwise></xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
@@ -268,7 +268,7 @@
         </xsl:choose>
     </xsl:variable>
     
-    <li id="portalNavigation_{@ID}" class="portal-navigation {$NAV_POSITION} {$NAV_ACTIVE} {$NAV_MOVABLE} {$NAV_EDITABLE} {$NAV_DELETABLE} {$NAV_CAN_ADD_CHILDREN} {$NAV_INLINE_EDITABLE}"> <!-- Each navigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
+    <li id="portalNavigation_{@ID}" class="portal-navigation {$NAV_POSITION} {$NAV_ACTIVE} {$NAV_MOVABLE} {$NAV_EDITABLE} {$NAV_DELETABLE} {$NAV_CAN_ADD_CHILDREN}"> <!-- Each navigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
       <xsl:variable name="tabLinkUrl">
           <xsl:call-template name="portalUrl">
             <xsl:with-param name="url">
@@ -278,11 +278,11 @@
             </xsl:with-param>
           </xsl:call-template>
       </xsl:variable>
-      <a id="tabLink_{@ID}" href="{$tabLinkUrl}" title="{@name}" class="portal-navigation-link">  <!-- Navigation item link. -->
+      <a id="tabLink_{@ID}" href="{$tabLinkUrl}" title="{@name}" class="portal-navigation-link {$NAV_INLINE_EDITABLE}">  <!-- Navigation item link. -->
         <span title="{$NAV_INLINE_EDIT_TITLE}" class="portal-navigation-label {$NAV_INLINE_EDIT_TEXT}"><xsl:value-of select="@name"/></span>
       </a>
       <xsl:if test="$AUTHENTICATED='true' and not($PORTAL_VIEW='focused') and not(dlm:moveAllowed='false')">
-          <a href="javascript:;" class="portal-navigation-gripper" title="{upMsg:getMessage('move.this.tab', $USER_LANG)}"><span><xsl:value-of select="upMsg:getMessage('move', $USER_LANG)"/></span></a> <!-- Drag & drop gripper handle. -->
+          <a href="javascript:;" class="portal-navigation-gripper {$NAV_ACTIVE}" title="{upMsg:getMessage('move.this.tab', $USER_LANG)}"><span><xsl:value-of select="upMsg:getMessage('move', $USER_LANG)"/></span></a> <!-- Drag & drop gripper handle. -->
       </xsl:if>
       <xsl:if test="$AUTHENTICATED='true' and @activeTab='true' and $NAV_POSITION != 'single' and not($PORTAL_VIEW='focused')">
           <xsl:if test="not(@dlm:deleteAllowed='false')">
