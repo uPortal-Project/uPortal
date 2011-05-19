@@ -144,7 +144,7 @@
                     <xsl:call-template name="gallery"/>
                 </xsl:if>
                 <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
-                    <div id="portalEditPagePermissions" class="ui-helper-clearfix">
+                    <div id="portalEditPagePermissions" class="fl-fix">
                     	<a class="button" id="editPagePermissionsLink" href="javascript:;" title="{upMsg:getMessage('edit.page.permissions', $USER_LANG)}">
                             <xsl:value-of select="upMsg:getMessage('edit.page.permissions', $USER_LANG)"/>
                         </a>
@@ -236,7 +236,7 @@
         <xsl:otherwise><xsl:value-of select="count(column)"/></xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    <div id="portalPageBody" class="fl-container-flex">  <!-- Div for presentation/formatting options. -->
+    <div id="portalPageBody" class="fl-container-flex fl-fix">  <!-- Div for presentation/formatting options. -->
     	<div id="portalPageBodyInner">  <!-- Inner div for additional presentation/formatting options. -->
       
         <!-- ****** BODY LAYOUT ****** -->
