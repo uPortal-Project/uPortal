@@ -304,13 +304,11 @@ table.purpose-layout td {margin:0; padding:0;}
 #portalNavigationSubrow li {list-style-type:none; display:inline;}
 #portalNavigationSubrow a {padding:0em 1em;}
 /* Navigation: Flyout */
-#portalNavigation .portal-flyout-container {width: 200px; position: absolute; z-index: 100000; display: none; background-color:#333; padding-bottom:1px; border:4px solid #333;}
+#portalNavigation .portal-flyout-container {width: 200px; position: absolute; z-index: 100000; display: none;}
 #portalNavigation .portal-flyout-container .portal-subnav-list {margin: 0;}
 #portalNavigation .portal-flyout-container .portal-subnav-list li {display: list-item; position: static; padding: 0; list-style: none; border: none;}
-#portalNavigation .portal-flyout-container .portal-subnav-list li a {display: block; padding:0.7em 2em; border-top:1px solid #333; background-color:#fff; color:#666 !important; font-size:85%;}
+#portalNavigation .portal-flyout-container .portal-subnav-list li a {display: block; padding:0.7em 2em;}
 #portalNavigation .portal-flyout-container .portal-subnav-list li:first-child a {border:none;}
-#portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav .portal-subnav-link:hover,
-#portalNavigation .portal-flyout-container .portal-subnav-list .portal-subnav .portal-subnav-link:focus {color:#fff !important; background-color:#AAA;}
 #portalNavigation .portal-flyout-iframe {position:absolute; z-index:9;}
 /* Navigation: Flyout (Fix for IE7) */
 .on-top {z-index:1000000;}
@@ -332,7 +330,7 @@ table.purpose-layout td {margin:0; padding:0;}
 
 /* Customize Page Message */
 #portalPageBodyCustomizeMessageRow {background: transparent; padding-top: 4px; margin-bottom: 1em;}
-#portalPageBodyCustomizeMessageRowContents {background-color: #FFF; padding: 10px 20px; border: 1px solid #000;}
+#portalPageBodyCustomizeMessageRowContents {background-color: #FFF; padding: 10px 20px;}
 #portalPageBodyCustomizeMessageRowContents h1 {margin: 0 0 .3em 0; font-weight: normal; border: none;}
 #portalPageBodyCustomizeMessageRowContents .fl-font-blue {font-weight: bold;}
 

@@ -1,0 +1,132 @@
+/*====================================*/
+/* Header */
+/*====================================*/
+/*
+ * Styles for formatting the portal header and widgets that are contained in it.
+ */
+
+.up {
+	#portalPageHeader {
+		/* Portal header (all views). */
+		background: $c1dark;
+		@include gradient($c1,$c1darker);
+		
+		.fl-widget {
+			/* Widgets in the header are stripped of chrome. */
+			margin: 0;
+			padding: 0;
+			background: none;
+			border: none;
+			
+			.fl-widget-titlebar {
+				display: none;
+			}
+			
+			.fl-widget-content {
+				margin: 0;
+				padding: 0;
+				background: transparent;
+			}
+		}
+		
+		#portalPageHeaderInner {
+			/* Allows for additional styling. In this skin, a background image. */
+			padding: 0;
+			background-image: url(images/header_bkd.png);
+			background-position: top left;
+			background-repeat: no-repeat;
+		}
+		
+		#portalPageBar {
+			/* A utility bar at the top of the portal page. */
+			padding: 0.3em 25px;
+			font-size: 80%;
+			background: $c1darker;
+			color: $c1lightest;
+			text-align:right;
+			text-transform: uppercase;
+			@include gradient($c1,$c1darker);
+			
+			#portalWelcome .user-name {
+				/* Emphasize the user's name. */
+				color: $white;
+			}
+			
+			#portalPageBarLinks {
+				/* List of utility links in the bar. */
+				display: inline;
+				li {
+					padding:0 5px;
+					border-right: 1px solid rgba($white, .25);
+				}
+				li:last-child {
+					border-right: none;
+				}
+				a {
+					color: $c1lightest;
+					text-decoration:none;
+				}
+				a:hover, a:focus {
+					color: $white;
+					text-decoration:underline;
+				}
+			}
+		}
+		
+		#portalLogo {
+			/* The portal logo. It's physical size + padding gives the header its height. */
+			padding: 1.3em 25px;
+		}
+		
+		#webSearchContainer {
+			/* Web Search */
+			input, select {
+				margin: 0;
+			}
+			input[type="text"] {
+				background: $c1light;
+				border-color: $c1darker;
+				@include round(0.6em,0,0,0.6em);
+			}
+			input[type="text"]:focus {
+				background: $white;
+			}
+			input[type="submit"] {
+				padding: 0.4em 15px 0.5em 15px;
+				@include round(0,0.6em,0.6em,0);
+			}
+			@include button(search);
+		}
+	}
+	
+	.not-logged-in {
+		#portalPageHeader {
+			/* Guest Header */
+			#portalLogo {
+				/* The portal logo when not logged in (Guest View). The logo's physical size + padding gives the header its height. */
+				padding: 1.5em 0;
+			}
+		
+			#portalLogin {
+				/* Login */
+				width: 10em;
+				position: absolute;
+				top: 1.5em;
+				right: 25px;
+				
+				.fl-widget-content {
+					text-align: center;
+					@include button(login);
+					
+					input[type="text"] {
+						padding: 0.5em 15px 0.6em 15px;
+					}
+					
+					p {
+						display: none;
+					}
+				}
+			}
+		}
+	}
+}

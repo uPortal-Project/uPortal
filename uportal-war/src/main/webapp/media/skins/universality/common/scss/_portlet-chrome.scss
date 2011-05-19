@@ -1,0 +1,172 @@
+/*====================================*/
+/* Portlet Chrome */
+/*====================================*/
+/*
+ * Styles for formatting the portlet chrome that wraps portlets.
+ */
+
+
+@mixin portlet-chrome($gradientColor1, $gradientColor2, $titleColor, $borderColor, $contentBorderColor, $contentBgColor) {
+	border-color: $borderColor;
+	background: $gradientColor2;
+	background-image: -moz-linear-gradient(top, $gradientColor1, $gradientColor2 65px);
+	background-image: -webkit-gradient(linear, left top, left bottom, from($gradientColor1), to($gradientColor2), color-stop(0.1, $gradientColor1));
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#{$gradientColor1}', EndColorStr='#{$gradientColor2}')";
+	background-image: linear-gradient(top, $gradientColor1, $gradientColor2 65px);
+	
+	.up-portlet-titlebar h2 a  {
+		color: $titleColor;
+	}
+	.up-portlet-content-wrapper {
+		border: 1px solid $contentBorderColor;
+		background: $contentBgColor;
+	}
+}
+
+.up {
+	.up-portlet-wrapper {
+		/* Portlet chrome. */
+		
+		@include portlet-chrome($white,$graylightest,$gray,$graylighter,$graylighter,$white);
+		
+		.up-portlet-wrapper-top,
+		.up-portlet-wrapper-bottom {
+			/* These extra containers are available for additional styling (like rounded corners with images). 
+			 * This skin does not use them, so hide them from view. */
+			display:none;
+			
+		}
+		
+		.up-portlet-titlebar  {
+			/* Prevent portlet titles from wrapping. */
+			white-space: nowrap;
+			
+			h2 {
+				padding-left: 0.5em;
+				font-size: 100%;
+				text-transform: uppercase;
+				
+				a {
+					text-decoration: none;
+				}
+			}
+		}
+		
+		.up-portlet-controls {
+			top: 2px;
+			padding-right: 0.5em;
+			
+			.up-portlet-control {
+				display: block;
+				float: left;
+				height: 16px;
+				width: 16px;
+				padding: 0;
+				font-size: 90%;
+				background: transparent url(images/portlet_icons_flat.png) no-repeat 0 0;
+				
+				span {
+					display: none;
+					
+				}
+			}
+			
+			.focus {
+				&:hover, &:focus {
+					background-position: 0 -16px;
+				}
+			}
+			.edit {
+				background-position: -16px 0;
+				&:hover, &:focus {
+					background-position: -16px -16px;
+				}
+			}
+			.info {
+				background-position: -32px 0;
+				&:hover, &:focus {
+					background-position: -32px -16px;;
+				}
+			}
+			.help {
+				background-position: -48px 0;
+				&:hover, &:focus {
+					background-position: -48px -16px;;
+				}
+			}
+			.remove {
+				background-position: -64px 0;
+				&:hover, &:focus {
+					background-position: -64px -16px;;
+				}
+			}
+			.add {
+				background-position: -80px 0;
+				&:hover, &:focus {
+					background-position: -80px -16px;;
+				}
+			}
+			.permissions {
+				background-position: -96px 0;
+				&:hover, &:focus {
+					background-position: -96px -16px;;
+				}
+			}
+			.help {
+				background-position: -48px 0;
+				&:hover, &:focus {
+					background-position: -48px -16px;;
+				}
+			}
+		}
+	}
+	
+	.no-chrome .up-portlet-content-wrapper {
+		/* A portlet that has been flagged to have no chrome - "Just the content, ma'am." */
+		padding: 1em;
+		@include rounded(7px);
+	}
+	
+	.alternate {
+		/* A portlet that has been flagged to have the alternate styling of portlet chrome.*/		
+		@include portlet-chrome($white,$c1lightest,$c1dark,$c1light,$c1light,$white);
+	}
+	
+	.highlight {
+		/* A portlet that has been flagged to have the highlight styling of portlet chrome. */
+		@include portlet-chrome($c4,$c4darker,$c4darkest,$c4darker,$c4darker,$c4lightest);
+	}
+	
+	.locked {
+		/* A portlet that has been locked (cannot be moved or removed). */
+		@include portlet-chrome($graylightest,$graylighter,$graydark,$gray,$gray,$white);
+		.up-portlet-titlebar h2 {
+			padding-left: 20px;
+			background: transparent url(/ResourceServingWebapp/rs/tango/0.8.90/16x16/emblems/emblem-readonly.png) 0 0 no-repeat;
+		}
+	}
+	
+	.focused {
+		/* A portlet when in the focused view. */
+		.up-portlet-controls {
+			.up-portlet-control {
+				height: auto;
+				width: auto;
+				padding-left: 18px;
+				margin-left: 1.5em;
+				text-decoration: none;
+				span {
+					display: inline;
+				}
+			}
+			
+			.return {
+				background: transparent url(images/portlet_icon_return_flat.png) no-repeat 0 0;
+				&:hover, &:focus {
+					background-position: 0 -16px;
+				}
+			}
+		}
+		
+	}
+}

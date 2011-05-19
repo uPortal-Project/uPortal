@@ -1,0 +1,190 @@
+//====================================
+// Skin Overrides
+//====================================
+// Put any skin-specific overrides here.
+
+.fl-theme-hc div, .fl-theme-hc input {
+    background-color: transparent;
+    border-color: inherit;
+    color: inherit;
+    
+    /* Square corners on widgets */
+	.fl-widget {
+		@include rounded(0px);
+		
+		.fl-widget-titlebar, .fl-widget-content, .fl-listmenu {
+			@include rounded(0px);
+		}
+	}
+}
+
+.up {
+	/*:focus {
+		outline: 2px solid $c4 !important;
+	}*/
+	
+	background: $white;
+	font-size: 150%;
+	
+	#{$btn-up-selector} {
+		font-size: 16px;
+		border-width: thick;
+	}
+	
+	form {
+		#{$form-elements}, #{$form-select}, #{$form-textarea} {
+			border-width: thick;
+			border-color: $black;
+			font-size: 18px;
+			box-shadow: none;
+		}
+		
+		#{$form-elements-focus} {
+			@include box-shadow(0 0 0 $c4);
+			outline: none;
+			border-color: $c4;
+		}
+	}
+	
+	#portalPageHeader {
+		background: $white;
+		
+		#portalPageBar {
+			padding: 1em;
+			color: $white;
+			
+			#portalWelcome .user-name {
+				/* Emphasize the user's name. */
+				font-weight: bold;
+			}
+			
+			#portalPageBarLinks {
+				color: $white;
+				li {
+					border: none;
+				}
+				a {
+					color: $black;
+				}
+			}
+		}
+		
+		#webSearchContainer {
+			/* Web Search */
+			top: 4em;
+			
+			input, select {
+				margin: 0;
+			}
+			input[type="text"] {
+				background: $white;
+				border-color: $black;
+				@include round(0.6em,0,0,0.6em);
+			}
+			input[type="text"]:focus {
+				background: $white;
+				border-color: $c4;
+			}
+			input[type="submit"] {
+				padding: 0.4em 15px 0.5em 15px;
+				@include round(0,0.6em,0.6em,0);
+			}
+			@include button(search);
+		}
+	}
+	
+	#portalNavigation {
+		background: $white;
+		
+		.portal-navigation {
+			/* Each tab list item. */
+			border: none;
+			background: $black;
+			margin-right: 10px;
+			
+			.portal-navigation-link {
+				/* Anchor tag within the list item. */
+				color: $white;
+			}
+		}
+		.portal-flyout-container {
+			display: none !important;
+		}
+	}
+	
+	.columns-2 .column-1 .portal-page-column-inner,
+	.columns-3 .column-1 .portal-page-column-inner,
+	.columns-4 .column-1 .portal-page-column-inner,
+	.columns-3 .column-2 .portal-page-column-inner,
+	.columns-4 .column-2 .portal-page-column-inner,
+	.columns-4 .column-3 .portal-page-column-inner {margin-right:15px}
+	.columns-2 .column-2 .portal-page-column-inner,
+	.columns-3 .column-3 .portal-page-column-inner,
+	.columns-4 .column-4 .portal-page-column-inner {margin-left:15px}
+	
+	.up-portlet-wrapper {
+		/* Portlet chrome. */
+		margin-bottom: 25px;
+		padding: 0.5em;
+		@include portlet-chrome($c1light,$black,$white,$black,$black,$white);
+		.up-portlet-titlebar h2 {
+			background: transparent;
+			border: none;
+			a {
+				background: transparent;
+				color: $white;
+				font-weight: bold;
+				@include text-shadow(dark);
+			}
+		}
+		.up-portlet-controls {
+			position: static;
+			top: 0;
+			display: block;
+			padding: 0.5em;
+			background: $c1lighter;
+			text-align: right;
+			
+			.up-portlet-control {
+				float: none;
+				display: inline;
+				height: auto;
+				width: auto;
+				padding: 0.5em;
+				background: $white;
+				
+				span {
+					display: inline;
+					
+				}
+			}
+		}
+	}
+	.alternate {
+		/* A portlet that has been flagged to have the alternate styling of portlet chrome.*/		
+		@include portlet-chrome($c3dark,$c1dark,$c1darkest,$c1darker,$c1darker,$white);
+		.up-portlet-titlebar h2 a {
+			color: $c3lighter;
+		}
+	}
+	
+	.highlight {
+		/* A portlet that has been flagged to have the highlight styling of portlet chrome. */
+		@include portlet-chrome($c5,$c5darker,$c5darkest,$c5darker,$c5lightest,$c5lightest);
+		.up-portlet-titlebar h2 a {
+			color: $c5lighter;
+		}
+	}
+	
+	.locked {
+		/* A portlet that has been locked (cannot be moved or removed). */
+		@include portlet-chrome($c1dark,$c1,$c2darker,$c1dark,$white,$white);
+		.up-portlet-titlebar h2 {
+			padding-left: 25px;
+			background: transparent url(/ResourceServingWebapp/rs/tango/0.8.90/16x16/emblems/emblem-readonly.png) 5px 0 no-repeat;
+			a {
+				color: $gray;
+			}
+		}
+	}
+}

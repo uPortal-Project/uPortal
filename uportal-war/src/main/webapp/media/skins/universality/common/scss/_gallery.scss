@@ -1,0 +1,237 @@
+/* 
+------------------------------------
+  uPortal Gallery.
+------------------------------------ 
+ * The gallery is a sliding drawer that provides interfaces for customizing the protal.
+ */
+
+.up {
+	.up-gallery {
+		 background: $dgray;
+		 border-color: $gray;
+		 
+		 .handle {
+	 		/* Clickable handle that opens the drawer. Once open, the handle can be clicked to close the drawer. */
+	 		background:$black url(../common/images/gallery-bar.png) bottom left repeat-x;
+	 		
+	 		a {
+	 			background:$white scroll url(../common/images/gallery-handle.png) 0 0 repeat-x;
+	 			color: $text;
+	 			border: 1px solid $graydark;
+	 			border-top: none;
+	 			@include round(0,0,3px,3px);
+	 			@include box-shadow(0,1px,2px,$gray);
+	 			
+	 			span {
+	 				background-image: url(../common/images/gallery-handle-arrow-down.png);
+	 				background-position: right center;
+	 				background-repeat: no-repeat;
+	 			}
+	 		}
+	 		.handle-arrow-up {background-image: url(../common/images/gallery-handle-arrow-up.png) !important;}
+	 	}
+		 
+		.gallery-inner {
+		 	background: transparent url(../common/images/gallery-bar.png) top left repeat-x;
+		 	
+		 	.menu-wrapper{
+		 		/* The navigation menu of gallery views. */
+			 	.menu {
+			 		border-color: $graylight;
+			 		background: $dgraylight;
+			 		
+			 		li {
+			 			border-color: $graydark;
+			 			background: $dgraylighter;
+			 			
+			 			a {
+			 				color: $graylight;
+			 			}
+			 		}
+			 		li:hover, li:active {
+			 			background: $c1darkest;
+			 			
+			 			a {
+			 				color: $white;
+			 			}
+			 		}
+			 		.active {
+			 			background: $dgray;
+			 			
+			 			a {
+			 				color: $white;
+			 			}
+			 			
+			 			span {
+			 				background: $dgray url("../common/images/gallery-arrow-right.png") 90% 50% no-repeat;
+			 			}
+			 		}
+			 		
+			 	}
+			 	
+			 	.close-button {
+			 		/* Close gallery ("I'm Done") button. */
+			 		@include button();
+			 	}	
+		 	}
+		 	
+		 	.content-filters-wrapper {
+		 		/* Search and category filters for the add portlet and use portlet views. */
+		 		background: $dgraylight;
+		 		border: 1px solid $dgraylightest;
+		 		@include rounded(5px);
+		 		
+	 			h3 {
+	 				/* Filter titles */
+	 				background: $dgray;
+	 				color: $c1dark;
+	 				@include round(5px,5px,0,0);
+	 				
+	 				span {
+	 					@include round(5px,5px,0,0);
+	 				}
+	 			}
+	 			
+	 			h3:hover, h3:focus {
+	 				color: $c1light;
+	 			}
+		 		
+		 		.active h3 {
+		 			color: $c1light;
+		 			span {
+		 				background: $dgraylight;
+		 			}
+		 		}
+		 		
+		 		.active h3:hover, .active h3:focus {
+		 			color: $c1lightest;
+		 		}
+		 		
+		 		h4 {
+		 			/* Filter subtitles */
+		 			color: $graylighter;
+		 			border-bottom:1px dotted $graydarkest;
+		 		}
+		 		
+		 		.portlet-search-input {
+		 			/* Filter search */
+		 			background: $dgraylightest;
+		 			color: $dgray;
+		 			padding: 0.3em;
+		 			&:hover {
+		 				background: $graydarker;
+		 			}
+		 			&:focus {
+			 			background: $white;
+			 		}
+		 		}
+		 		
+		 		.categories {
+		 			/* Filter categories */
+		 			a {
+		 				color: $graylight;
+		 			}
+		 			
+		 			a:hover, a:focus {
+		 				color: $c1;
+		 			}
+		 			
+		 			.active a {
+		 				color: $white;
+		 			}
+		 		}
+		 		
+		 		
+		 		.packages-wrapper {
+		 			/* Filter packages */
+		 			color: $graylighter;
+		 		}
+		 	}
+		 	
+		 	.results-wrapper {
+		 		/* Results section of the gallery. Lists portlets, packages, skins, or layout options. */
+		 		padding-bottom: 5px;
+		 		color: $gray;
+		 		
+		 		.ri-wrapper {
+		 			background: $dgray;
+		 			border: 1px solid $dgraylightest;
+		 			@include rounded(5px);
+		 			@include box-shadow(1px,1px,2px,$black);
+		 			
+		 			.ri-utility {
+		 				height: 16px;
+		 				background: $dgraylight;
+		 				@include round(5px,5px,0,0);
+		 			}
+		 			
+		 			.portlet-thumb-gripper {
+		 				background: $dgraylight url("../common/images/gripper.png") 5px 0px no-repeat;
+		 			}
+		 			
+		 			.ri-titlebar {
+		 				color: $white;
+		 			}
+		 			
+		 			.ri-description {
+		 				color: $graylight;
+		 			}
+		 		}
+		 		.ri-wrapper:hover, .ri-wrapper:focus {
+		 			background: $dgraydarker;
+		 			border-color: $c1;
+		 			@include gradient($dgray,$dgraydarkest);
+		 		}
+		 		.portlet-wrapper, .package-wrapper {
+		 			.ri-link {
+		 				color: $black;
+		 				background: $dgraydark;
+		 				@include gradient($gray,$graydarkest);
+		 				@include round(0,5px,0,0);
+		 				display: none;
+		 			}
+		 		}
+		 		.portlet-wrapper:hover, .portlet-wrapper:focus, .package-wrapper:hover, .package-wrapper:focus {
+		 			.ri-link {
+		 				background: $c1dark;
+		 				@include gradient($c1light,$c1dark);
+		 				display: block;
+		 			}
+	 			}
+	 			
+	 			.selected {
+	 				background: $dgraydark;
+	 				border-color: $c1;
+	 				border-width: 3px;
+	 			}
+	 			
+	 			
+	 			.pager {
+	 				.pager-pagination {
+	 					color: $white;
+	 				}
+	 				.pager-button-up, .pager-button-down {
+	 					background: $dgraylight;
+	 					border:1px solid $dgraylightest;
+	 					@include gradient($dgraylighter,$dgray);
+	 					@include rounded(5px);
+	 				}
+	 				.pager-button-up:hover, .pager-button-up:focus, .pager-button-down:hover, .pager-button-down:focus {
+						background: $dgraylightest;
+						border-color: $c1;
+						@include gradient($dgray,$dgraydarkest);
+					}
+					.fl-pager-disabled {
+						background: $dgray !important;
+						border-color: $dgraylight !important;
+						cursor: default !important;
+						a {
+							cursor: default !important;
+						}
+					}
+	 			}
+		 	}
+		 	
+		}
+	} 
+}

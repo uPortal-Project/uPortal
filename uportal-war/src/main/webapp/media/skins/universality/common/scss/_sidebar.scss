@@ -1,0 +1,68 @@
+/*====================================*/
+/* Sidebar */
+/*====================================*/
+/*
+ * Styles for formatting the portal sidebar and widgets that are contained in it.
+ */
+
+.up {
+	#portalSidebar {
+		/* A persistent sidebar that can contain widgets.  */
+		.fl-widget {
+			/* General formatting for sidebar widgets */
+			border-color: $c2dark;
+			@include gradient($c2lightest,$c2);
+			
+			.fl-widget-titlebar {
+				h2 {
+					color: $c1lightest;
+					text-transform: uppercase;
+					@include text-shadow(dark);
+				}
+			}
+			
+			.fl-widget-content {
+				background: $c1dark;
+				color: $c1lightest;
+				border: 1px solid $c2;
+				
+				.fl-listmenu {
+					/* Most sidebar widgets contain list menus. */
+					background-color: $c1dark;
+					border-color: $c1dark;
+					
+					li, li a {
+						background-color: $c1dark;
+						color: $c1lightest;
+					}
+					li:hover, li:focus, li a:hover, li a:focus {
+						background-color: $c4darker;
+						color: $white;
+					}
+					.fl-activemenu {
+						.portal-subnav-list {
+							a {
+								background-color: $c1darker;
+								color: $c1lighter;
+							
+								&:hover, &:focus {
+									background-color: $c1darkest;
+									color: $white;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		#portalFragAdminList .fl-widget-content {
+			/* This sidebar widget does not have a list menu and needs some padding. */
+			padding: 1em 12px;
+		}
+		
+		#portalAdminLinks #portalAdminLinksPortletAdmin a {
+			/* A list of links to administrative functions */
+			background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/application_cascade.png);
+		}
+	}
+}

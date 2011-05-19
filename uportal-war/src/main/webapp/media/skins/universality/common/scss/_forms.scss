@@ -1,0 +1,43 @@
+/* Form styles.
+ * Gives form elements a consistent look across the portal.
+ * Pass in the desired type of form based on the context.
+ */
+
+/* Use variables to store selectors. */
+$form-elements: "input[type='text'], input[type='email'], input[type='tel'], input[type='url'], input[type='search']";
+$form-select: "select";
+$form-textarea: "textarea";
+$form-elements-focus: "select:focus, input[type='text']:focus, input[type='email']:focus, input[type='tel']:focus, input[type='url']:focus, input[type='search']:focus, select:focus, textarea:focus";
+
+/* Apply baseline form element styling. */
+.up {
+	form {
+		#{$form-elements}, #{$form-select}, #{$form-textarea} {
+			font-family		: "lucida grande",tahoma,verdana,arial,sans-serif;
+			border-width	: 1px;
+			border-style	: solid;
+			border-color	: $gray;
+			font-size		: 14px;
+		}
+		
+		#{$form-elements}, #{$form-textarea} {
+			padding			: 0.4em;
+			line-height		: 1.4;
+			background		: $white;
+			box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2) inset;
+			@include rounded(0.6em);
+		}
+		
+		#{$form-select} {
+			padding: 0.1em;
+			@include rounded(0.2em);
+		}
+		
+		#{$form-elements-focus} {
+			@include box-shadow(0 0 10px $c1light);
+			outline				: none;
+		}
+		
+		
+	}
+}

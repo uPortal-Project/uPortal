@@ -1,0 +1,29 @@
+/* 
+------------------------------------
+  jQuery UI overrides.
+------------------------------------ 
+ * uPortal uses jQuery UI (http://jqueryui.com/) for animation, effects, and widgets.
+ * jQuery UI themes are expected by uPortal to format jQuery UI elements used by the portal.
+ * The specific jQuery UI theme used in this skin is specified in skin.xml
+ * A default theme (smoothness) is available from the resource server.
+ * Alternate themes can be used by changing the reference in skin.xml
+ * These are any overrides to the jQuery UI theme.
+*/
+
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button, .ui-widget {
+	font-size: 1em;
+	font-family: arial,helvetica,clean,sans-serif;
+}
+.ui-tabs .ui-tabs-nav li {
+	list-style-image: none;
+	list-style-position: outside;
+	list-style-type: none;
+}
+
+#tooltip {
+	/* Unsure if this is still needed.
+	background-color: #fffbbf;
+	color: #344461;
+	border: thin solid #b1c6f2;
+	*/
+}

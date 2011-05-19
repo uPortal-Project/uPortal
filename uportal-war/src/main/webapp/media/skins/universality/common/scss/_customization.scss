@@ -1,0 +1,96 @@
+/*====================================*/
+/* Customization */
+/*====================================*/
+/*
+ * Styles for formatting various aspects of portal customization.
+ */
+
+.up {
+	#portalPageBodyCustomizeMessageRow {
+		/* Customize Page Message, displays when a new page is created (with no content). */
+		background: transparent url("images/customize_message_arrow.png") 40px 0px no-repeat;
+		
+		#portalPageBodyCustomizeMessageRowContents {
+			padding: 10px 20px;
+    		background: $white;
+    		border: 2px solid $c4;
+    		@include rounded(7px);
+    		
+    		h1 {
+    			margin: 0 0 .3em 0;
+    			font-weight: normal;
+    			color: $dgray;
+    			text-decoration: none;
+    			border: none;
+    		}
+    		
+    		strong {
+    			color: $c1dark;
+    		}
+		}
+	}
+	
+	.fragment-admin-mode #portalPageBodyInner {
+		/* Page body in fragment administration mode. */
+		padding: 1.2em 25px 2.5em 25px;
+	}
+	
+	#portalFragAdminExit {
+		/* Fragment Administration mode. */
+		margin: 0;
+		background: $c4lightest;
+		border: none;
+		border-bottom: 1px solid $c4; 
+		@include rounded(0px);
+		
+		h2 {
+			color: $c4;
+			font-size: 150%;
+		}
+		
+		.fl-widget-content {
+			background: $c4lightest;
+			@include button(login);
+			
+			#exitFragment {
+				float: right;
+			}
+		}
+	}
+	
+	#portalEditPagePermissions {
+		/* Edit page Permisssions */
+		float: right;
+		display: block;
+		margin-top: .75em;
+		margin-right: 25px;
+		@include button(light);
+	}
+
+	.column-permissions {
+		margin-bottom:0.5em;
+		@include button(light);
+	}
+	
+	.fragment-disabled, .fragment-disabled h2.fragment-title {
+		color: $graydark;
+	}
+	.layout-option {
+		padding: 5px;
+	}
+	.layout-option.selected {
+		border: thin solid $gray;
+	}
+
+	.fl-reorderer-movable-selected:focus,
+	.fl-reorderer-movable-dragging:focus {
+		/* keyboard layout reorder focus outline */
+		outline: 2px solid $c4;
+	}
+	.fl-reorderer-header-movable-selected:focus,
+	.fl-reorderer-header-movable-dragging:focus,
+	.fl-reorderer-sidebar-movable-selected:focus,
+	.fl-reorderer-sidebar-movable-dragging:focus {
+		outline: none;
+	}
+}

@@ -1,0 +1,46 @@
+/*====================================*/
+/* Footer */
+/*====================================*/
+/*
+ * Styles for formatting the portal footer and widgets that are contained in it.
+ */
+
+.up {
+	#portalPageFooter {
+		/* Portal footer. */
+		background: $c2;
+		color: $graydarker;
+		font-size: 80%;
+		
+		#portalPageFooterInner {
+			margin: 0 auto;
+			padding: 25px;
+    		width: 620px;
+    		background: transparent url(images/portal_poweredby.png) 25px 65px no-repeat;
+		}
+		
+		a {
+			/* Generally want footer links to blend in with the footer. */
+			color: $gray;
+			text-decoration: none;
+			&:hover, &:focus {
+				color: $c1light;
+			}
+		}
+		
+		#portalPageFooterLinks {
+			/* This list of footer links needs a little more attention than the rest of the footer stuff. */
+			margin-bottom: 2em;
+			a {
+				color: $white;
+				font-weight: bold;
+				&:hover, &:focus {
+					color: $c1light;
+				}
+			}
+		}
+		#portalProductAndVersion, #portalCopyright, #silkIconsAttribution {
+			margin-left: 120px;
+		}
+	}
+}

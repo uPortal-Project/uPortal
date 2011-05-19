@@ -1,0 +1,41 @@
+/*====================================*/
+/* General */
+/*====================================*/
+/* 
+ * Formatting for global elements and basic setup.
+ */
+
+.up {
+	/* Global, general styling. */
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	background-color: $white;
+	color: $text;
+	
+	h1, h2, h3, h4, h5, h6 {
+		/* Global heading styling. */
+		font-family:"Lucida Sans Unicode", "Lucida Grande", sans-serif
+	}
+	
+	#portalPageHeaderInner,
+	#portalNavigationInner,
+	#portalPageBodyInner,
+	#portalPageFooterInner {
+		/* Side padding on all the main elements to give the page some space from the browser window. */
+		padding-left: 25px;
+		padding-right: 25px;
+	}
+	
+	@include button();
+	
+	.skip-link {
+		/* Skip-to navigation links. Make them visually hidden, but available to screen readers and focusable. */
+		@include visuallyhidden();
+		@include focusable();
+	}
+	
+	#portalPageBodyInner {
+		/* Page body. */
+		padding:2.5em 25px;
+		
+	}
+}

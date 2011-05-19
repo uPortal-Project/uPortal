@@ -1,0 +1,219 @@
+//====================================
+// Skin Overrides
+//====================================
+// Put any skin-specific overrides here.
+
+.fl-theme-mist {
+	/* Square corners on widgets */
+	.fl-widget {
+		@include rounded(0px);
+		
+		.fl-widget-titlebar, .fl-widget-content, .fl-listmenu {
+			@include rounded(0px);
+		}
+	}
+}
+
+.up {
+	/* Global, general styling. */
+	background: $c2;
+	font-family: serif;
+	font-size: 14px;
+	
+	h1, h2, h3, h4, h5, h6 {
+		/* Global heading styling. */
+		font-family: Georgia, "Times New Roman", Times, serif;
+	}
+	
+	#portalPageHeader {
+		#portalPageBar {
+			/* A utility bar at the top of the portal page. */
+			padding: 0.5em 25px;
+			border-bottom: 1px solid $c1darker;
+			background: $c1darker url(images/headerbar.jpg) 0 0 repeat-x;
+			color: $c1lighter;
+			font-size: 100%;
+			text-transform: capitalize;
+			@include box-shadow(0,2px,4px,$c1darker);
+			
+			#portalWelcome .user-name {
+				/* Emphasize the user's name. */
+				font-weight: bold;
+			}
+			
+			#portalPageBarLinks {
+				/* List of utility links in the bar. */
+				a {
+					color: $c1lighter;
+				}
+			}
+		}
+		
+		#webSearchContainer {
+			/* Web Search */
+			top: 4em;
+		}
+	}
+	
+	#portalNavigation {
+		/* Main Navigation, rendered as a row of tabs. */
+		background: $c1darker;
+		a {
+			font-weight: normal;
+		}
+		
+		.portal-navigation {
+			/* Each tab list item. */
+			margin-right: 2px;
+			border: 1px solid $c2dark;
+			border-top: none;
+			@include gradient2($c1,$c1,$c1dark);
+		}
+		.portal-navigation:hover {
+			/* Tab hover. */
+			@include gradient2($c1lighter,$c1light,$c1);
+		}
+		
+		.active {
+			/* Active tab. */
+			@include gradient2($c5,$c5dark,$c5darker);
+		}
+		.active:hover {
+			/* Active tab hover. */
+			@include gradient2($c5light,$c5,$c5dark);
+		}
+		.portal-flyout-container {
+			/* Flyout menus. */
+			background: $c2;
+			border-color: $c2;
+			li a {
+				&:hover, &:focus {
+					color: $white;
+				}
+			}
+		}
+	}
+	
+	#portalPageBody {
+		background: $c1lightest;
+	}
+	
+	.up-portlet-wrapper {
+		/* Portlet chrome. */
+		padding: 0;
+		@include portlet-chrome($c1,$c1lighter,$c2dark,$c1,$white,$white);
+		
+		.up-portlet-wrapper-top {
+			display: block;
+			height: 1px;
+			background: $c1lightest;
+			margin-bottom:5px;
+		}
+		.up-portlet-titlebar h2 {
+			text-transform: capitalize;
+		}
+		.up-portlet-content-wrapper {
+			border-top-color: $c1dark;
+		}
+		.up-portlet-controls .up-portlet-control {
+			background-color: $c1lighter
+		}
+	}
+	.alternate {
+		/* A portlet that has been flagged to have the alternate styling of portlet chrome.*/		
+		@include portlet-chrome($c4,$c4darker,$c4darkest,$c4darker,$white,$white);
+	}
+	
+	.highlight {
+		/* A portlet that has been flagged to have the highlight styling of portlet chrome. */
+		@include portlet-chrome($c5,$c5darker,$c5darkest,$c5darker,$c5lightest,$c5lightest);
+	}
+	
+	.locked {
+		/* A portlet that has been locked (cannot be moved or removed). */
+		@include portlet-chrome($c1dark,$c1,$c2darker,$c1dark,$white,$white);
+		.up-portlet-titlebar h2 {
+			padding-left: 25px;
+			background: transparent url(/ResourceServingWebapp/rs/tango/0.8.90/16x16/emblems/emblem-readonly.png) 5px 0 no-repeat;
+		}
+	}
+	.focused {
+		/* A portlet when in the focused view. */
+		.up-portlet-controls {
+			.up-portlet-control {
+				color: $c1lightest;
+				&:hover, &:focus {
+					color: $white;
+				}
+			}
+		}
+	}
+	.dashboard .up-portlet-control {
+		margin-left: 2px;
+		border: 1px solid $c1;
+	}
+	.dashboard .alternate .up-portlet-control {
+		border: 1px solid $c4darker;
+		background-color: $c4;
+	}
+	.dashboard .highlight .up-portlet-control {
+		border: 1px solid $c5;
+		background-color: $c5lightest;
+	}
+	.dashboard .locked .up-portlet-control {
+		border: 1px solid $c1darker;
+		background-color: $c1light;
+	}
+	
+	#portalFragAdminExit {
+		/* Fragment Administration mode. */
+		background: $c3light;
+		border-bottom: 1px solid $c3darker; 
+		
+		h2 {
+			color: $c3darkest;
+		}
+		
+		.fl-widget-content {
+			background: $c3light;
+			@include button(dark);
+		}
+	}
+	
+	#portalPageBodyCustomizeMessageRow {
+		/* Customize Page Message, displays when a new page is created (with no content). */
+		#portalPageBodyCustomizeMessageRowContents {
+    		border-color: $c4darker;
+		}
+	}
+	
+	#portalPageFooter {
+		/* Portal footer. */
+		color: $c2lighter;
+		font-size: 100%;
+		
+		#portalPageFooterInner {
+    		width: 650px;
+    		background: transparent url(images/portal_poweredby.png) 25px 75px no-repeat;
+		}
+		
+		a {
+			/* Generally want footer links to blend in with the footer. */
+			color: $c1light;
+			&:hover, &:focus {
+				color: $white;
+			}
+		}
+		
+		#portalPageFooterLinks {
+			/* This list of footer links needs a little more attention than the rest of the footer stuff. */
+			margin-bottom: 2em;
+			a {
+				color: $c1lighter;
+				&:hover, &:focus {
+					color: $white;
+				}
+			}
+		}
+	}
+}

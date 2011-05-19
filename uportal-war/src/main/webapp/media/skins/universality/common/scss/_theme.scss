@@ -1,0 +1,21 @@
+//====================================
+// THEME
+//====================================
+// Portal theme styles. This file imports all other theme files.
+// Theme files are boxed off for human use.
+
+@import "../../ivy/scss/_skin-colors.scss"; // skin color overrides.
+@import "colors";
+@import "buttons";
+@import "forms";
+@import "fss-overrides";
+@import "jqueryui-overrides";
+@import "general";
+@import "header";
+@import "navigation";
+@import "gallery";
+@import "sidebar";
+@import "portlet-chrome";
+@import "footer";
+@import "customization";
+@import "../../ivy/scss/_skin-overrides.scss"; // skin theme overrides.
