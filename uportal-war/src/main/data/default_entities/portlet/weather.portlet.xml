@@ -69,10 +69,10 @@
       <name>locationCodes</name>
       <readOnly>false</readOnly>
       
-        <value>Los Angeles, CA, USA</value>
-        <value>New York, NY, USA</value>
-        <value>Paris, France</value>
-        <value>Tokyo, Japan</value>
+        <value>2442047</value>
+        <value>2459115</value>
+        <value>615702</value>
+        <value>1118370</value>
       
     </portlet-preference>
     <portlet-preference>
