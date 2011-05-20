@@ -24,3 +24,5 @@
  * If you are satisfied with the default styling, this file may remain blank.
  * Otherwise, add any CSS to style portlets as desired.
  */
+ 
+.ui-datepicker-inline { display: block; }

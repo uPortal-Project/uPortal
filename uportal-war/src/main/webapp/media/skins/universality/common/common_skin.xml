@@ -47,14 +47,14 @@
   <css>css/token-input.css</css>
 
 
-  <js included="plain">/ResourceServingWebapp/rs/jquery/1.5/jquery-1.5.js</js>
-  <js included="aggregated">/ResourceServingWebapp/rs/jquery/1.5/jquery-1.5.min.js</js>
+  <js included="plain">/ResourceServingWebapp/rs/jquery/1.6.1/jquery-1.6.1.js</js>
+  <js included="aggregated">/ResourceServingWebapp/rs/jquery/1.6.1/jquery-1.6.1.min.js</js>
   
   <js included="plain">/ResourceServingWebapp/rs/jquery-plugins/cookie/1.0/jquery.cookie-1.0.js</js>
   <js included="aggregated">/ResourceServingWebapp/rs/jquery-plugins/cookie/1.0/jquery.cookie-1.0.min.js</js>
   
-  <js included="plain">/ResourceServingWebapp/rs/jqueryui/1.8/jquery-ui-1.8.js</js>
-  <js included="aggregated">/ResourceServingWebapp/rs/jqueryui/1.8/jquery-ui-1.8.min.js</js>
+  <js included="plain">/ResourceServingWebapp/rs/jqueryui/1.8.13/jquery-ui-1.8.13.js</js>
+  <js included="aggregated">/ResourceServingWebapp/rs/jqueryui/1.8.13/jquery-ui-1.8.13.min.js</js>
   
   <js included="plain">/ResourceServingWebapp/rs/fluid/1.4-bea0041/js/fluid-all-1.4-bea0041.js</js>
   <js included="aggregated">/ResourceServingWebapp/rs/fluid/1.4-bea0041/js/fluid-all-1.4-bea0041.min.js</js>
@@ -78,5 +78,5 @@
   <js>javascript/uportal/entity-selector.js</js>
   <js>javascript/uportal/up-parameter-editor.js</js>
   <js>javascript/uportal/flyout-nav.js</js>
-  <js>javascript/jquery.tokeninput.js</js>
+  <!--js>javascript/jquery.tokeninput.js</js-->
 </resources>

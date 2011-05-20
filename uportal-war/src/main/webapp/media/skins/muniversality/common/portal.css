@@ -870,6 +870,9 @@ mathematical calculations. */
   background-color: transparent;
   background-position: -48px -192px;
 }
+.up .ui-datepicker-inline {
+  display: block;
+}
 .up .ptl-calendar .upcal-hide-on-calendar {
   display: none;
 }
