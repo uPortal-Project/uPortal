@@ -44,17 +44,33 @@
 </div>
 
 <script type="text/javascript">
-  google.load("visualization", "1", {packages:["linechart"]});
+  google.load("visualization", "1", {packages:["corechart"]});
   google.setOnLoadCallback(drawChart);
   function drawChart() {
     var data = new google.visualization.DataTable();
     <c:forEach items="${ results[0] }" var="cell" varStatus="status">
-        data.addColumn('<gvis:dataType value="${ cell.value }"/>', '<spring:escapeBody javaScriptEscape="true">${ cell.key }</spring:escapeBody>');
+        <c:choose>
+            <c:when test="${ status.index == 0 }">
+                var type = 'string';
+            </c:when>
+            <c:otherwise>
+                var type = '<gvis:dataType value="${ cell.value }"/>';
+            </c:otherwise>
+        </c:choose>
+        data.addColumn(type, '<spring:escapeBody javaScriptEscape="true">${ cell.key }</spring:escapeBody>');
     </c:forEach>
     data.addRows(${ fn:length(results) });
     <c:forEach items="${ results }" var="row" varStatus="status">
         <c:forEach items="${ row }" var="cell" varStatus="cellStatus">
-            data.setValue(${ status.index }, ${ cellStatus.index }, <gvis:formatValue value="${ cell.value }"/>);
+            <c:choose>
+            <c:when test="${ status.index == 0 and cellStatus.index == 0 }">
+                var value = String(${ cell.value });
+            </c:when>
+            <c:otherwise>
+                var value = <gvis:formatValue value="${ cell.value }"/>;
+            </c:otherwise>
+        </c:choose>
+            data.setValue(${ status.index }, ${ cellStatus.index }, value);
         </c:forEach>
     </c:forEach>
 
