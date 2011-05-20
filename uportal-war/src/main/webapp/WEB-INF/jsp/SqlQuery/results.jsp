@@ -34,7 +34,7 @@
 	    <div class="portlet-section-options fl-text-align-right">
 	        <div class="view-pager flc-pager-top">
 	          <ul id="pager-top" class="fl-pager-ui">
-	            <li class="flc-pager-previous"><a href="#">&lt; <spring:message code="listChannels.pagerPrevious"/></a></li>
+	            <li class="flc-pager-previous"><a href="#">&lt; <spring:message code="previous"/></a></li>
 	            <li>
 	              <ul class="fl-pager-links flc-pager-links" style="margin:0; display:inline">
 	                <li class="flc-pager-pageLink"><a href="javascript:;">1</a></li>
@@ -42,15 +42,15 @@
 	                <li class="flc-pager-pageLink"><a href="javascript:;">3</a></li>
 	              </ul>
 	            </li>
-	            <li class="flc-pager-next"><a href="#"><spring:message code="listChannels.pagerNext"/> &gt;</a></li>
+	            <li class="flc-pager-next"><a href="#"><spring:message code="next"/> &gt;</a></li>
 	            <li>
-	              <span class="flc-pager-summary"><spring:message code="listChannels.pagerPerPagePrefix"/></span>
+	              <span class="flc-pager-summary"><spring:message code="show"/></span>
 	              <span> <select class="pager-page-size flc-pager-page-size">
 	              <option value="5">5</option>
 	              <option value="10">10</option>
 	              <option value="20">20</option>
 	              <option value="50">50</option>
-	              </select></span> <spring:message code="listChannels.pagerPerPageSuffix"/>
+	              </select></span> <spring:message code="per.page"/>
 	            </li>
 	          </ul>
 	        </div>
