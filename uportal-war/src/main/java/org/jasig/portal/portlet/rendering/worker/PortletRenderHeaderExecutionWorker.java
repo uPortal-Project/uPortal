@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.portlet.rendering.worker;
 
 import java.io.StringWriter;
