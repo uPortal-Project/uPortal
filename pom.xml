@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jasig.portal</groupId>
     <artifactId>uportal-parent</artifactId>
-    <version>3.3.0-SNAPSHOT</version>
+    <version>4.0.0-RC1</version>
     <packaging>pom</packaging>
 
     <name>uPortal Parent</name>
@@ -18,9 +18,9 @@
     <url>${jasig-site-base}/uportal/${project.version}</url>
     
     <scm>
-        <connection>scm:svn:https://source.jasig.org/uPortal/trunk</connection>
-        <developerConnection>scm:svn:https://source.jasig.org/uPortal/trunk</developerConnection>
-        <url>https://developer.jasig.org/source/browse/jasigsvn/uPortal/trunk</url>
+        <connection>scm:svn:https://source.jasig.org/uPortal/tags/uportal-4.0.0-RC1</connection>
+        <developerConnection>scm:svn:https://source.jasig.org/uPortal/tags/uportal-4.0.0-RC1</developerConnection>
+        <url>https://developer.jasig.org/source/browse/jasigsvn/uPortal/tags/uportal-4.0.0-RC1</url>
     </scm>
     
     <distributionManagement>
@@ -106,7 +106,7 @@
          | character.  If you want to override the default environment.name by 
          | invoking Maven directly, you will have to append a period yourself.
          +-->
-        <environment.name></environment.name>
+        <environment.name />
         <filters.file>build.${environment.name}properties</filters.file>
     
         <!-- WAR Dependency Version Properties -->
