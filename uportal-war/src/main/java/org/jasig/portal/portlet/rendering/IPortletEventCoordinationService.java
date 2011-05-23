@@ -19,9 +19,6 @@
 
 package org.jasig.portal.portlet.rendering;
 
-import java.util.Queue;
-
-import javax.portlet.Event;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.pluto.container.EventCoordinationService;
@@ -35,13 +32,14 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
  */
 public interface IPortletEventCoordinationService extends EventCoordinationService {
     /**
-     * Get all of the queued events for the current request
-     */
-    public Queue<Event> getQueuedEvents(HttpServletRequest request);
-    
-    /**
-     * Remove events from the Queue determing which {@link IPortletWindowId}s it targets and then add it to the
+     * Remove events from the Queue determining which {@link IPortletWindowId}s it targets and then add it to the
      * {@link PortletEventQueue}
      */
-    public void resolveQueueEvents(PortletEventQueue resolvedEvents, Queue<Event> events, HttpServletRequest request);
+    public PortletEventQueue getPortletEventQueue(HttpServletRequest request);
+    
+    /**
+     * Resolve all events returned by {@link PortletEventQueue#getUnresolvedEvents()} and store the resolved
+     * event data via {@link PortletEventQueue#offerEvent(IPortletWindowId, javax.portlet.Event)}
+     */
+    public void resolvePortletEvents(HttpServletRequest request, PortletEventQueue portletEventQueue);
 }

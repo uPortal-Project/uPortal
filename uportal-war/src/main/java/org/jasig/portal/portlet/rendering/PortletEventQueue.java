@@ -19,6 +19,7 @@
 
 package org.jasig.portal.portlet.rendering;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,21 +37,47 @@ import org.jasig.portal.utils.ConcurrentMapUtils;
  * can iterate over the {@link IPortletWindowId}s that have events and get a {@link Queue} of
  * un-processed events for each {@link IPortletWindowId}
  * 
- * This class is thread safe
+ * This class and all data structures returned by it are thread safe
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
 public class PortletEventQueue implements Iterable<IPortletWindowId> {
-    private final ConcurrentMap<IPortletWindowId, Queue<Event>> portletEvents = new ConcurrentHashMap<IPortletWindowId, Queue<Event>>();
+    /**
+     * Queue of portlet events that have not been resolved to target specific portlet windows 
+     */
+    private final Queue<Event> rawEventQueue = new ConcurrentLinkedQueue<Event>();
+    
+    /**
+     * Map for portlet windows where the value is a queue of events that need to be dispatched to the portlet
+     */
+    private final ConcurrentMap<IPortletWindowId, Queue<Event>> resolvedEventQueues = new ConcurrentHashMap<IPortletWindowId, Queue<Event>>();
+    
+    PortletEventQueue() {
+        //Only allow code in the same package to create the queue
+    }
+    
+    /**
+     * Add the collection of events to the raw event queue
+     */
+    public void addEvents(Collection<? extends Event> events) {
+        this.rawEventQueue.addAll(events);
+    }
+    
+    /**
+     * @return The Queue of unresolved events
+     */
+    public Queue<Event> getUnresolvedEvents() {
+        return this.rawEventQueue;
+    }
     
     /**
      * Queue an {@link Event} for the specified {@link IPortletWindowId}
      */
     public void offerEvent(IPortletWindowId portletWindowId, Event event) {
-        Queue<Event> events = portletEvents.get(portletWindowId);
+        Queue<Event> events = resolvedEventQueues.get(portletWindowId);
         if (events == null) {
-            events = ConcurrentMapUtils.putIfAbsent(portletEvents, portletWindowId, new ConcurrentLinkedQueue<Event>());
+            events = ConcurrentMapUtils.putIfAbsent(resolvedEventQueues, portletWindowId, new ConcurrentLinkedQueue<Event>());
         }
         
         events.offer(event);
@@ -60,7 +87,7 @@ public class PortletEventQueue implements Iterable<IPortletWindowId> {
      * Remove the oldest {@link Event} from the Queue for the specified {@link IPortletWindowId}
      */
     public Event pollEvent(IPortletWindowId portletWindowId) {
-        final Queue<Event> queue = this.portletEvents.get(portletWindowId);
+        final Queue<Event> queue = this.resolvedEventQueues.get(portletWindowId);
         return queue != null ? queue.poll() : null;
     }
 
@@ -69,6 +96,6 @@ public class PortletEventQueue implements Iterable<IPortletWindowId> {
      */
     @Override
     public Iterator<IPortletWindowId> iterator() {
-        return this.portletEvents.keySet().iterator();
+        return this.resolvedEventQueues.keySet().iterator();
     }
 }

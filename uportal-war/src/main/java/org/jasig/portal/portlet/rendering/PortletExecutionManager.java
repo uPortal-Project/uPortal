@@ -24,7 +24,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -158,20 +157,20 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
 			portletFailureMap.put(portletWindowId, e);
 		}
 		
-		final Queue<Event> queuedEvents = this.eventCoordinationService.getQueuedEvents(request);
-        this.doPortletEvents(queuedEvents, request, response);
+		final PortletEventQueue portletEventQueue = this.eventCoordinationService.getPortletEventQueue(request);
+        this.doPortletEvents(portletEventQueue, request, response);
     }
     
-    public void doPortletEvents(Queue<Event> events, HttpServletRequest request, HttpServletResponse response) {
-        //Used to track the events queued for each portlet window
-        final PortletEventQueue eventQueue = new PortletEventQueue();
-        
+    public void doPortletEvents(PortletEventQueue eventQueue, HttpServletRequest request, HttpServletResponse response) {
         final Map<IPortletWindowId, IPortletExecutionWorker<Long>> eventWorkers = new LinkedHashMap<IPortletWindowId, IPortletExecutionWorker<Long>>();
-        this.eventCoordinationService.resolveQueueEvents(eventQueue, events, request);
+        
 
         //TODO what to do if we hit the max iterations?
         int iteration = 0;
         for (; iteration < this.maxEventIterations; iteration++) {
+            //Make sure all queued events have been resolved
+            this.eventCoordinationService.resolvePortletEvents(request, eventQueue);
+            
             //Create and submit an event worker for each window with a queued event
             for (final IPortletWindowId eventWindowId : eventQueue) {
                 if (eventWorkers.containsKey(eventWindowId)) {
@@ -250,10 +249,6 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
             //TODO event error handling?
             logger.warn("Portlet '" + portletWindowId + "' threw an execption while executing an event. This chain of event handling will terminate.", e);
         }
-        
-        //Get any additional events that the event that just completed may have generated and add them to the queuedEvents structure
-        final Queue<Event> queuedEvents = this.eventCoordinationService.getQueuedEvents(request);
-        this.eventCoordinationService.resolveQueueEvents(eventQueue, queuedEvents, request);
     }
     
     

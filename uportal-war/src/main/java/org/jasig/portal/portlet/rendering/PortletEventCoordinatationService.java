@@ -22,13 +22,13 @@ package org.jasig.portal.portlet.rendering;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.portlet.Event;
 import javax.servlet.http.HttpServletRequest;
@@ -69,13 +69,13 @@ import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
+import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.utils.web.PortalWebUtils;
 import org.jasig.portal.xml.XmlUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -83,7 +83,7 @@ import org.springframework.stereotype.Service;
  * to handle event execution. What this class does is for each {@link #processEvents(PortletContainer, PortletWindow, HttpServletRequest, HttpServletResponse, List)}
  * request from the portlet container is to add them to a Queue scoped to the portal's request.
  * 
- * It also provides {@link #resolveQueueEvents(PortletEventQueue, List, HttpServletRequest)} which is used to determine
+ * It also provides {@link #getPortletEventQueue(PortletEventQueue, List, HttpServletRequest)} which is used to determine
  * which events to send to which portlet windows. 
  * 
  * @author Eric Dalquist
@@ -146,17 +146,16 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
     }
 
     /**
-     * Returns a request attribute scoped Map of portlets that have set events to be processed for the current request
+     * Returns a request scoped PortletEventQueue used to track events to process and events to dispatch
      */
     @Override
-    @SuppressWarnings("unchecked")
-    public Queue<Event> getQueuedEvents(HttpServletRequest request) {
+    public PortletEventQueue getPortletEventQueue(HttpServletRequest request) {
         request = this.portalRequestUtils.getOriginalPortalRequest(request);
         
         synchronized (PortalWebUtils.getRequestAttributeMutex(request)) {
-            Queue<Event> portletEventQueue = (Queue<Event>)request.getAttribute(PORTLET_EVENT_QUEUE);
+            PortletEventQueue portletEventQueue = (PortletEventQueue)request.getAttribute(PORTLET_EVENT_QUEUE);
             if (portletEventQueue == null) {
-                portletEventQueue = new ConcurrentLinkedQueue<Event>();
+                portletEventQueue = new PortletEventQueue();
                 request.setAttribute(PORTLET_EVENT_QUEUE, portletEventQueue);
             }
             return portletEventQueue;
@@ -165,51 +164,65 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
     
     @Override
     public void processEvents(PortletContainer container, PortletWindow plutoPortletWindow, HttpServletRequest request, HttpServletResponse response, List<Event> events) {
-        final Queue<Event> queuedEvents = this.getQueuedEvents(request);
-        queuedEvents.addAll(events);
+        final PortletEventQueue requestPortletEventQueue = this.getPortletEventQueue(request);
+        requestPortletEventQueue.addEvents(events);
     }
     
+    
     @Override
-    public void resolveQueueEvents(PortletEventQueue resolvedEvents, Queue<Event> events, HttpServletRequest request) {
+    public void resolvePortletEvents(HttpServletRequest request, PortletEventQueue portletEventQueue) {
+        final Queue<Event> events = portletEventQueue.getUnresolvedEvents();
+        
         //Skip all processing if there are no new events.
         if (events.isEmpty()) {
             return;
         }
-
+        
         //Get all the portlets the user is subscribed to
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
-        final Set<String> allSubscribedChannels = userLayoutManager.getAllSubscribedChannels();
         
-        //Check each subscription to see what events it is registered to see
-        for (final String channelSubscribeId : allSubscribedChannels) {
-            final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(request, userInstance, channelSubscribeId);
-            final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
-            final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();
-            
-            final PortletDefinition portletDescriptor;
-            try {
-                portletDescriptor = this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId);
-            }
-            catch (DataRetrievalFailureException e) {
-                this.logger.warn("Failed to retrieve portlet descriptor for: " + portletDefinition.getFName() + " Event handling for this portlet will be skipped." , e);
-                continue;
+        //Make a local copy so we can remove data from it
+        final Set<String> allLayoutNodeIds = new LinkedHashSet<String>(userLayoutManager.getAllSubscribedChannels());
+        
+        final Map<String, IPortletEntity> portletEntityCache = new LinkedHashMap<String, IPortletEntity>();
+        
+        while (!events.isEmpty()) {
+            final Event event = events.poll();
+            if (event == null) {
+                //no more queued events, done resolving
+                return;
             }
             
-            final List<? extends EventDefinitionReference> supportedProcessingEvents = portletDescriptor.getSupportedProcessingEvents();
-            //Skip portlets that don't handle any events
-            if (supportedProcessingEvents == null || supportedProcessingEvents.size() == 0) {
-                continue;
-            }
-            
-            //Check each published event against the events the portlet supports
-            while (!events.isEmpty()) {
-                final Event event = events.poll();
-                if (event == null) {
-                    break;
+            //Check each subscription to see what events it is registered to see
+            for (final Iterator<String> layoutNodeIdItr = allLayoutNodeIds.iterator(); layoutNodeIdItr.hasNext(); ) {
+                final String layoutNodeId = layoutNodeIdItr.next();
+                
+                IPortletEntity portletEntity = portletEntityCache.get(layoutNodeId);
+                if (portletEntity == null) {
+                    portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(request, userInstance, layoutNodeId);
+                    final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
+                    final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();
+                    
+                    final PortletDefinition portletDescriptor = this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId);
+                    if (portletDescriptor == null) {
+                        //Missconfigured portlet, remove it from the list so we don't check again and ignore it
+                        layoutNodeIdItr.remove();
+                        continue;
+                    }
+                    
+                    final List<? extends EventDefinitionReference> supportedProcessingEvents = portletDescriptor.getSupportedProcessingEvents();
+                    //Skip portlets that don't handle any events and remove them from the set so they are not checked again
+                    if (supportedProcessingEvents == null || supportedProcessingEvents.size() == 0) {
+                        layoutNodeIdItr.remove();
+                        continue;
+                    }
+                    
+                    portletEntityCache.put(layoutNodeId, portletEntity);
                 }
-
+            
+                final IPortletDefinitionId portletDefinitionId = portletEntity.getPortletDefinitionId();
                 if (this.supportsEvent(event, portletDefinitionId)) {
                     final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
                     final Set<IPortletWindow> portletWindows = this.portletWindowRegistry.getAllPortletWindowsForEntity(request, portletEntityId);
@@ -217,7 +230,7 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
                     for (final IPortletWindow portletWindow : portletWindows) {
                         final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
                         final Event unmarshalledEvent = this.unmarshall(portletWindow, event);
-                        resolvedEvents.offerEvent(portletWindowId, unmarshalledEvent);
+                        portletEventQueue.offerEvent(portletWindowId, unmarshalledEvent);
                     }
                 }
             }
@@ -312,73 +325,51 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
     protected boolean supportsEvent(Event event, IPortletDefinitionId portletDefinitionId) {
         final QName eventName = event.getQName();
         
-        //Check in the cache if this event has already been resolved for this portlet definition
-        final Map<QName, Boolean> supportedEvents = this.getSupportedEventsCache(portletDefinitionId);
+        //The cache key to use
+        final Tuple<IPortletDefinitionId, QName> key = new Tuple<IPortletDefinitionId, QName>(portletDefinitionId, eventName);
         
-        final Boolean supported = supportedEvents.get(eventName);
-        if (supported != null) {
-            return supported;
+        //Check in the cache if the portlet definition supports this event
+        final Element element = this.supportedEventCache.get(key);
+        if (element != null) {
+            final Boolean supported = (Boolean)element.getValue();
+            if (supported != null) {
+                return supported;
+            }
         }
+
+        final PortletApplicationDefinition portletApplicationDescriptor = this.portletDefinitionRegistry.getParentPortletApplicationDescriptor(portletDefinitionId);
+        final Set<QName> aliases = this.getAllAliases(eventName, portletApplicationDescriptor);
         
-        try {
-            final PortletApplicationDefinition portletApplicationDescriptor = this.portletDefinitionRegistry.getParentPortletApplicationDescriptor(portletDefinitionId);
-            final Set<QName> aliases = this.getAllAliases(eventName, portletApplicationDescriptor);
-            
-            final String defaultNamespace = portletApplicationDescriptor.getDefaultNamespace();
-            
-            //No support found so far, do more complex namespace matching
-            final PortletDefinition portletDescriptor = this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId);
-            final List<? extends EventDefinitionReference> supportedProcessingEvents = portletDescriptor.getSupportedProcessingEvents();
-            for (final EventDefinitionReference eventDefinitionReference : supportedProcessingEvents) {
-                final QName qualifiedName = eventDefinitionReference.getQualifiedName(defaultNamespace);
-                if (qualifiedName == null) {
-                    continue;
-                }
-                
-                //See if the supported qname and event qname match explicitly
-                if (qualifiedName.equals(eventName)) {
-                    supportedEvents.put(eventName, true);                
-                    return true;
-                }
-                
-                //Look for alias names
-                if (aliases.contains(qualifiedName)) {
-                    supportedEvents.put(eventName, true);
-                    return true;
-                }
-                
-                //Look for namespaced events
-                if (StringUtils.isEmpty(qualifiedName.getNamespaceURI())) {
-                    final QName namespacedName = new QName(defaultNamespace, qualifiedName.getLocalPart());
-                    if (eventName.equals(namespacedName)) {
-                        supportedEvents.put(eventName, true);
-                        return true;
-                    }
-                }
+        final String defaultNamespace = portletApplicationDescriptor.getDefaultNamespace();
+        
+        //No support found so far, do more complex namespace matching
+        final PortletDefinition portletDescriptor = this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId);
+        final List<? extends EventDefinitionReference> supportedProcessingEvents = portletDescriptor.getSupportedProcessingEvents();
+        for (final EventDefinitionReference eventDefinitionReference : supportedProcessingEvents) {
+            final QName qualifiedName = eventDefinitionReference.getQualifiedName(defaultNamespace);
+            if (qualifiedName == null) {
+                continue;
             }
             
-    
-            supportedEvents.put(eventName, false);
-            return false;
+            //See if the supported qname and event qname match explicitly
+            //Look for alias names
+            if (qualifiedName.equals(eventName) || aliases.contains(qualifiedName)) {
+                this.supportedEventCache.put(new Element(key, Boolean.TRUE));
+                return true;
+            }
+            
+            //Look for namespaced events
+            if (StringUtils.isEmpty(qualifiedName.getNamespaceURI())) {
+                final QName namespacedName = new QName(defaultNamespace, qualifiedName.getLocalPart());
+                if (eventName.equals(namespacedName)) {
+                    this.supportedEventCache.put(new Element(key, Boolean.TRUE));
+                    return true;
+                }
+            }
         }
-        finally {
-            this.supportedEventCache.put(new Element(portletDefinitionId, supportedEvents));
-        }
-    }
+        
 
-    /**
-     * Get a Map of event names that have already been resolved against this portlet definition
-     */
-    @SuppressWarnings("unchecked")
-    protected Map<QName, Boolean> getSupportedEventsCache(IPortletDefinitionId portletDefinitionId) {
-        Map<QName, Boolean> supportedEvents = null;
-        final Element supportedEventsElement = this.supportedEventCache.get(portletDefinitionId);
-        if (supportedEventsElement != null) {
-            supportedEvents = (Map<QName, Boolean>)supportedEventsElement.getObjectValue();
-        }
-        if (supportedEvents == null) {
-            supportedEvents = new ConcurrentHashMap<QName, Boolean>();
-        }
-        return supportedEvents;
+        this.supportedEventCache.put(new Element(key, Boolean.FALSE));
+        return false;
     }
 }
