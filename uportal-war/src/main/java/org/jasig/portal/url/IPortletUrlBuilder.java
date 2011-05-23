@@ -19,6 +19,8 @@
 
 package org.jasig.portal.url;
 
+import java.util.Map;
+
 import javax.portlet.PortletMode;
 import javax.portlet.PortletURL;
 import javax.portlet.ResourceURL;
@@ -87,4 +89,11 @@ public interface IPortletUrlBuilder extends IUrlBuilder {
      */
     public String getCacheability();
     
+    /**
+     * Get the public render parameters set by this portlet. The Map is mutable and making changes to the Map will
+     * affect the public render parameters on the URL.
+     * 
+     * @return Map containing currently set parameters.
+     */
+    public Map<String, String[]> getPublicRenderParameters(); 
 }

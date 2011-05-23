@@ -46,7 +46,6 @@ public interface IPortalUrlBuilder extends IUrlBuilder {
     public UrlType getUrlType();
     
     //get/set secure
-    //public portlet render parameters
     
     /**
      * Get the {@link IPortletUrlBuilder} for the specified {@link IPortletWindowId}. Multiple calls to

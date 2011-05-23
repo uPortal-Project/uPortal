@@ -19,12 +19,17 @@
 
 package org.jasig.portal.url;
 
+import java.util.Map;
+
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 
+import org.apache.commons.lang.Validate;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.MapConstraint;
+import com.google.common.collect.MapConstraints;
 
 /**
  * Builds a portlet URL
@@ -36,6 +41,8 @@ class PortletUrlBuilder extends AbstractUrlBuilder implements IPortletUrlBuilder
     private final IPortletWindowId portletWindowId;
     private final IPortalUrlBuilder portalUrlBuilder;
     private final UrlType urlType;
+    private final Map<String, String[]> publicRenderParameters;
+    
     private WindowState windowState = null;
     private PortletMode portletMode = null;
     private String resourceId = null;
@@ -48,6 +55,14 @@ class PortletUrlBuilder extends AbstractUrlBuilder implements IPortletUrlBuilder
         this.portletWindowId = portletWindowId;
         this.portalUrlBuilder = portalUrlBuilder;
         this.urlType = this.portalUrlBuilder.getUrlType();
+        
+        this.publicRenderParameters = MapConstraints.constrainedMap(new ParameterMap(), new MapConstraint<String, String[]>() {
+            @Override
+            public void checkKeyValue(String key, String[] value) {
+                Validate.notNull(key, "name can not be null");
+                Validate.noNullElements(value, "values can not be null or contain null elements");
+            }
+        });
     }
 
     /* (non-Javadoc)
@@ -138,11 +153,18 @@ class PortletUrlBuilder extends AbstractUrlBuilder implements IPortletUrlBuilder
         return this.cacheability;
     }
     
+    
+    @Override
+    public Map<String, String[]> getPublicRenderParameters() {
+        return this.publicRenderParameters;
+    }
+
     @Override
     public String toString() {
         return "PortletUrlBuilder [portletWindowId=" + this.portletWindowId + ", windowState=" + this.windowState
                 + ", portletMode=" + this.portletMode + ", resourceId=" + this.resourceId + ", cacheability="
-                + this.cacheability + ", parameters=" + this.getParameters() + "]";
+                + this.cacheability + ", parameters=" + this.getParameters() + ", publicRenderParameters="
+                + this.publicRenderParameters + "]";
     }
 
     @Override

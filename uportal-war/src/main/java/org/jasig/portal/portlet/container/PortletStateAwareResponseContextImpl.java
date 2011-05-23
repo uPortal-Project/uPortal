@@ -19,7 +19,6 @@
 
 package org.jasig.portal.portlet.container;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -91,8 +90,7 @@ public class PortletStateAwareResponseContextImpl extends PortletResponseContext
     @Override
     public Map<String, String[]> getPublicRenderParameters() {
         this.checkContextStatus();
-//TODO        return this.portletUrlBuilder.getPublicRenderParameters();
-        return Collections.emptyMap();
+        return this.portletUrlBuilder.getPublicRenderParameters();
     }
 
     /* (non-Javadoc)

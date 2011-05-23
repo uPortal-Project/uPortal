@@ -36,6 +36,7 @@ import org.jasig.portal.url.ParameterMap;
  */
 class FailSafePortletUrlBuilder implements IPortletUrlBuilder {
     private final Map<String, String[]> parameters = new ParameterMap();
+    private final Map<String, String[]> publicParameters = new ParameterMap();
     private final IPortletWindowId portletWindowId;
     private final IPortalUrlBuilder portalUrlBuilder;
     
@@ -168,4 +169,9 @@ class FailSafePortletUrlBuilder implements IPortletUrlBuilder {
         return null;
     }
 
+    @Override
+    public Map<String, String[]> getPublicRenderParameters() {
+        //NOOP
+        return publicParameters;
+    }
 }
