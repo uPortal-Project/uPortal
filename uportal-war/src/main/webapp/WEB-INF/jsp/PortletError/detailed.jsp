@@ -33,22 +33,20 @@ border: 1px solid gray;
 
 <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
 <p><spring:message code="errorportlet.main"/></p>
-<%-- 
 <div class="breadcrumb">
-<portlet:renderURL var="retryUrl"></portlet:renderURL>
-<portlet:renderURL var="resetUrl"></portlet:renderURL>
-<<span class="breadcrumb-1"><a href="${ retryUrl }"><spring:message code="errorportlet.retry"/></a></span>
-<span class="separator">&nbsp;</span>
-<span class="breadcrumb-2"><a href="${ resetUrl }"><spring:message code="errorportlet.reset"/></a></span>
+<portlet:actionURL var="userResetUrl">
+<portlet:param name="failedPortletWindowId" value="${ portletWindowId.stringId}"/>
+</portlet:actionURL>
+<span class="breadcrumb-1"><a href="${ adminRetryUrl }"><spring:message code="errorportlet.retry"/></a></span>
+<span class="breadcrumb-2"><a href="${ userResetUrl }"><spring:message code="errorportlet.reset"/> (User Facing)</a></span> 
 </div> <!-- end breadcrumbs -->
---%>
 </div> <!-- end section head -->
 
 <div class="fl-widget-content fl-fix up-portlet-content-wrapper">
 <ul>
 <li>Portlet Window ID: ${fn:escapeXml(portletWindowId)}</li>
 <li>Channel Definition Name: ${fn:escapeXml(channelDefinition.name)}</li>
-<li><spring:message code="errorportlet.exception"/>: ${fn:escapeXml(exception)}</li>
+<li><spring:message code="errorportlet.causemessage.admin"/>: <i>${fn:escapeXml(rootCauseMessage)}</i></li>
 </ul>
 <div id="${n}stacktracecontainer">
 <p><button class="stacktracetoggle"><spring:message code="errorportlet.toggleshow"/></button></p>

@@ -54,6 +54,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.url.IPortletUrlBuilder;
+import org.jasig.portal.url.ParameterMap;
 import org.jasig.portal.utils.web.PortletHttpServletRequestWrapper;
 import org.jasig.portal.utils.web.PortletHttpServletResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -287,39 +288,41 @@ public class PortletRendererImpl implements IPortletRenderer {
 	
 	@Override
     public void doReset(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
-        
-        portletWindow.setPortletMode(PortletMode.VIEW);
-        portletWindow.setRenderParameters(null);
-        portletWindow.setExpirationCache(null);
-        
-        final StringWriter responseOutput = new StringWriter();
-        
-        httpServletRequest = this.setupPortletRequest(httpServletRequest);
-        httpServletResponse = new OutputCapturingHttpServletResponseWrapper(httpServletResponse, new PrintWriter(responseOutput));
-        
-        httpServletRequest.setAttribute(AdministrativeRequestListenerController.DEFAULT_LISTENER_KEY_ATTRIBUTE, "sessionActionListener");
-        httpServletRequest.setAttribute(PortletSessionAdministrativeRequestListener.ACTION, PortletSessionAdministrativeRequestListener.SessionAction.CLEAR);
-        httpServletRequest.setAttribute(PortletSessionAdministrativeRequestListener.SCOPE, PortletSession.PORTLET_SCOPE);
-        
-        try {
-            this.portletContainer.doAdmin(portletWindow.getPlutoPortletWindow(), httpServletRequest, httpServletResponse);
-        }
-        catch (PortletException pe) {
-            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing admin command to clear session.", portletWindow, pe);
-        }
-        catch (PortletContainerException pce) {
-            throw new PortletDispatchException("The portlet container threw an exception while executing admin command to clear session on portlet window '" + portletWindow + "'.", portletWindow, pce);
-        }
-        catch (IOException ioe) {
-            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing admin command to clear session.", portletWindow, ioe);
-        }
-        
-        final StringBuffer initResults = responseOutput.getBuffer();
-        if (initResults.length() > 0) {
-            throw new PortletDispatchException("Content was written to response during reset of portlet window '" + portletWindow + "'. Response Content: " + initResults, portletWindow);
-        }
-        
+		final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
+		if(portletWindow != null) {
+			portletWindow.setPortletMode(PortletMode.VIEW);
+			portletWindow.setRenderParameters(new ParameterMap());
+			portletWindow.setExpirationCache(null);
+
+			final StringWriter responseOutput = new StringWriter();
+
+			httpServletRequest = this.setupPortletRequest(httpServletRequest);
+			httpServletResponse = new OutputCapturingHttpServletResponseWrapper(httpServletResponse, new PrintWriter(responseOutput));
+
+			httpServletRequest.setAttribute(AdministrativeRequestListenerController.DEFAULT_LISTENER_KEY_ATTRIBUTE, "sessionActionListener");
+			httpServletRequest.setAttribute(PortletSessionAdministrativeRequestListener.ACTION, PortletSessionAdministrativeRequestListener.SessionAction.CLEAR);
+			httpServletRequest.setAttribute(PortletSessionAdministrativeRequestListener.SCOPE, PortletSession.PORTLET_SCOPE);
+
+			try {
+				this.portletContainer.doAdmin(portletWindow.getPlutoPortletWindow(), httpServletRequest, httpServletResponse);
+			}
+			catch (PortletException pe) {
+				throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing admin command to clear session.", portletWindow, pe);
+			}
+			catch (PortletContainerException pce) {
+				throw new PortletDispatchException("The portlet container threw an exception while executing admin command to clear session on portlet window '" + portletWindow + "'.", portletWindow, pce);
+			}
+			catch (IOException ioe) {
+				throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing admin command to clear session.", portletWindow, ioe);
+			}
+
+			final StringBuffer initResults = responseOutput.getBuffer();
+			if (initResults.length() > 0) {
+				throw new PortletDispatchException("Content was written to response during reset of portlet window '" + portletWindow + "'. Response Content: " + initResults, portletWindow);
+			}
+		} else {
+			logger.debug("ignoring doReset as portletWindowRegistry#getPortletWindow returned a null result for portletWindowId " + portletWindowId);
+		}
     }
 
     protected HttpServletRequest setupPortletRequest(HttpServletRequest httpServletRequest) {

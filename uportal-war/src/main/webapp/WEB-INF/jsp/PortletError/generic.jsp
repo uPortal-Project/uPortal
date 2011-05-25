@@ -24,15 +24,14 @@
 
 <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
 <p><spring:message code="errorportlet.main"/></p>
-<%-- 
+
 <div class="breadcrumb">
-<portlet:renderURL var="retryUrl"></portlet:renderURL>
-<portlet:renderURL var="resetUrl"></portlet:renderURL>
-<span class="breadcrumb-1"><a href="${ retryUrl }"><spring:message code="errorportlet.retry"/></a></span>
-<span class="separator">&nbsp;</span>
-<span class="breadcrumb-2"><a href="${ resetUrl }"><spring:message code="errorportlet.reset"/></a></span>
+<portlet:actionURL var="userResetUrl">
+<portlet:param name="failedPortletWindowId" value="${ portletWindowId.stringId}"/>
+</portlet:actionURL>
+<span class="breadcrumb-1"><a href="${ userResetUrl }"><spring:message code="errorportlet.reset"/></a></span>
 </div> <!-- end breadcrumbs -->
---%>
+
 </div> <!-- end sectionhead -->
 
 </div> <!--  end portlet -->

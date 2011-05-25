@@ -24,20 +24,30 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.portlet.ActionRequest;
+import javax.portlet.ActionResponse;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.portlet.rendering.PortletExecutionManager;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.url.IPortalRequestUtils;
+import org.jasig.portal.url.IPortalUrlBuilder;
+import org.jasig.portal.url.IPortalUrlProvider;
+import org.jasig.portal.url.ParameterMap;
+import org.jasig.portal.url.UrlType;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +71,8 @@ public class PortletErrorController extends AbstractController {
 	private IUserInstanceManager userInstanceManager;
 	private IPortalRequestUtils portalRequestUtils;
 	private IPortletWindowRegistry portletWindowRegistry;
+	private IPortletRenderer portletRenderer;
+	private IPortalUrlProvider portalUrlProvider;
 	
 	/**
 	 * @param userInstanceManager the userInstanceManager to set
@@ -84,7 +96,20 @@ public class PortletErrorController extends AbstractController {
 			IPortletWindowRegistry portletWindowRegistry) {
 		this.portletWindowRegistry = portletWindowRegistry;
 	}
-
+	/**
+	 * @param portletRenderer the portletRenderer to set
+	 */
+	@Autowired
+	public void setPortletRenderer(IPortletRenderer portletRenderer) {
+		this.portletRenderer = portletRenderer;
+	}
+	/**
+	 * @param portalUrlProvider the portalUrlProvider to set
+	 */
+	@Autowired
+	public void setPortalUrlProvider(IPortalUrlProvider portalUrlProvider) {
+		this.portalUrlProvider = portalUrlProvider;
+	}
 	/* (non-Javadoc)
 	 * @see org.springframework.web.portlet.mvc.AbstractController#handleRenderRequestInternal(javax.portlet.RenderRequest, javax.portlet.RenderResponse)
 	 */
@@ -93,18 +118,25 @@ public class PortletErrorController extends AbstractController {
 			RenderResponse response) throws Exception {
 		Map<String, Object> model = new HashMap<String, Object>();
 		HttpServletRequest httpRequest = this.portalRequestUtils.getPortletHttpRequest(request);
+		IPortletWindowId currentFailedPortletWindowId = (IPortletWindowId) request.getAttribute(REQUEST_ATTRIBUTE__CURRENT_FAILED_PORTLET_WINDOW_ID);
+		model.put("portletWindowId", currentFailedPortletWindowId);
+		Exception cause = (Exception) request.getAttribute(REQUEST_ATTRIBUTE__CURRENT_EXCEPTION_CAUSE);
+		model.put("exception", cause);
+		final String rootCauseMessage = ExceptionUtils.getRootCauseMessage(cause);
+		model.put("rootCauseMessage", rootCauseMessage);
+		
 		IUserInstance userInstance = this.userInstanceManager.getUserInstance(httpRequest);
-		if(canSeeErrorDetails(userInstance)) {
-			IPortletWindowId currentFailedPortletWindowId = (IPortletWindowId) request.getAttribute(REQUEST_ATTRIBUTE__CURRENT_FAILED_PORTLET_WINDOW_ID);
-			model.put("portletWindowId", currentFailedPortletWindowId);
+		if(hasAdminPrivileges(userInstance)) {
+			IPortletWindow window = this.portletWindowRegistry.getPortletWindow(httpRequest, currentFailedPortletWindowId);
+			window.setRenderParameters(new ParameterMap());
+			IPortalUrlBuilder adminRetryUrl = this.portalUrlProvider.getPortalUrlBuilderByPortletWindow(httpRequest, currentFailedPortletWindowId, UrlType.RENDER);
+			model.put("adminRetryUrl", adminRetryUrl.getUrlString());
 			
 			final IPortletWindow portletWindow = portletWindowRegistry.getPortletWindow(httpRequest, currentFailedPortletWindowId);
             final IPortletEntity parentPortletEntity = portletWindow.getPortletEntity();
             final IPortletDefinition parentPortletDefinition = parentPortletEntity.getPortletDefinition();
             model.put("channelDefinition", parentPortletDefinition);
             
-			Exception cause = (Exception) request.getAttribute(REQUEST_ATTRIBUTE__CURRENT_EXCEPTION_CAUSE);
-			model.put("exception", cause);
 			StringWriter stackTraceWriter = new StringWriter();
 			cause.printStackTrace(new PrintWriter(stackTraceWriter));
 			
@@ -114,12 +146,32 @@ public class PortletErrorController extends AbstractController {
 		} 
 		return new ModelAndView("/jsp/PortletError/generic", model);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.springframework.web.portlet.mvc.AbstractController#handleActionRequest(javax.portlet.ActionRequest, javax.portlet.ActionResponse)
+	 */
+	@Override
+	public void handleActionRequest(ActionRequest request,
+			ActionResponse response) throws Exception {
+		final String windowId = request.getParameter("failedPortletWindowId");
+		if(StringUtils.isNotBlank(windowId)) {
+			HttpServletRequest httpRequest = this.portalRequestUtils.getPortletHttpRequest(request);
+			IPortletWindowId portletWindowId = this.portletWindowRegistry.getPortletWindowId(httpRequest, windowId);
+
+			HttpServletResponse httpResponse = this.portalRequestUtils.getOriginalPortalResponse(request);
+			this.portletRenderer.doReset(portletWindowId, httpRequest, httpResponse);
+
+			IPortalUrlBuilder builder = this.portalUrlProvider.getPortalUrlBuilderByPortletWindow(httpRequest, portletWindowId, UrlType.RENDER);
+
+			response.sendRedirect(builder.getUrlString());
+		}
+	}
 
 	/**
 	 * 
-	 * @return
+	 * @return true if the userInstance argument has administrative privileges regarding viewing error details
 	 */
-	protected boolean canSeeErrorDetails(IUserInstance userInstance) {
+	protected boolean hasAdminPrivileges(IUserInstance userInstance) {
 		EntityIdentifier ei = userInstance.getPerson().getEntityIdentifier();
 	    IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
 	    return ap.hasPermission(ERROR_OWNER, ERROR_ACTIVITY, ERROR_TARGET);
