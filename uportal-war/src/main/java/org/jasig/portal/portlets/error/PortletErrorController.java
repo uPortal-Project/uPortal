@@ -21,8 +21,6 @@ package org.jasig.portal.portlets.error;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -51,8 +49,9 @@ import org.jasig.portal.url.UrlType;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.portlet.ModelAndView;
-import org.springframework.web.portlet.mvc.AbstractController;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * Portlet intended to replace the output for a portlet that failed
@@ -61,7 +60,8 @@ import org.springframework.web.portlet.mvc.AbstractController;
  * @author Nicholas Blair
  * @version $Id$
  */
-public class PortletErrorController extends AbstractController {
+@Controller
+public class PortletErrorController {
     public static final String REQUEST_ATTRIBUTE__CURRENT_FAILED_PORTLET_WINDOW_ID = PortletExecutionManager.class.getName() + ".CURRENT_FAILED_PORTLET_WINDOW_ID";
     public static final String REQUEST_ATTRIBUTE__CURRENT_EXCEPTION_CAUSE = PortletExecutionManager.class.getName() + ".CURRENT_EXCEPTION_CAUSE";
 
@@ -110,48 +110,59 @@ public class PortletErrorController extends AbstractController {
 	public void setPortalUrlProvider(IPortalUrlProvider portalUrlProvider) {
 		this.portalUrlProvider = portalUrlProvider;
 	}
-	/* (non-Javadoc)
-	 * @see org.springframework.web.portlet.mvc.AbstractController#handleRenderRequestInternal(javax.portlet.RenderRequest, javax.portlet.RenderResponse)
+	
+	/**
+	 * Render the error portlet view.
+	 * 
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return the name of the view to display
+	 * @throws Exception
 	 */
-	@Override
-	protected ModelAndView handleRenderRequestInternal(RenderRequest request,
-			RenderResponse response) throws Exception {
-		Map<String, Object> model = new HashMap<String, Object>();
+	@RequestMapping("VIEW")
+	public String renderError(RenderRequest request,
+			RenderResponse response, ModelMap model) throws Exception {
+		
 		HttpServletRequest httpRequest = this.portalRequestUtils.getPortletHttpRequest(request);
 		IPortletWindowId currentFailedPortletWindowId = (IPortletWindowId) request.getAttribute(REQUEST_ATTRIBUTE__CURRENT_FAILED_PORTLET_WINDOW_ID);
-		model.put("portletWindowId", currentFailedPortletWindowId);
+		model.addAttribute("portletWindowId", currentFailedPortletWindowId);
 		Exception cause = (Exception) request.getAttribute(REQUEST_ATTRIBUTE__CURRENT_EXCEPTION_CAUSE);
-		model.put("exception", cause);
+		model.addAttribute("exception", cause);
 		final String rootCauseMessage = ExceptionUtils.getRootCauseMessage(cause);
-		model.put("rootCauseMessage", rootCauseMessage);
+		model.addAttribute("rootCauseMessage", rootCauseMessage);
 		
 		IUserInstance userInstance = this.userInstanceManager.getUserInstance(httpRequest);
 		if(hasAdminPrivileges(userInstance)) {
 			IPortletWindow window = this.portletWindowRegistry.getPortletWindow(httpRequest, currentFailedPortletWindowId);
 			window.setRenderParameters(new ParameterMap());
 			IPortalUrlBuilder adminRetryUrl = this.portalUrlProvider.getPortalUrlBuilderByPortletWindow(httpRequest, currentFailedPortletWindowId, UrlType.RENDER);
-			model.put("adminRetryUrl", adminRetryUrl.getUrlString());
+			model.addAttribute("adminRetryUrl", adminRetryUrl.getUrlString());
 			
 			final IPortletWindow portletWindow = portletWindowRegistry.getPortletWindow(httpRequest, currentFailedPortletWindowId);
             final IPortletEntity parentPortletEntity = portletWindow.getPortletEntity();
             final IPortletDefinition parentPortletDefinition = parentPortletEntity.getPortletDefinition();
-            model.put("channelDefinition", parentPortletDefinition);
+            model.addAttribute("channelDefinition", parentPortletDefinition);
             
 			StringWriter stackTraceWriter = new StringWriter();
 			cause.printStackTrace(new PrintWriter(stackTraceWriter));
 			
-			model.put("stackTrace", stackTraceWriter.toString());
+			model.addAttribute("stackTrace", stackTraceWriter.toString());
 			
-			return new ModelAndView("/jsp/PortletError/detailed", model);
+			return "/jsp/PortletError/detailed";
 		} 
-		return new ModelAndView("/jsp/PortletError/generic", model);
+		// no admin privileges, return generic view
+		return "/jsp/PortletError/generic";
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.springframework.web.portlet.mvc.AbstractController#handleActionRequest(javax.portlet.ActionRequest, javax.portlet.ActionResponse)
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws Exception
 	 */
-	@Override
-	public void handleActionRequest(ActionRequest request,
+	@RequestMapping("VIEW")
+	public void executeReset(ActionRequest request,
 			ActionResponse response) throws Exception {
 		final String windowId = request.getParameter("failedPortletWindowId");
 		if(StringUtils.isNotBlank(windowId)) {
