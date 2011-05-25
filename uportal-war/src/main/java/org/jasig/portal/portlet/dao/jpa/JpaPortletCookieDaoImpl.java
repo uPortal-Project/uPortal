@@ -171,14 +171,16 @@ public class JpaPortletCookieDaoImpl extends BasePortalJpaDao implements IPortle
 		for (final PortalCookieImpl portalCookie : resultList) {
 		    this.entityManager.remove(portalCookie);
 		}
-		log.info("Purged " + resultList.size() + " portal cookies");
-		
-		log.debug("begin portlet cookie expiration");
+		if(log.isDebugEnabled()) {
+			log.debug("finished purging " + resultList.size() + " portal cookies, begin portlet cookie expiration");
+		}
         final Query deletePortletCookies = this.entityManager.createNamedQuery(PortletCookieImpl.UP_PORTLET_COOKIES__DELETE_EXPIRED);
         deletePortletCookies.setParameter("expirationDate", now);
         
         final int portletCookiesDeleted = deletePortletCookies.executeUpdate();
-        log.info("Purged " + portletCookiesDeleted + " portlet cookies");
+        if(log.isDebugEnabled()) {
+        	log.debug("finished purging " + portletCookiesDeleted + " portlet cookies");
+        }
 	}
 
 	/*
