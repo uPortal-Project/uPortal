@@ -148,10 +148,9 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
             
             // Update expiration dates of portlet cookies stored in session
             removeExpiredPortletCookies(request);
-            
-            //Update the cookie in the users browser
-            response.addCookie(cookie);
         }
+        //Update the cookie in the users browser
+        response.addCookie(cookie);
     }
    
    /**
