@@ -26,6 +26,8 @@
 
 <xsl:param name="userLayoutRoot">root</xsl:param>
 <xsl:param name="focusedTabID">none</xsl:param>
+<xsl:param name="defaultTab">1</xsl:param>
+<xsl:param name="detached">false</xsl:param>
 
 <!-- Used to build the tabGroupsList:  discover tab groups, add each to the list ONLY ONCE -->
 <xsl:key name="tabGroupKey" match="layout/folder/folder[@hidden='false' and @type='regular']" use="@tabGroup"/>
@@ -39,7 +41,9 @@
       <xsl:when test="$focusedTabID!='none' and /layout/folder/folder[@ID=$focusedTabID and @type='regular' and @hidden='false']">
         <xsl:value-of select="count(/layout/folder/folder[@ID=$focusedTabID]/preceding-sibling::folder[@type='regular' and @hidden='false'])+1"/>
       </xsl:when>
-      <xsl:otherwise>1</xsl:otherwise> <!-- if not found, use first tab -->
+      <xsl:otherwise>
+        <xsl:value-of select="$defaultTab" />
+      </xsl:otherwise> <!-- if not found, use first tab -->
     </xsl:choose>
   </xsl:variable>
 
@@ -55,28 +59,38 @@
     </xsl:choose>
   </xsl:variable> 
 
-<!-- document fragment template. See structure stylesheet for more comments -->
-<xsl:template match="layout_fragment">
-   <layout_fragment>
-    <xsl:call-template name="tabList"/>
-    <content>
-      <xsl:apply-templates/>
-    </content>
-   </layout_fragment>    
+<xsl:template name="debug-info">
+    <!-- This element is not (presently) consumed by the theme transform, but it can be written to the logs easy debugging -->
+    <debug>
+        <userLayoutRoot><xsl:value-of select="$userLayoutRoot"></xsl:value-of></userLayoutRoot>
+        <focusedTabID><xsl:value-of select="$focusedTabID"></xsl:value-of></focusedTabID>
+        <defaultTab><xsl:value-of select="$defaultTab"></xsl:value-of></defaultTab>
+        <detached><xsl:value-of select="$detached"></xsl:value-of></detached>
+        <activeTabIdx><xsl:value-of select="$activeTabIdx"></xsl:value-of></activeTabIdx>
+        <activeTabID><xsl:value-of select="$activeTabID"></xsl:value-of></activeTabID>
+        <activeTabGroup><xsl:value-of select="$activeTabGroup"></xsl:value-of></activeTabGroup>
+        <tabsInTabGroup><xsl:value-of select="count(/layout/folder/folder[@tabGroup=$activeTabGroup and @type='regular' and @hidden='false'])"/></tabsInTabGroup>
+    </debug>    
 </xsl:template>
 
 <xsl:template match="layout">
-   <xsl:for-each select="folder[@type='root']">
-  <layout>
+  <xsl:for-each select="folder[@type='root']">
   
-  <!-- This element is not (presently) consumed by the theme transform, but it can be written to the logs easy debugging -->
-    <debug>
-        <data name="focusedTabID"><xsl:value-of select="$focusedTabID"/></data>
-        <data name="activeTabIdx"><xsl:value-of select="$activeTabIdx"/></data>
-        <data name="activeTabID"><xsl:value-of select="$activeTabID"/></data>
-        <data name="activeTabGroup"><xsl:value-of select="$activeTabGroup"/></data>
-        <data name="tabsInTabGroup"><xsl:value-of select="count(/layout/folder/folder[@tabGroup=$activeTabGroup and @type='regular' and @hidden='false'])"/></data>
-    </debug>
+  <xsl:choose>
+    <xsl:when test="$userLayoutRoot != 'root' and $detached = 'true'">
+      <layout_fragment>
+        <xsl:call-template name="debug-info"/>
+        <xsl:call-template name="tabList"/>
+        <content>
+          <!-- Detect whether a detached channel is present in the user's layout ? -->
+          <xsl:apply-templates select="//*[@ID = $userLayoutRoot]"/>
+        </content>
+      </layout_fragment>
+    </xsl:when>
+    <xsl:otherwise>
+  
+  <layout>
+    <xsl:call-template name="debug-info"/>  
   
     <xsl:if test="/layout/@dlm:fragmentName">
         <xsl:attribute name="dlm:fragmentName"><xsl:value-of select="/layout/@dlm:fragmentName"/></xsl:attribute>
@@ -139,7 +153,11 @@
     </footer>
     
   </layout>    
-   </xsl:for-each>
+
+    </xsl:otherwise>
+  </xsl:choose>
+
+  </xsl:for-each>
 </xsl:template>
 
 <xsl:template name="tabList">

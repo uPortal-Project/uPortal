@@ -28,6 +28,12 @@
     <uri>classpath:/layout/structure/columns/columns.xsl</uri>
     <url-syntax-helper>SingleTabUrlNodeSyntaxHelper</url-syntax-helper>
     <stylesheet-parameter>
+        <name>detached</name>
+        <default-value>false</default-value>
+        <scope>REQUEST</scope>
+        <description>If the request is for a detached portlet</description>
+    </stylesheet-parameter>
+    <stylesheet-parameter>
         <name>userLayoutRoot</name>
         <scope>REQUEST</scope>
         <description>The id of the focused layout element</description>

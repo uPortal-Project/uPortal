@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,9 +54,6 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.apache.commons.lang.Validate;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
@@ -100,6 +96,10 @@ class PortletDefinitionImpl implements IPortletDefinition {
     @Column(name = "PORTLET_DEF_ID")
     private final long internalPortletDefinitionId;
     
+    @Transient
+    private IPortletDefinitionId portletDefinitionId = null;
+
+    @SuppressWarnings("unused")
     @Version
     @Column(name = "ENTITY_VERSION")
     private final long entityVersion;
@@ -115,10 +115,6 @@ class PortletDefinitionImpl implements IPortletDefinition {
     @Fetch(FetchMode.JOIN)
     private IPortletPreferences portletPreferences = null;
     
-
-    @Transient
-    private IPortletDefinitionId portletDefinitionId = null;
-
     @Column(name = "PORTLET_NAME", length = 128, nullable = false, unique = true)
     private String name;
 
@@ -224,6 +220,7 @@ class PortletDefinitionImpl implements IPortletDefinition {
         this.portletDescriptorKey.setFrameworkPortlet(isFramework);
     }
     
+    //** APIs for import/export support **//
     @Override
     public String getDataId() {
         return this.getFName();
@@ -239,7 +236,8 @@ class PortletDefinitionImpl implements IPortletDefinition {
         return this.getDescription();
     }
 
-
+    //** APIs for portlet definitions **//
+    
     /* (non-Javadoc)
      * @see org.jasig.portal.om.portlet.IPortletDefinition#getPortletDefinitionId()
      */
@@ -276,11 +274,11 @@ class PortletDefinitionImpl implements IPortletDefinition {
 	}
 
 	@Override
-    public String getFName() {
+	public String getFName() {
 		return fname;
 	}
 
-	@Override
+    @Override
     public void setFName(String fname) {
 		this.fname = fname;
 	}
@@ -293,14 +291,6 @@ class PortletDefinitionImpl implements IPortletDefinition {
 	@Override
     public void setTitle(String title) {
 		this.title = title;
-	}
-
-	public IPortletType getPortletType() {
-		return portletType;
-	}
-
-	public void setPortletType(IPortletType portletType) {
-		this.portletType = portletType;
 	}
 
 	@Override
@@ -392,54 +382,6 @@ class PortletDefinitionImpl implements IPortletDefinition {
     public void setParameters(Set<IPortletDefinitionParameter> parameters) {
 		this.parameters = parameters;
 	}
-
-	public Map<String, PortletLocalizationData> getLocalizations() {
-		return localizations;
-	}
-
-	public void setLocalizations(
-			Map<String, PortletLocalizationData> localizations) {
-		this.localizations = localizations;
-	}
-
-	public void setPortletDefinitionId(IPortletDefinitionId portletDefinitionId) {
-		this.portletDefinitionId = portletDefinitionId;
-	}
-
-	/**
-     * @see java.lang.Object#equals(Object)
-     */
-    @Override
-    public boolean equals(Object object) {
-        if (object == this) {
-            return true;
-        }
-        if (!(object instanceof IPortletDefinition)) {
-            return false;
-        }
-        IPortletDefinition rhs = (IPortletDefinition) object;
-        return this.getPortletDefinitionId().equals(rhs.getPortletDefinitionId());
-    }
-
-    /**
-     * @see java.lang.Object#hashCode()
-     */
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(464270933, -1074792143)
-        	.append(this.getPortletDefinitionId())
-            .toHashCode();
-    }
-
-    /**
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-            .append("portletDefinitionId", this.portletDefinitionId)
-            .toString();
-    }
 
 
 	@Override
@@ -583,32 +525,55 @@ class PortletDefinitionImpl implements IPortletDefinition {
 		addParameter(new PortletDefinitionParameterImpl(name, value));
 	}
 
-	public void addParameter(PortletDefinitionParameterImpl newParameter) {
-	    final String newName = newParameter.getName();
-        
-	    for (final Iterator<IPortletDefinitionParameter> paramIter = this.parameters.iterator(); paramIter.hasNext();) {
-	        final IPortletDefinitionParameter param = paramIter.next();
-	        if (newName.equals(param.getName())) {
-	            paramIter.remove();
-	            break;
-	        }
-	    }
-	    
-	    this.parameters.add(newParameter);
-	}
-
     @Override
     public PortletLifecycleState getLifecycleState() {
-		Date now = new Date();
-		if (this.getExpirationDate() != null && this.getExpirationDate().before(now)) {
+		final Date now = new Date();
+        if (expirationDate != null && expirationDate.before(now)) {
 			return PortletLifecycleState.EXPIRED;
-		} else if (this.getPublishDate() != null && this.getPublishDate().before(now)) {
+		} else if (publishDate != null && publishDate.before(now)) {
 			return PortletLifecycleState.PUBLISHED;
-		} else if (this.getApprovalDate() != null && this.getApprovalDate().before(now)) {
+		} else if (approvalDate != null && approvalDate.before(now)) {
 			return PortletLifecycleState.APPROVED;
 		} else {
 			return PortletLifecycleState.CREATED;
 		}
     }
 
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.fname == null) ? 0 : this.fname.hashCode());
+        return result;
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!IPortletDefinition.class.isAssignableFrom(obj.getClass()))
+            return false;
+        final IPortletDefinition other = (IPortletDefinition) obj;
+        if (this.fname == null) {
+            if (other.getFName()!= null)
+                return false;
+        }
+        else if (!this.fname.equals(other.getFName()))
+            return false;
+        return true;
+    }
+
+
+    @Override
+    public String toString() {
+        return "PortletDefinition [" +
+        		"portletDefinitionId=" + this.portletDefinitionId + ", " +
+				"fname=" + this.fname + ", " +
+				"portletDescriptorKey=" + this.portletDescriptorKey + ", " +
+				"portletType=" + this.portletType + "]";
+    }
 }

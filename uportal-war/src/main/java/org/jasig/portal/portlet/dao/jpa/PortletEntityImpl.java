@@ -91,6 +91,7 @@ class PortletEntityImpl implements IPortletEntity {
     @Column(name = "PORTLET_ENT_ID")
     private final long internalPortletEntityId;
     
+    @SuppressWarnings("unused")
     @Version
     @Column(name = "ENTITY_VERSION")
     private final long entityVersion;
@@ -259,31 +260,32 @@ class PortletEntityImpl implements IPortletEntity {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!IPortletEntity.class.isAssignableFrom(obj.getClass()))
             return false;
-        PortletEntityImpl other = (PortletEntityImpl) obj;
+        IPortletEntity other = (IPortletEntity) obj;
         if (this.layoutNodeId == null) {
-            if (other.layoutNodeId != null)
+            if (other.getLayoutNodeId() != null)
                 return false;
         }
-        else if (!this.layoutNodeId.equals(other.layoutNodeId))
+        else if (!this.layoutNodeId.equals(other.getLayoutNodeId()))
             return false;
         if (this.portletDefinition == null) {
-            if (other.portletDefinition != null)
+            if (other.getPortletDefinition() != null)
                 return false;
         }
-        else if (!this.portletDefinition.equals(other.portletDefinition))
+        else if (!this.portletDefinition.equals(other.getPortletDefinition()))
             return false;
-        if (this.userId != other.userId)
+        if (this.userId != other.getUserId())
             return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "PortletEntityImpl [internalPortletEntityId=" + this.internalPortletEntityId + ", entityVersion="
-                + this.entityVersion + ", layoutNodeId=" + this.layoutNodeId + ", userId=" + this.userId
-                + ", portletDefinition=" + this.portletDefinition
-                + ", portletEntityId=" + this.portletEntityId + "]";
+        return "PortletEntity [" +
+                "portletEntityId=" + this.portletEntityId + ", " +
+                "layoutNodeId=" + this.layoutNodeId + ", " +
+                "userId=" + this.userId + ", " +
+                "portletDefinition=" + this.portletDefinition + "]";
     }
 }

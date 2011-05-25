@@ -70,13 +70,17 @@ public class RenderingController {
         this.urlSyntaxProvider = urlSyntaxProvider;
     }
     
+    @RequestMapping(headers="org.jasig.portal.url.UrlState=EXCLUSIVE")
+    public void renderExclusive(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        this.logger.debug("EXCLUSIVE REQUEST");
+    }
     
-    @RequestMapping(headers="org.jasig.portal.url.UrlType=RENDER")
+    @RequestMapping(headers={"org.jasig.portal.url.UrlType=RENDER", "org.jasig.portal.url.UrlState!=EXCLUSIVE"})
     public void renderRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         this.portalRenderingPipeline.renderState(request, response);
     }
     
-    @RequestMapping(headers="org.jasig.portal.url.UrlType=ACTION")
+    @RequestMapping(headers={"org.jasig.portal.url.UrlType=ACTION", "org.jasig.portal.url.UrlState!=EXCLUSIVE"})
     public void actionRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
         final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
         final IPortletRequestInfo portletRequestInfo = portalRequestInfo.getTargetedPortletRequestInfo();
@@ -119,14 +123,8 @@ public class RenderingController {
         sendRedirect(actionRedirectUrl, response);
     }
     
-    /**
-     * 
-     * @param request
-     * @param response
-     * @throws IOException
-     */
-    @RequestMapping(headers="org.jasig.portal.url.UrlType=RESOURCE")
-    public void resourceRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    @RequestMapping(headers={"org.jasig.portal.url.UrlType=RESOURCE", "org.jasig.portal.url.UrlState!=EXCLUSIVE"})
+    public void resourceRequest(HttpServletRequest request, HttpServletResponse response) {
     	final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
         final IPortletRequestInfo portletRequestInfo = portalRequestInfo.getTargetedPortletRequestInfo();
         if (portletRequestInfo != null) {

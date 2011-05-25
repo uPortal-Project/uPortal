@@ -102,12 +102,14 @@ public class UrlCanonicalizingFilter extends OncePerRequestFilter {
         
         final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
         final UrlType urlType = portalRequestInfo.getUrlType();
+        final UrlState urlState = portalRequestInfo.getUrlState();
         
         final PortalHttpServletResponseWrapper httpServletResponseWrapper = new PortalHttpServletResponseWrapper(response);
-        
         final PortalHttpServletRequestWrapper httpServletRequestWrapper = 
             new PortalHttpServletRequestWrapper(request, httpServletResponseWrapper, this.userInstanceManager);
+        
         httpServletRequestWrapper.setHeader(IPortalRequestInfo.URL_TYPE_HEADER, urlType.toString());
+        httpServletRequestWrapper.setHeader(IPortalRequestInfo.URL_STATE_HEADER, urlState.toString());
         
         filterChain.doFilter(httpServletRequestWrapper, httpServletResponseWrapper);
     }

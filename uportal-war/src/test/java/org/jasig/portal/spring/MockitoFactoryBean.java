@@ -17,26 +17,32 @@
  * under the License.
  */
 
-package org.jasig.portal.character.stream;
+package org.jasig.portal.spring;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.MatchResult;
+import static org.mockito.Mockito.mock;
 
-import org.jasig.portal.character.stream.events.CharacterEvent;
-import org.jasig.portal.character.stream.events.PortletTitlePlaceholderEvent;
-import org.jasig.portal.character.stream.events.PortletTitlePlaceholderEventImpl;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.springframework.beans.factory.config.AbstractFactoryBean;
 
 /**
- * Generates a {@link PortletTitlePlaceholderEvent} for a regular expression match
+ * Factory for creating Mockito objects as beans.
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class PortletTitlePlaceholderEventSource extends PortletPlaceholderEventSource {
+public class MockitoFactoryBean<T> extends AbstractFactoryBean<T> {
+    private final Class<? extends T> type;
+
+    public MockitoFactoryBean(Class<? extends T> type) {
+        this.type = type;
+    }
+
     @Override
-    protected List<CharacterEvent> getCharacterEvents(IPortletWindowId portletWindowId, MatchResult matchResult) {
-        return Arrays.asList((CharacterEvent)new PortletTitlePlaceholderEventImpl(portletWindowId));
+    public Class<? extends T> getObjectType() {
+        return this.type;
+    }
+
+    @Override
+    protected T createInstance() throws Exception {
+        return mock(this.type);
     }
 }

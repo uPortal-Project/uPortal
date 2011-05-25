@@ -17,26 +17,23 @@
  * under the License.
  */
 
-package org.jasig.portal.character.stream;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.MatchResult;
-
-import org.jasig.portal.character.stream.events.CharacterEvent;
-import org.jasig.portal.character.stream.events.PortletTitlePlaceholderEvent;
-import org.jasig.portal.character.stream.events.PortletTitlePlaceholderEventImpl;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+package org.jasig.portal.portlet.om;
 
 /**
- * Generates a {@link PortletTitlePlaceholderEvent} for a regular expression match
+ * Describes the IDs at the core of a portlet window
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class PortletTitlePlaceholderEventSource extends PortletPlaceholderEventSource {
-    @Override
-    protected List<CharacterEvent> getCharacterEvents(IPortletWindowId portletWindowId, MatchResult matchResult) {
-        return Arrays.asList((CharacterEvent)new PortletTitlePlaceholderEventImpl(portletWindowId));
-    }
+public interface IPortletWindowDescriptor {
+    
+    /**
+     * @return ID of the portlet window
+     */
+    public IPortletWindowId getPortletWindowId();
+    
+    /**
+     * @return ID of the parent entity
+     */
+    public IPortletEntityId getPortletEntityId();
 }

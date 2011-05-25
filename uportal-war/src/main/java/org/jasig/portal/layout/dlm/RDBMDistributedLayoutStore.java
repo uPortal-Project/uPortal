@@ -1440,9 +1440,9 @@ public class RDBMDistributedLayoutStore
         if (channelDef != null) {
             missingChannel = channelDef.getName();
         }
-        structure = getElementForChannel(doc, channelPrefix + ls.getStructId(), MissingChannelDefinition.INSTANCE, null);
-//        structure = MissingChannelDefinition.INSTANCE.getDocument(doc, channelPrefix + ls.getStructId());
-//        structure = MissingChannelDefinition.INSTANCE.getDocument(doc, channelPrefix + ls.getStructId(),
+        structure = getElementForChannel(doc, channelPrefix + ls.getStructId(), MissingPortletDefinition.INSTANCE, null);
+//        structure = MissingPortletDefinition.INSTANCE.getDocument(doc, channelPrefix + ls.getStructId());
+//        structure = MissingPortletDefinition.INSTANCE.getDocument(doc, channelPrefix + ls.getStructId(),
 //                "The '" + missingChannel + "' channel is no longer available. " +
 //                "Please remove it from your layout.",
 //                -1);
@@ -1963,8 +1963,10 @@ public class RDBMDistributedLayoutStore
 
     }
     
-    private static final class MissingChannelDefinition implements IPortletDefinition {
-        public static final IPortletDefinition INSTANCE = new MissingChannelDefinition();
+    private static final class MissingPortletDefinition implements IPortletDefinition {
+        public static final IPortletDefinition INSTANCE = new MissingPortletDefinition();
+        
+        private final String fname = "DLMStaticMissingChannel";
         
         public String getName() {
             return "Missing channel";
@@ -1982,7 +1984,7 @@ public class RDBMDistributedLayoutStore
             return "Missing channel";
         }
         public String getFName() {
-            return "DLMStaticMissingChannel";
+            return fname;
         }
         
         @Override
@@ -2109,15 +2111,40 @@ public class RDBMDistributedLayoutStore
 		@Override
 		public void setPortletPreferences(
 				List<IPortletPreference> portletPreferences) {
-			// TODO Auto-generated method stub
 			
 		}
         @Override
         public IPortletDescriptorKey getPortletDescriptorKey() {
-            // TODO Auto-generated method stub
             return null;
         }
-
+        @Override
+        public String toString() {
+            return "MissingPortletDefinition [fname=" + this.fname + "]";
+        }
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((this.fname == null) ? 0 : this.fname.hashCode());
+            return result;
+        }
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (!IPortletDefinition.class.isAssignableFrom(obj.getClass()))
+                return false;
+            final IPortletDefinition other = (IPortletDefinition) obj;
+            if (this.fname == null) {
+                if (other.getFName() != null)
+                    return false;
+            }
+            else if (!this.fname.equals(other.getFName()))
+                return false;
+            return true;
+        }
     }
     
     private static final class MissingPortletDefinitionId implements IPortletDefinitionId {

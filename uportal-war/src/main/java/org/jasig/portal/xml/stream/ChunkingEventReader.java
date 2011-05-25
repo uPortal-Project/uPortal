@@ -29,6 +29,7 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventReader;
@@ -55,6 +56,7 @@ public class ChunkingEventReader extends BaseXMLEventReader {
     
     private final List<CharacterEvent> characterEvents = new LinkedList<CharacterEvent>();
 
+    private final HttpServletRequest request;
     private final Map<String, CharacterEventSource> chunkingElements;
     private final Map<Pattern, CharacterEventSource> chunkingPatterns;
     private final XMLEventWriter xmlEventWriter;
@@ -70,12 +72,14 @@ public class ChunkingEventReader extends BaseXMLEventReader {
     //Handle chunking immediately after a StartElement
     private StartElement captureEvent = null;
 
-    public ChunkingEventReader(Map<String, CharacterEventSource> chunkingElements,
+    public ChunkingEventReader(HttpServletRequest request,
+            Map<String, CharacterEventSource> chunkingElements,
             Map<Pattern, CharacterEventSource> chunkingPatterns, 
             XMLEventReader xmlEventReader, XMLEventWriter xmlEventWriter,
             StringWriter writer) {
         super(xmlEventReader);
 
+        this.request = request;
         this.chunkingElements = chunkingElements;
         this.chunkingPatterns = chunkingPatterns;
         this.xmlEventWriter = xmlEventWriter;
@@ -163,7 +167,7 @@ public class ChunkingEventReader extends BaseXMLEventReader {
             
             //Get the generated events for the element
             final XMLEventReader parent = this.getParent();
-            final List<CharacterEvent> generatedCharacterEvents = characterEventSource.getCharacterEvents(parent, startElement);
+            final List<CharacterEvent> generatedCharacterEvents = characterEventSource.getCharacterEvents(this.request, parent, startElement);
             if (generatedCharacterEvents != null) {
                 this.characterEvents.addAll(generatedCharacterEvents);
             }
@@ -239,7 +243,7 @@ public class ChunkingEventReader extends BaseXMLEventReader {
                             //Get the generated CharacterEvents for the match
                             final CharacterEventSource eventSource = chunkingPatternEntry.getValue();
                             final MatchResult matchResult = matcher.toMatchResult();
-                            final List<CharacterEvent> generatedCharacterEvents = eventSource.getCharacterEvents(matchResult);
+                            final List<CharacterEvent> generatedCharacterEvents = eventSource.getCharacterEvents(this.request, matchResult);
                             
                             //Add the generated CharacterEvents to the list
                             for (final CharacterEvent generatedCharacterEvent : generatedCharacterEvents) {

@@ -68,5 +68,46 @@ class PortletDescriptorKeyImpl implements IPortletDescriptorKey, Serializable {
     public void setPortletName(String portletName) {
         this.portletName = portletName;
     }
+    
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (this.frameworkPortlet ? 1231 : 1237);
+        result = prime * result + ((this.portletName == null) ? 0 : this.portletName.hashCode());
+        result = prime * result + ((this.webAppName == null) ? 0 : this.webAppName.hashCode());
+        return result;
+    }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (IPortletDescriptorKey.class.isAssignableFrom(obj.getClass()))
+            return false;
+        IPortletDescriptorKey other = (IPortletDescriptorKey) obj;
+        if (this.frameworkPortlet != other.isFrameworkPortlet())
+            return false;
+        if (this.portletName == null) {
+            if (other.getPortletName() != null)
+                return false;
+        }
+        else if (!this.portletName.equals(other.getPortletName()))
+            return false;
+        if (this.webAppName == null) {
+            if (other.getWebAppName() != null)
+                return false;
+        }
+        else if (!this.webAppName.equals(other.getWebAppName()))
+            return false;
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "PortletDescriptorKey [frameworkPortlet=" + this.frameworkPortlet + ", webAppName="
+                + this.webAppName + ", portletName=" + this.portletName + "]";
+    }
 }

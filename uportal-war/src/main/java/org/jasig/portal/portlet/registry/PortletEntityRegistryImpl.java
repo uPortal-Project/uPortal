@@ -487,9 +487,9 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         if (portletEntityData != null) {
             
             //Stick the entity wrapper in the request map (if it wasn't already added by another thread)
-            portletEntity = portletEntityCache.storeIfAbsentEntity(portletEntityData.getPortletEntityId(), new Function<Object, IPortletEntity>() {
+            portletEntity = portletEntityCache.storeIfAbsentEntity(portletEntityData.getPortletEntityId(), new Function<IPortletEntityId, IPortletEntity>() {
                 @Override
-                public IPortletEntity apply(Object input) {
+                public IPortletEntity apply(IPortletEntityId input) {
                     //Found a session stored entity, wrap it to make it a real IPortletEntity
                     logger.trace("Found PortletEntityData {} in session cache, caching wrapper in the request", portletEntityData.getPortletEntityId());
                     
@@ -524,9 +524,9 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
             final IPortletEntity anonPortletEntity = portletEntity;
             
             //Stick the entity wrapper in the request map (if it wasn't already added by another thread)
-            portletEntity = portletEntityCache.storeIfAbsentEntity(consistentPortletEntityId, new Function<Object, IPortletEntity>() {
+            portletEntity = portletEntityCache.storeIfAbsentEntity(consistentPortletEntityId, new Function<IPortletEntityId, IPortletEntity>() {
                 @Override
-                public IPortletEntity apply(Object input) {
+                public IPortletEntity apply(IPortletEntityId input) {
                     logger.trace("Found persistent IPortletEntity {}, mapped id to {}, caching the wrapper in the request", anonPortletEntity.getPortletEntityId(), consistentPortletEntityId);
                     return new PersistentPortletEntityWrapper(anonPortletEntity, consistentPortletEntityId);
                 }

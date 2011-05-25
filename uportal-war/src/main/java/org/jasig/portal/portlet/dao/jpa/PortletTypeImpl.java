@@ -35,8 +35,6 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.jasig.portal.portlet.om.IPortletDefinition;
@@ -71,6 +69,7 @@ public class PortletTypeImpl implements Serializable, IPortletType {
 	@Column(name = "TYPE_ID")
 	private final int internalId;
     
+    @SuppressWarnings("unused")
     @Version
     @Column(name = "ENTITY_VERSION")
     private final long entityVersion;
@@ -171,43 +170,37 @@ public class PortletTypeImpl implements Serializable, IPortletType {
 
 
 
-    /**
-     * @see java.lang.Object#equals(Object)
-     */
     @Override
-    public boolean equals(Object object) {
-        if (object == this) {
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        }
-        if (!(object instanceof IPortletType)) {
+        if (obj == null)
             return false;
+        if (IPortletType.class.isAssignableFrom(obj.getClass()))
+            return false;
+        IPortletType other = (IPortletType) obj;
+        if (this.name == null) {
+            if (other.getName() != null)
+                return false;
         }
-        IPortletType rhs = (IPortletType) object;
-        return new EqualsBuilder()
-            .append(this.name, rhs.getName())
-            .append(this.cpdUri, rhs.getCpdUri())
-            .isEquals();
+        else if (!this.name.equals(other.getName()))
+            return false;
+        return true;
     }
 
-
-    /**
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(-1497407419, 1799845985)
-            .append(this.cpdUri)
-            .append(this.name)
-            .toHashCode();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
+        return result;
     }
-
 
     @Override
     public String toString() {
-        return "PortletTypeImpl [internalId=" + this.internalId + ", entityVersion=" + this.entityVersion + ", name="
-                + this.name + ", descr=" + this.descr + ", cpdUri=" + this.cpdUri + "]";
+        return "PortletTypeImpl [internalId=" + this.internalId + ", name=" + this.name + ", descr=" + this.descr
+                + ", cpdUri=" + this.cpdUri + "]";
     }
-
 
 	@Override
 	public String getDataId() {

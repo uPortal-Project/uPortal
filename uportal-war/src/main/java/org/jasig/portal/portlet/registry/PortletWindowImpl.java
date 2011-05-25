@@ -30,6 +30,7 @@ import org.apache.pluto.container.PortletWindow;
 import org.apache.pluto.container.PortletWindowID;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
+import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 
@@ -71,6 +72,12 @@ class PortletWindowImpl implements IPortletWindow, PortletWindow {
     @Override
     public PortletWindowID getId() {
         return this.portletWindowData.getPortletWindowId();
+    }
+    
+
+    @Override
+    public IPortletEntityId getPortletEntityId() {
+        return this.portletEntity.getPortletEntityId();
     }
 
     @Override
@@ -177,7 +184,9 @@ class PortletWindowImpl implements IPortletWindow, PortletWindow {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.portletWindowData == null) ? 0 : this.portletWindowData.hashCode());
+        result = prime * result + ((this.portletEntity == null) ? 0 : this.portletEntity.hashCode());
+        result = prime * result + ((this.portletWindowData.getPortletWindowId() == null) ? 0 : this.portletWindowData.getPortletWindowId().hashCode());
+        result = prime * result + ((this.portletWindowData.getDelegationParentId() == null) ? 0 : this.portletWindowData.getDelegationParentId().hashCode());
         return result;
     }
 
@@ -187,24 +196,40 @@ class PortletWindowImpl implements IPortletWindow, PortletWindow {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!IPortletWindow.class.isAssignableFrom(obj.getClass()))
             return false;
-        PortletWindowImpl other = (PortletWindowImpl) obj;
-        if (this.portletWindowData == null) {
-            if (other.portletWindowData != null)
+        final IPortletWindow other = (IPortletWindow) obj;
+        if (this.portletEntity == null) {
+            if (other.getPortletEntity() != null)
                 return false;
         }
-        else if (!this.portletWindowData.equals(other.portletWindowData))
+        else if (!this.portletEntity.equals(other.getPortletEntity()))
+            return false;
+        if (this.portletWindowData.getDelegationParentId() == null) {
+            if (other.getDelegationParentId() != null)
+                return false;
+        }
+        else if (!this.portletWindowData.getDelegationParentId().equals(other.getDelegationParentId()))
+            return false;
+        if (this.portletWindowData.getPortletWindowId() == null) {
+            if (other.getPortletWindowId() != null)
+                return false;
+        }
+        else if (!this.portletWindowData.getPortletWindowId().equals(other.getPortletWindowId()))
             return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "PortletWindowImpl [portletDefinition=" + this.portletDefinition + ", portletEntity="
-                + this.portletEntity + ", portletWindowData=" + this.portletWindowData + ", renderParameters="
-                + this.renderParameters + ", publicRenderParameters=" + this.publicRenderParameters + ", portletMode="
-                + this.portletMode + ", windowState=" + this.windowState + ", expirationCache=" + this.expirationCache
-                + "]";
+        return "PortletWindow [" +
+                "portletWindowId=" + this.portletWindowData.getPortletWindowId() + ", " +
+                "delegationParentId=" + this.portletWindowData.getDelegationParentId() + ", " +
+                "portletMode=" + this.portletWindowData.getPortletMode() + ", " +
+                "windowState=" + this.portletWindowData.getWindowState() + ", " +
+                "expirationCache=" + this.portletWindowData.getExpirationCache() + ", " +
+                "renderParameters=" + this.portletWindowData.getRenderParameters() + ", " +
+                "publicRenderParameters=" + this.portletWindowData.getPublicRenderParameters() + ", " +
+                "portletEntity=" + this.portletEntity + "]";
     }
 }

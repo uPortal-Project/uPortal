@@ -98,30 +98,20 @@ class PersistentPortletEntityWrapper implements IPortletEntity {
 
     @Override
     public int hashCode() {
-        return this.standardEntityId.hashCode();
+        return this.persistentEntity.hashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        PersistentPortletEntityWrapper other = (PersistentPortletEntityWrapper) obj;
-        if (this.persistentEntity == null) {
-            if (other.persistentEntity != null)
-                return false;
-        }
-        else if (!this.persistentEntity.equals(other.persistentEntity))
-            return false;
-        return true;
+        return this.persistentEntity.equals(obj);
     }
 
     @Override
     public String toString() {
-        return "PersistentPortletEntityWrapper [standardEntityId=" + this.standardEntityId + ", persistentEntity="
-                + this.persistentEntity + "]";
+        return "PortletEntity [" +
+                "portletEntityId=" + this.standardEntityId + ", " +
+                "layoutNodeId=" + this.persistentEntity.getLayoutNodeId() + ", " +
+                "userId=" + this.persistentEntity.getUserId() + ", " +
+                "portletDefinition=" + this.persistentEntity.getPortletDefinition() + "]";
     }
 }

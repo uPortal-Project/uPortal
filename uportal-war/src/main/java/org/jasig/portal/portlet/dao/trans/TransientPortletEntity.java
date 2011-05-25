@@ -23,10 +23,6 @@ import java.util.Map;
 
 import javax.portlet.WindowState;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
@@ -116,43 +112,50 @@ class TransientPortletEntity implements IPortletEntity {
         this.delegatePortletEntity.setPortletPreferences(portletPreferences);
     }
 
-    /**
-     * @see java.lang.Object#equals(Object)
-     */
-    @Override
-    public boolean equals(Object object) {
-        if (object == this) {
-            return true;
-        }
-        if (!(object instanceof TransientPortletEntity)) {
-            return false;
-        }
-        TransientPortletEntity rhs = (TransientPortletEntity) object;
-        return new EqualsBuilder()
-            .append(this.transientLayoutNodeId, rhs.transientLayoutNodeId)
-            .append(this.delegatePortletEntity, rhs.delegatePortletEntity)
-            .isEquals();
-    }
+    
 
-    /**
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(1802746633, 68234451)
-            .append(this.transientLayoutNodeId)
-            .append(this.delegatePortletEntity)
-            .toHashCode();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.transientLayoutNodeId == null) ? 0 : this.transientLayoutNodeId.hashCode());
+        result = prime * result + ((this.delegatePortletEntity.getPortletDefinition() == null) ? 0 : this.delegatePortletEntity.getPortletDefinition().hashCode());
+        result = prime * result + this.delegatePortletEntity.getUserId();
+        return result;
     }
 
-    /**
-     * @see java.lang.Object#toString()
-     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!IPortletEntity.class.isAssignableFrom(obj.getClass()))
+            return false;
+        IPortletEntity other = (IPortletEntity) obj;
+        if (this.transientLayoutNodeId == null) {
+            if (other.getLayoutNodeId() != null)
+                return false;
+        }
+        else if (!this.transientLayoutNodeId.equals(other.getLayoutNodeId()))
+            return false;
+        if (this.delegatePortletEntity.getPortletDefinition() == null) {
+            if (other.getPortletDefinition() != null)
+                return false;
+        }
+        else if (!this.delegatePortletEntity.getPortletDefinition().equals(other.getPortletDefinition()))
+            return false;
+        if (this.delegatePortletEntity.getUserId() != other.getUserId())
+            return false;
+        return true;
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-            .appendSuper(this.delegatePortletEntity.toString())
-            .append("transientLayoutNodeId", this.transientLayoutNodeId)
-            .toString();
+        return "PortletEntity [" +
+                "portletEntityId=" + this.delegatePortletEntity.getPortletEntityId() + ", " +
+                "layoutNodeId=" + this.transientLayoutNodeId + ", " +
+                "userId=" + this.delegatePortletEntity.getUserId() + ", " +
+                "portletDefinition=" + this.delegatePortletEntity.getPortletDefinition() + "]";
     }
 }

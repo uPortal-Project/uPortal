@@ -28,10 +28,11 @@ import org.jasig.portal.character.stream.CharacterEventReader;
 import org.jasig.portal.character.stream.FilteringCharacterEventReader;
 import org.jasig.portal.character.stream.events.CharacterDataEventImpl;
 import org.jasig.portal.character.stream.events.CharacterEvent;
-import org.jasig.portal.character.stream.events.PortletNewItemCountPlaceholderEvent;
 import org.jasig.portal.character.stream.events.PortletContentPlaceholderEvent;
 import org.jasig.portal.character.stream.events.PortletHeaderPlaceholderEvent;
+import org.jasig.portal.character.stream.events.PortletNewItemCountPlaceholderEvent;
 import org.jasig.portal.character.stream.events.PortletTitlePlaceholderEvent;
+import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.rendering.IPortletExecutionManager;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,33 +92,33 @@ public class PortletRenderingIncorporationComponent extends CharacterPipelineCom
             switch (event.getEventType()) {
             	case PORTLET_HEADER: {
             		final PortletHeaderPlaceholderEvent headerPlaceholderEvent = (PortletHeaderPlaceholderEvent) event;
-            		final String subscribeId = headerPlaceholderEvent.getPortletSubscribeId();
+            		final IPortletWindowId portletWindowId = headerPlaceholderEvent.getPortletWindowId();
             		
-            		final String output = portletExecutionManager.getPortletHeadOutput(subscribeId, this.request, this.response);
+            		final String output = portletExecutionManager.getPortletHeadOutput(portletWindowId, this.request, this.response);
             		
             		return new CharacterDataEventImpl(output);
             	}
                 case PORTLET_CONTENT: {
                     final PortletContentPlaceholderEvent contentPlaceholderEvent = (PortletContentPlaceholderEvent)event;
-                    final String subscribeId = contentPlaceholderEvent.getPortletSubscribeId();
+                    final IPortletWindowId portletWindowId = contentPlaceholderEvent.getPortletWindowId();
                     
-                    final String output = portletExecutionManager.getPortletOutput(subscribeId, this.request, this.response);
+                    final String output = portletExecutionManager.getPortletOutput(portletWindowId, this.request, this.response);
                     
                     return new CharacterDataEventImpl(output);
                 }
                 case PORTLET_TITLE: {
                     final PortletTitlePlaceholderEvent titlePlaceholderEvent = (PortletTitlePlaceholderEvent)event;
-                    final String subscribeId = titlePlaceholderEvent.getPortletSubscribeId();
+                    final IPortletWindowId portletWindowId = titlePlaceholderEvent.getPortletWindowId();
                     
-                    final String title = portletExecutionManager.getPortletTitle(subscribeId, this.request, this.response);
+                    final String title = portletExecutionManager.getPortletTitle(portletWindowId, this.request, this.response);
                     
                     return new CharacterDataEventImpl(title);
                 }
                 case PORTLET_NEW_ITEM_COUNT: {
                     final PortletNewItemCountPlaceholderEvent newItemCountPlaceholderEvent = (PortletNewItemCountPlaceholderEvent)event;
-                    final String subscribeId = newItemCountPlaceholderEvent.getPortletSubscribeId();
+                    final IPortletWindowId portletWindowId = newItemCountPlaceholderEvent.getPortletWindowId();
                     
-                    final int newItemCount = portletExecutionManager.getPortletNewItemCount(subscribeId, this.request, this.response);
+                    final int newItemCount = portletExecutionManager.getPortletNewItemCount(portletWindowId, this.request, this.response);
                     
                     return new CharacterDataEventImpl(String.valueOf(newItemCount));
                 }

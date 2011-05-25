@@ -42,19 +42,15 @@ import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker;
 import org.jasig.portal.portlet.rendering.worker.IPortletFailureExecutionWorker;
 import org.jasig.portal.portlet.rendering.worker.IPortletRenderExecutionWorker;
 import org.jasig.portal.portlet.rendering.worker.IPortletWorkerFactory;
-import org.jasig.portal.user.IUserInstance;
-import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.utils.web.PortalWebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
-import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.web.util.WebUtils;
@@ -86,8 +82,6 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
     
     private int maxEventIterations = 100;
     private IPortletWindowRegistry portletWindowRegistry;
-    private IPortletEntityRegistry portletEntityRegistry;
-    private IUserInstanceManager userInstanceManager;
     private IPortletEventCoordinationService eventCoordinationService;
     private IPortletWorkerFactory portletWorkerFactory;
     
@@ -108,23 +102,13 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
         this.eventCoordinationService = eventCoordinationService;
     }
 
-    @Autowired
-    public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
-        this.userInstanceManager = userInstanceManager;
-    }
 
     @Autowired
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         this.portletWindowRegistry = portletWindowRegistry;
     }
 
-    @Autowired
-    public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
-        this.portletEntityRegistry = portletEntityRegistry;
-    }
-
-
-	@Override
+    @Override
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
     }
@@ -149,8 +133,7 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
         portletActionExecutionWorker.submit();
         
         try {
-			final Long actualExecutionTime = portletActionExecutionWorker.get(timeout);
-			 //TODO publish portlet action event
+			portletActionExecutionWorker.get(timeout);
 		} catch (Exception e) {
 			// put the exception into the error map for the session
 	    	final Map<IPortletWindowId, Exception> portletFailureMap = getPortletErrorMap(request);
@@ -240,9 +223,7 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
         final int timeout = getPortletRenderTimeout(portletWindowId, request);
         
         try {
-            //This should never actually wait since the future says it was done
-            final Long actualExecutionTime = eventWorker.get(timeout);
-             //TODO publish portlet event event
+            eventWorker.get(timeout);
         }
         catch (Exception e) {
             // put the exception into the error map for the session
@@ -261,14 +242,8 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
 			HttpServletRequest request, HttpServletResponse response) {
 		Assert.notNull(subscribeId, "subscribeId cannot be null");
         
-        final IPortletWindow portletWindow;
-        try {
-            portletWindow = this.getDefaultPortletWindow(subscribeId, request);
-        }
-        catch (DataRetrievalFailureException e) {
-            this.logger.warn("Failed to start portlet head rendering: " + subscribeId, e);
-            return;
-        }
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, subscribeId);
+        
         if(portletWindow != null) {
         	this.startPortletHeadRender(portletWindow.getPortletWindowId(), request, response);
         } else {
@@ -316,14 +291,8 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
     public void startPortletRender(String subscribeId, HttpServletRequest request, HttpServletResponse response) {
         Assert.notNull(subscribeId, "subscribeId cannot be null");
         
-        final IPortletWindow portletWindow;
-        try {
-            portletWindow = this.getDefaultPortletWindow(subscribeId, request);
-        }
-        catch (DataRetrievalFailureException e) {
-            this.logger.warn("Failed to start portlet rendering: " + subscribeId, e);
-            return;
-        }
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, subscribeId);
+        
         if(null != portletWindow) {
         	this.startPortletRenderInternal(portletWindow.getPortletWindowId(), request, response);
         } else {
@@ -353,8 +322,7 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
 		resourceWorker.submit();
         
         try {
-            final Long actualExecutionTime = resourceWorker.get(timeout);
-			// TODO publish portlet resource event
+            resourceWorker.get(timeout);
 		} catch (Exception e) {
 			//log the exception
 			this.logger.error("resource worker failed with exception", e);
@@ -391,14 +359,7 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
 	@Override
 	public boolean isPortletRenderHeaderRequested(String subscribeId,
 			HttpServletRequest request, HttpServletResponse response) {
-		final IPortletWindow portletWindow;
-		try {
-			portletWindow = this.getDefaultPortletWindow(subscribeId, request);
-		}
-		catch (DataRetrievalFailureException e) {
-			this.logger.warn("Failed to test if portlet should render header: " + subscribeId, e);
-			return false;
-		}
+	    final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, subscribeId);
 
 		if(portletWindow == null) {
 			this.logger.debug("returning false since getDefaultPortletWindow returned null for subscribeId " + subscribeId); 
@@ -412,20 +373,15 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
      */
     @Override
     public boolean isPortletRenderRequested(String subscribeId, HttpServletRequest request, HttpServletResponse response) {
-        final IPortletWindow portletWindow;
-        try {
-            portletWindow = this.getDefaultPortletWindow(subscribeId, request);
-        }
-        catch (DataRetrievalFailureException e) {
-            this.logger.warn("Failed to test if portlet should render body: " + subscribeId, e);
-            return false;
-        }
-        if(portletWindow != null) {
-        	return this.isPortletRenderRequested(portletWindow.getPortletWindowId(), request, response);
-        } else {
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, subscribeId);
+        
+        if (portletWindow == null) {
         	this.logger.warn("returning false for isPortletRenderRequested due to null result for getDefaultPortletWindow on subscribeId " + subscribeId);
         	return false;
         }
+        
+        final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
+        return this.isPortletRenderRequested(portletWindowId, request, response);
         
     }
     
@@ -469,14 +425,7 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
 	@Override
 	public String getPortletHeadOutput(String subscribeId,
 			HttpServletRequest request, HttpServletResponse response) {
-		final IPortletWindow portletWindow;
-		try {
-			portletWindow = this.getDefaultPortletWindow(subscribeId, request);
-		}
-		catch (DataRetrievalFailureException e) {
-			this.logger.warn("Failed to output portlet: " + subscribeId, e);
-			return "";
-		}
+	    final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, subscribeId);
 		
 		if (portletWindow == null) {
 		    this.logger.warn("Could not find portlet window for layout node id, empty header content will be returned: " + subscribeId);
@@ -495,14 +444,7 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
     public String getPortletOutput(String subscribeId, HttpServletRequest request, HttpServletResponse response) {
             Assert.notNull(subscribeId, "subscribeId cannot be null");
         
-        final IPortletWindow portletWindow;
-        try {
-            portletWindow = this.getDefaultPortletWindow(subscribeId, request);
-        }
-        catch (DataRetrievalFailureException e) {
-            this.logger.warn("Failed to output portlet: " + subscribeId, e);
-            return "";
-        }
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, subscribeId);
         
         if (portletWindow == null) {
             this.logger.warn("Could not find portlet window for layout node id, empty missing content text will be returned: " + subscribeId);
@@ -549,14 +491,7 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
     public String getPortletTitle(String subscribeId, HttpServletRequest request, HttpServletResponse response) {
         Assert.notNull(subscribeId, "subscribeId cannot be null");
         
-        final IPortletWindow portletWindow;
-        try {
-            portletWindow = this.getDefaultPortletWindow(subscribeId, request);
-        }
-        catch (DataRetrievalFailureException e) {
-            this.logger.warn("Failed to get portlet title: " + subscribeId, e);
-            return "";
-        }
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, subscribeId);
         
         if (portletWindow == null) {
             this.logger.warn("Could not find portlet window for layout node id, empty title content will be returned: " + subscribeId);
@@ -598,21 +533,19 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
         return portletDefinition.getTitle();
     }
 
+    @Override
     public int getPortletNewItemCount(String subscribeId, HttpServletRequest request, HttpServletResponse response) {
         Assert.notNull(subscribeId, "subscribeId cannot be null");
         
-        final IPortletWindow portletWindow;
-        try {
-            portletWindow = this.getDefaultPortletWindow(subscribeId, request);
-        }
-        catch (DataRetrievalFailureException e) {
-            this.logger.warn("Failed to get portlet new item count: " + subscribeId, e);
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, subscribeId);
+        if (portletWindow == null) {
             return 0;
         }
 
         return this.getPortletNewItemCount(portletWindow.getPortletWindowId(), request, response);
     }
 
+    @Override
     public int getPortletNewItemCount(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
         final IPortletRenderExecutionWorker tracker = getRenderedPortletBody(portletWindowId, request, response);
         final int timeout = getPortletRenderTimeout(portletWindowId, request);
@@ -629,18 +562,6 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
         }
         
         return 0;
-    }
-
-    protected IPortletWindow getDefaultPortletWindow(String subscribeId, HttpServletRequest request) {
-        try {
-            final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
-            final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(request, userInstance, subscribeId);
-            final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindow(request, portletEntity.getPortletEntityId());
-            return portletWindow;
-        }
-        catch (RuntimeException re) {
-            throw new DataRetrievalFailureException("Could not find IPortletWindow for subscribe id '" + subscribeId + "'", re);
-        }
     }
     
     protected int getPortletRenderTimeout(IPortletWindowId portletWindowId, HttpServletRequest request) {

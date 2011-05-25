@@ -65,7 +65,7 @@ class PortletEntityCache<T extends IPortletEntityDescriptor> {
         }
     }
     
-    public T storeIfAbsentEntity(IPortletEntityId portletEntityId, Function<?, T> entityCreator) {
+    public T storeIfAbsentEntity(IPortletEntityId portletEntityId, Function<IPortletEntityId, T> entityCreator) {
         //Check if the entity already exists (uses a read lock)
         T existingEntity = this.getEntity(portletEntityId);
         if (existingEntity != null) {
@@ -80,10 +80,9 @@ class PortletEntityCache<T extends IPortletEntityDescriptor> {
                 return existingEntity;
             }
             
-            final T entity = entityCreator.apply(null);
-            final SubscribeKey subscribeKey = new SubscribeKey(entity.getUserId(), entity.getLayoutNodeId());
-            this.entitiesBySubscribeKey.put(subscribeKey, entity);
-            this.entitiesById.put(portletEntityId, entity);
+            final T entity = entityCreator.apply(portletEntityId);
+            
+            this.storeEntity(entity);
             
             return entity;
         }
@@ -109,9 +108,7 @@ class PortletEntityCache<T extends IPortletEntityDescriptor> {
                 return existingEntity;
             }
             
-            final SubscribeKey subscribeKey = new SubscribeKey(entity.getUserId(), entity.getLayoutNodeId());
-            this.entitiesBySubscribeKey.put(subscribeKey, entity);
-            this.entitiesById.put(portletEntityId, entity);
+            this.storeEntity(entity);
         }
         finally {
             writeLock.unlock();

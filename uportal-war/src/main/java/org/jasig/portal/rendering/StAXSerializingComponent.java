@@ -105,7 +105,7 @@ public class StAXSerializingComponent implements CharacterPipelineComponent {
         
         //Add the chunking wrapper to the XMLEventReader
         final XMLEventReader xmlEventReader = eventReader.getEventReader();
-        final ChunkingEventReader chunkingEventReader = new ChunkingEventReader(
+        final ChunkingEventReader chunkingEventReader = new ChunkingEventReader(request,
                 this.chunkingElements, this.chunkingPatterns, 
                 xmlEventReader, xmlEventWriter, writer);
         

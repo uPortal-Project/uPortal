@@ -118,8 +118,9 @@ class SessionPortletEntityImpl implements IPortletEntity, IPortletEntityDescript
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((this.portletEntityData.getLayoutNodeId() == null) ? 0 : this.portletEntityData.getLayoutNodeId().hashCode());
         result = prime * result + ((this.portletDefinition == null) ? 0 : this.portletDefinition.hashCode());
-        result = prime * result + ((this.portletEntityData == null) ? 0 : this.portletEntityData.hashCode());
+        result = prime * result + this.portletEntityData.getUserId();
         return result;
     }
 
@@ -129,28 +130,32 @@ class SessionPortletEntityImpl implements IPortletEntity, IPortletEntityDescript
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!IPortletEntity.class.isAssignableFrom(obj.getClass()))
             return false;
-        SessionPortletEntityImpl other = (SessionPortletEntityImpl) obj;
+        IPortletEntity other = (IPortletEntity) obj;
+        if (this.portletEntityData.getLayoutNodeId() == null) {
+            if (other.getLayoutNodeId() != null)
+                return false;
+        }
+        else if (!this.portletEntityData.getLayoutNodeId().equals(other.getLayoutNodeId()))
+            return false;
         if (this.portletDefinition == null) {
-            if (other.portletDefinition != null)
+            if (other.getPortletDefinition() != null)
                 return false;
         }
-        else if (!this.portletDefinition.equals(other.portletDefinition))
+        else if (!this.portletDefinition.equals(other.getPortletDefinition()))
             return false;
-        if (this.portletEntityData == null) {
-            if (other.portletEntityData != null)
-                return false;
-        }
-        else if (!this.portletEntityData.equals(other.portletEntityData))
+        if (this.portletEntityData.getUserId() != other.getUserId())
             return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "SessionPortletEntityImpl [portletDefinition=" + this.portletDefinition + ", portletEntityData="
-                + this.portletEntityData + ", windowStates=" + this.windowStates + ", portletPreferences="
-                + this.portletPreferences + "]";
+        return "PortletEntity [" +
+                "portletEntityId=" + this.portletEntityData.getPortletEntityId() + ", " +
+                "layoutNodeId=" + this.portletEntityData.getLayoutNodeId() + ", " +
+                "userId=" + this.portletEntityData.getUserId() + ", " +
+                "portletDefinition=" + this.portletDefinition + "]";
     }
 }

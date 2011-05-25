@@ -129,9 +129,9 @@ public interface IPortletWindowRegistry {
      * 
      * @param request The current request
      * @param basePortletWindowId The window ID to clone into a transient window
-     * @return The transient window id
+     * @return The stateless window
      */
-    public IPortletWindowId getStatelessPortletWindowId(HttpServletRequest request, IPortletWindowId basePortletWindowId);
+    public IPortletWindow getOrCreateStatelessPortletWindow(HttpServletRequest request, IPortletWindowId basePortletWindowId);
     
     /**
      * Get all portlet window objects for this portlet entity.

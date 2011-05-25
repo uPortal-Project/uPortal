@@ -270,7 +270,8 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                             
                             //If the request is stateless
                             if (statelessUrlStates.contains(requestedUrlState)) {
-                                targetedPortletWindowId = this.portletWindowRegistry.getStatelessPortletWindowId(request, targetedPortletWindowId);
+                                final IPortletWindow statelessPortletWindow = this.portletWindowRegistry.getOrCreateStatelessPortletWindow(request, targetedPortletWindowId);
+                                targetedPortletWindowId = statelessPortletWindow.getPortletWindowId();
                             }
                             
                             //Create the portlet request info
@@ -792,7 +793,11 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
     /**
      * Add the provided portlet url builder data to the url string builder
      */
-    protected void addPortletUrlData(final HttpServletRequest request, final UrlStringBuilder url, final UrlType urlType, final IPortletUrlBuilder portletUrlBuilder, final IPortletWindowId targetedPortletWindowId, final boolean statelessUrl) {
+    protected void addPortletUrlData(
+            final HttpServletRequest request, final UrlStringBuilder url, final UrlType urlType, 
+            final IPortletUrlBuilder portletUrlBuilder, final IPortletWindowId targetedPortletWindowId, 
+            final boolean statelessUrl) {
+        
         final IPortletWindowId portletWindowId = portletUrlBuilder.getPortletWindowId();
         final boolean targeted = portletWindowId.equals(targetedPortletWindowId);
         
@@ -856,12 +861,13 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
         }
             
         final Map<String, String[]> parameters = portletUrlBuilder.getParameters();
-        if (targeted && statelessUrl && parameters.size() == 0) {
-            portletWindow = portletWindow != null ? portletWindow : this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
-            final Map<String, String[]> currentParameters = portletWindow.getRenderParameters();
-            url.addParametersArray(PORTLET_PARAM_PREFIX + suffixedPortletWindowId, currentParameters);
+        if (targeted && statelessUrl && parameters.isEmpty()) {
+            //TODO need a way to designate portlet API generated urls and portal api generated urls 
+//            portletWindow = portletWindow != null ? portletWindow : this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
+//            final Map<String, String[]> currentParameters = portletWindow.getRenderParameters();
+//            url.addParametersArray(PORTLET_PARAM_PREFIX + suffixedPortletWindowId, currentParameters);
         }
-        else {
+        else if (!parameters.isEmpty()) {
             url.addParametersArray(PORTLET_PARAM_PREFIX + suffixedPortletWindowId, parameters);
         }
     }

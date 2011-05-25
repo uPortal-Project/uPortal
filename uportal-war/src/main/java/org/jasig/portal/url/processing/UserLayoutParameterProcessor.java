@@ -92,10 +92,17 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
         final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
 
         
-        
+        final IStylesheetUserPreferences structureStylesheetUserPreferences = this.stylesheetUserPreferencesService.getStructureStylesheetUserPreferences(request);
+        final String tabId = portalRequestInfo.getTargetedLayoutNodeId();
+        if (tabId != null) {
+            structureStylesheetUserPreferences.setStylesheetParameter("focusedTabID", tabId);
+        }
+
         final UrlState urlState = portalRequestInfo.getUrlState();
         switch (urlState) {
-            case MAX:
+            case DETACHED:
+                structureStylesheetUserPreferences.setStylesheetParameter("detached", Boolean.TRUE.toString());
+            case MAX: {
                 final IPortletRequestInfo portletRequestInfo = portalRequestInfo.getTargetedPortletRequestInfo();
                 
                 if (portletRequestInfo != null) {
@@ -105,7 +112,6 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
                     
                     final String channelSubscribeId = portletEntity.getLayoutNodeId();
                     
-                    final IStylesheetUserPreferences structureStylesheetUserPreferences = this.stylesheetUserPreferencesService.getStructureStylesheetUserPreferences(request);
                     structureStylesheetUserPreferences.setStylesheetParameter("userLayoutRoot", channelSubscribeId);
                     this.stylesheetUserPreferencesService.updateStylesheetUserPreferences(request, structureStylesheetUserPreferences);
                     
@@ -119,17 +125,14 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
                     //If portletRequestInfo was null just fall through to NORMAL state
                     break;
                 }
+            }
                 
             case NORMAL:
-            default:
-                final IStylesheetUserPreferences structureStylesheetUserPreferences = this.stylesheetUserPreferencesService.getStructureStylesheetUserPreferences(request);
-                final String tabId = portalRequestInfo.getTargetedLayoutNodeId();
-                if (tabId != null) {
-                    structureStylesheetUserPreferences.setStylesheetParameter("focusedTabID", tabId);
-                }
+            default: {
                 structureStylesheetUserPreferences.setStylesheetParameter("userLayoutRoot", IUserLayout.ROOT_NODE_NAME);
                 this.stylesheetUserPreferencesService.updateStylesheetUserPreferences(request, structureStylesheetUserPreferences);
-            break;
+                break;
+            }
         }
         
         //TODO after portlet processing is complete set minimized theme flags by subscribeId

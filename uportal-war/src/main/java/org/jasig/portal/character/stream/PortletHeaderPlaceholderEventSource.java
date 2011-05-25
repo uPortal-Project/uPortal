@@ -29,6 +29,7 @@ import javax.xml.stream.events.StartElement;
 import org.jasig.portal.character.stream.events.CharacterEvent;
 import org.jasig.portal.character.stream.events.PortletHeaderPlaceholderEvent;
 import org.jasig.portal.character.stream.events.PortletHeaderPlaceholderEventImpl;
+import org.jasig.portal.portlet.om.IPortletWindowId;
 
 /**
  * Generates a {@link PortletHeaderPlaceholderEvent} for a {@link StartElement} event
@@ -39,8 +40,9 @@ import org.jasig.portal.character.stream.events.PortletHeaderPlaceholderEventImp
 public class PortletHeaderPlaceholderEventSource extends PortletPlaceholderEventSource {
     
     @Override
-    protected List<CharacterEvent> getCharacterEvents(String subscribeId, XMLEventReader eventReader, StartElement event) throws XMLStreamException {
+    protected List<CharacterEvent> getCharacterEvents(IPortletWindowId portletWindowId, XMLEventReader eventReader, StartElement event) throws XMLStreamException {
         this.readToEndElement(eventReader, event);
-        return Arrays.asList((CharacterEvent)new PortletHeaderPlaceholderEventImpl(subscribeId));
+        return Arrays.asList((CharacterEvent)new PortletHeaderPlaceholderEventImpl(portletWindowId));
     }
+
 }

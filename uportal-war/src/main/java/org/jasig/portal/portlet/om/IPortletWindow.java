@@ -33,12 +33,13 @@ import org.apache.pluto.container.PortletWindow;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface IPortletWindow {
+public interface IPortletWindow extends IPortletWindowDescriptor {
     /**
      * Retrieve this windows unique id which will be
      *  used to communicate back to the referencing portal.
      * @return unique id.
      */
+    @Override
     public IPortletWindowId getPortletWindowId();
     
     /**
@@ -115,4 +116,17 @@ public interface IPortletWindow {
      * @return The Pluto SPI implementation of a portlet window
      */
     public PortletWindow getPlutoPortletWindow();
+    
+    /**
+     * @return Hash code based on the {@link #getPortletEntity()}, {@link #getPortletWindowId()}, and {@link #getDelegationParentId()}
+     */
+    @Override
+    public int hashCode();
+
+    /**
+     * Do equals comparison to any other {@link IPortletWindow} based on the {@link #getPortletEntity()},
+     * {@link #getPortletWindowId()}, and {@link #getDelegationParentId()}
+     */
+    @Override
+    public boolean equals(Object obj);
 }

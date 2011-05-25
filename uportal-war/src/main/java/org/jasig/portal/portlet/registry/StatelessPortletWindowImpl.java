@@ -19,26 +19,19 @@
 
 package org.jasig.portal.portlet.registry;
 
-import java.io.IOException;
-import java.io.InvalidObjectException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Map;
 
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 
 import org.apache.commons.lang.Validate;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.pluto.container.PortletWindow;
 import org.apache.pluto.container.PortletWindowID;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
-import org.jasig.portal.portlet.PortletUtils;
 import org.jasig.portal.portlet.om.IPortletEntity;
+import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.url.ParameterMap;
 
 /**
  * Implementation of the {@link IPortletWindow} interface that tracks the current
@@ -48,73 +41,26 @@ import org.jasig.portal.url.ParameterMap;
  * @version $Revision$
  */
 class StatelessPortletWindowImpl implements IPortletWindow, PortletWindow {
-    private static final long serialVersionUID = 1L;
-
     private final PortletDefinition portletDefinition;
     private final IPortletEntity portletEntity;
-    private final IPortletWindowId portletWindowId;
-    private final IPortletWindowId delegationParent;
-    
-    private Map<String, String[]> renderParameters = new ParameterMap();
-    private Map<String, String[]> publicRenderParameters = new ParameterMap();
-    private transient PortletMode portletMode = PortletMode.VIEW;
-    private transient WindowState windowState = WindowState.NORMAL;
-    private Integer expirationCache = null;
+    private final PortletWindowData portletWindowData;
     
     /**
      * Creates a new PortletWindow with the default settings
      * 
-     * @param portletWindowId The unique identifier for this PortletWindow
-     * @param portletEntityId The unique identifier of the parent IPortletEntity
+     * @param portletWindowData The persistent portlet window data
+     * @param portletEntity The parent IPortletEntity
      * @param portletDefinition The pluto portlet descriptor level object (pluto calls it a definition)
-     * @param delegationParent The ID of the PortletWindow delegating rendering to this portlet
-     * @throws IllegalArgumentException if portletWindowId, or portletDefinition are null
+     * @throws IllegalArgumentException if any parameters are null
      */
-    public StatelessPortletWindowImpl(IPortletWindowId portletWindowId, IPortletEntity portletEntity, PortletDefinition portletDefinition, IPortletWindowId delegationParent) {
-        Validate.notNull(portletWindowId, "portletWindowId can not be null");
+    public StatelessPortletWindowImpl(PortletWindowData portletWindowData, IPortletEntity portletEntity, PortletDefinition portletDefinition) {
+        Validate.notNull(portletWindowData, "portletWindowData can not be null");
         Validate.notNull(portletEntity, "portletEntity can not be null");
         Validate.notNull(portletDefinition, "portletDefinition can not be null");
         
-        this.portletWindowId = portletWindowId;
+        this.portletWindowData = portletWindowData;
         this.portletEntity = portletEntity;
-        this.delegationParent = delegationParent;
         this.portletDefinition = portletDefinition;
-    }
-    
-    /**
-     * Creates a new PortletWindow with the default settings
-     * 
-     * @param portletWindowId The unique identifier for this PortletWindow
-     * @param portletEntityId The unique identifier of the parent IPortletEntity
-     * @param portletDefinition The pluto portlet descriptor level object (pluto calls it a definition)
-     * @throws IllegalArgumentException if portletWindowId, or portletDefinition are null
-     */
-    public StatelessPortletWindowImpl(IPortletWindowId portletWindowId, IPortletEntity portletEntity, PortletDefinition portletDefinition) {
-        this(portletWindowId, portletEntity, portletDefinition, null);
-    }
-    
-    /**
-     * Creates a new PortletWindow cloned from the passed IPortletWindow
-     * 
-     * @param portletWindowId The unique identifier for this PortletWindow
-     * @param portletWindow The PortletWindow to clone settings from
-     * @throws IllegalArgumentException if portletWindowId, or portletWindow are null
-     */
-    public StatelessPortletWindowImpl(IPortletWindowId portletWindowId, IPortletWindow portletWindow) {
-        Validate.notNull(portletWindowId, "portletWindowId can not be null");
-        Validate.notNull(portletWindow, "portletWindow can not be null");
-        
-        this.portletWindowId = portletWindowId;
-        this.portletEntity = portletWindow.getPortletEntity();
-        this.portletMode = portletWindow.getPortletMode();
-        this.windowState = portletWindow.getWindowState();
-        this.portletDefinition = portletWindow.getPlutoPortletWindow().getPortletDefinition();;
-        this.delegationParent = portletWindow.getDelegationParentId();
-        
-        Validate.notNull(this.portletEntity, "portletWindow.portletEntity can not be null");
-        Validate.notNull(this.portletMode, "portletWindow.portletMode can not be null");
-        Validate.notNull(this.windowState, "portletWindow.windowState can not be null");
-        Validate.notNull(this.portletDefinition, "portletWindow.portletDefinition can not be null");
     }
 
     /* (non-Javadoc)
@@ -122,7 +68,7 @@ class StatelessPortletWindowImpl implements IPortletWindow, PortletWindow {
      */
     @Override
     public PortletWindowID getId() {
-        return this.portletWindowId;
+        return this.portletWindowData.getPortletWindowId();
     }
     
     /* (non-Javadoc)
@@ -130,9 +76,14 @@ class StatelessPortletWindowImpl implements IPortletWindow, PortletWindow {
      */
     @Override
     public IPortletWindowId getPortletWindowId() {
-        return this.portletWindowId;
+        return this.portletWindowData.getPortletWindowId();
     }
     
+    @Override
+    public IPortletEntityId getPortletEntityId() {
+        return this.portletEntity.getPortletEntityId();
+    }
+
     @Override
     public IPortletEntity getPortletEntity() {
         return this.portletEntity;
@@ -143,7 +94,7 @@ class StatelessPortletWindowImpl implements IPortletWindow, PortletWindow {
      */
     @Override
     public PortletMode getPortletMode() {
-        return this.portletMode;
+        return this.portletWindowData.getPortletMode();
     }
 
     /* (non-Javadoc)
@@ -151,7 +102,7 @@ class StatelessPortletWindowImpl implements IPortletWindow, PortletWindow {
      */
     @Override
     public WindowState getWindowState() {
-        return this.windowState;
+        return this.portletWindowData.getWindowState();
     }
     
     /* (non-Javadoc)
@@ -159,8 +110,7 @@ class StatelessPortletWindowImpl implements IPortletWindow, PortletWindow {
      */
     @Override
     public void setPortletMode(PortletMode mode){
-        Validate.notNull(mode, "mode can not be null");
-        this.portletMode = mode;
+        this.portletWindowData.setPortletMode(mode);
     }
     
     /* (non-Javadoc)
@@ -168,8 +118,7 @@ class StatelessPortletWindowImpl implements IPortletWindow, PortletWindow {
      */
     @Override
     public void setWindowState(WindowState state) {
-        Validate.notNull(state, "state can not be null");
-        this.windowState = state;
+        this.portletWindowData.setWindowState(state);
     }
     
     /* (non-Javadoc)
@@ -177,7 +126,7 @@ class StatelessPortletWindowImpl implements IPortletWindow, PortletWindow {
      */
     @Override
     public Map<String, String[]> getRenderParameters() {
-        return this.renderParameters;
+        return this.portletWindowData.getRenderParameters();
     }
 
     /* (non-Javadoc)
@@ -185,19 +134,17 @@ class StatelessPortletWindowImpl implements IPortletWindow, PortletWindow {
      */
     @Override
     public void setRenderParameters(Map<String, String[]> renderParameters) {
-        Validate.notNull(renderParameters, "renderParameters can not be null");
-        this.renderParameters = renderParameters;
+        this.portletWindowData.setRenderParameters(renderParameters);
     }
     
     @Override
     public Map<String, String[]> getPublicRenderParameters() {
-        return this.publicRenderParameters;
+        return this.portletWindowData.getPublicRenderParameters();
     }
 
     @Override
     public void setPublicRenderParameters(Map<String, String[]> publicRenderParameters) {
-        Validate.notNull(publicRenderParameters, "publicRenderParameters can not be null");
-        this.publicRenderParameters = publicRenderParameters;
+        this.portletWindowData.setPublicRenderParameters(publicRenderParameters);
     }
 
     /* (non-Javadoc)
@@ -205,7 +152,7 @@ class StatelessPortletWindowImpl implements IPortletWindow, PortletWindow {
      */
     @Override
     public Integer getExpirationCache() {
-        return this.expirationCache;
+        return this.portletWindowData.getExpirationCache();
     }
 
     /* (non-Javadoc)
@@ -213,7 +160,7 @@ class StatelessPortletWindowImpl implements IPortletWindow, PortletWindow {
      */
     @Override
     public void setExpirationCache(Integer expirationCache) {
-        this.expirationCache = expirationCache;
+        this.portletWindowData.setExpirationCache(expirationCache);
     }
     
     /*
@@ -222,7 +169,7 @@ class StatelessPortletWindowImpl implements IPortletWindow, PortletWindow {
      */
     @Override
     public IPortletWindowId getDelegationParentId() {
-        return this.delegationParent;
+        return this.portletWindowData.getDelegationParentId();
     }
 
     @Override
@@ -230,43 +177,22 @@ class StatelessPortletWindowImpl implements IPortletWindow, PortletWindow {
         return this;
     }
     
-    //********** Serializable Methods **********//
-
-    private void writeObject(ObjectOutputStream oos) throws IOException {
-        oos.defaultWriteObject();
-        oos.writeObject(this.portletMode.toString());
-        oos.writeObject(this.windowState.toString());
-    }
-    
-    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        //Read & validate non-transient fields
-        ois.defaultReadObject();
-        
-        if (this.portletWindowId == null) {
-            throw new InvalidObjectException("portletWindowId can not be null");
-        }
-        
-        //Read & validate transient fields
-        final String portletModeStr = (String)ois.readObject();
-        if (portletModeStr == null) {
-            throw new InvalidObjectException("portletMode can not be null");
-        }
-        this.portletMode = PortletUtils.getPortletMode(portletModeStr);
-        
-        final String windowStateStr = (String)ois.readObject();
-        if (windowStateStr == null) {
-            throw new InvalidObjectException("windowState can not be null");
-        }
-        this.windowState = PortletUtils.getWindowState(windowStateStr);
-    }
+    /*
+     * (non-Javadoc)
+     * @see org.apache.pluto.container.PortletWindow#getPortletDefinition()
+     */
+	@Override
+	public PortletDefinition getPortletDefinition() {
+		return this.portletDefinition;
+	}
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.delegationParent == null) ? 0 : this.delegationParent.hashCode());
         result = prime * result + ((this.portletEntity == null) ? 0 : this.portletEntity.hashCode());
-        result = prime * result + ((this.portletWindowId == null) ? 0 : this.portletWindowId.hashCode());
+        result = prime * result + ((this.portletWindowData.getPortletWindowId() == null) ? 0 : this.portletWindowData.getPortletWindowId().hashCode());
+        result = prime * result + ((this.portletWindowData.getDelegationParentId() == null) ? 0 : this.portletWindowData.getDelegationParentId().hashCode());
         return result;
     }
 
@@ -276,52 +202,40 @@ class StatelessPortletWindowImpl implements IPortletWindow, PortletWindow {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!IPortletWindow.class.isAssignableFrom(obj.getClass()))
             return false;
-        StatelessPortletWindowImpl other = (StatelessPortletWindowImpl) obj;
-        if (this.delegationParent == null) {
-            if (other.delegationParent != null)
-                return false;
-        }
-        else if (!this.delegationParent.equals(other.delegationParent))
-            return false;
+        final IPortletWindow other = (IPortletWindow) obj;
         if (this.portletEntity == null) {
-            if (other.portletEntity != null)
+            if (other.getPortletEntity() != null)
                 return false;
         }
-        else if (!this.portletEntity.equals(other.portletEntity))
+        else if (!this.portletEntity.equals(other.getPortletEntity()))
             return false;
-        if (this.portletWindowId == null) {
-            if (other.portletWindowId != null)
+        if (this.portletWindowData.getDelegationParentId() == null) {
+            if (other.getDelegationParentId() != null)
                 return false;
         }
-        else if (!this.portletWindowId.equals(other.portletWindowId))
+        else if (!this.portletWindowData.getDelegationParentId().equals(other.getDelegationParentId()))
+            return false;
+        if (this.portletWindowData.getPortletWindowId() == null) {
+            if (other.getPortletWindowId() != null)
+                return false;
+        }
+        else if (!this.portletWindowData.getPortletWindowId().equals(other.getPortletWindowId()))
             return false;
         return true;
     }
 
-    /**
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-            .append("portletWindowId", this.portletWindowId)
-            .append("windowState", this.windowState)
-            .append("portletMode", this.portletMode)
-            .append("expirationCache", this.expirationCache)
-            .append("renderParameters", this.renderParameters)
-            .append("publicRenderParameters", this.publicRenderParameters)
-            .append("delegationParent", this.delegationParent)
-            .toString();
+        return "PortletWindow [" +
+        		"portletWindowId=" + this.portletWindowData.getPortletWindowId() + ", " +
+        		"delegationParentId=" + this.portletWindowData.getDelegationParentId() + ", " +
+        		"portletMode=" + this.portletWindowData.getPortletMode() + ", " +
+        		"windowState=" + this.portletWindowData.getWindowState() + ", " +
+        		"expirationCache=" + this.portletWindowData.getExpirationCache() + ", " +
+        		"renderParameters=" + this.portletWindowData.getRenderParameters() + ", " +
+        		"publicRenderParameters=" + this.portletWindowData.getPublicRenderParameters() + ", " +
+				"portletEntity=" + this.portletEntity + "]";
     }
-
-    /*
-     * (non-Javadoc)
-     * @see org.apache.pluto.container.PortletWindow#getPortletDefinition()
-     */
-	@Override
-	public PortletDefinition getPortletDefinition() {
-		return this.portletDefinition;
-	}
 }

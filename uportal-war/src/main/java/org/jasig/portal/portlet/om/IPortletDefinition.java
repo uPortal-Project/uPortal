@@ -170,4 +170,16 @@ public interface IPortletDefinition extends IBasicEntity, IPortalData {
 	 */
 	public void removeParameter(String name);
 
+	/**
+	 * @return Hash code based only on the fname of the portlet definition
+	 */
+	@Override
+	public int hashCode();
+	
+	/**
+	 * Equals must be able to compare against any other {@link IPortletDefinition} and
+	 * the comparison must only use the fname
+	 */
+	@Override
+	public boolean equals(Object o);
 }

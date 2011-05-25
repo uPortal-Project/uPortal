@@ -28,30 +28,28 @@
                            
     <alias name="staxSerializingComponent" alias="renderingPipeline"/>
     
+    <bean id="portletContentPlaceholderEventSource" class="org.jasig.portal.character.stream.PortletContentPlaceholderEventSource" />
+    <bean id="portletHeaderPlaceholderEventSource" class="org.jasig.portal.character.stream.PortletHeaderPlaceholderEventSource" />
+    <bean id="portletTitlePlaceholderEventSource" class="org.jasig.portal.character.stream.PortletTitlePlaceholderEventSource" />
+    <bean id="portletHelpPlaceholderEventSource" class="org.jasig.portal.character.stream.PortletHelpPlaceholderEventSource" />
     
     <!-- StAX to String serialization -->
     <bean id="staxSerializingComponent" class="org.jasig.portal.rendering.StAXSerializingComponent">
         <property name="wrappedComponent" ref="postThemeTransformLogger" />
         <property name="chunkingElements">
             <map>
-                <entry>
+                <entry value-ref="portletContentPlaceholderEventSource">
                     <key><util:constant static-field="org.jasig.portal.layout.IUserLayoutManager.CHANNEL" /></key>
-                    <bean class="org.jasig.portal.character.stream.PortletContentPlaceholderEventSource" />
                 </entry>
-                <entry>
+                <entry value-ref="portletHeaderPlaceholderEventSource">
                     <key><util:constant static-field="org.jasig.portal.layout.IUserLayoutManager.CHANNEL_HEADER" /></key>
-                    <bean class="org.jasig.portal.character.stream.PortletHeaderPlaceholderEventSource" />
                 </entry>
             </map>
         </property>
         <property name="chunkingPatterns">
             <map>
-                <entry key="\{up-portlet-title\(([^\)]+)\)\}">
-                    <bean class="org.jasig.portal.character.stream.PortletTitlePlaceholderEventSource" />
-                </entry>
-                <entry key="\{up-portlet-help\(([^\)]+)\)\}">
-                    <bean class="org.jasig.portal.character.stream.PortletHelpPlaceholderEventSource" />
-                </entry>
+                <entry key="\{up-portlet-title\(([^\)]+)\)\}" value-ref="portletTitlePlaceholderEventSource" />
+                <entry key="\{up-portlet-help\(([^\)]+)\)\}" value-ref="portletHelpPlaceholderEventSource" />
             </map>
         </property>
     </bean>
@@ -192,27 +190,27 @@
     
     <bean id="xalanMessageHelper" class="org.jasig.portal.security.xslt.XalanMessageHelper"/>
     
-    <bean id="userInstanceManager" class="org.jasig.portal.spring.EasyMockFactoryBean">
+    <bean id="userInstanceManager" class="org.jasig.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.jasig.portal.user.IUserInstanceManager" />
     </bean>
     
-    <bean id="portalUrlProvider" class="org.jasig.portal.spring.EasyMockFactoryBean">
+    <bean id="portalUrlProvider" class="org.jasig.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.jasig.portal.url.IPortalUrlProvider" />
     </bean>
     
-    <bean id="portletWindowRegistry" class="org.jasig.portal.spring.EasyMockFactoryBean">
+    <bean id="portletWindowRegistry" class="org.jasig.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.jasig.portal.portlet.registry.IPortletWindowRegistry" />
     </bean>
     
-    <bean id="portletEntityRegistry" class="org.jasig.portal.spring.EasyMockFactoryBean">
+    <bean id="portletEntityRegistry" class="org.jasig.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.jasig.portal.portlet.registry.IPortletEntityRegistry" />
     </bean>
     
-    <bean id="resourcesElementsProvider" class="org.jasig.portal.spring.EasyMockFactoryBean">
+    <bean id="resourcesElementsProvider" class="org.jasig.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.jasig.resourceserver.utils.aggr.ResourcesElementsProvider" />
     </bean>
     
-    <bean id="xalanMessageHelperBean" class="org.jasig.portal.spring.EasyMockFactoryBean">
+    <bean id="xalanMessageHelperBean" class="org.jasig.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.jasig.portal.security.xslt.IXalanMessageHelper" />
     </bean>
     

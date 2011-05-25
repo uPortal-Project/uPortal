@@ -19,10 +19,8 @@
 
 package org.jasig.portal.rendering;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -54,9 +52,14 @@ import org.jasig.portal.character.stream.events.PortletContentPlaceholderEvent;
 import org.jasig.portal.character.stream.events.PortletHeaderPlaceholderEvent;
 import org.jasig.portal.character.stream.events.PortletHelpPlaceholderEvent;
 import org.jasig.portal.character.stream.events.PortletTitlePlaceholderEvent;
+import org.jasig.portal.portlet.om.IPortletWindow;
+import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.jasig.portal.xml.XmlUtilities;
 import org.junit.Test;
+import org.mockito.Matchers;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 /**
  * @author Eric Dalquist
@@ -66,102 +69,118 @@ public class StAXSerializingComponentTest {
 
     @Test
     public void testSerializing() throws Exception {
-        final XmlUtilities xmlUtilities = createMock(XmlUtilities.class);
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+        final XmlUtilities xmlUtilities = mock(XmlUtilities.class);
+        final IPortletWindowRegistry portletWindowRegistry = mock(IPortletWindowRegistry.class);
         
-        expect(xmlUtilities.getHtmlOutputFactory()).andReturn(XMLOutputFactory.newFactory());
-        
-        replay(xmlUtilities);
+        when(xmlUtilities.getHtmlOutputFactory()).thenReturn(XMLOutputFactory.newFactory());
         
         final StAXSerializingComponent staxSerializingComponent = new StAXSerializingComponent();
         
         //Setup a simple pass-through parent
         staxSerializingComponent.setWrappedComponent(new SimpleStAXSource());
         staxSerializingComponent.setXmlUtilities(xmlUtilities);
+
+        final IPortletWindow portletWindow = mock(IPortletWindow.class);
+        when(portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(Matchers.eq(request), Matchers.anyString())).thenReturn(portletWindow);
+        
+        final PortletContentPlaceholderEventSource contentPlaceholderEventSource = new PortletContentPlaceholderEventSource();
+        contentPlaceholderEventSource.setPortletWindowRegistry(portletWindowRegistry);
+
+        final PortletHeaderPlaceholderEventSource headerPlaceholderEventSource = new PortletHeaderPlaceholderEventSource();
+        headerPlaceholderEventSource.setPortletWindowRegistry(portletWindowRegistry);
+
+        final PortletTitlePlaceholderEventSource portletTitlePlaceholderEventSource = new PortletTitlePlaceholderEventSource();
+        portletTitlePlaceholderEventSource.setPortletWindowRegistry(portletWindowRegistry);
+        
+        final PortletHelpPlaceholderEventSource portletHelpPlaceholderEventSource = new PortletHelpPlaceholderEventSource();
+        portletHelpPlaceholderEventSource.setPortletWindowRegistry(portletWindowRegistry);
+        
+        
         
         final Map<String, CharacterEventSource> chunkingElements = new LinkedHashMap<String, CharacterEventSource>();
-        chunkingElements.put("portlet", new PortletContentPlaceholderEventSource());
-        chunkingElements.put("portlet-header", new PortletHeaderPlaceholderEventSource());
+        chunkingElements.put("portlet", contentPlaceholderEventSource);
+        chunkingElements.put("portlet-header", headerPlaceholderEventSource);
         staxSerializingComponent.setChunkingElements(chunkingElements);
         
         final Map<String, CharacterEventSource> chunkingPatterns = new LinkedHashMap<String, CharacterEventSource>();
-        chunkingPatterns.put("\\{up-portlet-title\\(([^\\)]+)\\)\\}", new PortletTitlePlaceholderEventSource());
-        chunkingPatterns.put("\\{up-portlet-help\\(([^\\)]+)\\)\\}", new PortletHelpPlaceholderEventSource());
+        chunkingPatterns.put("\\{up-portlet-title\\(([^\\)]+)\\)\\}", portletTitlePlaceholderEventSource);
+        chunkingPatterns.put("\\{up-portlet-help\\(([^\\)]+)\\)\\}", portletHelpPlaceholderEventSource);
         staxSerializingComponent.setChunkingPatterns(chunkingPatterns);
         
-        final PipelineEventReader<CharacterEventReader, CharacterEvent> eventReader = staxSerializingComponent.getEventReader(null, null);
+        final PipelineEventReader<CharacterEventReader, CharacterEvent> eventReader = staxSerializingComponent.getEventReader(request, response);
         
         //Expected events structure, leaving the data out to make it at least a little simpler
-        final List<Class<? extends CharacterEvent>> expectedEvents = new ArrayList<Class<? extends CharacterEvent>>();
-        expectedEvents.add(CharacterDataEvent.class);
-        expectedEvents.add(PortletHeaderPlaceholderEvent.class);
-        expectedEvents.add(CharacterDataEvent.class);
-        expectedEvents.add(PortletHeaderPlaceholderEvent.class);
-        expectedEvents.add(CharacterDataEvent.class);
-        expectedEvents.add(PortletHeaderPlaceholderEvent.class);
-        expectedEvents.add(CharacterDataEvent.class);
-        expectedEvents.add(PortletHeaderPlaceholderEvent.class);
-        expectedEvents.add(CharacterDataEvent.class);
-        expectedEvents.add(PortletHeaderPlaceholderEvent.class);
-        expectedEvents.add(CharacterDataEvent.class);
-        expectedEvents.add(PortletHeaderPlaceholderEvent.class);
-        expectedEvents.add(CharacterDataEvent.class);
-        expectedEvents.add(PortletHeaderPlaceholderEvent.class);
-        expectedEvents.add(CharacterDataEvent.class);
-        expectedEvents.add(PortletHeaderPlaceholderEvent.class);
-        expectedEvents.add(CharacterDataEvent.class);
-        expectedEvents.add(PortletContentPlaceholderEvent.class);
-        expectedEvents.add(CharacterDataEvent.class);
-        expectedEvents.add(PortletContentPlaceholderEvent.class);
-        expectedEvents.add(CharacterDataEvent.class);
-        expectedEvents.add(PortletContentPlaceholderEvent.class);
-        expectedEvents.add(CharacterDataEvent.class);
-        expectedEvents.add(PortletContentPlaceholderEvent.class);
-        expectedEvents.add(CharacterDataEvent.class);
-        expectedEvents.add(PortletContentPlaceholderEvent.class);
-        expectedEvents.add(CharacterDataEvent.class);
-        expectedEvents.add(PortletContentPlaceholderEvent.class);
-        expectedEvents.add(CharacterDataEvent.class);
-        expectedEvents.add(PortletContentPlaceholderEvent.class);
-        expectedEvents.add(CharacterDataEvent.class);
-        expectedEvents.add(PortletContentPlaceholderEvent.class);
-        expectedEvents.add(CharacterDataEvent.class);
-        expectedEvents.add(PortletTitlePlaceholderEvent.class);
-        expectedEvents.add(CharacterDataEvent.class);
-        expectedEvents.add(PortletTitlePlaceholderEvent.class);
-        expectedEvents.add(CharacterDataEvent.class);
-        expectedEvents.add(PortletHelpPlaceholderEvent.class);
-        expectedEvents.add(CharacterDataEvent.class);
-        expectedEvents.add(PortletTitlePlaceholderEvent.class);
-        expectedEvents.add(CharacterDataEvent.class);
-        expectedEvents.add(PortletContentPlaceholderEvent.class);
-        expectedEvents.add(CharacterDataEvent.class);
-        expectedEvents.add(PortletContentPlaceholderEvent.class);
-        expectedEvents.add(CharacterDataEvent.class);
-        expectedEvents.add(PortletContentPlaceholderEvent.class);
-        expectedEvents.add(CharacterDataEvent.class);
-        expectedEvents.add(PortletContentPlaceholderEvent.class);
-        expectedEvents.add(CharacterDataEvent.class);
+        final List<Class<? extends CharacterEvent>> whenedEvents = new ArrayList<Class<? extends CharacterEvent>>();
+        whenedEvents.add(CharacterDataEvent.class);
+        whenedEvents.add(PortletHeaderPlaceholderEvent.class);
+        whenedEvents.add(CharacterDataEvent.class);
+        whenedEvents.add(PortletHeaderPlaceholderEvent.class);
+        whenedEvents.add(CharacterDataEvent.class);
+        whenedEvents.add(PortletHeaderPlaceholderEvent.class);
+        whenedEvents.add(CharacterDataEvent.class);
+        whenedEvents.add(PortletHeaderPlaceholderEvent.class);
+        whenedEvents.add(CharacterDataEvent.class);
+        whenedEvents.add(PortletHeaderPlaceholderEvent.class);
+        whenedEvents.add(CharacterDataEvent.class);
+        whenedEvents.add(PortletHeaderPlaceholderEvent.class);
+        whenedEvents.add(CharacterDataEvent.class);
+        whenedEvents.add(PortletHeaderPlaceholderEvent.class);
+        whenedEvents.add(CharacterDataEvent.class);
+        whenedEvents.add(PortletHeaderPlaceholderEvent.class);
+        whenedEvents.add(CharacterDataEvent.class);
+        whenedEvents.add(PortletContentPlaceholderEvent.class);
+        whenedEvents.add(CharacterDataEvent.class);
+        whenedEvents.add(PortletContentPlaceholderEvent.class);
+        whenedEvents.add(CharacterDataEvent.class);
+        whenedEvents.add(PortletContentPlaceholderEvent.class);
+        whenedEvents.add(CharacterDataEvent.class);
+        whenedEvents.add(PortletContentPlaceholderEvent.class);
+        whenedEvents.add(CharacterDataEvent.class);
+        whenedEvents.add(PortletContentPlaceholderEvent.class);
+        whenedEvents.add(CharacterDataEvent.class);
+        whenedEvents.add(PortletContentPlaceholderEvent.class);
+        whenedEvents.add(CharacterDataEvent.class);
+        whenedEvents.add(PortletContentPlaceholderEvent.class);
+        whenedEvents.add(CharacterDataEvent.class);
+        whenedEvents.add(PortletContentPlaceholderEvent.class);
+        whenedEvents.add(CharacterDataEvent.class);
+        whenedEvents.add(PortletTitlePlaceholderEvent.class);
+        whenedEvents.add(CharacterDataEvent.class);
+        whenedEvents.add(PortletTitlePlaceholderEvent.class);
+        whenedEvents.add(CharacterDataEvent.class);
+        whenedEvents.add(PortletHelpPlaceholderEvent.class);
+        whenedEvents.add(CharacterDataEvent.class);
+        whenedEvents.add(PortletTitlePlaceholderEvent.class);
+        whenedEvents.add(CharacterDataEvent.class);
+        whenedEvents.add(PortletContentPlaceholderEvent.class);
+        whenedEvents.add(CharacterDataEvent.class);
+        whenedEvents.add(PortletContentPlaceholderEvent.class);
+        whenedEvents.add(CharacterDataEvent.class);
+        whenedEvents.add(PortletContentPlaceholderEvent.class);
+        whenedEvents.add(CharacterDataEvent.class);
+        whenedEvents.add(PortletContentPlaceholderEvent.class);
+        whenedEvents.add(CharacterDataEvent.class);
 
         
         final Iterator<CharacterEvent> eventItr = eventReader.iterator();
-        final Iterator<Class<? extends CharacterEvent>> expectedEventTypeItr = expectedEvents.iterator();
+        final Iterator<Class<? extends CharacterEvent>> whenedEventTypeItr = whenedEvents.iterator();
         
         int eventCount = 0;
-        while (expectedEventTypeItr.hasNext()) {
+        while (whenedEventTypeItr.hasNext()) {
             eventCount++;
-            assertTrue("The number of events returned by the eventReader less than the expected event count of: " + expectedEvents.size() + " was: " + eventCount, eventItr.hasNext());
+            assertTrue("The number of events returned by the eventReader less than the whened event count of: " + whenedEvents.size() + " was: " + eventCount, eventItr.hasNext());
             
-            final Class<? extends CharacterEvent> expectedEventType = expectedEventTypeItr.next();
+            final Class<? extends CharacterEvent> whenedEventType = whenedEventTypeItr.next();
             final CharacterEvent event = eventItr.next();
             assertNotNull("Event number " + eventCount + " is null", event);
             
             final Class<? extends CharacterEvent> eventType = event.getClass();
-            assertTrue("Event " + eventType.getName() + " at index " + eventCount + " is not assignable to expected event type: " + expectedEventType.getName(), expectedEventType.isAssignableFrom(eventType));
+            assertTrue("Event " + eventType.getName() + " at index " + eventCount + " is not assignable to whened event type: " + whenedEventType.getName(), whenedEventType.isAssignableFrom(eventType));
         }
         
-        assertFalse("The number of events returned by the eventReader is more than the expected event count of: " + expectedEvents.size(), eventItr.hasNext());
-        
-        verify(xmlUtilities);
+        assertFalse("The number of events returned by the eventReader is more than the whened event count of: " + whenedEvents.size(), eventItr.hasNext());
     }
     
     private static final class SimpleStAXSource implements StAXPipelineComponent {

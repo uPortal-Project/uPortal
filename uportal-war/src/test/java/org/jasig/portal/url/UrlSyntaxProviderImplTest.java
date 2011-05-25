@@ -42,6 +42,7 @@ import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.utils.Tuple;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -145,6 +146,37 @@ public class UrlSyntaxProviderImplTest {
         final String url = portalUrlBuilder.getUrlString();
         
         assertEquals("/uPortal/f/n2/normal/render.uP?plCt=fname.s3", url);
+    }
+  
+    @Test
+    public void testSingleFolderPortletFnameSubscribeIdDetachedRenderUrlGeneration() throws Exception {
+        final String layoutNodeId = "n2";
+        final String subscribeId = "s3";
+        final String fname = "fname";
+        
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setContextPath("/uPortal");
+        
+        final MockPortletWindowId portletWindowId = new MockPortletWindowId("pw1");
+        
+        when(portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
+        when(urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request)).thenReturn(urlNodeSyntaxHelper);
+        when(urlNodeSyntaxHelper.getFolderNamesForLayoutNode(request, subscribeId)).thenReturn(Arrays.asList(layoutNodeId));
+        when(urlNodeSyntaxHelper.getFolderNameForPortlet(request, portletWindowId)).thenReturn(fname + "." + subscribeId);
+        
+        when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow1);
+        when(portletWindow1.getPortletEntity()).thenReturn(portletEntity1);
+        when(portletWindow1.getWindowState()).thenReturn(IPortletRenderer.DETACHED);
+        when(portletWindow1.getPortletMode()).thenReturn(PortletMode.VIEW);
+        when(portletEntity1.getLayoutNodeId()).thenReturn(subscribeId);
+        
+        final PortalUrlBuilder portalUrlBuilder = new PortalUrlBuilder(urlSyntaxProvider, request, layoutNodeId, portletWindowId, UrlType.RENDER);
+        final IPortletUrlBuilder portletUrlBuilder = portalUrlBuilder.getPortletUrlBuilder(portletWindowId);
+        portletUrlBuilder.setPortletMode(PortletMode.EDIT);
+        
+        final String url = portalUrlBuilder.getUrlString();
+        
+        assertEquals("/uPortal/f/n2/p/fname.s3/detached/render.uP?plCm=edit", url);
     }
 
     @Test

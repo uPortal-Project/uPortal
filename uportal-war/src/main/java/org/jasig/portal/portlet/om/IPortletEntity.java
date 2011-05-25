@@ -84,4 +84,16 @@ public interface IPortletEntity extends IPortletEntityDescriptor {
      */
     public void setPortletPreferences(IPortletPreferences portletPreferences);
     
+    /**
+     * @return A hash code created based on the userId, layoutId and parent {@link IPortletDefinition}
+     */
+    @Override
+    public int hashCode();
+    
+    /**
+     * Must compare correctly with any other {@link IPortletEntity} on {@link #getUserId()}, {@link #getLayoutNodeId()}, and
+     * {@link #getPortletDefinition()}
+     */
+    @Override
+    public boolean equals(Object o);
 }

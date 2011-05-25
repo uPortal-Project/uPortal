@@ -33,15 +33,16 @@ import javax.portlet.WindowState;
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.portlet.PortletUtils;
 import org.jasig.portal.portlet.om.IPortletEntityId;
+import org.jasig.portal.portlet.om.IPortletWindowDescriptor;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 
 /**
- * Serializable session persistent portlet window data. This class MUST be thread safe.
+ * Serializable persistent portlet window data. This class MUST be thread safe.
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-class PortletWindowData implements Serializable {
+class PortletWindowData implements IPortletWindowDescriptor, Serializable {
     private static final long serialVersionUID = 1L;
     
     private final IPortletEntityId portletEntityId;
@@ -154,6 +155,7 @@ class PortletWindowData implements Serializable {
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.om.IPortletWindowData#getPortletEntityId()
      */
+    @Override
     public IPortletEntityId getPortletEntityId() {
         return this.portletEntityId;
     }
@@ -161,6 +163,7 @@ class PortletWindowData implements Serializable {
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.om.IPortletWindowData#getPortletWindowId()
      */
+    @Override
     public IPortletWindowId getPortletWindowId() {
         return this.portletWindowId;
     }
@@ -214,11 +217,15 @@ class PortletWindowData implements Serializable {
 
     @Override
     public String toString() {
-        return "PortletWindowData [portletEntityId=" + this.portletEntityId + ", portletWindowId="
-                + this.portletWindowId + ", delegationParentId=" + this.delegationParentId + ", renderParameters="
-                + this.renderParameters + ", publicRenderParameters=" + this.publicRenderParameters + ", portletMode="
-                + this.portletMode + ", windowState=" + this.windowState + ", expirationCache=" + this.expirationCache
-                + "]";
+        return "PortletWindow [" +
+                "portletWindowId=" + this.portletWindowId + ", " +
+                "delegationParentId=" + this.delegationParentId + ", " +
+                "portletMode=" + this.portletMode + ", " +
+                "windowState=" + this.windowState + ", " +
+                "expirationCache=" + this.expirationCache + ", " +
+                "renderParameters=" + this.renderParameters + ", " +
+                "publicRenderParameters=" + this.publicRenderParameters + ", " +
+                "portletEntityId=" + this.portletEntityId + "]";
     }
 
     private void writeObject(ObjectOutputStream oos) throws IOException {

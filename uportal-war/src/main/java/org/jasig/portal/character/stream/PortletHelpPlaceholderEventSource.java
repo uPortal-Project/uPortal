@@ -26,6 +26,7 @@ import java.util.regex.MatchResult;
 import org.jasig.portal.character.stream.events.CharacterEvent;
 import org.jasig.portal.character.stream.events.PortletHelpPlaceholderEvent;
 import org.jasig.portal.character.stream.events.PortletHelpPlaceholderEventImpl;
+import org.jasig.portal.portlet.om.IPortletWindowId;
 
 /**
  * Generates a {@link PortletHelpPlaceholderEvent} for a regular expression match
@@ -36,7 +37,7 @@ import org.jasig.portal.character.stream.events.PortletHelpPlaceholderEventImpl;
 public class PortletHelpPlaceholderEventSource extends PortletPlaceholderEventSource {
 
     @Override
-    protected List<CharacterEvent> getCharacterEvents(String subscribeId, MatchResult matchResult) {
-        return Arrays.asList((CharacterEvent)new PortletHelpPlaceholderEventImpl(subscribeId));
+    protected List<CharacterEvent> getCharacterEvents(IPortletWindowId portletWindowId, MatchResult matchResult) {
+        return Arrays.asList((CharacterEvent)new PortletHelpPlaceholderEventImpl(portletWindowId));
     }
 }

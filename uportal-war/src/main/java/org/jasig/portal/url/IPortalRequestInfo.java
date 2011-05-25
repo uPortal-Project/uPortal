@@ -33,6 +33,7 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
  */
 public interface IPortalRequestInfo {
     public static final String URL_TYPE_HEADER = UrlType.class.getName();
+    public static final String URL_STATE_HEADER = UrlState.class.getName();
     
     /**
      * @return The state rendered by the URL

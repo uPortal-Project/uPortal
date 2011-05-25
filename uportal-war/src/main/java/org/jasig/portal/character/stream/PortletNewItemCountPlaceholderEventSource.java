@@ -26,6 +26,7 @@ import java.util.regex.MatchResult;
 import org.jasig.portal.character.stream.events.CharacterEvent;
 import org.jasig.portal.character.stream.events.PortletNewItemCountPlaceholderEvent;
 import org.jasig.portal.character.stream.events.PortletNewItemCountPlaceholderEventImpl;
+import org.jasig.portal.portlet.om.IPortletWindowId;
 
 /**
  * Generates a {@link PortletNewItemCountPlaceholderEvent} for a regular expression match
@@ -36,7 +37,8 @@ import org.jasig.portal.character.stream.events.PortletNewItemCountPlaceholderEv
 public class PortletNewItemCountPlaceholderEventSource extends PortletPlaceholderEventSource {
     
     @Override
-    protected List<CharacterEvent> getCharacterEvents(String subscribeId, MatchResult matchResult) {
-        return Arrays.asList((CharacterEvent)new PortletNewItemCountPlaceholderEventImpl(subscribeId));
+    protected List<CharacterEvent> getCharacterEvents(IPortletWindowId portletWindowId, MatchResult matchResult) {
+        return Arrays.asList((CharacterEvent)new PortletNewItemCountPlaceholderEventImpl(portletWindowId));
     }
+
 }

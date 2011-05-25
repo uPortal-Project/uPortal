@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.MatchResult;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
@@ -34,9 +35,13 @@ import javax.xml.stream.events.XMLEvent;
 
 import org.jasig.portal.character.stream.events.CharacterEvent;
 import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.rendering.PortletRenderingInitiationComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Base class for create {@link CharacterEvent}s that target a portlet based on either
@@ -48,6 +53,7 @@ import org.slf4j.LoggerFactory;
 public abstract class PortletPlaceholderEventSource implements CharacterEventSource {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
+    private IPortletWindowRegistry portletWindowRegistry;
     private int portletIdGroup = 1;
     
     /**
@@ -56,24 +62,39 @@ public abstract class PortletPlaceholderEventSource implements CharacterEventSou
     public void setPortletIdGroup(int portletIdGroup) {
         this.portletIdGroup = portletIdGroup;
     }
+    
+    @Autowired
+    public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
+        this.portletWindowRegistry = portletWindowRegistry;
+    }
 
 
     /* (non-Javadoc)
      * @see org.jasig.portal.character.stream.CharacterEventSource#getCharacterEvents(javax.xml.stream.XMLEventReader, javax.xml.stream.events.StartElement)
      */
     @Override
-    public final List<CharacterEvent> getCharacterEvents(XMLEventReader eventReader, StartElement event) throws XMLStreamException {
-        final Attribute idAttribute = event.getAttributeByName(IUserLayoutManager.ID_ATTR_NAME);
-        if (idAttribute == null) {
-            this.logger.warn("StartElement " + event.getName() + " does not have an " + IUserLayoutManager.ID_ATTR_NAME + " Attribute. No PortletPlaceholderEvent will be generated. " + event.getLocation());
-            return null;
+    public final List<CharacterEvent> getCharacterEvents(HttpServletRequest request, XMLEventReader eventReader, StartElement event) throws XMLStreamException {
+        final IPortletWindowId portletWindowId;
+        
+        final Attribute windowIdAttribute = event.getAttributeByName(PortletRenderingInitiationComponent.PORTLET_WINDOW_ID_ATTR_NAME);
+        if (windowIdAttribute != null) {
+            final String windowIdStr = windowIdAttribute.getValue();
+            portletWindowId = this.portletWindowRegistry.getPortletWindowId(request, windowIdStr);
+        }
+        else {
+            final Attribute idAttribute = event.getAttributeByName(IUserLayoutManager.ID_ATTR_NAME);
+            if (idAttribute == null) {
+                this.logger.warn("StartElement " + event.getName() + " does not have a " + PortletRenderingInitiationComponent.PORTLET_WINDOW_ID_ATTR_NAME + " or " + IUserLayoutManager.ID_ATTR_NAME + " Attribute. No PortletPlaceholderEvent will be generated. " + event.getLocation());
+                return null;
+            }
+            
+            final String subscribeId = idAttribute.getValue();
+            final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, subscribeId);
+            portletWindowId = portletWindow.getPortletWindowId();
         }
         
-        final String subscribeId = idAttribute.getValue();
         
-        final List<CharacterEvent> characterEvents = this.getCharacterEvents(subscribeId, eventReader, event);
-        
-        return characterEvents;
+        return this.getCharacterEvents(portletWindowId, eventReader, event);
     }
     
     /**
@@ -105,7 +126,7 @@ public abstract class PortletPlaceholderEventSource implements CharacterEventSou
      * UnsupportedOperationException
      */
     @SuppressWarnings("unused")
-    protected List<CharacterEvent> getCharacterEvents(String subscribeId, XMLEventReader eventReader, StartElement event) throws XMLStreamException {
+    protected List<CharacterEvent> getCharacterEvents(IPortletWindowId portletWindowId, XMLEventReader eventReader, StartElement event) throws XMLStreamException {
         throw new UnsupportedOperationException();
     }
 
@@ -113,21 +134,24 @@ public abstract class PortletPlaceholderEventSource implements CharacterEventSou
      * @see org.jasig.portal.character.stream.CharacterEventSource#getCharacterEvents(java.util.regex.MatchResult)
      */
     @Override
-    public final List<CharacterEvent> getCharacterEvents(MatchResult matchResult) {
+    public final List<CharacterEvent> getCharacterEvents(HttpServletRequest request, MatchResult matchResult) {
         final String subscribeId = matchResult.group(this.portletIdGroup);
         if (subscribeId == null) {
             this.logger.warn("MatchResult returned null for group " + this.portletIdGroup + ". No PortletPlaceholderEvent will be generated. " + matchResult);
             return null;
         }
         
-        return this.getCharacterEvents(subscribeId, matchResult);
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, subscribeId);
+        final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
+        
+        return this.getCharacterEvents(portletWindowId, matchResult);
     }
     
     /**
      * Implement to generate CharacterEvents based on a regular expression match. If not implemented throws 
      * UnsupportedOperationException
      */
-    protected List<CharacterEvent> getCharacterEvents(String subscribeId, MatchResult matchResult) {
+    protected List<CharacterEvent> getCharacterEvents(IPortletWindowId portletWindowId, MatchResult matchResult) {
         throw new UnsupportedOperationException();
     }
 }

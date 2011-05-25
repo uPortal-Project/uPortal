@@ -19,13 +19,11 @@
 
 package org.jasig.portal.rendering;
 
-import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.isA;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import static org.junit.Assert.assertEquals;
 
@@ -35,6 +33,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.OutputKeys;
 
+import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
+import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.security.xslt.IXalanMessageHelper;
@@ -125,32 +125,32 @@ public class RenderingPipelineIntegrationTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         
-        final IPortalUrlBuilder portalUrlBuilder = createNiceMock(IPortalUrlBuilder.class);
-        final IPortletUrlBuilder portletUrlBuilder = createNiceMock(IPortletUrlBuilder.class);
+        final IPortalUrlBuilder portalUrlBuilder = mock(IPortalUrlBuilder.class);
+        final IPortletUrlBuilder portletUrlBuilder = mock(IPortletUrlBuilder.class);
         
-        expect(portalUrlBuilder.getUrlString()).andReturn("URL_PLACEHOLDER").anyTimes();
-        expect(portalUrlBuilder.getTargetedPortletUrlBuilder()).andReturn(portletUrlBuilder).anyTimes();
+        when(portalUrlBuilder.getUrlString()).thenReturn("URL_PLACEHOLDER");
+        when(portalUrlBuilder.getTargetedPortletUrlBuilder()).thenReturn(portletUrlBuilder);
         
-        expect(this.resourcesElementsProvider
-                .getResourcesXmlFragment(isA(HttpServletRequest.class), eq("/media/skins/universality/uportal3/skin.xml")))
-                .andReturn(headFragment.getChildNodes()).anyTimes();
-        expect(this.resourcesElementsProvider
-                .getResourcesParameter(isA(HttpServletRequest.class), eq("/media/skins/universality/uportal3/skin.xml"), eq("fss-theme")))
-                .andReturn(".fl-mist").anyTimes();
-        expect(this.portalUrlProvider.getDefaultUrl(anyObject(HttpServletRequest.class))).andReturn(portalUrlBuilder).anyTimes();
-        expect(this.portalUrlProvider.getPortalUrlBuilderByLayoutNode(anyObject(HttpServletRequest.class), anyObject(String.class), anyObject(UrlType.class))).andReturn(portalUrlBuilder).anyTimes();
-        expect(this.portalUrlProvider.getPortalUrlBuilderByPortletFName(anyObject(HttpServletRequest.class), anyObject(String.class), anyObject(UrlType.class))).andReturn(portalUrlBuilder).anyTimes();
+        when(this.resourcesElementsProvider
+                .getResourcesXmlFragment(any(HttpServletRequest.class), eq("/media/skins/universality/uportal3/skin.xml")))
+                .thenReturn(headFragment.getChildNodes());
+        when(this.resourcesElementsProvider
+                .getResourcesParameter(any(HttpServletRequest.class), eq("/media/skins/universality/uportal3/skin.xml"), eq("fss-theme")))
+                .thenReturn(".fl-mist");
+        when(this.portalUrlProvider.getDefaultUrl(any(HttpServletRequest.class))).thenReturn(portalUrlBuilder);
+        when(this.portalUrlProvider.getPortalUrlBuilderByLayoutNode(any(HttpServletRequest.class), any(String.class), any(UrlType.class))).thenReturn(portalUrlBuilder);
+        when(this.portalUrlProvider.getPortalUrlBuilderByPortletFName(any(HttpServletRequest.class), any(String.class), any(UrlType.class))).thenReturn(portalUrlBuilder);
         
-        
-        replay(portalUrlBuilder, this.resourcesElementsProvider, this.portalUrlProvider, this.portletWindowRegistry, this.portletEntityRegistry, this.userInstanceManager, this.xalanMessageHelper);
+
+        final IPortletWindow portletWindow = mock(IPortletWindow.class);
+        when(portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(any(HttpServletRequest.class), any(String.class))).thenReturn(portletWindow);
+        when(portletWindow.getPortletWindowId()).thenReturn(new MockPortletWindowId("1"));
         
         final PipelineEventReader<?, ?> eventReader = this.component.getEventReader(request, response);
         
         for (final Object event : eventReader) {
             logger.debug(toString(event));
         }
-        
-        verify(portalUrlBuilder, this.resourcesElementsProvider, this.portalUrlProvider, this.portletWindowRegistry, this.portletEntityRegistry, this.userInstanceManager, this.xalanMessageHelper);
         
         final String mediaType = eventReader.getOutputProperty(OutputKeys.MEDIA_TYPE);
         assertEquals("text/html", mediaType);
