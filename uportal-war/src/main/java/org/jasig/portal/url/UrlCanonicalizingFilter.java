@@ -110,6 +110,10 @@ public class UrlCanonicalizingFilter extends OncePerRequestFilter {
         
         httpServletRequestWrapper.setHeader(IPortalRequestInfo.URL_TYPE_HEADER, urlType.toString());
         httpServletRequestWrapper.setHeader(IPortalRequestInfo.URL_STATE_HEADER, urlState.toString());
+
+        //Hack to make PortalController work in light of https://jira.springsource.org/secure/attachment/18283/SPR7346.patch
+        httpServletRequestWrapper.setHeader(IPortalRequestInfo.URL_TYPE_HEADER + "." + urlType, Boolean.TRUE.toString());
+        httpServletRequestWrapper.setHeader(IPortalRequestInfo.URL_STATE_HEADER + "." + urlState, Boolean.TRUE.toString());
         
         filterChain.doFilter(httpServletRequestWrapper, httpServletResponseWrapper);
     }

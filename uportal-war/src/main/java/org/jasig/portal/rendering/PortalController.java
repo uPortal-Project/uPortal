@@ -44,8 +44,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @version $Revision$
  */
 @Controller
-@RequestMapping("/*")
-public class RenderingController {
+@RequestMapping(value = "/*")
+public class PortalController {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     private IPortalRenderingPipeline portalRenderingPipeline;
@@ -70,17 +70,17 @@ public class RenderingController {
         this.urlSyntaxProvider = urlSyntaxProvider;
     }
     
-    @RequestMapping(headers="org.jasig.portal.url.UrlState=EXCLUSIVE")
+    @RequestMapping(headers={"org.jasig.portal.url.UrlType=RENDER", "org.jasig.portal.url.UrlState.EXCLUSIVE=true"})
     public void renderExclusive(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         this.logger.debug("EXCLUSIVE REQUEST");
     }
     
-    @RequestMapping(headers={"org.jasig.portal.url.UrlType=RENDER", "org.jasig.portal.url.UrlState!=EXCLUSIVE"})
+    @RequestMapping(headers={"org.jasig.portal.url.UrlType=RENDER"})
     public void renderRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         this.portalRenderingPipeline.renderState(request, response);
     }
     
-    @RequestMapping(headers={"org.jasig.portal.url.UrlType=ACTION", "org.jasig.portal.url.UrlState!=EXCLUSIVE"})
+    @RequestMapping(headers={"org.jasig.portal.url.UrlType=ACTION"})
     public void actionRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
         final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
         final IPortletRequestInfo portletRequestInfo = portalRequestInfo.getTargetedPortletRequestInfo();
@@ -123,7 +123,7 @@ public class RenderingController {
         sendRedirect(actionRedirectUrl, response);
     }
     
-    @RequestMapping(headers={"org.jasig.portal.url.UrlType=RESOURCE", "org.jasig.portal.url.UrlState!=EXCLUSIVE"})
+    @RequestMapping(headers={"org.jasig.portal.url.UrlType=RESOURCE"})
     public void resourceRequest(HttpServletRequest request, HttpServletResponse response) {
     	final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
         final IPortletRequestInfo portletRequestInfo = portalRequestInfo.getTargetedPortletRequestInfo();
