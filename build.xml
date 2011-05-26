@@ -20,7 +20,7 @@
 -->
 
 <!--
- | Detailed help documenation lives in docs/antHelp.txt, please refer to this file or
+ | Detailed help documentation lives in docs/antHelp.txt, please refer to this file or
  | run 'ant help' for usage of this file.
  |
  | Comments in this file should be targeted to the maintenance of the build script.
@@ -347,7 +347,7 @@
         </uportal-war-macro>
     </target>
     
-    <target name="clean-shared" depends="checkForTomcat" description="Removes the ALL shared libraries from the container.">
+    <target name="clean-shared" depends="checkForTomcat" description="Removes ALL shared libraries from the servlet container.">
         <mkdir dir="${server.base}/shared/lib"/>
         <delete>
             <fileset dir="${server.base}/shared/lib">
@@ -356,7 +356,7 @@
         </delete>
     </target>
     
-    <target name="clean-tomcat" depends="checkForTomcat" description="Removes the deployed uPortal from the container">
+    <target name="clean-tomcat" depends="checkForTomcat" description="Removes the deployed uPortal from the servlet container">
         <uportal-parent-macro>
             <!-- Clean out uPortal from Tomcat -->
             <artifact:pom file="${uportal-war.dir}/pom.xml" id="uportal-war.pom" settingsFile="${maven.settings}" inheritAllProperties="false" />
@@ -616,7 +616,7 @@
 
     <!-- ============================== Utility Targets ============================== -->
     <!--
-     | Utility to deploy a WAR to the container where the delete and the replacement happen
+     | Utility to deploy a WAR to the servlet container. The delete and the replacement happen
      | as close together as possible.
      +-->
     <target name="fastWarDeploy">
