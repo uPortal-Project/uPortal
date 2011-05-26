@@ -93,8 +93,8 @@ public class ExpiredEventsPurger {
         cal.add(Calendar.DATE, -expirationThresholdDays);
         Date threshold = cal.getTime();
 
-        if (log.isInfoEnabled()) {
-            log.info("Purging events before the following date: " + format.format(threshold));
+        if (log.isDebugEnabled()) {
+            log.debug("Purging events before the following date: " + format.format(threshold));
         }
 
         for (String sql : SQL) {
