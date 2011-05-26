@@ -226,6 +226,7 @@
         <property name="wrappedComponent" ref="themeCachingComponent" />
     </bean>
     <bean id="portalRenderingPipeline" class="org.jasig.portal.rendering.DynamicRenderingPipeline">
+        <qualifier value="main" />
         <property name="pipeline" ref="portletRenderingIncorporationComponent" />
     </bean>
     
