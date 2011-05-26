@@ -329,6 +329,16 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
         
+    <servlet>
+        <servlet-name>JsonRenderingDispatcherServlet</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:properties/contexts/servlet/jsonRenderingServletContext.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+        
     <!-- Serves static resource content from .jar files such as spring-js.jar -->
     <servlet>
         <servlet-name>Resources Servlet</servlet-name>
@@ -364,6 +374,11 @@
         <url-pattern>*.uP</url-pattern>
         <url-pattern>/f/*</url-pattern>
         <url-pattern>/p/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>JsonRenderingDispatcherServlet</servlet-name>
+        <url-pattern>/layout</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

@@ -51,7 +51,7 @@ public abstract class BaseTransformerSource implements TransformerSource, Resour
     private IUserInstanceManager userInstanceManager;
     private XmlUtilities xmlUtilities;
     private ResourceLoader resourceLoader;
-    private IStylesheetDescriptorDao stylesheetDescriptorDao;
+    protected IStylesheetDescriptorDao stylesheetDescriptorDao;
     
     @Autowired
     public void setStylesheetDescriptorDao(IStylesheetDescriptorDao stylesheetDescriptorDao) {

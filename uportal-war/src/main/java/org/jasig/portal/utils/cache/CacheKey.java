@@ -23,6 +23,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * @author Eric Dalquist
  * @version $Revision$
@@ -120,9 +122,20 @@ public class CacheKey implements Serializable {
         }
         return true;
     }
-
+    private final static ThreadLocal<Integer> depth = new ThreadLocal<Integer>() {
+        @Override
+        protected Integer initialValue() {
+            return 0;
+        }
+    };
+    
     @Override
     public String toString() {
-        return "CacheKey [" + this.source + ":" + this.key + "]";
+        int d = depth.get();
+        depth.set(d + 1);
+        final String indent = StringUtils.leftPad("", depth.get(), '\t');
+        final String s = indent + "CacheKey [" +  this.source + "\n\t" + indent + this.key + "\n" + indent  + "]";
+        depth.set(d);
+        return s;
     }
 }

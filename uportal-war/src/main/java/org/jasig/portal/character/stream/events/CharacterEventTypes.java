@@ -47,5 +47,9 @@ public enum CharacterEventTypes {
     /**
      * @see PortletHeaderPlaceholderEvent
      */
-    PORTLET_HEADER;
+    PORTLET_HEADER,
+    /**
+     * @see JsonLayoutPlaceholderEvent
+     */
+    JSON_LAYOUT;
 }
