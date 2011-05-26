@@ -22,10 +22,13 @@
 <project name="uPortal_Includes" basedir="." xmlns:artifact="urn:maven-artifact-ant">
     <dirname property="imported.basedir" file="${ant.file.uPortal_Includes}"/>
     
-    <fail message="Ant 1.7.1 is required, version ${ant.version} is not supported">
+    <fail message="Ant 1.7.1 or 1.8.2 is required, version ${ant.version} is not supported">
         <condition>
             <not>
-                <antversion exactly="1.7.1"/>
+            	<or>
+            		<antversion exactly="1.7.1"/>
+            	    <antversion exactly="1.8.2"/>
+            	</or>
             </not>
         </condition>
     </fail>
@@ -77,4 +80,16 @@
             <echo>${@{filesetref}.echopath}</echo>
         </sequential>
     </macrodef>
+	
+	<target name="test-macros" description="Test macrodefs defined in this file">
+		<path id="testpath">
+			<pathelement location="hsqldb"/>
+			<pathelement location="pluto-assembler"/>
+			<pathelement location="uportal-ant-tasks"/>
+		</path>
+		<fileset dir="lib" casesensitive="yes" id="testfileset">
+		</fileset>
+	    <echo-path pathref="testpath"/>
+	    <echo-fileset filesetref="testfileset"/>
+	</target>
 </project>
