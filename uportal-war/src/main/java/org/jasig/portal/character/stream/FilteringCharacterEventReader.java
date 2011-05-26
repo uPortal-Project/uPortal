@@ -19,6 +19,8 @@
 
 package org.jasig.portal.character.stream;
 
+import java.util.NoSuchElementException;
+
 import org.jasig.portal.character.stream.events.CharacterEvent;
 
 /**
@@ -29,27 +31,58 @@ import org.jasig.portal.character.stream.events.CharacterEvent;
  * @version $Revision$
  */
 public abstract class FilteringCharacterEventReader extends CharacterEventReaderDelegate {
-
+    private CharacterEvent peekedEvent = null;
+    
     public FilteringCharacterEventReader(CharacterEventReader delegate) {
         super(delegate);
     }
     
     @Override
+    public boolean hasNext() {
+        try {
+            return peekedEvent != null || (super.hasNext() && this.peek() != null);
+        }
+        catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+    
+    @Override
     public CharacterEvent next() {
-        final CharacterEvent event = super.next();
-        return this.filterEvent(event, false);
+        return internalNext(false);
     }
 
     @Override
     public CharacterEvent peek() {
-        final CharacterEvent event = super.peek();
-        return this.filterEvent(event, true);
+        if (peekedEvent != null) {
+            return peekedEvent;
+        }
+        
+        peekedEvent = internalNext(true);
+        return peekedEvent;
     }
 
+    protected final CharacterEvent internalNext(boolean peek) {
+        CharacterEvent event = null;
+        
+        if (peekedEvent != null) {
+            event = peekedEvent;
+            peekedEvent = null;
+            return event;
+        }
+        
+        do {
+            event = super.next();
+            event = this.filterEvent(event, peek);
+        } while (event == null);
+        
+        return event;
+    }
+    
     /**
      * @param event The current event
      * @param peek If the event is from a {@link #peek()} call
-     * @return The event to return
+     * @return The event to return, if null is returned the event is dropped from the stream and the next event will be used.
      */
     protected abstract CharacterEvent filterEvent(CharacterEvent event, boolean peek);
 }

@@ -19,17 +19,13 @@
 
 package org.jasig.portal.character.stream;
 
-import java.util.Deque;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.MatchResult;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
-import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
@@ -50,7 +46,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public abstract class PortletPlaceholderEventSource implements CharacterEventSource {
+public abstract class PortletPlaceholderEventSource extends BasePlaceholderEventSource {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     private IPortletWindowRegistry portletWindowRegistry;
@@ -98,27 +94,16 @@ public abstract class PortletPlaceholderEventSource implements CharacterEventSou
     }
     
     /**
-     * Read {@link XMLEvent}s off the {@link XMLEventReader} until the corresponding {@link EndElement}
-     * is found.
+     * Implement to generate CharacterEvents based on a {@link StartElement} match. Allows the
+     * implementation to read the contents of the placeholder element from the provided {@link XMLEventReader} if
+     * it needs additional info. 
+     * 
+     * Default impl simply calls {@link #getCharacterEvents(IPortletWindowId, MatchResult)} then {@link #readToEndElement(XMLEventReader, StartElement)}
      */
-    protected final void readToEndElement(XMLEventReader eventReader, StartElement event) throws XMLStreamException {
-        final Deque<QName> elementStack = new LinkedList<QName>();
-        elementStack.push(event.getName());
-        
-        while (!elementStack.isEmpty()) {
-            final XMLEvent nextEvent = eventReader.nextEvent();
-            if (nextEvent.isStartElement()) {
-                final StartElement startElement = nextEvent.asStartElement();
-                elementStack.push(startElement.getName());
-            }
-            else if (nextEvent.isEndElement()) {
-                final QName lastStart = elementStack.pop();
-                final EndElement endElement = nextEvent.asEndElement();
-                if (!lastStart.equals(endElement.getName())) {
-                    throw new XMLStreamException("Invalid XML Structure, expected EndElement " + lastStart + " but found EndElment " + endElement.getName());
-                }
-            }
-        }
+    protected List<CharacterEvent> getCharacterEvents(IPortletWindowId portletWindowId, XMLEventReader eventReader, StartElement event) throws XMLStreamException {
+        final List<CharacterEvent> characterEvents = this.getCharacterEvents(portletWindowId, event);
+        this.readToEndElement(eventReader, event);
+        return characterEvents;
     }
     
     /**
@@ -126,7 +111,7 @@ public abstract class PortletPlaceholderEventSource implements CharacterEventSou
      * UnsupportedOperationException
      */
     @SuppressWarnings("unused")
-    protected List<CharacterEvent> getCharacterEvents(IPortletWindowId portletWindowId, XMLEventReader eventReader, StartElement event) throws XMLStreamException {
+    protected List<CharacterEvent> getCharacterEvents(IPortletWindowId portletWindowId, StartElement event) throws XMLStreamException {
         throw new UnsupportedOperationException();
     }
 

@@ -19,6 +19,8 @@
 
 package org.jasig.portal.xml.stream;
 
+import java.util.NoSuchElementException;
+
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
@@ -31,6 +33,7 @@ import javax.xml.stream.events.XMLEvent;
  * @version $Revision$
  */
 public abstract class FilteringXMLEventReader extends BaseXMLEventReader {
+    private XMLEvent peekedEvent = null;
     
     public FilteringXMLEventReader(XMLEventReader reader) {
         super(reader);
@@ -38,20 +41,53 @@ public abstract class FilteringXMLEventReader extends BaseXMLEventReader {
 
     @Override
     protected final XMLEvent internalNextEvent() throws XMLStreamException {
-        final XMLEvent event = this.getParent().nextEvent();
-        return this.filterEvent(event, false);
+        return this.internalNext(false);
+    }
+    
+    @Override
+    public boolean hasNext() {
+        try {
+            return peekedEvent != null || (super.hasNext() && this.peek() != null);
+        }
+        catch (XMLStreamException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+        catch (NoSuchElementException e) {
+            return false;
+        }
     }
 
     @Override
     public final XMLEvent peek() throws XMLStreamException {
-        final XMLEvent event = super.peek();
-        return this.filterEvent(event, true);
+        if (peekedEvent != null) {
+            return peekedEvent;
+        }
+        
+        peekedEvent = internalNext(true);
+        return peekedEvent;
+    }
+
+    protected final XMLEvent internalNext(boolean peek) throws XMLStreamException {
+        XMLEvent event = null;
+        
+        if (peekedEvent != null) {
+            event = peekedEvent;
+            peekedEvent = null;
+            return event;
+        }
+        
+        do {
+            event = super.getParent().nextEvent();
+            event = this.filterEvent(event, peek);
+        } while (event == null);
+        
+        return event;
     }
     
     /**
      * @param event The current event
      * @param peek If the event is from a {@link #peek()} call
-     * @return The event to return
+     * @return The event to return, if null is returned the event is dropped from the stream and the next event will be used.
      */
     protected abstract XMLEvent filterEvent(XMLEvent event, boolean peek);
 }

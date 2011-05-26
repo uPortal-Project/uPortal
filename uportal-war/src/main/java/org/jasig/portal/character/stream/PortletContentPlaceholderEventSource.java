@@ -22,8 +22,6 @@ package org.jasig.portal.character.stream;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
 import org.jasig.portal.character.stream.events.CharacterEvent;
@@ -40,8 +38,7 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
 public class PortletContentPlaceholderEventSource extends PortletPlaceholderEventSource {
 
     @Override
-    protected List<CharacterEvent> getCharacterEvents(IPortletWindowId portletWindowId, XMLEventReader eventReader, StartElement event) throws XMLStreamException {
-        this.readToEndElement(eventReader, event);
+    protected List<CharacterEvent> getCharacterEvents(IPortletWindowId portletWindowId, StartElement event) {
         return Arrays.asList((CharacterEvent)new PortletContentPlaceholderEventImpl(portletWindowId));
     }
 }

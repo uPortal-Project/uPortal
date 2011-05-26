@@ -196,8 +196,12 @@
         </property>
     </bean>
     
-    <bean id="jsonThemeCachingComponent" class="org.jasig.portal.rendering.cache.CachingCharacterPipelineComponent">
+    <bean id="jsonWrapperFilteringCharacterPipelineComponent" class="org.jasig.portal.json.rendering.JsonWrapperFilteringCharacterPipelineComponent">
         <property name="wrappedComponent" ref="jsonStaxSerializingComponent" />
+    </bean>
+    
+    <bean id="jsonThemeCachingComponent" class="org.jasig.portal.rendering.cache.CachingCharacterPipelineComponent">
+        <property name="wrappedComponent" ref="jsonWrapperFilteringCharacterPipelineComponent" />
         <property name="cache" ref="org.jasig.portal.rendering.THEME_TRANSFORM" />
     </bean>
     
