@@ -23,8 +23,12 @@ import java.io.Serializable;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -35,27 +39,48 @@ import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
  * 
  * @author Jen Bourey, jennifer.bourey@gmail.com
  */
-@Embeddable
-@Table(name = "UP_PORTLET_PARAM")
+@Entity
+@Table(
+        name = "UP_PORTLET_DEF_PARAM"
+    )
+@SequenceGenerator(
+        name="UP_PORTLET_DEF_PARAM_GEN",
+        sequenceName="UP_PORTLET_DEF_PARAM_SEQ",
+        allocationSize=5
+    )
+@TableGenerator(
+        name="UP_PORTLET_DEF_PARAM_GEN",
+        pkColumnValue="UP_PORTLET_DEF_PARAM",
+        allocationSize=5
+    )
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class PortletDefinitionParameterImpl implements IPortletDefinitionParameter, Serializable {
     private static final long serialVersionUID = 1L;
+    
+    @SuppressWarnings("unused")
+    @Id
+    @GeneratedValue(generator = "UP_PORTLET_DEF_PARAM_GEN")
+    @Column(name="PARAM_ID")
+    private final long id;
+    
+    @Column(name = "NAME", length = 255, nullable = false)
+    private final String name;
+    
+	@Column(name = "VAL", length = 2000)
+	private String value;
 
-    @Column(name = "PORTLET_PARM_NAME", length = 255, nullable = false)
-	String name;
-
-	@Column(name = "PORTLET_PARM_VAL", length = 2000)
-	String value;
-
-	@Column(name = "PORTLET_PARM_DESC", length = 255)
-	String descr;
+	@Column(name = "DESC", length = 255)
+	private String descr;
 	
 	
 	/**
 	 * Default constructor required by Hibernate
 	 */
-	public PortletDefinitionParameterImpl() { }
+	public PortletDefinitionParameterImpl() {
+	    this.id = -1;
+	    this.name = null;
+	}
 
     /**
      * Instantiate a ChannelParameter with a particular name, default value,
@@ -64,8 +89,9 @@ public class PortletDefinitionParameterImpl implements IPortletDefinitionParamet
      * @param value default value for the parameter.
      */
     public PortletDefinitionParameterImpl(String name, String value) {
-      this.name = name;
-      this.value = value;
+        this.id = -1;
+        this.name = name;
+        this.value = value;
     }
     
     /**
@@ -74,7 +100,8 @@ public class PortletDefinitionParameterImpl implements IPortletDefinitionParamet
      * @param param
      */
     public PortletDefinitionParameterImpl(IPortletDefinitionParameter param) {
-    	this.name = param.getName();
+        this.id = -1;
+        this.name = param.getName();
     	this.value = param.getValue();
     	this.descr = param.getDescription();
     }
@@ -111,15 +138,6 @@ public class PortletDefinitionParameterImpl implements IPortletDefinitionParamet
 
 	
 	// Setter methods
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.jasig.portal.channel.IChannelParameter#setName(java.lang.String)
-	 */
-	@Override
-    public void setName(String name) {
-		this.name = name;
-	}
 
 	/*
 	 * (non-Javadoc)

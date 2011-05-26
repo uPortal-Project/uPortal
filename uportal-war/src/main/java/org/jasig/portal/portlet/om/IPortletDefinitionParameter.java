@@ -54,12 +54,6 @@ public interface IPortletDefinitionParameter {
     // Setter methods
     
     /**
-     * Set the name of the channel parameter.
-     * @param name the name of the channel parameter
-     */
-    public void setName(String name);
-    
-    /**
      * Set the default value for this channel parameter.
      * @param value the default value for this channel parameter.
      */

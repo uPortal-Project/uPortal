@@ -22,8 +22,7 @@ package org.jasig.portal.portlet.dao.jpa;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,6 +39,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -157,18 +157,19 @@ class PortletDefinitionImpl implements IPortletDefinition {
 	@Column(name = "PORTLET_EXP_DT")
 	private Date expirationDate = null;
 
-	@ElementCollection(fetch = FetchType.EAGER, targetClass = PortletDefinitionParameterImpl.class)
-	@JoinTable(name = "UP_PORTLET_PARAM", joinColumns = @JoinColumn(name = "PORTLET_ID"))
-	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-	@Fetch(FetchMode.JOIN)
-	private Set<IPortletDefinitionParameter> parameters = new HashSet<IPortletDefinitionParameter>();
+    @OneToMany(targetEntity = PortletDefinitionParameterImpl.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn(name = "PORLTET_DEF_ID", nullable=false)
+    @MapKey(name="name")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @Fetch(FetchMode.JOIN)
+	private final Map<String, IPortletDefinitionParameter> parameters = new HashMap<String, IPortletDefinitionParameter>();
 
 	@ElementCollection(fetch = FetchType.EAGER, targetClass = PortletLocalizationData.class)
-	@JoinTable(name = "UP_PORTLET_MDATA", joinColumns = @JoinColumn(name = "PORTLET_ID"))
+	@JoinTable(name = "UP_PORTLET_DEF_MDATA", joinColumns = @JoinColumn(name = "PORTLET_ID"))
 	@MapKeyColumn(name = "LOCALE", length = 64, nullable = false)
 	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 	@Fetch(FetchMode.JOIN)
-	private Map<String, PortletLocalizationData> localizations = new HashMap<String, PortletLocalizationData>();
+	private final Map<String, PortletLocalizationData> localizations = new HashMap<String, PortletLocalizationData>();
 
 	@Embedded
 	private PortletDescriptorKeyImpl portletDescriptorKey;
@@ -375,12 +376,15 @@ class PortletDefinitionImpl implements IPortletDefinition {
 
 	@Override
     public Set<IPortletDefinitionParameter> getParameters() {
-		return parameters;
+		return Collections.unmodifiableSet(new LinkedHashSet<IPortletDefinitionParameter>(parameters.values()));
 	}
 
 	@Override
     public void setParameters(Set<IPortletDefinitionParameter> parameters) {
-		this.parameters = parameters;
+		this.parameters.clear();
+		for (final IPortletDefinitionParameter parameter : parameters) {
+		    this.parameters.put(parameter.getName(), parameter);
+        }
 	}
 
 
@@ -392,25 +396,13 @@ class PortletDefinitionImpl implements IPortletDefinition {
 
 	@Override
 	public IPortletDefinitionParameter getParameter(String key) {
-	    for (final IPortletDefinitionParameter param : this.parameters) {
-	        if (param.getName().equals(key)) {
-	            return param;
-	        }
-	    }
-	    
-	    return null;
+	    return this.parameters.get(key);
 	}
 
 
 	@Override
     public Map<String, IPortletDefinitionParameter> getParametersAsUnmodifiableMap() {
-	    final Map<String, IPortletDefinitionParameter> parameterMap = new LinkedHashMap<String, IPortletDefinitionParameter>();
-	    
-	    for (final IPortletDefinitionParameter param : this.parameters) {
-	        parameterMap.put(param.getName(), param);
-	    }
-	    
-		return Collections.unmodifiableMap(parameterMap);
+	    return Collections.unmodifiableMap(this.parameters);
 	}
 
 	@Override
@@ -497,14 +489,6 @@ class PortletDefinitionImpl implements IPortletDefinition {
 	}
 
 	@Override
-    public void replaceParameters(Set<IPortletDefinitionParameter> parameters) {
-		this.parameters.clear();
-		for (IPortletDefinitionParameter param : parameters) {
-			this.parameters.add(new PortletDefinitionParameterImpl(param));
-		}
-	}
-	
-	@Override
     public void setPortletPreferences(List<IPortletPreference> portletPreferences) {
 		this.portletPreferences.setPortletPreferences(portletPreferences);
 	}
@@ -517,7 +501,7 @@ class PortletDefinitionImpl implements IPortletDefinition {
 
     @Override
     public void addParameter(IPortletDefinitionParameter parameter) {
-        this.parameters.add(parameter);
+        this.parameters.put(parameter.getName(), parameter);
 	}
 
 	@Override

@@ -57,6 +57,7 @@
         <mapping class="org.jasig.portal.permission.dao.jpa.PermissionActivityImpl" />
         <mapping class="org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl" />
+        <mapping class="org.jasig.portal.portlet.dao.jpa.PortletDefinitionParameterImpl" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletCookieImpl"/>
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortalCookieImpl"/>
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletTypeImpl" />
