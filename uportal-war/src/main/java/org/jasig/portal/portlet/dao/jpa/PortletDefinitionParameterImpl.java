@@ -26,10 +26,6 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Table;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
@@ -143,42 +139,35 @@ public class PortletDefinitionParameterImpl implements IPortletDefinitionParamet
 		this.descr = descr;
 	}
 
-    /**
-     * @see java.lang.Object#equals(Object)
-     */
     @Override
-    public boolean equals(Object object) {
-        if (object == this) {
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        }
-        if (!(object instanceof IPortletDefinitionParameter)) {
+        if (obj == null)
             return false;
+        if (IPortletDefinitionParameter.class.isAssignableFrom(obj.getClass()))
+            return false;
+        IPortletDefinitionParameter other = (IPortletDefinitionParameter) obj;
+        if (this.name == null) {
+            if (other.getName() != null)
+                return false;
         }
-        IPortletDefinitionParameter rhs = (IPortletDefinitionParameter) object;
-        return new EqualsBuilder()
-            .append(this.name, rhs.getName())
-            .isEquals();
+        else if (!this.name.equals(other.getName()))
+            return false;
+        return true;
     }
 
-    /**
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(1915068383, -1044838521)
-            .append(this.name)
-            .toHashCode();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
+        return result;
     }
 
-    /**
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-            .append("name", this.name)
-            .append("value", this.value)
-            .append("descr", this.descr)
-            .toString();
+        return "PortletDefinitionParameter [name=" + this.name + ", value=" + this.value + ", descr=" + this.descr + "]";
     }
+    
 }

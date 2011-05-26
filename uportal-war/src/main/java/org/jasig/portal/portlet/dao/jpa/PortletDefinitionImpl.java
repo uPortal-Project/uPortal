@@ -517,7 +517,7 @@ class PortletDefinitionImpl implements IPortletDefinition {
 
     @Override
     public void addParameter(IPortletDefinitionParameter parameter) {
-		addParameter(parameter);
+        this.parameters.add(parameter);
 	}
 
 	@Override
