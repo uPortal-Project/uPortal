@@ -527,25 +527,15 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
      */
     protected Tuple<String, IPortletWindowId> parsePortletParameterName(HttpServletRequest request, String name, Set<String> additionalPortletIds) {
         //Look for a 2nd separator which might indicate a portlet window id
-        final int windowIdEndIdx = name.indexOf(SEPARATOR, PORTLET_PARAM_PREFIX.length());
-        if (windowIdEndIdx > PORTLET_PARAM_PREFIX.length()) {
-            
-            //Extract the suspected window id and check the additional portlet ids Set to see if it was passed on the request
-            final String portletWindowIdStr = name.substring(PORTLET_PARAM_PREFIX.length(), windowIdEndIdx);
-            if (additionalPortletIds.contains(portletWindowIdStr)) {
-                final String paramName;
-                
-                //Do sanity checks on substring operations to avoid potential exceptions
-                if (windowIdEndIdx + SEPARATOR.length() < name.length()) {
-                    paramName = name.substring(windowIdEndIdx + SEPARATOR.length());
-                }
-                else {
-                    paramName = "";
-                }
-                final IPortletWindowId portletWindowId = this.portletWindowRegistry.getPortletWindowId(request, portletWindowIdStr);
-                
-                return new Tuple<String, IPortletWindowId>(paramName, portletWindowId);
+        for (final String additionalPortletId : additionalPortletIds) {
+            final int windowIdIdx = name.indexOf(additionalPortletId);
+            if (windowIdIdx == -1) {
+                continue;
             }
+            
+            final String paramName = name.substring(PORTLET_PARAM_PREFIX.length() + additionalPortletId.length() + SEPARATOR.length());
+            final IPortletWindowId portletWindowId = this.portletWindowRegistry.getPortletWindowId(request, additionalPortletId);
+            return new Tuple<String, IPortletWindowId>(paramName, portletWindowId);
         }
         
         final String paramName = this.safeSubstringAfter(PORTLET_PARAM_PREFIX, name);

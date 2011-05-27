@@ -422,6 +422,57 @@ public class UrlSyntaxProviderImplTest {
         assertEquals(PortletMode.HELP, portletRequestInfo2.getPortletMode());
         assertEquals(portletWindowId1, portletRequestInfo2.getDelegateParentWindowId());
     }
+    
+    @Test
+    public void testSingleFolderPortletDelegationFnameSubscribeIdMinimizedRenderUrlParsingTwo() throws Exception {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setContextPath("/uPortal");
+        request.setRequestURI("/p/portlet-admin.ctf3/max/action.uP");
+        request.setQueryString("?plCa=71_dlg-44-ctf3-8_8&plCd_71_dlg-44-ctf3-8_8=44_ctf3_8&plP_71_dlg-44-ctf3-8_8_action=updateKey&plP_execution=e4s4&plP__eventId=configModeAction");
+        request.addParameter("plCa", "71_dlg-44-ctf3-8_8");
+        request.addParameter("plCd_71_dlg-44-ctf3-8_8", "44_ctf3_8");
+        request.addParameter("plP_71_dlg-44-ctf3-8_8_action", "updateKey");
+        request.addParameter("plP_execution", "e4s4");
+        request.addParameter("plP__eventId", "configModeAction");
+        request.addParameter("googleApiKey", "12345");
+        
+        final MockPortletWindowId portletWindowId1 = new MockPortletWindowId("44_ctf3_8");
+        final MockPortletWindowId portletWindowId2 = new MockPortletWindowId("71_dlg-44-ctf3-8_8");
+        
+        when(this.portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
+        when(urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request)).thenReturn(urlNodeSyntaxHelper);
+        when(this.urlNodeSyntaxHelper.getPortletForFolderName(request, "portlet-admin.ctf3")).thenReturn(portletWindowId1);
+        when(this.portletWindowRegistry.getPortletWindowId(request, "71_dlg-44-ctf3-8_8")).thenReturn(portletWindowId2);
+        when(this.portletWindowRegistry.getPortletWindowId(request, "44_ctf3_8")).thenReturn(portletWindowId1);
+        
+        final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
+        
+        assertNotNull(portalRequestInfo);
+        assertNull(portalRequestInfo.getTargetedLayoutNodeId());
+        assertEquals(portletWindowId1, portalRequestInfo.getTargetedPortletWindowId());
+        assertEquals(UrlState.MAX, portalRequestInfo.getUrlState());
+        assertEquals(UrlType.ACTION, portalRequestInfo.getUrlType());
+        
+        final Map<IPortletWindowId, ? extends IPortletRequestInfo> portletRequestInfoMap = portalRequestInfo.getPortletRequestInfoMap();
+        assertNotNull(portletRequestInfoMap);
+        assertEquals(2, portletRequestInfoMap.size());
+        
+        final IPortletRequestInfo portletRequestInfo = portletRequestInfoMap.get(portletWindowId1);
+        assertNotNull(portletRequestInfo);
+        assertEquals(portletWindowId1, portletRequestInfo.getPortletWindowId());
+        assertEquals(ImmutableMap.of("execution", Arrays.asList("e4s4"), "_eventId", Arrays.asList("configModeAction")), portletRequestInfo.getPortletParameters());
+        assertEquals(WindowState.MAXIMIZED, portletRequestInfo.getWindowState());
+        assertNull(portletRequestInfo.getPortletMode());
+        assertNull(portletRequestInfo.getDelegateParentWindowId());
+        
+        final IPortletRequestInfo portletRequestInfo2 = portletRequestInfoMap.get(portletWindowId2);
+        assertNotNull(portletRequestInfo2);
+        assertEquals(portletWindowId2, portletRequestInfo2.getPortletWindowId());
+        assertEquals(ImmutableMap.of("action", Arrays.asList("updateKey"), "googleApiKey", Arrays.asList("12345")), portletRequestInfo2.getPortletParameters());
+        assertNull(portletRequestInfo2.getWindowState());
+        assertNull(portletRequestInfo2.getPortletMode());
+        assertEquals(portletWindowId1, portletRequestInfo2.getDelegateParentWindowId());
+    }
 
     @Test
     public void testParsePortletWindowIdSuffix() {
