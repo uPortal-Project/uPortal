@@ -40,9 +40,6 @@
                 <configuration>
                     <bindingDirectory>src/main/binding</bindingDirectory>
                     <schemaDirectory>src/main/resources/xsd</schemaDirectory>
-                    <schemaIncludes>
-                        <include>portal-search.xsd</include>
-                    </schemaIncludes>
                     <episode>false</episode>
                     <extension>true</extension>
                     <args>
