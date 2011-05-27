@@ -34,6 +34,8 @@
             <xs:element name="portletUrl" type="portletUrl" minOccurs="0" />
             <xs:element name="externalUrl" type="xs:anyURI" minOccurs="0" />
         </xs:sequence>
+        
+        <xs:attribute name="windowId" type="xs:string" use="required" />
     </xs:complexType>
     
     <xs:complexType name="portletUrl">
