@@ -35,6 +35,11 @@
             </util:list>
         </property>
     </bean>
+    
+    <util:list id="searchServices">
+        <!--bean class="org.jasig.portal.portlets.search.gsa.GsaSearchService"
+            p:baseUrl="http://search.school.edu" p:site="Site"/-->
+    </util:list>
 
     <bean id="permissionTargetProviderRegistry" class="org.jasig.portal.permission.target.PermissionTargetProviderRegistryImpl">
         <property name="providers">

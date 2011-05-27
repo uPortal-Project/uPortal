@@ -22,12 +22,16 @@ package org.jasig.portal.portlets.search.gsa;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.portlet.PortletRequest;
+
+import org.jasig.portal.portlets.search.IPortalSearchService;
+import org.jasig.portal.search.SearchQuery;
+import org.jasig.portal.search.SearchResult;
+import org.jasig.portal.search.SearchResults;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-@Component
-public class GsaSearchService {
+public class GsaSearchService implements IPortalSearchService {
 
     private RestTemplate restTemplate;
     
@@ -42,15 +46,42 @@ public class GsaSearchService {
         this.urlTemplate = urlTemplate;
     }
     
-    public GsaResults search(String query, String baseUrl, String site) {
+    private String gsaBaseUrl;
+    
+    public void setBaseUrl(String gsaBaseUrl) {
+        this.gsaBaseUrl = gsaBaseUrl;
+    }
+    
+    private String gsaSite;
+    
+    public void setSite(String gsaSite) {
+        this.gsaSite = gsaSite;
+    }
+    
+    @Override
+    public SearchResults getSearchResults(PortletRequest request,
+            SearchQuery query) {
+        return search(query.getSearchTerms());
+    }
+    
+    protected SearchResults search(String query) {
         
         Map<String, String> vars = new HashMap<String, String>();
         vars.put("query", query);
-        vars.put("baseUrl", baseUrl);
-        vars.put("site", site);
+        vars.put("baseUrl", gsaBaseUrl);
+        vars.put("site", gsaSite);
         
-        GsaResults result = restTemplate.getForObject(urlTemplate, GsaResults.class, vars);
-        return result;
+        GsaResults gsaResults = restTemplate.getForObject(urlTemplate, GsaResults.class, vars);
+        SearchResults results =  new SearchResults();
+        for (GsaSearchResult gsaResult : gsaResults.getSearchResults()) {
+            SearchResult result = new SearchResult();
+            result.setTitle(gsaResult.getTitle());
+            result.setExternalUrl(gsaResult.getLink());
+            result.setSummary(gsaResult.getSnippet());
+            result.getType().add("campus web");
+            results.getSearchResult().add(result);
+        }
+        return results;
     }
-    
+
 }

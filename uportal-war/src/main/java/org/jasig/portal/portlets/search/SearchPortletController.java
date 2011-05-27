@@ -19,30 +19,28 @@
 
 package org.jasig.portal.portlets.search;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.portlet.PortletPreferences;
+import javax.portlet.ActionRequest;
+import javax.portlet.ActionResponse;
+import javax.portlet.Event;
+import javax.portlet.EventRequest;
+import javax.portlet.EventResponse;
 import javax.portlet.PortletRequest;
-import javax.servlet.http.HttpServletRequest;
+import javax.portlet.PortletSession;
 
-import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.portlet.container.properties.ThemeNameRequestPropertiesManager;
-import org.jasig.portal.portlets.lookup.PersonLookupHelperImpl;
-import org.jasig.portal.portlets.search.gsa.GsaResults;
-import org.jasig.portal.portlets.search.gsa.GsaSearchService;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IPersonManager;
-import org.jasig.portal.url.IPortalRequestUtils;
-import org.jasig.services.persondir.IPersonAttributes;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.jasig.portal.search.SearchQuery;
+import org.jasig.portal.search.SearchResults;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.portlet.ModelAndView;
+import org.springframework.web.portlet.bind.annotation.ActionMapping;
+import org.springframework.web.portlet.bind.annotation.EventMapping;
 
 /**
  * SearchPortletController produces both a search form and results for configured
@@ -54,50 +52,50 @@ import org.springframework.web.portlet.ModelAndView;
 @Controller
 @RequestMapping("VIEW")
 public class SearchPortletController {
-
-    protected static final String DIRECTORY_ENGINE = "directory";
-    protected static final String CAMPUS_WEB_ENGINE = "campus-web";
     
-    private GsaSearchService gsaSearchService;
-
-    @Autowired
-    public void setGsaSearchService(GsaSearchService gsaSearchService) {
-        this.gsaSearchService = gsaSearchService;
-    }
+    private List<IPortalSearchService> searchServices;
     
-    private IPortalRequestUtils portalRequestUtils;
-    
-    @Autowired(required = true)
-    public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
-        this.portalRequestUtils = portalRequestUtils;
-    }
-    
-    private IPersonManager personManager;
-    
-    @Autowired(required = true)
-    public void setPersonManager(IPersonManager personManager) {
-        this.personManager = personManager;
+    @Resource(name="searchServices")
+    public void setPortalSearchServices(List<IPortalSearchService> searchServices) {
+        this.searchServices = searchServices;
     }
 
-    private PersonLookupHelperImpl lookupHelper;
+    @ActionMapping
+    public void performSearch(@RequestParam(value = "query") String query, 
+            ActionRequest request, ActionResponse response) {
+
+        // construct a new search query object from the string query
+        SearchQuery queryObj = new SearchQuery();
+        queryObj.setSearchTerms(query);
+
+        // add search results from each portal search service to a new portal
+        // search results object
+        PortalSearchResults results = new PortalSearchResults();
+        for (IPortalSearchService searchService : searchServices) {
+            SearchResults serviceResults = searchService.getSearchResults(request, queryObj);
+            results.addPortletSearchResults(serviceResults);
+        }
+        
+        // place the portal search results object in the session
+        PortletSession session = request.getPortletSession();
+        session.setAttribute("searchResults", results);
+        
+        // send a search query event
+        response.setEvent("SearchQuery", queryObj);
+    }
     
-    @Autowired(required = true)
-    public void setPersonLookupHelper(PersonLookupHelperImpl lookupHelper) {
-        this.lookupHelper = lookupHelper;
-    }
+    @EventMapping("SearchResults")
+    public void handleSearchResult(EventRequest request) {
+        
+        // get the portlet search results from the event
+        Event event = request.getEvent();
+        SearchResults portletSearchResults = (SearchResults) event.getValue();
 
-    private Map<String, DirectoryAttributeType> displayAttributes;
-
-    @Resource(name="directoryDisplayAttributes")
-    public void setDirectoryDisplayAttributes(Map<String, DirectoryAttributeType> attributes) {
-        this.displayAttributes = attributes;
-    }
-
-    private List<String> directoryQueryAttributes;
-
-    @Resource(name="directoryQueryAttributes")
-    public void setDirectoryQueryAttributes(List<String> attributes) {
-        this.directoryQueryAttributes = attributes;
+        // get the existing portal search result from the session and append
+        // the results for this event
+        PortletSession session = request.getPortletSession();
+        PortalSearchResults results = (PortalSearchResults) session.getAttribute("searchResults");
+        results.addPortletSearchResults(portletSearchResults);
     }
 
 
@@ -110,80 +108,18 @@ public class SearchPortletController {
      */
     @RequestMapping
     public ModelAndView getSearchResults(PortletRequest request,
-            @RequestParam(value = "query", required = false) String query,
-            @RequestParam(value = "engine", required = false) String engine) {
+            @RequestParam(value = "query", required = false) String query) {
         
         final Map<String,Object> model = new HashMap<String, Object>();
+        model.put("query", query);
+
+        PortletSession session = request.getPortletSession();
+        PortalSearchResults results = (PortalSearchResults) session.getAttribute("searchResults");
+        model.put("results", results);
 
         final boolean isMobile = isMobile(request);
         String viewName = isMobile ? "/jsp/Search/mobileSearch" : "/jsp/Search/search";
         
-        // determine which search types are enabled for this portlet configuration
-        PortletPreferences prefs = request.getPreferences();
-
-        // get the list of search enginges for this portlet configuration
-        List<String> searchEngines = Arrays.asList(prefs.getValues("searchEngines", new String[]{"directory"}));
-        model.put("searchEngines", searchEngines);
-        
-        // if only one search engine is configured, automatically set it as
-        // selected
-        int numEngines = searchEngines.size();
-        if (numEngines == 1) {
-            engine = searchEngines.get(0);
-        }
-        model.put("engineCount", numEngines);
-
-        // if the selected search engine isn't actually enabled, unselect it
-        if (engine != null && !searchEngines.contains(engine)) {
-            engine = null;
-        }
-        model.put("engine", engine);
-
-        // if no search has been supplied, simply show the search form
-        if (StringUtils.isBlank(query)) {
-            return new ModelAndView(viewName, model);
-        }
-        
-        /*
-         * If directory search is enabled, find people matching the search query.
-         */
-        if (DIRECTORY_ENGINE.equals(engine) || (!isMobile && searchEngines.contains(DIRECTORY_ENGINE))) {
-
-            // TODO: allow configuration of search query displayAttributes
-            final Map<String, Object> queryAttributes = new HashMap<String, Object>();
-            for (String attr : directoryQueryAttributes) {
-                queryAttributes.put(attr, query);
-            }
-
-            final List<IPersonAttributes> people;
-
-            // get an authorization principal for the current requesting user
-            HttpServletRequest servletRequest = portalRequestUtils.getPortletHttpRequest(request);
-            IPerson currentUser = personManager.getPerson(servletRequest);
-
-            // get the set of people matching the search query
-            people = this.lookupHelper.searchForPeople(currentUser, queryAttributes);
-            
-            model.put("people", people);
-            model.put("attributeNames", this.displayAttributes);
-        }
-        
-        /*
-         * If GSA search is enabled, get GSA results for the current query
-         */
-        if (CAMPUS_WEB_ENGINE.equals(engine) || (!isMobile && searchEngines.contains(CAMPUS_WEB_ENGINE))) {
-            
-            // get the GSA search configuration from the portlet preferences
-            String baseUrl = prefs.getValue("gsaBaseUrl", null);
-            String site = prefs.getValue("gsaSite", null);
-            
-            GsaResults gsaResults = gsaSearchService.search(query, baseUrl, site);
-            model.put("gsaResults", gsaResults);
-            model.put("gsaEnabled", true);
-        }
-                
-        model.put("query", query);
-
         return new ModelAndView(viewName, model);
     }
  

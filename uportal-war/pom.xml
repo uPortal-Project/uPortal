@@ -25,6 +25,12 @@
             <version>${jdbc.version}</version>
         </dependency>
         
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uportal-search-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
         <!-- ===== Compile Dependencies ======================================= -->
         <dependency>
             <groupId>org.antlr</groupId>

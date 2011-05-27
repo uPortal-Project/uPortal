@@ -36,7 +36,7 @@
   <timeout>30000</timeout>
   <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
     <up:isFramework>true</up:isFramework>
-    <up:portletName>Search</up:portletName>
+    <up:portletName>Directory</up:portletName>
   </portlet-descriptor>
     <category>Information</category>
     <group>Everyone</group>
@@ -52,8 +52,4 @@
         <name>mobileIconUrl</name>
         <value>/uPortal/media/skins/icons/mobile/directory.png</value>
     </parameter>
-    <portlet-preference>
-        <name>searchEngines</name>
-        <value>directory</value>
-    </portlet-preference>
 </portlet-definition>

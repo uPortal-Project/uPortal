@@ -502,6 +502,44 @@
         <portlet-info>
             <title>Search</title>
         </portlet-info>
+        
+        <supported-processing-event>
+            <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchResults</qname>
+        </supported-processing-event>
+        <supported-processing-event>
+            <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchQuery</qname>
+        </supported-processing-event>
+        
+        <supported-publishing-event>
+            <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchQuery</qname>
+        </supported-publishing-event>
+    </portlet>
+    
+    <portlet>
+        <portlet-name>Directory</portlet-name>
+        <display-name xml:lang="en">Directory</display-name>
+        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>classpath:/properties/contexts/portlet/Directory-portlet.xml</value>
+        </init-param>
+        <expiration-cache>0</expiration-cache>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>VIEW</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <portlet-info>
+            <title>Directory</title>
+        </portlet-info>
+        
+        <supported-processing-event>
+            <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchQuery</qname>
+        </supported-processing-event>
+        
+        <supported-publishing-event>
+            <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchResults</qname>
+        </supported-publishing-event>
     </portlet>
     
     <portlet>
@@ -580,9 +618,39 @@
         </portlet-info>
     </portlet>
 
+    <portlet>
+        <portlet-name>SwitchProfile</portlet-name>
+        <display-name xml:lang="en">Switch Profile</display-name>
+        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>classpath:/properties/contexts/portlet/SwitchProfile-portlet.xml</value>
+        </init-param>
+        <expiration-cache>0</expiration-cache>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>VIEW</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <portlet-info>
+            <title>Switch Profile</title>
+        </portlet-info>
+    </portlet>
+
     <custom-portlet-mode>
         <description>Allows the portlet to render a preferences edit UI during publishing</description>
         <portlet-mode>config</portlet-mode>
     </custom-portlet-mode>    
-    
+
+    <event-definition>
+        <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchQuery</qname>
+        <alias>SearchQuery</alias>
+        <value-type>org.jasig.portal.search.SearchQuery</value-type>
+    </event-definition>
+    <event-definition>
+        <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchResults</qname>
+        <alias>SearchResults</alias>
+        <value-type>org.jasig.portal.search.SearchResults</value-type>
+    </event-definition>
+        
 </portlet-app>
