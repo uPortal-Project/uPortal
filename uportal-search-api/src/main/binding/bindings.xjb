@@ -1,0 +1,23 @@
+<jaxb:bindings
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+    xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd"
+    jaxb:version="2.1"
+>
+
+    <jaxb:bindings>
+        <jaxb:globalBindings>
+            <jaxb:serializable/>
+        </jaxb:globalBindings>
+    </jaxb:bindings>
+    
+    <!-- Generic uPortal Schemas -->
+    <jaxb:bindings schemaLocation="../resources/xsd/portal-search.xsd">
+        <jaxb:schemaBindings>
+            <jaxb:package name="org.jasig.portal.search" />
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
+
+</jaxb:bindings>

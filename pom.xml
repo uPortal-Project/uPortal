@@ -194,6 +194,7 @@
         <module>uportal-ear</module>
         <module>uportal-portlets-overlay</module>
         <module>bootstrap</module>
+        <module>uportal-search-api</module>
     </modules>
 
     <dependencyManagement>
