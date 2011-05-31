@@ -378,7 +378,7 @@
 
     <servlet-mapping>
         <servlet-name>JsonRenderingDispatcherServlet</servlet-name>
-        <url-pattern>/layout</url-pattern>
+        <url-pattern>/layout.json</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

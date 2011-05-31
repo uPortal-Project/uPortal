@@ -46,7 +46,7 @@
     <bean id="jsonStructureTransformComponent" class="org.jasig.portal.rendering.xslt.XSLTComponent">
         <property name="wrappedComponent" ref="jsonPreStructureTransformLogger" />
         <property name="transformerSource">
-            <bean class="org.jasig.portal.rendering.xslt.StructureTransformerSource"/>
+            <bean class="org.jasig.portal.json.rendering.JsonStructureTransformerSource"/>
         </property>
         <property name="xsltParameterSource">
             <bean class="org.jasig.portal.rendering.xslt.MergingTransformerConfigurationSource">
@@ -147,7 +147,6 @@
                             </property>
                         </bean>
                         <bean class="org.jasig.portal.rendering.xslt.LocaleTransformerConfigurationSource" />
-                        <bean class="org.jasig.portal.rendering.xslt.DeviceTypeTransformerConfigurationSource" />
                         <bean class="org.jasig.portal.web.skin.ResourcesElementsXsltcHelper" />
                     </list>
                 </property>

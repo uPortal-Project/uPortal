@@ -282,10 +282,6 @@ public class LoginController implements InitializingBean {
      	request.getSession(false).setAttribute("up_attemptedUserName", request.getParameter("userName"));		
 	}
 	
-	if ("true".equals(request.getParameter("isNativeDevice"))) {
-	    request.getSession(false).setAttribute("isNativeDevice", "true");
-	}
-
 	final String encodedRedirectURL = response.encodeRedirectURL(redirectTarget);
     response.sendRedirect(encodedRedirectURL);
 

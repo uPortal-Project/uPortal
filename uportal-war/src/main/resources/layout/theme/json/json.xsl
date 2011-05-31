@@ -130,32 +130,10 @@
 | YELLOW
 | Skin Settings can be used to change the location of skin files.
 --> 
-<xsl:param name="skin">iphone</xsl:param>
 <xsl:param name="CONTEXT_PATH">/NOT_SET</xsl:param>
-<xsl:variable name="SKIN" select="$skin"/>
 <xsl:variable name="MEDIA_PATH">media/skins/muniversality</xsl:variable>
 <xsl:variable name="ABSOLUTE_MEDIA_PATH" select="concat($CONTEXT_PATH,'/',$MEDIA_PATH)"/>
-<xsl:variable name="SKIN_RESOURCES_PATH" select="concat('/',$MEDIA_PATH,'/',$SKIN,'/skin.xml')"/>
-<xsl:variable name="SKIN_PATH" select="concat($ABSOLUTE_MEDIA_PATH,'/',$SKIN)"/>
 <xsl:variable name="PORTAL_SHORTCUT_ICON" select="concat($CONTEXT_PATH,'/favicon.ico')" />
-<xsl:variable name="FLUID_THEME">
-    <xsl:call-template name="skinParameter">
-        <xsl:with-param name="path" select="$SKIN_RESOURCES_PATH" />
-        <xsl:with-param name="name">fss-theme</xsl:with-param>
-    </xsl:call-template>
-  </xsl:variable>
-<xsl:variable name="FLUID_THEME_CLASS">
-    <xsl:choose>
-        <xsl:when test="$FLUID_THEME"><xsl:value-of select="$FLUID_THEME"/></xsl:when>
-        <xsl:otherwise>fl-theme-uportal</xsl:otherwise>
-    </xsl:choose>
-</xsl:variable>
-<xsl:variable name="FOCUSED_CLASS">
-    <xsl:choose>
-        <xsl:when test="//content/focused">focused</xsl:when>
-        <xsl:otherwise>dashboard</xsl:otherwise>
-    </xsl:choose>
-</xsl:variable>
 <!-- ======================================== -->
 
 
@@ -175,7 +153,6 @@
 | Portal Settings should generally not be (and not need to be) modified.
 -->
 <xsl:param name="AUTHENTICATED" select="'false'"/>
-<xsl:param name="NATIVE" select="'false'"/>
 <xsl:param name="USER_ID">guest</xsl:param>
 <xsl:param name="userName">Guest User</xsl:param>
 <xsl:param name="USER_NAME"><xsl:value-of select="$userName"/></xsl:param>
@@ -201,7 +178,8 @@
 -->
 <xsl:template match="/">
     <layout><json/>{
-        "user": "<xsl:value-of select="$USER_ID"/>", 
+        "user": "<xsl:value-of select="$USER_ID"/>",
+        "locale": "<xsl:value-of select="$USER_LANG"/>", 
         "layout": [
             <xsl:for-each select="//navigation/channel">
                 <xsl:variable name="portletUrl">
@@ -209,7 +187,7 @@
                         <xsl:with-param name="url">
                             <url:portal-url>
                                 <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                                <url:portlet-url state="MAXIMIZED" />
+                                <url:portlet-url state="DETACHED" />
                             </url:portal-url>
                         </xsl:with-param>
                     </xsl:call-template>

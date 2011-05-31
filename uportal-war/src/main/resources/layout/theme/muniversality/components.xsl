@@ -164,7 +164,7 @@
             <xsl:with-param name="url"/>
         </xsl:call-template>
     </xsl:variable>
-    <xsl:if test="$NATIVE != 'true'">
+    <xsl:if test="not(//content/focused/@detached = 'true')">
         <div class="titlebar portlet-wrapper-titlebar" data-role="header" data-position="inline">
             <a href="{$basePortalUrl}" data-icon="home" data-direction="reverse">
                 <xsl:value-of select="upMsg:getMessage('home', $USER_LANG)"/>

@@ -176,7 +176,6 @@
 | Portal Settings should generally not be (and not need to be) modified.
 -->
 <xsl:param name="AUTHENTICATED" select="'false'"/>
-<xsl:param name="NATIVE" select="'false'"/>
 <xsl:param name="USER_ID">guest</xsl:param>
 <xsl:param name="userName">Guest User</xsl:param>
 <xsl:param name="USER_NAME"><xsl:value-of select="$userName"/></xsl:param>
@@ -292,79 +291,40 @@
 | Template contents can be any valid XSL or XHTML.
 -->
 <xsl:template match="/">
-    <xsl:choose>
-        <xsl:when test="not(//focused) and $NATIVE = 'true'">
-            <json-layout>{
-                "user": "<xsl:value-of select="$USER_ID"/>", 
-                "layout": [
-                <xsl:for-each select="//navigation/channel">
-                    <xsl:variable name="portletUrl">
-                        <xsl:call-template name="portalUrl">
-                            <xsl:with-param name="url">
-                                <url:portal-url>
-                                    <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                                    <url:portlet-url state="MAXIMIZED" />
-                                </url:portal-url>
-                            </xsl:with-param>
-                        </xsl:call-template>
-                    </xsl:variable>
-                    <xsl:variable name="iconUrl">
-                        <xsl:choose>
-                            <xsl:when test="parameter[@name='mobileIconUrl'] and parameter[@name='mobileIconUrl']/@value != ''">
-                                <xsl:value-of select="parameter[@name='mobileIconUrl']/@value"/>
-                            </xsl:when>
-                            <xsl:otherwise><xsl:value-of select="$CONTEXT_PATH"/>/media/skins/icons/default.png</xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:variable>
-                    {
-                        "fname": "<xsl:value-of select="@fname"/>",
-                        "title": "{up-portlet-title(<xsl:value-of select="@ID" />)}",
-                        "url": "<xsl:value-of select="$portletUrl"/>",
-                        "description": "<xsl:value-of select="@description"/>",
-                        "newItemCount": "{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}",
-                        "iconUrl": "<xsl:value-of select="$iconUrl"/>"
-                    }<xsl:if test="position() != last()">,</xsl:if>
-                </xsl:for-each>
-            ] }</json-layout>
-            </xsl:when>
-        <xsl:otherwise>
-            <html>
-                <head>
-                    <xsl:call-template name="page.title" />
-                    <xsl:call-template name="page.meta" />
-                    <xsl:call-template name="skinResources">
-                      <xsl:with-param name="path" select="$SKIN_RESOURCES_PATH" />
-                    </xsl:call-template>
-        
-                    <xsl:call-template name="page.js" />
-                </head>
-                <body class="up {$FLUID_THEME_CLASS}">
-                    <div class="portal {$FOCUSED_CLASS}" data-role="page" id="page">
-                        <xsl:choose>
-                            <xsl:when test="//focused">
-                                <xsl:call-template name="mobile.header.focused" />
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:call-template name="mobile.header" />
-                            </xsl:otherwise>
-                        </xsl:choose>
-                        
-                        <xsl:choose>
-                            <xsl:when test="//focused">
-                                <xsl:call-template name="mobile.channel.content.focused" />
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:call-template name="mobile.navigation" />
-                                <xsl:call-template name="logo" />
-                            </xsl:otherwise>
-                        </xsl:choose>
-                        <xsl:call-template name="footer" />
-                    </div>
-                </body>
-            </html>
-        </xsl:otherwise>
-    </xsl:choose>
+    <html>
+        <head>
+            <xsl:call-template name="page.title" />
+            <xsl:call-template name="page.meta" />
+            <xsl:call-template name="skinResources">
+              <xsl:with-param name="path" select="$SKIN_RESOURCES_PATH" />
+            </xsl:call-template>
 
+            <xsl:call-template name="page.js" />
+        </head>
+        <body class="up {$FLUID_THEME_CLASS}">
+            <div class="portal {$FOCUSED_CLASS}" data-role="page" id="page">
+                <xsl:choose>
+                    <xsl:when test="//focused">
+                        <xsl:call-template name="mobile.header.focused" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:call-template name="mobile.header" />
+                    </xsl:otherwise>
+                </xsl:choose>
+                
+                <xsl:choose>
+                    <xsl:when test="//focused">
+                        <xsl:call-template name="mobile.channel.content.focused" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:call-template name="mobile.navigation" />
+                        <xsl:call-template name="logo" />
+                    </xsl:otherwise>
+                </xsl:choose>
+                <xsl:call-template name="footer" />
+            </div>
+        </body>
+    </html>
 </xsl:template>
 <!-- ========================================================================= -->
 

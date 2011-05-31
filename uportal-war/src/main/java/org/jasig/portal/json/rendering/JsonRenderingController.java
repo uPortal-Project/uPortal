@@ -49,7 +49,7 @@ public class JsonRenderingController {
         this.portalRenderingPipeline = portalRenderingPipeline;
     }
     
-    @RequestMapping("/*")
+    @RequestMapping("/layout.json")
     public void renderRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         this.portalRenderingPipeline.renderState(request, response);
     }

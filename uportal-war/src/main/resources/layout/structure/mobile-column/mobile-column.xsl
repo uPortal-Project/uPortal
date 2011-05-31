@@ -73,7 +73,8 @@
 
 
 <!--=====START: PARAMETERS & VARIABLES=====-->
-    <xsl:param name="userLayoutRoot">root</xsl:param>
+<xsl:param name="userLayoutRoot">root</xsl:param>
+<xsl:param name="detached">false</xsl:param>
 <!--=====END: PARAMETERS & VARIABLES=====-->
 
 
@@ -118,6 +119,9 @@
                                         <xsl:when test="//folder[@type='regular' and @hidden='false']/channel[@ID = $userLayoutRoot]">yes</xsl:when>
                                         <xsl:otherwise>no</xsl:otherwise>
                                     </xsl:choose>
+                                </xsl:attribute>
+                                <xsl:attribute name="detached">
+                                    <xsl:value-of select="$detached"/>
                                 </xsl:attribute>
                                 
                                 <xsl:apply-templates select="//channel[@ID = $userLayoutRoot]"/>

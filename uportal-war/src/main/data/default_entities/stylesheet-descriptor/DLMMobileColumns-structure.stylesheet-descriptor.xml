@@ -35,6 +35,12 @@
         <scope>REQUEST</scope>
         <description>The id of the focused layout element</description>
     </stylesheet-parameter>
+    <stylesheet-parameter>
+        <name>detached</name>
+        <default-value>false</default-value>
+        <scope>REQUEST</scope>
+        <description>If the request is for a detached portlet</description>
+    </stylesheet-parameter>
     <layout-attribute>
         <name>externalId</name>
         <scope>PERSISTENT</scope>
