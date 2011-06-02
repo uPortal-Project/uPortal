@@ -64,7 +64,7 @@
         <c:forEach items="${ row }" var="cell" varStatus="cellStatus">
             <c:choose>
             <c:when test="${ status.index == 0 and cellStatus.index == 0 }">
-                var value = String(${ cell.value });
+                var value = String('<spring:escapeBody javaScriptEscape="true">${ cell.value }</spring:escapeBody>');
             </c:when>
             <c:otherwise>
                 var value = <gvis:formatValue value="${ cell.value }"/>;
