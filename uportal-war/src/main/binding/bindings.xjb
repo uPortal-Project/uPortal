@@ -50,6 +50,14 @@
             <jaxb:package name="org.jasig.portal.io.xml.ssd" />
         </jaxb:schemaBindings>
     </jaxb:bindings>
+    <jaxb:bindings schemaLocation="../resources/xsd/io/user/user-4.0.xsd">
+        <jaxb:bindings node="//xs:element[@name='user']">
+            <jaxb:class name="ExternalUser"/>
+        </jaxb:bindings>
+        <jaxb:schemaBindings>
+            <jaxb:package name="org.jasig.portal.io.xml.user" />
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
 
     <jaxb:bindings schemaLocation="../resources/xsd/portlet-publishing/portlet-publishing-definition.xsd">
         <jaxb:bindings node="//xs:element[@name='step']">

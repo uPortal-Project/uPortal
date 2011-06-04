@@ -145,6 +145,10 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
     }
     
     public void doPortletEvents(PortletEventQueue eventQueue, HttpServletRequest request, HttpServletResponse response) {
+        if (eventQueue.getUnresolvedEvents().isEmpty()) {
+            return;
+        }
+        
         final Map<IPortletWindowId, IPortletExecutionWorker<Long>> eventWorkers = new LinkedHashMap<IPortletWindowId, IPortletExecutionWorker<Long>>();
         
 

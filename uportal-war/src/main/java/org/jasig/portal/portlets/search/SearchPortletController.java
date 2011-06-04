@@ -28,12 +28,13 @@ import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.Event;
 import javax.portlet.EventRequest;
-import javax.portlet.EventResponse;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.jasig.portal.portlet.container.properties.ThemeNameRequestPropertiesManager;
-import org.jasig.portal.search.SearchQuery;
+import org.jasig.portal.search.SearchConstants;
+import org.jasig.portal.search.SearchRequest;
 import org.jasig.portal.search.SearchResults;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,7 +66,8 @@ public class SearchPortletController {
             ActionRequest request, ActionResponse response) {
 
         // construct a new search query object from the string query
-        SearchQuery queryObj = new SearchQuery();
+        SearchRequest queryObj = new SearchRequest();
+        queryObj.setQueryId(RandomStringUtils.randomAlphanumeric(32));
         queryObj.setSearchTerms(query);
 
         // add search results from each portal search service to a new portal
@@ -81,10 +83,10 @@ public class SearchPortletController {
         session.setAttribute("searchResults", results);
         
         // send a search query event
-        response.setEvent("SearchQuery", queryObj);
+        response.setEvent(SearchConstants.SEARCH_REQUEST_QNAME, queryObj);
     }
     
-    @EventMapping("SearchResults")
+    @EventMapping(SearchConstants.SEARCH_RESULTS_QNAME_STRING)
     public void handleSearchResult(EventRequest request) {
         
         // get the portlet search results from the event

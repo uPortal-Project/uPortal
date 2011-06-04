@@ -5,24 +5,27 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
 
-    <xs:element name="SearchQuery">
+    <xs:element name="SearchRequest">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="queryId" type="xs:string" />
                 <xs:element name="searchTerms" type="xs:string" />
                 <xs:element name="count" type="xs:positiveInteger" />
                 <xs:element name="startIndex" type="xs:positiveInteger" />
                 <xs:element name="type" type="xs:string" maxOccurs="unbounded" minOccurs="0" />
             </xs:sequence>
+            
+            <xs:attribute name="queryId" type="xs:string" use="required" />
         </xs:complexType>
     </xs:element>
     
     <xs:element name="SearchResults">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="queryId" type="xs:string" />
                 <xs:element name="SearchResult" type="searchResult" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
+            
+            <xs:attribute name="queryId" type="xs:string" use="required" />
+            <xs:attribute name="windowId" type="xs:string" use="required" />
         </xs:complexType>
     </xs:element>
     
@@ -35,7 +38,6 @@
             <xs:element name="externalUrl" type="xs:anyURI" minOccurs="0" />
         </xs:sequence>
         
-        <xs:attribute name="windowId" type="xs:string" use="required" />
     </xs:complexType>
     
     <xs:complexType name="portletUrl">

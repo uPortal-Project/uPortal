@@ -307,15 +307,21 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
 
     protected Set<QName> getAllAliases(QName eventName, PortletApplicationDefinition portletApplicationDefinition) {
         final List<? extends EventDefinition> eventDefinitions = portletApplicationDefinition.getEventDefinitions();
-        if (eventDefinitions == null) {
+        if (eventDefinitions == null || eventDefinitions.isEmpty()) {
             return Collections.emptySet();
         }
 
+        final String defaultNamespace = portletApplicationDefinition.getDefaultNamespace();
+        
         for (final EventDefinition eventDefinition : eventDefinitions) {
-            final String defaultNamespace = portletApplicationDefinition.getDefaultNamespace();
             final QName defQName = eventDefinition.getQualifiedName(defaultNamespace);
             if (defQName != null && defQName.equals(eventName)) {
-                return new LinkedHashSet<QName>(eventDefinition.getAliases());
+                final List<QName> aliases = eventDefinition.getAliases();
+                if (aliases == null || aliases.isEmpty()) {
+                    return Collections.emptySet();
+                }
+                    
+                return new LinkedHashSet<QName>(aliases);
             }
         }
 

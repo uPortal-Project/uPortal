@@ -375,7 +375,13 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     protected void addPortletWindowData(HttpServletRequest request, IPortletEntityId portletEntityId,
             final Set<IPortletWindow> portletWindows, final PortletWindowCache<IPortletWindow> portletWindowMap,
             final PortletWindowCache<PortletWindowData> portletWindowDataMap) {
-        for (final PortletWindowData portletWindowData : portletWindowDataMap.getWindows(portletEntityId)) {
+        
+        final Set<PortletWindowData> windows = portletWindowDataMap.getWindows(portletEntityId);
+        if (windows == null) {
+            return;
+        }
+        
+        for (final PortletWindowData portletWindowData : windows) {
             final IPortletWindowId portletWindowId = portletWindowData.getPortletWindowId();
             
             //Skip data windows that aren't for this entity and for windows that are already in the request cache

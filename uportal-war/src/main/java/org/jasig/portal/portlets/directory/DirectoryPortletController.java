@@ -15,7 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.jasig.portal.portlet.container.properties.ThemeNameRequestPropertiesManager;
 import org.jasig.portal.portlets.lookup.PersonLookupHelperImpl;
 import org.jasig.portal.portlets.search.DirectoryAttributeType;
-import org.jasig.portal.search.SearchQuery;
+import org.jasig.portal.search.SearchConstants;
+import org.jasig.portal.search.SearchRequest;
 import org.jasig.portal.search.SearchResult;
 import org.jasig.portal.search.SearchResults;
 import org.jasig.portal.security.IPerson;
@@ -69,12 +70,12 @@ public class DirectoryPortletController {
         this.directoryQueryAttributes = attributes;
     }
     
-    @EventMapping("SearchQuery")
+    @EventMapping(SearchConstants.SEARCH_REQUEST_QNAME_STRING)
     public void search2(EventRequest request, EventResponse response) {
         
         // get the search query object from the event
         Event event = request.getEvent();
-        SearchQuery query = (SearchQuery) event.getValue();
+        SearchRequest query = (SearchRequest) event.getValue();
 
         // search the portal's directory service for people matching the request
         final List<IPersonAttributes> people = searchDirectory(query.getSearchTerms(), request);
@@ -83,6 +84,9 @@ public class DirectoryPortletController {
             // transform the list of directory results into our generic search
             // response object
             final SearchResults results = new SearchResults();
+            results.setQueryId(query.getQueryId());
+            results.setWindowId(request.getWindowID());
+            
             for (IPersonAttributes person : people) {
                 final SearchResult result = new SearchResult();
                 result.setTitle((String) person.getAttributeValue("displayName"));
@@ -91,7 +95,7 @@ public class DirectoryPortletController {
             }
             
             // fire a search response event
-            response.setEvent("SearchResults", results);
+            response.setEvent(SearchConstants.SEARCH_RESULTS_QNAME, results);
         }
     }
     

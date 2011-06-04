@@ -25,7 +25,7 @@ import java.util.Map;
 import javax.portlet.PortletRequest;
 
 import org.jasig.portal.portlets.search.IPortalSearchService;
-import org.jasig.portal.search.SearchQuery;
+import org.jasig.portal.search.SearchRequest;
 import org.jasig.portal.search.SearchResult;
 import org.jasig.portal.search.SearchResults;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,8 +60,11 @@ public class GsaSearchService implements IPortalSearchService {
     
     @Override
     public SearchResults getSearchResults(PortletRequest request,
-            SearchQuery query) {
-        return search(query.getSearchTerms());
+            SearchRequest query) {
+        final SearchResults results = search(query.getSearchTerms());
+        results.setQueryId(query.getQueryId());
+        results.setWindowId(request.getWindowID());
+        return results;
     }
     
     protected SearchResults search(String query) {

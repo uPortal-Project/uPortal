@@ -22,8 +22,14 @@ public class PortalSearchResults {
     
     public void addPortletSearchResults(SearchResults portletSearchResults) {
         for (SearchResult result : portletSearchResults.getSearchResult()) {
-            for (String type : result.getType()) {
-                addPortletSearchResult(type, result);
+            final List<String> types = result.getType();
+            if (types == null || types.isEmpty()) {
+                addPortletSearchResult("Default", result);
+            }
+            else {
+                for (String type : types) {
+                    addPortletSearchResult(type, result);
+                }
             }
         }
     }
