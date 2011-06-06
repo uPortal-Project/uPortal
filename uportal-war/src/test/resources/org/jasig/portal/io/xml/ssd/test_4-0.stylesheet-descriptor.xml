@@ -22,7 +22,6 @@
 
 <stylesheet-descriptor
     xmlns="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor"
-    xmlns:ns2="https://source.jasig.org/schemas/uportal/io/portlet-definition"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0"
     xsi:schemaLocation="
         https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor/stylesheet-descriptor-4.0.xsd"

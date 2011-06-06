@@ -36,10 +36,10 @@
             <xs:complexContent>
                 <xs:extension base="io:basePortalDataType">
                     <xs:sequence>
-                        <xs:element name="default-user" type="xs:string"/>
-                        <xs:element name="password" type="xs:string"/>
-                        <xs:element name="lastPasswordChange" type="xs:dateTime"/>
-                        <xs:element name="attribute" type="attribute"/>
+                        <xs:element name="default-user" type="xs:string" minOccurs="0"/>
+                        <xs:element name="password" type="xs:string" minOccurs="0"/>
+                        <xs:element name="lastPasswordChange" type="xs:dateTime" minOccurs="0"/>
+                        <xs:element name="attribute" type="attribute" minOccurs="0" maxOccurs="unbounded"/>
                     </xs:sequence>
                     
                     <xs:attribute name="version" type="io:version40Type" use="required"/>

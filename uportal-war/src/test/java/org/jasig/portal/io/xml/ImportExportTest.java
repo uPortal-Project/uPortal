@@ -19,30 +19,45 @@
 
 package org.jasig.portal.io.xml;
 
+import static org.mockito.Matchers.anyString;
+
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
+
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.TimeZone;
 
+import javax.sql.DataSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.jasig.portal.io.xml.portlet.ExternalPortletDefinition;
 import org.jasig.portal.io.xml.ssd.ExternalStylesheetDescriptor;
+import org.jasig.portal.io.xml.user.ExternalUser;
+import org.jasig.portal.utils.ICounterStore;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.jdbc.SimpleJdbcTestUtils;
 
 import com.google.common.base.Function;
 
@@ -53,12 +68,83 @@ import com.google.common.base.Function;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/org/jasig/portal/io/xml/importExportTestContext.xml")
 public class ImportExportTest {
+    @Autowired private DataSource dataSource;
     @Autowired private IDataImporterExporter<ExternalStylesheetDescriptor> stylesheetDescriptorImporterExporter;
-    @Autowired private IDataImporterExporter<ExternalPortletDefinition> portletImporterExporter;
+    @Autowired private IDataImporterExporter<ExternalUser> userImporterExporter;
+    @Autowired private ICounterStore counterStore;
+    private int counter = 0;
+    private TimeZone defaultTimeZone;
+    
+    @After
+    public void cleanup() {
+        if (defaultTimeZone != null) {
+            TimeZone.setDefault(defaultTimeZone);
+        }
+    }
+    
+    @Before
+    public void setup() {
+        defaultTimeZone = TimeZone.getDefault();
+        TimeZone.setDefault(TimeZone.getTimeZone("EST"));
+        
+        counter = 0;
+        reset(counterStore);
+        when(counterStore.getIncrementIntegerId(anyString())).thenAnswer(new Answer<Integer>() {
+            @Override
+            public Integer answer(InvocationOnMock invocation) throws Throwable {
+                return counter++;
+            }
+        });
+        
+        final SimpleJdbcTemplate simpleJdbcTemplate = new SimpleJdbcTemplate(dataSource);
+        
+        final StringBuilder dbSetupScript = new StringBuilder();
+
+        //Needed for user import/export test
+        dbSetupScript.append(
+                "CREATE TABLE UP_USER\n" + 
+        		"(\n" + 
+        		"   USER_ID integer PRIMARY KEY,\n" + 
+        		"   USER_NAME varchar,\n" + 
+        		"   USER_DFLT_USR_ID integer,\n" + 
+        		"   USER_DFLT_LAY_ID integer,\n" + 
+        		"   NEXT_STRUCT_ID integer,\n" + 
+        		"   LST_CHAN_UPDT_DT timestamp,\n" +  
+        		"   CONSTRAINT SYS_IDX_01 PRIMARY KEY (USER_ID)\n" + 
+        		");\n");
+        dbSetupScript.append("CREATE INDEX UPU_DFLT_ID_IDX ON UP_USER(USER_DFLT_USR_ID);\n"); 
+        dbSetupScript.append("CREATE UNIQUE INDEX SYS_IDX_02 ON UP_USER(USER_ID);\n");
+        dbSetupScript.append(
+                "CREATE TABLE UP_LAYOUT_STRUCT\n" + 
+        		"(\n" + 
+        		"   USER_ID integer NOT NULL,\n" + 
+        		"   LAYOUT_ID integer NOT NULL,\n" + 
+        		"   STRUCT_ID integer NOT NULL,\n" + 
+        		"   NEXT_STRUCT_ID integer,\n" + 
+        		"   CHLD_STRUCT_ID integer,\n" + 
+        		"   EXTERNAL_ID varchar,\n" + 
+        		"   CHAN_ID integer,\n" + 
+        		"   NAME varchar,\n" + 
+        		"   TYPE varchar,\n" + 
+        		"   HIDDEN varchar,\n" + 
+        		"   IMMUTABLE varchar,\n" + 
+        		"   UNREMOVABLE varchar,\n" + 
+        		"   CONSTRAINT SYS_IDX_03 PRIMARY KEY (LAYOUT_ID,USER_ID,STRUCT_ID)\n" + 
+        		");\n");
+        dbSetupScript.append(
+                "CREATE UNIQUE INDEX SYS_IDX_04 ON UP_LAYOUT_STRUCT\n" + 
+        		"(\n" + 
+        		"  LAYOUT_ID,\n" + 
+        		"  USER_ID,\n" + 
+        		"  STRUCT_ID\n" + 
+        		");\n");
+        
+        SimpleJdbcTestUtils.executeSqlScript(simpleJdbcTemplate, new ByteArrayResource(dbSetupScript.toString().getBytes()), true);
+    }
 
     
     @Test
-    public void testStylesheetDescriptor40ImportExpot() throws Exception {
+    public void testStylesheetDescriptor40ImportExport() throws Exception {
         final ClassPathResource stylesheetDescriptorResource = new ClassPathResource("/org/jasig/portal/io/xml/ssd/test_4-0.stylesheet-descriptor.xml");
         
         this.testIdentityImportExport(
@@ -73,28 +159,25 @@ public class ImportExportTest {
                 });
     }
     
-//    @Test
-//    public void testPortlet40ImportExpot() throws Exception {
-//        final ClassPathResource portletResource = new ClassPathResource("/org/jasig/portal/io/xml/portlet/test_4-0.portlet.xml");
-//        
-//        this.testIdentityImportExport(
-//                this.portletImporterExporter,
-//                portletResource,
-//                new Function<ExternalPortletDefinition, String>() {
-//
-//                    @Override
-//                    public String apply(ExternalPortletDefinition input) {
-//                        return input.getName();
-//                    }
-//                });
-//    }
+    @Test
+    public void testUser40ImportExport() throws Exception {
+        final ClassPathResource dataResource = new ClassPathResource("/org/jasig/portal/io/xml/user/test_4-0.user.xml");
+        
+        this.testIdentityImportExport(
+                this.userImporterExporter,
+                dataResource,
+                new Function<ExternalUser, String>() {
+                    @Override
+                    public String apply(ExternalUser input) {
+                        return input.getUsername();
+                    }
+                });
+    }
     
     
     private <T> void testIdentityImportExport(IDataImporterExporter<T> dataImporterExporter, Resource resource, Function<T, String> getName) throws Exception {
-        final ClassPathResource stylesheetDescriptorResource = new ClassPathResource("/org/jasig/portal/io/xml/ssd/test_4-0.stylesheet-descriptor.xml");
-        
         final String importData;
-        final InputStream inputStream = stylesheetDescriptorResource.getInputStream();
+        final InputStream inputStream = resource.getInputStream();
         try {
             importData = IOUtils.toString(inputStream);
         }
@@ -122,6 +205,9 @@ public class ImportExportTest {
         
         final StringWriter result = new StringWriter();
         marshaller.marshal(dataExport, new StreamResult(result));
+        
+        System.out.println(result.toString());
+        System.out.println("");
 
         //Compare the exported XML data with the imported XML data, they should match
         XMLUnit.setIgnoreWhitespace(true);

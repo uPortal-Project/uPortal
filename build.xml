@@ -115,6 +115,7 @@
      | Properties that describe the maven project
      +-->
     <property name="bootstrap.dir" value="${basedir}/bootstrap" />
+    <property name="uportal-search-api.dir" value="${basedir}/uportal-search-api" />
     <property name="uportal-war.dir" value="${basedir}/uportal-war" />
     <property name="uportal-portlets-overlay.dir" value="${basedir}/uportal-portlets-overlay" />
     <property name="uportal-ear.dir" value="${basedir}/uportal-ear" />
@@ -904,6 +905,33 @@
     
     <!--
      | Provides a wrapper for tasks that need a classpath that includes all of the uPortal WAR
+     | dependencies. The task also ensures the uportal-search-api WAR exists and is up to date.
+     |
+     | The following are available in the search-api-sub-tasks element:
+     | properties from the uportal-parent-macro macrodef
+     | pom object   - uportal-search-api.pom                       - The Maven POM object for the uportal-search-api pom
+     | property     - uportal-search-api.artifact                  - The full path to the uportal-search-api WAR
+     | path         - uportal-search-api.classpath                 - The uportal-search-api classpath not including the uportal-search-api WAR
+     +-->
+    <macrodef name="uportal-search-api-macro">
+        <element name="search-api-sub-tasks" optional="false" implicit="true" />
+
+        <sequential>
+            <uportal-parent-macro>
+                <fileset id="uportal-parent.pom.fsid" file="${basedir}/pom.xml" />
+                
+                <maven-artifact-macro project-name="uportal-search-api" project-path="${uportal-search-api.dir}" checkfilesid="uportal-parent.pom.fsid">
+                    <!--
+                     | Execute the search-api-sub-tasks
+                     +-->
+                    <search-api-sub-tasks />
+                </maven-artifact-macro>
+            </uportal-parent-macro>
+        </sequential>
+    </macrodef>
+    
+    <!--
+     | Provides a wrapper for tasks that need a classpath that includes all of the uPortal WAR
      | dependencies. The task also ensures the uportal-war WAR exists and is up to date.
      |
      | The following are available in the war-sub-tasks element:
@@ -916,7 +944,7 @@
         <element name="war-sub-tasks" optional="false" implicit="true" />
 
         <sequential>
-            <uportal-parent-macro>
+            <uportal-search-api-macro>
                 <fileset id="uportal-parent.pom.fsid" file="${basedir}/pom.xml" />
                 
                 <maven-artifact-macro project-name="uportal-war" project-path="${uportal-war.dir}" checkfilesid="uportal-parent.pom.fsid">
@@ -937,7 +965,7 @@
                      +-->
                     <war-sub-tasks />
                 </maven-artifact-macro>
-            </uportal-parent-macro>
+            </uportal-search-api-macro>
         </sequential>
     </macrodef>
 

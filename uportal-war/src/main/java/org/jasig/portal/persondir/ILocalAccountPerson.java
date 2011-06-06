@@ -57,5 +57,7 @@ public interface ILocalAccountPerson {
     public void setAttributes(Map<String, List<String>> values);
 
     public boolean removeAttribute(String name);
+    
+    public void clearAttributes();
 
 }

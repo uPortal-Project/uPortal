@@ -30,7 +30,6 @@
  |   - ${SqlAttributes.DATA_SOURCE}=the DataSource for the PortalDb
  |   - ${SqlAttributes.TRANSACTION_MANAGER}=PlatformTransactionManager in use
  |   - Settings defined in classpath://properties/db/entities/import.properties
- |
  +-->
 <with>
     <attribute key="USER_NAME">${valueOf(@username)}</attribute>
