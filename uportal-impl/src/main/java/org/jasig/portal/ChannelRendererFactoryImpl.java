@@ -53,38 +53,39 @@ public final class ChannelRendererFactoryImpl
     /** <p>Thread pool per factory.</p> */
     private ThreadPoolExecutor mThreadPool = null;
     
-    private static ThreadPoolExecutor cErrorThreadPool = null;
+    static ThreadPoolExecutor cErrorThreadPool = null;
 
     /** <p>Shared thread pool for all factories.</p> */
-    private static ThreadPoolExecutor cSharedThreadPool = null;
-
+    static ThreadPoolExecutor cSharedThreadPool = null;
+    
     private class ChannelRenderThreadPoolExecutor extends ThreadPoolExecutor {
-    	final AtomicLong activeThreads;
-    	final AtomicLong maxActiveThreads;
-		public ChannelRenderThreadPoolExecutor(final AtomicLong activeThreads, final AtomicLong maxActiveThreads,
-				int corePoolSize,
-				int maximumPoolSize, long keepAliveTime, TimeUnit unit,
-				BlockingQueue workQueue, ThreadFactory threadFactory) {
-			super(corePoolSize, maximumPoolSize, keepAliveTime, unit,
-					workQueue, threadFactory);
+        final AtomicLong activeThreads;
+        final AtomicLong maxActiveThreads;
 
-			this.activeThreads = activeThreads;
-			this.maxActiveThreads = maxActiveThreads;
-		}
-		protected void beforeExecute(java.lang.Thread t,
-                java.lang.Runnable r) {
-			super.beforeExecute(t, r);
-			final long current = activeThreads.incrementAndGet();
-			if (current > maxActiveThreads.get()) {
-				maxActiveThreads.set(current);
-			}
-		}
-		protected void afterExecute(java.lang.Runnable r,
-                java.lang.Throwable t) {
-			super.afterExecute(r, t);
-			activeThreads.decrementAndGet();
-		}
-	}
+        public ChannelRenderThreadPoolExecutor(final AtomicLong activeThreads, final AtomicLong maxActiveThreads,
+                int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue,
+                ThreadFactory threadFactory) {
+            super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory);
+
+            this.activeThreads = activeThreads;
+            this.maxActiveThreads = maxActiveThreads;
+        }
+
+        @Override
+        protected void beforeExecute(java.lang.Thread t, java.lang.Runnable r) {
+            super.beforeExecute(t, r);
+            final long current = activeThreads.incrementAndGet();
+            if (current > maxActiveThreads.get()) {
+                maxActiveThreads.set(current);
+            }
+        }
+
+        @Override
+        protected void afterExecute(java.lang.Runnable r, java.lang.Throwable t) {
+            super.afterExecute(r, t);
+            activeThreads.decrementAndGet();
+        }
+    }
 
     /**
      * <p>Creates a new instance of a bounded thread pool channel
@@ -108,55 +109,40 @@ public final class ChannelRendererFactoryImpl
      *
      * or <code>null</code>
      */
-    public ChannelRendererFactoryImpl(
-        final String keyBase, final AtomicLong activeThreads, final AtomicLong maxActiveThreads
-        )
-    {
-        int initialThreads = 1;
-        int maxThreads = 20;
+    public ChannelRendererFactoryImpl(final String keyBase, final AtomicLong activeThreads,
+            final AtomicLong maxActiveThreads) {
+        int initialThreads = 20;
+        int maxThreads = 150;
         int threadPriority = 5;
         boolean sharedPool = false;
 
-        try
-        {
-            initialThreads = PropertiesManager.getPropertyAsInt(
-                keyBase + ".threadPool_initialThreads"
-                );
+        try {
+            initialThreads = PropertiesManager.getPropertyAsInt(keyBase + ".threadPool_initialThreads");
+            
+            maxThreads = PropertiesManager.getPropertyAsInt(keyBase + ".threadPool_maxThreads");
 
-            maxThreads = PropertiesManager.getPropertyAsInt(
-                keyBase + ".threadPool_maxThreads"
-                );
+            threadPriority = PropertiesManager.getPropertyAsInt(keyBase + ".threadPool_threadPriority");
 
-            threadPriority = PropertiesManager.getPropertyAsInt(
-                keyBase + ".threadPool_threadPriority"
-                );
-
-            sharedPool = PropertiesManager.getPropertyAsBoolean(
-                keyBase + ".threadPool_shared"
-                );
+            sharedPool = PropertiesManager.getPropertyAsBoolean(keyBase + ".threadPool_shared");
         }
-        catch( Exception x )
-        {
-            log.error(
-                "ChannelRendererFactoryImpl(" + keyBase + ") failed to find configuration parameters. Constructing with: " +
-                "threadPool_initialThreads = " + initialThreads + " " +
-                "threadPool_maxThreads = " + maxThreads + " " +
-                "threadPool_threadPriority = " + threadPriority + " " +
-                "threadPool_shared = " + sharedPool,
-                x
-                );
+        catch (Exception x) {
+            log.error("ChannelRendererFactoryImpl(" + keyBase + ") failed to find configuration parameters. Constructing with: " + 
+                    "threadPool_initialThreads = " + initialThreads + " " + 
+                    "threadPool_threadPriority = " + threadPriority + " " + 
+                    "threadPool_shared = " + sharedPool, x);
         }
 
-        cErrorThreadPool = new ThreadPoolExecutor(20, 20, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue(), new PriorityThreadFactory(threadPriority, "ErrorRendering", PortalSessionManager.getThreadGroup()));
+        cErrorThreadPool = new ThreadPoolExecutor(20, 20, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue(),
+                new PriorityThreadFactory(threadPriority, "ErrorRendering", PortalSessionManager.getThreadGroup()));
 
-        
-        if( sharedPool )
-        {
-            cSharedThreadPool = new ChannelRenderThreadPoolExecutor(activeThreads, maxActiveThreads, initialThreads, maxThreads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue(), new PriorityThreadFactory(threadPriority, keyBase, PortalSessionManager.getThreadGroup()));
+        final PriorityThreadFactory threadFactory = new PriorityThreadFactory(threadPriority, keyBase, PortalSessionManager.getThreadGroup());
+        if (sharedPool) {
+            cSharedThreadPool = new ChannelRenderThreadPoolExecutor(activeThreads, maxActiveThreads, initialThreads,
+                    maxThreads, 1000L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(), threadFactory);
         }
-        else
-        {
-            this.mThreadPool = new ChannelRenderThreadPoolExecutor(activeThreads, maxActiveThreads, initialThreads, maxThreads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue(), new PriorityThreadFactory(threadPriority, keyBase, PortalSessionManager.getThreadGroup()));
+        else {
+            this.mThreadPool = new ChannelRenderThreadPoolExecutor(activeThreads, maxActiveThreads, initialThreads,
+                    maxThreads, 1000L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(), threadFactory);
         }
     }
 
@@ -169,56 +155,52 @@ public final class ChannelRendererFactoryImpl
      *
      * @return new instance of a channel renderer for the specified channel
      **/
-    public IChannelRenderer newInstance(
-        IChannel channel,
-        ChannelRuntimeData channelRuntimeData
-        )
-    {
-    	
-    	ThreadPoolExecutor threadPoolExecutor = null;
-    	// Use special thread pool for CError channel rendering
-    	if (channel instanceof CError){
-    	    		threadPoolExecutor = cErrorThreadPool;
-    	    	}else if (cSharedThreadPool != null){
-                    int activeCount = cSharedThreadPool.getActiveCount();
-                    int queueSize = cSharedThreadPool.getQueue().size();
-                    int largestPoolSize = cSharedThreadPool.getLargestPoolSize();
-                    int maxPoolSize = cSharedThreadPool.getMaximumPoolSize();
-        
-                    //If 75% of pool used, warn
-                    if (log.isWarnEnabled() && activeCount >= (int) (0.75 * maxPoolSize)) {
-                        log.warn(String.format("Rendering thread pool is nearly full. activeCount: %d/%d queueSize: %d largestPoolSize: %d",
-                            activeCount,
-                            maxPoolSize,
-                            queueSize,
-                            largestPoolSize));
-                    }
-                    //If queue is greater than 50% of pool, warn
-                    if (log.isWarnEnabled() && queueSize >= (int) (0.5 * maxPoolSize)) {
-                        log.warn(String.format("Rendering thread pool queue size is high. activeCount: %d/%d queueSize: %d largestPoolSize: %d",
-                            activeCount,
-                            maxPoolSize,
-                            queueSize,
-                            largestPoolSize));
-                    }
-        
-                    if (log.isDebugEnabled()) {
-                        log.debug(
-                                 "stp-activeCount: " + activeCount + 
-                                " stp-completedTaskCount: " + cSharedThreadPool.getCompletedTaskCount() + 
-                                " stp-corePoolSize: " + cSharedThreadPool.getCorePoolSize() + 
-                                " stp-queue-size: " + queueSize);
-                    }
+    public IChannelRenderer newInstance(IChannel channel, ChannelRuntimeData channelRuntimeData) {
 
-    	    		threadPoolExecutor = cSharedThreadPool;
-    	        }else{
-    	        	threadPoolExecutor = this.mThreadPool;
-    	        }
-    	
-        return new ChannelRenderer(
-            channel,
-            channelRuntimeData,
-            threadPoolExecutor
-            );
+        ThreadPoolExecutor threadPoolExecutor = null;
+        // Use special thread pool for CError channel rendering
+        if (channel instanceof CError) {
+            threadPoolExecutor = cErrorThreadPool;
+        }
+        else if (cSharedThreadPool != null) {
+            final int activeCount = cSharedThreadPool.getActiveCount();
+            final int queueSize = cSharedThreadPool.getQueue().size();
+            final int corePoolSize = cSharedThreadPool.getCorePoolSize();
+
+            if (queueSize > (corePoolSize / 2)) {
+                log.error(
+                        "stp-queue-size: " + queueSize + " " + 
+                        "stp-activeCount: " + activeCount + " " + 
+                        "stp-completedTaskCount: " + cSharedThreadPool.getCompletedTaskCount() + " " + 
+                        "stp-corePoolSize: " + corePoolSize + " " + 
+                        "stp-poolSize: " + cSharedThreadPool.getPoolSize() + " " + 
+                        "stp-maxPoolSize: " + cSharedThreadPool.getMaximumPoolSize());
+            }
+            else if (queueSize > (corePoolSize / 4)) {
+                log.warn(
+                        "stp-queue-size: " + queueSize + " " + 
+                        "stp-activeCount: " + activeCount + " " + 
+                        "stp-completedTaskCount: " + cSharedThreadPool.getCompletedTaskCount() + " " + 
+                        "stp-corePoolSize: " + corePoolSize + " " + 
+                        "stp-poolSize: " + cSharedThreadPool.getPoolSize() + " " + 
+                        "stp-maxPoolSize: " + cSharedThreadPool.getMaximumPoolSize());
+            }
+            else {
+                log.debug(
+                        "stp-queue-size: " + queueSize + " " + 
+                        "stp-activeCount: " + activeCount + " " + 
+                        "stp-completedTaskCount: " + cSharedThreadPool.getCompletedTaskCount() + " " + 
+                        "stp-corePoolSize: " + corePoolSize + " " + 
+                        "stp-poolSize: " + cSharedThreadPool.getPoolSize() + " " + 
+                        "stp-maxPoolSize: " + cSharedThreadPool.getMaximumPoolSize());
+            }
+
+            threadPoolExecutor = cSharedThreadPool;
+        }
+        else {
+            threadPoolExecutor = this.mThreadPool;
+        }
+
+        return new ChannelRenderer(channel, channelRuntimeData, threadPoolExecutor);
     }
 }
