@@ -41,7 +41,7 @@ import org.hibernate.usertype.UserType;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public abstract class BaseUserType<T> implements UserType {
+public abstract class BaseUserType<T> implements UserType, Serializable {
     private static final WrapperOptions OPTIONS = new WrapperOptions() {
         @Override
         public boolean useStreamForLobBinding() {
