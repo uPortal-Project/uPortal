@@ -38,7 +38,7 @@ import org.hibernate.usertype.UserType;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class BaseEscapedStringType implements UserType {
+public class BaseEscapedStringType implements UserType, Serializable {
     private static final char QUOTING_CHAR = '\"';
 
     private final NullableType type;

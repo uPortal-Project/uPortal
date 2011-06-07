@@ -36,7 +36,7 @@ import org.hibernate.usertype.UserType;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class FunctionalNameType implements UserType {
+public class FunctionalNameType implements UserType, Serializable {
     public static final Pattern INVALID_CHARS_PATTERN = Pattern.compile("[^\\w-]");
     public static final Pattern VALID_CHARS_PATTERN = Pattern.compile("[\\w-]");
     public static final Pattern VALID_FNAME_PATTERN = Pattern.compile("^[\\w-]+$");
