@@ -156,6 +156,7 @@
             <available file="${live-nightly.dir}/build.xml" />
             <then>
                 <ant antfile="${live-nightly.dir}/build.xml" dir="${live-nightly.dir}" inheritall="false" target="stop" />
+                <sleep minutes="1" />
             </then>
         </if>
     </target>
