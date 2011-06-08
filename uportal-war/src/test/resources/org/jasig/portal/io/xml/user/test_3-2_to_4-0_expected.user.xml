@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<user 
+    xmlns="https://source.jasig.org/schemas/uportal/io/user" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/user https://source.jasig.org/schemas/uportal/io/user/user-4.0.xsd"
+    version="4.0" username="student"
+>
+    <default-user>defaultTemplateUser</default-user>
+    <password>(MD5)mhmjKvf2F3gPizS9DrA+CsFmqj74oTSb</password>
+    <attribute>
+        <name>first-name</name>
+        <value>Student</value>
+    </attribute>
+    <attribute>
+        <name>last-name</name>
+        <value>User</value>
+    </attribute>
+    <attribute>
+        <name>email</name>
+        <value>student.user@example.org</value>
+    </attribute>
+</user>

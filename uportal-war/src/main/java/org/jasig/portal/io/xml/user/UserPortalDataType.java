@@ -34,10 +34,14 @@ import org.jasig.portal.io.xml.PortalDataKey;
 public class UserPortalDataType implements IPortalDataType {
     public static final UserPortalDataType INSTANCE = new UserPortalDataType();
     public static final QName USER_NAME = new QName("https://source.jasig.org/schemas/uportal/io/user", "user");
-    public static final PortalDataKey IMPORT_DATA_KEY = new PortalDataKey(
+    public static final PortalDataKey IMPORT_40_DATA_KEY = new PortalDataKey(
             USER_NAME, 
             null,
             "4.0");
+    public static final PortalDataKey IMPORT_32_DATA_KEY = new PortalDataKey(
+            new QName("user"), 
+            "classpath://org/jasig/portal/io/import-user_v3-2.crn",
+            null);
     
     @Override
     public String getTypeId() {

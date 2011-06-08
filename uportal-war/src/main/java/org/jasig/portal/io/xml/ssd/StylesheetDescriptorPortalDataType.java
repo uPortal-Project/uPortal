@@ -33,11 +33,11 @@ import org.jasig.portal.layout.om.IStylesheetDescriptor;
  * @author Eric Dalquist
  * @version $Revision$
  */
-class StylesheetDescriptorPortalDataType implements IPortalDataType {
+public class StylesheetDescriptorPortalDataType implements IPortalDataType {
     public static final StylesheetDescriptorPortalDataType INSTANCE = new StylesheetDescriptorPortalDataType();
     
     private static final QName STYLESHEET_DESCRIPTOR_NAME = new QName("https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor", "stylesheet-descriptor");
-    public static final PortalDataKey IMPORT_DATA_KEY = new PortalDataKey(
+    public static final PortalDataKey IMPORT_40_DATA_KEY = new PortalDataKey(
             STYLESHEET_DESCRIPTOR_NAME, 
             null,
             "4.0");

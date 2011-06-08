@@ -27,6 +27,7 @@ import static org.mockito.Mockito.when;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -176,14 +177,7 @@ public class ImportExportTest {
     
     
     private <T> void testIdentityImportExport(IDataImporterExporter<T> dataImporterExporter, Resource resource, Function<T, String> getName) throws Exception {
-        final String importData;
-        final InputStream inputStream = resource.getInputStream();
-        try {
-            importData = IOUtils.toString(inputStream);
-        }
-        finally {
-            IOUtils.closeQuietly(inputStream);
-        }
+        final String importData = toString(resource);
         
         //Unmarshall from XML
         final Unmarshaller unmarshaller = dataImporterExporter.getUnmarshaller();
@@ -213,5 +207,15 @@ public class ImportExportTest {
         XMLUnit.setIgnoreWhitespace(true);
         Diff d = new Diff(new StringReader(importData), new StringReader(result.toString()));
         assertTrue("Export result differs from import" + d, d.similar());
+    }
+
+    protected String toString(Resource resource) throws IOException {
+        final InputStream inputStream = resource.getInputStream();
+        try {
+            return IOUtils.toString(inputStream);
+        }
+        finally {
+            IOUtils.closeQuietly(inputStream);
+        }
     }
 }

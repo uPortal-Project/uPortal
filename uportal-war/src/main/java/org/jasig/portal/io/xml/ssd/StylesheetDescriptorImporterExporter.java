@@ -60,7 +60,7 @@ public class StylesheetDescriptorImporterExporter extends AbstractJaxbIDataImpor
      */
     @Override
     public PortalDataKey getImportDataKey() {
-        return StylesheetDescriptorPortalDataType.IMPORT_DATA_KEY;
+        return StylesheetDescriptorPortalDataType.IMPORT_40_DATA_KEY;
     }
 
     /* (non-Javadoc)

@@ -96,7 +96,7 @@ public class UserImporterExporter extends
 
     @Override
 	public PortalDataKey getImportDataKey() {
-		return UserPortalDataType.IMPORT_DATA_KEY;
+		return UserPortalDataType.IMPORT_40_DATA_KEY;
 	}
 
 	@Override
