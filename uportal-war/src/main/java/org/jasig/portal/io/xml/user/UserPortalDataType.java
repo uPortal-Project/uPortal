@@ -42,6 +42,14 @@ public class UserPortalDataType implements IPortalDataType {
             new QName("user"), 
             "classpath://org/jasig/portal/io/import-user_v3-2.crn",
             null);
+    public static final PortalDataKey IMPORT_30_DATA_KEY = new PortalDataKey(
+            new QName("user"), 
+            "classpath://org/jasig/portal/io/import-user_v3-0.crn",
+            null);
+    public static final PortalDataKey IMPORT_26_DATA_KEY = new PortalDataKey(
+            new QName("user"), 
+            "classpath://org/jasig/portal/io/import-user_v2-6.crn",
+            null);
     
     @Override
     public String getTypeId() {

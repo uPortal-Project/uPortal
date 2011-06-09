@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<user
+    xmlns="https://source.jasig.org/schemas/uportal/io/user" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/user https://source.jasig.org/schemas/uportal/io/user/user-4.0.xsd"
+    version="4.0" username="student">
+   <default-user>demo</default-user>
+</user>
