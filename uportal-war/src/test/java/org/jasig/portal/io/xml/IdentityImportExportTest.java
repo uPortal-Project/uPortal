@@ -68,7 +68,7 @@ import com.google.common.base.Function;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/org/jasig/portal/io/xml/importExportTestContext.xml")
-public class ImportExportTest {
+public class IdentityImportExportTest {
     @Autowired private DataSource dataSource;
     @Autowired private IDataImporterExporter<ExternalStylesheetDescriptor> stylesheetDescriptorImporterExporter;
     @Autowired private IDataImporterExporter<ExternalUser> userImporterExporter;

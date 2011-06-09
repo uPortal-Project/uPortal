@@ -83,22 +83,23 @@ public class JaxbDataImportExportService implements IDataImportExportService, Re
         this.xmlUtilities = xmlUtilities;
     }
     
+    @SuppressWarnings("unchecked")
     @Autowired(required=false)
-    public void setDataImporters(Collection<IDataImporterExporter<Object>> dataImporters) {
+    public void setDataImporters(Collection<IDataImporterExporter<? extends Object>> dataImporters) {
         final Map<PortalDataKey, IDataImporterExporter<Object>> dataImportersMap = new LinkedHashMap<PortalDataKey, IDataImporterExporter<Object>>();
         final Map<String, IDataImporterExporter<Object>> dataExportersMap = new LinkedHashMap<String, IDataImporterExporter<Object>>();
         
         final Set<IPortalDataType> portalDataTypes = new LinkedHashSet<IPortalDataType>();
         
-        for (final IDataImporterExporter<Object> dataImporter : dataImporters) {
+        for (final IDataImporterExporter<?> dataImporter : dataImporters) {
             final IPortalDataType portalDataType = dataImporter.getPortalDataType();
             final String typeId = portalDataType.getTypeId();
             final PortalDataKey importDataKey = dataImporter.getImportDataKey();
             
             this.logger.debug("Registering IDataImporterExporter for '{}','{}' - {}", new Object[] {typeId, importDataKey, dataImporter});
             
-            dataImportersMap.put(importDataKey, dataImporter);
-            dataExportersMap.put(typeId, dataImporter);
+            dataImportersMap.put(importDataKey, (IDataImporterExporter<Object>)dataImporter);
+            dataExportersMap.put(typeId, (IDataImporterExporter<Object>)dataImporter);
             portalDataTypes.add(portalDataType);
         }
         
@@ -181,8 +182,17 @@ public class JaxbDataImportExportService implements IDataImportExportService, Re
         final IDataUpgrader dataUpgrader = this.portalDataUpgraders.get(portalDataKey);
         if (dataUpgrader != null) {
             this.logger.debug("Upgrading: {}", portalDataKey);
+            
+            final StAXSource staxSource;
+            try {
+                staxSource = new StAXSource(bufferedXmlEventReader);
+            }
+            catch (XMLStreamException e) {
+                throw new RuntimeException("Failed to create StAXSource from original XML reader", e);
+            }
+            
             final DOMResult result = new DOMResult();
-            final boolean doImport = dataUpgrader.upgradeData(source, result);
+            final boolean doImport = dataUpgrader.upgradeData(staxSource, result);
             if (doImport) {
                 //If the upgrader didn't handle the import as well wrap the result DOM in a new Source and start the import process over again
                 final org.w3c.dom.Node node = result.getNode();
