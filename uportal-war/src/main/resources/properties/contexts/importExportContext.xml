@@ -30,20 +30,48 @@
     <!-- 
      | Import/Export classes for portal entities
      +-->
-    <bean class="org.jasig.portal.io.xml.portlet.PortletDefinitionImporterExporter">
+    <bean id="portletDefinitionImporterExporter" class="org.jasig.portal.io.xml.portlet.PortletDefinitionImporterExporter">
         <property name="contextPath" value="org.jasig.portal.io.xml.portlet" />
         <property name="schema" value="classpath:/xsd/io/portlet-definition/portlet-definition-4.0.xsd" />
         <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd" />
     </bean>
-    <bean class="org.jasig.portal.io.xml.portlettype.PortletTypeImporterExporter">
+    <bean id="portletTypeImporterExporter" class="org.jasig.portal.io.xml.portlettype.PortletTypeImporterExporter">
         <property name="contextPath" value="org.jasig.portal.io.xml.portlettype" />
         <property name="schema" value="classpath:/xsd/io/portlet-type/portlet-type-4.0.xsd" />
         <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/portlet-type https://source.jasig.org/schemas/uportal/io/portlet-type/portlet-type-4.0.xsd" />
     </bean>
-    <bean class="org.jasig.portal.io.xml.ssd.StylesheetDescriptorImporterExporter">
+    <bean id="stylesheetDescriptorImporterExporter" class="org.jasig.portal.io.xml.ssd.StylesheetDescriptorImporterExporter">
         <property name="contextPath" value="org.jasig.portal.io.xml.ssd" />
         <property name="schema" value="classpath:/xsd/io/stylesheet-descriptor/stylesheet-descriptor-4.0.xsd" />
         <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor/stylesheet-descriptor-4.0.xsd" />
+    </bean>
+    <bean id="userImporterExporter" class="org.jasig.portal.io.xml.user.UserImporterExporter">
+        <property name="contextPath" value="org.jasig.portal.io.xml.user" />
+        <property name="schema" value="classpath:/xsd/io/user/user-4.0.xsd" />
+        <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/user https://source.jasig.org/schemas/uportal/io/user/user-4.0.xsd" />
+    </bean>
+
+    
+    <!-- 
+     | Data Upgraded classes for portal entities
+     +-->
+    <bean id="user32DataUpgrader" class="org.jasig.portal.io.xml.XsltDataUpgrader">
+        <property name="portalDataKey">
+            <util:constant static-field="org.jasig.portal.io.xml.user.UserPortalDataType.IMPORT_32_DATA_KEY"/>
+        </property>
+        <property name="xslResource" value="classpath:/org/jasig/portal/io/xml/user/upgrade-user_3-2.xsl" />
+    </bean>
+    <bean id="user30DataUpgrader" class="org.jasig.portal.io.xml.XsltDataUpgrader">
+        <property name="portalDataKey">
+            <util:constant static-field="org.jasig.portal.io.xml.user.UserPortalDataType.IMPORT_30_DATA_KEY"/>
+        </property>
+        <property name="xslResource" value="classpath:/org/jasig/portal/io/xml/user/upgrade-user_3-2.xsl" />
+    </bean>
+    <bean id="user26DataUpgrader" class="org.jasig.portal.io.xml.XsltDataUpgrader">
+        <property name="portalDataKey">
+            <util:constant static-field="org.jasig.portal.io.xml.user.UserPortalDataType.IMPORT_26_DATA_KEY"/>
+        </property>
+        <property name="xslResource" value="classpath:/org/jasig/portal/io/xml/user/upgrade-user_3-2.xsl" />
     </bean>
     
     <!-- 

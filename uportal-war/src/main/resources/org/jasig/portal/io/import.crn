@@ -100,9 +100,25 @@
                                         <handle-error>
                                             <try>
                                                 <echo-ln>Import Template User:  ${Attributes.LOCATION}</echo-ln>
-                                                <with-attribute key="Attributes.NODE" value="${parseXml(${Attributes.LOCATION})}">
-                                                    <crn location="${valueOf(@script)}"/>
-                                                </with-attribute>
+                                                <crn location="classpath://org/jasig/portal/io/jaxb-import_v4-0.crn"/>
+                                            </try>
+                                            <catch>
+                                                <echo-ln>ERROR Failed to import Template User from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                                <throw/>
+                                            </catch>
+                                        </handle-error>
+                                    </concurrent>
+                                </if>
+                            </file-iterator>
+                        </thread-pool>
+                        <thread-pool threads="${req(THREAD_COUNT)}">
+                            <file-iterator dir="${$1}" includes="**/*.template-user.xml">
+                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                    <concurrent>
+                                        <handle-error>
+                                            <try>
+                                                <echo-ln>Import Template User:  ${Attributes.LOCATION}</echo-ln>
+                                                <crn location="classpath://org/jasig/portal/io/jaxb-import_v4-0.crn"/>
                                             </try>
                                             <catch>
                                                 <echo-ln>ERROR Failed to import Template User from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
@@ -122,9 +138,25 @@
                                         <handle-error>
                                             <try>
                                                 <echo-ln>Import User:  ${Attributes.LOCATION}</echo-ln>
-                                                <with-attribute key="Attributes.NODE" value="${parseXml(${Attributes.LOCATION})}">
-                                                    <crn location="${valueOf(@script)}"/>
-                                                </with-attribute>
+                                                <crn location="classpath://org/jasig/portal/io/jaxb-import_v4-0.crn"/>
+                                            </try>
+                                            <catch>
+                                                <echo-ln>ERROR Failed to import User from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>
+                                                <throw/>
+                                            </catch>
+                                        </handle-error>
+                                    </concurrent>
+                                </if>
+                            </file-iterator>
+                        </thread-pool>
+                        <thread-pool threads="${req(THREAD_COUNT)}">
+                            <file-iterator dir="${$1}" includes="**/*.user.xml">
+                                <if test="${jexl(Attributes.LOCATION.matches(FILE_PATTERN))}">
+                                    <concurrent>
+                                        <handle-error>
+                                            <try>
+                                                <echo-ln>Import User:  ${Attributes.LOCATION}</echo-ln>
+                                                <crn location="classpath://org/jasig/portal/io/jaxb-import_v4-0.crn"/>
                                             </try>
                                             <catch>
                                                 <echo-ln>ERROR Failed to import User from:  ${Attributes.LOCATION} due to exception: ${Attributes.EXCEPTION}</echo-ln>

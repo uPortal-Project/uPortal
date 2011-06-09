@@ -151,7 +151,10 @@ public class UserImporterExporter extends
                 account = this.localAccountDao.createPerson(username);
             }
             account.setPassword(password);
-            account.setLastPasswordChange(data.getLastPasswordChange().getTime());
+            final Calendar lastPasswordChange = data.getLastPasswordChange();
+            if (lastPasswordChange != null) {
+                account.setLastPasswordChange(lastPasswordChange.getTime());
+            }
     
             account.removeAttribute(username);
             for (final Attribute attribute : attributes) {
