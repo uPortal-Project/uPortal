@@ -420,9 +420,6 @@
         <entry key="fragment-definition">
             <ref bean="export-fragment-definition"/>
         </entry>
-        <entry key="user">
-            <ref bean="export-user"/>
-        </entry>
     </util:map>
 
     <bean id="export-group_membership" class="org.danann.cernunnos.runtime.PojoTask">
@@ -563,22 +560,6 @@
                 </entry>
                 <entry key="fragmentDefinitionDao">
                     <ref bean="fragmentDefinitionDao"/>
-                </entry>
-            </util:map>
-        </property>
-    </bean>
-
-    <bean id="export-user" class="org.danann.cernunnos.runtime.PojoTask">
-        <property name="location">
-            <value>classpath://org/jasig/portal/io/export-user.crn</value>
-        </property>
-        <property name="requestAttributes">
-            <util:map>
-                <entry key="SqlAttributes.DATA_SOURCE">
-                    <ref bean="PortalDb"/>
-                </entry>
-                <entry key="SqlAttributes.TRANSACTION_MANAGER">
-                    <ref bean="transactionManager"/>
                 </entry>
             </util:map>
         </property>
