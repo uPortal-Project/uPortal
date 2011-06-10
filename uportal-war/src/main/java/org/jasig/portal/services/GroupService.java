@@ -41,6 +41,7 @@ import org.jasig.portal.groups.IGroupServiceFactory;
 import org.jasig.portal.groups.ILockableEntityGroup;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
 
 /**
  *  Bootstrap class for the IGroupService implementation.
@@ -56,7 +57,13 @@ public class GroupService implements IGroupConstants
     private static final Log log = LogFactory.getLog(GroupService.class);
     
     // Singleton instance of the bootstrap class:
-    private static GroupService instance = null;
+    private static final SingletonDoubleCheckedCreator<GroupService> instance = new SingletonDoubleCheckedCreator<GroupService>() {
+        
+        @Override
+        protected GroupService createSingleton(Object... args) {
+            return new GroupService();
+        }
+    };
 
     // Switch for composite/simple service
     private static boolean composite;
@@ -406,11 +413,8 @@ private void initializeCompositeService() throws GroupsException
         throw new GroupsException(eMsg, e);
     }
 }
-    public static synchronized GroupService instance() throws GroupsException {
-        if ( instance==null ) {
-            instance = new GroupService();
-        }
-        return instance;
+    public static GroupService instance() throws GroupsException {
+        return instance.get();
     }
     
     /**
