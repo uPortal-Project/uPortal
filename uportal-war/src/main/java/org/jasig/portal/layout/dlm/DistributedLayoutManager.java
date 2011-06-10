@@ -1500,6 +1500,12 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
      */
     private boolean resetLayout(IPerson person)
     {
+        final String userName = person.getUserName();
+        if (PersonFactory.GUEST_USERNAME.equals(userName)) {
+            throw new IllegalArgumentException("CANNOT RESET LAYOUT FOR A GUEST USER: " + person);
+        }
+        LOG.warn("Resetting user layout for: " + userName, new Throwable());
+        
         boolean layoutWasReset = false;
         
         /*
