@@ -122,6 +122,11 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       if ( rs.next() )
         name = rs.getString(1);
       rs.close();
+      
+      if (PersonFactory.GUEST_USERNAME.equals(name)) {
+          throw new IllegalArgumentException("CANNOT RESET LAYOUT FOR A GUEST USER: " + uPortalUID);
+      }
+      
       rs = stmt.executeQuery("SELECT ENTITY_TYPE_ID FROM UP_ENTITY_TYPE WHERE ENTITY_TYPE_NAME = 'org.jasig.portal.security.IPerson'");
       int type = -1;
       if ( rs.next() )
