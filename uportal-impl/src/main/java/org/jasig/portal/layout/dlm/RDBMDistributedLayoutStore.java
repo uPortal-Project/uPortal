@@ -81,10 +81,12 @@ import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.BrokenSecurityContext;
 import org.jasig.portal.security.provider.PersonImpl;
+import org.jasig.portal.spring.locator.CacheFactoryLocator;
 import org.jasig.portal.spring.locator.ConfigurationLoaderLocator;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.SmartCache;
 import org.jasig.portal.utils.XML;
+import org.jasig.portal.utils.cache.CacheFactory;
 import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.w3c.dom.Attr;
@@ -117,11 +119,10 @@ public class RDBMDistributedLayoutStore
     private String systemDefaultUser = null;
     private boolean systemDefaultUserLoaded = false;
     private ConfigurationLoader configurationLoader;
-    private Map<String, FragmentNodeInfo> fragmentInfoCache = new ConcurrentHashMap<String, FragmentNodeInfo>();
+    private final Map<String, FragmentNodeInfo> fragmentInfoCache;
     private LayoutDecorator decorator = null;
 
     // fragmentActivator
-    private FragmentActivator fragmentActivator;
     private final SingletonDoubleCheckedCreator<FragmentActivator> fragmentActivatorCreator = new SingletonDoubleCheckedCreator<FragmentActivator>() {
         protected FragmentActivator createSingleton(Object... args) {
             // be sure we only do this once...
@@ -198,7 +199,10 @@ public class RDBMDistributedLayoutStore
         ssdCache = new SmartCache();
         
         this.configurationLoader = ConfigurationLoaderLocator.getConfigurationLoader();
-
+        
+        final CacheFactory cacheFactory = CacheFactoryLocator.getCacheFactory();
+        this.fragmentInfoCache = cacheFactory.getCache("org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragmentNodeInfoCache");
+        
         try
         {
 
@@ -364,72 +368,6 @@ public class RDBMDistributedLayoutStore
 
         // Set the new one in the cache
         tsdCache.put(new Integer(tsd.getId()), tsd);
-    }
-
-    /**
-     * Cleans out the layout fragments. This is done so that changes made to
-     * the channels within a layout are visible to the users who have that layout
-     * incorporated into their own.
-     *
-     * The interval at which this thread runs is set in the dlm.xml file as
-     * 'org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragment_cache_refresh',
-     * specified in minutes.
-     */
-    public void cleanFragments() {
-        
-        FragmentActivator activator = this.getFragmentActivator();
-
-        //get each layout owner
-        final List<FragmentDefinition> definitions = configurationLoader.getFragments();
-        if ( null != definitions ) {
-            
-            final Map<IPerson, FragmentDefinition> owners = new HashMap<IPerson, FragmentDefinition>();
-            for (final FragmentDefinition fragmentDefinition : definitions) {
-                String ownerId = fragmentDefinition.getOwnerId();
-                final UserView userView = activator.getUserView(fragmentDefinition);
-                if (userView != null) {
-                    int userId  = userView.getUserId();
-    
-                    if ( null != ownerId )
-                    {
-                        IPerson p = new PersonImpl();
-                        p.setID( userId );
-                        p.setAttribute( "username", ownerId );
-                        owners.put(p, fragmentDefinition);
-                    }
-                }
-            }
-
-            // cycle through each layout owner and clear out their
-            // respective layouts so users fragments will be cleared
-            for (final Map.Entry<IPerson, FragmentDefinition> ownerEntry : owners.entrySet()) {
-                final IPerson person = ownerEntry.getKey();
-                final UserProfile profile;
-                try {
-                    profile = getUserProfileByFname(person, "default");
-                }
-                catch (Exception e) {
-                    this.log.error("Failed to retrieve UserProfile for person " + person + " while cleaning fragment cache, person will be skipped", e);
-                    continue;
-                }
-                
-                // TODO fix hard coded "default" later for profiling
-                profile.setProfileFname("default");
-                
-                final Document layout;
-                try {
-                    layout = getFragmentLayout(person, profile);
-                }
-                catch (Exception e) {
-                    this.log.error("Failed to retrieve layout for person " + person + " and profile " + profile + " while cleaning fragment cache, person will be skipped", e);
-                    continue;
-                }
-                
-                FragmentDefinition fragment = ownerEntry.getValue();
-                updateCachedLayout( layout, profile, fragment );
-            }
-        }
-        fragmentInfoCache = new ConcurrentHashMap<String, FragmentNodeInfo>();
     }
 
     /**
@@ -1216,7 +1154,7 @@ public class RDBMDistributedLayoutStore
         {
             activator.fragmentizeLayout( view, fragment );
             activator.setUserView(fragment.getOwnerId(), view);
-            this.fragmentInfoCache = new HashMap<String, FragmentNodeInfo>();
+            this.fragmentInfoCache.clear();
         }
         catch( Exception e )
         {

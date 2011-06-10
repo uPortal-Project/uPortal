@@ -102,6 +102,24 @@
 
     
     <!-- 
+     | Caches fragment layouts
+     | - 1 x fragment layout
+     | - replicated by invalidation
+     +-->
+    <cache name="org.jasig.portal.layout.dlm.FragmentActivator.userViews"
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
+     <!-- 
+     | Caches node descriptor objects for fragment layouts
+     | - 1 x fragment layout node
+     | - not replicated
+     +-->
+    <cache name="org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragmentNodeInfoCache"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
+    <!-- 
      | Caches layout DOM
      | - 1 x user
      | - replicated by invalidation

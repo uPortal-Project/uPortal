@@ -36,7 +36,6 @@
             <list>
             	<ref bean="carFilesLoadingTrigger" />
                 <ref bean="cacheMaintenanceTrigger" />
-                <ref bean="dlmFragmentCleanerTrigger" />
                 <ref bean="statsQueueFlushingTrigger" />
                 <ref bean="statsPurgeTrigger" />
             </list>
@@ -69,19 +68,6 @@
         <!-- Run every 5 minutes -->
         <property name="startDelay" value="300000" />
         <property name="repeatInterval" value="300000" />
-    </bean>
-    
-    <bean id="dlmFragmentCleanerTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
-        <property name="jobDetail">
-            <bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-                <property name="targetMethod" value="run" />
-                <property name="targetObject">
-                    <bean class="org.jasig.portal.layout.dlm.FragmentCleanerRunner" />
-                </property>
-            </bean>
-        </property>
-        <property name="startDelay" value="${org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragment_cache_refresh}" />
-        <property name="repeatInterval" value="${org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragment_cache_refresh}" />
     </bean>
     
     <!-- Flush the stats queue to the database every second -->
