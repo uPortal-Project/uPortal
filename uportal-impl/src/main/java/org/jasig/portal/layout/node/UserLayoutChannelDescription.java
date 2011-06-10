@@ -74,6 +74,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
     public UserLayoutChannelDescription(IUserLayoutChannelDescription d) {
         this();
         this.title=d.getTitle();
+        this.name = d.getName();
         this.description=d.getDescription();
         this.setClassName(d.getClassName());
         this.channelPublishId=d.getChannelPublishId();
@@ -99,6 +100,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
     public UserLayoutChannelDescription(IChannelDefinition definition) {
         this();
         this.title = definition.getTitle();
+        this.name = definition.getName();
         this.description = definition.getDescription();
         this.setClassName(definition.getJavaClass());
         this.channelPublishId = String.valueOf(definition.getId());
@@ -594,6 +596,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
     public void addNodeAttributes(Element node) {
         super.addNodeAttributes(node);
         node.setAttribute("title",this.getTitle());
+        node.setAttribute("name",this.getName());
         node.setAttribute("description",this.getDescription());
         node.setAttribute("class",this.getClassName());
         node.setAttribute("chanID",this.getChannelPublishId());
