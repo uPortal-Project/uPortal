@@ -29,14 +29,19 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
 import javax.servlet.ServletContext;
+import javax.xml.bind.JAXBElement;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -73,10 +78,17 @@ import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletTypeRegistry;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
+import org.jasig.portal.portletpublishing.xml.MultiValuedPreferenceInputType;
+import org.jasig.portal.portletpublishing.xml.Parameter;
+import org.jasig.portal.portletpublishing.xml.ParameterInputType;
 import org.jasig.portal.portletpublishing.xml.PortletPublishingDefinition;
 import org.jasig.portal.portletpublishing.xml.Preference;
+import org.jasig.portal.portletpublishing.xml.PreferenceInputType;
+import org.jasig.portal.portletpublishing.xml.SingleValuedPreferenceInputType;
 import org.jasig.portal.portletpublishing.xml.Step;
+import org.jasig.portal.portlets.Attribute;
 import org.jasig.portal.portlets.BooleanAttribute;
+import org.jasig.portal.portlets.StringListAttribute;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.IChannelPublishingDefinitionDao;
 import org.jasig.portal.security.IAuthorizationPrincipal;
@@ -486,49 +498,107 @@ public class PortletAdministrationHelper implements ServletContextAware {
         return false;
 	}
 	
-	public void cleanOptions(PortletDefinitionForm form, PortletRequest request) {
-		Set<String> preferenceNames = new HashSet<String>();
-		Set<String> parameterNames = new HashSet<String>();
-		for (Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();) {
-			String name = e.nextElement();
-			if (name.startsWith("portletPreferences[")) {
-				preferenceNames.add(name.split("\'")[1]);
-			} else if (name.startsWith("parameters[")) {
-				parameterNames.add(name.split("\'")[1]);
-			}
-		}
-		
-		Set<String> keys = new HashSet<String>();
-		keys.addAll(form.getPortletPreferences().keySet());
-		for (String key : keys) {
-			if (!preferenceNames.contains(key)) {
-				form.getPortletPreferences().remove(key);
-			} else if (form.getPortletPreferences().get(key) == null) {
-				form.getPortletPreferences().remove(key);
-			} else {
-				List<String> values = form.getPortletPreferences().get(key).getValue();
-				for (ListIterator<String> iter = values.listIterator(); iter.hasNext();) {
-					String value = iter.next();
-					if (StringUtils.isEmpty(value)) {
-						iter.remove();
-					}
-				}
-				if (values.size() == 0) {
-					form.getPortletPreferences().remove(key);
-				}
-			}
-		}
-		
-		keys = new HashSet<String>();
-		keys.addAll(form.getParameters().keySet());
-		for (String key : keys) {
-			if (!parameterNames.contains(key)) {
-				form.getParameters().remove(key);
-			} else if (form.getParameters().get(key) == null || StringUtils.isBlank(form.getParameters().get(key).getValue())) {
-				form.getParameters().remove(key);
-			}
-		}
-	}
+    private static final Pattern PARAM_PATTERN = Pattern.compile("^([^\\[]+)\\['([^\\']+)'\\]\\.value$");
+    
+    public void cleanOptions(PortletDefinitionForm form, PortletRequest request) {
+        //Names of valid preferences and parameters
+        final Set<String> preferenceNames = new HashSet<String>();
+        final Set<String> parameterNames = new HashSet<String>();
+
+        //Read all of the submitted channel parameter and portlet preference names from the request
+        for (final Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();) {
+            final String name = e.nextElement();
+            final Matcher nameMatcher = PARAM_PATTERN.matcher(name);
+            if (nameMatcher.matches()) {
+                final String paramType = nameMatcher.group(1);
+                final String paramName = nameMatcher.group(2);
+                
+                if ("portletPreferences".equals(paramType)) {
+                    preferenceNames.add(paramName);
+                }
+                else if ("parameters".equals(paramType)) {
+                    parameterNames.add(paramName);
+                }
+            }
+        }
+
+        //Add all of the parameter and preference names that have default values in the CPD into the valid name sets
+        final PortletPublishingDefinition cpd = this.portletPublishingDefinitionDao.getChannelPublishingDefinition(form.getTypeId());
+        for (final Step step : cpd.getSteps()) {
+            final List<Parameter> parameters = step.getParameters();
+            if (parameters != null) {
+                for (final Parameter parameter : parameters) {
+                    final JAXBElement<? extends ParameterInputType> parameterInput = parameter.getParameterInput();
+                    if (parameterInput != null) {
+                        final ParameterInputType parameterInputType = parameterInput.getValue();
+                        if (parameterInputType != null && parameterInputType.getDefault() != null) {
+                            parameterNames.add(parameter.getName());
+                        }
+                    }
+                }
+            }
+            
+            final List<Preference> preferences = step.getPreferences();
+            if (preferences != null) {
+                for (final Preference preference : preferences) {
+                    final JAXBElement<? extends PreferenceInputType> preferenceInput = preference.getPreferenceInput();
+                    final PreferenceInputType preferenceInputType = preferenceInput.getValue();
+                    if (preferenceInputType instanceof MultiValuedPreferenceInputType) {
+                        final MultiValuedPreferenceInputType multiValuedPreferenceInputType = (MultiValuedPreferenceInputType)preferenceInputType;
+                        final List<String> defaultValues = multiValuedPreferenceInputType.getDefault();
+                        if (defaultValues != null && !defaultValues.isEmpty()) {
+                            preferenceNames.add(preference.getName());
+                        }
+                    }
+                    else if (preferenceInputType instanceof SingleValuedPreferenceInputType) {
+                        final SingleValuedPreferenceInputType SingleValuedPreferenceInputType = (SingleValuedPreferenceInputType)preferenceInputType;
+                        if (SingleValuedPreferenceInputType.getDefault() != null) {
+                            preferenceNames.add(preference.getName());
+                        }
+                    }
+                }
+            }
+        }
+        
+        //Remove portlet preferences from the form object that were not part of this request or defined in the CPD
+        final Map<String, StringListAttribute> portletPreferences = form.getPortletPreferences();
+        final Map<String, BooleanAttribute> portletPreferencesOverrides = form.getPortletPreferenceReadOnly();
+        
+        for (final Iterator<Entry<String, StringListAttribute>> portletPreferenceEntryItr = portletPreferences.entrySet().iterator(); portletPreferenceEntryItr.hasNext();) {
+            final Map.Entry<String, StringListAttribute> portletPreferenceEntry = portletPreferenceEntryItr.next();
+            final String key = portletPreferenceEntry.getKey();
+            final StringListAttribute valueAttr = portletPreferenceEntry.getValue();
+            
+            if (!preferenceNames.contains(key) || valueAttr == null) {
+                portletPreferenceEntryItr.remove();
+                portletPreferencesOverrides.remove(key);
+            } else {
+                final List<String> values = valueAttr.getValue();
+                for (final Iterator<String> iter = values.iterator(); iter.hasNext();) {
+                    String value = iter.next();
+                    if (value == null) {
+                        iter.remove();
+                    }
+                }
+                if (values.size() == 0) {
+                    portletPreferenceEntryItr.remove();
+                    portletPreferencesOverrides.remove(key);
+                }
+            }
+        }
+        
+        final Map<String, Attribute> parameters = form.getParameters();
+
+        for (final Iterator<Entry<String, Attribute>> parameterEntryItr = parameters.entrySet().iterator(); parameterEntryItr.hasNext();) {
+            final Entry<String, Attribute> parameterEntry = parameterEntryItr.next();
+            final String key = parameterEntry.getKey();
+            final Attribute value = parameterEntry.getValue();
+            
+            if (!parameterNames.contains(key) || value == null || StringUtils.isBlank(value.getValue())) {
+                parameterEntryItr.remove();
+            }
+        }
+    }
 	
 	/**
 	 * Retreive the list of portlet application contexts currently available in
