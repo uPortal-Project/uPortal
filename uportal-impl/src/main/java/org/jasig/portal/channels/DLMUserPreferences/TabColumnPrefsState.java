@@ -241,7 +241,7 @@ public class TabColumnPrefsState extends BaseState
 
   private final String getActiveTab()
   {
-    String activeTab = "none";
+    String activeTab = null;
 
     try
     {
@@ -251,7 +251,11 @@ public class TabColumnPrefsState extends BaseState
     }
     catch (Exception e)
     {
-      log.error( "Unable to retrieve active tab.");
+      log.error( "Unable to retrieve active tab.", e);
+    }
+    
+    if (activeTab == null) {
+        activeTab = "none";
     }
 
     return activeTab;
