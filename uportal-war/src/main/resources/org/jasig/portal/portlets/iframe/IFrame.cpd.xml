@@ -66,6 +66,90 @@
             </single-text-preference-input>
         </preference>
 
+      <preference>
+        <name>height</name>
+        <label>frame.height</label>
+        <single-text-preference-input display="text">
+            <default>600</default>
+        </single-text-preference-input>
+      </preference>
+
+      <preference>
+        <name>width</name>
+        <label>frame.width</label>
+        <single-text-preference-input display="text">
+            <default>100%</default>
+        </single-text-preference-input>
+      </preference>
+
+      <preference>
+        <name>id</name>
+        <label>html.id</label>
+        <single-text-preference-input display="text" />
+      </preference>
+
+      <preference>
+        <name>cssClass</name>
+        <label>html.cssClass</label>
+        <single-text-preference-input display="text" />
+      </preference>
+
+      <preference>
+        <name>style</name>
+        <label>html.style</label>
+        <single-text-preference-input display="text" />
+      </preference>
+
+      <preference>
+        <name>title</name>
+        <label>html.title</label>
+        <single-text-preference-input display="text" />
+      </preference>
+
+      <preference>
+        <name>longDescription</name>
+        <label>html.longDescription</label>
+        <single-text-preference-input display="text" />
+      </preference>
+
+      <preference>
+        <name>name</name>
+        <label>html.name</label>
+        <single-text-preference-input display="text" />
+      </preference>
+
+      <preference>
+        <name>frameBorder</name>
+        <label>html.frameBorder</label>
+        <single-text-preference-input display="text">
+            <default>0</default>
+        </single-text-preference-input>
+      </preference>
+
+      <preference>
+        <name>marginWidth</name>
+        <label>html.marginWidth</label>
+        <single-text-preference-input display="text" />
+      </preference>
+
+      <preference>
+        <name>marginHeight</name>
+        <label>html.marginHeight</label>
+        <single-text-preference-input display="text" />
+      </preference>
+
+      <preference>
+        <name>scrolling</name>
+        <label>html.scrolling</label>
+        <single-text-preference-input display="text" />
+      </preference>
+
+      <preference>
+        <name>align</name>
+        <label>html.align</label>
+        <single-text-preference-input display="text" />
+      </preference>
+
     </step>
 
 </portlet-publishing-definition>
