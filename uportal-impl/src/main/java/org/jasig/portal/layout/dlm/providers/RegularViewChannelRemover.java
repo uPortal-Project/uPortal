@@ -68,6 +68,7 @@ public class RegularViewChannelRemover implements IParameterProcessor
             try
             {
                 dlm.deleteNode(chanNodeId);
+                dlm.saveUserLayout();
             } catch (PortalException e)
             {
                 LOG.error("Unable to delete node " + chanNodeId, e);
