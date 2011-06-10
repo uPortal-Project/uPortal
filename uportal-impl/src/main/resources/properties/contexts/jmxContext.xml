@@ -75,6 +75,12 @@
 
     <!-- uPortal framework statistics -->
     <bean id="portalFrameworkMBean" class="org.jasig.portal.jmx.FrameworkMBeanImpl" />
+    
+    <bean id="channelThreadPoolMBean" class="org.jasig.portal.ThreadPoolStatistics"/>
+    
+    <bean id="channelErrorThreadPoolMBean" class="org.jasig.portal.ThreadPoolStatistics">
+        <constructor-arg value="true" />
+    </bean>
 
     <!-- EhCache management and statistics -->
     <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
