@@ -19,7 +19,9 @@
 
 package org.jasig.portal.portlets.iframe;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.portlet.PortletPreferences;
@@ -41,6 +43,51 @@ import org.springframework.web.portlet.mvc.AbstractController;
  * @version $Revision$
  */
 public class IFramePortletController extends AbstractController {
+    
+    private static final Map<String, String> IFRAME_ATTRS = Collections.unmodifiableMap(new LinkedHashMap<String, String>() {{
+        /** document-wide unique id */
+        put("id", null);
+        
+        /** space-separated list of classes */
+        put("cssClass", null);
+        
+        /** associated style info */
+        put("style", null);
+        
+        /** advisory title */
+        put("title", null);
+        
+        /** link to long description (complements title) */
+        put("longDescription", null);
+        
+        /** name of frame for targetting */
+        put("name", null);
+        
+        /** source of frame content */
+        put("src", null);
+        
+        /** request frame borders? */
+        put("frameBorder", "0");
+        
+        /** margin widths in pixels */
+        put("marginWidth", null);
+        
+        /** margin height in pixels */
+        put("marginHeight", null);
+        
+        /** scrollbar or none */
+        put("scrolling", null);
+        
+        /** vertical or horizontal alignment */
+        put("align", null);
+        
+        /** frame height */
+        put("width", "100%");
+        
+        /** frame width */
+        put("height", null);
+    }});
+
 
 	@Override
 	protected ModelAndView handleRenderRequestInternal(RenderRequest request,
@@ -51,10 +98,17 @@ public class IFramePortletController extends AbstractController {
 		// get the IFrame target URL and the configured height of the IFrame
 		// window from the portlet preferences
 		PortletPreferences preferences = request.getPreferences();
-		model.put("url", preferences.getValue("url", null));
-		model.put("height", preferences.getValue("height", null));
 		
-		return new ModelAndView("/jsp/IFrame/iframePortlet", model);
+		//Legacy support for url attribute
+		model.put("src", preferences.getValue("url", null));
+		
+		for (final Map.Entry<String, String> attrEntry : IFRAME_ATTRS.entrySet()) {
+    		final String attr = attrEntry.getKey();
+            final String defaultValue = attrEntry.getValue();
+            model.put(attr, preferences.getValue(attr, defaultValue));
+		}
+		
+		return new ModelAndView("/jsp/IFrame/iframePortlet", "attrs", model);
 	}
 
 }

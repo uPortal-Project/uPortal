@@ -122,23 +122,142 @@ Version $Revision$
       </parameter>
 
       <preference modify="publish-only">
-        <name>url</name>
+        <name>src</name>
         <label>URL</label>
         <type base="string" input="text" display="text">
-          <length>40</length>
+          <length>80</length>
           <maxlength>2000</maxlength>
         </type>
         <example>http://www.udel.edu/uPortal</example>
       </preference>
 
-      <preference modify="publish">
+      <preference modify="publish-only">
         <name>height</name>
-        <label>Frame Height (pixels)</label>
+        <label>Frame Height (pixels or %)</label>
         <type base="integer" input="text" display="text">
-          <length>3</length>
-          <maxlength>4</maxlength>
+          <length>5</length>
+          <maxlength>10</maxlength>
         </type>
         <defaultValue>600</defaultValue>
+      </preference>
+
+      <preference modify="publish-only">
+        <name>width</name>
+        <label>Frame Width (pixels or %)</label>
+        <type base="string" input="text" display="text">
+          <length>5</length>
+          <maxlength>10</maxlength>
+        </type>
+        <defaultValue>100%</defaultValue>
+      </preference>
+
+      <preference modify="publish-only">
+        <name>id</name>
+        <label>HTML id attribute</label>
+        <type base="string" input="text" display="text">
+          <length>10</length>
+          <maxlength>80</maxlength>
+        </type>
+      </preference>
+
+      <preference modify="publish-only">
+        <name>cssClass</name>
+        <label>HTML cssClass attribute</label>
+        <type base="string" input="text" display="text">
+          <length>20</length>
+          <maxlength>100</maxlength>
+        </type>
+      </preference>
+
+      <preference modify="publish-only">
+        <name>style</name>
+        <label>HTML style attribute</label>
+        <type base="string" input="text" display="text">
+          <length>20</length>
+          <maxlength>100</maxlength>
+        </type>
+      </preference>
+
+      <preference modify="publish-only">
+        <name>title</name>
+        <label>HTML title attribute</label>
+        <type base="string" input="text" display="text">
+          <length>60</length>
+          <maxlength>200</maxlength>
+        </type>
+      </preference>
+
+      <preference modify="publish-only">
+        <name>longDescription</name>
+        <label>HTML longDescription attribute</label>
+        <type base="string" input="text" display="text">
+          <length>60</length>
+          <maxlength>1000</maxlength>
+        </type>
+      </preference>
+
+      <preference modify="publish-only">
+        <name>name</name>
+        <label>HTML name attribute</label>
+        <type base="string" input="text" display="text">
+          <length>10</length>
+          <maxlength>80</maxlength>
+        </type>
+      </preference>
+
+      <preference modify="publish-only">
+        <name>frameBorder</name>
+        <label>HTML frameBorder attribute</label>
+        <type base="integer" input="text" display="text">
+          <length>4</length>
+          <maxlength>10</maxlength>
+        </type>
+        <defaultValue>0</defaultValue>
+      </preference>
+
+      <preference modify="publish-only">
+        <name>marginWidth</name>
+        <label>HTML marginWidth attribute</label>
+        <type base="string" input="text" display="text">
+          <length>4</length>
+          <maxlength>10</maxlength>
+        </type>
+      </preference>
+
+      <preference modify="publish-only">
+        <name>marginHeight</name>
+        <label>HTML marginHeight attribute</label>
+        <type base="string" input="text" display="text">
+          <length>4</length>
+          <maxlength>10</maxlength>
+        </type>
+      </preference>
+
+      <preference modify="publish-only">
+        <name>scrolling</name>
+        <label>HTML scrolling attribute</label>
+        <type base="string" input="text" display="text">
+          <length>5</length>
+          <maxlength>40</maxlength>
+        </type>
+      </preference>
+
+      <preference modify="publish-only">
+        <name>align</name>
+        <label>HTML align attribute</label>
+        <type base="string" input="text" display="text">
+          <length>5</length>
+          <maxlength>40</maxlength>
+        </type>
+      </preference>
+
+      <preference modify="publish-only">
+        <name>align</name>
+        <label>HTML align attribute</label>
+        <type base="string" input="text" display="text">
+          <length>5</length>
+          <maxlength>40</maxlength>
+        </type>
       </preference>
 
     </step>
