@@ -24,9 +24,11 @@ import java.io.InputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
 import org.w3c.dom.Document;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
@@ -37,31 +39,14 @@ import org.xml.sax.SAXException;
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
  * @version $Revision$
  */
-public class DocumentFactory {
+public final class DocumentFactory {
 
     private static final Log log = LogFactory.getLog(DocumentFactory.class);
 
-    protected static DocumentFactory _instance;
-    protected static final LocalDocumentBuilder localDocBuilder = new LocalDocumentBuilder();
-    protected DocumentBuilderFactory dbFactory = null;
-
-    protected static synchronized DocumentFactory instance() {
-        if (_instance == null) {
-            _instance = new DocumentFactory();
-        }
-        return _instance;
-    }
-
-    protected DocumentFactory() {
-
-        try {
-            dbFactory = DocumentBuilderFactory.newInstance();
-            dbFactory.setNamespaceAware(true);
-            dbFactory.setValidating(false);
-        } catch (Exception e) {
-            log.error( "DocumentFactory: unable to initialize DocumentBuilderFactory", e);
-        }
-    }
+    protected static final SingletonDoubleCheckedCreator<DocumentBuilderFactory> documentBuilderFactoryInstance = new DocumentBuilderFactoryCreator();
+    
+    protected static final ThreadLocal<DocumentBuilder> localDocumentBuilder = new DocumentBuilderLocal();
+    
 
     /**
      * Returns a new copy of a Document implementation. This will
@@ -72,46 +57,64 @@ public class DocumentFactory {
         return newDocumentBuilder().newDocument();
     }
 
-    /**
-     * Returns a new copy of a Document implementation.
-     * @return an empty org.w3c.dom.Document implementation
-     */
-    static Document __getNewDocument() {
-        Document doc = newDocumentBuilder().newDocument();
+    public static Document getDocumentFromStream(InputStream stream, String publicId) throws IOException, SAXException {
+        DocumentBuilder builder = newDocumentBuilder();
+        InputSource source = new InputSource(stream);
+        source.setPublicId(publicId);
+        Document doc = builder.parse(source);
         return doc;
     }
 
-public static Document getDocumentFromStream(InputStream stream, String publicId) throws IOException, SAXException {
-    DocumentBuilder builder = newDocumentBuilder();
-    InputSource source = new InputSource(stream);
-    source.setPublicId(publicId);
-    Document doc = builder.parse(source);
-    return doc;
-}
-
-public static Document getDocumentFromStream(InputStream stream, EntityResolver er, String publicId) throws IOException, SAXException {
-    DocumentBuilder builder = newDocumentBuilder();
-    builder.setEntityResolver(er);
-    InputSource source = new InputSource(stream);
-    source.setPublicId(publicId);
-    Document doc = builder.parse(source);
-    return doc;
-}
-
-    public static DocumentBuilder newDocumentBuilder() {
-        DocumentBuilder builder = (DocumentBuilder)localDocBuilder.get();
-        return builder;
+    public static Document getDocumentFromStream(InputStream stream, EntityResolver er, String publicId)
+            throws IOException, SAXException {
+        DocumentBuilder builder = newDocumentBuilder();
+        builder.setEntityResolver(er);
+        InputSource source = new InputSource(stream);
+        source.setPublicId(publicId);
+        Document doc = builder.parse(source);
+        return doc;
     }
 
-    protected static class LocalDocumentBuilder extends ThreadLocal {
-        protected Object initialValue() {
-            Object r = null;
+    public static DocumentBuilder newDocumentBuilder() {
+        return localDocumentBuilder.get();
+    }
+    
+    private static final class DocumentBuilderFactoryCreator extends
+            SingletonDoubleCheckedCreator<DocumentBuilderFactory> {
+        @Override
+        protected DocumentBuilderFactory createSingleton(Object... args) {
+            final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            dbFactory.setNamespaceAware(true);
+            dbFactory.setValidating(false);
+            
+            return dbFactory;
+        }
+    }
+
+    private static final class DocumentBuilderLocal extends ThreadLocal<DocumentBuilder> {
+        @Override
+        protected DocumentBuilder initialValue() {
+            final DocumentBuilderFactory documentBuilderFactory = documentBuilderFactoryInstance.get();
             try {
-                r = instance().dbFactory.newDocumentBuilder();
-            } catch (Exception e) {
-                log.error(e, e);
+                return documentBuilderFactory.newDocumentBuilder();
             }
-            return r;
+            catch (ParserConfigurationException e) {
+                throw new IllegalStateException("Failed to create new DocumentBuilder for thread: " + Thread.currentThread().getName(), e);
+            }
+        }
+
+        @Override
+        public DocumentBuilder get() {
+            DocumentBuilder documentBuilder = super.get();
+            
+            //Handle a DocumentBuilder not getting created correctly
+            if (documentBuilder == null) {
+                log.warn("No DocumentBuilder existed for this thread, an initialValue() call must have failed");
+                documentBuilder = this.initialValue();
+                this.set(documentBuilder);
+            }
+            
+            return documentBuilder;
         }
     }
 }

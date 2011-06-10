@@ -19,15 +19,17 @@
 
 package org.jasig.portal.layout.dlm;
 
+import java.util.concurrent.Callable;
+
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.layout.IUserLayout;
+import org.jasig.portal.utils.ContextClassloaderTemplate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -41,8 +43,8 @@ import org.w3c.dom.Element;
  */
 public class RootLocator
 {
+    private static final String expression = "//layout/folder";
     private static final Log LOG = LogFactory.getLog(RootLocator.class);
-    private static final String cfgPrefix = RootLocator.class.getName() + ".";
     private static XPathExpression rootLocatorXpathExpression = null;
 
     /**
@@ -53,22 +55,26 @@ public class RootLocator
      * @param layout
      * @return 
      */
-    public static Element getRootElement(Document layout)
-    {
-        Element root = null;
-        try
-        {
-            if (rootLocatorXpathExpression == null)
-                createRootLocatorXpathExpression();
-
-            root = (Element) rootLocatorXpathExpression.evaluate(
-                    layout, XPathConstants.NODE);
-        } catch (Exception e)
-        {
-            LOG.error("Unable to locate layout element of type " 
-                    + IUserLayout.ROOT_NODE_NAME, e);
+    public static Element getRootElement(final Document layout) {
+        if (rootLocatorXpathExpression == null) {
+            createRootLocatorXpathExpression();
         }
-        return root;
+
+        try {
+            return ContextClassloaderTemplate.doWithContextClassloader(
+                    rootLocatorXpathExpression.getClass().getClassLoader(), 
+                    new Callable<Element>() {
+                        @Override
+                        public Element call() throws Exception {
+                            return (Element) rootLocatorXpathExpression.evaluate(layout, XPathConstants.NODE);
+                        }
+                    });
+        }
+        catch (Exception e) {
+            LOG.error("Unable to locate layout element of type " + IUserLayout.ROOT_NODE_NAME, e);
+        }
+
+        return null;
     }
 
     /**
@@ -77,13 +83,20 @@ public class RootLocator
      */
     private static void createRootLocatorXpathExpression()
     {
-        String expression = "//layout/folder";
         try
         {
-            XPathFactory fac = XPathFactory.newInstance();
-            XPath xpath = fac.newXPath();
-            rootLocatorXpathExpression = xpath.compile(expression);
-        } catch (XPathExpressionException e)
+            rootLocatorXpathExpression = ContextClassloaderTemplate.doWithContextClassloader(
+                    RootLocator.class.getClassLoader(), 
+                    new Callable<XPathExpression>() {
+                        @Override
+                        public XPathExpression call() throws Exception {
+                            XPathFactory fac = XPathFactory.newInstance();
+                            XPath xpath = fac.newXPath();
+                            return xpath.compile(expression);
+                        }
+                    });
+            
+        } catch (Exception e)
         {
             throw new RuntimeException("Unable to compile XPath expression '" + expression +
                     "' for obtaining root layout element.", e);
