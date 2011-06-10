@@ -69,6 +69,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
     public UserLayoutChannelDescription(IUserLayoutChannelDescription d) {
         this();
         this.title=d.getTitle();
+        this.name = d.getName();
         this.description=d.getDescription();
         this.setClassName(d.getClassName());
         this.channelPublishId=d.getChannelPublishId();
@@ -93,6 +94,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
     public UserLayoutChannelDescription(IPortletDefinition definition) {
         this();
         this.title = definition.getTitle();
+        this.name = definition.getName();
         this.name = definition.getName();
         this.description = definition.getDescription();
         this.channelPublishId = String.valueOf(definition.getPortletDefinitionId().getStringId());
