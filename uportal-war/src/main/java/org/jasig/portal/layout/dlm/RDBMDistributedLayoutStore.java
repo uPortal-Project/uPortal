@@ -44,6 +44,8 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import net.sf.ehcache.Ehcache;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.danann.cernunnos.Attributes;
@@ -81,6 +83,7 @@ import org.jasig.portal.security.provider.PersonImpl;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -115,7 +118,7 @@ public class RDBMDistributedLayoutStore
     private ConfigurationLoader configurationLoader;
     private FragmentActivator fragmentActivator;
 
-    private final Map<String, FragmentNodeInfo> fragmentInfoCache = new ConcurrentHashMap<String, FragmentNodeInfo>();
+    private Ehcache fragmentNodeInfoCache;
     
     static final String TEMPLATE_USER_NAME
         = "org.jasig.portal.services.Authentication.defaultTemplateUserName";
@@ -140,6 +143,11 @@ public class RDBMDistributedLayoutStore
     @Autowired
     public void setStylesheetUserPreferencesDao(IStylesheetUserPreferencesDao stylesheetUserPreferencesDao) {
         this.stylesheetUserPreferencesDao = stylesheetUserPreferencesDao;
+    }
+    
+    @Autowired
+    public void setFragmentNodeInfoCache(@Qualifier("org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragmentNodeInfoCache") Ehcache fragmentNodeInfoCache) {
+        this.fragmentNodeInfoCache = fragmentNodeInfoCache;
     }
 
     public void setLookupNoderefTask(Task k) {
@@ -167,7 +175,12 @@ public class RDBMDistributedLayoutStore
         final List<FragmentDefinition> definitions = configurationLoader.getFragments();
         for (final FragmentDefinition fragmentDefinition : definitions) {
             Document layout = DocumentFactory.getNewDocument();
-            Node copy = layout.importNode(activator.getUserView(fragmentDefinition)
+            final UserView userView = activator.getUserView(fragmentDefinition);
+            if (userView == null) {
+                log.warn("No UserView found for FragmentDefinition " + fragmentDefinition.getName() + ", it will be skipped.");
+                continue;
+            }
+            Node copy = layout.importNode(userView
                         .layout.getDocumentElement(), true);
             layout.appendChild(copy);
             layouts.put(fragmentDefinition.getOwnerId(), layout);
@@ -187,64 +200,6 @@ public class RDBMDistributedLayoutStore
 
     private FragmentActivator getFragmentActivator() {
         return this.fragmentActivator;
-    }
-
-    @Override
-    public void cleanFragments() {
-        
-        FragmentActivator activator = this.getFragmentActivator();
-
-        //get each layout owner
-        final List<FragmentDefinition> definitions = configurationLoader.getFragments();
-        if ( null != definitions ) {
-            
-            final Map<IPerson, FragmentDefinition> owners = new HashMap<IPerson, FragmentDefinition>();
-            for (final FragmentDefinition fragmentDefinition : definitions) {
-                String ownerId = fragmentDefinition.getOwnerId();
-                final UserView userView = activator.getUserView(fragmentDefinition);
-                if (userView != null) {
-                    int userId  = userView.getUserId();
-    
-                    if ( null != ownerId )
-                    {
-                        IPerson p = new PersonImpl();
-                        p.setID( userId );
-                        p.setAttribute( "username", ownerId );
-                        owners.put(p, fragmentDefinition);
-                    }
-                }
-            }
-
-            // cycle through each layout owner and clear out their
-            // respective layouts so users fragments will be cleared
-            for (final Map.Entry<IPerson, FragmentDefinition> ownerEntry : owners.entrySet()) {
-                final IPerson person = ownerEntry.getKey();
-                final IUserProfile profile;
-                try {
-                    profile = getUserProfileByFname(person, "default");
-                }
-                catch (Exception e) {
-                    this.log.error("Failed to retrieve UserProfile for person " + person + " while cleaning fragment cache, person will be skipped", e);
-                    continue;
-                }
-                
-                // TODO fix hard coded "default" later for profiling
-                profile.setProfileFname("default");
-                
-                final Document layout;
-                try {
-                    layout = getFragmentLayout(person, profile);
-                }
-                catch (Exception e) {
-                    this.log.error("Failed to retrieve layout for person " + person + " and profile " + profile + " while cleaning fragment cache, person will be skipped", e);
-                    continue;
-                }
-                
-                FragmentDefinition fragment = ownerEntry.getValue();
-                updateCachedLayout( layout, profile, fragment );
-            }
-        }
-        fragmentInfoCache.clear();
     }
     
     
@@ -609,7 +564,7 @@ public class RDBMDistributedLayoutStore
         
         // (6) Add database Ids & (5) Add dlm:plfID ...
         int nextId = 1;
-        for (Iterator<org.dom4j.Element> it = (Iterator<org.dom4j.Element>) layout.selectNodes("folder | dlm:*").iterator(); it.hasNext();) {
+        for (Iterator<org.dom4j.Element> it = (Iterator<org.dom4j.Element>) layout.selectNodes("folder | dlm:* | channel").iterator(); it.hasNext();) {
             nextId = addIdAttributesIfNecessary(it.next(), nextId);
         }
         // Now update UP_USER...
@@ -708,7 +663,7 @@ public class RDBMDistributedLayoutStore
         
         // Finally store the layout...
         try {
-            this.setUserLayout(person, profile, layoutDom, true, false);
+            this.setUserLayout(person, profile, layoutDom, true, true);
         } catch (Throwable t) {
             String msg = "Unable to persist layout for user:  " + ownerUsername;
             throw new RuntimeException(msg, t);
@@ -757,7 +712,8 @@ public class RDBMDistributedLayoutStore
     private final int addIdAttributesIfNecessary(org.dom4j.Element e, int nextId) {
         
         int idAfterThisOne = nextId;  // default...
-        if (e.selectSingleNode("@ID | @dlm:plfID") == null) {
+        final org.dom4j.Node idAttribute = e.selectSingleNode("@ID | @dlm:plfID");
+        if (idAttribute == null) {
             if (log.isDebugEnabled()) {
                 log.debug("No ID or dlm:plfID attribute for the following node "
                 		    + "(one will be generated and added):  element" 
@@ -791,7 +747,16 @@ public class RDBMDistributedLayoutStore
 
             ++idAfterThisOne;
         }
-
+        else {
+            final String id = idAttribute.getText();
+            try {
+                idAfterThisOne = Integer.parseInt(id.substring(1)) + 1;
+            }
+            catch (NumberFormatException nfe) {
+                log.warn("Could not parse int value from id: " + id + " The next layout id will be: " + idAfterThisOne, nfe);
+            }
+        }
+        
         // Now check children...
         for (Iterator<org.dom4j.Element> itr = (Iterator<org.dom4j.Element>) e.selectNodes("folder | channel | dlm:*").iterator(); itr.hasNext();) {
             org.dom4j.Element child = itr.next();
@@ -1030,6 +995,10 @@ public class RDBMDistributedLayoutStore
         // Fix later to handle multiple profiles
         Element root = layout.getDocumentElement();
         final UserView userView = activator.getUserView(fragment);
+        if (userView == null) {
+            throw new IllegalStateException("No UserView found for fragment: " + fragment.getName());
+        }
+
         root.setAttribute( Constants.ATT_ID,
                            Constants.FRAGMENT_ID_USER_PREFIX +
                            userView.getUserId() +
@@ -1041,7 +1010,6 @@ public class RDBMDistributedLayoutStore
         {
             activator.fragmentizeLayout( view, fragment );
             activator.setUserView(fragment.getOwnerId(), view);
-            this.fragmentInfoCache.clear();
         }
         catch( Exception e )
         {
@@ -1293,12 +1261,12 @@ public class RDBMDistributedLayoutStore
     public FragmentNodeInfo getFragmentNodeInfo(String sId)
     {
         // grab local pointers to variables subject to change at any time
-        Map<String, FragmentNodeInfo> infoCache = fragmentInfoCache;
         final List<FragmentDefinition> fragments = configurationLoader.getFragments();
 
         FragmentActivator activator = this.getFragmentActivator();
 
-        FragmentNodeInfo info = infoCache.get(sId);
+        final net.sf.ehcache.Element element = fragmentNodeInfoCache.get(sId);
+        FragmentNodeInfo info = element != null ? (FragmentNodeInfo)element.getObjectValue() : null;
 
         if (info == null)
         {
@@ -1317,7 +1285,7 @@ public class RDBMDistributedLayoutStore
                         info = new FragmentChannelInfo(node);
                     else
                         info = new FragmentNodeInfo(node);
-                    infoCache.put(sId, info);
+                    fragmentNodeInfoCache.put(new net.sf.ehcache.Element(sId, info));
                     break;
                 }
             }

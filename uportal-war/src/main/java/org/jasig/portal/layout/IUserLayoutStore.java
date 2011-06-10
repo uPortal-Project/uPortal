@@ -239,17 +239,6 @@ public interface IUserLayoutStore {
     public boolean isFragmentOwner(IPerson person);
     public boolean isFragmentOwner(String username);
     
-    /**
-     * Cleans out the layout fragments. This is done so that changes made to
-     * the channels within a layout are visible to the users who have that layout
-     * incorporated into their own.
-     *
-     * The interval at which this thread runs is set in the dlm.xml file as
-     * 'org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragment_cache_refresh',
-     * specified in minutes.
-     */
-    public void cleanFragments();
-    
     public void setUserLayout (IPerson person, IUserProfile profile,
             Document layoutXML, boolean channelsAdded,
             boolean updateFragmentCache);

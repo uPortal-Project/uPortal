@@ -85,42 +85,45 @@ public abstract class DoubleCheckedCreator<T> {
         this.readLock.lock();
         try {
 
-            //See if the object already exists
+            //See if the object already exists and is valid
+            final T value = this.retrieve(args);
+            if (!this.invalid(value, args)) {
+                if (this.logger.isDebugEnabled()) {
+                    this.logger.debug("Using retrieved Object='" + value + "'");
+                }
+                
+                return value;
+            }
+        }
+        finally {
+            //Release the read lock
+            this.readLock.unlock();
+        }
+        
+        
+        //Object must not be valid, switch to a write lock
+        this.writeLock.lock();
+        try {
+            //Check again if the object exists and is valid
             T value = this.retrieve(args);
             if (this.invalid(value, args)) {
-                //Switch to a write lock
-                this.readLock.unlock();
-                this.writeLock.lock();
                 
-                //Check if it exists now, create it if it doesn't
-                try {
-                    value = this.retrieve(args);
+                //Object is not valid, create it
+                value = this.create(args);
                 
-                    if (this.invalid(value, args)) {
-                        value = this.create(args);
-                        
-                        if (this.logger.isDebugEnabled()) {
-                            this.logger.debug("Created new Object='" + value + "'");
-                        }
-                    }
-                    else if (this.logger.isDebugEnabled()) {
-                        this.logger.debug("Using retrieved Object='" + value + "'");
-                    }
-                }
-                finally {
-                    //switch back to the read lock
-                    this.readLock.lock();
-                    this.writeLock.unlock();
+                if (this.logger.isDebugEnabled()) {
+                    this.logger.debug("Created new Object='" + value + "'");
                 }
             }
             else if (this.logger.isDebugEnabled()) {
                 this.logger.debug("Using retrieved Object='" + value + "'");
             }
-
+            
             return value;
         }
         finally {
-            this.readLock.unlock();
+            //switch back to the read lock
+            this.writeLock.unlock();
         }
     }
 }

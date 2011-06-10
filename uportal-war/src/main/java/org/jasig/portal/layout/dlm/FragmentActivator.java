@@ -20,9 +20,12 @@
 package org.jasig.portal.layout.dlm;
 
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Pattern;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import net.sf.ehcache.Ehcache;
+import net.sf.ehcache.store.chm.ConcurrentHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,8 +38,13 @@ import org.jasig.portal.layout.dao.IStylesheetUserPreferencesDao;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.PersonImpl;
+import org.jasig.portal.utils.ConcurrentMapUtils;
+import org.jasig.portal.utils.threading.ReadResult;
+import org.jasig.portal.utils.threading.ReadWriteCallback;
+import org.jasig.portal.utils.threading.ReadWriteLockTemplate;
 import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -51,18 +59,24 @@ import org.w3c.dom.NodeList;
 public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
 {
     public static final String RCS_ID = "@(#) $Header$";
-    private final static Log LOG = LogFactory.getLog(FragmentActivator.class);
+    private static final Log LOG = LogFactory.getLog(FragmentActivator.class);
 
-    private final Map<String,UserView> userViews = new ConcurrentHashMap<String,UserView>();
+    private final ConcurrentMap<String, ReadWriteLock> userViewLocks = new ConcurrentHashMap<String, ReadWriteLock>();
+    
+    private Ehcache userViews;
     private IUserIdentityStore identityStore;
     private IUserLayoutStore userLayoutStore;
     private IStylesheetUserPreferencesDao stylesheetUserPreferencesDao;
     private ConfigurationLoader configurationLoader;
+
+    private static final int CHANNELS = 0;
+    private static final int FOLDERS = 1;
     
-    private static final String PROPERTY_ALLOW_EXPANDED_CONTENT = "allowExpandedContent";
-    private static final Pattern STANDARD_PATTERN = Pattern.compile("\\Aregular\\z", Pattern.CASE_INSENSITIVE);
-    private static final Pattern EXPANDED_PATTERN = Pattern.compile(".*");
-    
+    @Autowired
+    public void setUserViews(@Qualifier("org.jasig.portal.layout.dlm.FragmentActivator.userViews") Ehcache userViews) {
+        this.userViews = userViews;
+    }
+
     @Autowired
     public void setConfigurationLoader(ConfigurationLoader configurationLoader) {
         this.configurationLoader = configurationLoader;
@@ -83,6 +97,7 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
         this.stylesheetUserPreferencesDao = stylesheetUserPreferencesDao;
     }
     
+
     /**
      * Activation will only be run once and will return immediately for every call once activation
      * is complete.
@@ -127,7 +142,7 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
         return true;
     }
     
-    private void activateFragment(FragmentDefinition fd) {
+    private UserView activateFragment(FragmentDefinition fd) {
         
         // Assertions.
         if (fd == null) {
@@ -172,6 +187,8 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("\n\n------ done activating " + fd.getName() );
                 }
+                
+                return view;
             }
             catch( Exception e )
             {
@@ -183,11 +200,13 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
                     LOG.warn(msg + " Enable DEBUG logging for the full stack trace.");
                 }
             }
+            
         }
 
+        return null;
     }
     
-    public UserView getUserView(FragmentDefinition fd) {
+    public UserView getUserView(final FragmentDefinition fd) {
         
         // Assertions...
         if (fd == null) {
@@ -195,19 +214,46 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
             throw new IllegalArgumentException(msg);
         }
         
-        // Activate the fragment just-in-time if it's new...
-        if (!hasUserView(fd)) {
-            activateFragment(fd);
-        }
-        
-        UserView rslt = userViews.get(fd.getOwnerId());
-        if (rslt == null) {
-            // This is worrysome...
-            LOG.warn("No UserView object is present for owner '" + fd.getOwnerId() 
-                                        + "' -- null will be returned");
-        }
+        // Activate the fragment just-in-time if it's new using some locking to make sure the same
+        // fragment isn't being loaded by multiple concurrent threads
+        final String ownerId = fd.getOwnerId();
+        final ReadWriteLock userViewLock = getUserViewLock(ownerId);
+        final UserView rslt = 
+            ReadWriteLockTemplate.doWithLock(userViewLock, new ReadWriteCallback<UserView>() {
+                public ReadResult<UserView> doInReadLock() {
+                    final net.sf.ehcache.Element element = userViews.get(ownerId);
+                    final UserView userView = element != null ? (UserView)element.getObjectValue() : null;
+                    if (userView == null) {
+                        return new ReadResult<UserView>(true);
+                    }
+                    
+                    return new ReadResult<UserView>(false, userView);
+                }
+    
+                public UserView doInWriteLock(ReadResult<UserView> readResult) {
+                    final UserView userView = activateFragment(fd);
+                    
+                    if (userView == null) {
+                        // This is worrysome...
+                        LOG.warn("No UserView object is present for owner '" + ownerId 
+                                                    + "' -- null will be returned");
+                    }
+                    
+                    return userView;
+                }
+            });
+            
         return rslt;
         
+    }
+
+    protected ReadWriteLock getUserViewLock(final String ownerId) {
+        final ReadWriteLock userViewLock = userViewLocks.get(ownerId);
+        if (userViewLock != null) {
+            return userViewLock;
+        }
+        
+        return ConcurrentMapUtils.putIfAbsent(userViewLocks, ownerId, new ReentrantReadWriteLock(true));
     }
     
     public void setUserView(String ownerId, UserView v) {
@@ -226,7 +272,7 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
             LOG.debug("Setting UserView instance for user:  " + ownerId);
         }
         
-        userViews.put(ownerId, v);
+        userViews.put(new net.sf.ehcache.Element(ownerId, v));
         
     }
     
@@ -238,7 +284,7 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
             throw new IllegalArgumentException(msg);
         }
 
-        return userViews.containsKey(fd.getOwnerId());
+        return userViews.get(fd.getOwnerId()) != null;
 
     }
     
@@ -297,7 +343,7 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
             if ( defaultLayoutOwner != null ) {
                 defaultUser = defaultLayoutOwner;
             }
-            else
+            else {
                 try
                 {
                     defaultUser
@@ -313,6 +359,7 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
                             "created. The fragment will not be available for " +
                             "inclusion into user layouts.\n", re );
                 }
+            }
         }
 
             if (LOG.isDebugEnabled())
@@ -371,6 +418,8 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
             view.profileId = profile.getProfileId();
             view.profileFname = profile.getProfileFname();
             view.layoutId = profile.getLayoutId();
+//            view.structureStylesheetId = profile.getStructureStylesheetId();
+//            view.themeStylesheetId = profile.getThemeStylesheetId();
             
             layout = userLayoutStore.getFragmentLayout( owner, profile ); 
             Element root = layout.getDocumentElement();
@@ -399,6 +448,23 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
         IPerson p = new PersonImpl();
         p.setID( view.getUserId() );
         p.setAttribute( "username", fragment.getOwnerId() );
+//      Don't think any stylesheet preferences work needs to be done here anymore
+//        try
+//        {
+//            view.structUserPrefs = userLayoutStore.getDistributedSSUP(p, view.profileId,
+//                    view.structureStylesheetId);
+//            view.themeUserPrefs = userLayoutStore.getDistributedTSUP(p, view.profileId,
+//                    view.themeStylesheetId);
+//        }
+//        catch( Exception e )
+//        {
+//            throw new RuntimeException(
+//                  "Anomaly occurred while loading structure or theme " +
+//                    "stylesheet user preferences for fragment '" +
+//                  fragment.getName() +
+//                  "'. The fragment will not be " +
+//                  "available for inclusion into user layouts.", e );
+//        }
     }
 
     /**
@@ -442,15 +508,31 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
 //     * user id and layout id from which the node came.
 //     */
 //    private void fragmentizeIds( String labelBase,
-//                                 IStylesheetUserPreferences up)
+//                                 DistributedUserPreferences up,
+//                                 int which )
 //    {
-//        final Map<String, Map<String, String>> allLayoutAttributes = up.getAllLayoutAttributes();
-//        final Set<String> nodeIds = new LinkedHashSet<String>(allLayoutAttributes.keySet());
+//        Enumeration elements = null;
+//        if ( which == CHANNELS )
+//            elements = up.getChannels();
+//        else
+//            elements = up.getFolders();
 //        
-//        for (final String nodeId : nodeIds) {
-//            if (!nodeId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX)) {
-//                //If the node id isn't dlm relative update it to be
-//                up.changeChannelId(nodeId, labelBase + nodeId);
+//        // grab the list of elements that have user changed attributes
+//        Vector list = new Vector();
+//        while( elements.hasMoreElements() )
+//            list.add( elements.nextElement() );
+//        elements = list.elements();
+//        
+//        // now change their id's to the globally unique values
+//        while( elements.hasMoreElements() )
+//        {
+//            String id = (String) elements.nextElement();
+//            if ( ! id.startsWith( Constants.FRAGMENT_ID_USER_PREFIX ) ) // already converted don't change
+//            {
+//                if ( which == CHANNELS )
+//                    up.changeChannelId( id, labelBase + id );
+//                else
+//                    up.changeFolderId( id, labelBase + id );
 //            }
 //        }
 //    }
@@ -466,13 +548,6 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
         if ( view.getUserId() == -1 ||
              view.layout == null )
             return;
-        
-        // Choose what types of content to apply from the fragment
-        Pattern contentPattern = STANDARD_PATTERN;  // default
-        boolean allowExpandedContent = Boolean.parseBoolean(this.configurationLoader.getProperty(PROPERTY_ALLOW_EXPANDED_CONTENT));
-        if (allowExpandedContent) {
-            contentPattern = EXPANDED_PATTERN;
-        }
 
         // remove all non-regular or hidden top level folders
         // skip root folder that is only child of top level layout element
@@ -482,18 +557,24 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
 
         // process the children backwards since as we delete some the indices
         // shift around
-        for( int i=children.getLength()-1; i>=0; i-- ) {
+        for( int i=children.getLength()-1; i>=0; i-- )
+        {
             Node node = children.item(i);
-            if (node.getNodeType() == Node.ELEMENT_NODE && node.getNodeName().equals("folder")) {
+            if ( node.getNodeType() == Node.ELEMENT_NODE &&
+                 node.getNodeName().equals("folder") )
+            {
                 Element folder = (Element) node;
 
                 // strip out folder types 'header', 'footer' and regular, 
                 // hidden folder "User Preferences" since users have their own
-                boolean isApplicable = contentPattern.matcher(folder.getAttribute("type")).matches();
-                if (!isApplicable || folder.getAttribute("hidden").equals("true")) {
-                    try {
-                        root.removeChild(folder);
-                    } catch(Exception e) {
+                if ( ! folder.getAttribute( "type" ).equals( "regular" ) ||
+                     folder.getAttribute( "hidden" ).equals( "true" ) )
+                    try
+                    {
+                        root.removeChild( folder );
+                    }
+                    catch( Exception e )
+                    {
                         throw new RuntimeException(
                               "Anomaly occurred while stripping out " +
                               " portions of layout for fragment '" +
@@ -501,7 +582,6 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
                               "'. The fragment will not be available for " +
                               "inclusion into user layouts.", e );
                     }
-                }
             }
         }
         // now re-lable all remaining nodes below root to have a safe system
