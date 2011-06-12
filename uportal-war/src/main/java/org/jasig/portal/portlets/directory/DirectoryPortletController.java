@@ -108,12 +108,13 @@ public class DirectoryPortletController {
         // if the query is non-null, perform a search request
         if (query != null) {
             final List<IPersonAttributes> people = searchDirectory(query, request);
+            model.put("query", query);
             model.put("people", people);
             model.put("attributeNames", this.displayAttributes);
         }
 
         final boolean isMobile = isMobile(request);
-        String viewName = isMobile ? "/jsp/Search/mobileSearch" : "/jsp/Search/search";
+        String viewName = isMobile ? "/jsp/Directory/mobileDirectory" : "/jsp/Directory/directory";
         
         return new ModelAndView(viewName, model);
     }
