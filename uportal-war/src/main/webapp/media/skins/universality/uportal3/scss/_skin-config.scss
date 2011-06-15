@@ -25,6 +25,7 @@
 //====================================
 // General
 //====================================
+$fontSize						: false; // Use a value to override the reset font size. "false" will keep the reset font size.
 $font							: Verdana, sans-serif;
 $headingFont					: Lucida Sans Unicode, Lucida Grande, sans-serif;
 $buttonFont						: sans-serif;
@@ -106,6 +107,7 @@ $navTabRound					: false;
 $navTabBorderLeft				: 1px solid rgba($white,.25);
 $navTabBorderRight				: 1px solid rgba($black,.25);
 $navTabPadding					: 8px 20px;
+$navTabMarginRight				: false;
 $navTabLink						: $white;
 $navTabWeight					: bold;
 $navTabTextShadow				: dark;
@@ -181,6 +183,7 @@ $breadcrumbLinkHover			: $graydark;
 //====================================
 // Body
 //====================================
+$portalPageBackground			: $white;
 // Portlet Wrapper
 $portletRound					: 7px;
 $portletContentRound			: 5px;

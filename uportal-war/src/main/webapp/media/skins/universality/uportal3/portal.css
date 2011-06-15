@@ -246,6 +246,7 @@
 .up #portalPageBodyInner {
   /* Page body. */
   padding: 2.5em 12px;
+  background: white;
 }
 
 /*====================================*/
