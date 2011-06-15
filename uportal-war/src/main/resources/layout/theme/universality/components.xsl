@@ -250,7 +250,7 @@
   -->
   <xsl:template name="portal.page.bar.link.logout">
     <xsl:if test="$AUTHENTICATED='true'">
-    	<li class="link-logout">
+     <li class="link-logout">
         <a href="{$CONTEXT_PATH}/Logout" title="{upMsg:getMessage('log.off.and.exit', $USER_LANG)}">
           <span><xsl:value-of select="upMsg:getMessage('sign.out', $USER_LANG)"/></span>
         </a>

@@ -343,12 +343,20 @@
   <!-- BREADCRUMB -->
   <xsl:param name="USE_BREADCRUMB">false</xsl:param> <!-- Sets the use of breadcrumb links.  Values are 'true' or 'false'. -->
   
+  <!-- ****** PORTLET SETTINGS ****** -->
+  <!-- 
+   | GREEN
+   | Portlet Settings can be used to change aspects of the portlet chrome.
+  -->
+  <xsl:param name="USE_PORTLET_MINIMIZE_CONTENT" select="'true'" /> <!-- Sets the use of a content show/hide control.  Values are 'true' or 'false'. -->
+  <xsl:param name="USE_PORTLET_CONTROL_ICONS" select="'true'" /> <!-- Sets the use of icons in portlet chrome controls.  Values are 'true' or 'false'. -->
+  
   <!-- ============================================ -->
   
   <!-- Debug Template
   <xsl:template match="/">
   	<h1>Debugging</h1>
-  	<div><textarea style="width:100em; height:75em;"><xsl:copy-of select="*"/></textarea></div>
+  	<div><textarea style="width:100em; height:75em;"><xsl:copy-of select="/"/></textarea></div>
   </xsl:template> -->
   
   <!-- =============================== -->
@@ -905,6 +913,7 @@
         <p><a href="http://www.famfamfam.com/lab/icons/silk/" title="Silk icon set 1.3" target="_blank">Silk icon set 1.3</a> courtesy of Mark James.</p>
         <!-- Silk icon set 1.3 by Mark James [ http://www.famfamfam.com/lab/icons/silk/ ], which is licensed under a Creative Commons Attribution 2.5 License. [ http://creativecommons.org/licenses/by/2.5/ ].  This icon set is free for use under the CCA 2.5 license, so long as there is a link back to the author's site.  If the Silk icons are used, this reference must be present in the markup, though not necessarily visible in the rendered page.  If you don't want the statement to visibly render in the page, use CSS to make it invisible. -->
       </div>
+    	
     </xsl:if>
     
   </xsl:template>
