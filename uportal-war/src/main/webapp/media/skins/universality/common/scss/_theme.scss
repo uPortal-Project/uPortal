@@ -4,8 +4,9 @@
 // Portal theme styles. This file imports all other theme files.
 // Theme files are boxed off for human use.
 
-@import "../../ivy/scss/_skin-colors.scss"; // skin color overrides.
+@import "../../uportal3/scss/_skin-colors.scss"; // skin colors.
 @import "colors";
+@import "../../uportal3/scss/_skin-config.scss"; // skin configuration.
 @import "buttons";
 @import "forms";
 @import "fss-overrides";
@@ -18,4 +19,4 @@
 @import "portlet-chrome";
 @import "footer";
 @import "customization";
-@import "../../ivy/scss/_skin-overrides.scss"; // skin theme overrides.
+@import "../../uportal3/scss/_skin-overrides.scss"; // skin specific overrides.

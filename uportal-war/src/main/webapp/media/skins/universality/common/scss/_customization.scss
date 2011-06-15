@@ -8,24 +8,26 @@
 .up {
 	#portalPageBodyCustomizeMessageRow {
 		/* Customize Page Message, displays when a new page is created (with no content). */
-		background: transparent url("images/customize_message_arrow.png") 40px 0px no-repeat;
+		background: $customizePageMessagePointer;
 		
 		#portalPageBodyCustomizeMessageRowContents {
-			padding: 10px 20px;
-    		background: $white;
-    		border: 2px solid $c4;
-    		@include rounded(7px);
+			padding: $customizePageMessagePadding;
+    		background: $customizePageMessageBackground;
+    		border: $customizePageMessageBorder;
+    		@if ($customizePageMessageRound != false) {
+    			@include rounded($customizePageMessageRound);
+    		}
     		
     		h1 {
-    			margin: 0 0 .3em 0;
-    			font-weight: normal;
-    			color: $dgray;
+    			margin: $customizePageMessageTitleMargin;
+    			font-weight: $customizePageMessageTitleWeight;
+    			color: $customizePageMessageTitle;
     			text-decoration: none;
     			border: none;
     		}
     		
     		strong {
-    			color: $c1dark;
+    			color: $customizePageMessageStrong;
     		}
 		}
 	}
@@ -38,19 +40,21 @@
 	#portalFragAdminExit {
 		/* Fragment Administration mode. */
 		margin: 0;
-		background: $c4lightest;
-		border: none;
-		border-bottom: 1px solid $c4; 
-		@include rounded(0px);
+		background: $fragAdminHeaderBackground;
+		border: $fragAdminHeaderBorder;
+		border-bottom: $fragAdminHeaderBorderBottom;
+		@if ($fragAdminHeaderRound != false) {
+			@include rounded($fragAdminHeaderRound);
+		}
 		
 		h2 {
-			color: $c4;
-			font-size: 150%;
+			color: $fragAdminHeaderTitle;
+			font-size: $fragAdminHeaderTitleSize;
 		}
 		
 		.fl-widget-content {
-			background: $c4lightest;
-			@include button(login);
+			background: $fragAdminHeaderContentBgd;
+			@include button($fragAdminHeaderButtonType);
 			
 			#exitFragment {
 				float: right;
@@ -64,33 +68,63 @@
 		display: block;
 		margin-top: .75em;
 		margin-right: 25px;
-		@include button(light);
+		@include button($fragAdminPagePermsButtonType);
 	}
 
 	.column-permissions {
 		margin-bottom:0.5em;
-		@include button(light);
+		@include button($fragAdminColumnPermsButtonType);
 	}
 	
 	.fragment-disabled, .fragment-disabled h2.fragment-title {
-		color: $graydark;
+		color: $fragDisabled;
 	}
 	.layout-option {
 		padding: 5px;
 	}
 	.layout-option.selected {
-		border: thin solid $gray;
+		border: $layoutOptionSelectedBorder;
 	}
-
+	
+	.fl-reorderer-movable-hover {
+		/* Affordance to indicate draggable. */
+		cursor:move;
+	}
+	
+	.fl-reorderer-movable-dragging-mouse {
+		/* When the item is being moved, hide the original. */
+		display:none;
+	}
+	
+	.fl-reorderer-avatar {
+		/* See-through avatar (copy) of the item being dragged. */
+		background-color: $dndAvatarBackground;
+		border: $dndAvatarBorder;
+	}
+	
+	.fl-reorderer-movable-selected,
 	.fl-reorderer-movable-selected:focus,
 	.fl-reorderer-movable-dragging:focus {
 		/* keyboard layout reorder focus outline */
-		outline: 2px solid $c4;
+		outline: $dndSelectedOutline;
 	}
 	.fl-reorderer-header-movable-selected:focus,
 	.fl-reorderer-header-movable-dragging:focus,
 	.fl-reorderer-sidebar-movable-selected:focus,
 	.fl-reorderer-sidebar-movable-dragging:focus {
 		outline: none;
+	}
+	
+	.fl-reorderer-dropMarker {
+		/* Indicate where the item may be dropped. */
+		background-color: $dndDropMarkerBackground;
+		border: $dndDropMarkerBorder;
+	}
+	
+	.drop-warning {
+		/* Warning message that indicates that an item cannot be moved into a position due to locked (unmovable) items. */
+		border: $dndDropWarningBorder;
+		background: $dndDropWarningBackground;
+		color: $dndDropWarningText;
 	}
 }

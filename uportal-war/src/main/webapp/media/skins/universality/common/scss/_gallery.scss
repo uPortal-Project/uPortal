@@ -20,7 +20,7 @@
 	 			border: 1px solid $graydark;
 	 			border-top: none;
 	 			@include round(0,0,3px,3px);
-	 			@include box-shadow(0,1px,2px,$gray);
+	 			@include box-shadow(0 1px 2px $gray);
 	 			
 	 			span {
 	 				background-image: url(../common/images/gallery-handle-arrow-down.png);
@@ -157,7 +157,7 @@
 		 			background: $dgray;
 		 			border: 1px solid $dgraylightest;
 		 			@include rounded(5px);
-		 			@include box-shadow(1px,1px,2px,$black);
+		 			@include box-shadow(1px 1px 2px $black);
 		 			
 		 			.ri-utility {
 		 				height: 16px;

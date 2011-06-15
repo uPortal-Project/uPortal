@@ -1,9 +1,10 @@
 //====================================
 // Colors
 //====================================
-// A 5-color palatte in the form of variables.
+// A color palatte in the form of variables.
+// The basic palette is defined per skin in "_skin-colors.scss", located in the skin folder.
+// Changing the "_skin-colors.scss" colors effectively changes the whole color scheme.
 // Along with some basics (white, black, and grayscales), these variables are referenced in all the rest of the css where color is specified.
-// Changing these colors effectively changes the whole color scheme.
 // We've used RGBA values because they include transparency and are easier to use in mathematical calculations.
 // If you need to convert Hexidecimal values to RGB, do a search on "convert hex to rgb" - there are several good web tools.
 
@@ -11,6 +12,7 @@
 $white			: rgba(255,255,255,1);
 $black			: rgba(0,0,0,1);
 $text			: $skinTextColor;
+$background		: $skinBackgroundColor;
 
 // Grayscale (medium value).
 $gray			: $skinGrayColor;

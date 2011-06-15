@@ -8,66 +8,52 @@
 .up {
 	#portalPageHeader {
 		/* Portal header (all views). */
-		background: $c1dark;
-		@include gradient($c1,$c1darker);
 		
-		.fl-widget {
-			/* Widgets in the header are stripped of chrome. */
-			margin: 0;
-			padding: 0;
-			background: none;
-			border: none;
-			
-			.fl-widget-titlebar {
-				display: none;
+		position: relative;
+		background: $headerBackground;
+		@include gradient($headerGradient1,$headerGradient2);
+		
+		#portalWelcome {
+			@if ($headerWelcomeTop != false) {
+				top: $headerWelcomeTop;
+				left: $headerWelcomeLeft;
 			}
-			
-			.fl-widget-content {
-				margin: 0;
-				padding: 0;
-				background: transparent;
+			color: $headerWelcome;
+			a, .user-name {
+				color: $headerUserName;
 			}
 		}
 		
-		#portalPageHeaderInner {
-			/* Allows for additional styling. In this skin, a background image. */
-			padding: 0;
-			background-image: url(images/header_bkd.png);
-			background-position: top left;
-			background-repeat: no-repeat;
-		}
+		@include widget-no-chrome();
 		
 		#portalPageBar {
 			/* A utility bar at the top of the portal page. */
-			padding: 0.3em 25px;
-			font-size: 80%;
-			background: $c1darker;
-			color: $c1lightest;
-			text-align:right;
-			text-transform: uppercase;
-			@include gradient($c1,$c1darker);
-			
-			#portalWelcome .user-name {
-				/* Emphasize the user's name. */
-				color: $white;
-			}
+			padding: $portalBarPadding;
+			font-size: $portalBarFontSize;
+			text-align: $portalBarTextAlign;
+			text-transform: $portalBarTextTransform;
+			color: $portalBarLink;
+			background: $portalBarBackground;
+			@include gradient($portalBarGradient1,$portalBarGradient2);
 			
 			#portalPageBarLinks {
-				/* List of utility links in the bar. */
+				/* List of portal links in the bar. */
 				display: inline;
 				li {
-					padding:0 5px;
-					border-right: 1px solid rgba($white, .25);
+					padding: $portalBarLinkPadding;
+					@if ($portalBarPipes != false) {
+						border-right: $portalBarPipes;
+					}
 				}
 				li:last-child {
 					border-right: none;
 				}
 				a {
-					color: $c1lightest;
+					color: $portalBarLink;
 					text-decoration:none;
 				}
 				a:hover, a:focus {
-					color: $white;
+					color: $portalBarLinkHover;
 					text-decoration:underline;
 				}
 			}
@@ -75,27 +61,40 @@
 		
 		#portalLogo {
 			/* The portal logo. It's physical size + padding gives the header its height. */
-			padding: 1.3em 25px;
+			padding: $portalLogoPadding;
 		}
 		
 		#webSearchContainer {
 			/* Web Search */
+			
+			top: $webSearchTop;
+			right: $webSearchRight;
+			
 			input, select {
 				margin: 0;
 			}
-			input[type="text"] {
-				background: $c1light;
-				border-color: $c1darker;
-				@include round(0.6em,0,0,0.6em);
+			@if ($webSearchSelectHide == true) {
+				select {
+					display: none;
+				}
 			}
-			input[type="text"]:focus {
-				background: $white;
+			input[type="text"], input[type="search"] {
+				color: $webSearchInputText;
+				background: $webSearchInput;
+				border-color: $webSearchInputBorder;
+				@if ($webSearchInputRound != false) {
+					@include round($webSearchInputRoundTL, $webSearchInputRoundTR, $webSearchInputRoundBR, $webSearchInputRoundBL);
+				}
 			}
-			input[type="submit"] {
-				padding: 0.4em 15px 0.5em 15px;
-				@include round(0,0.6em,0.6em,0);
+			input[type="text"]:hover, input[type="search"]:hover {
+				background: $webSearchInputHover;
 			}
-			@include button(search);
+			input[type="text"]:focus, input[type="search"]:focus {
+				color: $webSearchInputFocusText;
+				background: $webSearchInputFocus;
+				border-color: $webSearchInputFocus;
+			}
+			@include button(websearch);
 		}
 	}
 	
@@ -104,27 +103,19 @@
 			/* Guest Header */
 			#portalLogo {
 				/* The portal logo when not logged in (Guest View). The logo's physical size + padding gives the header its height. */
-				padding: 1.5em 0;
+				padding: $portalFocusedLogoPadding;
 			}
 		
 			#portalLogin {
 				/* Login */
-				width: 10em;
+				width: $loginButtonWidth;
 				position: absolute;
-				top: 1.5em;
-				right: 25px;
+				top: $loginPositionTop;
+				right: $loginPositionRight;
 				
 				.fl-widget-content {
 					text-align: center;
 					@include button(login);
-					
-					input[type="text"] {
-						padding: 0.5em 15px 0.6em 15px;
-					}
-					
-					p {
-						display: none;
-					}
 				}
 			}
 		}

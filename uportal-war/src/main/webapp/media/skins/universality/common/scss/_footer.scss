@@ -8,39 +8,41 @@
 .up {
 	#portalPageFooter {
 		/* Portal footer. */
-		background: $c2;
-		color: $graydarker;
-		font-size: 80%;
+		background: $footerBackground;
+		color: $footerText;
+		font-size: $footerFontSize;
 		
 		#portalPageFooterInner {
 			margin: 0 auto;
-			padding: 25px;
-    		width: 620px;
-    		background: transparent url(images/portal_poweredby.png) 25px 65px no-repeat;
+			padding: $footerInnerPadding;
+    		width: $footerInnerWidth;
+    		@if ($footerInnerBackground != false) {
+    			background: $footerInnerBackground;
+    		}
 		}
 		
 		a {
 			/* Generally want footer links to blend in with the footer. */
-			color: $gray;
-			text-decoration: none;
+			color: $footerLink;
+			text-decoration: $footerLinkDecoration;
 			&:hover, &:focus {
-				color: $c1light;
+				color: $footerLinkHover;
 			}
 		}
 		
 		#portalPageFooterLinks {
 			/* This list of footer links needs a little more attention than the rest of the footer stuff. */
-			margin-bottom: 2em;
+			margin: $footerLinkListMargin;
 			a {
-				color: $white;
-				font-weight: bold;
+				color: $footerLinkListColor;
+				font-weight: $footerLinkListFontWeight;
 				&:hover, &:focus {
-					color: $c1light;
+					color: $footerLinkListHoverColor;
 				}
 			}
 		}
 		#portalProductAndVersion, #portalCopyright, #silkIconsAttribution {
-			margin-left: 120px;
+			margin: $footerEtcMargin;
 		}
 	}
 }

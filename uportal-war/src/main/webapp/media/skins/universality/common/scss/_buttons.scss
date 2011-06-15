@@ -21,7 +21,7 @@ $btn-disabled-selector	: ".button[disabled='disabled'], button[disabled='disable
 
 // Specific styling for button Active (global "on") state.
 @mixin button-active() {
-	@include button-style($c1darker, $c1, $white, dark, $c1, $c1darker);
+	@include button-style($activeButtonBorder, $activeButtonBackground, $activeButtonText, $activeButtonTextShadow, $activeButtonGradient1, $activeButtonGradient2);
 }
 
 /* Apply baseline button styling once to every kind of button. */
@@ -29,18 +29,22 @@ $btn-disabled-selector	: ".button[disabled='disabled'], button[disabled='disable
 	#{$btn-up-selector} {
 		display			: inline;
 		margin			: 0;
-		padding			: 0.3em 15px 0.4em 15px;
-		border-width	: 1px;
-		border-style	: solid;
-		font-family		: "lucida grande",tahoma,verdana,arial,sans-serif;
-		font-weight		: bold;
-		font-size		: 12px;
-		text-align		: center;
+		padding			: $buttonPadding;
+		border-width	: $buttonBorderWidth;
+		border-style	: $buttonBorderStyle;
+		font-family		: $buttonFont;
+		font-weight		: $buttonFontWeight;
+		font-size		: $buttonFontSize;
+		text-align		: $buttonTextAlign;
 		text-decoration	: none;
-		text-transform	: capitalize;
+		text-transform	: $buttonTextTransform;
 		cursor			: pointer;
-		@include rounded(0.6em);
-		@include box-shadow(0,1px,3px,rgba(0,0,0,.5));
+		@if ($buttonRound != false) {
+			@include rounded($buttonRound);
+		}
+		@if ($buttonShadow != false) {
+			@include box-shadow($buttonShadow);
+		}
 	}
 	
 	a.button {
@@ -48,9 +52,9 @@ $btn-disabled-selector	: ".button[disabled='disabled'], button[disabled='disable
 	}
 	
 	#{$btn-disabled-selector} {
-		background		: $graylighter !important;
-		border-color	: $gray !important;
-		color			: $gray !important;
+		background		: $disabledButtonBackground !important;
+		border-color	: $disabledButtonBorder !important;
+		color			: $disabledButtonText !important;
 		text-shadow		: none !important;
 		cursor			: default !important;
 	}
@@ -63,17 +67,27 @@ $btn-disabled-selector	: ".button[disabled='disabled'], button[disabled='disable
 @mixin button-up($type) {
 	
 	@if $type == dark {
-		@include button-style($c3darker, $c3, $white, dark, $c3, $c3darker);
+		@include button-style($darkButtonBorder, $darkButtonBackground, $darkButtonText, $darkButtonTextShadow, $darkButtonGradient1, $darkButtonGradient2);
 	} @else if $type == light {
-		@include button-style($graylight, $graylightest, $graydarkest, light, $white, $graylightest);
+		@include button-style($lightButtonBorder, $lightButtonBackground, $lightButtonText, $lightButtonTextShadow, $lightButtonGradient1, $lightButtonGradient2);
 	} @else if $type == login {
-		@include button-style($c4dark, $c4, $white, dark, $c4light, $c4dark);
+		@include button-style($loginButtonBorder, $loginButtonBackground, $loginButtonText, $loginButtonTextShadow, $loginButtonGradient1, $loginButtonGradient2);
 	} @else if $type == utility {
-		@include button-style($c3dark, $c3, $white, dark, $c3light, $c3dark);
+		@include button-style($utilityButtonBorder, $utilityButtonBackground, $utilityButtonText, $utilityButtonTextShadow, $utilityButtonGradient1, $utilityButtonGradient2);
 	}  @else if $type == search {
-		@include button-style($c1darker, $c1, $white, dark, $c1, $c1darker);
+		@include button-style($searchButtonBorder, $searchButtonBackground, $searchButtonText, $searchButtonTextShadow, $searchButtonGradient1, $searchButtonGradient2);
+		padding: $searchButtonPadding;
+		@if ($buttonRound != false) {
+			@include round(0, $buttonRound, $buttonRound, 0);
+		}
+	}  @else if $type == websearch {
+		@include button-style($websearchButtonBorder, $websearchButtonBackground, $websearchButtonText, $websearchButtonTextShadow, $websearchButtonGradient1, $websearchButtonGradient2);
+		padding: $websearchButtonPadding;
+		@if ($buttonRound != false) {
+			@include round(0, $buttonRound, $buttonRound, 0);
+		}
 	} @else {
-		@include button-style($c1darker, $c1, $white, dark, $c1, $c1darker);
+		@include button-style($buttonBorder, $buttonBackground, $buttonText, $buttonTextShadow, $buttonGradient1, $buttonGradient2);
 	}
 }
 
@@ -81,17 +95,19 @@ $btn-disabled-selector	: ".button[disabled='disabled'], button[disabled='disable
 @mixin button-hover($type) {
 	
 	@if $type == dark {
-		@include button-style($c3darker, $c3light, $white, dark, $c3light, $c3dark);
+		@include button-style($darkButtonHoverBorder, $darkButtonHoverBackground, $darkButtonHoverText, $darkButtonHoverTextShadow, $darkButtonHoverGradient1, $darkButtonHoverGradient2);
 	} @else if $type == light {
-		@include button-style($graydark, $gray, $graydarkest, light, $graylightest, $graylighter);
+		@include button-style($lightButtonHoverBorder, $lightButtonHoverBackground, $lightButtonHoverText, $lightButtonHoverTextShadow, $lightButtonHoverGradient1, $lightButtonHoverGradient2);
 	} @else if $type == login {
-		@include button-style($c4dark, $c4light, $white, dark, $c4lighter, $c4dark);
+		@include button-style($loginButtonHoverBorder, $loginButtonHoverBackground, $loginButtonHoverText, $loginButtonHoverTextShadow, $loginButtonHoverGradient1, $loginButtonHoverGradient2);
 	} @else if $type == utility {
-		@include button-style($c3dark, $c3light, $white, dark, $c3lighter, $c3dark);
+		@include button-style($utilityButtonHoverBorder, $utilityButtonHoverBackground, $utilityButtonHoverText, $utilityButtonHoverTextShadow, $utilityButtonHoverGradient1, $utilityButtonHoverGradient2);
 	}  @else if $type == search {
-		@include button-style($c4darker, $c4light, $white, dark, $c4lighter, $c4dark);
+		@include button-style($searchButtonHoverBorder, $searchButtonHoverBackground, $searchButtonHoverText, $searchButtonHoverTextShadow, $searchButtonHoverGradient1, $searchButtonHoverGradient2);
+	}  @else if $type == websearch {
+		@include button-style($websearchButtonHoverBorder, $websearchButtonHoverBackground, $websearchButtonHoverText, $websearchButtonHoverTextShadow, $websearchButtonHoverGradient1, $websearchButtonHoverGradient2);
 	} @else {
-		@include button-style($c1darker, $c1light, $white, dark, $c1lighter, $c1darker);
+		@include button-style($buttonHoverBorder, $buttonHoverBackground, $buttonHoverText, $buttonHoverTextShadow, $buttonHoverGradient1, $buttonHoverGradient2);
 	}
 }
 
@@ -99,17 +115,19 @@ $btn-disabled-selector	: ".button[disabled='disabled'], button[disabled='disable
 @mixin button-down($type) {
 	
 	@if $type == dark {
-		@include button-style($c3darker, $c3dark, $white, dark, $c3dark, $c3light);
+		@include button-style($darkButtonDownBorder, $darkButtonDownBackground, $darkButtonDownText, $darkButtonDownTextShadow, $darkButtonDownGradient1, $darkButtonDownGradient2);
 	} @else if $type == light {
-		@include button-style($graydark, $graydark, $graydarkest, light, $graylighter, $white);
+		@include button-style($lightButtonDownBorder, $lightButtonDownBackground, $lightButtonDownText, $lightButtonDownTextShadow, $lightButtonDownGradient1, $darkButtonDownGradient2);
 	} @else if $type == login {
-		@include button-style($c4darker, $c4dark, $white, dark, $c4dark, $c4light);
+		@include button-style($loginButtonHoverBorder, $loginButtonHoverBackground, $loginButtonHoverText, $loginButtonHoverTextShadow, $loginButtonHoverGradient1, $darkButtonHoverGradient2);
 	} @else if $type == utility {
-		@include button-style($c3darker, $c3dark, $white, dark, $c3dark, $c3light);
+		@include button-style($utilityButtonDownBorder, $utilityButtonDownBackground, $utilityButtonDownText, $utilityButtonDownTextShadow, $utilityButtonDownGradient1, $utilityButtonDownGradient2);
 	}  @else if $type == search {
-		@include button-style($c4darker, $c4dark, $white, dark, $c4dark, $c4light);
+		@include button-style($searchButtonDownBorder, $searchButtonDownBackground, $searchButtonDownText, $searchButtonDownTextShadow, $searchButtonDownGradient1, $searchButtonDownGradient2);
+	}  @else if $type == websearch {
+		@include button-style($websearchButtonDownBorder, $websearchButtonDownBackground, $websearchButtonDownText, $websearchButtonDownTextShadow, $websearchButtonDownGradient1, $websearchButtonDownGradient2);
 	} @else {
-		@include button-style($c1darker, $c1dark, $white, dark, $c1darker, $c1);
+		@include button-style($buttonDownBorder, $buttonDownBackground, $buttonDownText, $buttonDownTextShadow, $buttonDownGradient1, $buttonDownGradient2);
 	}
 }
 
