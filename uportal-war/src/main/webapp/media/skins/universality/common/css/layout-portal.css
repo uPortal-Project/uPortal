@@ -286,7 +286,7 @@ table.purpose-layout td {margin:0; padding:0;}
 #portalNavigation .active .portal-navigation-gripper span {display: block; width: 16px; height: 16px; overflow: hidden;}
 #portalNavigation .portal-navigation-delete span,
 #portalNavigation .active .portal-navigation-gripper span {visibility: hidden;}
-#portalNavigation .portal-navigation-add {height:16px; top: 1px; right: 2em;  padding:0px 0px 0px 16px; background: transparent url("../images/add.png") 0px 0px no-repeat;}
+#portalNavigation .portal-navigation-add {top: 1px; right: 2em;  padding:0px 0px 0px 16px; background: transparent url("../images/add.png") 0px 0px no-repeat;}
 #portalNavigation .active .portal-navigation-gripper {top: 0px; left: 0px; cursor: move; background: transparent url("../images/gripper.png") 0px 0px no-repeat; padding: 0;}
 #portalNavigation .portal-navigation-delete {top: 0px; right: 0px; cursor: pointer; background: transparent url("../images/remove.png") 0px 0px no-repeat; padding: 0;}
 /* Navigation: Subrow */
