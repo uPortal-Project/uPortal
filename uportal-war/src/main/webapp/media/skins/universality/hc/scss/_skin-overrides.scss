@@ -3,40 +3,32 @@
 //====================================
 // Put any skin-specific overrides here.
 
-.fl-theme-hc div, .fl-theme-hc input {
-    background-color: transparent;
-    border-color: inherit;
-    color: inherit;
-    
-    /* Square corners on widgets */
-	.fl-widget {
-		@include rounded(0px);
-		
-		.fl-widget-titlebar, .fl-widget-content, .fl-listmenu {
-			@include rounded(0px);
-		}
-	}
-}
-
 .up {
-	/*:focus {
-		outline: 2px solid $c4 !important;
-	}*/
+	a, a:hover, a:focus {
+		font-weight: bold;
+	}
 	
-	background: $white;
-	font-size: 150%;
+	a:hover, a:focus {
+		outline: thick solid $c5;
+	}
+	
+	border-width: thick !important;
 	
 	#{$btn-up-selector} {
-		font-size: 16px;
-		border-width: thick;
+		font-size: 18px;
+		padding: 0.3em 12px !important;
+	}
+	
+	#{$btn-up-selector}, #{$btn-hover-selector}, #{$btn-down-selector} {
+		text-shadow: none !important;
 	}
 	
 	form {
 		#{$form-elements}, #{$form-select}, #{$form-textarea} {
-			border-width: thick;
 			border-color: $black;
 			font-size: 18px;
 			box-shadow: none;
+			padding: 0.3em 12px !important;
 		}
 		
 		#{$form-elements-focus} {
@@ -46,65 +38,25 @@
 		}
 	}
 	
+	
 	#portalPageHeader {
-		background: $white;
-		
 		#portalPageBar {
-			padding: 1em;
-			color: $white;
-			
-			#portalWelcome .user-name {
-				/* Emphasize the user's name. */
-				font-weight: bold;
-			}
-			
-			#portalPageBarLinks {
-				color: $white;
-				li {
-					border: none;
-				}
-				a {
-					color: $black;
+			#portalPageBarLinks li a {
+				background: $white;
+				color: $black;
+				
+				&:hover, &:focus {
+					background: $black;
+					color: $white;
 				}
 			}
-		}
-		
-		#webSearchContainer {
-			/* Web Search */
-			top: 4em;
-			
-			input, select {
-				margin: 0;
-			}
-			input[type="text"] {
-				background: $white;
-				border-color: $black;
-				@include round(0.6em,0,0,0.6em);
-			}
-			input[type="text"]:focus {
-				background: $white;
-				border-color: $c4;
-			}
-			input[type="submit"] {
-				padding: 0.4em 15px 0.5em 15px;
-				@include round(0,0.6em,0.6em,0);
-			}
-			@include button(search);
-		}
+		}	
 	}
 	
 	#portalNavigation {
-		background: $white;
-		
 		.portal-navigation {
-			/* Each tab list item. */
-			border: none;
-			background: $black;
-			margin-right: 10px;
-			
 			.portal-navigation-link {
-				/* Anchor tag within the list item. */
-				color: $white;
+				text-shadow: none !important;
 			}
 		}
 		.portal-flyout-container {
@@ -123,20 +75,8 @@
 	.columns-4 .column-4 .portal-page-column-inner {margin-left:15px}
 	
 	.up-portlet-wrapper {
-		/* Portlet chrome. */
 		margin-bottom: 25px;
-		padding: 0.5em;
-		@include portlet-chrome($c1light,$black,$white,$black,$black,$white);
-		.up-portlet-titlebar h2 {
-			background: transparent;
-			border: none;
-			a {
-				background: transparent;
-				color: $white;
-				font-weight: bold;
-				@include text-shadow(dark);
-			}
-		}
+		
 		.up-portlet-controls {
 			position: static;
 			top: 0;
@@ -150,41 +90,24 @@
 				display: inline;
 				height: auto;
 				width: auto;
-				padding: 0.5em;
+				padding: 0.4em 0.5em;
+				margin-left: 1em;
 				background: $white;
 				
-				span {
-					display: inline;
+				.icon {
+					display: none;
 					
+				}
+				.label {
+					display: inline;
+				}
+				
+				&:hover, &:focus {
+					background: $black;
+					color: $white;
 				}
 			}
 		}
 	}
-	.alternate {
-		/* A portlet that has been flagged to have the alternate styling of portlet chrome.*/		
-		@include portlet-chrome($c3dark,$c1dark,$c1darkest,$c1darker,$c1darker,$white);
-		.up-portlet-titlebar h2 a {
-			color: $c3lighter;
-		}
-	}
 	
-	.highlight {
-		/* A portlet that has been flagged to have the highlight styling of portlet chrome. */
-		@include portlet-chrome($c5,$c5darker,$c5darkest,$c5darker,$c5lightest,$c5lightest);
-		.up-portlet-titlebar h2 a {
-			color: $c5lighter;
-		}
-	}
-	
-	.locked {
-		/* A portlet that has been locked (cannot be moved or removed). */
-		@include portlet-chrome($c1dark,$c1,$c2darker,$c1dark,$white,$white);
-		.up-portlet-titlebar h2 {
-			padding-left: 25px;
-			background: transparent url(/ResourceServingWebapp/rs/tango/0.8.90/16x16/emblems/emblem-readonly.png) 5px 0 no-repeat;
-			a {
-				color: $gray;
-			}
-		}
-	}
 }
