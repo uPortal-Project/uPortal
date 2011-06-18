@@ -47,11 +47,11 @@
     <c:choose>
       <c:when test="${ input.display == 'RADIO' }">
       <!-- Radio buttons -->
-        <form:radiobuttons path="${ path }" items="${ input.option }" itemLabel="label" itemValue="value" delimiter=" "/>
+        <form:radiobuttons path="${ path }" items="${ input.options }" itemLabel="label" itemValue="value" delimiter=" "/>
       </c:when>
       <c:otherwise>
       <!-- Select menu -->
-        <form:select path="${ path }" multiple="false" items="${ input.option }" itemLabel="label" itemValue="value"/>
+        <form:select path="${ path }" multiple="false" items="${ input.options }" itemLabel="label" itemValue="value"/>
       </c:otherwise>
     </c:choose>
   </c:when>

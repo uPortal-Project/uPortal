@@ -77,7 +77,7 @@
       <c:otherwise>
       <!-- Select menu -->
         <form:select path="${ path }" multiple="false">
-          <c:forEach items="${ input.option }" var="option">
+          <c:forEach items="${ input.options }" var="option">
             <spring:message var="label" code="${ option.label }" text="${ option.label }" />
             <form:option value="${ option.value }" label="${ label }" />
           </c:forEach>
@@ -91,12 +91,12 @@
     <c:choose>
       <c:when test="${ input.display == 'CHECKBOX' }">
       <!-- Checkboxes -->
-        <form:checkboxes path="${path}" items="${ input.option }" itemLabel="label" itemValue="value" delimiter=" "/>
+        <form:checkboxes path="${path}" items="${ input.options }" itemLabel="label" itemValue="value" delimiter=" "/>
       </c:when>
       <c:otherwise>
       <!-- Multiple select menu -->
         <form:select path="${path}" multiple="true">
-          <c:forEach items="${ input.option }" var="option">
+          <c:forEach items="${ input.options }" var="option">
             <spring:message var="label" code="${ option.label }" text="${ option.label }" />
             <form:option value="${ option.value }" label="${ label }" />
           </c:forEach>
