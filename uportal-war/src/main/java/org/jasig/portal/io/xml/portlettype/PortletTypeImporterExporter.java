@@ -47,21 +47,27 @@ public class PortletTypeImporterExporter extends
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
+	private PortletTypePortalDataType typePortalDataType;
     private IPortletTypeRegistry portletTypeRegistry;
     
+    @Autowired
+    public void setTypePortalDataType(PortletTypePortalDataType typePortalDataType) {
+        this.typePortalDataType = typePortalDataType;
+    }
+
     @Autowired
 	public void setPortletTypeRegistry(IPortletTypeRegistry portletTypeRegistry) {
 		this.portletTypeRegistry = portletTypeRegistry;
 	}
 
 	@Override
-	public PortalDataKey getImportDataKey() {
-		return PortletTypePortalDataType.IMPORT_DATA_KEY;
+	public Set<PortalDataKey> getImportDataKeys() {
+		return Collections.singleton(PortletTypePortalDataType.IMPORT_40_DATA_KEY);
 	}
 
 	@Override
 	public IPortalDataType getPortalDataType() {
-		return PortletTypePortalDataType.INSTANCE;
+		return this.typePortalDataType;
 	}
 
 	@Override
@@ -74,9 +80,17 @@ public class PortletTypeImporterExporter extends
 	@Transactional
 	@Override
 	public void importData(ExternalPortletType data) {
-		IPortletType result = this.portletTypeRegistry.createPortletType(data.getName(), data.getCpdUri());
-		result.setDescription(data.getDescription());
-		this.portletTypeRegistry.savePortletType(result);
+	    final String name = data.getName();
+	    IPortletType portletType = this.portletTypeRegistry.getPortletType(name);
+	    if (portletType == null) {
+	        portletType = this.portletTypeRegistry.createPortletType(name, data.getUri());
+	    }
+	    else {
+	        portletType.setCpdUri(data.getUri());
+	    }
+	    
+	    portletType.setDescription(data.getDescription());
+		this.portletTypeRegistry.savePortletType(portletType);
 	}
 
 	/*
@@ -103,11 +117,11 @@ public class PortletTypeImporterExporter extends
 		IPortletType portletType = this.portletTypeRegistry.getPortletType(Integer.parseInt(id));
 		if(null == portletType) {
 			return null;
-		} else {
-			ExternalPortletType result = convert(portletType);
-			this.portletTypeRegistry.deleteChannelType(portletType);
-			return result;
 		}
+		
+		ExternalPortletType result = convert(portletType);
+		this.portletTypeRegistry.deleteChannelType(portletType);
+		return result;
 	}
 
 	/**
@@ -117,9 +131,8 @@ public class PortletTypeImporterExporter extends
 	 */
 	protected ExternalPortletType convert(IPortletType portletType) {
 		ExternalPortletType result = new ExternalPortletType();
-		result.setCpdUri(portletType.getCpdUri());
+		result.setUri(portletType.getCpdUri());
 		result.setDescription(portletType.getDescription());
-		result.setId(portletType.getId());
 		result.setName(portletType.getName());
 		result.setVersion("4.0");
 		return result;

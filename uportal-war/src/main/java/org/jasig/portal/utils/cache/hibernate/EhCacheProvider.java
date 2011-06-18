@@ -23,6 +23,7 @@ import java.util.Properties;
 
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
+import net.sf.ehcache.ObjectExistsException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -77,6 +78,10 @@ public class EhCacheProvider implements CacheProvider {
             }
             
             return new net.sf.ehcache.hibernate.EhCache(cache);
+        }
+        catch (ObjectExistsException e) {
+            //Must have been created by another thread
+            return new net.sf.ehcache.hibernate.EhCache(this.cacheManager.getEhcache(regionName));
         }
         catch (net.sf.ehcache.CacheException e) {
             throw new CacheException(e);

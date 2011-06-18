@@ -41,7 +41,7 @@ import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.jasig.portal.io.xml.ssd.ExternalStylesheetDescriptor;
-import org.jasig.portal.io.xml.user.ExternalUser;
+import org.jasig.portal.io.xml.user.UserType;
 import org.jasig.portal.utils.ICounterStore;
 import org.junit.After;
 import org.junit.Before;
@@ -71,7 +71,7 @@ import com.google.common.base.Function;
 public class IdentityImportExportTest {
     @Autowired private DataSource dataSource;
     @Autowired private IDataImporterExporter<ExternalStylesheetDescriptor> stylesheetDescriptorImporterExporter;
-    @Autowired private IDataImporterExporter<ExternalUser> userImporterExporter;
+    @Autowired private IDataImporterExporter<UserType> userImporterExporter;
     @Autowired private ICounterStore counterStore;
     private int counter = 0;
     private TimeZone defaultTimeZone;
@@ -167,9 +167,9 @@ public class IdentityImportExportTest {
         this.testIdentityImportExport(
                 this.userImporterExporter,
                 dataResource,
-                new Function<ExternalUser, String>() {
+                new Function<UserType, String>() {
                     @Override
-                    public String apply(ExternalUser input) {
+                    public String apply(UserType input) {
                         return input.getUsername();
                     }
                 });
@@ -200,8 +200,8 @@ public class IdentityImportExportTest {
         final StringWriter result = new StringWriter();
         marshaller.marshal(dataExport, new StreamResult(result));
         
-        System.out.println(result.toString());
-        System.out.println("");
+//        System.out.println(result.toString());
+//        System.out.println("");
 
         //Compare the exported XML data with the imported XML data, they should match
         XMLUnit.setIgnoreWhitespace(true);

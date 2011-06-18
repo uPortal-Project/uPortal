@@ -19,6 +19,9 @@
 
 package org.jasig.portal.io.xml;
 
+import java.util.Collections;
+import java.util.Set;
+
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
@@ -31,19 +34,25 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 
+import com.google.common.collect.ImmutableSet;
+
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
 public class XsltDataUpgrader implements IDataUpgrader, InitializingBean {
-    private PortalDataKey portalDataKey;
+    private Set<PortalDataKey> portalDataKeys;
     private Resource xslResource;
     private XmlUtilities xmlUtilities;
     
     private Templates upgradeTemplates;
 
+
     public void setPortalDataKey(PortalDataKey portalDataKey) {
-        this.portalDataKey = portalDataKey;
+        this.portalDataKeys = Collections.singleton(portalDataKey);
+    }
+    public void setPortalDataKeys(Set<PortalDataKey> portalDataKeys) {
+        this.portalDataKeys = ImmutableSet.copyOf(portalDataKeys);
     }
 
     public void setXslResource(Resource xslResource) {
@@ -64,8 +73,8 @@ public class XsltDataUpgrader implements IDataUpgrader, InitializingBean {
      * @see org.jasig.portal.io.xml.IDataUpgrader#getSourceDataType()
      */
     @Override
-    public PortalDataKey getSourceDataType() {
-        return this.portalDataKey;
+    public Set<PortalDataKey> getSourceDataTypes() {
+        return this.portalDataKeys;
     }
 
     /* (non-Javadoc)

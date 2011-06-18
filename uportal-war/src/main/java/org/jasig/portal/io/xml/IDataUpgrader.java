@@ -19,6 +19,8 @@
 
 package org.jasig.portal.io.xml;
 
+import java.util.Set;
+
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 
@@ -31,9 +33,9 @@ import javax.xml.transform.Source;
  */
 public interface IDataUpgrader {
     /**
-     * @return The portal xml data type this upgrader converts from
+     * @return The {@link PortalDataKey}s this upgrader can operate on
      */
-    public PortalDataKey getSourceDataType();
+    public Set<PortalDataKey> getSourceDataTypes();
     
     /**
      * Upgrade the external XML data format to a newer format

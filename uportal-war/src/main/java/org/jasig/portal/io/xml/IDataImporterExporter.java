@@ -33,9 +33,9 @@ import org.springframework.oxm.Unmarshaller;
  */
 public interface IDataImporterExporter<T> {
     /**
-     * @return The data key the match on for importing with this class
+     * @return The {@link PortalDataKey}s that this importer can import
      */
-    public PortalDataKey getImportDataKey();
+    public Set<PortalDataKey> getImportDataKeys();
     
     /**
      * @return The type descriptor for the 

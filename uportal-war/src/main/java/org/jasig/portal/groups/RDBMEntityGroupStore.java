@@ -122,9 +122,8 @@ private void initialize() {
     catch (Exception ex)
         { sep = NODE_SEPARATOR; }
     GROUP_NODE_SEPARATOR = sep;
-    if (log.isInfoEnabled()) {
-        String msg = "RDBMEntityGroupStore.initialize(): Node separator set to " + sep;
-        log.info( msg);
+    if (log.isDebugEnabled()) {
+        log.debug("RDBMEntityGroupStore.initialize(): Node separator set to " + sep);
     }
 }
 

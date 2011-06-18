@@ -9,6 +9,7 @@
 
     <jaxb:bindings>
         <jaxb:globalBindings>
+            <xjc:simple />
             <jaxb:serializable/>
             <jaxb:javaType name="java.util.Calendar" xmlType="xs:dateTime" parseMethod="javax.xml.bind.DatatypeConverter.parseDateTime" printMethod="javax.xml.bind.DatatypeConverter.printDateTime" />
         </jaxb:globalBindings>
@@ -54,6 +55,9 @@
     <jaxb:bindings schemaLocation="../resources/xsd/io/user/user-4.0.xsd">
         <jaxb:bindings node="//xs:element[@name='user']">
             <jaxb:class name="ExternalUser"/>
+        </jaxb:bindings>
+        <jaxb:bindings node="//xs:element[@name='template-user']">
+            <jaxb:class name="ExternalTemplateUser"/>
         </jaxb:bindings>
         <jaxb:schemaBindings>
             <jaxb:package name="org.jasig.portal.io.xml.user" />

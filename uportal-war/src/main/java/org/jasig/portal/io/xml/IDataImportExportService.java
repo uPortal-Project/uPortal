@@ -19,53 +19,67 @@
 
 package org.jasig.portal.io.xml;
 
+import java.io.File;
 import java.util.Set;
 
 import javax.xml.transform.Result;
-import javax.xml.transform.Source;
 
-import org.dom4j.Node;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 
 /**
- * Service that can import and export portal data
+ * Service that can import, export and delete portal data
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
 public interface IDataImportExportService {
     /**
-     * Import data from the XML Node
-     * @deprecated use {@link #importData(Source)}
+     * Options that control behavior of batch import operations
      */
-    @Deprecated
-    public void importData(Node node);
-
-    /**
-     * Import data from the XML Transformer Source
-     */
-    public void importData(Source source);
+    public interface BatchImportOptions {
+        /**
+         * @return defaults to true
+         */
+        public boolean isRecursive();
+        /**
+         * @return defaults to true
+         */
+        public boolean isFailOnError();
+        /**
+         * @return defaults to true
+         */
+        public boolean isIngoreNonDataFiles();
+    }
     
     /**
-     * Import data from the specified resource
+     * Import a batch of files from a directory.
+     * 
+     * @param directory Base directory to import from
+     * @param pattern Optional ant path matcher pattern used for matching files to import. If not specified the default pattern set is used
+     * @param options Optional set of options to better control the import
+     */
+    public void importData(File directory, String pattern, BatchImportOptions options);
+    
+    /**
+     * Import data from the specified resource, uses a {@link ResourceLoader} find the data file
      */
     public void importData(String resource);
     
     /**
-     * @return All portal data types that can be exported
+     * Import data from the specified resource
+     */
+    public void importData(Resource resource);
+    
+    /**
+     * @return All portal data types that can be exported or deleted from
      */
     public Set<IPortalDataType> getPortalDataTypes();
     
     /**
-     * @return All portal data for a specific portal data type
+     * @return All portal data for a specific portal data type, some types may return an empty set even if they contain data due size constraints.
      */
     public Set<IPortalData> getPortalData(String typeId);
-    
-    /**
-     * Export the portal data for the specified type and id as an XML Node
-     * @deprecated use {@link #exportData(String, String, Result)}
-     */
-    @Deprecated
-    public Node exportData(String typeId, String dataId);
     
     /**
      * Export the portal data for the specified type and id writing it to the provided XML Transformer Result 
@@ -79,6 +93,4 @@ public interface IDataImportExportService {
      * @param dataId
      */
     public void deleteData(String typeId, String dataId);
-    
-//    public void exportData(String typeId, String dataId, String resultResource);
 }

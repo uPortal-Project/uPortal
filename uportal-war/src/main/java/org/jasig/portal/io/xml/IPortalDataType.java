@@ -19,6 +19,13 @@
 
 package org.jasig.portal.io.xml;
 
+import java.util.List;
+import java.util.Set;
+
+import javax.xml.stream.XMLEventReader;
+
+import org.springframework.core.io.Resource;
+
 
 /**
  * Describes a type of portal data that can be imported or exported via the {@link IDataImportExportService}
@@ -39,4 +46,19 @@ public interface IPortalDataType {
      * @return The user readable description of the type
      */
     public String getDescription();
+    /**
+     * @return The list of {@link PortalDataKey}s supported for this data type and the order in which they should be imported 
+     */
+    public List<PortalDataKey> getDataKeyImportOrder();
+    
+    /**
+     * Required by some data types that have more complex processing flows such as multiple passes or different PortalDataKeys based
+     * on data beyond the basic root-element, script and version.
+     * 
+     * @param input The Resource the data key was parsed from
+     * @param portalDataKey The already parsed key, must be contained in the set returned by {@link #getDataKeyImportOrder()}
+     * @param reader The XMLEventReader (set to the start of the XML event stream) to use for processing the input
+     * @return One or more PortalDataKeys that represent the data
+     */
+    public Set<PortalDataKey> postProcessPortalDataKey(Resource input, PortalDataKey portalDataKey, XMLEventReader reader);
 }

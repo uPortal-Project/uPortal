@@ -63,6 +63,7 @@ import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.EntityNameFinderService;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.xml.PortletDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,12 +78,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class PortletDefinitionImporterExporter extends AbstractJaxbIDataImporterExporter<ExternalPortletDefinition> implements IPortletPublishingService, ApplicationEventPublisherAware {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
+    private PortletPortalDataType portletPortalDataType;
     private IPortletTypeRegistry portletTypeRegistry;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPortletCategoryRegistry portletCategoryRegistry;
     private ApplicationEventPublisher applicationEventPublisher;
     
-    
+    @Autowired
+    public void setPortletPortalDataType(PortletPortalDataType portletPortalDataType) {
+        this.portletPortalDataType = portletPortalDataType;
+    }
 
     @Autowired
     public void setPortletTypeRegistry(IPortletTypeRegistry portletTypeRegistry) {
@@ -105,13 +110,13 @@ public class PortletDefinitionImporterExporter extends AbstractJaxbIDataImporter
     }
     
     @Override
-    public PortalDataKey getImportDataKey() {
-        return PortletDefinitionPortalDataType.IMPORT_DATA_KEY;
+    public Set<PortalDataKey> getImportDataKeys() {
+        return Collections.singleton(PortletPortalDataType.IMPORT_40_DATA_KEY);
     }
 
     @Override
     public IPortalDataType getPortalDataType() {
-        return PortletDefinitionPortalDataType.INSTANCE;
+        return this.portletPortalDataType;
     }
 
     @Override
@@ -125,10 +130,10 @@ public class PortletDefinitionImporterExporter extends AbstractJaxbIDataImporter
     @Override
     public void importData(ExternalPortletDefinition portletRep) {
         // get the portlet type
-        IPortletType portletType = portletTypeRegistry.getPortletType(portletRep.getType());
+        final IPortletType portletType = portletTypeRegistry.getPortletType(portletRep.getType());
         
         final List<PortletCategory> categories = new ArrayList<PortletCategory>();
-        for (String categoryName : portletRep.getCategory()) {
+        for (String categoryName : portletRep.getCategories()) {
             EntityIdentifier[] cats = GroupService.searchForGroups(categoryName, IGroupConstants.IS, IPortletDefinition.class);
             
             PortletCategory category = null;
@@ -146,7 +151,7 @@ public class PortletDefinitionImporterExporter extends AbstractJaxbIDataImporter
         }
 
         final List<IGroupMember> groups = new ArrayList<IGroupMember>();
-        for (String groupName : portletRep.getGroup()) {
+        for (String groupName : portletRep.getGroups()) {
             EntityIdentifier[] gs = GroupService.searchForGroups(groupName, IGroupConstants.IS, IPerson.class);
             IGroupMember group;
             if (gs != null && gs.length > 0) {
@@ -162,25 +167,29 @@ public class PortletDefinitionImporterExporter extends AbstractJaxbIDataImporter
         }
         
         
-        IPortletDefinition def = portletDefinitionRegistry
-                .getPortletDefinitionByFname(portletRep.getFname());
-        final org.jasig.portal.xml.PortletDescriptor portletDescriptor = portletRep.getPortletDescriptor();
+        final String fname = portletRep.getFname();
+        final PortletDescriptor portletDescriptor = portletRep.getPortletDescriptor();
         final Boolean isFramework = portletDescriptor.isIsFramework();
+
+        IPortletDefinition def = portletDefinitionRegistry.getPortletDefinitionByFname(fname);
         if (def == null) {
             def = portletDefinitionRegistry.createPortletDefinition(
                     portletType, 
-                    portletRep.getFname(), 
+                    fname, 
                     portletRep.getName(),
                     portletRep.getTitle(), 
                     portletDescriptor.getWebAppName(), 
                     portletDescriptor.getPortletName(), 
                     isFramework != null ? isFramework : false);
-        } else {
-            def.getPortletDescriptorKey().setPortletName(portletDescriptor.getPortletName());
+        }
+        else {
+            final IPortletDescriptorKey portletDescriptorKey = def.getPortletDescriptorKey();
+            portletDescriptorKey.setPortletName(portletDescriptor.getPortletName());
             if (isFramework != null && isFramework) {
-                def.getPortletDescriptorKey().setFrameworkPortlet(isFramework);
-            } else {
-                def.getPortletDescriptorKey().setWebAppName(portletDescriptor.getWebAppName());
+                portletDescriptorKey.setFrameworkPortlet(isFramework);
+            }
+            else {
+                portletDescriptorKey.setWebAppName(portletDescriptor.getWebAppName());
             }
         }
         
@@ -201,13 +210,13 @@ public class PortletDefinitionImporterExporter extends AbstractJaxbIDataImporter
         def.setPublisherId(systemUser.getID());     
         
         def.clearParameters();
-        for (ExternalPortletParameter param : portletRep.getParameter()) {
+        for (ExternalPortletParameter param : portletRep.getParameters()) {
             def.addParameter(param.getName(), param.getValue());
         }
         
         final ArrayList<IPortletPreference> preferenceList = new ArrayList<IPortletPreference>();
-        for (ExternalPortletPreference pref : portletRep.getPortletPreference()) {
-            final List<String> valueList = pref.getValue();
+        for (ExternalPortletPreference pref : portletRep.getPortletPreferences()) {
+            final List<String> valueList = pref.getValues();
             final String[] values = valueList.toArray(new String[valueList.size()]);
             
             final Boolean readOnly = pref.isReadOnly();
@@ -234,18 +243,19 @@ public class PortletDefinitionImporterExporter extends AbstractJaxbIDataImporter
     	final IPortletDefinition def = this.portletDefinitionRegistry.getPortletDefinitionByFname(fname);
     	if(null == def) {
     		return null;
-    	} else {
-    		ExternalPortletDefinition result = convert(def);
-    		this.portletDefinitionRegistry.deletePortletDefinition(def);
-    		return result;
     	}
+    	
+		ExternalPortletDefinition result = convert(def);
+		this.portletDefinitionRegistry.deletePortletDefinition(def);
+		return result;
 	}
 
+    private final Object groupUpdateLock = new Object();
+    
 	/*
      * (non-Javadoc)
      * @see org.jasig.portal.channel.IChannelPublishingService#saveChannelDefinition(org.jasig.portal.channel.IChannelDefinition, org.jasig.portal.security.IPerson, org.jasig.portal.channel.ChannelLifecycleState, java.util.Date, java.util.Date, org.jasig.portal.ChannelCategory[], org.jasig.portal.groups.IGroupMember[])
      */
-    @Transactional
     @Override
     public IPortletDefinition savePortletDefinition(IPortletDefinition definition, IPerson publisher, List<PortletCategory> categories, List<IGroupMember> groupMembers) {
         boolean newChannel = (definition.getPortletDefinitionId() == null);
@@ -254,46 +264,52 @@ public class PortletDefinitionImporterExporter extends AbstractJaxbIDataImporter
         definition = portletDefinitionRegistry.updatePortletDefinition(definition);
         definition = portletDefinitionRegistry.getPortletDefinitionByFname(definition.getFName());
 
-        // Delete existing category memberships for this channel
-        String defId = String.valueOf(definition.getPortletDefinitionId().getStringId());
-        IEntity channelDefEntity = GroupService.getEntity(defId, IPortletDefinition.class);
-        @SuppressWarnings("unchecked")
-        Iterator<IEntityGroup> iter = channelDefEntity.getAllContainingGroups();
-        while (iter.hasNext()) {
-            IEntityGroup group = iter.next();
-            group.removeMember(channelDefEntity);
-            group.update();
-        }
+        final String defId = definition.getPortletDefinitionId().getStringId();
+        final IEntity portletDefEntity = GroupService.getEntity(defId, IPortletDefinition.class);
 
-        // For each category ID, add channel to category
-        for (PortletCategory category : categories) {
-            IEntity portletDefEntity = GroupService.getEntity(defId, IPortletDefinition.class);
-            IEntityGroup categoryGroup = GroupService.findGroup(category.getId());
-            categoryGroup.addMember(portletDefEntity);
-            categoryGroup.updateMembers();
+        //Sync on groups during update. This really should be a portal wide thread-safety check or
+        //The groups service needs to deal with concurrent modification better.
+        synchronized(this.groupUpdateLock) {
+            // Delete existing category memberships for this channel
+            if (!newChannel) {
+                @SuppressWarnings("unchecked")
+                final Iterator<IEntityGroup> iter = portletDefEntity.getAllContainingGroups();
+                while (iter.hasNext()) {
+                    final IEntityGroup group = iter.next();
+                    group.removeMember(portletDefEntity);
+                    group.update();
+                }
+            }
+    
+            // For each category ID, add channel to category
+            for (PortletCategory category : categories) {
+                final IEntityGroup categoryGroup = GroupService.findGroup(category.getId());
+                categoryGroup.addMember(portletDefEntity);
+                categoryGroup.updateMembers();
+            }
+    
+            // Set groups
+            final AuthorizationService authService = AuthorizationService.instance();
+            final String target = IPermission.PORTLET_PREFIX + defId;
+    
+            final IUpdatingPermissionManager upm = authService.newUpdatingPermissionManager(FRAMEWORK_OWNER);
+            final List<IPermission> permissions = new ArrayList<IPermission>(groupMembers.size());
+            for (final IGroupMember member : groupMembers) {
+                final IAuthorizationPrincipal authPrincipal = authService.newPrincipal(member);
+                final IPermission permission = upm.newPermission(authPrincipal);
+                permission.setType(GRANT_PERMISSION_TYPE);
+                permission.setActivity(SUBSCRIBER_ACTIVITY);
+                permission.setTarget(target);
+                permissions.add(permission);
+            }
+    
+            // If modifying the channel, remove the existing permissions before adding the new ones
+            if (!newChannel) {
+                IPermission[] oldPermissions = upm.getPermissions(SUBSCRIBER_ACTIVITY, target);
+                upm.removePermissions(oldPermissions);
+            }
+            upm.addPermissions(permissions.toArray(new IPermission[permissions.size()]));
         }
-
-        // Set groups
-        AuthorizationService authService = AuthorizationService.instance();
-        String target = IPermission.PORTLET_PREFIX + defId;
-        IUpdatingPermissionManager upm = authService.newUpdatingPermissionManager(FRAMEWORK_OWNER);
-        IPermission[] permissions = new IPermission[groupMembers.size()];
-        int i = 0;
-        for (IGroupMember member : groupMembers) {
-          IAuthorizationPrincipal authPrincipal = authService.newPrincipal(member);
-          permissions[i] = upm.newPermission(authPrincipal);
-          permissions[i].setType(GRANT_PERMISSION_TYPE);
-          permissions[i].setActivity(SUBSCRIBER_ACTIVITY);
-          permissions[i].setTarget(target);
-          i++;
-        }
-
-        // If modifying the channel, remove the existing permissions before adding the new ones
-        if (!newChannel) {
-          IPermission[] oldPermissions = upm.getPermissions(SUBSCRIBER_ACTIVITY, target);
-          upm.removePermissions(oldPermissions);
-        }
-        upm.addPermissions(permissions);
 
         if (logger.isDebugEnabled()) {
             logger.debug( "Portlet " + defId + " has been " + 
@@ -377,7 +393,7 @@ public class PortletDefinitionImporterExporter extends AbstractJaxbIDataImporter
          rep.setPortletDescriptor(portletDescriptor);
          
          
-         final List<ExternalPortletParameter> parameterList = rep.getParameter();
+         final List<ExternalPortletParameter> parameterList = rep.getParameters();
          for (IPortletDefinitionParameter param : def.getParameters()) {
              final ExternalPortletParameter externalPortletParameter = new ExternalPortletParameter();
              externalPortletParameter.setName(param.getName());
@@ -387,21 +403,21 @@ public class PortletDefinitionImporterExporter extends AbstractJaxbIDataImporter
          }
 
          
-         final List<ExternalPortletPreference> portletPreferenceList = rep.getPortletPreference();
+         final List<ExternalPortletPreference> portletPreferenceList = rep.getPortletPreferences();
          final IPortletPreferences portletPreferences = def.getPortletPreferences();
          for (IPortletPreference pref : portletPreferences.getPortletPreferences()) {
              final ExternalPortletPreference externalPortletPreference = new ExternalPortletPreference();
              externalPortletPreference.setName(pref.getName());
              externalPortletPreference.setReadOnly(pref.isReadOnly());
              
-             final List<String> value = externalPortletPreference.getValue();
+             final List<String> value = externalPortletPreference.getValues();
              value.addAll(Arrays.asList(pref.getValues()));
              
              portletPreferenceList.add(externalPortletPreference);
          }
          
          
-         final List<String> categoryList = rep.getCategory();
+         final List<String> categoryList = rep.getCategories();
          final IGroupMember gm = GroupService.getGroupMember(def.getPortletDefinitionId().getStringId(), IPortletDefinition.class);
          final Iterator<IEntityGroup> categories = GroupService.getCompositeGroupService().findContainingGroups(gm);
          while (categories.hasNext()) {
@@ -411,8 +427,8 @@ public class PortletDefinitionImporterExporter extends AbstractJaxbIDataImporter
         
          
          
-         final List<String> groupList = rep.getGroup();
-         final List<String> userList = rep.getUser();
+         final List<String> groupList = rep.getGroups();
+         final List<String> userList = rep.getUsers();
          
          final AuthorizationService authService = org.jasig.portal.services.AuthorizationService.instance();
          final IPermissionManager pm = authService.newPermissionManager("UP_FRAMEWORK");

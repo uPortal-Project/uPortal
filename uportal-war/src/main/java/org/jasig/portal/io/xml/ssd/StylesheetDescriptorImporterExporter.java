@@ -48,8 +48,14 @@ import org.springframework.transaction.annotation.Transactional;
  * @version $Revision$
  */
 public class StylesheetDescriptorImporterExporter extends AbstractJaxbIDataImporterExporter<ExternalStylesheetDescriptor> {
+    private StylesheetDescriptorPortalDataType stylesheetDescriptorPortalDataType;
     private IStylesheetDescriptorDao stylesheetDescriptorDao;
     
+    @Autowired
+    public void setStylesheetDescriptorPortalDataType(StylesheetDescriptorPortalDataType stylesheetDescriptorPortalDataType) {
+        this.stylesheetDescriptorPortalDataType = stylesheetDescriptorPortalDataType;
+    }
+
     @Autowired
     public void setStylesheetDescriptorDao(IStylesheetDescriptorDao stylesheetDescriptorDao) {
         this.stylesheetDescriptorDao = stylesheetDescriptorDao;
@@ -59,8 +65,8 @@ public class StylesheetDescriptorImporterExporter extends AbstractJaxbIDataImpor
      * @see org.jasig.portal.io.xml.IDataImporterExporter#getImportDataKey()
      */
     @Override
-    public PortalDataKey getImportDataKey() {
-        return StylesheetDescriptorPortalDataType.IMPORT_40_DATA_KEY;
+    public Set<PortalDataKey> getImportDataKeys() {
+        return Collections.singleton(StylesheetDescriptorPortalDataType.IMPORT_40_DATA_KEY);
     }
 
     /* (non-Javadoc)
@@ -68,7 +74,7 @@ public class StylesheetDescriptorImporterExporter extends AbstractJaxbIDataImpor
      */
     @Override
     public IPortalDataType getPortalDataType() {
-        return StylesheetDescriptorPortalDataType.INSTANCE;
+        return this.stylesheetDescriptorPortalDataType;
     }
 
     /* (non-Javadoc)
@@ -101,7 +107,7 @@ public class StylesheetDescriptorImporterExporter extends AbstractJaxbIDataImpor
         stylesheetDescriptor.setUrlNodeSyntaxHelperName(data.getUrlSyntaxHelper());
         stylesheetDescriptor.setDescription(data.getDescription());
         
-        final List<ExternalOutputPropertyDescriptor> extOutputProperties = data.getOutputProperty();
+        final List<ExternalOutputPropertyDescriptor> extOutputProperties = data.getOutputProperties();
         final List<IOutputPropertyDescriptor> outputPropertyDescriptors = new ArrayList<IOutputPropertyDescriptor>(extOutputProperties.size());
         for (final ExternalOutputPropertyDescriptor extOutputProperty : extOutputProperties) {
             final String name = extOutputProperty.getName();
@@ -115,7 +121,7 @@ public class StylesheetDescriptorImporterExporter extends AbstractJaxbIDataImpor
         stylesheetDescriptor.setOutputPropertyDescriptors(outputPropertyDescriptors);
         
         
-        final List<ExternalStylesheetParameterDescriptor> extStylesheetParameters = data.getStylesheetParameter();
+        final List<ExternalStylesheetParameterDescriptor> extStylesheetParameters = data.getStylesheetParameters();
         final List<IStylesheetParameterDescriptor> stylesheetParameterDescriptors = new ArrayList<IStylesheetParameterDescriptor>(extOutputProperties.size());
         for (final ExternalStylesheetParameterDescriptor extStylesheetParameter : extStylesheetParameters) {
             final String name = extStylesheetParameter.getName();
@@ -129,7 +135,7 @@ public class StylesheetDescriptorImporterExporter extends AbstractJaxbIDataImpor
         stylesheetDescriptor.setStylesheetParameterDescriptors(stylesheetParameterDescriptors);
         
         
-        final List<ExternalLayoutAttributeDescriptor> extLayoutAttributes = data.getLayoutAttribute();
+        final List<ExternalLayoutAttributeDescriptor> extLayoutAttributes = data.getLayoutAttributes();
         final List<ILayoutAttributeDescriptor> layoutAttributeDescriptors = new ArrayList<ILayoutAttributeDescriptor>(extOutputProperties.size());
         for (final ExternalLayoutAttributeDescriptor extLayoutAttribute : extLayoutAttributes) {
             final String name = extLayoutAttribute.getName();
@@ -137,7 +143,7 @@ public class StylesheetDescriptorImporterExporter extends AbstractJaxbIDataImpor
             final LayoutAttributeDescriptorImpl layoutAttributeDescriptor = new LayoutAttributeDescriptorImpl(name, scope);
             layoutAttributeDescriptor.setDefaultValue(extLayoutAttribute.getDefaultValue());
             layoutAttributeDescriptor.setDescription(extLayoutAttribute.getDescription());
-            layoutAttributeDescriptor.setTargetElementNames(new LinkedHashSet<String>(extLayoutAttribute.getTargetElement()));
+            layoutAttributeDescriptor.setTargetElementNames(new LinkedHashSet<String>(extLayoutAttribute.getTargetElements()));
             
             layoutAttributeDescriptors.add(layoutAttributeDescriptor);
         }
@@ -200,7 +206,7 @@ public class StylesheetDescriptorImporterExporter extends AbstractJaxbIDataImpor
         externalStylesheetDescriptor.setUri(stylesheetDescriptor.getStylesheetResource());
         
         final Collection<IOutputPropertyDescriptor> outputPropertyDescriptors = stylesheetDescriptor.getOutputPropertyDescriptors();
-        final List<ExternalOutputPropertyDescriptor> extOutputPropertyDescriptors = externalStylesheetDescriptor.getOutputProperty();
+        final List<ExternalOutputPropertyDescriptor> extOutputPropertyDescriptors = externalStylesheetDescriptor.getOutputProperties();
         for (final IOutputPropertyDescriptor outputPropertyDescriptor : outputPropertyDescriptors) {
             final ExternalOutputPropertyDescriptor extOutputPropertyDescriptor = new ExternalOutputPropertyDescriptor();
             copyProperties(outputPropertyDescriptor, extOutputPropertyDescriptor);
@@ -208,7 +214,7 @@ public class StylesheetDescriptorImporterExporter extends AbstractJaxbIDataImpor
         }
         
         final Collection<IStylesheetParameterDescriptor> stylesheetParameterDescriptors = stylesheetDescriptor.getStylesheetParameterDescriptors();
-        final List<ExternalStylesheetParameterDescriptor> extStylesheetParameterDescriptors = externalStylesheetDescriptor.getStylesheetParameter();
+        final List<ExternalStylesheetParameterDescriptor> extStylesheetParameterDescriptors = externalStylesheetDescriptor.getStylesheetParameters();
         for (final IStylesheetParameterDescriptor stylesheetParameterDescriptor : stylesheetParameterDescriptors) {
             final ExternalStylesheetParameterDescriptor extStylesheetParameterDescriptor = new ExternalStylesheetParameterDescriptor();
             copyProperties(stylesheetParameterDescriptor, extStylesheetParameterDescriptor);
@@ -216,11 +222,11 @@ public class StylesheetDescriptorImporterExporter extends AbstractJaxbIDataImpor
         }
         
         final Collection<ILayoutAttributeDescriptor> layoutAttributeDescriptors = stylesheetDescriptor.getLayoutAttributeDescriptors();
-        final List<ExternalLayoutAttributeDescriptor> extLayoutAttributeDescriptors = externalStylesheetDescriptor.getLayoutAttribute();
+        final List<ExternalLayoutAttributeDescriptor> extLayoutAttributeDescriptors = externalStylesheetDescriptor.getLayoutAttributes();
         for (final ILayoutAttributeDescriptor layoutAttributeDescriptor : layoutAttributeDescriptors) {
             final ExternalLayoutAttributeDescriptor extLayoutAttributeDescriptor = new ExternalLayoutAttributeDescriptor();
             copyProperties(layoutAttributeDescriptor, extLayoutAttributeDescriptor);
-            extLayoutAttributeDescriptor.getTargetElement().addAll(layoutAttributeDescriptor.getTargetElementNames());
+            extLayoutAttributeDescriptor.getTargetElements().addAll(layoutAttributeDescriptor.getTargetElementNames());
             extLayoutAttributeDescriptors.add(extLayoutAttributeDescriptor);
         }
         

@@ -182,7 +182,7 @@ public class ImportExportController {
 	         runner.evaluate(scriptLocation, taskRequest);
 	    } else {
 	    	// this is a document supported by import service
-	    	this.importExportService.importData(source);
+//	    	this.importExportService.importData(source);
 	    }
         
         response.setStatus(HttpServletResponse.SC_OK);

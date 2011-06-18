@@ -166,7 +166,7 @@ public class ImportExportPortletController {
     	
     	for(String legacyType: importExportTypes) {
     		if (ap.hasPermission(OWNER, activityName, legacyType)) {
-    			results.add(new CernnunosOnlyPortalDataType(legacyType));
+//    			results.add(new CernnunosOnlyPortalDataType(legacyType));
     		}
     	}
     	return results;

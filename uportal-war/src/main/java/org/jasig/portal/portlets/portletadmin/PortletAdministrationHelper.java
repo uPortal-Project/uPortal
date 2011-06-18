@@ -545,7 +545,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
                     final PreferenceInputType preferenceInputType = preferenceInput.getValue();
                     if (preferenceInputType instanceof MultiValuedPreferenceInputType) {
                         final MultiValuedPreferenceInputType multiValuedPreferenceInputType = (MultiValuedPreferenceInputType)preferenceInputType;
-                        final List<String> defaultValues = multiValuedPreferenceInputType.getDefault();
+                        final List<String> defaultValues = multiValuedPreferenceInputType.getDefaults();
                         if (defaultValues != null && !defaultValues.isEmpty()) {
                             preferenceNames.add(preference.getName());
                         }

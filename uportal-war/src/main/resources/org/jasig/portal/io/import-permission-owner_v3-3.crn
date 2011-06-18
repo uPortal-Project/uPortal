@@ -20,8 +20,6 @@
 -->
 
 <with>
-    <attribute key="permissionOwnerDao">${groovy(PORTAL_CONTEXT.getBean('permissionOwnerDao'))}</attribute>
-
     <attribute key="OWNER_NAME">${valueOf(name)}</attribute>
     <attribute key="OWNER_FNAME">${valueOf(fname)}</attribute>
     <attribute key="OWNER_DESC">${valueOf(desc)}</attribute>

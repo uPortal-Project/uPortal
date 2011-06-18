@@ -23,6 +23,8 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 
+import org.apache.commons.lang.Validate;
+
 /**
  * Describes the root element of a portal data XML file in an easily comparable way.
  * 
@@ -44,6 +46,7 @@ public class PortalDataKey {
     }
 
     public PortalDataKey(QName name, String script, String version) {
+        Validate.notNull(name);
         this.name = name;
         this.script = script;
         this.version = version;
@@ -112,6 +115,16 @@ public class PortalDataKey {
 
     @Override
     public String toString() {
-        return "PortalDataKey [name=" + this.name + ", script=" + this.script + ", version=" + this.version + "]";
+        final StringBuilder builder = new StringBuilder("<");
+        builder.append(this.name);
+        if (this.script != null) {
+            builder.append(" script=\"").append(this.script).append("\"");
+        }
+        if (this.version != null) {
+            builder.append(" version=\"").append(this.version).append("\"");
+        }
+        builder.append(">");
+        
+        return builder.toString();
     }
 }

@@ -69,7 +69,7 @@ public interface XmlUtilities {
     
     /**
      * The standard shared XMLInputFactory to be used by uPortal code. Clients should not set any properties
-     * on this XMLInputFactory.  
+     * on this XMLInputFactory, if they need to they should use {@link XMLInputFactory#newFactory()} directly
      */
     public XMLInputFactory getXmlInputFactory();
     

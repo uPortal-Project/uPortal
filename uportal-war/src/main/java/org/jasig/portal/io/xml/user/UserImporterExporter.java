@@ -47,17 +47,22 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.ImmutableSet;
+
 /**
  * @author Nicholas Blair
  * @version $Id$
  */
 public class UserImporterExporter extends
-		AbstractJaxbIDataImporterExporter<ExternalUser> {
+		AbstractJaxbIDataImporterExporter<UserType> {
+    
+    private static final ImmutableSet<PortalDataKey> IMPORT_DATA_KEYS = ImmutableSet.of(UserPortalDataType.IMPORT_40_DATA_KEY, TemplateUserPortalDataType.IMPORT_40_DATA_KEY);
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 	
 	private JdbcOperations jdbcOperations;
 
+	private UserPortalDataType userPortalDataType;
 	private boolean forceDefaultUserName = false;
 	private String defaultUserName;
 	private DataSource dataSource;
@@ -70,6 +75,11 @@ public class UserImporterExporter extends
     
     public void setDefaultUserName(String defaultUserName) {
         this.defaultUserName = defaultUserName;
+    }
+
+    @Autowired
+    public void setUserPortalDataType(UserPortalDataType userPortalDataType) {
+        this.userPortalDataType = userPortalDataType;
     }
 
     @Autowired
@@ -95,13 +105,13 @@ public class UserImporterExporter extends
     }
 
     @Override
-	public PortalDataKey getImportDataKey() {
-		return UserPortalDataType.IMPORT_40_DATA_KEY;
+	public Set<PortalDataKey> getImportDataKeys() {
+		return IMPORT_DATA_KEYS;
 	}
 
 	@Override
 	public IPortalDataType getPortalDataType() {
-		return UserPortalDataType.INSTANCE;
+		return this.userPortalDataType;
 	}
 
 	@Override
@@ -111,9 +121,9 @@ public class UserImporterExporter extends
 	
 	@Transactional
 	@Override
-	public void importData(ExternalUser data) {
-	    final String username = data.getUsername();
-	    final String defaultUsername = getDefaultUsername(data);
+	public void importData(UserType userType) {
+	    final String username = userType.getUsername();
+	    final String defaultUsername = getDefaultUsername(userType);
 	    final Tuple<Integer, Long> defaultUserInfo = getDefaultUserInfo(defaultUsername);
         final long nextStructId = getNextStructId(username, defaultUserInfo);
 	    
@@ -137,8 +147,8 @@ public class UserImporterExporter extends
 
 	    
 	    ILocalAccountPerson account = this.localAccountDao.getPerson(username);
-	    final String password = data.getPassword();
-	    final List<Attribute> attributes = data.getAttribute();
+	    final String password = userType.getPassword();
+	    final List<Attribute> attributes = userType.getAttributes();
 	    if (password == null && attributes.isEmpty()) {
 	        //No local account data, clean up the DB
 	        if (account != null) {
@@ -151,14 +161,14 @@ public class UserImporterExporter extends
                 account = this.localAccountDao.createPerson(username);
             }
             account.setPassword(password);
-            final Calendar lastPasswordChange = data.getLastPasswordChange();
+            final Calendar lastPasswordChange = userType.getLastPasswordChange();
             if (lastPasswordChange != null) {
                 account.setLastPasswordChange(lastPasswordChange.getTime());
             }
     
             account.removeAttribute(username);
             for (final Attribute attribute : attributes) {
-                account.setAttribute(attribute.getName(), attribute.getValue());
+                account.setAttribute(attribute.getName(), attribute.getValues());
             }
             
             this.localAccountDao.updateAccount(account);
@@ -205,7 +215,7 @@ public class UserImporterExporter extends
         return defaultUserInfo;
     }
 
-    protected String getDefaultUsername(ExternalUser data) {
+    protected String getDefaultUsername(UserType data) {
         final String defaultUser = data.getDefaultUser();
         if (defaultUser == null || this.forceDefaultUserName) {
             return this.defaultUserName;
@@ -219,23 +229,30 @@ public class UserImporterExporter extends
 	 * @see org.jasig.portal.io.xml.IDataImporterExporter#exportData(java.lang.String)
 	 */
 	@Override
-	public ExternalUser exportData(String userName) {
+	public UserType exportData(String userName) {
         final String defaultUserName = getDefaultUserName(userName);
-	    
-	    final ExternalUser externalUser = new ExternalUser();
-	    externalUser.setVersion("4.0");
-	    externalUser.setUsername(userName);
-	    externalUser.setDefaultUser(defaultUserName);
+        
+        final boolean isDefaultUser = this.isDefaultUser(userName);
+	    final UserType userType;
+	    if (isDefaultUser) {
+	        userType = new ExternalTemplateUser();
+	    }
+	    else {
+	        userType = new ExternalUser();
+	    }
+	    userType.setVersion("4.0");
+	    userType.setUsername(userName);
+	    userType.setDefaultUser(defaultUserName);
 	    
 	    final ILocalAccountPerson localAccountPerson = this.localAccountDao.getPerson(userName);
 	    if (localAccountPerson != null) {
-	        externalUser.setPassword(localAccountPerson.getPassword());
+	        userType.setPassword(localAccountPerson.getPassword());
 	        
 	        final Calendar lastPasswordChange = Calendar.getInstance();
             lastPasswordChange.setTime(localAccountPerson.getLastPasswordChange());
-	        externalUser.setLastPasswordChange(lastPasswordChange);
+	        userType.setLastPasswordChange(lastPasswordChange);
             
-            final List<Attribute> externalAttributes = externalUser.getAttribute();
+            final List<Attribute> externalAttributes = userType.getAttributes();
             for (final Map.Entry<String, List<Object>> attributeEntry : localAccountPerson.getAttributes().entrySet()) {
                 final String name = attributeEntry.getKey();
                 final List<Object> values = attributeEntry.getValue();
@@ -243,7 +260,7 @@ public class UserImporterExporter extends
                 final Attribute externalAttribute = new Attribute();
                 externalAttribute.setName(name);
                 
-                final List<String> externalValues = externalAttribute.getValue();
+                final List<String> externalValues = externalAttribute.getValues();
                 for (final Object value : values) {
                     if (value != null) {
                         externalValues.add(value.toString());
@@ -257,7 +274,7 @@ public class UserImporterExporter extends
             }
 	    }
 	    
-	    return externalUser;
+	    return userType;
 	}
 	
 	protected String getDefaultUserName(String userName) {
@@ -273,6 +290,18 @@ public class UserImporterExporter extends
         
         return null;
 	}
+    
+    protected boolean isDefaultUser(String userName) {
+        final List<Integer> defaultUserIdResults = this.jdbcOperations.queryForList(
+                "SELECT user_dflt_usr_id FROM up_user WHERE user_name = ?", Integer.class, userName);
+        final Integer defaultUserId = DataAccessUtils.singleResult(defaultUserIdResults);
+        
+        final List<Integer> defaultUSerInstancesResults = this.jdbcOperations.queryForList(
+                "SELECT count(user_name) FROM up_user WHERE user_dflt_usr_id = ?", Integer.class, defaultUserId);
+        final Integer defaultUserInstances = DataAccessUtils.singleResult(defaultUSerInstancesResults);
+        
+        return defaultUserInstances != null && defaultUserInstances > 0;
+    }
 	
 
 	/*

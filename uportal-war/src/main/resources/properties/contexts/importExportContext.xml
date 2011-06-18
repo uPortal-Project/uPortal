@@ -28,6 +28,90 @@
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
     <!-- 
+     | The various portal data type descriptors
+     +-->
+    <bean id="entityTypePortalDataType" class="org.jasig.portal.io.xml.entitytype.EntityTypePortalDataType"/>
+    <bean id="stylesheetDescriptorPortalDataType" class="org.jasig.portal.io.xml.ssd.StylesheetDescriptorPortalDataType"/>
+    <bean id="templateUserPortalDataType" class="org.jasig.portal.io.xml.user.TemplateUserPortalDataType"/>
+    <bean id="userPortalDataType" class="org.jasig.portal.io.xml.user.UserPortalDataType"/>
+    <bean id="groupPortalDataType" class="org.jasig.portal.io.xml.group.GroupPortalDataType"/>
+    <bean id="groupMembershipPortalDataType" class="org.jasig.portal.io.xml.group.GroupMembershipPortalDataType"/>
+    <bean id="membershipPortalDataType" class="org.jasig.portal.io.xml.group.MembershipPortalDataType"/>
+    <bean id="portletTypePortalDataType" class="org.jasig.portal.io.xml.portlettype.PortletTypePortalDataType"/>
+    <bean id="portletPortalDataType" class="org.jasig.portal.io.xml.portlet.PortletPortalDataType"/>
+    <bean id="permissionPortalDataType" class="org.jasig.portal.io.xml.permission.PermissionPortalDataType"/>
+    <bean id="permissionSetPortalDataType" class="org.jasig.portal.io.xml.permission.PermissionSetPortalDataType"/>
+    <bean id="permissionOwnerPortalDataType" class="org.jasig.portal.io.xml.permission.PermissionOwnerPortalDataType"/>
+    <bean id="profilePortalDataType" class="org.jasig.portal.io.xml.layout.ProfilePortalDataType"/>
+    <bean id="fragmentLayoutPortalDataType" class="org.jasig.portal.io.xml.layout.FragmentLayoutPortalDataType"/>
+    <bean id="layoutPortalDataType" class="org.jasig.portal.io.xml.layout.LayoutPortalDataType"/>
+    <bean id="fragmentDefinitionPortalDataType" class="org.jasig.portal.io.xml.dlm.FragmentDefinitionPortalDataType"/>
+    
+    <!--
+     | Import order for portal data types 
+     +-->
+    <util:list id="dataTypeImportOrder">
+        <ref bean="entityTypePortalDataType" />
+        <ref bean="stylesheetDescriptorPortalDataType" />
+        <ref bean="templateUserPortalDataType" />
+        <ref bean="userPortalDataType" />
+        <ref bean="groupPortalDataType" />
+        <ref bean="groupMembershipPortalDataType" />
+        <ref bean="membershipPortalDataType" />
+        <ref bean="portletTypePortalDataType" />
+        <ref bean="portletPortalDataType" />
+        <ref bean="permissionPortalDataType" />
+        <ref bean="permissionSetPortalDataType" />
+        <ref bean="permissionOwnerPortalDataType" />
+        <ref bean="profilePortalDataType" />
+        <ref bean="fragmentLayoutPortalDataType" />
+        <ref bean="layoutPortalDataType" />
+        <ref bean="fragmentDefinitionPortalDataType" />
+    </util:list>
+
+    <!-- 
+     | File-name patterns that a candidate file must match one of when doing a bulk import
+     +-->
+    <util:set id="dataFileIncludes">
+        <value>**/*.xml</value>
+        <value>**/*.entity-type</value>
+        <value>**/*.template-user</value>
+        <value>**/*.user</value>
+        <value>**/*.group</value>
+        <value>**/*.group_membership</value>
+        <value>**/*.membership</value>
+        <value>**/*.portlet-type</value>
+        <value>**/*.channel-type</value>
+        <value>**/*.portlet</value>
+        <value>**/*.channel</value>
+        <value>**/*.permission</value>
+        <value>**/*.permission_set</value>
+        <value>**/*.permission_owner</value>
+        <value>**/*.profile</value>
+        <value>**/*.fragment-layout</value>
+        <value>**/*.layout</value>
+        <value>**/*.fragment-definition</value>
+    </util:set>
+           
+    <!-- 
+     | Thread pool used for bulk import/export operations
+     +-->
+    <bean id="importExportThreadPool" class="org.jasig.portal.utils.threading.DynamicThreadPoolExecutorFactoryBean">
+        <property name="corePoolSize" value="${org.jasig.portal.io.threadPool.initialThreads}" />
+        <property name="maxPoolSize" value="${org.jasig.portal.io.threadPool.maxThreads}" />
+        <property name="queueCapacity" value="${org.jasig.portal.io.threadPool.queueSize}" />
+        <property name="threadGroupName" value="uPortal-ImportExportThreadGroup" />
+        <property name="threadNamePrefix" value="uPortal-ImportExport-" />
+        <property name="threadPriority" value="${org.jasig.portal.io.threadPool.threadPriority}" />
+        <property name="keepAliveSeconds" value="${org.jasig.portal.io.threadPool.keepAliveSeconds}" />
+        <property name="rejectedExecutionHandler">
+            <bean class="java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy"/>
+        </property>
+        <property name="daemon" value="true" />
+        <property name="allowCoreThreadTimeOut" value="true" />
+    </bean>
+
+    <!-- 
      | Import/Export classes for portal entities
      +-->
     <bean id="portletDefinitionImporterExporter" class="org.jasig.portal.io.xml.portlet.PortletDefinitionImporterExporter">
@@ -56,302 +140,321 @@
      | Data Upgraded classes for portal entities
      +-->
     <bean id="user32DataUpgrader" class="org.jasig.portal.io.xml.XsltDataUpgrader">
-        <property name="portalDataKey">
-            <util:constant static-field="org.jasig.portal.io.xml.user.UserPortalDataType.IMPORT_32_DATA_KEY"/>
+        <property name="portalDataKeys">
+            <set>
+                <util:constant static-field="org.jasig.portal.io.xml.user.UserPortalDataType.IMPORT_26_DATA_KEY"/>
+                <util:constant static-field="org.jasig.portal.io.xml.user.UserPortalDataType.IMPORT_30_DATA_KEY"/>
+                <util:constant static-field="org.jasig.portal.io.xml.user.UserPortalDataType.IMPORT_32_DATA_KEY"/>
+            </set>
         </property>
         <property name="xslResource" value="classpath:/org/jasig/portal/io/xml/user/upgrade-user_3-2.xsl" />
     </bean>
-    <bean id="user30DataUpgrader" class="org.jasig.portal.io.xml.XsltDataUpgrader">
-        <property name="portalDataKey">
-            <util:constant static-field="org.jasig.portal.io.xml.user.UserPortalDataType.IMPORT_30_DATA_KEY"/>
+    <bean id="templateUser32DataUpgrader" class="org.jasig.portal.io.xml.XsltDataUpgrader">
+        <property name="portalDataKeys">
+            <set>
+                <util:constant static-field="org.jasig.portal.io.xml.user.TemplateUserPortalDataType.IMPORT_26_DATA_KEY"/>
+                <util:constant static-field="org.jasig.portal.io.xml.user.TemplateUserPortalDataType.IMPORT_30_DATA_KEY"/>
+                <util:constant static-field="org.jasig.portal.io.xml.user.TemplateUserPortalDataType.IMPORT_32_DATA_KEY"/>
+            </set>
         </property>
-        <property name="xslResource" value="classpath:/org/jasig/portal/io/xml/user/upgrade-user_3-2.xsl" />
+        <property name="xslResource" value="classpath:/org/jasig/portal/io/xml/user/upgrade-template-user_3-2.xsl" />
     </bean>
-    <bean id="user26DataUpgrader" class="org.jasig.portal.io.xml.XsltDataUpgrader">
-        <property name="portalDataKey">
-            <util:constant static-field="org.jasig.portal.io.xml.user.UserPortalDataType.IMPORT_26_DATA_KEY"/>
+
+    <!--
+     | Legacy Import Tasks 
+     | Map<PortalDataKey, IDataUpgrader> 
+     + -->
+    <util:map id="importTasks" key-type="org.jasig.portal.io.xml.PortalDataKey" value-type="org.danann.cernunnos.Task">
+        <entry>
+            <key>
+                <util:constant static-field="org.jasig.portal.io.xml.entitytype.EntityTypePortalDataType.IMPORT_26_DATA_KEY"/>
+            </key>
+            <ref bean="import-entity-type_v2-6" />
+        </entry>
+        <entry>
+            <key>
+                <util:constant static-field="org.jasig.portal.io.xml.entitytype.EntityTypePortalDataType.IMPORT_32_DATA_KEY"/>
+            </key>
+            <ref bean="import-entity-type_v3-2" />
+        </entry>
+        <entry>
+            <key>
+                <util:constant static-field="org.jasig.portal.io.xml.layout.FragmentLayoutPortalDataType.IMPORT_26_DATA_KEY"/>
+            </key>
+            <ref bean="import-layout_v2-6" />
+        </entry>
+        <entry>
+            <key>
+                <util:constant static-field="org.jasig.portal.io.xml.layout.FragmentLayoutPortalDataType.IMPORT_30_DATA_KEY"/>
+            </key>
+            <ref bean="import-layout_v3-0" />
+        </entry>
+        <entry>
+            <key>
+                <util:constant static-field="org.jasig.portal.io.xml.layout.FragmentLayoutPortalDataType.IMPORT_32_DATA_KEY"/>
+            </key>
+            <ref bean="import-layout_v3-2" />
+        </entry>
+        <entry>
+            <key>
+                <util:constant static-field="org.jasig.portal.io.xml.layout.LayoutPortalDataType.IMPORT_26_DATA_KEY"/>
+            </key>
+            <ref bean="import-layout_v2-6" />
+        </entry>
+        <entry>
+            <key>
+                <util:constant static-field="org.jasig.portal.io.xml.layout.LayoutPortalDataType.IMPORT_30_DATA_KEY"/>
+            </key>
+            <ref bean="import-layout_v3-0" />
+        </entry>
+        <entry>
+            <key>
+                <util:constant static-field="org.jasig.portal.io.xml.layout.LayoutPortalDataType.IMPORT_32_DATA_KEY"/>
+            </key>
+            <ref bean="import-layout_v3-2" />
+        </entry>
+        <entry>
+            <key>
+                <util:constant static-field="org.jasig.portal.io.xml.layout.ProfilePortalDataType.IMPORT_32_DATA_KEY"/>
+            </key>
+            <ref bean="import-profile_v3-2" />
+        </entry>
+        <entry>
+            <key>
+                <util:constant static-field="org.jasig.portal.io.xml.group.GroupPortalDataType.IMPORT_26_DATA_KEY"/>
+            </key>
+            <ref bean="import-group_v2-6" />
+        </entry>
+        <entry>
+            <key>
+                <util:constant static-field="org.jasig.portal.io.xml.group.GroupMembershipPortalDataType.IMPORT_GROUP_30_DATA_KEY"/>
+            </key>
+            <ref bean="import-group_membership_v3-0-GROUP" />
+        </entry>
+        <entry>
+            <key>
+                <util:constant static-field="org.jasig.portal.io.xml.group.GroupMembershipPortalDataType.IMPORT_MEMBERS_30_DATA_KEY"/>
+            </key>
+            <ref bean="import-group_membership_v3-0-MEMBERS" />
+        </entry>
+        <entry>
+            <key>
+                <util:constant static-field="org.jasig.portal.io.xml.group.GroupMembershipPortalDataType.IMPORT_GROUP_32_DATA_KEY"/>
+            </key>
+            <ref bean="import-group_membership_v3-2-GROUP" />
+        </entry>
+        <entry>
+            <key>
+                <util:constant static-field="org.jasig.portal.io.xml.group.GroupMembershipPortalDataType.IMPORT_MEMBERS_32_DATA_KEY"/>
+            </key>
+            <ref bean="import-group_membership_v3-2-MEMBERS" />
+        </entry>
+        <entry>
+            <key>
+                <util:constant static-field="org.jasig.portal.io.xml.group.MembershipPortalDataType.IMPORT_26_DATA_KEY"/>
+            </key>
+            <ref bean="import-membership_v2-6" />
+        </entry>
+        <entry>
+            <key>
+                <util:constant static-field="org.jasig.portal.io.xml.permission.PermissionSetPortalDataType.IMPORT_31_DATA_KEY"/>
+            </key>
+            <ref bean="import-permission_set_v3-1" />
+        </entry>
+        <entry>
+            <key>
+                <util:constant static-field="org.jasig.portal.io.xml.permission.PermissionOwnerPortalDataType.IMPORT_33_DATA_KEY"/>
+            </key>
+            <ref bean="import-permission-owner_v3-3" />
+        </entry>
+        <entry>
+            <key>
+                <util:constant static-field="org.jasig.portal.io.xml.permission.PermissionPortalDataType.IMPORT_26_DATA_KEY"/>
+            </key>
+            <ref bean="import-permission_v2-6" />
+        </entry>
+        
+    </util:map>
+
+    <bean id="import-membership_v2-6" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location">
+            <value>classpath://org/jasig/portal/io/import-membership_v2-6.crn</value>
         </property>
-        <property name="xslResource" value="classpath:/org/jasig/portal/io/xml/user/upgrade-user_3-2.xsl" />
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+            </util:map>
+        </property>
     </bean>
-    
-    <!-- 
-     | Import Tasks
-     +-->
 
-  <util:map id="importTasks" map-class="java.util.concurrent.ConcurrentHashMap">
-    <entry key="classpath://org/jasig/portal/io/import-entity-type_v2-6.crn">
-      <ref bean="import-entity-type_v2-6" />
-    </entry>
-    <entry key="classpath://org/jasig/portal/io/import-entity-type_v3-2.crn">
-      <ref bean="import-entity-type_v3-2" />
-    </entry>
-    <entry key="classpath://org/jasig/portal/io/import-layout_v3-0.crn">
-      <ref bean="import-layout_v3-0" />
-    </entry>
-    <entry key="classpath://org/jasig/portal/io/import-layout_v3-2.crn">
-      <ref bean="import-layout_v3-2" />
-    </entry>
-    <entry key="classpath://org/jasig/portal/io/import-profile_v3-2.crn">
-      <ref bean="import-profile_v3-2" />
-    </entry>
-    <entry key="classpath://org/jasig/portal/io/import-channel_v2-6.crn">
-      <ref bean="import-channel_v2-6" />
-    </entry>
-    <entry key="classpath://org/jasig/portal/io/import-channel_v3-0.crn">
-      <ref bean="import-channel_v3-0" />
-    </entry>
-    <entry key="classpath://org/jasig/portal/io/import-channel_v3-1.crn">
-      <ref bean="import-channel_v3-1" />
-    </entry>
-    <entry key="classpath://org/jasig/portal/io/import-channel_v3-2.crn">
-      <ref bean="import-channel_v3-2" />
-    </entry>
-    <entry key="classpath://org/jasig/portal/io/jaxb-import_v4-0.crn">
-      <ref bean="jaxb-import_v4-0" />
-    </entry>
-    <entry key="classpath://org/jasig/portal/io/import-structure_v2-6.crn">
-      <ref bean="import-structure_v2-6" />
-    </entry>
-    <entry key="classpath://org/jasig/portal/io/import-theme_v2-6.crn">
-      <ref bean="import-theme_v2-6" />
-    </entry>
-    <entry key="classpath://org/jasig/portal/io/import-group_v2-6.crn">
-      <ref bean="import-group_v2-6" />
-    </entry>
-    <entry key="classpath://org/jasig/portal/io/import-group_membership_v3-0.crn">
-      <ref bean="import-group_membership_v3-0" />
-    </entry>
-    <entry key="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
-      <ref bean="import-group_membership_v3-2" />
-    </entry>
-    <entry key="classpath://org/jasig/portal/io/import-membership_v2-6.crn">
-      <ref bean="import-membership_v2-6" />
-    </entry>
-  </util:map>
+    <bean id="import-group_membership_v3-2-GROUP" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location">
+            <value>classpath://org/jasig/portal/io/import-group_membership_v3-2.crn</value>
+        </property>
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+                <entry key="IMPORT_ACTION" value="GROUP" />
+            </util:map>
+        </property>
+    </bean>
+    <bean id="import-group_membership_v3-2-MEMBERS" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location">
+            <value>classpath://org/jasig/portal/io/import-group_membership_v3-2.crn</value>
+        </property>
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+                <entry key="IMPORT_ACTION" value="MEMBERS" />
+            </util:map>
+        </property>
+    </bean>
 
-  <bean id="import-membership_v2-6" class="org.danann.cernunnos.runtime.PojoTask">
-    <property name="location">
-      <value>classpath://org/jasig/portal/io/import-membership_v2-6.crn</value>
-    </property>
-    <property name="requestAttributes">
-      <util:map>
-        <entry key="SqlAttributes.DATA_SOURCE">
-          <ref bean="PortalDb" />
-        </entry>
-        <entry key="SqlAttributes.TRANSACTION_MANAGER">
-          <ref bean="transactionManager" />
-        </entry>
-      </util:map>
-    </property>
-  </bean>
+    <bean id="import-group_membership_v3-0-GROUP" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location">
+            <value>classpath://org/jasig/portal/io/import-group_membership_v3-0.crn</value>
+        </property>
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+                <entry key="IMPORT_ACTION" value="GROUP" />
+            </util:map>
+        </property>
+    </bean>
+    <bean id="import-group_membership_v3-0-MEMBERS" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location">
+            <value>classpath://org/jasig/portal/io/import-group_membership_v3-0.crn</value>
+        </property>
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+                <entry key="IMPORT_ACTION" value="MEMBERS" />
+            </util:map>
+        </property>
+    </bean>
 
-  <bean id="import-group_membership_v3-2" class="org.danann.cernunnos.runtime.PojoTask">
-    <property name="location">
-      <value>classpath://org/jasig/portal/io/import-group_membership_v3-2.crn</value>
-    </property>
-    <property name="requestAttributes">
-      <util:map>
-        <entry key="SqlAttributes.DATA_SOURCE">
-          <ref bean="PortalDb" />
-        </entry>
-        <entry key="SqlAttributes.TRANSACTION_MANAGER">
-          <ref bean="transactionManager" />
-        </entry>
-      </util:map>
-    </property>
-  </bean>
+    <bean id="import-group_v2-6" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location">
+            <value>classpath://org/jasig/portal/io/import-group_v2-6.crn</value>
+        </property>
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+            </util:map>
+        </property>
+    </bean>
 
-  <bean id="import-group_membership_v3-0" class="org.danann.cernunnos.runtime.PojoTask">
-    <property name="location">
-      <value>classpath://org/jasig/portal/io/import-group_membership_v3-0.crn</value>
-    </property>
-    <property name="requestAttributes">
-      <util:map>
-        <entry key="SqlAttributes.DATA_SOURCE">
-          <ref bean="PortalDb" />
-        </entry>
-        <entry key="SqlAttributes.TRANSACTION_MANAGER">
-          <ref bean="transactionManager" />
-        </entry>
-      </util:map>
-    </property>
-  </bean>
+    <bean id="import-permission_set_v3-1" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location">
+            <value>classpath://org/jasig/portal/io/import-permission_set_v3-1.crn</value>
+        </property>
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+            </util:map>
+        </property>
+    </bean>
 
-  <bean id="import-group_v2-6" class="org.danann.cernunnos.runtime.PojoTask">
-    <property name="location">
-      <value>classpath://org/jasig/portal/io/import-group_v2-6.crn</value>
-    </property>
-    <property name="requestAttributes">
-      <util:map>
-        <entry key="SqlAttributes.DATA_SOURCE">
-          <ref bean="PortalDb" />
-        </entry>
-        <entry key="SqlAttributes.TRANSACTION_MANAGER">
-          <ref bean="transactionManager" />
-        </entry>
-      </util:map>
-    </property>
-  </bean>
+    <bean id="import-permission-owner_v3-3" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location">
+            <value>classpath://org/jasig/portal/io/import-permission-owner_v3-3.crn</value>
+        </property>
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+                <entry key="permissionOwnerDao" value-ref="permissionOwnerDao" />
+            </util:map>
+        </property>
+    </bean>
 
-  <bean id="import-theme_v2-6" class="org.danann.cernunnos.runtime.PojoTask">
-    <property name="location">
-      <value>classpath://org/jasig/portal/io/import-theme_v2-6.crn</value>
-    </property>
-    <property name="requestAttributes">
-      <util:map>
-        <entry key="SqlAttributes.DATA_SOURCE">
-          <ref bean="PortalDb" />
-        </entry>
-        <entry key="SqlAttributes.TRANSACTION_MANAGER">
-          <ref bean="transactionManager" />
-        </entry>
-      </util:map>
-    </property>
-  </bean>
-
-  <bean id="import-structure_v2-6" class="org.danann.cernunnos.runtime.PojoTask">
-    <property name="location">
-      <value>classpath://org/jasig/portal/io/import-structure_v2-6.crn</value>
-    </property>
-    <property name="requestAttributes">
-      <util:map>
-        <entry key="SqlAttributes.DATA_SOURCE">
-          <ref bean="PortalDb" />
-        </entry>
-        <entry key="SqlAttributes.TRANSACTION_MANAGER">
-          <ref bean="transactionManager" />
-        </entry>
-      </util:map>
-    </property>
-  </bean>
-    
-  <bean id="import-channel_v2-6" class="org.danann.cernunnos.runtime.PojoTask">
-    <property name="location">
-      <value>classpath://org/jasig/portal/io/import-channel_v2-6.crn</value>
-    </property>
-    <property name="requestAttributes">
-      <util:map>
-        <entry key="SqlAttributes.DATA_SOURCE">
-          <ref bean="PortalDb" />
-        </entry>
-        <entry key="SqlAttributes.TRANSACTION_MANAGER">
-          <ref bean="transactionManager" />
-        </entry>
-      </util:map>
-    </property>
-  </bean>
-    
-  <bean id="import-channel_v3-0" class="org.danann.cernunnos.runtime.PojoTask">
-    <property name="location">
-      <value>classpath://org/jasig/portal/io/import-channel_v3-0.crn</value>
-    </property>
-    <property name="requestAttributes">
-      <util:map>
-        <entry key="SqlAttributes.DATA_SOURCE">
-          <ref bean="PortalDb" />
-        </entry>
-        <entry key="SqlAttributes.TRANSACTION_MANAGER">
-          <ref bean="transactionManager" />
-        </entry>
-      </util:map>
-    </property>
-  </bean>
-    
-  <bean id="import-channel_v3-1" class="org.danann.cernunnos.runtime.PojoTask">
-    <property name="location">
-      <value>classpath://org/jasig/portal/io/import-channel_v3-1.crn</value>
-    </property>
-    <property name="requestAttributes">
-      <util:map>
-        <entry key="SqlAttributes.DATA_SOURCE">
-          <ref bean="PortalDb" />
-        </entry>
-        <entry key="SqlAttributes.TRANSACTION_MANAGER">
-          <ref bean="transactionManager" />
-        </entry>
-      </util:map>
-    </property>
-  </bean>
-    
-  <bean id="import-channel_v3-2" class="org.danann.cernunnos.runtime.PojoTask">
-    <property name="location">
-      <value>classpath://org/jasig/portal/io/import-channel_v3-2.crn</value>
-    </property>
-    <property name="requestAttributes">
-      <util:map>
-        <entry key="SqlAttributes.DATA_SOURCE">
-          <ref bean="PortalDb" />
-        </entry>
-        <entry key="SqlAttributes.TRANSACTION_MANAGER">
-          <ref bean="transactionManager" />
-        </entry>
-      </util:map>
-    </property>
-  </bean>
-    
-  <bean id="jaxb-import_v4-0" class="org.danann.cernunnos.runtime.PojoTask">
-    <property name="location">
-      <value>classpath://org/jasig/portal/io/jaxb-import_v4-0.crn</value>
-    </property>
-  </bean>
+    <bean id="import-permission_v2-6" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location">
+            <value>classpath://org/jasig/portal/io/import-permission_v2-6.crn</value>
+        </property>
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+            </util:map>
+        </property>
+    </bean>
     
     <bean id="import-entity-type_v2-6" class="org.danann.cernunnos.runtime.PojoTask">
-	    <property name="location">
-	        <value>classpath://org/jasig/portal/io/import-entity-type_v2-6.crn</value>
-	    </property>
-	    <property name="requestAttributes">
+        <property name="location">
+            <value>classpath://org/jasig/portal/io/import-entity-type_v2-6.crn</value>
+        </property>
+        <property name="requestAttributes">
             <util:map>
                 <entry key="entityTypesSingleton">
-		            <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		                <property name="targetClass" value="org.jasig.portal.EntityTypes"/>
-		                <property name="targetMethod" value="singleton"/>
-		                <property name="arguments">
-		                    <list>
-		                        <ref bean="PortalDb"/>
-		                    </list>
-		                </property>
-		            </bean>
-		        </entry>
-		    </util:map>
+                    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                        <property name="targetClass" value="org.jasig.portal.EntityTypes" />
+                        <property name="targetMethod" value="singleton" />
+                        <property name="arguments">
+                            <list>
+                                <ref bean="PortalDb" />
+                            </list>
+                        </property>
+                    </bean>
+                </entry>
+            </util:map>
         </property>
     </bean>
-    
+
     <bean id="import-entity-type_v3-2" class="org.danann.cernunnos.runtime.PojoTask">
-      <property name="location">
-          <value>classpath://org/jasig/portal/io/import-entity-type_v3-2.crn</value>
-      </property>
-      <property name="requestAttributes">
+        <property name="location">
+            <value>classpath://org/jasig/portal/io/import-entity-type_v3-2.crn</value>
+        </property>
+        <property name="requestAttributes">
             <util:map>
                 <entry key="entityTypesSingleton">
-                <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-                    <property name="targetClass" value="org.jasig.portal.EntityTypes"/>
-                    <property name="targetMethod" value="singleton"/>
-                    <property name="arguments">
-                        <list>
-                            <ref bean="PortalDb"/>
-                        </list>
-                    </property>
-                </bean>
-            </entry>
-        </util:map>
+                    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                        <property name="targetClass" value="org.jasig.portal.EntityTypes" />
+                        <property name="targetMethod" value="singleton" />
+                        <property name="arguments">
+                            <list>
+                                <ref bean="PortalDb" />
+                            </list>
+                        </property>
+                    </bean>
+                </entry>
+            </util:map>
         </property>
     </bean>
     
+    <bean id="import-layout_v2-6" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location">
+            <value>classpath://org/jasig/portal/io/import-layout_v2-6.crn</value>
+        </property>
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+                <entry key="userLayoutStore" value-ref="userLayoutStore" />
+                <entry key="stylesheetDescriptorDao" value-ref="stylesheetDescriptorDao" />
+                <entry key="portletEntityPreferenceHandler" value-ref="portletEntityPreferenceHandler" />
+            </util:map>
+        </property>
+    </bean>
+
     <bean id="import-layout_v3-0" class="org.danann.cernunnos.runtime.PojoTask">
         <property name="location">
             <value>classpath://org/jasig/portal/io/import-layout_v3-0.crn</value>
         </property>
         <property name="requestAttributes">
             <util:map>
-                <entry key="SqlAttributes.DATA_SOURCE">
-                    <ref bean="PortalDb"/>
-                </entry>
-                <entry key="SqlAttributes.TRANSACTION_MANAGER">
-                    <ref bean="transactionManager"/>
-                </entry>
-                <entry key="userLayoutStore">
-                    <ref bean="userLayoutStore"/>
-                </entry>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+                <entry key="userLayoutStore" value-ref="userLayoutStore" />
+                <entry key="stylesheetDescriptorDao" value-ref="stylesheetDescriptorDao" />
+                <entry key="portletEntityPreferenceHandler" value-ref="portletEntityPreferenceHandler" />
             </util:map>
         </property>
     </bean>
@@ -362,15 +465,11 @@
         </property>
         <property name="requestAttributes">
             <util:map>
-                <entry key="SqlAttributes.DATA_SOURCE">
-                    <ref bean="PortalDb"/>
-                </entry>
-                <entry key="SqlAttributes.TRANSACTION_MANAGER">
-                    <ref bean="transactionManager"/>
-                </entry>
-                <entry key="userLayoutStore">
-                    <ref bean="userLayoutStore"/>
-                </entry>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+                <entry key="userLayoutStore" value-ref="userLayoutStore" />
+                <entry key="stylesheetDescriptorDao" value-ref="stylesheetDescriptorDao" />
+                <entry key="portletEntityPreferenceHandler" value-ref="portletEntityPreferenceHandler" />
             </util:map>
         </property>
     </bean>
@@ -381,12 +480,9 @@
         </property>
         <property name="requestAttributes">
             <util:map>
-                <entry key="SqlAttributes.DATA_SOURCE">
-                    <ref bean="PortalDb"/>
-                </entry>
-                <entry key="SqlAttributes.TRANSACTION_MANAGER">
-                    <ref bean="transactionManager"/>
-                </entry>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+                <entry key="stylesheetDescriptorDao" value-ref="stylesheetDescriptorDao" />
             </util:map>
         </property>
     </bean>
@@ -428,12 +524,8 @@
         </property>
         <property name="requestAttributes">
             <util:map>
-                <entry key="SqlAttributes.DATA_SOURCE">
-                    <ref bean="PortalDb" />
-                </entry>
-                <entry key="SqlAttributes.TRANSACTION_MANAGER">
-                    <ref bean="transactionManager" />
-                </entry>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
                 <entry key="isUserIncluded">
                     <ref bean="is-user-included"/>
                 </entry>
@@ -450,12 +542,8 @@
         </property>
         <property name="requestAttributes">
             <util:map>
-                <entry key="SqlAttributes.DATA_SOURCE">
-                    <ref bean="PortalDb"/>
-                </entry>
-                <entry key="SqlAttributes.TRANSACTION_MANAGER">
-                    <ref bean="transactionManager"/>
-                </entry>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
             </util:map>
         </property>
     </bean>
@@ -466,12 +554,8 @@
         </property>
         <property name="requestAttributes">
             <util:map>
-                <entry key="SqlAttributes.DATA_SOURCE">
-                    <ref bean="PortalDb"/>
-                </entry>
-                <entry key="SqlAttributes.TRANSACTION_MANAGER">
-                    <ref bean="transactionManager"/>
-                </entry>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
             </util:map>
         </property>
     </bean>
@@ -482,12 +566,8 @@
         </property>
         <property name="requestAttributes">
             <util:map>
-                <entry key="SqlAttributes.DATA_SOURCE">
-                    <ref bean="PortalDb"/>
-                </entry>
-                <entry key="SqlAttributes.TRANSACTION_MANAGER">
-                    <ref bean="transactionManager"/>
-                </entry>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
             </util:map>
         </property>
     </bean>
@@ -498,18 +578,10 @@
         </property>
         <property name="requestAttributes">
             <util:map>
-                <entry key="SqlAttributes.DATA_SOURCE">
-                    <ref bean="PortalDb"/>
-                </entry>
-                <entry key="SqlAttributes.TRANSACTION_MANAGER">
-                    <ref bean="transactionManager"/>
-                </entry>
-                <entry key="userLayoutStore">
-                    <ref bean="userLayoutStore"/>
-                </entry>
-                <entry key="portletEntityPreferenceHandler">
-                    <ref bean="portletEntityPreferenceHandler"/>
-                </entry>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+                <entry key="userLayoutStore" value-ref="userLayoutStore"/>
+                <entry key="portletEntityPreferenceHandler" value-ref="portletEntityPreferenceHandler" />
             </util:map>
         </property>
     </bean>
@@ -520,12 +592,8 @@
         </property>
         <property name="requestAttributes">
             <util:map>
-                <entry key="SqlAttributes.DATA_SOURCE">
-                    <ref bean="PortalDb"/>
-                </entry>
-                <entry key="SqlAttributes.TRANSACTION_MANAGER">
-                    <ref bean="transactionManager"/>
-                </entry>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
             </util:map>
         </property>
     </bean>
@@ -536,12 +604,8 @@
         </property>
         <property name="requestAttributes">
             <util:map>
-                <entry key="SqlAttributes.DATA_SOURCE">
-                    <ref bean="PortalDb"/>
-                </entry>
-                <entry key="SqlAttributes.TRANSACTION_MANAGER">
-                    <ref bean="transactionManager"/>
-                </entry>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
             </util:map>
         </property>
     </bean>
@@ -552,12 +616,8 @@
         </property>
         <property name="requestAttributes">
             <util:map>
-                <entry key="SqlAttributes.DATA_SOURCE">
-                    <ref bean="PortalDb"/>
-                </entry>
-                <entry key="SqlAttributes.TRANSACTION_MANAGER">
-                    <ref bean="transactionManager"/>
-                </entry>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
                 <entry key="fragmentDefinitionDao">
                     <ref bean="fragmentDefinitionDao"/>
                 </entry>
@@ -581,12 +641,8 @@
         </property>
         <property name="requestAttributes">
             <util:map>
-                <entry key="SqlAttributes.DATA_SOURCE">
-                    <ref bean="PortalDb"/>
-                </entry>
-                <entry key="SqlAttributes.TRANSACTION_MANAGER">
-                    <ref bean="transactionManager"/>
-                </entry>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
             </util:map>
         </property>
     </bean>    
@@ -632,15 +688,9 @@
                         <property name="cacheName" value="org.jasig.portal.layout.dlm.NODEREF_CACHE" />
                     </bean>
                 </entry>
-                <entry key="Attributes.CACHE_MODEL">
-                    <value>ALL</value>
-                </entry>
-                <entry key="SqlAttributes.DATA_SOURCE">
-                    <ref bean="PortalDb"/>
-                </entry>
-                <entry key="SqlAttributes.TRANSACTION_MANAGER">
-                    <ref bean="transactionManager"/>
-                </entry>
+                <entry key="Attributes.CACHE_MODEL" value="ALL" />
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
             </util:map>
         </property>
     </bean>
@@ -659,12 +709,8 @@
                 <entry key="Attributes.CACHE_MODEL">
                     <value>ALL</value>
                 </entry>
-                <entry key="SqlAttributes.DATA_SOURCE">
-                    <ref bean="PortalDb"/>
-                </entry>
-                <entry key="SqlAttributes.TRANSACTION_MANAGER">
-                    <ref bean="transactionManager"/>
-                </entry>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
             </util:map>
         </property>
     </bean>

@@ -8,15 +8,19 @@
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0"
             xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/user https://source.jasig.org/schemas/uportal/io/user/user-4.0.xsd">
             
-            <xsl:copy-of select="@username"/>
-            <xsl:if test="default-user">
-                <default-user><xsl:value-of select="default-user"/></default-user>
-            </xsl:if>
-            <xsl:if test="person-directory/encrptd-pswd">
-                <password><xsl:value-of select="person-directory/encrptd-pswd"/></password>
-            </xsl:if>
-            <xsl:apply-templates select="person-directory/*[name() != 'encrptd-pswd']" />
+            <xsl:call-template name="upgradeUserData" />
         </user>
+    </xsl:template>
+    
+    <xsl:template name="upgradeUserData">
+        <xsl:copy-of select="@username"/>
+        <xsl:if test="default-user">
+            <default-user><xsl:value-of select="default-user"/></default-user>
+        </xsl:if>
+        <xsl:if test="person-directory/encrptd-pswd">
+            <password><xsl:value-of select="person-directory/encrptd-pswd"/></password>
+        </xsl:if>
+        <xsl:apply-templates select="person-directory/*[name() != 'encrptd-pswd']" />
     </xsl:template>
     
     <xsl:template match="person-directory/*[name() != 'encrptd-pswd']">

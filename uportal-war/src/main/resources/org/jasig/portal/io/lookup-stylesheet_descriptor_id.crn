@@ -27,8 +27,6 @@
  +-->
  
 
-<with-attribute key="stylesheetDescriptorDao" value="${groovy(PORTAL_CONTEXT.getBean(org.jasig.portal.layout.dao.IStylesheetDescriptorDao.class))}">
-    <with-attribute key="stylesheetDescriptor" value="${groovy(stylesheetDescriptorDao.getStylesheetDescriptorByName(STYLESHEET_NAME))}">
-        <return value="${groovy(Long.valueOf(stylesheetDescriptor.getId()))}"/>
-    </with-attribute>
+<with-attribute key="stylesheetDescriptor" value="${groovy(stylesheetDescriptorDao.getStylesheetDescriptorByName(STYLESHEET_NAME))}">
+    <return value="${groovy(Long.valueOf(stylesheetDescriptor.getId()))}"/>
 </with-attribute>

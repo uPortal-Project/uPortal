@@ -131,7 +131,7 @@ public class PortalEvent {
   private final String eventName;
   
   /**
-   * Source of the event -- curently either FRAMEWORK or LAYOUT.
+   * Source of the event -- curently either FRAMEWORK or LEGACY_LAYOUT_QNAME.
    */
   private final PortalEventSource source;
   

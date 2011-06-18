@@ -1,0 +1,11 @@
+<portlet-type
+    xmlns="https://source.jasig.org/schemas/uportal/io/portlet-type" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-type ../../../resources/xsd/io/portlet-type/portlet-type-4.0.xsd"
+    version="4.0"
+>
+
+  <name>CMS</name>
+  <description>Displays configured HTML content after performing validation.</description>
+  <uri>/org/jasig/portal/portlets/CMS/CMSPortlet.cpd.xml</uri>
+</portlet-type>

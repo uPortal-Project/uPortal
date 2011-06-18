@@ -66,7 +66,7 @@ public class GroupServiceConfiguration
 
       if (qName.equals("servicelist"))
       {
-          log.info("Parsing group service configuration.");
+          log.debug("Parsing group service configuration.");
           parseAttributes(atts);
       }
       else if (qName.equals("service"))

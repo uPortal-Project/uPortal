@@ -125,7 +125,7 @@
         <!-- Project Dependency Version Properties -->
         <aopalliance.version>1.0</aopalliance.version>
         <activation.version>1.1</activation.version>
-        <ant.version>1.7.1</ant.version>
+        <ant.version>1.8.1</ant.version>
         <aspectjrt.version>1.6.10</aspectjrt.version>
         <aspectjweaver.version>1.6.10</aspectjweaver.version>
         <casclient.version>3.2.0</casclient.version>
@@ -180,6 +180,7 @@
         <spring-ldap.version>1.3.1.RELEASE</spring-ldap.version>
         <spring-modules.version>0.8a</spring-modules.version>
         <standard.version>1.1.2</standard.version>
+        <staxmate.version>2.0.1</staxmate.version>
         <stringtemplate.version>3.2.1</stringtemplate.version>
         <uportal-ear-deployer.version>1.0.1</uportal-ear-deployer.version>
         <woodstox.version>4.1.1</woodstox.version>
@@ -522,6 +523,11 @@
                 <groupId>org.codehaus.jackson</groupId>
                 <artifactId>jackson-mapper-asl</artifactId>
                 <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.staxmate</groupId>
+                <artifactId>staxmate</artifactId>
+                <version>${staxmate.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.woodstox</groupId>

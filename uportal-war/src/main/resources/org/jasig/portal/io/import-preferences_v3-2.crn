@@ -86,18 +86,16 @@
 	    <!--
 	     | Iterate over the collated Map and call the helper class to do the actual persisting
 	     +-->
-	    <with-attribute key="portletEntityPreferenceHandler" value="${groovy(PORTAL_CONTEXT.getBean('portletEntityPreferenceHandler'))}">
-	        <for-each items="${groovy(PORTLET_MAP.entrySet())}" attribute-name="portletPrefsEntry">
-	            <groovy>
-	                <script>
-	                    portletEntityPreferenceHandler.setEntityPreference(
-	                        portletPrefsEntry.getKey().get(0),
-	                        portletPrefsEntry.getKey().get(1),
-	                        portletPrefsEntry.getKey().get(2).intValue(),
-	                        portletPrefsEntry.getValue());
-	                </script>
-	            </groovy>
-	        </for-each>
-	    </with-attribute>
+        <for-each items="${groovy(PORTLET_MAP.entrySet())}" attribute-name="portletPrefsEntry">
+            <groovy>
+                <script>
+                    portletEntityPreferenceHandler.setEntityPreference(
+                        portletPrefsEntry.getKey().get(0),
+                        portletPrefsEntry.getKey().get(1),
+                        portletPrefsEntry.getKey().get(2).intValue(),
+                        portletPrefsEntry.getValue());
+                </script>
+            </groovy>
+        </for-each>
 	</subtasks>
 </with>

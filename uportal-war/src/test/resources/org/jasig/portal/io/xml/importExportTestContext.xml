@@ -29,6 +29,9 @@
                         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
                         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
                         
+    <bean class="org.jasig.portal.io.xml.ssd.StylesheetDescriptorPortalDataType" />
+    <bean class="org.jasig.portal.io.xml.user.UserPortalDataType" />
+    
     <bean id="stylesheetDescriptorImporterExporter" class="org.jasig.portal.io.xml.ssd.StylesheetDescriptorImporterExporter">
         <property name="contextPath" value="org.jasig.portal.io.xml.ssd" />
         <property name="schema" value="classpath:/xsd/io/stylesheet-descriptor/stylesheet-descriptor-4.0.xsd" />

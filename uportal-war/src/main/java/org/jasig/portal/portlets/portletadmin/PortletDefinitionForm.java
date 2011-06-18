@@ -229,8 +229,8 @@ public class PortletDefinitionForm implements Serializable {
 						    }
 						} else if (input instanceof MultiValuedPreferenceInputType) {
                             MultiValuedPreferenceInputType multiValued = (MultiValuedPreferenceInputType) input;
-                            if (multiValued.getDefault() != null) {
-                                this.portletPreferences.get(pref.getName()).getValue().addAll(multiValued.getDefault());
+                            if (multiValued.getDefaults() != null) {
+                                this.portletPreferences.get(pref.getName()).getValue().addAll(multiValued.getDefaults());
                             }
 						}
 

@@ -22,32 +22,63 @@
  */
 package org.jasig.portal.io.xml.portlettype;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.xml.namespace.QName;
 
-import org.jasig.portal.io.xml.IPortalDataType;
+import org.jasig.portal.io.xml.AbstractPortalDataType;
 import org.jasig.portal.io.xml.PortalDataKey;
 
 /**
  * @author Nicholas Blair
  * @version $Id$
  */
-public class PortletTypePortalDataType implements IPortalDataType {
-
-	public static final PortletTypePortalDataType INSTANCE = new PortletTypePortalDataType();
-	public static final QName PORTLET_DEFINITION_NAME = new QName("https://source.jasig.org/schemas/uportal/io/portlet-type", "portlet-type");
-    public static final PortalDataKey IMPORT_DATA_KEY = new PortalDataKey(
-            PORTLET_DEFINITION_NAME, 
+public class PortletTypePortalDataType extends AbstractPortalDataType {
+	public static final QName PORTLET_TYPE_QNAME = new QName(
+	        "https://source.jasig.org/schemas/uportal/io/portlet-type", 
+	        "portlet-type");
+	
+	/**
+     * @deprecated used for importing old data files
+     */
+    @Deprecated
+    public static final QName LEGACY_CHANNEL_TYPE_QNAME = new QName("channel-type");
+	
+	public static final PortalDataKey IMPORT_40_DATA_KEY = new PortalDataKey(
+            PORTLET_TYPE_QNAME, 
             null,
             "4.0");
     
-	/* (non-Javadoc)
-	 * @see org.jasig.portal.io.xml.IPortalDataType#getTypeId()
-	 */
-	@Override
-	public String getTypeId() {
-		return PORTLET_DEFINITION_NAME.getLocalPart();
-	}
+	/**
+     * @deprecated used for importing old data files
+     */
+    @Deprecated
+    public static final PortalDataKey IMPORT_30_DATA_KEY = new PortalDataKey(
+            LEGACY_CHANNEL_TYPE_QNAME,
+            "classpath://org/jasig/portal/io/import-channel-type_v3-0.crn",
+            null);
+    
+    /**
+     * @deprecated used for importing old data files
+     */
+    @Deprecated
+    public static final PortalDataKey IMPORT_26_DATA_KEY = new PortalDataKey(
+            LEGACY_CHANNEL_TYPE_QNAME, 
+            "classpath://org/jasig/portal/io/import-channel-type_v2-6.crn",
+            null);
 
+    private static final List<PortalDataKey> PORTAL_DATA_KEYS = Arrays.asList(IMPORT_26_DATA_KEY, IMPORT_30_DATA_KEY, IMPORT_40_DATA_KEY);
+    
+    public PortletTypePortalDataType() {
+        super(PORTLET_TYPE_QNAME);
+    }
+    
+    @Override
+    public List<PortalDataKey> getDataKeyImportOrder() {
+        return PORTAL_DATA_KEYS;
+    }
+    
 	/* (non-Javadoc)
 	 * @see org.jasig.portal.io.xml.IPortalDataType#getTitle()
 	 */

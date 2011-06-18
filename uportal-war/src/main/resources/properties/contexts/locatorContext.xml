@@ -46,7 +46,7 @@
     </bean>
     
     <bean id="org.jasig.portal.spring.locator.PortalDbLocator" 
-            class="org.jasig.portal.spring.locator.PortalDbLocator">
+            class="org.jasig.portal.spring.locator.PortalDbLocator" lazy-init="false">
         <constructor-arg index="0" ref="PortalDb" />
     </bean>
     

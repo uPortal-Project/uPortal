@@ -162,9 +162,19 @@
         </dependency>
         
         <dependency>
+            <groupId>org.codehaus.staxmate</groupId>
+            <artifactId>staxmate</artifactId>
+        </dependency>
+        
+        <dependency>
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
         </dependency> 
+        
+        <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.portals.pluto</groupId>
@@ -383,7 +393,7 @@
         <dependency>
             <groupId>hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-            <scope>test</scope>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -479,7 +489,6 @@
                         <include>io/user/*.xsd</include>
                         <include>portlet-publishing/*.xsd</include>
                     </schemaIncludes>
-                    <episode>false</episode>
                     <extension>true</extension>
                     <args>
                         <arg>-XtoString</arg>

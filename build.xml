@@ -298,20 +298,61 @@
 
     <target name="crn-import" depends="prodPrompt" description="Imports the specified XML file or files">
         <uportal-war-macro>
-            <!-- Two properties control the import:  dir and pattern -->
-            <property name="dir" value="." />
-            <property name="pattern" value="org.jasig.portal.FilePatternPhrase.USE_DEFAULT_VALUE"/>
-            <property name="noprompt" value="false"/>
+            <if>
+                <and>
+                    <isset property="dir" />
+                    <not>
+                        <isset property="pattern" />
+                    </not>
+                </and>
+                <then>
+                    <!-- Invoke import/export tool -->
+                    <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.io.ImportExportRunner">
+                        <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+                        <classpath refid="uportal-war-full.classpath" />
+                        <arg value="-i" />
+                        <arg value="-d" />
+                        <arg value="${dir}" />
+                    </java>
+                </then>
+                <elseif>
+                    <and>
+                        <isset property="dir" />
+                        <isset property="pattern" />
+                    </and>
+                    <then>
+                        <!-- Invoke import/export tool -->
+                        <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.io.ImportExportRunner">
+                            <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+                            <classpath refid="uportal-war-full.classpath" />
+                            <arg value="-i" />
+                            <arg value="-d" />
+                            <arg value="${dir}" />
+                            <arg value="-p" />
+                            <arg value="${pattern}" />
+                        </java>
+                    </then>
+                </elseif>
+                <elseif>
+                    <and>
+                        <isset property="file" />
+                    </and>
+                    <then>
+                        <!-- Invoke import/export tool -->
+                        <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.io.ImportExportRunner">
+                            <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+                            <classpath refid="uportal-war-full.classpath" />
+                            <arg value="-i" />
+                            <arg value="-f" />
+                            <arg value="${file}" />
+                        </java>
+                    </then>
+                </elseif>
+                <else>
+                    <fail>Unsupported options</fail>
+                </else>
+            </if>
 
-            <!-- Invoke Cernunnos specifying script and parameters -->
-            <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
-                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
-                <classpath refid="uportal-war-full.classpath" />
-                <arg value="classpath://org/jasig/portal/io/import.crn" />
-                <arg value="${dir}" />
-                <arg value="${pattern}" />
-                <arg value="${noprompt}" />
-            </java>
         </uportal-war-macro>
     </target>
 

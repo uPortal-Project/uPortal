@@ -36,6 +36,7 @@ import org.jasig.portal.permission.IPermissionActivity;
 import org.jasig.portal.permission.IPermissionOwner;
 import org.jasig.portal.permission.dao.IPermissionOwnerDao;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -46,6 +47,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @version $Revision$
  * @since 3.3
  */
+@Repository("permissionOwnerDao")
 public class JpaPermissionOwnerDao extends BasePortalJpaDao implements IPermissionOwnerDao {
     private static final String FIND_ALL_PERMISSION_OWNERS_CACHE_REGION = PermissionOwnerImpl.class.getName() + ".query.FIND_ALL_PERMISSION_OWNERS";
     private static final String FIND_PERMISSION_OWNER_BY_FNAME_CACHE_REGION = PermissionOwnerImpl.class.getName() + ".query.FIND_PERMISSION_OWNER_BY_FNAME";

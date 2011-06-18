@@ -41,7 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Eric Dalquist
  * @version $Revision$
  */
-@Repository
+@Repository("stylesheetDescriptorDao")
 public class JpaStylesheetDescriptorDao extends BasePortalJpaDao implements IStylesheetDescriptorDao {
     private static final String FIND_ALL_DESCRIPTORS_CACHE_REGION = StylesheetDescriptorImpl.class.getName() + ".query.FIND_ALL_DESCRIPTORS";
     private static final String FIND_DESCRIPTOR_BY_NAME_CACHE_REGION = StylesheetDescriptorImpl.class.getName() + ".query.FIND_DESCRIPTOR_BY_NAME";

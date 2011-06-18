@@ -19,8 +19,14 @@
 
 -->
 
-<portlet-type script="classpath://org/jasig/portal/io/import-portlet-type_v3-3.crn">
-  <name>SQL</name>
-  <desc>Executes a SQL query against a selected DataSource.</desc>
-  <uri>/org/jasig/portal/portlets/sqlquery/SqlQuery.cpd.xml</uri>
+<portlet-type
+    xmlns="https://source.jasig.org/schemas/uportal/io/portlet-type" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-type ../../../resources/xsd/io/portlet-type/portlet-type-4.0.xsd"
+    version="4.0"
+>
+
+  <name>Inline Frame</name>
+  <description>Renders an HTML page within a frame. Not supported in browsers older than Internet Explorer 5 and Netscape 6.</description>
+  <uri>/org/jasig/portal/portlets/iframe/IFrame.cpd.xml</uri>
 </portlet-type>

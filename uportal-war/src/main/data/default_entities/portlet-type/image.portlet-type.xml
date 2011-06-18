@@ -19,8 +19,14 @@
 
 -->
 
-<portlet-type script="classpath://org/jasig/portal/io/import-portlet-type_v3-3.crn">
-  <name>Web Proxy Portlet</name>
-  <desc>Web Proxy Portlet</desc>
-  <uri>/org/jasig/portal/portlets/webproxy/WebProxyPortlet.cpd.xml</uri>
+<portlet-type
+    xmlns="https://source.jasig.org/schemas/uportal/io/portlet-type" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-type ../../../resources/xsd/io/portlet-type/portlet-type-4.0.xsd"
+    version="4.0"
+>
+
+  <name>Image</name>
+  <description>Displays an image with optional caption and subcaption</description>
+  <uri>/org/jasig/portal/portlets/image/Image.cpd.xml</uri>
 </portlet-type>
