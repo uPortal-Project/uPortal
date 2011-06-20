@@ -206,7 +206,7 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
         // Activate the fragment just-in-time if it's new using some locking to make sure the same
         // fragment isn't being loaded by multiple concurrent threads
         final String ownerId = fd.getOwnerId();
-        final ReadWriteLock userViewLock = userViewLocks.get(ownerId);
+        final ReadWriteLock userViewLock = getUserViewLock(ownerId);
         final UserView rslt = 
             ReadWriteLockTemplate.doWithLock(userViewLock, new ReadWriteCallback<UserView>() {
                 public ReadResult<UserView> doInReadLock() {
