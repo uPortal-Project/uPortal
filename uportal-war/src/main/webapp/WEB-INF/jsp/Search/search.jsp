@@ -50,7 +50,20 @@
                 <h2>${ type.key }</h2>
                 <ul>
                     <c:forEach items="${ type.value }" var="result">
-                        <li>${ result.title }</li>
+                        <li>
+                            <c:choose>
+                                <c:when test="${ not empty result.portletUrl }">
+                                    <h3><a href="${ result.portletUrl.urlString }">${ result.title }</a></h3>
+                                </c:when>
+                                <c:when test="${ not empty result.externalUrl }">
+                                    <h3><a href="${ result.externalUrl }">${ result.title }</a></h3>
+                                </c:when>
+                                <c:otherwise>
+                                    <h3>${ result.title }</h3>
+                                </c:otherwise>
+                            </c:choose>
+                            <p>${ result.summary }</p>
+                        </li>
                     </c:forEach>
                 </ul>
             </c:forEach>

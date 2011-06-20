@@ -81,7 +81,7 @@ public class GsaSearchService implements IPortalSearchService {
             result.setTitle(gsaResult.getTitle());
             result.setExternalUrl(gsaResult.getLink());
             result.setSummary(gsaResult.getSnippet());
-            result.getType().add("campus web");
+            result.getType().add("Campus Web");
             results.getSearchResult().add(result);
         }
         return results;

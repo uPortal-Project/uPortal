@@ -15,6 +15,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.jasig.portal.portlet.container.properties.ThemeNameRequestPropertiesManager;
 import org.jasig.portal.portlets.lookup.PersonLookupHelperImpl;
 import org.jasig.portal.portlets.search.DirectoryAttributeType;
+import org.jasig.portal.search.PortletUrl;
+import org.jasig.portal.search.PortletUrlParameter;
+import org.jasig.portal.search.PortletUrlType;
 import org.jasig.portal.search.SearchConstants;
 import org.jasig.portal.search.SearchRequest;
 import org.jasig.portal.search.SearchResult;
@@ -90,7 +93,17 @@ public class DirectoryPortletController {
             for (IPersonAttributes person : people) {
                 final SearchResult result = new SearchResult();
                 result.setTitle((String) person.getAttributeValue("displayName"));
-                result.getType().add("directory");
+                result.getType().add("Directory");
+                
+                PortletUrl url = new PortletUrl();
+                url.setWindowId(request.getWindowID());
+                url.setType(PortletUrlType.RENDER);
+                url.setPortletMode("VIEW");
+                PortletUrlParameter param = new PortletUrlParameter();
+                param.setName("query");
+                param.getValue().add(query.getSearchTerms());
+                url.setParam(param);
+                result.setPortletUrl(url);
                 results.getSearchResult().add(result);
             }
             
@@ -154,5 +167,5 @@ public class DirectoryPortletController {
         final String themeName = request.getProperty(ThemeNameRequestPropertiesManager.THEME_NAME_PROPERTY);
         return "UniversalityMobile".equals(themeName);
     }
-
+    
 }

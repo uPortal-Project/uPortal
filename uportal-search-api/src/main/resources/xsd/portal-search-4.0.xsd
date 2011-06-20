@@ -42,10 +42,12 @@
     
     <xs:complexType name="portletUrl">
         <xs:sequence>
+            <xs:element name="windowId" type="xs:string" />
             <xs:element name="windowState" type="xs:string" />
             <xs:element name="portletMode" type="xs:string" />
             <xs:element name="type" type="portletUrlType" />
             <xs:element name="param" type="portletUrlParameter" />
+            <xs:element name="urlString" type="xs:string" minOccurs="0"/>
         </xs:sequence>
     </xs:complexType>
     
