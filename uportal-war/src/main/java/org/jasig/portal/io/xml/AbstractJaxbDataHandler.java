@@ -22,6 +22,8 @@ package org.jasig.portal.io.xml;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springframework.oxm.Marshaller;
@@ -34,7 +36,11 @@ import org.springframework.oxm.jaxb.Jaxb2Marshaller;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public abstract class AbstractJaxbIDataImporterExporter<T> implements IDataImporterExporter<T>, InitializingBean {
+public abstract class AbstractJaxbDataHandler<T> 
+        implements IDataImporter<T>, IDataExporter<T>, IDataDeleter<T>, InitializingBean {
+    
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    
     private final Jaxb2Marshaller jaxb2Marshaller = new Jaxb2Marshaller();
     private String schemaLocation;
     

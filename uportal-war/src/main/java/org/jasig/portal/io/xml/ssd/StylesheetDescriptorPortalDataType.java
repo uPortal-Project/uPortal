@@ -86,12 +86,12 @@ public class StylesheetDescriptorPortalDataType extends AbstractPortalDataType {
     }
 
     @Override
-    public String getTitle() {
+    public String getTitleCode() {
         return "Stylesheet Descriptor";
     }
 
     @Override
-    public String getDescription() {
+    public String getDescriptionCode() {
         return "Stylesheet Descriptors published in the portal";
     }
 }

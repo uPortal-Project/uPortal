@@ -29,7 +29,7 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
-import org.jasig.portal.io.xml.AbstractJaxbIDataImporterExporter;
+import org.jasig.portal.io.xml.AbstractJaxbDataHandler;
 import org.jasig.portal.io.xml.IPortalData;
 import org.jasig.portal.io.xml.IPortalDataType;
 import org.jasig.portal.io.xml.PortalDataKey;
@@ -54,12 +54,10 @@ import com.google.common.collect.ImmutableSet;
  * @version $Id$
  */
 public class UserImporterExporter extends
-		AbstractJaxbIDataImporterExporter<UserType> {
+		AbstractJaxbDataHandler<UserType> {
     
     private static final ImmutableSet<PortalDataKey> IMPORT_DATA_KEYS = ImmutableSet.of(UserPortalDataType.IMPORT_40_DATA_KEY, TemplateUserPortalDataType.IMPORT_40_DATA_KEY);
 
-	protected final Logger logger = LoggerFactory.getLogger(getClass());
-	
 	private JdbcOperations jdbcOperations;
 
 	private UserPortalDataType userPortalDataType;

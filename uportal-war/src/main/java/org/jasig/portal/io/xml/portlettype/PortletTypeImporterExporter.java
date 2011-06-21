@@ -27,14 +27,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.jasig.portal.io.xml.AbstractJaxbIDataImporterExporter;
+import org.jasig.portal.io.xml.AbstractJaxbDataHandler;
 import org.jasig.portal.io.xml.IPortalData;
 import org.jasig.portal.io.xml.IPortalDataType;
 import org.jasig.portal.io.xml.PortalDataKey;
 import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.portlet.registry.IPortletTypeRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,9 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @version $Id$
  */
 public class PortletTypeImporterExporter extends
-		AbstractJaxbIDataImporterExporter<ExternalPortletType> {
-
-	protected final Logger logger = LoggerFactory.getLogger(getClass());
+		AbstractJaxbDataHandler<ExternalPortletType> {
 
 	private PortletTypePortalDataType typePortalDataType;
     private IPortletTypeRegistry portletTypeRegistry;

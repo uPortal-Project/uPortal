@@ -74,12 +74,12 @@ public class LayoutPortalDataType extends AbstractPortalDataType {
     }
     
     @Override
-    public String getTitle() {
+    public String getTitleCode() {
         return "Layout";
     }
 
     @Override
-    public String getDescription() {
+    public String getDescriptionCode() {
         return "User Layout";
     }
     

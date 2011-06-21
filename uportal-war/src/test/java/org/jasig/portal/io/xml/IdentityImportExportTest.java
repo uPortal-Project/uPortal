@@ -70,8 +70,17 @@ import com.google.common.base.Function;
 @ContextConfiguration(locations = "classpath:/org/jasig/portal/io/xml/importExportTestContext.xml")
 public class IdentityImportExportTest {
     @Autowired private DataSource dataSource;
-    @Autowired private IDataImporterExporter<ExternalStylesheetDescriptor> stylesheetDescriptorImporterExporter;
-    @Autowired private IDataImporterExporter<UserType> userImporterExporter;
+    
+    @javax.annotation.Resource(name="stylesheetDescriptorImporterExporter")
+    private IDataImporter<ExternalStylesheetDescriptor> stylesheetDescriptorImporter;
+    @javax.annotation.Resource(name="stylesheetDescriptorImporterExporter")
+    private IDataExporter<ExternalStylesheetDescriptor> stylesheetDescriptorExporter;
+    
+    @javax.annotation.Resource(name="userImporterExporter")
+    private IDataImporter<UserType> userImporter;
+    @javax.annotation.Resource(name="userImporterExporter")
+    private IDataExporter<UserType> userExporter;
+    
     @Autowired private ICounterStore counterStore;
     private int counter = 0;
     private TimeZone defaultTimeZone;
@@ -149,7 +158,7 @@ public class IdentityImportExportTest {
         final ClassPathResource stylesheetDescriptorResource = new ClassPathResource("/org/jasig/portal/io/xml/ssd/test_4-0.stylesheet-descriptor.xml");
         
         this.testIdentityImportExport(
-                this.stylesheetDescriptorImporterExporter,
+                this.stylesheetDescriptorImporter, this.stylesheetDescriptorExporter,
                 stylesheetDescriptorResource,
                 new Function<ExternalStylesheetDescriptor, String>() {
 
@@ -164,8 +173,8 @@ public class IdentityImportExportTest {
     public void testUser40ImportExport() throws Exception {
         final ClassPathResource dataResource = new ClassPathResource("/org/jasig/portal/io/xml/user/test_4-0.user.xml");
         
-        this.testIdentityImportExport(
-                this.userImporterExporter,
+        this.<UserType>testIdentityImportExport(
+                this.userImporter, this.userExporter,
                 dataResource,
                 new Function<UserType, String>() {
                     @Override
@@ -176,11 +185,13 @@ public class IdentityImportExportTest {
     }
     
     
-    private <T> void testIdentityImportExport(IDataImporterExporter<T> dataImporterExporter, Resource resource, Function<T, String> getName) throws Exception {
+    private <T> void testIdentityImportExport(
+            IDataImporter<T> dataImporter, IDataExporter<T> dataExporter, 
+            Resource resource, Function<T, String> getName) throws Exception {
         final String importData = toString(resource);
         
         //Unmarshall from XML
-        final Unmarshaller unmarshaller = dataImporterExporter.getUnmarshaller();
+        final Unmarshaller unmarshaller = dataImporter.getUnmarshaller();
         @SuppressWarnings("unchecked")
         final T dataImport = (T)unmarshaller.unmarshal(new StreamSource(new StringReader(importData)));
         
@@ -188,14 +199,14 @@ public class IdentityImportExportTest {
         assertNotNull(dataImport);
         
         //Import the data
-        dataImporterExporter.importData(dataImport);
+        dataImporter.importData(dataImport);
         
         //Export the data
         final String name = getName.apply(dataImport);
-        final T dataExport = dataImporterExporter.exportData(name);
+        final T dataExport = dataExporter.exportData(name);
         
         //Marshall to XML
-        final Marshaller marshaller = dataImporterExporter.getMarshaller();
+        final Marshaller marshaller = dataExporter.getMarshaller();
         
         final StringWriter result = new StringWriter();
         marshaller.marshal(dataExport, new StreamResult(result));

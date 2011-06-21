@@ -92,12 +92,12 @@ public class UserPortalDataType extends AbstractPortalDataType {
     }
 
     @Override
-    public String getTitle() {
+    public String getTitleCode() {
         return "User";
     }
 
     @Override
-    public String getDescription() {
+    public String getDescriptionCode() {
         return "Portal Users";
     }
     

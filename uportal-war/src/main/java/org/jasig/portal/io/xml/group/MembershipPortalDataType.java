@@ -54,12 +54,12 @@ public class MembershipPortalDataType extends AbstractPortalDataType {
     }
     
     @Override
-    public String getTitle() {
+    public String getTitleCode() {
         return "Group Member";
     }
 
     @Override
-    public String getDescription() {
+    public String getDescriptionCode() {
         return "Member of a group";
     }
 }

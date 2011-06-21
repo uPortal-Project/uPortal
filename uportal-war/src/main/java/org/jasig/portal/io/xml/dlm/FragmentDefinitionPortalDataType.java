@@ -54,12 +54,12 @@ public class FragmentDefinitionPortalDataType extends AbstractPortalDataType {
     }
     
     @Override
-    public String getTitle() {
+    public String getTitleCode() {
         return "Fragment Definition";
     }
 
     @Override
-    public String getDescription() {
+    public String getDescriptionCode() {
         return "DLM Fragment Definition";
     }
 }

@@ -54,12 +54,12 @@ public class PermissionSetPortalDataType extends AbstractPortalDataType {
     }
 
     @Override
-    public String getTitle() {
+    public String getTitleCode() {
         return "Permission Set";
     }
 
     @Override
-    public String getDescription() {
+    public String getDescriptionCode() {
         return "Permission Set";
     }
 }

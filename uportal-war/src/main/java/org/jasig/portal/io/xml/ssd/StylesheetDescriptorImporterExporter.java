@@ -26,7 +26,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.jasig.portal.io.xml.AbstractJaxbIDataImporterExporter;
+import org.jasig.portal.io.xml.AbstractJaxbDataHandler;
 import org.jasig.portal.io.xml.IPortalData;
 import org.jasig.portal.io.xml.IPortalDataType;
 import org.jasig.portal.io.xml.PortalDataKey;
@@ -47,7 +47,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class StylesheetDescriptorImporterExporter extends AbstractJaxbIDataImporterExporter<ExternalStylesheetDescriptor> {
+public class StylesheetDescriptorImporterExporter extends AbstractJaxbDataHandler<ExternalStylesheetDescriptor> {
     private StylesheetDescriptorPortalDataType stylesheetDescriptorPortalDataType;
     private IStylesheetDescriptorDao stylesheetDescriptorDao;
     
@@ -169,18 +169,18 @@ public class StylesheetDescriptorImporterExporter extends AbstractJaxbIDataImpor
      * Treats the {@link String} id argument as the stylesheet name.
      * 
      * (non-Javadoc)
-     * @see org.jasig.portal.io.xml.IDataImporterExporter#deleteData(java.lang.String)
+     * @see org.jasig.portal.io.xml.IDataImporter#deleteData(java.lang.String)
      */
     @Override
 	public ExternalStylesheetDescriptor deleteData(String name) {
     	final IStylesheetDescriptor stylesheetDescriptor = this.stylesheetDescriptorDao.getStylesheetDescriptorByName(name);
         if (stylesheetDescriptor == null) {
             return null;
-        } else {
-        	ExternalStylesheetDescriptor result = convert(stylesheetDescriptor);
-        	this.stylesheetDescriptorDao.deleteStylesheetDescriptor(stylesheetDescriptor);
-        	return result;
         }
+        
+    	ExternalStylesheetDescriptor result = convert(stylesheetDescriptor);
+    	this.stylesheetDescriptorDao.deleteStylesheetDescriptor(stylesheetDescriptor);
+    	return result;
 	}
 
 	protected void copyProperties(IStylesheetData source, ExternalStylesheetData dest) {

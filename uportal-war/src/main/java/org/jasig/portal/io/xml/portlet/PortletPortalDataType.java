@@ -98,12 +98,12 @@ public class PortletPortalDataType extends AbstractPortalDataType {
     }
     
     @Override
-    public String getTitle() {
+    public String getTitleCode() {
         return "Portlet Definition";
     }
 
     @Override
-    public String getDescription() {
+    public String getDescriptionCode() {
         return "Portlets published in the portal";
     }
 }

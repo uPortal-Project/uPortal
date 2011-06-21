@@ -28,7 +28,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 /**
- * Service that can import, export and delete portal data
+ * Service that can import, export and delete portal data.
  * 
  * @author Eric Dalquist
  * @version $Revision$
@@ -89,8 +89,8 @@ public interface IDataImportExportService {
     /**
      * Delete the portal data for the specified type and id.
      * 
-     * @param typeId
-     * @param dataId
+     * @param typeId id of the portal type to delete data from
+     * @param dataId the id of the data to delete
      */
     public void deleteData(String typeId, String dataId);
 }

@@ -159,19 +159,18 @@ public class JaxbDataImportExportServiceTest {
         userJaxb2Marshaller.setContextPath("org.jasig.portal.io.xml.user");
         userJaxb2Marshaller.afterPropertiesSet();
         
-        final IDataImporterExporter<ExternalUser> userDataImporterExporter = mock(IDataImporterExporter.class);
-        when(userDataImporterExporter.getImportDataKeys()).thenReturn(Collections.singleton(UserPortalDataType.IMPORT_40_DATA_KEY));
-        when(userDataImporterExporter.getPortalDataType()).thenReturn(new UserPortalDataType());
-        when(userDataImporterExporter.getUnmarshaller()).thenReturn(userJaxb2Marshaller);
+        final IDataImporter<ExternalUser> userDataImporter = mock(IDataImporter.class);
+        when(userDataImporter.getImportDataKeys()).thenReturn(Collections.singleton(UserPortalDataType.IMPORT_40_DATA_KEY));
+        when(userDataImporter.getUnmarshaller()).thenReturn(userJaxb2Marshaller);
         
-        Collection<IDataImporterExporter<?>> dataImporters = new LinkedList<IDataImporterExporter<?>>();
-        dataImporters.add(userDataImporterExporter);
+        Collection<IDataImporter<?>> dataImporters = new LinkedList<IDataImporter<?>>();
+        dataImporters.add(userDataImporter);
         dataImportExportService.setDataImporters(dataImporters);
         
         dataImportExportService.importData("classpath:/org/jasig/portal/io/xml/user/test_3-2.user.xml");
         
         final ArgumentCaptor<ExternalUser> userArgumentCaptor = ArgumentCaptor.forClass(ExternalUser.class);
-        verify(userDataImporterExporter).importData(userArgumentCaptor.capture());
+        verify(userDataImporter).importData(userArgumentCaptor.capture());
         final ExternalUser externalUser = userArgumentCaptor.getValue();
         assertNotNull(externalUser);
         assertEquals("student", externalUser.getUsername());

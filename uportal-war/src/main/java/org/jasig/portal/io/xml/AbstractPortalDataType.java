@@ -54,7 +54,7 @@ public abstract class AbstractPortalDataType implements IPortalDataType {
      * @see org.jasig.portal.io.xml.IPortalDataType#getTitle()
      */
     @Override
-    public String getTitle() {
+    public String getTitleCode() {
         return this.defaultQName.getLocalPart();
     }
 
@@ -62,7 +62,7 @@ public abstract class AbstractPortalDataType implements IPortalDataType {
      * @see org.jasig.portal.io.xml.IPortalDataType#getDescription()
      */
     @Override
-    public String getDescription() {
+    public String getDescriptionCode() {
         return null;
     }
 

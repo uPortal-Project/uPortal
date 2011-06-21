@@ -28,32 +28,34 @@ import org.springframework.core.io.Resource;
 
 
 /**
- * Describes a type of portal data that can be imported or exported via the {@link IDataImportExportService}
+ * Describes a type of portal data that can be imported, exported, or deleted via
+ * the {@link IDataImportExportService}
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
 public interface IPortalDataType {
     /**
-     * @return The unique name of this portal data type
+     * @return The unique name of this portal data type, must be a valid XML element name.
      */
     public String getTypeId();
     /**
-     * @return The user readable title of the type
+     * @return Message code to use for displaying the user readable title of this data type
      */
-    public String getTitle();
+    public String getTitleCode();
     /**
-     * @return The user readable description of the type
+     * @return Message code to use for displaying the user readable description of this data type
      */
-    public String getDescription();
+    public String getDescriptionCode();
     /**
-     * @return The list of {@link PortalDataKey}s supported for this data type and the order in which they should be imported 
+     * @return The {@link PortalDataKey}s that can be imported for this data type and the order that the must be imported in.
+     * All data for each {@link PortalDataKey} will be imported in parallel.
      */
     public List<PortalDataKey> getDataKeyImportOrder();
     
     /**
-     * Required by some data types that have more complex processing flows such as multiple passes or different PortalDataKeys based
-     * on data beyond the basic root-element, script and version.
+     * Post processes the resolved {@link PortalDataKey}, allows for data that needs to be retyped based on file name, returning
+     * multiple data keys for data that needs a multi-pass import, and other operations.
      * 
      * @param input The Resource the data key was parsed from
      * @param portalDataKey The already parsed key, must be contained in the set returned by {@link #getDataKeyImportOrder()}

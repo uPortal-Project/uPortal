@@ -26,13 +26,20 @@ import javax.xml.stream.events.StartElement;
 import org.apache.commons.lang.Validate;
 
 /**
- * Describes the root element of a portal data XML file in an easily comparable way.
+ * Describes the type and version of a portal data XML file.
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
 public class PortalDataKey {
+    /**
+     * The XML Attribute on the root element that contains the cernunnos script
+     * that denotes the file version. Used for data files from 3.2 and earlier.
+     */
     public static final QName SCRIPT_ATTRIBUTE_NAME = new QName("script");
+    /**
+     * The version of the data file, used for data files form 4.0 and later.
+     */
     public static final QName VERSION_ATTRIBUTE_NAME = new QName("version");
     
     private QName name;

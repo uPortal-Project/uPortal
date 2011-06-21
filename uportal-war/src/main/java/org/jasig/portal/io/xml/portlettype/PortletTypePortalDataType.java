@@ -83,7 +83,7 @@ public class PortletTypePortalDataType extends AbstractPortalDataType {
 	 * @see org.jasig.portal.io.xml.IPortalDataType#getTitle()
 	 */
 	@Override
-	public String getTitle() {
+	public String getTitleCode() {
 		return "Portlet Type";
 	}
 
@@ -91,7 +91,7 @@ public class PortletTypePortalDataType extends AbstractPortalDataType {
 	 * @see org.jasig.portal.io.xml.IPortalDataType#getDescription()
 	 */
 	@Override
-	public String getDescription() {
+	public String getDescriptionCode() {
 		return "Types of portlets published in the portal";
 	}
 

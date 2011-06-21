@@ -54,12 +54,12 @@ public class GroupPortalDataType extends AbstractPortalDataType {
     }
     
     @Override
-    public String getTitle() {
+    public String getTitleCode() {
         return "Group";
     }
 
     @Override
-    public String getDescription() {
+    public String getDescriptionCode() {
         return "Group with no members";
     }
 }

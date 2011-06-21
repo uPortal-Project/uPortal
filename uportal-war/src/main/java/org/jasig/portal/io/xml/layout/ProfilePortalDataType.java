@@ -54,12 +54,12 @@ public class ProfilePortalDataType extends AbstractPortalDataType {
     }
     
     @Override
-    public String getTitle() {
+    public String getTitleCode() {
         return "Profile";
     }
 
     @Override
-    public String getDescription() {
+    public String getDescriptionCode() {
         return "User layout profile";
     }
 }

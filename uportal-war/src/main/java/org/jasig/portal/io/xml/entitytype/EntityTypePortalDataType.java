@@ -63,12 +63,12 @@ public class EntityTypePortalDataType extends AbstractPortalDataType {
     }
     
     @Override
-    public String getTitle() {
+    public String getTitleCode() {
         return "Entity Type";
     }
 
     @Override
-    public String getDescription() {
+    public String getDescriptionCode() {
         return "Portal Entity Type";
     }
 }

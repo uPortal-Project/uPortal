@@ -39,7 +39,7 @@ import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IEntityNameFinder;
 import org.jasig.portal.groups.IGroupConstants;
 import org.jasig.portal.groups.IGroupMember;
-import org.jasig.portal.io.xml.AbstractJaxbIDataImporterExporter;
+import org.jasig.portal.io.xml.AbstractJaxbDataHandler;
 import org.jasig.portal.io.xml.IPortalData;
 import org.jasig.portal.io.xml.IPortalDataType;
 import org.jasig.portal.io.xml.PortalDataKey;
@@ -64,8 +64,6 @@ import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.EntityNameFinderService;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.xml.PortletDescriptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
@@ -75,9 +73,10 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class PortletDefinitionImporterExporter extends AbstractJaxbIDataImporterExporter<ExternalPortletDefinition> implements IPortletPublishingService, ApplicationEventPublisherAware {
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
-
+public class PortletDefinitionImporterExporter 
+        extends AbstractJaxbDataHandler<ExternalPortletDefinition> 
+        implements IPortletPublishingService, ApplicationEventPublisherAware {
+    
     private PortletPortalDataType portletPortalDataType;
     private IPortletTypeRegistry portletTypeRegistry;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
@@ -235,7 +234,7 @@ public class PortletDefinitionImporterExporter extends AbstractJaxbIDataImporter
      * {@link String} id argument is treated as the portlet fname.
      * 
      * (non-Javadoc)
-     * @see org.jasig.portal.io.xml.IDataImporterExporter#deleteData(java.lang.String)
+     * @see org.jasig.portal.io.xml.IDataImporter#deleteData(java.lang.String)
      */
     @Transactional
     @Override

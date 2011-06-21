@@ -92,7 +92,8 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * 
+ * Pulls together {@link IPortalDataType}, {@link IDataUpgrader}, and {@link IDataImporter}
+ * implementations to handle data upgrade, import, export and removal operations.
  * 
  * TODO better error handling, try to figure out what went wrong and provide a solution in the exception message
  * 
@@ -104,28 +105,36 @@ public class JaxbDataImportExportService implements IDataImportExportService, Re
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
-    private final XMLInputFactory xmlInputFactory;
-
-    // Order in which data must be imported.
-    // All data for a specific typeId may be imported in parallel
+    // Order in which data must be imported
     private List<PortalDataKey> dataKeyImportOrder = Collections.emptyList();
+    // Map to lookup the associated IPortalDataType for each known PortalDataKey
     private Map<PortalDataKey, IPortalDataType> dataKeyTypes = Collections.emptyMap();
     
     // Ant path matcher patterns that a file must match when scanning directories (unless a pattern is explicitly specified)
     private Set<String> dataFileIncludes = Collections.emptySet();
     private Set<String> dataFileExcludes = ImmutableSet.copyOf(DirectoryScanner.getDefaultExcludes());
     
-    // Data upgraders and importers
+    // Data upgraders mapped by PortalDataKey
     private Map<PortalDataKey, IDataUpgrader> portalDataUpgraders = Collections.emptyMap();
-    private Map<PortalDataKey, IDataImporterExporter<Object>> portalDataImporters = Collections.emptyMap();
-    //TODO delete this when all crn tasks are gone 
+    // Data importers mapped by PortalDataKey
+    private Map<PortalDataKey, IDataImporter<Object>> portalDataImporters = Collections.emptyMap();
+    // Legacy Cernunnos data import Tasks. TODO delete eventually 
     private Map<PortalDataKey, Task> legacyPortalDataImporters = Collections.emptyMap();
 
-    // Data types and exporters
+    // All portal data types available for export
     private Set<IPortalDataType> exportPortalDataTypes = Collections.emptySet();
-    private Map<String, IDataImporterExporter<Object>> portalDataExporters = Collections.emptyMap();
-    //TODO delete this when all crn tasks are gone 
-//    private Map<PortalDataKey, Task> legacyPortalDataExporters = Collections.emptyMap();
+    // Data exporters mapped by IPortalDateType#getTypeId()
+    private Map<String, IDataExporter<Object>> portalDataExporters = Collections.emptyMap();
+    // Legacy Cernunnos data export Tasks, TODO delete eventually
+    private Map<String, Task> legacyPortalDataExporters = Collections.emptyMap();
+    
+    // All portal data types available for delete
+    private Set<IPortalDataType> deletePortalDataTypes = Collections.emptySet();
+    // Data deleters mapped by IPortalDateType#getTypeId()
+    private Map<String, IDataDeleter<Object>> portalDataDeleters = Collections.emptyMap();
+    // Legacy Cernunnos data delete Tasks, TODO delete eventually
+    private Map<String, Task> legacyPortalDataDeleters = Collections.emptyMap();
+
     
     private ConcurrentDirectoryScanner directoryScanner;
     private ExecutorService importExportThreadPool;
@@ -134,35 +143,6 @@ public class JaxbDataImportExportService implements IDataImportExportService, Re
     
     private long maxWait = -1;
     private TimeUnit maxWaitTimeUnit = TimeUnit.MILLISECONDS;
-    
-    public JaxbDataImportExportService() {
-        this.xmlInputFactory = XMLInputFactory.newFactory();
-        
-        //Set the input buffer to 2k bytes. This appears to work for reading just enough to get the start element event for
-        //all of the data files in a single read.
-        xmlInputFactory.setProperty(WstxInputProperties.P_INPUT_BUFFER_LENGTH, 2000);
-        xmlInputFactory.setProperty(XMLInputFactory2.P_LAZY_PARSING, true); //Do as little parsing as possible, just want basic info
-        xmlInputFactory.setProperty(XMLInputFactory.IS_VALIDATING, false); //Don't do any validation here
-        xmlInputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false); //Don't load referenced DTDs here
-    }
-
-    @javax.annotation.Resource(name="importTasks")
-    public void setLegacyPortalDataImporters(Map<PortalDataKey, Task> legacyPortalDataImporters) {
-        this.legacyPortalDataImporters = legacyPortalDataImporters;
-    }
-
-//    @Autowired
-//    public void setLegacyPortalDataExporters(Map<PortalDataKey, Task> legacyPortalDataExporters) {
-//        this.legacyPortalDataExporters = legacyPortalDataExporters;
-//    }
-
-    public void setMaxWait(long maxWait) {
-        this.maxWait = maxWait;
-    }
-
-    public void setMaxWaitTimeUnit(TimeUnit maxWaitTimeUnit) {
-        this.maxWaitTimeUnit = maxWaitTimeUnit;
-    }
 
     @Autowired
     public void setXmlUtilities(XmlUtilities xmlUtilities) {
@@ -175,8 +155,45 @@ public class JaxbDataImportExportService implements IDataImportExportService, Re
         this.directoryScanner = new ConcurrentDirectoryScanner(this.importExportThreadPool);
     }
     
+    /**
+     * Legacy Cernunnos tasks used to import data
+     * @deprecated
+     */
+    @Deprecated
+    @javax.annotation.Resource(name="importTasks")
+    public void setLegacyPortalDataImporters(Map<PortalDataKey, Task> legacyPortalDataImporters) {
+        this.legacyPortalDataImporters = legacyPortalDataImporters;
+    }
+
+//    /**
+//     * Legacy Cernunnos tasks used to export data
+//     * @deprecated
+//     */
+//    @Deprecated
+//    @javax.annotation.Resource(name="exportTasks")
+//    public void setLegacyPortalDataExporters(Map<PortalDataKey, Task> legacyPortalDataExporters) {
+//        this.legacyPortalDataExporters = legacyPortalDataExporters;
+//    }
+
+    /**
+     * Maximum time to wait for an import, export, or delete to execute. 
+     */
+    public void setMaxWait(long maxWait) {
+        this.maxWait = maxWait;
+    }
+
+    /**
+     * {@link TimeUnit} for {@link #setMaxWait(long)} value.
+     */
+    public void setMaxWaitTimeUnit(TimeUnit maxWaitTimeUnit) {
+        this.maxWaitTimeUnit = maxWaitTimeUnit;
+    }
+    
+    /**
+     * Order in which data types should be imported.
+     */
     @javax.annotation.Resource(name="dataTypeImportOrder")
-    public void setDataTypeImportOrder( List<IPortalDataType> dataTypeImportOrder) {
+    public void setDataTypeImportOrder(List<IPortalDataType> dataTypeImportOrder) {
         final ArrayList<PortalDataKey> dataKeyImportOrder = new ArrayList<PortalDataKey>(dataTypeImportOrder.size() * 2);
         final Map<PortalDataKey, IPortalDataType> dataKeyTypes = new LinkedHashMap<PortalDataKey, IPortalDataType>(dataTypeImportOrder.size() * 2);
         
@@ -194,7 +211,7 @@ public class JaxbDataImportExportService implements IDataImportExportService, Re
     }
     
     /**
-     * @param dataFileIncludes Ant path matching patterns that files must match to be included
+     * Ant path matching patterns that files must match to be included
      */
     @javax.annotation.Resource(name="dataFileIncludes")
     public void setDataFileIncludes(Set<String> dataFileIncludes) {
@@ -202,42 +219,95 @@ public class JaxbDataImportExportService implements IDataImportExportService, Re
     }
     
     /**
-     * @param dataFileExcludes Ant path matching patterns that exclude matched files. Defaults to {@link DirectoryScanner#addDefaultExcludes()}
+     * Ant path matching patterns that exclude matched files. Defaults to {@link DirectoryScanner#addDefaultExcludes()}
      */
     public void setDataFileExcludes(Set<String> dataFileExcludes) {
         this.dataFileExcludes = dataFileExcludes;
     }
 
+    /**
+     * {@link IDataImporter} implementations to delegate import operations to. 
+     */
     @SuppressWarnings("unchecked")
     @Autowired(required=false)
-    public void setDataImporters(Collection<IDataImporterExporter<? extends Object>> dataImporters) {
-        final Map<PortalDataKey, IDataImporterExporter<Object>> dataImportersMap = new LinkedHashMap<PortalDataKey, IDataImporterExporter<Object>>();
-        final Map<String, IDataImporterExporter<Object>> dataExportersMap = new LinkedHashMap<String, IDataImporterExporter<Object>>();
+    public void setDataImporters(Collection<IDataImporter<? extends Object>> dataImporters) {
+        final Map<PortalDataKey, IDataImporter<Object>> dataImportersMap = new LinkedHashMap<PortalDataKey, IDataImporter<Object>>();
         
-        final Set<IPortalDataType> portalDataTypes = new LinkedHashSet<IPortalDataType>();
-        
-        for (final IDataImporterExporter<?> dataImporter : dataImporters) {
-            final IPortalDataType portalDataType = dataImporter.getPortalDataType();
-            final String typeId = portalDataType.getTypeId();
+        for (final IDataImporter<?> dataImporter : dataImporters) {
             final Set<PortalDataKey> importDataKeys = dataImporter.getImportDataKeys();
             
             for (final PortalDataKey importDataKey : importDataKeys) {
-                this.logger.debug("Registering IDataImporterExporter for '{}','{}' - {}", new Object[] {typeId, importDataKey, dataImporter});
-                final IDataImporterExporter<Object> existing = dataImportersMap.put(importDataKey, (IDataImporterExporter<Object>)dataImporter);
+                this.logger.debug("Registering IDataImporter for '{}' - {}", new Object[] {importDataKey, dataImporter});
+                final IDataImporter<Object> existing = dataImportersMap.put(importDataKey, (IDataImporter<Object>)dataImporter);
                 if (existing != null) {
-                    this.logger.warn("Duplicate IDataImporterExporter PortalDataKey for {} Replacing {} with {}", 
+                    this.logger.warn("Duplicate IDataImporter PortalDataKey for {} Replacing {} with {}", 
                             new Object[] {importDataKey, existing, dataImporter});
                 }
             }
-            dataExportersMap.put(typeId, (IDataImporterExporter<Object>)dataImporter);
-            portalDataTypes.add(portalDataType);
         }
         
         this.portalDataImporters = Collections.unmodifiableMap(dataImportersMap);
+    }
+
+    /**
+     * {@link IDataExporter} implementations to delegate export operations to. 
+     */
+    @SuppressWarnings("unchecked")
+    @Autowired(required=false)
+    public void setDataExporters(Collection<IDataExporter<? extends Object>> dataExporters) {
+        final Map<String, IDataExporter<Object>> dataExportersMap = new LinkedHashMap<String, IDataExporter<Object>>();
+        
+        final Set<IPortalDataType> portalDataTypes = new LinkedHashSet<IPortalDataType>();
+        
+        for (final IDataExporter<?> dataImporter : dataExporters) {
+            final IPortalDataType portalDataType = dataImporter.getPortalDataType();
+            final String typeId = portalDataType.getTypeId();
+            
+            this.logger.debug("Registering IDataExporter for '{}' - {}", new Object[] {typeId, dataImporter});
+            final IDataExporter<Object> existing = dataExportersMap.put(typeId, (IDataExporter<Object>)dataImporter);
+            if (existing != null) {
+                this.logger.warn("Duplicate IDataExporter typeId for {} Replacing {} with {}", 
+                        new Object[] {typeId, existing, dataImporter});
+            }
+            
+            portalDataTypes.add(portalDataType);
+        }
+        
         this.portalDataExporters = Collections.unmodifiableMap(dataExportersMap);
         this.exportPortalDataTypes = Collections.unmodifiableSet(portalDataTypes);
     }
+
+    /**
+     * {@link IDataDeleter} implementations to delegate delete operations to. 
+     */
+    @SuppressWarnings("unchecked")
+    @Autowired(required=false)
+    public void setDataDeleters(Collection<IDataDeleter<? extends Object>> dataDeleters) {
+        final Map<String, IDataDeleter<Object>> dataDeletersMap = new LinkedHashMap<String, IDataDeleter<Object>>();
+        
+        final Set<IPortalDataType> portalDataTypes = new LinkedHashSet<IPortalDataType>();
+        
+        for (final IDataDeleter<?> dataImporter : dataDeleters) {
+            final IPortalDataType portalDataType = dataImporter.getPortalDataType();
+            final String typeId = portalDataType.getTypeId();
+            
+            this.logger.debug("Registering IDataDeleter for '{}' - {}", new Object[] {typeId, dataImporter});
+            final IDataDeleter<Object> existing = dataDeletersMap.put(typeId, (IDataDeleter<Object>)dataImporter);
+            if (existing != null) {
+                this.logger.warn("Duplicate IDataDeleter typeId for {} Replacing {} with {}", 
+                        new Object[] {typeId, existing, dataImporter});
+            }
+            
+            portalDataTypes.add(portalDataType);
+        }
+        
+        this.portalDataDeleters = Collections.unmodifiableMap(dataDeletersMap);
+        this.deletePortalDataTypes = Collections.unmodifiableSet(portalDataTypes);
+    }
     
+    /**
+     * {@link IDataUpgrader} implementations to delegate upgrade operations to. 
+     */
     @Autowired(required=false)
     public void setDataUpgraders(Collection<IDataUpgrader> dataUpgraders) {
         final Map<PortalDataKey, IDataUpgrader> dataUpgraderMap = new LinkedHashMap<PortalDataKey, IDataUpgrader>();
@@ -416,6 +486,9 @@ public class JaxbDataImportExportService implements IDataImportExportService, Re
         
         //Post Process the PortalDataKey to see if more complex import operations are needed
         final IPortalDataType portalDataType = this.dataKeyTypes.get(portalDataKey);
+        if (portalDataType == null) {
+            throw new RuntimeException("No IPortalDataType configured for " + portalDataKey + ", the resource will be ignored: " + resource);
+        }
         final Set<PortalDataKey> postProcessedPortalDataKeys = portalDataType.postProcessPortalDataKey(resource, portalDataKey, bufferedXmlEventReader);
         bufferedXmlEventReader.reset();
         
@@ -441,7 +514,7 @@ public class JaxbDataImportExportService implements IDataImportExportService, Re
      */
     protected final void importOrUpgradeData(Resource resource, PortalDataKey portalDataKey, XMLEventReader xmlEventReader) {
         //See if there is a registered importer for the data, if so import
-        final IDataImporterExporter<Object> dataImporterExporter = this.portalDataImporters.get(portalDataKey);
+        final IDataImporter<Object> dataImporterExporter = this.portalDataImporters.get(portalDataKey);
         if (dataImporterExporter != null) {
             this.logger.debug("Importing: {}", resource);
             final Object data = unmarshallData(xmlEventReader, dataImporterExporter);
@@ -518,7 +591,7 @@ public class JaxbDataImportExportService implements IDataImportExportService, Re
         return dom4JDocument.getRootElement();
     }
 
-    protected Object unmarshallData(final XMLEventReader bufferedXmlEventReader, final IDataImporterExporter<Object> dataImporterExporter) {
+    protected Object unmarshallData(final XMLEventReader bufferedXmlEventReader, final IDataImporter<Object> dataImporterExporter) {
         final Unmarshaller unmarshaller = dataImporterExporter.getUnmarshaller();
         
         try {
@@ -573,13 +646,13 @@ public class JaxbDataImportExportService implements IDataImportExportService, Re
 
     @Override
     public Set<IPortalData> getPortalData(String typeId) {
-        final IDataImporterExporter<Object> dataImporterExporter = getPortalDataExporter(typeId);
+        final IDataExporter<Object> dataImporterExporter = getPortalDataExporter(typeId);
         return dataImporterExporter.getPortalData();
     }
 
     @Override
     public void exportData(String typeId, String dataId, Result result) {
-        final IDataImporterExporter<Object> portalDataExporter = this.getPortalDataExporter(typeId);
+        final IDataExporter<Object> portalDataExporter = this.getPortalDataExporter(typeId);
         final Object data = portalDataExporter.exportData(dataId);
         if (data == null) {
             return;
@@ -597,17 +670,17 @@ public class JaxbDataImportExportService implements IDataImportExportService, Re
         }
     }
 
-    protected IDataImporterExporter<Object> getPortalDataExporter(String typeId) {
-        final IDataImporterExporter<Object> dataImporterExporter = this.portalDataExporters.get(typeId);
-        if (dataImporterExporter == null) {
-            throw new IllegalArgumentException("No IDataImporterExporter exists for: " + typeId);   
+    protected IDataExporter<Object> getPortalDataExporter(String typeId) {
+        final IDataExporter<Object> dataExporter = this.portalDataExporters.get(typeId);
+        if (dataExporter == null) {
+            throw new IllegalArgumentException("No IDataExporter exists for: " + typeId);   
         }
-        return dataImporterExporter;
+        return dataExporter;
     }
 
 	@Override
 	public void deleteData(String typeId, String dataId) {
-		final IDataImporterExporter<Object> portalDataExporter = this.getPortalDataExporter(typeId);
+		final IDataDeleter<Object> portalDataExporter = this.portalDataDeleters.get(typeId);
 		final Object data = portalDataExporter.deleteData(dataId);
 		if(data == null) {
 			logger.info("portalDataExporter#deleteData returned null for typeId " + typeId + " and dataId " + dataId );
@@ -615,12 +688,23 @@ public class JaxbDataImportExportService implements IDataImportExportService, Re
 	}
     
     private final class PortalDataKeyFileProcessor implements Function<Resource, Object> {
+        private final XMLInputFactory xmlInputFactory;
         private final ConcurrentMap<PortalDataKey, Queue<Resource>> dataToImport;
         private final BatchImportOptions options;
-
+        
         private PortalDataKeyFileProcessor(ConcurrentMap<PortalDataKey, Queue<Resource>> dataToImport, BatchImportOptions options) {
             this.dataToImport = dataToImport;
             this.options = options;
+            
+            
+            this.xmlInputFactory = XMLInputFactory.newFactory();
+            
+            //Set the input buffer to 2k bytes. This appears to work for reading just enough to get the start element event for
+            //all of the data files in a single read operation.
+            this.xmlInputFactory.setProperty(WstxInputProperties.P_INPUT_BUFFER_LENGTH, 2000);
+            this.xmlInputFactory.setProperty(XMLInputFactory2.P_LAZY_PARSING, true); //Do as little parsing as possible, just want basic info
+            this.xmlInputFactory.setProperty(XMLInputFactory.IS_VALIDATING, false); //Don't do any validation here
+            this.xmlInputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false); //Don't load referenced DTDs here
         }
 
         @Override
