@@ -134,6 +134,109 @@
         <property name="schema" value="classpath:/xsd/io/user/user-4.0.xsd" />
         <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/user https://source.jasig.org/schemas/uportal/io/user/user-4.0.xsd" />
     </bean>
+    
+    <!-- 
+     | Legacy Import/Export classes for portal entities
+     +-->
+    <bean id="layout26ImporterExporter" class="org.jasig.portal.io.xml.CernunnosImportExportHandler">
+        <property name="importDataKeys">
+            <set>
+                <util:constant static-field="org.jasig.portal.io.xml.layout.LayoutPortalDataType.IMPORT_26_DATA_KEY"/>
+                <util:constant static-field="org.jasig.portal.io.xml.layout.FragmentLayoutPortalDataType.IMPORT_26_DATA_KEY"/>
+            </set>
+        </property>
+        <property name="importTask" ref="import-layout_v2-6" />
+    </bean>
+    <bean id="layout30ImporterExporter" class="org.jasig.portal.io.xml.CernunnosImportExportHandler">
+        <property name="importDataKeys">
+            <set>
+                <util:constant static-field="org.jasig.portal.io.xml.layout.LayoutPortalDataType.IMPORT_30_DATA_KEY"/>
+                <util:constant static-field="org.jasig.portal.io.xml.layout.FragmentLayoutPortalDataType.IMPORT_30_DATA_KEY"/>
+            </set>
+        </property>
+        <property name="importTask" ref="import-layout_v3-0" />
+    </bean>
+    <bean id="layout32ImporterExporter" class="org.jasig.portal.io.xml.CernunnosImportExportHandler">
+        <property name="importDataKeys">
+            <set>
+                <util:constant static-field="org.jasig.portal.io.xml.layout.LayoutPortalDataType.IMPORT_32_DATA_KEY"/>
+                <util:constant static-field="org.jasig.portal.io.xml.layout.FragmentLayoutPortalDataType.IMPORT_32_DATA_KEY"/>
+            </set>
+        </property>
+        <property name="importTask" ref="import-layout_v3-2" />
+    </bean>
+    <bean id="entity26ImporterExporter" class="org.jasig.portal.io.xml.CernunnosImportExportHandler">
+        <property name="importDataKeys">
+            <util:constant static-field="org.jasig.portal.io.xml.entitytype.EntityTypePortalDataType.IMPORT_26_DATA_KEY"/>
+        </property>
+        <property name="importTask" ref="import-entity-type_v2-6" />
+    </bean>
+    <bean id="entity32ImporterExporter" class="org.jasig.portal.io.xml.CernunnosImportExportHandler">
+        <property name="importDataKeys">
+            <util:constant static-field="org.jasig.portal.io.xml.entitytype.EntityTypePortalDataType.IMPORT_32_DATA_KEY"/>
+        </property>
+        <property name="importTask" ref="import-entity-type_v3-2" />
+    </bean>
+    <bean id="profile32ImporterExporter" class="org.jasig.portal.io.xml.CernunnosImportExportHandler">
+        <property name="importDataKeys">
+            <util:constant static-field="org.jasig.portal.io.xml.layout.ProfilePortalDataType.IMPORT_32_DATA_KEY"/>
+        </property>
+        <property name="importTask" ref="import-profile_v3-2" />
+    </bean>
+    <bean id="group26ImporterExporter" class="org.jasig.portal.io.xml.CernunnosImportExportHandler">
+        <property name="importDataKeys">
+            <util:constant static-field="org.jasig.portal.io.xml.group.GroupPortalDataType.IMPORT_26_DATA_KEY"/>
+        </property>
+        <property name="importTask" ref="import-group_v2-6" />
+    </bean>
+    <bean id="groupMembershipGroup30ImporterExporter" class="org.jasig.portal.io.xml.CernunnosImportExportHandler">
+        <property name="importDataKeys">
+            <util:constant static-field="org.jasig.portal.io.xml.group.GroupMembershipPortalDataType.IMPORT_GROUP_30_DATA_KEY"/>
+        </property>
+        <property name="importTask" ref="import-group_membership_v3-0-GROUP" />
+    </bean>
+    <bean id="groupMembershipMembers30ImporterExporter" class="org.jasig.portal.io.xml.CernunnosImportExportHandler">
+        <property name="importDataKeys">
+            <util:constant static-field="org.jasig.portal.io.xml.group.GroupMembershipPortalDataType.IMPORT_MEMBERS_30_DATA_KEY"/>
+        </property>
+        <property name="importTask" ref="import-group_membership_v3-0-MEMBERS" />
+    </bean>
+    <bean id="groupMembershipGroup32ImporterExporter" class="org.jasig.portal.io.xml.CernunnosImportExportHandler">
+        <property name="importDataKeys">
+            <util:constant static-field="org.jasig.portal.io.xml.group.GroupMembershipPortalDataType.IMPORT_GROUP_32_DATA_KEY"/>
+        </property>
+        <property name="importTask" ref="import-group_membership_v3-2-GROUP" />
+    </bean>
+    <bean id="groupMembershipMembers32ImporterExporter" class="org.jasig.portal.io.xml.CernunnosImportExportHandler">
+        <property name="importDataKeys">
+            <util:constant static-field="org.jasig.portal.io.xml.group.GroupMembershipPortalDataType.IMPORT_MEMBERS_32_DATA_KEY"/>
+        </property>
+        <property name="importTask" ref="import-group_membership_v3-2-MEMBERS" />
+    </bean>
+    <bean id="membership26ImporterExporter" class="org.jasig.portal.io.xml.CernunnosImportExportHandler">
+        <property name="importDataKeys">
+            <util:constant static-field="org.jasig.portal.io.xml.group.MembershipPortalDataType.IMPORT_26_DATA_KEY"/>
+        </property>
+        <property name="importTask" ref="import-membership_v2-6" />
+    </bean>
+    <bean id="permissionSet31ImporterExporter" class="org.jasig.portal.io.xml.CernunnosImportExportHandler">
+        <property name="importDataKeys">
+            <util:constant static-field="org.jasig.portal.io.xml.permission.PermissionSetPortalDataType.IMPORT_31_DATA_KEY"/>
+        </property>
+        <property name="importTask" ref="import-permission_set_v3-1" />
+    </bean>
+    <bean id="permissionOwner33ImporterExporter" class="org.jasig.portal.io.xml.CernunnosImportExportHandler">
+        <property name="importDataKeys">
+            <util:constant static-field="org.jasig.portal.io.xml.permission.PermissionOwnerPortalDataType.IMPORT_33_DATA_KEY"/>
+        </property>
+        <property name="importTask" ref="import-permission-owner_v3-3" />
+    </bean>
+    <bean id="permission26ImporterExporter" class="org.jasig.portal.io.xml.CernunnosImportExportHandler">
+        <property name="importDataKeys">
+            <util:constant static-field="org.jasig.portal.io.xml.permission.PermissionPortalDataType.IMPORT_26_DATA_KEY"/>
+        </property>
+        <property name="importTask" ref="import-permission_v2-6" />
+    </bean>
 
     
     <!-- 
@@ -160,122 +263,10 @@
         <property name="xslResource" value="classpath:/org/jasig/portal/io/xml/user/upgrade-template-user_3-2.xsl" />
     </bean>
 
-    <!--
-     | Legacy Import Tasks 
-     | Map<PortalDataKey, IDataUpgrader> 
-     + -->
-    <util:map id="importTasks" key-type="org.jasig.portal.io.xml.PortalDataKey" value-type="org.danann.cernunnos.Task">
-        <entry>
-            <key>
-                <util:constant static-field="org.jasig.portal.io.xml.entitytype.EntityTypePortalDataType.IMPORT_26_DATA_KEY"/>
-            </key>
-            <ref bean="import-entity-type_v2-6" />
-        </entry>
-        <entry>
-            <key>
-                <util:constant static-field="org.jasig.portal.io.xml.entitytype.EntityTypePortalDataType.IMPORT_32_DATA_KEY"/>
-            </key>
-            <ref bean="import-entity-type_v3-2" />
-        </entry>
-        <entry>
-            <key>
-                <util:constant static-field="org.jasig.portal.io.xml.layout.FragmentLayoutPortalDataType.IMPORT_26_DATA_KEY"/>
-            </key>
-            <ref bean="import-layout_v2-6" />
-        </entry>
-        <entry>
-            <key>
-                <util:constant static-field="org.jasig.portal.io.xml.layout.FragmentLayoutPortalDataType.IMPORT_30_DATA_KEY"/>
-            </key>
-            <ref bean="import-layout_v3-0" />
-        </entry>
-        <entry>
-            <key>
-                <util:constant static-field="org.jasig.portal.io.xml.layout.FragmentLayoutPortalDataType.IMPORT_32_DATA_KEY"/>
-            </key>
-            <ref bean="import-layout_v3-2" />
-        </entry>
-        <entry>
-            <key>
-                <util:constant static-field="org.jasig.portal.io.xml.layout.LayoutPortalDataType.IMPORT_26_DATA_KEY"/>
-            </key>
-            <ref bean="import-layout_v2-6" />
-        </entry>
-        <entry>
-            <key>
-                <util:constant static-field="org.jasig.portal.io.xml.layout.LayoutPortalDataType.IMPORT_30_DATA_KEY"/>
-            </key>
-            <ref bean="import-layout_v3-0" />
-        </entry>
-        <entry>
-            <key>
-                <util:constant static-field="org.jasig.portal.io.xml.layout.LayoutPortalDataType.IMPORT_32_DATA_KEY"/>
-            </key>
-            <ref bean="import-layout_v3-2" />
-        </entry>
-        <entry>
-            <key>
-                <util:constant static-field="org.jasig.portal.io.xml.layout.ProfilePortalDataType.IMPORT_32_DATA_KEY"/>
-            </key>
-            <ref bean="import-profile_v3-2" />
-        </entry>
-        <entry>
-            <key>
-                <util:constant static-field="org.jasig.portal.io.xml.group.GroupPortalDataType.IMPORT_26_DATA_KEY"/>
-            </key>
-            <ref bean="import-group_v2-6" />
-        </entry>
-        <entry>
-            <key>
-                <util:constant static-field="org.jasig.portal.io.xml.group.GroupMembershipPortalDataType.IMPORT_GROUP_30_DATA_KEY"/>
-            </key>
-            <ref bean="import-group_membership_v3-0-GROUP" />
-        </entry>
-        <entry>
-            <key>
-                <util:constant static-field="org.jasig.portal.io.xml.group.GroupMembershipPortalDataType.IMPORT_MEMBERS_30_DATA_KEY"/>
-            </key>
-            <ref bean="import-group_membership_v3-0-MEMBERS" />
-        </entry>
-        <entry>
-            <key>
-                <util:constant static-field="org.jasig.portal.io.xml.group.GroupMembershipPortalDataType.IMPORT_GROUP_32_DATA_KEY"/>
-            </key>
-            <ref bean="import-group_membership_v3-2-GROUP" />
-        </entry>
-        <entry>
-            <key>
-                <util:constant static-field="org.jasig.portal.io.xml.group.GroupMembershipPortalDataType.IMPORT_MEMBERS_32_DATA_KEY"/>
-            </key>
-            <ref bean="import-group_membership_v3-2-MEMBERS" />
-        </entry>
-        <entry>
-            <key>
-                <util:constant static-field="org.jasig.portal.io.xml.group.MembershipPortalDataType.IMPORT_26_DATA_KEY"/>
-            </key>
-            <ref bean="import-membership_v2-6" />
-        </entry>
-        <entry>
-            <key>
-                <util:constant static-field="org.jasig.portal.io.xml.permission.PermissionSetPortalDataType.IMPORT_31_DATA_KEY"/>
-            </key>
-            <ref bean="import-permission_set_v3-1" />
-        </entry>
-        <entry>
-            <key>
-                <util:constant static-field="org.jasig.portal.io.xml.permission.PermissionOwnerPortalDataType.IMPORT_33_DATA_KEY"/>
-            </key>
-            <ref bean="import-permission-owner_v3-3" />
-        </entry>
-        <entry>
-            <key>
-                <util:constant static-field="org.jasig.portal.io.xml.permission.PermissionPortalDataType.IMPORT_26_DATA_KEY"/>
-            </key>
-            <ref bean="import-permission_v2-6" />
-        </entry>
-        
-    </util:map>
-
+    
+    <!-- 
+     | Cernunnos Import Tasks
+     +-->
     <bean id="import-membership_v2-6" class="org.danann.cernunnos.runtime.PojoTask">
         <property name="location">
             <value>classpath://org/jasig/portal/io/import-membership_v2-6.crn</value>
@@ -488,36 +479,8 @@
     </bean>
 
     <!-- 
-     | Export Tasks
+     | Cernunnos Export Tasks
      +-->
-
-    <util:map id="exportTasks" map-class="java.util.concurrent.ConcurrentHashMap">
-        <entry key="layout">
-            <ref bean="export-layout"/>
-        </entry>
-        <entry key="entity-type">
-            <ref bean="export-entity-type"/>
-        </entry>
-        <entry key="profile">
-            <ref bean="export-profile"/>
-        </entry>
-        <entry key="structure">
-            <ref bean="export-structure"/>
-        </entry>
-        <entry key="theme">
-            <ref bean="export-theme"/>
-        </entry>
-        <entry key="group">
-            <ref bean="export-group"/>
-        </entry>
-        <entry key="group_membership">
-            <ref bean="export-group_membership"/>
-        </entry>
-        <entry key="fragment-definition">
-            <ref bean="export-fragment-definition"/>
-        </entry>
-    </util:map>
-
     <bean id="export-group_membership" class="org.danann.cernunnos.runtime.PojoTask">
         <property name="location">
             <value>classpath://org/jasig/portal/io/export-group_membership.crn</value>
@@ -626,14 +589,8 @@
     </bean>
 
     <!-- 
-     | Nested Tasks
+     | Cernunnos Delete Tasks
      +-->
-
-    <util:map id="deleteTasks" map-class="java.util.concurrent.ConcurrentHashMap">
-        <entry key="layout">
-            <ref bean="delete-layout"/>
-        </entry>
-    </util:map>
     
     <bean id="delete-layout" class="org.danann.cernunnos.runtime.PojoTask">
         <property name="location">
@@ -728,15 +685,5 @@
         <entry key="entity-type" value="NAME"/>
         <entry key="fragment-definition" value="NAME"/>
     </util:map>
-    
-    <util:list id="importExportTypes">
-        <value>user</value>
-        <value>layout</value>
-        <value>profile</value>
-        <value>group_membership</value>
-        <value>theme</value>
-        <value>entity-type</value>
-        <value>fragment-definition</value>
-    </util:list>
       
 </beans>

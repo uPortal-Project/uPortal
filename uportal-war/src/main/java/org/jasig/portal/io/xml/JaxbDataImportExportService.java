@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -45,9 +44,7 @@ import java.util.concurrent.TimeoutException;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMResult;
@@ -57,19 +54,10 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.tools.ant.DirectoryScanner;
-import org.codehaus.stax2.XMLInputFactory2;
-import org.codehaus.staxmate.dom.DOMConverter;
-import org.danann.cernunnos.Attributes;
-import org.danann.cernunnos.ReturnValueImpl;
-import org.danann.cernunnos.Task;
-import org.danann.cernunnos.TaskResponse;
-import org.danann.cernunnos.runtime.RuntimeRequestResponse;
-import org.dom4j.Node;
-import org.dom4j.io.DOMReader;
 import org.jasig.portal.utils.AntPatternFileFilter;
 import org.jasig.portal.utils.ConcurrentDirectoryScanner;
-import org.jasig.portal.utils.ConcurrentMapUtils;
 import org.jasig.portal.utils.Tuple;
+import org.jasig.portal.xml.StaxUtils;
 import org.jasig.portal.xml.XmlUtilities;
 import org.jasig.portal.xml.stream.BufferedXMLEventReader;
 import org.slf4j.Logger;
@@ -84,11 +72,7 @@ import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.XmlMappingException;
 import org.springframework.stereotype.Service;
-import org.springframework.util.xml.FixedXMLEventStreamReader;
-import org.w3c.dom.Document;
 
-import com.ctc.wstx.api.WstxInputProperties;
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -118,22 +102,16 @@ public class JaxbDataImportExportService implements IDataImportExportService, Re
     private Map<PortalDataKey, IDataUpgrader> portalDataUpgraders = Collections.emptyMap();
     // Data importers mapped by PortalDataKey
     private Map<PortalDataKey, IDataImporter<Object>> portalDataImporters = Collections.emptyMap();
-    // Legacy Cernunnos data import Tasks. TODO delete eventually 
-    private Map<PortalDataKey, Task> legacyPortalDataImporters = Collections.emptyMap();
 
     // All portal data types available for export
     private Set<IPortalDataType> exportPortalDataTypes = Collections.emptySet();
     // Data exporters mapped by IPortalDateType#getTypeId()
     private Map<String, IDataExporter<Object>> portalDataExporters = Collections.emptyMap();
-    // Legacy Cernunnos data export Tasks, TODO delete eventually
-    private Map<String, Task> legacyPortalDataExporters = Collections.emptyMap();
     
     // All portal data types available for delete
     private Set<IPortalDataType> deletePortalDataTypes = Collections.emptySet();
     // Data deleters mapped by IPortalDateType#getTypeId()
     private Map<String, IDataDeleter<Object>> portalDataDeleters = Collections.emptyMap();
-    // Legacy Cernunnos data delete Tasks, TODO delete eventually
-    private Map<String, Task> legacyPortalDataDeleters = Collections.emptyMap();
 
     
     private ConcurrentDirectoryScanner directoryScanner;
@@ -154,26 +132,6 @@ public class JaxbDataImportExportService implements IDataImportExportService, Re
         this.importExportThreadPool = importExportThreadPool;
         this.directoryScanner = new ConcurrentDirectoryScanner(this.importExportThreadPool);
     }
-    
-    /**
-     * Legacy Cernunnos tasks used to import data
-     * @deprecated
-     */
-    @Deprecated
-    @javax.annotation.Resource(name="importTasks")
-    public void setLegacyPortalDataImporters(Map<PortalDataKey, Task> legacyPortalDataImporters) {
-        this.legacyPortalDataImporters = legacyPortalDataImporters;
-    }
-
-//    /**
-//     * Legacy Cernunnos tasks used to export data
-//     * @deprecated
-//     */
-//    @Deprecated
-//    @javax.annotation.Resource(name="exportTasks")
-//    public void setLegacyPortalDataExporters(Map<PortalDataKey, Task> legacyPortalDataExporters) {
-//        this.legacyPortalDataExporters = legacyPortalDataExporters;
-//    }
 
     /**
      * Maximum time to wait for an import, export, or delete to execute. 
@@ -354,7 +312,7 @@ public class JaxbDataImportExportService implements IDataImportExportService, Re
         //Scan the specified directory for files to import
         logger.info("Scanning for files to Import");
         this.directoryScanner.scanDirectoryNoResults(directory, fileFilter, 
-                new PortalDataKeyFileProcessor(dataToImport, options));
+                new PortalDataKeyFileProcessor(this.dataKeyTypes, dataToImport, options));
         
         //Import the data files
         for (final PortalDataKey portalDataKey : this.dataKeyImportOrder) {
@@ -463,7 +421,7 @@ public class JaxbDataImportExportService implements IDataImportExportService, Re
         }
         
         try {
-            this.importData(resource, new StreamSource(resourceStream), portalDataKey);
+            this.importData(resource, new StreamSource(resourceStream, resource.getDescription()), portalDataKey);
         }
         finally {
             IOUtils.closeQuietly(resourceStream);
@@ -479,7 +437,7 @@ public class JaxbDataImportExportService implements IDataImportExportService, Re
         
         //If no PortalDataKey was passed build it from the source
         if (portalDataKey == null) {
-            final StartElement rootElement = getRootElement(bufferedXmlEventReader);
+            final StartElement rootElement = StaxUtils.getRootElement(bufferedXmlEventReader);
             portalDataKey = new PortalDataKey(rootElement);
             bufferedXmlEventReader.reset();
         }
@@ -551,44 +509,8 @@ public class JaxbDataImportExportService implements IDataImportExportService, Re
             return;
         }
         
-        //See if there is a legacy CRN task that can handle the import
-        final Task task = this.legacyPortalDataImporters.get(portalDataKey);
-        if (task != null) {
-            this.logger.debug("Importing: {}", resource);
-
-            //Convert the StAX XMLEventReader to a dom4j Node
-            final Node node = convertToNode(xmlEventReader);
-            
-            final RuntimeRequestResponse request = new RuntimeRequestResponse();
-            request.setAttribute(Attributes.NODE, node);
-            request.setAttribute(Attributes.LOCATION, resource.getDescription());
-
-            final ReturnValueImpl result = new ReturnValueImpl();
-            final TaskResponse response = new RuntimeRequestResponse(
-                    Collections.<String, Object> singletonMap("Attributes.RETURN_VALUE", result));
-
-            task.perform(request, response);
-            this.logger.info("Imported : {}", resource);
-            return;
-        }
-        
         //No importer or upgrader found, fail
         throw new IllegalArgumentException("Provided data " + portalDataKey + " has no registered importer or upgrader support: " + resource);
-    }
-
-    protected Node convertToNode(XMLEventReader xmlEventReader) {
-        final DOMConverter domConverter = new DOMConverter();
-        final Document document;
-        try {
-            final XMLStreamReader eventStreamReader = new FixedXMLEventStreamReader(xmlEventReader);
-            document = domConverter.buildDocument(eventStreamReader);
-        }
-        catch (Exception e) {
-            throw new RuntimeException("Failed to parse StAX Reader into Dom4J Node", e);
-        }
-        final DOMReader domReader = new DOMReader();
-        final org.dom4j.Document dom4JDocument = domReader.read(document);
-        return dom4JDocument.getRootElement();
     }
 
     protected Object unmarshallData(final XMLEventReader bufferedXmlEventReader, final IDataImporter<Object> dataImporterExporter) {
@@ -619,24 +541,6 @@ public class JaxbDataImportExportService implements IDataImportExportService, Re
             throw new RuntimeException("Failed to create XML Event Reader for data Source", e);
         }
         return new BufferedXMLEventReader(xmlEventReader, -1);
-    }
-
-    protected StartElement getRootElement(final XMLEventReader bufferedXmlEventReader) {
-        XMLEvent rootElement;
-        try {
-            rootElement = bufferedXmlEventReader.nextEvent();
-            while (rootElement.getEventType() != XMLEvent.START_ELEMENT && bufferedXmlEventReader.hasNext()) {
-                rootElement = bufferedXmlEventReader.nextEvent();
-            }
-        }
-        catch (XMLStreamException e) {
-            throw new RuntimeException("Failed to read root element from XML", e);
-        }
-        
-        if (XMLEvent.START_ELEMENT != rootElement.getEventType()) {
-            throw new IllegalArgumentException("Bad XML document for import, no root element could be found");
-        }
-        return rootElement.asStartElement();
     }
 
     @Override
@@ -686,82 +590,4 @@ public class JaxbDataImportExportService implements IDataImportExportService, Re
 			logger.info("portalDataExporter#deleteData returned null for typeId " + typeId + " and dataId " + dataId );
 		}
 	}
-    
-    private final class PortalDataKeyFileProcessor implements Function<Resource, Object> {
-        private final XMLInputFactory xmlInputFactory;
-        private final ConcurrentMap<PortalDataKey, Queue<Resource>> dataToImport;
-        private final BatchImportOptions options;
-        
-        private PortalDataKeyFileProcessor(ConcurrentMap<PortalDataKey, Queue<Resource>> dataToImport, BatchImportOptions options) {
-            this.dataToImport = dataToImport;
-            this.options = options;
-            
-            
-            this.xmlInputFactory = XMLInputFactory.newFactory();
-            
-            //Set the input buffer to 2k bytes. This appears to work for reading just enough to get the start element event for
-            //all of the data files in a single read operation.
-            this.xmlInputFactory.setProperty(WstxInputProperties.P_INPUT_BUFFER_LENGTH, 2000);
-            this.xmlInputFactory.setProperty(XMLInputFactory2.P_LAZY_PARSING, true); //Do as little parsing as possible, just want basic info
-            this.xmlInputFactory.setProperty(XMLInputFactory.IS_VALIDATING, false); //Don't do any validation here
-            this.xmlInputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false); //Don't load referenced DTDs here
-        }
-
-        @Override
-        public Object apply(Resource input) {
-            final InputStream fis;
-            try {
-                fis = input.getInputStream();
-            }
-            catch (IOException e) {
-                if (this.options == null || this.options.isFailOnError()) {
-                    throw new RuntimeException("Failed to create InputStream for: " + input, e);
-                }
-
-                logger.warn("Failed to create InputStream, resource will be ignored: {}", input);
-                return null;
-            }
-            
-            final PortalDataKey portalDataKey;
-            final BufferedXMLEventReader xmlEventReader;
-            try {
-                xmlEventReader = new BufferedXMLEventReader(xmlInputFactory.createXMLEventReader(fis));
-                
-                final StartElement rootElement = getRootElement(xmlEventReader);
-                portalDataKey = new PortalDataKey(rootElement);
-            }
-            catch (XMLStreamException e) {
-                if (this.options != null && !this.options.isIngoreNonDataFiles()) {
-                    throw new RuntimeException("Failed to parse: " + input, e);
-                }
-
-                logger.warn("Failed to parse resource, it will be ignored: {}", input);
-                return null;
-            }
-            finally {
-                IOUtils.closeQuietly(fis);
-            }
-            
-            xmlEventReader.reset();
-            final IPortalDataType portalDataType = dataKeyTypes.get(portalDataKey);
-            if (portalDataType == null) {
-                logger.warn("No IPortalDataType configured for {}, the resource will be ignored: {}", portalDataKey, input);
-                return null;
-            }
-            
-            //Allow the PortalDataType to do any necessary post-processing of the input, needed as some types require extra work
-            final Set<PortalDataKey> processedPortalDataKeys = portalDataType.postProcessPortalDataKey(input, portalDataKey, xmlEventReader);
-            
-            for (final PortalDataKey processedPortalDataKey : processedPortalDataKeys) {
-                //Add the PortalDataKey and File into the map
-                Queue<Resource> queue = this.dataToImport.get(processedPortalDataKey);
-                if (queue == null) {
-                    queue = ConcurrentMapUtils.putIfAbsent(this.dataToImport, processedPortalDataKey, new ConcurrentLinkedQueue<Resource>());
-                }
-                queue.offer(input);
-            }
-            
-            return null;
-        }
-    }
 }
