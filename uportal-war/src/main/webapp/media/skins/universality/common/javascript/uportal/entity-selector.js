@@ -337,7 +337,7 @@ var up = up || {};
         
         // Loop through selected array.
         $.each(that.options.selected, function (idx, obj) {
-            var span = list.find('span[key=' + obj + ']');
+            var span = list.find('span[key="' + obj + '"]');
             span.parent().parent().addClass(that.options.styles.selected);
         });//end:loop.
     };//end:function.
