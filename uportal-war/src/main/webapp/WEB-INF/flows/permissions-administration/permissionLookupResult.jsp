@@ -27,11 +27,7 @@
     <portlet:param name="_eventId" value="owners"/>
 </portlet:actionURL>
 
-<portlet:actionURL var="createUrl">
-  <portlet:param name="execution" value="${flowExecutionKey}" />
-  <portlet:param name="_eventId" value="createPermission"/>
-</portlet:actionURL>
-<portlet:actionURL var="editUrl">
+<portlet:actionURL var="editUrl" escapeXml="false">
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="editPermission"/>
   <portlet:param name="owner" value="OWNER"/>

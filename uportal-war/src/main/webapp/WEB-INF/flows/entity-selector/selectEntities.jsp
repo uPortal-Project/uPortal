@@ -76,8 +76,8 @@
                     | View: Multi Select.
                     ================================================-->
                     <div class="view-multi-select">
-                        <div class="fl-col-flex columns ui-helper-clearfix">
-                            <div class="fl-col-flex55 column-left">
+                        <div class="columns-2">
+                            <div class="fl-container-flex55">
                                 <!-- entity -->
                                 <div id="${n}entityBrowser" class="entity-browser">
                                     <!--breadcrumb-->
@@ -145,7 +145,7 @@
                                     </div>
                                 </div><!--end: entity-->
                             </div>
-                            <div class="fl-col-flex40 column-right">
+                            <div class="fl-container-flex40">
                                 <!--selection-->
                                 <div class="portlet-selection">
                                     <!--titlebar-->

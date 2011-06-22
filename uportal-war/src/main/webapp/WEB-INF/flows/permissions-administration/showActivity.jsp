@@ -35,14 +35,14 @@
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="createPermission"/>
 </portlet:actionURL>
-<portlet:actionURL var="editUrl">
+<portlet:actionURL var="editUrl" escapeXml="false">
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="editPermission"/>
   <portlet:param name="owner" value="OWNER"/>
   <portlet:param name="activity" value="ACTIVITY"/>
   <portlet:param name="target" value="TARGET"/>
 </portlet:actionURL>
-<portlet:actionURL var="deleteUrl">
+<portlet:actionURL var="deleteUrl" escapeXml="false">
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="deletePermission"/>
   <portlet:param name="owner" value="OWNER"/>

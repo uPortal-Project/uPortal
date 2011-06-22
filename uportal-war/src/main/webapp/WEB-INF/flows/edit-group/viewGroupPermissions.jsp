@@ -27,11 +27,7 @@
     <portlet:param name="_eventId" value="group"/>
 </portlet:actionURL>
 
-<portlet:actionURL var="createUrl">
-  <portlet:param name="execution" value="${flowExecutionKey}" />
-  <portlet:param name="_eventId" value="createPermission"/>
-</portlet:actionURL>
-<portlet:actionURL var="editUrl">
+<portlet:actionURL var="editUrl" escapeXml="false">
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="editPermission"/>
   <portlet:param name="owner" value="OWNER"/>
@@ -167,7 +163,6 @@ up.jQuery(function() {
 
     var pager;
     var editUrl = "${editUrl}";
-    var deleteUrl = "${deleteUrl}";
     var targetUrl = "<c:url value="/api/assignments/target/${ group.key }.json?includeInherited=true"/>";
     var principalUrl = "<c:url value="/api/assignments/principal/${ group.key }.json?includeInherited=true"/>";
 
