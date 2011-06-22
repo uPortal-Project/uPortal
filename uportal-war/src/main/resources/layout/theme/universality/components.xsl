@@ -482,7 +482,7 @@
             <xsl:variable name="searchUrl">
                 <xsl:call-template name="portalUrl">
                     <xsl:with-param name="url">
-                        <url:portal-url>
+                        <url:portal-url type="ACTION">
                             <url:fname>search</url:fname>
                             <url:portlet-url state="MAXIMIZED" />
                         </url:portal-url>
