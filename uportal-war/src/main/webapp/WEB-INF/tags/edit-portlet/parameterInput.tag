@@ -37,7 +37,7 @@
       </c:when>
       <c:otherwise>
         <!-- Text input -->
-        <form:input path="${parameterPath}" />
+        <form:input path="${ path }" />
       </c:otherwise>
     </c:choose>
   </c:when>
