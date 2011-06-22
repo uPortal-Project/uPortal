@@ -47,8 +47,8 @@
   
   <js>../common/javascript/up-mobile-config.js</js>
 
-  <js included="plain">/ResourceServingWebapp/rs/jquery-mobile/1.0a4.1/jquery.mobile-1.0a4.1.js</js>
-  <js included="aggregated">/ResourceServingWebapp/rs/jquery-mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.js</js>
+  <js included="plain">/ResourceServingWebapp/rs/jquery-mobile/1.0b1/jquery.mobile-1.0b1.js</js>
+  <js included="aggregated">/ResourceServingWebapp/rs/jquery-mobile/1.0b1/jquery.mobile-1.0b1.min.js</js>
   
   <js>../../universality/common/javascript/uportal/up-util.js</js>
   <js>../../universality/common/javascript/uportal/up-portlet-registry.js</js>
