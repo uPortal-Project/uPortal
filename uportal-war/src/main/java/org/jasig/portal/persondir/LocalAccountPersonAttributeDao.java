@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.jasig.services.persondir.support.AbstractDefaultAttributePersonAttributeDao;
@@ -218,15 +219,15 @@ public class LocalAccountPersonAttributeDao extends AbstractDefaultAttributePers
         
         // if the user does not have a display name attribute set, attempt
         // to build one from the first and last name attributes
-        if (!mappedAttributes.containsKey(displayNameAttribute)) {
-            final Object firstNames = mappedAttributes.get("given");
-            final Object lastNames = mappedAttributes.get("sn");
+        if (!mappedAttributes.containsKey(displayNameAttribute) || mappedAttributes.get(displayNameAttribute).size() == 0 || StringUtils.isBlank((String) mappedAttributes.get(displayNameAttribute).get(0))) {
+            final List<Object> firstNames = mappedAttributes.get("givenName");
+            final List<Object> lastNames = mappedAttributes.get("sn");
             final StringBuilder displayName = new StringBuilder();
-            if (firstNames != null) {
-                displayName.append(firstNames).append(" ");
+            if (firstNames != null && firstNames.size() > 0) {
+                displayName.append(firstNames.get(0)).append(" ");
             }
-            if (lastNames != null) {
-                displayName.append(lastNames);
+            if (lastNames != null && lastNames.size() > 0) {
+                displayName.append(lastNames.get(0));
             }
             mappedAttributes.put(displayNameAttribute, Collections.<Object>singletonList(displayName.toString()));
         }

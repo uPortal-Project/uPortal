@@ -24,8 +24,8 @@
   <default-user>defaultTemplateUser</default-user>
   <person-directory>
     <encrptd-pswd>(MD5)IAnYXaWGdqTkifNNwo0bfIIphj2NPvSG</encrptd-pswd>
-    <first-name>Demo</first-name>
-    <last-name>User</last-name>
-    <email>demo.user@example.org</email>
+    <givenName>Demo</givenName>
+    <sn>User</sn>
+    <mail>demo.user@example.org</mail>
   </person-directory>
 </user>

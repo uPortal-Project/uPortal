@@ -24,7 +24,7 @@
   <default-user>defaultTemplateUser</default-user>
   <person-directory>
     <encrptd-pswd>(MD5)TcJ+RAxMebVLfq2+xF1YY4Mv5dRGo7Rg</encrptd-pswd>
-    <first-name>Fragment</first-name>
-    <last-name>Template</last-name>
+    <givenName>Fragment</givenName>
+    <sn>Template</sn>
   </person-directory>
 </user>

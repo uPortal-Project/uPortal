@@ -199,17 +199,6 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
             attributeMap.put(attribute.getName(), objValues);
         }
         
-        final Object firstNames = getAttributeValue("given");
-        final Object lastNames = getAttributeValue("sn");
-        final StringBuilder displayName = new StringBuilder();
-        if (firstNames != null) {
-            displayName.append(firstNames).append(" ");
-        }
-        if (lastNames != null) {
-            displayName.append(lastNames);
-        }
-        attributeMap.put("displayName", Collections.<Object>singletonList(displayName.toString()));
-        
         return Collections.unmodifiableMap(attributeMap);
     }
     

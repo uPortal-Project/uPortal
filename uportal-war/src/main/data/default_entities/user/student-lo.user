@@ -23,7 +23,7 @@
 <user script="classpath://org/jasig/portal/io/import-user_v3-2.crn" username="student-lo">
   <default-user>defaultTemplateUser</default-user>
   <person-directory>
-    <first-name>Student</first-name>
-    <last-name>Layout Owner</last-name>
+    <givenName>Student</givenName>
+    <sn>Layout Owner</sn>
   </person-directory>
 </user>

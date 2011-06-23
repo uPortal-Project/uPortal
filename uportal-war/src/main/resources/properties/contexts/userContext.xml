@@ -73,7 +73,7 @@
     </bean>
 
     <util:list id="directoryQueryAttributes">
-        <value>given</value>
+        <value>givenName</value>
         <value>sn</value>
     </util:list>
 
