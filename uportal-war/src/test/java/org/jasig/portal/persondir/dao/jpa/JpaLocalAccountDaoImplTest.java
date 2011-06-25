@@ -82,7 +82,7 @@ public class JpaLocalAccountDaoImplTest extends BaseJpaDaoTest {
                 
                 final Map<String, List<Object>> attributes = user1.getAttributes();
                 assertNotNull(attributes);
-                assertEquals(3, attributes.size());
+                assertEquals(2, attributes.size());
                 
                 return null;
             }
