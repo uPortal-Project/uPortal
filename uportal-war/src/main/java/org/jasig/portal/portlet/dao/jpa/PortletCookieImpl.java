@@ -84,7 +84,7 @@ class PortletCookieImpl implements IPortletCookie {
     @Column(name = "ENTITY_VERSION")
     private final long entityVersion;
     
-    @Column(name = "NAME", length=500, nullable = false, updatable = false)
+    @Column(name = "COOKIE_NAME", length=500, nullable = false, updatable = false)
 	private final String name;
 	
 	@Column(name = "COOKIE_COMMENT", length=1000, nullable = true, updatable = true)
@@ -96,7 +96,7 @@ class PortletCookieImpl implements IPortletCookie {
 	
 	@Column(name = "PATH", length=1000, nullable = true, updatable = true)
 	private String path;
-	@Column(name = "VALUE", length=1000, nullable = false, updatable = true)
+	@Column(name = "COOKIE_VALUE", length=1000, nullable = false, updatable = true)
 	private String value = "";
 	@Column(name = "VERSION", nullable = false, updatable = true)
 	private int version = 0;
