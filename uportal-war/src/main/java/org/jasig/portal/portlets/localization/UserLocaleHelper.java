@@ -29,7 +29,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.i18n.ILocaleStore;
 import org.jasig.portal.i18n.LocaleManager;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
@@ -47,8 +49,14 @@ public class UserLocaleHelper {
 
 	private IUserInstanceManager userInstanceManager;
 	private IPortalRequestUtils portalRequestUtils;
+	private ILocaleStore localeStore;
 	
-	/**
+	@Autowired
+	public void setLocaleStore(ILocaleStore localeStore) {
+        this.localeStore = localeStore;
+    }
+
+    /**
 	 * Set the UserInstanceManager
 	 * 
 	 * @param userInstanceManager
@@ -147,9 +155,11 @@ public class UserLocaleHelper {
             
             // if the current user is logged in, also update the persisted
             // user locale
-            if (!ui.getPerson().isGuest()) {
+            final IPerson person = ui.getPerson();
+            if (!person.isGuest()) {
                 try {
                     localeManager.persistUserLocales(new Locale[] { userLocale });
+                    localeStore.updateUserLocales(person, new Locale[] { userLocale });
                     upm.getUserLayoutManager().loadUserLayout();
                 } catch (Exception e) {
                     throw new PortalException(e);

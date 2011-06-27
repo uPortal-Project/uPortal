@@ -30,6 +30,7 @@
      +-->
 
     <bean id="PortalDb" class="org.apache.commons.dbcp.BasicDataSource">
+        <qualifier value="PortalDb"/>
         <property name="driverClassName" value="${hibernate.connection.driver_class}" />
         <property name="url" value="${hibernate.connection.url}" />
         <property name="username" value="${hibernate.connection.username}" />
@@ -42,6 +43,8 @@
         <property name="removeAbandonedTimeout" value="300" />
         <property name="logAbandoned" value="true" />
         <property name="poolPreparedStatements" value="true" />
+        
+        <property name="connectionProperties" value="hsqldb.applog=3" />
     </bean>
     <bean id="PortalDB.metadata" class="org.jasig.portal.rdbm.DatabaseMetaDataImpl">
         <constructor-arg index="0" ref="PortalDb" />
@@ -50,5 +53,5 @@
     
     <alias alias="PersonDB" name="PortalDb"/>
     
-    <alias alias="StatsDB" name="PortalDb"/>
+    <alias alias="StatsDB" name="PortalDb" />
 </beans>

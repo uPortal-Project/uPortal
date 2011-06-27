@@ -391,7 +391,7 @@
         
         <!-- ===== Test Dependencies ========================================== -->
         <dependency>
-            <groupId>hsqldb</groupId>
+            <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
             <scope>compile</scope>
         </dependency>
@@ -466,7 +466,6 @@
             </resource>
         </resources>
         <plugins>
-
             <!-- Generates JAXB binding classes -->            
             <plugin>
                 <groupId>org.jvnet.jaxb2.maven2</groupId>
@@ -474,6 +473,8 @@
                 <version>0.7.4</version>
                 <executions>
                     <execution>
+                        <id>generate-xjc-sources</id>
+                        <phase>generate-sources</phase>
                         <goals>
                             <goal>generate</goal>
                         </goals>
@@ -517,7 +518,7 @@
                     <compilerArgument>-proc:none</compilerArgument>
                 </configuration>
             </plugin>
-            <!-- Generates the Hibernate metamodel classes -->
+            <!-- Generates the Hibernate metamodel classes 
             <plugin>
                 <groupId>org.bsc.maven</groupId>
                 <artifactId>maven-processor-plugin</artifactId>
@@ -530,12 +531,11 @@
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <!-- source output directory -->
                             <outputDirectory>target/metamodel</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>--> 
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -708,6 +708,33 @@
     </build>
     
     <profiles>
+        <profile>
+            <id>jpa-metamodel</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.bsc.maven</groupId>
+                        <artifactId>maven-processor-plugin</artifactId>
+                        <version>2.0.2</version>
+                        <executions>
+                            <execution>
+                                <id>process</id>
+                                <goals>
+                                    <goal>process</goal>
+                                </goals>
+                                <phase>generate-sources</phase>
+                                <configuration>
+                                    <outputDirectory>target/metamodel</outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>jspc-tomcat6</id>
             <activation>

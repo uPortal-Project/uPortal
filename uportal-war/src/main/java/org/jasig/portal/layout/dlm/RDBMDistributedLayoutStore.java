@@ -123,9 +123,6 @@ public class RDBMDistributedLayoutStore
     static final String TEMPLATE_USER_NAME
         = "org.jasig.portal.services.Authentication.defaultTemplateUserName";
     
-    final static String DELETE_FROM_UP_SS_USER_ATTS_SQL = "DELETE FROM UP_SS_USER_ATTS WHERE USER_ID = ? AND PROFILE_ID = ? AND SS_ID = ? AND SS_TYPE = ?";
-    final static String DELETE_FROM_UP_USER_PARM = "DELETE FROM UP_SS_USER_PARM WHERE USER_ID=?  AND PROFILE_ID=? AND SS_ID=? AND SS_TYPE=?";
-    
     // Used in Import/Export operations
     private final org.dom4j.DocumentFactory fac = new org.dom4j.DocumentFactory();
     private final DOMReader reader = new DOMReader();
@@ -322,7 +319,7 @@ public class RDBMDistributedLayoutStore
             throw new IllegalArgumentException(msg);
         }
         
-        final int struct_count = jdbcTemplate.queryForInt("SELECT COUNT(*) FROM up_layout_struct WHERE user_id = ?", person.getID());
+        final int struct_count = jdbcOperations.queryForInt("SELECT COUNT(*) FROM up_layout_struct WHERE user_id = ?", person.getID());
         return struct_count == 0 ? false : true;
         
     }
@@ -558,8 +555,7 @@ public class RDBMDistributedLayoutStore
             person.setSecurityContext(new BrokenSecurityContext());
             profile = this.getUserProfileByFname(person, "default");
         } catch (Throwable t) {
-            String msg = "Unrecognized user " + person.getUserName() + "; you must import users before their layouts.";
-            throw new RuntimeException(msg, t);
+            throw new RuntimeException("Unrecognized user " + person.getUserName() + "; you must import users before their layouts.", t);
         }
         
         // (6) Add database Ids & (5) Add dlm:plfID ...
@@ -568,7 +564,7 @@ public class RDBMDistributedLayoutStore
             nextId = addIdAttributesIfNecessary(it.next(), nextId);
         }
         // Now update UP_USER...
-        jdbcTemplate.update("UPDATE up_user SET next_struct_id = ? WHERE user_id = ?", nextId, person.getID());
+        jdbcOperations.update("UPDATE up_user SET next_struct_id = ? WHERE user_id = ?", nextId, person.getID());
 
         // (4) Convert external DLM pathrefs to internal form (noderefs)...
         for (Iterator<org.dom4j.Attribute> itr = (Iterator<org.dom4j.Attribute>) layout.selectNodes("//@dlm:origin").iterator(); itr.hasNext();) {
@@ -657,8 +653,7 @@ public class RDBMDistributedLayoutStore
             person.setAttribute(Constants.PLF, layoutDom);
             
         } catch (Throwable t) {
-            log.error("Unable to set UserPreferences for user:  " + person.getUserName());
-            throw new RuntimeException(t);
+            throw new RuntimeException("Unable to set UserPreferences for user:  " + person.getUserName(), t);
         }
         
         // Finally store the layout...
@@ -1292,72 +1287,6 @@ public class RDBMDistributedLayoutStore
         }
         return info;
     }
-    
-    private Map<Integer, String> getOriginIds(Connection con, int userId, int profileId, int stylesheetType, int stylesheetId) throws SQLException {
-        /*
-         * Now we need to load in the folder and channel attributes from
-        * the up_ss_user_atts table. But before doing so to avoid using
-        * an outer join and to work around an oracle restriction of
-        * having only on LONG type returned per result set we first
-        * load dlm:origin IDs for the corresponding nodes it any. These
-        * origin IDs indicate that the node whose attribute is being
-        * overridden came from a fragment and that origin ID must then
-        * be used for the node id when setting them on the structure
-        * stylesheet user preferences object.
-        */
-        
-        /*
-         * the list of origin Ids if any for nodes having overridden
-         * structure stylesheet attributes.
-         */
-        String originIdQuery = "SELECT struct_id, struct_parm_val "
-                                        + "FROM up_layout_param "
-                                        + "WHERE user_id=?"
-                                        + " AND layout_id = 1 and "
-                                        + "(struct_parm_nm=?"
-                                        + " OR struct_parm_nm=?"
-                                        + ") AND struct_id IN ("
-                                            + "SELECT struct_id FROM up_ss_user_atts "
-                                            + "WHERE user_id=?"
-                                            + " AND profile_id=?"
-                                            + " AND ss_type=?"
-                                            + " AND ss_id=?)";
-
-        final PreparedStatement pstmt = con.prepareStatement(originIdQuery);
-        
-        pstmt.setInt(1,userId);
-        pstmt.setString(2,Constants.ATT_ORIGIN);
-        pstmt.setString(3,Constants.LEGACY_ATT_ORIGIN);
-        // for structIdsWithCustomUserValues select
-        pstmt.setInt(4,userId);
-        pstmt.setInt(5,profileId);
-        pstmt.setInt(6,stylesheetType);
-        pstmt.setInt(7,stylesheetId);
-        Map<Integer, String> originIds = null;
-        try {
-            final ResultSet rs = pstmt.executeQuery();
-            try {
-                while (rs.next()) {
-                    if (originIds == null)
-                            originIds = new HashMap<Integer, String>();
-                    // get the LONG column first so Oracle doesn't toss a
-                    // java.sql.SQLException: Stream has already been closed
-                    String originId = rs.getString(2);
-                    int structId = rs.getInt(1);
-                    originIds.put(new Integer(structId), originId);
-                }
-            }
-            finally {
-                close(rs);
-            }
-        }
-        finally
-        {
-            close(pstmt);
-        }
-        
-        return originIds;
-    }
 
     /**
        When user preferences are stored in the database for changes made to
@@ -1729,169 +1658,6 @@ public class RDBMDistributedLayoutStore
         catch ( Exception ex )
         {
             throw new PortalException( ex );
-        }
-    }
-
-
-    private static final String INSERT__INTO__UP_SS_USER_ATTS
-    = "INSERT INTO UP_SS_USER_ATTS " +
-            "(USER_ID," +
-            "PROFILE_ID," +
-            "SS_ID," +
-            "SS_TYPE," + // 1=structure, 2=theme
-            "STRUCT_ID," +
-            "PARAM_TYPE," + // 2=folder, 3=channel, 1=sheet parm not allowed
-            "PARAM_NAME," +
-            "PARAM_VAL) " +
-            "VALUES (?,?,?,?,?,?,?,?)";
-    
-
-    /**
-     * Handles inserts into the UP_SS_USER_ATTS table.
-     * 
-     * @param pstmt
-     * @param userId
-     * @param profileId
-     * @param stylesheetId
-     * @param stylesheetType
-     *            (1=structure, 2=theme)
-     * @param nodeId
-     * @param parmType
-     *            (1=channel, 2=folder)
-     * @param parmName
-     * @param parmValue
-     * @throws SQLException
-     */
-    private static void insertIntoUpSsUserAtts(final Connection con,
-            int userId, int profileId, int stylesheetId, int stylesheetType,
-            String nodeId, int parmType, String parmName, String parmValue)
-            throws SQLException {
-        int structId = Integer.parseInt(nodeId.substring(1));
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(INSERT__INTO__UP_SS_USER_ATTS + ": with values"
-                    + " USER_ID=" + userId + ", PROFILE_ID=" + profileId
-                    + ", SS_ID=" + stylesheetId + ", SS_TYPE=" + stylesheetType
-                    + ", STRUCT_ID=" + structId + ", PARAM_TYPE=" + parmType
-                    + ", PARAM_NAME=" + parmName + ", PARAM_VAL=" + parmValue);
-        }
-        final PreparedStatement pstmt = con
-                .prepareStatement(INSERT__INTO__UP_SS_USER_ATTS);
-        try {
-            pstmt.setInt(1, userId);
-            pstmt.setInt(2, profileId);
-            pstmt.setInt(3, stylesheetId);
-            pstmt.setInt(4, stylesheetType);
-            pstmt.setInt(5, structId);
-            pstmt.setInt(6, parmType);
-            pstmt.setString(7, parmName);
-            pstmt.setString(8, parmValue);
-
-            pstmt.execute();
-        } finally {
-            close(pstmt);
-        }
-    }
-
-    /**
-     * Handles deletes from UP_SS_USER_PARM table.
-     * 
-     * @param stmt
-     * @param userId
-     * @param profileId
-     * @param stylesheetId
-     * @param stylesheetType
-     * @throws SQLException
-     */
-    private static void deleteFromUpSsUserParm(final Connection con,
-            int userId, int profileId, int stylesheetId, int stylesheetType)
-            throws SQLException {
-        /*
-         * String sQuery = "DELETE FROM UP_SS_USER_PARM " + "WHERE USER_ID=" +
-         * userId + " AND " + "PROFILE_ID=" + profileId + " AND " + "SS_ID=" +
-         * stylesheetId + " AND SS_TYPE=" + stylesheetType;
-         */
-        if (LOG.isDebugEnabled())
-            LOG.debug(DELETE_FROM_UP_USER_PARM + " VALUES = " + userId + ","
-                    + profileId + "," + stylesheetId + "," + stylesheetType);
-
-        final PreparedStatement pstmt = con
-                .prepareStatement(DELETE_FROM_UP_USER_PARM);
-        try {
-            pstmt.setInt(1, userId);
-            pstmt.setInt(2, profileId);
-            pstmt.setInt(3, stylesheetId);
-            pstmt.setInt(4, stylesheetType);
-            pstmt.executeUpdate();
-        } finally {
-            close(pstmt);
-        }
-    }
-
-    /**
-     * Handles deletes from UP_SS_USER_ATTS table.
-     * 
-     * @param stmt
-     * @param userId
-     * @param profileId
-     * @param stylesheetId
-     * @param stylesheetType
-     * @throws SQLException
-     */
-    private static void deleteFromUpSsUserAtts(final Connection con,
-            int userId, int profileId, int stylesheetId, int stylesheetType)
-            throws SQLException {
-        /*
-         * String sQuery = "DELETE FROM UP_SS_USER_ATTS " + "WHERE USER_ID=" +
-         * userId + " AND " + "PROFILE_ID=" + profileId + " AND " + "SS_ID=" +
-         * stylesheetId + " AND SS_TYPE=" + stylesheetType;
-         */
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(DELETE_FROM_UP_SS_USER_ATTS_SQL + " VALUES = " + userId
-                    + "," + profileId + "," + stylesheetId + ","
-                    + stylesheetType);
-        }
-        final PreparedStatement pstmt = con
-                .prepareStatement(DELETE_FROM_UP_SS_USER_ATTS_SQL);
-        try {
-            pstmt.setInt(1, userId);
-            pstmt.setInt(2, profileId);
-            pstmt.setInt(3, stylesheetId);
-            pstmt.setInt(4, stylesheetType);
-            pstmt.executeUpdate();
-        } finally {
-            close(pstmt);
-        }
-    }
-    
-    private static void close(ResultSet rs) {
-        try {
-            rs.close();
-        } catch (SQLException e) {
-            LOG.warn("failed to close resultset", e);
-        }
-    }
-
-    private static void close(Statement statement) {
-        try {
-            statement.close();
-        } catch (SQLException e) {
-            LOG.warn("failed to close statement", e);
-        }
-    }
-
-    private static void rollback(Connection con) {
-        LOG.warn("problem encountered, attempting to roll back");
-        boolean goodRollBack = true;
-        try {
-            con.rollback();
-        } catch (SQLException e) {
-            goodRollBack = false;
-        }
-        if (goodRollBack) {
-            LOG.info("rollback successful");
-        } else {
-            LOG.warn("rollback failed!");
         }
     }
     

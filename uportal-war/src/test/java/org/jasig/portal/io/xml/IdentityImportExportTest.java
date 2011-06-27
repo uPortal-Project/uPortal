@@ -19,13 +19,11 @@
 
 package org.jasig.portal.io.xml;
 
-import static org.mockito.Matchers.anyString;
-
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.when;
-
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -82,18 +80,31 @@ public class IdentityImportExportTest {
     private IDataExporter<UserType> userExporter;
     
     @Autowired private ICounterStore counterStore;
+    private SimpleJdbcTemplate simpleJdbcTemplate;
     private int counter = 0;
     private TimeZone defaultTimeZone;
+    
+    protected void runSql(final String sql) {
+        if (simpleJdbcTemplate == null) {
+            simpleJdbcTemplate = new SimpleJdbcTemplate(dataSource);
+        }
+        SimpleJdbcTestUtils.executeSqlScript(simpleJdbcTemplate, new ByteArrayResource(sql.getBytes()), false);
+    }
     
     @After
     public void cleanup() {
         if (defaultTimeZone != null) {
             TimeZone.setDefault(defaultTimeZone);
         }
+        
+        runSql("DROP TABLE UP_USER"); 
+        runSql("DROP TABLE UP_LAYOUT_STRUCT");
     }
-    
+
     @Before
     public void setup() {
+        simpleJdbcTemplate = null;
+        
         defaultTimeZone = TimeZone.getDefault();
         TimeZone.setDefault(TimeZone.getTimeZone("EST"));
         
@@ -106,50 +117,34 @@ public class IdentityImportExportTest {
             }
         });
         
-        final SimpleJdbcTemplate simpleJdbcTemplate = new SimpleJdbcTemplate(dataSource);
-        
-        final StringBuilder dbSetupScript = new StringBuilder();
-
         //Needed for user import/export test
-        dbSetupScript.append(
-                "CREATE TABLE UP_USER\n" + 
-        		"(\n" + 
-        		"   USER_ID integer PRIMARY KEY,\n" + 
-        		"   USER_NAME varchar,\n" + 
-        		"   USER_DFLT_USR_ID integer,\n" + 
-        		"   USER_DFLT_LAY_ID integer,\n" + 
-        		"   NEXT_STRUCT_ID integer,\n" + 
-        		"   LST_CHAN_UPDT_DT timestamp,\n" +  
-        		"   CONSTRAINT SYS_IDX_01 PRIMARY KEY (USER_ID)\n" + 
-        		");\n");
-        dbSetupScript.append("CREATE INDEX UPU_DFLT_ID_IDX ON UP_USER(USER_DFLT_USR_ID);\n"); 
-        dbSetupScript.append("CREATE UNIQUE INDEX SYS_IDX_02 ON UP_USER(USER_ID);\n");
-        dbSetupScript.append(
-                "CREATE TABLE UP_LAYOUT_STRUCT\n" + 
+        runSql("CREATE TABLE UP_USER\n" + 
+                        "(\n" + 
+                        "   USER_ID integer,\n" + 
+                        "   USER_NAME varchar(1000),\n" + 
+                        "   USER_DFLT_USR_ID integer,\n" + 
+                        "   USER_DFLT_LAY_ID integer,\n" + 
+                        "   NEXT_STRUCT_ID integer,\n" + 
+                        "   LST_CHAN_UPDT_DT timestamp,\n" +  
+                        "   CONSTRAINT SYS_IDX_01 PRIMARY KEY (USER_ID)\n" + 
+                        ");");
+        runSql("CREATE INDEX UPU_DFLT_ID_IDX ON UP_USER(USER_DFLT_USR_ID);");
+        runSql("CREATE TABLE UP_LAYOUT_STRUCT\n" + 
         		"(\n" + 
         		"   USER_ID integer NOT NULL,\n" + 
         		"   LAYOUT_ID integer NOT NULL,\n" + 
         		"   STRUCT_ID integer NOT NULL,\n" + 
         		"   NEXT_STRUCT_ID integer,\n" + 
         		"   CHLD_STRUCT_ID integer,\n" + 
-        		"   EXTERNAL_ID varchar,\n" + 
+        		"   EXTERNAL_ID varchar(1000),\n" + 
         		"   CHAN_ID integer,\n" + 
-        		"   NAME varchar,\n" + 
-        		"   TYPE varchar,\n" + 
-        		"   HIDDEN varchar,\n" + 
-        		"   IMMUTABLE varchar,\n" + 
-        		"   UNREMOVABLE varchar,\n" + 
+        		"   NAME varchar(1000),\n" + 
+        		"   TYPE varchar(1000),\n" + 
+        		"   HIDDEN varchar(1000),\n" + 
+        		"   IMMUTABLE varchar(1000),\n" + 
+        		"   UNREMOVABLE varchar(1000),\n" + 
         		"   CONSTRAINT SYS_IDX_03 PRIMARY KEY (LAYOUT_ID,USER_ID,STRUCT_ID)\n" + 
-        		");\n");
-        dbSetupScript.append(
-                "CREATE UNIQUE INDEX SYS_IDX_04 ON UP_LAYOUT_STRUCT\n" + 
-        		"(\n" + 
-        		"  LAYOUT_ID,\n" + 
-        		"  USER_ID,\n" + 
-        		"  STRUCT_ID\n" + 
-        		");\n");
-        
-        SimpleJdbcTestUtils.executeSqlScript(simpleJdbcTemplate, new ByteArrayResource(dbSetupScript.toString().getBytes()), true);
+        		");");
     }
 
     

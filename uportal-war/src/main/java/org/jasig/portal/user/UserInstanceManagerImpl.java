@@ -20,6 +20,7 @@
 package org.jasig.portal.user;
 
 import java.io.Serializable;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -31,6 +32,7 @@ import org.jasig.portal.IUserProfile;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserInstance;
 import org.jasig.portal.UserPreferencesManager;
+import org.jasig.portal.i18n.ILocaleStore;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.IProfileMapper;
 import org.jasig.portal.layout.IUserLayoutManager;
@@ -55,11 +57,17 @@ public class UserInstanceManagerImpl implements IUserInstanceManager {
     
     protected final Log logger = LogFactory.getLog(UserInstanceManagerImpl.class);
     
+    private ILocaleStore localeStore;
     private IUserLayoutStore userLayoutStore;
     private IPersonManager personManager;
     private IPortalRequestUtils portalRequestUtils;
     private IProfileMapper profileMapper;
     
+    @Autowired
+    public void setLocaleStore(ILocaleStore localeStore) {
+        this.localeStore = localeStore;
+    }
+
     @Autowired
     public void setUserLayoutStore(IUserLayoutStore userLayoutStore) {
         this.userLayoutStore = userLayoutStore;
@@ -173,7 +181,8 @@ public class UserInstanceManagerImpl implements IUserInstanceManager {
     
     protected LocaleManager getLocaleManager(HttpServletRequest request, IPerson person) {
         final String acceptLanguage = request.getHeader("Accept-Language");
-        return new LocaleManager(person, acceptLanguage);
+        final Locale[] userLocales = localeStore.getUserLocales(person);
+        return new LocaleManager(person, userLocales, acceptLanguage);
     }
 
     protected String getUserAgent(HttpServletRequest request) {

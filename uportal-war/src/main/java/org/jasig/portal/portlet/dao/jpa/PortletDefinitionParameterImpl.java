@@ -64,13 +64,13 @@ public class PortletDefinitionParameterImpl implements IPortletDefinitionParamet
     @Column(name="PARAM_ID")
     private final long id;
     
-    @Column(name = "NAME", length = 255, nullable = false)
+    @Column(name = "PARAM_NAME", length = 255, nullable = false)
     private final String name;
     
-	@Column(name = "VAL", length = 2000)
+	@Column(name = "PARAM_VAL", length = 2000)
 	private String value;
 
-	@Column(name = "DESC", length = 255)
+	@Column(name = "PARAM_DESC", length = 255)
 	private String descr;
 	
 	

@@ -106,8 +106,7 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     @Type(type="nullSafeString") //only applies to map values
     @CollectionTable(
             name="UP_SS_USER_PREF_OUTPUT_PROP", 
-            joinColumns = @JoinColumn(name = "SS_USER_PREF_ID", nullable = false), 
-            uniqueConstraints = @UniqueConstraint(columnNames = { "SS_USER_PREF_ID", "NAME" }))
+            joinColumns = @JoinColumn(name = "SS_USER_PREF_ID", nullable = false))
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
     private final Map<String, String> outputProperties = new LinkedHashMap<String, String>(0);
@@ -118,8 +117,7 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     @Type(type="nullSafeString") //only applies to map values
     @CollectionTable(
             name="UP_SS_USER_PREF_PARAM", 
-            joinColumns = @JoinColumn(name = "SS_USER_PREF_ID", nullable = false), 
-            uniqueConstraints = @UniqueConstraint(columnNames = { "SS_USER_PREF_ID", "NAME" }))
+            joinColumns = @JoinColumn(name = "SS_USER_PREF_ID", nullable = false))
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
     private final Map<String, String> parameters = new LinkedHashMap<String, String>(0);

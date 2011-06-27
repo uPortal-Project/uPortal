@@ -64,29 +64,20 @@ public class ImportExportPortletController {
     protected final Log log = LogFactory.getLog(getClass());
 
     private List<String> importExportTypes;
-    
-    @Required
-    @Resource(name="importExportTypes")
-    public void setImportExportTypes(List<String> importExportTypes) {
-    	this.importExportTypes = importExportTypes;
-    }
-    
     private IPersonManager personManager;
+    private IPortalRequestUtils portalRequestUtils;
+    private IDataImportExportService importExportService;
     
-    @Autowired(required = true)
+    @Autowired
     public void setPersonManager(IPersonManager personManager) {
     	this.personManager = personManager;
     }
-
-    private IPortalRequestUtils portalRequestUtils;
     
-    @Autowired(required = true)
+    @Autowired
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
-        Validate.notNull(portalRequestUtils);
         this.portalRequestUtils = portalRequestUtils;
     }
 
-    private IDataImportExportService importExportService;
     @Autowired
     public void setImportExportService(IDataImportExportService importExportService) {
 		this.importExportService = importExportService;

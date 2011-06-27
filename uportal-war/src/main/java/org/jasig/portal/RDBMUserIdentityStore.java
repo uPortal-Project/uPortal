@@ -26,8 +26,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 
 import javax.sql.DataSource;
 
@@ -36,16 +36,32 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.ILockableEntityGroup;
+import org.jasig.portal.layout.dao.IStylesheetUserPreferencesDao;
+import org.jasig.portal.portlet.dao.IPortletEntityDao;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.services.SequenceGenerator;
+import org.jasig.portal.utils.ConcurrentMapUtils;
 import org.jasig.portal.utils.CounterStoreFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.jdbc.core.ConnectionCallback;
+import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionOperations;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import com.google.common.collect.MapMaker;
 
 /**
  * SQL implementation for managing creation and removal of User Portal Data
@@ -62,30 +78,35 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
   // Constants
     private static final String defaultTemplateUserName = PropertiesManager.getProperty("org.jasig.portal.services.Authentication.defaultTemplateUserName");
     private static final String templateAttrName = "uPortalTemplateUserName";
-    private static final int guestUID = 1;
     static int DEBUG = 0;
-    private static final ConcurrentMap<String, Object> userLocks = new ConcurrentHashMap<String, Object>();
+    private static final ConcurrentMap<String, Object> userLocks = new MapMaker()
+        .expireAfterAccess(1, TimeUnit.MINUTES)
+        .makeMap();
     
     private static Object getLock(IPerson person) {
         final String username = (String)person.getAttribute(IPerson.USERNAME);
         
-        Object newLock = new Object();
-        Object lock = userLocks.putIfAbsent(username, newLock);
-        
-        if (lock == null) {
-            return newLock;
+        final Object lock = userLocks.get(username);
+        if (lock != null) {
+            return lock;
         }
         
-        return lock;
+        return ConcurrentMapUtils.putIfAbsent(userLocks, username, new Object());
     }
     
-    private static void removeLock(IPerson person) {
-        String username = (String)person.getAttribute(IPerson.USERNAME);
-        userLocks.remove(username);
+    private JdbcOperations jdbcOperations;
+    private TransactionOperations transactionOperations;
+    
+    @Autowired
+    public void setPlatformTransactionManager(@Qualifier("PortalDb") PlatformTransactionManager platformTransactionManager) {
+        this.transactionOperations = new TransactionTemplate(platformTransactionManager);
     }
 
-
-
+    @javax.annotation.Resource(name="PortalDb")
+    public void setDataSource(DataSource dataSource) {
+        this.jdbcOperations = new JdbcTemplate(dataSource);
+    }
+    
  /**
    * getuPortalUID -  return a unique uPortal key for a user.
    *    calls alternate signature with createPortalData set to false.
@@ -105,16 +126,23 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
    * @param   uPortalUID integer key to uPortal data for a user
    * @throws SQLException exception if a sql error is encountered
    */
-  public void removePortalUID(int uPortalUID) throws Exception {
-    Connection con = RDBMServices.getConnection();
-    java.sql.PreparedStatement ps = null;
-    Statement stmt = null;
-    ResultSet rs = null;
+  public void removePortalUID(final int uPortalUID) throws Exception {
+      
+      this.transactionOperations.execute(new TransactionCallback<Object>() {
+          @Override
+          public Object doInTransaction(TransactionStatus status) {
+              return jdbcOperations.execute(new ConnectionCallback<Object>() {
+                  @Override
+                  public Object doInConnection(Connection con) throws SQLException, DataAccessException {
+    
+      java.sql.PreparedStatement ps = null;
+      Statement stmt = null;
+      ResultSet rs = null;
+      
+      // TODO get these working
+//      portletEntityDao.deletePortletEntitiesForUser(uPortalUID);
+//      stylesheetUserPreferencesDao.deleteStylesheetUserPreferencesForUser(uPortalUID)
 
-    try {
-      stmt = con.createStatement();
-      if (RDBMServices.getDbMetaData().supportsTransactions())
-        con.setAutoCommit(false);
 
       // START of Addition after bug declaration (bug id 1516)
       // Permissions delete
@@ -231,40 +259,11 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       stmt.executeUpdate(SQLDelete);
       // END of Addition after bug declaration (bug id 1516)
 
-      if (RDBMServices.getDbMetaData().supportsTransactions())
-        con.commit();
-
-//      try {
-//          IPortletPreferencesStore portletPrefStore = PortletPreferencesStoreFactory.getPortletPreferencesStoreImpl();
-//          portletPrefStore.deletePortletPreferencesByUser(uPortalUID);
-//      }
-//      catch (Exception e) { }
-
-    }
-    catch (SQLException se) {
-      try {
-      	log.error( "RDBMUserIdentityStore::removePortalUID(): " + se);
-        if (RDBMServices.getDbMetaData().supportsTransactions())
-          con.rollback();
-      }
-      catch (SQLException e) {
-      	log.error( "RDBMUserIdentityStore::removePortalUID(): " + e);
-      }
-        if (DEBUG>0) {
-         System.err.println("SQLException: " + se.getMessage());
-         System.err.println("SQLState:  " + se.getSQLState());
-         System.err.println("Message:  " + se.getMessage());
-         System.err.println("Vendor:  " + se.getErrorCode());
-        }
-
-        throw se;
-      }
-    finally {
-      RDBMServices.closeResultSet(rs);
-      RDBMServices.closeStatement(stmt);
-      RDBMServices.closeStatement(ps);
-      RDBMServices.releaseConnection(con);
-    }
+      return null;
+                  }
+              });
+          }
+      });
     }
 
    /**
@@ -296,7 +295,6 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
            synchronized (lock) {
                uid = __getPortalUID(person, createPortalData);
            }
-           removeLock(person);
        }
        return uid;
    }
@@ -367,13 +365,15 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                throw new AuthorizationException("No portal information exists for user " + userName);
            }
 
-       } catch (Exception e) {
-           if (e instanceof AuthorizationException) {
-               throw (AuthorizationException)e;
-           }
-
-           log.error(e.getMessage(), e);
-           throw new AuthorizationException(e);
+       }
+       catch (AuthorizationException e) {
+           throw e;
+       }
+       catch (RuntimeException e) {
+           throw e;
+       }
+       catch (Exception e) {
+           throw new RuntimeException(e);
        }
 
        return portalUser.getUserId();
@@ -408,12 +408,12 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
    * @return A PortalUser object or null if the user doesn't exist.
    * @throws Exception
    */
-  protected PortalUser getPortalUser(String userName) throws Exception {
-      PortalUser portalUser = null;
+  protected PortalUser getPortalUser(final String userName) throws Exception {
+      return jdbcOperations.execute(new ConnectionCallback<PortalUser>() {
+          @Override
+          public PortalUser doInConnection(Connection con) throws SQLException, DataAccessException {
 
-      Connection con = null;
-      try {
-          con = RDBMServices.getConnection();
+          PortalUser portalUser = null;
           PreparedStatement pstmt = null;
 
           try {
@@ -439,11 +439,10 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           } finally {
               try { pstmt.close(); } catch (Exception e) {}
           }
-      } finally {
-          try { RDBMServices.releaseConnection(con); } catch (Exception e) {}
-      }
-
-      return portalUser;
+          
+          return portalUser;
+          }
+      });
   }
 
   protected String getTemplateName(IPerson person) {
@@ -462,12 +461,12 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
    * @return A TemplateUser object or null if the user doesn't exist.
    * @throws Exception
    */
-  protected TemplateUser getTemplateUser(String templateUserName) throws Exception {
-      TemplateUser templateUser = null;
+  protected TemplateUser getTemplateUser(final String templateUserName) throws Exception {
+      return jdbcOperations.execute(new ConnectionCallback<TemplateUser>() {
+          @Override
+          public TemplateUser doInConnection(Connection con) throws SQLException, DataAccessException {
 
-      Connection con = null;
-      try {
-          con = RDBMServices.getConnection();
+          TemplateUser templateUser = null;
           PreparedStatement pstmt = null;
           try {
               String query = "SELECT USER_ID, USER_DFLT_LAY_ID FROM UP_USER WHERE USER_NAME=?";
@@ -487,7 +486,12 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                       templateUser.setDefaultLayoutId(rs.getInt("USER_DFLT_LAY_ID"));
                   } else {
                       if (!templateUserName.equals(defaultTemplateUserName)) {
-                          templateUser = getTemplateUser(defaultTemplateUserName);
+                          try {
+                            templateUser = getTemplateUser(defaultTemplateUserName);
+                        }
+                        catch (Exception e) {
+                            throw new SQLException(e);
+                        }
                       }
                   }
               } finally {
@@ -496,18 +500,17 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           } finally {
               try { pstmt.close(); } catch (Exception e) {}
           }
-      } finally {
-          try { RDBMServices.releaseConnection(con); } catch (Exception e) {}
-      }
-
-      return templateUser;
+          return templateUser;
+          }
+      });
   }
 
-  protected boolean userHasSavedLayout(int userId) throws Exception {
-      boolean userHasSavedLayout = false;
-      Connection con = null;
-      try {
-          con = RDBMServices.getConnection();
+  protected boolean userHasSavedLayout(final int userId) throws Exception {
+      return jdbcOperations.execute(new ConnectionCallback<Boolean>() {
+          @Override
+          public Boolean doInConnection(Connection con) throws SQLException, DataAccessException {
+
+          boolean userHasSavedLayout = false;
           PreparedStatement pstmt = null;
           try {
               String query = "SELECT * FROM UP_USER_PROFILE WHERE USER_ID=? AND LAYOUT_ID IS NOT NULL AND LAYOUT_ID!=0";
@@ -529,11 +532,10 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           } finally {
               try { pstmt.close(); } catch (Exception e) {}
           }
-      } finally {
-          try { RDBMServices.releaseConnection(con); } catch (Exception e) {}
-      }
-
-      return userHasSavedLayout;
+          return userHasSavedLayout;
+          
+          }
+      });
   }
   
   private ILockableEntityGroup getSafeLockableGroup(IEntityGroup eg, IGroupMember gm) {
@@ -598,7 +600,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       }
   }
 
-  protected void updateUser(int userId, IPerson person, TemplateUser templateUser) throws Exception {
+  protected void updateUser(final int userId, final IPerson person, final TemplateUser templateUser) throws Exception {
       // Remove my existing group memberships
       IGroupMember me = GroupService.getGroupMember(person.getEntityIdentifier());
       Iterator myExistingGroups = me.getContainingGroups();
@@ -621,12 +623,12 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           }
       }
 
-      Connection con = null;
-      try {
-          con = RDBMServices.getConnection();
-          // Turn off autocommit if the database supports it
-          if (RDBMServices.getDbMetaData().supportsTransactions())
-              con.setAutoCommit(false);
+      this.transactionOperations.execute(new TransactionCallback<Object>() {
+          @Override
+          public Object doInTransaction(TransactionStatus status) {
+              return jdbcOperations.execute(new ConnectionCallback<Object>() {
+                  @Override
+                  public Object doInConnection(Connection con) throws SQLException, DataAccessException {
 
           PreparedStatement deleteStmt = null;
           PreparedStatement queryStmt = null;
@@ -764,20 +766,15 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
               try { queryStmt.close(); } catch (Exception e) {}
               try { insertStmt.close(); } catch (Exception e) {}
           }
-      }
-      catch (SQLException sqle) {
-          if (RDBMServices.getDbMetaData().supportsTransactions())
-              con.rollback();
-          throw new AuthorizationException("SQL database error while retrieving user's portal UID", sqle);
-      }
-      finally {
-          try { RDBMServices.releaseConnection(con); } catch (Exception e) {}
-      }
-
-      return;
+          
+          return null;
+                  }
+              });
+          }
+      });
   }
 
-  protected int addNewUser(int newUID, IPerson person, TemplateUser templateUser) throws Exception {
+  protected int addNewUser(final int newUID, final IPerson person, final TemplateUser templateUser) throws Exception {
       // Copy template user's groups memberships
       IGroupMember me = GroupService.getGroupMember(person.getEntityIdentifier());
       IGroupMember template = GroupService.getEntity(templateUser.getUserName(), Class.forName("org.jasig.portal.security.IPerson"));
@@ -790,14 +787,14 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           }
       }
 
-      int uPortalUID = -1;
-      Connection con = null;
-      try {
-          con = RDBMServices.getConnection();
-          // Turn off autocommit if the database supports it
-          if (RDBMServices.getDbMetaData().supportsTransactions())
-              con.setAutoCommit(false);
+      return this.transactionOperations.execute(new TransactionCallback<Integer>() {
+          @Override
+          public Integer doInTransaction(TransactionStatus status) {
+              return jdbcOperations.execute(new ConnectionCallback<Integer>() {
+                  @Override
+                  public Integer doInConnection(Connection con) throws SQLException, DataAccessException {
 
+          int uPortalUID = -1;
           PreparedStatement queryStmt = null;
           PreparedStatement insertStmt = null;
           try {
@@ -920,18 +917,16 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
               try { if (queryStmt != null) queryStmt.close(); } catch (Exception e) {}
               try { if (insertStmt != null) insertStmt.close(); } catch (Exception e) {}
           }
-      } catch (SQLException sqle) {
-          if (RDBMServices.getDbMetaData().supportsTransactions())
-              con.rollback();
-          throw new AuthorizationException("SQL database error while retrieving user's portal UID", sqle);
-      } finally {
-          try { RDBMServices.releaseConnection(con); } catch (Exception e) {}
-      }
 
-      return uPortalUID;
+          return uPortalUID;
+
+                  }
+              });
+          }
+      });
   }
 
-  private int getNextKey() throws java.lang.Exception
+  private int getNextKey()
   {
       return SequenceGenerator.instance().getNextInt(PROFILE_TABLE);
   }

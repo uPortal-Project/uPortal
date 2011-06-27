@@ -23,13 +23,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.Cacheable;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import org.apache.commons.logging.Log;
@@ -39,7 +34,7 @@ import org.dom4j.Namespace;
 import org.dom4j.QName;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.IndexColumn;
+import org.jasig.portal.layout.dlm.providers.EvaluatorGroup;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.w3c.dom.Element;
@@ -54,7 +49,7 @@ import org.w3c.dom.NodeList;
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class FragmentDefinition extends Evaluator
+public class FragmentDefinition extends EvaluatorGroup
 {
     
     public static final String NAMESPACE_URI = "http://org.jasig.portal.layout.dlm.config";
@@ -80,12 +75,6 @@ public class FragmentDefinition extends Evaluator
 
     @Column(name = "DESCRIPTION")
     private String description;
-
-    @OneToMany(targetEntity = Evaluator.class, cascade=CascadeType.ALL, fetch=FetchType.EAGER, orphanRemoval=true)
-    @IndexColumn(name = "EVAL_INDEX")
-    @JoinTable(name = "UP_DLM_EVALUATOR_PAREN", joinColumns = @JoinColumn(name = "PAREN_EVAL_ID"), inverseJoinColumns = @JoinColumn(name = "CHILD_EVAL_ID"))
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private List<Evaluator> evaluators = null;
 
     /* These variables are bound to a uP userId later in the life cycle, not managed by hibernate */
     @Transient

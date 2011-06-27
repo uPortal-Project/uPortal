@@ -27,66 +27,108 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.annotation.Resource;
+import javax.sql.DataSource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.RDBMServices;
 import org.jasig.portal.security.IPerson;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.ConnectionCallback;
+import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionOperations;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * Database implementation of locale storage interface.
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
+@Repository("localeStore")
 public class RDBMLocaleStore implements ILocaleStore {
 
-    private static final Log log = LogFactory.getLog(RDBMLocaleStore.class);
+    protected final Log logger = LogFactory.getLog(this.getClass());
+    
+    protected TransactionOperations transactionOperations;
+    protected JdbcOperations jdbcOperations;
 
-    public Locale[] getUserLocales(IPerson person) throws Exception {
-        List localeList = new ArrayList();
-        Connection con = RDBMServices.getConnection();
-        try {
-            String query = "SELECT * FROM UP_USER_LOCALE WHERE USER_ID=? ORDER BY PRIORITY";
-            PreparedStatement pstmt = con.prepareStatement(query);
+
+    @Autowired
+    public void setPlatformTransactionManager(@Qualifier("PortalDb") PlatformTransactionManager platformTransactionManager) {
+        this.transactionOperations = new TransactionTemplate(platformTransactionManager);
+    }
+
+    @Resource(name="PortalDb")
+    public void setDataSource(DataSource dataSource) {
+        this.jdbcOperations = new JdbcTemplate(dataSource);
+    }
+    
+    @Override
+    public Locale[] getUserLocales(final IPerson person) {
+        return jdbcOperations.execute(new ConnectionCallback<Locale[]>() {
+            @Override
+            public Locale[] doInConnection(Connection con) throws SQLException, DataAccessException {
+                
+            final List<Locale> localeList = new ArrayList<Locale>();
+            final String query = "SELECT * FROM UP_USER_LOCALE WHERE USER_ID=? ORDER BY PRIORITY";
+            final PreparedStatement pstmt = con.prepareStatement(query);
             try {
                 pstmt.clearParameters();
                 pstmt.setInt(1, person.getID());
-                log.debug(query);
-                ResultSet rs = pstmt.executeQuery();
+                logger.debug(query);
+                final ResultSet rs = pstmt.executeQuery();
                 try {
                     while (rs.next()) {
-                       String localeString = rs.getString("LOCALE");
-                       Locale locale = LocaleManager.parseLocale(localeString);
-                       localeList.add(locale);
+                        final String localeString = rs.getString("LOCALE");
+                        final Locale locale = LocaleManager.parseLocale(localeString);
+                        localeList.add(locale);
                     }
-                } finally {
+                }
+                finally {
                     rs.close();
                 }
-            } finally {
+            }
+            finally {
                 pstmt.close();
             }
-        } finally {
-            RDBMServices.releaseConnection(con);
-        }
-        return (Locale[])localeList.toArray(new Locale[0]);
+            
+            return localeList.toArray(new Locale[localeList.size()]);
+
+            }
+        });
     }
 
-    public void updateUserLocales(IPerson person, Locale[] locales) throws SQLException {
-        Connection con = RDBMServices.getConnection();
-        try {
+    @Override
+    public void updateUserLocales(final IPerson person, final Locale[] locales) {
+        this.transactionOperations.execute(new TransactionCallback<Object>() {
+            @Override
+            public Object doInTransaction(TransactionStatus status) {
+                return jdbcOperations.execute(new ConnectionCallback<Object>() {
+                    @Override
+                    public Object doInConnection(Connection con) throws SQLException, DataAccessException {
+
             // Delete the existing list of locales
-            String delete = "DELETE FROM UP_USER_LOCALE WHERE USER_ID=?";
+            final String delete = "DELETE FROM UP_USER_LOCALE WHERE USER_ID=?";
             PreparedStatement pstmt = con.prepareStatement(delete);
             try {
                 pstmt.clearParameters();
                 pstmt.setInt(1, person.getID());
-                log.debug(delete);
+                logger.debug(delete);
                 pstmt.executeUpdate();
 
-            } finally {
+            }
+            finally {
                 pstmt.close();
             }
             // Insert the new list of locales
-            String insert = "INSERT INTO UP_USER_LOCALE VALUES (?, ?, ?)";
+            final String insert = "INSERT INTO UP_USER_LOCALE VALUES (?, ?, ?)";
             pstmt = con.prepareStatement(insert);
             try {
                 for (int i = 0; i < locales.length; i++) {
@@ -94,15 +136,19 @@ public class RDBMLocaleStore implements ILocaleStore {
                     pstmt.setInt(1, person.getID());
                     pstmt.setString(2, locales[i].toString());
                     pstmt.setInt(3, i);
-                    log.debug(insert);
+                    logger.debug(insert);
                     pstmt.executeUpdate();
                 }
 
-            } finally {
+            }
+            finally {
                 pstmt.close();
             }
-        } finally {
-            RDBMServices.releaseConnection(con);
-        }
+            
+            return null;
+                    }
+                });
+            }
+        });
     }
 }

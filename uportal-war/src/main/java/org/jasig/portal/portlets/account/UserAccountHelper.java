@@ -36,13 +36,12 @@ import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 
-import org.antlr.stringtemplate.StringTemplate;
-import org.antlr.stringtemplate.StringTemplateGroup;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.i18n.ILocaleStore;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.persondir.ILocalAccountDao;
 import org.jasig.portal.persondir.ILocalAccountPerson;
@@ -63,71 +62,73 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
 
 @Component("userAccountHelper")
 public class UserAccountHelper {
 
     protected final Log log = LogFactory.getLog(getClass());
     
+    private String passwordResetTemplate  = "properties/templates/passwordReset";
+    private STGroup stringTemplateGroup = new STGroup('$', '$');
+    private ILocaleStore localeStore;
     private ILocalAccountDao accountDao;
+    private IPortalPasswordService passwordService;
+    private List<Preference> accountEditAttributes;
+    private JavaMailSenderImpl mailSender;
+    private IPortalUrlProvider urlProvider;
+    private MessageSource messageSource;
+    private String portalEmailAddress;
+    private IPersonManager personManager;
+    
+    @Autowired
+    public void setLocaleStore(ILocaleStore localeStore) {
+        this.localeStore = localeStore;
+    }
 
-    @Autowired(required = true)
+    @Autowired
     public void setLocalAccountDao(ILocalAccountDao accountDao) {
         this.accountDao = accountDao;
     }
     
-    private IPortalPasswordService passwordService;
-    
-    @Autowired(required = true)
+    @Autowired
     public void setPortalPasswordService(IPortalPasswordService passwordService) {
         this.passwordService = passwordService;
     }
-    
-    private List<Preference> accountEditAttributes;
     
     @Resource(name="accountEditAttributes")
     public void setAccountEditAttributes(List<Preference> accountEditAttributes) {
         this.accountEditAttributes = accountEditAttributes;
     }
     
-    private JavaMailSenderImpl mailSender;
-    
-    @Autowired(required = true)
+    @Autowired
     public void setMailSender(JavaMailSenderImpl mailSender) {
         this.mailSender = mailSender;
     }
 
-    private IPortalUrlProvider urlProvider;
-    
-    @Autowired(required = true)
+    @Autowired
     public void setPortalUrlProvider(IPortalUrlProvider urlProvider) {
         this.urlProvider = urlProvider;
     }
-
-    private MessageSource messageSource;
 
     @Autowired
     public void setMessageSource(MessageSource messageSource) {
         this.messageSource = messageSource;
     }
 
-    private String portalEmailAddress;
     
     @Resource(name="portalEmailAddress")
     public void setPortalEmailAddress(String portalEmailAddress) {
         this.portalEmailAddress = portalEmailAddress;
     }
     
-    @Autowired
-    private IPersonManager personManager;
     
+    @Autowired
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
     }
 
-    private String passwordResetTemplate  = "properties/templates/passwordReset";
-    
-    private StringTemplateGroup stringTemplateGroup = new StringTemplateGroup("email");
     
     public PersonForm getNewAccountForm() {
         
@@ -304,7 +305,8 @@ public class UserAccountHelper {
     public void sendLoginToken(HttpServletRequest request, ILocalAccountPerson account) {
         
         IPerson person = personManager.getPerson(request);
-        LocaleManager localeManager = new LocaleManager(person);
+        final Locale[] userLocales = localeStore.getUserLocales(person);
+        LocaleManager localeManager = new LocaleManager(person, userLocales);
         Locale locale = localeManager.getLocales()[0];
         
         IPortalUrlBuilder builder = urlProvider.getPortalUrlBuilderByPortletFName(request, "reset-password", UrlType.RENDER);
@@ -327,10 +329,10 @@ public class UserAccountHelper {
 
         String emailAddress = (String) account.getAttributeValue("mail");
         
-        StringTemplate template = stringTemplateGroup
+        final ST template = stringTemplateGroup
             .getInstanceOf(passwordResetTemplate);
-        template.setAttribute("displayName", account.getAttributeValue("given") + " " + account.getAttributeValue("sn"));
-        template.setAttribute("url", url.toString());
+        template.add("displayName", account.getAttributeValue("given") + " " + account.getAttributeValue("sn"));
+        template.add("url", url.toString());
 
         MimeMessage message = mailSender.createMimeMessage();
 

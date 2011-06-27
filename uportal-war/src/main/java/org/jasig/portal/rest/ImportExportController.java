@@ -55,10 +55,9 @@ import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.services.AuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
-import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -80,59 +79,43 @@ public class ImportExportController {
     final Log log = LogFactory.getLog(getClass());
     
     private DataSource portalDb;
+    private ApplicationContext applicationContext;
+    private PlatformTransactionManager transactionManager;
+    private Map<String,String> attributeNames;
+    private Map<String, Task> exportTasks;
+    private Map<String, Task> deleteTasks;
+    private IPersonManager personManager;
+    private IDataImportExportService importExportService;
     
-    @Required
     @Resource(name="PortalDb")
     public void setPortalDb(DataSource portalDb) {
         this.portalDb = portalDb;
     }
     
-    private ApplicationContext applicationContext;
     
     @Autowired
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
     
-    private JpaTransactionManager transactionManager;
     
     @Autowired
-    public void setTransactionManager(@Qualifier("PortalDb") JpaTransactionManager transactionManager) {
+    public void setTransactionManager(@Qualifier("PortalDb") PlatformTransactionManager transactionManager) {
         this.transactionManager = transactionManager;
     }
     
-    private Map<String,String> attributeNames;
     
-    @Required
     @Resource(name="identifierAttributeNames")
     public void setIdentifierAttributeNames(Map<String,String> attributeNames) {
     	this.attributeNames = attributeNames;
     }
     
-    private Map<String, Task> exportTasks;
-    
-    @Required
-    @Resource(name="exportTasks")
-    public void setExportTasks(Map<String, Task> exportTasks) {
-        this.exportTasks = exportTasks;
-    }
-    
-    private Map<String, Task> deleteTasks;
-    
-    @Required
-    @Resource(name="deleteTasks")
-    public void setDeleteTasks(Map<String, Task> deleteTasks) {
-    	this.deleteTasks = deleteTasks;
-    }
-    
-    private IPersonManager personManager;
     
     @Autowired
     public void setPersonManager(IPersonManager personManager) {
     	this.personManager = personManager;
     }
     
-    private IDataImportExportService importExportService;
     
     @Autowired
     public void setImportExportService(IDataImportExportService importExportService) {

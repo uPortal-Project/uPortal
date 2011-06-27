@@ -29,17 +29,16 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -119,8 +118,8 @@ public class JaxbDataImportExportService implements IDataImportExportService, Re
     private XmlUtilities xmlUtilities;
     private ResourceLoader resourceLoader;
     
-    private long maxWait = -1;
-    private TimeUnit maxWaitTimeUnit = TimeUnit.MILLISECONDS;
+    private long maxWait = 1000;
+    private TimeUnit maxWaitTimeUnit = TimeUnit.MINUTES;
 
     @Autowired
     public void setXmlUtilities(XmlUtilities xmlUtilities) {
@@ -310,9 +309,11 @@ public class JaxbDataImportExportService implements IDataImportExportService, Re
         final ConcurrentMap<PortalDataKey, Queue<Resource>> dataToImport = new ConcurrentHashMap<PortalDataKey, Queue<Resource>>();
         
         //Scan the specified directory for files to import
-        logger.info("Scanning for files to Import");
+        logger.info("Scanning for files to Import from: {}", directory);
         this.directoryScanner.scanDirectoryNoResults(directory, fileFilter, 
                 new PortalDataKeyFileProcessor(this.dataKeyTypes, dataToImport, options));
+        
+        final List<Tuple<Resource, Future<?>>> importFutures = new ArrayList<Tuple<Resource, Future<?>>>();
         
         //Import the data files
         for (final PortalDataKey portalDataKey : this.dataKeyImportOrder) {
@@ -324,17 +325,10 @@ public class JaxbDataImportExportService implements IDataImportExportService, Re
             final int fileCount = files.size();
             logger.info("Importing {} files of type {}", fileCount, portalDataKey);
             
-            final List<Tuple<Resource, Future<?>>> importFutures = new ArrayList<Tuple<Resource, Future<?>>>(fileCount);
             
             for (final Resource file : files) {
                 //Check for completed futures on every iteration, needed to fail as fast as possible on an import exception
-                for (final Iterator<Tuple<Resource, Future<?>>> importFuturesItr = importFutures.iterator(); importFuturesItr.hasNext();) {
-                    final Tuple<Resource, Future<?>> importFuture = importFuturesItr.next();
-                    if (importFuture.second.isDone()) {
-                        waitForImportFuture(importFuture, options, -1, null);
-                        importFuturesItr.remove();
-                    }
-                }
+                waitForImportFutures(importFutures, options, false);
                 
                 //Submit the import task
                 final Future<?> importFuture = this.importExportThreadPool.submit(new Runnable() {
@@ -349,48 +343,85 @@ public class JaxbDataImportExportService implements IDataImportExportService, Re
             }
             
             //Wait for all of the imports on of this type to complete
-            for (final Tuple<Resource, Future<?>> importFuture : importFutures) {
-                waitForImportFuture(importFuture, options, this.maxWait, this.maxWaitTimeUnit);
-            }
+            waitForImportFutures(importFutures, options, true);
+            
+            //Remove any remaining futures
+            importFutures.clear();
         }
         
         if (!dataToImport.isEmpty()) {
             throw new IllegalStateException("The following PortalDataKeys are not listed in the dataTypeImportOrder List: " + dataToImport.keySet());
         }
     }
-
-    protected void waitForImportFuture(
-            final Tuple<Resource, Future<?>> importFuture, final BatchImportOptions options, 
-            final long maxWait, final TimeUnit timeUnit) {
-
-        try {
-            if (maxWait > 0) {
-                importFuture.second.get(maxWait, timeUnit);
-            }
-            else {
-                importFuture.second.get();
+    
+    protected void waitForImportFutures(
+            final List<Tuple<Resource, Future<?>>> importFutures, final BatchImportOptions options, 
+            final boolean wait) {
+        
+        List<Resource> failedResources = null;
+        
+        for (Iterator<Tuple<Resource, Future<?>>> importFuturesItr = importFutures.iterator(); importFuturesItr.hasNext();) {
+            final Tuple<Resource, Future<?>> importFuture = importFuturesItr.next();
+            
+            //If waiting, or if not waiting but the future is already done do the get
+            if (wait || failedResources != null || (!wait && importFuture.second.isDone())) {
+                try {
+                    //Ignore cancelled future tasks
+                    if (!importFuture.second.isCancelled()) {
+                        if (this.maxWait > 0) {
+                            importFuture.second.get(this.maxWait, this.maxWaitTimeUnit);
+                        }
+                        else {
+                            importFuture.second.get();
+                        }
+                    }
+                    
+                    importFuturesItr.remove();
+                }
+                catch (Exception e) {
+                    importFuturesItr.remove();
+                    
+                    if (options == null || options.isFailOnError()) {
+                        //If this is the first exception reset the iterator to the start of the futures list
+                        if (failedResources == null) {
+                            //Immediately try to cancel all queued future tasks to avoid creating more error noise than nessesary
+                            for (final Tuple<Resource, Future<?>> future : importFutures) {
+                                future.second.cancel(true);
+                            }
+                            
+                            //Reset the iterator since we now need to wait for ALL futures to complete
+                            importFuturesItr = importFutures.iterator();
+                            
+                            //Create List used to track failed imports
+                            failedResources = new LinkedList<Resource>();
+                        }
+                        
+                        //Add resource to the list of failed tasks 
+                        failedResources.add(importFuture.first);
+                        
+                        //Log the import error
+                        this.logger.error("Exception while importing data: " + importFuture.first, e);
+                    }
+                    else {
+                        if (this.logger.isDebugEnabled()) {
+                            this.logger.warn("Exception while importing '" + importFuture.first + "', file will be ignored" , e);
+                        }
+                        else {
+                            this.logger.warn("Exception while importing '{}', file will be ignored: {}", e.getCause().getMessage(), importFuture.first);
+                        }
+                    }
+                }
             }
         }
-        catch (InterruptedException e) {
-            if (options == null || options.isFailOnError()) {
-                throw new RuntimeException("Interrupted waiting for import to complete: " + importFuture.first, e);
+        
+        if (failedResources != null) {
+            final StringBuilder msg = new StringBuilder("Import Halted due to failure during import of ");
+            msg.append(failedResources.size()).append(" files\n");
+            for (final Resource failedResource : failedResources) {
+                msg.append("\t").append(failedResource).append("\n");
             }
             
-            this.logger.warn("Interrupted waiting for import to complete, file will be ignored: {}", importFuture.first);
-        }
-        catch (ExecutionException e) {
-            if (options == null || options.isFailOnError()) {
-                throw new RuntimeException("Exception while importing: " + importFuture.first, e);
-            }
-            
-            this.logger.warn("Exception while importing '{}', file will be ignored: {}", e.getCause().getMessage(), importFuture.first);
-        }
-        catch (TimeoutException e) {
-            if (options == null || options.isFailOnError()) {
-                throw new RuntimeException("Timed out waiting for import to complete: " + importFuture.first, e);
-            }
-            
-            this.logger.warn("Timed out waiting for import to complete, file will be ignored: {}", importFuture.first);
+            throw new RuntimeException(msg.toString());
         }
     }
 

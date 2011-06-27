@@ -1,4 +1,4 @@
-#
+ #
 # Licensed to Jasig under one or more contributor license
 # agreements. See the NOTICE file distributed with this work
 # for additional information regarding copyright ownership.
@@ -88,8 +88,8 @@ prodPrompt=false
 environment.build.hsql.port=8887
 
 ## Database Connection Settings (Uncomment the Maven Filters section in rdbm.properties)
-environment.build.hibernate.connection.driver_class=org.hsqldb.jdbcDriver
-environment.build.hibernate.connection.url=jdbc:hsqldb:hsql://localhost:${environment.build.hsql.port}
+environment.build.hibernate.connection.driver_class=org.hsqldb.jdbc.JDBCDriver
+environment.build.hibernate.connection.url=jdbc:hsqldb:hsql://localhost:${environment.build.hsql.port}/uPortal
 environment.build.hibernate.connection.username=sa
 environment.build.hibernate.connection.password=
 environment.build.hibernate.dialect=org.hibernate.dialect.HSQLDialect

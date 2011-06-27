@@ -19,17 +19,9 @@
 
 package org.jasig.portal.layout.dlm.providers;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import javax.persistence.Cacheable;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,7 +30,6 @@ import org.dom4j.Element;
 import org.dom4j.QName;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.IndexColumn;
 import org.jasig.portal.layout.dlm.Evaluator;
 import org.jasig.portal.layout.dlm.EvaluatorFactory;
 import org.jasig.portal.layout.dlm.FragmentDefinition;
@@ -51,7 +42,7 @@ import org.jasig.portal.security.IPerson;
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Paren extends Evaluator {
+public class Paren extends EvaluatorGroup {
     public enum Type {
         OR,
         AND,
@@ -66,20 +57,10 @@ public class Paren extends Evaluator {
     @Column(name = "PAREN_TYPE")
     private Type type = null;
 
-    @OneToMany(targetEntity=Evaluator.class, cascade=CascadeType.ALL, fetch=FetchType.EAGER, orphanRemoval=true)
-    @IndexColumn(name = "EVAL_INDEX")
-    @JoinTable(name = "UP_DLM_EVALUATOR_PAREN", joinColumns = @JoinColumn(name = "PAREN_EVAL_ID"), inverseJoinColumns = @JoinColumn(name = "CHILD_EVAL_ID"))
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private List<Evaluator> evaluators = new LinkedList<Evaluator>();
-
     public Paren() {}
 
     public Paren(Type t) {
         type = t;
-    }
-
-    public void addEvaluator(Evaluator e) {
-        this.evaluators.add(e);
     }
 
     @Override

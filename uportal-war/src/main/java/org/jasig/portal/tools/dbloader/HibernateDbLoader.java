@@ -79,10 +79,10 @@ public class HibernateDbLoader implements IDbLoader {
     private Dialect preferedDialect;
     
     /**
-     * @param jdbcTemplate the jdbcTemplate to set
+     * @param jdbcOperations the jdbcTemplate to set
      */
-    @Autowired
-    public void setDataSource(@Qualifier("PortalDb") DataSource dataSource) {
+    @javax.annotation.Resource(name="PortalDb")
+    public void setDataSource( DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 

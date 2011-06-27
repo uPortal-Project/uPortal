@@ -22,6 +22,8 @@ package org.jasig.portal.events.handlers.db;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
+
+import javax.annotation.Resource;
 import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
@@ -77,8 +79,7 @@ public class ExpiredEventsPurger {
      * Public API.
      */
     
-    @Autowired
-    @Qualifier("StatsDB")
+    @Resource(name="StatsDB")
     public void setDataSource(DataSource dataSource) {
         this.simpleJdbcTemplate = new SimpleJdbcTemplate(dataSource);
     }

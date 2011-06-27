@@ -33,7 +33,7 @@
         <property name="location" value="classpath:/properties/dataSource.properties" />
     </bean>
 
-    <bean id="dataSource" class="org.springframework.jdbc.datasource.SingleConnectionDataSource">
+    <bean id="PortalDb" class="org.springframework.jdbc.datasource.SingleConnectionDataSource">
         <qualifier value="PortalDb" />
         <property name="driverClassName" value="${hibernate.connection.driver_class}" />
         <property name="url" value="${hibernate.connection.url}" />
@@ -44,7 +44,7 @@
     </bean>
     
     <bean id="factoryBean" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-        <property name="dataSource" ref="dataSource" />
+        <property name="dataSource" ref="PortalDb" />
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="persistenceUnitName" value="uPortalPersistence" />
         <property name="jpaProperties">

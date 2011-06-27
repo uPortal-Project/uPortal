@@ -37,7 +37,7 @@ public interface ILocaleStore {
      * @return the user's locale preferences
      * @throws Exception
      */
-    public Locale[] getUserLocales(IPerson person) throws Exception;
+    public Locale[] getUserLocales(IPerson person);
 
     /**
      * Persists the locale preferences for a particular user.
@@ -45,6 +45,6 @@ public interface ILocaleStore {
      * @param locales the user's new locale preferences
      * @throws Exception
      */
-    public void updateUserLocales(IPerson person, Locale[] locales) throws Exception;
+    public void updateUserLocales(IPerson person, Locale[] locales);
     
 }

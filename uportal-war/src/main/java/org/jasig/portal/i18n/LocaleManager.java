@@ -62,10 +62,11 @@ public class LocaleManager implements Serializable {
      */
     public static final boolean DEFAULT_LOCALE_AWARE = false;
     
-    private IPerson person;
     private static boolean localeAware = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.i18n.LocaleManager.locale_aware", DEFAULT_LOCALE_AWARE);
     private static Locale jvmLocale;
     private static Locale[] portalLocales;
+    
+    private final IPerson person;
     private Locale[] sessionLocales;
     private Locale[] browserLocales;
     private Locale[] userLocales;
@@ -74,13 +75,13 @@ public class LocaleManager implements Serializable {
      * Constructor that associates a locale manager with a user.
      * @param person the user
      */
-    public LocaleManager(IPerson person) {
+    public LocaleManager(IPerson person, Locale[] userLocales) {
         this.person = person;
         jvmLocale = Locale.getDefault();
 		if (localeAware) {
             portalLocales = loadPortalLocales();
             try {
-                userLocales = LocaleStoreFactory.getLocaleStoreImpl().getUserLocales(person);
+                this.userLocales = userLocales;
             } catch (Exception e) {
                 log.error("Error populating userLocals", e);
             }
@@ -94,8 +95,8 @@ public class LocaleManager implements Serializable {
      * @param person the user
      * @param acceptLanguage the Accept-Language request header from a user's browser
      */
-    public LocaleManager(IPerson person, String acceptLanguage) {
-        this(person);
+    public LocaleManager(IPerson person, Locale[] userLocales, String acceptLanguage) {
+        this(person, userLocales);
         this.browserLocales = parseLocales(acceptLanguage);
     }
 
@@ -246,7 +247,6 @@ public class LocaleManager implements Serializable {
      */
     public void persistUserLocales(Locale[] userLocales) throws Exception {
         setUserLocales(userLocales);
-        LocaleStoreFactory.getLocaleStoreImpl().updateUserLocales(person, userLocales);
     }
     
     /**

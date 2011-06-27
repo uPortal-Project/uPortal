@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -81,8 +82,7 @@ public class StatsLayoutModificationsController implements InitializingBean {
     private CacheFactory cacheFactory;
     private final Log log = LogFactory.getLog(getClass());
     
-    @Autowired
-    @Qualifier("StatsDB")
+    @Resource(name="StatsDB")
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }

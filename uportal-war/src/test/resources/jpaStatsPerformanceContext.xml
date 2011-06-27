@@ -60,7 +60,7 @@
     <bean id="sqlNextExceptionLoggerAspect" class="org.jasig.portal.portlet.dao.jpa.SQLNextExceptionLoggerAspect" />
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-        <property name="dataSource" ref="dataSource" />
+        <property name="dataSource" ref="PortalDb" />
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="persistenceUnitName" value="uPortalPersistence" />
     </bean>

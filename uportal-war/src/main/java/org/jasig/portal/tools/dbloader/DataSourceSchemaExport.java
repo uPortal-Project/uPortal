@@ -118,7 +118,8 @@ public class DataSourceSchemaExport implements ISchemaExport {
             configuration.buildMappings();
             
             final SchemaExport exporter = new SchemaExport(configuration, connection);
-            exporter.setFormat(false);
+//            exporter.setFormat(true);
+//            exporter.setHaltOnError(true);
             if (outputFile != null) {
                 exporter.setOutputFile(outputFile);
             }

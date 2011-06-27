@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Resource;
 import javax.sql.DataSource;
 
 import org.jasig.portal.io.xml.AbstractJaxbDataHandler;
@@ -85,8 +86,8 @@ public class UserImporterExporter extends
         this.counterStore = counterStore;
     }
 
-    @Autowired
-    public void setDataSource(@Qualifier("PortalDb") DataSource dataSource) {
+    @Resource(name="PortalDb")
+    public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 

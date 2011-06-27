@@ -28,17 +28,19 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.annotation.Resource;
 import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IUserProfile;
-import org.jasig.portal.PortalException;
 import org.jasig.portal.UserProfile;
+import org.jasig.portal.i18n.ILocaleStore;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.LayoutStructure;
@@ -54,13 +56,22 @@ import org.jasig.portal.security.provider.PersonImpl;
 import org.jasig.portal.services.SequenceGenerator;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ICounterStore;
+import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
-import org.springframework.jdbc.support.JdbcUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.ConnectionCallback;
+import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
 import org.springframework.jdbc.support.SQLExceptionTranslator;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionOperations;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -86,8 +97,10 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
   protected static final String channelPrefix = "n";
   protected static final String folderPrefix = "s";
   
-  protected SimpleJdbcTemplate jdbcTemplate;
-  protected DataSource dataSource;
+  protected TransactionOperations transactionOperations;
+  protected JdbcOperations jdbcOperations;
+  
+  private ILocaleStore localeStore; 
   protected IDatabaseMetadata databaseMetadata;
   protected IPersonManager personManager;
   protected ICounterStore counterStore;
@@ -99,13 +112,23 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
   protected static final boolean localeAware = LocaleManager.isLocaleAware();
   
     @Autowired
+    public void setLocaleStore(ILocaleStore localeStore) {
+        this.localeStore = localeStore;
+    }
+
+    @Autowired
     public void setStylesheetDescriptorDao(IStylesheetDescriptorDao stylesheetDescriptorDao) {
         this.stylesheetDescriptorDao = stylesheetDescriptorDao;
     }
 
     @Autowired
+    public void setPlatformTransactionManager(@Qualifier("PortalDb") PlatformTransactionManager platformTransactionManager) {
+        this.transactionOperations = new TransactionTemplate(platformTransactionManager);
+    }
+
+    @Resource(name="PortalDb")
     public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
+        this.jdbcOperations = new JdbcTemplate(dataSource);
         this.exceptionTranslator = new SQLErrorCodeSQLExceptionTranslator(dataSource);
     }
 
@@ -131,8 +154,6 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
     
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.jdbcTemplate = new SimpleJdbcTemplate(this.dataSource);
-        
         if (this.databaseMetadata.supportsOuterJoins()) {
             final IJoinQueryString joinQuery = this.databaseMetadata.getJoinQuery();
 
@@ -170,8 +191,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
         protected IPerson createSingleton(Object... args) {
             // be sure we only do this once...
             // Load the "system" user id from the database
-            final SimpleJdbcTemplate jdbcTemplate = new SimpleJdbcTemplate(RDBMUserLayoutStore.this.dataSource);
-            final int systemUserId = jdbcTemplate.queryForInt("SELECT USER_ID FROM UP_USER WHERE USER_NAME = 'system'");
+            final int systemUserId = jdbcOperations.queryForInt("SELECT USER_ID FROM UP_USER WHERE USER_NAME = 'system'");
             log.info("Found user id " + systemUserId + " for the 'system' user.");
             return new SystemUser(systemUserId);
         }
@@ -188,54 +208,52 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
    * @return userProfile
    * @exception Exception
    */
-  public UserProfile addUserProfile (IPerson person, IUserProfile profile) {
-    int userId = person.getID();
-    UserProfile newProfile = null;
+  public UserProfile addUserProfile (final IPerson person, final IUserProfile profile) {
+    final int userId = person.getID();
     // generate an id for this profile
-    Connection con = null;
-    String sQuery = null;
-    try {
-      con = this.dataSource.getConnection();
-      PreparedStatement pstmt = con.prepareStatement("INSERT INTO UP_USER_PROFILE " +
-      		"(USER_ID,PROFILE_ID,PROFILE_FNAME,PROFILE_NAME,STRUCTURE_SS_ID,THEME_SS_ID," +
-      		"DESCRIPTION, LAYOUT_ID) VALUES (?,?,?,?,?,?,?,?)");
-      int profileId = getNextKey();
-      pstmt.setInt(1, userId);
-      pstmt.setInt(2, profileId);
-      pstmt.setString(3, profile.getProfileFname());
-      pstmt.setString(4, profile.getProfileName());
-      pstmt.setInt(5, profile.getStructureStylesheetId());
-      pstmt.setInt(6, profile.getThemeStylesheetId());
-      pstmt.setString(7, profile.getProfileDescription());
-      pstmt.setInt(8, profile.getLayoutId());
-      sQuery = "INSERT INTO UP_USER_PROFILE (USER_ID,PROFILE_ID,PROFILE_FNAME,PROFILE_NAME,STRUCTURE_SS_ID,THEME_SS_ID,DESCRIPTION, LAYOUT_ID) VALUES ("
-          + userId + ",'" + profileId + ",'" + profile.getProfileFname() + "','" + profile.getProfileName() + "'," + profile.getStructureStylesheetId()
-          + "," + profile.getThemeStylesheetId() + ",'" + profile.getProfileDescription() + "', "+profile.getLayoutId()+")";
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserLayoutStore::addUserProfile(): " + sQuery);
-      try {
-        pstmt.executeUpdate();
-        
-        newProfile = new UserProfile();
-        newProfile.setProfileId(profileId);
-        newProfile.setLayoutId(profile.getLayoutId());
-        newProfile.setLocaleManager(profile.getLocaleManager());
-        newProfile.setProfileDescription(profile.getProfileDescription());
-        newProfile.setProfileFname(profile.getProfileFname());
-        newProfile.setProfileName(profile.getProfileName());
-        newProfile.setStructureStylesheetId(profile.getStructureStylesheetId());
-        newProfile.setSystemProfile(false);
-        newProfile.setThemeStylesheetId(profile.getThemeStylesheetId());
 
-      } finally {
-        pstmt.close();
-      }
-    } catch (SQLException e) {
-        throw this.exceptionTranslator.translate("addUserProfile", sQuery, e);
-    } finally {
-      JdbcUtils.closeConnection(con);
-    }
-    return newProfile;
+    return this.jdbcOperations.execute(new ConnectionCallback<UserProfile>() {
+        @Override
+        public UserProfile doInConnection(Connection con) throws SQLException, DataAccessException {
+          String sQuery = null;
+          PreparedStatement pstmt = con.prepareStatement("INSERT INTO UP_USER_PROFILE " +
+          		"(USER_ID,PROFILE_ID,PROFILE_FNAME,PROFILE_NAME,STRUCTURE_SS_ID,THEME_SS_ID," +
+          		"DESCRIPTION, LAYOUT_ID) VALUES (?,?,?,?,?,?,?,?)");
+          int profileId = getNextKey();
+          pstmt.setInt(1, userId);
+          pstmt.setInt(2, profileId);
+          pstmt.setString(3, profile.getProfileFname());
+          pstmt.setString(4, profile.getProfileName());
+          pstmt.setInt(5, profile.getStructureStylesheetId());
+          pstmt.setInt(6, profile.getThemeStylesheetId());
+          pstmt.setString(7, profile.getProfileDescription());
+          pstmt.setInt(8, profile.getLayoutId());
+          sQuery = "INSERT INTO UP_USER_PROFILE (USER_ID,PROFILE_ID,PROFILE_FNAME,PROFILE_NAME,STRUCTURE_SS_ID,THEME_SS_ID,DESCRIPTION, LAYOUT_ID) VALUES ("
+              + userId + ",'" + profileId + ",'" + profile.getProfileFname() + "','" + profile.getProfileName() + "'," + profile.getStructureStylesheetId()
+              + "," + profile.getThemeStylesheetId() + ",'" + profile.getProfileDescription() + "', "+profile.getLayoutId()+")";
+          if (log.isDebugEnabled())
+              log.debug("RDBMUserLayoutStore::addUserProfile(): " + sQuery);
+          try {
+            pstmt.executeUpdate();
+            
+            UserProfile newProfile = new UserProfile();
+            newProfile.setProfileId(profileId);
+            newProfile.setLayoutId(profile.getLayoutId());
+            newProfile.setLocaleManager(profile.getLocaleManager());
+            newProfile.setProfileDescription(profile.getProfileDescription());
+            newProfile.setProfileFname(profile.getProfileFname());
+            newProfile.setProfileName(profile.getProfileName());
+            newProfile.setStructureStylesheetId(profile.getStructureStylesheetId());
+            newProfile.setSystemProfile(false);
+            newProfile.setThemeStylesheetId(profile.getThemeStylesheetId());
+            
+            return newProfile;
+    
+          } finally {
+            pstmt.close();
+          }
+        }
+    });
   }
 
   private int getNextKey()
@@ -295,29 +313,10 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
     deleteUserProfile(userId,profileId);
   }
 
-//  private Document getDOM(String uri) {
-//    DOMResult result = new DOMResult();
-//    SAXSource source = new SAXSource(new InputSource(
-//      ResourceLoader.getResourceAsStream(this.getClass(), uri)));
-//    TransformerFactory tFactory = TransformerFactory.newInstance();
-//    Transformer emptytr = tFactory.newTransformer();
-//    emptytr.transform(source, result);
-//
-//    // need to return a Document
-//    Node node = result.getNode();
-//    if (node instanceof Document) {
-//      return (Document)node;
-//    }
-//
-//    Document dom = DocumentFactory.getNewDocument();
-//    dom.appendChild(dom.importNode(node, true));
-//    return dom;
-//  }
-
-  private void deleteUserProfile(int userId, int profileId) {
-    Connection con = null;
-    try {
-      con = this.dataSource.getConnection();
+  private void deleteUserProfile(final int userId, final int profileId) {
+      this.jdbcOperations.execute(new ConnectionCallback<Object>() {
+          @Override
+          public Object doInConnection(Connection con) throws SQLException, DataAccessException {
       Statement stmt = con.createStatement();
       try {
         String sQuery = "DELETE FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + Integer.toString(profileId);
@@ -345,11 +344,10 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
       } finally {
         stmt.close();
       }
-    } catch (SQLException e) {
-        throw this.exceptionTranslator.translate("deleteUserProfile", null, e);
-    } finally {
-      JdbcUtils.closeConnection(con);
-    }
+      
+      return null;
+          }
+      });
   }
 
   /**
@@ -410,12 +408,15 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
    * @return next free structure ID
    * @exception Exception
    */
-  protected synchronized String getNextStructId (IPerson person, String prefix) {
-    int userId = person.getID();
-    Connection con = null;
-    try {
-      con = this.dataSource.getConnection();
-      con.setAutoCommit(false);
+  protected synchronized String getNextStructId (final IPerson person, final String prefix) {
+    final int userId = person.getID();
+    return this.transactionOperations.execute(new TransactionCallback<String>() {
+        @Override
+        public String doInTransaction(TransactionStatus status) {
+            return jdbcOperations.execute(new ConnectionCallback<String>() {
+                @Override
+                public String doInConnection(Connection con) throws SQLException, DataAccessException {
+
       Statement stmt = con.createStatement();
       try {
         String sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + userId;
@@ -457,12 +458,12 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
       } finally {
         stmt.close();
       }
-    } catch (SQLException e) {
-        throw this.exceptionTranslator.translate("getNextStructId", null, e);
-    } finally {
-      JdbcUtils.closeConnection(con);
-    }
-    throw new RuntimeException("Unable to generate a new structure id for user " + userId);
+      
+      throw new RuntimeException("Unable to generate a new structure id for user " + userId);
+                }
+            });
+        }
+    });
   }
 
   /**
@@ -571,16 +572,21 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
   /**
    *   UserPreferences
    */
-  private String getUserBrowserMapping (IPerson person, String userAgent) {
-    if (userAgent.length() > 255){
-        userAgent = userAgent.substring(0,254);
-        log.debug("userAgent trimmed to 255 characters. userAgent: "+userAgent);
-    }
-    int userId = person.getID();
-    String profileFname = null;
-    Connection con = null;
-    try {
-      con = this.dataSource.getConnection();
+  private String getUserBrowserMapping (final IPerson person, final String userAgentArg) {
+    final int userId = person.getID();
+    return jdbcOperations.execute(new ConnectionCallback<String>() {
+        @Override
+        public String doInConnection(Connection con) throws SQLException, DataAccessException {
+            final String userAgent;
+            if (userAgentArg.length() > 255){
+                userAgent = userAgentArg.substring(0,254);
+                log.debug("userAgent trimmed to 255 characters. userAgent: "+userAgentArg);
+            }
+            else {
+                userAgent = userAgentArg;
+            }
+            
+            
       String sQuery =
         "SELECT PROFILE_FNAME " +
         "FROM UP_USER_UA_MAP LEFT JOIN UP_USER_PROFILE ON " + 
@@ -597,7 +603,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
         ResultSet rs = pstmt.executeQuery();
         try {
           if (rs.next()) {
-            profileFname = rs.getString("PROFILE_FNAME");
+            return rs.getString("PROFILE_FNAME");
           }
         } finally {
           rs.close();
@@ -605,26 +611,25 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
       } finally {
         pstmt.close();
       }
-    } catch (SQLException e) {
-        throw this.exceptionTranslator.translate("getUserBrowserMapping", null, e);
-    } finally {
-      JdbcUtils.closeConnection(con);
-    }
-    return  profileFname;
+      
+      return null;
+        }
+    });
   }
 
-  protected Document getPersonalUserLayout (IPerson person, IUserProfile profile) {
-    int userId = person.getID();
-    int realUserId = userId;
-    ResultSet rs;
-    Connection con = null;
-    LocaleManager localeManager = profile.getLocaleManager();
+  protected Document getPersonalUserLayout (final IPerson person, final IUserProfile profile) {
+    final LocaleManager localeManager = profile.getLocaleManager();
 
-    try {
-      con = this.dataSource.getConnection();
+    return jdbcOperations.execute(new ConnectionCallback<Document>() {
+        @Override
+        public Document doInConnection(Connection con) throws SQLException, DataAccessException {
+
+      ResultSet rs;
+      int userId = person.getID();
+      final int realUserId = userId;
       Document doc = DocumentFactory.getNewDocument();
       Element root = doc.createElement("layout");
-      Statement stmt = con.createStatement();
+      final Statement stmt = con.createStatement();
       // A separate statement is needed so as not to interfere with ResultSet
       // of statements used for queries
       Statement insertStmt = con.createStatement();
@@ -633,25 +638,33 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
         // eventually, we need to fix template layout implementations so you can just do this:
         //        int layoutId=profile.getLayoutId();
         // but for now:
-        int layoutId = this.getLayoutID(userId, profile.getProfileId());
+        int layoutId = getLayoutID(userId, profile.getProfileId());
 
        if (layoutId == 0) { // First time, grab the default layout for this user
-          con.setAutoCommit(false);          // May speed things up, can't hurt
-          try {
-              String sQuery = "SELECT USER_DFLT_USR_ID, USER_DFLT_LAY_ID FROM UP_USER WHERE USER_ID=" + userId;
+           final Tuple<Integer, Integer> userLayoutIds = transactionOperations.execute(new TransactionCallback<Tuple<Integer, Integer>>() {
+               @Override
+               public Tuple<Integer, Integer> doInTransaction(TransactionStatus status) {
+                   return jdbcOperations.execute(new ConnectionCallback<Tuple<Integer, Integer>>() {
+                       @Override
+                       public Tuple<Integer, Integer> doInConnection(Connection con) throws SQLException, DataAccessException {
+              
+              int newLayoutId;
+              int newUserId;
+              
+              String sQuery = "SELECT USER_DFLT_USR_ID, USER_DFLT_LAY_ID FROM UP_USER WHERE USER_ID=" + realUserId;
               if (log.isDebugEnabled())
                   log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
-              rs = stmt.executeQuery(sQuery);
+              ResultSet rs = stmt.executeQuery(sQuery);
               try {
                 boolean hasRow = rs.next();
-                userId = rs.getInt(1);
-                layoutId = rs.getInt(2);
+                newUserId = rs.getInt(1);
+                newLayoutId = rs.getInt(2);
               } finally {
                 rs.close();
               }
     
               // Make sure the next struct id is set in case the user adds a channel
-              sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + userId;
+              sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + newUserId;
               if (log.isDebugEnabled())
                   log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
               int nextStructId;
@@ -665,10 +678,10 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
     
               int realNextStructId = 0;
     
-              if (realUserId != userId) {
+              if (realUserId != newUserId) {
                 // But never make the existing value SMALLER, change it only to make it LARGER
                 // (so, get existing value)
-                sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + realUserId;
+                sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + newUserId;
                 if (log.isDebugEnabled())
                     log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
                 rs = stmt.executeQuery(sQuery);
@@ -681,22 +694,21 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
               }
     
               if (nextStructId > realNextStructId) {
-                sQuery = "UPDATE UP_USER SET NEXT_STRUCT_ID=" + nextStructId + " WHERE USER_ID=" + realUserId;
+                sQuery = "UPDATE UP_USER SET NEXT_STRUCT_ID=" + nextStructId + " WHERE USER_ID=" + newUserId;
                 if (log.isDebugEnabled())
                     log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
                 stmt.executeUpdate(sQuery);
               }
-    
-              con.commit(); // Make sure it appears in the store
-          }
-          catch (SQLException e) {
-              con.rollback();
-              throw e;
-          }
-          finally {
-              //Reset commit state
-              con.setAutoCommit(true);
-          }
+              
+              return new Tuple<Integer, Integer>(newUserId, newLayoutId);
+              
+                       }
+                   });
+               }
+           });
+           
+           userId = userLayoutIds.first;
+           layoutId = userLayoutIds.second;
         }
 
         int firstStructId = -1;
@@ -733,8 +745,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                 sql = "SELECT ULS.STRUCT_ID,ULS.NEXT_STRUCT_ID,ULS.CHLD_STRUCT_ID,ULS.CHAN_ID,ULS.NAME,ULS.TYPE,ULS.HIDDEN,"+
               "ULS.UNREMOVABLE,ULS.IMMUTABLE";
             }
-            if (this.databaseMetadata.supportsOuterJoins()) {
-              sql += ",USP.STRUCT_PARM_NM,USP.STRUCT_PARM_VAL FROM " + this.databaseMetadata.getJoinQuery().getQuery("layout");
+            if (databaseMetadata.supportsOuterJoins()) {
+              sql += ",USP.STRUCT_PARM_NM,USP.STRUCT_PARM_VAL FROM " + databaseMetadata.getJoinQuery().getQuery("layout");
             } else {
               sql += " FROM UP_LAYOUT_STRUCT ULS WHERE ";
             }
@@ -821,7 +833,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
               if (!ls.isChannel()) {
                 ls.addFolderData(temp5, temp6); // Plug in saved column values
               }
-              if (this.databaseMetadata.supportsOuterJoins()) {
+              if (databaseMetadata.supportsOuterJoins()) {
                 do {
                   String name = rs.getString(name_index);
                   String value = rs.getString(value_index); // Oracle JDBC requires us to do this for longs
@@ -856,7 +868,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
           rs.close();
         }
 
-        if (!this.databaseMetadata.supportsOuterJoins()) { // Pick up structure parameters
+        if (!databaseMetadata.supportsOuterJoins()) { // Pick up structure parameters
           // first, get the struct ids for the channels
           String sql = "SELECT STRUCT_ID FROM UP_LAYOUT_STRUCT WHERE USER_ID=" + userId +
             " AND LAYOUT_ID=" + layoutId +
@@ -919,18 +931,16 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
         insertStmt.close();
       }
       return  doc;
-    } catch (SQLException e) {
-        throw this.exceptionTranslator.translate("getUserLayout", null, e);
-    } finally {
-      JdbcUtils.closeConnection(con);
-    }
+        }
+    });
   }
 
-  public IUserProfile getUserProfileById (IPerson person, int profileId) {
-    int userId = person.getID();
-    Connection con = null;
-    try {
-      con = this.dataSource.getConnection();
+  public IUserProfile getUserProfileById (final IPerson person, final int profileId) {
+    final int userId = person.getID();
+    return jdbcOperations.execute(new ConnectionCallback<IUserProfile>() {
+        @Override
+        public IUserProfile doInConnection(Connection con) throws SQLException, DataAccessException {
+
       Statement stmt = con.createStatement();
       try {
         String sQuery = "SELECT USER_ID, PROFILE_ID, PROFILE_FNAME, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID FROM UP_USER_PROFILE WHERE USER_ID="
@@ -950,8 +960,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
             int structSsId = rs.getInt(7);
             if (rs.wasNull()) {
                 // This is probably a data issue and probably an export operation;  defer to the system user...
-                if (!person.equals(this.getSystemUser())) {
-                    structSsId = this.getSystemProfileByFname(temp2).getStructureStylesheetId();
+                if (!person.equals(getSystemUser())) {
+                    structSsId = getSystemProfileByFname(temp2).getStructureStylesheetId();
                 } else {
                     String msg = "The system user profile has no structure stylesheet Id.";
                     throw new IllegalStateException(msg);
@@ -960,15 +970,16 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
             int themeSsId = rs.getInt(8);
             if (rs.wasNull()) {
                 // This is probably a data issue and probably an export operation;  defer to the system user...
-                if (!person.equals(this.getSystemUser())) {
-                    themeSsId = this.getSystemProfileByFname(temp2).getThemeStylesheetId();
+                if (!person.equals(getSystemUser())) {
+                    themeSsId = getSystemProfileByFname(temp2).getThemeStylesheetId();
                 } else {
                     String msg = "The system user profile has no theme stylesheet Id.";
                     throw new IllegalStateException(msg);
                 }
             }
             IUserProfile userProfile = new UserProfile(profileId, temp2, temp3,temp4, layoutId, structSsId, themeSsId);
-            userProfile.setLocaleManager(new LocaleManager(person));
+            final Locale[] userLocales = localeStore.getUserLocales(person);
+            userProfile.setLocaleManager(new LocaleManager(person, userLocales));
             return userProfile;
           }
           else {
@@ -980,19 +991,18 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
       } finally {
         stmt.close();
       }
-    } catch (SQLException e) {
-        throw this.exceptionTranslator.translate("getUserProfileById", null, e);
-    } finally {
-      JdbcUtils.closeConnection(con);
-    }
+      
+        }
+    });
   }
 
-  public UserProfile getUserProfileByFname (IPerson person, String profileFname) {
+  public UserProfile getUserProfileByFname (final IPerson person, final String profileFname) {
 	log.debug("Getting profile " + profileFname + " for user " + person.getID());
-    int userId = person.getID();
-    Connection con = null;
-    try {
-      con = this.dataSource.getConnection();
+    final int userId = person.getID();
+    return jdbcOperations.execute(new ConnectionCallback<UserProfile>() {
+        @Override
+        public UserProfile doInConnection(Connection con) throws SQLException, DataAccessException {
+
       String query = "SELECT USER_ID, PROFILE_ID, PROFILE_NAME, DESCRIPTION, " +
       		"LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID FROM UP_USER_PROFILE WHERE " +
       		"USER_ID=? AND PROFILE_FNAME=?";
@@ -1016,8 +1026,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
             int structSsId = rs.getInt(6);
             if (rs.wasNull()) {
                 // This is probably a data issue and probably an export operation;  defer to the system user...
-                if (!person.equals(this.getSystemUser())) {
-                    structSsId = this.getSystemProfileByFname(profileFname).getStructureStylesheetId();
+                if (!person.equals(getSystemUser())) {
+                    structSsId = getSystemProfileByFname(profileFname).getStructureStylesheetId();
                 } else {
                     String msg = "The system user profile has no structure stylesheet Id.";
                     throw new IllegalStateException(msg);
@@ -1026,19 +1036,20 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
             int themeSsId = rs.getInt(7);
             if (rs.wasNull()) {
                 // This is probably a data issue and probably an export operation;  defer to the system user...
-                if (!person.equals(this.getSystemUser())) {
-                    themeSsId = this.getSystemProfileByFname(profileFname).getThemeStylesheetId();
+                if (!person.equals(getSystemUser())) {
+                    themeSsId = getSystemProfileByFname(profileFname).getThemeStylesheetId();
                 } else {
                     String msg = "The system user profile has no theme stylesheet Id.";
                     throw new IllegalStateException(msg);
                 }
             }
             UserProfile userProfile = new UserProfile(profileId, profileFname, profileName, profileDesc, layoutId, structSsId, themeSsId);
-            userProfile.setLocaleManager(new LocaleManager(person));
+            final Locale[] userLocales = localeStore.getUserLocales(person);
+            userProfile.setLocaleManager(new LocaleManager(person, userLocales));
             return userProfile;
           }
-          else {
-        	/* Try to copy the template profile. */
+
+            /* Try to copy the template profile. */
         	log.debug("Copying template profile " + profileFname + " to user " + person.getID());
         	rs.close();
         	pstmt.close();
@@ -1055,36 +1066,30 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
         			    final IUserProfile newUserProfile = new UserProfile(templateProfile);
         			    newUserProfile.setLayoutId(0);
         				return addUserProfile(person,newUserProfile);
-        			} else {
-                        throw new RuntimeException("Unable to find template profile for " + userId + " and profile " + profileFname);
         			}
-        		} else {
-                    throw new RuntimeException("Unable to find User Profile for userId " + userId + " and profile " + profileFname);
         		}
-        	} else {
-              throw new RuntimeException("Unable to find User Profile for userId " + userId + " and profile " + profileFname);
         	}
-          }
+        	
+            throw new RuntimeException("Unable to find User Profile for userId " + userId + " and profile " + profileFname);
         } finally {
           rs.close();
         }
       } finally {
         pstmt.close();
       }
-    } catch (SQLException e) {
-        throw this.exceptionTranslator.translate("getUserProfileByFname", null, e);
-    } finally {
-      JdbcUtils.closeConnection(con);
-    }
+      
+        }
+    });
   }
 
-  public Hashtable getUserProfileList (IPerson person) {
-    int userId = person.getID();
+  public Hashtable getUserProfileList (final IPerson person) {
+    final int userId = person.getID();
 
-    Hashtable<Integer,UserProfile> pv = new Hashtable<Integer,UserProfile>();
-    Connection con = null;
-    try {
-      con = this.dataSource.getConnection();
+    return jdbcOperations.execute(new ConnectionCallback<Hashtable>() {
+        @Override
+        public Hashtable doInConnection(Connection con) throws SQLException, DataAccessException {
+
+      Hashtable<Integer,UserProfile> pv = new Hashtable<Integer,UserProfile>();
       Statement stmt = con.createStatement();
       try {
         String sQuery = "SELECT USER_ID, PROFILE_ID, PROFILE_FNAME, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID FROM UP_USER_PROFILE WHERE USER_ID="
@@ -1117,31 +1122,35 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
       } finally {
         stmt.close();
       }
-    } catch (SQLException e) {
-        throw this.exceptionTranslator.translate("getUserProfileList", null, e);
-    } finally {
-      JdbcUtils.closeConnection(con);
-    }
-    return  pv;
+      return pv;
+      
+        }
+    });
   }
 
   protected abstract Element getStructure(Document doc, LayoutStructure ls);
 
   protected abstract int saveStructure (Node node, PreparedStatement structStmt, PreparedStatement parmStmt) throws SQLException;
 
-  public void setUserBrowserMapping (IPerson person, String userAgent, int profileId) {
-	  if (userAgent.length() > 255){
-		  userAgent = userAgent.substring(0,254);
-		  log.debug("userAgent trimmed to 255 characters. userAgent: "+userAgent);
-	  }
-	  int userId = person.getID();
-	  Connection con = null;
-	  try {
-	      con = this.dataSource.getConnection();
-		  // Set autocommit false for the connection
-		  con.setAutoCommit(false);
+  public void setUserBrowserMapping (final IPerson person, final String userAgentArg, final int profileId) {
+	  final int userId = person.getID();
+	  
+	  this.transactionOperations.execute(new TransactionCallback<Object>() {
+	      @Override
+	      public Object doInTransaction(TransactionStatus status) {
+	          return jdbcOperations.execute(new ConnectionCallback<Object>() {
+	              @Override
+	              public Object doInConnection(Connection con) throws SQLException, DataAccessException {
+	                  final String userAgent;
+	                  if (userAgentArg.length() > 255){
+	                      userAgent = userAgentArg.substring(0,254);
+	                      log.debug("userAgent trimmed to 255 characters. userAgent: "+userAgentArg);
+	                  }
+	                  else {
+	                      userAgent = userAgentArg;
+	                  }
+
 		  // remove the old mapping and add the new one
-		  try {
 			  PreparedStatement ps = null;
 			  try{
 				  ps = con.prepareStatement("DELETE FROM UP_USER_UA_MAP WHERE USER_ID=? AND USER_AGENT=?");
@@ -1169,18 +1178,12 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
 					  //ignore
 				  }
 			  }
-			  // Commit the transaction
-			  con.commit();
-		  } catch (Exception e) {
-			  // Roll back the transaction
-			  con.rollback();
-			  throw new PortalException("userId: "+userId+", userAgent: "+userAgent+", profileId: "+profileId, e);
-		  }
-      } catch (SQLException e) {
-          throw this.exceptionTranslator.translate("getUserProfileList", null, e);
-	  } finally {
-		  JdbcUtils.closeConnection(con);
-	  }
+			  
+			  return null;
+	                   }
+                });
+            }
+        });
   }
 
   /**
@@ -1190,20 +1193,24 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
    * @param layoutXML
    * @throws Exception
    */
-  public void setUserLayout(IPerson person, IUserProfile profile, Document layoutXML, boolean channelsAdded) {
-      long startTime = System.currentTimeMillis();
-      int userId = person.getID();
-      int profileId = profile.getProfileId();
-      int layoutId = 0;
-      ResultSet rs;
-      Connection con = null;
-      try {
-          con = this.dataSource.getConnection();
-          con.setAutoCommit(false); // Need an atomic update here
+  public void setUserLayout(final IPerson person, final IUserProfile profile, final Document layoutXML, final boolean channelsAdded) {
+      final long startTime = System.currentTimeMillis();
+      final int userId = person.getID();
+      final int profileId = profile.getProfileId();
+
+      this.transactionOperations.execute(new TransactionCallback<Object>() {
+          @Override
+          public Object doInTransaction(TransactionStatus status) {
+              return jdbcOperations.execute(new ConnectionCallback<Object>() {
+                  @Override
+                  public Object doInConnection(Connection con) throws SQLException, DataAccessException {
+
+          int layoutId = 0;
+          ResultSet rs;
 
           // Eventually we want to be able to just get layoutId from the
           // profile, but because of the template user layouts we have to do this for now ...
-          layoutId = this.getLayoutID(userId, profileId);
+          layoutId = getLayoutID(userId, profileId);
 
           boolean firstLayout = false;
           if (layoutId == 0) {
@@ -1410,29 +1417,27 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                   pstmt.close();
               }
           }
-          con.commit();
-      } catch (SQLException e) {
-          try {
-            con.rollback();
-        }
-        catch (SQLException e1) {
-            log.warn("Exception rolling back commit", e);
-        }
-      throw this.exceptionTranslator.translate("getUserLayout", null, e);
-      } finally {
-          JdbcUtils.closeConnection(con);
-      }
+          
+          return null;
+                  }
+              });
+          }
+      });
       if (log.isDebugEnabled()) {
           long stopTime = System.currentTimeMillis();
           log.debug("RDBMUserLayoutStore::setUserLayout(): Layout document for user " + userId + " took " + (stopTime - startTime) + " milliseconds to save");
       }
-     }
+  }
 
-  public void updateUserProfile (IPerson person, IUserProfile profile) {
-    int userId = person.getID();
-    Connection con = null;
-    try {
-      con = this.dataSource.getConnection();
+  public void updateUserProfile (final IPerson person, final IUserProfile profile) {
+    final int userId = person.getID();
+    this.transactionOperations.execute(new TransactionCallback<Object>() {
+        @Override
+        public Object doInTransaction(TransactionStatus status) {
+            return jdbcOperations.execute(new ConnectionCallback<Object>() {
+                @Override
+                public Object doInConnection(Connection con) throws SQLException, DataAccessException {
+
       String query = "UPDATE UP_USER_PROFILE SET LAYOUT_ID=?,THEME_SS_ID=?,STRUCTURE_SS_ID=?," +
       		"DESCRIPTION=?,PROFILE_NAME=?, PROFILE_FNAME=? WHERE USER_ID=? AND PROFILE_ID=?";
       PreparedStatement pstmt = con.prepareStatement(query);
@@ -1455,11 +1460,12 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
       } finally {
         pstmt.close();
       }
-    } catch (SQLException e) {
-        throw this.exceptionTranslator.translate("updateUserProfile", null, e);
-    } finally {
-      JdbcUtils.closeConnection(con);
-    }
+      
+      return null;
+                }
+            });
+        }
+    });
   }
 
   public void setSystemBrowserMapping (String userAgent, int profileId) {
@@ -1609,24 +1615,28 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
    * @return The layout_id field or 0 if it does not exist or is null
    * @throws SQLException
    */
-  protected int getLayoutID(int userId, int profileId) throws SQLException {
-      String query =
-          "SELECT LAYOUT_ID " +
-          "FROM UP_USER_PROFILE " +
-          "WHERE USER_ID=? AND PROFILE_ID=?";
+  protected int getLayoutID(final int userId, final int profileId) throws SQLException {
+      return jdbcOperations.execute(new ConnectionCallback<Integer>() {
+          @Override
+          public Integer doInConnection(Connection con) throws SQLException, DataAccessException {
 
-      Connection con = this.dataSource.getConnection();
-      int layoutId = 0;
+          String query =
+              "SELECT LAYOUT_ID " +
+              "FROM UP_USER_PROFILE " +
+              "WHERE USER_ID=? AND PROFILE_ID=?";
+    
+          int layoutId = 0;
 
-      try {
           PreparedStatement pstmt = con.prepareStatement(query);
 
           try {
-              if (log.isDebugEnabled())
-                  log.debug("RDBMUserLayoutStore::getLayoutID(userId=" + userId + ", profileId=" + profileId + " ): " + query);
+              final int u = userId;
+            final int p = profileId;
+            if (log.isDebugEnabled())
+                  log.debug("RDBMUserLayoutStore::getLayoutID(userId=" + u + ", profileId=" + p + " ): " + query);
 
-              pstmt.setInt(1, userId);
-              pstmt.setInt(2, profileId);
+              pstmt.setInt(1, u);
+              pstmt.setInt(2, p);
               ResultSet rs = pstmt.executeQuery();
 
               try {
@@ -1644,8 +1654,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                 	  query = "SELECT PROFILE_FNAME FROM UP_USER_PROFILE WHERE " +
                 	  		"USER_ID=? AND PROFILE_ID=?";
                 	  pstmt = con.prepareStatement(query);
-                	  pstmt.setInt(1, userId);
-                	  pstmt.setInt(2, profileId);
+                	  pstmt.setInt(1, u);
+                	  pstmt.setInt(2, p);
                 	  
                 	  rs = pstmt.executeQuery();
                 	  String profileFname = null;
@@ -1659,7 +1669,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                 	  		"UP_USER ON UP_USER_PROFILE.USER_ID=UP_USER.USER_DFLT_LAY_ID " +
                 	  		"WHERE UP_USER.USER_ID=? AND UP_USER_PROFILE.PROFILE_FNAME=?";
                 	  pstmt = con.prepareStatement(query);
-                	  pstmt.setInt(1, userId);
+                	  pstmt.setInt(1, u);
                 	  pstmt.setString(2, profileFname);
                 	  rs = pstmt.executeQuery();
                 	  int intendedLayoutId = 0;
@@ -1672,7 +1682,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                 	  query = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE " +
                 	  		"USER_ID=? AND LAYOUT_ID=?";
                 	  pstmt = con.prepareStatement(query);
-                	  pstmt.setInt(1, userId);
+                	  pstmt.setInt(1, u);
                 	  pstmt.setInt(2, intendedLayoutId);
                 	  rs = pstmt.executeQuery();
                 	  if (rs.next()) {
@@ -1683,8 +1693,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                     	  		"USER_ID=? AND PROFILE_ID=?";
                     	  pstmt = con.prepareStatement(query);
                     	  pstmt.setInt(1, intendedLayoutId);
-                    	  pstmt.setInt(2, userId);
-                    	  pstmt.setInt(3, profileId);
+                    	  pstmt.setInt(2, u);
+                    	  pstmt.setInt(3, p);
                     	  pstmt.execute();
                     	  
                     	  layoutId = intendedLayoutId;
@@ -1701,12 +1711,11 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
           finally {
               pstmt.close();
           }
-      }
-      finally {
-          JdbcUtils.closeConnection(con);
-      }
-
-      return layoutId;
+          
+          return layoutId;
+          
+          }
+      });
   }
 
     /* (non-Javadoc)
