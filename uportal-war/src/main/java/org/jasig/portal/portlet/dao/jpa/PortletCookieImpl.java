@@ -50,7 +50,7 @@ import org.jasig.portal.portlet.om.IPortletCookie;
 @Entity
 @Table(
 		name = "UP_PORTLET_COOKIES",
-        uniqueConstraints = @UniqueConstraint( columnNames = {"PORTAL_COOKIE_ID", "NAME"} )
+        uniqueConstraints = @UniqueConstraint( columnNames = {"PORTAL_COOKIE_ID", "COOKIE_NAME"} )
 	)
 @SequenceGenerator(
         name="UP_PORTLET_COOKIES_GEN",
