@@ -151,7 +151,7 @@
         <grouperClient.version>1.6.3</grouperClient.version>
         <hibernate.version>3.6.5.Final</hibernate.version>
         <hibernate-jpamodelgen.version>1.1.1.Final</hibernate-jpamodelgen.version>
-        <hsqldb.version>1.8.0.10</hsqldb.version>
+        <hsqldb.version>2.2.4</hsqldb.version>
         <jackson.version>1.8.2</jackson.version>
         <javassist.version>3.14.0.GA</javassist.version> 
         <jasypt.version>1.7.1</jasypt.version>

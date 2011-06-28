@@ -597,22 +597,6 @@
                 <artifact:pom file="${bootstrap.dir}/hsqldb/pom.xml" settingsFile="${maven.settings}" inheritAllProperties="false" />
             </artifact:dependencies>
 
-            <property name="database" value="${basedir}/data/uPortal" />
-            <property name="port" value="${environment.build.hsql.port}" />
-
-            <echo message="Starting HSQL" />
-            <echo message="Using: ${database}" />
-            <java fork="true" spawn="${spawn}"  maxmemory="16M" dir="${basedir}" classname="org.hsqldb.Server" failonerror="${failonerror}">
-                <classpath refid="hsql.classpath" />
-    
-                <arg value="-database" />
-                <arg value="${database}" />
-                <arg value="-host" />
-                <arg value="localhost" />
-                <arg value="-port" />
-                <arg value="${port}" />
-            </java>
-                <!--
             <property name="database" value="file:${basedir}/data/uPortal" />
             <property name="port" value="${environment.build.hsql.port}" />
 
@@ -621,20 +605,15 @@
             <java fork="true" spawn="${spawn}"  maxmemory="16M" dir="${basedir}" classname="org.hsqldb.Server" failonerror="${failonerror}">
                 <classpath refid="hsql.classpath" />
     
-                <arg value="- -silent" />
-                <arg value="false" />
-                <arg value="- -trace" />
-                <arg value="true" />
-                <arg value="- -database.0" />
+                <arg value="--database.0" />
                 <arg value="${database}" />
-                <arg value="- -dbname.0" />
+                <arg value="--dbname.0" />
                 <arg value="uPortal" />
-                <arg value="- -address" />
+                <arg value="--address" />
                 <arg value="localhost" />
-                <arg value="- -port" />
+                <arg value="--port" />
                 <arg value="${port}" />
             </java>
-            -->
         </uportal-parent-macro>
     </target>
     
