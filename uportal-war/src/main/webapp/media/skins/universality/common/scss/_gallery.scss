@@ -7,63 +7,68 @@
 
 .up {
 	.up-gallery {
-		 background: $dgray;
-		 border-color: $gray;
+		 background: $galleryBackground;
+		 border: $galleryBorder;
 		 
 		 .handle {
 	 		/* Clickable handle that opens the drawer. Once open, the handle can be clicked to close the drawer. */
-	 		background:$black url(../common/images/gallery-bar.png) bottom left repeat-x;
+	 		background:$galleryHandleBackground;
 	 		
 	 		a {
-	 			background:$white scroll url(../common/images/gallery-handle.png) 0 0 repeat-x;
-	 			color: $text;
-	 			border: 1px solid $graydark;
+	 			background:$galleryHandleLinkBackround;
+	 			color: $galleryHandleLink;
+	 			border: $galleryHandleBorder;
 	 			border-top: none;
-	 			@include round(0,0,3px,3px);
-	 			@include box-shadow(0 1px 2px $gray);
+	 			@if ($galleryHandleRound != false) {
+	 				@include round(0,0,$galleryHandleRound,$galleryHandleRound);
+	 			}
+	 			@if ($galleryHandleShadow != false) {
+	 				@include box-shadow($galleryHandleShadow);
+	 			}
+	 			
 	 			
 	 			span {
-	 				background-image: url(../common/images/gallery-handle-arrow-down.png);
+	 				background-image: $galleryHandleIconClosed;
 	 				background-position: right center;
 	 				background-repeat: no-repeat;
 	 			}
 	 		}
-	 		.handle-arrow-up {background-image: url(../common/images/gallery-handle-arrow-up.png) !important;}
+	 		.handle-arrow-up {background-image: $galleryHandleIconOpen;}
 	 	}
 		 
 		.gallery-inner {
-		 	background: transparent url(../common/images/gallery-bar.png) top left repeat-x;
+		 	background: $galleryBarBackground;
 		 	
 		 	.menu-wrapper{
 		 		/* The navigation menu of gallery views. */
 			 	.menu {
-			 		border-color: $graylight;
-			 		background: $dgraylight;
+			 		border: $galleryMenuBorder;
+			 		background: $galleryMenuBackground;
 			 		
 			 		li {
-			 			border-color: $graydark;
-			 			background: $dgraylighter;
+			 			border: $galleryMenuItemBorder;
+			 			background: $galleryMenuItemBackground;
 			 			
 			 			a {
-			 				color: $graylight;
+			 				color: $galleryMenuItemLink;
 			 			}
 			 		}
 			 		li:hover, li:active {
-			 			background: $c1darkest;
+			 			background: $galleryMenuItemBackgroundHover;
 			 			
 			 			a {
-			 				color: $white;
+			 				color: $galleryMenuItemLinkHover;
 			 			}
 			 		}
 			 		.active {
-			 			background: $dgray;
+			 			background: $galleryMenuItemActiveBackground;
 			 			
 			 			a {
-			 				color: $white;
+			 				color: $galleryMenuItemActiveLink;
 			 			}
 			 			
 			 			span {
-			 				background: $dgray url("../common/images/gallery-arrow-right.png") 90% 50% no-repeat;
+			 				background: $galleryMenuItemActiveIcon;
 			 			}
 			 		}
 			 		
@@ -71,159 +76,182 @@
 			 	
 			 	.close-button {
 			 		/* Close gallery ("I'm Done") button. */
-			 		@include button();
+			 		@include button($galleryCloseButtonType);
 			 	}	
 		 	}
 		 	
 		 	.content-filters-wrapper {
 		 		/* Search and category filters for the add portlet and use portlet views. */
-		 		background: $dgraylight;
-		 		border: 1px solid $dgraylightest;
-		 		@include rounded(5px);
+		 		background: $galleryFilterBackground;
+		 		border: $galleryFilterBorder;
+		 		@if ($galleryFilterRound != false) {
+		 			@include rounded($galleryFilterRound);
+		 		}
 		 		
 	 			h3 {
 	 				/* Filter titles */
-	 				background: $dgray;
-	 				color: $c1dark;
-	 				@include round(5px,5px,0,0);
-	 				
-	 				span {
-	 					@include round(5px,5px,0,0);
-	 				}
+	 				background: $galleryFilterTitleBackground;
+	 				color: $galleryFilterTitle;
+	 				@if ($galleryFilterTitleRound != false) {
+			 			@include round($galleryFilterTitleRound, $galleryFilterTitleRound, 0, 0);
+			 			
+			 			span {
+			 				@include round($galleryFilterTitleRound, $galleryFilterTitleRound, 0, 0);
+			 			}
+			 		}
 	 			}
 	 			
 	 			h3:hover, h3:focus {
-	 				color: $c1light;
+	 				color: $galleryFilterTitleHover;
 	 			}
 		 		
 		 		.active h3 {
-		 			color: $c1light;
+		 			color: $galleryFilterTitleActive;
 		 			span {
-		 				background: $dgraylight;
+		 				background: $galleryFilterTitleActiveBgd;
 		 			}
 		 		}
 		 		
 		 		.active h3:hover, .active h3:focus {
-		 			color: $c1lightest;
+		 			color: $galleryFilterTitleActiveHover;
 		 		}
 		 		
 		 		h4 {
 		 			/* Filter subtitles */
-		 			color: $graylighter;
-		 			border-bottom:1px dotted $graydarkest;
+		 			color: $galleryFilterSubtitle;
+		 			border-bottom: $galleryFilterSubtitleLine;
 		 		}
 		 		
 		 		.portlet-search-input {
 		 			/* Filter search */
-		 			background: $dgraylightest;
-		 			color: $dgray;
-		 			padding: 0.3em;
+		 			background: $galleryFSearchInputBackground;
+		 			color: $galleryFSearchInputText;
+		 			padding: $galleryFSearchInputPadding;
 		 			&:hover {
-		 				background: $graydarker;
+		 				background: $galleryFSearchInputHover;
 		 			}
 		 			&:focus {
-			 			background: $white;
+			 			background: $galleryFSearchInputFocus;
 			 		}
 		 		}
 		 		
 		 		.categories {
 		 			/* Filter categories */
 		 			a {
-		 				color: $graylight;
+		 				color: $galleryCatLink;
 		 			}
 		 			
 		 			a:hover, a:focus {
-		 				color: $c1;
+		 				color: $galleryCatLinkHover;
 		 			}
 		 			
 		 			.active a {
-		 				color: $white;
+		 				color: $galleryCatActiveLink;
 		 			}
 		 		}
 		 		
 		 		
 		 		.packages-wrapper {
 		 			/* Filter packages */
-		 			color: $graylighter;
+		 			color: $galleryPackagesText;
 		 		}
 		 	}
 		 	
 		 	.results-wrapper {
 		 		/* Results section of the gallery. Lists portlets, packages, skins, or layout options. */
-		 		padding-bottom: 5px;
-		 		color: $gray;
+		 		padding-bottom: $galleryResultsBottomPadding;
+		 		color: $galleryResultsText;
 		 		
 		 		.ri-wrapper {
-		 			background: $dgray;
-		 			border: 1px solid $dgraylightest;
-		 			@include rounded(5px);
-		 			@include box-shadow(1px 1px 2px $black);
+		 			background: $galleryRIBackground;
+		 			border: $galleryRIBorder;
+		 			@if ($galleryRIRound != false) {
+		 				@include rounded($galleryRIRound);
+		 			}
+		 			@if ($galleryRIShadow != false) {
+		 				@include box-shadow($galleryRIShadow);
+		 			}
 		 			
 		 			.ri-utility {
-		 				height: 16px;
-		 				background: $dgraylight;
-		 				@include round(5px,5px,0,0);
+		 				height: $galleryRIUtilityHeight;
+		 				background: $galleryRIUtilityBackground;
+		 				@if ($galleryRIUtilityRound != false) {
+		 					@include round($galleryRIUtilityRound,$galleryRIUtilityRound,0,0);
+		 				}
 		 			}
 		 			
 		 			.portlet-thumb-gripper {
-		 				background: $dgraylight url("../common/images/gripper.png") 5px 0px no-repeat;
+		 				background: $galleryRIGripper;
 		 			}
 		 			
 		 			.ri-titlebar {
-		 				color: $white;
+		 				color: $galleryRITitle;
 		 			}
 		 			
 		 			.ri-description {
-		 				color: $graylight;
+		 				color: $galleryRIDescription;
 		 			}
 		 		}
 		 		.ri-wrapper:hover, .ri-wrapper:focus {
-		 			background: $dgraydarker;
-		 			border-color: $c1;
-		 			@include gradient($dgray,$dgraydarkest);
+		 			background: $galleryRIBackgroundHover;
+		 			border: $galleryRIBorderHover;
+		 			@include gradient($galleryRIGradient1Hover,$galleryRIGradient2Hover);
 		 		}
 		 		.portlet-wrapper, .package-wrapper {
 		 			.ri-link {
-		 				color: $black;
-		 				background: $dgraydark;
-		 				@include gradient($gray,$graydarkest);
-		 				@include round(0,5px,0,0);
+		 				color: $galleryRILink;
+		 				background: $galleryRIBackground;
+		 				@if ($galleryRILinkGradient1 != false) {
+		 					@include gradient($galleryRILinkGradient1,$galleryRILinkGradient2);
+		 				}
+		 				@if ($galleryRILinkRound != false) {
+		 					@include round(0,$galleryRILinkRound,0,0);
+		 				}
+		 				
 		 				display: none;
 		 			}
 		 		}
 		 		.portlet-wrapper:hover, .portlet-wrapper:focus, .package-wrapper:hover, .package-wrapper:focus {
 		 			.ri-link {
-		 				background: $c1dark;
-		 				@include gradient($c1light,$c1dark);
+		 				background: $galleryRILinkBackgroundHover;
+		 				@if ($galleryRILinkGradient1Hover != false) {
+		 					@include gradient($galleryRILinkGradient1Hover,$galleryRILinkGradient2Hover);
+		 				}
+		 				
 		 				display: block;
 		 			}
 	 			}
 	 			
 	 			.selected {
-	 				background: $dgraydark;
-	 				border-color: $c1;
-	 				border-width: 3px;
+	 				background: $galleryRISelectedBackground;
+	 				border: $galleryRISelectedBorder;
 	 			}
-	 			
 	 			
 	 			.pager {
 	 				.pager-pagination {
-	 					color: $white;
+	 					color: $galleryPagerText;
 	 				}
 	 				.pager-button-up, .pager-button-down {
-	 					background: $dgraylight;
-	 					border:1px solid $dgraylightest;
-	 					@include gradient($dgraylighter,$dgray);
-	 					@include rounded(5px);
+	 					background: $galleryPagerButtonBackground;
+	 					border: $galleryPagerButtonBorder;
+	 					@if ($galleryPagerButtonGradient1 != false) {
+	 						@include gradient($galleryPagerButtonGradient1,$galleryPagerButtonGradient2);
+	 					}
+	 					@if ($galleryPagerButtonRound != false) {
+	 						@include rounded($galleryPagerButtonRound);
+	 					}
 	 				}
 	 				.pager-button-up:hover, .pager-button-up:focus, .pager-button-down:hover, .pager-button-down:focus {
-						background: $dgraylightest;
-						border-color: $c1;
-						@include gradient($dgray,$dgraydarkest);
+						background: $galleryPagerBtnBackgroundHover;
+						border: $galleryPagerBtnBorderHover;
+						@if ($galleryPagerBtnGradient1Hover != false) {
+							@include gradient($galleryPagerBtnGradient1Hover,$galleryPagerBtnGradient2Hover);
+						}
+						
 					}
 					.fl-pager-disabled {
-						background: $dgray !important;
-						border-color: $dgraylight !important;
+						background: $galleryPagerBtnBgdDisabled;
+						border: $galleryPagerBtnBorderDisabled;
 						cursor: default !important;
 						a {
 							cursor: default !important;

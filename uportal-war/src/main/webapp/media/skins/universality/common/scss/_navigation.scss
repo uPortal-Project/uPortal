@@ -21,6 +21,9 @@
 		.portal-navigation {
 			/* Each tab list item. */
 			float: left;
+			@if ($navTabMarginRight != false) {
+				margin-right: $navTabMarginRight;
+			}
 			padding: 0;
 			border: none;
 			border-left: $navTabBorderLeft;
@@ -41,7 +44,7 @@
 				font-weight: $navTabWeight;
 			}
 		}
-		.portal-navigation:hover {
+		.portal-navigation:hover, .portal-navigation:focus {
 			/* Tab hover. */
 			background: $navTabHoverBackground;
 			@include gradient2($navTabHoverGradient1,$navTabHoverGradient2,$navTabHoverGradient3);

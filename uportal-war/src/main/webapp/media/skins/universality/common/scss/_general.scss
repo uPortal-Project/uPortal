@@ -7,6 +7,9 @@
 
 .up {
 	/* Global, general styling. */
+	@if ($fontSize != false) {
+		font-size: $fontSize;
+	}
 	font-family: $font;
 	background: $portalBackground;
 	@if ($portalGradient1 != false) {
@@ -44,6 +47,6 @@
 	#portalPageBodyInner {
 		/* Page body. */
 		padding: $portalPageBodyInnerPadding;
-		
+		background: $portalPageBackground;
 	}
 }
