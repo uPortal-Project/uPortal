@@ -92,7 +92,7 @@ public class StylesheetDescriptorImpl implements IStylesheetDescriptor {
     @OneToMany(mappedBy = "stylesheetDescriptor", targetEntity = StylesheetUserPreferencesImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<IStylesheetUserPreferences> stylesheetUserPreferences = null;
     
-    @Column(name = "NAME", length=100, nullable = false, unique = true)
+    @Column(name = "SS_NAME", length=100, nullable = false, unique = true)
     @Type(type = "fname")
     private String name;
     

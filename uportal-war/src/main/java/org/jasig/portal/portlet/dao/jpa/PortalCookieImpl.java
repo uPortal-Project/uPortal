@@ -80,7 +80,7 @@ class PortalCookieImpl implements IPortalCookie {
 	private final Date created;
 	@Column(name = "EXPIRES", nullable = false, updatable = true)
 	private Date expires;
-	@Column(name = "VALUE", length=100, nullable = false, updatable = false, unique = true)
+	@Column(name = "COOKIE_VALUE", length=100, nullable = false, updatable = false, unique = true)
 	private final String value;
 	
 	@OneToMany(targetEntity = PortletCookieImpl.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)

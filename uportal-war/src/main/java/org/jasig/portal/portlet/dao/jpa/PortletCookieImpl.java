@@ -89,12 +89,12 @@ class PortletCookieImpl implements IPortletCookie {
 	
 	@Column(name = "COOKIE_COMMENT", length=1000, nullable = true, updatable = true)
 	private String comment;
-	@Column(name = "DOMAIN", length=500, nullable = true, updatable = true)
+	@Column(name = "COOKIE_DOMAIN", length=500, nullable = true, updatable = true)
 	private String domain;
 	@Column(name = "EXPIRES", nullable = false, updatable = true)
     private Date expires;
 	
-	@Column(name = "PATH", length=1000, nullable = true, updatable = true)
+	@Column(name = "COOKIE_PATH", length=1000, nullable = true, updatable = true)
 	private String path;
 	@Column(name = "COOKIE_VALUE", length=1000, nullable = false, updatable = true)
 	private String value = "";

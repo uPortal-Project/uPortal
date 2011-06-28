@@ -71,7 +71,7 @@ public class LayoutAttributeDescriptorImpl extends AbstractStylesheetDataImpl im
         name = "UP_SS_DESC_LAY_ATTR_ELMS",
         joinColumns = @JoinColumn(name = "ATTR_ID")
     )
-    @Column(name = "ELEMENT")
+    @Column(name = "ELEMENT_NAME")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
     private Set<String> targetElementNames;

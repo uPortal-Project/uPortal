@@ -45,7 +45,6 @@ import javax.persistence.PrePersist;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
@@ -101,8 +100,8 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     private final int profileId;
     
     @ElementCollection(fetch = FetchType.EAGER)
-    @MapKeyColumn(name="NAME", nullable=false, length = 500)
-    @Column(name="VALUE", nullable=false, length = 2000)
+    @MapKeyColumn(name="PROP_NAME", nullable=false, length = 500)
+    @Column(name="PROP_VALUE", nullable=false, length = 2000)
     @Type(type="nullSafeString") //only applies to map values
     @CollectionTable(
             name="UP_SS_USER_PREF_OUTPUT_PROP", 
@@ -112,8 +111,8 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     private final Map<String, String> outputProperties = new LinkedHashMap<String, String>(0);
     
     @ElementCollection(fetch = FetchType.EAGER)
-    @MapKeyColumn(name="NAME", nullable=false, length = 500)
-    @Column(name="VALUE", nullable=false, length = 2000)
+    @MapKeyColumn(name="PARAM_NAME", nullable=false, length = 500)
+    @Column(name="PARAM_VALUE", nullable=false, length = 2000)
     @Type(type="nullSafeString") //only applies to map values
     @CollectionTable(
             name="UP_SS_USER_PREF_PARAM", 

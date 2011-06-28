@@ -39,14 +39,14 @@ abstract class AbstractStylesheetDataImpl implements IStylesheetData {
     @Column(name = "ENTITY_VERSION")
     private final long entityVersion;
     
-    @Column(name = "NAME", length=100, nullable = false, updatable = false)
+    @Column(name = "DATA_NAME", length=100, nullable = false, updatable = false)
     private final String name;
     
     @Column(name = "DEFAULT_VALUE", length=500)
     @Type(type="nullSafeString")
     private String defaultValue;
     
-    @Column(name = "SCOPE", nullable = false)
+    @Column(name = "PERSISTENCE_SCOPE", nullable = false)
     @Enumerated(EnumType.STRING)
     private Scope scope;
     

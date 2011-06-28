@@ -77,8 +77,8 @@ class LayoutNodeAttributesImpl {
     private final String nodeId;
     
     @ElementCollection(fetch = FetchType.EAGER)
-    @MapKeyColumn(name="NAME", nullable=false, length = 500)
-    @Column(name="VALUE", nullable=false, length = 2000)
+    @MapKeyColumn(name="ATTR_NAME", nullable=false, length = 500)
+    @Column(name="ATTR_VALUE", nullable=false, length = 2000)
     @Type(type="nullSafeString") //only applies to map values
     @CollectionTable(
             name="UP_SS_USER_PREF_LAY_ATTR_VAL", 

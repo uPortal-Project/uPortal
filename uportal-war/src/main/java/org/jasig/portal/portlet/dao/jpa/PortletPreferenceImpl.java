@@ -39,8 +39,6 @@ import javax.persistence.Version;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.pluto.container.PortletPreference;
 import org.apache.pluto.container.om.portlet.Preference;
 import org.hibernate.annotations.Cache;
@@ -80,7 +78,7 @@ public class PortletPreferenceImpl implements IPortletPreference {
     @Column(name = "ENTITY_VERSION")
     private final long entityVersion;
     
-    @Column(name = "NAME")//, nullable = false)
+    @Column(name = "PREF_NAME")
     @Type(type = "materialized_clob")
     private String name = null;
     
@@ -94,7 +92,7 @@ public class PortletPreferenceImpl implements IPortletPreference {
     )
     @IndexColumn(name = "VALUE_ORDER")
     @Type(type = "materialized_clob")
-    @Column(name = "VALUE")
+    @Column(name = "PREF_VALUE")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
     private List<String> values = null;
