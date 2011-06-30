@@ -383,8 +383,9 @@ dbLoader.process(dbLoaderConfig);
 //Data Import Script
 logger.info('');
 logger.info('');
-logger.info('Importing Data from: ${dir}');
-portalDataHandlerService.importData(new File(/${dirEscaped}/), '${pattern}' == 'null' ? null : '${pattern}', null);
+dataDir = /${dirEscaped}/;
+logger.info('Importing Data from: ' + dataDir);
+portalDataHandlerService.importData(new File(dataDir), '${pattern}' == 'null' ? null : '${pattern}', null);
         </echo>
         
         <antcall target="up-shell">
