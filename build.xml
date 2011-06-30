@@ -60,6 +60,9 @@
     
     <tempfile property="parentPomInstallMarker.file" destdir="${jasig.tmpdir}" prefix="uportal-parent.pom-" suffix="-marker" deleteonexit="true"/>
     
+    <!-- PortalShell Script File for run -->
+    <tempfile property="portal-shell-script" destdir="${jasig.tmpdir}" prefix="up-shell_" suffix=".groovy" deleteonexit="true"/>
+    
     <!--
      | Define maven.home and maven.settings variables if they are not set
      +-->
@@ -141,105 +144,101 @@
     
     <target name="initdb" depends="prodPrompt" description="Drops all tables, then runs all the targets necessary prepare the portal database">
         <echo message="Initializing database" />
-        <antcall target="db" />
-        <antcall target="db-hibernate" />
-        <antcall target="i18n-db" />
-        <antcall target="db-import" />
+        <up-shell-batch>
+            <antcall target="db" />
+            <antcall target="db-hibernate" />
+            <antcall target="i18n-db" />
+            <antcall target="db-import" />
+        </up-shell-batch>
         <echo message="Finished initializing database" />
     </target>
     
     <target name="db-hibernate" depends="prodPrompt" description="Drops then creates Hibernate managed tables">
-        <antcall target="db-hibernate-portal" />
-        <antcall target="db-hibernate-stats" />
+        <up-shell-batch>
+            <antcall target="db-hibernate-portal" />
+            <antcall target="db-hibernate-stats" />
+        </up-shell-batch>      
     </target>
     
     <target name="db-hibernate-portal" depends="prodPrompt" description="Drops then creates Hibernate managed tables for the portal">
-        <uportal-war-macro>
-            <java fork="true" failonerror="true" dir="${uportal-war.dir}" classname="org.jasig.portal.tools.dbloader.DataSourceSchemaExportRunner">
-                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
-                
-                <classpath refid="uportal-war-full.classpath" />
+        <property name="schemaExportBean" value="portalDbHibernateExport" />
+        <property name="export" value="true" />
+        <property name="drop" value="true" />
+        <property name="create" value="true" />
+        <property name="outputFile" value="null" />
+        <property name="haltOnError" value="true" />
 
-                <arg value="-b" />
-                <arg value="portalDbHibernateExport" />
-                <arg value="-e" />
-                <arg value="-d" />
-                <arg value="-c" />
-            </java>
-        </uportal-war-macro>
+        <echo>Creating HBM2DDL Script</echo>
+        <echo file="${portal-shell-script}" append="true">
+//HBM2DDL Script
+logger.info('');
+logger.info('');
+logger.info('HBM2DDL: ${schemaExportBean}');
+${schemaExportBean}.hbm2ddl('${export}'.toBoolean(), '${create}'.toBoolean(), '${drop}'.toBoolean(), '${outputFile}' == 'null' ? null : '${outputFile}' , '${haltOnError}'.toBoolean());
+        </echo>
+        
+        <antcall target="up-shell">
+            <param name="script" value="${portal-shell-script}"/>
+        </antcall>
     </target>
     
     <target name="db-hibernate-stats" depends="prodPrompt" description="Drops then creates Hibernate managed tables used for the database backed portal statistics">
-        <uportal-war-macro>
-            <java fork="true" failonerror="true" dir="${uportal-war.dir}" classname="org.jasig.portal.tools.dbloader.DataSourceSchemaExportRunner">
-                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
-                
-                <classpath refid="uportal-war-full.classpath" />
-
-                <arg value="-b" />
-                <arg value="statsDbHibernateExport" />
-                <arg value="-e" />
-                <arg value="-d" />
-                <arg value="-c" />
-                <arg value="-i" />
-            </java>
-        </uportal-war-macro>
+        <antcall target="db-hibernate-portal">
+            <param name="schemaExportBean" value="statsDbHibernateExport" />
+            <param name="haltOnError" value="false" />
+        </antcall>
     </target>
 
     <target name="db" depends="prodPrompt" description="Loads database tables and data">
-        <uportal-war-macro>
-            <property name="usetable" value="-t" />
-            <property name="tablefile" value="/properties/db/tables.xml" />
-            <property name="usedata" value="-d" />
-            <property name="datafile" value="/properties/db/data.xml" />
-            <property name="createscript" value=" " />
-            <property name="droptables" value="-D" />
-            <property name="createtables" value="-C" />
-            <property name="populatetables" value="-P" />
-
-            <echo message="Invoking DbLoader" />
-            <java fork="true" failonerror="true" dir="${uportal-war.dir}" classname="org.jasig.portal.tools.dbloader.DbLoaderRunner">
-                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
-                
-                <classpath refid="uportal-war-full.classpath" />
-
-                <arg value="${usetable}" />
-                <arg value="${tablefile}" />
-                <arg value="${usedata}" />
-                <arg value="${datafile}" />
-                <arg value="${createscript}" />
-                <arg value="${droptables}" />
-                <arg value="${createtables}" />
-                <arg value="${populatetables}" />
-            </java>
-        </uportal-war-macro>
+        <property name="tablefile" value="/properties/db/tables.xml" />
+        <property name="datafile" value="/properties/db/data.xml" />
+        <property name="createscript" value="null" />
+        <property name="droptables" value="true" />
+        <property name="createtables" value="true" />
+        <property name="populatetables" value="true" />
+            
+        <echo>Creating DBLoader Script</echo>
+        <echo file="${portal-shell-script}" append="true">
+//DbLoader Script
+logger.info('');
+logger.info('');
+dbLoaderConfig = new org.jasig.portal.tools.dbloader.DbLoaderConfigBuilder();
+dbLoaderConfig.setTablesFile('${tablefile}');
+dbLoaderConfig.setDataFile('${datafile}');
+if ('${createscript}' != 'null') {
+    dbLoaderConfig.setScriptFile('${createscript}');
+}
+dbLoaderConfig.setDropTables('${droptables}'.toBoolean());
+dbLoaderConfig.setCreateTables('${createtables}'.toBoolean());
+dbLoaderConfig.setPopulateTables('${populatetables}'.toBoolean());
+logger.info('Running DbLoader with: ' + dbLoaderConfig);
+dbLoader.process(dbLoaderConfig);
+        </echo>
+        
+        <antcall target="up-shell">
+            <param name="script" value="${portal-shell-script}"/>
+        </antcall>
     </target>
 
     <target name="i18n-db" depends="prodPrompt" description="Loads internationalization tables and data">
-        <echo message="Invoking DbLoader for localizationed database setting" />
         <antcall target="db">
-            <param name="usetable" value="-t" />
             <param name="tablefile" value="/properties/db/tables-i18n.xml" />
-            <param name="usedata" value="-d" />
             <param name="datafile" value="/properties/db/data-i18n.xml" />
-            <param name="droptables" value="-D" />
-            <param name="createtables" value="-C" />
-            <param name="populatetables" value="-P" />
         </antcall>
     </target>
 
     <target name="db-import" depends="prodPrompt" description="Imports the default XML files to the database">
-        <echo message="Importing data" />
-        <antcall target="crn-import">
-            <param name="dir" value="${basedir}/uportal-war/src/main/data/required_entities" />
-            <param name="noprompt" value="true" />
-        </antcall>
-    	<!-- Use build.properties to override the entities.location setting -->
+        <!-- Use build.properties to override the entities.location setting -->
     	<property name="entities.location" value="uportal-war/src/main/data/default_entities" />
-        <antcall target="crn-import">
-            <param name="dir" value="${basedir}/${entities.location}" />
-            <param name="noprompt" value="true" />
-        </antcall>
+
+        <up-shell-batch>
+            <antcall target="data-import">
+                <param name="dir" value="${basedir}/uportal-war/src/main/data/required_entities" />
+            </antcall>
+            <antcall target="data-import">
+                <param name="dir" value="${basedir}/${entities.location}" />
+            </antcall>
+        </up-shell-batch>
     </target>
 
     <target name="dbtest" description="Displays information about the database defined in rdbm.properties">
@@ -271,12 +270,56 @@
             </java>
         </uportal-war-macro>
     </target>
-    
-    <target name="crn-export" description="Exports the specified entity or entities to XML on the file system">
+        
+    <target name="up-shell" description="Run a uPortal Groovy Shell. Interactive or scripted using -Dscript=">
+        <if>
+            <not>
+                <istrue value="${skip-up-shell-execution}"/>
+            </not>
+            <then>
+                <uportal-war-macro>
+                    <if>
+                        <and>
+                            <isset property="script" />
+                        </and>
+                        <then>
+                            <echo>Running Portal Script: ${script}</echo>
+                            <!--
+                            <concat>
+                                <path>
+                                    <pathelement location="${script}" />
+                                </path>
+                            </concat>
+                            -->
+                            <!-- Invoke import/export tool -->
+                            <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.shell.PortalShell">
+                                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+                                <classpath refid="uportal-war-full.classpath" />
+                                <arg value="-s" />
+                                <arg value="${script}" />
+                            </java>
+                        </then>
+                        <else>
+                            <echo>No Script</echo>
+                        
+                            <!-- Invoke import/export tool -->
+                            <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.shell.PortalShell">
+                                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+                                <classpath refid="uportal-war-full.classpath" />
+                            </java>
+                        </else>
+                    </if>
+        
+                </uportal-war-macro>
+            </then>
+        </if>
+    </target>
+
+    <target name="data-export" description="Exports the specified entity or entities to XML on the file system">
         <uportal-war-macro>
             <!-- Three properties control the export:  dir, type, and sysid -->
             <fail unless="type">
-                You must specify a &quot;type&quot; parameter (-Dtype={something}) from the following:  all, layout,
+                You must specify a 'type' parameter (-Dtype={something}) from the following:  all, layout,
                 all-layouts, channel, all-channels, all-permissions,  all-memberships, group, all-groups, user, 
                 all-users.
             </fail>
@@ -296,75 +339,34 @@
         </uportal-war-macro>
     </target>
 
-    <target name="crn-import" depends="prodPrompt" description="Imports the specified XML file or files">
-        <uportal-war-macro>
-            <if>
-                <and>
-                    <isset property="dir" />
-                    <not>
-                        <isset property="pattern" />
-                    </not>
-                </and>
-                <then>
-                    <!-- Invoke import/export tool -->
-                    <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.io.ImportExportRunner">
-                        <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
-                        <classpath refid="uportal-war-full.classpath" />
-                        <arg value="-i" />
-                        <arg value="-d" />
-                        <arg value="${dir}" />
-                    </java>
-                </then>
-                <elseif>
-                    <and>
-                        <isset property="dir" />
-                        <isset property="pattern" />
-                    </and>
-                    <then>
-                        <!-- Invoke import/export tool -->
-                        <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.io.ImportExportRunner">
-                            <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
-                            <classpath refid="uportal-war-full.classpath" />
-                            <arg value="-i" />
-                            <arg value="-d" />
-                            <arg value="${dir}" />
-                            <arg value="-p" />
-                            <arg value="${pattern}" />
-                        </java>
-                    </then>
-                </elseif>
-                <elseif>
-                    <and>
-                        <isset property="file" />
-                    </and>
-                    <then>
-                        <!-- Invoke import/export tool -->
-                        <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.io.ImportExportRunner">
-                            <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
-                            <classpath refid="uportal-war-full.classpath" />
-                            <arg value="-i" />
-                            <arg value="-f" />
-                            <arg value="${file}" />
-                        </java>
-                    </then>
-                </elseif>
-                <else>
-                    <fail>Unsupported options</fail>
-                </else>
-            </if>
-
-        </uportal-war-macro>
+    <target name="data-import" depends="prodPrompt" description="Imports the specified XML file or files">
+        <fail unless="dir">Property 'dir' must be set</fail>
+            
+        <property name="pattern" value="null" />
+            
+        <echo>Creating Data Import Script</echo>
+        <echo file="${portal-shell-script}" append="true">
+//Data Import Script
+logger.info('');
+logger.info('');
+logger.info('Importing Data from: ${dir}');
+portalDataHandlerService.importData(new File('${dir}'), '${pattern}' == 'null' ? null : '${pattern}', null);
+        </echo>
+        
+        <antcall target="up-shell">
+            <param name="script" value="${portal-shell-script}"/>
+        </antcall>
     </target>
 
-    <target name="crn-delete" depends="prodPrompt" description="Deletes the specified entity">
+    <target name="data-delete" depends="prodPrompt" description="Deletes the specified entity">
         <uportal-war-macro>
             <fail unless="type">
-                You must specify a &quot;type&quot; parameter (-Dtype={something}) from the following:  layout, channel,
+                You must specify a 'type' parameter (-Dtype={something}) from the following:  layout, channel,
                 group, user.
             </fail>
             
             <fail unless="sysid">
-                You must specify a &quot;sysid&quot; parameter (-Dsysid={something}).  The value will be a valid username
+                You must specify a 'sysid' parameter (-Dsysid={something}).  The value will be a valid username
                 (user or layout), fname (channel), or name (group).
             </fail>
 
@@ -660,6 +662,22 @@
 
     <!-- ============================== Utility Targets ============================== -->
     <!--
+     | Runs up-shell passing in the default shell script filename as the targeted script
+     +-->
+    <target name="up-shell-default">
+        <if>
+            <not>
+                <istrue value="${skip-up-shell-execution}"/>
+            </not>
+            <then>
+                <antcall target="up-shell">
+                    <param name="script" value="${portal-shell-script}"/>
+                </antcall>       
+            </then>
+        </if> 
+    </target>
+        
+    <!--
      | Utility to deploy a WAR to the servlet container. The delete and the replacement happen
      | as close together as possible.
      +-->
@@ -810,13 +828,79 @@
         </fail>
     </target>
     <target name="pubchan">
-        <echo>The "pubchan" Ant task is no longer supported. Use 'ant crn-import' to publish channel entity XML files.</echo>
-        <fail message="The 'pubchan' Ant task is no longer supported. Run 'ant crn-import' for the same result.">
+        <echo>The "pubchan" Ant task is no longer supported. Use 'ant data-import' to publish channel entity XML files.</echo>
+        <fail message="The 'pubchan' Ant task is no longer supported. Run 'ant data-import' for the same result.">
         </fail>
-   </target>
-
+    </target>
+    <target name="crn-export">
+        <echo>The "crn-export" Ant task is no longer supported. Use 'ant data-export' to export portal data.</echo>
+        <fail message="The 'crn-export' Ant task is no longer supported. Use 'ant data-export' to export portal data.">
+        </fail>
+    </target>
+    <target name="crn-import">
+        <echo>The "crn-import" Ant task is no longer supported. Use 'ant data-import' to import portal data.
+IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a Ant Pattern instead.</echo>
+        <fail message="The 'crn-import' Ant task is no longer supported. Use 'ant data-import' to import portal data.">
+        </fail>
+    </target>
+    <target name="crn-delete">
+        <echo>The "crn-delete" Ant task is no longer supported. Use 'ant data-delete' to delete portal data.</echo>
+        <fail message="The 'crn-delete' Ant task is no longer supported. Use 'ant data-delete' to delete portal data.">
+        </fail>
+    </target>
+    
 
     <!-- ============================== Maven Support Macros ============================== -->
+    
+    <macrodef name="up-shell-batch">
+        <element name="sub-tasks" optional="false" implicit="true" />
+    
+        <sequential>
+            <!-- use a counter variable as a way to namespace properties -->
+            <if>
+                <not><isset property="up-shell-batch-version"/></not>
+                <then>
+                    <var name="up-shell-batch-version" value="0"/>
+                </then>
+                <else>
+                    <math result="up-shell-batch-version-result" operand1="${up-shell-batch-version}" operation="+" operand2="1" datatype="int"/>
+                    <var name="up-shell-batch-version" value="${up-shell-batch-version-result}"/>
+                    <var name="up-shell-batch-version-result" unset="true"/>
+                </else>
+            </if>
+            
+            <!-- if skip-up-shell-execution isn't set default it to false -->
+            <if>
+                <not><isset property="skip-up-shell-execution"/></not>
+                <then>
+                    <var name="skip-up-shell-execution" value="false"/>
+                </then>
+            </if>
+            
+            <!-- Track the current skip-up-shell-execution locally for this macro and set the skip-up-shell-execution to true -->
+            <property name="batch-skip-up-shell-execution-${up-shell-batch-version}" value="${skip-up-shell-execution}"/>
+            <var name="skip-up-shell-execution" value="true"/>
+            
+            <!-- run subtasks -->
+            <sub-tasks />
+            
+            <!-- copy the original skip-up-shell-execution value back into the variable -->            
+            <propertycopy name="batch-skip-up-shell-execution-temp" from="batch-skip-up-shell-execution-${up-shell-batch-version}" />
+            <var name="skip-up-shell-execution" value="${batch-skip-up-shell-execution-temp}"/>
+            <var name="batch-skip-up-shell-execution-temp" unset="true"/>
+    
+            <!-- If not skipping run up-default-shell -->
+            <if>
+                <not>
+                    <istrue value="${skip-up-shell-execution}"/>
+                </not>
+                <then>
+                    <antcall target="up-shell-default" />
+                </then>
+            </if>
+        </sequential>
+    </macrodef>
+    
     
     <!--
      | Macro that simply calls the install-root-pom target using an 'ant' task instead of the

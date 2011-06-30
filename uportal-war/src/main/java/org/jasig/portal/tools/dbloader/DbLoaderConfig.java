@@ -19,17 +19,41 @@
 
 package org.jasig.portal.tools.dbloader;
 
+
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface ISchemaExport {
+public interface DbLoaderConfig {
 
     /**
-     * @param export If the database should have the SQL executed agaisnt it
-     * @param drop If existing database objects should be dropped before creating new objects
-     * @param outputFile Optional file to write out the SQL to.
+     * @return the tablesFile
      */
-    public void hbm2ddl(boolean export, boolean create, boolean drop, String outputFile, boolean haltOnError);
+    public String getTablesFile();
+
+    /**
+     * @return the dataFile
+     */
+    public String getDataFile();
+
+    /**
+     * @return the scriptFile
+     */
+    public String getScriptFile();
+
+    /**
+     * @return the dropTables
+     */
+    public boolean isDropTables();
+
+    /**
+     * @return the createTables
+     */
+    public boolean isCreateTables();
+
+    /**
+     * @return the populateTables
+     */
+    public boolean isPopulateTables();
 
 }

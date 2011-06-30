@@ -83,8 +83,8 @@ import com.google.common.collect.ImmutableSet;
  * @author Eric Dalquist
  * @version $Revision$
  */
-@Service("dataImportExportService")
-public class JaxbDataImportExportService implements IDataImportExportService, ResourceLoaderAware {
+@Service("portalDataHandlerService")
+public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, ResourceLoaderAware {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
@@ -118,8 +118,8 @@ public class JaxbDataImportExportService implements IDataImportExportService, Re
     private XmlUtilities xmlUtilities;
     private ResourceLoader resourceLoader;
     
-    private long maxWait = 1000;
-    private TimeUnit maxWaitTimeUnit = TimeUnit.MINUTES;
+    private long maxWait = -1;
+    private TimeUnit maxWaitTimeUnit = TimeUnit.MILLISECONDS;
 
     @Autowired
     public void setXmlUtilities(XmlUtilities xmlUtilities) {
@@ -313,14 +313,14 @@ public class JaxbDataImportExportService implements IDataImportExportService, Re
         this.directoryScanner.scanDirectoryNoResults(directory, fileFilter, 
                 new PortalDataKeyFileProcessor(this.dataKeyTypes, dataToImport, options));
         
-        final List<Tuple<Resource, Future<?>>> importFutures = new ArrayList<Tuple<Resource, Future<?>>>();
-        
         //Import the data files
         for (final PortalDataKey portalDataKey : this.dataKeyImportOrder) {
             final Queue<Resource> files = dataToImport.remove(portalDataKey);
             if (files == null) {
                 continue;
             }
+
+            final Queue<Tuple<Resource, Future<?>>> importFutures = new LinkedList<Tuple<Resource, Future<?>>>();
             
             final int fileCount = files.size();
             logger.info("Importing {} files of type {}", fileCount, portalDataKey);
@@ -339,30 +339,27 @@ public class JaxbDataImportExportService implements IDataImportExportService, Re
                 });
                 
                 //Add the future for tracking
-                importFutures.add(new Tuple<Resource, Future<?>>(file, importFuture));
+                importFutures.offer(new Tuple<Resource, Future<?>>(file, importFuture));
             }
             
             //Wait for all of the imports on of this type to complete
             waitForImportFutures(importFutures, options, true);
-            
-            //Remove any remaining futures
-            importFutures.clear();
         }
         
         if (!dataToImport.isEmpty()) {
             throw new IllegalStateException("The following PortalDataKeys are not listed in the dataTypeImportOrder List: " + dataToImport.keySet());
         }
     }
-    
+
     protected void waitForImportFutures(
-            final List<Tuple<Resource, Future<?>>> importFutures, final BatchImportOptions options, 
+            final Queue<Tuple<Resource, Future<?>>> importFutures, final BatchImportOptions options, 
             final boolean wait) {
         
         List<Resource> failedResources = null;
         
         for (Iterator<Tuple<Resource, Future<?>>> importFuturesItr = importFutures.iterator(); importFuturesItr.hasNext();) {
             final Tuple<Resource, Future<?>> importFuture = importFuturesItr.next();
-            
+             
             //If waiting, or if not waiting but the future is already done do the get
             if (wait || failedResources != null || (!wait && importFuture.second.isDone())) {
                 try {
@@ -414,13 +411,14 @@ public class JaxbDataImportExportService implements IDataImportExportService, Re
             }
         }
         
+        //If any of the Futures threw an exception report details and fail
         if (failedResources != null) {
-            final StringBuilder msg = new StringBuilder("Import Halted due to failure during import of ");
+            final StringBuilder msg = new StringBuilder("Import Halted due to failure during import, see previous exceptions for causes. ");
             msg.append(failedResources.size()).append(" files\n");
             for (final Resource failedResource : failedResources) {
                 msg.append("\t").append(failedResource).append("\n");
             }
-            
+             
             throw new RuntimeException(msg.toString());
         }
     }

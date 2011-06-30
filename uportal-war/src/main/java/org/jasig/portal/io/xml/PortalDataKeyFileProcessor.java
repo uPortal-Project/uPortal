@@ -33,7 +33,7 @@ import javax.xml.stream.events.StartElement;
 
 import org.apache.commons.io.IOUtils;
 import org.codehaus.stax2.XMLInputFactory2;
-import org.jasig.portal.io.xml.IDataImportExportService.BatchImportOptions;
+import org.jasig.portal.io.xml.IPortalDataHandlerService.BatchImportOptions;
 import org.jasig.portal.utils.ConcurrentMapUtils;
 import org.jasig.portal.xml.StaxUtils;
 import org.jasig.portal.xml.stream.BufferedXMLEventReader;

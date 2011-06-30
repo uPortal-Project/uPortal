@@ -1085,7 +1085,7 @@ public class RDBMDistributedLayoutStore
     */
     private FragmentDefinition getOwnedFragment( IPerson person )
     {
-        int userId = person.getID();
+        final String userName = person.getUserName();
 
         FragmentActivator activator = this.getFragmentActivator();
 
@@ -1093,12 +1093,8 @@ public class RDBMDistributedLayoutStore
         if ( definitions != null )
         {
             for (final FragmentDefinition fragmentDefinition : definitions) {
-                final UserView userView = activator.getUserView(fragmentDefinition);
-                if (userView != null) {
-                    int fdId = userView.getUserId();
-                    if ( fdId == userId ) {
-                        return fragmentDefinition;
-                    }
+                if (userName.equals(fragmentDefinition.getOwnerId())) {
+                    return fragmentDefinition;
                 }
             }
         }
@@ -1138,7 +1134,9 @@ public class RDBMDistributedLayoutStore
                 if ( fragmentDefinition.isApplicable(person) )
                 {
                     final UserView userView = activator.getUserView(fragmentDefinition);
-                    applicables.add( userView.layout );
+                    if (userView != null) {
+                        applicables.add( userView.layout );
+                    }
                     fragmentNames.add(fragmentDefinition.getName());
                 }
             }

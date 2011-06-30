@@ -165,6 +165,11 @@
             <groupId>org.codehaus.staxmate</groupId>
             <artifactId>staxmate</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.woodstox</groupId>
+            <artifactId>woodstox-core-asl</artifactId>
+        </dependency>
         
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
@@ -194,6 +199,11 @@
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy</artifactId>
         </dependency>
 
         <dependency>
@@ -385,8 +395,15 @@
         
         <!-- ===== Runtime Dependencies ======================================= -->
         <dependency>
-            <groupId>org.codehaus.woodstox</groupId>
-            <artifactId>woodstox-core-asl</artifactId>
+            <groupId>org.fusesource.jansi</groupId>
+            <artifactId>jansi</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>jline</groupId>
+            <artifactId>jline</artifactId>
+            <scope>runtime</scope>
         </dependency>
         
         <!-- ===== Test Dependencies ========================================== -->
@@ -531,7 +548,7 @@
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <outputDirectory>target/metamodel</outputDirectory>
+                            <outputDirectory>target/generated-sources/metamodel</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -549,7 +566,7 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>target/metamodel</source>
+                                <source>target/generated-sources/metamodel</source>
                             </sources>
                         </configuration>
                     </execution>

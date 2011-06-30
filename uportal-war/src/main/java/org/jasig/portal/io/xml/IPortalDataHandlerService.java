@@ -33,7 +33,7 @@ import org.springframework.core.io.ResourceLoader;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface IDataImportExportService {
+public interface IPortalDataHandlerService {
     /**
      * Options that control behavior of batch import operations
      */

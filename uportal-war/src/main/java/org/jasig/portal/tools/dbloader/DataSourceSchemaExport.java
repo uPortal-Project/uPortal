@@ -93,7 +93,7 @@ public class DataSourceSchemaExport implements ISchemaExport {
      * @param outputFile Optional file to write out the SQL to.
      */
     @Override
-    public void hbm2ddl(boolean export, boolean create, boolean drop, String outputFile) {
+    public void hbm2ddl(boolean export, boolean create, boolean drop, String outputFile, boolean haltOnError) {
         final Configuration configuration = new Configuration();
         try {
             configuration.configure(this.configuration.getURL());
@@ -118,10 +118,13 @@ public class DataSourceSchemaExport implements ISchemaExport {
             configuration.buildMappings();
             
             final SchemaExport exporter = new SchemaExport(configuration, connection);
-//            exporter.setFormat(true);
-//            exporter.setHaltOnError(true);
+            exporter.setHaltOnError(haltOnError);
             if (outputFile != null) {
+                exporter.setFormat(true);
                 exporter.setOutputFile(outputFile);
+            }
+            else {
+                exporter.setFormat(false);
             }
             
             exporter.execute(true, export, !create, !drop);

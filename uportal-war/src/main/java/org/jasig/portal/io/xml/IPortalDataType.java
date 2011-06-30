@@ -29,7 +29,7 @@ import org.springframework.core.io.Resource;
 
 /**
  * Describes a type of portal data that can be imported, exported, or deleted via
- * the {@link IDataImportExportService}
+ * the {@link IPortalDataHandlerService}
  * 
  * @author Eric Dalquist
  * @version $Revision$

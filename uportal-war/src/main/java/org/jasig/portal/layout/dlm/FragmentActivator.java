@@ -235,7 +235,7 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
                     
                     if (userView == null) {
                         // This is worrysome...
-                        LOG.warn("No UserView object is present for owner '" + ownerId 
+                        LOG.warn("No UserView object could be activated for owner '" + ownerId 
                                                     + "' -- null will be returned");
                     }
                     

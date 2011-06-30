@@ -48,7 +48,7 @@ import org.dom4j.Node;
 import org.dom4j.io.DocumentSource;
 import org.dom4j.io.XMLWriter;
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.io.xml.IDataImportExportService;
+import org.jasig.portal.io.xml.IPortalDataHandlerService;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
@@ -85,7 +85,7 @@ public class ImportExportController {
     private Map<String, Task> exportTasks;
     private Map<String, Task> deleteTasks;
     private IPersonManager personManager;
-    private IDataImportExportService importExportService;
+    private IPortalDataHandlerService portalDataHandlerService;
     
     @Resource(name="PortalDb")
     public void setPortalDb(DataSource portalDb) {
@@ -116,13 +116,12 @@ public class ImportExportController {
     	this.personManager = personManager;
     }
     
-    
     @Autowired
-    public void setImportExportService(IDataImportExportService importExportService) {
-		this.importExportService = importExportService;
-	}
+	public void setPortalDataHandlerService(IPortalDataHandlerService portalDataHandlerService) {
+        this.portalDataHandlerService = portalDataHandlerService;
+    }
 
-	/**
+    /**
      * 
      * @param entityFile
      * @param request
@@ -219,7 +218,7 @@ public class ImportExportController {
 	    // get the task associated with exporting this entity type 
         Task task = deleteTasks.get(entityType);
 	    if(null == task) {
-	    	this.importExportService.deleteData(entityType, entityId);
+	    	this.portalDataHandlerService.deleteData(entityType, entityId);
 	    } else {
 	    	 // set the system identifier under the require attribute name
 	        String attributeName = attributeNames.get(entityType);
@@ -272,7 +271,7 @@ public class ImportExportController {
         if(null == task) {
         	OutputStream out = response.getOutputStream();
         	StreamResult result = new StreamResult(out);
-        	this.importExportService.exportData(entityType, entityId, result);
+        	this.portalDataHandlerService.exportData(entityType, entityId, result);
         	out.flush();
         } else {
         	// set the system identifier under the require attribute name

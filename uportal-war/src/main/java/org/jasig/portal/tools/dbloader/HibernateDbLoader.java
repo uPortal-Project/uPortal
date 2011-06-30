@@ -50,7 +50,9 @@ import org.hibernate.mapping.Table;
 import org.hibernate.mapping.UniqueKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.NonTransientDataAccessResourceException;
 import org.springframework.jdbc.core.ConnectionCallback;
@@ -71,12 +73,13 @@ import org.xml.sax.SAXException;
  * @version $Revision$
  */
 @Repository("dbLoader")
-public class HibernateDbLoader implements IDbLoader {
+public class HibernateDbLoader implements IDbLoader, ResourceLoaderAware {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
     private JdbcTemplate jdbcTemplate;
     private TransactionTemplate transactionTemplate;
     private Dialect preferedDialect;
+    private ResourceLoader resourceLoader;
     
     /**
      * @param jdbcOperations the jdbcTemplate to set
@@ -101,13 +104,18 @@ public class HibernateDbLoader implements IDbLoader {
     public void setDialect(Dialect dialect) {
         this.preferedDialect = dialect;
     }
-
     
+    
+    @Override
+    public void setResourceLoader(ResourceLoader resourceLoader) {
+        this.resourceLoader = resourceLoader;
+    }
+
     /* (non-Javadoc)
      * @see org.jasig.portal.tools.dbloader.IDbLoader#process(org.jasig.portal.tools.dbloader.DbLoaderConfiguration)
      */
     @Override
-    public void process(DbLoaderConfiguration configuration) throws ParserConfigurationException, SAXException, IOException {
+    public void process(DbLoaderConfig configuration) throws ParserConfigurationException, SAXException, IOException {
         final List<String> script = new ArrayList<String>();
         
         final Dialect dialect;
@@ -200,11 +208,12 @@ public class HibernateDbLoader implements IDbLoader {
         }
     }
     
-    protected ITableDataProvider loadTables(DbLoaderConfiguration configuration, Dialect dialect) throws ParserConfigurationException, SAXException, IOException {
+    protected ITableDataProvider loadTables(DbLoaderConfig configuration, Dialect dialect) throws ParserConfigurationException, SAXException, IOException {
         //Locate tables.xml
-        final Resource tablesFile = configuration.getTablesFile();
+        final String tablesFileName = configuration.getTablesFile();
+        final Resource tablesFile = this.resourceLoader.getResource(tablesFileName);
         if (!tablesFile.exists()) {
-            throw new IllegalArgumentException("Could not find tables file: " + configuration.getTablesFile());
+            throw new IllegalArgumentException("Could not find tables file: " + tablesFile);
         }
 
         //Setup parser with custom handler to generate Table model and parse
@@ -288,11 +297,12 @@ public class HibernateDbLoader implements IDbLoader {
         return script;
     }
     
-    protected void populateTables(DbLoaderConfiguration configuration, Map<String, Map<String, Integer>> tableColumnTypes) throws ParserConfigurationException, SAXException, IOException {
+    protected void populateTables(DbLoaderConfig configuration, Map<String, Map<String, Integer>> tableColumnTypes) throws ParserConfigurationException, SAXException, IOException {
         //Locate tables.xml
-        final Resource dataFile = configuration.getDataFile();
+        final String dataFileName = configuration.getDataFile();
+        final Resource dataFile = this.resourceLoader.getResource(dataFileName);
         if (!dataFile.exists()) {
-            throw new IllegalArgumentException("Could not find data file: " + configuration.getDataFile());
+            throw new IllegalArgumentException("Could not find data file: " + dataFile);
         }
 
         //Setup parser with custom handler to generate Table model and parse

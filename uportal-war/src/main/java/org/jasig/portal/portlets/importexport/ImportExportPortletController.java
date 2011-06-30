@@ -25,15 +25,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Resource;
 import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.io.xml.IDataImportExportService;
+import org.jasig.portal.io.xml.IPortalDataHandlerService;
 import org.jasig.portal.io.xml.IPortalDataType;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
@@ -41,7 +39,6 @@ import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.ModelAndView;
@@ -66,7 +63,7 @@ public class ImportExportPortletController {
     private List<String> importExportTypes;
     private IPersonManager personManager;
     private IPortalRequestUtils portalRequestUtils;
-    private IDataImportExportService importExportService;
+    private IPortalDataHandlerService portalDataHandlerService;
     
     @Autowired
     public void setPersonManager(IPersonManager personManager) {
@@ -79,11 +76,11 @@ public class ImportExportPortletController {
     }
 
     @Autowired
-    public void setImportExportService(IDataImportExportService importExportService) {
-		this.importExportService = importExportService;
-	}
+	public void setPortalDataHandlerService(IPortalDataHandlerService portalDataHandlerService) {
+        this.portalDataHandlerService = portalDataHandlerService;
+    }
 
-	/**
+    /**
      * Display the entity import form view.
      * 
      * @param request
@@ -144,7 +141,7 @@ public class ImportExportPortletController {
 		final EntityIdentifier ei = person.getEntityIdentifier();
 	    final IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
 
-	    Set<IPortalDataType> dataTypes = this.importExportService.getPortalDataTypes();
+	    Set<IPortalDataType> dataTypes = this.portalDataHandlerService.getPortalDataTypes();
 	    
 	    // filter the list of configured import/export types by user permission
     	final List<IPortalDataType> results = new ArrayList<IPortalDataType>();

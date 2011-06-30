@@ -37,7 +37,7 @@ public interface IDbLoader {
     /**
      * Executes database loading based on the provided configuration
      */
-    public abstract void process(DbLoaderConfiguration configuration) throws ParserConfigurationException,
+    public abstract void process(DbLoaderConfig configuration) throws ParserConfigurationException,
             SAXException, IOException;
 
 }
