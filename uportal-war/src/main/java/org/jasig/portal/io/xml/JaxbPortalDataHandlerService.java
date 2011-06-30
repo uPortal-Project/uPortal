@@ -450,7 +450,10 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         }
         
         try {
-            this.importData(resource, new StreamSource(resourceStream, resource.getDescription()), portalDataKey);
+            this.importData(resource, new StreamSource(resourceStream, resource.getURI().toString()), portalDataKey);
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Could not create URI for resource: " + resource, e);
         }
         finally {
             IOUtils.closeQuietly(resourceStream);
