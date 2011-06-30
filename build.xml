@@ -167,6 +167,13 @@
         <property name="create" value="true" />
         <property name="outputFile" value="null" />
         <property name="haltOnError" value="true" />
+        
+        <propertyregex property="outputFileEscaped"
+                      input="${outputFile}"
+                      defaultValue="${outputFile}"
+                      regexp="/"
+                      replace="\\\\/"
+                      global="true" />
 
         <echo>Creating HBM2DDL Script</echo>
         <echo file="${portal-shell-script}" append="true">
@@ -174,7 +181,7 @@
 logger.info('');
 logger.info('');
 logger.info('HBM2DDL: ${schemaExportBean}');
-${schemaExportBean}.hbm2ddl('${export}'.toBoolean(), '${create}'.toBoolean(), '${drop}'.toBoolean(), '${outputFile}' == 'null' ? null : '${outputFile}' , '${haltOnError}'.toBoolean());
+${schemaExportBean}.hbm2ddl('${export}'.toBoolean(), '${create}'.toBoolean(), '${drop}'.toBoolean(), /${outputFileEscaped}/ == 'null' ? null : /${outputFileEscaped}/ , '${haltOnError}'.toBoolean());
         </echo>
         
         <antcall target="up-shell">
@@ -192,10 +199,32 @@ ${schemaExportBean}.hbm2ddl('${export}'.toBoolean(), '${create}'.toBoolean(), '$
     <target name="db" depends="prodPrompt" description="Loads database tables and data">
         <property name="tablefile" value="/properties/db/tables.xml" />
         <property name="datafile" value="/properties/db/data.xml" />
-        <property name="createscript" value="null" />
+        <property name="scriptfile" value="null" />
         <property name="droptables" value="true" />
         <property name="createtables" value="true" />
         <property name="populatetables" value="true" />
+
+            
+        <propertyregex property="tablefileEscaped"
+                      input="${tablefile}"
+                      defaultValue="${tablefile}"
+                      regexp="/"
+                      replace="\\\\/"
+                      global="true" />
+
+        <propertyregex property="datafileEscaped"
+                      input="${datafile}"
+                      defaultValue="${datafile}"
+                      regexp="/"
+                      replace="\\\\/"
+                      global="true" />
+
+        <propertyregex property="scriptfileEscaped"
+                      input="${scriptfile}"
+                      defaultValue="${scriptfile}"
+                      regexp="/"
+                      replace="\\\\/"
+                      global="true" />
             
         <echo>Creating DBLoader Script</echo>
         <echo file="${portal-shell-script}" append="true">
@@ -203,10 +232,10 @@ ${schemaExportBean}.hbm2ddl('${export}'.toBoolean(), '${create}'.toBoolean(), '$
 logger.info('');
 logger.info('');
 dbLoaderConfig = new org.jasig.portal.tools.dbloader.DbLoaderConfigBuilder();
-dbLoaderConfig.setTablesFile('${tablefile}');
-dbLoaderConfig.setDataFile('${datafile}');
-if ('${createscript}' != 'null') {
-    dbLoaderConfig.setScriptFile('${createscript}');
+dbLoaderConfig.setTablesFile(/${tablefileEscaped}/);
+dbLoaderConfig.setDataFile(/${datafileEscaped}/);
+if (/${scriptfileEscaped}/ != 'null') {
+    dbLoaderConfig.setScriptFile(/${scriptfileEscaped}/);
 }
 dbLoaderConfig.setDropTables('${droptables}'.toBoolean());
 dbLoaderConfig.setCreateTables('${createtables}'.toBoolean());
@@ -284,13 +313,11 @@ dbLoader.process(dbLoaderConfig);
                         </and>
                         <then>
                             <echo>Running Portal Script: ${script}</echo>
-                            <!--
                             <concat>
                                 <path>
                                     <pathelement location="${script}" />
                                 </path>
                             </concat>
-                            -->
                             <!-- Invoke import/export tool -->
                             <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.shell.PortalShell">
                                 <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
@@ -344,13 +371,20 @@ dbLoader.process(dbLoaderConfig);
             
         <property name="pattern" value="null" />
             
+        <propertyregex property="dirEscaped"
+                      input="${dir}"
+                      defaultValue="${dir}"
+                      regexp="/"
+                      replace="\\\\/"
+                      global="true" />
+
         <echo>Creating Data Import Script</echo>
         <echo file="${portal-shell-script}" append="true">
 //Data Import Script
 logger.info('');
 logger.info('');
 logger.info('Importing Data from: ${dir}');
-portalDataHandlerService.importData(new File('${dir}'), '${pattern}' == 'null' ? null : '${pattern}', null);
+portalDataHandlerService.importData(new File(/${dirEscaped}/), '${pattern}' == 'null' ? null : '${pattern}', null);
         </echo>
         
         <antcall target="up-shell">
