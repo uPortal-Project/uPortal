@@ -113,7 +113,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
     private Map<String, IDataDeleter<Object>> portalDataDeleters = Collections.emptyMap();
 
     
-    private ConcurrentDirectoryScanner directoryScanner;
+    private org.jasig.portal.utils.DirectoryScanner directoryScanner;
     private ExecutorService importExportThreadPool;
     private XmlUtilities xmlUtilities;
     private ResourceLoader resourceLoader;

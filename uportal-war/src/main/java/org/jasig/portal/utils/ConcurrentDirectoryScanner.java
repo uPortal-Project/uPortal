@@ -51,7 +51,7 @@ import com.google.common.base.Function;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public final class ConcurrentDirectoryScanner {
+public final class ConcurrentDirectoryScanner implements DirectoryScanner {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
     private final ExecutorService executorService;
@@ -98,27 +98,20 @@ public final class ConcurrentDirectoryScanner {
         this.maxWaitTimeUnit = maxWaitTimeUnit;
     }
 
-    /**
-     * Scan the specified directory. Returning a {@link Map} of the processed results.
-     * 
-     * @param directory The directory to scan
-     * @param fileFilter Used to filter the files during processing
-     * @param fileProcessor Callback, called for each matched {@link File}
-     * @return The Map of the processed results from the source file the result
+    /* (non-Javadoc)
+     * @see org.jasig.portal.utils.DirectoryScanner#scanDirectoryWithResults(java.io.File, java.io.FileFilter, com.google.common.base.Function)
      */
+    @Override
     public <T> Map<File, T> scanDirectoryWithResults(File directory, FileFilter fileFilter, Function<Resource, T> fileProcessor) {
         final ConcurrentMap<File, T> results = new ConcurrentHashMap<File, T>();
         this.scanDirectory(directory, results, fileFilter, fileProcessor);
         return results;
     }
     
-    /**
-     * Scan the specified directory.
-     * 
-     * @param directory The directory to scan
-     * @param fileFilter Used to filter the files during processing
-     * @param fileProcessor Callback, called for each matched {@link File}
+    /* (non-Javadoc)
+     * @see org.jasig.portal.utils.DirectoryScanner#scanDirectoryNoResults(java.io.File, java.io.FileFilter, com.google.common.base.Function)
      */
+    @Override
     public void scanDirectoryNoResults(File directory, FileFilter fileFilter, Function<Resource, ?> fileProcessor) {
         this.scanDirectory(directory, null, fileFilter, fileProcessor);
     }
