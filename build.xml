@@ -168,12 +168,7 @@
         <property name="outputFile" value="null" />
         <property name="haltOnError" value="true" />
         
-        <propertyregex property="outputFileEscaped"
-                      input="${outputFile}"
-                      defaultValue="${outputFile}"
-                      regexp="/"
-                      replace="\\\\/"
-                      global="true" />
+        <groovy-safe-path property="outputFileEscaped" input="${outputFile}"/>
 
         <echo>Creating HBM2DDL Script</echo>
         <echo file="${portal-shell-script}" append="true">
@@ -204,28 +199,10 @@ ${schemaExportBean}.hbm2ddl('${export}'.toBoolean(), '${create}'.toBoolean(), '$
         <property name="createtables" value="true" />
         <property name="populatetables" value="true" />
 
-            
-        <propertyregex property="tablefileEscaped"
-                      input="${tablefile}"
-                      defaultValue="${tablefile}"
-                      regexp="/"
-                      replace="\\\\/"
-                      global="true" />
+        <groovy-safe-path property="tablefileEscaped" input="${tablefile}"/>
+        <groovy-safe-path property="datafileEscaped" input="${datafile}"/>
+        <groovy-safe-path property="scriptfileEscaped" input="${scriptfile}"/>
 
-        <propertyregex property="datafileEscaped"
-                      input="${datafile}"
-                      defaultValue="${datafile}"
-                      regexp="/"
-                      replace="\\\\/"
-                      global="true" />
-
-        <propertyregex property="scriptfileEscaped"
-                      input="${scriptfile}"
-                      defaultValue="${scriptfile}"
-                      regexp="/"
-                      replace="\\\\/"
-                      global="true" />
-            
         <echo>Creating DBLoader Script</echo>
         <echo file="${portal-shell-script}" append="true">
 //DbLoader Script
@@ -370,20 +347,15 @@ dbLoader.process(dbLoaderConfig);
         <fail unless="dir">Property 'dir' must be set</fail>
             
         <property name="pattern" value="null" />
-            
-        <propertyregex property="dirEscaped"
-                      input="${dir}"
-                      defaultValue="${dir}"
-                      regexp="/"
-                      replace="\\\\/"
-                      global="true" />
 
+        <groovy-safe-path property="dirFullEscaped" input="${dir}"/>
+            
         <echo>Creating Data Import Script</echo>
         <echo file="${portal-shell-script}" append="true">
 //Data Import Script
 logger.info('');
 logger.info('');
-dataDir = /${dirEscaped}/;
+dataDir = /${dirFullEscaped}/;
 logger.info('Importing Data from: ' + dataDir);
 portalDataHandlerService.importData(new File(dataDir), '${pattern}' == 'null' ? null : '${pattern}', null);
         </echo>
@@ -887,23 +859,33 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
 
     <!-- ============================== Maven Support Macros ============================== -->
     
+    <macrodef name="groovy-safe-path">
+        <attribute name="property" />
+        <attribute name="input" />
+
+        <sequential>
+            <local name="@{property}WinEscaped"/>
+            
+            <propertyregex property="@{property}WinEscaped"
+                          input="@{input}"
+                          defaultValue="@{input}"
+                          regexp="\\"
+                          replace="/"
+                          global="true" />
+                              
+            <propertyregex property="@{property}"
+                          input="${@{property}WinEscaped}"
+                          defaultValue="${@{property}WinEscaped}"
+                          regexp="/"
+                          replace="\\\\/"
+                          global="true" />
+        </sequential>
+    </macrodef>
+    
     <macrodef name="up-shell-batch">
         <element name="sub-tasks" optional="false" implicit="true" />
     
         <sequential>
-            <!-- use a counter variable as a way to namespace properties -->
-            <if>
-                <not><isset property="up-shell-batch-version"/></not>
-                <then>
-                    <var name="up-shell-batch-version" value="0"/>
-                </then>
-                <else>
-                    <math result="up-shell-batch-version-result" operand1="${up-shell-batch-version}" operation="+" operand2="1" datatype="int"/>
-                    <var name="up-shell-batch-version" value="${up-shell-batch-version-result}"/>
-                    <var name="up-shell-batch-version-result" unset="true"/>
-                </else>
-            </if>
-            
             <!-- if skip-up-shell-execution isn't set default it to false -->
             <if>
                 <not><isset property="skip-up-shell-execution"/></not>
@@ -913,16 +895,15 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
             </if>
             
             <!-- Track the current skip-up-shell-execution locally for this macro and set the skip-up-shell-execution to true -->
-            <property name="batch-skip-up-shell-execution-${up-shell-batch-version}" value="${skip-up-shell-execution}"/>
+            <local name="batch-skip-up-shell-execution"/>
+            <property name="batch-skip-up-shell-execution" value="${skip-up-shell-execution}"/>
             <var name="skip-up-shell-execution" value="true"/>
             
             <!-- run subtasks -->
             <sub-tasks />
             
             <!-- copy the original skip-up-shell-execution value back into the variable -->            
-            <propertycopy name="batch-skip-up-shell-execution-temp" from="batch-skip-up-shell-execution-${up-shell-batch-version}" />
-            <var name="skip-up-shell-execution" value="${batch-skip-up-shell-execution-temp}"/>
-            <var name="batch-skip-up-shell-execution-temp" unset="true"/>
+            <var name="skip-up-shell-execution" value="${batch-skip-up-shell-execution}"/>
     
             <!-- If not skipping run up-default-shell -->
             <if>

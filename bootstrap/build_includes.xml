@@ -22,11 +22,10 @@
 <project name="uPortal_Includes" basedir="." xmlns:artifact="urn:maven-artifact-ant">
     <dirname property="imported.basedir" file="${ant.file.uPortal_Includes}"/>
     
-    <fail message="Ant 1.7.1 or 1.8.2 is required, version ${ant.version} is not supported">
+    <fail message="1.8.2 is required, version ${ant.version} is not supported">
         <condition>
             <not>
             	<or>
-            		<antversion exactly="1.7.1"/>
             	    <antversion exactly="1.8.2"/>
             	</or>
             </not>
