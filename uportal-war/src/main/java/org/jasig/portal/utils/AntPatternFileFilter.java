@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * FilenameFilter that uses a Set of regular expressions for testing. The file name
@@ -49,8 +50,8 @@ public class AntPatternFileFilter implements FileFilter {
     public AntPatternFileFilter(boolean acceptDirectories, boolean ignoreHidden, String include, Collection<String> excludes) {
         Validate.notNull(include);
         Validate.notNull(excludes);
-        this.includes = ImmutableSet.of(include);
-        this.excludes = ImmutableSet.copyOf(excludes);
+        this.includes = ImmutableSet.of(fixPattern(include));
+        this.excludes = fixAntPatterns(excludes);
         this.acceptDirectories = acceptDirectories;
         this.ignoreHidden = ignoreHidden;
     }
@@ -58,10 +59,24 @@ public class AntPatternFileFilter implements FileFilter {
     public AntPatternFileFilter(boolean acceptDirectories, boolean ignoreHidden, Collection<String> includes, Collection<String> excludes) {
         Validate.notNull(includes);
         Validate.notNull(excludes);
-        this.includes = ImmutableSet.copyOf(includes);
-        this.excludes = ImmutableSet.copyOf(excludes);
+        this.includes = fixAntPatterns(includes);
+        this.excludes = fixAntPatterns(excludes);
         this.acceptDirectories = acceptDirectories;
         this.ignoreHidden = ignoreHidden;
+    }
+    
+    protected Collection<String> fixAntPatterns(Collection<String> patterns) {
+        final Builder<String> fixedPatterns = ImmutableSet.builder();
+        
+        for (final String pattern : patterns) {
+            fixedPatterns.add(fixPattern(pattern));
+        }
+        
+        return fixedPatterns.build();
+    }
+
+    protected String fixPattern(final String pattern) {
+        return pattern.replace('/', File.separatorChar).replace('\\', File.separatorChar);
     }
 
     @Override
@@ -78,6 +93,10 @@ public class AntPatternFileFilter implements FileFilter {
             throw new RuntimeException("Could not determine canonical path of: " + pathname, e);
         }
         
+        return accept(pathname, path);
+    }
+
+    protected boolean accept(File pathname, final String path) {
         logger.debug("checking path: {}", path);
         for (final String include : this.includes) {
             if ((acceptDirectories && pathname.isDirectory()) || SelectorUtils.matchPath(include, path, false)) {
