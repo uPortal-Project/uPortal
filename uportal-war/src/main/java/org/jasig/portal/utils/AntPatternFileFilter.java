@@ -26,6 +26,8 @@ import java.util.Collection;
 
 import org.apache.commons.lang.Validate;
 import org.apache.tools.ant.types.selectors.SelectorUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -37,6 +39,8 @@ import com.google.common.collect.ImmutableSet;
  * @version $Revision$
  */
 public class AntPatternFileFilter implements FileFilter {
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    
     private final boolean acceptDirectories;
     private final boolean ignoreHidden;
     private final Collection<String> includes;
@@ -74,17 +78,30 @@ public class AntPatternFileFilter implements FileFilter {
             throw new RuntimeException("Could not determine canonical path of: " + pathname, e);
         }
         
+        logger.debug("checking path: {}", path);
         for (final String include : this.includes) {
             if ((acceptDirectories && pathname.isDirectory()) || SelectorUtils.matchPath(include, path, false)) {
+                logger.debug("{} matches include {}", path, include);
                 for (final String exclude : this.excludes) {
                     if (SelectorUtils.matchPath(exclude, path, false)) {
+                        logger.debug("{} matches exclude {}", path, exclude);
+                        logger.debug("denied path: {}", path);
                         return false;
+                    }
+                    else if (logger.isTraceEnabled()) {
+                        logger.trace("{} doesn't match exclude {}", path, exclude);
                     }
                 }
                 
+                logger.debug("acepted path: {}", path);
                 return true;
             }
+            else if (logger.isTraceEnabled()) {
+                logger.trace("{} doesn't match include {}", path, include);
+            }
         }
+        
+        logger.debug("denied path: {}", path);
         return false;
     }
 }
