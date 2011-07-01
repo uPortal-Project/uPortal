@@ -25,10 +25,9 @@ import java.io.IOException;
 import java.util.Collection;
 
 import org.apache.commons.lang.Validate;
+import org.apache.tools.ant.types.selectors.SelectorUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.AntPathMatcher;
-import org.springframework.util.PathMatcher;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -42,7 +41,6 @@ import com.google.common.collect.ImmutableSet;
 public class AntPatternFileFilter implements FileFilter {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
-    private final PathMatcher pathMatcher = new AntPathMatcher();
     private final boolean acceptDirectories;
     private final boolean ignoreHidden;
     private final Collection<String> includes;
@@ -82,10 +80,10 @@ public class AntPatternFileFilter implements FileFilter {
         
         logger.debug("checking path: {}", path);
         for (final String include : this.includes) {
-            if ((acceptDirectories && pathname.isDirectory()) || pathMatcher.match(include, path)) {
+            if ((acceptDirectories && pathname.isDirectory()) || SelectorUtils.matchPath(include, path, false)) {
                 logger.debug("{} matches include {}", path, include);
                 for (final String exclude : this.excludes) {
-                    if (pathMatcher.match(exclude, path)) {
+                    if (SelectorUtils.matchPath(exclude, path, false)) {
                         logger.debug("{} matches exclude {}", path, exclude);
                         logger.debug("denied path: {}", path);
                         return false;
