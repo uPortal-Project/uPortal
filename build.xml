@@ -641,13 +641,13 @@ portalDataHandlerService.importData(new File(dataDir), '${pattern}' == 'null' ? 
             <echo message="Stopping HSQL" />
             <trycatch reference="hsql-shutdown.exceptionId">
                 <try>
-                    <java fork="true" maxmemory="8M" dir="${basedir}" classname="org.hsqldb.util.SqlTool" timeout="5000" errorproperty="hsql-shutdown.err.out" failonerror="true">
+                    <java fork="true" maxmemory="8M" dir="${basedir}" classname="org.hsqldb.cmdline.SqlTool" timeout="5000" errorproperty="hsql-shutdown.err.out" failonerror="true">
                         <classpath refid="hsql.classpath" />
                         
                         <arg value="--rcFile" />
                         <arg value="${bootstrap.dir}/hsqldb.sqltool.rc" />
                         <arg value="--sql" />
-                        <arg value="shutdown compact" />
+                        <arg value="shutdown compact;" />
                         <arg value="uPortalDb" />
                     </java>
                 </try>
