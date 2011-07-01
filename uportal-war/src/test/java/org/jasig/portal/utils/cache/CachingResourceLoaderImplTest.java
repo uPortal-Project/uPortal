@@ -37,6 +37,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.concurrent.TimeUnit;
 
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
@@ -153,9 +154,11 @@ public class CachingResourceLoaderImplTest {
         expect(cache.get(doc1Resouce))
             .andReturn(new Element(doc1Resouce, cachedResource));
         
+        final long lastModified = doc1.lastModified();
+        
         expect(cachedResource.getResource()).andReturn(doc1Resouce);
-        expect(cachedResource.getLastCheckTime()).andReturn(1000000L);
-        expect(cachedResource.getLastLoadTime()).andReturn(1000000L);
+        expect(cachedResource.getLastCheckTime()).andReturn(lastModified - TimeUnit.MINUTES.toMillis(5));
+        expect(cachedResource.getLastLoadTime()).andReturn(lastModified - TimeUnit.MINUTES.toMillis(5));
         
         cache.put(anyObject(Element.class));
         expectLastCall();
@@ -164,8 +167,6 @@ public class CachingResourceLoaderImplTest {
         
         loader.setResourceCache(cache);
         loader.setResourcesElementsProvider(elementsProvider);
-        
-        doc1.setLastModified(2000000);
         
         final CachedResource<String> cachedResource1 = loader.getResource(doc1Resouce, StringResourceBuilder.INSTANCE);
         
@@ -192,9 +193,11 @@ public class CachingResourceLoaderImplTest {
         final Element element = new Element("class path resource [CachingResourceLoaderImplTest_doc1.txt]", cachedResource);
         expect(cache.get(doc1Resouce)).andReturn(element);
         
+        final long lastModified = doc1.lastModified();
+        
         expect(cachedResource.getResource()).andReturn(doc1Resouce);
-        expect(cachedResource.getLastCheckTime()).andReturn(1001000L);
-        expect(cachedResource.getLastLoadTime()).andReturn(1001000L);
+        expect(cachedResource.getLastCheckTime()).andReturn(0L);
+        expect(cachedResource.getLastLoadTime()).andReturn(lastModified +  TimeUnit.MINUTES.toMillis(5));
         expect(cachedResource.getAdditionalResources()).andReturn(Collections.EMPTY_MAP);
         cachedResource.setLastCheckTime(anyLong());
         cache.put(element);
@@ -205,17 +208,12 @@ public class CachingResourceLoaderImplTest {
         loader.setResourceCache(cache);
         loader.setResourcesElementsProvider(elementsProvider);
         
-        if (!doc1.setLastModified(1000000)) {
-            final long lastModified = doc1.lastModified();
-            assertEquals(1000000, lastModified);
-            
-            final CachedResource<String> cachedResource1 = loader.getResource(doc1Resouce, StringResourceBuilder.INSTANCE);
-            
-            verify(cache, cachedResource, elementsProvider);
-            
-            assertNotNull(cachedResource1);
-            assertTrue(cachedResource1 == cachedResource);
-        }
+        final CachedResource<String> cachedResource1 = loader.getResource(doc1Resouce, StringResourceBuilder.INSTANCE);
+        
+        verify(cache, cachedResource, elementsProvider);
+        
+        assertNotNull(cachedResource1);
+        assertTrue(cachedResource1 == cachedResource);
     }
     
     @Test
