@@ -205,16 +205,17 @@ public class CachingResourceLoaderImplTest {
         loader.setResourceCache(cache);
         loader.setResourcesElementsProvider(elementsProvider);
         
-        doc1.setLastModified(1000000);
-        final long lastModified = doc1.lastModified();
-        assertEquals(1000000, lastModified);
-        
-        final CachedResource<String> cachedResource1 = loader.getResource(doc1Resouce, StringResourceBuilder.INSTANCE);
-        
-        verify(cache, cachedResource, elementsProvider);
-        
-        assertNotNull(cachedResource1);
-        assertTrue(cachedResource1 == cachedResource);
+        if (!doc1.setLastModified(1000000)) {
+            final long lastModified = doc1.lastModified();
+            assertEquals(1000000, lastModified);
+            
+            final CachedResource<String> cachedResource1 = loader.getResource(doc1Resouce, StringResourceBuilder.INSTANCE);
+            
+            verify(cache, cachedResource, elementsProvider);
+            
+            assertNotNull(cachedResource1);
+            assertTrue(cachedResource1 == cachedResource);
+        }
     }
     
     @Test
