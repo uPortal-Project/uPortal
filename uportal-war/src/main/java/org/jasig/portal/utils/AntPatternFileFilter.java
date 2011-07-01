@@ -75,9 +75,9 @@ public class AntPatternFileFilter implements FileFilter {
         }
         
         for (final String include : this.includes) {
-            if ((acceptDirectories && pathname.isDirectory()) || SelectorUtils.match(include, path, false)) {
+            if ((acceptDirectories && pathname.isDirectory()) || SelectorUtils.matchPath(include, path, false)) {
                 for (final String exclude : this.excludes) {
-                    if (SelectorUtils.match(exclude, path, false)) {
+                    if (SelectorUtils.matchPath(exclude, path, false)) {
                         return false;
                     }
                 }
