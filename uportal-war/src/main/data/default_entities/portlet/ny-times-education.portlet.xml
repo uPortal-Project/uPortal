@@ -35,7 +35,7 @@
   <type>RSS</type>
   <timeout>10000</timeout>
   <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
-    <up:webAppName>NewsReaderPortle</up:webAppName>
+    <up:webAppName>/NewsReaderPortlet</up:webAppName>
     <up:portletName>single-feed-news</up:portletName>
   </portlet-descriptor>
   

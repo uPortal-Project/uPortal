@@ -31,7 +31,7 @@
   <title>Search</title>
   <name>Search</name>
   <fname>search</fname>
-  <desc>Search portlet</desc>
+  <desc>Search the portal, directory, and campus web.</desc>
   <type>Portlet</type>
   <timeout>30000</timeout>
   <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">

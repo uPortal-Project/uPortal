@@ -31,7 +31,7 @@
   <title>Weather</title>
   <name>Weather</name>
   <fname>weather</fname>
-  <desc>The Weather Module allows you to access the latest weather conditions and 5-day forecasts for the cities you select.</desc>  
+  <desc>Current weather conditions and forecast.</desc>  
   <type>Portlet</type>
   <timeout>15000</timeout>
   <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">

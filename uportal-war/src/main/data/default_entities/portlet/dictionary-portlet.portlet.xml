@@ -36,7 +36,7 @@
   <timeout>60000</timeout>
   <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
     <up:webAppName>/jasig-widget-portlets</up:webAppName>
-    <up:portletName>discitonary</up:portletName>
+    <up:portletName>dictionary</up:portletName>
   </portlet-descriptor>
   
   

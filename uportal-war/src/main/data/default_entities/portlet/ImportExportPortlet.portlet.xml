@@ -41,7 +41,7 @@
         <up:portletName>ImportExportPortlet</up:portletName>
     </portlet-descriptor>
     <category>Development</category>
-    <group>Everyone</group>
+    <group>Portal Administrators</group>
     <parameter>
         <name>disableDynamicTitle</name>
         <value>false</value>
