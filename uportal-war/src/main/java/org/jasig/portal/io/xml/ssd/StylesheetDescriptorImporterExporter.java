@@ -40,6 +40,7 @@ import org.jasig.portal.layout.om.IStylesheetData;
 import org.jasig.portal.layout.om.IStylesheetData.Scope;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.layout.om.IStylesheetParameterDescriptor;
+import org.jasig.portal.utils.SafeFilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -81,10 +82,8 @@ public class StylesheetDescriptorImporterExporter extends AbstractJaxbDataHandle
      * @see org.jasig.portal.io.xml.IDataImporterExporter#getPortalData()
      */
     @Override
-    public Set<IPortalData> getPortalData() {
-        final List<? extends IStylesheetDescriptor> stylesheetDescriptors = this.stylesheetDescriptorDao.getStylesheetDescriptors();
-        final Set<IPortalData> portalData = new LinkedHashSet<IPortalData>(stylesheetDescriptors);
-        return Collections.unmodifiableSet(portalData);
+    public Iterable<? extends IPortalData> getPortalData() {
+        return this.stylesheetDescriptorDao.getStylesheetDescriptors();
     }
 
     /* (non-Javadoc)
@@ -165,6 +164,11 @@ public class StylesheetDescriptorImporterExporter extends AbstractJaxbDataHandle
         return convert(stylesheetDescriptor);
     }
     
+    @Override
+    public String getFileName(ExternalStylesheetDescriptor data) {
+        return SafeFilenameUtils.makeSafeFilename(data.getName());
+    }
+
     /**
      * Treats the {@link String} id argument as the stylesheet name.
      * 

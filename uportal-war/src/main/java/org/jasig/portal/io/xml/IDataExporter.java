@@ -19,8 +19,6 @@
 
 package org.jasig.portal.io.xml;
 
-import java.util.Set;
-
 import org.springframework.oxm.Marshaller;
 
 /**
@@ -39,12 +37,18 @@ public interface IDataExporter<T> {
     /**
      * @return All of the available data for this type
      */
-    public Set<IPortalData> getPortalData();
+    public Iterable<? extends IPortalData> getPortalData();
     
     /**
      * Return portal data to export, if no data exists for the id null should be returned.
      */
     public T exportData(String id);
+    
+    /**
+     * Return a safe file name. Safe is defined as not containing characters that are invalid or difficult to
+     * type on common file systems or names that are reserved on common file systems.
+     */
+    public String getFileName(T data);
     
     /**
      * @return The Marshaller to use the convert the data to XML

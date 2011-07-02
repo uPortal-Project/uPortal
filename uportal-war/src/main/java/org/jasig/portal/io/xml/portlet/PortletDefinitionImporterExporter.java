@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -63,6 +62,7 @@ import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.EntityNameFinderService;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.utils.SafeFilenameUtils;
 import org.jasig.portal.xml.PortletDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -119,10 +119,8 @@ public class PortletDefinitionImporterExporter
     }
 
     @Override
-    public Set<IPortalData> getPortalData() {
-        final List<IPortletDefinition> portletDefinitions = this.portletDefinitionRegistry.getAllPortletDefinitions();
-        final Set<IPortalData> portalData = new LinkedHashSet<IPortalData>(portletDefinitions);
-        return Collections.unmodifiableSet(portalData);
+    public Iterable<? extends IPortalData> getPortalData() {
+        return this.portletDefinitionRegistry.getAllPortletDefinitions();
     }
 
     @Transactional
@@ -367,6 +365,13 @@ public class PortletDefinitionImporterExporter
         return convert(def);
     }
     
+    
+    
+    @Override
+    public String getFileName(ExternalPortletDefinition data) {
+        return SafeFilenameUtils.makeSafeFilename(data.getFname());
+    }
+
     protected ExternalPortletDefinition convert(IPortletDefinition def) {
     	 ExternalPortletDefinition rep = new ExternalPortletDefinition();
          

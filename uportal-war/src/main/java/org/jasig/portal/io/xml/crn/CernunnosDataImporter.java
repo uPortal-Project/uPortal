@@ -17,11 +17,13 @@
  * under the License.
  */
 
-package org.jasig.portal.io.xml;
+package org.jasig.portal.io.xml.crn;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
@@ -38,6 +40,10 @@ import org.danann.cernunnos.TaskResponse;
 import org.danann.cernunnos.runtime.RuntimeRequestResponse;
 import org.dom4j.Node;
 import org.dom4j.io.DOMReader;
+import org.jasig.portal.io.xml.IDataImporter;
+import org.jasig.portal.io.xml.PortalDataKey;
+import org.jasig.portal.utils.Tuple;
+import org.jasig.portal.utils.threading.NoopLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.oxm.Unmarshaller;
@@ -46,50 +52,71 @@ import org.springframework.util.xml.FixedXMLEventStreamReader;
 import org.w3c.dom.Document;
 
 /**
- * Generic import/export/delete impl that support Cernunnous Tasks.
+ * Generic import impl that support Cernunnous Tasks.
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class CernunnosImportExportHandler implements IDataImporter<Source>, Unmarshaller {//, IDataExporter<Object>, IDataDeleter<Object> {
+public class CernunnosDataImporter implements IDataImporter<Tuple<String, Node>>, Unmarshaller {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
-    private Set<PortalDataKey> importDataKeys;
-    private Task importTask;
+    private Set<PortalDataKey> dataKeys;
+    private Task task;
+    private Lock lock = NoopLock.INSTANCE;
     
-    public void setImportDataKeys(Set<PortalDataKey> importDataKeys) {
-        this.importDataKeys = importDataKeys;
+    public void setDataKeys(Set<PortalDataKey> dataKeys) {
+        this.dataKeys = dataKeys;
     }
 
-    public void setImportTask(Task importTask) {
-        this.importTask = importTask;
+    public void setTask(Task task) {
+        this.task = task;
+    }
+    
+    /**
+     * Set if the import operation is thread-safe, defaults to true
+     */
+    public void setThreadSafe(boolean threadSafe) {
+        if (threadSafe) {
+            this.lock = NoopLock.INSTANCE;
+        }
+        else {
+            this.lock = new ReentrantLock();
+        }
     }
 
     @Override
     public Set<PortalDataKey> getImportDataKeys() {
-        return this.importDataKeys;
+        return this.dataKeys;
     }
 
     @Override
-    public void importData(Source data) {
-      //Convert the StAX XMLEventReader to a dom4j Node
-        final Node node = convertToNode(data);
-        
+    public void importData(Tuple<String, Node> data) {
         final RuntimeRequestResponse request = new RuntimeRequestResponse();
-        request.setAttribute(Attributes.NODE, node);
-        request.setAttribute(Attributes.LOCATION, StringUtils.trimToEmpty(data.getSystemId()));
+        request.setAttribute(Attributes.NODE, data.second);
+        request.setAttribute(Attributes.LOCATION, StringUtils.trimToEmpty(data.first));
 
         final ReturnValueImpl result = new ReturnValueImpl();
         final TaskResponse response = new RuntimeRequestResponse(
                 Collections.<String, Object> singletonMap("Attributes.RETURN_VALUE", result));
-
-        this.importTask.perform(request, response);
+        
+        //Have to make local reference since importLock is NOT immutable
+        final Lock lock = this.lock;
+        lock.lock();
+        try {
+            this.task.perform(request, response);
+        }
+        finally {
+            lock.unlock();
+        }
     }
 
     @Override
     public Unmarshaller getUnmarshaller() {
         return this;
     }
+
+    
+    //** Unmarshaller APIs **/
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -98,9 +125,11 @@ public class CernunnosImportExportHandler implements IDataImporter<Source>, Unma
 
     @Override
     public Object unmarshal(Source source) throws IOException, XmlMappingException {
-        return source;
+        //Convert the StAX XMLEventReader to a dom4j Node
+        final Node node = convertToNode(source);
+        return new Tuple<String, Node>(source.getSystemId(), node);
     }
-
+    
     protected Node convertToNode(Source source) {
         if (source instanceof StAXSource) {
             final StAXSource staxSource = (StAXSource)source;

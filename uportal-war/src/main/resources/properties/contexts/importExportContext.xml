@@ -138,104 +138,107 @@
     <!-- 
      | Legacy Import/Export classes for portal entities
      +-->
-    <bean id="layout26ImporterExporter" class="org.jasig.portal.io.xml.CernunnosImportExportHandler">
-        <property name="importDataKeys">
+    <bean id="layout26ImporterExporter" class="org.jasig.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="threadSafe" value="false"/>
+        <property name="dataKeys">
             <set>
                 <util:constant static-field="org.jasig.portal.io.xml.layout.LayoutPortalDataType.IMPORT_26_DATA_KEY"/>
                 <util:constant static-field="org.jasig.portal.io.xml.layout.FragmentLayoutPortalDataType.IMPORT_26_DATA_KEY"/>
             </set>
         </property>
-        <property name="importTask" ref="import-layout_v2-6" />
+        <property name="task" ref="import-layout_v2-6" />
     </bean>
-    <bean id="layout30ImporterExporter" class="org.jasig.portal.io.xml.CernunnosImportExportHandler">
-        <property name="importDataKeys">
+    <bean id="layout30ImporterExporter" class="org.jasig.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="threadSafe" value="false"/>
+        <property name="dataKeys">
             <set>
                 <util:constant static-field="org.jasig.portal.io.xml.layout.LayoutPortalDataType.IMPORT_30_DATA_KEY"/>
                 <util:constant static-field="org.jasig.portal.io.xml.layout.FragmentLayoutPortalDataType.IMPORT_30_DATA_KEY"/>
             </set>
         </property>
-        <property name="importTask" ref="import-layout_v3-0" />
+        <property name="task" ref="import-layout_v3-0" />
     </bean>
-    <bean id="layout32ImporterExporter" class="org.jasig.portal.io.xml.CernunnosImportExportHandler">
-        <property name="importDataKeys">
+    <bean id="layout32ImporterExporter" class="org.jasig.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="threadSafe" value="false"/>
+        <property name="dataKeys">
             <set>
                 <util:constant static-field="org.jasig.portal.io.xml.layout.LayoutPortalDataType.IMPORT_32_DATA_KEY"/>
                 <util:constant static-field="org.jasig.portal.io.xml.layout.FragmentLayoutPortalDataType.IMPORT_32_DATA_KEY"/>
             </set>
         </property>
-        <property name="importTask" ref="import-layout_v3-2" />
+        <property name="task" ref="import-layout_v3-2" />
     </bean>
-    <bean id="entity26ImporterExporter" class="org.jasig.portal.io.xml.CernunnosImportExportHandler">
-        <property name="importDataKeys">
+    <bean id="entity26ImporterExporter" class="org.jasig.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="dataKeys">
             <util:constant static-field="org.jasig.portal.io.xml.entitytype.EntityTypePortalDataType.IMPORT_26_DATA_KEY"/>
         </property>
-        <property name="importTask" ref="import-entity-type_v2-6" />
+        <property name="task" ref="import-entity-type_v2-6" />
     </bean>
-    <bean id="entity32ImporterExporter" class="org.jasig.portal.io.xml.CernunnosImportExportHandler">
-        <property name="importDataKeys">
+    <bean id="entity32ImporterExporter" class="org.jasig.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="dataKeys">
             <util:constant static-field="org.jasig.portal.io.xml.entitytype.EntityTypePortalDataType.IMPORT_32_DATA_KEY"/>
         </property>
-        <property name="importTask" ref="import-entity-type_v3-2" />
+        <property name="task" ref="import-entity-type_v3-2" />
     </bean>
-    <bean id="profile32ImporterExporter" class="org.jasig.portal.io.xml.CernunnosImportExportHandler">
-        <property name="importDataKeys">
+    <bean id="profile32ImporterExporter" class="org.jasig.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="dataKeys">
             <util:constant static-field="org.jasig.portal.io.xml.layout.ProfilePortalDataType.IMPORT_32_DATA_KEY"/>
         </property>
-        <property name="importTask" ref="import-profile_v3-2" />
+        <property name="task" ref="import-profile_v3-2" />
     </bean>
-    <bean id="group26ImporterExporter" class="org.jasig.portal.io.xml.CernunnosImportExportHandler">
-        <property name="importDataKeys">
+    <bean id="group26ImporterExporter" class="org.jasig.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="dataKeys">
             <util:constant static-field="org.jasig.portal.io.xml.group.GroupPortalDataType.IMPORT_26_DATA_KEY"/>
         </property>
-        <property name="importTask" ref="import-group_v2-6" />
+        <property name="task" ref="import-group_v2-6" />
     </bean>
-    <bean id="groupMembershipGroup30ImporterExporter" class="org.jasig.portal.io.xml.CernunnosImportExportHandler">
-        <property name="importDataKeys">
+    <bean id="groupMembershipGroup30ImporterExporter" class="org.jasig.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="dataKeys">
             <util:constant static-field="org.jasig.portal.io.xml.group.GroupMembershipPortalDataType.IMPORT_GROUP_30_DATA_KEY"/>
         </property>
-        <property name="importTask" ref="import-group_membership_v3-0-GROUP" />
+        <property name="task" ref="import-group_membership_v3-0-GROUP" />
     </bean>
-    <bean id="groupMembershipMembers30ImporterExporter" class="org.jasig.portal.io.xml.CernunnosImportExportHandler">
-        <property name="importDataKeys">
+    <bean id="groupMembershipMembers30ImporterExporter" class="org.jasig.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="dataKeys">
             <util:constant static-field="org.jasig.portal.io.xml.group.GroupMembershipPortalDataType.IMPORT_MEMBERS_30_DATA_KEY"/>
         </property>
-        <property name="importTask" ref="import-group_membership_v3-0-MEMBERS" />
+        <property name="task" ref="import-group_membership_v3-0-MEMBERS" />
     </bean>
-    <bean id="groupMembershipGroup32ImporterExporter" class="org.jasig.portal.io.xml.CernunnosImportExportHandler">
-        <property name="importDataKeys">
+    <bean id="groupMembershipGroup32ImporterExporter" class="org.jasig.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="dataKeys">
             <util:constant static-field="org.jasig.portal.io.xml.group.GroupMembershipPortalDataType.IMPORT_GROUP_32_DATA_KEY"/>
         </property>
-        <property name="importTask" ref="import-group_membership_v3-2-GROUP" />
+        <property name="task" ref="import-group_membership_v3-2-GROUP" />
     </bean>
-    <bean id="groupMembershipMembers32ImporterExporter" class="org.jasig.portal.io.xml.CernunnosImportExportHandler">
-        <property name="importDataKeys">
+    <bean id="groupMembershipMembers32ImporterExporter" class="org.jasig.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="dataKeys">
             <util:constant static-field="org.jasig.portal.io.xml.group.GroupMembershipPortalDataType.IMPORT_MEMBERS_32_DATA_KEY"/>
         </property>
-        <property name="importTask" ref="import-group_membership_v3-2-MEMBERS" />
+        <property name="task" ref="import-group_membership_v3-2-MEMBERS" />
     </bean>
-    <bean id="membership26ImporterExporter" class="org.jasig.portal.io.xml.CernunnosImportExportHandler">
-        <property name="importDataKeys">
+    <bean id="membership26ImporterExporter" class="org.jasig.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="dataKeys">
             <util:constant static-field="org.jasig.portal.io.xml.group.MembershipPortalDataType.IMPORT_26_DATA_KEY"/>
         </property>
-        <property name="importTask" ref="import-membership_v2-6" />
+        <property name="task" ref="import-membership_v2-6" />
     </bean>
-    <bean id="permissionSet31ImporterExporter" class="org.jasig.portal.io.xml.CernunnosImportExportHandler">
-        <property name="importDataKeys">
+    <bean id="permissionSet31ImporterExporter" class="org.jasig.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="dataKeys">
             <util:constant static-field="org.jasig.portal.io.xml.permission.PermissionSetPortalDataType.IMPORT_31_DATA_KEY"/>
         </property>
-        <property name="importTask" ref="import-permission_set_v3-1" />
+        <property name="task" ref="import-permission_set_v3-1" />
     </bean>
-    <bean id="permissionOwner33ImporterExporter" class="org.jasig.portal.io.xml.CernunnosImportExportHandler">
-        <property name="importDataKeys">
+    <bean id="permissionOwner33ImporterExporter" class="org.jasig.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="dataKeys">
             <util:constant static-field="org.jasig.portal.io.xml.permission.PermissionOwnerPortalDataType.IMPORT_33_DATA_KEY"/>
         </property>
-        <property name="importTask" ref="import-permission-owner_v3-3" />
+        <property name="task" ref="import-permission-owner_v3-3" />
     </bean>
-    <bean id="permission26ImporterExporter" class="org.jasig.portal.io.xml.CernunnosImportExportHandler">
-        <property name="importDataKeys">
+    <bean id="permission26ImporterExporter" class="org.jasig.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="dataKeys">
             <util:constant static-field="org.jasig.portal.io.xml.permission.PermissionPortalDataType.IMPORT_26_DATA_KEY"/>
         </property>
-        <property name="importTask" ref="import-permission_v2-6" />
+        <property name="task" ref="import-permission_v2-6" />
     </bean>
 
     

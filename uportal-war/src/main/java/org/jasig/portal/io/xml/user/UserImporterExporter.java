@@ -22,7 +22,7 @@ package org.jasig.portal.io.xml.user;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
-import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,21 +34,22 @@ import org.jasig.portal.io.xml.AbstractJaxbDataHandler;
 import org.jasig.portal.io.xml.IPortalData;
 import org.jasig.portal.io.xml.IPortalDataType;
 import org.jasig.portal.io.xml.PortalDataKey;
+import org.jasig.portal.io.xml.SimpleStringPortalData;
 import org.jasig.portal.persondir.ILocalAccountDao;
 import org.jasig.portal.persondir.ILocalAccountPerson;
 import org.jasig.portal.utils.ICounterStore;
+import org.jasig.portal.utils.SafeFilenameUtils;
 import org.jasig.portal.utils.Tuple;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 
 /**
  * @author Nicholas Blair
@@ -114,8 +115,15 @@ public class UserImporterExporter extends
 	}
 
 	@Override
-	public Set<IPortalData> getPortalData() {
-	    return Collections.emptySet();
+	public Iterable<? extends IPortalData> getPortalData() {
+	    final List<String> userList = this.jdbcOperations.queryForList("SELECT USER_NAME FROM UP_USER", String.class);
+	    
+	    return Lists.transform(userList, new Function<String, IPortalData>() {
+            @Override
+            public IPortalData apply(final String userName) {
+                return new SimpleStringPortalData(userName, null, null);
+            }
+        });
 	}
 	
 	@Transactional
@@ -247,9 +255,12 @@ public class UserImporterExporter extends
 	    if (localAccountPerson != null) {
 	        userType.setPassword(localAccountPerson.getPassword());
 	        
-	        final Calendar lastPasswordChange = Calendar.getInstance();
-            lastPasswordChange.setTime(localAccountPerson.getLastPasswordChange());
-	        userType.setLastPasswordChange(lastPasswordChange);
+	        final Date lastPasswordChange = localAccountPerson.getLastPasswordChange();
+	        if (lastPasswordChange != null) {
+    	        final Calendar lastPasswordChangeCal = Calendar.getInstance();
+                lastPasswordChangeCal.setTime(lastPasswordChange);
+    	        userType.setLastPasswordChange(lastPasswordChangeCal);
+	        }
             
             final List<Attribute> externalAttributes = userType.getAttributes();
             for (final Map.Entry<String, List<Object>> attributeEntry : localAccountPerson.getAttributes().entrySet()) {
@@ -301,9 +312,14 @@ public class UserImporterExporter extends
         
         return defaultUserInstances != null && defaultUserInstances > 0;
     }
-	
+    
 
-	/*
+	@Override
+    public String getFileName(UserType data) {
+        return SafeFilenameUtils.makeSafeFilename(data.getUsername());
+    }
+
+    /*
 	 * (non-Javadoc)
 	 * @see org.jasig.portal.io.xml.IDataImporterExporter#deleteData(java.lang.String)
 	 */

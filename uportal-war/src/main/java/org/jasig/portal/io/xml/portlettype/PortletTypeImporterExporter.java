@@ -23,8 +23,6 @@
 package org.jasig.portal.io.xml.portlettype;
 
 import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.jasig.portal.io.xml.AbstractJaxbDataHandler;
@@ -33,6 +31,7 @@ import org.jasig.portal.io.xml.IPortalDataType;
 import org.jasig.portal.io.xml.PortalDataKey;
 import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.portlet.registry.IPortletTypeRegistry;
+import org.jasig.portal.utils.SafeFilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,10 +66,8 @@ public class PortletTypeImporterExporter extends
 	}
 
 	@Override
-	public Set<IPortalData> getPortalData() {
-		List<IPortletType> portletTypes = this.portletTypeRegistry.getPortletTypes();
-		Set<IPortalData> results = new LinkedHashSet<IPortalData>(portletTypes);
-		return Collections.unmodifiableSet(results);
+	public Iterable<? extends IPortalData> getPortalData() {
+		return this.portletTypeRegistry.getPortletTypes();
 	}
 
 	@Transactional
@@ -103,7 +100,12 @@ public class PortletTypeImporterExporter extends
 		return convert(portletType);
 	}
 
-	/*
+	@Override
+    public String getFileName(ExternalPortletType data) {
+        return SafeFilenameUtils.makeSafeFilename(data.getName());
+    }
+
+    /*
 	 * (non-Javadoc)
 	 * @see org.jasig.portal.io.xml.IDataImporterExporter#deleteData(java.lang.String)
 	 */

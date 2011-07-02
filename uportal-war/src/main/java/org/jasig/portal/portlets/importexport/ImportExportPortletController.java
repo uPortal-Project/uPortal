@@ -141,7 +141,7 @@ public class ImportExportPortletController {
 		final EntityIdentifier ei = person.getEntityIdentifier();
 	    final IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
 
-	    Set<IPortalDataType> dataTypes = this.portalDataHandlerService.getPortalDataTypes();
+	    final Iterable<IPortalDataType> dataTypes = this.portalDataHandlerService.getPortalDataTypes();
 	    
 	    // filter the list of configured import/export types by user permission
     	final List<IPortalDataType> results = new ArrayList<IPortalDataType>();

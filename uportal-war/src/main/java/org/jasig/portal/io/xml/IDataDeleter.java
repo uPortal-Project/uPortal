@@ -19,7 +19,6 @@
 
 package org.jasig.portal.io.xml;
 
-import java.util.Set;
 
 /**
  * Defines a class that can export a specific type of portal data
@@ -36,7 +35,7 @@ public interface IDataDeleter<T> {
     /**
      * @return All of the available data for this type
      */
-    public Set<IPortalData> getPortalData();
+    public Iterable<? extends IPortalData> getPortalData();
     
     /**
      * Deletes the data specified by the id. If data existed it will be returned.

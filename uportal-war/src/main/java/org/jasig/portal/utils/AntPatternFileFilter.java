@@ -24,6 +24,7 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.util.Collection;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.tools.ant.types.selectors.SelectorUtils;
 import org.slf4j.Logger;
@@ -50,7 +51,7 @@ public class AntPatternFileFilter implements FileFilter {
     public AntPatternFileFilter(boolean acceptDirectories, boolean ignoreHidden, String include, Collection<String> excludes) {
         Validate.notNull(include);
         Validate.notNull(excludes);
-        this.includes = ImmutableSet.of(fixPattern(include));
+        this.includes = ImmutableSet.of(FilenameUtils.separatorsToSystem(include));
         this.excludes = fixAntPatterns(excludes);
         this.acceptDirectories = acceptDirectories;
         this.ignoreHidden = ignoreHidden;
@@ -69,14 +70,10 @@ public class AntPatternFileFilter implements FileFilter {
         final Builder<String> fixedPatterns = ImmutableSet.builder();
         
         for (final String pattern : patterns) {
-            fixedPatterns.add(fixPattern(pattern));
+            fixedPatterns.add(FilenameUtils.separatorsToSystem(pattern));
         }
         
         return fixedPatterns.build();
-    }
-
-    protected String fixPattern(final String pattern) {
-        return pattern.replace('/', File.separatorChar).replace('\\', File.separatorChar);
     }
 
     @Override

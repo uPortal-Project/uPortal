@@ -36,6 +36,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -49,9 +50,12 @@ import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.DirectoryScanner;
 import org.jasig.portal.utils.AntPatternFileFilter;
 import org.jasig.portal.utils.ConcurrentDirectoryScanner;
@@ -576,27 +580,28 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
     }
 
     @Override
-    public Set<IPortalDataType> getPortalDataTypes() {
+    public Iterable<IPortalDataType> getPortalDataTypes() {
         return this.exportPortalDataTypes;
     }
 
     @Override
-    public Set<IPortalData> getPortalData(String typeId) {
+    public Iterable<? extends IPortalData> getPortalData(String typeId) {
         final IDataExporter<Object> dataImporterExporter = getPortalDataExporter(typeId);
         return dataImporterExporter.getPortalData();
     }
 
     @Override
-    public void exportData(String typeId, String dataId, Result result) {
+    public String exportData(String typeId, String dataId, Result result) {
         final IDataExporter<Object> portalDataExporter = this.getPortalDataExporter(typeId);
         final Object data = portalDataExporter.exportData(dataId);
         if (data == null) {
-            return;
+            return null;
         }
         
         final Marshaller marshaller = portalDataExporter.getMarshaller();
         try {
             marshaller.marshal(data, result);
+            return portalDataExporter.getFileName(data);
         }
         catch (XmlMappingException e) {
             throw new RuntimeException("Failed to map provided portal data to XML", e);
@@ -604,6 +609,109 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         catch (IOException e) {
             throw new RuntimeException("Failed to write the provided XML data", e);
         }
+    }
+    
+    @Override
+    public boolean exportData(String typeId, String dataId, File directory) {
+        directory.mkdirs();
+        
+        final File exportTempFile;
+        try {
+            exportTempFile = File.createTempFile(StringUtils.rightPad(dataId, 2, '-') + "-",  "." + typeId, directory);
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Could not create temp file to export " + typeId + " " + dataId, e);
+        }
+        
+        try {
+            final String fileName = this.exportData(typeId, dataId, new StreamResult(exportTempFile));
+            if (fileName != null) {
+                final File destFile = new File(directory, fileName + "." + typeId + ".xml");
+                if (destFile.exists()) {
+                    logger.warn("Exporting " + typeId + " " + dataId + " but destination file already exists, it will be overwritten: " + destFile);
+                    destFile.delete();
+                }
+                FileUtils.moveFile(exportTempFile, destFile);
+                logger.info("Exported: {}", destFile);
+                
+                return true;
+            }
+            
+            return false;
+        }
+        catch (Exception e) {
+            FileUtils.deleteQuietly(exportTempFile);
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException)e;
+            }
+            
+            throw new RuntimeException("Failed to export " + typeId + " " + dataId, e);
+        }
+    }
+
+    @Override
+    public void exportAllDataOfType(Set<String> typeIds, File directory) {
+        
+        final Queue<Future<?>> exportFutures = new LinkedList<Future<?>>();
+        
+        for (final String typeId : typeIds) {
+            final File typeDir = new File(directory, typeId);
+            logger.info("Exporting all data of type {} to {}", typeId, typeDir);
+            
+            final Iterable<? extends IPortalData> dataForType = this.getPortalData(typeId);
+            for (final IPortalData data : dataForType) {
+                final String dataId = data.getDataId();
+
+                //Check for completed futures on every iteration, needed to fail as fast as possible on an import exception
+    //            waitForImportFutures(importFutures, null, false);
+                
+                //Submit the export task
+                final Future<?> exportFuture = this.importExportThreadPool.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        exportData(typeId, dataId, typeDir);
+                    }
+                });
+                
+                //Add the future for tracking
+                exportFutures.offer(exportFuture);
+            }
+        }
+        
+        for (final Future<?> exportFuture : exportFutures) {
+            try {
+                exportFuture.get();
+            }
+            catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            catch (ExecutionException e) {
+                throw new RuntimeException(e.getCause());
+            }
+        }
+        
+        //Wait for all of the imports on of this type to complete
+//        waitForImportFutures(importFutures, options, true);
+        
+//        for (final String typeId : typeIds) {
+//            final File typeDir = new File(directory, typeId);
+//            logger.info("Exporting all data of type {} to {}", typeId, typeDir);
+//            
+//            final Iterable<IPortalData> dataForType = this.getPortalData(typeId);
+//            for (final IPortalData data : dataForType) {
+//                final String dataId = data.getDataId();
+//                this.exportData(typeId, dataId, typeDir);
+//            }
+//        }
+    }
+
+    @Override
+    public void exportAllData(File directory) {
+        final Set<String> typeIds = new LinkedHashSet<String>();
+        for (final IPortalDataType portalDataType : this.exportPortalDataTypes) {
+            typeIds.add(portalDataType.getTypeId());
+        }
+        this.exportAllDataOfType(typeIds, directory);
     }
 
     protected IDataExporter<Object> getPortalDataExporter(String typeId) {

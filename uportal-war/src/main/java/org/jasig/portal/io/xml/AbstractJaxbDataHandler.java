@@ -72,6 +72,7 @@ public abstract class AbstractJaxbDataHandler<T>
         if (this.schemaLocation != null) {
             properties.put(javax.xml.bind.Marshaller.JAXB_SCHEMA_LOCATION, this.schemaLocation);
         }
+        
         this.jaxb2Marshaller.setMarshallerProperties(properties);
         
         this.jaxb2Marshaller.afterPropertiesSet();

@@ -74,18 +74,48 @@ public interface IPortalDataHandlerService {
     /**
      * @return All portal data types that can be exported or deleted from
      */
-    public Set<IPortalDataType> getPortalDataTypes();
+    public Iterable<IPortalDataType> getPortalDataTypes();
     
     /**
      * @return All portal data for a specific portal data type, some types may return an empty set even if they contain data due size constraints.
      */
-    public Set<IPortalData> getPortalData(String typeId);
+    public Iterable<? extends IPortalData> getPortalData(String typeId);
     
     /**
-     * Export the portal data for the specified type and id writing it to the provided XML Transformer Result 
+     * Export the portal data for the specified type and id writing it to the provided XML Transformer Result
+     * 
+     * @param typeId Type of the portal data to export
+     * @param dataId Id of the data to export
+     * @param result XML Result to write the exported data to
+     * @return The recommended file name to use for the result 
      */
-    public void exportData(String typeId, String dataId, Result result);
+    public String exportData(String typeId, String dataId, Result result);
     
+    /**
+     * Export the portal data for the specified type and save it to the specified directory
+     * 
+     * @param typeId Type of the portal data to export
+     * @param dataId Id of the data to export
+     * @param directory Directory to save exported data to
+     * @return True if the specified data was found, false if no data exists for the type and data ids
+     */
+    public boolean exportData(String typeId, String dataId, File directory);
+    
+    /**
+     * Export all the portal data for each type and save it to the specified directory
+     * 
+     * @param typeIds TypeIds from {@link #getPortalDataTypes()} to export all data for
+     * @param directory Directory to save exported data to
+     */
+    public void exportAllDataOfType(Set<String> typeIds, File directory);
+    
+    /**
+     * Export all portal data for all data type and save it to the specified directory
+     * 
+     * @param directory Directory to save exported data to
+     */
+    public void exportAllData(File directory);
+
     /**
      * Delete the portal data for the specified type and id.
      * 
