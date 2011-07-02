@@ -40,6 +40,9 @@
                     <filters>
                         <filter>${basedir}/../../uportal-war/target/classes/properties/rdbm.properties</filter>
                     </filters>
+                    <dependentWarExcludes>
+                        WEB-INF/lib/hsqldb-*.jar
+                    </dependentWarExcludes>
                     <webResources>
                         <resource>
                             <directory>${basedir}/src/main/webapp/WEB-INF</directory>
