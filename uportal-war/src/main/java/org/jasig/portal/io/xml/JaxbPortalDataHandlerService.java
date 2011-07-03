@@ -36,7 +36,6 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -59,7 +58,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.DirectoryScanner;
 import org.jasig.portal.utils.AntPatternFileFilter;
 import org.jasig.portal.utils.ConcurrentDirectoryScanner;
-import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.xml.StaxUtils;
 import org.jasig.portal.xml.XmlUtilities;
 import org.jasig.portal.xml.stream.BufferedXMLEventReader;
@@ -317,6 +315,8 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         this.directoryScanner.scanDirectoryNoResults(directory, fileFilter, 
                 new PortalDataKeyFileProcessor(this.dataKeyTypes, dataToImport, options));
         
+        final boolean failOnError = options != null ? options.isFailOnError() : false;
+        
         //Import the data files
         for (final PortalDataKey portalDataKey : this.dataKeyImportOrder) {
             final Queue<Resource> files = dataToImport.remove(portalDataKey);
@@ -324,7 +324,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
                 continue;
             }
 
-            final Queue<Tuple<Resource, Future<?>>> importFutures = new LinkedList<Tuple<Resource, Future<?>>>();
+            final Queue<ImportFuture<?>> importFutures = new LinkedList<ImportFuture<?>>();
             
             final int fileCount = files.size();
             logger.info("Importing {} files of type {}", fileCount, portalDataKey);
@@ -332,7 +332,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
             
             for (final Resource file : files) {
                 //Check for completed futures on every iteration, needed to fail as fast as possible on an import exception
-                waitForImportFutures(importFutures, options, false);
+                waitForFutures(importFutures, failOnError, false);
                 
                 //Submit the import task
                 final Future<?> importFuture = this.importExportThreadPool.submit(new Runnable() {
@@ -343,87 +343,15 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
                 });
                 
                 //Add the future for tracking
-                importFutures.offer(new Tuple<Resource, Future<?>>(file, importFuture));
+                importFutures.offer(new ImportFuture(importFuture, file));
             }
             
             //Wait for all of the imports on of this type to complete
-            waitForImportFutures(importFutures, options, true);
+            waitForFutures(importFutures, failOnError, true);
         }
         
         if (!dataToImport.isEmpty()) {
             throw new IllegalStateException("The following PortalDataKeys are not listed in the dataTypeImportOrder List: " + dataToImport.keySet());
-        }
-    }
-
-    protected void waitForImportFutures(
-            final Queue<Tuple<Resource, Future<?>>> importFutures, final BatchImportOptions options, 
-            final boolean wait) {
-        
-        List<Resource> failedResources = null;
-        
-        for (Iterator<Tuple<Resource, Future<?>>> importFuturesItr = importFutures.iterator(); importFuturesItr.hasNext();) {
-            final Tuple<Resource, Future<?>> importFuture = importFuturesItr.next();
-             
-            //If waiting, or if not waiting but the future is already done do the get
-            if (wait || failedResources != null || (!wait && importFuture.second.isDone())) {
-                try {
-                    //Ignore cancelled future tasks
-                    if (!importFuture.second.isCancelled()) {
-                        if (this.maxWait > 0) {
-                            importFuture.second.get(this.maxWait, this.maxWaitTimeUnit);
-                        }
-                        else {
-                            importFuture.second.get();
-                        }
-                    }
-                    
-                    importFuturesItr.remove();
-                }
-                catch (Exception e) {
-                    importFuturesItr.remove();
-                    
-                    if (options == null || options.isFailOnError()) {
-                        //If this is the first exception reset the iterator to the start of the futures list
-                        if (failedResources == null) {
-                            //Immediately try to cancel all queued future tasks to avoid creating more error noise than nessesary
-                            for (final Tuple<Resource, Future<?>> future : importFutures) {
-                                future.second.cancel(true);
-                            }
-                            
-                            //Reset the iterator since we now need to wait for ALL futures to complete
-                            importFuturesItr = importFutures.iterator();
-                            
-                            //Create List used to track failed imports
-                            failedResources = new LinkedList<Resource>();
-                        }
-                        
-                        //Add resource to the list of failed tasks 
-                        failedResources.add(importFuture.first);
-                        
-                        //Log the import error
-                        this.logger.error("Exception while importing data: " + importFuture.first, e);
-                    }
-                    else {
-                        if (this.logger.isDebugEnabled()) {
-                            this.logger.warn("Exception while importing '" + importFuture.first + "', file will be ignored" , e);
-                        }
-                        else {
-                            this.logger.warn("Exception while importing '{}', file will be ignored: {}", e.getCause().getMessage(), importFuture.first);
-                        }
-                    }
-                }
-            }
-        }
-        
-        //If any of the Futures threw an exception report details and fail
-        if (failedResources != null) {
-            final StringBuilder msg = new StringBuilder("Import Halted due to failure during import, see previous exceptions for causes. ");
-            msg.append(failedResources.size()).append(" files\n");
-            for (final Resource failedResource : failedResources) {
-                msg.append("\t").append(failedResource).append("\n");
-            }
-             
-            throw new RuntimeException(msg.toString());
         }
     }
 
@@ -652,7 +580,9 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
     @Override
     public void exportAllDataOfType(Set<String> typeIds, File directory) {
         
-        final Queue<Future<?>> exportFutures = new LinkedList<Future<?>>();
+        final Queue<ExportFuture<?>> exportFutures = new LinkedList<ExportFuture<?>>();
+        
+        final boolean failOnError = true; //options != null ? options.isFailOnError() : false;
         
         for (final String typeId : typeIds) {
             final File typeDir = new File(directory, typeId);
@@ -663,7 +593,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
                 final String dataId = data.getDataId();
 
                 //Check for completed futures on every iteration, needed to fail as fast as possible on an import exception
-    //            waitForImportFutures(importFutures, null, false);
+                waitForFutures(exportFutures, failOnError, false);
                 
                 //Submit the export task
                 final Future<?> exportFuture = this.importExportThreadPool.submit(new Runnable() {
@@ -674,35 +604,11 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
                 });
                 
                 //Add the future for tracking
-                exportFutures.offer(exportFuture);
+                exportFutures.offer(new ExportFuture(exportFuture, typeId, dataId));
             }
         }
         
-        for (final Future<?> exportFuture : exportFutures) {
-            try {
-                exportFuture.get();
-            }
-            catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            catch (ExecutionException e) {
-                throw new RuntimeException(e.getCause());
-            }
-        }
-        
-        //Wait for all of the imports on of this type to complete
-//        waitForImportFutures(importFutures, options, true);
-        
-//        for (final String typeId : typeIds) {
-//            final File typeDir = new File(directory, typeId);
-//            logger.info("Exporting all data of type {} to {}", typeId, typeDir);
-//            
-//            final Iterable<IPortalData> dataForType = this.getPortalData(typeId);
-//            for (final IPortalData data : dataForType) {
-//                final String dataId = data.getDataId();
-//                this.exportData(typeId, dataId, typeDir);
-//            }
-//        }
+        waitForFutures(exportFutures, failOnError, true);
     }
 
     @Override
@@ -730,4 +636,151 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
 			logger.info("portalDataExporter#deleteData returned null for typeId " + typeId + " and dataId " + dataId );
 		}
 	}
+    
+    /**
+     * Used by batch import and export to wait for queued tasks to complete. Handles fail-fast behavior
+     * if any of the tasks threw and exception by canceling all queued futures and logging a summary of
+     * the failures. All completed futures are removed from the queue.
+     * 
+     * @param futures Queued futures to check for completeness
+     * @param failOnError If true and any {@link Future#get()} throws an exception all Futures in the Queue will be canceled and an exception will be thrown.
+     * @param wait If true it will wait for all futures to complete, if false only check for completed futures
+     */
+    protected void waitForFutures(
+            final Queue<? extends FutureHolder<?>> futures, final boolean failOnError, 
+            final boolean wait) {
+        
+        List<FutureHolder<?>> failedFutures = null;
+        
+        for (Iterator<? extends FutureHolder<?>> futuresItr = futures.iterator(); futuresItr.hasNext();) {
+            final FutureHolder<?> futureHolder = futuresItr.next();
+             
+            //If waiting, or if not waiting but the future is already done do the get
+            final Future<?> future = futureHolder.getFuture();
+            if (wait || failedFutures != null || (!wait && future.isDone())) {
+                try {
+                    //Don't bother doing a get() on cancelled futures
+                    if (!future.isCancelled()) {
+                        if (this.maxWait > 0) {
+                            future.get(this.maxWait, this.maxWaitTimeUnit);
+                        }
+                        else {
+                            future.get();
+                        }
+                    }
+                    
+                    futuresItr.remove();
+                }
+                catch (Exception e) {
+                    futuresItr.remove();
+                    
+                    if (failOnError) {
+                        //If this is the first exception reset the iterator to the start of the futures list
+                        if (failedFutures == null) {
+                            //Immediately try to cancel all queued future tasks to avoid creating more error noise than necessary
+                            for (final FutureHolder<?> cancelFuture : futures) {
+                                cancelFuture.getFuture().cancel(true);
+                            }
+                            
+                            //Reset the iterator since we now need to wait for ALL futures to complete
+                            futuresItr = futures.iterator();
+                            
+                            //Create List used to track failed imports
+                            failedFutures = new LinkedList<FutureHolder<?>>();
+                        }
+                        
+                        //Add resource to the list of failed tasks 
+                        failedFutures.add(futureHolder);
+                        
+                        //Log the import error
+                        this.logger.error("Exception while " + futureHolder, e);
+                    }
+                    else {
+                        if (this.logger.isDebugEnabled()) {
+                            this.logger.warn("Exception while '" + futureHolder + "', file will be ignored" , e);
+                        }
+                        else {
+                            this.logger.warn("Exception while '{}', file will be ignored: {}", futureHolder, e.getCause().getMessage());
+                        }
+                    }
+                }
+            }
+        }
+        
+        //If any of the Futures threw an exception report details and fail
+        if (failedFutures != null) {
+            final StringBuilder msg = new StringBuilder("Halted due to ").append(failedFutures.size()).append(" failures, see previous exceptions for causes.\n");
+            for (final FutureHolder<?> failedResource : failedFutures) {
+                msg.append("\t").append(failedResource.getDescription()).append("\n");
+            }
+             
+            throw new RuntimeException(msg.toString());
+        }
+    }
+    
+    private static abstract class FutureHolder<T> {
+        private final Future<T> future;
+
+        public FutureHolder(Future<T> future) {
+            this.future = future;
+        }
+
+        public Future<T> getFuture() {
+            return this.future;
+        }
+        
+        public abstract String getDescription();
+    }
+    
+    private static class ImportFuture<T> extends FutureHolder<T> {
+        private final Resource resource;
+
+        public ImportFuture(Future<T> future, Resource resource) {
+            super(future);
+            this.resource = resource;
+        }
+
+        public Resource getResource() {
+            return this.resource;
+        }
+        
+        @Override
+        public String getDescription() {
+            return this.resource.getDescription();
+        }
+
+        @Override
+        public String toString() {
+            return "importing " + this.getDescription();
+        }
+    }
+    
+    private static class ExportFuture<T> extends FutureHolder<T> {
+        private final String typeId;
+        private final String dataId;
+
+        public ExportFuture(Future<T> future, String typeId, String dataId) {
+            super(future);
+            this.typeId = typeId;
+            this.dataId = dataId;
+        }
+
+        public String getTypeId() {
+            return this.typeId;
+        }
+
+        public String getDataId() {
+            return this.dataId;
+        }
+        
+        @Override
+        public String getDescription() {
+            return "type=" + this.typeId + ", dataId=" + this.dataId;
+        }
+
+        @Override
+        public String toString() {
+            return "exporting " + this.getDescription();
+        }
+    }
 }
