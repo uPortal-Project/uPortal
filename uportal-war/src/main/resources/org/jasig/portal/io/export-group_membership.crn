@@ -21,8 +21,17 @@
 
 <with-attribute key="Attributes.NODE" value="${newDoc(group)}">
   <properties location="${exportPropertiesLocation}">
+    <sql-query>
+        <sql>
+            SELECT UPG.*, UPET.ENTITY_TYPE_NAME
+            FROM UP_GROUP UPG
+                LEFT JOIN UP_ENTITY_TYPE UPET ON UPG.ENTITY_TYPE_ID = UPET.ENTITY_TYPE_ID
+            WHERE UPG.GROUP_NAME = ?
+        </sql>
+        <parameter value="${GROUP_NAME}"/>
+        <subtasks>
     <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-group_membership_v3-2.crn)}"/>
-    <echo-ln>Export Group and Members:  GROUP_NAME=${GROUP_NAME}</echo-ln>
+
     <append-node>
         <name>${GROUP_NAME}</name>
         <entity-type>${ENTITY_TYPE_NAME}</entity-type>
@@ -71,7 +80,7 @@
                         </choose>
                     </with-attribute>
                 </when>
-                <when test="${jexl(!ENTITY_TYPE_NAME.equals('org.jasig.portal.channel.IChannelDefinition'))}">
+                <when test="${jexl(!ENTITY_TYPE_NAME.equals('org.jasig.portal.portlet.om.IPortletDefinition'))}">
                     <!-- Ignore channels, their group membership information is handled by the chanpub files -->
                     <append-node parent="${singleNode(children)}">
                         <literal>${MEMBER_KEY}</literal>
@@ -82,5 +91,7 @@
     </sql-query>
     
     <return value="${Attributes.NODE}"/>
+        </subtasks>
+    </sql-query>
   </properties>
 </with-attribute>

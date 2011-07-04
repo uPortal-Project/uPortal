@@ -33,7 +33,6 @@
  |
  +-->
 <with-attribute key="Attributes.NODE" value="${newDoc(entity-type)}">
-    <echo-ln>Export Entity Type:  NAME=${NAME}</echo-ln>
     <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-entity-type_v3-2.crn)}"/>
     <with-attribute key="TYPE_ID" value="${sql(SELECT MAX(entity_type_id) FROM up_entity_type WHERE entity_type_name = '${NAME}')}">
         <choose>

@@ -21,104 +21,160 @@ package org.jasig.portal.io.xml.crn;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Set;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.stax.StAXSource;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 
-import org.apache.commons.lang.StringUtils;
-import org.codehaus.staxmate.dom.DOMConverter;
-import org.danann.cernunnos.Attributes;
 import org.danann.cernunnos.ReturnValueImpl;
 import org.danann.cernunnos.Task;
 import org.danann.cernunnos.TaskResponse;
 import org.danann.cernunnos.runtime.RuntimeRequestResponse;
 import org.dom4j.Node;
-import org.dom4j.io.DOMReader;
+import org.dom4j.io.DocumentSource;
 import org.jasig.portal.io.xml.IDataExporter;
 import org.jasig.portal.io.xml.IPortalData;
 import org.jasig.portal.io.xml.IPortalDataType;
-import org.jasig.portal.io.xml.PortalDataKey;
-import org.jasig.portal.utils.threading.NoopLock;
+import org.jasig.portal.utils.SafeFilenameUtils;
+import org.jasig.portal.utils.Tuple;
+import org.jasig.portal.xml.XmlUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.oxm.Marshaller;
-import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.XmlMappingException;
-import org.springframework.util.xml.FixedXMLEventStreamReader;
-import org.w3c.dom.Document;
+
+import com.google.common.base.Function;
 
 /**
- * Generic import impl that support Cernunnous Tasks.
+ * Generic export impl that support Cernunnous Tasks.
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class CernunnosDataExporter implements IDataExporter<Source>, Marshaller {
+public class CernunnosDataExporter implements IDataExporter<Tuple<String, Node>>, Marshaller {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
+    private XmlUtilities xmlUtilities;
     private Task task;
+    private String idAttributeName;
+    private IPortalDataType portalDataType;
+    private Function<IPortalDataType, Iterable<? extends IPortalData>> portalDataRetriever;
+    private Function<Tuple<String, Node>, String> fileNameFunction;
     
+    @Autowired
+    public void setXmlUtilities(XmlUtilities xmlUtilities) {
+        this.xmlUtilities = xmlUtilities;
+    }
 
+    @Required
+    public void setIdAttributeName(String idAttributeName) {
+        this.idAttributeName = idAttributeName;
+    }
+
+    @Required
     public void setTask(Task task) {
         this.task = task;
     }
-
+    
+    @Required
+    public void setPortalDataType(IPortalDataType portalDataType) {
+        this.portalDataType = portalDataType;
+    }
+    
+    @Required
+    public void setPortalDataRetriever(Function<IPortalDataType, Iterable<? extends IPortalData>> portalDataRetriever) {
+        this.portalDataRetriever = portalDataRetriever;
+    }
+    
+    public void setFileNameFunction(Function<Tuple<String, Node>, String> fileNameFunction) {
+        this.fileNameFunction = fileNameFunction;
+    }
 
     @Override
     public IPortalDataType getPortalDataType() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.portalDataType;
     }
-
 
     @Override
     public Iterable<? extends IPortalData> getPortalData() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.portalDataRetriever.apply(this.portalDataType);
     }
 
 
     @Override
-    public Source exportData(String id) {
-        // TODO Auto-generated method stub
-        return null;
+    public Tuple<String, Node> exportData(String id) {
+        
+        final RuntimeRequestResponse request = new RuntimeRequestResponse();
+        request.setAttribute(this.idAttributeName, id);
+
+        final ReturnValueImpl result = new ReturnValueImpl();
+        final TaskResponse response = new RuntimeRequestResponse(
+                Collections.<String, Object> singletonMap("Attributes.RETURN_VALUE", result));
+        
+        task.perform(request, response);
+        
+        final Node node = (Node)result.getValue();
+        if (node == null) {
+            return null;
+        }
+        
+        return new Tuple<String, Node>(id, node);
     }
 
 
     @Override
-    public String getFileName(Source data) {
-        // TODO Auto-generated method stub
-        return null;
+    public String getFileName(Tuple<String, Node> data) {
+        final String fileName;
+        if (this.fileNameFunction == null) {
+            fileName = data.first;
+        }
+        else {
+            fileName = this.fileNameFunction.apply(data);
+        }
+        
+        return SafeFilenameUtils.makeSafeFilename(fileName);
     }
 
 
     @Override
     public Marshaller getMarshaller() {
-        // TODO Auto-generated method stub
-        return null;
+        return this;
     }
-
-
     
     
     @Override
     public boolean supports(Class<?> clazz) {
-        // TODO Auto-generated method stub
-        return false;
+        System.err.println(clazz);
+        return true;
     }
 
 
     @Override
     public void marshal(Object graph, Result result) throws IOException, XmlMappingException {
-        // TODO Auto-generated method stub
+        @SuppressWarnings("unchecked")
+        final Tuple<String, Node> data = (Tuple<String, Node>)graph;
         
-    }
+        final Transformer transformer;
+        try {
+            transformer = this.xmlUtilities.getIdentityTransformer();
+        }
+        catch (TransformerConfigurationException e) {
+            throw new RuntimeException("Failed to load identity Transformer", e);
+        }
 
+        //Setup the transformer to pretty-print the output
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+        
+        try {
+            transformer.transform(new DocumentSource(data.second), result);
+        }
+        catch (TransformerException e) {
+            throw new RuntimeException("Failed to write Node to Result for: " + data.first, e);
+        }
+    }
 }

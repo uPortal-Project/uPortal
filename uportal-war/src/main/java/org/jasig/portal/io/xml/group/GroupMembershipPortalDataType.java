@@ -102,6 +102,11 @@ public class GroupMembershipPortalDataType extends AbstractPortalDataType {
     }
     
     @Override
+    public String getTypeId() {
+        return "group-membership";
+    }
+
+    @Override
     public List<PortalDataKey> getDataKeyImportOrder() {
         return PORTAL_DATA_KEYS;
     }

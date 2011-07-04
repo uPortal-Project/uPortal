@@ -25,6 +25,6 @@
 	<store precedence="3" impl="org.jasig.portal.services.entityproperties.RDBMPropertyStore"/>
 	<finder precedence="2" type="org.jasig.portal.security.IPerson" 
 	impl="org.jasig.portal.services.entityproperties.PersonDirPropertyFinder"/>
-	<finder precedence="1" type="org.jasig.portal.channel.IChannelDefinition" 
+	<finder precedence="1" type="org.jasig.portal.portlet.om.IPortletDefinition" 
 	impl="org.jasig.portal.services.entityproperties.ChannelRegistryPropertyFinder"/>
 </EntityPropertyRegistry>

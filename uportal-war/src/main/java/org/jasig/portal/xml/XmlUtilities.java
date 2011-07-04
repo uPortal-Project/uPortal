@@ -50,6 +50,11 @@ public interface XmlUtilities {
     public Transformer getTransformer(Resource stylesheet) throws TransformerConfigurationException, IOException;
     
     /**
+     * @return The identity transformer
+     */
+    public Transformer getIdentityTransformer() throws TransformerConfigurationException, IOException;
+    
+    /**
      * Gets an appropriate cache key for the specified stylesheet resource. The key should be valid for both {@link Transformer}s
      * and {@link Templates} based on this stylesheet.
      */

@@ -28,12 +28,11 @@
 <cache key="VALID_USERS" cache-key="VALID_USERS" thread-safe="true">
     <factory>
         <with-attribute key="LOAD_START_TIME" value="${groovy(System.currentTimeMillis())}">
-            <echo-ln>Loading included users ...</echo-ln>
             <with>
                 <attribute key="VALID_USERS">${groovy(new java.util.concurrent.ConcurrentHashMap())}</attribute>
                 <subtasks>
                     <choose>
-                        <when test="${groovy(new java.io.File(included_users_file).exists())}">
+                        <when test="${groovy(included_users_file != '' &amp;&amp; new java.io.File(included_users_file).exists())}">
                             <line-iterator string="${contents(${included_users_file})}">
                                 <groovy>
                                     <script>
@@ -46,9 +45,9 @@
                             
                             <echo-ln>Loaded ${groovy(VALID_USERS.size())} included users in ${groovy(System.currentTimeMillis() - LOAD_START_TIME)}ms</echo-ln>
                         </when>
-                        <otherwise>
+                        <when test="${groovy(included_users_file != '')}">
                             <echo-ln>Includes file '${included_users_file}' does not exist, all users will be exported</echo-ln>
-                        </otherwise>
+                        </when>
                     </choose>
                     <return value="${groovy(VALID_USERS.keySet())}" />
                 </subtasks>

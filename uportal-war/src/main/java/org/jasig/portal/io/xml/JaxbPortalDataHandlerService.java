@@ -285,7 +285,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         
         this.portalDataUpgraders = Collections.unmodifiableMap(dataUpgraderMap);
     }
-
+    
     @Override
     public void setResourceLoader(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
@@ -568,12 +568,14 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
             return false;
         }
         catch (Exception e) {
-            FileUtils.deleteQuietly(exportTempFile);
             if (e instanceof RuntimeException) {
                 throw (RuntimeException)e;
             }
             
             throw new RuntimeException("Failed to export " + typeId + " " + dataId, e);
+        }
+        finally {
+            FileUtils.deleteQuietly(exportTempFile);
         }
     }
 

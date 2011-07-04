@@ -100,6 +100,12 @@ public class XmlUtilitiesImpl implements XmlUtilities {
     }
     
     @Override
+    public Transformer getIdentityTransformer() throws TransformerConfigurationException, IOException {
+        final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        return transformerFactory.newTransformer();
+    }
+
+    @Override
     public Serializable getStylesheetCacheKey(Resource stylesheet) throws TransformerConfigurationException, IOException {
         final CachedResource<Templates> templates = this.getStylesheetCachedResource(stylesheet);
         return templates.getCacheKey();
