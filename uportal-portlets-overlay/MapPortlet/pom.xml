@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>org.jasig.portal.portlets-overlay</groupId>
+        <artifactId>uportal-portlets-overlay-parent</artifactId>
+        <version>4.0.0-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>MapPortlet</artifactId>
+    <packaging>war</packaging>
+
+    <name>Map Portlet</name>
+    <description>Overlay on Map Portlet.</description>
+
+    <dependencies>
+        <!-- ===== Compile Time Dependencies ============================== -->
+        <dependency>
+            <groupId>org.jasig.portlet.map</groupId>
+            <artifactId>MapPortlet</artifactId>
+            <version>${MapPortlet.version}</version>
+            <type>war</type>
+        </dependency>
+    </dependencies>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+            </plugin>
+           <plugin>
+                <groupId>org.apache.portals.pluto</groupId>
+                <artifactId>maven-pluto-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

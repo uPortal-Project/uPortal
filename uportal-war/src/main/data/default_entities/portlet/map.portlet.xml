@@ -24,41 +24,26 @@
     xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" 
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition ../../../resources/xsd/io/portlet-definition/portlet-definition-4.0.xsd"
-   
     version="4.0"
 >
-
-  <title>Calendar</title>
-  <name>Calendar</name>
-  <fname>calendar</fname>
-  <desc>Calendar of campus, academic, and personal events.</desc>
+  <title>Map</title>
+  <name>Map</name>
+  <fname>map</fname>
+  <desc>Campus Map Portlet</desc>
   <type>Portlet</type>
   <timeout>60000</timeout>
   <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
-    <up:webAppName>/CalendarPortlet</up:webAppName>
-    <up:portletName>calendar</up:portletName>
+    <up:webAppName>/MapPortlet</up:webAppName>
+    <up:portletName>map</up:portletName>
   </portlet-descriptor>
-  
-  
-  
-  
     <category>Information</category>
-  
-  
     <group>Everyone</group>
-  
-  
-	<parameter>
+    <parameter>
       <name>iconUrl</name>
-      <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/mimetypes/x-office-calendar.png</value>
+      <value>/uPortal/media/skins/icons/map.png</value>
     </parameter>
     <parameter>
-      <name>mobileIconUrl</name>
-      <value>/uPortal/media/skins/icons/mobile/calendar.png</value>
+        <name>mobileIconUrl</name>
+        <value>/uPortal/media/skins/icons/mobile/map.png</value>
     </parameter>
-    <portlet-preference>
-        <name>days</name>
-        <value>1</value>
-    </portlet-preference>
-  
 </portlet-definition>

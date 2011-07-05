@@ -20,30 +20,26 @@
 -->
 
 
-<layout script="classpath://org/jasig/portal/io/import-layout_v3-0.crn" username="admin-lo">
+<layout script="classpath://org/jasig/portal/io/import-layout_v3-0.crn" username="academics-lo">
   <root unremovable="Y" immutable="N" hidden="N" name="Root folder">
     <header unremovable="Y" immutable="Y" hidden="Y" name="Header folder">
       <channel unremovable="" immutable="" hidden="" fname="fragment-admin-exit"/>
     </header>
-    <header unremovable="Y" immutable="Y" hidden="N" name="Header folder">
-      <channel unremovable="" immutable="" hidden="" fname="fragment-admin"/>
-    </header>
     <footer unremovable="N" immutable="N" hidden="N" name="Footer folder">
     </footer>
-    <tab unremovable="N" immutable="N" hidden="N" name="Admin Tools">
+    <tab unremovable="N" immutable="N" hidden="N" name="Academics">
       <column unremovable="N" immutable="N" hidden="N" name="Column">
         <structure-attribute type="folder">
           <name>width</name>
-          <value>50%</value>
+          <value>60%</value>
         </structure-attribute>
-        <channel unremovable="" immutable="" hidden="" fname="portal-administration"/>
+        <channel unremovable="" immutable="" hidden="" fname="courses"/>
       </column>
       <column unremovable="N" immutable="N" hidden="N" name="Column">
         <structure-attribute type="folder">
           <name>width</name>
-          <value>50%</value>
+          <value>40%</value>
         </structure-attribute>
-        <channel unremovable="" immutable="" hidden="" fname="ImportExportPortlet"/>
       </column>
     </tab>
   </root>

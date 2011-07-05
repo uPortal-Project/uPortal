@@ -32,18 +32,25 @@
 
         <dependency>
             <groupId>org.jasig.portal.portlets-overlay</groupId>
-            <artifactId>cas</artifactId>
+            <artifactId>cas-proxy-test-portlet</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.jasig.portal.portlets-overlay</groupId>
+            <artifactId>CalendarPortlet</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
 
         <dependency>
             <groupId>org.jasig.portal.portlets-overlay</groupId>
-            <artifactId>cas-proxy-test-portlet</artifactId>
+            <artifactId>CoursesPortlet</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
-        
+
         <dependency>
             <groupId>org.jasig.portal.portlets-overlay</groupId>
             <artifactId>FunctionalTestsPortlet</artifactId>
@@ -54,6 +61,13 @@
         <dependency>
             <groupId>org.jasig.portal.portlets-overlay</groupId>
             <artifactId>jasig-widget-portlets</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.portal.portlets-overlay</groupId>
+            <artifactId>MapPortlet</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
@@ -162,15 +176,21 @@
                         </webModule>
                         <webModule>
                             <groupId>org.jasig.portal.portlets-overlay</groupId>
-                            <artifactId>cas</artifactId>
-                            <bundleFileName>cas.war</bundleFileName>
-                            <contextRoot>/cas</contextRoot>
-                        </webModule>
-                        <webModule>
-                            <groupId>org.jasig.portal.portlets-overlay</groupId>
                             <artifactId>cas-proxy-test-portlet</artifactId>
                             <bundleFileName>cas-proxy-test-portlet.war</bundleFileName>
                             <contextRoot>/cas-proxy-test-portlet</contextRoot>
+                        </webModule>
+                        <webModule>
+                            <groupId>org.jasig.portal.portlets-overlay</groupId>
+                            <artifactId>CalendarPortlet</artifactId>
+                            <bundleFileName>CalendarPortlet.war</bundleFileName>
+                            <contextRoot>/CalendarPortlet</contextRoot>
+                        </webModule>
+                        <webModule>
+                            <groupId>org.jasig.portal.portlets-overlay</groupId>
+                            <artifactId>CoursesPortlet</artifactId>
+                            <bundleFileName>CoursesPortlet.war</bundleFileName>
+                            <contextRoot>/CoursesPortlet</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.jasig.portal.portlets-overlay</groupId>
@@ -183,6 +203,12 @@
                             <artifactId>jasig-widget-portlets</artifactId>
                             <bundleFileName>jasig-widget-portlets.war</bundleFileName>
                             <contextRoot>/jasig-widget-portlets</contextRoot>
+                        </webModule>
+                        <webModule>
+                            <groupId>org.jasig.portal.portlets-overlay</groupId>
+                            <artifactId>MapPortlet</artifactId>
+                            <bundleFileName>MapPortlet.war</bundleFileName>
+                            <contextRoot>/MapPortlet</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.jasig.portal.portlets-overlay</groupId>

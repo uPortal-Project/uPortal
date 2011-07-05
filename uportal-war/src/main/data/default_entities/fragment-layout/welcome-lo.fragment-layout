@@ -27,72 +27,38 @@
     </header>
     <footer unremovable="N" immutable="N" hidden="N" name="Footer folder">
     </footer>
-    <tab unremovable="N" immutable="N" hidden="N" name="Welcome">
-      <param>
-        <name>cp:deleteAllowed</name>
-        <value>false</value>
-      </param>
-      <param>
-        <name>cp:editAllowed</name>
-        <value>false</value>
-      </param>
-      <param>
-        <name>cp:moveAllowed</name>
-        <value>false</value>
-      </param>
+    <tab unremovable="N" immutable="N" hidden="N" name="Home">
       <column unremovable="N" immutable="N" hidden="N" name="Column">
         <structure-attribute type="folder">
           <name>width</name>
-          <value>60%</value>
+          <value>50%</value>
         </structure-attribute>
-        <channel unremovable="" immutable="" hidden="" fname="snappy">
-          <param>
-            <name>cp:deleteAllowed</name>
-            <value>false</value>
-          </param>
-          <param>
-            <name>cp:moveAllowed</name>
-            <value>false</value>
-          </param>
-        </channel>
-        <channel unremovable="" immutable="" hidden="" fname="google-portlet"/>
+        <channel unremovable="" immutable="" hidden="" fname="news"/>
       </column>
       <column unremovable="N" immutable="N" hidden="N" name="Column">
         <structure-attribute type="folder">
           <name>width</name>
-          <value>40%</value>
-        </structure-attribute>
-        <channel unremovable="" immutable="" hidden="" fname="RegisterPortal"/>
-        <channel unremovable="" immutable="" hidden="" fname="weather"/>
-      </column>
-    </tab>
-    <tab unremovable="N" immutable="N" hidden="N" name="Resources">
-      <param>
-        <name>cp:deleteAllowed</name>
-        <value>false</value>
-      </param>
-      <param>
-        <name>cp:editAllowed</name>
-        <value>false</value>
-      </param>
-      <param>
-        <name>cp:moveAllowed</name>
-        <value>false</value>
-      </param>
-      <column unremovable="N" immutable="N" hidden="N" name="Column">
-        <structure-attribute type="folder">
-          <name>width</name>
-          <value>60%</value>
-        </structure-attribute>
-        <channel unremovable="" immutable="" hidden="" fname="popular-portlets"/>
-      </column>
-      <column unremovable="N" immutable="N" hidden="N" name="Column">
-        <structure-attribute type="folder">
-          <name>width</name>
-          <value>40%</value>
+          <value>50%</value>
         </structure-attribute>
         <channel unremovable="" immutable="" hidden="" fname="calendar"/>
-        <channel unremovable="" immutable="" hidden="" fname="pbookmarks"/>
+        <channel unremovable="" immutable="" hidden="" fname="search"/>
+        <channel unremovable="" immutable="" hidden="" fname="videos"/>
+      </column>
+    </tab>
+    <tab unremovable="N" immutable="N" hidden="N" name="Campus">
+      <column unremovable="N" immutable="N" hidden="N" name="Column">
+        <structure-attribute type="folder">
+          <name>width</name>
+          <value>40%</value>
+        </structure-attribute>
+        <channel unremovable="" immutable="" hidden="" fname="directory"/>
+      </column>
+      <column unremovable="N" immutable="N" hidden="N" name="Column">
+        <structure-attribute type="folder">
+          <name>width</name>
+          <value>60%</value>
+        </structure-attribute>
+        <channel unremovable="" immutable="" hidden="" fname="map"/>
       </column>
     </tab>
   </root>

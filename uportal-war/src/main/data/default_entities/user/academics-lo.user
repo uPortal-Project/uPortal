@@ -20,22 +20,10 @@
 -->
 
 
-<group script="classpath://org/jasig/portal/io/import-group_membership_v3-0.crn">
-  <name>Fragment Owners</name>
-  <entity-type>org.jasig.portal.security.IPerson</entity-type>
-  <creator>system</creator>
-  <description>These are fragment layout owner accounts</description>
-  <children>
-    <literal>academics-lo</literal>
-    <literal>admin-lo</literal>
-    <literal>developer-lo</literal>
-    <literal>faculty-lo</literal>
-    <literal>guest-lo</literal>
-    <literal>news-lo</literal>
-    <literal>staff-lo</literal>
-    <literal>student-lo</literal>
-    <literal>welcome-lo</literal>
-    <literal>fragmentTemplate</literal>
-    <group>Subscribable Fragments</group>
-  </children>
-</group>
+<user script="classpath://org/jasig/portal/io/import-user_v3-2.crn" username="academics-lo">
+  <default-user>defaultTemplateUser</default-user>
+  <person-directory>
+    <givenName>Academics</givenName>
+    <sn>Layout Owner</sn>
+  </person-directory>
+</user>

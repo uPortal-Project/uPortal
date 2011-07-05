@@ -17,11 +17,13 @@
 
     <modules>
         <module>BookmarksPortlet</module>
-        <module>cas</module>
+        <module>CalendarPortlet</module>
         <module>cas-proxy-test-portlet</module>
+        <module>CoursesPortlet</module>
         <module>FunctionalTestsPortlet</module>
         <module>jasig-widget-portlets</module>
         <module>pluto-testsuite</module>
+        <module>MapPortlet</module>
         <module>NewsReaderPortlet</module>
         <module>SimpleContentPortlet</module>
         <module>WeatherPortlet</module>
