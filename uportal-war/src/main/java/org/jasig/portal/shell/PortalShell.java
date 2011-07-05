@@ -21,9 +21,9 @@ package org.jasig.portal.shell;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
+import groovy.lang.Script;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -34,7 +34,6 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-import org.apache.commons.io.IOUtils;
 import org.apache.tools.ant.util.FileUtils;
 import org.codehaus.groovy.tools.shell.Groovysh;
 import org.codehaus.groovy.tools.shell.IO;
@@ -80,13 +79,8 @@ public class PortalShell {
             final String scriptName = commandLine.getOptionValue("script");
             final File scriptFile = getAbsoluteFile(scriptName);
             final GroovyShell shell = new GroovyShell(binding);
-            final FileReader scriptReader = new FileReader(scriptFile);
-            try {
-                shell.evaluate(scriptReader);
-            }
-            finally {
-                IOUtils.closeQuietly(scriptReader);
-            }
+            final Script script = shell.parse(scriptFile);
+            script.run();
         }
         else {
             final Groovysh shell = new Groovysh(binding, new IO());

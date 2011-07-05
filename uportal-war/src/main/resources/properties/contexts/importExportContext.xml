@@ -193,24 +193,28 @@
         <property name="task" ref="import-group_v2-6" />
     </bean>
     <bean id="groupMembershipGroup30Importer" class="org.jasig.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="threadSafe" value="false" />
         <property name="dataKeys">
             <util:constant static-field="org.jasig.portal.io.xml.group.GroupMembershipPortalDataType.IMPORT_GROUP_30_DATA_KEY"/>
         </property>
         <property name="task" ref="import-group_membership_v3-0-GROUP" />
     </bean>
     <bean id="groupMembershipMembers30Importer" class="org.jasig.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="threadSafe" value="false" />
         <property name="dataKeys">
             <util:constant static-field="org.jasig.portal.io.xml.group.GroupMembershipPortalDataType.IMPORT_MEMBERS_30_DATA_KEY"/>
         </property>
         <property name="task" ref="import-group_membership_v3-0-MEMBERS" />
     </bean>
     <bean id="groupMembershipGroup32Importer" class="org.jasig.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="threadSafe" value="false" />
         <property name="dataKeys">
             <util:constant static-field="org.jasig.portal.io.xml.group.GroupMembershipPortalDataType.IMPORT_GROUP_32_DATA_KEY"/>
         </property>
         <property name="task" ref="import-group_membership_v3-2-GROUP" />
     </bean>
     <bean id="groupMembershipMembers32Importer" class="org.jasig.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="threadSafe" value="false" />
         <property name="dataKeys">
             <util:constant static-field="org.jasig.portal.io.xml.group.GroupMembershipPortalDataType.IMPORT_MEMBERS_32_DATA_KEY"/>
         </property>
@@ -223,6 +227,7 @@
         <property name="task" ref="import-membership_v2-6" />
     </bean>
     <bean id="permissionSet31Importer" class="org.jasig.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="threadSafe" value="false" />
         <property name="dataKeys">
             <util:constant static-field="org.jasig.portal.io.xml.permission.PermissionSetPortalDataType.IMPORT_31_DATA_KEY"/>
         </property>

@@ -22,7 +22,6 @@ package org.jasig.portal.tools.dbloader;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,6 +30,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.sql.DataSource;
 import javax.xml.parsers.ParserConfigurationException;
@@ -41,8 +41,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.dialect.Dialect;
-import org.hibernate.dialect.resolver.DialectResolver;
-import org.hibernate.dialect.resolver.StandardDialectResolver;
+import org.hibernate.dialect.resolver.DialectFactory;
 import org.hibernate.engine.Mapping;
 import org.hibernate.mapping.ForeignKey;
 import org.hibernate.mapping.Index;
@@ -126,9 +125,11 @@ public class HibernateDbLoader implements IDbLoader, ResourceLoaderAware {
             dialect = this.jdbcTemplate.execute(new ConnectionCallback<Dialect>() {
                 @Override
                 public Dialect doInConnection(Connection con) throws SQLException, DataAccessException {
-                    final DatabaseMetaData metaData = con.getMetaData();
-                    final DialectResolver dialectResolver = new StandardDialectResolver();
-                    return dialectResolver.resolveDialect(metaData);
+//                    final DatabaseMetaData metaData = con.getMetaData();
+//                    final DialectResolverSet dialectResolverSet = new DialectResolverSet();
+//                    dialectResolverSet.addResolver(new Mysql5DialectResolver());
+//                    dialectResolverSet.addResolver(new StandardDialectResolver());
+                    return DialectFactory.buildDialect(new Properties(), con);
                 }
             });
             
