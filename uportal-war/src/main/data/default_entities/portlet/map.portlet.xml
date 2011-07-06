@@ -40,10 +40,10 @@
     <group>Everyone</group>
     <parameter>
       <name>iconUrl</name>
-      <value>/uPortal/media/skins/icons/map.png</value>
+      <value>/media/skins/icons/map.png</value>
     </parameter>
     <parameter>
         <name>mobileIconUrl</name>
-        <value>/uPortal/media/skins/icons/mobile/map.png</value>
+        <value>/media/skins/icons/mobile/map.png</value>
     </parameter>
 </portlet-definition>

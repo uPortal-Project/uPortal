@@ -42,7 +42,7 @@
     </parameter>
     <parameter>
         <name>mobileIconUrl</name>
-        <value>/uPortal/media/skins/icons/mobile/youtube.png</value>
+        <value>/media/skins/icons/mobile/youtube.png</value>
     </parameter>
     <portlet-preference>
         <name>usernames</name>

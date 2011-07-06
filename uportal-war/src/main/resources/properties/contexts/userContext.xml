@@ -45,7 +45,7 @@
                 </bean>
                 <!-- Android -->
                 <bean class="org.jasig.portal.layout.UserAgentProfileMapper.Mapping">
-                    <property name="pattern" value=".*Android.*" />
+                    <property name="pattern" value=".*Android.*Mobile.*" />
                     <property name="profileName" value="mobileDefault" />
                 </bean>
                 <!-- Palm Pre -->

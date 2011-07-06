@@ -58,7 +58,7 @@
     </parameter>
     <parameter>
         <name>mobileIconUrl</name>
-        <value>/uPortal/media/skins/icons/mobile/weather.png</value>
+        <value>/media/skins/icons/mobile/weather.png</value>
     </parameter>
     <parameter>
         <name>editable</name>

@@ -42,6 +42,6 @@
     </parameter>
     <parameter>
         <name>mobileIconUrl</name>
-        <value>/uPortal/media/skins/icons/mobile/courses.png</value>
+        <value>/media/skins/icons/mobile/courses.png</value>
     </parameter>
 </portlet-definition>

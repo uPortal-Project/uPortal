@@ -35,7 +35,7 @@
     </parameter>
     <parameter>
         <name>mobileIconUrl</name>
-        <value>/uPortal/media/skins/icons/mobile/feed.png</value>
+        <value>/media/skins/icons/mobile/feed.png</value>
     </parameter>
     <portlet-preference> 
       <name>maxStories</name>

@@ -50,6 +50,6 @@
     </parameter>
     <parameter>
         <name>mobileIconUrl</name>
-        <value>/uPortal/media/skins/icons/mobile/directory.png</value>
+        <value>/media/skins/icons/mobile/directory.png</value>
     </parameter>
 </portlet-definition>
