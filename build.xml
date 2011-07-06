@@ -125,7 +125,6 @@
     <property name="uportal-ear.dir" value="${basedir}/uportal-ear" />
 
     <import file="${bootstrap.dir}/build_includes.xml" />
-    <import file="/home/edalquist/JavaClasses/tools/ant/sounds.xml" description="Play appropriate sounds depending on whether build worked or failed."/>
 
 
     <!-- ============================== Public Targets ============================== -->
