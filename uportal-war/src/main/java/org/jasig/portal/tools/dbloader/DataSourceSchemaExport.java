@@ -21,6 +21,7 @@ package org.jasig.portal.tools.dbloader;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -128,6 +129,19 @@ public class DataSourceSchemaExport implements ISchemaExport {
             }
             
             exporter.execute(true, export, !create, !drop);
+            
+            if (haltOnError) {
+                final List<Exception> exceptions = exporter.getExceptions();
+                if (!exceptions.isEmpty()) {
+                    final Exception e = exceptions.get(exceptions.size() - 1);
+                    if (e instanceof RuntimeException) {
+                        throw (RuntimeException)e;
+                    }
+                    
+                    this.logger.error("Schema Export threw " + exceptions.size() + " exceptions and was halted");
+                    throw new RuntimeException(e);
+                }
+            }
         }
         finally {
             DataSourceUtils.releaseConnection(connection, this.dataSource);

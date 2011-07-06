@@ -174,10 +174,15 @@
         <echo>Creating HBM2DDL Script</echo>
         <echo file="${portal-shell-script}" append="true">
 //HBM2DDL Script
-logger.info('');
-logger.info('');
-logger.info('HBM2DDL: ${schemaExportBean}');
-${schemaExportBean}.hbm2ddl('${export}'.toBoolean(), '${create}'.toBoolean(), '${drop}'.toBoolean(), /${outputFileEscaped}/ == 'null' ? null : /${outputFileEscaped}/ , '${haltOnError}'.toBoolean());
+try {
+    logger.info('');
+    logger.info('');
+    logger.info('HBM2DDL: ${schemaExportBean}');
+    ${schemaExportBean}.hbm2ddl('${export}'.toBoolean(), '${create}'.toBoolean(), '${drop}'.toBoolean(), /${outputFileEscaped}/ == 'null' ? null : /${outputFileEscaped}/ , '${haltOnError}'.toBoolean());
+}
+catch (Exception e) {
+    throw new RuntimeException("db-hibernate for ${schemaExportBean} failed", e);
+}
         </echo>
 
         <antcall target="up-shell">
@@ -206,20 +211,25 @@ ${schemaExportBean}.hbm2ddl('${export}'.toBoolean(), '${create}'.toBoolean(), '$
 
         <echo>Creating DBLoader Script</echo>
         <echo file="${portal-shell-script}" append="true">
-//DbLoader Script
-logger.info('');
-logger.info('');
-dbLoaderConfig = new org.jasig.portal.tools.dbloader.DbLoaderConfigBuilder();
-dbLoaderConfig.setTablesFile(/${tablefileEscaped}/);
-dbLoaderConfig.setDataFile(/${datafileEscaped}/);
-if (/${scriptfileEscaped}/ != 'null') {
-    dbLoaderConfig.setScriptFile(/${scriptfileEscaped}/);
+try {
+    //DbLoader Script
+    logger.info('');
+    logger.info('');
+    dbLoaderConfig = new org.jasig.portal.tools.dbloader.DbLoaderConfigBuilder();
+    dbLoaderConfig.setTablesFile(/${tablefileEscaped}/);
+    dbLoaderConfig.setDataFile(/${datafileEscaped}/);
+    if (/${scriptfileEscaped}/ != 'null') {
+        dbLoaderConfig.setScriptFile(/${scriptfileEscaped}/);
+    }
+    dbLoaderConfig.setDropTables('${droptables}'.toBoolean());
+    dbLoaderConfig.setCreateTables('${createtables}'.toBoolean());
+    dbLoaderConfig.setPopulateTables('${populatetables}'.toBoolean());
+    logger.info('Running DbLoader with: ' + dbLoaderConfig);
+    dbLoader.process(dbLoaderConfig);
 }
-dbLoaderConfig.setDropTables('${droptables}'.toBoolean());
-dbLoaderConfig.setCreateTables('${createtables}'.toBoolean());
-dbLoaderConfig.setPopulateTables('${populatetables}'.toBoolean());
-logger.info('Running DbLoader with: ' + dbLoaderConfig);
-dbLoader.process(dbLoaderConfig);
+catch (Exception e) {
+    throw new RuntimeException("db for ${tablefile} and ${datafile} failed", e);
+}
         </echo>
 
         <antcall target="up-shell">
@@ -290,12 +300,14 @@ dbLoader.process(dbLoaderConfig);
                             <isset property="script" />
                         </and>
                         <then>
+                            <!--
                             <echo>Running Portal Script: ${script}</echo>
                             <concat>
                                 <path>
                                     <pathelement location="${script}" />
                                 </path>
                             </concat>
+                            -->
                             <!-- Invoke import/export tool -->
                             <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.shell.PortalShell">
                                 <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
@@ -324,33 +336,38 @@ dbLoader.process(dbLoaderConfig);
         <property name="type" value="null" />
 
         <echo file="${portal-shell-script}" append="true">
-if ('${type}' == 'null') {
-    //List Data Types Script
-    types = portalDataHandlerService.getPortalDataTypes();
-    logger.info('');
-    logger.info('');
-    logger.info('Portal Data Types:');
-    types.each() {
-        logger.info('    ' + it.getTypeId());
-    };
+try {
+    if ('${type}' == 'null') {
+        //List Data Types Script
+        types = portalDataHandlerService.getPortalDataTypes();
+        logger.info('');
+        logger.info('');
+        logger.info('Portal Data Types:');
+        types.each() {
+            logger.info('    ' + it.getTypeId());
+        };
+    }
+    else {
+        //List Data Script
+        type = '${type}';
+        data = portalDataHandlerService.getPortalData(type);
+        logger.info('');
+        logger.info('');
+        logger.info('All ' + type + ' data');
+        data.each() {
+            dataId = it.getDataId();
+            dataTitle = it.getDataTitle();
+            if (dataTitle != null &amp;&amp; dataId != dataTitle) {
+                logger.info('    ' + it.getDataId() + " - " + it.getDataTitle());
+            }
+            else {
+                logger.info('    ' + it.getDataId());
+            }  
+        };
+    }
 }
-else {
-    //List Data Script
-    type = '${type}';
-    data = portalDataHandlerService.getPortalData(type);
-    logger.info('');
-    logger.info('');
-    logger.info('All ' + type + ' data');
-    data.each() {
-        dataId = it.getDataId();
-        dataTitle = it.getDataTitle();
-        if (dataTitle != null &amp;&amp; dataId != dataTitle) {
-            logger.info('    ' + it.getDataId() + " - " + it.getDataTitle());
-        }
-        else {
-            logger.info('    ' + it.getDataId());
-        }  
-    };
+catch (Exception e) {
+    throw new RuntimeException("data-list failed", e);
 }
         </echo>
 
@@ -371,21 +388,26 @@ else {
 
         <echo>Creating Data Export Script</echo>
         <echo file="${portal-shell-script}" append="true">
-//Data Export Script
-logger.info('');
-logger.info('');
-dataDir = /${dirFullEscaped}/;
-if ('${type}' != 'null' &amp;&amp; '${sysid}' != 'null') { 
-    logger.info('Exporting Data ${sysid} of type ${type} to: ' + dataDir);
-    portalDataHandlerService.exportData('${type}', '${sysid}', new File(dataDir));
+try {
+    //Data Export Script
+    logger.info('');
+    logger.info('');
+    dataDir = /${dirFullEscaped}/;
+    if ('${type}' != 'null' &amp;&amp; '${sysid}' != 'null') { 
+        logger.info('Exporting Data ${sysid} of type ${type} to: ' + dataDir);
+        portalDataHandlerService.exportData('${type}', '${sysid}', new File(dataDir));
+    }
+    else if ('${type}' != 'null') { 
+        logger.info('Exporting All Data of type ${type} to: ' + dataDir);
+        portalDataHandlerService.exportAllDataOfType(['${type}'] as Set, new File(dataDir));
+    }
+    else { 
+        logger.info('Exporting All Data to: ' + dataDir);
+        portalDataHandlerService.exportAllData(new File(dataDir));
+    }
 }
-else if ('${type}' != 'null') { 
-    logger.info('Exporting All Data of type ${type} to: ' + dataDir);
-    portalDataHandlerService.exportAllDataOfType(['${type}'] as Set, new File(dataDir));
-}
-else { 
-    logger.info('Exporting All Data to: ' + dataDir);
-    portalDataHandlerService.exportAllData(new File(dataDir));
+catch (Exception e) {
+    throw new RuntimeException("data-export for ${dir} and ${sysid} failed", e);
 }
         </echo>
 
@@ -403,12 +425,17 @@ else {
 
         <echo>Creating Data Import Script</echo>
         <echo file="${portal-shell-script}" append="true">
-//Data Import Script
-logger.info('');
-logger.info('');
-dataDir = /${dirFullEscaped}/;
-logger.info('Importing Data from: ' + dataDir);
-portalDataHandlerService.importData(new File(dataDir), '${pattern}' == 'null' ? null : '${pattern}', null);
+try {
+    //Data Import Script
+    logger.info('');
+    logger.info('');
+    dataDir = /${dirFullEscaped}/;
+    logger.info('Importing Data from: ' + dataDir);
+    portalDataHandlerService.importData(new File(dataDir), '${pattern}' == 'null' ? null : '${pattern}', null);
+}
+catch (Exception e) {
+    throw new RuntimeException("data-import for ${dir} and ${pattern} failed", e);
+}
         </echo>
 
         <antcall target="up-shell">
