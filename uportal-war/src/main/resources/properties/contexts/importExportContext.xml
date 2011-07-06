@@ -315,6 +315,44 @@
             <bean class="org.jasig.portal.io.xml.permission.PermissionSetsFilenameFunction" />
         </property>
     </bean>
+    <bean id="profileExporter" class="org.jasig.portal.io.xml.crn.CernunnosDataExporter">
+        <property name="idAttributeName" value="USER_NAME"/>
+        <property name="portalDataType" ref="profilePortalDataType"/>
+        <property name="task" ref="export-profile" />
+        <property name="portalDataRetriever">
+            <bean class="org.jasig.portal.io.xml.crn.SqlPortalDataFunction">
+                <property name="dataSource" ref="PortalDb" />
+                <property name="query" value="SELECT upup.profile_fname, upu.user_name FROM up_user_profile upup LEFT JOIN up_user upu ON upu.user_id = upup.user_id" />
+                <property name="idColumn" value="group_name" />
+                <property name="nameColumn" value="group_name" />
+                <property name="descColumn" value="description" />
+            </bean>
+        </property>
+    </bean>
+    
+    <!--
+    <bean id="profilePortalDataType" class="org.jasig.portal.io.xml.layout.ProfilePortalDataType"/>
+    <bean id="fragmentLayoutPortalDataType" class="org.jasig.portal.io.xml.layout.FragmentLayoutPortalDataType"/>
+    <bean id="layoutPortalDataType" class="org.jasig.portal.io.xml.layout.LayoutPortalDataType"/>
+    <bean id="fragmentDefinitionPortalDataType" class="org.jasig.portal.io.xml.dlm.FragmentDefinitionPortalDataType"/>
+
+    <bean id="permissionOwnerPortalDataType" class="org.jasig.portal.io.xml.permission.PermissionOwnerPortalDataType"/>
+
+    <bean id="groupPortalDataType" class="org.jasig.portal.io.xml.group.GroupPortalDataType"/>
+    <bean id="membershipPortalDataType" class="org.jasig.portal.io.xml.group.MembershipPortalDataType"/>
+    <bean id="permissionPortalDataType" class="org.jasig.portal.io.xml.permission.PermissionPortalDataType"/>
+    
+    <util:map id="identifierAttributeNames">
+        <entry key="user" value="USER_NAME"/>
+        <entry key="layout" value="USER_NAME"/>
+        <entry key="profile" value="USER_NAME"/>
+        <entry key="group_membership" value="GROUP_NAME"/>
+        <entry key="theme" value="NAME"/>
+        <entry key="entity-type" value="NAME"/>
+        <entry key="fragment-definition" value="NAME"/>
+    </util:map>
+    -->
+    
 
     
     <!-- 

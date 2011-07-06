@@ -35,7 +35,7 @@ import org.springframework.jdbc.core.RowMapper;
 import com.google.common.base.Function;
 
 /**
- * Permission Set 
+ * Lists each Permission Set in the portal
  * 
  * @author Eric Dalquist
  * @version $Revision$

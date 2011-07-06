@@ -562,19 +562,20 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         
         try {
             final String fileName = this.exportData(typeId, dataId, new StreamResult(exportTempFile));
-            if (fileName != null) {
-                final File destFile = new File(directory, fileName + "." + typeId + ".xml");
-                if (destFile.exists()) {
-                    logger.warn("Exporting " + typeId + " " + dataId + " but destination file already exists, it will be overwritten: " + destFile);
-                    destFile.delete();
-                }
-                FileUtils.moveFile(exportTempFile, destFile);
-                logger.info("Exported: {}", destFile);
-                
-                return true;
+            if (fileName == null) {
+                logger.info("Skipped: type={} id={}", typeId, dataId);
+                return false;
             }
             
-            return false;
+            final File destFile = new File(directory, fileName + "." + typeId + ".xml");
+            if (destFile.exists()) {
+                logger.warn("Exporting " + typeId + " " + dataId + " but destination file already exists, it will be overwritten: " + destFile);
+                destFile.delete();
+            }
+            FileUtils.moveFile(exportTempFile, destFile);
+            logger.info("Exported: {}", destFile);
+            
+            return true;
         }
         catch (Exception e) {
             if (e instanceof RuntimeException) {
