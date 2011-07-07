@@ -52,7 +52,7 @@ public class EhcacheManagerBeanConfigurer implements BeanFactoryPostProcessor {
             this.logger.debug("Registering Ehcache '" + cacheName + "' with bean factory");
             beanFactory.registerSingleton(cacheName, ehcache);
         }
-        this.logger.info("Registered " + cacheNames.length + " Ehcaches with bean factory");
+        this.logger.debug("Registered " + cacheNames.length + " Ehcaches with bean factory");
     }
 
 }

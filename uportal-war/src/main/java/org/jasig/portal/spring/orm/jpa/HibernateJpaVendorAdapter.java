@@ -75,8 +75,8 @@ public class HibernateJpaVendorAdapter extends org.springframework.orm.jpa.vendo
         final Map<String, Object> jpaPropertyMap = super.getJpaPropertyMap();
         
         if (this.cacheProvider != null) {
-            if (this.logger.isInfoEnabled()) {
-                this.logger.info("Setting CacheProvider '" + this.cacheProvider + "' on ThreadLocal");
+            if (this.logger.isDebugEnabled()) {
+                this.logger.debug("Setting CacheProvider '" + this.cacheProvider + "' on ThreadLocal");
             }
             
             configTimeCacheProviderHolder.set(this.cacheProvider);
