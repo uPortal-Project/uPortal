@@ -43,6 +43,10 @@
                         <xs:element name="desc" type="xs:string" minOccurs="0"/>
                         <xs:element name="type" type="xs:string"/>
                         <xs:element name="timeout" type="xs:positiveInteger"/>
+                        <xs:element name="actionTimeout" type="xs:positiveInteger" minOccurs="0"/>
+                        <xs:element name="eventTimeout" type="xs:positiveInteger" minOccurs="0"/>
+                        <xs:element name="renderTimeout" type="xs:positiveInteger" minOccurs="0"/>
+                        <xs:element name="resourceTimeout" type="xs:positiveInteger" minOccurs="0"/>
                         
                         <xs:element name="portlet-descriptor" type="up:portlet-descriptor"/>
                         

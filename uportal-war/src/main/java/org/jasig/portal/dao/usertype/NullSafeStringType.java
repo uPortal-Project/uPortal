@@ -25,8 +25,8 @@ import org.hibernate.type.descriptor.sql.VarcharTypeDescriptor;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class EscapedStringType extends BaseEscapedStringType {
-    public EscapedStringType() {
+public class NullSafeStringType extends BaseNullSafeStringType {
+    public NullSafeStringType() {
         super(VarcharTypeDescriptor.INSTANCE);
     }
 }

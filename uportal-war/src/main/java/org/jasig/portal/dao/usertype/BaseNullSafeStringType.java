@@ -28,17 +28,17 @@ import org.hibernate.type.descriptor.java.StringTypeDescriptor;
 import org.hibernate.type.descriptor.sql.SqlTypeDescriptor;
 
 /**
- * Quotes all non-null strings to handle the case of null and "" being treated the same way in some
- * databases.
+ * Adds a prefx to all non-null strings to handle the case of null and an empty string being treated the
+ * same way in some databases.
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class BaseEscapedStringType extends BaseUserType<String> {
-    private static final char QUOTING_CHAR = '\"';
+public class BaseNullSafeStringType extends BaseUserType<String> {
+    public static final char NOT_NULL_PREFIX = '_';
     
 
-    public BaseEscapedStringType(SqlTypeDescriptor sqlTypeDescriptor) {
+    public BaseNullSafeStringType(SqlTypeDescriptor sqlTypeDescriptor) {
         super(sqlTypeDescriptor, StringTypeDescriptor.INSTANCE);
     }
 
@@ -62,7 +62,7 @@ public class BaseEscapedStringType extends BaseUserType<String> {
             return null;
         }
         
-        return QUOTING_CHAR + string + QUOTING_CHAR;
+        return NOT_NULL_PREFIX + string;
     }
 
     /**
@@ -73,11 +73,10 @@ public class BaseEscapedStringType extends BaseUserType<String> {
             return null;
         }
         
-        final int length = string.length();
-        if (!(string.charAt(0) == QUOTING_CHAR) || !(string.charAt(length - 1) == QUOTING_CHAR)) {
-            throw new HibernateException("Persistent storage of " + this.getClass().getName() + " corrupted, database contained string [" + string + "] which should be surrouned by " + QUOTING_CHAR + " characters.");
+        if (string.charAt(0) != NOT_NULL_PREFIX) {
+            throw new HibernateException("Persistent storage of " + this.getClass().getName() + " corrupted, database contained string [" + string + "] which should be prefixed by: " + NOT_NULL_PREFIX);
         }
 
-        return string.substring(1, length - 1);
+        return string.substring(1);
     }
 }

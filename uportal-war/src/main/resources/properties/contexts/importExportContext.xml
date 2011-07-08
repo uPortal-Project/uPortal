@@ -316,16 +316,12 @@
         </property>
     </bean>
     <bean id="profileExporter" class="org.jasig.portal.io.xml.crn.CernunnosDataExporter">
-        <property name="idAttributeName" value="USER_NAME"/>
+        <property name="idAttributeName" value="PROFILE_KEY"/>
         <property name="portalDataType" ref="profilePortalDataType"/>
         <property name="task" ref="export-profile" />
         <property name="portalDataRetriever">
-            <bean class="org.jasig.portal.io.xml.crn.SqlPortalDataFunction">
+            <bean class="org.jasig.portal.io.xml.layout.ProfilesDataFunction">
                 <property name="dataSource" ref="PortalDb" />
-                <property name="query" value="SELECT upup.profile_fname, upu.user_name FROM up_user_profile upup LEFT JOIN up_user upu ON upu.user_id = upup.user_id" />
-                <property name="idColumn" value="group_name" />
-                <property name="nameColumn" value="group_name" />
-                <property name="descColumn" value="description" />
             </bean>
         </property>
     </bean>

@@ -127,7 +127,7 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
      */
     @Override
     public void doPortletAction(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
-        final int timeout = getPortletRenderTimeout(portletWindowId, request);
+        final int timeout = getPortletActionTimeout(portletWindowId, request);
         
         final IPortletExecutionWorker<Long> portletActionExecutionWorker = this.portletWorkerFactory.createActionWorker(request, response, portletWindowId);
         portletActionExecutionWorker.submit();
@@ -224,7 +224,7 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
             HttpServletRequest request, PortletEventQueue eventQueue, 
             IPortletExecutionWorker<Long> eventWorker, IPortletWindowId portletWindowId) {
 
-        final int timeout = getPortletRenderTimeout(portletWindowId, request);
+        final int timeout = getPortletEventTimeout(portletWindowId, request);
         
         try {
             eventWorker.get(timeout);
@@ -320,7 +320,7 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
 	@Override
 	public void doPortletServeResource(IPortletWindowId portletWindowId,
 			HttpServletRequest request, HttpServletResponse response) {
-		final int timeout = getPortletRenderTimeout(portletWindowId, request);
+		final int timeout = getPortletResourceTimeout(portletWindowId, request);
 		
 		final IPortletExecutionWorker<Long> resourceWorker = this.portletWorkerFactory.createResourceWorker(request, response, portletWindowId);
 		resourceWorker.submit();
@@ -408,7 +408,6 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
     		HttpServletRequest request, HttpServletResponse response) {
     	if(doesPortletNeedHeaderWorker(portletWindowId, request)) {
     		final IPortletRenderExecutionWorker tracker = getRenderedPortletHeader(portletWindowId, request, response);
-    		// TODO need a means for a separate render timeout for rendering portlet header content
     		final int timeout = getPortletRenderTimeout(portletWindowId, request);
     		try {
     			final String output = tracker.getOutput(timeout);
@@ -510,9 +509,7 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
      */
     @Override
     public String getPortletTitle(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
-        final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
-        final IPortletEntity portletEntity = portletWindow.getPortletEntity();
-        final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
+        final IPortletDefinition portletDefinition = getPortletDefinition(portletWindowId, request);
         final IPortletDefinitionParameter disableDynamicTitle = portletDefinition.getParameter("disableDynamicTitle");
         
         if (disableDynamicTitle == null || !Boolean.parseBoolean(disableDynamicTitle.getValue())) {
@@ -568,11 +565,50 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
         return 0;
     }
     
+    protected int getPortletActionTimeout(IPortletWindowId portletWindowId, HttpServletRequest request) {
+        final IPortletDefinition portletDefinition = getPortletDefinition(portletWindowId, request);
+        final Integer actionTimeout = portletDefinition.getActionTimeout();
+        if (actionTimeout != null) {
+            return actionTimeout;
+        }
+        
+        return portletDefinition.getTimeout();
+    }
+    
+    protected int getPortletEventTimeout(IPortletWindowId portletWindowId, HttpServletRequest request) {
+        final IPortletDefinition portletDefinition = getPortletDefinition(portletWindowId, request);
+        final Integer eventTimeout = portletDefinition.getEventTimeout();
+        if (eventTimeout != null) {
+            return eventTimeout;
+        }
+        
+        return portletDefinition.getTimeout();
+    }
+    
     protected int getPortletRenderTimeout(IPortletWindowId portletWindowId, HttpServletRequest request) {
+        final IPortletDefinition portletDefinition = getPortletDefinition(portletWindowId, request);
+        final Integer renderTimeout = portletDefinition.getRenderTimeout();
+        if (renderTimeout != null) {
+            return renderTimeout;
+        }
+        
+        return portletDefinition.getTimeout();
+    }
+    
+    protected int getPortletResourceTimeout(IPortletWindowId portletWindowId, HttpServletRequest request) {
+        final IPortletDefinition portletDefinition = getPortletDefinition(portletWindowId, request);
+        final Integer resourceTimeout = portletDefinition.getResourceTimeout();
+        if (resourceTimeout != null) {
+            return resourceTimeout;
+        }
+        
+        return portletDefinition.getTimeout();
+    }
+
+    protected IPortletDefinition getPortletDefinition(IPortletWindowId portletWindowId, HttpServletRequest request) {
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
         final IPortletEntity parentPortletEntity = portletWindow.getPortletEntity();
-        final IPortletDefinition portletDefinition = parentPortletEntity.getPortletDefinition();
-        return portletDefinition.getTimeout();
+        return parentPortletEntity.getPortletDefinition();
     }
 
     protected IPortletRenderExecutionWorker getRenderedPortletHeader(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {

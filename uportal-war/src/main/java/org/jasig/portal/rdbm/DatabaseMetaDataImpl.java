@@ -123,8 +123,8 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
     	this.transactionTemplate.afterPropertiesSet();    	
     	
     	this.runDatabaseTests();
-        if (LOG.isInfoEnabled())
-            LOG.info(this.toString());            
+        if (LOG.isDebugEnabled())
+            LOG.debug(this.toString());            
     }
 
     private void releaseConnection(final Connection conn) {
@@ -379,8 +379,8 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
 							});
                     
                     this.joinTest = joinQueryString;
-                    if (LOG.isInfoEnabled()) {
-                        LOG.info("Using join test: " + this.joinTest.getClass().getName());
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Using join test: " + this.joinTest.getClass().getName());
                     }
                     break;
                 }
@@ -389,9 +389,6 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
                     
                     if (LOG.isDebugEnabled()) {
                         LOG.debug(logMessage, e);
-                    }
-                    else {
-                        LOG.info(logMessage + "\n" + e.getMessage());
                     }
                 }
             }
@@ -417,9 +414,6 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
             if (LOG.isDebugEnabled()) {
                 LOG.debug(logMessage1, dae1);
             }
-            else {
-                LOG.info(logMessage1 + "\n" + dae1.getMessage());
-            }
 
             //Try using TO_DATE()
             try {
@@ -435,9 +429,6 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
                 final String logMessage2 = "Error running TO_DATE() test.";
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(logMessage2, dae2);
-                }
-                else {
-                    LOG.info(logMessage2 + "\n" + dae2.getMessage());
                 }
             }
         }

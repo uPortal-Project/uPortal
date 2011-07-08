@@ -35,11 +35,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -317,6 +320,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
                 new PortalDataKeyFileProcessor(this.dataKeyTypes, dataToImport, options));
         
         final boolean failOnError = options != null ? options.isFailOnError() : true;
+        final AtomicBoolean failed = new AtomicBoolean(false);
         
         //Import the data files
         for (final PortalDataKey portalDataKey : this.dataKeyImportOrder) {
@@ -333,22 +337,41 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
             
             for (final Resource file : files) {
                 //Check for completed futures on every iteration, needed to fail as fast as possible on an import exception
-                waitForFutures(importFutures, failOnError, false);
+                waitForFutures(importFutures, failed, failOnError, false);
+                
+                //Create import task
+                Callable<Object> task = new Callable<Object>() {
+                    @Override
+                    public Object call() {
+                        importData(file, portalDataKey);
+                        return null;
+                    }
+                };
+                
+                //If fail on error wrap in exception handling task
+                if (failOnError) {
+                    task = new ErrorReportingCallable<Object>(importFutures, failed, task);
+                }
+                
+                //If an exception has been reported stop immediately
+                if (failOnError && failed.get()) {
+                    break;
+                }
                 
                 //Submit the import task
-                final Future<?> importFuture = this.importExportThreadPool.submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        importData(file, portalDataKey);
-                    }
-                });
+                final Future<?> importFuture = this.importExportThreadPool.submit(task);
+                
+                //Set a reference to the new future in the callable, needed for error handling
+                if (task instanceof ErrorReportingCallable) {
+                    ((ErrorReportingCallable)task).setSelf(importFuture);
+                }
                 
                 //Add the future for tracking
                 importFutures.offer(new ImportFuture(importFuture, file));
             }
             
             //Wait for all of the imports on of this type to complete
-            waitForFutures(importFutures, failOnError, true);
+            waitForFutures(importFutures, failed, failOnError, true);
         }
         
         if (!dataToImport.isEmpty()) {
@@ -591,10 +614,10 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
 
     @Override
     public void exportAllDataOfType(Set<String> typeIds, File directory) {
-        
         final Queue<ExportFuture<?>> exportFutures = new LinkedList<ExportFuture<?>>();
-        
         final boolean failOnError = true; //options != null ? options.isFailOnError() : true;
+        
+        final AtomicBoolean failed = new AtomicBoolean(false);
         
         for (final String typeId : typeIds) {
             final File typeDir = new File(directory, typeId);
@@ -605,22 +628,48 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
                 final String dataId = data.getDataId();
 
                 //Check for completed futures on every iteration, needed to fail as fast as possible on an import exception
-                waitForFutures(exportFutures, failOnError, false);
+                waitForFutures(exportFutures, failed, failOnError, false);
+                
+                //Create export task
+                Callable<Object> task = new Callable<Object>() {
+                    @Override
+                    public Object call() throws Exception {
+                        exportData(typeId, dataId, typeDir);
+                        return null;
+                    }
+                };
+                
+                //If failing on error add exception handling wrapper
+                if (failOnError) {
+                    task = new ErrorReportingCallable<Object>(exportFutures, failed, task);
+                }
+                
+                //If an exception has been reported stop immediately
+                if (failOnError && failed.get()) {
+                    break;
+                }
                 
                 //Submit the export task
-                final Future<?> exportFuture = this.importExportThreadPool.submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        exportData(typeId, dataId, typeDir);
-                    }
-                });
+                final Future<?> exportFuture = this.importExportThreadPool.submit(task);
+                
+                //Set a reference to the new future in the callable, needed for error handling
+                if (task instanceof ErrorReportingCallable) {
+                    ((ErrorReportingCallable)task).setSelf(exportFuture);
+                }
                 
                 //Add the future for tracking
-                exportFutures.offer(new ExportFuture(exportFuture, typeId, dataId));
+                final ExportFuture futureHolder = new ExportFuture(exportFuture, typeId, dataId);
+                exportFutures.offer(futureHolder);
+            }
+            
+            //If an exception has been reported stop immediately
+            if (failOnError && failed.get()) {
+                break;
             }
         }
         
-        waitForFutures(exportFutures, failOnError, true);
+        //Wait for all futures to complete
+        waitForFutures(exportFutures, failed, failOnError, true);
     }
 
     @Override
@@ -659,8 +708,8 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
      * @param wait If true it will wait for all futures to complete, if false only check for completed futures
      */
     protected void waitForFutures(
-            final Queue<? extends FutureHolder<?>> futures, final boolean failOnError, 
-            final boolean wait) {
+            final Queue<? extends FutureHolder<?>> futures, final AtomicBoolean failed,
+            final boolean failOnError, final boolean wait) {
         
         List<FutureHolder<?>> failedFutures = null;
         
@@ -671,8 +720,13 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
             final Future<?> future = futureHolder.getFuture();
             if (wait || failedFutures != null || (!wait && future.isDone())) {
                 try {
-                    //Don't bother doing a get() on cancelled futures
+                    //Don't bother doing a get() on canceled futures
                     if (!future.isCancelled()) {
+                        //If there has been an exception and the future isn't done try canceling it
+                        if (failed.get() && !future.isDone()) {
+                            future.cancel(true);
+                        }
+                        
                         if (this.maxWait > 0) {
                             future.get(this.maxWait, this.maxWaitTimeUnit);
                         }
@@ -683,17 +737,15 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
                     
                     futuresItr.remove();
                 }
+                catch (CancellationException e) {
+                    //Ignore cancellation exceptions
+                }
                 catch (Exception e) {
                     futuresItr.remove();
                     
                     if (failOnError) {
                         //If this is the first exception reset the iterator to the start of the futures list
                         if (failedFutures == null) {
-                            //Immediately try to cancel all queued future tasks to avoid creating more error noise than necessary
-                            for (final FutureHolder<?> cancelFuture : futures) {
-                                cancelFuture.getFuture().cancel(true);
-                            }
-                            
                             //Reset the iterator since we now need to wait for ALL futures to complete
                             futuresItr = futures.iterator();
                             
@@ -730,6 +782,46 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         }
     }
     
+    private final class ErrorReportingCallable<T> implements Callable<T> {
+        private final Queue<? extends FutureHolder<?>> futures;
+        private final AtomicBoolean failed;
+        private final Callable<T> delegate;
+        private volatile Future<T> self;
+
+        public ErrorReportingCallable(Queue<? extends FutureHolder<?>> futures, AtomicBoolean failed, Callable<T> delegate) {
+            this.futures = futures;
+            this.failed = failed;
+            this.delegate = delegate;
+        }
+
+        /**
+         * The future that is running this Callable
+         */
+        public void setSelf(Future<T> self) {
+            this.self = self;
+        }
+
+        @Override
+        public T call() throws Exception {
+            try {
+                return this.delegate.call();
+            }
+            catch (Exception e) {
+                if (!this.failed.getAndSet(true)) {
+                    //If this is the first failure immediately cancel all futures (except self)
+                    for (final FutureHolder<?> futureHolder : this.futures) {
+                        final Future<?> future = futureHolder.getFuture();
+                        if (future != self && !future.isDone()) {
+                            future.cancel(true);
+                        }
+                    }
+                }
+                
+                throw e;
+            }
+        }
+    }
+    
     private static abstract class FutureHolder<T> {
         private final Future<T> future;
 
@@ -752,10 +844,6 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
             this.resource = resource;
         }
 
-        public Resource getResource() {
-            return this.resource;
-        }
-        
         @Override
         public String getDescription() {
             return this.resource.getDescription();
@@ -777,14 +865,6 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
             this.dataId = dataId;
         }
 
-        public String getTypeId() {
-            return this.typeId;
-        }
-
-        public String getDataId() {
-            return this.dataId;
-        }
-        
         @Override
         public String getDescription() {
             return "type=" + this.typeId + ", dataId=" + this.dataId;
