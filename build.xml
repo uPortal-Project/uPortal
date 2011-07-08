@@ -687,7 +687,7 @@ catch (Exception e) {
             <property name="database" value="file:${basedir}/data/uPortal" />
             <property name="port" value="${environment.build.hsql.port}" />
 
-            <echo message="Starting HSQL" />
+            <echo message="Starting HSQL on ${port}" />
             <echo message="Using: ${database}" />
             <java fork="true" spawn="${spawn}"  maxmemory="16M" dir="${basedir}" classname="org.hsqldb.Server" failonerror="${failonerror}">
                 <classpath refid="hsql.classpath" />

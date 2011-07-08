@@ -21,6 +21,7 @@ package org.jasig.portal.tools.dbloader;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -34,7 +35,10 @@ import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
-import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.ConnectionCallback;
+import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * Runs the Hibernate Schema Export tool using the specified DataSource for the target DB.
@@ -46,15 +50,9 @@ public class DataSourceSchemaExport implements ISchemaExport {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
     private Resource configuration;
-    private DataSource dataSource;
+    private JdbcOperations jdbcOperations;
     private String dialect;
     
-    /**
-     * @return the configuration
-     */
-    public Resource getConfiguration() {
-        return configuration;
-    }
     /**
      * @param configuration the configuration to set
      */
@@ -63,24 +61,14 @@ public class DataSourceSchemaExport implements ISchemaExport {
     }
 
     /**
-     * @return the dataSource
-     */
-    public DataSource getDataSource() {
-        return dataSource;
-    }
-    /**
      * @param dataSource the dataSource to set
      */
     public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
+        final JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        jdbcTemplate.afterPropertiesSet();
+        this.jdbcOperations = jdbcTemplate;
     }
 
-    /**
-     * @return the dialect
-     */
-    public String getDialect() {
-        return dialect;
-    }
     /**
      * @param dialect the dialect to set
      */
@@ -94,7 +82,7 @@ public class DataSourceSchemaExport implements ISchemaExport {
      * @param outputFile Optional file to write out the SQL to.
      */
     @Override
-    public void hbm2ddl(boolean export, boolean create, boolean drop, String outputFile, boolean haltOnError) {
+    public void hbm2ddl(final boolean export, final boolean create, final boolean drop, final String outputFile, final boolean haltOnError) {
         final Configuration configuration = new Configuration();
         try {
             configuration.configure(this.configuration.getURL());
@@ -104,47 +92,79 @@ public class DataSourceSchemaExport implements ISchemaExport {
         }
         
         
-        final Connection connection = DataSourceUtils.getConnection(this.dataSource);
-        try {
-            if (StringUtils.isNotEmpty(this.dialect)) {
-                configuration.setProperty(Environment.DIALECT, this.dialect);
-            }
-            else {
-                final Dialect dialect = DialectFactory.buildDialect(configuration.getProperties(), connection);
-                final String dialectName = dialect.getClass().getName();
-                configuration.setProperty(Environment.DIALECT, dialectName);
-                this.logger.info("Resolved Hibernate Dialect: {}", dialectName);
-            }
-            
-            configuration.buildMappings();
-            
-            final SchemaExport exporter = new SchemaExport(configuration, connection);
-            exporter.setHaltOnError(haltOnError);
-            if (outputFile != null) {
-                exporter.setFormat(true);
-                exporter.setOutputFile(outputFile);
-            }
-            else {
-                exporter.setFormat(false);
-            }
-            
-            exporter.execute(true, export, !create, !drop);
-            
-            if (haltOnError) {
-                final List<Exception> exceptions = exporter.getExceptions();
-                if (!exceptions.isEmpty()) {
-                    final Exception e = exceptions.get(exceptions.size() - 1);
-                    if (e instanceof RuntimeException) {
-                        throw (RuntimeException)e;
-                    }
-                    
-                    this.logger.error("Schema Export threw " + exceptions.size() + " exceptions and was halted");
-                    throw new RuntimeException(e);
+        if (StringUtils.isNotEmpty(this.dialect)) {
+            configuration.setProperty(Environment.DIALECT, this.dialect);
+        }
+        else {
+            final Dialect dialect = this.jdbcOperations.execute(new ConnectionCallback<Dialect>() {
+                @Override
+                public Dialect doInConnection(Connection con) throws SQLException, DataAccessException {
+                    return DialectFactory.buildDialect(configuration.getProperties(), con);
                 }
-            }
+            });
+            
+            final String dialectName = dialect.getClass().getName();
+            configuration.setProperty(Environment.DIALECT, dialectName);
+            this.logger.info("Resolved Hibernate Dialect: {}", dialectName);
         }
-        finally {
-            DataSourceUtils.releaseConnection(connection, this.dataSource);
+            
+            
+        configuration.buildMappings();
+        
+        if (drop) {
+            this.jdbcOperations.execute(new ConnectionCallback<Object>() {
+                @Override
+                public Object doInConnection(Connection con) throws SQLException, DataAccessException {
+                    final SchemaExport exporter = createExporter(outputFile, haltOnError, configuration, con);
+                    exporter.execute(true, export, true, false);
+                    return null;
+                }
+            });
         }
+        
+        if (create) {
+            this.jdbcOperations.execute(new ConnectionCallback<Object>() {
+                @Override
+                public Object doInConnection(Connection con) throws SQLException, DataAccessException {
+                    final SchemaExport exporter = createExporter(outputFile, haltOnError, configuration, con);
+                    exporter.execute(true, export, false, true);
+        
+                    if (haltOnError) {
+                        final List<Exception> exceptions = exporter.getExceptions();
+                        if (!exceptions.isEmpty()) {
+                            final Exception e = exceptions.get(exceptions.size() - 1);
+                            
+                            if (e instanceof RuntimeException) {
+                                throw (RuntimeException)e;
+                            }
+                            
+                            logger.error("Schema Export threw " + exceptions.size() + " exceptions and was halted");
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    return null;
+                }
+            });
+        }
+    }
+
+    /**
+     * @param outputFile
+     * @param haltOnError
+     * @param configuration
+     * @param connection
+     * @return
+     */
+    protected SchemaExport createExporter(String outputFile, boolean haltOnError, final Configuration configuration, Connection connection) {
+        final SchemaExport exporter = new SchemaExport(configuration, connection);
+        exporter.setHaltOnError(haltOnError);
+        if (outputFile != null) {
+            exporter.setFormat(true);
+            exporter.setOutputFile(outputFile);
+        }
+        else {
+            exporter.setFormat(false);
+        }
+        return exporter;
     }
 }
