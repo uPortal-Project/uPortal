@@ -47,7 +47,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.IndexColumn;
-import org.hibernate.annotations.Type;
+import org.jasig.portal.dao.usertype.BaseNullSafeStringType;
 import org.jasig.portal.portlet.om.IPortletPreference;
 
 /**
@@ -69,6 +69,7 @@ import org.jasig.portal.portlet.om.IPortletPreference;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class PortletPreferenceImpl implements IPortletPreference {
+    private static final String NULL_MARKER = "NULL";
 
     @Id
     @GeneratedValue(generator = "UP_PORTLET_PREF_GEN")
@@ -96,7 +97,10 @@ public class PortletPreferenceImpl implements IPortletPreference {
     @Column(name = "PREF_VALUE")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
-    private List<String> values = null;
+    private List<String> values = new ArrayList<String>(0);
+    
+    @Column(name = "NULL_VALUES", nullable = false)
+    private boolean nullValues = true;
     
     
     public PortletPreferenceImpl() {
@@ -105,6 +109,10 @@ public class PortletPreferenceImpl implements IPortletPreference {
     }
     
     public PortletPreferenceImpl(PortletPreferenceImpl portletPreference) {
+        if (portletPreference.getName() == null) {
+            throw new IllegalArgumentException("name cannot be null");
+        }
+        
         this.portletPreferenceId = -1;
         this.entityVersion = -1;
         this.name = portletPreference.getName();
@@ -113,6 +121,10 @@ public class PortletPreferenceImpl implements IPortletPreference {
     }
     
     public PortletPreferenceImpl(PortletPreference portletPreference) {
+        if (portletPreference.getName() == null) {
+            throw new IllegalArgumentException("name cannot be null");
+        }
+        
         this.portletPreferenceId = -1;
         this.entityVersion = -1;
         this.name = portletPreference.getName();
@@ -122,7 +134,11 @@ public class PortletPreferenceImpl implements IPortletPreference {
         this.setValues(values);
     }
     public PortletPreferenceImpl(Preference preference) {
-    	this.portletPreferenceId = -1;
+        if (preference.getName() == null) {
+            throw new IllegalArgumentException("name cannot be null");
+        }
+        
+        this.portletPreferenceId = -1;
     	this.entityVersion = -1;
     	this.name = preference.getName();
     	this.readOnly = preference.isReadOnly();
@@ -131,6 +147,10 @@ public class PortletPreferenceImpl implements IPortletPreference {
     }
     
     public PortletPreferenceImpl(String name, boolean readOnly, String... values) {
+        if (name == null) {
+            throw new IllegalArgumentException("name cannot be null");
+        }
+        
         this.portletPreferenceId = -1;
         this.entityVersion = -1;
         this.name = name;
@@ -154,11 +174,21 @@ public class PortletPreferenceImpl implements IPortletPreference {
      */
     @Override
     public String[] getValues() {
-        if (this.values == null) {
+        if (this.nullValues || this.values == null) {
             return null;
         }
 
-        return this.values.toArray(new String[this.values.size()]);
+        final String[] valuesArray = new String[this.values.size()];
+        int index = 0;
+        for (final String value : this.values) {
+            if (NULL_MARKER.equals(value)) {
+                valuesArray[index++] = null;
+            }
+            else {
+                valuesArray[index++] = value.substring(1);
+            }
+        }
+        return valuesArray;
     }
 
     /*
@@ -183,13 +213,23 @@ public class PortletPreferenceImpl implements IPortletPreference {
     public void setValues(String[] values) {
         if (values == null) {
             this.values = null;
+            this.nullValues = true;
         }
         else if (this.values == null) {
             this.values = new ArrayList<String>(Arrays.asList(values));
+            this.nullValues = false;
         }
         else {
+            this.nullValues = false;
             this.values.clear();
-            this.values.addAll(Arrays.asList(values));
+            for (final String value : values) {
+                if (value == null) {
+                    this.values.add(NULL_MARKER);
+                }
+                else {
+                    this.values.add(BaseNullSafeStringType.NOT_NULL_PREFIX + value);
+                }
+            }
         }
     }
 

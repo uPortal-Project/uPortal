@@ -60,6 +60,7 @@ import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.utils.threading.NoopLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Hooks into uPortal portlet preferences object model
@@ -298,6 +299,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
      * (non-Javadoc)
      * @see org.apache.pluto.container.PortletPreferencesService#store(org.apache.pluto.container.PortletWindow, javax.portlet.PortletRequest, java.util.Map)
      */
+	@Transactional
 	@Override
     public void store(PortletWindow plutoPortletWindow, PortletRequest portletRequest, Map<String,PortletPreference> newPreferences) throws PortletContainerException {
         final HttpServletRequest httpServletRequest = this.portalRequestUtils.getPortletHttpRequest(portletRequest);
@@ -367,7 +369,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
                 //Ignore preferences with null names
                 final String name = internalPreference.getName();
                 if (name == null) {
-                    continue;
+                    throw new IllegalArgumentException("PortletPreference name cannot be null");
                 }
     
                 //Convert to a uPortal preference class to ensure quality check and persistence works
