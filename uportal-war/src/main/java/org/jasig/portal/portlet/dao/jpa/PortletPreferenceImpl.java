@@ -32,6 +32,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -79,7 +80,7 @@ public class PortletPreferenceImpl implements IPortletPreference {
     private final long entityVersion;
     
     @Column(name = "PREF_NAME")
-    @Type(type = "materialized_clob")
+    @Lob
     private String name = null;
     
     @Column(name = "READ_ONLY", nullable = false)
@@ -91,7 +92,7 @@ public class PortletPreferenceImpl implements IPortletPreference {
         joinColumns = @JoinColumn(name = "PORTLET_PREF_ID")
     )
     @IndexColumn(name = "VALUE_ORDER")
-    @Type(type = "materialized_clob")
+    @Lob
     @Column(name = "PREF_VALUE")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)

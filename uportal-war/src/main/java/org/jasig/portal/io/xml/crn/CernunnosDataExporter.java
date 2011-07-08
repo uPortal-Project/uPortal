@@ -75,21 +75,33 @@ public class CernunnosDataExporter implements IDataExporter<Tuple<String, Node>>
         this.idAttributeName = idAttributeName;
     }
 
+    /**
+     * The CRN task to execute to perform the export
+     */
     @Required
     public void setTask(Task task) {
         this.task = task;
     }
     
+    /**
+     * The {@link IPortalDataType} being exported
+     */
     @Required
     public void setPortalDataType(IPortalDataType portalDataType) {
         this.portalDataType = portalDataType;
     }
     
+    /**
+     * A Function that call list all data for the {@link IPortalDataType}
+     */
     @Required
     public void setPortalDataRetriever(Function<IPortalDataType, Iterable<? extends IPortalData>> portalDataRetriever) {
         this.portalDataRetriever = portalDataRetriever;
     }
     
+    /**
+     * An optional function that resolves the filename for each exported node. If not specified the default data id used.
+     */
     public void setFileNameFunction(Function<Tuple<String, Node>, String> fileNameFunction) {
         this.fileNameFunction = fileNameFunction;
     }

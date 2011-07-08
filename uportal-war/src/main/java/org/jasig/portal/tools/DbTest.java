@@ -61,6 +61,10 @@ public class DbTest {
     String dbVersion = dbMetaData.getDatabaseProductVersion();
     String driverName = dbMetaData.getDriverName();
     String driverVersion = dbMetaData.getDriverVersion();
+    final int databaseMajorVersion = dbMetaData.getDatabaseMajorVersion();
+    final int databaseMinorVersion = dbMetaData.getDatabaseMinorVersion();
+    final int driverMajorVersion = dbMetaData.getDriverMajorVersion();
+    final int driverMinorVersion = dbMetaData.getDriverMinorVersion();
     
     String driverClass = RDBMServices.getJdbcDriver();
     String url = RDBMServices.getJdbcUrl();
@@ -116,9 +120,9 @@ public class DbTest {
 
     System.out.println();
     System.out.println("Database name:    '" + dbName + "'");
-    System.out.println("Database version: '" + dbVersion + "'");
+    System.out.println("Database version: '" + dbVersion + "' (" + databaseMajorVersion + "." + databaseMinorVersion + ")");
     System.out.println("Driver name:      '" + driverName + "'");
-    System.out.println("Driver version:   '" + driverVersion + "'");
+    System.out.println("Driver version:   '" + driverVersion + "' (" + driverMajorVersion + "." + driverMinorVersion + ")");
     System.out.println("Driver class:     '" + driverClass + "'");
     System.out.println("Connection URL:   '" + url + "'");
     System.out.println("User:             '" + user + "'");

@@ -189,12 +189,6 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
         // sort the list by display name
         Collections.sort(list, new DisplayNameComparator());
         
-        // limit the list to a maximum of 10 returned results
-        // TODO: make this limit configurable
-        if (people.size() > 10) {
-            list = list.subList(0, 9);
-        }
-        
         return list;
     }
 

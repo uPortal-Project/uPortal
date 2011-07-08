@@ -27,7 +27,7 @@ import org.jasig.portal.utils.Tuple;
 import com.google.common.base.Function;
 
 /**
- * Permission Set 
+ * Generates the correct file name for a Permission Set
  * 
  * @author Eric Dalquist
  * @version $Revision$

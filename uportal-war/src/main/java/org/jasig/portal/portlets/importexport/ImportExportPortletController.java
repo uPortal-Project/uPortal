@@ -60,7 +60,6 @@ public class ImportExportPortletController {
 
     protected final Log log = LogFactory.getLog(getClass());
 
-    private List<String> importExportTypes;
     private IPersonManager personManager;
     private IPortalRequestUtils portalRequestUtils;
     private IPortalDataHandlerService portalDataHandlerService;
@@ -151,12 +150,7 @@ public class ImportExportPortletController {
     	    	results.add(type);
     	    }    		
     	}
-    	
-    	for(String legacyType: importExportTypes) {
-    		if (ap.hasPermission(OWNER, activityName, legacyType)) {
-//    			results.add(new CernnunosOnlyPortalDataType(legacyType));
-    		}
-    	}
+
     	return results;
     }
 

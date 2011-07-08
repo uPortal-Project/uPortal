@@ -31,8 +31,12 @@
         
         <property name="hibernate.cache.use_query_cache">true</property>
         <property name="hibernate.cache.use_second_level_cache">true</property>
+        <property name="hibernate.cache.use_minimal_puts">true</property>
         <property name="hibernate.cache.region_prefix">PortalStats</property>
         <property name="hibernate.jdbc.batch_size">25</property>
+        <property name="hibernate.max_fetch_depth">3</property>
+        <property name="hibernate.default_batch_fetch_size">1</property>
+        <property name="hibernate.id.new_generator_mappings">true</property>
         
         <property name="hibernate.current_session_context_class">thread</property>
         

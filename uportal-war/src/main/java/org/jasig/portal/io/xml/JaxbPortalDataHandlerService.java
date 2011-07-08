@@ -21,6 +21,7 @@ package org.jasig.portal.io.xml;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -315,7 +316,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         this.directoryScanner.scanDirectoryNoResults(directory, fileFilter, 
                 new PortalDataKeyFileProcessor(this.dataKeyTypes, dataToImport, options));
         
-        final boolean failOnError = options != null ? options.isFailOnError() : false;
+        final boolean failOnError = options != null ? options.isFailOnError() : true;
         
         //Import the data files
         for (final PortalDataKey portalDataKey : this.dataKeyImportOrder) {
@@ -382,10 +383,18 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         }
         
         try {
-            this.importData(resource, new StreamSource(resourceStream, resource.getURI().toString()), portalDataKey);
-        }
-        catch (IOException e) {
-            throw new RuntimeException("Could not create URI for resource: " + resource, e);
+            String resourceUri;
+            try {
+                resourceUri = resource.getURI().toString();
+            }
+            catch (FileNotFoundException e) {
+                resourceUri = resource.getDescription();
+            }
+            catch (IOException e) {
+                throw new RuntimeException("Could not create URI for resource: " + resource, e);
+            }
+            
+            this.importData(resource, new StreamSource(resourceStream, resourceUri), portalDataKey);
         }
         finally {
             IOUtils.closeQuietly(resourceStream);
@@ -553,19 +562,20 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         
         try {
             final String fileName = this.exportData(typeId, dataId, new StreamResult(exportTempFile));
-            if (fileName != null) {
-                final File destFile = new File(directory, fileName + "." + typeId + ".xml");
-                if (destFile.exists()) {
-                    logger.warn("Exporting " + typeId + " " + dataId + " but destination file already exists, it will be overwritten: " + destFile);
-                    destFile.delete();
-                }
-                FileUtils.moveFile(exportTempFile, destFile);
-                logger.info("Exported: {}", destFile);
-                
-                return true;
+            if (fileName == null) {
+                logger.info("Skipped: type={} id={}", typeId, dataId);
+                return false;
             }
             
-            return false;
+            final File destFile = new File(directory, fileName + "." + typeId + ".xml");
+            if (destFile.exists()) {
+                logger.warn("Exporting " + typeId + " " + dataId + " but destination file already exists, it will be overwritten: " + destFile);
+                destFile.delete();
+            }
+            FileUtils.moveFile(exportTempFile, destFile);
+            logger.info("Exported: {}", destFile);
+            
+            return true;
         }
         catch (Exception e) {
             if (e instanceof RuntimeException) {
@@ -584,7 +594,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         
         final Queue<ExportFuture<?>> exportFutures = new LinkedList<ExportFuture<?>>();
         
-        final boolean failOnError = true; //options != null ? options.isFailOnError() : false;
+        final boolean failOnError = true; //options != null ? options.isFailOnError() : true;
         
         for (final String typeId : typeIds) {
             final File typeDir = new File(directory, typeId);
