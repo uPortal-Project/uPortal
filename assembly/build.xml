@@ -345,7 +345,7 @@
         </copy>
 
         <!-- create uPortal build.properties pointing to quickstart tomcat -->
-        <copy file="${uportal.dir}/assembly/live-nightly/uportal-build.properties" tofile="${uportal.dir}/build.properties" overwrite="true">
+        <copy file="${uportal.dir}/build.properties.sample" tofile="${uportal.dir}/build.properties" overwrite="true">
             <filterset>
                 <filter token="server.home" value="$${basedir}/../${dl.tomcat.finalName}" />
             </filterset>
@@ -354,18 +354,25 @@
         <replace file="${uportal.dir}/pom.xml" token="${uportal.docbase.token}" value="${uportal.docbase.replacement}" summary="true" />
                     
         <!-- Ensure a HSQL isntance isn't already running -->
-        <ant target="hsql-shutdown" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}" />
+        <ant target="hsql-shutdown" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}" >
+            <property name="env" value="live-nightly"/>
+        </ant>
             
         <!-- start live-nightly hsql isntance -->
         <ant target="hsql" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}">
+            <property name="env" value="live-nightly"/>
             <property name="spawn" value="true" />
         </ant>
 
         <!-- run initportal to setup tomcat & database -->
-        <ant target="initportal" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}" />
+        <ant target="initportal" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}">
+            <property name="env" value="live-nightly"/>
+        </ant>
 
         <!-- shutdown hsql nicely -->
-        <ant target="hsql-shutdown" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}" />
+        <ant target="hsql-shutdown" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}" >
+            <property name="env" value="live-nightly"/>
+        </ant>
     </target>
 
     <target name="prepare-ln" depends="prepare">

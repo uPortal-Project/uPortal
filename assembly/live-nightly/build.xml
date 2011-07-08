@@ -19,7 +19,7 @@
 
 -->
 
-<project name="uPortal Live Build" basedir="." default="help">
+<project name="uPortal Live Build" basedir=".">
     <property file="${basedir}/build.properties" />
     
     <import file="${uportal.dir}/bootstrap/build_includes.xml" />
@@ -55,7 +55,8 @@
     <target name="hsql-start">
         <echo message="Starting HSQL ..." />
 
-        <ant target="hsql" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}">
+        <ant target="hsql" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}" >
+            <property name="env" value="live-nightly"/>
             <property name="spawn" value="true" />
         </ant>
     </target>
@@ -63,7 +64,9 @@
     <target name="hsql-stop">
         <echo message="Stopping HSQL ..." />
             
-        <ant target="hsql-shutdown" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}" />
+        <ant target="hsql-shutdown" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}" >
+            <property name="env" value="live-nightly"/>
+        </ant>
     </target>
 
     <target name="prepare-tomcat">
