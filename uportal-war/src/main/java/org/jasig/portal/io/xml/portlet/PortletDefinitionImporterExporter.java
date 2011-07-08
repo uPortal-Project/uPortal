@@ -197,6 +197,22 @@ public class PortletDefinitionImporterExporter
         if (timeout != null) {
             def.setTimeout(timeout.intValue());
         }
+        final BigInteger actionTimeout = portletRep.getActionTimeout();
+        if (actionTimeout != null) {
+            def.setActionTimeout(actionTimeout.intValue());
+        }
+        final BigInteger eventTimeout = portletRep.getEventTimeout();
+        if (eventTimeout != null) {
+            def.setEventTimeout(eventTimeout.intValue());
+        }
+        final BigInteger renderTimeout = portletRep.getRenderTimeout();
+        if (renderTimeout != null) {
+            def.setRenderTimeout(renderTimeout.intValue());
+        }
+        final BigInteger resourceTimeout = portletRep.getResourceTimeout();
+        if (resourceTimeout != null) {
+            def.setResourceTimeout(resourceTimeout.intValue());
+        }
         def.setType(portletType);
         
         Date now = new Date();
@@ -371,6 +387,14 @@ public class PortletDefinitionImporterExporter
     public String getFileName(ExternalPortletDefinition data) {
         return SafeFilenameUtils.makeSafeFilename(data.getFname());
     }
+    
+    protected BigInteger convertToBigInteger(Integer i) {
+        if (i == null) {
+            return null;
+        }
+        
+        return BigInteger.valueOf(i);
+    }
 
     protected ExternalPortletDefinition convert(IPortletDefinition def) {
     	 ExternalPortletDefinition rep = new ExternalPortletDefinition();
@@ -381,6 +405,10 @@ public class PortletDefinitionImporterExporter
          rep.setDesc(def.getDescription());
          rep.setName(def.getName());
          rep.setTimeout(BigInteger.valueOf(def.getTimeout()));
+         rep.setActionTimeout(convertToBigInteger(def.getActionTimeout()));
+         rep.setEventTimeout(convertToBigInteger(def.getEventTimeout()));
+         rep.setRenderTimeout(convertToBigInteger(def.getRenderTimeout()));
+         rep.setResourceTimeout(convertToBigInteger(def.getResourceTimeout()));
          rep.setTitle(def.getTitle());
          rep.setType(def.getType().getName());
          

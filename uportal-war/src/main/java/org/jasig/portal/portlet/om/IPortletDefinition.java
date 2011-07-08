@@ -70,7 +70,26 @@ public interface IPortletDefinition extends IBasicEntity, IPortalData {
 	
 	public String getTitle();
 
+	/**
+	 * @return Default timeout in ms, -1 means no timeout.
+	 */
 	public int getTimeout();
+	/**
+	 * @return Optional timeout for action requests in ms, if null {@link #getTimeout()} should be used, -1 means no timeout.
+	 */
+	public Integer getActionTimeout();
+    /**
+     * @return Optional timeout for event requests in ms, if null {@link #getTimeout()} should be used, -1 means no timeout.
+     */
+	public Integer getEventTimeout();
+    /**
+     * @return Optional timeout for render requests in ms, if null {@link #getTimeout()} should be used, -1 means no timeout.
+     */
+	public Integer getRenderTimeout();
+    /**
+     * @return Optional timeout for resource requests in ms, if null {@link #getTimeout()} should be used, -1 means no timeout.
+     */
+	public Integer getResourceTimeout();
 
 	public IPortletType getType();
 
@@ -111,7 +130,27 @@ public interface IPortletDefinition extends IBasicEntity, IPortalData {
 
 	public void setTitle(String title);
 
+	/**
+	 * @param timeout The default timeout value in ms, -1 means no timeout.
+	 */
 	public void setTimeout(int timeout);
+
+    /**
+     * @param actionTimeout Optional timeout for action requests in ms, if null {@link #getTimeout()} will be used, -1 means no timeout.
+     */
+    public void setActionTimeout(Integer actionTimeout);
+    /**
+     * @param eventTimeout Optional timeout for event requests in ms, if null {@link #getTimeout()} will be used, -1 means no timeout.
+     */
+    public void setEventTimeout(Integer eventTimeout);
+    /**
+     * @param renderTimeout Optional timeout for render requests in ms, if null {@link #getTimeout()} will be used, -1 means no timeout.
+     */
+    public void setRenderTimeout(Integer renderTimeout);
+    /**
+     * @param resourceTimeout Optional timeout for resource requests in ms, if null {@link #getTimeout()} will be used, -1 means no timeout.
+     */
+    public void setResourceTimeout(Integer resourceTimeout);
 
 	public void setType(IPortletType channelType);
 

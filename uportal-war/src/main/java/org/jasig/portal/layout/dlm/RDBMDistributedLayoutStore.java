@@ -20,11 +20,8 @@
 package org.jasig.portal.layout.dlm;
 
 import java.io.StringWriter;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -104,25 +100,22 @@ import org.w3c.dom.NodeList;
  * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
-public class RDBMDistributedLayoutStore
-    extends RDBMUserLayoutStore
-{
+public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     public static final String RCS_ID = "@(#) $Header$";
     private static final Log LOG = LogFactory.getLog(RDBMDistributedLayoutStore.class);
-    
+
     private final static Pattern USER_NODE_PATTERN = Pattern.compile("\\A([a-zA-Z]\\d*)\\z");
 
     private String systemDefaultUser = null;
     private boolean systemDefaultUserLoaded = false;
-    
+
     private ConfigurationLoader configurationLoader;
     private FragmentActivator fragmentActivator;
 
     private Ehcache fragmentNodeInfoCache;
-    
-    static final String TEMPLATE_USER_NAME
-        = "org.jasig.portal.services.Authentication.defaultTemplateUserName";
-    
+
+    static final String TEMPLATE_USER_NAME = "org.jasig.portal.services.Authentication.defaultTemplateUserName";
+
     // Used in Import/Export operations
     private final org.dom4j.DocumentFactory fac = new org.dom4j.DocumentFactory();
     private final DOMReader reader = new DOMReader();
@@ -131,7 +124,7 @@ public class RDBMDistributedLayoutStore
     private Task lookupPathrefTask;
     private IUserIdentityStore identityStore;
     private IStylesheetUserPreferencesDao stylesheetUserPreferencesDao;
-    
+
     @Autowired
     public void setIdentityStore(IUserIdentityStore identityStore) {
         this.identityStore = identityStore;
@@ -141,9 +134,11 @@ public class RDBMDistributedLayoutStore
     public void setStylesheetUserPreferencesDao(IStylesheetUserPreferencesDao stylesheetUserPreferencesDao) {
         this.stylesheetUserPreferencesDao = stylesheetUserPreferencesDao;
     }
-    
+
     @Autowired
-    public void setFragmentNodeInfoCache(@Qualifier("org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragmentNodeInfoCache") Ehcache fragmentNodeInfoCache) {
+    public void setFragmentNodeInfoCache(
+            @Qualifier("org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragmentNodeInfoCache")
+            Ehcache fragmentNodeInfoCache) {
         this.fragmentNodeInfoCache = fragmentNodeInfoCache;
     }
 
@@ -162,34 +157,34 @@ public class RDBMDistributedLayoutStore
      * @return Map
      */
     public Map<String, Document> getFragmentLayoutCopies()
-    
+
     {
 
-        FragmentActivator activator = this.getFragmentActivator();
+        final FragmentActivator activator = this.getFragmentActivator();
 
-        Map<String, Document> layouts = new HashMap<String, Document>();
+        final Map<String, Document> layouts = new HashMap<String, Document>();
 
-        final List<FragmentDefinition> definitions = configurationLoader.getFragments();
+        final List<FragmentDefinition> definitions = this.configurationLoader.getFragments();
         for (final FragmentDefinition fragmentDefinition : definitions) {
-            Document layout = DocumentFactory.getNewDocument();
+            final Document layout = DocumentFactory.getNewDocument();
             final UserView userView = activator.getUserView(fragmentDefinition);
             if (userView == null) {
-                log.warn("No UserView found for FragmentDefinition " + fragmentDefinition.getName() + ", it will be skipped.");
+                this.log.warn("No UserView found for FragmentDefinition " + fragmentDefinition.getName()
+                        + ", it will be skipped.");
                 continue;
             }
-            Node copy = layout.importNode(userView
-                        .layout.getDocumentElement(), true);
+            final Node copy = layout.importNode(userView.layout.getDocumentElement(), true);
             layout.appendChild(copy);
             layouts.put(fragmentDefinition.getOwnerId(), layout);
         }
         return layouts;
     }
-    
+
     @Autowired
     public void setConfigurationLoader(ConfigurationLoader configurationLoader) {
         this.configurationLoader = configurationLoader;
     }
-    
+
     @Autowired
     public void setFragmentActivator(FragmentActivator fragmentActivator) {
         this.fragmentActivator = fragmentActivator;
@@ -198,59 +193,66 @@ public class RDBMDistributedLayoutStore
     private FragmentActivator getFragmentActivator() {
         return this.fragmentActivator;
     }
-    
-    
-    protected IStylesheetUserPreferences loadDistributedStylesheetUserPreferences(IPerson person, IUserProfile profile, long stylesheetDescriptorId, Set<String> fragmentNames) {
+
+    protected IStylesheetUserPreferences loadDistributedStylesheetUserPreferences(IPerson person, IUserProfile profile,
+            long stylesheetDescriptorId, Set<String> fragmentNames) {
         if (this.isFragmentOwner(person)) {
             return null;
         }
-        
-        final IStylesheetDescriptor stylesheetDescriptor = this.stylesheetDescriptorDao.getStylesheetDescriptor(stylesheetDescriptorId);
-        final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, person, profile);
-        
-        final IStylesheetUserPreferences distributedStylesheetUserPreferences = new StylesheetUserPreferencesImpl(stylesheetDescriptorId);
-    
+
+        final IStylesheetDescriptor stylesheetDescriptor = this.stylesheetDescriptorDao
+                .getStylesheetDescriptor(stylesheetDescriptorId);
+        final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao
+                .getStylesheetUserPreferences(stylesheetDescriptor, person, profile);
+
+        final IStylesheetUserPreferences distributedStylesheetUserPreferences = new StylesheetUserPreferencesImpl(
+                stylesheetDescriptorId);
+
         final FragmentActivator fragmentActivator = this.getFragmentActivator();
-        
+
         for (final String fragmentOwnerId : fragmentNames) {
             final FragmentDefinition fragmentDefinition = this.configurationLoader.getFragmentByName(fragmentOwnerId);
-        
+
             //UserView may be missing if the fragment isn't defined correctly
             final UserView userView = fragmentActivator.getUserView(fragmentDefinition);
             if (userView == null) {
-                log.warn("No UserView is present for fragment " + fragmentDefinition.getName() + " it will be skipped when loading distributed stylesheet user preferences");
+                this.log.warn("No UserView is present for fragment " + fragmentDefinition.getName()
+                        + " it will be skipped when loading distributed stylesheet user preferences");
                 continue;
             }
-            
+
             //IStylesheetUserPreferences only exist if something was actually set
-            final IStylesheetUserPreferences fragmentStylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, userView.getUserId(), userView.profileId);
+            final IStylesheetUserPreferences fragmentStylesheetUserPreferences = this.stylesheetUserPreferencesDao
+                    .getStylesheetUserPreferences(stylesheetDescriptor, userView.getUserId(), userView.profileId);
             if (fragmentStylesheetUserPreferences == null) {
                 continue;
             }
-            
+
             //Get the info needed to DLMify node IDs
             final Element root = userView.layout.getDocumentElement();
-            final String labelBase = root.getAttribute( Constants.ATT_ID );
-            
+            final String labelBase = root.getAttribute(Constants.ATT_ID);
+
             boolean modified = false;
-        
+
             //Copy all of the fragment preferences into the distributed preferences
-            final Map<String, Map<String, String>> allLayoutAttributes = fragmentStylesheetUserPreferences.getAllLayoutAttributes();
-            for (final Map.Entry<String, Map<String, String>> layoutNodeAttributesEntry : allLayoutAttributes.entrySet()) {
+            final Map<String, Map<String, String>> allLayoutAttributes = fragmentStylesheetUserPreferences
+                    .getAllLayoutAttributes();
+            for (final Map.Entry<String, Map<String, String>> layoutNodeAttributesEntry : allLayoutAttributes
+                    .entrySet()) {
                 String nodeId = layoutNodeAttributesEntry.getKey();
-                
+
                 if (!nodeId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX)) {
                     nodeId = labelBase + nodeId;
                 }
-                
+
                 final Map<String, String> layoutAttributes = layoutNodeAttributesEntry.getValue();
                 for (final Map.Entry<String, String> layoutAttributesEntry : layoutAttributes.entrySet()) {
                     final String name = layoutAttributesEntry.getKey();
                     final String value = layoutAttributesEntry.getValue();
-                    
+
                     //Fragmentize the nodeId here
                     distributedStylesheetUserPreferences.setLayoutAttribute(nodeId, name, value);
-                    
+
                     //Clean out user preferences data that matches data from the fragment.
                     if (stylesheetUserPreferences != null) {
                         final String userValue = stylesheetUserPreferences.getLayoutAttribute(nodeId, name);
@@ -262,28 +264,27 @@ public class RDBMDistributedLayoutStore
                     }
                 }
             }
-            
+
             if (modified) {
                 this.stylesheetUserPreferencesDao.storeStylesheetUserPreferences(stylesheetUserPreferences);
             }
         }
-        
+
         return distributedStylesheetUserPreferences;
     }
-    
+
     @Override
-    public double getFragmentPrecedence( int index )
-    {
-        final List<FragmentDefinition> definitions = configurationLoader.getFragments();
-        if ( index < 0 ||
-             index > definitions.size()-1 )
+    public double getFragmentPrecedence(int index) {
+        final List<FragmentDefinition> definitions = this.configurationLoader.getFragments();
+        if (index < 0 || index > definitions.size() - 1) {
             return 0;
+        }
 
         // must pass through the array looking for the fragment with this
         // index since the array was sorted by precedence and then index
         // within precedence.
         for (final FragmentDefinition fragmentDefinition : definitions) {
-            if ( fragmentDefinition.getIndex() == index ) {
+            if (fragmentDefinition.getIndex() == index) {
                 return fragmentDefinition.getPrecedence();
             }
         }
@@ -301,114 +302,101 @@ public class RDBMDistributedLayoutStore
        allowed to changed.
      */
     @Override
-    public DistributedUserLayout getUserLayout (IPerson person,
-                                   IUserProfile profile)
-        
+    public DistributedUserLayout getUserLayout(IPerson person, IUserProfile profile)
+
     {
 
-        DistributedUserLayout layout = _getUserLayout( person, profile );
+        final DistributedUserLayout layout = this._getUserLayout(person, profile);
 
         return layout;
     }
-    
+
     private boolean layoutExistsForUser(IPerson person) {
-        
+
         // Assertions.
         if (person == null) {
-            String msg = "Argument 'person' cannot be null.";
+            final String msg = "Argument 'person' cannot be null.";
             throw new IllegalArgumentException(msg);
         }
-        
-        final int struct_count = jdbcOperations.queryForInt("SELECT COUNT(*) FROM up_layout_struct WHERE user_id = ?", person.getID());
+
+        final int struct_count = this.jdbcOperations
+                .queryForInt("SELECT COUNT(*) FROM up_layout_struct WHERE user_id = ?", person.getID());
         return struct_count == 0 ? false : true;
-        
+
     }
-    
+
     @SuppressWarnings("unchecked")
     public org.dom4j.Element exportLayout(IPerson person, IUserProfile profile) {
-        
-        if (!layoutExistsForUser(person)) {
+
+        if (!this.layoutExistsForUser(person)) {
             return null;
         }
-        
+
         org.dom4j.Document layoutDoc = null;
         try {
-            Document layoutDom = _safeGetUserLayout(person, profile);
+            final Document layoutDom = this._safeGetUserLayout(person, profile);
             person.setAttribute(Constants.PLF, layoutDom);
-            layoutDoc = reader.read(layoutDom);
-        } catch (Throwable t) {
-            String msg = "Unable to obtain layout & profile for user '" 
-                            + person.getUserName() + "', profileId " 
-                            + profile.getProfileId();
+            layoutDoc = this.reader.read(layoutDom);
+        }
+        catch (final Throwable t) {
+            final String msg = "Unable to obtain layout & profile for user '" + person.getUserName() + "', profileId "
+                    + profile.getProfileId();
             throw new RuntimeException(msg, t);
         }
-        
-        if (log.isDebugEnabled()) {
+
+        if (this.log.isDebugEnabled()) {
             // Write out this version of the layout to the log for dev purposes...
-            StringWriter str = new StringWriter();
-            XMLWriter xml = new XMLWriter(str, new OutputFormat("  ", true));
+            final StringWriter str = new StringWriter();
+            final XMLWriter xml = new XMLWriter(str, new OutputFormat("  ", true));
             try {
                 xml.write(layoutDoc);
                 xml.close();
-            } catch (Throwable t) {
-                throw new RuntimeException("Failed to write the layout for user '" 
-                            + person.getUserName() + "' to the DEBUG log", t);
             }
-            log.debug("Layout for user:  " + person.getUserName() 
-                        + "\n" + str.getBuffer().toString());
+            catch (final Throwable t) {
+                throw new RuntimeException("Failed to write the layout for user '" + person.getUserName()
+                        + "' to the DEBUG log", t);
+            }
+            this.log.debug("Layout for user:  " + person.getUserName() + "\n" + str.getBuffer().toString());
         }
 
         /*
          * Clean up the DOM for export.
          */
-        
+
         // (1) Add structure & theme attributes...
         final int structureStylesheetId = profile.getStructureStylesheetId();
-        addStylesheetUserPreferencesAttributes(person,
-                profile,
-                layoutDoc,
-                structureStylesheetId,
-                "structure");
-        
+        this.addStylesheetUserPreferencesAttributes(person, profile, layoutDoc, structureStylesheetId, "structure");
+
         final int themeStylesheetId = profile.getThemeStylesheetId();
-        addStylesheetUserPreferencesAttributes(person,
-                profile,
-                layoutDoc,
-                themeStylesheetId,
-                "theme");
-                
+        this.addStylesheetUserPreferencesAttributes(person, profile, layoutDoc, themeStylesheetId, "theme");
+
         // (2) Remove locale info...
-        Iterator<org.dom4j.Attribute> locale = (Iterator<org.dom4j.Attribute>) layoutDoc.selectNodes("//@locale").iterator();
+        final Iterator<org.dom4j.Attribute> locale = (Iterator<org.dom4j.Attribute>) layoutDoc.selectNodes("//@locale")
+                .iterator();
         while (locale.hasNext()) {
-            org.dom4j.Attribute loc = locale.next();
+            final org.dom4j.Attribute loc = locale.next();
             loc.getParent().remove(loc);
         }
 
         // (3) Scrub unnecessary channel information...
-        for (Iterator<org.dom4j.Element> orphanedChannels = (Iterator<org.dom4j.Element>) layoutDoc.selectNodes("//channel[@fname = '']").iterator(); orphanedChannels.hasNext();) {
+        for (final Iterator<org.dom4j.Element> orphanedChannels = (Iterator<org.dom4j.Element>) layoutDoc
+                .selectNodes("//channel[@fname = '']").iterator(); orphanedChannels.hasNext();) {
             // These elements represent UP_LAYOUT_STRUCT rows where the 
             // CHAN_ID field was not recognized by ChannelRegistryStore;  
             // best thing to do is remove the elements...
-            org.dom4j.Element ch = orphanedChannels.next();
+            final org.dom4j.Element ch = orphanedChannels.next();
             ch.getParent().remove(ch);
         }
-        List<String> channelAttributeWhitelist = Arrays.asList(new String[] { 
-                        "fname", 
-                        "unremovable", 
-                        "hidden", 
-                        "immutable",
-                        "ID",
-                        "dlm:plfID",
-                        "dlm:moveAllowed",
-                        "dlm:deleteAllowed"
-                    });
-        Iterator<org.dom4j.Element> channels = (Iterator<org.dom4j.Element>) layoutDoc.selectNodes("//channel").iterator();
+        final List<String> channelAttributeWhitelist = Arrays.asList(new String[] { "fname", "unremovable", "hidden",
+                "immutable", "ID", "dlm:plfID", "dlm:moveAllowed", "dlm:deleteAllowed" });
+        final Iterator<org.dom4j.Element> channels = (Iterator<org.dom4j.Element>) layoutDoc.selectNodes("//channel")
+                .iterator();
         while (channels.hasNext()) {
-            org.dom4j.Element oldCh = channels.next();
-            org.dom4j.Element parent = oldCh.getParent();
-            org.dom4j.Element newCh = fac.createElement("channel");
-            for (String aName : channelAttributeWhitelist) {
-                org.dom4j.Attribute a = (org.dom4j.Attribute) oldCh.selectSingleNode("@" + aName);
+            final org.dom4j.Element oldCh = channels.next();
+            final org.dom4j.Element parent = oldCh.getParent();
+            final org.dom4j.Element newCh = this.fac.createElement("channel");
+            for (final String aName : channelAttributeWhitelist) {
+                final org.dom4j.Attribute a = (org.dom4j.Attribute) oldCh.selectSingleNode("@" + aName);
                 if (a != null) {
                     newCh.addAttribute(a.getQName(), a.getValue());
                 }
@@ -416,79 +404,96 @@ public class RDBMDistributedLayoutStore
             parent.elements().add(parent.elements().indexOf(oldCh), newCh);
             parent.remove(oldCh);
         }
-                
+
         // (4) Convert internal DLM noderefs to external form (pathrefs)...
-        for (Iterator<org.dom4j.Attribute> origins = (Iterator<org.dom4j.Attribute>) layoutDoc.selectNodes("//@dlm:origin").iterator(); origins.hasNext();) {
-            org.dom4j.Attribute org = origins.next();
-            String[] pathTokens = getDlmPathref((String) person.getAttribute(IPerson.USERNAME), person.getID(), org.getValue(), layoutDoc.getRootElement());
+        for (final Iterator<org.dom4j.Attribute> origins = (Iterator<org.dom4j.Attribute>) layoutDoc
+                .selectNodes("//@dlm:origin").iterator(); origins.hasNext();) {
+            final org.dom4j.Attribute org = origins.next();
+            final String[] pathTokens = this.getDlmPathref((String) person.getAttribute(IPerson.USERNAME),
+                    person.getID(),
+                    org.getValue(),
+                    layoutDoc.getRootElement());
             if (pathTokens != null) {
                 // Change the value only if we have a valid pathref...
                 org.setValue(pathTokens[0] + ":" + pathTokens[1]);
-            } else {
-                if (log.isWarnEnabled()) {
-                    log.warn("Layout element '" + org.getUniquePath() 
-                            + "' from user '" + person.getAttribute(IPerson.USERNAME) 
-                            + "' failed to match noderef '" + org.getValue() + "'");
+            }
+            else {
+                if (this.log.isWarnEnabled()) {
+                    this.log.warn("Layout element '" + org.getUniquePath() + "' from user '"
+                            + person.getAttribute(IPerson.USERNAME) + "' failed to match noderef '" + org.getValue()
+                            + "'");
                 }
             }
         }
-        for (Iterator<org.dom4j.Attribute> it = (Iterator<org.dom4j.Attribute>) layoutDoc.selectNodes("//@dlm:target").iterator(); it.hasNext();) {
-            org.dom4j.Attribute target = it.next();
-            String[] pathTokens = getDlmPathref((String) person.getAttribute(IPerson.USERNAME), person.getID(), target.getValue(), layoutDoc.getRootElement());
+        for (final Iterator<org.dom4j.Attribute> it = (Iterator<org.dom4j.Attribute>) layoutDoc
+                .selectNodes("//@dlm:target").iterator(); it.hasNext();) {
+            final org.dom4j.Attribute target = it.next();
+            final String[] pathTokens = this.getDlmPathref((String) person.getAttribute(IPerson.USERNAME),
+                    person.getID(),
+                    target.getValue(),
+                    layoutDoc.getRootElement());
             if (pathTokens != null) {
                 // Change the value only if we have a valid pathref...
                 target.setValue(pathTokens[0] + ":" + pathTokens[1]);
-            } else {
-                if (log.isWarnEnabled()) {
-                    log.warn("Layout element '" + target.getUniquePath() 
-                            + "' from user '" + person.getAttribute(IPerson.USERNAME) 
-                            + "' failed to match noderef '" + target.getValue() + "'");
+            }
+            else {
+                if (this.log.isWarnEnabled()) {
+                    this.log.warn("Layout element '" + target.getUniquePath() + "' from user '"
+                            + person.getAttribute(IPerson.USERNAME) + "' failed to match noderef '" + target.getValue()
+                            + "'");
                 }
             }
         }
-        for (Iterator<org.dom4j.Attribute> names = (Iterator<org.dom4j.Attribute>) layoutDoc.selectNodes("//dlm:*/@name").iterator(); names.hasNext();) {
-            org.dom4j.Attribute n = names.next();
+        for (final Iterator<org.dom4j.Attribute> names = (Iterator<org.dom4j.Attribute>) layoutDoc
+                .selectNodes("//dlm:*/@name").iterator(); names.hasNext();) {
+            final org.dom4j.Attribute n = names.next();
             if (n.getValue() == null || n.getValue().trim().length() == 0) {
                 // Outer <dlm:positionSet> elements don't seem to use the name 
                 // attribute, though their childern do.  Just skip these so we 
                 // don't send a false WARNING.
                 continue;
             }
-            String[] pathTokens = getDlmPathref((String) person.getAttribute(IPerson.USERNAME), person.getID(), n.getValue(), layoutDoc.getRootElement());
+            final String[] pathTokens = this.getDlmPathref((String) person.getAttribute(IPerson.USERNAME),
+                    person.getID(),
+                    n.getValue(),
+                    layoutDoc.getRootElement());
             if (pathTokens != null) {
                 // Change the value only if we have a valid pathref...
                 n.setValue(pathTokens[0] + ":" + pathTokens[1]);
                 // These *may* have fnames...
                 if (pathTokens[2] != null && pathTokens[2].trim().length() != 0) {
-                    n.getParent().addAttribute("fname", pathTokens[2]);                
-                } 
-            } else {
-                if (log.isWarnEnabled()) {
-                    log.warn("Layout element '" + n.getUniquePath() 
-                            + "' from user '" + person.getAttribute(IPerson.USERNAME) 
-                            + "' failed to match noderef '" + n.getValue() + "'");
+                    n.getParent().addAttribute("fname", pathTokens[2]);
+                }
+            }
+            else {
+                if (this.log.isWarnEnabled()) {
+                    this.log.warn("Layout element '" + n.getUniquePath() + "' from user '"
+                            + person.getAttribute(IPerson.USERNAME) + "' failed to match noderef '" + n.getValue()
+                            + "'");
                 }
             }
         }
 
         // Remove synthetic Ids, but from non-fragment owners only...
-        if (!isFragmentOwner(person)) {
-            
+        if (!this.isFragmentOwner(person)) {
+
             /*
              * In the case of fragment owners, the original database Ids allow 
              * us keep (not break) the associations that subscribers have with 
              * nodes on the fragment layout.
-             */ 
-            
+             */
+
             // (5) Remove dlm:plfID...
-            for (Iterator<org.dom4j.Attribute> plfid = (Iterator<org.dom4j.Attribute>) layoutDoc.selectNodes("//@dlm:plfID").iterator(); plfid.hasNext();) {
-                org.dom4j.Attribute plf = plfid.next();
+            for (final Iterator<org.dom4j.Attribute> plfid = (Iterator<org.dom4j.Attribute>) layoutDoc
+                    .selectNodes("//@dlm:plfID").iterator(); plfid.hasNext();) {
+                final org.dom4j.Attribute plf = plfid.next();
                 plf.getParent().remove(plf);
             }
 
             // (6) Remove database Ids...
-            for (Iterator<org.dom4j.Attribute> ids = (Iterator<org.dom4j.Attribute>) layoutDoc.selectNodes("//@ID").iterator(); ids.hasNext();) {
-                org.dom4j.Attribute a = ids.next();
+            for (final Iterator<org.dom4j.Attribute> ids = (Iterator<org.dom4j.Attribute>) layoutDoc
+                    .selectNodes("//@ID").iterator(); ids.hasNext();) {
+                final org.dom4j.Attribute a = ids.next();
                 a.getParent().remove(a);
             }
         }
@@ -499,102 +504,113 @@ public class RDBMDistributedLayoutStore
 
     protected void addStylesheetUserPreferencesAttributes(IPerson person, IUserProfile profile,
             org.dom4j.Document layoutDoc, int stylesheetId, String attributeType) {
-        final IStylesheetDescriptor structureStylesheetDescriptor = this.stylesheetDescriptorDao.getStylesheetDescriptor(stylesheetId);
-        
-        final IStylesheetUserPreferences ssup = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(structureStylesheetDescriptor, person, profile);
-        
-        if(ssup != null) {
-        	final Map<String, Map<String, String>> allLayoutAttributes = ssup.getAllLayoutAttributes();
-        	for (final Entry<String, Map<String, String>> nodeEntry : allLayoutAttributes.entrySet()) {
-        		final String nodeId = nodeEntry.getKey();
-        		final Map<String, String> attributes = nodeEntry.getValue();
+        final IStylesheetDescriptor structureStylesheetDescriptor = this.stylesheetDescriptorDao
+                .getStylesheetDescriptor(stylesheetId);
 
-        		final org.dom4j.Element element = layoutDoc.elementByID(nodeId);
-        		if (element == null) {
-        			this.log.warn("No layout node with id '" + nodeId + "' found attributes will be ignored: " + attributes);
-        			continue;
-        		}
+        final IStylesheetUserPreferences ssup = this.stylesheetUserPreferencesDao
+                .getStylesheetUserPreferences(structureStylesheetDescriptor, person, profile);
 
-        		for (final Entry<String, String> attributeEntry : attributes.entrySet()) {
-        			final String name = attributeEntry.getKey();
-        			final String value = attributeEntry.getValue();
+        if (ssup != null) {
+            final Map<String, Map<String, String>> allLayoutAttributes = ssup.getAllLayoutAttributes();
+            for (final Entry<String, Map<String, String>> nodeEntry : allLayoutAttributes.entrySet()) {
+                final String nodeId = nodeEntry.getKey();
+                final Map<String, String> attributes = nodeEntry.getValue();
 
-        			if (log.isDebugEnabled()) {
-        				log.debug("Adding structure folder attribute:  name=" + name + ", value=" + value);
-        			}
-        			org.dom4j.Element structAttrElement = fac.createElement(attributeType + "-attribute");
-        			org.dom4j.Element nameAttribute = structAttrElement.addElement("name");
-        			nameAttribute.setText(name);
-        			org.dom4j.Element valueAttribute = structAttrElement.addElement("value");
-        			valueAttribute.setText(value);
-        			element.elements().add(0, structAttrElement);
-        		}
-        	}
-        } else {
-        	LOG.debug("no StylesheetUserPreferences found for " + person + ", " + profile);
+                final org.dom4j.Element element = layoutDoc.elementByID(nodeId);
+                if (element == null) {
+                    this.log.warn("No layout node with id '" + nodeId + "' found attributes will be ignored: "
+                            + attributes);
+                    continue;
+                }
+
+                for (final Entry<String, String> attributeEntry : attributes.entrySet()) {
+                    final String name = attributeEntry.getKey();
+                    final String value = attributeEntry.getValue();
+
+                    if (this.log.isDebugEnabled()) {
+                        this.log.debug("Adding structure folder attribute:  name=" + name + ", value=" + value);
+                    }
+                    final org.dom4j.Element structAttrElement = this.fac.createElement(attributeType + "-attribute");
+                    final org.dom4j.Element nameAttribute = structAttrElement.addElement("name");
+                    nameAttribute.setText(name);
+                    final org.dom4j.Element valueAttribute = structAttrElement.addElement("value");
+                    valueAttribute.setText(value);
+                    element.elements().add(0, structAttrElement);
+                }
+            }
+        }
+        else {
+            LOG.debug("no StylesheetUserPreferences found for " + person + ", " + profile);
         }
     }
-        
+
     @Override
     @SuppressWarnings("unchecked")
     @Transactional
     public void importLayout(org.dom4j.Element layout) {
-        
-        String ownerUsername = layout.valueOf("@username");
+
+        final String ownerUsername = layout.valueOf("@username");
         IPerson person = null;
         IUserProfile profile = null;
         try {
             person = new PersonImpl();
             person.setUserName(ownerUsername);
-            int ownerId = identityStore.getPortalUID(person);
+            final int ownerId = this.identityStore.getPortalUID(person);
             if (ownerId == -1) {
-                String msg = "No userId for username=" + ownerUsername;
+                final String msg = "No userId for username=" + ownerUsername;
                 throw new RuntimeException(msg);
             }
             person.setID(ownerId);
             person.setSecurityContext(new BrokenSecurityContext());
             profile = this.getUserProfileByFname(person, "default");
-        } catch (Throwable t) {
-            throw new RuntimeException("Unrecognized user " + person.getUserName() + "; you must import users before their layouts.", t);
         }
-        
+        catch (final Throwable t) {
+            throw new RuntimeException("Unrecognized user " + person.getUserName()
+                    + "; you must import users before their layouts.", t);
+        }
+
         // (6) Add database Ids & (5) Add dlm:plfID ...
         int nextId = 1;
-        for (Iterator<org.dom4j.Element> it = (Iterator<org.dom4j.Element>) layout.selectNodes("folder | dlm:* | channel").iterator(); it.hasNext();) {
-            nextId = addIdAttributesIfNecessary(it.next(), nextId);
+        for (final Iterator<org.dom4j.Element> it = (Iterator<org.dom4j.Element>) layout
+                .selectNodes("folder | dlm:* | channel").iterator(); it.hasNext();) {
+            nextId = this.addIdAttributesIfNecessary(it.next(), nextId);
         }
         // Now update UP_USER...
-        jdbcOperations.update("UPDATE up_user SET next_struct_id = ? WHERE user_id = ?", nextId, person.getID());
+        this.jdbcOperations.update("UPDATE up_user SET next_struct_id = ? WHERE user_id = ?", nextId, person.getID());
 
         // (4) Convert external DLM pathrefs to internal form (noderefs)...
-        for (Iterator<org.dom4j.Attribute> itr = (Iterator<org.dom4j.Attribute>) layout.selectNodes("//@dlm:origin").iterator(); itr.hasNext();) {
-            org.dom4j.Attribute a = itr.next();
-            String noderef = getDlmNoderef(ownerUsername, a.getValue(), null, true, layout);
+        for (final Iterator<org.dom4j.Attribute> itr = (Iterator<org.dom4j.Attribute>) layout
+                .selectNodes("//@dlm:origin").iterator(); itr.hasNext();) {
+            final org.dom4j.Attribute a = itr.next();
+            final String noderef = this.getDlmNoderef(ownerUsername, a.getValue(), null, true, layout);
             if (noderef != null) {
                 // Change the value only if we have a valid pathref...
                 a.setValue(noderef);
                 // For dlm:origin only, also use the noderef as the ID attribute...
                 a.getParent().addAttribute("ID", noderef);
             }
-         }
-        for (Iterator<org.dom4j.Attribute> itr = (Iterator<org.dom4j.Attribute>) layout.selectNodes("//@dlm:target").iterator(); itr.hasNext();) {
-            org.dom4j.Attribute a = itr.next();
-            String noderef = getDlmNoderef(ownerUsername, a.getValue(), null, true, layout);
+        }
+        for (final Iterator<org.dom4j.Attribute> itr = (Iterator<org.dom4j.Attribute>) layout
+                .selectNodes("//@dlm:target").iterator(); itr.hasNext();) {
+            final org.dom4j.Attribute a = itr.next();
+            final String noderef = this.getDlmNoderef(ownerUsername, a.getValue(), null, true, layout);
             if (noderef != null) {
                 // Change the value only if we have a valid pathref...
                 a.setValue(noderef);
             }
         }
-        for (Iterator<org.dom4j.Attribute> names = (Iterator<org.dom4j.Attribute>) layout.selectNodes("//dlm:*/@name").iterator(); names.hasNext();) {
-            org.dom4j.Attribute a = names.next();
-            org.dom4j.Attribute fname = a.getParent().attribute("fname");
+        for (final Iterator<org.dom4j.Attribute> names = (Iterator<org.dom4j.Attribute>) layout
+                .selectNodes("//dlm:*/@name").iterator(); names.hasNext();) {
+            final org.dom4j.Attribute a = names.next();
+            final org.dom4j.Attribute fname = a.getParent().attribute("fname");
             String noderef = null;
             if (fname != null) {
-                noderef = getDlmNoderef(ownerUsername, a.getValue(), fname.getValue(), false, layout);
+                noderef = this.getDlmNoderef(ownerUsername, a.getValue(), fname.getValue(), false, layout);
                 // Remove the fname attribute now that we're done w/ it...
                 fname.getParent().remove(fname);
-            } else {
-                noderef = getDlmNoderef(ownerUsername, a.getValue(), null, true, layout);
+            }
+            else {
+                noderef = this.getDlmNoderef(ownerUsername, a.getValue(), null, true, layout);
             }
             if (noderef != null) {
                 // Change the value only if we have a valid pathref...
@@ -603,16 +619,18 @@ public class RDBMDistributedLayoutStore
         }
 
         // (3) Restore chanID attributes on <channel> elements...
-        for (Iterator<org.dom4j.Element> it = (Iterator<org.dom4j.Element>) layout.selectNodes("//channel").iterator(); it.hasNext();) {
-            org.dom4j.Element c = it.next();
+        for (final Iterator<org.dom4j.Element> it = (Iterator<org.dom4j.Element>) layout.selectNodes("//channel")
+                .iterator(); it.hasNext();) {
+            final org.dom4j.Element c = it.next();
             final String fname = c.valueOf("@fname");
-            IPortletDefinition cd = this.portletDefinitionRegistry.getPortletDefinitionByFname(fname);
+            final IPortletDefinition cd = this.portletDefinitionRegistry.getPortletDefinitionByFname(fname);
             if (cd == null) {
-                throw new IllegalArgumentException("No published channel for fname=" + fname + " referenced by layout for " + ownerUsername);
+                throw new IllegalArgumentException("No published channel for fname=" + fname
+                        + " referenced by layout for " + ownerUsername);
             }
             c.addAttribute("chanID", String.valueOf(cd.getPortletDefinitionId().getStringId()));
         }
-        
+
         // (2) Restore locale info...
         // (This step doesn't appear to be needed for imports)
 
@@ -621,59 +639,55 @@ public class RDBMDistributedLayoutStore
         try {
 
             // Structure Attributes.
-            boolean saSet = false;
-            
+            final boolean saSet = false;
+
             final int structureStylesheetId = profile.getStructureStylesheetId();
-            loadStylesheetUserPreferencesAttributes(person,
-                    profile,
-                    layout,
-                    structureStylesheetId,
-                    "structure");
-            
+            this.loadStylesheetUserPreferencesAttributes(person, profile, layout, structureStylesheetId, "structure");
+
             final int themeStylesheetId = profile.getThemeStylesheetId();
-            loadStylesheetUserPreferencesAttributes(person,
-                    profile,
-                    layout,
-                    themeStylesheetId,
-                    "theme");
+            this.loadStylesheetUserPreferencesAttributes(person, profile, layout, themeStylesheetId, "theme");
 
             // From this point forward we need the user's PLF set as DLM expects it...
-            for (Iterator<org.dom4j.Text> it = (Iterator<org.dom4j.Text>) layout.selectNodes("descendant::text()").iterator(); it.hasNext();) {
+            for (final Iterator<org.dom4j.Text> it = (Iterator<org.dom4j.Text>) layout
+                    .selectNodes("descendant::text()").iterator(); it.hasNext();) {
                 // How many years have we used Java & XML, and this still isn't easy?
-                org.dom4j.Text txt = it.next();
+                final org.dom4j.Text txt = it.next();
                 if (txt.getText().trim().length() == 0) {
                     txt.getParent().remove(txt);
                 }
             }
-            
-            org.dom4j.Element copy = layout.createCopy();
-            org.dom4j.Document doc = fac.createDocument(copy);
+
+            final org.dom4j.Element copy = layout.createCopy();
+            final org.dom4j.Document doc = this.fac.createDocument(copy);
             doc.normalize();
-            layoutDom = writer.write(doc);
+            layoutDom = this.writer.write(doc);
             person.setAttribute(Constants.PLF, layoutDom);
-            
-        } catch (Throwable t) {
+
+        }
+        catch (final Throwable t) {
             throw new RuntimeException("Unable to set UserPreferences for user:  " + person.getUserName(), t);
         }
-        
+
         // Finally store the layout...
         try {
             this.setUserLayout(person, profile, layoutDom, true, true);
-        } catch (Throwable t) {
-            String msg = "Unable to persist layout for user:  " + ownerUsername;
+        }
+        catch (final Throwable t) {
+            final String msg = "Unable to persist layout for user:  " + ownerUsername;
             throw new RuntimeException(msg, t);
         }
 
     }
 
-    protected void loadStylesheetUserPreferencesAttributes(
-            IPerson person, IUserProfile profile, org.dom4j.Element layout,
-            final int structureStylesheetId, final String nodeType) {
-        
-        final IStylesheetDescriptor stylesheetDescriptor = this.stylesheetDescriptorDao.getStylesheetDescriptor(structureStylesheetId);
+    protected void loadStylesheetUserPreferencesAttributes(IPerson person, IUserProfile profile,
+            org.dom4j.Element layout, final int structureStylesheetId, final String nodeType) {
+
+        final IStylesheetDescriptor stylesheetDescriptor = this.stylesheetDescriptorDao
+                .getStylesheetDescriptor(structureStylesheetId);
         final List<org.dom4j.Element> structureAttributes = layout.selectNodes("//" + nodeType + "-attribute");
-        
-        IStylesheetUserPreferences ssup = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, person, profile);
+
+        IStylesheetUserPreferences ssup = this.stylesheetUserPreferencesDao
+                .getStylesheetUserPreferences(stylesheetDescriptor, person, profile);
         if (structureAttributes.isEmpty()) {
             if (ssup != null) {
                 this.stylesheetUserPreferencesDao.deleteStylesheetUserPreferences(ssup);
@@ -681,61 +695,66 @@ public class RDBMDistributedLayoutStore
         }
         else {
             if (ssup == null) {
-                ssup = this.stylesheetUserPreferencesDao.createStylesheetUserPreferences(stylesheetDescriptor, person, profile);
+                ssup = this.stylesheetUserPreferencesDao.createStylesheetUserPreferences(stylesheetDescriptor,
+                        person,
+                        profile);
             }
-            
+
             ssup.clearAllLayoutAttributes();
-            
+
             for (final org.dom4j.Element structureAttribute : structureAttributes) {
                 final org.dom4j.Element layoutElement = structureAttribute.getParent();
                 final String nodeId = layoutElement.valueOf("@ID");
-                
+
                 final String name = structureAttribute.valueOf("name");
                 final String value = structureAttribute.valueOf("value");
-                
+
                 ssup.setLayoutAttribute(nodeId, name, value);
-                
+
                 // Remove the layout attribute element or DLM fails
                 layoutElement.remove(structureAttribute);
             }
-            
+
             this.stylesheetUserPreferencesDao.storeStylesheetUserPreferences(ssup);
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     private final int addIdAttributesIfNecessary(org.dom4j.Element e, int nextId) {
-        
-        int idAfterThisOne = nextId;  // default...
+
+        int idAfterThisOne = nextId; // default...
         final org.dom4j.Node idAttribute = e.selectSingleNode("@ID | @dlm:plfID");
         if (idAttribute == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("No ID or dlm:plfID attribute for the following node "
-                		    + "(one will be generated and added):  element" 
-                            + e.getName() + ", name=" + e.valueOf("@name") 
-                            + ", fname=" + e.valueOf("@fname"));
+            if (this.log.isDebugEnabled()) {
+                this.log.debug("No ID or dlm:plfID attribute for the following node "
+                        + "(one will be generated and added):  element" + e.getName() + ", name=" + e.valueOf("@name")
+                        + ", fname=" + e.valueOf("@fname"));
             }
-            
+
             // We need to add an ID to this node...
             char prefix;
             if (e.getName().equals("folder")) {
                 prefix = 's';
-            } else if (e.getName().equals("channel")) {
+            }
+            else if (e.getName().equals("channel")) {
                 prefix = 'n';
-            } else if (e.getQName().getNamespacePrefix().equals("dlm")) {
+            }
+            else if (e.getQName().getNamespacePrefix().equals("dlm")) {
                 prefix = 'd';
-            } else {
+            }
+            else {
                 throw new RuntimeException("Unrecognized element type:  " + e.getName());
             }
 
-            String origin = e.valueOf("@dlm:origin");
+            final String origin = e.valueOf("@dlm:origin");
             // 'origin' may be null if the dlm:origin attribute is an 
             // empty string (which also shouldn't happen);  'origin' 
             // will be zero-length if dlm:origin is not defined...
             if (origin != null && origin.length() != 0) {
                 // Add as dlm:plfID, if necessary...
                 e.addAttribute("dlm:plfID", prefix + String.valueOf(nextId));
-            } else {
+            }
+            else {
                 // Do the standard thing, if necessary...
                 e.addAttribute("ID", prefix + String.valueOf(nextId));
             }
@@ -747,46 +766,49 @@ public class RDBMDistributedLayoutStore
             try {
                 idAfterThisOne = Integer.parseInt(id.substring(1)) + 1;
             }
-            catch (NumberFormatException nfe) {
-                log.warn("Could not parse int value from id: " + id + " The next layout id will be: " + idAfterThisOne, nfe);
+            catch (final NumberFormatException nfe) {
+                this.log.warn("Could not parse int value from id: " + id + " The next layout id will be: "
+                        + idAfterThisOne, nfe);
             }
         }
-        
+
         // Now check children...
-        for (Iterator<org.dom4j.Element> itr = (Iterator<org.dom4j.Element>) e.selectNodes("folder | channel | dlm:*").iterator(); itr.hasNext();) {
-            org.dom4j.Element child = itr.next();
-            idAfterThisOne = addIdAttributesIfNecessary(child, idAfterThisOne);
+        for (final Iterator<org.dom4j.Element> itr = (Iterator<org.dom4j.Element>) e
+                .selectNodes("folder | channel | dlm:*").iterator(); itr.hasNext();) {
+            final org.dom4j.Element child = itr.next();
+            idAfterThisOne = this.addIdAttributesIfNecessary(child, idAfterThisOne);
         }
-        
+
         return idAfterThisOne;
-    
+
     }
 
-    private final String[] getDlmPathref(String layoutOwnerUsername, int layoutOwnerUserId, String dlmNoderef, org.dom4j.Element layout) {
-        
+    private final String[] getDlmPathref(String layoutOwnerUsername, int layoutOwnerUserId, String dlmNoderef,
+            org.dom4j.Element layout) {
+
         // Assertions.
         if (layoutOwnerUsername == null) {
-            String msg = "Argument 'layoutOwnerUsername' cannot be null.";
+            final String msg = "Argument 'layoutOwnerUsername' cannot be null.";
             throw new IllegalArgumentException(msg);
         }
         if (dlmNoderef == null) {
-            String msg = "Argument 'dlmNoderef' cannot be null.";
+            final String msg = "Argument 'dlmNoderef' cannot be null.";
             throw new IllegalArgumentException(msg);
         }
         if (layout == null) {
-            String msg = "Argument 'layout' cannot be null.";
+            final String msg = "Argument 'layout' cannot be null.";
             throw new IllegalArgumentException(msg);
         }
-        
-        String[] rslt = null;  // This will be the response if we can't make a match...
-        
+
+        String[] rslt = null; // This will be the response if we can't make a match...
+
         final Matcher m = USER_NODE_PATTERN.matcher(dlmNoderef);
         if (m.find()) {
             // We need a pathref based on the new style of layout b/c on 
             // import this users own layout will not be in the database 
             // when the path in computed back to an Id...
-            String structId = m.group(1);
-            org.dom4j.Node target = layout.selectSingleNode("//*[@ID = '" + structId + "']");
+            final String structId = m.group(1);
+            final org.dom4j.Node target = layout.selectSingleNode("//*[@ID = '" + structId + "']");
             if (target != null) {
                 rslt = new String[3];
                 rslt[0] = layoutOwnerUsername;
@@ -794,63 +816,66 @@ public class RDBMDistributedLayoutStore
                 if (target.getName().equals("channel")) {
                     rslt[2] = target.valueOf("@fname");
                 }
-            } else {
-                log.warn("no match found on layout for user '"+ layoutOwnerUsername 
-                            + "' for the specified dlmNoderef:  " + dlmNoderef);
             }
-        } else {
-            ReturnValueImpl rvi = new ReturnValueImpl();
-            RuntimeRequestResponse tr = new RuntimeRequestResponse();
+            else {
+                this.log.warn("no match found on layout for user '" + layoutOwnerUsername
+                        + "' for the specified dlmNoderef:  " + dlmNoderef);
+            }
+        }
+        else {
+            final ReturnValueImpl rvi = new ReturnValueImpl();
+            final RuntimeRequestResponse tr = new RuntimeRequestResponse();
             tr.setAttribute(Attributes.RETURN_VALUE, rvi);
             tr.setAttribute("USER_NAME", layoutOwnerUsername);
             tr.setAttribute("DLM_NODEREF", dlmNoderef);
             tr.setAttribute("userLayoutStore", this);
             this.lookupNoderefTask.perform(tr, new RuntimeRequestResponse());
-            
+
             rslt = (String[]) rvi.getValue();
         }
-        
+
         return rslt;
 
     }
 
-    private final String getDlmNoderef(String layoutOwner, String pathref, String fname, boolean isStructRef, org.dom4j.Element layoutElement) {
-        
+    private final String getDlmNoderef(String layoutOwner, String pathref, String fname, boolean isStructRef,
+            org.dom4j.Element layoutElement) {
+
         // Assertions.
         if (layoutOwner == null) {
-            String msg = "Argument 'layoutOwner' cannot be null.";
+            final String msg = "Argument 'layoutOwner' cannot be null.";
             throw new IllegalArgumentException(msg);
         }
         if (pathref == null) {
-            String msg = "Argument 'pathref' cannot be null.";
+            final String msg = "Argument 'pathref' cannot be null.";
             throw new IllegalArgumentException(msg);
         }
         // NB:  Argument 'fname' may be null...
         if (layoutElement == null) {
-            String msg = "Argument 'layoutElement' cannot be null.";
+            final String msg = "Argument 'layoutElement' cannot be null.";
             throw new IllegalArgumentException(msg);
         }
-        
+
         String rslt = pathref; // This will be the response if we can't make a match...
-        
+
         if (pathref.startsWith(layoutOwner + ":")) {
             // This an internal reference (our own layout);  we have to 
             // use the layoutExment (instead of load-limited-layout) b/c 
             // our layout may not be in the db...
-            String[] pathTokens = pathref.split("\\:");
-            org.dom4j.Element target = (org.dom4j.Element) layoutElement.selectSingleNode(pathTokens[1]);
+            final String[] pathTokens = pathref.split("\\:");
+            final org.dom4j.Element target = (org.dom4j.Element) layoutElement.selectSingleNode(pathTokens[1]);
             if (target != null) {
                 rslt = target.valueOf("@ID");
-            } else {
-                if (log.isWarnEnabled()) {
-                    log.warn("Unable to resolve pathref '" + pathref 
-                            + "' for layoutOwner '" 
-                            + layoutOwner + "'");
+            }
+            else {
+                if (this.log.isWarnEnabled()) {
+                    this.log.warn("Unable to resolve pathref '" + pathref + "' for layoutOwner '" + layoutOwner + "'");
                 }
             }
-        } else {
-            ReturnValueImpl rvi = new ReturnValueImpl();
-            RuntimeRequestResponse tr = new RuntimeRequestResponse();
+        }
+        else {
+            final ReturnValueImpl rvi = new ReturnValueImpl();
+            final RuntimeRequestResponse tr = new RuntimeRequestResponse();
             tr.setAttribute(Attributes.RETURN_VALUE, rvi);
             tr.setAttribute("USER_NAME", layoutOwner);
             tr.setAttribute("DLM_PATHREF", pathref);
@@ -862,13 +887,13 @@ public class RDBMDistributedLayoutStore
                 tr.setAttribute("IS_STRUCT_REF", Boolean.TRUE);
             }
             this.lookupPathrefTask.perform(tr, new RuntimeRequestResponse());
-            
-            String val = (String) rvi.getValue();
+
+            final String val = (String) rvi.getValue();
             if (val != null) {
                 rslt = val;
             }
         }
-        
+
         // Data got orphaned, nothing we can do;  we need to 
         // be sure not to leave any that are too long...
         return rslt.length() <= 35 ? rslt : "";
@@ -885,10 +910,10 @@ public class RDBMDistributedLayoutStore
      * @
      */
     private Document _safeGetUserLayout(IPerson person, IUserProfile profile)
-            
+
     {
-        Document layoutDoc = super.getPersonalUserLayout(person, profile);
-        Element layout = layoutDoc.getDocumentElement();
+        final Document layoutDoc = super.getPersonalUserLayout(person, profile);
+        final Element layout = layoutDoc.getDocumentElement();
         layout.setAttribute(Constants.NS_DECL, Constants.NS_URI);
         return layoutDoc;
     }
@@ -904,13 +929,12 @@ public class RDBMDistributedLayoutStore
      * that they own or incorporated elements that they have been
      * allowed to changed.
      **/
-    private DistributedUserLayout _getUserLayout (IPerson person,
-                                     IUserProfile profile)
-        
+    private DistributedUserLayout _getUserLayout(IPerson person, IUserProfile profile)
+
     {
-        String userName = (String) person.getAttribute( "username" );
-        FragmentDefinition ownedFragment = getOwnedFragment( person );
-        boolean isLayoutOwnerDefault = isLayoutOwnerDefault( person );
+        final String userName = (String) person.getAttribute("username");
+        final FragmentDefinition ownedFragment = this.getOwnedFragment(person);
+        final boolean isLayoutOwnerDefault = this.isLayoutOwnerDefault(person);
 
         // if this user is an owner then ownedFragment will be non null. For
         // fragment owners and owners of any default layout from which a
@@ -918,51 +942,43 @@ public class RDBMDistributedLayoutStore
         // distributed layouts. Instead, load their plf, mark as an owned
         // if a fragment owner, and return.
 
-        if ( ownedFragment != null || isLayoutOwnerDefault )
-        {
+        if (ownedFragment != null || isLayoutOwnerDefault) {
             Document PLF, ILF = null;
-            PLF = _safeGetUserLayout(person, profile);
-            ILF = (Document)PLF.cloneNode(true);
+            PLF = this._safeGetUserLayout(person, profile);
+            ILF = (Document) PLF.cloneNode(true);
 
-            Element layoutNode = ILF.getDocumentElement();
+            final Element layoutNode = ILF.getDocumentElement();
 
-            if ( ownedFragment != null )
-            {
-                layoutNode.setAttributeNS( Constants.NS_URI,
-                                           Constants.ATT_FRAGMENT_NAME,
-                                           ownedFragment.getName() );
-                if (LOG.isDebugEnabled())
-                    LOG.debug("User '" + userName + "' is owner of '"
-                            + ownedFragment.getName() + "' fragment.");
+            if (ownedFragment != null) {
+                layoutNode.setAttributeNS(Constants.NS_URI, Constants.ATT_FRAGMENT_NAME, ownedFragment.getName());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("User '" + userName + "' is owner of '" + ownedFragment.getName() + "' fragment.");
+                }
             }
-            else if ( isLayoutOwnerDefault )
-            {
-                layoutNode.setAttributeNS( Constants.NS_URI,
-                                           Constants.ATT_IS_TEMPLATE_USER,
-                                           "true" );
-                layoutNode.setAttributeNS( Constants.NS_URI,
-                                           Constants.ATT_TEMPLATE_LOGIN_ID,
-                                           (String) person.getAttribute( "username" ) );
+            else if (isLayoutOwnerDefault) {
+                layoutNode.setAttributeNS(Constants.NS_URI, Constants.ATT_IS_TEMPLATE_USER, "true");
+                layoutNode.setAttributeNS(Constants.NS_URI,
+                        Constants.ATT_TEMPLATE_LOGIN_ID,
+                        (String) person.getAttribute("username"));
             }
             // cache in person as PLF for storage later like normal users
-            person.setAttribute( Constants.PLF, PLF );
+            person.setAttribute(Constants.PLF, PLF);
             return new DistributedUserLayout(ILF);
         }
 
-        return getCompositeLayout( person, profile );
+        return this.getCompositeLayout(person, profile);
     }
 
     /**
      * Convenience method for fragment activator to obtain raw layouts for
      * fragments during initialization.
      */
-    public Document getFragmentLayout (IPerson person,
-                                IUserProfile profile)
-        
+    public Document getFragmentLayout(IPerson person, IUserProfile profile)
+
     {
-        return _safeGetUserLayout( person, profile );
+        return this._safeGetUserLayout(person, profile);
     }
-    
+
     /**
      * Generates a new struct id for directive elements that dlm places in
      * the PLF version of the layout tree. These elements are atifacts of the
@@ -970,44 +986,35 @@ public class RDBMDistributedLayoutStore
      * composite view.
      */
     @Override
-    public String getNextStructDirectiveId (IPerson person)  {
-        return  super.getNextStructId(person, Constants.DIRECTIVE_PREFIX );
+    public String getNextStructDirectiveId(IPerson person) {
+        return super.getNextStructId(person, Constants.DIRECTIVE_PREFIX);
     }
 
     /**
        Replaces the layout Document stored on a fragment definition with a new
        version. This is called when a fragment owner updates their layout.
      */
-    private void updateCachedLayout( Document layout,
-                                     IUserProfile profile,
-                                     FragmentDefinition fragment )
-    {
+    private void updateCachedLayout(Document layout, IUserProfile profile, FragmentDefinition fragment) {
         // need to make a copy that we can fragmentize
-        layout = (Document)layout.cloneNode(true);
+        layout = (Document) layout.cloneNode(true);
 
-        FragmentActivator activator = this.getFragmentActivator();
+        final FragmentActivator activator = this.getFragmentActivator();
 
         // Fix later to handle multiple profiles
-        Element root = layout.getDocumentElement();
+        final Element root = layout.getDocumentElement();
         final UserView userView = activator.getUserView(fragment);
         if (userView == null) {
             throw new IllegalStateException("No UserView found for fragment: " + fragment.getName());
         }
 
-        root.setAttribute( Constants.ATT_ID,
-                           Constants.FRAGMENT_ID_USER_PREFIX +
-                           userView.getUserId() +
-                           Constants.FRAGMENT_ID_LAYOUT_PREFIX + "1" );
-        UserView view = new UserView( userView.getUserId(),
-                                      profile,
-                                      layout);
-        try
-        {
-            activator.fragmentizeLayout( view, fragment );
+        root.setAttribute(Constants.ATT_ID, Constants.FRAGMENT_ID_USER_PREFIX + userView.getUserId()
+                + Constants.FRAGMENT_ID_LAYOUT_PREFIX + "1");
+        final UserView view = new UserView(userView.getUserId(), profile, layout);
+        try {
+            activator.fragmentizeLayout(view, fragment);
             activator.setUserView(fragment.getOwnerId(), view);
         }
-        catch( Exception e )
-        {
+        catch (final Exception e) {
             LOG.error("An exception occurred attempting to update a layout.", e);
         }
     }
@@ -1016,56 +1023,50 @@ public class RDBMDistributedLayoutStore
        Returns true is the user is the owner of a layout which is copied as the
        default for any fragment when first created.
     */
-    private boolean isLayoutOwnerDefault( IPerson person )
-    {
-        String userName = (String) person.getAttribute( "username" );
+    private boolean isLayoutOwnerDefault(IPerson person) {
+        final String userName = (String) person.getAttribute("username");
 
-        final List<FragmentDefinition> definitions = configurationLoader.getFragments();
-        if ( userName != null && definitions != null )
-        {
+        final List<FragmentDefinition> definitions = this.configurationLoader.getFragments();
+        if (userName != null && definitions != null) {
             for (final FragmentDefinition fragmentDefinition : definitions) {
-                if ( fragmentDefinition.defaultLayoutOwnerID != null &&
-                        fragmentDefinition.defaultLayoutOwnerID.equals( userName ) ) {
+                if (fragmentDefinition.defaultLayoutOwnerID != null
+                        && fragmentDefinition.defaultLayoutOwnerID.equals(userName)) {
                     return true;
                 }
             }
         }
-        String globalDefault =  getProperty( "defaultLayoutOwner" );
-        if ( globalDefault != null &&
-             globalDefault.equals( userName ) )
+        final String globalDefault = this.getProperty("defaultLayoutOwner");
+        if (globalDefault != null && globalDefault.equals(userName)) {
             return true;
+        }
 
-        if (!systemDefaultUserLoaded)
-        {
-            systemDefaultUserLoaded = true;
-        try
-        {
-                systemDefaultUser = PropertiesManager
-                        .getProperty(TEMPLATE_USER_NAME);
-            } catch (RuntimeException re)
-            {
-                LOG.error("Property '" + TEMPLATE_USER_NAME + "' not defined.",
-                        re);
+        if (!this.systemDefaultUserLoaded) {
+            this.systemDefaultUserLoaded = true;
+            try {
+                this.systemDefaultUser = PropertiesManager.getProperty(TEMPLATE_USER_NAME);
             }
-            if (systemDefaultUser != null && systemDefaultUser.equals(userName))
+            catch (final RuntimeException re) {
+                LOG.error("Property '" + TEMPLATE_USER_NAME + "' not defined.", re);
+            }
+            if (this.systemDefaultUser != null && this.systemDefaultUser.equals(userName)) {
                 return true;
+            }
         }
 
         return false;
     }
 
     @Override
-    public boolean isFragmentOwner(IPerson person)
-    {
-        return getOwnedFragment(person) != null;
+    public boolean isFragmentOwner(IPerson person) {
+        return this.getOwnedFragment(person) != null;
     }
-    
+
     @Override
     public boolean isFragmentOwner(String username) {
 
-        boolean rslt = false;  // default
-        
-        final List<FragmentDefinition> definitions = configurationLoader.getFragments();
+        boolean rslt = false; // default
+
+        final List<FragmentDefinition> definitions = this.configurationLoader.getFragments();
         if (definitions != null) {
             for (final FragmentDefinition fragmentDefinition : definitions) {
                 if (fragmentDefinition.getOwnerId().equals(username)) {
@@ -1078,20 +1079,18 @@ public class RDBMDistributedLayoutStore
         return rslt;
 
     }
-    
+
     /**
        Returns the fragment owned by this user if any. If this user is not a
        fragment owner then null is returned.
     */
-    private FragmentDefinition getOwnedFragment( IPerson person )
-    {
+    private FragmentDefinition getOwnedFragment(IPerson person) {
         final String userName = person.getUserName();
 
-        FragmentActivator activator = this.getFragmentActivator();
+        final FragmentActivator activator = this.getFragmentActivator();
 
-        final List<FragmentDefinition> definitions = configurationLoader.getFragments();
-        if ( definitions != null )
-        {
+        final List<FragmentDefinition> definitions = this.configurationLoader.getFragments();
+        if (definitions != null) {
             for (final FragmentDefinition fragmentDefinition : definitions) {
                 if (userName.equals(fragmentDefinition.getOwnerId())) {
                     return fragmentDefinition;
@@ -1108,79 +1107,75 @@ public class RDBMDistributedLayoutStore
     incorporated layouts fragment, and finally the user's PLF, personal layout
     fragment, is merged in and the composite layout returned.
     */
-    private DistributedUserLayout getCompositeLayout( IPerson person,
-                                         IUserProfile profile )
-        
+    private DistributedUserLayout getCompositeLayout(IPerson person, IUserProfile profile)
+
     {
         final Set<String> fragmentNames = new LinkedHashSet<String>();
         final List<Document> applicables = new LinkedList<Document>();
 
-        final List<FragmentDefinition> definitions = configurationLoader.getFragments();
-        
-        if (log.isDebugEnabled()) {
-            log.debug("About to check applicability of " + definitions.size() + " fragments");
-        }
-        
-        FragmentActivator activator = this.getFragmentActivator();
+        final List<FragmentDefinition> definitions = this.configurationLoader.getFragments();
 
-        if ( definitions != null )
-        {
+        if (this.log.isDebugEnabled()) {
+            this.log.debug("About to check applicability of " + definitions.size() + " fragments");
+        }
+
+        final FragmentActivator activator = this.getFragmentActivator();
+
+        if (definitions != null) {
             for (final FragmentDefinition fragmentDefinition : definitions) {
 
-                if (log.isDebugEnabled()) {
-                    log.debug("Checking applicability of the following fragment:  " + fragmentDefinition.getName());
+                if (this.log.isDebugEnabled()) {
+                    this.log.debug("Checking applicability of the following fragment:  " + fragmentDefinition.getName());
                 }
 
-                if ( fragmentDefinition.isApplicable(person) )
-                {
+                if (fragmentDefinition.isApplicable(person)) {
                     final UserView userView = activator.getUserView(fragmentDefinition);
                     if (userView != null) {
-                        applicables.add( userView.layout );
+                        applicables.add(userView.layout);
                     }
                     fragmentNames.add(fragmentDefinition.getName());
                 }
             }
         }
 
-        Document PLF = (Document) person.getAttribute( Constants.PLF );
+        Document PLF = (Document) person.getAttribute(Constants.PLF);
 
-        if ( null == PLF )
-        {
-            PLF = _safeGetUserLayout( person, profile );
+        if (null == PLF) {
+            PLF = this._safeGetUserLayout(person, profile);
         }
-        if (LOG.isDebugEnabled())
-            LOG.debug("PLF for " + person.getAttribute(IPerson.USERNAME) +
-                    " immediately after loading\n" + XmlUtilitiesImpl.toString(PLF));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("PLF for " + person.getAttribute(IPerson.USERNAME) + " immediately after loading\n"
+                    + XmlUtilitiesImpl.toString(PLF));
+        }
 
-        Document ILF = ILFBuilder.constructILF( PLF, applicables, person );
-        person.setAttribute( Constants.PLF, PLF );
-        IntegrationResult result = new IntegrationResult();
-        PLFIntegrator.mergePLFintoILF( PLF, ILF, result );
-        if (LOG.isDebugEnabled())
-        {
-            LOG.debug("PLF for " + person.getAttribute(IPerson.USERNAME) +
-                    " after MERGING\n" + XmlUtilitiesImpl.toString(PLF));
-            LOG.debug("ILF for " + person.getAttribute(IPerson.USERNAME) +
-                    " after MERGING\n" + XmlUtilitiesImpl.toString(ILF));
+        final Document ILF = ILFBuilder.constructILF(PLF, applicables, person);
+        person.setAttribute(Constants.PLF, PLF);
+        final IntegrationResult result = new IntegrationResult();
+        PLFIntegrator.mergePLFintoILF(PLF, ILF, result);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("PLF for " + person.getAttribute(IPerson.USERNAME) + " after MERGING\n"
+                    + XmlUtilitiesImpl.toString(PLF));
+            LOG.debug("ILF for " + person.getAttribute(IPerson.USERNAME) + " after MERGING\n"
+                    + XmlUtilitiesImpl.toString(ILF));
         }
         // push optimizations made during merge back into db.
-        if( result.changedPLF )
-        {
-            if (LOG.isDebugEnabled())
-                LOG.debug("Saving PLF for " +
-                    person.getAttribute(IPerson.USERNAME) +
-                    " due to changes during merge.");
-            super.setUserLayout( person, profile, PLF, false );
+        if (result.changedPLF) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Saving PLF for " + person.getAttribute(IPerson.USERNAME) + " due to changes during merge.");
+            }
+            super.setUserLayout(person, profile, PLF, false);
         }
-        
+
         final int structureStylesheetId = profile.getStructureStylesheetId();
-        final IStylesheetUserPreferences distributedStructureStylesheetUserPreferences = this.loadDistributedStylesheetUserPreferences(person, profile, structureStylesheetId, fragmentNames);
-        
+        final IStylesheetUserPreferences distributedStructureStylesheetUserPreferences = this
+                .loadDistributedStylesheetUserPreferences(person, profile, structureStylesheetId, fragmentNames);
+
         final int themeStylesheetId = profile.getThemeStylesheetId();
-        final IStylesheetUserPreferences distributedThemeStylesheetUserPreferences = this.loadDistributedStylesheetUserPreferences(person, profile, themeStylesheetId, fragmentNames);
+        final IStylesheetUserPreferences distributedThemeStylesheetUserPreferences = this
+                .loadDistributedStylesheetUserPreferences(person, profile, themeStylesheetId, fragmentNames);
 
-
-        return new DistributedUserLayout(ILF, fragmentNames, distributedStructureStylesheetUserPreferences, distributedThemeStylesheetUserPreferences);
+        return new DistributedUserLayout(ILF, fragmentNames, distributedStructureStylesheetUserPreferences,
+                distributedThemeStylesheetUserPreferences);
     }
 
     /**
@@ -1189,11 +1184,10 @@ public class RDBMDistributedLayoutStore
        or PLF. If this person is a layout owner then their changes are pushed
        into the appropriate layout fragment.
      */
-    public void setUserLayout (IPerson person, IUserProfile profile,
-                               Document layoutXML, boolean channelsAdded)
-      
+    public void setUserLayout(IPerson person, IUserProfile profile, Document layoutXML, boolean channelsAdded)
+
     {
-        setUserLayout(person, profile, layoutXML, channelsAdded, true);
+        this.setUserLayout(person, profile, layoutXML, channelsAdded, true);
     }
 
     /**
@@ -1204,81 +1198,78 @@ public class RDBMDistributedLayoutStore
        into the appropriate layout fragment.
      */
     @Override
-    public void setUserLayout (IPerson person, IUserProfile profile,
-                        Document layoutXML, boolean channelsAdded,
-                        boolean updateFragmentCache)
-      
+    public void setUserLayout(IPerson person, IUserProfile profile, Document layoutXML, boolean channelsAdded,
+            boolean updateFragmentCache)
+
     {
-        Document plf = (Document) person.getAttribute( Constants.PLF );
-        if (LOG.isDebugEnabled())
-            LOG.debug("PLF for " + person.getAttribute(IPerson.USERNAME) +
-                    "\n" + XmlUtilitiesImpl.toString(plf));
-        super.setUserLayout( person, profile, plf, channelsAdded );
+        final Document plf = (Document) person.getAttribute(Constants.PLF);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("PLF for " + person.getAttribute(IPerson.USERNAME) + "\n" + XmlUtilitiesImpl.toString(plf));
+        }
+        super.setUserLayout(person, profile, plf, channelsAdded);
 
-        if (updateFragmentCache)
-        {
-            FragmentDefinition fragment = getOwnedFragment(person);
+        if (updateFragmentCache) {
+            final FragmentDefinition fragment = this.getOwnedFragment(person);
 
-            if (fragment != null)
-                updateCachedLayout(plf, profile, fragment);
+            if (fragment != null) {
+                this.updateCachedLayout(plf, profile, fragment);
+            }
         }
     }
 
     /**
        Returns the number of properties loaded from the dlm.xml file.
      */
-    public int getPropertyCount()
-    {
-        return configurationLoader.getPropertyCount();
+    public int getPropertyCount() {
+        return this.configurationLoader.getPropertyCount();
     }
 
     /**
        Returns the specified property loaded from dlm.xml or null if not found.
      */
-    public String getProperty( String name )
-    {
-        return configurationLoader.getProperty( name );
+    public String getProperty(String name) {
+        return this.configurationLoader.getProperty(name);
     }
 
     @Override
-    public FragmentChannelInfo getFragmentChannelInfo(String sId)
-    {
-        FragmentNodeInfo node = getFragmentNodeInfo(sId);
+    public FragmentChannelInfo getFragmentChannelInfo(String sId) {
+        final FragmentNodeInfo node = this.getFragmentNodeInfo(sId);
 
-        if (node != null && (node instanceof FragmentChannelInfo))
+        if (node != null && node instanceof FragmentChannelInfo) {
             return (FragmentChannelInfo) node;
+        }
         return null;
     }
 
     @Override
-    public FragmentNodeInfo getFragmentNodeInfo(String sId)
-    {
+    public FragmentNodeInfo getFragmentNodeInfo(String sId) {
         // grab local pointers to variables subject to change at any time
-        final List<FragmentDefinition> fragments = configurationLoader.getFragments();
+        final List<FragmentDefinition> fragments = this.configurationLoader.getFragments();
 
-        FragmentActivator activator = this.getFragmentActivator();
+        final FragmentActivator activator = this.getFragmentActivator();
 
-        final net.sf.ehcache.Element element = fragmentNodeInfoCache.get(sId);
-        FragmentNodeInfo info = element != null ? (FragmentNodeInfo)element.getObjectValue() : null;
+        final net.sf.ehcache.Element element = this.fragmentNodeInfoCache.get(sId);
+        FragmentNodeInfo info = element != null ? (FragmentNodeInfo) element.getObjectValue() : null;
 
-        if (info == null)
-        {
+        if (info == null) {
             for (final FragmentDefinition fragmentDefinition : fragments) {
                 final UserView userView = activator.getUserView(fragmentDefinition);
                 if (userView == null) {
-                    log.warn("No UserView is present for fragment " + fragmentDefinition.getName() + " it will be skipped when fragment node information");
+                    this.log.warn("No UserView is present for fragment " + fragmentDefinition.getName()
+                            + " it will be skipped when fragment node information");
                     continue;
                 }
-                
-                Element node = userView.layout.getElementById(sId);
+
+                final Element node = userView.layout.getElementById(sId);
                 if (node != null) // found it
                 {
-                    if (node.getTagName().equals(Constants.ELM_CHANNEL))
-
+                    if (node.getTagName().equals(Constants.ELM_CHANNEL)) {
                         info = new FragmentChannelInfo(node);
-                    else
+                    }
+                    else {
                         info = new FragmentNodeInfo(node);
-                    fragmentNodeInfoCache.put(new net.sf.ehcache.Element(sId, info));
+                    }
+                    this.fragmentNodeInfoCache.put(new net.sf.ehcache.Element(sId, info));
                     break;
                 }
             }
@@ -1296,192 +1287,186 @@ public class RDBMDistributedLayoutStore
        the db and sets the plfid of that node into the corresponding node in
        the PLF prior to the call to update the user prefs in the db.
      */
-    private String getPlfId( Document PLF, String incdId )
-    {
+    private String getPlfId(Document PLF, String incdId) {
         Element element = null;
         try {
-            XPathFactory fac = XPathFactory.newInstance();
-            XPath xp = fac.newXPath();
+            final XPathFactory fac = XPathFactory.newInstance();
+            final XPath xp = fac.newXPath();
             element = (Element) xp.evaluate("//*[@ID = '" + incdId + "']", PLF, XPathConstants.NODE);
-        } catch (XPathExpressionException xpee) {
+        }
+        catch (final XPathExpressionException xpee) {
             throw new RuntimeException(xpee);
         }
-        if ( element == null ) {
-            log.warn("The specified folderId was not found in the user's PLF:  " + incdId);
-            return null;            
-        }
-        Attr attr = element.getAttributeNode( Constants.ATT_PLF_ID );
-        if ( attr == null )
+        if (element == null) {
+            this.log.warn("The specified folderId was not found in the user's PLF:  " + incdId);
             return null;
+        }
+        final Attr attr = element.getAttributeNode(Constants.ATT_PLF_ID);
+        if (attr == null) {
+            return null;
+        }
         return attr.getValue();
     }
 
     @Override
-    protected Element getStructure(Document doc, LayoutStructure ls)  {
+    protected Element getStructure(Document doc, LayoutStructure ls) {
         Element structure = null;
 
         // handle migration of legacy namespace
         String type = ls.getType();
-        if (type != null && type.startsWith(Constants.LEGACY_NS))
+        if (type != null && type.startsWith(Constants.LEGACY_NS)) {
             type = Constants.NS + type.substring(Constants.LEGACY_NS.length());
-
-  if (ls.isChannel()) {
-	  IPortletDefinition channelDef = portletDefinitionRegistry.getPortletDefinition(String.valueOf(ls.getChanId()));
-    if (channelDef != null && channelApproved(channelDef.getApprovalDate())) {
-      structure = getElementForChannel(doc, channelPrefix + ls.getStructId(), channelDef, ls.getLocale());
-    } else {
-        // Create an error channel if channel is missing or not approved
-        String missingChannel = "Unknown";
-        if (channelDef != null) {
-            missingChannel = channelDef.getName();
         }
-        structure = getElementForChannel(doc, channelPrefix + ls.getStructId(), MissingPortletDefinition.INSTANCE, null);
-//        structure = MissingPortletDefinition.INSTANCE.getDocument(doc, channelPrefix + ls.getStructId());
-//        structure = MissingPortletDefinition.INSTANCE.getDocument(doc, channelPrefix + ls.getStructId(),
-//                "The '" + missingChannel + "' channel is no longer available. " +
-//                "Please remove it from your layout.",
-//                -1);
-    }
-  } else
-        {
+
+        if (ls.isChannel()) {
+            final IPortletDefinition channelDef = this.portletDefinitionRegistry.getPortletDefinition(String.valueOf(ls
+                    .getChanId()));
+            if (channelDef != null && channelApproved(channelDef.getApprovalDate())) {
+                structure = this
+                        .getElementForChannel(doc, channelPrefix + ls.getStructId(), channelDef, ls.getLocale());
+            }
+            else {
+                // Create an error channel if channel is missing or not approved
+                String missingChannel = "Unknown";
+                if (channelDef != null) {
+                    missingChannel = channelDef.getName();
+                }
+                structure = this.getElementForChannel(doc,
+                        channelPrefix + ls.getStructId(),
+                        MissingPortletDefinition.INSTANCE,
+                        null);
+                //        structure = MissingPortletDefinition.INSTANCE.getDocument(doc, channelPrefix + ls.getStructId());
+                //        structure = MissingPortletDefinition.INSTANCE.getDocument(doc, channelPrefix + ls.getStructId(),
+                //                "The '" + missingChannel + "' channel is no longer available. " +
+                //                "Please remove it from your layout.",
+                //                -1);
+            }
+        }
+        else {
             // create folder objects including dlm new types in cp namespace
-            if (type != null && (type.startsWith(Constants.NS)))
-            {
+            if (type != null && type.startsWith(Constants.NS)) {
                 structure = doc.createElementNS(Constants.NS_URI, type);
             }
-            else
+            else {
                 structure = doc.createElement("folder");
-    structure.setAttribute("name", ls.getName());
-    structure.setAttribute("type", (type != null ? type : "regular"));
+            }
+            structure.setAttribute("name", ls.getName());
+            structure.setAttribute("type", (type != null ? type : "regular"));
         }
 
         structure.setAttribute("hidden", (ls.isHidden() ? "true" : "false"));
         structure.setAttribute("immutable", (ls.isImmutable() ? "true" : "false"));
-  structure.setAttribute("unremovable", (ls.isUnremovable() ? "true" : "false"));
-  if (localeAware) {
-      structure.setAttribute("locale", ls.getLocale());  // for i18n by Shoji
-  }
-
-  /*
-   * Parameters from up_layout_param are loaded slightly differently for
-   * folders and channels. For folders all parameters are added as attributes
-   * of the Element. For channels only those parameters with names starting
-   * with the dlm namespace Constants.NS are added as attributes to the Element.
-   * Others are added as child parameter Elements.
-   */
-  if (ls.getParameters() != null) {
-    for (Iterator itr = ls.getParameters().iterator(); itr.hasNext();) {
-      StructureParameter sp = (StructureParameter) itr.next();
-      String pName = sp.getName();
-
-      // handle migration of legacy namespace
-      if (pName.startsWith(Constants.LEGACY_NS))
-          pName = Constants.NS + sp.getName().substring(Constants.LEGACY_NS.length());
-
-      if (!ls.isChannel())
-      { // Folder
-          if (pName.startsWith(Constants.NS))
-              structure.setAttributeNS(Constants.NS_URI, pName, sp.getValue());
-          else
-              structure.setAttribute(pName, sp.getValue());
-      }
-      else // Channel
-      {
-          // if dealing with a dlm namespace param add as attribute
-          if (pName.startsWith(Constants.NS))
-          {
-              structure.setAttributeNS(Constants.NS_URI, pName, sp.getValue());
-              itr.remove();
-          }
-          else
-          {
-              /*
-               * do traditional override processing. some explanation is in
-               * order. The structure element was created by the
-               * ChannelDefinition and only contains parameter children if the
-               * definition had defined parameters. These are checked for each
-               * layout loaded parameter as found in LayoutStructure.parameters.
-               * If a name match is found then we need to see if overriding is
-               * allowed and if so we set the value on the child parameter
-               * element. At that point we are done with that version loaded
-               * from the layout so we remove it from the in-memory set of
-               * parameters that are being merged-in. Then, after all such have
-               * been checked against those added by the channel definition we
-               * add in any remaining as adhoc, unregulated parameters.
-               */
-              NodeList nodeListParameters =
-                  structure.getElementsByTagName("parameter");
-              for (int j = 0; j < nodeListParameters.getLength(); j++)
-              {
-                  Element parmElement = (Element)nodeListParameters.item(j);
-                  NamedNodeMap nm = parmElement.getAttributes();
-
-                  String nodeName = nm.getNamedItem("name").getNodeValue();
-                  if (nodeName.equals(pName))
-                  {
-                      Node override = nm.getNamedItem("override");
-                      if (override != null && override.getNodeValue().equals("yes"))
-                      {
-                          Node valueNode = nm.getNamedItem("value");
-                          valueNode.setNodeValue(sp.getValue());
-                      }
-                      itr.remove();
-                      break; // found the corresponding one so skip the rest
-                  }
-              }
-          }
-      }
-    }
-    // For channels, add any remaining parameter elements loaded with the
-    // layout as adhoc, unregulated, parameter children that can be overridden.
-    if (ls.isChannel())
-    {
-        for (Iterator itr = ls.getParameters().iterator(); itr.hasNext();)
-        {
-            StructureParameter sp = (StructureParameter) itr.next();
-            Element parameter = doc.createElement("parameter");
-            parameter.setAttribute("name", sp.getName());
-            parameter.setAttribute("value", sp.getValue());
-            parameter.setAttribute("override", "yes");
-            structure.appendChild(parameter);
+        structure.setAttribute("unremovable", (ls.isUnremovable() ? "true" : "false"));
+        if (localeAware) {
+            structure.setAttribute("locale", ls.getLocale()); // for i18n by Shoji
         }
-    }
-  }
+
+        /*
+         * Parameters from up_layout_param are loaded slightly differently for
+         * folders and channels. For folders all parameters are added as attributes
+         * of the Element. For channels only those parameters with names starting
+         * with the dlm namespace Constants.NS are added as attributes to the Element.
+         * Others are added as child parameter Elements.
+         */
+        if (ls.getParameters() != null) {
+            for (final Iterator itr = ls.getParameters().iterator(); itr.hasNext();) {
+                final StructureParameter sp = (StructureParameter) itr.next();
+                String pName = sp.getName();
+
+                // handle migration of legacy namespace
+                if (pName.startsWith(Constants.LEGACY_NS)) {
+                    pName = Constants.NS + sp.getName().substring(Constants.LEGACY_NS.length());
+                }
+
+                if (!ls.isChannel()) { // Folder
+                    if (pName.startsWith(Constants.NS)) {
+                        structure.setAttributeNS(Constants.NS_URI, pName, sp.getValue());
+                    }
+                    else {
+                        structure.setAttribute(pName, sp.getValue());
+                    }
+                }
+                else // Channel
+                {
+                    // if dealing with a dlm namespace param add as attribute
+                    if (pName.startsWith(Constants.NS)) {
+                        structure.setAttributeNS(Constants.NS_URI, pName, sp.getValue());
+                        itr.remove();
+                    }
+                    else {
+                        /*
+                         * do traditional override processing. some explanation is in
+                         * order. The structure element was created by the
+                         * ChannelDefinition and only contains parameter children if the
+                         * definition had defined parameters. These are checked for each
+                         * layout loaded parameter as found in LayoutStructure.parameters.
+                         * If a name match is found then we need to see if overriding is
+                         * allowed and if so we set the value on the child parameter
+                         * element. At that point we are done with that version loaded
+                         * from the layout so we remove it from the in-memory set of
+                         * parameters that are being merged-in. Then, after all such have
+                         * been checked against those added by the channel definition we
+                         * add in any remaining as adhoc, unregulated parameters.
+                         */
+                        final NodeList nodeListParameters = structure.getElementsByTagName("parameter");
+                        for (int j = 0; j < nodeListParameters.getLength(); j++) {
+                            final Element parmElement = (Element) nodeListParameters.item(j);
+                            final NamedNodeMap nm = parmElement.getAttributes();
+
+                            final String nodeName = nm.getNamedItem("name").getNodeValue();
+                            if (nodeName.equals(pName)) {
+                                final Node override = nm.getNamedItem("override");
+                                if (override != null && override.getNodeValue().equals("yes")) {
+                                    final Node valueNode = nm.getNamedItem("value");
+                                    valueNode.setNodeValue(sp.getValue());
+                                }
+                                itr.remove();
+                                break; // found the corresponding one so skip the rest
+                            }
+                        }
+                    }
+                }
+            }
+            // For channels, add any remaining parameter elements loaded with the
+            // layout as adhoc, unregulated, parameter children that can be overridden.
+            if (ls.isChannel()) {
+                for (final Iterator itr = ls.getParameters().iterator(); itr.hasNext();) {
+                    final StructureParameter sp = (StructureParameter) itr.next();
+                    final Element parameter = doc.createElement("parameter");
+                    parameter.setAttribute("name", sp.getName());
+                    parameter.setAttribute("value", sp.getValue());
+                    parameter.setAttribute("override", "yes");
+                    structure.appendChild(parameter);
+                }
+            }
+        }
         // finish setting up elements based on loaded params
-        String origin = structure.getAttribute(Constants.ATT_ORIGIN);
-        String prefix = (ls.isChannel() ? channelPrefix : folderPrefix);
+        final String origin = structure.getAttribute(Constants.ATT_ORIGIN);
+        final String prefix = ls.isChannel() ? channelPrefix : folderPrefix;
 
         // if not null we are dealing with a node incorporated from another
         // layout and this node contains changes made by the user so handle
         // id swapping.
-        if (!origin.equals(""))
-        {
-            structure.setAttributeNS(
-                Constants.NS_URI,
-                Constants.ATT_PLF_ID,
-                prefix + ls.getStructId());
+        if (!origin.equals("")) {
+            structure.setAttributeNS(Constants.NS_URI, Constants.ATT_PLF_ID, prefix + ls.getStructId());
             structure.setAttribute("ID", origin);
         }
         else if (!ls.isChannel())
-            // regular folder owned by this user, need to check if this is a
-            // directive or ui element. If the latter then use traditional id
-            // structure
+        // regular folder owned by this user, need to check if this is a
+        // directive or ui element. If the latter then use traditional id
+        // structure
         {
-            if (type != null && type.startsWith(Constants.NS))
-            {
-                structure.setAttribute(
-                    "ID",
-                    Constants.DIRECTIVE_PREFIX + ls.getStructId());
+            if (type != null && type.startsWith(Constants.NS)) {
+                structure.setAttribute("ID", Constants.DIRECTIVE_PREFIX + ls.getStructId());
             }
-            else
-            {
+            else {
                 structure.setAttribute("ID", folderPrefix + ls.getStructId());
             }
         }
-        else
-        {
-            if (LOG.isDebugEnabled())
-                LOG.debug("Adding identifier " + folderPrefix + ls.getStructId() );
+        else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Adding identifier " + folderPrefix + ls.getStructId());
+            }
             structure.setAttribute("ID", channelPrefix + ls.getStructId());
         }
         structure.setIdAttribute(Constants.ATT_ID, true);
@@ -1489,178 +1474,147 @@ public class RDBMDistributedLayoutStore
     }
 
     @Override
-    protected int saveStructure(
-            Node node,
-            PreparedStatement structStmt,
-            PreparedStatement parmStmt)
-            throws SQLException
-        {
-            if (node == null)
-            { // No more
-                return 0;
-            }
-            if (node.getNodeName().equals("parameter")) {
-                //parameter, skip it and go on to the next node
-                return saveStructure(node.getNextSibling(), structStmt, parmStmt);
-            }
-            if (!(node instanceof Element)) {
-                return 0;
-            }
-                    
-            Element structure = (Element) node;
+    protected int saveStructure(Node node, PreparedStatement structStmt, PreparedStatement parmStmt)
+            throws SQLException {
+        if (node == null) { // No more
+            return 0;
+        }
+        if (node.getNodeName().equals("parameter")) {
+            //parameter, skip it and go on to the next node
+            return this.saveStructure(node.getNextSibling(), structStmt, parmStmt);
+        }
+        if (!(node instanceof Element)) {
+            return 0;
+        }
 
-            if (LOG.isDebugEnabled())
-                LOG.debug("saveStructure XML content: "
-                    + XmlUtilitiesImpl.toString(node));
+        final Element structure = (Element) node;
 
-            // determine the struct_id for storing in the db. For incorporated nodes in
-            // the plf their ID is a system-wide unique ID while their struct_id for
-            // storing in the db is cached in a dlm:plfID attribute.
-            int saveStructId = -1;
-            String plfID = structure.getAttribute(Constants.ATT_PLF_ID);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("saveStructure XML content: " + XmlUtilitiesImpl.toString(node));
+        }
 
-            if (!plfID.equals("")) {
-                saveStructId = Integer.parseInt(plfID.substring(1));
-            }
-            else {
-                final String id = structure.getAttribute("ID");
-                saveStructId = Integer.parseInt(id.substring(1));
-            }
+        // determine the struct_id for storing in the db. For incorporated nodes in
+        // the plf their ID is a system-wide unique ID while their struct_id for
+        // storing in the db is cached in a dlm:plfID attribute.
+        int saveStructId = -1;
+        final String plfID = structure.getAttribute(Constants.ATT_PLF_ID);
 
-            int nextStructId = 0;
-            int childStructId = 0;
-            int chanId = -1;
-            boolean isChannel = node.getNodeName().equals("channel");
+        if (!plfID.equals("")) {
+            saveStructId = Integer.parseInt(plfID.substring(1));
+        }
+        else {
+            final String id = structure.getAttribute("ID");
+            saveStructId = Integer.parseInt(id.substring(1));
+        }
 
-            if (node.hasChildNodes())
-            {
-                childStructId =
-                    saveStructure(node.getFirstChild(), structStmt, parmStmt);
-            }
-            nextStructId =
-                saveStructure(node.getNextSibling(), structStmt, parmStmt);
-            structStmt.clearParameters();
-            structStmt.setInt(1, saveStructId);
-            structStmt.setInt(2, nextStructId);
-            structStmt.setInt(3, childStructId);
+        int nextStructId = 0;
+        int childStructId = 0;
+        int chanId = -1;
+        final boolean isChannel = node.getNodeName().equals("channel");
 
-            String externalId = structure.getAttribute("external_id");
-            if (externalId != null && externalId.trim().length() > 0)
-            {
-                Integer eID = new Integer(externalId);
-                structStmt.setInt(4, eID.intValue());
-            }
-            else
-            {
-                structStmt.setNull(4, java.sql.Types.NUMERIC);
+        if (node.hasChildNodes()) {
+            childStructId = this.saveStructure(node.getFirstChild(), structStmt, parmStmt);
+        }
+        nextStructId = this.saveStructure(node.getNextSibling(), structStmt, parmStmt);
+        structStmt.clearParameters();
+        structStmt.setInt(1, saveStructId);
+        structStmt.setInt(2, nextStructId);
+        structStmt.setInt(3, childStructId);
 
-            }
-            if (isChannel)
-            {
-                chanId =
-                    Integer.parseInt(
-                        node.getAttributes().getNamedItem("chanID").getNodeValue());
-                structStmt.setInt(5, chanId);
-                structStmt.setNull(6, java.sql.Types.VARCHAR);
-            }
-            else
-            {
-                structStmt.setNull(5, java.sql.Types.NUMERIC);
-                structStmt.setString(6, structure.getAttribute("name"));
-            }
-            String structType = structure.getAttribute("type");
-            structStmt.setString(7, structType);
-            structStmt.setString(
-                8,
-                RDBMServices.dbFlag(xmlBool(structure.getAttribute("hidden"))));
-            structStmt.setString(
-                9,
-                RDBMServices.dbFlag(xmlBool(structure.getAttribute("immutable"))));
-            structStmt.setString(
-                10,
-                RDBMServices.dbFlag(
-                    xmlBool(structure.getAttribute("unremovable"))));
-            if (LOG.isDebugEnabled())
-                LOG.debug(structStmt.toString());
-            structStmt.executeUpdate();
+        final String externalId = structure.getAttribute("external_id");
+        if (externalId != null && externalId.trim().length() > 0) {
+            final Integer eID = new Integer(externalId);
+            structStmt.setInt(4, eID.intValue());
+        }
+        else {
+            structStmt.setNull(4, java.sql.Types.NUMERIC);
 
-            // code to persist extension attributes for dlm
-            NamedNodeMap attribs = node.getAttributes();
-            for (int i = 0; i < attribs.getLength(); i++)
-            {
-                Node attrib = attribs.item(i);
-                String name = attrib.getNodeName();
+        }
+        if (isChannel) {
+            chanId = Integer.parseInt(node.getAttributes().getNamedItem("chanID").getNodeValue());
+            structStmt.setInt(5, chanId);
+            structStmt.setNull(6, java.sql.Types.VARCHAR);
+        }
+        else {
+            structStmt.setNull(5, java.sql.Types.NUMERIC);
+            structStmt.setString(6, structure.getAttribute("name"));
+        }
+        final String structType = structure.getAttribute("type");
+        structStmt.setString(7, structType);
+        structStmt.setString(8, RDBMServices.dbFlag(xmlBool(structure.getAttribute("hidden"))));
+        structStmt.setString(9, RDBMServices.dbFlag(xmlBool(structure.getAttribute("immutable"))));
+        structStmt.setString(10, RDBMServices.dbFlag(xmlBool(structure.getAttribute("unremovable"))));
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(structStmt.toString());
+        }
+        structStmt.executeUpdate();
 
-                if (name.startsWith(Constants.NS)
-                    && !name.equals(Constants.ATT_PLF_ID)
-                    && !name.equals(Constants.ATT_FRAGMENT)
-                    && !name.equals(Constants.ATT_PRECEDENCE))
-                {
-                    // a cp extension attribute. Push into param table.
-                    parmStmt.clearParameters();
-                    parmStmt.setInt(1, saveStructId);
-                    parmStmt.setString(2, name);
-                    parmStmt.setString(3, attrib.getNodeValue());
-                    if (LOG.isDebugEnabled())
-                        LOG.debug(parmStmt.toString());
-                    parmStmt.executeUpdate();
+        // code to persist extension attributes for dlm
+        final NamedNodeMap attribs = node.getAttributes();
+        for (int i = 0; i < attribs.getLength(); i++) {
+            final Node attrib = attribs.item(i);
+            final String name = attrib.getNodeName();
+
+            if (name.startsWith(Constants.NS) && !name.equals(Constants.ATT_PLF_ID)
+                    && !name.equals(Constants.ATT_FRAGMENT) && !name.equals(Constants.ATT_PRECEDENCE)) {
+                // a cp extension attribute. Push into param table.
+                parmStmt.clearParameters();
+                parmStmt.setInt(1, saveStructId);
+                parmStmt.setString(2, name);
+                parmStmt.setString(3, attrib.getNodeValue());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(parmStmt.toString());
                 }
+                parmStmt.executeUpdate();
             }
-            NodeList parameters = node.getChildNodes();
-            if (parameters != null && isChannel)
-            {
-            	IPortletDefinition channelDef = portletDefinitionRegistry.getPortletDefinition(String.valueOf(chanId));
-                for (int i = 0; i < parameters.getLength(); i++)
-                {
-                    if (parameters.item(i).getNodeName().equals("parameter"))
-                    {
-                        Element parmElement = (Element) parameters.item(i);
-                        NamedNodeMap nm = parmElement.getAttributes();
-                        String parmName = nm.getNamedItem("name").getNodeValue();
-                        String parmValue = nm.getNamedItem("value").getNodeValue();
-                        Node override = nm.getNamedItem("override");
+        }
+        final NodeList parameters = node.getChildNodes();
+        if (parameters != null && isChannel) {
+            final IPortletDefinition channelDef = this.portletDefinitionRegistry.getPortletDefinition(String
+                    .valueOf(chanId));
+            for (int i = 0; i < parameters.getLength(); i++) {
+                if (parameters.item(i).getNodeName().equals("parameter")) {
+                    final Element parmElement = (Element) parameters.item(i);
+                    final NamedNodeMap nm = parmElement.getAttributes();
+                    final String parmName = nm.getNamedItem("name").getNodeValue();
+                    final String parmValue = nm.getNamedItem("value").getNodeValue();
+                    final Node override = nm.getNamedItem("override");
 
-                        // if no override specified then default to allowed
-                        if (override != null
-                            && !override.getNodeValue().equals("yes"))
-                        {
-                            // can't override
-                        } else
-                        {
-                            // override only for adhoc or if diff from chan def
-                            IPortletDefinitionParameter cp = channelDef.getParameter(parmName);
-                            if (cp == null || !cp.getValue().equals(parmValue))
-                            {
-                                parmStmt.clearParameters();
-                                parmStmt.setInt(1, saveStructId);
-                                parmStmt.setString(2, parmName);
-                                parmStmt.setString(3, parmValue);
-                                if (LOG.isDebugEnabled())
-                                    LOG.debug(parmStmt);
-                                parmStmt.executeUpdate();
+                    // if no override specified then default to allowed
+                    if (override != null && !override.getNodeValue().equals("yes")) {
+                        // can't override
+                    }
+                    else {
+                        // override only for adhoc or if diff from chan def
+                        final IPortletDefinitionParameter cp = channelDef.getParameter(parmName);
+                        if (cp == null || !cp.getValue().equals(parmValue)) {
+                            parmStmt.clearParameters();
+                            parmStmt.setInt(1, saveStructId);
+                            parmStmt.setString(2, parmName);
+                            parmStmt.setString(3, parmValue);
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug(parmStmt);
                             }
+                            parmStmt.executeUpdate();
                         }
                     }
                 }
             }
-            return saveStructId;
         }
+        return saveStructId;
+    }
 
-    public static Document getPLF( IPerson person )
-    throws PortalException
-    {
-        try
-        {
-            return (Document) person.getAttribute( Constants.PLF );
+    public static Document getPLF(IPerson person) throws PortalException {
+        try {
+            return (Document) person.getAttribute(Constants.PLF);
         }
-        catch ( Exception ex )
-        {
-            throw new PortalException( ex );
+        catch (final Exception ex) {
+            throw new PortalException(ex);
         }
     }
-    
+
     private Element getElementForChannel(Document doc, String chanId, IPortletDefinition def, String locale) {
-        Element channel = doc.createElement("channel");
+        final Element channel = doc.createElement("channel");
 
         // the ID attribute is the identifier for the Channel element
         channel.setAttribute("ID", chanId);
@@ -1673,7 +1627,8 @@ public class RDBMDistributedLayoutStore
             channel.setAttribute("title", def.getTitle(locale));
             channel.setAttribute("description", def.getDescription(locale));
             channel.setAttribute("locale", locale);
-        } else {
+        }
+        else {
             channel.setAttribute("name", def.getName());
             channel.setAttribute("title", def.getTitle());
             channel.setAttribute("description", def.getDescription());
@@ -1684,8 +1639,8 @@ public class RDBMDistributedLayoutStore
         // to the method rather than the instance variable chanClass
         channel.setAttribute("typeID", String.valueOf(def.getType().getId()));
 
-        for (IPortletDefinitionParameter param : def.getParameters()) {
-            Element parameter = doc.createElement("parameter");
+        for (final IPortletDefinitionParameter param : def.getParameters()) {
+            final Element parameter = doc.createElement("parameter");
             parameter.setAttribute("name", param.getName());
             parameter.setAttribute("value", param.getValue());
             channel.appendChild(parameter);
@@ -1694,252 +1649,347 @@ public class RDBMDistributedLayoutStore
         return channel;
 
     }
-    
+
     private static final class MissingPortletDefinition implements IPortletDefinition {
         public static final IPortletDefinition INSTANCE = new MissingPortletDefinition();
-        
+
         private final String fname = "DLMStaticMissingChannel";
-        
+
         public String getName() {
             return "Missing channel";
         }
+
         public String getName(String locale) {
             return "Missing channel";
         }
+
         public int getTimeout() {
             return 20000;
         }
+
         public String getTitle() {
             return "Missing channel";
         }
+
         public String getTitle(String locale) {
             return "Missing channel";
         }
+
         public String getFName() {
-            return fname;
+            return this.fname;
         }
-        
+
         @Override
         public String getDataId() {
             return null;
         }
+
         @Override
         public String getDataTitle() {
             return this.getName();
         }
+
         @Override
         public String getDataDescription() {
             return this.getDescription();
         }
+
+        @Override
+        public Integer getActionTimeout() {
+            return null;
+        }
+
+        @Override
+        public Integer getEventTimeout() {
+            return null;
+        }
+
+        @Override
+        public Integer getRenderTimeout() {
+            return null;
+        }
+
+        @Override
+        public Integer getResourceTimeout() {
+            return null;
+        }
+
+        @Override
+        public void setActionTimeout(Integer actionTimeout) {
+        }
+
+        @Override
+        public void setEventTimeout(Integer eventTimeout) {
+        }
+
+        @Override
+        public void setRenderTimeout(Integer renderTimeout) {
+        }
+
+        @Override
+        public void setResourceTimeout(Integer resourceTimeout) {
+        }
+
         public void addLocalizedDescription(String locale, String chanDesc) {
         }
+
         public void addLocalizedName(String locale, String chanName) {
         }
+
         public void addLocalizedTitle(String locale, String chanTitle) {
         }
+
         public void addParameter(IPortletDefinitionParameter parameter) {
         }
+
         public void clearParameters() {
         }
+
         public Date getApprovalDate() {
             return null;
         }
+
         public int getApproverId() {
             return 0;
         }
+
         public String getDescription() {
             return null;
         }
+
         public String getDescription(String locale) {
             return null;
         }
+
         public EntityIdentifier getEntityIdentifier() {
             return null;
         }
+
         public Date getExpirationDate() {
             return null;
         }
+
         public int getExpirerId() {
             return 0;
         }
+
         public IPortletDefinitionParameter getParameter(String key) {
             return null;
         }
+
         public Set<IPortletDefinitionParameter> getParameters() {
             return null;
         }
+
         public Map<String, IPortletDefinitionParameter> getParametersAsUnmodifiableMap() {
             return null;
         }
+
         public Date getPublishDate() {
             return null;
         }
+
         public int getPublisherId() {
             return 0;
         }
+
         public boolean hasAbout() {
             return false;
         }
+
         public boolean hasHelp() {
             return false;
         }
+
         public boolean isEditable() {
             return false;
         }
+
         public void removeParameter(IPortletDefinitionParameter parameter) {
         }
+
         public void removeParameter(String name) {
         }
+
         public void replaceParameters(Set<IPortletDefinitionParameter> parameters) {
         }
+
         public void setApprovalDate(Date approvalDate) {
         }
+
         public void setApproverId(int approvalId) {
         }
+
         public void setDescription(String descr) {
         }
+
         public void setEditable(boolean editable) {
         }
+
         public void setExpirationDate(Date expirationDate) {
         }
+
         public void setExpirerId(int expirerId) {
         }
+
         public void setFName(String fname) {
         }
+
         public void setHasAbout(boolean hasAbout) {
         }
+
         public void setHasHelp(boolean hasHelp) {
         }
+
         public void setName(String name) {
         }
+
         public void setParameters(Set<IPortletDefinitionParameter> parameters) {
         }
+
         public void setPublishDate(Date publishDate) {
         }
+
         public void setPublisherId(int publisherId) {
         }
+
         public void setTimeout(int timeout) {
         }
+
         public void setTitle(String title) {
         }
+
         public IPortletType getType() {
             return new MissingPortletType();
         }
+
         public void setType(IPortletType channelType) {
         }
-		public PortletLifecycleState getLifecycleState() {
-			return null;
-		}
-		public IPortletDefinitionId getPortletDefinitionId() {
-			return new MissingPortletDefinitionId();
-		}
-		public IPortletPreferences getPortletPreferences() {
-			return null;
-		}
-		public void setPortletPreferences(IPortletPreferences portletPreferences) {
-		}
-		public void addParameter(String name, String value) {
-		}
-		@Override
-		public void setPortletPreferences(
-				List<IPortletPreference> portletPreferences) {
-			
-		}
+
+        public PortletLifecycleState getLifecycleState() {
+            return null;
+        }
+
+        public IPortletDefinitionId getPortletDefinitionId() {
+            return new MissingPortletDefinitionId();
+        }
+
+        public IPortletPreferences getPortletPreferences() {
+            return null;
+        }
+
+        public void setPortletPreferences(IPortletPreferences portletPreferences) {
+        }
+
+        public void addParameter(String name, String value) {
+        }
+
+        @Override
+        public void setPortletPreferences(List<IPortletPreference> portletPreferences) {
+
+        }
+
         @Override
         public IPortletDescriptorKey getPortletDescriptorKey() {
             return null;
         }
+
         @Override
         public String toString() {
             return "MissingPortletDefinition [fname=" + this.fname + "]";
         }
+
         @Override
         public int hashCode() {
             final int prime = 31;
             int result = 1;
-            result = prime * result + ((this.fname == null) ? 0 : this.fname.hashCode());
+            result = prime * result + (this.fname == null ? 0 : this.fname.hashCode());
             return result;
         }
+
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
+            if (this == obj) {
                 return true;
-            if (obj == null)
+            }
+            if (obj == null) {
                 return false;
-            if (!IPortletDefinition.class.isAssignableFrom(obj.getClass()))
+            }
+            if (!IPortletDefinition.class.isAssignableFrom(obj.getClass())) {
                 return false;
+            }
             final IPortletDefinition other = (IPortletDefinition) obj;
             if (this.fname == null) {
-                if (other.getFName() != null)
+                if (other.getFName() != null) {
                     return false;
+                }
             }
-            else if (!this.fname.equals(other.getFName()))
+            else if (!this.fname.equals(other.getFName())) {
                 return false;
+            }
             return true;
         }
     }
-    
+
     private static final class MissingPortletDefinitionId implements IPortletDefinitionId {
 
-		public String getStringId() {
-			return "-1";
-		}
+        public String getStringId() {
+            return "-1";
+        }
 
-    	
     }
 
     private static final class MissingPortletType implements IPortletType {
 
-		public int getId() {
-			// TODO Auto-generated method stub
-			return -1;
-		}
+        public int getId() {
+            // TODO Auto-generated method stub
+            return -1;
+        }
 
-		public String getName() {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        public String getName() {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
-		public String getDescription() {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        public String getDescription() {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
-		public String getCpdUri() {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        public String getCpdUri() {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
-		public void setDescription(String descr) {
-			// TODO Auto-generated method stub
-			
-		}
+        public void setDescription(String descr) {
+            // TODO Auto-generated method stub
 
-		@Override
-		public void setCpdUri(String cpdUri) {
-			// TODO Auto-generated method stub
-			
-		}
+        }
 
-		@Override
-		public String getDataId() {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        @Override
+        public void setCpdUri(String cpdUri) {
+            // TODO Auto-generated method stub
 
-		@Override
-		public String getDataTitle() {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        }
 
-		@Override
-		public String getDataDescription() {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        @Override
+        public String getDataId() {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
-    	
+        @Override
+        public String getDataTitle() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public String getDataDescription() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
     }
 
 }

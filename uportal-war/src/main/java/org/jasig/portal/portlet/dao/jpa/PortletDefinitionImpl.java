@@ -135,6 +135,14 @@ class PortletDefinitionImpl implements IPortletDefinition {
 
 	@Column(name = "PORTLET_TIMEOUT", nullable = false)
 	private int timeout = 20000; //Default to a reasonable value
+    @Column(name = "ACTION_TIMEOUT")
+    private Integer actionTimeout = null;
+    @Column(name = "EVENT_TIMEOUT")
+    private Integer eventTimeout = null;
+    @Column(name = "RENDER_TIMEOUT")
+    private Integer renderTimeout = null;
+    @Column(name = "RESOURCE_TIMEOUT")
+    private Integer resourceTimeout = null;
 
 	//TODO link to User object once it is JPA managed
 	@Column(name = "PORTLET_PUBL_ID")
@@ -313,8 +321,48 @@ class PortletDefinitionImpl implements IPortletDefinition {
     public void setTimeout(int timeout) {
 		this.timeout = timeout;
 	}
+	
+	@Override
+    public Integer getActionTimeout() {
+        return actionTimeout;
+    }
 
 	@Override
+    public void setActionTimeout(Integer actionTimeout) {
+        this.actionTimeout = actionTimeout;
+    }
+
+	@Override
+    public Integer getEventTimeout() {
+        return eventTimeout;
+    }
+
+	@Override
+    public void setEventTimeout(Integer eventTimeout) {
+        this.eventTimeout = eventTimeout;
+    }
+
+    @Override
+    public Integer getRenderTimeout() {
+        return renderTimeout;
+    }
+
+    @Override
+    public void setRenderTimeout(Integer renderTimeout) {
+        this.renderTimeout = renderTimeout;
+    }
+
+    @Override
+    public Integer getResourceTimeout() {
+        return resourceTimeout;
+    }
+
+    @Override
+    public void setResourceTimeout(Integer resourceTimeout) {
+        this.resourceTimeout = resourceTimeout;
+    }
+
+    @Override
     public int getPublisherId() {
 		return publisherId;
 	}
