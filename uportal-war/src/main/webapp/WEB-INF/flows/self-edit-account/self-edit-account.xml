@@ -49,6 +49,7 @@
         <transition on="save" to="success">
             <evaluate expression="userAccountHelper.updateAccount(accountForm)"/>
         </transition>
+        <transition on="cancel" to="finish"/>
     </view-state>
 
     <view-state id="success">
