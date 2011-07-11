@@ -96,13 +96,12 @@ public class DirectoryPortletController {
                 result.getType().add("Directory");
                 
                 PortletUrl url = new PortletUrl();
-                url.setWindowId(request.getWindowID());
                 url.setType(PortletUrlType.RENDER);
                 url.setPortletMode("VIEW");
                 PortletUrlParameter param = new PortletUrlParameter();
                 param.setName("query");
                 param.getValue().add(query.getSearchTerms());
-                url.setParam(param);
+                url.getParam().add(param);
                 result.setPortletUrl(url);
                 results.getSearchResult().add(result);
             }

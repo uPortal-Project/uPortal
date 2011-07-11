@@ -72,20 +72,21 @@ public class EventImpl implements Event {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof Event)) {
             return false;
-        EventImpl other = (EventImpl) obj;
+        }
+        Event other = (Event) obj;
         if (this.qname == null) {
-            if (other.qname != null)
+            if (other.getQName() != null)
                 return false;
         }
-        else if (!this.qname.equals(other.qname))
+        else if (!this.qname.equals(other.getQName()))
             return false;
         if (this.value == null) {
-            if (other.value != null)
+            if (other.getValue() != null)
                 return false;
         }
-        else if (!this.value.equals(other.value))
+        else if (!this.value.equals(other.getValue()))
             return false;
         return true;
     }
