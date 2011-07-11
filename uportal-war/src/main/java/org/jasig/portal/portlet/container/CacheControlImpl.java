@@ -27,9 +27,12 @@ import javax.portlet.CacheControl;
  */
 public class CacheControlImpl implements CacheControl {
     private String eTag;
-    private int expirationTime;
-    private boolean publicScope;
-    private boolean cachedContent;
+    // PLT.22.1 default expiration time is 0 ("always expired")
+    private int expirationTime = 0;
+    // PLT.22.1 cache scope is assumed private by default
+    private boolean publicScope = false;
+    private boolean useCachedContent = false;
+    
     
     /* (non-Javadoc)
      * @see javax.portlet.CacheControl#getETag()
@@ -84,7 +87,7 @@ public class CacheControlImpl implements CacheControl {
      */
     @Override
     public void setUseCachedContent(boolean useCachedContent) {
-        this.cachedContent = useCachedContent;
+        this.useCachedContent = useCachedContent;
     }
 
     /* (non-Javadoc)
@@ -92,14 +95,14 @@ public class CacheControlImpl implements CacheControl {
      */
     @Override
     public boolean useCachedContent() {
-        return this.cachedContent;
+        return this.useCachedContent;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (this.cachedContent ? 1231 : 1237);
+        result = prime * result + (this.useCachedContent ? 1231 : 1237);
         result = prime * result + ((this.eTag == null) ? 0 : this.eTag.hashCode());
         result = prime * result + this.expirationTime;
         result = prime * result + (this.publicScope ? 1231 : 1237);
@@ -118,7 +121,7 @@ public class CacheControlImpl implements CacheControl {
             return false;
         }
         CacheControlImpl other = (CacheControlImpl) obj;
-        if (this.cachedContent != other.cachedContent) {
+        if (this.useCachedContent != other.useCachedContent) {
             return false;
         }
         if (this.eTag == null) {
@@ -139,7 +142,9 @@ public class CacheControlImpl implements CacheControl {
     }
 
     @Override
-    public String toString() {
-        return "CacheControlImpl [cachedContent=" + this.cachedContent + ", eTag=" + this.eTag + ", expirationTime=" + this.expirationTime + ", publicScope=" + this.publicScope + "]";
-    }
+	public String toString() {
+		return "CacheControlImpl [eTag=" + eTag + ", expirationTime="
+				+ expirationTime + ", publicScope=" + publicScope
+				+ ", useCachedContent=" + useCachedContent + "]";
+	}
 }
