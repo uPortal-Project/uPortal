@@ -149,12 +149,14 @@ var uportal = uportal || {};
         var post = {action: 'changeColumns', tabId: getActiveTabId(), widths: newcolumns};
         
         if (newcolumns.length < columnCount) {
+            var numToDelete = columnCount - newcolumns.length;
             var deletables = getDeletableColumns();
-            var deletes = deletables.filter(":gt(" + (newcolumns.length -1) + ")");
             post.deleted = [];
-            $(deletes).each(function(idx, deletable){
-                post.deleted.push(up.defaultNodeIdExtractor(deletable));
-            });
+            var deletes = [];
+            for (var i = 0; i < numToDelete; i++) {
+                deletes.push(deletables[deletables.length-i-1]);
+                post.deleted.push(up.defaultNodeIdExtractor(deletables[deletables.length-i-1]));
+            }
             
             var acceptors = $("#portalPageBodyColumns > [id^=column_].canAddChildren");
             var acceptor = acceptors.filter(":first");
