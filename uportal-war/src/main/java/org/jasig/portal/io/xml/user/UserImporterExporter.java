@@ -132,7 +132,7 @@ public class UserImporterExporter extends
 	    final String username = userType.getUsername();
 	    final String defaultUsername = getDefaultUsername(userType);
 	    final Tuple<Integer, Long> defaultUserInfo = getDefaultUserInfo(defaultUsername);
-        final long nextStructId = getNextStructId(username, defaultUserInfo);
+        final Long nextStructId = getNextStructId(username, defaultUserInfo);
 	    
         final Integer defaultUserId = defaultUserInfo != null ? defaultUserInfo.first : null;
         
@@ -182,7 +182,7 @@ public class UserImporterExporter extends
 	    }
 	}
 
-    protected long getNextStructId(final String username, final Tuple<Integer, Long> defaultUserInfo) {
+    protected Long getNextStructId(final String username, final Tuple<Integer, Long> defaultUserInfo) {
         final List<Long> maxStructIdResults = this.jdbcOperations.queryForList(
 	            "SELECT MAX(UPLS.STRUCT_ID) AS MAX_STRUCT_ID " + 
 	            "FROM UP_USER UPU " + 
@@ -198,13 +198,16 @@ public class UserImporterExporter extends
 	    else if (defaultUserInfo != null) {
 	        return defaultUserInfo.second;
 	    }
-	    else  {
-	        return 1;
-	    }
+
+	    return null;
     }
 
     //TODO cache the lookup of default user data
     protected Tuple<Integer, Long> getDefaultUserInfo(String defaultUsername) {
+    	if (defaultUsername == null) {
+    		return null;
+    	}
+
 	    final List<Tuple<Integer, Long>> defaultUserInfoResults = this.jdbcOperations.query(
 	            "SELECT USER_ID, NEXT_STRUCT_ID " + 
 	            "FROM UP_USER " + 
@@ -213,8 +216,9 @@ public class UserImporterExporter extends
                     @Override
                     public Tuple<Integer, Long> mapRow(ResultSet rs, int rowNum) throws SQLException {
                         final int userId = rs.getInt("USER_ID");
-                        final long nextStructId = rs.getLong("NEXT_STRUCT_ID");
-                        return new Tuple<Integer, Long>(userId, nextStructId);
+                        final Long nextStructId = rs.getLong("NEXT_STRUCT_ID");
+                        final boolean nullNextStructId = rs.wasNull();
+                        return new Tuple<Integer, Long>(userId, nullNextStructId ? null : nextStructId);
                     }
 	            },
 	            defaultUsername);
