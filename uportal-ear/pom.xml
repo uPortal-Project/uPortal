@@ -2,14 +2,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>org.jasig.portal</groupId>
-        <artifactId>uportal-parent</artifactId>
+        <groupId>org.jasig.umobile.server</groupId>
+        <artifactId>umobile-parent</artifactId>
         <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jasig.portal</groupId>
-    <artifactId>uportal-ear</artifactId>
+    <groupId>org.jasig.umobile.server</groupId>
+    <artifactId>umobile-ear</artifactId>
     <packaging>ear</packaging>
 
     <name>uPortal EAR</name>
@@ -17,63 +17,63 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.jasig.portal</groupId>
-            <artifactId>uportal-war</artifactId>
+            <groupId>org.jasig.umobile.server</groupId>
+            <artifactId>umobile-war</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
         
         <dependency>
-            <groupId>org.jasig.portal.portlets-overlay</groupId>
+            <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
             <artifactId>BookmarksPortlet</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
 
         <dependency>
-            <groupId>org.jasig.portal.portlets-overlay</groupId>
+            <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
             <artifactId>cas-proxy-test-portlet</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
         
         <dependency>
-            <groupId>org.jasig.portal.portlets-overlay</groupId>
+            <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
             <artifactId>CalendarPortlet</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
 
         <dependency>
-            <groupId>org.jasig.portal.portlets-overlay</groupId>
+            <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
             <artifactId>CoursesPortlet</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
 
         <dependency>
-            <groupId>org.jasig.portal.portlets-overlay</groupId>
+            <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
             <artifactId>FunctionalTestsPortlet</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
 
         <dependency>
-            <groupId>org.jasig.portal.portlets-overlay</groupId>
+            <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
             <artifactId>jasig-widget-portlets</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
 
         <dependency>
-            <groupId>org.jasig.portal.portlets-overlay</groupId>
+            <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
             <artifactId>MapPortlet</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
 
         <dependency>
-            <groupId>org.jasig.portal.portlets-overlay</groupId>
+            <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
             <artifactId>pluto-testsuite</artifactId>
             <version>${project.version}</version>
             <type>war</type>
@@ -87,28 +87,28 @@
         </dependency>
         
         <dependency>
-            <groupId>org.jasig.portal.portlets-overlay</groupId>
+            <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
             <artifactId>NewsReaderPortlet</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
 
         <dependency>
-            <groupId>org.jasig.portal.portlets-overlay</groupId>
+            <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
             <artifactId>SimpleContentPortlet</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
 
         <dependency>
-            <groupId>org.jasig.portal.portlets-overlay</groupId>
+            <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
             <artifactId>WeatherPortlet</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
 
         <dependency>
-            <groupId>org.jasig.portal.portlets-overlay</groupId>
+            <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
             <artifactId>WebProxyPortlet</artifactId>
             <version>${project.version}</version>
             <type>war</type>
@@ -163,55 +163,55 @@
                 <configuration>
                     <modules>
                         <webModule>
-                            <groupId>org.jasig.portal</groupId>
-                            <artifactId>uportal-war</artifactId>
+                            <groupId>org.jasig.umobile.server</groupId>
+                            <artifactId>umobile-war</artifactId>
                             <bundleFileName>${uportal.docbase}.war</bundleFileName>
                             <contextRoot>/${uportal.docbase}</contextRoot>
                         </webModule>
                         <webModule>
-                            <groupId>org.jasig.portal.portlets-overlay</groupId>
+                            <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
                             <artifactId>BookmarksPortlet</artifactId>
                             <bundleFileName>BookmarksPortlet.war</bundleFileName>
                             <contextRoot>/BookmarksPortlet</contextRoot>
                         </webModule>
                         <webModule>
-                            <groupId>org.jasig.portal.portlets-overlay</groupId>
+                            <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
                             <artifactId>cas-proxy-test-portlet</artifactId>
                             <bundleFileName>cas-proxy-test-portlet.war</bundleFileName>
                             <contextRoot>/cas-proxy-test-portlet</contextRoot>
                         </webModule>
                         <webModule>
-                            <groupId>org.jasig.portal.portlets-overlay</groupId>
+                            <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
                             <artifactId>CalendarPortlet</artifactId>
                             <bundleFileName>CalendarPortlet.war</bundleFileName>
                             <contextRoot>/CalendarPortlet</contextRoot>
                         </webModule>
                         <webModule>
-                            <groupId>org.jasig.portal.portlets-overlay</groupId>
+                            <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
                             <artifactId>CoursesPortlet</artifactId>
                             <bundleFileName>CoursesPortlet.war</bundleFileName>
                             <contextRoot>/CoursesPortlet</contextRoot>
                         </webModule>
                         <webModule>
-                            <groupId>org.jasig.portal.portlets-overlay</groupId>
+                            <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
                             <artifactId>FunctionalTestsPortlet</artifactId>
                             <bundleFileName>FunctionalTestsPortlet.war</bundleFileName>
                             <contextRoot>/FunctionalTestsPortlet</contextRoot>
                         </webModule>
                         <webModule>
-                            <groupId>org.jasig.portal.portlets-overlay</groupId>
+                            <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
                             <artifactId>jasig-widget-portlets</artifactId>
                             <bundleFileName>jasig-widget-portlets.war</bundleFileName>
                             <contextRoot>/jasig-widget-portlets</contextRoot>
                         </webModule>
                         <webModule>
-                            <groupId>org.jasig.portal.portlets-overlay</groupId>
+                            <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
                             <artifactId>MapPortlet</artifactId>
                             <bundleFileName>MapPortlet.war</bundleFileName>
                             <contextRoot>/MapPortlet</contextRoot>
                         </webModule>
                         <webModule>
-                            <groupId>org.jasig.portal.portlets-overlay</groupId>
+                            <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
                             <artifactId>pluto-testsuite</artifactId>
                             <bundleFileName>pluto-testsuite.war</bundleFileName>
                             <contextRoot>/pluto-testsuite</contextRoot>
@@ -223,25 +223,25 @@
                             <contextRoot>/ResourceServingWebapp</contextRoot>
                         </webModule>
                         <webModule>
-                            <groupId>org.jasig.portal.portlets-overlay</groupId>
+                            <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
                             <artifactId>NewsReaderPortlet</artifactId>
                             <bundleFileName>NewsReaderPortlet.war</bundleFileName>
                             <contextRoot>/NewsReaderPortlet</contextRoot>
                         </webModule>
                         <webModule>
-                            <groupId>org.jasig.portal.portlets-overlay</groupId>
+                            <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
                             <artifactId>SimpleContentPortlet</artifactId>
                             <bundleFileName>SimpleContentPortlet.war</bundleFileName>
                             <contextRoot>/SimpleContentPortlet</contextRoot>
                         </webModule>
                         <webModule>
-                            <groupId>org.jasig.portal.portlets-overlay</groupId>
+                            <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
                             <artifactId>WeatherPortlet</artifactId>
                             <bundleFileName>WeatherPortlet.war</bundleFileName>
                             <contextRoot>/WeatherPortlet</contextRoot>
                         </webModule>
                         <webModule>
-                            <groupId>org.jasig.portal.portlets-overlay</groupId>
+                            <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
                             <artifactId>WebProxyPortlet</artifactId>
                             <bundleFileName>WebProxyPortlet.war</bundleFileName>
                             <contextRoot>/WebProxyPortlet</contextRoot>

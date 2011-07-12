@@ -8,8 +8,8 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jasig.portal</groupId>
-    <artifactId>uportal-parent</artifactId>
+    <groupId>org.jasig.umobile.server</groupId>
+    <artifactId>umobile-parent</artifactId>
     <version>4.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
@@ -188,6 +188,7 @@
         <staxmate.version>2.0.1</staxmate.version>
         <stringtemplate.version>4.0.2</stringtemplate.version>
         <uportal-ear-deployer.version>1.0.1</uportal-ear-deployer.version>
+		<uportal-search-api.version>4.0.0-SNAPSHOT</uportal-search-api.version>
         <woodstox.version>4.1.1</woodstox.version>
         <xmlunit.version>1.3</xmlunit.version>
         <xstream.version>1.3.1</xstream.version>
@@ -200,7 +201,6 @@
         <module>uportal-ear</module>
         <module>uportal-portlets-overlay</module>
         <module>bootstrap</module>
-        <module>uportal-search-api</module>
     </modules>
 
     <dependencyManagement>
@@ -600,8 +600,8 @@
             </dependency>
             <dependency>
                 <groupId>org.jasig.portal</groupId>
-                <artifactId>uportal-ear-deployer</artifactId>
-                <version>${uportal-ear-deployer.version}</version>
+                <artifactId>umobile-ear-deployer</artifactId>
+                <version>${umobile-ear-deployer.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jasig.resourceserver</groupId>
@@ -747,6 +747,11 @@
                 <version>${standard.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.jasig.portal</groupId>
+                <artifactId>uportal-search-api</artifactId>
+                <version>${uportal-search-api.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>xmlunit</groupId>
                 <artifactId>xmlunit</artifactId>
                 <version>${xmlunit.version}</version>
@@ -845,9 +850,9 @@
                     <noticeTemplate>NOTICE.template</noticeTemplate>
                     <generateChildNotices>false</generateChildNotices>
                     <excludedModules>
-                        <excludedModule>uportal-portlets-overlay-parent</excludedModule>
+                        <excludedModule>umobile-portlets-overlay-parent</excludedModule>
                         <excludedModule>bootstrap</excludedModule>
-                        <excludedModule>uportal-ear</excludedModule>
+                        <excludedModule>umobile-ear</excludedModule>
                     </excludedModules>
                 </configuration>
             </plugin>
