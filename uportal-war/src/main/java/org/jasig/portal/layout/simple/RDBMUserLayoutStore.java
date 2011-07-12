@@ -681,7 +681,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
               if (realUserId != newUserId) {
                 // But never make the existing value SMALLER, change it only to make it LARGER
                 // (so, get existing value)
-                sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + newUserId;
+                sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + realUserId;
                 if (log.isDebugEnabled())
                     log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
                 rs = stmt.executeQuery(sQuery);
