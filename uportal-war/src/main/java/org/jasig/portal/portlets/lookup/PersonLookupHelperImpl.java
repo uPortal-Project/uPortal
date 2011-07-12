@@ -191,7 +191,7 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
         
         // limit the list to a maximum of 10 returned results
         // TODO: make this limit configurable
-        if (people.size() > 10) {
+        if (list.size() > 10) {
             list = list.subList(0, 9);
         }
         
