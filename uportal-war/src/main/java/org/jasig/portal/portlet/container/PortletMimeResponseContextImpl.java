@@ -34,6 +34,7 @@ import org.apache.pluto.container.PortletMimeResponseContext;
 import org.apache.pluto.container.PortletURLProvider;
 import org.apache.pluto.container.PortletURLProvider.TYPE;
 import org.apache.pluto.container.util.PrintWriterServletOutputStream;
+import org.jasig.portal.portlet.container.cache.IPortletCacheControlService;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.jasig.portal.portlet.container.services.IPortletCookieService;
 import org.jasig.portal.portlet.om.IPortletWindow;
@@ -50,16 +51,16 @@ import org.jasig.portal.url.UrlType;
  * @version $Revision$
  */
 public class PortletMimeResponseContextImpl extends PortletResponseContextImpl implements PortletMimeResponseContext {
-    private CacheControl cacheControl;
     
     private final IPortalUrlProvider portalUrlProvider;
     private final PrintWriter portletWriter;
     private OutputStream writerOutputStream;
+    private IPortletCacheControlService portletCacheControlService;
     
     public PortletMimeResponseContextImpl(PortletContainer portletContainer, IPortletWindow portletWindow,
             HttpServletRequest containerRequest, HttpServletResponse containerResponse,
             IRequestPropertiesManager requestPropertiesManager, IPortalUrlProvider portalUrlProvider,
-            IPortletCookieService portletCookieService) {
+            IPortletCookieService portletCookieService, IPortletCacheControlService portletCacheControlService) {
 
         super(portletContainer, portletWindow, containerRequest, containerResponse, 
                 requestPropertiesManager, portletCookieService);
@@ -68,6 +69,7 @@ public class PortletMimeResponseContextImpl extends PortletResponseContextImpl i
         
         this.portletWriter = (PrintWriter)containerRequest.getAttribute(IPortletRenderer.ATTRIBUTE__PORTLET_PRINT_WRITER);
         this.portalUrlProvider = portalUrlProvider;
+        this.portletCacheControlService = portletCacheControlService;
     }
 
     /* (non-Javadoc)
@@ -104,10 +106,8 @@ public class PortletMimeResponseContextImpl extends PortletResponseContextImpl i
     public CacheControl getCacheControl() {
         this.checkContextStatus();
         
-        if (this.cacheControl == null) {
-            this.cacheControl = new CacheControlImpl();
-        }
-        return this.cacheControl;
+        CacheControl cacheControl = this.portletCacheControlService.getPortletCacheControl(this.portletWindow.getPortletWindowId(), this.containerRequest);    
+        return cacheControl;
     }
 
     /* (non-Javadoc)

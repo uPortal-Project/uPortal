@@ -34,28 +34,28 @@
             <xs:element name="title" type="xs:string" />
             <xs:element name="summary" type="xs:string" />
             <xs:element name="type" type="xs:string" maxOccurs="unbounded" minOccurs="0" />
-            <xs:element name="portletUrl" type="portletUrl" minOccurs="0" />
-            <xs:element name="externalUrl" type="xs:anyURI" minOccurs="0" />
+            <xs:choice minOccurs="0">
+                <xs:element name="portletUrl" type="portletUrl"/>
+                <xs:element name="externalUrl" type="xs:anyURI"/>
+            </xs:choice>
         </xs:sequence>
-        
     </xs:complexType>
     
     <xs:complexType name="portletUrl">
         <xs:sequence>
-            <xs:element name="windowId" type="xs:string" />
-            <xs:element name="windowState" type="xs:string" />
-            <xs:element name="portletMode" type="xs:string" />
-            <xs:element name="type" type="portletUrlType" />
-            <xs:element name="param" type="portletUrlParameter" />
-            <xs:element name="urlString" type="xs:string" minOccurs="0"/>
+            <xs:element name="windowState" type="xs:string" default="normal" minOccurs="0" />
+            <xs:element name="portletMode" type="xs:string" default="view" minOccurs="0" />
+            <xs:element name="type" type="portletUrlType" default="render" minOccurs="0" />
+            <xs:element name="param" type="portletUrlParameter" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
     
     <xs:complexType name="portletUrlParameter">
         <xs:sequence>
-            <xs:element name="name" type="xs:string" />
             <xs:element name="value" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
+        
+        <xs:attribute name="name" type="xs:string" use="required" />
     </xs:complexType>
     
     <xs:simpleType name="portletUrlType">

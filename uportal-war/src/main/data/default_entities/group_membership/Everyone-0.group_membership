@@ -26,6 +26,7 @@
   <creator>system</creator>
   <description>All Users</description>
   <children>
+    <group>Authenticated Users</group>
     <group>Faculty</group>
     <group>Guests</group>
     <group>Staff</group>

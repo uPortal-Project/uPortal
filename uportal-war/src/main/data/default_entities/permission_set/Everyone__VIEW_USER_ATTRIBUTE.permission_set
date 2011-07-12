@@ -31,7 +31,7 @@
     <literal>username</literal> 
   </target>
   <target permission-type="GRANT">
-    <literal>given</literal>
+    <literal>givenName</literal>
   </target>
   <target permission-type="GRANT">
     <literal>sn</literal>
@@ -47,5 +47,14 @@
   </target>
   <target permission-type="GRANT">
     <literal>postalAddress</literal> 
+  </target>
+  <target permission-type="GRANT">
+    <literal>title</literal> 
+  </target>
+  <target permission-type="GRANT">
+    <literal>department</literal> 
+  </target>
+  <target permission-type="GRANT">
+    <literal>organization</literal> 
   </target>
 </permission-set>

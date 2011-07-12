@@ -52,17 +52,14 @@
                     <c:forEach items="${ type.value }" var="result">
                         <li>
                             <c:choose>
-                                <c:when test="${ not empty result.portletUrl }">
-                                    <h3><a href="${ result.portletUrl.urlString }">${ result.title }</a></h3>
-                                </c:when>
-                                <c:when test="${ not empty result.externalUrl }">
-                                    <h3><a href="${ result.externalUrl }">${ result.title }</a></h3>
+                                <c:when test="${ not empty result.key }">
+                                    <h3><a href="${ result.key }">${ result.value.title }</a></h3>
                                 </c:when>
                                 <c:otherwise>
-                                    <h3>${ result.title }</h3>
+                                    <h3>${ result.value.title }</h3>
                                 </c:otherwise>
                             </c:choose>
-                            <p>${ result.summary }</p>
+                            <p>${ result.value.summary }</p>
                         </li>
                     </c:forEach>
                 </ul>

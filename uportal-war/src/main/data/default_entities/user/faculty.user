@@ -24,8 +24,11 @@
   <default-user>defaultTemplateUser</default-user>
   <person-directory>
     <encrptd-pswd>(MD5)FoDMOEu9EMjbJ3bikDnqdFT0Tpd7xg6S</encrptd-pswd>
-    <givenName>Faculty</givenName>
-    <sn>User</sn>
-    <mail>faculty.user@example.org</mail>
+    <givenName>Felicia</givenName>
+    <sn>Faculty</sn>
+    <mail>felicia.faculty@example.org</mail>
+    <telephoneNumber>(555) 555-5555</telephoneNumber>
+    <title>Assistant Professor</title>
+    <department>Computer Science and Engineering</department>
   </person-directory>
 </user>

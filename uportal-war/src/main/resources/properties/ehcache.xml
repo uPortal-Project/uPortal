@@ -289,6 +289,22 @@
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
      
     <!-- 
+     | Caches CachedPortletData objects
+     | - 1 per user per portlet that tells the container to cache it's content (see portlet MimeResponse#getCacheControl())
+     +-->   
+    <cache name="org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.privateScopePortletOutputCache"
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
+    <!-- 
+     | Caches CachedPortletData objects
+     | - 1 per user per portlet that tells the container to cache it's content in the PUBLIC_SCOPE (see portlet MimeResponse#getCacheControl())
+     +-->   
+    <cache name="org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.publicScopePortletOutputCache"
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
+    <!-- 
      | Caches PortalCookieImpl objects
      | - 1 per "customer" per "year" (by default, or until they clear their cookies)
      +-->   

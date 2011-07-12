@@ -110,6 +110,11 @@
                         </property>
                     </bean>
                 </entry>
+                <entry key="userAttributesTargetProvider">
+                    <bean class="org.jasig.portal.permission.target.UserAttributesTargetProviderImpl">
+                        <property name="personAttributeDao" ref="personAttributeDao" />
+                    </bean>
+                </entry>
             </map>
         </property>
     </bean>    

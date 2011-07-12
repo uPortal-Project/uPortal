@@ -8,7 +8,6 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jasig.portal</groupId>
     <artifactId>uportal-war</artifactId>
     <packaging>war</packaging>
 
@@ -535,7 +534,7 @@
                     <compilerArgument>-proc:none</compilerArgument>
                 </configuration>
             </plugin>
-            <!-- Generates the Hibernate metamodel classes 
+            <!-- Generates the Hibernate metamodel classes -->
             <plugin>
                 <groupId>org.bsc.maven</groupId>
                 <artifactId>maven-processor-plugin</artifactId>
@@ -548,11 +547,11 @@
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <outputDirectory>target/generated-sources/metamodel</outputDirectory>
+                            <outputDirectory>target/generated-sources/annotations</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>--> 
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -566,7 +565,7 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>target/generated-sources/metamodel</source>
+                                <source>target/generated-sources/annotations</source>
                             </sources>
                         </configuration>
                     </execution>
@@ -725,33 +724,6 @@
     </build>
     
     <profiles>
-        <profile>
-            <id>jpa-metamodel</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.bsc.maven</groupId>
-                        <artifactId>maven-processor-plugin</artifactId>
-                        <version>2.0.2</version>
-                        <executions>
-                            <execution>
-                                <id>process</id>
-                                <goals>
-                                    <goal>process</goal>
-                                </goals>
-                                <phase>generate-sources</phase>
-                                <configuration>
-                                    <outputDirectory>target/metamodel</outputDirectory>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
         <profile>
             <id>jspc-tomcat6</id>
             <activation>

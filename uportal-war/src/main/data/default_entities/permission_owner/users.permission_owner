@@ -53,7 +53,7 @@
         <name>View user attribute</name>
         <fname>VIEW_USER_ATTRIBUTE</fname>
         <desc>View a specific user attribute.  This permission applies to that attribute for all visible users</desc>
-        <targetProvider>peopleAndGroupsTargetProvider</targetProvider>
+        <targetProvider>userAttributesTargetProvider</targetProvider>
     </activity>
     <activity>
         <name>Edit user attribute</name>

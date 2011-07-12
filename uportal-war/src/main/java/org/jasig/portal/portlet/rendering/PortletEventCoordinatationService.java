@@ -165,6 +165,7 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
     @Override
     public void processEvents(PortletContainer container, PortletWindow plutoPortletWindow, HttpServletRequest request, HttpServletResponse response, List<Event> events) {
         final PortletEventQueue requestPortletEventQueue = this.getPortletEventQueue(request);
+        this.logger.debug("Queued {} from {}", events, plutoPortletWindow);
         requestPortletEventQueue.addEvents(events);
     }
     
@@ -228,6 +229,7 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
                     final Set<IPortletWindow> portletWindows = this.portletWindowRegistry.getAllPortletWindowsForEntity(request, portletEntityId);
                     
                     for (final IPortletWindow portletWindow : portletWindows) {
+                        this.logger.debug("{} resolved target {}", event, portletWindow);
                         final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
                         final Event unmarshalledEvent = this.unmarshall(portletWindow, event);
                         portletEventQueue.offerEvent(portletWindowId, unmarshalledEvent);

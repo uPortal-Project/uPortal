@@ -8,7 +8,6 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jasig.portal</groupId>
     <artifactId>uportal-search-api</artifactId>
     <packaging>jar</packaging>
 

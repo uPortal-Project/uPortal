@@ -19,7 +19,6 @@
 
 package org.jasig.portal.portlets.search;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,11 +34,13 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.Validate;
+import org.jasig.portal.portlet.PortletUtils;
 import org.jasig.portal.portlet.container.properties.ThemeNameRequestPropertiesManager;
-import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.search.PortletUrl;
 import org.jasig.portal.search.PortletUrlParameter;
+import org.jasig.portal.search.PortletUrlType;
 import org.jasig.portal.search.SearchConstants;
 import org.jasig.portal.search.SearchRequest;
 import org.jasig.portal.search.SearchResult;
@@ -49,6 +50,8 @@ import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;
 import org.jasig.portal.url.IPortletUrlBuilder;
 import org.jasig.portal.url.UrlType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,6 +59,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.EventMapping;
+
+import com.google.common.collect.MapMaker;
 
 /**
  * SearchPortletController produces both a search form and results for configured
@@ -67,6 +72,12 @@ import org.springframework.web.portlet.bind.annotation.EventMapping;
 @Controller
 @RequestMapping("VIEW")
 public class SearchPortletController {
+    /**
+     * 
+     */
+    private static final String SEARCH_RESULTS_CACHE_NAME = "searchResultsCache";
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());    
     
     private List<IPortalSearchService> searchServices;
     
@@ -103,23 +114,36 @@ public class SearchPortletController {
 
         // construct a new search query object from the string query
         SearchRequest queryObj = new SearchRequest();
-        queryObj.setQueryId(RandomStringUtils.randomAlphanumeric(32));
+        String queryId = RandomStringUtils.randomAlphanumeric(32);
+        queryObj.setQueryId(queryId);
         queryObj.setSearchTerms(query);
+        
+        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getPortletHttpRequest(request);
+        final IPortletWindowId portletWindowId = this.portletWindowRegistry.getPortletWindowId(httpServletRequest, request.getWindowID());
 
         // add search results from each portal search service to a new portal
         // search results object
         PortalSearchResults results = new PortalSearchResults();
         for (IPortalSearchService searchService : searchServices) {
             SearchResults serviceResults = searchService.getSearchResults(request, queryObj);
-            results.addPortletSearchResults(serviceResults);
+            addSearchResults(serviceResults, results, httpServletRequest, portletWindowId);
         }
         
-        // place the portal search results object in the session
+        // place the portal search results object in the session using the queryId to namespace it
         PortletSession session = request.getPortletSession();
-        session.setAttribute("searchResults", results);
+        Map<String, PortalSearchResults> searchResultsCache;
+        synchronized (org.springframework.web.portlet.util.PortletUtils.getSessionMutex(session)) {
+            searchResultsCache = (Map<String, PortalSearchResults>)session.getAttribute(SEARCH_RESULTS_CACHE_NAME);
+            if (searchResultsCache == null) {
+                searchResultsCache = new MapMaker().maximumSize(50).makeMap();
+                session.setAttribute(SEARCH_RESULTS_CACHE_NAME, searchResultsCache);
+            }
+        }
+        searchResultsCache.put(queryId, results);
         
         // send a search query event
         response.setEvent(SearchConstants.SEARCH_REQUEST_QNAME, queryObj);
+        response.setRenderParameter("queryId", queryId);
     }
     
     @EventMapping(SearchConstants.SEARCH_RESULTS_QNAME_STRING)
@@ -131,28 +155,88 @@ public class SearchPortletController {
 
         // get the existing portal search result from the session and append
         // the results for this event
-        PortletSession session = request.getPortletSession();
-        PortalSearchResults results = (PortalSearchResults) session.getAttribute("searchResults");
+        String queryId = portletSearchResults.getQueryId();
         
-        if (portletSearchResults != null) {
-            final HttpServletRequest httpServletRequest = this.portalRequestUtils.getPortletHttpRequest(request);
+        PortletSession session = request.getPortletSession();
+        final Map<String, PortalSearchResults> searchResultsCache = (Map<String, PortalSearchResults>)session.getAttribute(SEARCH_RESULTS_CACHE_NAME);
+        if (searchResultsCache == null) {
+            this.logger.warn("No searchResultsCache Map in the session, ignoring search results: " + event);
+            return;
+        }
+        
+        final PortalSearchResults results = searchResultsCache.get(queryId);
+        if (results == null) {
+            this.logger.warn("No PortalSearchResults found for queryId " + queryId + ", ignoring search results: " + event);
+            return;
+        }
+        
+        final String windowId = portletSearchResults.getWindowId();
+        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getPortletHttpRequest(request);
+        final IPortletWindowId portletWindowId = this.portletWindowRegistry.getPortletWindowId(httpServletRequest, windowId);
+        
+        addSearchResults(portletSearchResults, results, httpServletRequest, portletWindowId);
+    }
 
-            for (SearchResult result : portletSearchResults.getSearchResult()) {
-                if (result.getPortletUrl() != null) {
-                    final IPortletWindowId portletWindowId = this.portletWindowRegistry.getPortletWindowId(httpServletRequest, result.getPortletUrl().getWindowId());
-                    final IPortalUrlBuilder portalUrlBuilder = this.portalUrlProvider.getPortalUrlBuilderByPortletWindow(httpServletRequest, portletWindowId, UrlType.RENDER);
-                    final IPortletUrlBuilder portletUrlBuilder = portalUrlBuilder.getPortletUrlBuilder(portletWindowId);
-                    PortletUrlParameter param = result.getPortletUrl().getParam();
-                    if (param != null) {
-                        portletUrlBuilder.addParameter(param.getName(), param.getValue().get(0));
+    private void addSearchResults(SearchResults portletSearchResults, PortalSearchResults results,
+            final HttpServletRequest httpServletRequest, final IPortletWindowId portletWindowId) {
+        for (SearchResult result : portletSearchResults.getSearchResult()) {
+            final String resultUrl = getResultUrl(httpServletRequest, result, portletWindowId);
+            this.logger.debug("Created {} with from {}", resultUrl, result);
+            results.addPortletSearchResults(resultUrl, result); 
+        }
+    }
+    
+    protected String getResultUrl(HttpServletRequest httpServletRequest, SearchResult result, IPortletWindowId portletWindowId) {
+        final String externalUrl = result.getExternalUrl();
+        if (externalUrl != null) {
+            return externalUrl;
+        }
+        
+        
+        UrlType urlType = UrlType.RENDER;
+
+        final PortletUrl portletUrl = result.getPortletUrl();
+        if (portletUrl != null) {
+            final PortletUrlType type = portletUrl.getType();
+            if (type != null) {
+                switch (type) {
+                    case ACTION: {
+                        urlType = UrlType.ACTION;
+                        break;
                     }
-                    result.getPortletUrl().setUrlString(portletUrlBuilder.getPortalUrlBuilder().getUrlString());
+                    default:
+                    case RENDER: {
+                        urlType = UrlType.RENDER;
+                        break;
+                    }
+                    case RESOURCE: {
+                        urlType = UrlType.RESOURCE;
+                        break;
+                    }
                 }
             }
-            
-            results.addPortletSearchResults(portletSearchResults);
-            
         }
+        
+        final IPortalUrlBuilder portalUrlBuilder = this.portalUrlProvider.getPortalUrlBuilderByPortletWindow(httpServletRequest, portletWindowId, urlType);
+        final IPortletUrlBuilder portletUrlBuilder = portalUrlBuilder.getTargetedPortletUrlBuilder();
+        
+        if (portletUrl != null) {
+            final String portletMode = portletUrl.getPortletMode();
+            if (portletMode != null) {
+                portletUrlBuilder.setPortletMode(PortletUtils.getPortletMode(portletMode));
+            }
+            final String windowState = portletUrl.getWindowState();
+            if (windowState != null) {
+                portletUrlBuilder.setWindowState(PortletUtils.getWindowState(windowState));
+            }
+            for (final PortletUrlParameter param : portletUrl.getParam()) {
+                final String name = param.getName();
+                final List<String> values = param.getValue();
+                portletUrlBuilder.addParameter(name, values.toArray(new String[values.size()]));
+            }
+        }
+        
+        return portalUrlBuilder.getUrlString();
     }
 
 
@@ -165,15 +249,19 @@ public class SearchPortletController {
      */
     @RequestMapping
     public ModelAndView getSearchResults(PortletRequest request,
-            @RequestParam(value = "query", required = false) String query) {
+            @RequestParam(value = "query", required = false) String query,
+            @RequestParam(value = "queryId", required = false) String queryId
+            ) {
         
         final Map<String,Object> model = new HashMap<String, Object>();
         model.put("query", query);
 
         PortletSession session = request.getPortletSession();
-        PortalSearchResults results = (PortalSearchResults) session.getAttribute("searchResults");
-
-        model.put("results", results);
+        final Map<String, PortalSearchResults> searchResultsCache = (Map<String, PortalSearchResults>)session.getAttribute(SEARCH_RESULTS_CACHE_NAME);
+        if (searchResultsCache != null) {
+            final PortalSearchResults results = searchResultsCache.get(queryId);
+            model.put("results", results);
+        }
 
         final boolean isMobile = isMobile(request);
         String viewName = isMobile ? "/jsp/Search/mobileSearch" : "/jsp/Search/search";

@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletResourceResponseContext;
+import org.jasig.portal.portlet.container.cache.IPortletCacheControlService;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.jasig.portal.portlet.container.services.IPortletCookieService;
 import org.jasig.portal.portlet.om.IPortletWindow;
@@ -40,9 +41,9 @@ public class PortletResourceResponseContextImpl extends PortletMimeResponseConte
     public PortletResourceResponseContextImpl(PortletContainer portletContainer, IPortletWindow portletWindow,
             HttpServletRequest containerRequest, HttpServletResponse containerResponse,
             IRequestPropertiesManager requestPropertiesManager, IPortalUrlProvider portalUrlProvider,
-            IPortletCookieService portletCookieService) {
+            IPortletCookieService portletCookieService, IPortletCacheControlService portletCacheControlService) {
 
-        super(portletContainer, portletWindow, containerRequest, containerResponse, requestPropertiesManager, portalUrlProvider, portletCookieService);
+        super(portletContainer, portletWindow, containerRequest, containerResponse, requestPropertiesManager, portalUrlProvider, portletCookieService, portletCacheControlService);
         
     }
 

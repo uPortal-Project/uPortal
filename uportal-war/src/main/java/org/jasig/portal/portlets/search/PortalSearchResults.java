@@ -1,44 +1,47 @@
 package org.jasig.portal.portlets.search;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.jasig.portal.search.SearchResult;
-import org.jasig.portal.search.SearchResults;
 
 public class PortalSearchResults {
-
-    private Map<String, List<SearchResult>> results;
+    private static final List<String> DEFAULT_TYPES = Arrays.asList("Default");
+    private final Map<String, Map<String, SearchResult>> results;
     
     public PortalSearchResults() {
-        this.results = new HashMap<String, List<SearchResult>>();
+        this.results = new LinkedHashMap<String, Map<String, SearchResult>>();
     }
     
-    public Map<String, List<SearchResult>> getResults() {
+    public Map<String, Map<String, SearchResult>> getResults() {
         return this.results;
     }
     
-    public void addPortletSearchResults(SearchResults portletSearchResults) {
-        for (SearchResult result : portletSearchResults.getSearchResult()) {
-            final List<String> types = result.getType();
-            if (types == null || types.isEmpty()) {
-                addPortletSearchResult("Default", result);
+    public synchronized void addPortletSearchResults(String url, SearchResult result) {
+        final List<String> types = this.getTypes(result);
+        for (final String type : types) {
+            
+            final Map<String, SearchResult> typeResults;
+            if (!results.containsKey(type)) {
+                typeResults = new LinkedHashMap<String, SearchResult>();
+                results.put(type, typeResults);
             }
             else {
-                for (String type : types) {
-                    addPortletSearchResult(type, result);
-                }
+                typeResults = results.get(type);
             }
+        
+            typeResults.put(url, result);
         }
     }
     
-    protected void addPortletSearchResult(String type, SearchResult result) {
-        if (!results.containsKey(type)) {
-            results.put(type, new ArrayList<SearchResult>());
+    protected List<String> getTypes(SearchResult result) {
+        final List<String> type = result.getType();
+        if (type != null && !type.isEmpty()) {
+            return type;
         }
-        results.get(type).add(result);
+        
+        return DEFAULT_TYPES;
     }
-    
 }

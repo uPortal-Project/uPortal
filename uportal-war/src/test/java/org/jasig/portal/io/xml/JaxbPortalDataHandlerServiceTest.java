@@ -64,6 +64,7 @@ import com.google.common.collect.ImmutableSet;
  * @version $Revision$
  */
 @RunWith(MockitoJUnitRunner.class)
+@Ignore
 public class JaxbPortalDataHandlerServiceTest {
     @InjectMocks private JaxbPortalDataHandlerService dataImportExportService = new JaxbPortalDataHandlerService();
     @Mock private XmlUtilities xmlUtilities;

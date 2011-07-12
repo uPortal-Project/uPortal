@@ -67,9 +67,26 @@
                                     <c:forEach items="${ attributeNames }" var="attribute">
                                         <c:if test="${ fn:length(person.attributes[attribute.key]) > 0 }">
                                             <tr>
-                                                <td><spring:message code="attribute.displayName.${ attribute.key }"/></td>
-                                                <td>${fn:escapeXml(person.attributes[attribute.key][0])}</td>
-                                        </tr>
+                                                <td>
+                                                    <spring:message code="attribute.displayName.${ attribute.key }"/>
+                                                </td>
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${ attribute.value == 'EMAIL' }">
+                                                            <a href="mailto:${ person.attributes[attribute.key][0] }">${ fn:escapeXml(person.attributes[attribute.key][0]) }</a>
+                                                        </c:when>
+                                                        <c:when test="${ attribute.value == 'MAP' }">
+                                                            <a href="<c:url value="http://maps.google.com/maps"><c:param name="q" value="${ fn:escapeXml(fn:replace(person.attributes[attribute.key][0], '$', ' ')) }"/></c:url>">${ fn:replace(fn:escapeXml(person.attributes[attribute.key][0]), '$', '<br/>') }</a>
+                                                        </c:when>
+                                                        <c:when test="${ attribute.value == 'LINK' }">
+                                                            <a href="${ fn:escapeXml(person.attributes[attribute.key][0]) }">${ fn:escapeXml(person.attributes[attribute.key][0]) }</a>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            ${ fn:escapeXml(person.attributes[attribute.key][0]) }
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </td>
+                                            </tr>
                                         </c:if>
                                     </c:forEach>
                                 </table>

@@ -24,8 +24,11 @@
   <default-user>defaultTemplateUser</default-user>
   <person-directory>
     <encrptd-pswd>(MD5)YGvCb8TdruiHaXdY9OvhRJ0MhwZYVTHa</encrptd-pswd>
-    <givenName>Staff</givenName>
-    <sn>User</sn>
-    <mail>staff.user@example.org</mail>
+    <givenName>Samuel</givenName>
+    <sn>Staff</sn>
+    <mail>samuel.staff@example.org</mail>
+    <telephoneNumber>(555) 555-5555</telephoneNumber>
+    <title>Database Administrator</title>
+    <department>IT Services</department>
   </person-directory>
 </user>

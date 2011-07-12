@@ -24,13 +24,22 @@
   <owner>UP_USERS</owner>
   <principal-type>org.jasig.portal.groups.IEntityGroup</principal-type>
   <principal> 
-    <group>Everyone</group> 
+    <group>Authenticated Users</group> 
   </principal>
   <activity>VIEW_USER</activity>
   <target permission-type="GRANT">
-    <group>Students</group> 
+    <group>Everyone</group>
   </target>
-  <target permission-type="GRANT">
-    <group>Faculty</group>
+  <target permission-type="DENY">
+    <group>Fragment Owners</group> 
+  </target>
+  <target permission-type="DENY">
+    <literal>defaultTemplateUser</literal> 
+  </target>
+  <target permission-type="DENY">
+    <literal>headerfooter-lo</literal> 
+  </target>
+  <target permission-type="DENY">
+    <literal>system</literal> 
   </target>
 </permission-set>
