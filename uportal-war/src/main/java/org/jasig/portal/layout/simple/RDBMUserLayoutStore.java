@@ -816,11 +816,12 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
               // uPortal i18n
               int name_index, value_index;
               if (localeAware) {
-                  ls = new LayoutStructure(
+                Locale[] locales = localeManager.getLocales();
+                String locale = locales[0].toString();
+				ls = new LayoutStructure(
                               structId, nextId, childId, chanId, 
                               rs.getString(7),rs.getString(8),rs.getString(9),
-                              localeManager.getLocales()
-                              [0].toString());
+                              locale);
                   name_index=10;
                   value_index=11;
               }  else {
@@ -1063,9 +1064,13 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
         		if(defaultProfilePerson.getID() != person.getID()) {
         			UserProfile templateProfile = getUserProfileByFname(defaultProfilePerson,profileFname);
         			if(templateProfile != null) {
-        			    final IUserProfile newUserProfile = new UserProfile(templateProfile);
+        				UserProfile newUserProfile = new UserProfile(templateProfile);
+        			    final Locale[] userLocales = localeStore.getUserLocales(person);
         			    newUserProfile.setLayoutId(0);
-        				return addUserProfile(person,newUserProfile);
+        			    newUserProfile = addUserProfile(person,newUserProfile);
+        			    
+        			    newUserProfile.setLocaleManager(new LocaleManager(person, userLocales));
+        			    return newUserProfile;
         			}
         		}
         	}
