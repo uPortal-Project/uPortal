@@ -51,7 +51,7 @@ public class AntPatternFileFilter implements FileFilter {
     public AntPatternFileFilter(boolean acceptDirectories, boolean ignoreHidden, String include, Collection<String> excludes) {
         Validate.notNull(include);
         Validate.notNull(excludes);
-        this.includes = ImmutableSet.of(FilenameUtils.separatorsToSystem(include));
+        this.includes = ImmutableSet.of(fixAntPattern(include));
         this.excludes = fixAntPatterns(excludes);
         this.acceptDirectories = acceptDirectories;
         this.ignoreHidden = ignoreHidden;
@@ -69,12 +69,21 @@ public class AntPatternFileFilter implements FileFilter {
     protected Collection<String> fixAntPatterns(Collection<String> patterns) {
         final Builder<String> fixedPatterns = ImmutableSet.builder();
         
-        for (final String pattern : patterns) {
-            fixedPatterns.add(FilenameUtils.separatorsToSystem(pattern));
+        for (String pattern : patterns) {
+        	pattern = fixAntPattern(pattern);
+            fixedPatterns.add(pattern);
         }
         
         return fixedPatterns.build();
     }
+
+	private String fixAntPattern(String pattern) {
+		pattern = FilenameUtils.separatorsToSystem(pattern);
+		if (!SelectorUtils.hasWildcards(pattern)) {
+			pattern = "**" + File.separatorChar + pattern;
+		}
+		return pattern;
+	}
 
     @Override
     public boolean accept(File pathname) {
@@ -96,7 +105,10 @@ public class AntPatternFileFilter implements FileFilter {
     protected boolean accept(File pathname, final String path) {
         logger.debug("checking path: {}", path);
         for (final String include : this.includes) {
-            if ((acceptDirectories && pathname.isDirectory()) || SelectorUtils.matchPath(include, path, false)) {
+            if ((acceptDirectories && pathname.isDirectory()) || 
+            		SelectorUtils.matchPath(include, path, false) || 
+            		SelectorUtils.match(include, path, false)) {
+
                 logger.debug("{} matches include {}", path, include);
                 for (final String exclude : this.excludes) {
                     if (SelectorUtils.matchPath(exclude, path, false)) {
