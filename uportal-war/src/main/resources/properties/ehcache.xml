@@ -246,13 +246,20 @@
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <!-- 
-     | Caches DLM Evaluator object
+     | Caches list of DLM Evaluators
      | - 1 per parentheses in the evaluators
      +-->
     <cache name="org.jasig.portal.layout.dlm.providers.Paren.evaluators"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
-          
+    <!-- 
+     | Caches list of DLM Evaluators
+     | - 1 per evaluator group
+     +-->
+    <cache name="org.jasig.portal.layout.dlm.providers.EvaluatorGroup.evaluators"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
     <!-- 
      | Caches PermissionOwner objects
      | - 1 x permission owner type
@@ -312,6 +319,14 @@
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <!-- 
+     | Caches queries for PortalCookieImpl objects by cookie value
+     | - 1 per active user
+     +-->   
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortalCookieImpl.query.FIND_COOKIE_BY_VALUE"
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
+    <!-- 
      | Caches the IPortletCookie collection within PortalCookieImpl objects
      | - 1 per portlet cookie per "customer" per "year" (by default, or until they clear their cookies)
      +-->  
@@ -365,6 +380,14 @@
      +-->
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl.query.FIND_PORTLET_DEF_BY_FNAME"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
+    <!-- 
+     | Caches query that returns all portlet definitions
+     | - 1
+     | - not replicated
+     +-->
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl.query.FIND_ALL_PORTLET_DEFS"
+        eternal="false" maxElementsInMemory="1" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
         
     <!-- 
@@ -479,7 +502,8 @@
      +-->
     <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />        
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
     <!-- 
      | Caches query results for all local users
      | - 1
@@ -494,6 +518,14 @@
      | - replicated by invalidation
      +-->
     <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl.query.FIND_ACCOUNT_BY_NAME"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />       
+    <!-- 
+     | Caches query results for finding a local user with a search
+     | - 1 x local user
+     | - replicated by invalidation
+     +-->
+    <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImplquery.ACCOUNT_SEARCH"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <!-- 
