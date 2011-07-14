@@ -93,6 +93,20 @@
             </div>
         </div>
         
+        <!-- Portlet Section -->
+        <div class="portlet-section" role="region">
+            <div class="titlebar">
+                <h3 class="title" role="heading"><spring:message code="parent.groups"/></h3>
+            </div>
+            <div class="content">
+                <ul>
+                    <c:forEach items="${ parents }" var="group">
+                        <li>${ group.name }</li>
+                    </c:forEach>
+                </ul>
+            </div>
+        </div>
+        
         <div class="buttons">
             <a class="button" href="${ backUrl }"><spring:message code="back"/></a>
         </div>

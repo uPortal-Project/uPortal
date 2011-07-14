@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -41,8 +42,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.i18n.ILocaleStore;
 import org.jasig.portal.i18n.LocaleManager;
+import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
+import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
 import org.jasig.portal.persondir.ILocalAccountDao;
 import org.jasig.portal.persondir.ILocalAccountPerson;
 import org.jasig.portal.portletpublishing.xml.Preference;
@@ -52,6 +56,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.IPortalPasswordService;
 import org.jasig.portal.services.AuthorizationService;
+import org.jasig.portal.services.GroupService;
 import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;
 import org.jasig.portal.url.IPortletUrlBuilder;
@@ -81,6 +86,7 @@ public class UserAccountHelper {
     private MessageSource messageSource;
     private String portalEmailAddress;
     private IPersonManager personManager;
+    private IGroupListHelper groupListHelper;
     
     @Autowired
     public void setLocaleStore(ILocaleStore localeStore) {
@@ -129,6 +135,11 @@ public class UserAccountHelper {
         this.personManager = personManager;
     }
 
+    @Autowired
+    public void setGroupListHelper(IGroupListHelper groupListHelper) {
+        this.groupListHelper = groupListHelper;
+    }
+
     
     public PersonForm getNewAccountForm() {
         
@@ -172,6 +183,17 @@ public class UserAccountHelper {
         } else {
             return false;
         }
+    }
+    
+    public List<JsonEntityBean> getParentGroups(String target) {
+        IGroupMember member = GroupService.getEntity(target, IPerson.class);
+        Iterator<IGroupMember> iterator = (Iterator<IGroupMember>) member.getAllContainingGroups();
+        List<JsonEntityBean> parents = new ArrayList<JsonEntityBean>();
+        while (iterator.hasNext()) {
+            parents.add(groupListHelper.getEntity(iterator.next()));
+        }
+        Collections.sort(parents);
+        return parents;
     }
     
     public boolean canImpersonateUser(IPerson currentUser, String target) {
