@@ -37,7 +37,7 @@
     
     <action-state id="selectPerson">
         <evaluate expression="personLookupHelper.findPerson(portalWebFlowUtils.getCurrentPerson(externalContext), requestParameters.username)" result="flowScope.person"/>
-        <transition on="#{flowScope.person == null}" to="personSearchResults"/>
+        <transition on="#{flowScope.person == null}" to="personLookup"/>
         <transition to="returnSelectedPerson"/>
     </action-state>
     
