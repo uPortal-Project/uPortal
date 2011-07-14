@@ -44,7 +44,7 @@ import org.springframework.web.portlet.mvc.AbstractController;
  */
 public class IFramePortletController extends AbstractController {
     
-    private static final Map<String, String> IFRAME_ATTRS = Collections.unmodifiableMap(new LinkedHashMap<String, String>() {{
+    protected static final Map<String, String> IFRAME_ATTRS = Collections.unmodifiableMap(new LinkedHashMap<String, String>() {{
         /** document-wide unique id */
         put("id", null);
         
@@ -99,13 +99,15 @@ public class IFramePortletController extends AbstractController {
 		// window from the portlet preferences
 		PortletPreferences preferences = request.getPreferences();
 		
-		//Legacy support for url attribute
-		model.put("src", preferences.getValue("url", null));
-		
 		for (final Map.Entry<String, String> attrEntry : IFRAME_ATTRS.entrySet()) {
     		final String attr = attrEntry.getKey();
             final String defaultValue = attrEntry.getValue();
             model.put(attr, preferences.getValue(attr, defaultValue));
+		}
+		
+        //Legacy support for url attribute
+		if (model.get("src") == null) {
+	        model.put("src", preferences.getValue("url", IFRAME_ATTRS.get("src")));	        
 		}
 		
 		return new ModelAndView("/jsp/IFrame/iframePortlet", "attrs", model);
