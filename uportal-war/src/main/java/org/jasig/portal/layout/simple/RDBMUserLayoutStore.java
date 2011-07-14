@@ -69,6 +69,7 @@ import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
 import org.springframework.jdbc.support.SQLExceptionTranslator;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -98,6 +99,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
   protected static final String folderPrefix = "s";
   
   protected TransactionOperations transactionOperations;
+  protected TransactionOperations nextStructTransactionOperations;
   protected JdbcOperations jdbcOperations;
   
   private ILocaleStore localeStore; 
@@ -124,6 +126,10 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
     @Autowired
     public void setPlatformTransactionManager(@Qualifier("PortalDb") PlatformTransactionManager platformTransactionManager) {
         this.transactionOperations = new TransactionTemplate(platformTransactionManager);
+        
+        final DefaultTransactionDefinition nextStructTransactionDefinition = new DefaultTransactionDefinition();
+        nextStructTransactionDefinition.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        this.nextStructTransactionOperations = new TransactionTemplate(platformTransactionManager, nextStructTransactionDefinition);
     }
 
     @Resource(name="PortalDb")
@@ -408,63 +414,49 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
    * @return next free structure ID
    * @exception Exception
    */
-  protected synchronized String getNextStructId (final IPerson person, final String prefix) {
-    final int userId = person.getID();
-    return this.transactionOperations.execute(new TransactionCallback<String>() {
-        @Override
-        public String doInTransaction(TransactionStatus status) {
-            return jdbcOperations.execute(new ConnectionCallback<String>() {
-                @Override
-                public String doInConnection(Connection con) throws SQLException, DataAccessException {
+    protected String getNextStructId(final IPerson person, final String prefix) {
+        final int userId = person.getID();
+        return this.nextStructTransactionOperations.execute(new TransactionCallback<String>() {
+            @Override
+            public String doInTransaction(TransactionStatus status) {
+                return jdbcOperations.execute(new ConnectionCallback<String>() {
+                    @Override
+                    public String doInConnection(Connection con) throws SQLException, DataAccessException {
 
-      Statement stmt = con.createStatement();
-      try {
-        String sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + userId;
-        for (int i = 0; i < 25; i++) {
-            if (log.isDebugEnabled())
-                log.debug("RDBMUserLayoutStore::getNextStructId(): " + sQuery);
-          ResultSet rs = stmt.executeQuery(sQuery);
-          int currentStructId;
-          try {
-        	  if (rs.next()){
-        		  currentStructId = rs.getInt(1);
-        	  }else{
-        		  throw new SQLException("no rows returned for query ["+sQuery+"]");
-        	  }
-          } finally {
-        	  rs.close();
-          }
-          int nextStructId = currentStructId + 1;
-          try {
-            String sUpdate = "UPDATE UP_USER SET NEXT_STRUCT_ID=" + nextStructId + " WHERE USER_ID=" + userId + " AND NEXT_STRUCT_ID="
-                + currentStructId;
-            if (log.isDebugEnabled())
-                log.debug("RDBMUserLayoutStore::getNextStructId(): " + sUpdate);
-            stmt.executeUpdate(sUpdate);
-            con.commit();
-            return  prefix + nextStructId;
-          } catch (SQLException sqle) {
-            con.rollback();
-            // Assume a concurrent update. Try again after some random amount of milliseconds.
-            // Retry in up to 3 seconds
-            try {
-                Thread.sleep(java.lang.Math.round(java.lang.Math.random()* 3 * 1000));
+                        Statement stmt = con.createStatement();
+                        try {
+                            String sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + userId;
+                            if (log.isDebugEnabled())
+                                log.debug("RDBMUserLayoutStore::getNextStructId(): " + sQuery);
+                            ResultSet rs = stmt.executeQuery(sQuery);
+                            int currentStructId;
+                            try {
+                                if (rs.next()) {
+                                    currentStructId = rs.getInt(1);
+                                }
+                                else {
+                                    throw new SQLException("no rows returned for query [" + sQuery + "]");
+                                }
+                            }
+                            finally {
+                                rs.close();
+                            }
+                            int nextStructId = currentStructId + 1;
+                            String sUpdate = "UPDATE UP_USER SET NEXT_STRUCT_ID=" + nextStructId + " WHERE USER_ID="
+                                    + userId + " AND NEXT_STRUCT_ID=" + currentStructId;
+                            if (log.isDebugEnabled())
+                                log.debug("RDBMUserLayoutStore::getNextStructId(): " + sUpdate);
+                            stmt.executeUpdate(sUpdate);
+                            return prefix + nextStructId;
+                        }
+                        finally {
+                            stmt.close();
+                        }
+                    }
+                });
             }
-            catch (InterruptedException e) {
-                //ignore
-            } 
-          }
-        }
-      } finally {
-        stmt.close();
-      }
-      
-      throw new RuntimeException("Unable to generate a new structure id for user " + userId);
-                }
-            });
-        }
-    });
-  }
+        });
+    }
 
   /**
    * Return the Structure ID tag
@@ -681,7 +673,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
               if (realUserId != newUserId) {
                 // But never make the existing value SMALLER, change it only to make it LARGER
                 // (so, get existing value)
-                sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + newUserId;
+                sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + realUserId;
                 if (log.isDebugEnabled())
                     log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
                 rs = stmt.executeQuery(sQuery);
@@ -694,7 +686,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
               }
     
               if (nextStructId > realNextStructId) {
-                sQuery = "UPDATE UP_USER SET NEXT_STRUCT_ID=" + nextStructId + " WHERE USER_ID=" + newUserId;
+                sQuery = "UPDATE UP_USER SET NEXT_STRUCT_ID=" + nextStructId + " WHERE USER_ID=" + realUserId;
                 if (log.isDebugEnabled())
                     log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
                 stmt.executeUpdate(sQuery);
@@ -816,11 +808,12 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
               // uPortal i18n
               int name_index, value_index;
               if (localeAware) {
-                  ls = new LayoutStructure(
+                Locale[] locales = localeManager.getLocales();
+                String locale = locales[0].toString();
+				ls = new LayoutStructure(
                               structId, nextId, childId, chanId, 
                               rs.getString(7),rs.getString(8),rs.getString(9),
-                              localeManager.getLocales()
-                              [0].toString());
+                              locale);
                   name_index=10;
                   value_index=11;
               }  else {
@@ -1063,9 +1056,13 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
         		if(defaultProfilePerson.getID() != person.getID()) {
         			UserProfile templateProfile = getUserProfileByFname(defaultProfilePerson,profileFname);
         			if(templateProfile != null) {
-        			    final IUserProfile newUserProfile = new UserProfile(templateProfile);
+        				UserProfile newUserProfile = new UserProfile(templateProfile);
+        			    final Locale[] userLocales = localeStore.getUserLocales(person);
         			    newUserProfile.setLayoutId(0);
-        				return addUserProfile(person,newUserProfile);
+        			    newUserProfile = addUserProfile(person,newUserProfile);
+        			    
+        			    newUserProfile.setLocaleManager(new LocaleManager(person, userLocales));
+        			    return newUserProfile;
         			}
         		}
         	}

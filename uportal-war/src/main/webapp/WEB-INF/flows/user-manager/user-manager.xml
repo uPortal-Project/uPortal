@@ -53,6 +53,7 @@
             <set name="viewScope.canEdit" value="userAccountHelper.canEditUser(user, person.name)"/>
             <set name="viewScope.canDelete" value="userAccountHelper.canDeleteUser(user, person.name)"/>
             <set name="viewScope.canImpersonate" value="userAccountHelper.canImpersonateUser(user, person.name)"/>
+            <set name="viewScope.parents" value="userAccountHelper.getParentGroups(person.name)"/>
         </on-entry>
         <transition on="editUser" to="editLocalAccount"/>
         <transition on="swap" to="swapIdentity"/>

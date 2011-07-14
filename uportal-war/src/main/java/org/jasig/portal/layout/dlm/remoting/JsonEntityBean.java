@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.builder.CompareToBuilder;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.portlet.om.PortletCategory;
@@ -34,7 +35,7 @@ import org.jasig.portal.portlets.groupselector.EntityEnum;
  * @author Drew Mazurek
  */
 @SuppressWarnings("unchecked")
-public class JsonEntityBean implements Serializable {
+public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> {
 
 	public static final String ENTITY_CATEGORY = "category";
 	public static final String ENTITY_CHANNEL = "channel";
@@ -197,4 +198,18 @@ public class JsonEntityBean implements Serializable {
 			return false;
 		return true;
 	}
+
+    @Override
+    public int compareTo(JsonEntityBean entity) {
+        return (new CompareToBuilder())
+            .append(this.name, entity.getName())
+            .append(this.entityType, entity.getEntityType())
+            .append(this.children, entity.getChildren())
+            .append(this.creatorId, entity.getCreatorId())
+            .append(this.description, entity.getDescription())
+            .append(this.entityType, entity.getEntityType())
+            .append(this.id, entity.getId())
+            .append(this.principalString, this.getPrincipalString())
+        .toComparison();
+    }
 }

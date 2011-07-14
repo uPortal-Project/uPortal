@@ -30,6 +30,7 @@ import org.jasig.portal.character.stream.events.CharacterDataEventImpl;
 import org.jasig.portal.character.stream.events.CharacterEvent;
 import org.jasig.portal.character.stream.events.PortletContentPlaceholderEvent;
 import org.jasig.portal.character.stream.events.PortletHeaderPlaceholderEvent;
+import org.jasig.portal.character.stream.events.PortletLinkPlaceholderEvent;
 import org.jasig.portal.character.stream.events.PortletNewItemCountPlaceholderEvent;
 import org.jasig.portal.character.stream.events.PortletTitlePlaceholderEvent;
 import org.jasig.portal.portlet.om.IPortletWindowId;
@@ -121,6 +122,15 @@ public class PortletRenderingIncorporationComponent extends CharacterPipelineCom
                     final int newItemCount = portletExecutionManager.getPortletNewItemCount(portletWindowId, this.request, this.response);
                     
                     return new CharacterDataEventImpl(String.valueOf(newItemCount));
+                }
+                case PORTLET_LINK: {
+                    final PortletLinkPlaceholderEvent linkPlaceholderEvent = (PortletLinkPlaceholderEvent)event;
+                    final IPortletWindowId portletWindowId = linkPlaceholderEvent.getPortletWindowId();
+                    final String defaultPortletUrl = linkPlaceholderEvent.getDefaultPortletUrl();
+                    
+                    final String link = portletExecutionManager.getPortletLink(portletWindowId, defaultPortletUrl, this.request, this.response);
+                    
+                    return new CharacterDataEventImpl(link);
                 }
             }
 

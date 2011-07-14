@@ -30,11 +30,13 @@ public class PortletRenderResult {
     private final String title;
     private final long renderTime;
     private final int newItemCount;
+    private final String externalLink;
 
-    public PortletRenderResult(String title, int newItemCount, long renderTime) {
+    public PortletRenderResult(String title, String externalLink, int newItemCount, long renderTime) {
         this.title = title;
         this.renderTime = renderTime;
         this.newItemCount = newItemCount;
+        this.externalLink = externalLink;
     }
 
     /**
@@ -56,6 +58,10 @@ public class PortletRenderResult {
      */
     public int getNewItemCount() {
         return this.newItemCount;
+    }
+    
+    public String getExternalLink() {
+        return this.externalLink;
     }
 
     @Override

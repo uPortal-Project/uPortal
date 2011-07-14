@@ -28,10 +28,12 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.portlet.Event;
+import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.container.om.portlet.ContainerRuntimeOption;
@@ -47,6 +49,9 @@ import org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker;
 import org.jasig.portal.portlet.rendering.worker.IPortletFailureExecutionWorker;
 import org.jasig.portal.portlet.rendering.worker.IPortletRenderExecutionWorker;
 import org.jasig.portal.portlet.rendering.worker.IPortletWorkerFactory;
+import org.jasig.portal.url.IPortalUrlBuilder;
+import org.jasig.portal.url.IPortalUrlProvider;
+import org.jasig.portal.url.UrlType;
 import org.jasig.portal.utils.web.PortalWebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -563,6 +568,29 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
         }
         
         return 0;
+    }
+    
+    @Override
+    public String getPortletLink(IPortletWindowId portletWindowId, String defaultPortletUrl, HttpServletRequest request, HttpServletResponse response) {
+        final IPortletRenderExecutionWorker tracker = getRenderedPortletBody(portletWindowId, request, response);
+        final int timeout = getPortletRenderTimeout(portletWindowId, request);
+        
+        try {
+            final PortletRenderResult portletRenderResult = tracker.get(timeout);
+            if (portletRenderResult != null) {
+                final String link = portletRenderResult.getExternalLink();
+                if (StringUtils.isNotBlank(link)) {
+                    return link;
+                } else {
+                    return defaultPortletUrl;
+                }
+            }
+        }
+        catch (Exception e) {
+            logger.warn("unable to get portlet new item count for portletWindowId " + portletWindowId);
+        }
+        
+        return null;
     }
     
     protected int getPortletActionTimeout(IPortletWindowId portletWindowId, HttpServletRequest request) {

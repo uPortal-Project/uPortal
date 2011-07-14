@@ -417,26 +417,51 @@ catch (Exception e) {
     </target>
 
     <target name="data-import" depends="prodPrompt" description="Imports the specified XML file or files">
-        <fail unless="dir">Property 'dir' must be set</fail>
+    	<if>
+    		<not>
+    			<or>
+    			    <isset property="dir"/>
+    				<isset property="file"/>
+    			</or>
+			</not>
+			<then>
+				<fail>Either '-Ddir' or '-Dfile' must be specified for data import</fail>
+			</then>
+    	</if>
+        
 
         <property name="pattern" value="null" />
+    	<property name="file" value="null" />
+    	<property name="dir" value="null" />
 
         <groovy-safe-path property="dirFullEscaped" input="${dir}"/>
+    	<groovy-safe-path property="fileFullEscaped" input="${file}"/>
 
         <echo>Creating Data Import Script</echo>
         <echo file="${portal-shell-script}" append="true">
-try {
-    //Data Import Script
-    logger.info('');
-    logger.info('');
-    dataDir = /${dirFullEscaped}/;
+//Data Import Script
+logger.info('');
+logger.info('');
+dataDir = /${dirFullEscaped}/;
+if (dataDir == 'null') {
+    file = /${fileFullEscaped}/;
+    logger.info('Importing Data from: ' + file);
+	try {
+        portalDataHandlerService.importData(new org.springframework.core.io.FileSystemResource(file));
+	}
+	catch (Exception e) {
+	    throw new RuntimeException("data-import for " + file + " failed", e);
+	}
+}
+else {
     logger.info('Importing Data from: ' + dataDir);
-    portalDataHandlerService.importData(new File(dataDir), '${pattern}' == 'null' ? null : '${pattern}', null);
-}
-catch (Exception e) {
-    throw new RuntimeException("data-import for ${dir} and ${pattern} failed", e);
-}
-        </echo>
+    try {
+        portalDataHandlerService.importData(new File(dataDir), '${pattern}' == 'null' ? null : '${pattern}', null);
+    }
+    catch (Exception e) {
+        throw new RuntimeException("data-import for " + dataDir + " and ${pattern} failed", e);
+    }
+}        </echo>
 
         <antcall target="up-shell">
             <param name="script" value="${portal-shell-script}"/>

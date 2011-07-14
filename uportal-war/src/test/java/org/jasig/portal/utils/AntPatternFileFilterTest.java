@@ -43,5 +43,16 @@ public class AntPatternFileFilterTest {
         final boolean accepted = antPatternFileFilter.accept(null, "C:\\up\\uPortal_trunk\\uportal-war\\src\\main\\data\\default_entities\\portlet\\ImportExportPortlet.portlet.xml");
         assertTrue(accepted);
     }
+    
+    @Test
+    public void testExactNameMatching() {
+        final Set<String> dataFileIncludes = ImmutableSet.of("youtube.portlet.xml", "**/test.xml", "te?.xml", "te*.xml");
+        final Set<String> dataFileExcludes = ImmutableSet.copyOf(DirectoryScanner.getDefaultExcludes());
+        
+        final AntPatternFileFilter antPatternFileFilter = new AntPatternFileFilter(false, true, dataFileIncludes, dataFileExcludes);
+        
+        final boolean accepted = antPatternFileFilter.accept(null, "/uportal-war/src/main/data/default_entities/portlet/youtube.portlet.xml");
+        assertTrue(accepted);
+    }
 
 }

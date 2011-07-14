@@ -27,7 +27,9 @@
     
     <bean id="portletModeHandlerMapping"
         class="org.springframework.web.portlet.handler.PortletModeHandlerMapping">
-        <property name="interceptors" ref="minimizedStateHandlerInterceptor" />
+        <property name="interceptors">
+            <bean class="org.jasig.portal.portlets.iframe.IFramePortletMinimizedStateHandlerInterceptor"/>
+        </property>
         <property name="portletModeMap">
             <map>
                 <entry key="view">
