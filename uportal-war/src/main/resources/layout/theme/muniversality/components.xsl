@@ -114,7 +114,7 @@
     <div class="portal-nav">
         <xsl:for-each select="//navigation/channel">
             <div class="portlet">
-                <xsl:variable name="portletUrl">
+                <xsl:variable name="defaultPortletUrl">
                     <xsl:call-template name="portalUrl">
                         <xsl:with-param name="url">
                             <url:portal-url>
@@ -124,6 +124,7 @@
                         </xsl:with-param>
                     </xsl:call-template>
                 </xsl:variable>
+                <xsl:variable name="portletUrl">{up-portlet-link(<xsl:value-of select="@ID" />,<xsl:value-of select="$defaultPortletUrl" />)}</xsl:variable>
                 <xsl:variable name="newItemCountClasses">
                     badge new-item up-new-item-count-{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}
                 </xsl:variable>

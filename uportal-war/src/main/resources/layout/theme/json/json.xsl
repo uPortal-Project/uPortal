@@ -182,7 +182,7 @@
         "locale": "<xsl:value-of select="$USER_LANG"/>", 
         "layout": [
             <xsl:for-each select="//navigation/channel">
-                <xsl:variable name="portletUrl">
+                <xsl:variable name="defaultPortletUrl">
                     <xsl:call-template name="portalUrl">
                         <xsl:with-param name="url">
                             <url:portal-url>
@@ -192,6 +192,7 @@
                         </xsl:with-param>
                     </xsl:call-template>
                 </xsl:variable>
+                <xsl:variable name="portletUrl">{up-portlet-link(<xsl:value-of select="@ID" />,<xsl:value-of select="$defaultPortletUrl" />)}</xsl:variable>
                 <xsl:variable name="iconUrl">
                     <xsl:choose>
                         <xsl:when test="parameter[@name='mobileIconUrl'] and parameter[@name='mobileIconUrl']/@value != ''">

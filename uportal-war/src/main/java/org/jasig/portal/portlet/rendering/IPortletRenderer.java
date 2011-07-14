@@ -65,7 +65,12 @@ public interface IPortletRenderer {
 	 * Attribute that the dynamic portlet new item count is stored using if set.
 	 */
 	public static final String ATTRIBUTE__PORTLET_NEW_ITEM_COUNT = RENDERER_ATTRIBUTE_PREFIX + ".PORTLET_NEW_ITEM_COUNT";
-	
+
+    /**
+     * Attribute that the dynamic external portlet link is stored using if set.
+     */
+	public static final String ATTRIBUTE__PORTLET_LINK = RENDERER_ATTRIBUTE_PREFIX + ".PORTLET_LINK";
+
 	/**
 	 * Attribute that the renderer stores a {@link PrintWriter} that should be used when the portlet writes out content.
 	 */

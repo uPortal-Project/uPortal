@@ -313,8 +313,9 @@ public class PortletRendererImpl implements IPortletRenderer {
          } else {
              newItemCount = 0;
          }
+         final String link = (String)httpServletRequest.getAttribute(IPortletRenderer.ATTRIBUTE__PORTLET_LINK);
          
-         return new PortletRenderResult(title, newItemCount, renderTime);
+         return new PortletRenderResult(title, link, newItemCount, renderTime);
     }
     
     /* (non-Javadoc)
@@ -363,12 +364,13 @@ public class PortletRendererImpl implements IPortletRenderer {
         } else {
             newItemCount = 0;
         }
+        final String externalLink = (String)httpServletRequest.getAttribute(IPortletRenderer.ATTRIBUTE__PORTLET_LINK);
 
         if (this.logger.isDebugEnabled()) {
             this.logger.debug("Retrieved title '" + title + "' from request for: " + portletWindow);
         }
         
-        return new PortletRenderResult(title, newItemCount, System.currentTimeMillis() - start);
+        return new PortletRenderResult(title, externalLink, newItemCount, System.currentTimeMillis() - start);
 	}
 	/* (non-Javadoc)
 	 * @see org.jasig.portal.portlet.rendering.IPortletRenderer#doServeResource(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.Writer)
