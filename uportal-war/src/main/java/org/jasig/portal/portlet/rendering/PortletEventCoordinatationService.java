@@ -50,10 +50,12 @@ import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletContainerException;
 import org.apache.pluto.container.PortletWindow;
 import org.apache.pluto.container.driver.PortletContextService;
+import org.apache.pluto.container.om.portlet.ContainerRuntimeOption;
 import org.apache.pluto.container.om.portlet.EventDefinition;
 import org.apache.pluto.container.om.portlet.EventDefinitionReference;
 import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
+import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.portlet.container.EventImpl;
@@ -66,6 +68,9 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
@@ -77,6 +82,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 
 /**
  * uPortal's approach to event coordination is to simply queue the events and rely on the {@link PortletExecutionManager}
@@ -91,7 +99,12 @@ import org.springframework.stereotype.Service;
  */
 @Service("eventCoordinationService")
 public class PortletEventCoordinatationService implements IPortletEventCoordinationService {
-    private static final String PORTLET_EVENT_QUEUE = PortletEventCoordinatationService.class.getName() + ".PORTLET_EVENT_QUEUE";
+    /**
+	 * 
+	 */
+	public static final String GLOBAL_EVENT__CONTAINER_OPTION = "org.jasig.portal.globalEvent";
+
+	private static final String PORTLET_EVENT_QUEUE = PortletEventCoordinatationService.class.getName() + ".PORTLET_EVENT_QUEUE";
     
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
@@ -166,13 +179,28 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
     public void processEvents(PortletContainer container, PortletWindow plutoPortletWindow, HttpServletRequest request, HttpServletResponse response, List<Event> events) {
         final PortletEventQueue requestPortletEventQueue = this.getPortletEventQueue(request);
         this.logger.debug("Queued {} from {}", events, plutoPortletWindow);
-        requestPortletEventQueue.addEvents(events);
+        
+        final IPortletWindow portletWindow = this.portletWindowRegistry.convertPortletWindow(request, plutoPortletWindow);
+        final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
+        
+        //Add list transformer to convert Event to QueuedEvent
+        final List<QueuedEvent> queuedEvents = Lists.transform(events, new Function<Event, QueuedEvent>() {
+			/* (non-Javadoc)
+			 * @see com.google.common.base.Function#apply(java.lang.Object)
+			 */
+			@Override
+			public QueuedEvent apply(Event event) {
+				return new QueuedEvent(portletWindowId, event);
+			}
+		});
+        
+        requestPortletEventQueue.addEvents(queuedEvents);
     }
     
     
     @Override
     public void resolvePortletEvents(HttpServletRequest request, PortletEventQueue portletEventQueue) {
-        final Queue<Event> events = portletEventQueue.getUnresolvedEvents();
+        final Queue<QueuedEvent> events = portletEventQueue.getUnresolvedEvents();
         
         //Skip all processing if there are no new events.
         if (events.isEmpty()) {
@@ -190,11 +218,21 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
         final Map<String, IPortletEntity> portletEntityCache = new LinkedHashMap<String, IPortletEntity>();
         
         while (!events.isEmpty()) {
-            final Event event = events.poll();
-            if (event == null) {
+            final QueuedEvent queuedEvent = events.poll();
+            if (queuedEvent == null) {
                 //no more queued events, done resolving
                 return;
             }
+            
+            final IPortletWindowId sourceWindowId = queuedEvent.getPortletWindowId();
+            final Event event = queuedEvent.getEvent();
+            
+        	final boolean globalEvent = isGlobalEvent(request, sourceWindowId, event);
+        	
+        	final Set<IPortletDefinition> portletDefinitions = new LinkedHashSet<IPortletDefinition>();
+        	if (globalEvent) {
+        		portletDefinitions.addAll(this.portletDefinitionRegistry.getAllPortletDefinitions());
+        	}
             
             //Check each subscription to see what events it is registered to see
             for (final Iterator<String> layoutNodeIdItr = allLayoutNodeIds.iterator(); layoutNodeIdItr.hasNext(); ) {
@@ -203,9 +241,8 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
                 IPortletEntity portletEntity = portletEntityCache.get(layoutNodeId);
                 if (portletEntity == null) {
                     portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(request, userInstance, layoutNodeId);
-                    final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
-                    final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();
                     
+                    final IPortletDefinitionId portletDefinitionId = portletEntity.getPortletDefinitionId();
                     final PortletDefinition portletDescriptor = this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId);
                     if (portletDescriptor == null) {
                         //Missconfigured portlet, remove it from the list so we don't check again and ignore it
@@ -222,9 +259,18 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
                     
                     portletEntityCache.put(layoutNodeId, portletEntity);
                 }
-            
-                final IPortletDefinitionId portletDefinitionId = portletEntity.getPortletDefinitionId();
+                
+                final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
+                final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();
                 if (this.supportsEvent(event, portletDefinitionId)) {
+                	this.logger.debug("{} supports event {}", portletDefinition, event);
+                	
+                	//If this is the default portlet entity remove the definition from the all defs set to avoid duplicate processing
+                	final IPortletEntity defaultPortletEntity = this.portletEntityRegistry.getOrCreateDefaultPortletEntity(request, portletDefinitionId);
+                	if (defaultPortletEntity.equals(portletEntity)) {
+                		portletDefinitions.remove(portletDefinition);
+                	}
+                	
                     final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
                     final Set<IPortletWindow> portletWindows = this.portletWindowRegistry.getAllPortletWindowsForEntity(request, portletEntityId);
                     
@@ -232,12 +278,64 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
                         this.logger.debug("{} resolved target {}", event, portletWindow);
                         final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
                         final Event unmarshalledEvent = this.unmarshall(portletWindow, event);
-                        portletEventQueue.offerEvent(portletWindowId, unmarshalledEvent);
+                        portletEventQueue.offerEvent(portletWindowId, new QueuedEvent(sourceWindowId, unmarshalledEvent) );
                     }
                 }
+                else {
+                	portletDefinitions.remove(portletDefinition);
+                }
+            }
+            
+            if (!portletDefinitions.isEmpty()) {
+            	final IPerson user = userInstance.getPerson();
+        		final EntityIdentifier ei = user.getEntityIdentifier();
+        		final IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+            	
+	            //If the event is global there might still be portlet definitions that need targeting
+	            for (final IPortletDefinition portletDefinition : portletDefinitions) {
+	            	final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();
+	            	//Check if the user can render the portlet definition before doing event tests
+	            	if (ap.canRender(portletDefinitionId.getStringId())) {
+		            	if (this.supportsEvent(event, portletDefinitionId)) {
+		            		this.logger.debug("{} supports event {}", portletDefinition, event);
+		                	
+		                	final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreateDefaultPortletEntity(request, portletDefinitionId);
+		                    final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
+		                    final Set<IPortletWindow> portletWindows = this.portletWindowRegistry.getAllPortletWindowsForEntity(request, portletEntityId);
+		                    
+		                    for (final IPortletWindow portletWindow : portletWindows) {
+		                        this.logger.debug("{} resolved target {}", event, portletWindow);
+		                        final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
+		                        final Event unmarshalledEvent = this.unmarshall(portletWindow, event);
+		                        portletEventQueue.offerEvent(portletWindowId, new QueuedEvent(sourceWindowId, unmarshalledEvent) );
+		                    }
+		            	}
+	            	}
+	            }
             }
         }
     }
+
+	protected boolean isGlobalEvent(HttpServletRequest request, IPortletWindowId sourceWindowId, Event event) {
+		final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, sourceWindowId);
+		final IPortletEntity portletEntity = portletWindow.getPortletEntity();
+		final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
+		final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();
+		final PortletApplicationDefinition parentPortletApplicationDescriptor = this.portletDefinitionRegistry.getParentPortletApplicationDescriptor(portletDefinitionId);
+		
+		final ContainerRuntimeOption globalEvents = parentPortletApplicationDescriptor.getContainerRuntimeOption(GLOBAL_EVENT__CONTAINER_OPTION);
+		if (globalEvents != null) {
+			final QName qName = event.getQName();
+			final String qNameStr = qName.toString();
+			for (final String globalEvent : globalEvents.getValues()) {
+				if (qNameStr.equals(globalEvent)) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
 
     protected Event unmarshall(IPortletWindow portletWindow, Event event) {
         //TODO make two types of Event impls, one for marshalled data and one for unmarshalled data
@@ -346,12 +444,20 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
         }
 
         final PortletApplicationDefinition portletApplicationDescriptor = this.portletDefinitionRegistry.getParentPortletApplicationDescriptor(portletDefinitionId);
+        if (portletApplicationDescriptor == null) {
+        	return false;
+        }
+        
         final Set<QName> aliases = this.getAllAliases(eventName, portletApplicationDescriptor);
         
         final String defaultNamespace = portletApplicationDescriptor.getDefaultNamespace();
         
         //No support found so far, do more complex namespace matching
         final PortletDefinition portletDescriptor = this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId);
+        if (portletDescriptor == null) {
+        	return false;
+        }
+
         final List<? extends EventDefinitionReference> supportedProcessingEvents = portletDescriptor.getSupportedProcessingEvents();
         for (final EventDefinitionReference eventDefinitionReference : supportedProcessingEvents) {
             final QName qualifiedName = eventDefinitionReference.getQualifiedName(defaultNamespace);

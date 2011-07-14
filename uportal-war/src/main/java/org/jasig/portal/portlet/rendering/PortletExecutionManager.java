@@ -176,9 +176,10 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
                     continue;
                 }
                 
-                final Event event = eventQueue.pollEvent(eventWindowId);
+                final QueuedEvent queuedEvent = eventQueue.pollEvent(eventWindowId);
                 
-                if (event != null) {
+                if (queuedEvent != null) {
+                	final Event event = queuedEvent.getEvent();
                     final IPortletExecutionWorker<Long> portletEventExecutionWorker = this.portletWorkerFactory.createEventWorker(request, response, eventWindowId, event);
                     eventWorkers.put(eventWindowId, portletEventExecutionWorker);
                     portletEventExecutionWorker.submit();

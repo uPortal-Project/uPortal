@@ -181,7 +181,7 @@ public class SearchPortletController {
             final HttpServletRequest httpServletRequest, final IPortletWindowId portletWindowId) {
         for (SearchResult result : portletSearchResults.getSearchResult()) {
             final String resultUrl = getResultUrl(httpServletRequest, result, portletWindowId);
-            this.logger.debug("Created {} with from {}", resultUrl, result);
+            this.logger.debug("Created {} with from {}", resultUrl, result.getTitle());
             results.addPortletSearchResults(resultUrl, result); 
         }
     }
@@ -256,11 +256,13 @@ public class SearchPortletController {
         final Map<String,Object> model = new HashMap<String, Object>();
         model.put("query", query);
 
-        PortletSession session = request.getPortletSession();
-        final Map<String, PortalSearchResults> searchResultsCache = (Map<String, PortalSearchResults>)session.getAttribute(SEARCH_RESULTS_CACHE_NAME);
-        if (searchResultsCache != null) {
-            final PortalSearchResults results = searchResultsCache.get(queryId);
-            model.put("results", results);
+        if (queryId != null) {
+	        PortletSession session = request.getPortletSession();
+	        final Map<String, PortalSearchResults> searchResultsCache = (Map<String, PortalSearchResults>)session.getAttribute(SEARCH_RESULTS_CACHE_NAME);
+	        if (searchResultsCache != null) {
+	            final PortalSearchResults results = searchResultsCache.get(queryId);
+	            model.put("results", results);
+	        }
         }
 
         final boolean isMobile = isMobile(request);

@@ -47,6 +47,17 @@
         <ref bean="ThreadNamingPortletExecutionInterceptorAdaptor"/>
     </util:list>
     
+    <!-- 
+     | See PropertyToAttributePropertiesManager.setPropertyMappings
+     +-->
+    <util:map id="portletPropertyToAttributeMappings">
+    </util:map>
+    <!-- 
+     | See PropertyToAttributePropertiesManager.setNonNamespacedProperties
+     +-->
+    <util:set id="nonNamespacedPortletProperties">
+    </util:set>
+    
     <bean id="portletContainer" class="org.jasig.portal.portlet.container.UportalPortletContainerImpl" destroy-method="destroy" init-method="init">
         <constructor-arg value="#{servletContext.contextPath + '-PlutoPortletContainer'}" />
         <constructor-arg>

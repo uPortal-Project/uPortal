@@ -628,5 +628,9 @@
         <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchResults</qname>
         <value-type>org.jasig.portal.search.SearchResults</value-type>
     </event-definition>
-        
+
+    <container-runtime-option>
+        <name>org.jasig.portal.globalEvent</name>
+        <value>{https://source.jasig.org/schemas/uportal/search}SearchRequest</value>
+    </container-runtime-option>
 </portlet-app>
