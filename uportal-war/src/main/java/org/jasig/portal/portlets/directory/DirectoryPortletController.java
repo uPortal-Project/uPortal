@@ -10,6 +10,7 @@ import javax.portlet.EventRequest;
 import javax.portlet.EventResponse;
 import javax.portlet.PortletRequest;
 import javax.portlet.RenderRequest;
+import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.portlet.container.properties.ThemeNameRequestPropertiesManager;
@@ -98,6 +99,7 @@ public class DirectoryPortletController {
                 PortletUrl url = new PortletUrl();
                 url.setType(PortletUrlType.RENDER);
                 url.setPortletMode("VIEW");
+                url.setWindowState("maximized");
                 PortletUrlParameter param = new PortletUrlParameter();
                 param.setName("query");
                 param.getValue().add(query.getSearchTerms());
