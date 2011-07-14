@@ -525,7 +525,15 @@
      | - 1 x local user
      | - replicated by invalidation
      +-->
-    <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImplquery.ACCOUNT_SEARCH"
+    <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl.query.ACCOUNT_SEARCH"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />      
+    <!-- 
+     | Caches query results for finding a local user with a search
+     | - 1 x local user
+     | - replicated by invalidation
+     +-->
+    <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl.query.FIND_AVAILABLE_ATTRIBUTES"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <!-- 
