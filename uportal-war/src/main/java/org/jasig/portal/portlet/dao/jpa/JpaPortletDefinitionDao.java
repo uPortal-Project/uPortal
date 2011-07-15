@@ -214,6 +214,7 @@ public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortle
 	}
 
 	@Override
+	@Transactional(readOnly=true)
     public List<IPortletDefinition> getPortletDefinitions() {
 	    final TypedQuery<PortletDefinitionImpl> query = this.createQuery(this.findAllPortletDefinitions, FIND_ALL_PORTLET_DEFS_CACHE_REGION);
         
