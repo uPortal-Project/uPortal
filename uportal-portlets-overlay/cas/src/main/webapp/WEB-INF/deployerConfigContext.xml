@@ -148,9 +148,9 @@
 	More robust deployments will want to use another option, such as the Jdbc version.
 	
 	The name of this should remain "userDetailsService" in order for Spring Security to find it.
-	 -->	
+	 -->
     <!-- <sec:user name="@@THIS SHOULD BE REPLACED@@" password="notused" authorities="ROLE_ADMIN" />-->
-			
+
     <sec:user-service id="userDetailsService">
         <sec:user name="@@THIS SHOULD BE REPLACED@@" password="notused" authorities="ROLE_ADMIN" />
     </sec:user-service>
@@ -210,4 +210,6 @@
                 </list>
             </property>
         </bean>
+
+    <bean id="auditTrailManager" class="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager" />
 </beans>
