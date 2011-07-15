@@ -149,6 +149,9 @@
 
     <!-- VIEW PERMISSIONS view state -->    
     <view-state id="viewGroupPermissions">
+        <on-entry>
+            <set name="viewScope.principalString" value="groupListHelper.getEntity(group.type, group.key, false).getPrincipalString()"/>
+        </on-entry>
         <transition on="group" to="reviewGroup"/>
         <transition on="editPermission" to="edit-permission"/>
     </view-state>
