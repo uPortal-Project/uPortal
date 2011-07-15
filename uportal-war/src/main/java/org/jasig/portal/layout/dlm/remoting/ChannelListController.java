@@ -20,6 +20,7 @@
 package org.jasig.portal.layout.dlm.remoting;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -29,6 +30,8 @@ import java.util.TreeSet;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.i18n.ILocaleStore;
+import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.dlm.remoting.registry.ChannelBean;
 import org.jasig.portal.layout.dlm.remoting.registry.ChannelCategoryBean;
 import org.jasig.portal.portlet.om.IPortletDefinition;
@@ -74,6 +77,7 @@ public class ChannelListController {
 	private IPortletCategoryRegistry portletCategoryRegistry;
 	private IPersonManager personManager;
 	private IPortalSpELService spELService;
+	private ILocaleStore localeStore;
 	private static final String TYPE_SUBSCRIBE = "subscribe";
 	private static final String TYPE_MANAGE = "manage";
 	
@@ -100,16 +104,20 @@ public class ChannelListController {
 		
 		// get a list of all channels 
 		List<IPortletDefinition> allChannels = portletDefinitionRegistry.getAllPortletDefinitions();
-
+		
 		// construct a new channel registry
 		Map<String,SortedSet<?>> registry = new TreeMap<String,SortedSet<?>>();
 	    SortedSet<ChannelCategoryBean> categories = new TreeSet<ChannelCategoryBean>();
 	    SortedSet<ChannelBean> channels = new TreeSet<ChannelBean>();
 
+	    // get user locale
+	    Locale[] locales = localeStore.getUserLocales(user);
+	    LocaleManager localeManager = new LocaleManager(user, locales);
+	    Locale locale = localeManager.getLocales()[0];
 		
 		// add the root category and all its children to the registry
 		PortletCategory rootCategory = portletCategoryRegistry.getTopLevelPortletCategory();
-		categories.add(addChildren(request, rootCategory, allChannels, user, type));
+		categories.add(addChildren(request, rootCategory, allChannels, user, type, locale));
 
 	    /*
 	     * uPortal historically has provided for a convention that channels
@@ -127,7 +135,7 @@ public class ChannelListController {
 	    if (type.equals(TYPE_MANAGE)) {
 	        for (IPortletDefinition channel : allChannels) {
 	            if (ap.canManage(channel.getPortletDefinitionId().getStringId())) {
-	                channels.add(getChannel(channel, request));
+	                channels.add(getChannel(channel, request, locale));
 	            }
 	        }
 	    }
@@ -138,7 +146,7 @@ public class ChannelListController {
 		return registry;
 	}
 	
-	private ChannelCategoryBean addChildren(WebRequest request, PortletCategory category, List<IPortletDefinition> allChannels, IPerson user, String type) {
+	private ChannelCategoryBean addChildren(WebRequest request, PortletCategory category, List<IPortletDefinition> allChannels, IPerson user, String type, Locale locale) {
 		
 		// construct a new channel category bean for this category
 		ChannelCategoryBean categoryBean = new ChannelCategoryBean(category);
@@ -156,7 +164,7 @@ public class ChannelListController {
 					|| (!isManage && ap.canSubscribe(channelDef
 							.getPortletDefinitionId().getStringId()))) {
 				// construct a new channel bean from this channel
-				ChannelBean channel = getChannel(channelDef, request);
+				ChannelBean channel = getChannel(channelDef, request, locale);
 				categoryBean.addChannel(channel);
 			}
 			
@@ -168,7 +176,7 @@ public class ChannelListController {
 		for(PortletCategory childCategory : this.portletCategoryRegistry.getChildCategories(category)) {
 			
 			// TODO subscribe check?
-			ChannelCategoryBean childCategoryBean = addChildren(request, childCategory, allChannels, user, type);
+			ChannelCategoryBean childCategoryBean = addChildren(request, childCategory, allChannels, user, type, locale);
 			
 			categoryBean.addCategory(childCategoryBean);
 		}
@@ -177,14 +185,14 @@ public class ChannelListController {
 		
 	}
 	
-	private ChannelBean getChannel(IPortletDefinition definition, WebRequest request) {
+	private ChannelBean getChannel(IPortletDefinition definition, WebRequest request, Locale locale) {
 	    ChannelBean channel = new ChannelBean();
 	    channel.setId(definition.getPortletDefinitionId().getStringId());
-        channel.setDescription(definition.getDescription());
+        channel.setDescription(definition.getDescription(locale.toString()));
         channel.setFname(definition.getFName());
-        channel.setName(definition.getName());
+        channel.setName(definition.getName(locale.toString()));
         channel.setState(definition.getLifecycleState().toString());
-        channel.setTitle(definition.getTitle());
+        channel.setTitle(definition.getTitle(locale.toString()));
         channel.setTypeId(definition.getType().getId());
 	        
         IPortletDefinitionParameter iconParameter = definition.getParameter("iconUrl");
@@ -222,4 +230,9 @@ public class ChannelListController {
 	public void setPortalSpELProvider(IPortalSpELService spELProvider) {
 	    this.spELService = spELProvider;
 	}
+	
+	@Autowired
+    public void setLocaleStore(ILocaleStore localeStore) {
+        this.localeStore = localeStore;
+    }
 }
