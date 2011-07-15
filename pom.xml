@@ -175,7 +175,7 @@
         <pluto.version>2.1.0-M2</pluto.version>
         <portlet-api.version>2.0</portlet-api.version>
         <quartz.version>1.8.4</quartz.version>
-        <resource-server.version>1.0.19-SNAPSHOT</resource-server.version>
+        <resource-server.version>1.0.19</resource-server.version>
         <servlet-api.version>2.5</servlet-api.version>
         <slf4j.version>1.6.1</slf4j.version>
         <spring-framework.version>3.0.5.RELEASE</spring-framework.version>
