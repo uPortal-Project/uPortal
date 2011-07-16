@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<taglib xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd"
+  version="2.1">
+    <tlib-version>1.0</tlib-version>
+    <short-name>up</short-name>
+    <uri>http://www.uportal.org/jsp/jstl/uportal/1.0</uri>
+    <tag>
+        <name>param</name>
+        <tag-class>org.jasig.portal.portlet.delegation.jsp.ParamTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>name</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>value</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    <tag>
+        <name>render-delegate</name>
+        <tag-class>org.jasig.portal.portlet.delegation.jsp.RenderPortletTag</tag-class>
+        <tei-class>org.jasig.portal.portlet.delegation.jsp.RenderPortletTag$TEI</tei-class>
+        <body-content>JSP</body-content>
+        <attribute>
+            <name>fname</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>windowState</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>portletMode</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>sessionKeyPrefix</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    <tag>
+        <name>parent-url</name>
+        <tag-class>org.jasig.portal.portlet.delegation.jsp.ParentUrlTag</tag-class>
+        <body-content>JSP</body-content>
+        <attribute>
+            <name>windowState</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>portletMode</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+    <tag>
+        <name>compressJs</name>
+        <tag-class>org.jasig.portal.utils.jsp.CompressJsTag</tag-class>
+        <body-content>scriptless</body-content>
+    </tag>
+    <function>
+        <name>contains</name>
+        <function-class>org.jasig.portal.utils.jsp.Util</function-class>
+        <function-signature>boolean contains(java.util.Collection, java.lang.Object)</function-signature>
+    </function>
+    <function>
+        <name>containsKey</name>
+        <function-class>org.jasig.portal.utils.jsp.Util</function-class>
+        <function-signature>boolean containsKey(java.util.Map, java.lang.Object)</function-signature>
+    </function>
+    <function>
+        <name>containsValue</name>
+        <function-class>org.jasig.portal.utils.jsp.Util</function-class>
+        <function-signature>boolean containsValue(java.util.Map, java.lang.Object)</function-signature>
+    </function>
+    <function>
+        <description> Tests if an object is an isntance of a class. </description>
+        <name>instanceOf</name>
+        <function-class>org.jasig.portal.utils.jsp.Util</function-class>
+        <function-signature>boolean instanceOf(java.lang.Object, java.lang.String)</function-signature>
+        <example>
+            &lt;c:if test="${up:instanceOf(obj, 'java.lang.Object')}">
+        </example>
+    </function>
+</taglib>

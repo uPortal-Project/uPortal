@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans" 
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+    
+    <bean id="uPortalTaskScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="quartzProperties">
+            <props>
+                <prop key="org.quartz.threadPool.threadCount">4</prop>
+                <prop key="org.quartz.scheduler.makeSchedulerThreadDaemon">true</prop>
+                <prop key="org.quartz.threadPool.makeThreadsDaemons">true</prop>
+            </props>
+        </property>
+        <property name="startupDelay" value="5" />
+        <property name="triggers">
+            <list>
+                <ref bean="cacheMaintenanceTrigger" />
+                <ref bean="statsQueueFlushingTrigger" />
+                <ref bean="statsPurgeTrigger" />
+                <ref bean="expiredPortletCookieRemovalTrigger" />
+            </list>
+        </property>
+    </bean>
+    
+    
+    <bean id="cacheMaintenanceTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+                <property name="targetMethod" value="run" />
+                <property name="targetObject">
+                    <bean class="org.jasig.portal.utils.cache.EhCacheExpirationManager">
+                        <property name="cacheManager" ref="cacheManager" />
+                    </bean>
+                </property>
+            </bean>
+        </property>
+        <!-- Run every 5 minutes -->
+        <property name="startDelay" value="300000" />
+        <property name="repeatInterval" value="300000" />
+    </bean>
+    
+    <!-- Flush the stats queue to the database every second -->
+    <bean id="statsQueueFlushingTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+                <property name="targetMethod" value="flush" />
+                <property name="targetObject" ref="queueingEventHandler" />
+            </bean>
+        </property>
+        <property name="startDelay" value="1000" />
+        <property name="repeatInterval" value="1000" />
+    </bean>
+
+    <!-- Purge stats records from the database after they reach a certain age  -->
+    <bean id="statsPurgeTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+                <property name="targetMethod" value="purge" />
+                <property name="targetObject" ref="expiredEventsPurger" />
+            </bean>
+        </property>
+        <property name="startDelay" value="300000" /><!-- Wait 5 minutes after startup -->
+        <property name="repeatInterval" value="86400000" /><!-- Perform the purge once a day 86400000 -->
+    </bean>
+    
+    <!-- remove all expired persisted portlet cookies every 60 seconds -->
+    <bean id="expiredPortletCookieRemovalTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+    	<property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+                <property name="targetMethod" value="purgeExpiredCookies" />
+                <property name="targetObject" ref="portletCookieDao" />
+            </bean>
+        </property>
+        <property name="startDelay" value="60000" />
+        <property name="repeatInterval" value="60000" />
+    </bean>
+</beans>

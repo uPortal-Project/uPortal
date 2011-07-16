@@ -1,0 +1,87 @@
+/**
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a
+ * copy of the License at:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.fl-uploader{width:434px;position:relative;display:block;clear:both;padding:1em 2em;}
+.fl-uploader td,.fl-uploader th{border:none;}
+.fl-uploader table{border-collapse:separate;margin:0;}
+.fl-uploader form{height:auto!important;}
+.fl-uploader button{background-color:#4F99D3;border-color:#2A3990;border-width:1px;border-style:solid;font-weight:bolder;font-size:1.06em;color:#FFF;height:32px;padding-left:2em;padding-right:2em;margin-right:1em;outline:none;cursor:pointer;}
+.fl-uploader button:focus,.fl-uploader button.focus{outline:2px solid #142B8C;}
+.fl-uploader button:hover{background-color:#115F8F;}
+.fl-uploader button.default{background-color:#74B74A;border-color:#006838;}
+.fl-uploader button.default:hover{background-color:#519325;border-color:#142B8C;}
+.fl-uploader button.cancel{background-color:#D03E4F;border-color:#BF1E2D;}
+.fl-uploader button.cancel:hover{background-color:#9E182B;border-color:#142B8C;}
+.fl-uploader button.dim{background-color:#999;border-color:#666;}
+.fl-uploader button.dim:hover{background-color:#999;border-color:#666;}
+.fl-uploader button span.text-description{display:none;}
+.fl-uploader a.fl-uploader-browse{background-image:url(../images/uploader/add.png);background-attachment:scroll;background-repeat:no-repeat;background-position:5px center;padding:4px 7px 4px 26px;border:none;white-space:nowrap;color:#427ABE;font-weight:normal;cursor:pointer;}
+html>body .fl-uploader a.fl-uploader-browse{padding:3px 6px 3px 25px;border:1px solid transparent;}
+.fl-uploader a.fl-uploader-browse:hover{border:1px solid #CCC;background-color:#FFF;}
+.fl-uploader a.fl-uploader-browse:focus,.fl-uploader a.fl-uploader-browse.focus{outline:2px solid #142B8C;background-color:#FFF;}
+.fl-uploader .fl-browse-button-overlay{position:absolute;z-index:1;}
+.fl-uploader-queue-wrapper caption{display:none;}
+.fl-scroller-table-head{background-color:transparent;color:#666;}
+.fl-scroller-table-head th{text-align:left;font-size:.94em;font-weight:normal;padding:6px;}
+.fl-scroller-table-foot{position:relative;background-color:#E6E6E6;border:1px solid #999;}
+.fl-scroller-table-foot table{width:100%;position:relative;z-index:6;}
+.fl-scroller-table-foot td{padding:8px 6px;vertical-align:middle;font-size:1.07em;font-weight:bolder;color:#666;}
+.fl-scroller-table-foot td.footer-button{text-align:right;}
+.fl-scroller{display:block;position:relative;background-color:white;overflow:auto;overflow-x:hidden;overflow-y:auto;border-width:1px 1px 0;border-style:solid;border-color:#999;}
+.fl-scroller .scroller-inner{position:relative;overflow:hidden;}
+.fl-uploader-queue{position:relative;font-size:.9em;color:#333;z-index:6;}
+html>body .fl-uploader-queue{width:100%;}
+.fl-uploader-queue:focus{border:1px solid #142B8C;}
+.fl-uploader-queue tr:focus,.fl-uploader-queue tr.selected{background-color:#FFF9DC;}
+.fl-uploader-queue tr{background-color:transparent;}
+.fl-uploader-queue tr.ready:hover,.fl-uploader-queue tr.hover{background-color:#FFF9DC;}
+.fl-uploader-queue tr.dim{color:#666;}
+.fl-uploader-queue td,.fl-uploader-queue th{text-align:left;padding:3px 6px;border-bottom:1px solid #BBCFDC;}
+.fl-uploader-queue-wrapper .fileName{width:322px;overflow:hidden;}
+.fl-uploader-queue-wrapper .fileSize{text-align:right;width:4em;white-space:nowrap;}
+.fl-uploader-queue .iconBtn{border:1px solid transparent;height:20px;width:20px;overflow:hidden;background-color:transparent;background-attachment:scroll;background-repeat:no-repeat;background-position:1px 1px;outline:0;padding:0;margin:0;outline:none;}
+.fl-uploader-queue .iconBtn:hover{border:1px solid transparent;background-color:transparent;cursor:auto;}
+.fl-uploader-queue .iconBtn.dim{border:1px solid transparent;background-color:transparent;cursor:auto;}
+.fl-uploader-queue .removeFile{background-image:url(../images/uploader/remove.png);cursor:pointer!important;}
+.fl-uploader-queue .removeFile:hover,.fl-uploader-queue tr.ready:focus .removeFile,.fl-uploader-queue tr.focus .removeFile{border:1px solid #CCC;background-color:#FFF;}
+.fl-uploader-queue .removeFile:focus,.fl-uploader-queue .removeFile.focus{background-color:#4F99D3;outline:none;}
+.fl-uploader-queue .uploaded th,.fl-uploader-queue tr.uploaded:focus th,.fl-uploader-queue tr.focus th{border-left:4px solid #74B74A;color:#5E7A5E;}
+.fl-uploader-queue .uploaded td{color:#5E7A5E;}
+.fl-uploader-queue .uploaded .iconBtn{background-image:url(../images/uploader/tick.png);}
+.fl-uploader-queue .error th{border-left:4px solid #F5E392;}
+.fl-uploader-queue .error .iconBtn{background-image:url(../images/uploader/error.png);}
+.fl-uploader-queue-wrapper td.actions,.fl-uploader-queue-wrapper th.actions{text-align:center;}
+.fl-uploader-queue td.actions,.fl-uploader-queue td.fileStatus{white-space:nowrap;}
+.fl-uploader-queue-wrapper .fl-uploader-browse-instructions{background-color:#F0F9FF;color:#666;text-align:center;border-left:1px solid #999;border-right:1px solid #999;padding:6px;}
+.fl-uploader-btns{margin-top:1em;}
+.fl-uploader-btns .fl-uploader-upload,.fl-uploader-btns .fl-uploader-resume,.fl-uploader-btns .fl-uploader-pause{width:8.4em;}
+.fl-uploader-btns .fl-uploader-done,.fl-uploader-btns .fl-uploader-cancel{width:7.6em;}
+.fl-uploader-btns button{float:right;padding:0;}
+button span.text-description{display:none;}
+.disabled,.dim{cursor:auto;}
+.disabled{background-color:#CCC!important;border-color:#999!important;}
+.dim{opacity:.4;filter:alpha(opacity=40);}
+.hidden{display:none;}
+.fluid-templates{display:none;}
+.fl-uploader-queue .queue-error-row td{border-top:1px dotted #E6E6E6;border-left:4px solid #F5E392;}
+.file-progress,.total-progress{position:absolute;display:none;background-attachment:scroll;background-position:bottom left;background-repeat:repeat-x;overflow:hidden;left:0;z-index:4;}
+.file-progress{background-image:url('../images/progress/gradient-file.png');background-color:#D1D6DD;width:76%;}
+.file-progress .file-progress-text{display:none;}
+.total-progress{top:0;height:100%;background-image:url('../images/progress/gradient-total.png');background-color:#BDBFC1;width:76%;}
+.fl-uploader-flash9-container{overflow:hidden;width:1px;height:1px;}

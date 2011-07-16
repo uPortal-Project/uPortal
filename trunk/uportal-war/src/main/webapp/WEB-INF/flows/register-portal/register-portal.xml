@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                          http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+            
+    <!-- Used to set default values for inputs -->
+    <action-state id="initVariables">
+        <evaluate result="flowScope.registrationRequest" expression="portalRegistrationHelper.createRegistrationRequest()" />
+
+        <transition to="organizationInfoForm" />
+    </action-state>
+            
+    <!-- Step 1 - organization info -->
+    <view-state id="organizationInfoForm" model="registrationRequest">
+        <transition on="next" to="systemInfoForm" />
+    </view-state>
+    
+    <!-- Step 2 - system info -->        
+    <view-state id="systemInfoForm" model="registrationRequest">
+        <transition on="previous" to="organizationInfoForm" />
+        <transition on="next" to="previewRegistrationDataMaximize" />
+    </view-state>
+
+    <!-- Entry into preview that maximizes the portlet -->    
+    <action-state id="previewRegistrationDataMaximize">
+        <evaluate expression="portletUrlFlowHelper.setWindowState(externalContext, 'maximized')" />
+        <transition to="previewRegistrationData" />    
+    </action-state>
+    
+    <!-- Step 3 - info review -->
+    <view-state id="previewRegistrationData">
+        <on-entry>
+            <evaluate result="flowScope.registrationData" expression="portalRegistrationHelper.getRegistrationData(registrationRequest)" />
+        </on-entry>
+        
+        <transition on="editRegistration" to="organizationInfoForm" />
+        <transition on="submitRegistration" to="submitRegistration" /> 
+    </view-state>
+
+    <!-- submit data from preview -->
+    <decision-state id="submitRegistration">
+        <on-entry>
+            <evaluate result="requestScope.submitStatus" expression="portalRegistrationHelper.submitRegistration(registrationData)" />
+        </on-entry>
+        
+        <if test="requestScope.submitStatus" then="registrationSuccess" else="registrationFailed" />
+    </decision-state>
+    
+    <view-state id="registrationSuccess">
+        <transition on="registrationForm" to="organizationInfoForm" />
+    </view-state>
+    
+    <view-state id="registrationFailed">
+        <transition on="registrationForm" to="organizationInfoForm" />
+    </view-state>
+</flow>

@@ -1,0 +1,92 @@
+/*====================================*/
+/* HELPERS */
+/*====================================*/
+/* 
+ * Helpers are non-semantic, global utilities.
+ * Helpers should not include theme specifics: color, images, etc.
+ * Helpers are created as SASS Mixins so they can be "mixed-in" to other SASS declarations and not be forced into the markup.
+ * SASS Mixins:
+ * http://sass-lang.com/
+ * Many Helpers inspired by HTML5 Boilerplate:
+ * http://html5boilerplate.com/
+ */
+
+/* For image replacement */
+@mixin ir() { display: block; text-indent: -999em; overflow: hidden; background-repeat: no-repeat; text-align: left; direction: ltr; }
+
+/* Hide for both screenreaders and browsers:
+   css-discuss.incutio.com/wiki/Screenreader_Visibility */
+@mixin hidden() { display: none; visibility: hidden; }
+
+/* Hide only visually, but have it available for screenreaders: by Jon Neal.
+  www.webaim.org/techniques/css/invisiblecontent/  &  j.mp/visuallyhidden */
+@mixin visuallyhidden($focusable: false) { 
+	border: 0; clip: rect(0 0 0 0); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; width: 1px;
+	@if $focusable == true {@include focusable(true);}
+}
+/* Extends the .visuallyhidden class to allow the element to be focusable when navigated to via the keyboard: drupal.org/node/897638 */
+@mixin focusable() {
+	&:focus,
+	&:active { clip: auto; height: auto; margin: 0; overflow: visible; position: static; width: auto;}
+}
+
+/* Hide visually and from screenreaders, but maintain layout */
+@mixin invisible() { visibility: hidden; }
+
+/* The Magnificent Clearfix: Updated to prevent margin-collapsing on child elements.
+   j.mp/bestclearfix */
+/* Fix clearfix: blueprintcss.lighthouseapp.com/projects/15318/tickets/5-extra-margin-padding-bottom-of-page */
+@mixin clearfix() {
+	&:before,
+	&:after { content: "\0020"; display: block; height: 0; overflow: hidden; }
+	&:after { clear: both; }
+	zoom: 1;
+}
+
+/* Easy 2-color, linear gradient stack. Pass in the colors. */
+@mixin gradient($color1, $color2) {
+	background-image: -moz-linear-gradient(top, $color1, $color2);
+	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, $color1), color-stop(1, $color2));
+	-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#{$color1}', EndColorStr='#{$color2}')";
+}
+
+/* Easy way to add rounded corners. Pass in the desired size of the corner radius. */
+@mixin rounded($size) {
+	-moz-border-radius		: $size;
+	-webkit-border-radius	: $size;
+	border-radius			: $size;
+}
+
+/* More flexible way to add rounded corners only to specific sides. */
+@mixin round($topleft, $topright, $bottomright, $bottomleft) {
+	-moz-border-radius: $topleft $topright $bottomright $bottomleft;
+	-webkit-border-top-left-radius: $topleft;
+	-webkit-border-top-right-radius: $topright;
+	-webkit-border-bottom-right-radius: $bottomright;
+	-webkit-border-bottom-left-radius: $bottomleft;
+	border-radius: $topleft $topright $bottomright $bottomleft;
+}
+
+/* Easy way to add a box-shadow stack. Pass in any of the desired values. */
+@mixin box-shadow($xpos: 2px, $ypos: 2px, $blur: 2px, $color: $black) {
+	-moz-box-shadow		: $xpos $ypos $blur $color;
+	-webkit-box-shadow	: $xpos $ypos $blur $color;
+	box-shadow			: $xpos $ypos $blur $color;
+}
+
+/* Easy way to add a basic text-shadow. Will default to a bottom shadow. 
+ * Pass in "light" to get a top bevel on dark text./backgrounds. */
+@mixin text-shadow($type: dark) {
+	@if($type == 'light') {
+		text-shadow	: 0 1px 1px $white;	
+	} @else {
+		text-shadow	: 0 -1px 1px $black;	
+	}
+	
+}
+
+@mixin color-box($color) {
+	background: transparentize($color, 0.75);
+	border-color: $color;
+	color: darken($color, 10%);
+}

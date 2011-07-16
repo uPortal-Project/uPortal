@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration debug="false" xmlns:log4j="http://jakarta.apache.org/log4j/">
+    <!--
+      This default ConsoleAppender is used to log all NON perf4j messages
+      to System.out
+    -->
+    <appender name="null" class="org.apache.log4j.varia.NullAppender" />
+
+    <!-- Loggers -->
+    <!--
+      The Perf4J logger. Note that org.perf4j.TimingLogger is the value of the
+      org.perf4j.StopWatch.DEFAULT_LOGGER_NAME constant. Also, note that
+      additivity is set to false, which is usually what is desired - this means
+      that timing statements will only be sent to this logger and NOT to
+      upstream loggers.
+    -->
+    <logger name="org.perf4j.TimingLogger" additivity="false">
+        <level value="INFO"/>
+        <appender-ref ref="null"/>
+    </logger>
+
+    <!--
+        WARNING: Setting the org.springframework logger to DEBUG displays debug information about
+        the request parameter values being bound to the command objects.  This could expose your
+        password in the log file.  If you are sharing your log files, it is recommend you selectively
+        apply DEBUG level logging on a an org.springframework.* package level (i.e. org.springframework.dao)
+    -->
+    <logger name="org.springframework">
+        <level value="WARN" />
+    </logger>
+
+    <logger name="org.springframework.webflow">
+        <level value="WARN" />
+    </logger>
+
+    <logger name="org.jasig" additivity="true">
+        <level value="DEBUG" />
+        <appender-ref ref="null" />
+    </logger>
+
+    <!--
+        WARNING: Setting the flow package to DEBUG will display
+        the parameters posted to the login servlet including
+        cleartext authentication credentials
+    -->
+    <logger name="org.jasig.cas.web.flow" additivity="true">
+        <level value="INFO" />
+        <appender-ref ref="null" />
+    </logger>
+
+    <!--
+      The root logger sends all log statements EXCEPT those sent to the perf4j
+      logger to System.out.
+    -->
+    <root>
+        <level value="ERROR"/>
+        <appender-ref ref="null"/>
+    </root>
+</log4j:configuration>

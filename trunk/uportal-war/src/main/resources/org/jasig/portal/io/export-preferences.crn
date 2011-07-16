@@ -1,0 +1,59 @@
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<with-attribute key="Attributes.NODE" value="${newDoc(preferences)}">
+    <with-attribute key="portletEntities" value="${groovy(portletEntityPreferenceHandler.getEntityPreferences(USER_ID.intValue()))}">
+        <for-each items="${groovy(portletEntities)}" attribute-name="portletEntity">
+            <with-attribute key="DLM_NODEREF" value="${groovy(portletEntity.getChannelSubscribeId())}">
+                <with-attribute key="PORTLET_DATA" value="${crn(lookup-dlm-noderef.crn)}">
+                    <choose>
+                        <when test="${groovy(PORTLET_DATA == null || PORTLET_DATA.length != 3 || PORTLET_DATA[0] == null || PORTLET_DATA[1] == null || PORTLET_DATA[2] == null)}">
+                            <echo-ln>WARNING: Portlet Entity for channel subscribe id ${groovy(portletEntity.getChannelSubscribeId())} in user ${USER_NAME}'s layout has no corresponding layout or channel information and will be ignored</echo-ln>
+                        </when>
+                        <otherwise>
+                            <for-each items="${groovy(portletEntity.getPortletPreferences().getPortletPreferences())}" attribute-name="portletPreference">
+                                <append-node>
+                                    <entry entity="${groovy(PORTLET_DATA[0])}:${groovy(PORTLET_DATA[1])}" channel="${groovy(PORTLET_DATA[2])}" name="${groovy(portletPreference.getName())}" />
+                                </append-node>
+                                <for-each items="${groovy(Arrays.asList(portletPreference.getValues()))}" attribute-name="preferenceValue">
+                                    <append-node parent="${singleNode(entry[position() = last()])}">
+                                        <value>${preferenceValue}</value>
+                                    </append-node>
+                                </for-each>
+                            </for-each>
+                         </otherwise>
+                     </choose>
+                </with-attribute>
+            </with-attribute>
+        </for-each>
+    </with-attribute>
+    <with-attribute key="ENTRY_NODE" value="${singleNode(entry)}">
+        <choose>
+            <when test="${jexl(ENTRY_NODE == null)}">
+                <!-- No preferences for this user, just return null... -->
+                <return value="${groovy(null)}" />
+            </when>
+            <otherwise>
+                <return value="${Attributes.NODE}" />
+            </otherwise>
+        </choose>
+    </with-attribute>
+</with-attribute>

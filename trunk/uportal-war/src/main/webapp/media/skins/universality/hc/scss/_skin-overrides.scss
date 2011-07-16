@@ -1,0 +1,113 @@
+//====================================
+// Skin Overrides
+//====================================
+// Put any skin-specific overrides here.
+
+.up {
+	a, a:hover, a:focus {
+		font-weight: bold;
+	}
+	
+	a:hover, a:focus {
+		outline: thick solid $c5;
+	}
+	
+	border-width: thick !important;
+	
+	#{$btn-up-selector} {
+		font-size: 18px;
+		padding: 0.3em 12px !important;
+	}
+	
+	#{$btn-up-selector}, #{$btn-hover-selector}, #{$btn-down-selector} {
+		text-shadow: none !important;
+	}
+	
+	form {
+		#{$form-elements}, #{$form-select}, #{$form-textarea} {
+			border-color: $black;
+			font-size: 18px;
+			box-shadow: none;
+			padding: 0.3em 12px !important;
+		}
+		
+		#{$form-elements-focus} {
+			@include box-shadow(0 0 0 $c4);
+			outline: none;
+			border-color: $c4;
+		}
+	}
+	
+	
+	#portalPageHeader {
+		#portalPageBar {
+			#portalPageBarLinks li a {
+				background: $white;
+				color: $black;
+				
+				&:hover, &:focus {
+					background: $black;
+					color: $white;
+				}
+			}
+		}	
+	}
+	
+	#portalNavigation {
+		.portal-navigation {
+			.portal-navigation-link {
+				text-shadow: none !important;
+			}
+		}
+		.portal-flyout-container {
+			display: none !important;
+		}
+	}
+	
+	.columns-2 .column-1 .portal-page-column-inner,
+	.columns-3 .column-1 .portal-page-column-inner,
+	.columns-4 .column-1 .portal-page-column-inner,
+	.columns-3 .column-2 .portal-page-column-inner,
+	.columns-4 .column-2 .portal-page-column-inner,
+	.columns-4 .column-3 .portal-page-column-inner {margin-right:15px}
+	.columns-2 .column-2 .portal-page-column-inner,
+	.columns-3 .column-3 .portal-page-column-inner,
+	.columns-4 .column-4 .portal-page-column-inner {margin-left:15px}
+	
+	.up-portlet-wrapper {
+		margin-bottom: 25px;
+		
+		.up-portlet-controls {
+			position: static;
+			top: 0;
+			display: block;
+			padding: 0.5em;
+			background: $c1lighter;
+			text-align: right;
+			
+			.up-portlet-control {
+				float: none;
+				display: inline;
+				height: auto;
+				width: auto;
+				padding: 0.4em 0.5em;
+				margin-left: 1em;
+				background: $white;
+				
+				.icon {
+					display: none;
+					
+				}
+				.label {
+					display: inline;
+				}
+				
+				&:hover, &:focus {
+					background: $black;
+					color: $white;
+				}
+			}
+		}
+	}
+	
+}

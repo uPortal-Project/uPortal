@@ -1,0 +1,218 @@
+/*====================================*/
+/* Portlet Chrome */
+/*====================================*/
+/*
+ * Styles for formatting the portlet chrome that wraps portlets.
+ */
+
+// Mixin to style portlet chrome.
+@mixin portlet-chrome($background, $gradient1, $gradient2, $title, $titleShadow, $titleHover, $border, $contentBorder, $contentBackground) {
+	background: $background;
+	@if ($border != false) {
+		border: $border;
+	}
+	@if ($gradient1 != false) {
+		background-image: -moz-linear-gradient(top, $gradient1, $gradient2 65px);
+		background-image: -webkit-gradient(linear, left top, left bottom, from($gradient1), to($gradient2), color-stop(0.1, $gradient1));
+		-ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#{$gradient1}', EndColorStr='#{$gradient2}')";
+		background-image: linear-gradient(top, $gradient1, $gradient2 65px);
+	}
+	@if ($portletRound != false) {
+		@include rounded($portletRound);
+	}
+	
+	.up-portlet-titlebar h2 a  {
+		color: $title;
+		@if ($titleShadow != false) {
+			@include text-shadow($titleShadow);
+		}
+		&:hover, &:focus {
+			color: $titleHover;
+		}
+	}
+	.up-portlet-content-wrapper {
+		background: $contentBackground;
+		@if ($contentBorder != false) {
+			border: $contentBorder;
+		}
+		@if ($portletContentRound != false) {
+			@include rounded($portletContentRound);
+		}
+	}
+}
+
+// Mixin to set image sprite location for portlet control icons.
+@mixin portlet-control($size, $position) {
+	$xpos: ($size * $position);
+	$ypos: 0px;
+	
+	.icon {
+		background-position: -#{$xpos} #{$ypos};
+	}
+	&:hover, &:focus {
+		.icon {
+			background-position: -#{$xpos} -#{$size};
+		}
+	}
+}
+
+.up {
+	.up-portlet-wrapper {
+		/* Portlet chrome. */
+		
+		padding: $portletPadding;
+		
+		@include portlet-chrome($portletBackground,$portletGradient1,$portletGradient2,$portletTitle,$portletTitleShadow,$portletTitleHover,$portletBorder,$portletContentBorder,$portletContentBackground);
+		
+		@if ($portletShadow != false) {
+			@include box-shadow($portletShadow);
+		}
+		
+		.up-portlet-wrapper-top,
+		.up-portlet-wrapper-bottom {
+			/* These extra containers are available for additional styling (like rounded corners with images). 
+			 * This skin does not use them, so hide them from view. */
+			display:none;
+			
+		}
+		
+		.up-portlet-titlebar  {
+			/* Prevent portlet titles from wrapping. */
+			white-space: nowrap;
+			
+			h2 {
+				padding: $portletTitlePadding;
+				font-size: $portletTitleFontSize;
+				font-weight: $portletTitleFontWeight;
+				text-transform: $portletTitleTextTransform;
+				
+				a {
+					text-decoration: none;
+				}
+			}
+			
+			.up-portlet-controls {
+				top: $portletControlsTop;
+				padding: $portletControlsPadding;
+			}
+			
+			.up-portlet-control {
+				font-size: $portletControlsFontSize;
+				color: $portletControlLink;
+				
+				&:hover, &:focus {
+					color: $portletControlLinkHover;
+				}
+				
+				.icon {
+					display: block;
+					float: left;
+					height: $portletControlIconSize;
+					width: $portletControlIconSize;
+					background-image: $portletControlIconSprite;
+					background-repeat: no-repeat;
+					background-position: 0 0;
+				}
+			}
+			
+			.focus {
+				@include portlet-control($portletControlIconSize, 0);
+			}
+			.edit {
+				@include portlet-control($portletControlIconSize, 1);
+			}
+			.info {
+				@include portlet-control($portletControlIconSize, 2);
+			}
+			.help {
+				@include portlet-control($portletControlIconSize, 3);
+			}
+			.remove {
+				@include portlet-control($portletControlIconSize, 4);
+			}
+			.add {
+				@include portlet-control($portletControlIconSize, 5);
+			}
+			.permissions {
+				@include portlet-control($portletControlIconSize, 6);
+			}
+			.show-content {
+				@include portlet-control($portletControlIconSize, 7);
+			}
+			.hide-content {
+				@include portlet-control($portletControlIconSize, 8);
+			}
+			.return {
+				@include portlet-control($portletControlIconSize, 9);
+			}
+		}
+		
+		.up-portlet-content-wrapper {
+			margin: 0;
+		}	
+	}
+	
+	.up-portlet-wrapper.no-chrome, .up-portlet-wrapper.no-chrome .up-portlet-content-wrapper {
+		/* A portlet that has been flagged to have no chrome - "Just the content, please." */
+		padding: 0;
+		background: none;
+		border: none;
+	}
+	
+	.up-portlet-wrapper.alternate {
+		/* A portlet that has been flagged to have the alternate styling of portlet chrome.*/		
+		@include portlet-chrome($portletAltBackground,$portletAltGradient1,$portletAltGradient2,$portletAltTitle,$portletAltTitleShadow,$portletAltTitleHover,$portletAltBorder,$portletAltContentBorder,$portletAltContentBackground);
+	}
+	
+	.up-portlet-wrapper.highlight {
+		/* A portlet that has been flagged to have the highlight styling of portlet chrome. */
+		@include portlet-chrome($portletHLBackground,$portletHLGradient1,$portletHLGradient2,$portletHLTitle,$portletHLTitleShadow,$portletHLTitleHover,$portletHLBorder,$portletHLContentBorder,$portletHLContentBackground);
+	}
+	
+	.up-portlet-wrapper.locked {
+		/* A portlet that has been locked (cannot be moved or removed). */
+		@include portlet-chrome($portletLockedBackground,$portletLockedGradient1,$portletLockedGradient2,$portletLockedTitle,$portletLockedTitleShadow,$portletLockedTitleHover,$portletLockedBorder,$portletLockedContentBorder,$portletLockedContentBackground);
+		
+		@if($portletLockedTitleIcon != false) {
+			.up-portlet-titlebar h2 {
+				padding-left: $portletControlIconSize + 5;
+				background: $portletLockedTitleIcon;
+			}
+		}
+	}
+	
+	.dashboard {
+		.up-portlet-controls {
+			top: $portletControlsTop;
+			padding: $portletControlsPadding;
+		}
+			
+		.up-portlet-control {
+			display: block;
+			float: left;
+			padding: 0;
+			
+			.label {
+				display: none;
+			}
+		}
+	}
+	
+	.focused {
+		/* A portlet when in the focused view. */
+		.up-portlet-controls {
+			.up-portlet-control {
+				display: inline-block;
+				margin-left: 1.5em;
+				text-decoration: none;
+			}
+			.icon {
+				margin-right: 3px;
+			}
+			.label {
+				float: left;
+			}
+		}
+		
+	}
+}

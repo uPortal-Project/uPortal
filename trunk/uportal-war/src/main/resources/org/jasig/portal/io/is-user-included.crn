@@ -1,0 +1,71 @@
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<!-- 
+ | Parameters:
+ |      USER_NAME - The name of the user to test to see if it should be included
+ |
+ | Returns true or false based on if the USER_NAME is found in the set of included users 
+ +-->
+<cache key="VALID_USERS" cache-key="VALID_USERS" thread-safe="true">
+    <factory>
+        <with-attribute key="LOAD_START_TIME" value="${groovy(System.currentTimeMillis())}">
+            <with>
+                <attribute key="VALID_USERS">${groovy(new java.util.concurrent.ConcurrentHashMap())}</attribute>
+                <subtasks>
+                    <choose>
+                        <when test="${groovy(included_users_file != '' &amp;&amp; new java.io.File(included_users_file).exists())}">
+                            <line-iterator string="${contents(${included_users_file})}">
+                                <groovy>
+                                    <script>
+                                        if (org.apache.commons.lang.StringUtils.trimToNull(Attributes.STRING) != null) {
+                                            VALID_USERS.put(Attributes.STRING, "");
+                                        }
+                                    </script>
+                                </groovy>
+                            </line-iterator>
+                            
+                            <echo-ln>Loaded ${groovy(VALID_USERS.size())} included users in ${groovy(System.currentTimeMillis() - LOAD_START_TIME)}ms</echo-ln>
+                        </when>
+                        <when test="${groovy(included_users_file != '')}">
+                            <echo-ln>Includes file '${included_users_file}' does not exist, all users will be exported</echo-ln>
+                        </when>
+                    </choose>
+                    <return value="${groovy(VALID_USERS.keySet())}" />
+                </subtasks>
+            </with>
+        </with-attribute>
+    </factory>
+    <subtasks>
+        <choose>
+            <!-- If no includes list loaded all users are included -->
+            <when test="${groovy(VALID_USERS.size() == 0 || USER_NAME == 'system')}">
+                <return value="${groovy(true)}"/>
+            </when>
+            <when test="${groovy(userLayoutStore.isFragmentOwner(USER_NAME))}">
+                <return value="${groovy(true)}"/>
+            </when>
+            <otherwise>
+                <return value="${groovy(VALID_USERS.contains(USER_NAME))}" />
+            </otherwise>
+        </choose>
+    </subtasks>
+</cache>

@@ -1,0 +1,89 @@
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<!--
+ | NOTICE:  This file represents a contractual API that is leveraged by more 
+ | than one caller.  Please do not refactor this file in a way that changes 
+ | the number or nature of arguments expected.
+ |
+ | These are:
+ |   - ${NAME}=the identifier of the entity to export
+ |   - ${PORTAL_CONTEXT}=uPortal's Spring ApplicationContext
+ |   - ${SqlAttributes.DATA_SOURCE}=the DataSource for the PortalDb
+ |   - ${SqlAttributes.TRANSACTION_MANAGER}=PlatformTransactionManager in use
+ |   - Settings defined in classpath://properties/db/entities/export.properties
+ |
+ +-->
+<with-attribute key="Attributes.NODE" value="${newDoc(theme)}">
+    <echo-ln>Export Theme:  NAME=${NAME}</echo-ln>
+    <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-theme_v2-6.crn)}"/>
+    <with-attribute key="SS_ID" value="${sql(SELECT MAX(ss_id) FROM up_ss_theme WHERE ss_name = '${NAME}')}">
+        <choose>
+            <when test="${jexl(SS_ID == null)}">
+                <echo-ln>WARNING:  Theme '${NAME}' does not exist;  no theme file will be generated.</echo-ln>
+                <log logger-name="org.jasig.portal.io.export-theme" level="warn">Theme '${NAME}' does not exist;  no theme file will be generated.</log>
+            </when>
+            <otherwise>
+                <sql-query>
+                    <sql>SELECT * FROM up_ss_theme WHERE ss_id = ?</sql>
+                    <parameter value="${SS_ID}"/>
+                    <subtasks>
+                        <!-- Establish basic structure of the document... -->
+                        <append-node>
+                            <theme-id>${SS_ID}</theme-id>
+                            <name>${SS_NAME}</name>
+                            <uri>${SS_URI}</uri>
+                            <description-uri>${SS_DESCRIPTION_URI}</description-uri>
+                            <description-text>${SS_DESCRIPTION_TEXT}</description-text>
+                            <struct-id>${STRUCT_SS_ID}</struct-id>
+                            <sample-icon-uri>${SAMPLE_ICON_URI}</sample-icon-uri>
+                            <sample-uri>${SAMPLE_URI}</sample-uri>
+                            <mime-type>${MIME_TYPE}</mime-type>
+                            <device-type>${DEVICE_TYPE}</device-type>
+                            <serializer-name>${SERIALIZER_NAME}</serializer-name>
+                            <module-class>${UP_MODULE_CLASS}</module-class>
+                            <parameters/>
+                        </append-node>
+                    </subtasks>
+                </sql-query>
+                <!--  Theme Parameters  -->
+                <sql-query>
+                    <sql>SELECT * FROM up_ss_theme_parm WHERE ss_id = ?</sql>
+                    <parameter value="${SS_ID}"/>
+                    <subtasks>
+                        <if test="${jexl(PARAM_DEFAULT_VAL != null)}">
+                            <append-node parent="${singleNode(parameters)}">
+                                <parameter>
+                                    <name>${PARAM_NAME}</name>
+                                    <value>${PARAM_DEFAULT_VAL}</value>
+                                    <description>${groovy(PARAM_DESCRIPT != null ? PARAM_DESCRIPT : '')}</description>
+                                    <type>${TYPE}</type>
+                                </parameter>
+                            </append-node>
+                        </if>
+                    </subtasks>
+                </sql-query>
+                <delete-node node="${singleNode(theme-id)}"/>
+                <return value="${Attributes.NODE}"/>
+            </otherwise>
+        </choose>
+    </with-attribute>
+</with-attribute>

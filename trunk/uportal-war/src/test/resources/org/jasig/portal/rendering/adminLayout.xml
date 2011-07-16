@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<layout xmlns:dlm="http://www.uportal.org/layout/dlm">
+    <folder ID="s1" hidden="false" immutable="false" locale="en_US"
+        name="Root folder" type="root" unremovable="true" externalId="" width="100%">
+        <folder ID="ft1" type="regular" hidden="true" unremovable="true"
+            immutable="true" name="Transient Folder" externalId="" width="100%"/>
+        <folder ID="u24l1s4" dlm:deleteAllowed="false"
+            dlm:editAllowed="false" dlm:fragment="1"
+            dlm:moveAllowed="false" dlm:precedence="80.0" hidden="false"
+            immutable="false" locale="en_US" name="Welcome"
+            type="regular" unremovable="false" externalId=""
+            width="100%" xmlns:dlm="http://www.uportal.org/layout/dlm">
+            <folder ID="u24l1s5" dlm:fragment="1" dlm:precedence="80.0"
+                hidden="false" immutable="false" locale="en_US"
+                name="Column" type="regular" unremovable="false"
+                externalId="" width="60%" xmlns:dlm="http://www.uportal.org/layout/dlm">
+                <folder ID="u24l1s11" dlm:deleteAllowed="false"
+                    dlm:fragment="1" dlm:moveAllowed="false"
+                    dlm:precedence="80.0" hidden="false"
+                    immutable="false" locale="en_US" name=""
+                    type="regular" unremovable="false" externalId=""
+                    width="100%" xmlns:dlm="http://www.uportal.org/layout/dlm"/>
+                <channel ID="u24l1n12" chanID="15"
+                    class="org.jasig.portal.channels.portlet.CSpringPortletAdaptor"
+                    description="Google Portlet from http://code.google.com/p/googleportlet/"
+                    dlm:fragment="1" dlm:precedence="80.0"
+                    editable="false" fname="google-portlet"
+                    hasAbout="false" hasHelp="false" hidden="false"
+                    immutable="false" isPortlet="true" locale="en_US"
+                    name="Google Search" secure="false" timeout="60000"
+                    title="Google Search" typeID="4" unremovable="false" xmlns:dlm="http://www.uportal.org/layout/dlm">
+                    <parameter name="portletApplicationId" override="no" value="/jasig-widget-portlets"/>
+                    <parameter name="portletName" override="no" value="google-search"/>
+                </channel>
+            </folder>
+            <folder ID="u24l1s6" dlm:fragment="1" dlm:precedence="80.0"
+                hidden="false" immutable="false" locale="en_US"
+                name="Column" type="regular" unremovable="false"
+                externalId="" width="40%" xmlns:dlm="http://www.uportal.org/layout/dlm">
+                <channel ID="u24l1n7" chanID="4"
+                    class="org.jasig.portal.channels.portlet.CSpringPortletAdaptor"
+                    description="" dlm:fragment="1"
+                    dlm:precedence="80.0" editable="false"
+                    fname="RegisterPortal" hasAbout="false"
+                    hasHelp="false" hidden="false" immutable="false"
+                    isPortlet="true" locale="en_US"
+                    name="Register Portal" secure="false"
+                    timeout="600000" title="Register Portal" typeID="4"
+                    unremovable="false" xmlns:dlm="http://www.uportal.org/layout/dlm">
+                    <parameter name="isFrameworkPortlet" override="no" value="true"/>
+                    <parameter name="portletName" override="no" value="RegisterPortalPortlet"/>
+                </channel>
+                <channel ID="u24l1n8" chanID="19"
+                    class="org.jasig.portal.channels.portlet.CSpringPortletAdaptor"
+                    description="Bookmarks portlet" dlm:fragment="1"
+                    dlm:precedence="80.0" editable="false"
+                    fname="pbookmarks" hasAbout="false" hasHelp="false"
+                    hidden="false" immutable="false" isPortlet="true"
+                    locale="en_US" name="Bookmarks" secure="false"
+                    timeout="60000" title="Bookmarks" typeID="1"
+                    unremovable="false" xmlns:dlm="http://www.uportal.org/layout/dlm">
+                    <parameter name="quicklink" override="no" value="1"/>
+                    <parameter name="portletApplicationId" override="no" value="/BookmarksPortlet"/>
+                    <parameter name="portletName" override="no" value="BookmarksPortlet"/>
+                </channel>
+                <channel ID="u24l1n9" chanID="7"
+                    class="org.jasig.portal.channels.portlet.CSpringPortletAdaptor"
+                    description="Small monthly calendar."
+                    dlm:fragment="1" dlm:precedence="80.0"
+                    editable="false" fname="calendar" hasAbout="false"
+                    hasHelp="false" hidden="false" immutable="false"
+                    isPortlet="true" locale="en_US" name="Calendar"
+                    secure="false" timeout="60000" title="Calendar"
+                    typeID="4" unremovable="false" xmlns:dlm="http://www.uportal.org/layout/dlm">
+                    <parameter name="portletApplicationId" override="no" value="/jasig-widget-portlets"/>
+                    <parameter name="portletName" override="no" value="calendar"/>
+                </channel>
+                <channel ID="u24l1n10" chanID="35"
+                    class="org.jasig.portal.channels.portlet.CSpringPortletAdaptor"
+                    description="The Weather Module allows you to access the latest weather conditions and 5-day forecasts for the cities you select."
+                    dlm:fragment="1" dlm:precedence="80.0"
+                    editable="false" fname="weather" hasAbout="false"
+                    hasHelp="false" hidden="false" immutable="false"
+                    isPortlet="true" locale="en_US" name="My Weather"
+                    secure="false" timeout="15000" title="My Weather"
+                    typeID="4" unremovable="false" xmlns:dlm="http://www.uportal.org/layout/dlm">
+                    <parameter name="portletApplicationId" override="no" value="/WeatherPortlet"/>
+                    <parameter name="portletName" override="no" value="Weather"/>
+                    <parameter name="disableDynamicTitle" override="no" value="true"/>
+                </channel>
+            </folder>
+        </folder>
+        <folder ID="u10l1s4" dlm:fragment="7" dlm:precedence="40.0"
+            hidden="false" immutable="false" locale="en_US"
+            name="Development" type="regular" unremovable="false"
+            externalId="" width="100%" xmlns:dlm="http://www.uportal.org/layout/dlm">
+            <folder ID="u10l1s11" dlm:fragment="7" dlm:precedence="40.0"
+                hidden="false" immutable="false" locale="en_US"
+                name="Column 1" type="regular" unremovable="false"
+                externalId="" width="50%" xmlns:dlm="http://www.uportal.org/layout/dlm">
+                <folder ID="u10l1s15" dlm:fragment="7"
+                    dlm:precedence="40.0" hidden="false"
+                    immutable="false" locale="en_US" name=""
+                    type="regular" unremovable="false" externalId=""
+                    width="100%" xmlns:dlm="http://www.uportal.org/layout/dlm"/>
+                <folder ID="u10l1s16" dlm:fragment="7"
+                    dlm:precedence="40.0" hidden="false"
+                    immutable="false" locale="en_US" name=""
+                    type="regular" unremovable="false" externalId=""
+                    width="100%" xmlns:dlm="http://www.uportal.org/layout/dlm"/>
+            </folder>
+            <folder ID="u10l1s12" dlm:fragment="7" dlm:precedence="40.0"
+                hidden="false" immutable="false" locale="en_US"
+                name="Column 2" type="regular" unremovable="false"
+                externalId="" width="50%" xmlns:dlm="http://www.uportal.org/layout/dlm">
+                <channel ID="u10l1n13" chanID="26"
+                    class="org.jasig.portal.channels.portlet.CSpringPortletAdaptor"
+                    description="Tool for viewing request attributes and headers"
+                    dlm:fragment="7" dlm:precedence="40.0"
+                    editable="false" fname="snooper" hasAbout="false"
+                    hasHelp="false" hidden="false" immutable="false"
+                    isPortlet="true" locale="en_US" name="Snooper"
+                    secure="false" timeout="5000" title="Snooper"
+                    typeID="4" unremovable="false" xmlns:dlm="http://www.uportal.org/layout/dlm">
+                    <parameter name="isFrameworkPortlet" override="no" value="true"/>
+                    <parameter name="portletName" override="no" value="Snooper"/>
+                </channel>
+                <folder ID="u10l1s14" dlm:fragment="7"
+                    dlm:precedence="40.0" hidden="false"
+                    immutable="false" locale="en_US" name=""
+                    type="regular" unremovable="false" externalId=""
+                    width="100%" xmlns:dlm="http://www.uportal.org/layout/dlm"/>
+            </folder>
+        </folder>
+        <folder ID="u10l1s5" dlm:fragment="7" dlm:precedence="40.0"
+            hidden="false" immutable="false" locale="en_US"
+            name="Testing" type="regular" unremovable="false"
+            externalId="" width="100%" xmlns:dlm="http://www.uportal.org/layout/dlm">
+            <folder ID="u10l1s6" dlm:fragment="7" dlm:precedence="40.0"
+                hidden="false" immutable="false" locale="en_US"
+                name="Column 1" type="regular" unremovable="false"
+                externalId="" width="50%" xmlns:dlm="http://www.uportal.org/layout/dlm">
+                <channel ID="u10l1n9" chanID="29"
+                    class="org.jasig.portal.channels.portlet.CSpringPortletAdaptor"
+                    description="Test portlet 1 from Apache Pluto"
+                    dlm:fragment="7" dlm:precedence="40.0"
+                    editable="false" fname="test-portlet-1"
+                    hasAbout="false" hasHelp="false" hidden="false"
+                    immutable="false" isPortlet="true" locale="en_US"
+                    name="Test Portlet 1" secure="false"
+                    timeout="600000" title="Test Portlet 1" typeID="4"
+                    unremovable="false" xmlns:dlm="http://www.uportal.org/layout/dlm">
+                    <parameter name="portletApplicationId" override="no" value="/pluto-testsuite"/>
+                    <parameter name="portletName" override="no" value="TestPortlet1"/>
+                </channel>
+                <channel ID="u10l1n10" chanID="18"
+                    class="org.jasig.portal.channels.portlet.CSpringPortletAdaptor"
+                    description="Test Portlet from JASIG"
+                    dlm:fragment="7" dlm:precedence="40.0"
+                    editable="false" fname="jasig-test-portlet"
+                    hasAbout="false" hasHelp="false" hidden="false"
+                    immutable="false" isPortlet="true" locale="en_US"
+                    name="JASIG Test Portlet" secure="false"
+                    timeout="60000" title="JASIG Test Portlet"
+                    typeID="4" unremovable="false" xmlns:dlm="http://www.uportal.org/layout/dlm">
+                    <parameter name="portletApplicationId" override="no" value="/FunctionalTestsPortlet"/>
+                    <parameter name="portletName" override="no" value="FunctionalTestsPortlet"/>
+                </channel>
+            </folder>
+            <folder ID="u10l1s7" dlm:fragment="7" dlm:precedence="40.0"
+                hidden="false" immutable="false" locale="en_US"
+                name="Column 2" type="regular" unremovable="false"
+                externalId="" width="50%" xmlns:dlm="http://www.uportal.org/layout/dlm">
+                <channel ID="u10l1n8" chanID="30"
+                    class="org.jasig.portal.channels.portlet.CSpringPortletAdaptor"
+                    description="Test portlet 2 from Apache Pluto"
+                    dlm:fragment="7" dlm:precedence="40.0"
+                    editable="false" fname="test-portlet-2"
+                    hasAbout="false" hasHelp="false" hidden="false"
+                    immutable="false" isPortlet="true" locale="en_US"
+                    name="Test Portlet 2" secure="false"
+                    timeout="600000" title="Test Portlet 2" typeID="4"
+                    unremovable="false" xmlns:dlm="http://www.uportal.org/layout/dlm">
+                    <parameter name="portletApplicationId" override="no" value="/pluto-testsuite"/>
+                    <parameter name="portletName" override="no" value="TestPortlet2"/>
+                </channel>
+            </folder>
+        </folder>
+        <folder ID="u7l1s4" dlm:fragment="8" dlm:precedence="40.0"
+            hidden="false" immutable="false" locale="en_US"
+            name="Admin Tools" type="regular" unremovable="false"
+            externalId="" width="100%" xmlns:dlm="http://www.uportal.org/layout/dlm">
+            <folder ID="u7l1s5" dlm:fragment="8" dlm:precedence="40.0"
+                hidden="false" immutable="false" locale="en_US"
+                name="Column" type="regular" unremovable="false"
+                externalId="" width="50%" xmlns:dlm="http://www.uportal.org/layout/dlm">
+                <channel ID="u7l1n10" chanID="5"
+                    class="org.jasig.portal.channels.portlet.CSpringPortletAdaptor"
+                    description="Admin-targeted welcome screen"
+                    dlm:fragment="8" dlm:precedence="40.0"
+                    editable="false" fname="admin-feature"
+                    hasAbout="false" hasHelp="false" hidden="false"
+                    immutable="false" isPortlet="true" locale="en_US"
+                    name="Admin Welcome" secure="false" timeout="30000"
+                    title="Admin Welcome" typeID="2" unremovable="false" xmlns:dlm="http://www.uportal.org/layout/dlm">
+                    <parameter name="isFrameworkPortlet" override="no" value="true"/>
+                    <parameter name="portletName" override="no" value="Image"/>
+                    <parameter name="disableDynamicTitle" override="no" value="true"/>
+                </channel>
+                <channel ID="u7l1n11" chanID="4"
+                    class="org.jasig.portal.channels.portlet.CSpringPortletAdaptor"
+                    description="" dlm:fragment="8"
+                    dlm:precedence="40.0" editable="false"
+                    fname="RegisterPortal" hasAbout="false"
+                    hasHelp="false" hidden="false" immutable="false"
+                    isPortlet="true" locale="en_US"
+                    name="Register Portal" secure="false"
+                    timeout="600000" title="Register Portal" typeID="4"
+                    unremovable="false" xmlns:dlm="http://www.uportal.org/layout/dlm">
+                    <parameter name="isFrameworkPortlet" override="no" value="true"/>
+                    <parameter name="portletName" override="no" value="RegisterPortalPortlet"/>
+                </channel>
+            </folder>
+            <folder ID="u7l1s6" dlm:fragment="8" dlm:precedence="40.0"
+                hidden="false" immutable="false" locale="en_US"
+                name="Column" type="regular" unremovable="false"
+                externalId="" width="50%" xmlns:dlm="http://www.uportal.org/layout/dlm">
+                <channel ID="u7l1n7" chanID="21"
+                    class="org.jasig.portal.channels.portlet.CSpringPortletAdaptor"
+                    description="Useful administrative links for managing portal entities and impersonating users"
+                    dlm:fragment="8" dlm:precedence="40.0"
+                    editable="false" fname="portal-administration"
+                    hasAbout="false" hasHelp="false" hidden="false"
+                    immutable="false" isPortlet="true" locale="en_US"
+                    name="Portal Administration" secure="false"
+                    timeout="50000" title="Portal Administration"
+                    typeID="4" unremovable="false" xmlns:dlm="http://www.uportal.org/layout/dlm">
+                    <parameter name="isFrameworkPortlet" override="no" value="true"/>
+                    <parameter name="portletName" override="no" value="PortalAdministration"/>
+                </channel>
+                <folder ID="u7l1s8" dlm:fragment="8"
+                    dlm:precedence="40.0" hidden="false"
+                    immutable="false" locale="en_US" name=""
+                    type="regular" unremovable="false" externalId=""
+                    width="100%" xmlns:dlm="http://www.uportal.org/layout/dlm"/>
+                <channel ID="u7l1n9" chanID="3"
+                    class="org.jasig.portal.channels.portlet.CSpringPortletAdaptor"
+                    description="i" dlm:fragment="8"
+                    dlm:precedence="40.0" editable="false"
+                    fname="ImportExportPortlet" hasAbout="false"
+                    hasHelp="false" hidden="false" immutable="false"
+                    isPortlet="true" locale="en_US"
+                    name="Import Export Portlet" secure="false"
+                    timeout="50000" title="Import Export Portlet"
+                    typeID="4" unremovable="false" xmlns:dlm="http://www.uportal.org/layout/dlm">
+                    <parameter name="isFrameworkPortlet" override="no" value="true"/>
+                    <parameter name="portletName" override="no" value="ImportExportPortlet"/>
+                    <parameter name="disableDynamicTitle" override="no" value="false"/>
+                </channel>
+            </folder>
+        </folder>
+        <folder ID="s2" hidden="false" immutable="true" locale="en_US"
+            name="Header folder" type="header" unremovable="true"
+            externalId="" width="100%">
+            <folder ID="s5" hidden="false" immutable="false"
+                locale="en_US" name="" type="regular"
+                unremovable="false" externalId="" width="100%"/>
+            <folder ID="s6" hidden="false" immutable="false"
+                locale="en_US" name="" type="regular"
+                unremovable="false" externalId="" width="100%"/>
+            <channel ID="n7" chanID="34"
+                class="org.jasig.portal.channels.portlet.CSpringPortletAdaptor"
+                description="Allows a user to indicate locale preferences"
+                editable="false" fname="user-locales-selector"
+                hasAbout="false" hasHelp="false" hidden="false"
+                immutable="false" isPortlet="true" locale="en_US"
+                name="User Locales Selector" secure="false"
+                timeout="30000" title="User Locales Selector" typeID="4" unremovable="false">
+                <parameter name="isFrameworkPortlet" override="no" value="true"/>
+                <parameter name="portletName" override="no" value="UserLocale"/>
+            </channel>
+            <channel ID="n8" chanID="13"
+                class="org.jasig.portal.channels.portlet.CSpringPortletAdaptor"
+                description="Portlet for Fragment Administration in the header"
+                editable="false" fname="fragment-admin" hasAbout="false"
+                hasHelp="false" hidden="false" immutable="false"
+                isPortlet="true" locale="en_US"
+                name="Fragment Administration" secure="false"
+                timeout="50000" title="Fragment Administration"
+                typeID="4" unremovable="false">
+                <parameter name="isFrameworkPortlet" override="no" value="true"/>
+                <parameter name="portletName" override="no" value="FragmentAdministration"/>
+            </channel>
+        </folder>
+        <folder ID="s3" hidden="false" immutable="false" locale="en_US"
+            name="Footer folder" type="footer" unremovable="false"
+            externalId="" width="100%">
+            <folder ID="s4" hidden="false" immutable="false"
+                locale="en_US" name="" type="regular"
+                unremovable="false" externalId="" width="100%"/>
+        </folder>
+    </folder>
+</layout>

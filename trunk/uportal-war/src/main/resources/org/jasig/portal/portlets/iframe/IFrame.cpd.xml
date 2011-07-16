@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<portlet-publishing-definition
+    xmlns="https://source.jasig.org/schemas/uportal/portlet-publishing"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://source.jasig.org/schemas/uportal/portlet-publishing ../../../../../xsd/portlet-publishing/portlet-publishing-definition.xsd">
+
+      <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
+        <up:isFramework>true</up:isFramework>
+        <up:portletName>IFrame</up:portletName>
+      </portlet-descriptor>
+
+    <step>
+
+        <name>Inline frame parameters</name>
+
+        <description>
+        Enter the URL of the page you want to render in an
+        inline frame.  Be aware that inline frames are not supported in some
+        browsers, in which case this channel will render a link to open the
+        page in a new window.
+      </description>
+      
+        <parameter>
+            <name>disableDynamicTitle</name>
+            <label>disable.dynamic.title</label>
+            <single-choice-parameter-input display="hidden">
+                <default>true</default>
+                <option value="false" label="false" />
+                <option value="true" label="true" />
+            </single-choice-parameter-input>
+        </parameter>
+
+        <preference>
+            <name>url</name>
+            <label>url</label>
+            <example>http://www.udel.edu/uPortal</example>
+            <single-text-preference-input display="text" />
+        </preference>
+
+      <preference>
+        <name>height</name>
+        <label>frame.height</label>
+        <single-text-preference-input display="text">
+            <default>600</default>
+        </single-text-preference-input>
+      </preference>
+
+      <preference>
+        <name>width</name>
+        <label>frame.width</label>
+        <single-text-preference-input display="text">
+            <default>100%</default>
+        </single-text-preference-input>
+      </preference>
+
+      <preference>
+        <name>id</name>
+        <label>html.id</label>
+        <single-text-preference-input display="text" />
+      </preference>
+
+      <preference>
+        <name>cssClass</name>
+        <label>html.cssClass</label>
+        <single-text-preference-input display="text" />
+      </preference>
+
+      <preference>
+        <name>style</name>
+        <label>html.style</label>
+        <single-text-preference-input display="text" />
+      </preference>
+
+      <preference>
+        <name>title</name>
+        <label>html.title</label>
+        <single-text-preference-input display="text" />
+      </preference>
+
+      <preference>
+        <name>longDescription</name>
+        <label>html.longDescription</label>
+        <single-text-preference-input display="text" />
+      </preference>
+
+      <preference>
+        <name>name</name>
+        <label>html.name</label>
+        <single-text-preference-input display="text" />
+      </preference>
+
+      <preference>
+        <name>frameBorder</name>
+        <label>html.frameBorder</label>
+        <single-text-preference-input display="text">
+            <default>0</default>
+        </single-text-preference-input>
+      </preference>
+
+      <preference>
+        <name>marginWidth</name>
+        <label>html.marginWidth</label>
+        <single-text-preference-input display="text" />
+      </preference>
+
+      <preference>
+        <name>marginHeight</name>
+        <label>html.marginHeight</label>
+        <single-text-preference-input display="text" />
+      </preference>
+
+      <preference>
+        <name>scrolling</name>
+        <label>html.scrolling</label>
+        <single-text-preference-input display="text" />
+      </preference>
+
+      <preference>
+        <name>align</name>
+        <label>html.align</label>
+        <single-text-preference-input display="text" />
+      </preference>
+
+    </step>
+
+</portlet-publishing-definition>

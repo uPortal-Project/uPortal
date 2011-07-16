@@ -1,0 +1,22 @@
+//====================================
+// THEME
+//====================================
+// Portal theme styles. This file imports all other theme files.
+// Theme files are boxed off for human use.
+
+@import "../../uportal3/scss/_skin-colors.scss"; // skin colors.
+@import "colors";
+@import "../../uportal3/scss/_skin-config.scss"; // skin configuration.
+@import "buttons";
+@import "forms";
+@import "fss-overrides";
+@import "jqueryui-overrides";
+@import "general";
+@import "header";
+@import "navigation";
+@import "gallery";
+@import "sidebar";
+@import "portlet-chrome";
+@import "footer";
+@import "customization";
+@import "../../uportal3/scss/_skin-overrides.scss"; // skin specific overrides.

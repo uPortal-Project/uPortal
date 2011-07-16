@@ -1,0 +1,87 @@
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<!--
+ | NOTICE:  This file represents a contractual API that is leveraged by more 
+ | than one caller.  Please do not refactor this file in a way that changes 
+ | the number or nature of arguments expected.
+ |
+ | These are:
+ |   - ${Attributes.NODE}=XML Element that defines the entity to import
+ |   - ${PORTAL_CONTEXT}=uPortal's Spring ApplicationContext
+ |   - ${SqlAttributes.DATA_SOURCE}=the DataSource for the PortalDb
+ |   - ${SqlAttributes.TRANSACTION_MANAGER}=PlatformTransactionManager in use
+ |   - Settings defined in classpath://properties/db/entities/import.properties
+ |
+ +-->
+<with-attribute key="CHANNEL_TYPE" value="${valueOf(type)}">
+    <choose>
+        <when test="${groovy(CHANNEL_TYPE.contains('Portlet'))}">
+            <!-- 
+             | As expected, Portlet support in uP3 received a solid overhaul.  Given 
+             | v2-6 XML that represents a published portlet, we need to:
+             |   - (1) change the <class> to 'org.jasig.portal.channels.portlet.CSpringPortletAdaptor'
+             |   - (2) split the (single) 'portletDefinitionId' parameter into 'portletApplicationId' and 'portletName' 
+             +-->
+            <delete-node node="${singleNode(class)}"/>
+            <append-node sibling="${singleNode(type)}">
+                <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
+            </append-node>
+            <with-attribute key="PORTLET_DEF_ELEMENT" value="${singleNode(parameters/parameter[name/text() = 'portletDefinitionId'])}">
+                <choose>
+                    <when test="${jexl(PORTLET_DEF_ELEMENT != null)}">
+                        <with-attribute key="PORTLET_DEF_TOKENS" value="${groovy(PORTLET_DEF_ELEMENT.valueOf('value').split('\\.'))}">
+                            <choose>
+                                <when test="${groovy(PORTLET_DEF_TOKENS.length == 2)}">
+                                    <append-node parent="${singleNode(parameters)}">
+                                        <parameter>
+                                            <name>portletApplicationId</name>
+                                            <value>/${groovy(PORTLET_DEF_TOKENS[0])}</value>
+                                            <description/>
+                                            <ovrd>N</ovrd>
+                                        </parameter>
+                                        <parameter>
+                                            <name>portletName</name>
+                                            <value>${groovy(PORTLET_DEF_TOKENS[1])}</value>
+                                            <description/>
+                                            <ovrd>N</ovrd>
+                                        </parameter> 
+                                    </append-node>
+                                    <delete-node node="${PORTLET_DEF_ELEMENT}"/>
+                                </when>
+                                <otherwise>
+                                    <echo-ln>WARNING: ${Attributes.LOCATION} does not have a well formatted 'portletDefinitionId' parameter: '${groovy(PORTLET_DEF_ELEMENT.valueOf('value'))}'. This channel may not work correctly.</echo-ln>
+                                </otherwise>
+                            </choose>
+                        </with-attribute>
+                    </when>
+                    <otherwise>
+                        <echo-ln>WARNING: ${Attributes.LOCATION} claims to be a portlet but doesn't have a 'portletDefinitionId' parameter. This channel may not work correctly.</echo-ln>
+                    </otherwise>
+                </choose>
+            </with-attribute>
+            <crn location="import-channel_v3-0.crn"/>
+        </when>
+        <otherwise>
+            <crn location="import-channel_v3-0.crn"/>
+        </otherwise>
+    </choose>
+</with-attribute>

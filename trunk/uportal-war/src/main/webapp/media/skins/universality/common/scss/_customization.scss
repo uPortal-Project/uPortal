@@ -1,0 +1,130 @@
+/*====================================*/
+/* Customization */
+/*====================================*/
+/*
+ * Styles for formatting various aspects of portal customization.
+ */
+
+.up {
+	#portalPageBodyCustomizeMessageRow {
+		/* Customize Page Message, displays when a new page is created (with no content). */
+		background: $customizePageMessagePointer;
+		
+		#portalPageBodyCustomizeMessageRowContents {
+			padding: $customizePageMessagePadding;
+    		background: $customizePageMessageBackground;
+    		border: $customizePageMessageBorder;
+    		@if ($customizePageMessageRound != false) {
+    			@include rounded($customizePageMessageRound);
+    		}
+    		
+    		h1 {
+    			margin: $customizePageMessageTitleMargin;
+    			font-weight: $customizePageMessageTitleWeight;
+    			color: $customizePageMessageTitle;
+    			text-decoration: none;
+    			border: none;
+    		}
+    		
+    		strong {
+    			color: $customizePageMessageStrong;
+    		}
+		}
+	}
+	
+	.fragment-admin-mode #portalPageBodyInner {
+		/* Page body in fragment administration mode. */
+		padding: 1.2em 25px 2.5em 25px;
+	}
+	
+	#portalFragAdminExit {
+		/* Fragment Administration mode. */
+		margin: 0;
+		background: $fragAdminHeaderBackground;
+		border: $fragAdminHeaderBorder;
+		border-bottom: $fragAdminHeaderBorderBottom;
+		@if ($fragAdminHeaderRound != false) {
+			@include rounded($fragAdminHeaderRound);
+		}
+		
+		h2 {
+			color: $fragAdminHeaderTitle;
+			font-size: $fragAdminHeaderTitleSize;
+		}
+		
+		.fl-widget-content {
+			background: $fragAdminHeaderContentBgd;
+			@include button($fragAdminHeaderButtonType);
+			
+			#exitFragment {
+				float: right;
+			}
+		}
+	}
+	
+	#portalEditPagePermissions {
+		/* Edit page Permisssions */
+		float: right;
+		display: block;
+		margin-top: .75em;
+		margin-right: 25px;
+		@include button($fragAdminPagePermsButtonType);
+	}
+
+	.column-permissions {
+		margin-bottom:0.5em;
+		@include button($fragAdminColumnPermsButtonType);
+	}
+	
+	.fragment-disabled, .fragment-disabled h2.fragment-title {
+		color: $fragDisabled;
+	}
+	.layout-option {
+		padding: 5px;
+	}
+	.layout-option.selected {
+		border: $layoutOptionSelectedBorder;
+	}
+	
+	.fl-reorderer-movable-hover {
+		/* Affordance to indicate draggable. */
+		cursor:move;
+	}
+	
+	.fl-reorderer-movable-dragging-mouse {
+		/* When the item is being moved, hide the original. */
+		display:none;
+	}
+	
+	.fl-reorderer-avatar {
+		/* See-through avatar (copy) of the item being dragged. */
+		background-color: $dndAvatarBackground;
+		border: $dndAvatarBorder;
+	}
+	
+	.fl-reorderer-movable-selected,
+	.fl-reorderer-movable-selected:focus,
+	.fl-reorderer-movable-dragging:focus {
+		/* keyboard layout reorder focus outline */
+		outline: $dndSelectedOutline;
+	}
+	.fl-reorderer-header-movable-selected:focus,
+	.fl-reorderer-header-movable-dragging:focus,
+	.fl-reorderer-sidebar-movable-selected:focus,
+	.fl-reorderer-sidebar-movable-dragging:focus {
+		outline: none;
+	}
+	
+	.fl-reorderer-dropMarker {
+		/* Indicate where the item may be dropped. */
+		background-color: $dndDropMarkerBackground;
+		border: $dndDropMarkerBorder;
+	}
+	
+	.drop-warning {
+		/* Warning message that indicates that an item cannot be moved into a position due to locked (unmovable) items. */
+		border: $dndDropWarningBorder;
+		background: $dndDropWarningBackground;
+		color: $dndDropWarningText;
+	}
+}

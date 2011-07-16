@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<head>
+    <link href="/media/skins/test/common/css/a.css" media="all" rel="stylesheet" type="text/css"/>
+    <link href="/media/skins/test/common/css/b.css" media="all" rel="stylesheet" type="text/css"/>
+    <!--[condition!]> <link rel="stylesheet" type="text/css" href="/media/skins/test/common/css/conditional.css" media="all"/> <![endif]-->
+    <link href="/ResourceServingWebapp/rs/1.css" media="all" rel="stylesheet" type="text/css"/>
+    <link href="/ResourceServingWebapp/rs/2.css" media="all" rel="stylesheet" type="text/css"/>
+    <link href="/media/skins/test/uportal3/css/a.css" media="alternate" rel="stylesheet"
+        type="text/css"/>
+    <link href="/media/skins/test/uportal3/css/b.css" media="alternate" rel="stylesheet"
+        type="text/css"/>
+    <script src="/media/skins/test/common/js/a.js" type="text/javascript"/>
+    <script src="/media/skins/test/common/js/b.js" type="text/javascript"/>
+    <script src="/universal.js" type="text/javascript"/>
+    <script src="/media/skins/test/uportal3/js/a.js" type="text/javascript"/>
+    <script src="/media/skins/test/uportal3/js/b.js" type="text/javascript"/>
+    <script src="/media/skins/test/uportal3/js/c-compressed.js" type="text/javascript"/>
+    <!--[if IE lt 7]> <script type="text/javascript" src="/media/skins/test/uportal3/js/ie6-hack.js"></script> <![endif]-->
+</head>

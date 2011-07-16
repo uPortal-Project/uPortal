@@ -1,0 +1,76 @@
+/* Color Palette
+--------------------------------------*/
+/* RGBA values include transparency and are easier than hexidecimal to use in 
+mathematical calculations. */
+$white			: rgba(255,255,255,1);
+$black			: rgba(0,0,0,1);
+$text			: rgba(68,68,68,1);
+
+/* Grayscale */
+$gray			: rgba(169, 169, 169, 1);
+$graydark		: darken($gray, 10%);
+$graydarker		: darken($gray, 20%);
+$graydarkest	: darken($gray, 30%);
+$graylight		: lighten($gray, 10%);
+$graylighter	: lighten($gray, 20%);
+$graylightest	: lighten($gray, 30%);
+
+/* Background color */
+$bgc			: rgba(51, 102, 204, 1);
+
+/* Primary color, c1 */
+$c1				: rgba(70, 130, 180, 1);
+$c1dark			: darken($c1, 10%);
+$c1darker		: darken($c1, 20%);
+$c1darkest		: darken($c1, 30%);
+$c1light		: lighten($c1, 10%);
+$c1lighter		: lighten($c1, 20%);
+$c1lightest		: lighten($c1, 30%);
+
+/* Secondary color, c2 */
+$c2				: rgba(40, 45, 51, 1);
+$c2dark			: darken($c2, 10%);
+$c2darker		: darken($c2, 20%);
+$c2darkest		: darken($c2, 30%);
+$c2light		: lighten($c2, 10%);
+$c2lighter		: lighten($c2, 20%);
+$c2lightest		: lighten($c2, 30%);
+
+/* Tertiary color, c3 */
+$c3				: rgba(33, 101, 63, 1);
+$c3dark			: darken($c3, 10%);
+$c3darker		: darken($c3, 20%);
+$c3darkest		: darken($c3, 30%);
+$c3light		: lighten($c3, 10%);
+$c3lighter		: lighten($c3, 20%);
+$c3lightest		: lighten($c3, 30%);
+
+/* Highlight color, c4 */
+$c4				: rgba(187, 170, 51, 1);
+$c4dark			: darken($c4, 10%);
+$c4darker		: darken($c4, 20%);
+$c4darkest		: darken($c4, 30%);
+$c4light		: lighten($c4, 10%);
+$c4lighter		: lighten($c4, 20%);
+$c4lightest		: lighten($c4, 30%);
+
+/* Secondary Highlight color, c5 */
+$c5				: rgba(204, 0, 0, 1);
+$c5dark			: darken($c5, 10%);
+$c5darker		: darken($c5, 20%);
+$c5darkest		: darken($c5, 30%);
+$c5light		: lighten($c5, 10%);
+$c5lighter		: lighten($c5, 20%);
+$c5lightest		: lighten($c5, 30%);
+
+/* Calendar colors */
+$cal0 			: rgba(16, 98, 165, 1);
+$cal1 			: rgba(71, 115, 0, 1);
+$cal2 			: rgba(153, 0, 0, 1);
+$cal3 			: rgba(104, 48, 153, 1);
+$cal4 			: rgba(139, 69, 0, 1);
+$cal5 			: rgba(0, 139, 120, 1);
+$cal6 			: rgba(182, 33, 98, 1);
+$cal7 			: rgba(187, 91, 29, 1);
+$cal8 			: rgba(123, 123, 123, 1);
+$cal9 			: rgba(0, 0, 0, 1);

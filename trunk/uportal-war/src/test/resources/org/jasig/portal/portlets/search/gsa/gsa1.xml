@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<GSP VER="3.2">
+    <TM>0.072078</TM>
+    <Q>mal</Q>
+    <PARAM name="q" value="mal" original_value="mal" />
+    <PARAM name="site" value="Yale_University" original_value="Yale_University" />
+    <PARAM name="btnG" value="Search" original_value="Search" />
+    <PARAM name="entqr" value="0" original_value="0" />
+    <PARAM name="ud" value="1" original_value="1" />
+    <PARAM name="sort" value="date:D:L:d1" original_value="date%3AD%3AL%3Ad1" />
+    <PARAM name="output" value="xml_no_dtd" original_value="xml_no_dtd" />
+    <PARAM name="oe" value="UTF-8" original_value="UTF-8" />
+    <PARAM name="ie" value="UTF-8" original_value="UTF-8" />
+    <PARAM name="client" value="bluesite_frontend" original_value="bluesite_frontend" />
+    <PARAM name="proxyreload" value="1" original_value="1" />
+    <PARAM name="entsp" value="0" original_value="0" />
+
+    <PARAM name="ip" value="130.132.35.8" original_value="130.132.35.8" />
+    <PARAM name="access" value="p" original_value="p" />
+    <Spelling>
+        <Suggestion q="mail">&lt;b&gt;&lt;i&gt;mail&lt;/i&gt;&lt;/b&gt;
+        </Suggestion>
+    </Spelling>
+    <RES SN="1" EN="10">
+        <M>2200</M>
+        <FI />
+        <NB>
+            <NU>/search?q=mal&amp;site=Yale_University&amp;lr=&amp;ie=UTF-8&amp;oe=UTF-8&amp;output=xml_no_dtd&amp;client=bluesite_frontend&amp;access=p&amp;sort=date:D:L:d1&amp;start=10&amp;sa=N
+            </NU>
+
+        </NB>
+
+        <R N="1">
+            <U>http://www.yalemedicalgroup.org/stw/Page.asp?ContentTypeId=85&amp;ContentId=P03980
+            </U>
+            <UE>http://www.yalemedicalgroup.org/stw/Page.asp%3FContentTypeId%3D85%26ContentId%3DP03980
+            </UE>
+            <UD>http://www.yalemedicalgroup.org/stw/Page.asp?ContentTypeId=85&amp;ContentId=P03980
+            </UD>
+            <T>Halitosis (&lt;b&gt;Mal&lt;/b&gt; aliento)</T>
+            <RK>9</RK>
+            <ENT_SOURCE>T2-FGDDZWWZWNWAT</ENT_SOURCE>
+            <FS NAME="date" VALUE="" />
+            <S>&lt;b&gt;...&lt;/b&gt; Halitosis (&lt;b&gt;Mal&lt;/b&gt;
+                aliento). ¿Qué es la halitosis? &lt;b&gt;...&lt;/b&gt;
+                Qué causa el &lt;b&gt;mal&lt;/b&gt; aliento?
+                Existen&lt;br&gt; tantas causas del
+                &lt;b&gt;mal&lt;/b&gt; aliento como fuentes de bacterias
+                en la boca. &lt;b&gt;...&lt;/b&gt; </S>
+            <LANG>es</LANG>
+            <HAS>
+                <L />
+                <C SZ="23k" CID="gr3-6C548RgJ" ENC="UTF-8" />
+            </HAS>
+        </R>
+        <R N="2" L="2">
+            <U>http://www.yalemedicalgroup.org/stw/Page.asp?PageID=STW013772
+            </U>
+            <UE>http://www.yalemedicalgroup.org/stw/Page.asp%3FPageID%3DSTW013772
+            </UE>
+            <UD>http://www.yalemedicalgroup.org/stw/Page.asp?PageID=STW013772
+            </UD>
+            <T>Acetazolamide</T>
+            <RK>6</RK>
+            <ENT_SOURCE>T2-FGDDZWWZWNWAT</ENT_SOURCE>
+            <FS NAME="date" VALUE="" />
+            <S>&lt;b&gt;...&lt;/b&gt; También se utiliza para tratar y
+                prevenir el &lt;b&gt;mal&lt;/b&gt; de alturas y
+                &lt;b&gt;mal&lt;/b&gt; de montaña.
+                &lt;b&gt;...&lt;/b&gt; También&lt;br&gt; se utiliza para
+                tratar or prevenir el &lt;b&gt;mal&lt;/b&gt; de altura y
+                &lt;b&gt;mal&lt;/b&gt; de montaña.
+                &lt;b&gt;...&lt;/b&gt; </S>
+            <LANG>es</LANG>
+            <HAS>
+                <L />
+                <C SZ="37k" CID="jmOtGNW8BtkJ" ENC="UTF-8" />
+            </HAS>
+            <HN U="www.yalemedicalgroup.org/stw/Page.asp">www.yalemedicalgroup.org/stw/Page.asp</HN>
+        </R>
+        <R N="3" MIME="application/msword">
+            <U>http://medicine.yale.edu/intmed/vacs/Images/Cancer_ICD9_codes_curr_tcm75-6731.doc
+            </U>
+            <UE>http://medicine.yale.edu/intmed/vacs/Images/Cancer_ICD9_codes_curr_tcm75-6731.doc
+            </UE>
+            <UD>http://medicine.yale.edu/intmed/vacs/Images/Cancer_ICD9_codes_curr_tcm75-6731.doc
+            </UD>
+            <T>ICD-9 codes for Cancer variables- using SEER criteria</T>
+            <RK>9</RK>
+            <ENT_SOURCE>T2-FGDDZWWZWNWAT</ENT_SOURCE>
+            <FS NAME="date" VALUE="" />
+            <S>&lt;b&gt;...&lt;/b&gt; V10.12, HX-TRACHEAL MALIGNANCY.
+                V10.2, HX-OTH INTRATHORACIC &lt;b&gt;MAL&lt;/b&gt;.
+                V10.20, HX-RESP&lt;br&gt; ORG MALIGNAN NOS.
+                &lt;b&gt;...&lt;/b&gt; V10.22, HX-NOSE/EAR/SINUS MALIG.
+                V10.29, HX-INTRATHORACIC &lt;b&gt;MAL&lt;/b&gt;
+                &lt;b&gt;...&lt;/b&gt; </S>
+            <LANG>en</LANG>
+            <HAS>
+                <L />
+                <C SZ="" CID="ls5coiBSKPsJ" ENC="UTF-8" />
+            </HAS>
+        </R>
+        <R N="4" L="2" MIME="application/vnd.ms-excel">
+            <U>http://medicine.yale.edu/intmed/vacs/Images/VACS_data_documentation.xls
+            </U>
+            <UE>http://medicine.yale.edu/intmed/vacs/Images/VACS_data_documentation.xls
+            </UE>
+            <UD>http://medicine.yale.edu/intmed/vacs/Images/VACS_data_documentation.xls
+            </UD>
+            <T>Table of Contents</T>
+            <RK>8</RK>
+            <ENT_SOURCE>T2-FGDDZWWZWNWAT</ENT_SOURCE>
+            <FS NAME="date" VALUE="" />
+            <S>&lt;b&gt;...&lt;/b&gt; 130, 405.x, Secondary
+                hypertension, 131, 405, Secondary hypertension, 132,
+                405.0,&lt;br&gt; &lt;b&gt;Mal&lt;/b&gt; second
+                hypertension, 133, 405.01, Renovascular, 134, 405.09,
+                Other, 135, 405.1 &lt;b&gt;...&lt;/b&gt; </S>
+            <LANG>en</LANG>
+            <HAS>
+                <L />
+                <C SZ="" CID="RqrD31zoFncJ" ENC="UTF-8" />
+            </HAS>
+            <HN U="medicine.yale.edu/intmed/vacs/Images">medicine.yale.edu/intmed/vacs/Images</HN>
+        </R>
+        <R N="5" MIME="application/pdf">
+            <U>http://www.haskins.yale.edu/SR/SR103/SR103_05.pdf</U>
+            <UE>http://www.haskins.yale.edu/SR/SR103/SR103_05.pdf</UE>
+            <UD>http://www.haskins.yale.edu/SR/SR103/SR103_05.pdf</UD>
+            <T>Linguistic Structure and Articulatory Dynamics: A Cross
+                Language &lt;b&gt;...&lt;/b&gt;</T>
+            <RK>8</RK>
+            <ENT_SOURCE>T2-FGDDZWWZWNWAT</ENT_SOURCE>
+            <FS NAME="date" VALUE="2010-05-25" />
+            <S>&lt;b&gt;...&lt;/b&gt; Consequently, Vatikiotis-Bateson
+                (1988) analyzed comparable reiterant speech
+                data&lt;br&gt; using two reiterant syllables, /bal and
+                /&lt;b&gt;mal&lt;/b&gt;, from at least three speakers
+                &lt;b&gt;...&lt;/b&gt; </S>
+            <LANG>en</LANG>
+            <HAS>
+                <L />
+                <C SZ="" CID="FUUac8hwJrEJ" ENC="UTF-8" />
+            </HAS>
+        </R>
+        <R N="6">
+            <U>http://cmi.research.yale.edu/dante/paradiso/cantos/vi_i.html
+            </U>
+            <UE>http://cmi.research.yale.edu/dante/paradiso/cantos/vi_i.html
+            </UE>
+            <UD>http://cmi.research.yale.edu/dante/paradiso/cantos/vi_i.html
+            </UD>
+            <T>CANTO VI</T>
+            <RK>7</RK>
+            <ENT_SOURCE>T2-FGDDZWWZWNWAT</ENT_SOURCE>
+            <FS NAME="date" VALUE="2010-03-08" />
+            <S>&lt;b&gt;...&lt;/b&gt; lui ancora. E sai ch&amp;#39;el fé
+                dal &lt;b&gt;mal&lt;/b&gt; de le Sabine al dolor di
+                Lucrezia in&lt;br&gt; sette regi, vincendo intorno le
+                genti vicine. Sai quel &lt;b&gt;...&lt;/b&gt; </S>
+            <LANG>it</LANG>
+            <HAS>
+                <L />
+                <C SZ="28k" CID="RoTwwvx9rbMJ" ENC="UTF-8" />
+            </HAS>
+        </R>
+        <R N="7" MIME="application/pdf">
+            <U>http://cowles.econ.yale.edu/lec-lun/2010/haile-sl-100414.pdf
+            </U>
+            <UE>http://cowles.econ.yale.edu/lec-lun/2010/haile-sl-100414.pdf
+            </UE>
+            <UD>http://cowles.econ.yale.edu/lec-lun/2010/haile-sl-100414.pdf
+            </UD>
+            <T>Identification in Differentiated Products Markets</T>
+            <RK>6</RK>
+            <ENT_SOURCE>T2-FGDDZWWZWNWAT</ENT_SOURCE>
+            <FS NAME="date" VALUE="2010-04-15" />
+            <S>&lt;b&gt;...&lt;/b&gt; population of consumer preferences
+                # each csr has conditional indirect utility
+                function&lt;br&gt; &lt;b&gt;MAL&lt;/b&gt; (PBL ,HBL ,
+                ξBL &lt;b&gt;...&lt;/b&gt; Assumption 1a.
+                &lt;b&gt;MAL&lt;/b&gt; (PBL ,HBL , ξBL ) # M (δBL ,P
+                &lt;b&gt;...&lt;/b&gt; </S>
+            <LANG>en</LANG>
+            <HAS>
+                <L />
+                <C SZ="" CID="b0Mzdyd2HdoJ" ENC="UTF-8" />
+            </HAS>
+        </R>
+        <R N="8" MIME="application/pdf">
+            <U>http://zoo.cs.yale.edu/classes/cs201/Fall_2002/lectures/lecture-9.pdf
+            </U>
+            <UE>http://zoo.cs.yale.edu/classes/cs201/Fall_2002/lectures/lecture-9.pdf
+            </UE>
+            <UD>http://zoo.cs.yale.edu/classes/cs201/Fall_2002/lectures/lecture-9.pdf
+            </UD>
+            <T>¢¡¤£¦¥¨§ © ! &amp;quot;# $ &amp;amp; %(&amp;#39;0)21(35
+                4618797@ %A&amp;#39;B&amp;#39;C%(35 D¢
+                &lt;b&gt;...&lt;/b&gt;</T>
+            <RK>6</RK>
+            <ENT_SOURCE>T2-FGDDZWWZWNWAT</ENT_SOURCE>
+            <FS NAME="date" VALUE="2002-09-25" />
+            <S>&lt;b&gt;...&lt;/b&gt; 5zSn… ‚(egfYm tBhh tSffegfGl t8r
+                kˆiB‡W ¹¬ ™ t¤‚BiÀ &lt;b&gt;mAl&lt;/b&gt;•
+                {5hgt8r&lt;br&gt; ñ(f• {Èi$lG«hiˆiˆr¾ lo™5i$£8 {5e»lP
+                k$zApAiXfX‡p {5mAlP &lt;b&gt;...&lt;/b&gt; </S>
+            <LANG>hr</LANG>
+            <HAS>
+                <L />
+                <C SZ="" CID="5u99LMsBUogJ" ENC="UTF-8" />
+            </HAS>
+        </R>
+        <R N="9" MIME="application/pdf">
+            <U>http://korora.econ.yale.edu/~engel/arts/04_09-19-lt.pdf
+            </U>
+            <UE>http://korora.econ.yale.edu/~engel/arts/04_09-19-lt.pdf
+            </UE>
+            <UD>http://korora.econ.yale.edu/~engel/arts/04_09-19-lt.pdf
+            </UD>
+            <T>Educación Municipal: ¿qué tal lo ha hecho su alcalde?</T>
+            <RK>6</RK>
+            <ENT_SOURCE>T2-FGDDZWWZWNWAT</ENT_SOURCE>
+            <FS NAME="date" VALUE="2004-09-22" />
+            <S>&lt;b&gt;...&lt;/b&gt; Quienes lo han hecho bien merecen
+                seguir, quienes lo han hecho &lt;b&gt;mal&lt;/b&gt;
+                debieran ser&lt;br&gt; reemplazados. Evaluar la gestión
+                de un alcalde no es tarea fácil. &lt;b&gt;...&lt;/b&gt;
+            </S>
+            <LANG>es</LANG>
+            <HAS>
+                <L />
+                <C SZ="" CID="z5UQSZVSzFcJ" ENC="UTF-8" />
+            </HAS>
+        </R>
+        <R N="10">
+            <U>http://fore.research.yale.edu/religion/jainism/bibliography.html
+            </U>
+            <UE>http://fore.research.yale.edu/religion/jainism/bibliography.html
+            </UE>
+            <UD>http://fore.research.yale.edu/religion/jainism/bibliography.html
+            </UD>
+            <T>FORE: Religion-Jainism-Bibliography</T>
+            <RK>6</RK>
+            <ENT_SOURCE>T2-FGDDZWWZWNWAT</ENT_SOURCE>
+            <FS NAME="date" VALUE="2009-09-04" />
+            <S>&lt;b&gt;...&lt;/b&gt; eds. Prem Suman Jain and Raj
+                &lt;b&gt;Mal&lt;/b&gt; Lodha, 103–108.
+                &lt;b&gt;...&lt;/b&gt; Prem Suman Jain and Raj
+                &lt;b&gt;Mal&lt;/b&gt; Lodha,&lt;br&gt; 103–108. New
+                Delhi: Ashish Publishing House, 1990. Jaini, Padmanabh.
+                &lt;b&gt;...&lt;/b&gt; </S>
+            <LANG>en</LANG>
+            <HAS>
+                <L />
+                <C SZ="26k" CID="_PR4egbwc48J" ENC="ISO-8859-1" />
+            </HAS>
+        </R>
+    </RES>
+
+</GSP>

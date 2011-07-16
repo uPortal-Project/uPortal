@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans" 
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+    
+    <context:annotation-config/>
+    <context:component-scan base-package="org.jasig.portal">
+        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.portlets\."/>
+    </context:component-scan>
+    
+    <context:property-placeholder location="classpath:/properties/rdbm.properties,classpath:/properties/portal.properties,classpath:/properties/security.properties"/>
+    
+    <bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor" lazy-init="false" />
+    
+    <bean id="portalPropertyEditorRegistrar" class="org.jasig.portal.spring.properties.PortalPropertyEditorRegistrar">
+        <property name="propertyEditors">
+            <map key-type="java.lang.Class">
+                <entry key="javax.portlet.PortletMode"><bean class="org.jasig.portal.spring.properties.PortletModeEditor" /></entry>
+                <entry key="javax.portlet.WindowState"><bean class="org.jasig.portal.spring.properties.WindowStateEditor" /></entry>
+            </map>
+        </property>
+    </bean>
+
+    <bean class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+        <property name="propertyEditorRegistrars">
+            <list>
+                <ref bean="portalPropertyEditorRegistrar"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+        <property name="scopes">
+            <map>
+                <entry key="globalSession">
+                    <bean class="org.jasig.portal.spring.web.context.support.FailsafeSingletonScope">
+                        <constructor-arg>
+                            <bean class="org.jasig.portal.spring.web.context.support.PortalSessionScope">
+                                <property name="portalRequestUtils" ref="portalRequestUtils" />
+                            </bean>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry key="session">
+                    <bean class="org.jasig.portal.spring.web.context.support.FailsafeSingletonScope">
+                        <constructor-arg>
+                            <bean class="org.springframework.web.context.request.SessionScope" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry key="request">
+                    <bean class="org.jasig.portal.spring.web.context.support.FailsafeSingletonScope">
+                        <constructor-arg>
+                            <bean class="org.springframework.web.context.request.RequestScope" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
+    
+</beans>

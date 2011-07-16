@@ -1,0 +1,85 @@
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<ldap-search 
+        context-source="${ldapContext}" 
+        base-dn="${baseDn}" 
+        filter="${filter}" 
+        scope="${groovy(javax.naming.directory.SearchControls.SUBTREE_SCOPE)}" 
+        attributes-mapper="${attributesMapper}" 
+        attribute-name="record"
+	>
+    <groovy>
+        <script>
+            import org.jasig.portal.groups.smartldap.LdapRecord;
+            
+            def req = ScriptAttributes.REQUEST;
+        
+            // First we do a little post-processing to detect and remove 
+            // circular references.  These may be permitted by the LDAP server, 
+            // but they are EXTREMELY TOXIC to GaP.
+            def chain = req.hasAttribute('groupChain') ? req.getAttribute('groupChain') : [];
+            record = smartLdapGroupStore.detectAndEliminateGroupReferences(record, chain);
+            ScriptAttributes.RESPONSE.setAttribute('record', record);
+            def newChain = [];
+            newChain.addAll(chain);
+            newChain.push(record.getGroup().getLocalKey());
+            ScriptAttributes.RESPONSE.setAttribute('groupChain', newChain);
+            
+            // Next transform 'resolveDn' into 'resolveDnList' if the first is 
+            // present but not the later.  'resolveDn' came before 'resolveDnList,' 
+            // and older configs might still be using it;  this code should only 
+            // trigger on the first pass.
+            if (req.hasAttribute('resolveDn') &amp;&amp; !req.hasAttribute('resolveDnList')) {
+                def resolveDnList = [];
+                resolveDnList.add(resolveDn);
+                ScriptAttributes.RESPONSE.setAttribute('resolveDnList', resolveDnList);
+            }
+        
+            // Finally attempt to add this one to the collection of records.  The 
+            // 'isNew' flag indicates whether we have seen this group before;  
+            // if we have, there's no need to follow its tree of decendents. 
+            boolean isNew = GROUPS.add(record);
+            ScriptAttributes.RESPONSE.setAttribute('isNew', isNew);
+        </script>
+        <subtasks>
+            <log logger-name="org.jasig.portal.groups.smartldap.init" >SmartLdap adding record for group:  ${groovy(record.getGroup().getName())}</log>
+            <if test="${groovy(isNew &amp;&amp; resolveMemberGroups)}">
+                <for-each items="${resolveDnList}" attribute-name="resolveDn">
+                    <!-- Be sure we don't waste a lot of time with unnecessary queries --> 
+                    <if test="${groovy(smartLdapGroupStore.hasUndiscoveredChildrenWithinDn(record, resolveDn, GROUPS))}">
+                        <with>
+                            <attribute key="baseDn">${resolveDn}</attribute>
+                            <attribute key="filter">(&amp;${baseFilter}(${memberOfAttributeName}=${groovy(record.getGroup().getLocalKey())}))</attribute>
+                            <subtasks>
+                                <groovy>
+                                    <!-- Count the queries as they occur for reporting purposes -->
+                                    <script>queryCounter.increment()</script>
+                                </groovy>
+                                <crn location="init.crn"/>
+                            </subtasks>
+                        </with>
+                    </if>
+                </for-each>
+            </if>
+        </subtasks>
+    </groovy>
+</ldap-search>

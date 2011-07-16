@@ -1,0 +1,79 @@
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<properties location="classpath://properties/export.properties"> 
+    <with>
+        <!-- The 1st argument passed to Cernunnos main():  the directory to which exported files will be written -->
+        <attribute key="EXPORT_DIR">${$1}</attribute>
+        <!-- The 2nd argument passed to Cernunnos main():  the type of entity to export -->
+        <attribute key="ENTITY_TYPE">${$2}</attribute>
+        <!-- The 3rd argument (optionally) passed to Cernunnos main():  Id of the specific entity to export;  not required for entity types that begin with 'all-' -->
+        <attribute key="SYSID">${groovy(ScriptAttributes.REQUEST.hasAttribute('$3') ? ScriptAttributes.REQUEST.getAttribute('$3') : null)}</attribute>
+        <attribute key="EXPORT_START_TIME">${groovy(System.currentTimeMillis())}</attribute>
+        <!-- Used by Cernunnos to boost performance -->
+        <attribute key="Attributes.CACHE">${groovy(java.util.Collections.synchronizedMap(new org.jasig.portal.io.LoggingLRUMap(${CACHE_SIZE})))}</attribute>
+        <!-- The entire Spring ApplicationContext, as defined in properties/contexts/ -->
+        <attribute key="PORTAL_CONTEXT">${groovy(org.jasig.portal.spring.PortalApplicationContextLocator.getApplicationContext())}</attribute>
+        <subtasks>
+            <with>
+                <!-- These attributes are used by Cernunnos SQL/RDBMS operations -->
+                <attribute key="${groovy(org.danann.cernunnos.sql.SqlAttributes.DATA_SOURCE)}">${groovy(PORTAL_CONTEXT.getBean('PortalDb'))}</attribute>
+                <attribute key="${groovy(org.danann.cernunnos.sql.SqlAttributes.TRANSACTION_MANAGER)}">${groovy(PORTAL_CONTEXT.getBean('transactionManager'))}</attribute>
+                <subtasks>                
+                    <echo-ln>Begin uPortal Export '${ENTITY_TYPE}': ${EXPORT_START_TIME}</echo-ln>
+            
+					<!-- Select export operation based on the specified ENTITY_TYPE -->
+					<choose>
+					
+					    <!-- all -->
+					    <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('all'))}">
+					        <for-each attribute-name="ENTITY_TYPE" items="${groovy([
+                                                   'all-layouts',
+                                                   'all-profiles',
+                                                   'all-permission_sets',
+                                                   'all-portlets',
+                                                   'all-portlet-types',
+                                                   'all-users',
+                                                   'all-stylesheet-descriptors',
+                                                   'all-entity-types',
+                                                   'all-group_memberships',
+                                                   'all-fragment-definitions'
+					                           ])}">
+                                <with-attribute key="SUBTYPE_START_TIME" value="${groovy(System.currentTimeMillis())}">
+                                    <echo-ln>Begin Export of '${ENTITY_TYPE}': ${SUBTYPE_START_TIME}</echo-ln>
+                                    <crn location="export_internal.crn"/>
+                                    <echo-ln>Export of ${ENTITY_TYPE} Complete: ${groovy(System.currentTimeMillis() - SUBTYPE_START_TIME)}</echo-ln>
+                                </with-attribute>
+					        </for-each>
+					    </when>
+					
+					    <otherwise>
+                            <crn location="export_internal.crn"/>
+					    </otherwise>
+					
+					</choose>
+					
+					<echo-ln>uPortal Export '${ENTITY_TYPE}' Complete in ${groovy(System.currentTimeMillis() - EXPORT_START_TIME)} milliseconds.</echo-ln>            
+                </subtasks>
+            </with>
+        </subtasks>
+    </with>
+</properties>

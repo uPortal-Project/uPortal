@@ -1,0 +1,231 @@
+/*====================================*/
+/* NAVIGATION */
+/*====================================*/
+/* 
+ * Styles specific to navigation.
+ */
+
+/* Portlet Navigation */
+.up {
+	#portalNavigation {
+		/* Main Navigation, rendered as a row of tabs. */
+		background: $navBackground;
+		@include gradient($navGradient1,$navGradient2);
+		
+		#portalNavigationList {
+			text-align: left;
+			border: none;
+			margin: $navTabMargin;
+			@include clearfix();
+		}
+		.portal-navigation {
+			/* Each tab list item. */
+			float: left;
+			@if ($navTabMarginRight != false) {
+				margin-right: $navTabMarginRight;
+			}
+			padding: 0;
+			border: none;
+			border-left: $navTabBorderLeft;
+			border-right: $navTabBorderRight;
+			background: $navTabBackground;
+			@include gradient2($navTabGradient1,$navTabGradient2,$navTabGradient3);
+			@if ($navTabRound != false) {
+				@include round($navTabRound,$navTabRound,0,0);
+			}
+			
+			.portal-navigation-link {
+				/* Anchor tag within the list item. */
+				display: block;
+				padding: $navTabPadding;
+				color: $navTabLink;
+				@include text-shadow($navTabTextShadow);
+				text-decoration: none;
+				font-weight: $navTabWeight;
+			}
+		}
+		.portal-navigation:hover, .portal-navigation:focus {
+			/* Tab hover. */
+			background: $navTabHoverBackground;
+			@include gradient2($navTabHoverGradient1,$navTabHoverGradient2,$navTabHoverGradient3);
+			
+			.portal-navigation-link {
+				/* Anchor tag within the list item. */
+				color: $navTabLinkHover;
+				@include text-shadow($navTabHoverTextShadow);
+			}
+		}
+		
+		.active {
+			/* Active tab. */
+			background: $navTabActiveBackground;
+			@include gradient2($navTabActiveGradient1,$navTabActiveGradient2,$navTabActiveGradient3);
+			
+			.portal-navigation-link {
+				color: $navTabActiveLink;
+				@include text-shadow($navTabActiveTextShadow);
+			}
+		}
+		.active:hover {
+			/* Active tab hover. */
+			background: $navTabActiveHoverBackground;
+			@include gradient2($navTabActiveHoverGradient1,$navTabActiveHoverGradient2,$navTabActiveHoverGradient3);
+			
+			.portal-navigation-link {
+				color: $navTabActiveHoverLink;
+				@include text-shadow($navTabActiveHoverTextShadow);
+			}
+		}
+		.portal-flyout-container {
+			/* Flyout menus. */
+			background: $navFlyoutBackground;
+			@include gradient($navFlyoutGradient1, $navFlyoutGradient2);
+			border: $navFlyoutBorder;
+			border-top-width: $navFlyoutBorderTopWidth;
+			@if ($navFlyoutRound != false) {
+				@include round($navFlyoutRoundTL, $navFlyoutRoundTR, $navFlyoutRoundBL, $navFlyoutRoundBR);
+			}
+			@if ($navFlyoutBoxShadow != false) {
+				@include box-shadow($navFlyoutBoxShadow);
+			}
+			
+			li {
+				@if ($navFlyoutLinkBorderTop != false) {
+					border-top: $navFlyoutLinkBorderTop;
+				}
+				@if ($navFlyoutLinkBorderBottom != false) {
+					border-bottom: $navFlyoutLinkBorderBottom;
+				}
+				background-color: $navFlyoutLinkBackground;
+				color: $navFlyoutLinkColor;
+				font-size: $navFlyoutLinkTextSize;
+				
+				a {
+					text-decoration: none;
+				}
+				
+				a:hover, a:focus {
+					/* Flyout menu hover. */
+					background: $navFlyoutHoverBackground;
+					color: $navFlyoutLinkHoverColor;
+				}
+			}
+		}
+		
+		.portal-navigation-add {
+			/* Add tab link */
+			top: $navAddTabTopPosition;
+			padding: $navAddTabPadding;
+			background-color: $navAddTabBackground;
+			background-image: $navAddTabImage;
+			background-position: $navAddTabImagePosition;
+			background-repeat: no-repeat;
+			border: $navAddTabBorder;
+			color: $navAddTabLink;
+			font-size: $navAddTabFontSize;
+			@if ($navAddTabRound !=false) {
+				@include rounded($navAddTabRound);
+			}
+			
+			&:hover, &:focus {
+				background-color: $navAddTabHover;
+				color: $navAddTabLinkHover;
+			}
+		}
+		.active .portal-navigation-gripper {
+			/* Gripper for indicating drag and drop ability. */
+			background: $navReorderGripperImage;
+		}
+		.portal-navigation-delete {
+			/* "X" icon for indicating delete tab action. */
+			background: $navRemoveTabImage;
+		}
+		.fl-inlineEdit-editModeInstruction {
+			@include visuallyhidden();
+		}
+		.fl-reorderer-header-avatar {
+			/* An avatar of the original tab being dragged during drag and drop. */
+			background-color: $black;
+			@if ($navReorderAvatarRound != false) {
+				@include rounded($navReorderAvatarRound);
+			}
+			@if ($navReorderAvatarBoxShadow != false) {
+				@include box-shadow($navReorderAvatarBoxShadow);
+			}
+			.portal-navigation-link {
+				color: $navReorderAvatarLink;
+				text-decoration: none;
+				font-weight: bold;
+			}
+			.portal-navigation-gripper {
+				background: $navReorderGripperImage;
+			}
+			.portal-navigation-delete {
+				background: $navRemoveTabImage;
+			}
+		}
+	}
+	
+	#portalSidebar {
+		/* Refer to other Sidebar styles for general list menu styling that affects the sidebar navigation. */
+		#portalNavigation {
+			/* Main navigation can be rendered in the Sidebar. */
+			.portal-navigation-add {
+				/* Add tab link */
+				color: $navAddTabLink;
+			}
+			.portal-navigation-gripper {
+				/* Gripper for indicating drag and drop ability. */
+				background: $navReorderGripperImage;
+			}
+			.portal-navigation-delete {
+				/* "X" icon for indicating delete tab action. */
+				background: $navRemoveTabImage;
+			}
+			.fl-reorderer-sidebar-avatar {
+				/* An avatar of the original tab being dragged during drag and drop. */
+				background: $navReorderAvatarBackground;
+				@if ($navReorderAvatarRound != false) {
+					@include rounded($navReorderAvatarRound); 
+				}
+				@if ($navReorderAvatarBoxShadow != false) {
+					@include box-shadow($navReorderAvatarBoxShadow); 
+				}
+				.portal-navigation-link {
+					color: $navReorderAvatarLink;
+					text-decoration: none; 
+					font-weight: bold;
+				}
+				.portal-navigation-delete {
+					background: $navRemoveTabImage;
+				}
+				.portal-navigation-gripper {
+					background: $navReorderGripperImage;
+				}
+			}
+		}
+		
+		#portletNavigation {
+			/* Portlet Navigation (focused view) */
+			#portletNavigationLinkHome a {
+				background: $navPortletImage;
+			}
+			h3 {
+				color: $navPortletHeading;
+			}
+		}
+	}
+	
+	#portalPageBodyBreadcrumb {
+		/* Breadcrumb */
+		color: $breadcrumbText;
+		a {
+			font-weight: $breadcrumbFontWeight;
+			color: $breadcrumbLink;
+			text-decoration: none;
+			&:hover, &:focus {
+				color: $breadcrumbLinkHover;
+			}
+		}
+	}	
+}

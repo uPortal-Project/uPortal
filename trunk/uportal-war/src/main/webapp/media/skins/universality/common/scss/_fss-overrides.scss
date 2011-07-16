@@ -1,0 +1,36 @@
+/* 
+------------------------------------
+  Fluid Skinning System overrides.
+------------------------------------
+ * The Fluid Skinning System is a group of CSS files with a specially designed modular structure and class-specific format.
+ * It is meant to work well as both a standalone CSS foundation for your site and Fluid Infusion components.
+ * In FSS, "themes" refer to the color schemes and "window dressings" for basic markup and FSS Helpers, such as Tabs, Widgets, Menus, etc.
+ * For more information on FSS themes, refer to:
+ * http://wiki.fluidproject.org/x/egNS
+ * uPortal skins generally use a FSS theme as the base CSS styling for the portal. 
+ * If a FSS theme is used with this skin, it is specified in skin.xml and applied first (from the resource server).
+ * These are any overrides to the FSS theme.
+ */
+
+.fl-theme-mist, .fl-theme-coal, .fl-theme-hc, .fl-theme-rust, .fl-theme-slate {
+	a {
+		font-weight: normal;
+	}
+	
+	.fl-widget {
+		@include rounded(7px);
+		
+		.fl-widget-titlebar, .fl-widget-content, .fl-listmenu {
+			@include rounded(5px);
+		}
+	}
+	
+	.fl-tabs {
+		*padding: 0;
+		
+		li {
+			*display: inline;
+			*padding: 5px 20px 5px 20px;
+		}
+	}
+}

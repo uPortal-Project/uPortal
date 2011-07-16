@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:util="http://www.springframework.org/schema/util"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+    
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" lazy-init="false">
+        <property name="locations">
+            <list>
+                <value>classpath:datasource.properties</value>
+            </list>
+        </property>
+    </bean>
+    
+    <!-- Message source for this context, loaded from localized "messages_xx" files -->
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basenames">
+            <list>
+                <value>messages</value>
+            </list>
+        </property>                                     
+    </bean>
+    
+    
+    <bean id="bookmarkSetOwnerResolver" class="edu.wisc.my.portlets.bookmarks.web.support.RemoteUserBookmarkSetOwnerResolver"/>
+    
+    <bean id="bookmarkSetNameResolver" class="edu.wisc.my.portlets.bookmarks.web.support.PortletPreferencesBookmarkSetNameResolver"/>
+    
+    <bean id="bookmarkSetRequestResolver" class="edu.wisc.my.portlets.bookmarks.web.support.BookmarkSetRequestResolver">
+        <property name="bookmarkStore" ref="bookmarkStore"/>
+        <property name="ownerResolver" ref="bookmarkSetOwnerResolver"/>
+        <property name="nameResolver" ref="bookmarkSetNameResolver"/>
+    </bean>
+    
+    <bean id="preferencesRequestResolver" class="edu.wisc.my.portlets.bookmarks.web.support.PreferencesRequestResolver">
+        <property name="preferencesStore" ref="preferencesStore"/>
+        <property name="ownerResolver" ref="bookmarkSetOwnerResolver"/>
+        <property name="nameResolver" ref="bookmarkSetNameResolver"/>
+    </bean>
+    
+    
+    
+    <!-- Default View Resolver -->
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="cache" value="false"/>
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+    
+    
+    
+    <!-- Hibernate Persistence Code -->
+    <bean id="bookmarkStore" parent="abstractStoreTransactionProxy">
+        <property name="target" ref="bookmarkStoreTarget"/>
+    </bean>
+    
+    <bean id="bookmarkStoreTarget" class="edu.wisc.my.portlets.bookmarks.dao.hibernate.HibernateBookmarkStore" parent="abstractHibernateTemplate">
+    </bean>
+
+    <bean id="preferencesStore" parent="abstractStoreTransactionProxy">
+        <property name="target" ref="preferencesStoreTarget"/>
+    </bean>
+    
+    <bean id="preferencesStoreTarget" class="edu.wisc.my.portlets.bookmarks.dao.hibernate.HibernatePreferencesStore" parent="abstractHibernateTemplate">
+    </bean>
+
+    
+    <bean id="abstractStoreTransactionProxy" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean" abstract="true">
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="create*">PROPAGATION_REQUIRED</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="remove*">PROPAGATION_REQUIRED</prop>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean id="abstractHibernateTemplate" abstract="true">
+        <property name="sessionFactory">
+            <ref local="sessionFactory" />
+        </property>
+    </bean>
+    
+    <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="configLocation" value="classpath:hibernate.cfg.xml"/>
+    </bean>
+    
+    
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName"><value>${hibernate.connection.driver_class}</value></property>
+        <property name="url"><value>${hibernate.connection.url}</value></property>
+        <property name="username"><value>${hibernate.connection.username}</value></property>
+        <property name="password"><value>${hibernate.connection.password}</value></property>
+    </bean>
+    
+    <!-- JMX Stats Exporting -->
+    <bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
+        <property name="beans">
+            <map>
+                <entry key="BookmarkPortlets:name=HibernateStatistics" value-ref="hibernateStatisticsBean"/>
+            </map>
+        </property>
+    </bean>
+    
+    
+    <bean id="hibernateStatisticsBean" class="org.hibernate.jmx.StatisticsService">
+        <property name="statisticsEnabled" value="true"/>
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+</beans>

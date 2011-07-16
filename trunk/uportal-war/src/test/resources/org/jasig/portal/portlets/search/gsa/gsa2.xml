@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<GSP VER="3.2">
+    <TM>0.028200</TM>
+    <Q>mail</Q>
+    <PARAM name="q" value="mail" original_value="mail" />
+    <PARAM name="site" value="Yale_University" original_value="Yale_University" />
+    <PARAM name="btnG" value="Search" original_value="Search" />
+    <PARAM name="entqr" value="0" original_value="0" />
+    <PARAM name="ud" value="1" original_value="1" />
+    <PARAM name="sort" value="date:D:L:d1" original_value="date%3AD%3AL%3Ad1" />
+    <PARAM name="output" value="xml_no_dtd" original_value="xml_no_dtd" />
+    <PARAM name="oe" value="UTF-8" original_value="UTF-8" />
+    <PARAM name="ie" value="UTF-8" original_value="UTF-8" />
+    <PARAM name="client" value="bluesite_frontend" original_value="bluesite_frontend" />
+    <PARAM name="proxyreload" value="1" original_value="1" />
+    <PARAM name="entsp" value="0" original_value="0" />
+
+    <PARAM name="ip" value="130.132.35.8" original_value="130.132.35.8" />
+    <PARAM name="access" value="p" original_value="p" />
+    <GM>
+        <GL>http://www.yale.edu/its/email/index.html</GL>
+        <GD>Email systems at Yale</GD>
+    </GM>
+    <GM>
+        <GL>http://www.yale.edu/campusmail/</GL>
+        <GD>Mail Service</GD>
+    </GM>
+    <RES SN="1" EN="10">
+        <M>1400</M>
+        <FI />
+        <NB>
+            <NU>/search?q=mail&amp;site=Yale_University&amp;lr=&amp;ie=UTF-8&amp;oe=UTF-8&amp;output=xml_no_dtd&amp;client=bluesite_frontend&amp;access=p&amp;sort=date:D:L:d1&amp;start=10&amp;sa=N
+            </NU>
+
+        </NB>
+
+        <R N="1">
+            <U>http://www.yale.edu/campusmail/</U>
+            <UE>http://www.yale.edu/campusmail/</UE>
+            <UD>http://www.yale.edu/campusmail/</UD>
+            <T>Yale University &lt;b&gt;Mail&lt;/b&gt; Service</T>
+            <RK>10</RK>
+            <ENT_SOURCE>T2-FGDDZWWZWNWAT</ENT_SOURCE>
+            <FS NAME="date" VALUE="" />
+            <S>&lt;b&gt;...&lt;/b&gt; Welcome to Yale
+                &lt;b&gt;Mail&lt;/b&gt; Service. What can we do for you?
+                Call 203.436.4592&lt;br&gt; or contact us via
+                e-&lt;b&gt;mail&lt;/b&gt;. WE MOVED! Yale
+                &lt;b&gt;Mail&lt;/b&gt; Service &lt;b&gt;...&lt;/b&gt;
+            </S>
+            <LANG>en</LANG>
+            <HAS>
+                <L />
+                <C SZ="15k" CID="7iU42_aE0CcJ" ENC="ISO-8859-1" />
+            </HAS>
+        </R>
+        <R N="2">
+            <U>http://yalehealth.yale.edu/subscription.htm</U>
+            <UE>http://yalehealth.yale.edu/subscription.htm</UE>
+            <UD>http://yalehealth.yale.edu/subscription.htm</UD>
+            <T>Messaging Subscription Service</T>
+            <RK>10</RK>
+            <ENT_SOURCE>T2-FGDDZWWZWNWAT</ENT_SOURCE>
+            <FS NAME="date" VALUE="" />
+            <S>&lt;b&gt;...&lt;/b&gt; E-&lt;b&gt;Mail&lt;/b&gt;
+                Subscription Service. Subscribe to our
+                e-&lt;b&gt;mail&lt;/b&gt; messaging and alert&lt;br&gt;
+                service by choosing one of the links below. You can
+                change &lt;b&gt;...&lt;/b&gt; </S>
+            <LANG>en</LANG>
+            <HAS>
+                <L />
+                <C SZ="19k" CID="BZbaeKyzs9oJ" ENC="ISO-8859-1" />
+            </HAS>
+        </R>
+        <R N="3">
+            <U>http://ogc.yale.edu/about_us/contact_us.html</U>
+            <UE>http://ogc.yale.edu/about_us/contact_us.html</UE>
+            <UD>http://ogc.yale.edu/about_us/contact_us.html</UD>
+            <T>About Us: Yale Vice President and General Counsel</T>
+            <RK>10</RK>
+            <ENT_SOURCE>T2-FGDDZWWZWNWAT</ENT_SOURCE>
+            <FS NAME="date" VALUE="" />
+            <S>&lt;b&gt;...&lt;/b&gt; Contact Us. Mailing address: PO
+                Box 208255 New Haven, CT 06520-8255. Overnight
+                &lt;b&gt;mail&lt;/b&gt;:&lt;br&gt; 2 Whitney Avenue, 6th
+                Floor New Haven, CT 06510. Telephone: (203) 432-4949.
+                &lt;b&gt;...&lt;/b&gt; </S>
+            <LANG>en</LANG>
+            <HAS>
+                <L />
+                <C SZ="9k" CID="pq5XcN0XWWcJ" ENC="ISO-8859-1" />
+            </HAS>
+        </R>
+        <R N="4">
+            <U>http://www.cls.yale.edu/mailinglist</U>
+            <UE>http://www.cls.yale.edu/mailinglist</UE>
+            <UD>http://www.cls.yale.edu/mailinglist</UD>
+            <T>E-&lt;b&gt;mail&lt;/b&gt; Announcements Mailing List</T>
+            <RK>10</RK>
+            <CRAWLDATE>18 Oct 2010</CRAWLDATE>
+            <ENT_SOURCE>T2-FGDDZWWZWNWAT</ENT_SOURCE>
+            <FS NAME="date" VALUE="" />
+            <S>Home &amp;gt; About the CLS &amp;gt; News and
+                Announcements &amp;gt; E-&lt;b&gt;mail&lt;/b&gt;
+                Announcements Mailing List.&lt;br&gt; Your browser does
+                not support script. E-&lt;b&gt;mail&lt;/b&gt;
+                Announcements Mailing List. &lt;b&gt;...&lt;/b&gt; </S>
+            <LANG>en</LANG>
+            <HAS>
+                <L />
+                <C SZ="18k" CID="m7ihvmXfXuIJ" ENC="UTF-8" />
+            </HAS>
+        </R>
+        <R N="5">
+            <U>http://opa.yale.edu/news/article.aspx?id=7380</U>
+            <UE>http://opa.yale.edu/news/article.aspx%3Fid%3D7380</UE>
+            <UD>http://opa.yale.edu/news/article.aspx?id=7380</UD>
+            <T>E-&lt;b&gt;mail&lt;/b&gt; Aims To Turn Yale Parkers Into
+                Sustainable Travelers</T>
+            <RK>10</RK>
+            <CRAWLDATE>18 Oct 2010</CRAWLDATE>
+            <ENT_SOURCE>T2-FGDDZWWZWNWAT</ENT_SOURCE>
+            <FS NAME="date" VALUE="2010-03-26" />
+            <S>&lt;b&gt;...&lt;/b&gt; FOUND IN: Environment | Yale
+                Bulletin. E-&lt;b&gt;mail&lt;/b&gt; Aims To Turn Yale
+                Parkers Into&lt;br&gt; Sustainable Travelers. Published:
+                March 26, 2010. &lt;b&gt;...&lt;/b&gt;
+                E-&lt;b&gt;mail&lt;/b&gt; This Article. To: From:
+                &lt;b&gt;...&lt;/b&gt; </S>
+            <LANG>en</LANG>
+            <HAS>
+                <L />
+                <C SZ="28k" CID="KUEoUfNTrzUJ" ENC="UTF-8" />
+            </HAS>
+        </R>
+        <R N="6">
+            <U>http://www.library.yale.edu/libraries/locations.html</U>
+            <UE>http://www.library.yale.edu/libraries/locations.html
+            </UE>
+            <UD>http://www.library.yale.edu/libraries/locations.html
+            </UD>
+            <T>Yale University Library: Library Locations</T>
+            <RK>10</RK>
+            <ENT_SOURCE>T2-FGDDZWWZWNWAT</ENT_SOURCE>
+            <FS NAME="date" VALUE="" />
+            <S>&lt;b&gt;...&lt;/b&gt; complete mailing/shipping address
+                below) 120 High Street (front entrance)
+                General&lt;br&gt; Information: (203) 432-2798
+                Circulation: (203) 432-1857 E-&lt;b&gt;mail&lt;/b&gt;:
+                smlcirc@yale &lt;b&gt;...&lt;/b&gt; </S>
+            <LANG>en</LANG>
+            <HAS>
+                <L />
+                <C SZ="36k" CID="aEGpluoQ3xYJ" ENC="ISO-8859-1" />
+            </HAS>
+        </R>
+        <R N="7">
+            <U>http://www.yale.edu/its/email/webmail.html</U>
+            <UE>http://www.yale.edu/its/email/webmail.html</UE>
+            <UD>http://www.yale.edu/its/email/webmail.html</UD>
+            <T>Webmail | Yale ITS</T>
+            <RK>10</RK>
+            <ENT_SOURCE>T2-FGDDZWWZWNWAT</ENT_SOURCE>
+            <FS NAME="date" VALUE="" />
+            <S>&lt;b&gt;...&lt;/b&gt; alias. SpamAssassin SpamAssassin
+                is a &lt;b&gt;mail&lt;/b&gt; filter which attempts to
+                identify&lt;br&gt; spam using comprehensive text
+                analysis. Vacation (auto &lt;b&gt;...&lt;/b&gt; </S>
+            <LANG>en</LANG>
+            <HAS>
+                <L />
+                <C SZ="22k" CID="u-p1PHnWFtIJ" ENC="ISO-8859-1" />
+            </HAS>
+        </R>
+        <R N="8">
+            <U>http://www.yale.edu/search/find_people.html</U>
+            <UE>http://www.yale.edu/search/find_people.html</UE>
+            <UD>http://www.yale.edu/search/find_people.html</UD>
+            <T>Search Yale University</T>
+            <RK>10</RK>
+            <ENT_SOURCE>T2-FGDDZWWZWNWAT</ENT_SOURCE>
+            <FS NAME="date" VALUE="" />
+            <S>Yale University. </S>
+            <LANG>en</LANG>
+            <HAS>
+                <L />
+                <C SZ="9k" CID="iVahHuyYE1gJ" ENC="ISO-8859-1" />
+            </HAS>
+        </R>
+        <R N="9">
+            <U>http://www.yalerep.org/index_splash_1011_02.html</U>
+            <UE>http://www.yalerep.org/index_splash_1011_02.html</UE>
+            <UD>http://www.yalerep.org/index_splash_1011_02.html</UD>
+            <T>Yale Repertory Theatre - Join our
+                e-&lt;b&gt;mail&lt;/b&gt; list</T>
+            <RK>10</RK>
+            <ENT_SOURCE>T2-FGDDZWWZWNWAT</ENT_SOURCE>
+            <FS NAME="date" VALUE="" />
+            <S>Yale Repertory Theatre, PO Box 208244, New Haven, CT
+                06520-8244 • Box Office -&lt;br&gt; 203.432.1234
+                Copyright © 2010 Yale Repertory Theatre. All rights
+                reserved. </S>
+            <LANG>en</LANG>
+            <HAS>
+                <L />
+                <C SZ="3k" CID="E_x6FqoOECMJ" ENC="ISO-8859-1" />
+            </HAS>
+        </R>
+        <R N="10">
+            <U>http://www.astro.yale.edu/people/research-staff</U>
+            <UE>http://www.astro.yale.edu/people/research-staff</UE>
+            <UD>http://www.astro.yale.edu/people/research-staff</UD>
+            <T>Research Staff | Department of Astronomy, Yale University
+            </T>
+            <RK>10</RK>
+            <CRAWLDATE>18 Oct 2010</CRAWLDATE>
+            <ENT_SOURCE>T2-FGDDZWWZWNWAT</ENT_SOURCE>
+            <FS NAME="date" VALUE="2010-10-18" />
+            <S>&lt;b&gt;...&lt;/b&gt; Bonning, Erin.
+                E-&lt;b&gt;mail&lt;/b&gt; (Link requires JavaScript)
+                Phone (203) 432-9766 Office JWG&lt;br&gt; 464.
+                &lt;b&gt;...&lt;/b&gt; E-&lt;b&gt;mail&lt;/b&gt; (Link
+                requires JavaScript) Phone (203) 432-3032 Office JWG
+                214. &lt;b&gt;...&lt;/b&gt; </S>
+            <LANG>en</LANG>
+            <HAS>
+                <L />
+                <C SZ="31k" CID="Qvuy-YAxEEIJ" ENC="ISO-8859-1" />
+            </HAS>
+        </R>
+    </RES>
+
+</GSP>

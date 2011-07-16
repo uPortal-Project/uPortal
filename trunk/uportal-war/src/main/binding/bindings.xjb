@@ -1,0 +1,82 @@
+<jaxb:bindings
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+    xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd"
+    jaxb:version="2.1"
+>
+
+    <jaxb:bindings>
+        <jaxb:globalBindings>
+            <xjc:simple />
+            <jaxb:serializable/>
+            <jaxb:javaType name="java.util.Calendar" xmlType="xs:dateTime" parseMethod="javax.xml.bind.DatatypeConverter.parseDateTime" printMethod="javax.xml.bind.DatatypeConverter.printDateTime" />
+        </jaxb:globalBindings>
+    </jaxb:bindings>
+    
+    <!-- Generic uPortal Schemas -->
+    <jaxb:bindings schemaLocation="../resources/xsd/common-types.xsd">
+        <jaxb:schemaBindings>
+            <jaxb:package name="org.jasig.portal.xml" />
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
+      
+    <!-- Import/Export Schemas  -->
+    <jaxb:bindings schemaLocation="../resources/xsd/io/common-io-types.xsd">
+        <jaxb:schemaBindings>
+            <jaxb:package name="org.jasig.portal.io.xml" />
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
+    <jaxb:bindings schemaLocation="../resources/xsd/io/portlet-definition/portlet-definition-4.0.xsd">
+        <jaxb:bindings node="//xs:element[@name='portlet-definition']">
+            <jaxb:class name="ExternalPortletDefinition"/>
+        </jaxb:bindings>
+        <jaxb:schemaBindings>
+            <jaxb:package name="org.jasig.portal.io.xml.portlet" />
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
+    <jaxb:bindings schemaLocation="../resources/xsd/io/portlet-type/portlet-type-4.0.xsd">
+        <jaxb:bindings node="//xs:element[@name='portlet-type']">
+            <jaxb:class name="ExternalPortletType"/>
+        </jaxb:bindings>
+        <jaxb:schemaBindings>
+            <jaxb:package name="org.jasig.portal.io.xml.portlettype" />
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
+    <jaxb:bindings schemaLocation="../resources/xsd/io/stylesheet-descriptor/stylesheet-descriptor-4.0.xsd">
+        <jaxb:bindings node="//xs:element[@name='stylesheet-descriptor']">
+            <jaxb:class name="ExternalStylesheetDescriptor"/>
+        </jaxb:bindings>
+        <jaxb:schemaBindings>
+            <jaxb:package name="org.jasig.portal.io.xml.ssd" />
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
+    <jaxb:bindings schemaLocation="../resources/xsd/io/user/user-4.0.xsd">
+        <jaxb:bindings node="//xs:element[@name='user']">
+            <jaxb:class name="ExternalUser"/>
+        </jaxb:bindings>
+        <jaxb:bindings node="//xs:element[@name='template-user']">
+            <jaxb:class name="ExternalTemplateUser"/>
+        </jaxb:bindings>
+        <jaxb:schemaBindings>
+            <jaxb:package name="org.jasig.portal.io.xml.user" />
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
+
+    <jaxb:bindings schemaLocation="../resources/xsd/portlet-publishing/portlet-publishing-definition.xsd">
+        <jaxb:bindings node="//xs:element[@name='step']">
+            <jaxb:property name="steps"/>
+        </jaxb:bindings>
+        <jaxb:bindings node="//xs:element[@name='parameter']">
+            <jaxb:property name="parameters"/>
+        </jaxb:bindings>
+        <jaxb:bindings node="//xs:element[@name='preference']">
+            <jaxb:property name="preferences"/>
+        </jaxb:bindings>
+        <jaxb:schemaBindings>
+            <jaxb:package name="org.jasig.portal.portletpublishing.xml" />
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
+
+</jaxb:bindings>

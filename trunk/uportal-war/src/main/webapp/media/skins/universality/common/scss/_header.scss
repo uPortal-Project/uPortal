@@ -1,0 +1,123 @@
+/*====================================*/
+/* Header */
+/*====================================*/
+/*
+ * Styles for formatting the portal header and widgets that are contained in it.
+ */
+
+.up {
+	#portalPageHeader {
+		/* Portal header (all views). */
+		
+		position: relative;
+		background: $headerBackground;
+		@include gradient($headerGradient1,$headerGradient2);
+		
+		#portalWelcome {
+			@if ($headerWelcomeTop != false) {
+				top: $headerWelcomeTop;
+				left: $headerWelcomeLeft;
+			}
+			color: $headerWelcome;
+			a, .user-name {
+				color: $headerUserName;
+			}
+		}
+		
+		@include widget-no-chrome();
+		
+		#portalPageBar {
+			/* A utility bar at the top of the portal page. */
+			padding: $portalBarPadding;
+			font-size: $portalBarFontSize;
+			text-align: $portalBarTextAlign;
+			text-transform: $portalBarTextTransform;
+			color: $portalBarLink;
+			background: $portalBarBackground;
+			@include gradient($portalBarGradient1,$portalBarGradient2);
+			
+			#portalPageBarLinks {
+				/* List of portal links in the bar. */
+				display: inline;
+				li {
+					padding: $portalBarLinkPadding;
+					@if ($portalBarPipes != false) {
+						border-right: $portalBarPipes;
+					}
+				}
+				li:last-child {
+					border-right: none;
+				}
+				a {
+					color: $portalBarLink;
+					text-decoration:none;
+				}
+				a:hover, a:focus {
+					color: $portalBarLinkHover;
+					text-decoration:underline;
+				}
+			}
+		}
+		
+		#portalLogo {
+			/* The portal logo. It's physical size + padding gives the header its height. */
+			padding: $portalLogoPadding;
+		}
+		
+		#webSearchContainer {
+			/* Web Search */
+			
+			top: $webSearchTop;
+			right: $webSearchRight;
+			
+			input, select {
+				margin: 0;
+			}
+			@if ($webSearchSelectHide == true) {
+				select {
+					display: none;
+				}
+			}
+			input[type="text"], input[type="search"] {
+				color: $webSearchInputText;
+				background: $webSearchInput;
+				border-color: $webSearchInputBorder;
+				@if ($webSearchInputRound != false) {
+					@include round($webSearchInputRoundTL, $webSearchInputRoundTR, $webSearchInputRoundBR, $webSearchInputRoundBL);
+				}
+			}
+			input[type="text"]:hover, input[type="search"]:hover {
+				background: $webSearchInputHover;
+			}
+			input[type="text"]:focus, input[type="search"]:focus {
+				color: $webSearchInputFocusText;
+				background: $webSearchInputFocus;
+				border-color: $webSearchInputFocus;
+			}
+			@include button(websearch);
+		}
+	}
+	
+	.not-logged-in {
+		#portalPageHeader {
+			/* Guest Header */
+			#portalLogo {
+				/* The portal logo when not logged in (Guest View). The logo's physical size + padding gives the header its height. */
+				padding: $portalFocusedLogoPadding;
+			}
+		
+			#portalLogin {
+				/* Login */
+				width: $loginButtonWidth;
+				position: absolute;
+				top: $loginPositionTop;
+				right: $loginPositionRight;
+				
+				.fl-widget-content {
+					text-align: center;
+					@include button(login);
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:lang="http://www.springframework.org/schema/lang" xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:ehcache-spring="http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring"
+    xsi:schemaLocation="http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-2.5.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring/ehcache-spring-1.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+	<!-- Author: Dustin Schultz | Version: $Id$ -->
+	<!-- ========================= RESOURCE DEFINITIONS ========================= -->
+	<!-- Annotations Configuration -->
+	<context:annotation-config/>
+    <context:component-scan base-package="org.jasig.portlet.weather"/>
+    <bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor" />
+
+    <!-- Data Caching Configuration -->    
+    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+        <property name="cacheManagerName" value="WeatherPortlet.cacheManager" />
+        <property name="configLocation" value="classpath:/ehcache.xml" />
+    </bean>
+    
+    <ehcache-spring:annotation-driven cache-manager="cacheManager" default-cache-key-generator="stringCacheKeyGenerator"/>
+    <bean id="stringCacheKeyGenerator" class="com.googlecode.ehcache.annotations.key.StringCacheKeyGenerator" />
+    
+    <!--  
+        worldweatheronline.com Weather DAO Implementation
+    -->
+    
+    <!--bean id="weatherDaoImpl" class="org.jasig.portlet.weather.dao.worldwide.WorldWeatherOnlineDaoImpl">
+        <property name="key" value="YOURKEY"/>
+        <property name="imageMapping"><value>classpath:wwo-image-mapping.properties</value></property>
+    </bean-->
+    
+    <!--
+        Yahoo! Weather DAO Implementation
+    -->
+    
+    <bean id="weatherDaoImpl" class="org.jasig.portlet.weather.dao.yahoo.YahooWeatherDaoImpl">
+        <property name="key" value="YOURKEY"/>
+        <property name="weatherParsingService" ref="weatherParsingService"/>
+        <property name="locationParsingService" ref="locationParsingService"/>
+    </bean>
+    
+    <lang:groovy id="weatherParsingService"
+        script-source="classpath:org/jasig/portlet/weather/dao/yahoo/YahooWeatherParsingServiceImpl.groovy"/>
+
+    <lang:groovy id="locationParsingService"
+        script-source="classpath:org/jasig/portlet/weather/dao/yahoo/YahooLocationParsingServiceImpl.groovy"/>
+            
+	
+	<!-- messages.propreties Configuration -->
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>messages</value>
+			</list>
+		</property>										
+	</bean>
+    
+    <bean id="ajaxPortletSupportService" class="org.jasig.web.service.AjaxPortletSupportService"/>
+	
+	<!-- ========================= PORTLET SPECIFIC DEFINITIONS ========================= -->
+	
+	<!-- Default ExceptionHandler -->
+	<bean id="defaultExceptionHandlerTemplate" class="org.springframework.web.portlet.handler.SimpleMappingExceptionResolver">
+    <property name="order" value="10"/>
+		<property name="defaultErrorView" value="error"/>
+		<property name="exceptionMappings">
+			<props>
+				<prop key="javax.portlet.PortletSecurityException">notAuthorized</prop>
+				<prop key="javax.portlet.UnavailableException">unavailable</prop>
+				<prop key="java.lang.RuntimeException">error</prop>
+			</props>
+		</property>  
+	</bean>
+</beans>

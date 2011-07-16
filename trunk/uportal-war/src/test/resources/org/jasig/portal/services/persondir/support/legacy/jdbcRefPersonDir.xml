@@ -1,0 +1,92 @@
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<PersonDirs>
+	<!-- CVS metadata: $Revision$ $Date$ -->
+	<!-- An example PersonDirs.xml file which configures a single
+		attribute source using directly configured JDBC. 
+		This file is used for the PersonDirXmlParserTester testcase - this file should
+		only be modified in coordination with modifications to that testcase. -->
+	<PersonDirInfo>
+		<res-ref-name>PersonDb</res-ref-name>
+		<!-- "SELECT *" is a very bad idea - best practices are to list explicitly the 
+			columns to be selected.  However this shorter query string is easier to test -->
+		<uidquery>select * from schema.table where netid=?</uidquery>
+		<attributes>
+			<attribute>
+				<name>first_last</name>
+				<alias>displayName</alias>
+			</attribute>
+			<attribute>
+				<name>last_name</name>
+				<alias>sn</alias>
+			</attribute>
+			<attribute>
+				<name>role</name>
+				<alias>uPortalAffiliation</alias>
+			</attribute>
+			<attribute>
+				<name>first_name</name>
+				<alias>givenName</alias>
+			</attribute>
+			<attribute>
+				<name>email_alias</name>
+				<alias>email</alias>
+			</attribute>
+			<attribute>
+				<name>alias</name>
+				<alias>alias</alias>
+			</attribute>
+			<attribute>
+				<name>person_type</name>
+				<alias>personType</alias>
+			</attribute>
+			<attribute>
+				<name>college</name>
+				<alias>YaleCollege</alias>
+			</attribute>
+			<attribute>
+				<name>class_year</name>
+				<alias>ClassYear</alias>
+			</attribute>
+			<attribute>
+				<name>student_status</name>
+				<alias>StudentStatus</alias>
+			</attribute>
+			<attribute>
+				<name>template</name>
+				<alias>uPortalTemplateUserName</alias>
+			</attribute>
+			<attribute>
+				<name>netid</name>
+				<alias>netid</alias>
+			</attribute>
+			<attribute>
+				<name>netid</name>
+				<alias>eduPersonPrincipalName</alias>
+			</attribute>
+			<attribute>
+				<name>work_phone</name>
+				<alias>WorkPhone</alias>
+			</attribute>
+		</attributes>
+	</PersonDirInfo>
+</PersonDirs>

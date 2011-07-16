@@ -1,0 +1,58 @@
+<?xml version='1.0'?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<layout>
+    <folder ID="s1" hidden="false" immutable="true" locale="en_US" name="Root folder" type="root" unremovable="true">
+        <folder ID="ft1" type="regular" hidden="true" unremovable="true" immutable="true" name="Transient Folder" />
+        <folder ID="u16l1s3" dlm:fragment="0" dlm:precedence="80.0" hidden="false" immutable="true" locale="en_US" name="Welcome" type="regular" unremovable="true">
+            <folder ID="u16l1s6" dlm:fragment="0" dlm:precedence="80.0" hidden="false" immutable="true" locale="en_US" name="Column" type="regular" unremovable="true">
+                <folder ID="u16l1s11" dlm:fragment="0" dlm:precedence="80.0" hidden="false" immutable="true" locale="en_US" name="" type="regular" unremovable="true" />
+                <folder ID="u16l1s12" dlm:fragment="0" dlm:precedence="80.0" hidden="false" immutable="true" locale="en_US" name="" type="regular" unremovable="true" />
+            </folder>
+            <folder ID="u16l1s7" dlm:fragment="0" dlm:precedence="80.0" hidden="false" immutable="true" locale="en_US" name="Column" type="regular" unremovable="true">
+                <channel ID="u16l1n8" chanID="15" class="org.jasig.portal.channels.portlet.CSpringPortletAdaptor" description="Google Portlet from http://code.google.com/p/googleportlet/"
+                    dlm:fragment="0" dlm:precedence="80.0" editable="false" fname="google-portlet" hasAbout="false" hasHelp="false" hidden="false" immutable="true" isPortlet="true"
+                    locale="en_US" name="Google Search" secure="false" timeout="60000" title="Google Search" typeID="4" unremovable="true"
+                >
+                    <parameter name="portletApplicationId" override="no" value="/jasig-widget-portlets" />
+                    <parameter name="portletName" override="no" value="google-search" />
+                </channel>
+                <folder ID="u16l1s9" dlm:fragment="0" dlm:precedence="80.0" hidden="false" immutable="true" locale="en_US" name="" type="regular" unremovable="true" />
+                <folder ID="u16l1s10" dlm:fragment="0" dlm:precedence="80.0" hidden="false" immutable="true" locale="en_US" name="" type="regular" unremovable="true" />
+            </folder>
+        </folder>
+        <folder ID="s2" hidden="false" immutable="true" locale="en_US" name="Header folder" type="header" unremovable="true">
+            <folder ID="s5" hidden="false" immutable="true" locale="en_US" name="" type="regular" unremovable="true" />
+            <folder ID="s6" hidden="false" immutable="true" locale="en_US" name="" type="regular" unremovable="true" />
+            <channel ID="n7" chanID="34" class="org.jasig.portal.channels.portlet.CSpringPortletAdaptor" description="Allows a user to indicate locale preferences"
+                editable="false" fname="user-locales-selector" hasAbout="false" hasHelp="false" hidden="false" immutable="true" isPortlet="true" locale="en_US" name="User Locales Selector"
+                secure="false" timeout="30000" title="User Locales Selector" typeID="4" unremovable="true"
+            >
+                <parameter name="isFrameworkPortlet" override="no" value="true" />
+                <parameter name="portletName" override="no" value="UserLocale" />
+            </channel>
+        </folder>
+        <folder ID="s3" hidden="false" immutable="true" locale="en_US" name="Footer folder" type="footer" unremovable="true">
+            <folder ID="s4" hidden="false" immutable="true" locale="en_US" name="" type="regular" unremovable="true" />
+        </folder>
+    </folder>
+</layout>

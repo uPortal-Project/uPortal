@@ -1,0 +1,83 @@
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+
+<portlet-definition
+    xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition ../../../resources/xsd/io/portlet-definition/portlet-definition-4.0.xsd"
+   
+    version="4.0"
+>
+
+  <title>uPortal Links</title>
+  <name>uPortal Links</name>
+  <fname>uportal-links</fname>
+  <desc>Useful uPortal links.</desc>
+  <type>CMS</type>
+  <timeout>10000</timeout>
+  <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
+    <up:webAppName>/SimpleContentPortlet</up:webAppName>
+    <up:portletName>cms</up:portletName>
+  </portlet-descriptor>
+  
+  
+  
+  
+    <category>News</category>
+  
+  
+    <group>Everyone</group>
+  
+  
+    <parameter>
+      <name>disableDynamicTitle</name>
+      <value>true</value> 
+    </parameter>
+	<parameter>
+      <name>iconUrl</name>
+      <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/mimetypes/text-html.png</value>
+    </parameter>
+  
+  
+    <portlet-preference>
+        <name>content</name>
+        <value>
+            <![CDATA[
+                <h2>uPortal Links</h2>
+                <ul>
+                    <li><a target="_blank" href="http://www.jasig.org/uportal">uPortal Home</a></li>
+                    <li><a target="_blank" href="http://wiki.jasig.org/display/UPM40/Home">uPortal 3 Manual</a></li>
+                    <li><a target="_blank" href="http://www.jasig.org/uportal/download/all">Download uPortal</a></li>
+                    <li><a target="_blank" href="http://wiki.jasig.org/display/UPC/Home">uPortal Wiki</a></li>
+                    <li><a target="_blank" href="http://www.jasig.org/uportal/mailing-lists">Join mailing lists</a></li>
+                    <li><a target="_blank" href="http://www.jasig.org/jasig-membership">Become a JA-SIG member</a></li>
+                    <li><a target="_blank" href="http://www.jasig.org/jasig-support/solutions-providers">uPortal commercial services and support</a></li>
+                    <li><a target="_blank" href="http://wiki.jasig.org/display/JSG/Newsletter">JA-SIG newsletter</a></li>
+                    <li><a target="_blank" href="http://www.jasig.org/uportal/deployments">uPortal-driven sites</a></li>
+                    <li><a target="_blank" href="http://issues.jasig.org/browse/UP">uPortal Bug Tracker</a></li>
+                    <li><a target="_blank" href="http://issues.jasig.org/browse/PLT">Get additional portlets</a></li>
+                </ul>
+            ]]>
+        </value>
+    </portlet-preference>
+  
+</portlet-definition>

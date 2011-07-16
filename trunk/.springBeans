@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beansProjectDescription>
+	<version>1</version>
+	<pluginVersion><![CDATA[2.5.0.201008251000-M3]]></pluginVersion>
+	<configSuffixes>
+		<configSuffix><![CDATA[xml]]></configSuffix>
+	</configSuffixes>
+	<enableImports><![CDATA[false]]></enableImports>
+	<configs>
+		<config>uportal-war/src/main/resources/properties/contexts/applicationContext.xml</config>
+		<config>uportal-war/src/main/resources/properties/contexts/cacheContext.xml</config>
+		<config>uportal-war/src/main/resources/properties/contexts/channelContainerContext.xml</config>
+		<config>uportal-war/src/main/resources/properties/contexts/checksContext.xml</config>
+		<config>uportal-war/src/main/resources/properties/contexts/datasourceContext.xml</config>
+		<config>uportal-war/src/main/resources/properties/contexts/flowsContext.xml</config>
+		<config>uportal-war/src/main/resources/properties/contexts/importExportContext.xml</config>
+		<config>uportal-war/src/main/resources/properties/contexts/jmxContext.xml</config>
+		<config>uportal-war/src/main/resources/properties/contexts/layoutContext.xml</config>
+		<config>uportal-war/src/main/resources/properties/contexts/ldapContext.xml</config>
+		<config>uportal-war/src/main/resources/properties/contexts/locatorContext.xml</config>
+		<config>uportal-war/src/main/resources/properties/contexts/mvcViews.xml</config>
+		<config>uportal-war/src/main/resources/properties/contexts/persistenceContext.xml</config>
+		<config>uportal-war/src/main/resources/properties/contexts/personDirectoryContext.xml</config>
+		<config>uportal-war/src/main/resources/properties/contexts/portletContainerContext.xml</config>
+		<config>uportal-war/src/main/resources/properties/contexts/renderingPipelineContext.xml</config>
+		<config>uportal-war/src/main/resources/properties/contexts/requestParameterProcessingContext.xml</config>
+		<config>uportal-war/src/main/resources/properties/contexts/schedulerContext.xml</config>
+		<config>uportal-war/src/main/resources/properties/contexts/securityContext.xml</config>
+		<config>uportal-war/src/main/resources/properties/contexts/servicesContext.xml</config>
+		<config>uportal-war/src/main/resources/properties/contexts/statsContext.xml</config>
+		<config>uportal-war/src/main/resources/properties/contexts/userContext.xml</config>
+		<config>uportal-war/src/test/resources/org/jasig/portal/rendering/renderingPipelineTestContext.xml</config>
+		<config>uportal-war/src/main/resources/properties/contexts/mvcContext.xml</config>
+		<config>uportal-war/src/main/resources/properties/contexts/servlet/mvcServletContext.xml</config>
+	</configs>
+	<configSets>
+	</configSets>
+</beansProjectDescription>

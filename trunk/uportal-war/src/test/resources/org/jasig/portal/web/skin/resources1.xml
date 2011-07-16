@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<skin:resources xmlns:skin="http://www.jasig.org/uportal/web/skin">
+
+    <!-- these 2 will aggregate -->
+	<css>../common/css/a.css</css>
+	<css>../common/css/b.css</css>
+	<!--  conditional will be by itself -->
+	<css conditional="condition!">../common/css/conditional.css</css>
+
+	<!-- absolute won't get touched, prove the 2 don't aggregate -->
+	<css>/ResourceServingWebapp/rs/1.css</css>
+	<css>/ResourceServingWebapp/rs/2.css</css>
+    
+    <!-- have same value for media, will get aggregated -->
+    <css media="alternate">css/a.css</css>
+    <css media="alternate">css/b.css</css>
+	
+
+	<js>../common/js/a.js</js>
+	<js>../common/js/b.js</js>
+	<!--  absolute won't get touched -->
+	<js>/universal.js</js>
+	<js>js/a.js</js>
+	<js>js/b.js</js>
+	<!-- compressed won't get aggregated -->
+	<js compressed="true">js/c-compressed.js</js>
+	<js conditional="if IE lt 7">js/ie6-hack.js</js>
+
+</skin:resources>

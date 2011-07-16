@@ -1,0 +1,52 @@
+/*====================================*/
+/* General */
+/*====================================*/
+/* 
+ * Formatting for global elements and basic setup.
+ */
+
+.up {
+	/* Global, general styling. */
+	@if ($fontSize != false) {
+		font-size: $fontSize;
+	}
+	font-family: $font;
+	background: $portalBackground;
+	@if ($portalGradient1 != false) {
+		@include gradient($portalGradient1,$portalGradient2);
+	}
+	color: $text;
+	
+	h1, h2, h3, h4, h5, h6 {
+		/* Global heading styling. */
+		font-family: $headingFont;
+	}
+	
+	#portalPage {
+		width: $portalWidth;
+		min-width: $portalMinWidth;
+		margin: 0 auto;
+	}
+	
+	#portalPageInner {
+		background: $portalPageBackground;
+		@if ($portalPageSideBorder != false) {
+			border-left: $portalPageSideBorder;
+			border-right: $portalPageSideBorder;
+		}
+	}	
+	
+	@include button();
+	
+	.skip-link {
+		/* Skip-to navigation links. Make them visually hidden, but available to screen readers and focusable. */
+		@include visuallyhidden();
+		@include focusable();
+	}
+	
+	#portalPageBodyInner {
+		/* Page body. */
+		padding: $portalPageBodyInnerPadding;
+		background: $portalPageBackground;
+	}
+}

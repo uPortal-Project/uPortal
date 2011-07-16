@@ -1,0 +1,82 @@
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+
+<layout script="classpath://org/jasig/portal/io/import-layout_v3-0.crn" username="demo">
+  <root unremovable="Y" immutable="N" hidden="N" name="Root folder">
+    <header unremovable="Y" immutable="Y" hidden="N" name="Header folder">
+    </header>
+    <footer unremovable="N" immutable="N" hidden="N" name="Footer folder">
+    </footer>
+    <tab unremovable="N" immutable="N" hidden="N" name="Demos">
+      <column unremovable="N" immutable="N" hidden="N" name="Column 1">
+        <structure-attribute type="folder">
+          <name>width</name>
+          <value>50%</value>
+        </structure-attribute>
+        <channel unremovable="" immutable="" hidden="" fname="word-of-the-day"/>
+        <!-- 
+        <channel unremovable="" immutable="" hidden="" fname="number-guessing-game">
+          <param>
+            <name>maxNum</name>
+            <value>150</value>
+          </param>
+          <param>
+            <name>minNum</name>
+            <value>50</value>
+          </param>
+        </channel>
+         -->
+        <channel unremovable="" immutable="" hidden="" fname="daily-business-cartoon"/>
+      </column>
+      <column unremovable="N" immutable="N" hidden="N" name="Column 2">
+        <structure-attribute type="folder">
+          <name>width</name>
+          <value>50%</value>
+        </structure-attribute>
+        <channel unremovable="" immutable="" hidden="" fname="uportal-news"/>
+      </column>
+    </tab>
+    <tab unremovable="N" immutable="N" hidden="N" name="Development">
+      <column unremovable="N" immutable="N" hidden="N" name="Column 1">
+        <structure-attribute type="folder">
+          <name>width</name>
+          <value>50%</value>
+        </structure-attribute>
+        <!-- <channel unremovable="" immutable="" hidden="" fname="person-attributes"/>
+        <channel unremovable="" immutable="" hidden="" fname="css-viewer"/> -->
+      </column>
+      <column unremovable="N" immutable="N" hidden="N" name="Column 2">
+        <structure-attribute type="folder">
+          <name>width</name>
+          <value>50%</value>
+        </structure-attribute>
+        <channel unremovable="" immutable="" hidden="" fname="snooper"/>
+        <!-- <channel unremovable="" immutable="" hidden="" fname="uportal-data-dictionary"/> -->
+      </column>
+    </tab>
+  </root>
+  <profile name="My web browser profile"> 
+    <description>A sample profile for web browsers</description>  
+    <structure name="DLMTabsColumns"/>  
+    <theme name="DLMXHTML"/> 
+  </profile>
+</layout>

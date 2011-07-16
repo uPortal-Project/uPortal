@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow
+    http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <on-start>
+        <set name="flowScope.owners" value="permissionOwnerDao.getAllPermissionOwners()"></set>
+    </on-start>
+
+    <!-- Display the list of permission owner systems -->
+    <view-state id="listOwners">
+        <transition on="listActivities" to="listActivities">
+            <set name="flowScope.owner" value="permissionOwnerDao.getPermissionOwner(requestParameters.ownerFname)"></set>
+        </transition>
+        <transition on="showActivity" to="showActivity">
+            <set name="flowScope.owner" value="permissionOwnerDao.getPermissionOwner(requestParameters.ownerFname)"></set>
+            <set name="flowScope.activity" value="permissionOwnerDao.getPermissionActivity(owner.id, requestParameters.activityFname)"></set>
+        </transition>
+        <transition on="lookupPermission" to="permissionLookupResult"/>
+    </view-state>
+    
+    <!-- Display the list of activities for the chosen owner system -->
+    <view-state id="listActivities">
+        <transition on="showActivity" to="showActivity">
+            <set name="flowScope.activity" value="permissionOwnerDao.getPermissionActivity(owner.id, requestParameters.activityFname)"></set>
+        </transition>
+    </view-state>
+    
+    <!-- Display the details for a chosen permission activity -->
+    <view-state id="showActivity">
+        <transition on="activities" to="listActivities"/>
+        <transition on="createPermission" to="selectTarget"/>
+        <transition on="editPermission" to="edit-permission"/>
+    </view-state>
+    
+    <!-- Select a new target on which to assign a permission -->
+    <view-state id="selectTarget">
+        <transition on="activities" to="listActivities"/>
+        <transition on="permissions" to="showActivity"/>
+        <transition on="cancel" to="showActivity"/>
+        <transition on="editPermission" to="edit-permission"/>
+    </view-state>
+
+    <!-- Edit an existing permission -->
+    <subflow-state id="edit-permission" subflow="edit-permission">
+        <on-entry>
+            <set name="flashScope.breadcrumbs" value="new java.util.LinkedHashMap()"/>
+            <evaluate expression="breadcrumbs.put('listOwners', 'Categories')"/>
+            <evaluate expression="breadcrumbs.put('listActivities', owner.name)"/>
+            <evaluate expression="breadcrumbs.put('showActivity', activity.name)"/>
+            <set name="flashScope.principals" value="permissionAdministrationHelper.getCurrentPrincipals(owner, activity, requestParameters.target)"/>
+            <set name="flashScope.targetProvider" value="permissionTargetProviderRegistry.getTargetProvider(activity.targetProviderKey)"/>
+            <set name="flashScope.target" value="targetProvider.getTarget(requestParameters.target)"/>
+        </on-entry>
+        
+        <input name="owner" value="owner"/>
+        <input name="activity" value="activity"/>
+        <input name="target" value="flashScope.target"/>
+        <input name="principals" value="principals"/>
+        <input name="breadcrumbs" value="breadcrumbs"/>
+        <output name="breadcrumb" value="flowScope.breadcrumb"/>
+        
+        <transition on="cancel" to="showActivity"/>
+        <transition on="done" to="showActivity"/>
+        <transition on="#{breadcrumb == 'listOwners'}" to="listOwners"/>
+        <transition on="#{breadcrumb == 'listActivities'}" to="listActivities"/>
+        <transition on="#{breadcrumb == 'showActivity'}" to="showActivity"/>
+    </subflow-state>
+
+    <!-- VIEW PERMISSIONS view state -->    
+    <view-state id="permissionLookupResult">
+        <on-entry>
+            <set name="viewScope.principal" value="requestParameters.principal"/>
+            <set name="viewScope.activity" value="requestParameters.activity"/>
+            <set name="viewScope.principalDisplayName" value="requestParameters.principalDisplayName"/>
+            <set name="viewScope.activityDisplayName" value="requestParameters.activityDisplayName"/>
+        </on-entry>
+        <transition on="editPermission" to="edit-permission">
+            <set name="flowScope.owner" value="permissionOwnerDao.getPermissionOwner(requestParameters.owner)"/>
+            <set name="flowScope.activity" value="permissionOwnerDao.getPermissionActivity(owner.id, requestParameters.activity)"/>
+        </transition>
+    </view-state>
+
+    
+    <!-- End state -->
+    <end-state id="finishPermissionEdit" />
+
+    <global-transitions>
+        <transition on="owners" to="listOwners"/>
+    </global-transitions>
+
+</flow>

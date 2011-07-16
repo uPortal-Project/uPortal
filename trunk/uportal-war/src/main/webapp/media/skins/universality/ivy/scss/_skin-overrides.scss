@@ -1,0 +1,18 @@
+//====================================
+// Skin Overrides
+//====================================
+// Put any skin-specific overrides here.
+
+.up {
+	#portalPageHeader {
+		#portalPageBar {
+			border-bottom: 1px solid $c1darker;
+			@include box-shadow(0 2px 4px $c1darker);
+			
+			#portalWelcome .user-name {
+				/* Emphasize the user's name. */
+				font-weight: bold;
+			}
+		}
+	}
+}

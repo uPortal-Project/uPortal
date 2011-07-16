@@ -1,0 +1,348 @@
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+
+<portlet-definition
+    xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition ../../../resources/xsd/io/portlet-definition/portlet-definition-4.0.xsd"
+   
+    version="4.0"
+>
+
+  <title>Javascript Demos</title>
+  <name>Javascript Demos</name>
+  <fname>js-demo</fname>
+  <desc>Demonstrations of available jQuery functionality</desc>
+  <type>Advanced CMS</type>
+  <timeout>10000</timeout>
+  <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
+    <up:webAppName>/SimpleContentPortlet</up:webAppName>
+    <up:portletName>cms</up:portletName>
+  </portlet-descriptor>
+  
+  
+  
+  
+    <category>Demonstration</category>
+  
+  
+    <group>Everyone</group>
+  
+  
+    <parameter>
+      <name>disableDynamicTitle</name>
+      <value>true</value> 
+    </parameter>
+	<parameter>
+      <name>iconUrl</name>
+      <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/applications-system.png</value>
+    </parameter>
+  
+  
+    <portlet-preference>
+        <name>content</name>
+        <value>
+            <![CDATA[
+                <script language="Javascript" type="text/javascript">
+                  up.jQuery(function() {
+                    var $ = up.jQuery;
+                
+                    $(document).ready(function(){
+                      // set up jQuery UI effects demo
+                      $(".effects-demo-outerbox").click(function(){ $(".effects-demo-innerbox").effect("bounce"); });
+                      $(".effects a").click(function(){ 
+                        var effect = $(this).text();
+                        $(".effects-demo-innerbox h3").text(effect);
+                        $(".effects-demo-outerbox").unbind();
+                        if ($(this).parent().parent().hasClass("showhide-effects")) {
+                          $(".effects-demo-outerbox").click(function(){ $(".effects-demo-innerbox").toggle(effect.toLowerCase()); });
+                        } else if (effect == 'Scale') {
+                          $(".effects-demo-outerbox").toggle(
+                            function() { $(".effects-demo-innerbox").effect("scale", { percent: 50 }); }, 
+                            function() { $(".effects-demo-innerbox").effect("scale", { percent: 200 });
+                          });
+                        } else {
+                          $(".effects-demo-outerbox").click(function(){ $(".effects-demo-innerbox").effect(effect.toLowerCase()); });
+                        }
+                      });
+                      
+                      // set up jQuery UI widget demos
+                      $(".accordion-demo").accordion({ clearStyle:true, collapsible:true, active:false });
+                      $(".datepicker-demo").datepicker();
+                      $(".tabs-demo").tabs();
+                      
+                      // set up fluid component demos
+                      up.fluid.reorderList(".list-reorderer ol", { selectors: { movables: "> li"} });
+                      up.fluid.pager(".pager-demo", {
+                        listeners: {
+                            onModelChange: function(link) {
+                                $(".fluid-pager-demo-items li").css("display", "none");
+                                $(".fluid-pager-demo-items li:not(:lt(" + link.pageIndex*5 +")):lt(5)").css("display", "block");
+                                return false;
+                            }
+                        }
+                      });
+                      
+                      
+                      // set up demo switching functionality
+                      $(".demo-list li").click(function(){
+                        $(".demo-list").css("display", "none");
+                        $("." + $(this).text().toLowerCase().replace(" ", "-")).css("display", "block");
+                        $(".demo-back-link").css("display", "block");
+                        if ($(this).text() == 'Accordion') {
+                            console.log('accordion');
+                            $(".accordion-demo").accordion('activate', 0);
+                        }
+                        return false;
+                      });
+                      $(".demo-back-link").click(function(){
+                        $(".demo-back-link").css("display", "none");
+                        $(".demo-container").css("display", "none");
+                        $(".demo-list").css("display", "block");
+                      });
+                    
+                    });
+                  });
+                </script>
+            
+                <style type="text/css">
+                  .demo-container {display:none; max-width:600px}
+                  .demo-back-link {display:none}
+                  .effects ul, .effects li {list-style-type:none; margin: 0}
+                  .list-reorderer ol li {padding:5px; margin:5px;}
+                  .list-reorderer ul li {margin:0px; padding:0px;}
+                  .list-reorderer .orderable-default{background-color:#eee;}
+                  .list-reorderer .orderable-hover{background-color:lightyellow; cursor:move;}
+                  .list-reorderer .orderable-selected{background-color: #ddd;}
+                  .list-reorderer .orderable-dragging {background-color: lightyellow;}
+                  .list-reorderer ol .orderable-drop-marker {background-color: red; height:4px !important; padding:0 0 0 0; border-width: 0px !important; list-style-type:none; font-size:0px; line-height:0px; overflow:hidden;}
+                </style>
+                
+                <div class="demo-list">
+                  <h2>jQuery UI Demos</h2>
+                  <ul>
+                    <li><a href="javascript:;">Datepicker</a></li>
+                    <li><a href="javascript:;">Accordion</a></li>
+                    <li><a href="javascript:;">Tabs</a></li>
+                    <li><a href="javascript:;">Effects</a></li>
+                  </ul>
+                  
+                  <p>
+                    This uPortal release contains the jQuery UI 1.7.2 final release.  
+                    For more jQuery UI demos and sample source code, please visit 
+                    <a href="http://jqueryui.com/demos/" target="_blank">http://jqueryui.com/demos</a>.
+                  </p>
+                  
+                  <h2>Fluid Component Demos</h2>
+                  <ul>
+                    <li><a href="javascript:;">Pager</a></li>
+                    <li><a href="javascript:;">List Reorderer</a></li>
+                  </ul>
+                  
+                  <p>
+                    This uPortal release contains the Fluid 1.1.2 final release.  For more 
+                    Fluid demos and sample source code, please visit 
+                    <a href="http://build.fluidproject.org/infusion/demos/" 
+                        target="_blank">http://build.fluidproject.org/infusion/demos/</a>.
+                  </p>
+                  
+                </div>
+                
+                <div class="demo-container accordion">
+                  <h2>Accordion Demo</h2>
+                  <div class="accordion-demo">
+                    <h3><a href="#">Section 1</a></h3>
+                    <div><p>Proin euismod nibh ac enim. Nam augue est, tempus ut, semper id, ornare vel, lorem. Cras id ligula. Etiam porttitor ullamcorper felis. Proin egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris in nibh. Fusce eget odio. Duis bibendum elit eget ante. Ut sollicitudin tortor. Ut posuere lorem vitae mauris. Mauris lobortis felis nec nulla. Fusce accumsan sagittis ante. </p></div>
+                    <h3><a href="#">Section 2</a></h3>
+                    <div><p>Ut et nunc. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. In dapibus sagittis felis. Nullam tempus velit at nisi. Phasellus nulla tortor, commodo eu, lobortis ac, convallis nec, mi. Donec cursus eros ac velit. Sed mattis, tortor sed laoreet tempor, risus ipsum posuere nisi, non vehicula dui libero sed mauris. Sed nisl nulla, vulputate nec, ornare vel, ultricies at, nulla. Proin purus nisi, scelerisque eget, consequat quis, aliquet nec, pede. Pellentesque erat augue, rhoncus in, convallis sit amet, pellentesque a, leo. Duis tortor nunc, ornare ac, volutpat quis, molestie et, mauris. Cras rhoncus massa eget enim. Aliquam erat volutpat.</p></div>
+                    <h3><a href="#">Section 3</a></h3>
+                    <div><p>Aliquam a leo. Phasellus congue tempor massa. In hac habitasse platea dictumst. Ut eu arcu eu velit pulvinar tempus. Nullam sit amet lorem ut dolor sagittis viverra. Curabitur in lacus dictum risus ultrices bibendum. Ut eu nibh et mauris ornare condimentum. Duis iaculis rutrum nisi. Sed facilisis augue ut neque. Pellentesque cursus libero vel neque. Nunc ornare eleifend lorem. Praesent ultrices hendrerit purus. Sed vitae tortor. Nunc velit. Suspendisse potenti.</p>
+                    <p>In hac habitasse platea dictumst. Nullam eget nisi id risus mollis porta. Morbi mollis gravida est. Cras vehicula tellus a lorem. Nunc risus metus, ultricies vel, cursus sit amet, rhoncus non, felis. Nunc porttitor diam id enim. Duis quam neque, eleifend id, faucibus quis, iaculis vitae, diam. Praesent ante. Fusce malesuada hendrerit sapien. Nulla tincidunt dui in diam. Integer pharetra. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In fermentum quam non magna. Sed a felis. Cras quis ipsum. Duis elit odio, facilisis scelerisque, vehicula et, posuere quis, elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris nibh quam, porttitor quis, commodo at, cursus ac, quam. Donec lacinia. Fusce eget justo quis libero egestas porttitor. </p></div>
+                  </div>
+                </div>
+                
+                <div class="demo-container datepicker"> 
+                  <h2>Datepicker demo</h2>
+                  <p>Date: <input class="datepicker-demo" type="text"/></p> 
+                </div>
+                
+                <div class="demo-container tabs">
+                  <h2>Tabs Demo</h2>
+                  <div class="tabs-demo">
+                    <ul>
+                      <li><a href="#tabs-1">Nunc tincidunt</a></li>
+                      <li><a href="#tabs-2">Proin dolor</a></li>
+                      <li><a href="#tabs-3">Aenean lacinia</a></li>
+                    </ul>
+                    <div id="tabs-1">
+                      <p>Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. Curabitur nec arcu. Donec sollicitudin mi sit amet mauris. Nam elementum quam ullamcorper ante. Etiam aliquet massa et lorem. Mauris dapibus lacus auctor risus. Aenean tempor ullamcorper leo. Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius sollicitudin. Sed ut dolor nec orci tincidunt interdum. Phasellus ipsum. Nunc tristique tempus lectus.</p>
+                    </div>
+                    <div id="tabs-2">
+                      <p>Morbi tincidunt, dui sit amet facilisis feugiat, odio metus gravida ante, ut pharetra massa metus id nunc. Duis scelerisque molestie turpis. Sed fringilla, massa eget luctus malesuada, metus eros molestie lectus, ut tempus eros massa ut dolor. Aenean aliquet fringilla sem. Suspendisse sed ligula in ligula suscipit aliquam. Praesent in eros vestibulum mi adipiscing adipiscing. Morbi facilisis. Curabitur ornare consequat nunc. Aenean vel metus. Ut posuere viverra nulla. Aliquam erat volutpat. Pellentesque convallis. Maecenas feugiat, tellus pellentesque pretium posuere, felis lorem euismod felis, eu ornare leo nisi vel felis. Mauris consectetur tortor et purus.</p>
+                    </div>
+                    <div id="tabs-3">
+                      <p>Mauris eleifend est et turpis. Duis id erat. Suspendisse potenti. Aliquam vulputate, pede vel vehicula accumsan, mi neque rutrum erat, eu congue orci lorem eget lorem. Vestibulum non ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce sodales. Quisque eu urna vel enim commodo pellentesque. Praesent eu risus hendrerit ligula tempus pretium. Curabitur lorem enim, pretium nec, feugiat nec, luctus a, lacus.</p>
+                      <p>Duis cursus. Maecenas ligula eros, blandit nec, pharetra at, semper at, magna. Nullam ac lacus. Nulla facilisi. Praesent viverra justo vitae neque. Praesent blandit adipiscing velit. Suspendisse potenti. Donec mattis, pede vel pharetra blandit, magna ligula faucibus eros, id euismod lacus dolor eget odio. Nam scelerisque. Donec non libero sed nulla mattis commodo. Ut sagittis. Donec nisi lectus, feugiat porttitor, tempor ac, tempor vitae, pede. Aenean vehicula velit eu tellus interdum rutrum. Maecenas commodo. Pellentesque nec elit. Fusce in lacus. Vivamus a libero vitae lectus hendrerit hendrerit.</p>
+                    </div>
+                  </div>
+                  
+                </div>
+                
+                <div class="demo-container effects">
+                  <h2>jQuery Effects Demo</h2>
+                  <div class="fl-col-flex2">
+                    <div class="fl-col-flex60">
+                      <div class="effects-demo-outerbox ui-widget-content ui-corner-all" style="height:240px;width:90%; text-align:center">
+                        <div class="effects-demo-innerbox ui-widget-content ui-corner-all" style="min-width:100px; max-width: 200px; margin: 10px">
+                          <h3 class="ui-widget-header ui-corner-all">Bounce</h3>
+                          Contents!
+                        </div>
+                      </div>
+                      <p>Click in box above to view effect</p>
+                      
+                    </div>
+            
+                    <div class="fl-col-flex40">
+                      <h3>Choose an effect</h3>
+                      <div class="fl-col-flex2">
+                        <div class="fl-col-flex50">
+                          <h4>General</h4>
+                          <ul class="general-effects">
+                            <li><a href="javascript:;">Bounce</a></li>
+                            <li><a href="javascript:;">Highlight</a></li>
+                            <li><a href="javascript:;">Pulsate</a></li>
+                            <li><a href="javascript:;">Scale</a></li>
+                            <li><a href="javascript:;">Shake</a></li>
+                            <!-- <li><a href="javascript:;">Size</a></li> -->
+                            <!-- <li><a href="javascript:;">Transfer</a></li> -->
+                          </ul>
+                        </div>
+                        <div class="fl-col-flex50">
+                          <h4>Show/Hide</h4>
+                          <ul class="showhide-effects">
+                            <li><a href="javascript:;">Blind</a></li>
+                            <li><a href="javascript:;">Clip</a></li>
+                            <li><a href="javascript:;">Drop</a></li>
+                            <li><a href="javascript:;">Explode</a></li>
+                            <li><a href="javascript:;">Fold</a></li>
+                            <li><a href="javascript:;">Puff</a></li>
+                            <li><a href="javascript:;">Scale</a></li>
+                            <li><a href="javascript:;">Slide</a></li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            
+                  <div class="demo-container list-reorderer">
+                    <h2>Fluid Reorderer: Sortable List</h2>
+                    <h3>Conference Planning To-do List</h3>
+                    <ol>
+                      <li>Select the date</li>
+                      <li>Create promotional plan
+                        <ul>
+                          <li>email campaign</li>
+                          <li>web site</li>
+                          <li>print materials</li>
+                        </ul>
+                      </li>
+                      <li id="myUniquePrefix.orderable3">Book facilities
+                        <ul>
+                          <li>Select building</li>
+                          <li>Book rooms</li>
+                        </ul>
+                      </li>
+                      <li>Book caterer</li>
+                      <li id="myUniquePrefix.orderable5">Book block of hotel rooms</li>
+                      <li id="myUniquePrefix.orderable6">
+                        Develop a conference daily schedule of events
+                      </li>
+                      <li>Book speakers
+                        <ul>
+                          <li>Keynote</li>
+                          <li>Internal/employee</li>
+                        </ul>
+                      </li>
+                      <li>Plan the registration process
+                        <ul>
+                          <li>Deadline for early bird and final registrations</li>
+                          <li>Create/enter data into database</li>
+                          <li>Create/upload information for web registration</li>
+                        </ul>
+                      </li>
+                      <li id="myUniquePrefix.orderable9">
+                        Book audio visual equipment and technicians
+                      </li>
+                      <li>Create name tags and welcome packages
+                        <ul>
+                          <li>schedule of events</li>
+                          <li>maps, tickets</li>
+                          <li>paper, pen, trinkets</li>
+                          <li>instructions</li>
+                        </ul>
+                      </li>
+                    </ol>
+                </div>
+                
+                <div class="demo-container pager">
+                    <h2>Fluid Pager</h2>
+                    
+                    <div class="pager-demo fl-pager">
+                      <div id="pager-top" class="flc-pager-top">
+                        <ul class="fl-pager-ui">
+                             <li><a class="flc-pager-previous" href="javascript:;">&lt; prev</a></li>
+                             <li>
+                                <ul class="fl-pager-links flc-pager-links" style="margin:0; display:inline">
+                                     <li value="1" class="flc-pager-pageLink"><a href="javascript:;">1</a></li>
+                                     <li value="2" class="flc-pager-pageLink"><a href="javascript:;">2</a></li>
+                                     <li value="3" class="flc-pager-pageLink"><a href="javascript:;">3</a></li>
+                                </ul>
+                             </li>
+                             <li><a class="flc-pager-next" href="javascript:;">next &gt;</a></li>
+                            <!-- <li>
+                              <span class="flc-pager-summary">1 of 2</span>
+                              <span> <select class="pager-page-size flc-pager-page-size">
+                                  <option value="5">5</option>
+                                  <option value="10">10</option>
+                              </select></span>
+                            </li>  -->
+                        </ul>
+                      </div>
+                    </div>
+                    <div>
+                        <ul class="fluid-pager-demo-items">
+                            <li>Item 1</li><li>Item 2</li><li>Item 3</li><li>Item 4</li><li>Item 5</li>
+                            <li>Item 6</li><li>Item 7</li><li>Item 8</li><li>Item 9</li><li>Item 10</li>
+                            <li>Item 11</li><li>Item 12</li><li>Item 13</li><li>Item 14</li><li>Item 15</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="demo-back-link" style="clear:both; padding:10px;">
+                  <p><a href="javascript:;">&lt; Back to available demos list</a></p>
+                </div>
+            ]]>
+        </value>
+    </portlet-preference>
+  
+</portlet-definition>

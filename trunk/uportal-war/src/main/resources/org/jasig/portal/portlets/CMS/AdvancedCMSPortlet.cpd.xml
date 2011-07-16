@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<portlet-publishing-definition
+    xmlns="https://source.jasig.org/schemas/uportal/portlet-publishing"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://source.jasig.org/schemas/uportal/portlet-publishing ../../../../../xsd/portlet-publishing/portlet-publishing-definition.xsd">
+
+      <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
+        <up:webAppName>/SimpleContentPortlet</up:webAppName>
+        <up:portletName>cms</up:portletName>
+      </portlet-descriptor>
+
+    <step>
+
+        <name>Portlet Descriptor</name>
+
+        <description>
+            Enter the Portlet web-application path and portlet name.
+        </description>
+
+        <parameter>
+            <name>disableDynamicTitle</name>
+            <label>disable.dynamic.title</label>
+            <description>
+              Disable dynamic title
+            </description>
+            <example>false</example>
+            <single-choice-parameter-input>
+                <default>true</default>
+                <option value="true" label="true" />
+                <option value="false" label="false" />
+            </single-choice-parameter-input>
+        </parameter>
+
+        <preference>
+            <name>cleanContent</name>
+            <label>clean.content</label>
+            <description>
+              Clean content
+            </description>
+            <example>false</example>
+            <single-choice-preference-input>
+                <default>false</default>
+                <option value="true" label="true" />
+                <option value="false" label="false" />
+            </single-choice-preference-input>
+        </preference>
+
+    </step>
+
+</portlet-publishing-definition>

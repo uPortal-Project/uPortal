@@ -1,0 +1,90 @@
+/*====================================*/
+/* Sidebar */
+/*====================================*/
+/*
+ * Styles for formatting the portal sidebar and widgets that are contained in it.
+ */
+
+.up {
+	#portalSidebar {
+		/* A persistent sidebar that can contain widgets.  */
+		
+		#portalSidebarInner {
+			padding: $sidebarPadding;
+		}
+		
+		.fl-widget {
+			/* General formatting for sidebar widgets */
+			border: $sidebarWidgetBorder;
+			background: $sidebarWidgetBackground;
+			@if ($sidebarWidgetGradient1 != false) {
+				@include gradient($sidebarWidgetGradient1,$sidebarWidgetGradient2);
+			}
+			@if ($sidebarWidgetRound != false) {
+				@include rounded($sidebarWidgetRound);
+			}
+			@if ($sidebarWidgetShadow != false) {
+				@include box-shadow($sidebarWidgetShadow);
+			}
+			.fl-widget-titlebar {
+				h2 {
+					padding: $sidebarWidgetTitlePadding;
+					color: $sidebarWidgetTitle;
+					font-size: $sidebarWidgetTitleSize;
+					font-weight: $sidebarWidgetTitleWeight;
+					text-transform: $sidebarWidgetTitleTransform;
+					@if ($sidebarWidgetTitleShadow != false) {
+						@include text-shadow($sidebarWidgetTitleShadow);	
+					}
+				}
+			}
+			
+			.fl-widget-content {
+				background: $sidebarWidgetContentBackground;
+				color: $sidebarWidgetContentText;
+				border: $sidebarWidgetContentBorder;
+				@if ($sidebarWidgetContentRound != false) {
+					@include rounded($sidebarWidgetContentRound);
+				}
+				.fl-listmenu {
+					/* Most sidebar widgets contain list menus. */
+					background: $sidebarListBackground;
+					border: $sidebarListBorder;
+					
+					a {
+						text-decoration: none;
+						padding: $sidebarLIPadding;
+					}
+					li {
+						border: $sidebarLIBorder;
+					}
+					li, li a {
+						background: $sidebarLIBackground;
+						color: $sidebarLIText;
+					}
+					li:hover, li:focus, li a:hover, li a:focus {
+						background: $sidebarLIBackgroundHover;
+						color: $sidebarLITextHover;
+					}
+					.fl-activemenu {
+						.portal-subnav-list {
+							a {
+								background: $sidebarLIActiveBackground;
+								color: $sidebarLIActiveText;
+							
+								&:hover, &:focus {
+									background: $sidebarLIActiveBackgroundHover;
+									color: $sidebarLIActiveTextHover;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		#portalFragAdminList .fl-widget-content {
+			/* This sidebar widget does not have a list menu and needs some padding. */
+			padding: $sidebarWidgetContentPadding;
+		}
+	}
+}

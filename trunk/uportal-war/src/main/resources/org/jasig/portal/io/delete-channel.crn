@@ -1,0 +1,82 @@
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<!--
+ | NOTICE:  This file represents a contractual API that is leveraged by more 
+ | than one caller.  Please do not refactor this file in a way that changes 
+ | the number or nature of arguments expected.
+ |
+ | These are:
+ |   - ${FNAME}=the identifier of the entity to delete
+ |   - ${PORTAL_CONTEXT}=uPortal's Spring ApplicationContext
+ |   - ${SqlAttributes.DATA_SOURCE}=the DataSource for the PortalDb
+ |   - ${SqlAttributes.TRANSACTION_MANAGER}=PlatformTransactionManager in use
+ |
+ +-->
+<with-attribute key="CHAN_ID" value="${sql(SELECT chan_id FROM up_channel WHERE chan_fname = '${FNAME}')}"><!-- WARNING:  might be wrong type (int not string)... -->
+    <choose>
+        <when test="${isNull(${CHAN_ID})}">
+            <echo-ln>WARNING:  Channel '${FNAME}' does not exist.</echo-ln>
+            <log logger-name="org.jasig.portal.io.delete-channel" level="warn">Channel '${FNAME}' does not exist.</log>
+        </when>
+        <otherwise>
+            <!-- Purge memberships... -->
+            <sql-query>
+                <sql>SELECT upgm.group_id FROM up_group upg, up_group_membership upgm WHERE upg.group_id = upgm.group_id AND upg.entity_type_id = ? AND upgm.member_key = ? AND upgm.member_is_group = 'F' AND upgm.member_service = 'local'</sql>
+                <parameter value="${sql(SELECT entity_type_id FROM up_entity_type WHERE entity_type_name = 'org.jasig.portal.portlet.om.IPortletDefinition')}"/>
+                <parameter value="${jexl(CHAN_ID.toString())}"/>
+                <subtasks>
+                    <sql-statement sql="DELETE FROM up_group_membership WHERE group_id = ? AND member_key = ? AND member_is_group = 'F' AND member_service = 'local'">
+                        <parameter value="${GROUP_ID}"/>
+                        <parameter value="${jexl(CHAN_ID.toString())}"/>
+                    </sql-statement>
+                </subtasks>
+            </sql-query>
+        
+            <!-- Purge permissions... -->
+            <sql-statement sql="DELETE FROM up_permission WHERE activity = 'SUBSCRIBE' AND permission_type = 'GRANT' AND target = ?">
+                <parameter value="CHAN_ID.${CHAN_ID}"/>
+            </sql-statement>
+        
+            <!-- Purge channel parameters... -->
+            <sql-statement sql="DELETE FROM up_channel_param WHERE chan_id = ?">
+                <parameter value="${CHAN_ID}"/>
+            </sql-statement>
+        
+            <!-- Purge portlet objects... -->
+            <invoke-method object="${PORTAL_CONTEXT}" method="getBean" attribute-name="portletDefinitionRegistry">
+                <parameter value="portletDefinitionRegistry" />
+                <subtasks>
+                    <groovy>
+                        <script>
+                            portletDefinitionRegistry.deletePortletDefinition(CHAN_ID.intValue());
+                        </script>
+                    </groovy>
+                </subtasks>
+            </invoke-method>
+        
+            <!-- Purge from the UP_CHANNEL table... -->
+            <sql-statement sql="DELETE FROM up_channel WHERE chan_id = ?">
+                <parameter value="${CHAN_ID}"/>
+            </sql-statement>
+        </otherwise>
+    </choose>
+</with-attribute>

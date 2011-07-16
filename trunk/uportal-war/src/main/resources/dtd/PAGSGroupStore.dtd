@@ -1,0 +1,59 @@
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<!-- A Group-Store is made up of 0 or more groups. -->
+<!ELEMENT Group-Store (group*)>
+
+<!ELEMENT group (group-key,group-name,group-description,selection-test?,members?)>
+<!-- A group key must be unique within the document.  A group-name need not be. -->
+
+<!ELEMENT group-key (#PCDATA)>
+<!ELEMENT group-name (#PCDATA)>
+<!ELEMENT group-description (#PCDATA)>
+
+<!ELEMENT selection-test (test-group+)>
+<!-- 
+  A selection-test element determines if a person is a member of a group.  It is 
+  composed of one or more test-group elements whose results are OR-ed together. 
+  If a group does not contain a selection-test, it may have member groups but not
+  member entities.  
+-->
+
+<!ELEMENT test-group (test+)>
+<!-- 
+  A test-group element is made up of 1 or more test elements whose results are 
+  AND-ed together.  
+-->
+
+<!ELEMENT test (attribute-name,tester-class,test-value)>
+<!-- 
+  A test element contains the name of the attribute whose value is to be tested
+  (attribute-name), the class that is to perform the test (tester-class), and the 
+  value to be compared to the attribute value (test-value).   
+-->
+<!ELEMENT attribute-name (#PCDATA)>
+<!ELEMENT tester-class (#PCDATA)>
+<!ELEMENT test-value (#PCDATA)>
+
+<!ELEMENT members (member-key*)>
+<!-- The optional members element contains keys of member groups. -->
+<!ELEMENT member-key (#PCDATA)>
+

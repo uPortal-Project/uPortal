@@ -1,0 +1,90 @@
+//====================================
+// Colors
+//====================================
+// A color palatte in the form of variables.
+// The basic palette is defined per skin in "_skin-colors.scss", located in the skin folder.
+// Changing the "_skin-colors.scss" colors effectively changes the whole color scheme.
+// Along with some basics (white, black, and grayscales), these variables are referenced in all the rest of the css where color is specified.
+// We've used RGBA values because they include transparency and are easier to use in mathematical calculations.
+// If you need to convert Hexidecimal values to RGB, do a search on "convert hex to rgb" - there are several good web tools.
+
+// The basics.
+$white			: rgba(255,255,255,1);
+$black			: rgba(0,0,0,1);
+$text			: $skinTextColor;
+$background		: $skinBackgroundColor;
+
+// Grayscale (medium value).
+$gray			: $skinGrayColor;
+$graydark		: darken($gray, 10%);
+$graydarker		: darken($gray, 20%);
+$graydarkest	: darken($gray, 30%);
+$graylight		: lighten($gray, 10%);
+$graylighter	: lighten($gray, 20%);
+$graylightest	: lighten($gray, 30%);
+
+// Grayscale (dark value).
+$dgray			: $skinDarkGrayColor;
+$dgraydark		: darken($dgray, 5%);
+$dgraydarker	: darken($dgray, 10%);
+$dgraydarkest	: darken($dgray, 15%);
+$dgraylight		: lighten($dgray, 5%);
+$dgraylighter	: lighten($dgray, 10%);
+$dgraylightest	: lighten($dgray, 15%);
+
+// Primary color, c1 - generally expects to be a medium value.
+$c1				: $skinColor1;
+$c1dark			: darken($c1, 10%);
+$c1darker		: darken($c1, 20%);
+$c1darkest		: darken($c1, 30%);
+$c1light		: lighten($c1, 10%);
+$c1lighter		: lighten($c1, 20%);
+$c1lightest		: lighten($c1, 30%);
+
+// Secondary color, c2 - generally expects to be a darker value.
+$c2				: $skinColor2;
+$c2dark			: darken($c2, 10%);
+$c2darker		: darken($c2, 20%);
+$c2darkest		: darken($c2, 30%);
+$c2light		: lighten($c2, 10%);
+$c2lighter		: lighten($c2, 20%);
+$c2lightest		: lighten($c2, 30%);
+
+// Tertiary color, c3 - generally expects to be a medium or lighter value.
+$c3				: $skinColor3;
+$c3dark			: darken($c3, 10%);
+$c3darker		: darken($c3, 20%);
+$c3darkest		: darken($c3, 30%);
+$c3light		: lighten($c3, 10%);
+$c3lighter		: lighten($c3, 20%);
+$c3lightest		: lighten($c3, 30%);
+
+// Highlight color, c4 - generally expects to be a lighter value with brighter saturation.
+$c4				: $skinColor4;
+$c4dark			: darken($c4, 10%);
+$c4darker		: darken($c4, 20%);
+$c4darkest		: darken($c4, 30%);
+$c4light		: lighten($c4, 10%);
+$c4lighter		: lighten($c4, 20%);
+$c4lightest		: lighten($c4, 30%);
+
+// Secondary Highlight color, c5 - generally expects to be a lighter value with brighter saturation.
+$c5				: $skinColor5;
+$c5dark			: darken($c5, 10%);
+$c5darker		: darken($c5, 20%);
+$c5darkest		: darken($c5, 30%);
+$c5light		: lighten($c5, 10%);
+$c5lighter		: lighten($c5, 20%);
+$c5lightest		: lighten($c5, 30%);
+
+// Calendar colors.
+$cal0 			: rgba(16, 98, 165, 1);
+$cal1 			: rgba(71, 115, 0, 1);
+$cal2 			: rgba(153, 0, 0, 1);
+$cal3 			: rgba(104, 48, 153, 1);
+$cal4 			: rgba(139, 69, 0, 1);
+$cal5 			: rgba(0, 139, 120, 1);
+$cal6 			: rgba(182, 33, 98, 1);
+$cal7 			: rgba(187, 91, 29, 1);
+$cal8 			: rgba(123, 123, 123, 1);
+$cal9 			: rgba(0, 0, 0, 1);

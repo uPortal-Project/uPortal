@@ -1,0 +1,19 @@
+//====================================
+// Skin Overrides
+//====================================
+// Put any skin-specific overrides here.
+
+.up {
+	#portalPage {
+		@include box-shadow(0 0 12px $black);
+	}
+	#portalPageHeader {
+		#portalPageHeaderInner {
+			/* Allows for additional styling. In this skin, a background image. */
+			padding: 0;
+			background-image: url("images/header_bkd.png");
+			background-position: 20px 0;
+			background-repeat: repeat-x;
+		}
+	}
+}
