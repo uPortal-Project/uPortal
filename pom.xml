@@ -22,14 +22,14 @@
         <developerConnection>scm:svn:https://source.jasig.org/uPortal/trunk</developerConnection>
         <url>https://developer.jasig.org/source/browse/jasigsvn/uPortal/trunk</url>
     </scm>
-    
+   <!-- 
     <distributionManagement>
         <site>
             <id>developer.jasig</id>
             <url>${jasig-site-dist-base}/uportal/${project.version}</url>
         </site>
     </distributionManagement>
-    
+   --> 
     <issueManagement>
         <url>${jasig-issues-base}/UP</url>
         <system>${jasig-issues-system}</system>
@@ -179,7 +179,7 @@
         <pluto.version>2.1.0-M2</pluto.version>
         <portlet-api.version>2.0</portlet-api.version>
         <quartz.version>1.8.4</quartz.version>
-        <resource-server.version>1.0.19-SNAPSHOT</resource-server.version>
+        <resource-server.version>1.0.20</resource-server.version>
         <servlet-api.version>2.5</servlet-api.version>
         <slf4j.version>1.6.1</slf4j.version>
         <spring-framework.version>3.0.5.RELEASE</spring-framework.version>
@@ -896,6 +896,7 @@
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>2.5</version>
                 </plugin>
+<!--
                 <plugin>
                     <artifactId>maven-site-plugin</artifactId>
                     <version>3.0-beta-3</version>
@@ -968,6 +969,7 @@
                             </reportPlugins>
                         </configuration>
                 </plugin>
+-->
                 <plugin>
                     <artifactId>maven-source-plugin</artifactId>
                     <version>2.1.2</version>
