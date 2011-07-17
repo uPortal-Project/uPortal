@@ -58,14 +58,6 @@
             <single-text-preference-input display="text" />
         </preference>
 
-        <preference>
-            <name>height</name>
-            <label>frame.height</label>
-            <single-text-preference-input display="text">
-                <default>600</default>
-            </single-text-preference-input>
-        </preference>
-
       <preference>
         <name>height</name>
         <label>frame.height</label>

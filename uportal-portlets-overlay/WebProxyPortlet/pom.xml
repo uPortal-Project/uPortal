@@ -3,7 +3,7 @@
 
     <parent>
         <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
-        <artifactId>umobile-portlets-overlay-parent</artifactId>
+        <artifactId>umobile-portlets-overlay</artifactId>
         <version>4.0.0-SNAPSHOT</version>
     </parent>
 

@@ -171,10 +171,10 @@ up.jQuery(function() {
                        async: false,
                        success: function (data) {
                            $(data.groups).each( function (idx, group) {
-                               principals.push({ value: group.id, text: group.name || group.keys });
+                               principals.push({ value: group.principalString, text: group.name || group.keys });
                            });
                            $(data.people).each( function (idx, person) {
-                               principals.push({ value: person.id, text: person.name || person.id });
+                               principals.push({ value: person.principalString, text: person.name || person.id });
                            });
                        }
                     });

@@ -93,6 +93,6 @@ public class EventImpl implements Event {
 
     @Override
     public String toString() {
-        return "EventImpl [qname=" + this.qname + ", value=" + this.value + "]";
+        return "Event [" + this.qname + "]";
     }
 }

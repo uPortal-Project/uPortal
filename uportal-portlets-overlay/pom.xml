@@ -9,7 +9,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
-    <artifactId>umobile-portlets-overlay-parent</artifactId>
+    <artifactId>umobile-portlets-overlay</artifactId>
     <packaging>pom</packaging>
 
     <name>uPortal Portlets</name>

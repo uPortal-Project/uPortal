@@ -51,8 +51,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class JpaLocalAccountDaoImpl extends BasePortalJpaDao implements ILocalAccountDao {
     private static final String FIND_ALL_ACCOUNTS_CACHE_REGION = LocalAccountPersonImpl.class.getName() + ".query.FIND_ALL_ACCOUNTS";
     private static final String FIND_ACCOUNT_BY_NAME_CACHE_REGION = LocalAccountPersonImpl.class.getName() + ".query.FIND_ACCOUNT_BY_NAME";
-    private static final String ACCOUNT_SEARCH_CACHE_REGION = LocalAccountPersonImpl.class.getName() + "query.ACCOUNT_SEARCH";
-    private static final String FIND_AVAILABLE_ATTRIBUTES_CACHE_REGION = LocalAccountPersonAttributeImpl.class.getName() + "query.FIND_AVAILABLE_ATTRIBUTES";
+    private static final String ACCOUNT_SEARCH_CACHE_REGION = LocalAccountPersonImpl.class.getName() + ".query.ACCOUNT_SEARCH";
+    private static final String FIND_AVAILABLE_ATTRIBUTES_CACHE_REGION = LocalAccountPersonAttributeImpl.class.getName() + ".query.FIND_AVAILABLE_ATTRIBUTES";
 
     @Override
     public ILocalAccountPerson getPerson(long id) {

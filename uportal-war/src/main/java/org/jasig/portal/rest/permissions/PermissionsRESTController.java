@@ -290,8 +290,8 @@ public class PermissionsRESTController {
         Set<UniquePermission> directAssignments = new HashSet<UniquePermission>();
         
         IAuthorizationService authService = AuthorizationImpl.singleton();
-        IAuthorizationPrincipal p = authService.newPrincipal(principal, IEntityGroup.class);
-        JsonEntityBean entity = groupListHelper.getEntityForPrincipal(p.getPrincipalString());
+        JsonEntityBean entity = groupListHelper.getEntityForPrincipal(principal);
+        IAuthorizationPrincipal p = authService.newPrincipal(entity.getId(), entity.getEntityType().getClazz());
         
         // first get the permissions explicitly set for this principal
         IPermission[] directPermissions = permissionStore.select(null, p.getPrincipalString(), null, null, null);
@@ -302,8 +302,7 @@ public class PermissionsRESTController {
         Set<UniquePermission> inheritedAssignments = new HashSet<UniquePermission>();
         if (includeInherited) {
             IGroupMember member = GroupService.getGroupMember(p.getKey(), p.getType());
-            for (@SuppressWarnings("unchecked")
-            Iterator<IEntityGroup> iter = member.getAllContainingGroups(); iter.hasNext();) {
+            for (Iterator<IEntityGroup> iter = member.getAllContainingGroups(); iter.hasNext();) {
                 IEntityGroup parent = iter.next();
 
                 IAuthorizationPrincipal parentPrincipal = authService.newPrincipal(parent);
@@ -360,8 +359,7 @@ public class PermissionsRESTController {
         Set<UniquePermission> inheritedAssignments = new HashSet<UniquePermission>();
         if (includeInherited) {
             IGroupMember member = GroupService.getGroupMember(p.getKey(), p.getType());
-            for (@SuppressWarnings("unchecked")
-            Iterator<IEntityGroup> iter = member.getAllContainingGroups(); iter.hasNext();) {
+            for (Iterator<IEntityGroup> iter = member.getAllContainingGroups(); iter.hasNext();) {
                 IEntityGroup parent = iter.next();
 
                 IAuthorizationPrincipal parentPrincipal = authService.newPrincipal(parent);
