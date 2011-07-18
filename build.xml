@@ -1192,7 +1192,7 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
         <element name="war-sub-tasks" optional="false" implicit="true" />
 
         <sequential>
-            <uportal-search-api-macro>
+            <!--uportal-search-api-macro-->
                 <fileset id="uportal-parent.pom.fsid" file="${basedir}/pom.xml" />
 
                 <maven-artifact-macro project-name="uportal-war" project-path="${uportal-war.dir}" checkfilesid="uportal-parent.pom.fsid">
@@ -1213,7 +1213,7 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
                      +-->
                     <war-sub-tasks />
                 </maven-artifact-macro>
-            </uportal-search-api-macro>
+            <!--/uportal-search-api-macro-->
         </sequential>
     </macrodef>
 
