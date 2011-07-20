@@ -31,6 +31,7 @@
 <with-attribute key="PROFILE_KEY_PARTS" value="${groovy(new HashMap())}">
     <groovy>
         <script>
+            println PROFILE_KEY;
             keyParts = PROFILE_KEY.split("\\|");
             PROFILE_KEY_PARTS.put("USER_NAME", keyParts[0]);
             PROFILE_KEY_PARTS.put("PROFILE_FNAME", keyParts[1]);
@@ -44,61 +45,57 @@
                         <attribute key="Attributes.NODE">${newDoc(profile)}</attribute>
                         <attribute key="USER_ID">${sql(SELECT user_id FROM up_user WHERE user_name = '${USER_NAME}')}</attribute>
                         <subtasks>
-                        <!--  getStylesheetDescriptor -->
                             <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-profile_v3-2.crn)}"/>
                             <append-node node="${attributeNode(username=${USER_NAME})}"/>
                             <sql-query>
                                 <sql>
-                                    SELECT upup.*, upss.ss_name AS structure_name, upst.ss_name AS theme_name 
-                                    FROM up_user_profile upup
-                                        LEFT JOIN up_ss_struct upss ON upup.structure_ss_id = upss.ss_id
-                                        LEFT JOIN up_ss_theme upst ON upup.theme_ss_id = upst.ss_id
-                                    WHERE UPUP.USER_ID = ? AND upup.profile_fname = ?
+                                    SELECT *
+                                    FROM up_user_profile
+                                    WHERE USER_ID = ? AND profile_fname = ?
                                 </sql>
                                 <parameter value="${USER_ID}"/>
                                 <parameter value="${PROFILE_FNAME}"/>
                                 <subtasks>
-                                    <append-node>
-                                        <name>${PROFILE_NAME}</name>
-                                        <fname>${PROFILE_FNAME}</fname>  
-                                        <description>${DESCRIPTION}</description>  
-                                        <structure name="${STRUCTURE_NAME}"/>  
-                                        <theme name="${THEME_NAME}"/> 
-                                    </append-node>
-                                    <sql-query>
-                                        <sql>
-                                            select param_name, param_val, ss_type
-                                            from UP_SS_USER_PARM 
-                                            where user_id=? and profile_id=? and ((ss_id=? and ss_type=1) or (ss_id=? and ss_type=2))
-                                        </sql>
-                                        <parameter value="${USER_ID}"/>
-                                        <parameter value="${PROFILE_ID}"/>                    
-                                        <parameter value="${STRUCTURE_SS_ID}"/>
-                                        <parameter value="${THEME_SS_ID}"/>
+                                    <with>
+                                        <attribute key="structureStylesheetDesc">${groovy(stylesheetDescriptorDao.getStylesheetDescriptor(STRUCTURE_SS_ID))}</attribute>
+                                        <attribute key="themeStylesheetDesc">${groovy(stylesheetDescriptorDao.getStylesheetDescriptor(THEME_SS_ID))}</attribute>
                                         <subtasks>
-                                            <choose>
-                                                <!-- type=1 for structure parameters -->
-                                                <when test="${jexl(SS_TYPE == 1)}">
-                                                    <append-node parent="${singleNode(structure)}">
-                                                        <parameter>
-                                                            <name>${PARAM_NAME}</name>
-                                                            <value>${PARAM_VAL}</value>
-                                                        </parameter>
-                                                    </append-node>
-                                                </when>
-                                                <!-- type=2 for theme parameters -->
-                                                <when test="${jexl(SS_TYPE == 2)}">
-                                                    <append-node parent="${singleNode(theme)}">
-                                                        <parameter>
-                                                            <name>${PARAM_NAME}</name>
-                                                            <value>${PARAM_VAL}</value>
-                                                        </parameter>
-                                                    </append-node>
-                                                </when>
-                                            </choose>
+                                            <append-node>
+                                                <name>${PROFILE_NAME}</name>
+                                                <fname>${PROFILE_FNAME}</fname>  
+                                                <description>${DESCRIPTION}</description>  
+                                                <structure name="${groovy(structureStylesheetDesc.getName())}"/>  
+                                                <theme name="${groovy(themeStylesheetDesc.getName())}"/> 
+                                            </append-node>
+                                            <with>
+                                                <attribute key="structureStylesheetPrefs">${groovy(stylesheetUserPreferencesDao.getStylesheetUserPreferences(structureStylesheetDesc, USER_ID, PROFILE_ID))}</attribute>
+                                                <attribute key="themeStylesheetPrefs">${groovy(stylesheetUserPreferencesDao.getStylesheetUserPreferences(themeStylesheetDesc, USER_ID, PROFILE_ID))}</attribute>
+                                                <subtasks>
+                                                    <if test="${groovy(structureStylesheetPrefs != null)}">
+                                                        <for-each attribute-name="paramEntry" items="${groovy(structureStylesheetPrefs.getStylesheetParameters())}">
+                                                            <append-node parent="${singleNode(structure)}">
+                                                                <parameter>
+                                                                    <name>${groovy(paramEntry.getKey())}</name>
+                                                                    <value>${groovy(paramEntry.getValue())}</value>
+                                                                </parameter>
+                                                            </append-node> 
+                                                        </for-each>
+                                                    </if>
+                                                    <if test="${groovy(themeStylesheetPrefs != null)}">
+                                                        <for-each attribute-name="paramEntry" items="${groovy(themeStylesheetPrefs.getStylesheetParameters())}">
+                                                            <append-node parent="${singleNode(theme)}">
+                                                                <parameter>
+                                                                    <name>${groovy(paramEntry.getKey())}</name>
+                                                                    <value>${groovy(paramEntry.getValue())}</value>
+                                                                </parameter>
+                                                            </append-node> 
+                                                        </for-each>
+                                                    </if>
+                                                </subtasks>
+                                            </with>
+                                            <return value="${Attributes.NODE}"/>
                                         </subtasks>
-                                    </sql-query>
-                                    <return value="${Attributes.NODE}"/>
+                                    </with>
                                 </subtasks>
                             </sql-query>
                         </subtasks>

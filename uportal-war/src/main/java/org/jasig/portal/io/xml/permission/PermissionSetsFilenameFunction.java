@@ -48,10 +48,8 @@ public class PermissionSetsFilenameFunction implements Function<Tuple<String, No
     public String apply(Tuple<String, Node> data) {
         final String[] keyParts = splitKey(data.first);
         
-//        org.dom4j.tree.DefaultText
         final Node node = data.second.selectSingleNode("/permission-set/principal/child::node()/child::text()");
         final String principal = node.getText();
-        //PRINCIPAL__ACTIVITY__OWNER
         return principal + "__" + keyParts[3] + "__" + keyParts[0];
     }
 }
