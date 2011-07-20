@@ -29,7 +29,7 @@
     <property name="download.dir" value="${target.dir}/downloads" />
 
     <artifact:pom file="${uportal.source.dir}/pom.xml" id="uportal-parent.pom" />
-    <property name="uportal.name" value="uPortal" />
+    <property name="uportal.name" value="uMobile" />
     <property name="uportal.version" value="${uportal-parent.pom.version}" />
     <property name="uportal.finalName" value="${uportal.name}-${uportal.version}" />
 
