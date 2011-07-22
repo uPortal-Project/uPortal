@@ -38,6 +38,11 @@
         <property name="defaultProfileName" value="default" />
         <property name="mappings">
             <list>
+				<!-- Apple iPad -->
+                <bean class="org.jasig.portal.layout.UserAgentProfileMapper.Mapping">
+                    <property name="pattern" value=".*iPad.*" />
+                    <property name="profileName" value="default" />
+                </bean>
                 <!-- Apple iPhone -->
                 <bean class="org.jasig.portal.layout.UserAgentProfileMapper.Mapping">
                     <property name="pattern" value=".*iPhone.*" />
