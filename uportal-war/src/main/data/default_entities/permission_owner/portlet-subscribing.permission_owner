@@ -29,25 +29,25 @@
     <activity>
         <name>Subscribe</name>
         <fname>SUBSCRIBE</fname>
-        <desc>Subscribe to published, unexpired uPortal content</desc>
+        <desc>Subscribe to published, unexpired uMobile content</desc>
         <targetProvider>channelsAndCategoriesTargetProvider</targetProvider>
     </activity>
     <activity>
         <name>Subscribe Approved</name>
         <fname>SUBSCRIBE_APPROVED</fname>
-        <desc>Subscribe to uPortal content that is approved, but not yet published</desc>
+        <desc>Subscribe to uMobile content that is approved, but not yet published</desc>
         <targetProvider>channelsAndCategoriesTargetProvider</targetProvider>
     </activity>
     <activity>
         <name>Subscribe Created</name>
         <fname>SUBSCRIBE_CREATED</fname>
-        <desc>Subscribe to uPortal content that has not yet been approved or published</desc>
+        <desc>Subscribe to uMobile content that has not yet been approved or published</desc>
         <targetProvider>channelsAndCategoriesTargetProvider</targetProvider>
     </activity>
     <activity>
         <name>Subscribe Expired</name>
         <fname>SUBSCRIBE_EXPIRED</fname>
-        <desc>Subscribe to expired uPortal content</desc>
+        <desc>Subscribe to expired uMobile content</desc>
         <targetProvider>channelsAndCategoriesTargetProvider</targetProvider>
     </activity>
   </activities>

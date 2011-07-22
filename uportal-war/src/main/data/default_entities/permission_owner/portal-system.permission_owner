@@ -23,7 +23,7 @@
 <permission-owner script="classpath://org/jasig/portal/io/import-permission-owner_v3-3.crn">
   <name>uPortal System</name>
   <fname>UP_SYSTEM</fname>
-  <desc>Permissions controlling the base uPortal system</desc>
+  <desc>Permissions controlling the base uMobile system</desc>
   <activities>
     <activity>
         <name>Superuser</name>

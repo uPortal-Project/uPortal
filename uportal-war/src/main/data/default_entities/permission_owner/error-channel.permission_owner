@@ -23,7 +23,7 @@
 <permission-owner script="classpath://org/jasig/portal/io/import-permission-owner_v3-3.crn">
   <name>Error Channel</name>
   <fname>UP_ERROR_CHAN</fname>
-  <desc>Permissions controlling the rendering of the uPortal error channel</desc>
+  <desc>Permissions controlling the rendering uMobile server errors</desc>
   <activities>
     <activity>
         <name>View</name>

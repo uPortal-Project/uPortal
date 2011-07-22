@@ -23,30 +23,30 @@
 <permission-owner script="classpath://org/jasig/portal/io/import-permission-owner_v3-3.crn">
   <name>Portlet Publishing</name>
   <fname>UP_PORTLET_PUBLISH</fname>
-  <desc>Permissions controlling the publishing and editing of uPortal content</desc>
+  <desc>Permissions controlling the publishing and editing of uMobile content</desc>
   <activities>
     <activity>
         <name>Manage Published</name>
         <fname>MANAGE</fname>
-        <desc>Manage published uPortal content.  This permission also implies the ability to create and approve portlets.</desc>
+        <desc>Manage published uMobile content.  This permission also implies the ability to create and approve portlets.</desc>
         <targetProvider>channelsAndCategoriesTargetProvider</targetProvider>
     </activity>
     <activity>
         <name>Manage Approved</name>
         <fname>MANAGE_APPROVED</fname>
-        <desc>Manage approved uPortal content.  This permission also implies the ability to create portlets.</desc>
+        <desc>Manage approved uMobile content.  This permission also implies the ability to create portlets.</desc>
         <targetProvider>channelsAndCategoriesTargetProvider</targetProvider>
     </activity>
     <activity>
         <name>Manage Created</name>
         <fname>MANAGE_CREATED</fname>
-        <desc>Create uPortal content.</desc>
+        <desc>Create uMobile content.</desc>
         <targetProvider>channelsAndCategoriesTargetProvider</targetProvider>
     </activity>
     <activity>
         <name>Manage Expired</name>
         <fname>MANAGE_EXPIRED</fname>
-        <desc>Manage expired uPortal content.  This permission also implies the ability to create, approve, and publish portlets.</desc>
+        <desc>Manage expired uMobile content.  This permission also implies the ability to create, approve, and publish portlets.</desc>
         <targetProvider>channelsAndCategoriesTargetProvider</targetProvider>
     </activity>
     <activity>

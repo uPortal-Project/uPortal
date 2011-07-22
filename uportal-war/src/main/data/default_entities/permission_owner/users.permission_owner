@@ -23,24 +23,24 @@
 <permission-owner script="classpath://org/jasig/portal/io/import-permission-owner_v3-3.crn">
   <name>Users</name>
   <fname>UP_USERS</fname>
-  <desc>Permissions controlling uPortal user account management</desc>
+  <desc>Permissions controlling uMobile user account management</desc>
   <activities>
     <activity>
         <name>Impersonate users</name>
         <fname>IMPERSONATE</fname>
-        <desc>Impersonate users for debugging purposes in uPortal</desc>
+        <desc>Impersonate users for debugging purposes in uMobile</desc>
         <targetProvider>peopleAndGroupsTargetProvider</targetProvider>
     </activity>
     <activity>
         <name>Edit users</name>
         <fname>EDIT_USER</fname>
-        <desc>Edit local uPortal accounts</desc>
+        <desc>Edit local uMobile accounts</desc>
         <targetProvider>peopleAndGroupsTargetProvider</targetProvider>
     </activity>
     <activity>
         <name>Delete users</name>
         <fname>DELETE_USER</fname>
-        <desc>Delete local uPortal accounts</desc>
+        <desc>Delete local uMobile accounts</desc>
         <targetProvider>peopleAndGroupsTargetProvider</targetProvider>
     </activity>
     <activity>
