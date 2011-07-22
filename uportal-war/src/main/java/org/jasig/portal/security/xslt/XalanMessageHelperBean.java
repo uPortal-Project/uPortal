@@ -41,5 +41,22 @@ public class XalanMessageHelperBean implements IXalanMessageHelper, MessageSourc
         final String message = messageSource.getMessage(code, null, locale);
         return message;
     }
-
+    
+    @Override
+    public String getMessage(String code, String language, String arg1) {
+        final Locale locale = LocaleManager.parseLocale(language);
+        return messageSource.getMessage(code, new Object[] { arg1 }, locale);
+    }
+    
+    @Override
+    public String getMessage(String code, String language, String arg1, String arg2) {
+        final Locale locale = LocaleManager.parseLocale(language);
+        return messageSource.getMessage(code, new Object[] { arg1, arg2 }, locale);
+    }
+    
+    @Override
+    public String getMessage(String code, String language, String arg1, String arg2, String arg3) {
+        final Locale locale = LocaleManager.parseLocale(language);
+        return messageSource.getMessage(code, new Object[] { arg1, arg2, arg3 }, locale);
+    }
 }

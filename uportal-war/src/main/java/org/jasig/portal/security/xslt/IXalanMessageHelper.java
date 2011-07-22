@@ -19,8 +19,24 @@
 
 package org.jasig.portal.security.xslt;
 
+/**
+ * Interface for retrievieng localized messages with parameters that can be used in messages (in
+ * format '{0}' or '{1,name}'). Unfortunately, since JAXP is used, we lose some of the Xalan API for
+ * extention functions, hence it's hard to create acutal multi-argument extention functions,
+ * therefore we're using seperate methods for functions with different arities. Currently up to 3
+ * parameters are supported.
+ * 
+ * @author Eric Dalquist
+ * @author Arvids Grabovskis
+ * @version $Revision$
+ */
 public interface IXalanMessageHelper {
-
+    
     public String getMessage(String code, String language);
-
+    
+    public String getMessage(String code, String language, String arg1);
+    
+    public String getMessage(String code, String language, String arg1, String arg2);
+    
+    public String getMessage(String code, String language, String arg1, String arg2, String arg3);
 }

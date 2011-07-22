@@ -103,7 +103,7 @@
         <div id="column_{@ID}" class="portal-page-column {$POSITION} fl-container-flex{$COLUMN_WIDTH} {$MOVABLE} {$DELETABLE} {$EDITABLE} {$CAN_ADD_CHILDREN}"> <!-- Unique column_ID needed for drag and drop. -->
           <div id="inner-column_{@ID}" class="portal-page-column-inner"> <!-- Column inner div for additional presentation/formatting options.  -->
             <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
-            	<div class="column-permissions"><a class="button portal-column-permissions-link" href="javascript:;"><span class="icon permissions"></span>Column <xsl:value-of select="$NUMBER"/> Permissions</a></div>
+            	<div class="column-permissions"><a class="button portal-column-permissions-link" href="javascript:;"><span class="icon permissions"></span><xsl:value-of select="upMsg:getMessage('edit.column.x.permissions', $USER_LANG, $NUMBER)"/></a></div>
             </xsl:if>
             <xsl:apply-templates select="channel"/> <!-- Render the column's portlets.  -->
           </div>
