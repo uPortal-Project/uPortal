@@ -40,7 +40,7 @@
  |
  | One of the intents of the theme structure is to provide one place for configuration and customization.
  | All configuration and customization should be done in this file, leaving all other theme files untouched.
- | Following this guideline will minimize impacts to your configuration and customization migration to future releases of uPortal.
+ | Following this guideline will minimize impacts to your configuration and customization migration to future releases of uMobile.
  |
  | NEED LOCALIZATION NOTES AND INSTRUCTION.
 -->
@@ -185,7 +185,7 @@
   <xsl:param name="userName">Guest User</xsl:param>
   <xsl:param name="USER_NAME"><xsl:value-of select="$userName"/></xsl:param>
   <xsl:param name="subscriptionsSupported">true</xsl:param>
-  <xsl:param name="uP_productAndVersion">uPortal</xsl:param>
+  <xsl:param name="uP_productAndVersion">uMobile</xsl:param>
   <xsl:param name="UP_VERSION"><xsl:value-of select="$uP_productAndVersion"/></xsl:param>
   <xsl:param name="EXTERNAL_LOGIN_URL"></xsl:param>
   <xsl:param name="PORTAL_VIEW">
@@ -899,13 +899,13 @@
       
       <!-- uPortal Product Version -->
       <div id="portalProductAndVersion">
-        <p><a href="http://www.jasig.org/uportal" title="Powered by ${UP_VERSION}" target="_blank">Powered by <xsl:value-of select="$UP_VERSION"/></a>, an open-source project by <a href="http://www.jasig.org" title="Jasig.org - Open for Higher Education">Jasig</a></p>
+        <p><a href="http://www.jasig.org/umobile" title="Powered by ${UP_VERSION}" target="_blank">Powered by <xsl:value-of select="$UP_VERSION"/></a>, an open-source project by <a href="http://www.jasig.org" title="Jasig.org - Open for Higher Education">Jasig</a></p>
         <!-- It's a good idea to leave this in the markup, that way anyone who may be supporting your portal can get to this information quickly by simply using a browser.  If you don't want the statement to visibly render in the page, use CSS to make it invisible. -->
       </div>
       
       <!-- Copyright -->
       <div id="portalCopyright">
-        <p><a href="http://www.jasig.org/uportal/about/license" title="uPortal" target="_blank">uPortal</a> is licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0" title="Apache License, Version 2.0" target="_blank">Apache License, Version 2.0</a> as approved by the Open Source Initiative (OSI), an <a href="http://www.opensource.org/docs/osd" title="OSI-certified" target="_blank">OSI-certified</a> ("open") and <a href="http://www.gnu.org/licenses/license-list.html" title="Gnu/FSF-recognized" target="_blank">Gnu/FSF-recognized</a> ("free") license.</p>
+        <p><a href="http://www.jasig.org/uportal/about/license" title="uMobile" target="_blank">uMobile</a> is licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0" title="Apache License, Version 2.0" target="_blank">Apache License, Version 2.0</a> as approved by the Open Source Initiative (OSI), an <a href="http://www.opensource.org/docs/osd" title="OSI-certified" target="_blank">OSI-certified</a> ("open") and <a href="http://www.gnu.org/licenses/license-list.html" title="Gnu/FSF-recognized" target="_blank">Gnu/FSF-recognized</a> ("free") license.</p>
       </div>
       
       <!-- Icon Set Attribution -->
