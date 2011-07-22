@@ -1,0 +1,11 @@
+<predefined-calendar script="classpath:/org/jasig/portlet/calendar/io/import-PredefinedCalendarDefinition_v1-0.crn.xml">
+  <fname>athletics</fname>
+  <className>urlTemplateHttpIcalAdapter</className>
+  <name>Athletics</name>
+  <parameters>
+    <parameter name="url">http://events.rpi.edu/webcache/v1.0/icsRange/@STARTDATE@/@ENDDATE@/%28catuid%3D%2700f18254-27fe1f37-0127-fe1f3969-00000016%27%29.ics</parameter>
+  </parameters>
+  <predefinedRoles>
+    <role>Everyone</role>
+  </predefinedRoles>
+</predefined-calendar>

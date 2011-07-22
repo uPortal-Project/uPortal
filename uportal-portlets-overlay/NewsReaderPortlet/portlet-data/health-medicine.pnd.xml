@@ -1,0 +1,11 @@
+<predefined-news script="classpath:/org/jasig/portlet/newsreader/io/import-PredefinedNewsDefinition_v1-0.crn.xml">
+  <fname>health-medicine</fname>
+  <className>org.jasig.portlet.newsreader.adapter.RomeAdapter</className>
+  <name>Health and Medicine</name>
+  <parameters>
+    <parameter name="url">http://opac.yale.edu/health-medicine.rss</parameter>
+  </parameters>
+  <predefinedRoles>
+    <role>Everyone</role>
+  </predefinedRoles>
+</predefined-news>

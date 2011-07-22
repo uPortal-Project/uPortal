@@ -1,0 +1,11 @@
+<predefined-news script="classpath:/org/jasig/portlet/newsreader/io/import-PredefinedNewsDefinition_v1-0.crn.xml">
+  <fname>ydn</fname>
+  <className>org.jasig.portlet.newsreader.adapter.RomeAdapter</className>
+  <name>Yale Daily News</name>
+  <parameters>
+    <parameter name="url">http://www.yaledailynews.com/rss/headlines/news/</parameter>
+  </parameters>
+  <predefinedRoles>
+    <role>Everyone</role>
+  </predefinedRoles>
+</predefined-news>

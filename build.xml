@@ -466,6 +466,24 @@ else {
         <antcall target="up-shell">
             <param name="script" value="${portal-shell-script}"/>
         </antcall>
+        <antcall target="mvn">
+            <param name="pomDir" value="${basedir}/uportal-portlets-overlay/CalendarPortlet" />
+            <param name="goal" value="package" />
+        </antcall>
+        <antcall target="mvn">
+            <param name="pomDir" value="${basedir}/uportal-portlets-overlay/CalendarPortlet" />
+            <param name="goal" value="antrun:run" />
+            <param name="portlet-data-import" value="true"/>
+        </antcall>
+        <antcall target="mvn">
+            <param name="pomDir" value="${basedir}/uportal-portlets-overlay/NewsReaderPortlet" />
+            <param name="goal" value="package" />
+        </antcall>
+        <antcall target="mvn">
+            <param name="pomDir" value="${basedir}/uportal-portlets-overlay/NewsReaderPortlet" />
+            <param name="goal" value="antrun:run" />
+            <param name="portlet-data-import" value="true"/>
+        </antcall>
     </target>
 
     <target name="data-delete" depends="prodPrompt" description="Deletes the specified entity">
@@ -1308,12 +1326,18 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
         </condition>
         <property name="filters.arg" value="-Djasig.ignore" />
 
+        <condition property="portlet-data-import.arg" value="-Dportlet-data-import=${portlet-data-import}">
+            <isset property="portlet-data-import" />
+        </condition>
+        <property name="portlet-data-import.arg" value="-Djasig.ignore" />
+
         <artifact:mvn pom="${pomDir}/pom.xml" failonerror="true" fork="true" mavenHome="${maven.home}" maxmemory="512m">
             <arg value="-s${maven.settings}" />
             <arg value="${test.skip}" />
             <arg value="${offline}" />
             <arg value="${env.arg}" />
             <arg value="${filters.arg}" />
+            <arg value="${portlet-data-import.arg}" />
             <arg value="${goal}" />
             <arg value="${goal1}" />
             <arg value="${goal2}" />

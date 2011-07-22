@@ -1,0 +1,111 @@
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+
+    <bean id="newsStore" parent="abstractStoreTransactionProxy">
+        <property name="target" ref="newsStoreTarget"/>
+    </bean>
+
+    <bean id="newsStoreTarget"
+        class="org.jasig.portlet.newsreader.dao.HibernateNewsStore"
+        parent="abstractHibernateTemplate" autowire-candidate="false"/>
+
+    <bean id="abstractStoreTransactionProxy"
+        class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean"
+        abstract="true">
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="create*">PROPAGATION_REQUIRED</prop>
+                <prop key="store*">PROPAGATION_REQUIRED</prop>
+                <prop key="remove*">PROPAGATION_REQUIRED</prop>
+                <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="abstractHibernateTemplate" abstract="true">
+        <property name="sessionFactory">
+            <ref local="sessionFactory"/>
+        </property>
+    </bean>
+
+    <bean id="transactionManager"
+        class="org.springframework.orm.hibernate3.HibernateTransactionManager"
+        p:sessionFactory-ref="sessionFactory"/>
+
+    <bean id="sessionFactory" 
+            class="org.springframework.orm.hibernate3.LocalSessionFactoryBean"
+            p:dataSource-ref="dataSource" 
+            p:configLocation="classpath:hibernate.cfg.xml"/>
+
+    <bean id="dataSource" 
+            class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+            p:driverClassName="${environment.build.hibernate.connection.driver_class}" 
+            p:url="${environment.build.hibernate.connection.url}" 
+            p:username="${environment.build.hibernate.connection.username}" 
+            p:password="${environment.build.hibernate.connection.password}"/>
+
+    <bean id="crn-import" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location"
+            value="classpath:/org/jasig/portlet/newsreader/io/import.crn.xml" />
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="importTasks">
+                    <ref bean="importTasks" />
+                </entry>
+            </util:map>
+        </property>
+    </bean>
+
+    <util:map id="importTasks" map-class="java.util.concurrent.ConcurrentHashMap">
+        <entry
+            key="classpath:/org/jasig/portlet/newsreader/io/import-PredefinedNewsDefinition_v1-0.crn.xml">
+            <ref bean="import-PredefinedNewsDefinition_v1-0" />
+        </entry>
+    </util:map>
+
+    <bean id="import-PredefinedNewsDefinition_v1-0" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location"
+            value="classpath:/org/jasig/portlet/newsreader/io/import-PredefinedNewsDefinition_v1-0.crn.xml" />
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="newsStore">
+                    <ref bean="newsStore" />
+                </entry>
+                <entry key="parse-NewsDefinition">
+                    <ref bean="parse-NewsDefinition" />
+                </entry>
+            </util:map>
+        </property>
+    </bean>
+
+    <bean id="parse-NewsDefinition" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location"
+            value="classpath:/org/jasig/portlet/newsreader/io/parse-NewsDefinition.crn.xml" />
+    </bean>
+
+</beans>

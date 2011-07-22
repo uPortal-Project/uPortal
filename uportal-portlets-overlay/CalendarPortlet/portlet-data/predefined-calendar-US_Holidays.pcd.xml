@@ -1,0 +1,11 @@
+<predefined-calendar script="classpath:/org/jasig/portlet/calendar/io/import-PredefinedCalendarDefinition_v1-0.crn.xml">
+  <fname>us-holidays</fname>
+  <className>httpIcalAdapter</className>
+  <name>US Holidays</name>
+  <parameters>
+    <parameter name="url">http://ical.mac.com/ical/US32Holidays.ics</parameter>
+  </parameters>
+  <predefinedRoles>
+    <role>Everyone</role>
+  </predefinedRoles>
+</predefined-calendar>
