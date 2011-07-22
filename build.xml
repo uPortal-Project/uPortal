@@ -148,7 +148,6 @@
         <up-shell-batch>
             <antcall target="db" />
             <antcall target="db-hibernate" />
-            <antcall target="i18n-db" />
             <antcall target="db-import" />
         </up-shell-batch>
         <echo message="Finished initializing database" />
@@ -234,13 +233,6 @@ catch (Exception e) {
 
         <antcall target="up-shell">
             <param name="script" value="${portal-shell-script}"/>
-        </antcall>
-    </target>
-
-    <target name="i18n-db" depends="prodPrompt" description="Loads internationalization tables and data">
-        <antcall target="db">
-            <param name="tablefile" value="/properties/db/tables-i18n.xml" />
-            <param name="datafile" value="/properties/db/data-i18n.xml" />
         </antcall>
     </target>
 
@@ -956,6 +948,11 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
     <target name="crn-delete">
         <echo>The "crn-delete" Ant task is no longer supported. Use 'ant data-delete' to delete portal data.</echo>
         <fail message="The 'crn-delete' Ant task is no longer supported. Use 'ant data-delete' to delete portal data.">
+        </fail>
+    </target>
+    <target name="i18n-db">
+        <echo>The "i18n-db" Ant task is no longer supported. Use "ant data-import" to import portal data.</echo>
+        <fail message="The 'i18n-db' Ant task is no longer supported. Use 'ant data-import' to import portal data.">
         </fail>
     </target>
 

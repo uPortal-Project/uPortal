@@ -202,11 +202,6 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
       stmt.executeUpdate(SQLDelete);
 
-      SQLDelete = "DELETE FROM UP_USER_PARAM WHERE USER_ID = " + uPortalUID;
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-      stmt.executeUpdate(SQLDelete);
-
       SQLDelete = "DELETE FROM UP_USER_PROFILE  WHERE USER_ID = " + uPortalUID;
       if (log.isDebugEnabled())
           log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
@@ -234,26 +229,6 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
       // START of Addition after bug declaration (bug id 1516)
       SQLDelete = "DELETE FROM UP_USER_LOCALE WHERE USER_ID = " + uPortalUID;
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-      stmt.executeUpdate(SQLDelete);
-
-      SQLDelete = "DELETE FROM UP_USER_PROFILE_MDATA WHERE USER_ID = " + uPortalUID;
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-      stmt.executeUpdate(SQLDelete);
-
-      SQLDelete = "DELETE FROM UP_USER_PROFILE_LOCALE WHERE USER_ID = " + uPortalUID;
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-      stmt.executeUpdate(SQLDelete);
-
-      SQLDelete = "DELETE FROM UP_USER_LAYOUT_MDATA WHERE USER_ID = " + uPortalUID;
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-      stmt.executeUpdate(SQLDelete);
-
-      SQLDelete = "DELETE FROM UP_LAYOUT_STRUCT_MDATA  WHERE USER_ID = " + uPortalUID;
       if (log.isDebugEnabled())
           log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
       stmt.executeUpdate(SQLDelete);
@@ -658,49 +633,6 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
               String query = null;
               String insert = null;
               try {
-                  // Update UP_USER_PARAM
-                  delete =
-                      "DELETE FROM UP_USER_PARAM " +
-                      "WHERE USER_ID=?";
-                  deleteStmt = con.prepareStatement(delete);
-                  deleteStmt.setInt(1, userId);
-                  if (log.isDebugEnabled())
-                      log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + userId + "): " + delete);
-                  deleteStmt.executeUpdate();
-                  deleteStmt.close();
-
-                  query =
-                      "SELECT USER_ID, USER_PARAM_NAME, USER_PARAM_VALUE " +
-                      "FROM UP_USER_PARAM " +
-                      "WHERE USER_ID=?";
-                  queryStmt = con.prepareStatement(query);
-                  queryStmt.setInt(1, templateUser.getUserId());
-                  if (log.isDebugEnabled())
-                      log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + templateUser.getUserId() + "): " + query);
-                  rs = queryStmt.executeQuery();
-
-                  insert =
-                      "INSERT INTO UP_USER_PARAM (USER_ID, USER_PARAM_NAME, USER_PARAM_VALUE) " +
-                      "VALUES(?, ?, ?)";
-                  insertStmt = con.prepareStatement(insert);
-                  while (rs.next()) {
-
-                      String userParamName = rs.getString("USER_PARAM_NAME");
-                      String userParamValue = rs.getString("USER_PARAM_VALUE");
-
-                      insertStmt.setInt(1, userId);
-                      insertStmt.setString(2, userParamName);
-                      insertStmt.setString(3, userParamValue);
-
-                      if (log.isDebugEnabled())
-                          log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + userId + ", USER_PARAM_NAME=" + userParamName + ", USER_PARAM_VALUE=" + userParamValue + "): " + insert);
-                      insertStmt.executeUpdate();
-                  }
-                  rs.close();
-                  queryStmt.close();
-                  insertStmt.close();
-
-
                   // Update UP_USER_PROFILE
                   delete =
                       "DELETE FROM UP_USER_PROFILE " +
@@ -822,42 +754,6 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
               ResultSet rs = null;
               String query = null;
               try {
-                  // Add to UP_USER_PARAM
-                  query =
-                      "SELECT USER_ID, USER_PARAM_NAME, USER_PARAM_VALUE " +
-                      "FROM UP_USER_PARAM " +
-                      "WHERE USER_ID=?";
-                  queryStmt = con.prepareStatement(query);
-                  queryStmt.setInt(1, templateUser.getUserId());
-                  if (log.isDebugEnabled())
-                      log.debug("RDBMUserIdentityStore::addNewUser(USER_ID=" + templateUser.getUserId() + "): " + query);
-                  rs = queryStmt.executeQuery();
-
-                  insert =
-                      "INSERT INTO UP_USER_PARAM (USER_ID, USER_PARAM_NAME, USER_PARAM_VALUE) " +
-                      "VALUES(?, ?, ?)";
-                  insertStmt = con.prepareStatement(insert);
-                  while (rs.next()) {
-                      String userParamName = rs.getString("USER_PARAM_NAME");
-                      String userParamValue = rs.getString("USER_PARAM_VALUE");
-
-                      insertStmt.setInt(1, newUID);
-                      insertStmt.setString(2, userParamName);
-                      insertStmt.setString(3, userParamValue);
-
-                      if (log.isDebugEnabled())
-                          log.debug("RDBMUserIdentityStore::addNewUser(USER_ID=" + newUID + ", USER_PARAM_NAME=" + userParamName + ", USER_PARAM_VALUE=" + userParamValue + "): " + insert);
-                      insertStmt.executeUpdate();
-                  }
-                  rs.close();
-                  queryStmt.close();
-
-                  if (insertStmt != null) {
-                    insertStmt.close();
-                    insertStmt = null;
-                  }
-
-
                   // Add to UP_USER_PROFILE
                   query =
                       "SELECT USER_ID, PROFILE_FNAME, PROFILE_NAME, DESCRIPTION, " +
