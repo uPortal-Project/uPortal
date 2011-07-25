@@ -36,8 +36,8 @@
         <antcall target="tomcat-start" />
 
 <echo>
-uPortal Quick-Start started, please wait 30 seconds before trying browsing to
-http://localhost:8080/uPortal
+uMobile Quick-Start started, please wait 30 seconds before trying browsing to
+http://localhost:8080
 </echo>
     </target>
 

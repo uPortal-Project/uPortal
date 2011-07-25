@@ -196,6 +196,9 @@
         
         <!-- update catalina.properties tp emable shared/lib classloader -->
         <replace file="${dl.tomcat.dir}/conf/catalina.properties" token="${tomcat.shared-lib.token}" value="${tomcat.shared-lib.replacement}" summary="true" />
+
+        <!-- update web.xml to increase length of session to 2 hours -->
+        <replace file="${dl.tomcat.dir}/conf/web.xml" token="${tomcat.session-length.token}" value="${tomcat.session-length.replacement}" summary="true" />
     </target>
 
     <target name="prepare-qs-ant" depends="prepare-qs">
