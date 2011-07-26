@@ -806,6 +806,8 @@
                         <exclude>**/NOTICE</exclude>
                         <exclude>README</exclude>
                         <exclude>LICENSE</exclude>
+                        <exclude>pom.xml.*</exclude>
+                        <exclude>release.properties</exclude>
                         <exclude>jquery.css</exclude>
                         <exclude>data/*</exclude>
                         <exclude>**/fluid/fluid.*.css</exclude>
