@@ -39,7 +39,7 @@
     <up:portletName>Directory</up:portletName>
   </portlet-descriptor>
     <category>Information</category>
-    <group>Everyone</group>
+    <group>Authenticated Users</group>
     <parameter>
       <name>disableDynamicTitle</name>
       <value>true</value> 
