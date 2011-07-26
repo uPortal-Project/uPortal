@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jasig.umobile.server</groupId>
     <artifactId>umobile-parent</artifactId>
-    <version>1.0.0-RC2-SNAPSHOT</version>
+    <version>1.0.0-RC1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>uPortal Parent</name>

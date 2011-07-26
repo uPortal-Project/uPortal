@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jasig.umobile.server</groupId>
         <artifactId>umobile-parent</artifactId>
-        <version>1.0.0-RC2-SNAPSHOT</version>
+        <version>1.0.0-RC1-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
