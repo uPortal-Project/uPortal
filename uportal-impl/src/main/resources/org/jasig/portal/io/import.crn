@@ -282,6 +282,7 @@
                                 </if>
                             </file-iterator>
                         </thread-pool>
+
                         <!-- channel-types -->
                         <thread-pool threads="${req(THREAD_COUNT)}">
                             <file-iterator dir="${$1}" includes="**/*.channel-type">

@@ -770,7 +770,18 @@ public class RDBMDistributedLayoutStore
             }
             for (Iterator<org.dom4j.Element> it = (Iterator<org.dom4j.Element>) layout.selectNodes("//structure-attribute").iterator(); it.hasNext();) {
                 org.dom4j.Element sa = (org.dom4j.Element) it.next();
-                String idAttr = sa.getParent().valueOf("@ID");
+                org.dom4j.Attribute attr = sa.getParent().attribute(new org.dom4j.QName("dlm:plfID"));
+                String idAttr =  attr != null ? attr.getValue() : null; //    .valueOf("@*[name()='plfID']");  // prefer dlm:plfID, if present
+                if (idAttr == null) {
+                    idAttr = sa.getParent().valueOf("@ID");
+                    if (idAttr.length() == 0) {
+                        // not good...
+                        String msg = "Missing ID or dlm:plfID attribute:  " + sa.valueOf("name") + "=" + sa.valueOf("value");
+                        log.error(msg);
+                        log.error(sa.getParent().asXML());
+                        throw new RuntimeException(msg);
+                    }
+                }
                 if (sa.getParent().getName().equals("folder")) {
                     ssup.setFolderAttributeValue(idAttr, sa.valueOf("name"), sa.valueOf("value"));
                     saSet = true;
@@ -800,7 +811,18 @@ public class RDBMDistributedLayoutStore
             }
             for (Iterator<org.dom4j.Element> it = (Iterator<org.dom4j.Element>) layout.selectNodes("//theme-attribute").iterator(); it.hasNext();) {
                 org.dom4j.Element ta = (org.dom4j.Element) it.next();
-                String idAttr = ta.getParent().valueOf("@ID");
+                org.dom4j.Attribute attr = ta.getParent().attribute(new org.dom4j.QName("dlm:plfID"));
+                String idAttr =  attr != null ? attr.getValue() : null; //    .valueOf("@*[name()='plfID']");  // prefer dlm:plfID, if present
+                if (idAttr == null) {
+                    idAttr = ta.getParent().valueOf("@ID");
+                    if (idAttr.length() == 0) {
+                        // not good...
+                        String msg = "Missing ID or dlm:plfID attribute:  " + ta.valueOf("name") + "=" + ta.valueOf("value");
+                        log.error(msg);
+                        log.error(ta.getParent().asXML());
+                        throw new RuntimeException(msg);
+                    }
+                }
                 // Theme attributes are channels only...
                 tsup.setChannelAttributeValue(idAttr, ta.valueOf("name"), ta.valueOf("value"));
                 taSet = true;
@@ -2847,6 +2869,7 @@ public class RDBMDistributedLayoutStore
             int userId, int profileId, int stylesheetId, int stylesheetType,
             String nodeId, int parmType, String parmName, String parmValue)
             throws SQLException {
+
         int structId = Integer.parseInt(nodeId.substring(1));
 
         if (LOG.isDebugEnabled()) {
