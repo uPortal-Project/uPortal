@@ -72,6 +72,8 @@ import org.xml.sax.InputSource;
 public class RDBMUserLayoutStore implements IUserLayoutStore {
 
     protected final Log log = LogFactory.getLog(getClass());
+    
+    private static final int SYSTEM_PROFILE_ID_FOR_EXPORT = 1;  // hard-coded for now... 
 
   //This class is instantiated ONCE so NO class variables can be used to keep state between calls
   protected static int DEBUG = 0;
@@ -736,15 +738,16 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
 
       if (log.isDebugEnabled())
           log.debug("RDBMUserLayoutStore::getStructureStylesheetDescription(): " + sQuery);
+      System.out.println("\nRDBMUserLayoutStore::getStructureStylesheetDescription(): " + sQuery + "\n");
       ResultSet rs = stmt.executeQuery(sQuery);
       try {
         if (rs.next()) {
           ssd = new StructureStylesheetDescription();
           ssd.setId(stylesheetId);
-          ssd.setStylesheetName(rs.getString(1));
-          ssd.setStylesheetURI(rs.getString(2));
-          ssd.setStylesheetDescriptionURI(rs.getString(3));
-          ssd.setStylesheetWordDescription(rs.getString(4));
+          ssd.setStylesheetName(rs.getString("SS_NAME"));
+          ssd.setStylesheetURI(rs.getString("SS_URI"));
+          ssd.setStylesheetDescriptionURI(rs.getString("SS_DESCRIPTION_URI"));
+          ssd.setStylesheetWordDescription(rs.getString("SS_DESCRIPTION_TEXT"));
         }
 
         if (!RDBMServices.getDbMetaData().supportsOuterJoins()) {
@@ -761,26 +764,26 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
             break;
           }
 
-          int type = rs.getInt(dbOffset + 1);
+          int type = rs.getInt("TYPE");
           if (rs.wasNull()){
             break;
           }
           if (type == 1) {
             // param
-            ssd.addStylesheetParameter(rs.getString(dbOffset + 2), rs.getString(dbOffset + 3), rs.getString(dbOffset + 4));
+            ssd.addStylesheetParameter(rs.getString("PARAM_NAME"), rs.getString("PARAM_DEFAULT_VAL"), rs.getString("PARAM_DESCRIPT"));
           }
           else if (type == 2) {
             // folder attribute
-            ssd.addFolderAttribute(rs.getString(dbOffset + 2), rs.getString(dbOffset + 3), rs.getString(dbOffset + 4));
+            ssd.addFolderAttribute(rs.getString("PARAM_NAME"), rs.getString("PARAM_DEFAULT_VAL"), rs.getString("PARAM_DESCRIPT"));
           }
           else if (type == 3) {
             // channel attribute
-            ssd.addChannelAttribute(rs.getString(dbOffset + 2), rs.getString(dbOffset + 3), rs.getString(dbOffset + 4));
+            ssd.addChannelAttribute(rs.getString("PARAM_NAME"), rs.getString("PARAM_DEFAULT_VAL"), rs.getString("PARAM_DESCRIPT"));
           }
           else {
               if (log.isDebugEnabled())
                   log.debug("RDBMUserLayoutStore::getStructureStylesheetDescription() : encountered param of unknown type! (stylesheetId="
-                          + stylesheetId + " param_name=\"" + rs.getString(dbOffset + 2) + "\" type=" + type + ").");
+                          + stylesheetId + " param_name=\"" + rs.getString("PARAM_NAME") + "\" type=" + type + ").");
           }
           if (RDBMServices.getDbMetaData().supportsOuterJoins() && !rs.next()) {
             break;
@@ -1878,11 +1881,23 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
             }
             int structSsId = rs.getInt(6);
             if (rs.wasNull()) {
-              structSsId = 0;
+                // This is probably a data issue and probably an export operation;  defer to the system user...
+                if (!person.equals(systemUser)) {
+                    structSsId = this.getSystemProfileById(SYSTEM_PROFILE_ID_FOR_EXPORT).getStructureStylesheetId();
+                } else {
+                    String msg = "The system user profile has no structure stylesheet Id.";
+                    throw new IllegalStateException(msg);
+                }
             }
             int themeSsId = rs.getInt(7);
             if (rs.wasNull()) {
-              themeSsId = 0;
+                // This is probably a data issue and probably an export operation;  defer to the system user...
+                if (!person.equals(systemUser)) {
+                    themeSsId = this.getSystemProfileById(SYSTEM_PROFILE_ID_FOR_EXPORT).getThemeStylesheetId();
+                } else {
+                    String msg = "The system user profile has no theme stylesheet Id.";
+                    throw new IllegalStateException(msg);
+                }
             }
             UserProfile userProfile = new UserProfile(profileId, temp3,temp4, layoutId, structSsId, themeSsId);
             userProfile.setLocaleManager(new LocaleManager(person));
@@ -3293,7 +3308,7 @@ public class RDBMUserLayoutStore implements IUserLayoutStore {
   public UserPreferences getUserPreferences (IPerson person, UserProfile profile) throws Exception {
     int profileId = profile.getProfileId();
     UserPreferences up = new UserPreferences(profile);
-    up.setStructureStylesheetUserPreferences(getStructureStylesheetUserPreferences(person, profileId, profile.getStructureStylesheetId()));
+    up.setStructureStylesheetUserPreferences(getStructureStylesheetUserPreferences(person, profileId, profile.getStructureStylesheetId() /* [drew] coming as zero */));
     up.setThemeStylesheetUserPreferences(getThemeStylesheetUserPreferences(person, profileId, profile.getThemeStylesheetId()));
     return  up;
   }

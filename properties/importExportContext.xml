@@ -42,7 +42,7 @@
 
     <bean id="lookup-dlm-noderef" class="org.danann.cernunnos.runtime.PojoTask">
         <property name="location">
-            <value>classpath://org/jasig/portal/io/lookup-dlm-noderef.crn</value>
+            <value>classpath://org/jasig/portal/io/lookup-dlm-noderef_v3-2.crn</value>
         </property>
         <property name="requestAttributes">
             <util:map>
