@@ -300,8 +300,8 @@
           destdir="${build.home}/WEB-INF/classes"
             debug="${compile.debug}"
       deprecation="${compile.deprecation}"
-          target="1.4"
-          source="1.4"
+          target="1.6"
+          source="1.6"
          optimize="${compile.optimize}">
       <classpath refid="compile.classpath"/>
     </javac>
