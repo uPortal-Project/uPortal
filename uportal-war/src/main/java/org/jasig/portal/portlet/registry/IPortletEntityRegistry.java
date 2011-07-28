@@ -109,11 +109,9 @@ public interface IPortletEntityRegistry {
      * @throws IllegalArgumentException if portletEntity is null
      */
     public void storePortletEntity(HttpServletRequest request, IPortletEntity portletEntity);
-//    /**
-//     * Get all {@link IPortletEntity}s that exist for the specified user id. (From {@link org.jasig.portal.security.IPerson#getID()}.
-//     * 
-//     * @param userId The id of the user to get the entities for.
-//     * @return A set of all entities base on the specified user id, will be empty if no entities exist for the id, will never be null.
-//     */
-//    public Set<IPortletEntity> getPortletEntitiesForUser(int userId);
+
+    /**
+     * @return True if the specified portlet entity should be persistent
+     */
+    public boolean shouldBePersisted(IPortletEntity portletEntity);
 }

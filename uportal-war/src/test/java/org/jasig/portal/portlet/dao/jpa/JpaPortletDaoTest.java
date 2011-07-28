@@ -31,8 +31,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import javax.portlet.WindowState;
-
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.dao.IPortletEntityDao;
 import org.jasig.portal.portlet.dao.IPortletTypeDao;
@@ -41,7 +39,6 @@ import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletPreference;
-import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.portlet.om.IPortletType;
 import org.junit.Before;
 import org.junit.Test;
@@ -131,8 +128,7 @@ public class JpaPortletDaoTest extends BaseJpaDaoTest {
         
         
                 // Add some preferences
-                final IPortletPreferences prefs2 = chanDef2.getPortletPreferences();
-                final List<IPortletPreference> prefsList2 = prefs2.getPortletPreferences();
+                final List<IPortletPreference> prefsList2 = chanDef2.getPortletPreferences();
                 prefsList2.add(new PortletPreferenceImpl("prefName1", false, "val1", "val2"));
                 prefsList2.add(new PortletPreferenceImpl("prefName2", true, "val3", "val4"));
                 
@@ -141,8 +137,7 @@ public class JpaPortletDaoTest extends BaseJpaDaoTest {
                 
                 // Check prefs, remove one and another
                 final IPortletDefinition portDef3 = jpaPortletDefinitionDao.getPortletDefinition(chanDef2.getPortletDefinitionId());
-                final IPortletPreferences prefs3 = portDef3.getPortletPreferences();
-                final List<IPortletPreference> prefsList3 = prefs3.getPortletPreferences();
+                final List<IPortletPreference> prefsList3 = portDef3.getPortletPreferences();
                 
                 final List<IPortletPreference> expectedPrefsList3 = new ArrayList<IPortletPreference>();
                 expectedPrefsList3.add(new PortletPreferenceImpl("prefName1", false, "val1", "val2"));
@@ -159,8 +154,7 @@ public class JpaPortletDaoTest extends BaseJpaDaoTest {
         
                 // Check prefs
                 final IPortletDefinition portDef4 = jpaPortletDefinitionDao.getPortletDefinition(portDef3.getPortletDefinitionId());
-                final IPortletPreferences prefs4 = portDef4.getPortletPreferences();
-                final List<IPortletPreference> prefsList4 = prefs4.getPortletPreferences();
+                final List<IPortletPreference> prefsList4 = portDef4.getPortletPreferences();
                 
                 final List<IPortletPreference> expectedPrefsList4 = new ArrayList<IPortletPreference>();
                 expectedPrefsList4.add(new PortletPreferenceImpl("prefName1", false, "val1", "val2"));
@@ -225,11 +219,11 @@ public class JpaPortletDaoTest extends BaseJpaDaoTest {
             public Object call() throws Exception { 
                 //Add entity and preferences
                 final IPortletDefinition portDef1 = jpaPortletDefinitionDao.getPortletDefinition(portletDefinitionId);
-                portDef1.getPortletPreferences().getPortletPreferences().add(new PortletPreferenceImpl("defpref1", false, "dpv1", "dpv2"));
+                portDef1.getPortletPreferences().add(new PortletPreferenceImpl("defpref1", false, "dpv1", "dpv2"));
                 jpaPortletDefinitionDao.updatePortletDefinition(portDef1);
                 
                 final IPortletEntity portEnt1 = jpaPortletEntityDao.getPortletEntity(portletEntityId);
-                portEnt1.getPortletPreferences().getPortletPreferences().add(new PortletPreferenceImpl("entpref1", false, "epv1", "epv2"));
+                portEnt1.getPortletPreferences().add(new PortletPreferenceImpl("entpref1", false, "epv1", "epv2"));
 //                portEnt1.setWindowState(WindowState.MINIMIZED);
                 jpaPortletEntityDao.updatePortletEntity(portEnt1);
                 

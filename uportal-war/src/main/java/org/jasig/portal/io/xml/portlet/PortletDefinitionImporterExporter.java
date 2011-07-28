@@ -47,7 +47,6 @@ import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
 import org.jasig.portal.portlet.om.IPortletDescriptorKey;
 import org.jasig.portal.portlet.om.IPortletPreference;
-import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
@@ -436,8 +435,7 @@ public class PortletDefinitionImporterExporter
 
          
          final List<ExternalPortletPreference> portletPreferenceList = rep.getPortletPreferences();
-         final IPortletPreferences portletPreferences = def.getPortletPreferences();
-         for (IPortletPreference pref : portletPreferences.getPortletPreferences()) {
+         for (IPortletPreference pref : def.getPortletPreferences()) {
              final ExternalPortletPreference externalPortletPreference = new ExternalPortletPreference();
              externalPortletPreference.setName(pref.getName());
              externalPortletPreference.setReadOnly(pref.isReadOnly());

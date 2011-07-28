@@ -19,7 +19,9 @@
 
 package org.jasig.portal.portlet.registry;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -27,13 +29,12 @@ import javax.portlet.WindowState;
 
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
-import org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityDescriptor;
 import org.jasig.portal.portlet.om.IPortletEntityId;
-import org.jasig.portal.portlet.om.IPortletPreferences;
+import org.jasig.portal.portlet.om.IPortletPreference;
 
 /**
  * Portlet entity data that is not persisted. Used when the entity doesn't have any customizations.
@@ -45,7 +46,7 @@ class SessionPortletEntityImpl implements IPortletEntity, IPortletEntityDescript
     private final IPortletDefinition portletDefinition;
     private final PortletEntityData portletEntityData;
     private final Map<Long, WindowState> windowStates = new ConcurrentHashMap<Long, WindowState>();
-    private IPortletPreferences portletPreferences = new PortletPreferencesImpl();
+    private List<IPortletPreference> portletPreferences = new ArrayList<IPortletPreference>(0);
 
     public SessionPortletEntityImpl(IPortletDefinition portletDefinition, PortletEntityData portletEntityData) {
         Validate.notNull(portletDefinition, "portletDefinition cannot be null");
@@ -104,17 +105,27 @@ class SessionPortletEntityImpl implements IPortletEntity, IPortletEntityDescript
         }
     }
 
-    @Override
-    public IPortletPreferences getPortletPreferences() {
-        return this.portletPreferences;
-    }
+    /* (non-Javadoc)
+	 * @see org.jasig.portal.portlet.om.IPortletEntity#getPortletPreferences()
+	 */
+	@Override
+	public List<IPortletPreference> getPortletPreferences() {
+		return portletPreferences;
+	}
 
-    @Override
-    public void setPortletPreferences(IPortletPreferences portletPreferences) {
-        this.portletPreferences = portletPreferences;
-    }
+	/* (non-Javadoc)
+	 * @see org.jasig.portal.portlet.om.IPortletEntity#setPortletPreferences(java.util.List)
+	 */
+	@Override
+	public void setPortletPreferences(List<IPortletPreference> portletPreferences) {
+		if (portletPreferences == null) {
+			this.portletPreferences.clear();
+		}
+		
+		this.portletPreferences = portletPreferences;
+	}
 
-    @Override
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

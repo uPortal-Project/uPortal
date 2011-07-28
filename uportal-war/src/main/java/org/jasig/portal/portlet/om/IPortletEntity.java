@@ -19,6 +19,7 @@
 
 package org.jasig.portal.portlet.om;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.portlet.WindowState;
@@ -74,15 +75,14 @@ public interface IPortletEntity extends IPortletEntityDescriptor {
     public void setWindowState(IStylesheetDescriptor stylesheetDescriptor, WindowState state);
     
     /**
-     * @return The preferences for this portlet entity, will not be null.
+     * @return The List of PortletPreferences, will not be null
      */
-    public IPortletPreferences getPortletPreferences();
+    public List<IPortletPreference> getPortletPreferences();
     
     /**
-     * @param portletPreferences The preferences for this portlet entity.
-     * @throws IllegalArgumentException If preferences is null.
+     * @param portletPreferences The List of PortletPreferences, null clears the preferences but actually sets an empty list
      */
-    public void setPortletPreferences(IPortletPreferences portletPreferences);
+    public void setPortletPreferences(List<IPortletPreference> portletPreferences);
     
     /**
      * @return A hash code created based on the userId, layoutId and parent {@link IPortletDefinition}

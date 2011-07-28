@@ -399,7 +399,7 @@ try {
     }
 }
 catch (Exception e) {
-    throw new RuntimeException("data-export for ${dir} and ${sysid} failed", e);
+    throw new RuntimeException("data-export for " + dataDir + " and ${sysid} failed", e);
 }
         </echo>
 
@@ -446,12 +446,13 @@ if (dataDir == 'null') {
 	}
 }
 else {
+    pattern = /${pattern}/;
     logger.info('Importing Data from: ' + dataDir);
     try {
-        portalDataHandlerService.importData(new File(dataDir), '${pattern}' == 'null' ? null : '${pattern}', null);
+        portalDataHandlerService.importData(new File(dataDir), pattern == 'null' ? null : pattern, null);
     }
     catch (Exception e) {
-        throw new RuntimeException("data-import for " + dataDir + " and ${pattern} failed", e);
+        throw new RuntimeException("data-import for " + dataDir + " and " + pattern + " failed", e);
     }
 }        </echo>
 

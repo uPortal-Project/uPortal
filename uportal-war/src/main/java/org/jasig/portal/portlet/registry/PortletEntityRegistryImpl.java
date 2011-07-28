@@ -49,7 +49,6 @@ import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletPreference;
-import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.url.IPortalRequestUtils;
@@ -393,11 +392,8 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         }
         
         //Copy over preferences to avoid modifying any part of the interim entity by reference
-        final IPortletPreferences existingPortletPreferences = portletEntity.getPortletPreferences();
-        final List<IPortletPreference> existingPreferences = existingPortletPreferences.getPortletPreferences();
-        
-        final IPortletPreferences persistentPortletPreferences = persistentEntity.getPortletPreferences();
-        final List<IPortletPreference> persistentPreferences = persistentPortletPreferences.getPortletPreferences();
+        final List<IPortletPreference> existingPreferences = portletEntity.getPortletPreferences();
+        final List<IPortletPreference> persistentPreferences = persistentEntity.getPortletPreferences();
         
         //Only do the copy if the List objects are not the same instance
         if (persistentPreferences != existingPreferences) {
@@ -671,7 +667,8 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         return new SessionPortletEntityImpl(portletDefinition, portletEntityData);
     }
     
-    protected boolean shouldBePersisted(IPortletEntity portletEntity) {
+    @Override
+    public boolean shouldBePersisted(IPortletEntity portletEntity) {
         //Delegate entities should NEVER be persisted
         final String layoutNodeId = portletEntity.getLayoutNodeId();
         if (layoutNodeId.startsWith(DELEGATE_LAYOUT_NODE_ID_PREFIX)) {
@@ -679,8 +676,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         }
         
         //Only non delegate entities with preferences or a non-null window state should be persisted
-        final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
-        final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
+        final List<IPortletPreference> preferences = portletEntity.getPortletPreferences();
         return CollectionUtils.isNotEmpty(preferences) || !portletEntity.getWindowStates().isEmpty();
     }
 }

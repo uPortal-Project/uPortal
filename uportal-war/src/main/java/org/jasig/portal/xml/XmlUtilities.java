@@ -31,6 +31,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 
 import org.springframework.core.io.Resource;
+import org.w3c.dom.Node;
 
 /**
  * Defines commonly used XML and XSLT utilities
@@ -87,4 +88,9 @@ public interface XmlUtilities {
      * Serializes the List of XMLEvents into a XML String using HTML safe formatting
      */
     public String serializeXMLEvents(List<XMLEvent> xmlEvents, boolean isHtml);
+    
+    /**
+     * Get the unique XPath for the specified Node
+     */
+    public String getUniqueXPath(Node node);
 }

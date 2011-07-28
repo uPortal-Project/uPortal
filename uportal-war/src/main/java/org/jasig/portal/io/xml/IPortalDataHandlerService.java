@@ -23,6 +23,7 @@ import java.io.File;
 import java.util.Set;
 
 import javax.xml.transform.Result;
+import javax.xml.transform.Source;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -70,6 +71,11 @@ public interface IPortalDataHandlerService {
      * Import data from the specified resource
      */
     public void importData(Resource resource);
+    
+    /**
+     * Import data from the specified source
+     */
+    public void importData(Source source);
     
     /**
      * @return All portal data types that can be exported or deleted from

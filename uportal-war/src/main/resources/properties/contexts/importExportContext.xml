@@ -138,27 +138,7 @@
     <!-- 
      | Legacy Import classes for portal entities
      +-->
-    <bean id="layout26Importer" class="org.jasig.portal.io.xml.crn.CernunnosDataImporter">
-        <property name="threadSafe" value="false"/>
-        <property name="dataKeys">
-            <set>
-                <util:constant static-field="org.jasig.portal.io.xml.layout.LayoutPortalDataType.IMPORT_26_DATA_KEY"/>
-                <util:constant static-field="org.jasig.portal.io.xml.layout.FragmentLayoutPortalDataType.IMPORT_26_DATA_KEY"/>
-            </set>
-        </property>
-        <property name="task" ref="import-layout_v2-6" />
-    </bean>
-    <bean id="layout30Importer" class="org.jasig.portal.io.xml.crn.CernunnosDataImporter">
-        <property name="threadSafe" value="false"/>
-        <property name="dataKeys">
-            <set>
-                <util:constant static-field="org.jasig.portal.io.xml.layout.LayoutPortalDataType.IMPORT_30_DATA_KEY"/>
-                <util:constant static-field="org.jasig.portal.io.xml.layout.FragmentLayoutPortalDataType.IMPORT_30_DATA_KEY"/>
-            </set>
-        </property>
-        <property name="task" ref="import-layout_v3-0" />
-    </bean>
-    <bean id="layout32Importer" class="org.jasig.portal.io.xml.crn.CernunnosDataImporter">
+    <bean id="layout32Importer" class="org.jasig.portal.io.xml.layout.LayoutImporter">
         <property name="threadSafe" value="false"/>
         <property name="dataKeys">
             <set>
@@ -166,7 +146,6 @@
                 <util:constant static-field="org.jasig.portal.io.xml.layout.FragmentLayoutPortalDataType.IMPORT_32_DATA_KEY"/>
             </set>
         </property>
-        <property name="task" ref="import-layout_v3-2" />
     </bean>
     <bean id="entity26Importer" class="org.jasig.portal.io.xml.crn.CernunnosDataImporter">
         <property name="dataKeys">
@@ -250,7 +229,7 @@
     <!-- 
      | Data Upgrader classes for portal entities
      +-->
-    <bean id="user32DataUpgrader" class="org.jasig.portal.io.xml.XsltDataUpgrader">
+    <bean id="user26_32DataUpgrader" class="org.jasig.portal.io.xml.XsltDataUpgrader">
         <property name="portalDataKeys">
             <set>
                 <util:constant static-field="org.jasig.portal.io.xml.user.UserPortalDataType.IMPORT_26_DATA_KEY"/>
@@ -260,7 +239,7 @@
         </property>
         <property name="xslResource" value="classpath:/org/jasig/portal/io/xml/user/upgrade-user_3-2.xsl" />
     </bean>
-    <bean id="templateUser32DataUpgrader" class="org.jasig.portal.io.xml.XsltDataUpgrader">
+    <bean id="templateUser26_32DataUpgrader" class="org.jasig.portal.io.xml.XsltDataUpgrader">
         <property name="portalDataKeys">
             <set>
                 <util:constant static-field="org.jasig.portal.io.xml.user.TemplateUserPortalDataType.IMPORT_26_DATA_KEY"/>
@@ -269,6 +248,24 @@
             </set>
         </property>
         <property name="xslResource" value="classpath:/org/jasig/portal/io/xml/user/upgrade-template-user_3-2.xsl" />
+    </bean>
+    <bean id="fragmentLayout26_30DataUpgrader" class="org.jasig.portal.io.xml.XsltDataUpgrader">
+        <property name="portalDataKeys">
+            <set>
+                <util:constant static-field="org.jasig.portal.io.xml.layout.FragmentLayoutPortalDataType.IMPORT_26_DATA_KEY"/>
+                <util:constant static-field="org.jasig.portal.io.xml.layout.FragmentLayoutPortalDataType.IMPORT_30_DATA_KEY"/>
+            </set>
+        </property>
+        <property name="xslResource" value="classpath:/org/jasig/portal/io/upgradeLayout_v3-2.xsl" />
+    </bean>
+    <bean id="layout26_30DataUpgrader" class="org.jasig.portal.io.xml.XsltDataUpgrader">
+        <property name="portalDataKeys">
+            <set>
+                <util:constant static-field="org.jasig.portal.io.xml.layout.LayoutPortalDataType.IMPORT_26_DATA_KEY"/>
+                <util:constant static-field="org.jasig.portal.io.xml.layout.LayoutPortalDataType.IMPORT_30_DATA_KEY"/>
+            </set>
+        </property>
+        <property name="xslResource" value="classpath:/org/jasig/portal/io/upgradeLayout_v3-2.xsl" />
     </bean>
     
     <!-- 
@@ -325,9 +322,26 @@
             </bean>
         </property>
     </bean>
+    <bean id="fragmentLayoutsDataFunction" class="org.jasig.portal.io.xml.layout.FragmentLayoutsDataFunction" />
+    <bean id="fragmentLayoutExporter" class="org.jasig.portal.io.xml.layout.LayoutExporter">
+        <property name="portalDataType" ref="fragmentLayoutPortalDataType"/>
+        <property name="portalDataRetriever" ref="fragmentLayoutsDataFunction" />
+    </bean>
+    <bean id="layoutsDataFunction" class="org.jasig.portal.io.xml.layout.LayoutsDataFunction" />
+    <bean id="layoutExporter" class="org.jasig.portal.io.xml.layout.LayoutExporter">
+        <property name="portalDataType" ref="layoutPortalDataType"/>
+        <property name="portalDataRetriever" ref="layoutsDataFunction" />
+    </bean>
+    <!-- 
+    <bean id="fragmentLayoutExporter" class="org.jasig.portal.io.xml.crn.CernunnosDataExporter">
+        <property name="idAttributeName" value="USER_NAME"/>
+        <property name="portalDataType" ref="fragmentLayoutPortalDataType"/>
+        <property name="task" ref="export-layout" />
+        <property name="portalDataRetriever" ref="fragmentLayoutsDataFunction" />
+    </bean>
+     -->
     
     <!--
-    <bean id="profilePortalDataType" class="org.jasig.portal.io.xml.layout.ProfilePortalDataType"/>
     <bean id="fragmentLayoutPortalDataType" class="org.jasig.portal.io.xml.layout.FragmentLayoutPortalDataType"/>
     <bean id="layoutPortalDataType" class="org.jasig.portal.io.xml.layout.LayoutPortalDataType"/>
     <bean id="fragmentDefinitionPortalDataType" class="org.jasig.portal.io.xml.dlm.FragmentDefinitionPortalDataType"/>
@@ -506,51 +520,6 @@
             </util:map>
         </property>
     </bean>
-    
-    <bean id="import-layout_v2-6" class="org.danann.cernunnos.runtime.PojoTask">
-        <property name="location">
-            <value>classpath://org/jasig/portal/io/import-layout_v2-6.crn</value>
-        </property>
-        <property name="requestAttributes">
-            <util:map>
-                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
-                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
-                <entry key="userLayoutStore" value-ref="userLayoutStore" />
-                <entry key="stylesheetDescriptorDao" value-ref="stylesheetDescriptorDao" />
-                <entry key="portletEntityPreferenceHandler" value-ref="portletEntityPreferenceHandler" />
-            </util:map>
-        </property>
-    </bean>
-
-    <bean id="import-layout_v3-0" class="org.danann.cernunnos.runtime.PojoTask">
-        <property name="location">
-            <value>classpath://org/jasig/portal/io/import-layout_v3-0.crn</value>
-        </property>
-        <property name="requestAttributes">
-            <util:map>
-                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
-                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
-                <entry key="userLayoutStore" value-ref="userLayoutStore" />
-                <entry key="stylesheetDescriptorDao" value-ref="stylesheetDescriptorDao" />
-                <entry key="portletEntityPreferenceHandler" value-ref="portletEntityPreferenceHandler" />
-            </util:map>
-        </property>
-    </bean>
-
-    <bean id="import-layout_v3-2" class="org.danann.cernunnos.runtime.PojoTask">
-        <property name="location">
-            <value>classpath://org/jasig/portal/io/import-layout_v3-2.crn</value>
-        </property>
-        <property name="requestAttributes">
-            <util:map>
-                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
-                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
-                <entry key="userLayoutStore" value-ref="userLayoutStore" />
-                <entry key="stylesheetDescriptorDao" value-ref="stylesheetDescriptorDao" />
-                <entry key="portletEntityPreferenceHandler" value-ref="portletEntityPreferenceHandler" />
-            </util:map>
-        </property>
-    </bean>
 
     <bean id="import-profile_v3-2" class="org.danann.cernunnos.runtime.PojoTask">
         <property name="location">
@@ -616,44 +585,6 @@
         </property>
     </bean>
 
-    <bean id="export-theme" class="org.danann.cernunnos.runtime.PojoTask">
-        <property name="location">
-            <value>classpath://org/jasig/portal/io/export-theme.crn</value>
-        </property>
-        <property name="requestAttributes">
-            <util:map>
-                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
-                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
-            </util:map>
-        </property>
-    </bean>
-
-    <bean id="export-structure" class="org.danann.cernunnos.runtime.PojoTask">
-        <property name="location">
-            <value>classpath://org/jasig/portal/io/export-structure.crn</value>
-        </property>
-        <property name="requestAttributes">
-            <util:map>
-                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
-                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
-            </util:map>
-        </property>
-    </bean>
-
-    <bean id="export-layout" class="org.danann.cernunnos.runtime.PojoTask">
-        <property name="location">
-            <value>classpath://org/jasig/portal/io/export-layout.crn</value>
-        </property>
-        <property name="requestAttributes">
-            <util:map>
-                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
-                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
-                <entry key="userLayoutStore" value-ref="userLayoutStore"/>
-                <entry key="portletEntityPreferenceHandler" value-ref="portletEntityPreferenceHandler" />
-            </util:map>
-        </property>
-    </bean>
-
     <bean id="export-entity-type" class="org.danann.cernunnos.runtime.PojoTask">
         <property name="location">
             <value>classpath://org/jasig/portal/io/export-entity-type.crn</value>
@@ -714,19 +645,6 @@
     <!-- 
      | Nested Tasks
      +-->
-    
-    <bean id="generate-entity-file-name" class="org.danann.cernunnos.runtime.PojoTask">
-        <property name="location">
-            <value>classpath://org/jasig/portal/io/generate-entity-file-name.crn</value>
-        </property>
-        <property name="requestAttributes">
-            <util:map>
-                <entry key="userLayoutStore">
-                    <ref bean="userLayoutStore"/>
-                </entry>
-            </util:map>
-        </property>
-    </bean>
 
     <bean id="is-user-included" class="org.danann.cernunnos.runtime.PojoTask">
         <property name="location">
@@ -737,44 +655,6 @@
                 <entry key="userLayoutStore">
                     <ref bean="userLayoutStore"/>
                 </entry>
-            </util:map>
-        </property>
-    </bean>
-
-    <bean id="lookup-dlm-noderef" class="org.danann.cernunnos.runtime.PojoTask">
-        <property name="location">
-            <value>classpath://org/jasig/portal/io/lookup-dlm-noderef.crn</value>
-        </property>
-        <property name="requestAttributes">
-            <util:map>
-                <entry key="Attributes.CACHE">
-                    <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
-                        <property name="cacheName" value="org.jasig.portal.layout.dlm.NODEREF_CACHE" />
-                    </bean>
-                </entry>
-                <entry key="Attributes.CACHE_MODEL" value="ALL" />
-                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
-                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
-            </util:map>
-        </property>
-    </bean>
-
-    <bean id="lookup-dlm-pathref_v3-2" class="org.danann.cernunnos.runtime.PojoTask">
-        <property name="location">
-            <value>classpath://org/jasig/portal/io/lookup-dlm-pathref_v3-2.crn</value>
-        </property>
-        <property name="requestAttributes">
-            <util:map>
-                <entry key="Attributes.CACHE">
-                    <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
-                        <property name="cacheName" value="org.jasig.portal.layout.dlm.NODEREF_CACHE" />
-                    </bean>
-                </entry>
-                <entry key="Attributes.CACHE_MODEL">
-                    <value>ALL</value>
-                </entry>
-                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
-                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
             </util:map>
         </property>
     </bean>

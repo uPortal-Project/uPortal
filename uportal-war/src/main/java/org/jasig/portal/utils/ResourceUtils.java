@@ -17,25 +17,34 @@
  * under the License.
  */
 
-package org.jasig.portal.portlet.om;
+package org.jasig.portal.utils;
 
-import java.util.List;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import org.springframework.core.io.Resource;
 
 /**
- * Holder (join) class for a List of portlet preferences
+ * Utilities for working with Spring {@link Resource} objects
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface IPortletPreferences {
-    /**
-     * @return The List of PortletPreferences, will not be null
-     */
-    public List<IPortletPreference> getPortletPreferences();
-    
-    /**
-     * @param portletPreferences The List of PortletPreferences.
-     * @throws IllegalArgumentException If portletPreferences is null.
-     */
-    public void setPortletPreferences(List<IPortletPreference> portletPreferences);
+public final class ResourceUtils {
+	private ResourceUtils() { }
+	
+	/**
+	 * First tries {@link Resource#getURI()} and if that fails with a FileNotFoundException then {@link Resource#getDescription()} is returned.
+	 */
+	public static String getResourceUri(Resource resource) {
+        try {
+            return resource.getURI().toString();
+        }
+        catch (FileNotFoundException e) {
+        	return resource.getDescription();
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Could not create URI for resource: " + resource, e);
+        }
+	}
 }

@@ -20,7 +20,12 @@
 
 -->
 
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:dlm="http://www.uportal.org/layout/dlm" version="1.0">
+<xsl:stylesheet
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:dlm="http://www.uportal.org/layout/dlm"
+  version="1.0">
+
     <xsl:template match="layout">
         <layout xmlns:dlm="http://www.uportal.org/layout/dlm" script="classpath://org/jasig/portal/io/import-layout_v3-2.crn">
             <xsl:copy-of select="@username"/>
@@ -75,8 +80,55 @@
         </profile>
     </xsl:template>
     
-    <xsl:template match="structure-attribute|theme-attribute|preferences">
+    <xsl:template match="structure-attribute|theme-attribute">
         <xsl:copy-of select="."/>
+    </xsl:template>
+    
+    <xsl:template match="preferences">
+        <xsl:copy>
+            <xsl:apply-templates />
+        </xsl:copy>
+    </xsl:template>
+    <xsl:template match="entry">
+      <xsl:copy>
+            <xsl:attribute name="entity">
+                <xsl:call-template name="fix-dlm-path-ref">
+                    <xsl:with-param name="path-ref" select="@entity"/>
+                </xsl:call-template>
+            </xsl:attribute>
+          <xsl:copy-of select="@channel|@name|value|text()"/>
+        </xsl:copy>
+    </xsl:template>
+  
+    <!--
+     | Recursive search/replace template for updating DLM path refs
+     +-->
+    <xsl:template name="fix-dlm-path-ref">
+        <xsl:param name="path-ref"/>
+      
+        <xsl:variable name="ROOT_FOLDER">folder[@type='root']/</xsl:variable>
+        <xsl:variable name="REGULAR_FOLDER">folder[@type='regular']</xsl:variable>
+
+        <xsl:choose>
+            <xsl:when test="contains($path-ref, 'root/')">
+                <xsl:call-template name="fix-dlm-path-ref">
+                    <xsl:with-param name="path-ref" select="concat(substring-before($path-ref, 'root/'), $ROOT_FOLDER, substring-after($path-ref, 'root/'))"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:when test="contains($path-ref, 'tab')">
+                <xsl:call-template name="fix-dlm-path-ref">
+                    <xsl:with-param name="path-ref" select="concat(substring-before($path-ref, 'tab'), $REGULAR_FOLDER, substring-after($path-ref, 'tab'))"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:when test="contains($path-ref, 'column')">
+                <xsl:call-template name="fix-dlm-path-ref">
+                    <xsl:with-param name="path-ref" select="concat(substring-before($path-ref, 'column'), $REGULAR_FOLDER, substring-after($path-ref, 'column'))"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$path-ref"/>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     
     <xsl:template match="@*[.='Y']">

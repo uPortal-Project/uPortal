@@ -60,15 +60,9 @@
                     <if test="${jexl(PREFERENCES ne null)}">
                         <append-node node="${PREFERENCES}"/>
                     </if>
-                    <choose>
-                        <when test="${jexl(Attributes.NODE.elements().size() ne 0)}">
-                            <echo-ln>Export Layout: USER_ID=${USER_ID} USER_NAME=${USER_NAME}</echo-ln>
-                            <return value="${Attributes.NODE}"/>
-                        </when>
-                        <otherwise>
-                            <echo-ln>Export Layout: Nothing to export for USER_ID=${USER_ID} USER_NAME=${USER_NAME}</echo-ln>
-                        </otherwise>
-                    </choose>
+                    <if test="${jexl(Attributes.NODE.elements().size() ne 0)}">
+                        <return value="${Attributes.NODE}"/>
+                    </if>
                 </with-attribute>
             </subtasks>
         </groovy>

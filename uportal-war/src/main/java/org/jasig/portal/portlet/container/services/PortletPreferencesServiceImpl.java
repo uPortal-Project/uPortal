@@ -48,7 +48,6 @@ import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletPreference;
-import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
@@ -240,8 +239,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
         this.addPreferencesToMap(descriptorPreferencesList, preferencesMap);
         
         //Add definition preferences
-        final IPortletPreferences definitionPreferences = portletDefinition.getPortletPreferences();
-        final List<IPortletPreference> definitionPreferencesList = definitionPreferences.getPortletPreferences();
+        final List<IPortletPreference> definitionPreferencesList = portletDefinition.getPortletPreferences();
         this.addPreferencesToMap(definitionPreferencesList, preferencesMap);
         
         return preferencesMap;
@@ -275,8 +273,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
             //If not guest or storing shared guest prefs get the prefs from the portlet entity
             if (this.isLoadFromEntity(portletRequest)) {
                 //Add entity preferences
-                final IPortletPreferences entityPreferences = portletEntity.getPortletPreferences();
-                final List<IPortletPreference> entityPreferencesList = entityPreferences.getPortletPreferences();
+                final List<IPortletPreference> entityPreferencesList = portletEntity.getPortletPreferences();
                 this.addPreferencesToMap(entityPreferencesList, preferencesMap);
     
                 if (!this.isLoadFromMemory(portletRequest) && !this.isStoreInEntity(portletRequest) && this.isStoreInMemory(portletRequest)) {
@@ -328,9 +325,6 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
         final List<IPortletPreference> descriptorPreferencesList = this.getDescriptorPreferences(portletDescriptor);
         this.addPreferencesToMap(descriptorPreferencesList, basePreferences);
   
-        //Get the definition and entity preferences objects
-        final IPortletPreferences definitionPreferences = portletDefinition.getPortletPreferences();
-        
         final Lock prefLock;
         if (configMode) {
             //In config mode we don't worry about locking
@@ -359,7 +353,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
             
             //Add definition preferences if not config mode
             if (!configMode) {
-                final List<IPortletPreference> definitionPreferencesList = definitionPreferences.getPortletPreferences();
+                final List<IPortletPreference> definitionPreferencesList = portletDefinition.getPortletPreferences();
                 this.addPreferencesToMap(definitionPreferencesList, basePreferences);
             }
 
@@ -387,14 +381,13 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
         
             //If in config mode store the preferences on the definition
             if (configMode) {
-                definitionPreferences.setPortletPreferences(preferencesList);
+            	portletDefinition.setPortletPreferences(preferencesList);
                 this.portletDefinitionRegistry.updatePortletDefinition(portletDefinition);
             }
             //If not a guest or if guest prefs are shared store them on the entity
             else if (this.isStoreInEntity(portletRequest)) {
                 //Update the portlet entity with the new preferences
-                final IPortletPreferences entityPreferences = portletEntity.getPortletPreferences();
-                entityPreferences.setPortletPreferences(preferencesList);
+                portletEntity.setPortletPreferences(preferencesList);
                 this.portletEntityRegistry.storePortletEntity(httpServletRequest, portletEntity);
             }
             //Must be a guest and share must be off so store the prefs on the session

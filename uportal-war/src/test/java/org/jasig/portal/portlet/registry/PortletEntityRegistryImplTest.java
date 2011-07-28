@@ -19,10 +19,9 @@
 
 package org.jasig.portal.portlet.registry;
 
-import static org.mockito.Mockito.when;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -43,7 +42,6 @@ import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletPreference;
-import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.url.IPortalRequestUtils;
@@ -181,8 +179,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
                 final IPortletEntity portletEntity = portletEntityRegistry.getPortletEntity(request, portletEntityId);
                 
                 //Add a preference
-                final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
-                final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
+                final List<IPortletPreference> preferences = portletEntity.getPortletPreferences();
                 final IPortletPreference portletPreference = new PortletPreferenceImpl("pref", false, "value");
                 preferences.add(portletPreference);
         
@@ -199,8 +196,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
                 //T1 - Verify it was converted from interim to persistent
                 final IPortletEntity portletEntity = portletEntityRegistry.getPortletEntity(request, portletEntityId);
                 assertEquals(PersistentPortletEntityWrapper.class, portletEntity.getClass());
-                final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
-                final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
+                final List<IPortletPreference> preferences = portletEntity.getPortletPreferences();
                 assertEquals(1, preferences.size());
                 
                 //T2 - get the entity and add preferences
@@ -212,8 +208,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
                         assertEquals(portletEntity, portletEntity);
         
                         //T2 - add preference
-                        final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
-                        final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
+                        final List<IPortletPreference> preferences = portletEntity.getPortletPreferences();
                         preferences.clear();
                         
                         //T2 - Store the entity
@@ -232,8 +227,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
                         final IPortletEntity portletEntity = portletEntityRegistry.getPortletEntity(request, localPortletEntityId);
                         assertNotNull(portletEntity);
                         assertEquals(SessionPortletEntityImpl.class, portletEntity.getClass());
-                        final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
-                        final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
+                        final List<IPortletPreference> preferences = portletEntity.getPortletPreferences();
                         assertEquals(0, preferences.size());
                         
                         return null;
@@ -258,8 +252,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
                 //T1 - Verify it was converted from interim to persistent
                 final IPortletEntity portletEntity = portletEntityRegistry.getPortletEntity(request, portletEntityId);
                 assertEquals(PersistentPortletEntityWrapper.class, portletEntity.getClass());
-                final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
-                final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
+                final List<IPortletPreference> preferences = portletEntity.getPortletPreferences();
                 assertEquals(2, preferences.size());
                 
                 return null;
@@ -306,8 +299,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
                 final IPortletEntity portletEntity = portletEntityRegistry.getPortletEntity(request, portletEntityId);
                 
                 //Add a preference
-                final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
-                final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
+                final List<IPortletPreference> preferences = portletEntity.getPortletPreferences();
                 final IPortletPreference portletPreference = new PortletPreferenceImpl("pref", false, "value");
                 preferences.add(portletPreference);
         
@@ -324,8 +316,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
                 //T1 - Verify it was converted from interim to persistent
                 final IPortletEntity portletEntity = portletEntityRegistry.getPortletEntity(request, portletEntityId);
                 assertEquals(PersistentPortletEntityWrapper.class, portletEntity.getClass());
-                final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
-                final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
+                final List<IPortletPreference> preferences = portletEntity.getPortletPreferences();
                 assertEquals(1, preferences.size());
                 
                 //T2 - get the entity and add preferences
@@ -337,8 +328,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
                         assertEquals(portletEntity, portletEntity);
         
                         //T2 - remove preferences
-                        final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
-                        final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
+                        final List<IPortletPreference> preferences = portletEntity.getPortletPreferences();
                         preferences.clear();
                         
                         //T2 - Store the entity
@@ -356,8 +346,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
                         //T2 - Verify it was converted from persistent to interim
                         IPortletEntity portletEntity = portletEntityRegistry.getPortletEntity(request, localPortletEntityId);
                         assertEquals(SessionPortletEntityImpl.class, portletEntity.getClass());
-                        IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
-                        List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
+                        List<IPortletPreference> preferences = portletEntity.getPortletPreferences();
                         assertEquals(0, preferences.size());
                         
                         return null;
@@ -381,8 +370,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
                 //T1 - Verify it was converted from interim to persistent
                 final IPortletEntity portletEntity = portletEntityRegistry.getPortletEntity(request, portletEntityId);
                 assertEquals(SessionPortletEntityImpl.class, portletEntity.getClass());
-                final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
-                final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
+                final List<IPortletPreference> preferences = portletEntity.getPortletPreferences();
                 assertEquals(0, preferences.size());
                 
                 return null;
@@ -424,11 +412,10 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
                     public IPortletEntityId call() throws Exception {
                         //T2 - Get entity
                         final IPortletEntity localPortletEntity = portletEntityRegistry.getPortletEntity(request, portletEntity.getPortletEntityId().getStringId());
-                        assertEquals(localPortletEntity, localPortletEntity);
+                        assertEquals(portletEntity, localPortletEntity);
         
                         //T2 - Add a preference
-                        final IPortletPreferences portletPreferences = localPortletEntity.getPortletPreferences();
-                        final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
+                        final List<IPortletPreference> preferences = localPortletEntity.getPortletPreferences();
                         final IPortletPreference portletPreference = new PortletPreferenceImpl("pref2", false, "value");
                         preferences.add(portletPreference);
                         
@@ -447,8 +434,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
                         //T2 - Verify it was converted from interim to persistent
                         IPortletEntity portletEntity = portletEntityRegistry.getPortletEntity(request, portletEntityId);
                         assertEquals(PersistentPortletEntityWrapper.class, portletEntity.getClass());
-                        IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
-                        List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
+                        List<IPortletPreference> preferences = portletEntity.getPortletPreferences();
                         assertEquals(1, preferences.size());
                         
                         return null;
@@ -456,8 +442,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
                 });
         
                 //T1 - clear preferences
-                final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
-                final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
+                final List<IPortletPreference> preferences = portletEntity.getPortletPreferences();
                 preferences.clear();
         
                 //T1 - Store the entity
@@ -473,8 +458,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
                 //T1 - Verify it was converted from interim to persistent
                 final IPortletEntity portletEntity = portletEntityRegistry.getPortletEntity(request, portletEntityId);
                 assertEquals(SessionPortletEntityImpl.class, portletEntity.getClass());
-                final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
-                final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
+                final List<IPortletPreference> preferences = portletEntity.getPortletPreferences();
                 assertEquals(0, preferences.size());
                 
                 return null;
@@ -523,11 +507,10 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
                     public IPortletEntityId call() throws Exception {
                         //T2 - Get entity
                         final IPortletEntity localPortletEntity = portletEntityRegistry.getPortletEntity(request, portletEntity.getPortletEntityId().getStringId());
-                        assertEquals(localPortletEntity, localPortletEntity);
+                        assertEquals(portletEntity, localPortletEntity);
         
                         //T2 - Add a preference
-                        final IPortletPreferences portletPreferences = localPortletEntity.getPortletPreferences();
-                        final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
+                        final List<IPortletPreference> preferences = localPortletEntity.getPortletPreferences();
                         final IPortletPreference portletPreference = new PortletPreferenceImpl("pref2", false, "value");
                         preferences.add(portletPreference);
                         
@@ -546,8 +529,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
                         //T2 - Verify it was converted from interim to persistent
                         IPortletEntity portletEntity = portletEntityRegistry.getPortletEntity(request, portletEntityId);
                         assertEquals(PersistentPortletEntityWrapper.class, portletEntity.getClass());
-                        IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
-                        List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
+                        List<IPortletPreference> preferences = portletEntity.getPortletPreferences();
                         assertEquals(1, preferences.size());
                         
                         return null;
@@ -555,8 +537,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
                 });
         
                 //T1 - Add a preference
-                final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
-                final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
+                final List<IPortletPreference> preferences = portletEntity.getPortletPreferences();
                 final IPortletPreference portletPreference = new PortletPreferenceImpl("pref1", false, "value");
                 preferences.add(portletPreference);
         
@@ -573,8 +554,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
                 //T1 - Verify it was converted from interim to persistent
                 final IPortletEntity portletEntity = portletEntityRegistry.getPortletEntity(request, portletEntityId);
                 assertEquals(PersistentPortletEntityWrapper.class, portletEntity.getClass());
-                final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
-                final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
+                final List<IPortletPreference> preferences = portletEntity.getPortletPreferences();
                 assertEquals(1, preferences.size());
                 
                 return null;
@@ -621,8 +601,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
                 final IPortletEntity portletEntity = portletEntityRegistry.getPortletEntity(request, portletEntityId);
                 
                 //Add a preference
-                final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
-                final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
+                final List<IPortletPreference> preferences = portletEntity.getPortletPreferences();
                 final IPortletPreference portletPreference = new PortletPreferenceImpl("pref", false, "value");
                 preferences.add(portletPreference);
         
@@ -639,8 +618,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
                 //Verify it was converted from interim to persistent
                 final IPortletEntity portletEntity = portletEntityRegistry.getPortletEntity(request, portletEntityId);
                 assertEquals(PersistentPortletEntityWrapper.class, portletEntity.getClass());
-                final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
-                final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
+                final List<IPortletPreference> preferences = portletEntity.getPortletPreferences();
                 assertEquals(1, preferences.size());
 
                 //remove all preferences
@@ -660,8 +638,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
                 //Verify it switched from persistent to interim
                 final IPortletEntity portletEntity = portletEntityRegistry.getPortletEntity(request, portletEntityId);
                 assertEquals(SessionPortletEntityImpl.class, portletEntity.getClass());
-                final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
-                final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
+                final List<IPortletPreference> preferences = portletEntity.getPortletPreferences();
                 assertEquals(0, preferences.size());
                 
                 return null;
@@ -708,8 +685,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
                 final IPortletEntity portletEntity = portletEntityRegistry.getPortletEntity(request, portletEntityId);
                 
                 //Add a preference
-                final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
-                final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
+                final List<IPortletPreference> preferences = portletEntity.getPortletPreferences();
                 final IPortletPreference portletPreference = new PortletPreferenceImpl("pref", false, "value");
                 preferences.add(portletPreference);
         
@@ -726,8 +702,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
                 //Verify it was converted from interim to persistent
                 final IPortletEntity portletEntity = portletEntityRegistry.getPortletEntity(request, portletEntityId);
                 assertEquals(PersistentPortletEntityWrapper.class, portletEntity.getClass());
-                final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
-                final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
+                final List<IPortletPreference> preferences = portletEntity.getPortletPreferences();
                 assertEquals(1, preferences.size());
 
                 //add another preference
@@ -747,8 +722,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
                 //Verify it was converted from interim to persistent
                 final IPortletEntity portletEntity = portletEntityRegistry.getPortletEntity(request, portletEntityId);
                 assertEquals(PersistentPortletEntityWrapper.class, portletEntity.getClass());
-                final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
-                final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
+                final List<IPortletPreference> preferences = portletEntity.getPortletPreferences();
                 assertEquals(2, preferences.size());
                 
                 return null;
@@ -854,8 +828,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
                 final IPortletEntity portletEntity = portletEntityRegistry.getPortletEntity(request, portletEntityId);
                 
                 //Add a preference
-                final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
-                final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
+                final List<IPortletPreference> preferences = portletEntity.getPortletPreferences();
                 final IPortletPreference portletPreference = new PortletPreferenceImpl("pref", false, "value");
                 preferences.add(portletPreference);
         
@@ -872,8 +845,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
                 //Verify it was converted from interim to persistent
                 final IPortletEntity portletEntity = portletEntityRegistry.getPortletEntity(request, portletEntityId);
                 assertEquals(PersistentPortletEntityWrapper.class, portletEntity.getClass());
-                final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
-                final List<IPortletPreference> preferences = portletPreferences.getPortletPreferences();
+                final List<IPortletPreference> preferences = portletEntity.getPortletPreferences();
                 assertEquals(1, preferences.size());
                 
                 return null;

@@ -46,17 +46,14 @@ public interface IPortletDefinition extends IBasicEntity, IPortalData {
     public IPortletDefinitionId getPortletDefinitionId();
     
     /**
-     * @return The preferences for this portlet definition, will not be null.
+     * @return The List of PortletPreferences, will not be null
      */
-    public IPortletPreferences getPortletPreferences();
-
-    public void setPortletPreferences(List<IPortletPreference> portletPreferences);
-
+    public List<IPortletPreference> getPortletPreferences();
+    
     /**
-     * @param portletPreferences The preferences for this portlet definition.
-     * @throws IllegalArgumentException If preferences is null.
+     * @param portletPreferences The List of PortletPreferences, null clears the preferences but actually sets an empty list
      */
-    public void setPortletPreferences(IPortletPreferences portletPreferences);
+    public void setPortletPreferences(List<IPortletPreference> portletPreferences);
     
     public PortletLifecycleState getLifecycleState();
     

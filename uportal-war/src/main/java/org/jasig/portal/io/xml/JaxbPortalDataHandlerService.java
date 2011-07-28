@@ -21,7 +21,6 @@ package org.jasig.portal.io.xml;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -62,6 +61,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.DirectoryScanner;
 import org.jasig.portal.utils.AntPatternFileFilter;
 import org.jasig.portal.utils.ConcurrentDirectoryScanner;
+import org.jasig.portal.utils.ResourceUtils;
 import org.jasig.portal.xml.StaxUtils;
 import org.jasig.portal.xml.XmlUtilities;
 import org.jasig.portal.xml.stream.BufferedXMLEventReader;
@@ -393,6 +393,11 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         this.importData(resource, null);
     }
     
+    @Override
+    public void importData(Source source) {
+		this.importData(source, null);
+    }
+    
     /**
      * @param portalDataKey Optional PortalDataKey to use, useful for batch imports where post-processing of keys has already take place
      */
@@ -406,18 +411,8 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         }
         
         try {
-            String resourceUri;
-            try {
-                resourceUri = resource.getURI().toString();
-            }
-            catch (FileNotFoundException e) {
-                resourceUri = resource.getDescription();
-            }
-            catch (IOException e) {
-                throw new RuntimeException("Could not create URI for resource: " + resource, e);
-            }
-            
-            this.importData(resource, new StreamSource(resourceStream, resourceUri), portalDataKey);
+            final String resourceUri = ResourceUtils.getResourceUri(resource);
+            this.importData(new StreamSource(resourceStream, resourceUri), portalDataKey);
         }
         finally {
             IOUtils.closeQuietly(resourceStream);
@@ -427,7 +422,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
     /* (non-Javadoc)
      * @see org.jasig.portal.io.xml.IEntityImportService#importEntity(javax.xml.transform.Source)
      */
-    protected final void importData(final Resource resource, final Source source, PortalDataKey portalDataKey) {
+    protected final void importData(final Source source, PortalDataKey portalDataKey) {
         //Get a StAX reader for the source to determine info about the data to import
         final BufferedXMLEventReader bufferedXmlEventReader = createSourceXmlEventReader(source);
         
@@ -438,17 +433,19 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
             bufferedXmlEventReader.reset();
         }
         
+        final String systemId = source.getSystemId();
+        
         //Post Process the PortalDataKey to see if more complex import operations are needed
         final IPortalDataType portalDataType = this.dataKeyTypes.get(portalDataKey);
-        if (portalDataType == null) {
-            throw new RuntimeException("No IPortalDataType configured for " + portalDataKey + ", the resource will be ignored: " + resource);
+		if (portalDataType == null) {
+            throw new RuntimeException("No IPortalDataType configured for " + portalDataKey + ", the resource will be ignored: " + systemId);
         }
-        final Set<PortalDataKey> postProcessedPortalDataKeys = portalDataType.postProcessPortalDataKey(resource, portalDataKey, bufferedXmlEventReader);
+        final Set<PortalDataKey> postProcessedPortalDataKeys = portalDataType.postProcessPortalDataKey(systemId, portalDataKey, bufferedXmlEventReader);
         bufferedXmlEventReader.reset();
         
         //If only a single result from post processing import
         if (postProcessedPortalDataKeys.size() == 1) {
-            this.importOrUpgradeData(resource, DataAccessUtils.singleResult(postProcessedPortalDataKeys), bufferedXmlEventReader);
+            this.importOrUpgradeData(systemId, DataAccessUtils.singleResult(postProcessedPortalDataKeys), bufferedXmlEventReader);
         }
         //If multiple results from post processing ordering is needed
         else {
@@ -457,7 +454,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
                 if (postProcessedPortalDataKeys.contains(orderedPortalDataKey)) {
                     //Reset the to start of the XML document for each import/upgrade call
                     bufferedXmlEventReader.reset();
-                    this.importOrUpgradeData(resource, orderedPortalDataKey, bufferedXmlEventReader);
+                    this.importOrUpgradeData(systemId, orderedPortalDataKey, bufferedXmlEventReader);
                 }
             }
         }
@@ -466,21 +463,21 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
     /**
      * Run the import/update process on the data
      */
-    protected final void importOrUpgradeData(Resource resource, PortalDataKey portalDataKey, XMLEventReader xmlEventReader) {
+    protected final void importOrUpgradeData(String systemId, PortalDataKey portalDataKey, XMLEventReader xmlEventReader) {
         //See if there is a registered importer for the data, if so import
         final IDataImporter<Object> dataImporterExporter = this.portalDataImporters.get(portalDataKey);
         if (dataImporterExporter != null) {
-            this.logger.debug("Importing: {}", resource);
+            this.logger.debug("Importing: {}", systemId);
             final Object data = unmarshallData(xmlEventReader, dataImporterExporter);
             dataImporterExporter.importData(data);
-            this.logger.info("Imported : {}", resource);
+            this.logger.info("Imported : {}", systemId);
             return;
         }
         
         //No importer, see if there is an upgrader, if so upgrade
         final IDataUpgrader dataUpgrader = this.portalDataUpgraders.get(portalDataKey);
         if (dataUpgrader != null) {
-            this.logger.debug("Upgrading: {}", resource);
+            this.logger.debug("Upgrading: {}", systemId);
             
             final StAXSource staxSource;
             try {
@@ -493,20 +490,20 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
             final DOMResult result = new DOMResult();
             final boolean doImport = dataUpgrader.upgradeData(staxSource, result);
             if (doImport) {
-                this.logger.info("Upgraded: {}", resource);
+                this.logger.info("Upgraded: {}", systemId);
                 //If the upgrader didn't handle the import as well wrap the result DOM in a new Source and start the import process over again
                 final org.w3c.dom.Node node = result.getNode();
-                final DOMSource upgradedSource = new DOMSource(node);
-                this.importData(resource, upgradedSource, null);
+                final DOMSource upgradedSource = new DOMSource(node, systemId);
+                this.importData(upgradedSource, null);
             }
             else {
-                this.logger.info("Upgraded and Imported: {}", resource);
+                this.logger.info("Upgraded and Imported: {}", systemId);
             }
             return;
         }
         
         //No importer or upgrader found, fail
-        throw new IllegalArgumentException("Provided data " + portalDataKey + " has no registered importer or upgrader support: " + resource);
+        throw new IllegalArgumentException("Provided data " + portalDataKey + " has no registered importer or upgrader support: " + systemId);
     }
 
     protected Object unmarshallData(final XMLEventReader bufferedXmlEventReader, final IDataImporter<Object> dataImporterExporter) {
@@ -621,7 +618,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         
         for (final String typeId : typeIds) {
             final File typeDir = new File(directory, typeId);
-            logger.info("Exporting all data of type {} to {}", typeId, typeDir);
+            logger.info("Adding all data of type {} to export queue: {}", typeId, typeDir);
             
             final Iterable<? extends IPortalData> dataForType = this.getPortalData(typeId);
             for (final IPortalData data : dataForType) {

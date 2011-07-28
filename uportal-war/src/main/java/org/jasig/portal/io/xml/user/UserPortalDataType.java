@@ -27,7 +27,6 @@ import javax.xml.stream.XMLEventReader;
 
 import org.jasig.portal.io.xml.AbstractPortalDataType;
 import org.jasig.portal.io.xml.PortalDataKey;
-import org.springframework.core.io.Resource;
 
 
 /**
@@ -103,9 +102,9 @@ public class UserPortalDataType extends AbstractPortalDataType {
     
     @SuppressWarnings("deprecation")
     @Override
-    protected PortalDataKey postProcessSinglePortalDataKey(Resource input, PortalDataKey portalDataKey, XMLEventReader reader) {
+    protected PortalDataKey postProcessSinglePortalDataKey(String systemId, PortalDataKey portalDataKey, XMLEventReader reader) {
         //If the filename ends in .template-user switch over to the TemplateUserPortalDataType data types 
-        if (input.getFilename().endsWith(".template-user")) {
+        if (systemId.endsWith(".template-user")) {
             if (IMPORT_32_DATA_KEY.equals(portalDataKey)) {
                 return TemplateUserPortalDataType.IMPORT_32_DATA_KEY;
             }

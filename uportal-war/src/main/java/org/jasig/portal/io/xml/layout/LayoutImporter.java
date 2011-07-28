@@ -17,15 +17,30 @@
  * under the License.
  */
 
-package org.jasig.portal.xml.xpath;
+package org.jasig.portal.io.xml.layout;
 
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
+import org.dom4j.Element;
+import org.jasig.portal.io.xml.crn.AbstractDom4jImporter;
+import org.jasig.portal.layout.IUserLayoutStore;
+import org.jasig.portal.utils.Tuple;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
+ * Imports a layout
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface XPathExpressionCallback<T> {
-    public T doWithExpression(XPathExpression xPathExpression) throws XPathExpressionException;
+public class LayoutImporter extends AbstractDom4jImporter {
+    private IUserLayoutStore userLayoutStore;
+    
+    @Autowired
+    public void setUserLayoutStore(IUserLayoutStore userLayoutStore) {
+        this.userLayoutStore = userLayoutStore;
+    }
+
+    @Override
+    protected void importDataElement(Tuple<String, Element> data) {
+        userLayoutStore.importLayout(data.second);
+    }
 }

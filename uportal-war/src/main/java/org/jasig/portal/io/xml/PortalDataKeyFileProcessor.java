@@ -35,6 +35,7 @@ import org.apache.commons.io.IOUtils;
 import org.codehaus.stax2.XMLInputFactory2;
 import org.jasig.portal.io.xml.IPortalDataHandlerService.BatchImportOptions;
 import org.jasig.portal.utils.ConcurrentMapUtils;
+import org.jasig.portal.utils.ResourceUtils;
 import org.jasig.portal.xml.StaxUtils;
 import org.jasig.portal.xml.stream.BufferedXMLEventReader;
 import org.slf4j.Logger;
@@ -110,7 +111,8 @@ public final class PortalDataKeyFileProcessor implements Function<Resource, Obje
         }
         
         //Allow the PortalDataType to do any necessary post-processing of the input, needed as some types require extra work
-        final Set<PortalDataKey> processedPortalDataKeys = portalDataType.postProcessPortalDataKey(input, portalDataKey, xmlEventReader);
+        final String resourceUri = ResourceUtils.getResourceUri(input);
+        final Set<PortalDataKey> processedPortalDataKeys = portalDataType.postProcessPortalDataKey(resourceUri, portalDataKey, xmlEventReader);
         
         for (final PortalDataKey processedPortalDataKey : processedPortalDataKeys) {
             //Add the PortalDataKey and File into the map

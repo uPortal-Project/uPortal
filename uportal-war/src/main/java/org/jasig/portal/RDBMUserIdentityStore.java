@@ -36,8 +36,6 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.ILockableEntityGroup;
-import org.jasig.portal.layout.dao.IStylesheetUserPreferencesDao;
-import org.jasig.portal.portlet.dao.IPortletEntityDao;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
@@ -52,8 +50,6 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -278,20 +274,20 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     * @see org.jasig.portal.IUserIdentityStore#getPortalUserName(int)
     */
    public String getPortalUserName(final int uPortalUID) {
-       final DataSource dataSource = RDBMServices.getDataSource();
-       final SimpleJdbcTemplate simpleJdbcTemplate = new SimpleJdbcTemplate(dataSource);
-
-       final List<String> results = simpleJdbcTemplate.query("SELECT USER_NAME FROM UP_USER WHERE USER_ID=?", this.userNameRowMapper, uPortalUID);
-       final String userName = (String)DataAccessUtils.singleResult(results);
-       return userName;
+       final List<String> results = this.jdbcOperations.queryForList(
+               "SELECT USER_NAME FROM UP_USER WHERE USER_ID=?", String.class, uPortalUID);
+       return DataAccessUtils.singleResult(results);
    }
    
-   private final UserNameRowMapper userNameRowMapper = new UserNameRowMapper();
-   private class UserNameRowMapper implements ParameterizedRowMapper<String> {
-       public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-           return rs.getString("USER_NAME");
-       }
-   }
+    /* (non-Javadoc)
+    * @see org.jasig.portal.IUserIdentityStore#getPortalUserId(java.lang.String)
+    */
+    @Override
+    public Integer getPortalUserId(String userName) {
+        final List<Integer> results = this.jdbcOperations.queryForList(
+                "SELECT USER_ID FROM UP_USER WHERE USER_NAME=?", Integer.class, userName);
+        return DataAccessUtils.singleResult(results);
+    }
 
    private int __getPortalUID (IPerson person, boolean createPortalData) throws AuthorizationException {
        PortalUser portalUser = null;

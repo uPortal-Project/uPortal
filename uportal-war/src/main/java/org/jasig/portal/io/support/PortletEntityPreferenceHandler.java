@@ -33,7 +33,6 @@ import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletPreference;
-import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataRetrievalFailureException;
@@ -65,8 +64,7 @@ public class PortletEntityPreferenceHandler {
         
         for (final Iterator<IPortletEntity> entityItr = portletEntities.iterator(); entityItr.hasNext(); ) {
             final IPortletEntity portletEntity = entityItr.next();
-            final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
-            final List<IPortletPreference> preferencesList = portletPreferences.getPortletPreferences();
+            final List<IPortletPreference> preferencesList = portletEntity.getPortletPreferences();
             
             //Only bother with entities that have preferences
             if (preferencesList.size() <= 0) {
@@ -91,8 +89,7 @@ public class PortletEntityPreferenceHandler {
         }
         
         //Persist the changes.
-        final IPortletPreferences portletPreferences = portletEntity.getPortletPreferences();
-        portletPreferences.setPortletPreferences(portletPreferencesList);
+        portletEntity.setPortletPreferences(portletPreferencesList);
         this.portletEntityDao.updatePortletEntity(portletEntity);
     }
     

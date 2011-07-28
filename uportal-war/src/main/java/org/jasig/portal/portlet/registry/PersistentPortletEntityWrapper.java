@@ -19,6 +19,7 @@
 
 package org.jasig.portal.portlet.registry;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.portlet.WindowState;
@@ -28,7 +29,7 @@ import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
-import org.jasig.portal.portlet.om.IPortletPreferences;
+import org.jasig.portal.portlet.om.IPortletPreference;
 
 /**
  * Wrapper for portlet entities that are persistent. Overrides the entity ID to be a consistent value 
@@ -87,16 +88,16 @@ class PersistentPortletEntityWrapper implements IPortletEntity {
     public void setWindowState(IStylesheetDescriptor stylesheetDescriptor, WindowState state) {
         this.persistentEntity.setWindowState(stylesheetDescriptor, state);
     }
-    @Override
-    public IPortletPreferences getPortletPreferences() {
-        return this.persistentEntity.getPortletPreferences();
-    }
-    @Override
-    public void setPortletPreferences(IPortletPreferences portletPreferences) {
-        this.persistentEntity.setPortletPreferences(portletPreferences);
-    }
+	@Override
+	public List<IPortletPreference> getPortletPreferences() {
+		return this.persistentEntity.getPortletPreferences();
+	}
+	@Override
+	public void setPortletPreferences(List<IPortletPreference> portletPreferences) {
+		this.persistentEntity.setPortletPreferences(portletPreferences);
+	}
 
-    @Override
+	@Override
     public int hashCode() {
         return this.persistentEntity.hashCode();
     }

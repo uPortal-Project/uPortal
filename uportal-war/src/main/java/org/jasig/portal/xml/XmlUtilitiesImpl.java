@@ -163,6 +163,46 @@ public class XmlUtilitiesImpl implements XmlUtilities {
         
         return writer.toString();
     }
+    
+    /* 
+     * Credit for this impl from: http://snippets.dzone.com/posts/show/3754
+     */
+    @Override
+    public String getUniqueXPath(Node node) {
+        if (node == null) {
+            throw new IllegalArgumentException("Node cannot be null");
+        }
+        
+        final StringBuilder path = new StringBuilder();
+        
+        for (; node != null && node.getNodeType() == Node.ELEMENT_NODE; node = node.getParentNode()) {
+            final int elementIndex = getElementIndex(node);
+            final String nodeName = node.getNodeName();
+            if (elementIndex > 1) {
+                path.insert(0, "]").insert(0, elementIndex).insert(0, "[");
+            }
+            path.insert(0, nodeName).insert(0, "/");
+            
+        }
+        
+        return path.toString();
+    }
+    
+    /**
+     * Gets the index of this element relative to other siblings with the same node name
+     */
+    private int getElementIndex(Node node) {
+        final String nodeName = node.getNodeName();
+        
+        int count = 1;
+        for (Node previousSibling = node.getPreviousSibling(); previousSibling != null; previousSibling = previousSibling.getPreviousSibling()) {
+            if (previousSibling.getNodeType() == Node.ELEMENT_NODE && previousSibling.getNodeName() == nodeName) {
+                count++;
+            }
+        }
+        
+        return count;
+    }
 
     private CachedResource<Templates> getStylesheetCachedResource(Resource stylesheet) throws IOException {
         return this.cachingResourceLoader.getResource(stylesheet, this.templatesBuilder);

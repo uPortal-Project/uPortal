@@ -27,7 +27,6 @@ import javax.xml.stream.XMLEventReader;
 
 import org.jasig.portal.io.xml.AbstractPortalDataType;
 import org.jasig.portal.io.xml.PortalDataKey;
-import org.springframework.core.io.Resource;
 
 
 /**
@@ -85,9 +84,9 @@ public class LayoutPortalDataType extends AbstractPortalDataType {
     
     @SuppressWarnings("deprecation")
     @Override
-    protected PortalDataKey postProcessSinglePortalDataKey(Resource input, PortalDataKey portalDataKey, XMLEventReader reader) {
+    protected PortalDataKey postProcessSinglePortalDataKey(String systemId, PortalDataKey portalDataKey, XMLEventReader reader) {
         //If the filename ends in .fragment-layout switch over to the FragmentLayoutPortalDataType data types 
-        if (input.getFilename().endsWith(".fragment-layout")) {
+        if (systemId.endsWith(".fragment-layout")) {
             if (IMPORT_32_DATA_KEY.equals(portalDataKey)) {
                 return FragmentLayoutPortalDataType.IMPORT_32_DATA_KEY;
             }
