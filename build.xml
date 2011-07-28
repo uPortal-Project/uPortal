@@ -174,13 +174,21 @@
         <echo file="${portal-shell-script}" append="true">
 //HBM2DDL Script
 try {
+	schemaExportBean = '${schemaExportBean}';
     logger.info('');
     logger.info('');
-    logger.info('HBM2DDL: ${schemaExportBean}');
-    ${schemaExportBean}.hbm2ddl('${export}'.toBoolean(), '${create}'.toBoolean(), '${drop}'.toBoolean(), /${outputFileEscaped}/ == 'null' ? null : /${outputFileEscaped}/ , '${haltOnError}'.toBoolean());
+    logger.info('HBM2DDL: ' + schemaExportBean);
+
+	export = '${export}'.toBoolean();
+	create = '${create}'.toBoolean();
+	drop = '${drop}'.toBoolean();
+	outputFile = /${outputFileEscaped}/;
+	haltOnError = '${haltOnError}'.toBoolean();
+        	
+    ${schemaExportBean}.hbm2ddl(export, create, drop, outputFile == 'null' ? null : outputFile , haltOnError);
 }
 catch (Exception e) {
-    throw new RuntimeException("db-hibernate for ${schemaExportBean} failed", e);
+    throw new RuntimeException("db-hibernate for ' + schemaExportBean + ' failed", e);
 }
         </echo>
 
@@ -214,15 +222,23 @@ try {
     //DbLoader Script
     logger.info('');
     logger.info('');
+
+	tablesFile = /${tablefileEscaped}/;
+	dataFile = /${datafileEscaped}/;
+	scriptFile = /${scriptfileEscaped}/;
+	droptables = '${droptables}'.toBoolean();
+	createtables = '${createtables}'.toBoolean();
+	populatetables = '${populatetables}'.toBoolean();
+
     dbLoaderConfig = new org.jasig.portal.tools.dbloader.DbLoaderConfigBuilder();
-    dbLoaderConfig.setTablesFile(/${tablefileEscaped}/);
-    dbLoaderConfig.setDataFile(/${datafileEscaped}/);
-    if (/${scriptfileEscaped}/ != 'null') {
-        dbLoaderConfig.setScriptFile(/${scriptfileEscaped}/);
+    dbLoaderConfig.setTablesFile(tablesFile);
+    dbLoaderConfig.setDataFile(dataFile);
+    if (scriptFile != 'null') {
+        dbLoaderConfig.setScriptFile(scriptFile);
     }
-    dbLoaderConfig.setDropTables('${droptables}'.toBoolean());
-    dbLoaderConfig.setCreateTables('${createtables}'.toBoolean());
-    dbLoaderConfig.setPopulateTables('${populatetables}'.toBoolean());
+    dbLoaderConfig.setDropTables(droptables);
+    dbLoaderConfig.setCreateTables(createtables);
+    dbLoaderConfig.setPopulateTables(populatetables);
     logger.info('Running DbLoader with: ' + dbLoaderConfig);
     dbLoader.process(dbLoaderConfig);
 }
@@ -329,7 +345,9 @@ catch (Exception e) {
 
         <echo file="${portal-shell-script}" append="true">
 try {
-    if ('${type}' == 'null') {
+	type = '${type}';
+        	
+    if (type == 'null') {
         //List Data Types Script
         types = portalDataHandlerService.getPortalDataTypes();
         logger.info('');
@@ -341,7 +359,6 @@ try {
     }
     else {
         //List Data Script
-        type = '${type}';
         data = portalDataHandlerService.getPortalData(type);
         logger.info('');
         logger.info('');
@@ -385,13 +402,16 @@ try {
     logger.info('');
     logger.info('');
     dataDir = /${dirFullEscaped}/;
-    if ('${type}' != 'null' &amp;&amp; '${sysid}' != 'null') { 
-        logger.info('Exporting Data ${sysid} of type ${type} to: ' + dataDir);
-        portalDataHandlerService.exportData('${type}', '${sysid}', new File(dataDir));
+	type = '${type}';
+	sysid = '${sysid}';
+
+    if (type != 'null' &amp;&amp; sysid != 'null') { 
+        logger.info('Exporting Data ' + sysid + ' of type ' + type + ' to: ' + dataDir);
+        portalDataHandlerService.exportData(type, sysid, new File(dataDir));
     }
-    else if ('${type}' != 'null') { 
-        logger.info('Exporting All Data of type ${type} to: ' + dataDir);
-        portalDataHandlerService.exportAllDataOfType(['${type}'] as Set, new File(dataDir));
+    else if (type != 'null') { 
+        logger.info('Exporting All Data of type ' + type + ' to: ' + dataDir);
+        portalDataHandlerService.exportAllDataOfType([type] as Set, new File(dataDir));
     }
     else { 
         logger.info('Exporting All Data to: ' + dataDir);
@@ -399,7 +419,7 @@ try {
     }
 }
 catch (Exception e) {
-    throw new RuntimeException("data-export for " + dataDir + " and ${sysid} failed", e);
+    throw new RuntimeException("data-export for " + dataDir + " and " + sysid + " failed", e);
 }
         </echo>
 
