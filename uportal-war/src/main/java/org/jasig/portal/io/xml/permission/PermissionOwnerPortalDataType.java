@@ -35,17 +35,18 @@ import org.jasig.portal.io.xml.PortalDataKey;
  * @version $Revision$
  */
 public class PermissionOwnerPortalDataType extends AbstractPortalDataType {
-    public static final QName LEGACY_PERMISSION_OWNER_QNAME = new QName("permission-owner");
-    
-    public static final PortalDataKey IMPORT_33_DATA_KEY = new PortalDataKey(
-            LEGACY_PERMISSION_OWNER_QNAME, 
-            "classpath://org/jasig/portal/io/import-permission-owner_v3-3.crn",
-            null);
-
-    private static final List<PortalDataKey> PORTAL_DATA_KEYS = Arrays.asList(IMPORT_33_DATA_KEY);
+	public static final QName PERMISSION_OWNER_QNAME = new QName(
+	        "https://source.jasig.org/schemas/uportal/io/permission-owner", 
+	        "permission-owner");
+	
+    public static final PortalDataKey IMPORT_40_DATA_KEY = new PortalDataKey(
+    		PERMISSION_OWNER_QNAME, 
+            null,
+            "4.0");
+    private static final List<PortalDataKey> PORTAL_DATA_KEYS = Arrays.asList(IMPORT_40_DATA_KEY);
     
     public PermissionOwnerPortalDataType() {
-        super(LEGACY_PERMISSION_OWNER_QNAME);
+        super(PERMISSION_OWNER_QNAME);
     }
     
     @Override

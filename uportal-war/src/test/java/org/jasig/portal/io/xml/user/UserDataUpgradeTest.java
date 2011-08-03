@@ -34,7 +34,8 @@ public class UserDataUpgradeTest extends BaseXsltDataUpgraderTest {
                 new ClassPathResource("/org/jasig/portal/io/xml/user/upgrade-user_3-2.xsl"), 
                 UserPortalDataType.IMPORT_26_DATA_KEY, 
                 new ClassPathResource("/org/jasig/portal/io/xml/user/test_2-6.user.xml"), 
-                new ClassPathResource("/org/jasig/portal/io/xml/user/test_2-6_to_4-0_expected.user.xml"));
+                new ClassPathResource("/org/jasig/portal/io/xml/user/test_2-6_to_4-0_expected.user.xml"),
+                new ClassPathResource("/xsd/io/user/user-4.0.xsd"));
     }
 
     @Test
@@ -43,7 +44,8 @@ public class UserDataUpgradeTest extends BaseXsltDataUpgraderTest {
                 new ClassPathResource("/org/jasig/portal/io/xml/user/upgrade-user_3-2.xsl"), 
                 UserPortalDataType.IMPORT_30_DATA_KEY, 
                 new ClassPathResource("/org/jasig/portal/io/xml/user/test_3-0.user.xml"), 
-                new ClassPathResource("/org/jasig/portal/io/xml/user/test_3-0_to_4-0_expected.user.xml"));
+                new ClassPathResource("/org/jasig/portal/io/xml/user/test_3-0_to_4-0_expected.user.xml"),
+                new ClassPathResource("/xsd/io/user/user-4.0.xsd"));
     }
 
     @Test
@@ -52,6 +54,7 @@ public class UserDataUpgradeTest extends BaseXsltDataUpgraderTest {
                 new ClassPathResource("/org/jasig/portal/io/xml/user/upgrade-user_3-2.xsl"), 
                 UserPortalDataType.IMPORT_32_DATA_KEY, 
                 new ClassPathResource("/org/jasig/portal/io/xml/user/test_3-2.user.xml"), 
-                new ClassPathResource("/org/jasig/portal/io/xml/user/test_3-2_to_4-0_expected.user.xml"));
+                new ClassPathResource("/org/jasig/portal/io/xml/user/test_3-2_to_4-0_expected.user.xml"),
+                new ClassPathResource("/xsd/io/user/user-4.0.xsd"));
     }
 }

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<portlet-definition xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd" version="4.0">
+<ns11:title xmlns:ns11="https://source.jasig.org/schemas/uportal/io/portlet-definition">Groups Manager</ns11:title>
+<ns12:name xmlns:ns12="https://source.jasig.org/schemas/uportal/io/portlet-definition">Groups Manager</ns12:name>
+<ns13:fname xmlns:ns13="https://source.jasig.org/schemas/uportal/io/portlet-definition">groupsmanager</ns13:fname>
+<ns14:desc xmlns:ns14="https://source.jasig.org/schemas/uportal/io/portlet-definition">An administrative tool for creating and managing groups and memberships</ns14:desc>
+<ns15:type xmlns:ns15="https://source.jasig.org/schemas/uportal/io/portlet-definition">Custom</ns15:type>
+<ns16:timeout xmlns:ns16="https://source.jasig.org/schemas/uportal/io/portlet-definition">40000</ns16:timeout>
+    <ns17:category xmlns:ns17="https://source.jasig.org/schemas/uportal/io/portlet-definition">Applications</ns17:category>
+  
+    <ns18:group xmlns:ns18="https://source.jasig.org/schemas/uportal/io/portlet-definition">Portal Administrators</ns18:group>
+    <ns19:group xmlns:ns19="https://source.jasig.org/schemas/uportal/io/portlet-definition">Developers</ns19:group>
+  <parameter>
+<name>hasedit</name>
+<value>false</value>
+</parameter>
+<parameter>
+<name>hashelp</name>
+<value>false</value>
+</parameter>
+<parameter>
+<name>hasabout</name>
+<value>false</value>
+</parameter>
+<parameter>
+<name>secure</name>
+<value>false</value>
+</parameter>
+<parameter>
+<name>locale</name>
+<value>false</value>
+</parameter>
+</portlet-definition>
+

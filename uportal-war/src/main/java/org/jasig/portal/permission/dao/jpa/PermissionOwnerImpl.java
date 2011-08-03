@@ -42,6 +42,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Type;
 import org.jasig.portal.permission.IPermissionActivity;
 import org.jasig.portal.permission.IPermissionOwner;
 
@@ -81,6 +82,7 @@ class PermissionOwnerImpl implements IPermissionOwner, Serializable {
     private final long entityVersion;
     
     @Column(name = "OWNER_FNAME", length = 128, nullable = false, unique = true)
+	@Type(type = "fname")
     private String fname;
     
     @Column(name = "OWNER_NAME", length = 128, nullable = false)

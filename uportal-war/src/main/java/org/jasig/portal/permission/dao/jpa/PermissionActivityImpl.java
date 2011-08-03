@@ -34,6 +34,7 @@ import javax.persistence.Version;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
 import org.jasig.portal.permission.IPermissionActivity;
 
 /**
@@ -72,6 +73,7 @@ class PermissionActivityImpl implements IPermissionActivity, Serializable {
     private final long entityVersion;
     
     @Column(name = "ACTIVITY_FNAME", length = 128, nullable = false, unique = true)
+	@Type(type = "fname")
     private String fname;
     
     @Column(name = "ACTIVITY_NAME", length = 128, nullable = false, unique = true)

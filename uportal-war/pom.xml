@@ -504,6 +504,7 @@
                         <include>io/portlet-type/*.xsd</include>
                         <include>io/stylesheet-descriptor/*.xsd</include>
                         <include>io/user/*.xsd</include>
+                        <include>io/permission-owner/*.xsd</include>
                         <include>portlet-publishing/*.xsd</include>
                     </schemaIncludes>
                     <extension>true</extension>

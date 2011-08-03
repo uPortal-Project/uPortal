@@ -108,6 +108,8 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
     // Data importers mapped by PortalDataKey
     private Map<PortalDataKey, IDataImporter<Object>> portalDataImporters = Collections.emptyMap();
 
+    // ExportAll data types
+    private Set<IPortalDataType> exportAllPortalDataTypes = null;
     // All portal data types available for export
     private Set<IPortalDataType> exportPortalDataTypes = Collections.emptySet();
     // Data exporters mapped by IPortalDateType#getTypeId()
@@ -239,7 +241,16 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         this.portalDataExporters = Collections.unmodifiableMap(dataExportersMap);
         this.exportPortalDataTypes = Collections.unmodifiableSet(portalDataTypes);
     }
-
+    
+    /**
+     * Optional set of all portal data types to export. If not specified all available portal data types
+     * will be listed.
+     */
+    @javax.annotation.Resource(name="exportAllPortalDataTypes")
+    public void setExportAllPortalDataTypes(Set<IPortalDataType> exportAllPortalDataTypes) {
+    	this.exportAllPortalDataTypes = ImmutableSet.copyOf(exportAllPortalDataTypes);
+    }
+    
     /**
      * {@link IDataDeleter} implementations to delegate delete operations to. 
      */
@@ -490,11 +501,12 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
             final DOMResult result = new DOMResult();
             final boolean doImport = dataUpgrader.upgradeData(staxSource, result);
             if (doImport) {
-                this.logger.info("Upgraded: {}", systemId);
                 //If the upgrader didn't handle the import as well wrap the result DOM in a new Source and start the import process over again
                 final org.w3c.dom.Node node = result.getNode();
+                final PortalDataKey upgradedPortalDataKey = new PortalDataKey(node);
+                this.logger.info("Upgraded: {} to {}", systemId, upgradedPortalDataKey);
                 final DOMSource upgradedSource = new DOMSource(node, systemId);
-                this.importData(upgradedSource, null);
+                this.importData(upgradedSource, upgradedPortalDataKey);
             }
             else {
                 this.logger.info("Upgraded and Imported: {}", systemId);
@@ -615,64 +627,81 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         final boolean failOnError = true; //options != null ? options.isFailOnError() : true;
         
         final AtomicBoolean failed = new AtomicBoolean(false);
-        
-        for (final String typeId : typeIds) {
-            final File typeDir = new File(directory, typeId);
-            logger.info("Adding all data of type {} to export queue: {}", typeId, typeDir);
-            
-            final Iterable<? extends IPortalData> dataForType = this.getPortalData(typeId);
-            for (final IPortalData data : dataForType) {
-                final String dataId = data.getDataId();
-
-                //Check for completed futures on every iteration, needed to fail as fast as possible on an import exception
-                waitForFutures(exportFutures, failed, failOnError, false);
-                
-                //Create export task
-                Callable<Object> task = new Callable<Object>() {
-                    @Override
-                    public Object call() throws Exception {
-                        exportData(typeId, dataId, typeDir);
-                        return null;
-                    }
-                };
-                
-                //If failing on error add exception handling wrapper
-                if (failOnError) {
-                    task = new ErrorReportingCallable<Object>(exportFutures, failed, task);
-                }
-                
-                //If an exception has been reported stop immediately
-                if (failOnError && failed.get()) {
-                    break;
-                }
-                
-                //Submit the export task
-                final Future<?> exportFuture = this.importExportThreadPool.submit(task);
-                
-                //Set a reference to the new future in the callable, needed for error handling
-                if (task instanceof ErrorReportingCallable) {
-                    ((ErrorReportingCallable)task).setSelf(exportFuture);
-                }
-                
-                //Add the future for tracking
-                final ExportFuture futureHolder = new ExportFuture(exportFuture, typeId, dataId);
-                exportFutures.offer(futureHolder);
-            }
-            
-            //If an exception has been reported stop immediately
-            if (failOnError && failed.get()) {
-                break;
-            }
+        try {
+	        for (final String typeId : typeIds) {
+	            final File typeDir = new File(directory, typeId);
+	            logger.info("Adding all data of type {} to export queue: {}", typeId, typeDir);
+	            
+	            final Iterable<? extends IPortalData> dataForType = this.getPortalData(typeId);
+	            for (final IPortalData data : dataForType) {
+	                final String dataId = data.getDataId();
+	
+	                //Check for completed futures on every iteration, needed to fail as fast as possible on an import exception
+	                waitForFutures(exportFutures, failed, failOnError, false);
+	                
+	                //Create export task
+	                Callable<Object> task = new Callable<Object>() {
+	                    @Override
+	                    public Object call() throws Exception {
+	                        exportData(typeId, dataId, typeDir);
+	                        return null;
+	                    }
+	                };
+	                
+	                //If failing on error add exception handling wrapper
+	                if (failOnError) {
+	                    task = new ErrorReportingCallable<Object>(exportFutures, failed, task);
+	                }
+	                
+	                //If an exception has been reported stop immediately
+	                if (failOnError && failed.get()) {
+	                    break;
+	                }
+	                
+	                //Submit the export task
+	                final Future<?> exportFuture = this.importExportThreadPool.submit(task);
+	                
+	                //Set a reference to the new future in the callable, needed for error handling
+	                if (task instanceof ErrorReportingCallable) {
+	                    ((ErrorReportingCallable)task).setSelf(exportFuture);
+	                }
+	                
+	                //Add the future for tracking
+	                final ExportFuture futureHolder = new ExportFuture(exportFuture, typeId, dataId);
+	                exportFutures.offer(futureHolder);
+	            }
+	            
+	            //If an exception has been reported stop immediately
+	            if (failOnError && failed.get()) {
+	                break;
+	            }
+	        }
         }
-        
-        //Wait for all futures to complete
-        waitForFutures(exportFutures, failed, failOnError, true);
+        catch (RuntimeException e) {
+        	if (!failed.getAndSet(true)) {
+        		throw new RuntimeException("Halted due to failures", e);
+        	}
+
+        	throw e;
+        }
+        finally {
+	        //Wait for all futures to complete
+	        waitForFutures(exportFutures, failed, failOnError, true);
+        }
     }
 
     @Override
     public void exportAllData(File directory) {
+    	final Set<IPortalDataType> portalDataTypes;
+    	if (this.exportAllPortalDataTypes != null) {
+    		portalDataTypes = this.exportAllPortalDataTypes;
+    	}
+    	else {
+    		portalDataTypes = this.exportPortalDataTypes;
+    	}
+    	
         final Set<String> typeIds = new LinkedHashSet<String>();
-        for (final IPortalDataType portalDataType : this.exportPortalDataTypes) {
+		for (final IPortalDataType portalDataType : portalDataTypes) {
             typeIds.add(portalDataType.getTypeId());
         }
         this.exportAllDataOfType(typeIds, directory);

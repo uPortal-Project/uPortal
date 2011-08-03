@@ -19,11 +19,13 @@
 
 package org.jasig.portal.io.xml;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
+
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +40,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.jasig.portal.io.xml.permission.ExternalPermissionOwner;
 import org.jasig.portal.io.xml.ssd.ExternalStylesheetDescriptor;
 import org.jasig.portal.io.xml.user.UserType;
 import org.jasig.portal.utils.ICounterStore;
@@ -78,6 +81,11 @@ public class IdentityImportExportTest {
     private IDataImporter<UserType> userImporter;
     @javax.annotation.Resource(name="userImporterExporter")
     private IDataExporter<UserType> userExporter;
+    
+    @javax.annotation.Resource(name="permissionOwnerImporterExporter")
+    private IDataImporter<ExternalPermissionOwner> permissionOwnerImporter;
+    @javax.annotation.Resource(name="permissionOwnerImporterExporter")
+    private IDataExporter<ExternalPermissionOwner> permissionOwnerExporter;
     
     @Autowired private ICounterStore counterStore;
     private SimpleJdbcTemplate simpleJdbcTemplate;
@@ -160,6 +168,22 @@ public class IdentityImportExportTest {
                     @Override
                     public String apply(ExternalStylesheetDescriptor input) {
                         return input.getName();
+                    }
+                });
+    }
+    
+    @Test
+    public void testPermissionOwner40ImportExport() throws Exception {
+        final ClassPathResource permissionOwnerResource = new ClassPathResource("/org/jasig/portal/io/xml/permission-owner/test_4-0.permission-owner.xml");
+        
+        this.testIdentityImportExport(
+                this.permissionOwnerImporter, this.permissionOwnerExporter,
+                permissionOwnerResource,
+                new Function<ExternalPermissionOwner, String>() {
+
+                    @Override
+                    public String apply(ExternalPermissionOwner input) {
+                        return input.getFname();
                     }
                 });
     }

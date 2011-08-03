@@ -123,6 +123,9 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
 	@Override
     public PortletCategory getPortletCategory(String portletCategoryId) {
         IEntityGroup categoryGroup = GroupService.findGroup(portletCategoryId);
+        if (categoryGroup == null) {
+            return null;
+        }
         PortletCategory category = new PortletCategory(portletCategoryId);
         category.setName(categoryGroup.getName());
         category.setDescription(categoryGroup.getDescription());

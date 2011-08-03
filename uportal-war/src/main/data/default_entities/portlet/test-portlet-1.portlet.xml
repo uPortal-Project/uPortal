@@ -21,45 +21,30 @@
 
 
 <portlet-definition
-    xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" 
+    xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition ../../../resources/xsd/io/portlet-definition/portlet-definition-4.0.xsd"
-   
-    version="4.0"
->
+    version="4.0">
 
-  <title>Test Portlet 1</title>
-  <name>Test Portlet 1</name>
-  <fname>test-portlet-1</fname>
-  <desc>Test portlet 1 from Apache Pluto</desc>
-  <type>Portlet</type>
-  <timeout>600000</timeout>
-  <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
-    <up:webAppName>/pluto-testsuite</up:webAppName>
-    <up:portletName>TestPortlet1</up:portletName>
-  </portlet-descriptor>
-  
-  
-  
-  
+    <title>Test Portlet 1</title>
+    <name>Test Portlet 1</name>
+    <fname>test-portlet-1</fname>
+    <desc>Test portlet 1 from Apache Pluto</desc>
+    <type>Portlet</type>
+    <timeout>600000</timeout>
+    <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
+        <up:webAppName>/pluto-testsuite</up:webAppName>
+        <up:portletName>TestPortlet1</up:portletName>
+    </portlet-descriptor>
     <category>Testing</category>
-  
-  
     <group>Everyone</group>
-  
-  
-	<parameter>
-      <name>iconUrl</name>
-      <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/applications-development.png</value>
+    <parameter>
+        <name>iconUrl</name>
+        <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/applications-development.png</value>
     </parameter>
-  
-  
-    <portlet-preference> 
-      <name>TestName4</name>  
-      <readOnly>true</readOnly>  
-      
+    <portlet-preference>
+        <name>TestName4</name>
+        <readOnly>true</readOnly>
         <value>TestValue4</value>
-       
     </portlet-preference>
-  
 </portlet-definition>

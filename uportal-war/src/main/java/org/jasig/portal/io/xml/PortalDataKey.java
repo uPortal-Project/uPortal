@@ -24,6 +24,9 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 
 import org.apache.commons.lang.Validate;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 /**
  * Describes the type and version of a portal data XML file.
@@ -45,6 +48,45 @@ public class PortalDataKey {
     private QName name;
     private String script;
     private String version;
+    
+    public PortalDataKey(Node rootElement) {
+        if (rootElement.getNodeType() == Node.DOCUMENT_NODE) {
+            rootElement = ((Document)rootElement).getDocumentElement();
+        }
+        
+        final String nodeName = rootElement.getNodeName();
+        final String namespaceURI = rootElement.getNamespaceURI();
+        
+        if (namespaceURI != null) {
+            this.name = new QName(namespaceURI, nodeName);
+        }
+        else {
+            this.name = new QName(nodeName);
+        }
+        
+        final NamedNodeMap attributes = rootElement.getAttributes();
+        if (attributes != null) {
+            final Node scriptAttr = attributes.getNamedItem(SCRIPT_ATTRIBUTE_NAME.getLocalPart());
+            if (scriptAttr != null) {
+                this.script = scriptAttr.getTextContent();
+            }
+            else {
+                this.script = null;
+            }
+            
+            final Node versionAttr = attributes.getNamedItem(VERSION_ATTRIBUTE_NAME.getLocalPart());
+            if (versionAttr != null) {
+                this.version = versionAttr.getTextContent();
+            }
+            else {
+                this.version = null;
+            }
+        }
+        else {
+            this.script = null;
+            this.version = null;
+        }
+    }
     
     public PortalDataKey(StartElement startElement) {
         this.name = startElement.getName();
