@@ -78,7 +78,7 @@ public class XPathPoolImpl implements XPathOperations, DisposableBean {
 
     @Override
     public <T> T doWithExpression(String expression, Function<XPathExpression, T> callback) {
-        return this.doWithExpression(expression, null, callback);
+        return this.<T>doWithExpression(expression, null, callback);
     }
 
     @Override
@@ -104,7 +104,7 @@ public class XPathPoolImpl implements XPathOperations, DisposableBean {
 
     @Override
     public <T> T evaluate(String expression, final Object item, final QName returnType) {
-        return this.evaluate(expression, null, item, returnType);
+        return this.<T>evaluate(expression, null, item, returnType);
     }
 
     @Override
