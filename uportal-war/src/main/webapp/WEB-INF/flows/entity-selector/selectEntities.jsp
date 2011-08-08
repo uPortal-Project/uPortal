@@ -77,7 +77,7 @@
                     ================================================-->
                     <div class="view-multi-select">
                         <div class="columns-2">
-                            <div class="fl-container-flex55">
+                            <div class="fl-container-flex60">
                                 <!-- entity -->
                                 <div id="${n}entityBrowser" class="entity-browser">
                                     <!--breadcrumb-->
