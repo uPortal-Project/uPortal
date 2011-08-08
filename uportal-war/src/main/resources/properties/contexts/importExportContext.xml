@@ -384,12 +384,6 @@
         <property name="portalDataRetriever" ref="fragmentDefinitionDataFunction" />
     </bean>
     
-    <!-- exporters TODO
-    <bean id="groupPortalDataType" class="org.jasig.portal.io.xml.group.GroupPortalDataType"/>
-    <bean id="membershipPortalDataType" class="org.jasig.portal.io.xml.group.MembershipPortalDataType"/>
-    <bean id="permissionPortalDataType" class="org.jasig.portal.io.xml.permission.PermissionPortalDataType"/>
-    -->
-    
     <!-- 
      | Cernunnos Import Tasks
      +-->
