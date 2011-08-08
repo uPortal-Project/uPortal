@@ -269,7 +269,7 @@ public class LocaleManager implements Serializable {
      * @return the locale list as XML
      */
     public static Document xmlValueOf(Locale[] locales, Locale selectedLocale) {
-        Document doc = DocumentFactory.getNewDocument();
+        Document doc = DocumentFactory.getThreadDocument();
 
         // <locales>
         Element localesE = doc.createElement("locales");

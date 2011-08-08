@@ -23,10 +23,10 @@ package org.jasig.portal.io.xml;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class XsltDataUpgradeTestException extends Exception {
+public class XmlTestException extends Exception {
     private final String result;
 
-    public XsltDataUpgradeTestException(String message, String result, Throwable cause) {
+    public XmlTestException(String message, String result, Throwable cause) {
         super(message + "\nResult XML:\n" + result, cause);
         this.result = result;
     }

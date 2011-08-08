@@ -619,7 +619,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
       ResultSet rs;
       int userId = person.getID();
       final int realUserId = userId;
-      Document doc = DocumentFactory.getNewDocument();
+      Document doc = DocumentFactory.getThreadDocument();
       Element root = doc.createElement("layout");
       final Statement stmt = con.createStatement();
       // A separate statement is needed so as not to interfere with ResultSet

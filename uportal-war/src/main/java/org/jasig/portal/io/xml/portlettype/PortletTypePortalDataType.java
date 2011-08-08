@@ -39,36 +39,12 @@ public class PortletTypePortalDataType extends AbstractPortalDataType {
 	        "https://source.jasig.org/schemas/uportal/io/portlet-type", 
 	        "portlet-type");
 	
-	/**
-     * @deprecated used for importing old data files
-     */
-    @Deprecated
-    public static final QName LEGACY_CHANNEL_TYPE_QNAME = new QName("channel-type");
-	
 	public static final PortalDataKey IMPORT_40_DATA_KEY = new PortalDataKey(
             PORTLET_TYPE_QNAME, 
             null,
             "4.0");
     
-	/**
-     * @deprecated used for importing old data files
-     */
-    @Deprecated
-    public static final PortalDataKey IMPORT_30_DATA_KEY = new PortalDataKey(
-            LEGACY_CHANNEL_TYPE_QNAME,
-            "classpath://org/jasig/portal/io/import-channel-type_v3-0.crn",
-            null);
-    
-    /**
-     * @deprecated used for importing old data files
-     */
-    @Deprecated
-    public static final PortalDataKey IMPORT_26_DATA_KEY = new PortalDataKey(
-            LEGACY_CHANNEL_TYPE_QNAME, 
-            "classpath://org/jasig/portal/io/import-channel-type_v2-6.crn",
-            null);
-
-    private static final List<PortalDataKey> PORTAL_DATA_KEYS = Arrays.asList(IMPORT_26_DATA_KEY, IMPORT_30_DATA_KEY, IMPORT_40_DATA_KEY);
+    private static final List<PortalDataKey> PORTAL_DATA_KEYS = Arrays.asList(IMPORT_40_DATA_KEY);
     
     public PortletTypePortalDataType() {
         super(PORTLET_TYPE_QNAME);

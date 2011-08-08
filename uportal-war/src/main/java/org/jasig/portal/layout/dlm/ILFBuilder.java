@@ -70,7 +70,7 @@ public class ILFBuilder
         // the implementation class to set the identifier for that node
         // in the document.
 
-        Document result = DocumentFactory.getNewDocument();
+        Document result = DocumentFactory.getThreadDocument();
         Element plfLayout = PLF.getDocumentElement();
         Element ilfLayout = (Element) result.importNode( plfLayout, false );
         result.appendChild( ilfLayout );

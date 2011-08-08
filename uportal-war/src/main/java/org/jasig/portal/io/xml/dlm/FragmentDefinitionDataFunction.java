@@ -53,8 +53,8 @@ public class FragmentDefinitionDataFunction implements Function<IPortalDataType,
             @Override
             public IPortalData apply(FragmentDefinition fragmentDefinition) {
                 return new SimpleStringPortalData(
-                        fragmentDefinition.getOwnerId(),
                         fragmentDefinition.getName(),
+                        null,
                         fragmentDefinition.getDescription());
             }
         });

@@ -96,7 +96,6 @@
         <value>**/*.group_membership</value>
         <value>**/*.membership</value>
         <value>**/*.portlet-type</value>
-        <value>**/*.channel-type</value>
         <value>**/*.portlet</value>
         <value>**/*.channel</value>
         <value>**/*.permission</value>
@@ -238,6 +237,7 @@
         </property>
         <property name="task" ref="import-permission_v2-6" />
     </bean>
+    <bean id="fragmentDefinition31Importer" class="org.jasig.portal.io.xml.dlm.FragmentDefinitionImporter" />
 
     
     <!-- 
@@ -379,10 +379,8 @@
         <property name="portalDataRetriever" ref="layoutsDataFunction" />
     </bean>
     <bean id="fragmentDefinitionDataFunction" class="org.jasig.portal.io.xml.dlm.FragmentDefinitionDataFunction"/>
-    <bean id="fragmentDefinitionExporter" class="org.jasig.portal.io.xml.crn.CernunnosDataExporter">
-        <property name="idAttributeName" value="NAME"/>
+    <bean id="fragmentDefinitionExporter" class="org.jasig.portal.io.xml.dlm.FragmentDefinitionExporter">
         <property name="portalDataType" ref="fragmentDefinitionPortalDataType"/>
-        <property name="task" ref="export-fragment-definition" />
         <property name="portalDataRetriever" ref="fragmentDefinitionDataFunction" />
     </bean>
     

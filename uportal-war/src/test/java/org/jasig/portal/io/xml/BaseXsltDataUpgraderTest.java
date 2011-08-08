@@ -92,7 +92,7 @@ public abstract class BaseXsltDataUpgraderTest {
                 validator.validate(new StreamSource(new StringReader(resultString)));
             }
             catch (Exception e) {
-                throw new XsltDataUpgradeTestException("Failed to validate XSLT output against provided XSD", resultString, e);
+                throw new XmlTestException("Failed to validate XSLT output against provided XSD", resultString, e);
             }
         }
 
@@ -102,10 +102,10 @@ public abstract class BaseXsltDataUpgraderTest {
             assertTrue("Upgraded data doesn't match expected data: " + d, d.similar());
         }
         catch (Exception e) {
-            throw new XsltDataUpgradeTestException("Failed to assert similar between XSLT output and expected XML", resultString, e);
+            throw new XmlTestException("Failed to assert similar between XSLT output and expected XML", resultString, e);
         }
         catch (Error e) {
-            throw new XsltDataUpgradeTestException("Failed to assert similar between XSLT output and expected XML", resultString, e);
+            throw new XmlTestException("Failed to assert similar between XSLT output and expected XML", resultString, e);
         }
     }
     

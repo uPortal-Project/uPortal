@@ -115,8 +115,7 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
         
         if (LOG.isDebugEnabled()) {
             LOG.debug("\n\n------ Distributed Layout ------\n" +
-              "properties loaded = " + this.configurationLoader.getPropertyCount() +
-              "\nfragment definitions loaded = " +
+              "fragment definitions loaded = " +
               ( fragments == null ? 0 : fragments.size() ) +
               "\n\n------ Beginning Activation ------\n" );
         }
@@ -339,15 +338,14 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
             defaultUser = fragment.defaultLayoutOwnerID;
         }
         else {
-            final String defaultLayoutOwner = configurationLoader.getProperty( "defaultLayoutOwner" );
+            final String defaultLayoutOwner = PropertiesManager.getProperty("org.jasig.portal.layout.dlm.defaultLayoutOwner");
             if ( defaultLayoutOwner != null ) {
                 defaultUser = defaultLayoutOwner;
             }
             else {
                 try
                 {
-                    defaultUser
-                    = PropertiesManager.getProperty( RDBMDistributedLayoutStore.TEMPLATE_USER_NAME );
+                    defaultUser = PropertiesManager.getProperty( RDBMDistributedLayoutStore.TEMPLATE_USER_NAME );
                 }
                 catch( RuntimeException re )
                 {

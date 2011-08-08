@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -37,8 +36,6 @@ import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -66,7 +63,6 @@ public class LegacyConfigurationLoader implements ConfigurationLoader {
     
     private List<FragmentDefinition> fragments = null;
     private Map<String, FragmentDefinition> fragmentsByName = null;
-    private Properties properties = null;
     
     /**
      * @param configurationFile The dlm.xml file to load configuration from
@@ -108,7 +104,6 @@ public class LegacyConfigurationLoader implements ConfigurationLoader {
         }
         
         final NodeList propertyNodes = doc.getElementsByTagName( "dlm:property" );
-        this.properties = this.getProperties(propertyNodes);
         
         final NodeList fragmentNodes = doc.getElementsByTagName( "dlm:fragment" );
         final List<FragmentDefinition> localFragments = this.getFragments(fragmentNodes);
@@ -154,64 +149,6 @@ public class LegacyConfigurationLoader implements ConfigurationLoader {
     public FragmentDefinition getFragmentByName(String name) {
         this.loadedFlag.get();
         return this.fragmentsByName.get(name);
-    }
-
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.dlm.ConfigurationLoader#getProperty(java.lang.String)
-     */
-    @Override
-    public String getProperty(String propertyName) {
-        this.loadedFlag.get();
-        return this.properties.getProperty(propertyName);
-    }
-    
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.dlm.ConfigurationLoader#getPropertyCount()
-     */
-    @Override
-    public int getPropertyCount() {
-        this.loadedFlag.get();
-        return this.properties.size();
-    }
-
-    protected Properties getProperties( NodeList props )
-    {
-        if ( props == null || props.getLength() == 0 ) {
-            return null;
-        }
-
-        Properties properties = new Properties();
-
-        for( int i=0; i<props.getLength(); i++ )
-        {
-            Node node = props.item(i);
-            NamedNodeMap atts = node.getAttributes();
-            Node name = atts.getNamedItem( "name" );
-            Node value = atts.getNamedItem( "value" );
-            if ( name == null || name.equals( "" ) )
-            {
-                if (logger.isInfoEnabled()) {
-                    logger.info("\n\n---------- Warning ----------\nThe 'name'" +
-                            " attribute of the " +
-                            "property element is required and must not be empty " +
-                            "in \n'" + XmlUtilitiesImpl.toString(node) +
-                            "'\nfrom distributed layout managment configuration " +
-                            "file \n" + this.configurationFile.toString() +
-                            "  \n-----------------------------\n");
-                }
-                
-                continue;
-            }
-            if ( value == null ) {
-                properties.put( name.getNodeValue(), "" );
-            }
-            else {
-                properties.put( name.getNodeValue(),
-                    value.getNodeValue() );
-            }
-        }
-        return properties;
     }
 
     protected List<FragmentDefinition> getFragments( NodeList frags )

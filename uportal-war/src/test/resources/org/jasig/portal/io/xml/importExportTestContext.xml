@@ -54,12 +54,31 @@
         <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/permission-owner https://source.jasig.org/schemas/uportal/io/permission-owner/permission-owner-4.0.xsd" />
     </bean>
     <bean id="permissionOwnerDao" class="org.jasig.portal.permission.dao.jpa.JpaPermissionOwnerDao" />
+    
+    <bean id="fragmentDefinitionPortalDataType" class="org.jasig.portal.io.xml.dlm.FragmentDefinitionPortalDataType" />
+    <bean id="fragmentDefinitionImporter" class="org.jasig.portal.io.xml.dlm.FragmentDefinitionImporter">
+    </bean>
+    <bean id="fragmentDefinitionDataFunction" class="org.jasig.portal.io.xml.dlm.FragmentDefinitionDataFunction"/>
+    <bean id="fragmentDefinitionExporter" class="org.jasig.portal.io.xml.dlm.FragmentDefinitionExporter">
+        <property name="portalDataType" ref="fragmentDefinitionPortalDataType"/>
+        <property name="portalDataRetriever" ref="fragmentDefinitionDataFunction" />
+    </bean>
+    <bean id="fragmentDefinitionDao" class="org.jasig.portal.layout.dlm.FragmentDefinitionDao" />
 
     
     
     <bean id="counterStore" class="org.jasig.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.jasig.portal.utils.ICounterStore" />
     </bean>
+    <bean id="cachingResourceLoader" class="org.jasig.portal.spring.MockitoFactoryBean">
+        <constructor-arg value="org.jasig.portal.utils.cache.resource.CachingResourceLoader" />
+    </bean>
+    <bean id="templatesBuilder" class="org.jasig.portal.spring.MockitoFactoryBean">
+        <constructor-arg value="org.jasig.portal.utils.cache.resource.TemplatesBuilder" />
+    </bean>
+
+    <bean id="xmlUtilities" class="org.jasig.portal.xml.XmlUtilitiesImpl" />
+    <bean id="xpathOperations" class="org.jasig.portal.xml.xpath.XPathPoolImpl" />
     
     <import resource="classpath:/sharedJpaTestContext.xml"/>
 </beans>

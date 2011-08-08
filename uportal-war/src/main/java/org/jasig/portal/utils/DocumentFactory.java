@@ -53,12 +53,12 @@ public final class DocumentFactory {
      * return an <code>IPortalDocument</code> implementation.
      * @return an empty org.w3c.dom.Document implementation
      */
-    public static Document getNewDocument() {
-        return newDocumentBuilder().newDocument();
+    public static Document getThreadDocument() {
+        return getThreadDocumentBuilder().newDocument();
     }
 
     public static Document getDocumentFromStream(InputStream stream, String publicId) throws IOException, SAXException {
-        DocumentBuilder builder = newDocumentBuilder();
+        DocumentBuilder builder = getThreadDocumentBuilder();
         InputSource source = new InputSource(stream);
         source.setPublicId(publicId);
         Document doc = builder.parse(source);
@@ -67,7 +67,7 @@ public final class DocumentFactory {
 
     public static Document getDocumentFromStream(InputStream stream, EntityResolver er, String publicId)
             throws IOException, SAXException {
-        DocumentBuilder builder = newDocumentBuilder();
+        DocumentBuilder builder = getThreadDocumentBuilder();
         builder.setEntityResolver(er);
         InputSource source = new InputSource(stream);
         source.setPublicId(publicId);
@@ -75,7 +75,10 @@ public final class DocumentFactory {
         return doc;
     }
 
-    public static DocumentBuilder newDocumentBuilder() {
+    /**
+     * @return The DocumentBuilder for the current thread. The returned references should NEVER be retained outside of the stack.
+     */
+    public static DocumentBuilder getThreadDocumentBuilder() {
         return localDocumentBuilder.get();
     }
     

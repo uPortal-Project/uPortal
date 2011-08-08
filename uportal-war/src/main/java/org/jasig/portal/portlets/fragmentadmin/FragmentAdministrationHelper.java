@@ -29,8 +29,8 @@ import java.util.TreeMap;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
 
+import org.jasig.portal.layout.dlm.ConfigurationLoader;
 import org.jasig.portal.layout.dlm.FragmentDefinition;
-import org.jasig.portal.layout.dlm.LegacyConfigurationLoader;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IPerson;
@@ -51,15 +51,15 @@ public class FragmentAdministrationHelper {
 
 	private static final String UP_USERS = "UP_USERS";
 	private static final String IMPERSONATE = "IMPERSONATE";
-	private LegacyConfigurationLoader legacyConfigurationLoader;
+	private ConfigurationLoader configurationLoader;
 	
 	/**
 	 * @param legacyConfigurationLoader the legacyConfigurationLoader to set
 	 */
 	@Autowired
-	public void setLegacyConfigurationLoader(
-			LegacyConfigurationLoader legacyConfigurationLoader) {
-		this.legacyConfigurationLoader = legacyConfigurationLoader;
+	public void setConfigurationLoader(
+			ConfigurationLoader configurationLoader) {
+		this.configurationLoader = configurationLoader;
 	}
 
 	/**
@@ -68,7 +68,7 @@ public class FragmentAdministrationHelper {
 	 * @return
 	 */
 	public Map<String, String> getAuthorizedDlmFragments(String remoteUser) {
-		List<FragmentDefinition> fragments = this.legacyConfigurationLoader.getFragments();
+		List<FragmentDefinition> fragments = this.configurationLoader.getFragments();
 		IAuthorizationService authorizationService = AuthorizationImpl.singleton();
 		IAuthorizationPrincipal principal = authorizationService.newPrincipal(remoteUser, IPerson.class);
 		Map<String, String> results = new TreeMap<String, String>();

@@ -198,7 +198,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
         final List<FragmentDefinition> definitions = this.configurationLoader.getFragments();
         for (final FragmentDefinition fragmentDefinition : definitions) {
-            final Document layout = DocumentFactory.getNewDocument();
+            final Document layout = DocumentFactory.getThreadDocument();
             final UserView userView = activator.getUserView(fragmentDefinition);
             if (userView == null) {
                 this.log.warn("No UserView found for FragmentDefinition " + fragmentDefinition.getName()
@@ -1246,7 +1246,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 }
             }
         }
-        final String globalDefault = this.getProperty("defaultLayoutOwner");
+        final String globalDefault = PropertiesManager.getProperty("org.jasig.portal.layout.dlm.defaultLayoutOwner");
         if (globalDefault != null && globalDefault.equals(userName)) {
             return true;
         }
@@ -1426,20 +1426,6 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 this.updateCachedLayout(plf, profile, fragment);
             }
         }
-    }
-
-    /**
-       Returns the number of properties loaded from the dlm.xml file.
-     */
-    public int getPropertyCount() {
-        return this.configurationLoader.getPropertyCount();
-    }
-
-    /**
-       Returns the specified property loaded from dlm.xml or null if not found.
-     */
-    public String getProperty(String name) {
-        return this.configurationLoader.getProperty(name);
     }
 
     @Override

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<fragment-definition xmlns:dlm="http://org.jasig.portal.layout.dlm.config" script="classpath://org/jasig/portal/io/import-fragment-definition_v3-1.crn">
+  <dlm:fragment name="Academics Tab" ownerID="sakai-tab" precedence="95.0">
+    <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.PersonEvaluatorFactory">
+      <paren mode="OR">
+        <attribute name="contentGroup" mode="equals" value="student"/>
+        <attribute name="contentGroup" mode="equals" value="faculty"/>
+      </paren>
+    </dlm:audience>
+  </dlm:fragment>
+</fragment-definition>

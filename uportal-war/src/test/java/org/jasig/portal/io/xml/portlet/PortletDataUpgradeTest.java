@@ -20,7 +20,7 @@
 package org.jasig.portal.io.xml.portlet;
 
 import org.jasig.portal.io.xml.BaseXsltDataUpgraderTest;
-import org.jasig.portal.io.xml.XsltDataUpgradeTestException;
+import org.jasig.portal.io.xml.XmlTestException;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.xml.sax.SAXParseException;
@@ -123,7 +123,7 @@ public class PortletDataUpgradeTest extends BaseXsltDataUpgraderTest {
                     new ClassPathResource("/org/jasig/portal/io/xml/portlet/groupsmanager_32-40_expected.channel.xml"),
                     new ClassPathResource("/xsd/io/portlet-definition/portlet-definition-4.0.xsd"));
         }
-        catch (XsltDataUpgradeTestException e) {
+        catch (XmlTestException e) {
             //Expect validation exception
             if (!(e.getCause() instanceof SAXParseException)) {
                 throw e;
