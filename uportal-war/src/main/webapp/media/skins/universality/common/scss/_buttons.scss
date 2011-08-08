@@ -48,7 +48,7 @@ $btn-disabled-selector	: ".button[disabled='disabled'], button[disabled='disable
 	}
 	
 	a.button {
-		display:block;
+		display:inline-block;
 	}
 	
 	#{$btn-disabled-selector} {

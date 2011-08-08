@@ -44,7 +44,7 @@
   border-radius: 0.6em;
 }
 .up a.button {
-  display: block;
+  display: inline-block;
 }
 .up .button[disabled='disabled'], .up button[disabled='disabled'], .up input[disabled='disabled'], .up input[disabled='disabled']:hover, .up input[disabled='disabled']:focus {
   background: white !important;
