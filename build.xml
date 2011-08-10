@@ -252,18 +252,58 @@ catch (Exception e) {
         </antcall>
     </target>
 
-    <target name="db-import" depends="prodPrompt" description="Imports the default XML files to the database">
-        <!-- Use build.properties to override the entities.location setting -->
-        <property name="entities.location" value="uportal-war/src/main/data/default_entities" />
-
+    <target name="db-import-required" depends="prodPrompt" description="Imports the required data files to the database">
         <up-shell-batch>
             <antcall target="data-import">
                 <param name="dir" value="${basedir}/uportal-war/src/main/data/required_entities" />
             </antcall>
+        </up-shell-batch>
+    </target>
+
+    <target name="db-import-default" depends="prodPrompt" description="Imports the default data files to the database">
+        <!-- Use build.properties to override the entities.location setting -->
+        <property name="default_entities.location" value="uportal-war/src/main/data/default_entities" />
+
+        <up-shell-batch>
             <antcall target="data-import">
-                <param name="dir" value="${basedir}/${entities.location}" />
+                <param name="dir" value="${basedir}/${default_entities.location}" />
             </antcall>
         </up-shell-batch>
+    </target>
+
+    <target name="db-import-quickstart" depends="prodPrompt" description="Imports the quickstart data files to the database">
+        <!-- Use build.properties to override the entities.location setting -->
+        <property name="quickstart_entities.location" value="uportal-war/src/main/data/quickstart_entities" />
+
+        <up-shell-batch>
+            <antcall target="data-import">
+                <param name="dir" value="${basedir}/${quickstart_entities.location}" />
+            </antcall>
+        </up-shell-batch>
+    </target>
+
+    <target name="db-import" depends="prodPrompt" description="Imports the default XML files to the database">
+    	<up-shell-batch>
+            <antcall target="db-import-required"/>
+    		
+    		<if>
+    		    <not>
+    			    <isset property="noDefaultData"/>
+		    	</not>
+		    	<then>
+    			   <antcall target="db-import-default"/>
+	    		</then>
+			</if>
+            
+            <if>
+                <not>
+                    <isset property="noQuickstartData"/>
+                </not>
+                <then>
+                   <antcall target="db-import-quickstart"/>
+                </then>
+            </if>
+		</up-shell-batch>
     </target>
 
     <target name="dbtest" description="Displays information about the database defined in rdbm.properties">

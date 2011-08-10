@@ -115,20 +115,12 @@ public class PortletDataUpgradeTest extends BaseXsltDataUpgraderTest {
 
     @Test
     public void testUpgradeGroupsManagerChannel32to40() throws Exception {
-        try {
-            testXsltUpgrade(
-                    new ClassPathResource("/org/jasig/portal/io/xml/portlet/upgradeChannel_32.xsl"), 
-                    PortletPortalDataType.IMPORT_31_DATA_KEY, 
-                    new ClassPathResource("/org/jasig/portal/io/xml/portlet/groupsmanager_32.channel.xml"), 
-                    new ClassPathResource("/org/jasig/portal/io/xml/portlet/groupsmanager_32-40_expected.channel.xml"),
-                    new ClassPathResource("/xsd/io/portlet-definition/portlet-definition-4.0.xsd"));
-        }
-        catch (XmlTestException e) {
-            //Expect validation exception
-            if (!(e.getCause() instanceof SAXParseException)) {
-                throw e;
-            }
-        }
+        testXsltUpgrade(
+                new ClassPathResource("/org/jasig/portal/io/xml/portlet/upgradeChannel_32.xsl"), 
+                PortletPortalDataType.IMPORT_31_DATA_KEY, 
+                new ClassPathResource("/org/jasig/portal/io/xml/portlet/groupsmanager_32.channel.xml"), 
+                new ClassPathResource("/org/jasig/portal/io/xml/portlet/groupsmanager_32-40_expected.channel.xml"),
+                new ClassPathResource("/xsd/io/portlet-definition/portlet-definition-4.0.xsd"));
     }
 
     @Test

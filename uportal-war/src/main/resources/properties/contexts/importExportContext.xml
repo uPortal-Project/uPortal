@@ -514,6 +514,10 @@
                 <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
                 <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
                 <entry key="stylesheetDescriptorDao" value-ref="stylesheetDescriptorDao" />
+                <entry key="user_profile_structure_force"           value="${org.jasig.portal.io.forceDefaultStructure}" />
+                <entry key="user_profile_structure_name_default"    value="${org.jasig.portal.io.defaultStructureName}" />
+                <entry key="user_profile_theme_force"               value="${org.jasig.portal.io.forceDefaultTheme}" />
+                <entry key="user_profile_theme_name_default"        value="${org.jasig.portal.io.defaultThemeName}" />
             </util:map>
         </property>
     </bean>
@@ -527,7 +531,7 @@
             <util:map>
                 <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
                 <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
-                <entry key="isUserIncluded" value-ref="is-user-included" />
+                <entry key="isUserIncluded" value-ref="isUserIncluded" />
                 <entry key="exportPropertiesLocation" value="classpath://properties/export.properties" />
             </util:map>
         </property>
@@ -539,7 +543,7 @@
             <util:map>
                 <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
                 <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
-                <entry key="isUserIncluded" value-ref="is-user-included" />
+                <entry key="isUserIncluded" value-ref="isUserIncluded" />
                 <entry key="exportPropertiesLocation" value="classpath://properties/export.properties" />
             </util:map>
         </property>
@@ -579,17 +583,17 @@
             </util:map>
         </property>
     </bean>
-
+    
+    
     <!-- 
      | Nested Tasks
      +-->
-
-    <bean id="is-user-included" class="org.danann.cernunnos.runtime.PojoTask">
-        <property name="location" value="classpath://org/jasig/portal/io/is-user-included.crn" />
-        <property name="requestAttributes">
-            <util:map>
-                <entry key="userLayoutStore" value-ref="userLayoutStore"/>
-            </util:map>
+    <bean id="isUserIncluded" class="org.jasig.portal.io.PropertiesFilesIsIncludedUser">
+        <property name="userNames">
+            <util:properties local-override="true" location="classpath:/properties/export_included_users.properties">
+                <!-- Properties listed here are in addition to the properties in the flat file -->
+                <prop key="system"/>
+            </util:properties>
         </property>
     </bean>
 </beans>

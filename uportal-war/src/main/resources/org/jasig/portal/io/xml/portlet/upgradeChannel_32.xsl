@@ -37,30 +37,48 @@
             <xsl:apply-templates select="title|name|fname|desc|type|timeout"/>
 
             <!-- Only add portlet-descriptor if there is enough data. No descriptor means it isn't a portlet and XSD validation should fail -->
-            <xsl:if test="parameters/parameter[name = 'portletName']/value">
-                <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
-                    <xsl:choose>
-                        <xsl:when test="parameters/parameter[name = 'portletApplicationId']">
-                            <up:webAppName>
-                                <xsl:value-of select="parameters/parameter[name = 'portletApplicationId']/value"/>
-                            </up:webAppName>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <up:isFramework>true</up:isFramework>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                    <up:portletName>
-                        <xsl:value-of select="parameters/parameter[name = 'portletName']/value"/>
-                    </up:portletName>
-                </portlet-descriptor>
-            </xsl:if>
+            <xsl:choose>
+                <xsl:when test="parameters/parameter[name = 'portletName']/value">
+                    <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
+                        <xsl:choose>
+                            <xsl:when test="parameters/parameter[name = 'portletApplicationId']">
+                                <up:webAppName>
+                                    <xsl:value-of select="parameters/parameter[name = 'portletApplicationId']/value"/>
+                                </up:webAppName>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <up:isFramework>true</up:isFramework>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                        <up:portletName>
+                            <xsl:value-of select="parameters/parameter[name = 'portletName']/value"/>
+                        </up:portletName>
+                    </portlet-descriptor>
+                </xsl:when>
+                <xsl:otherwise>
+                    <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
+                        <up:isFramework>true</up:isFramework>
+                        <up:portletName>UPGRADED_CHANNEL_IS_NOT_A_PORTLET</up:portletName>
+                    </portlet-descriptor>
+                </xsl:otherwise>
+            </xsl:choose>
 
             <xsl:apply-templates select="categories|groups|users|parameters"/>
             <xsl:apply-templates select="hasedit|hashelp|hasabout|secure|locale"/>
             <xsl:apply-templates select="portletPreferences"/>
         </portlet-definition>
     </xsl:template>
-
+    
+    
+    <xsl:template match="type">
+        <type>
+            <xsl:choose>
+                <xsl:when test=". = 'Simple Web Proxy Portlet'">Web Proxy Portlet</xsl:when>
+                <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
+            </xsl:choose>
+        </type>
+    </xsl:template>
+    
     <!-- Collection wrapper elements that aren't carried forward -->
     <xsl:template match="categories|groups|users|parameters|portletPreferences|values">
         <xsl:apply-templates/>

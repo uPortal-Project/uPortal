@@ -64,6 +64,7 @@ import org.jasig.portal.services.GroupService;
 import org.jasig.portal.utils.SafeFilenameUtils;
 import org.jasig.portal.xml.PortletDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,14 +76,20 @@ import org.springframework.transaction.annotation.Transactional;
 public class PortletDefinitionImporterExporter 
         extends AbstractJaxbDataHandler<ExternalPortletDefinition> 
         implements IPortletPublishingService, ApplicationEventPublisherAware {
-    
+	
     private PortletPortalDataType portletPortalDataType;
     private IPortletTypeRegistry portletTypeRegistry;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPortletCategoryRegistry portletCategoryRegistry;
     private ApplicationEventPublisher applicationEventPublisher;
-    
-    @Autowired
+    private boolean errorOnChannel = true;
+
+    @Value("${org.jasig.portal.io.errorOnChannel}")
+	public void setErrorOnChannel(boolean errorOnChannel) {
+		this.errorOnChannel = errorOnChannel;
+	}
+
+	@Autowired
     public void setPortletPortalDataType(PortletPortalDataType portletPortalDataType) {
         this.portletPortalDataType = portletPortalDataType;
     }
@@ -125,8 +132,23 @@ public class PortletDefinitionImporterExporter
     @Transactional
     @Override
     public void importData(ExternalPortletDefinition portletRep) {
+    	final PortletDescriptor portletDescriptor = portletRep.getPortletDescriptor();
+    	final Boolean isFramework = portletDescriptor.isIsFramework();
+
+    	if (isFramework != null && isFramework && "UPGRADED_CHANNEL_IS_NOT_A_PORTLET".equals(portletDescriptor.getPortletName())) {
+    		if (errorOnChannel) {
+    			throw new IllegalArgumentException(portletRep.getFname() + " is not a portlet. It was likely an IChannel from a previous version of uPortal and cannot be imported.");
+    		}
+
+    		logger.warn(portletRep.getFname() + " is not a portlet. It was likely an IChannel from a previous version of uPortal and will not be imported.");
+    		return;
+    	}
+    		
         // get the portlet type
         final IPortletType portletType = portletTypeRegistry.getPortletType(portletRep.getType());
+        if (portletType == null) {
+        	throw new IllegalArgumentException("No portlet type registered for: " + portletRep.getType());
+        }
         
         final List<PortletCategory> categories = new ArrayList<PortletCategory>();
         for (String categoryName : portletRep.getCategories()) {
@@ -164,9 +186,6 @@ public class PortletDefinitionImporterExporter
         
         
         final String fname = portletRep.getFname();
-        final PortletDescriptor portletDescriptor = portletRep.getPortletDescriptor();
-        final Boolean isFramework = portletDescriptor.isIsFramework();
-
         IPortletDefinition def = portletDefinitionRegistry.getPortletDefinitionByFname(fname);
         if (def == null) {
             def = portletDefinitionRegistry.createPortletDefinition(

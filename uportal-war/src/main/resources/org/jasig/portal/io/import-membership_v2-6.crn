@@ -29,7 +29,6 @@
  |   - ${PORTAL_CONTEXT}=uPortal's Spring ApplicationContext
  |   - ${SqlAttributes.DATA_SOURCE}=the DataSource for the PortalDb
  |   - ${SqlAttributes.TRANSACTION_MANAGER}=PlatformTransactionManager in use
- |   - Settings defined in classpath://properties/db/entities/import.properties
  |
  +-->
 <with-attribute key="PARENT_GROUP_NAME" value="${valueOf(parent)}">

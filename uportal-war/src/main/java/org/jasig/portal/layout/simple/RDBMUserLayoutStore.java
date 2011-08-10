@@ -1051,6 +1051,10 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
         	rs = pstmt.executeQuery();
         	if(rs.next()) {
         		int defaultProfileUser = rs.getInt(1);
+        		if (rs.wasNull()) {
+        			throw new RuntimeException("Need to clone the '" + profileFname + "' profile from template user for " + person + " but they have no template user");
+        		}
+
         		IPerson defaultProfilePerson = new PersonImpl();
         		defaultProfilePerson.setID(defaultProfileUser);
         		if(defaultProfilePerson.getID() != person.getID()) {

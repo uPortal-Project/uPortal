@@ -41,6 +41,7 @@ import org.jasig.portal.utils.ICounterStore;
 import org.jasig.portal.utils.SafeFilenameUtils;
 import org.jasig.portal.utils.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -222,8 +223,12 @@ public class UserImporterExporter extends
                     }
 	            },
 	            defaultUsername);
-	    final Tuple<Integer, Long> defaultUserInfo = DataAccessUtils.singleResult(defaultUserInfoResults);
-        return defaultUserInfo;
+	    try {
+	    	return DataAccessUtils.requiredSingleResult(defaultUserInfoResults);
+	    }
+	    catch (EmptyResultDataAccessException e) {
+	    	throw new RuntimeException("No user data found for default-user: " + defaultUsername, e);
+	    }
     }
 
     protected String getDefaultUsername(UserType data) {

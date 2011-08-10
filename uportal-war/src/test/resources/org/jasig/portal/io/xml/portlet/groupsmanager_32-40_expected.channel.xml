@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <portlet-definition xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd" version="4.0">
-<ns11:title xmlns:ns11="https://source.jasig.org/schemas/uportal/io/portlet-definition">Groups Manager</ns11:title>
-<ns12:name xmlns:ns12="https://source.jasig.org/schemas/uportal/io/portlet-definition">Groups Manager</ns12:name>
-<ns13:fname xmlns:ns13="https://source.jasig.org/schemas/uportal/io/portlet-definition">groupsmanager</ns13:fname>
-<ns14:desc xmlns:ns14="https://source.jasig.org/schemas/uportal/io/portlet-definition">An administrative tool for creating and managing groups and memberships</ns14:desc>
-<ns15:type xmlns:ns15="https://source.jasig.org/schemas/uportal/io/portlet-definition">Custom</ns15:type>
-<ns16:timeout xmlns:ns16="https://source.jasig.org/schemas/uportal/io/portlet-definition">40000</ns16:timeout>
-    <ns17:category xmlns:ns17="https://source.jasig.org/schemas/uportal/io/portlet-definition">Applications</ns17:category>
+<ns32:title xmlns:ns32="https://source.jasig.org/schemas/uportal/io/portlet-definition">Groups Manager</ns32:title>
+<ns33:name xmlns:ns33="https://source.jasig.org/schemas/uportal/io/portlet-definition">Groups Manager</ns33:name>
+<ns34:fname xmlns:ns34="https://source.jasig.org/schemas/uportal/io/portlet-definition">groupsmanager</ns34:fname>
+<ns35:desc xmlns:ns35="https://source.jasig.org/schemas/uportal/io/portlet-definition">An administrative tool for creating and managing groups and memberships</ns35:desc>
+<ns36:type xmlns:ns36="https://source.jasig.org/schemas/uportal/io/portlet-definition">Custom</ns36:type>
+<ns37:timeout xmlns:ns37="https://source.jasig.org/schemas/uportal/io/portlet-definition">40000</ns37:timeout>
+<portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
+<up:isFramework>true</up:isFramework>
+<up:portletName>UPGRADED_CHANNEL_IS_NOT_A_PORTLET</up:portletName>
+</portlet-descriptor>
+    <ns38:category xmlns:ns38="https://source.jasig.org/schemas/uportal/io/portlet-definition">Applications</ns38:category>
   
-    <ns18:group xmlns:ns18="https://source.jasig.org/schemas/uportal/io/portlet-definition">Portal Administrators</ns18:group>
-    <ns19:group xmlns:ns19="https://source.jasig.org/schemas/uportal/io/portlet-definition">Developers</ns19:group>
+    <ns39:group xmlns:ns39="https://source.jasig.org/schemas/uportal/io/portlet-definition">Portal Administrators</ns39:group>
+    <ns40:group xmlns:ns40="https://source.jasig.org/schemas/uportal/io/portlet-definition">Developers</ns40:group>
   <parameter>
 <name>hasedit</name>
 <value>false</value>
@@ -31,4 +35,3 @@
 <value>false</value>
 </parameter>
 </portlet-definition>
-

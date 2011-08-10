@@ -45,9 +45,15 @@ public class PortalDataKey {
      */
     public static final QName VERSION_ATTRIBUTE_NAME = new QName("version");
     
-    private QName name;
-    private String script;
-    private String version;
+    /**
+     * {@link #hashCode()} is called A LOT but never changes since this object and all field
+     * types are immutable. A local variable is used to cache the calculated hash code  
+     */
+    private int hash = 0;
+    
+    private final QName name;
+    private final String script;
+    private final String version;
     
     public PortalDataKey(Node rootElement) {
         if (rootElement.getNodeType() == Node.DOCUMENT_NODE) {
@@ -124,12 +130,17 @@ public class PortalDataKey {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
-        result = prime * result + ((this.script == null) ? 0 : this.script.hashCode());
-        result = prime * result + ((this.version == null) ? 0 : this.version.hashCode());
-        return result;
+    	final int lHash = this.hash;
+    	if (lHash == 0) {
+	        final int prime = 31;
+	        int result = 1;
+	        result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
+	        result = prime * result + ((this.script == null) ? 0 : this.script.hashCode());
+	        result = prime * result + ((this.version == null) ? 0 : this.version.hashCode());
+	        this.hash = result;
+	        return result;
+    	}
+    	return lHash;
     }
 
     @Override
