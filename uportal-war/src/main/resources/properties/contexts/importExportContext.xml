@@ -545,16 +545,6 @@
         </property>
     </bean>
 
-    <bean id="export-group" class="org.danann.cernunnos.runtime.PojoTask">
-        <property name="location" value="classpath://org/jasig/portal/io/export-group.crn" />
-        <property name="requestAttributes">
-            <util:map>
-                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
-                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
-            </util:map>
-        </property>
-    </bean>
-
     <bean id="export-entity-type" class="org.danann.cernunnos.runtime.PojoTask">
         <property name="location" value="classpath://org/jasig/portal/io/export-entity-type.crn" />
         <property name="requestAttributes">
