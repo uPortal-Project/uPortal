@@ -417,7 +417,7 @@
                     <xsl:otherwise></xsl:otherwise>
                   </xsl:choose>
                 </xsl:variable>
-                <li id="uPfname_{@fname}" class="portal-subnav {$SUBNAV_POSITION}"> <!-- Each subnavigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
+                <li id="portalSubnavLink_{@ID}" class="portal-subnav {$SUBNAV_POSITION} {@fname}"> <!-- Each subnavigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
                   <xsl:variable name="portletSubNavLink">
                     <xsl:call-template name="portalUrl">
                         <xsl:with-param name="url">
