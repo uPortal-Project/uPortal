@@ -227,6 +227,11 @@
     
     <filter-mapping>
         <filter-name>CharacterEncodingFilter</filter-name>
+        <servlet-name>JsonRenderingDispatcherServlet</servlet-name>
+    </filter-mapping>
+    
+    <filter-mapping>
+        <filter-name>CharacterEncodingFilter</filter-name>
         <servlet-name>MVCDispatcherServlet</servlet-name>
     </filter-mapping>
      
