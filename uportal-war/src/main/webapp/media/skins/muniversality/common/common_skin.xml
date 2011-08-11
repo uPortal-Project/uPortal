@@ -42,8 +42,8 @@
   <js included="plain">/ResourceServingWebapp/rs/jqueryui/1.8.13/jquery-ui-1.8.13.js</js>
   <js included="aggregated">/ResourceServingWebapp/rs/jqueryui/1.8.13/jquery-ui-1.8.13.min.js</js>
   
-  <js included="plain">/ResourceServingWebapp/rs/fluid/1.4-f831047/js/fluid-all-1.4-f831047.js</js>
-  <js included="aggregated">/ResourceServingWebapp/rs/fluid/1.4-f831047/js/fluid-all-1.4-f831047.min.js</js>
+  <js included="plain">/ResourceServingWebapp/rs/fluid/1.4-00b5b5e/js/fluid-all-1.4-00b5b5e.js</js>
+  <js included="aggregated">/ResourceServingWebapp/rs/fluid/1.4-00b5b5e/js/fluid-all-1.4-00b5b5e.min.js</js>
   
   <js>../common/javascript/up-mobile-config.js</js>
 
