@@ -813,11 +813,9 @@
 .up .up-gallery .gallery-inner .content-filters-wrapper h3:hover, .up .up-gallery .gallery-inner .content-filters-wrapper h3:focus {
   color: #e68537;
 }
-.up .up-gallery .gallery-inner .content-filters-wrapper .active h3 {
-  color: #d06b1a;
-}
 .up .up-gallery .gallery-inner .content-filters-wrapper .active h3 span {
   background: #404040;
+  color: white;
 }
 .up .up-gallery .gallery-inner .content-filters-wrapper .active h3:hover, .up .up-gallery .gallery-inner .content-filters-wrapper .active h3:focus {
   color: #e68537;
