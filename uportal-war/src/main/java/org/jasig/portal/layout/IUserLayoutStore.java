@@ -33,7 +33,6 @@ import org.jasig.portal.UserProfile;
 import org.jasig.portal.layout.dlm.DistributedUserLayout;
 import org.jasig.portal.layout.dlm.FragmentChannelInfo;
 import org.jasig.portal.layout.dlm.FragmentNodeInfo;
-import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.security.IPerson;
 import org.w3c.dom.Document;
 

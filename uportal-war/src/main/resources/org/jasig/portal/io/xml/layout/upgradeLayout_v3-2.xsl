@@ -50,7 +50,7 @@
         </folder>
     </xsl:template>
     
-    <xsl:template match="channel">
+    <xsl:template match="channel[fname != 'header' and fname != 'footer']">
         <xsl:copy>
             <xsl:apply-templates select="@*" />
             <xsl:apply-templates select="param"/>
@@ -105,23 +105,27 @@
     <xsl:template name="fix-dlm-path-ref">
         <xsl:param name="path-ref"/>
       
+        <xsl:variable name="ROOT_PATH">root/</xsl:variable>
         <xsl:variable name="ROOT_FOLDER">folder[@type='root']/</xsl:variable>
-        <xsl:variable name="REGULAR_FOLDER">folder[@type='regular']</xsl:variable>
+        
+        <xsl:variable name="TAB_PATH">/tab</xsl:variable>
+        <xsl:variable name="COLUMN_PATH">/column</xsl:variable>
+        <xsl:variable name="REGULAR_FOLDER">/folder[@type='regular']</xsl:variable>
 
         <xsl:choose>
-            <xsl:when test="contains($path-ref, 'root/')">
+            <xsl:when test="contains($path-ref, $ROOT_PATH)">
                 <xsl:call-template name="fix-dlm-path-ref">
-                    <xsl:with-param name="path-ref" select="concat(substring-before($path-ref, 'root/'), $ROOT_FOLDER, substring-after($path-ref, 'root/'))"/>
+                    <xsl:with-param name="path-ref" select="concat(substring-before($path-ref, $ROOT_PATH), $ROOT_FOLDER, substring-after($path-ref, $ROOT_PATH))"/>
                 </xsl:call-template>
             </xsl:when>
-            <xsl:when test="contains($path-ref, 'tab')">
+            <xsl:when test="contains($path-ref, $TAB_PATH)">
                 <xsl:call-template name="fix-dlm-path-ref">
-                    <xsl:with-param name="path-ref" select="concat(substring-before($path-ref, 'tab'), $REGULAR_FOLDER, substring-after($path-ref, 'tab'))"/>
+                    <xsl:with-param name="path-ref" select="concat(substring-before($path-ref, $TAB_PATH), $REGULAR_FOLDER, substring-after($path-ref, $TAB_PATH))"/>
                 </xsl:call-template>
             </xsl:when>
-            <xsl:when test="contains($path-ref, 'column')">
+            <xsl:when test="contains($path-ref, $COLUMN_PATH)">
                 <xsl:call-template name="fix-dlm-path-ref">
-                    <xsl:with-param name="path-ref" select="concat(substring-before($path-ref, 'column'), $REGULAR_FOLDER, substring-after($path-ref, 'column'))"/>
+                    <xsl:with-param name="path-ref" select="concat(substring-before($path-ref, $COLUMN_PATH), $REGULAR_FOLDER, substring-after($path-ref, $COLUMN_PATH))"/>
                 </xsl:call-template>
             </xsl:when>
             <xsl:otherwise>

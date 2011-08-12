@@ -64,9 +64,9 @@
         <ref bean="permissionSetPortalDataType" />
         <ref bean="permissionOwnerPortalDataType" />
         <ref bean="profilePortalDataType" />
+        <ref bean="fragmentDefinitionPortalDataType" />
         <ref bean="fragmentLayoutPortalDataType" />
         <ref bean="layoutPortalDataType" />
-        <ref bean="fragmentDefinitionPortalDataType" />
     </util:list>
     
     <util:set id="exportAllPortalDataTypes">
@@ -162,6 +162,7 @@
         <property name="dataKeys">
             <set>
                 <util:constant static-field="org.jasig.portal.io.xml.layout.LayoutPortalDataType.IMPORT_32_DATA_KEY"/>
+                <util:constant static-field="org.jasig.portal.io.xml.layout.LayoutPortalDataType.IMPORT_32_DEFAULT_USER_DATA_KEY"/>
                 <util:constant static-field="org.jasig.portal.io.xml.layout.FragmentLayoutPortalDataType.IMPORT_32_DATA_KEY"/>
             </set>
         </property>
@@ -263,20 +264,15 @@
         </property>
         <property name="xslResource" value="classpath:/org/jasig/portal/io/xml/user/upgrade-template-user_3-2.xsl" />
     </bean>
-    <bean id="fragmentLayout26_30DataUpgrader" class="org.jasig.portal.io.xml.XsltDataUpgrader">
+    <bean id="layoutDataUpgrader" class="org.jasig.portal.io.xml.XsltDataUpgrader">
         <property name="portalDataKeys">
             <set>
                 <util:constant static-field="org.jasig.portal.io.xml.layout.FragmentLayoutPortalDataType.IMPORT_26_DATA_KEY"/>
                 <util:constant static-field="org.jasig.portal.io.xml.layout.FragmentLayoutPortalDataType.IMPORT_30_DATA_KEY"/>
-            </set>
-        </property>
-        <property name="xslResource" value="classpath:/org/jasig/portal/io/xml/layout/upgradeLayout_v3-2.xsl" />
-    </bean>
-    <bean id="layout26_30DataUpgrader" class="org.jasig.portal.io.xml.XsltDataUpgrader">
-        <property name="portalDataKeys">
-            <set>
                 <util:constant static-field="org.jasig.portal.io.xml.layout.LayoutPortalDataType.IMPORT_26_DATA_KEY"/>
                 <util:constant static-field="org.jasig.portal.io.xml.layout.LayoutPortalDataType.IMPORT_30_DATA_KEY"/>
+                <util:constant static-field="org.jasig.portal.io.xml.layout.LayoutPortalDataType.IMPORT_26_DEFAULT_USER_DATA_KEY"/>
+                <util:constant static-field="org.jasig.portal.io.xml.layout.LayoutPortalDataType.IMPORT_30_DEFAULT_USER_DATA_KEY"/>
             </set>
         </property>
         <property name="xslResource" value="classpath:/org/jasig/portal/io/xml/layout/upgradeLayout_v3-2.xsl" />

@@ -289,7 +289,22 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         return DataAccessUtils.singleResult(results);
     }
 
-   private int __getPortalUID (IPerson person, boolean createPortalData) throws AuthorizationException {
+    private static final String IS_DEFAULT_USER_QUERY = 
+    		"SELECT count(*)\n" +
+			"FROM up_user upuA\n" +
+			"	right join up_user upuB on upuA.USER_ID = upuB.USER_DFLT_USR_ID\n" +
+			"WHERE upuA.user_name=?";
+    
+    /* (non-Javadoc)
+	 * @see org.jasig.portal.IUserIdentityStore#isDefaultUser(java.lang.String)
+	 */
+	@Override
+	public boolean isDefaultUser(String username) {
+		final int defaultUserCount = this.jdbcOperations.queryForInt(IS_DEFAULT_USER_QUERY, username);
+		return defaultUserCount > 0;
+    }
+
+	private int __getPortalUID (IPerson person, boolean createPortalData) throws AuthorizationException {
        PortalUser portalUser = null;
 
        try {

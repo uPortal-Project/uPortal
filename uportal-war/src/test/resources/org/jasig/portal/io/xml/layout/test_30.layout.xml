@@ -1,0 +1,27 @@
+
+<layout script="classpath://org/jasig/portal/io/import-layout_v3-0.crn" username="test">
+  <root unremovable="Y" immutable="N" hidden="N" name="Root Folder">
+    <header unremovable="Y" immutable="Y" hidden="N" name="Header folder">
+      <channel unremovable="N" immutable="N" hidden="N" fname="header"/>
+      <channel unremovable="N" immutable="N" hidden="N" fname="login"/>
+    </header>
+    <footer unremovable="N" immutable="N" hidden="N" name="Footer folder">
+      <channel unremovable="N" immutable="N" hidden="N" fname="footer"/>
+    </footer>
+  </root>
+  <profile name="HTML browser profile"> 
+    <description>A system profile for common web browsers</description>  
+    <structure name="DLM Tabs and columns"/>  
+    <theme name="DLM XHTML"/> 
+  </profile>
+  <preferences>
+    <entry entity="news-tab:/layout/root/tab/column[2]/channel[1]" channel="Yale-Events" name="days">
+      <value>1</value>
+    </entry>
+    <entry entity="news-tab:/layout/root/tab/column[2]/channel[1]" channel="Yale-Events" name="category">
+      <value>Music</value>
+      <value>Theater</value>
+      <value>Talks</value>
+    </entry>
+  </preferences>
+</layout>

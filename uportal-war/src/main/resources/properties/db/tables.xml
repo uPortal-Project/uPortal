@@ -54,6 +54,10 @@
         <name>UPU_DFLT_ID_IDX</name>
         <column-ref>USER_DFLT_USR_ID</column-ref>
     </index>
+    <unique>
+        <name>UPU_USER_NAME</name>
+        <column-ref>USER_NAME</column-ref>
+    </unique>
   </table>
 
   <table sinceMajor="2" sinceMinor="2">

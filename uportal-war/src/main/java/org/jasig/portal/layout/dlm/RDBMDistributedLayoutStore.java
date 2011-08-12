@@ -671,12 +671,19 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 throw new RuntimeException(msg);
             }
             person.setID(ownerId);
-            person.setSecurityContext(new BrokenSecurityContext());
-            profile = this.getUserProfileByFname(person, "default");
         }
         catch (final Throwable t) {
             throw new RuntimeException("Unrecognized user " + person.getUserName()
                     + "; you must import users before their layouts.", t);
+        }
+
+        try {
+	        person.setSecurityContext(new BrokenSecurityContext());
+	        profile = this.getUserProfileByFname(person, "default");
+        }
+        catch (final Throwable t) {
+            throw new RuntimeException("Failed to load profile for " + person.getUserName()
+                    + "; This user must have a profile for import to continue.", t);
         }
 
         // (6) Add database Ids & (5) Add dlm:plfID ...
@@ -812,7 +819,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 
                 final String dlmNoderef = this.getDlmNoderef(person.getUserName(), dlmPathRef, fname, false, layout);
                 
-                if (dlmNoderef != null && fname != null && !"null".equals(fname)) {
+                if (dlmNoderef != null && !"".equals(dlmNoderef) && fname != null && !"null".equals(fname)) {
                 	final IPortletEntity portletEntity = this.getPortletEntity(fname, dlmNoderef, ownerUserId);
                 	final List<IPortletPreference> portletPreferences = portletEntity.getPortletPreferences();
                 	
@@ -1072,6 +1079,11 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         final String layoutPath = pathTokens[1];
         
         final Integer layoutOwnerUserId = this.userIdentityStore.getPortalUserId(layoutOwnerName);
+        if (layoutOwnerUserId == null) {
+        	this.log.warn("Unable to resolve pathref '" + pathref + "' for layoutOwner '" + layoutOwner + "', no userId found for userName: " + layoutOwnerName);
+            return "";
+        }
+        
         final Tuple<String, DistributedUserLayout> userLayoutInfo = getUserLayout(layoutOwnerUserId);
         final Document userLayout = userLayoutInfo.second.getLayout();
         

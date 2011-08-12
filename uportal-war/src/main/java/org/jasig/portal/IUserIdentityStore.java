@@ -69,5 +69,10 @@ public interface IUserIdentityStore {
    * Gets a portal user id that is associated with the specified portal user name
    */
   public Integer getPortalUserId(String userName);
+  
+  /**
+   * @return true if the specified username is used as a default user for any other user in the portal
+   */
+  public boolean isDefaultUser(String username);
 
 }

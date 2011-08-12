@@ -37,6 +37,7 @@ import org.jasig.portal.io.xml.PortalDataKey;
 public class ProfilePortalDataType extends AbstractPortalDataType {
     public static final QName LEGACY_PROFILE_QNAME = new QName("profile");
     
+
     public static final PortalDataKey IMPORT_32_DATA_KEY = new PortalDataKey(
             LEGACY_PROFILE_QNAME, 
             "classpath://org/jasig/portal/io/import-profile_v3-2.crn",

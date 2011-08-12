@@ -36,7 +36,6 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -322,16 +321,18 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
             fileFilter = new AntPatternFileFilter(true, false, this.dataFileIncludes, this.dataFileExcludes);
         }
         
-        //Map of files to import, grouped by type
-        final ConcurrentMap<PortalDataKey, Queue<Resource>> dataToImport = new ConcurrentHashMap<PortalDataKey, Queue<Resource>>();
-        
         //Scan the specified directory for files to import
         logger.info("Scanning for files to Import from: {}", directory);
-        this.directoryScanner.scanDirectoryNoResults(directory, fileFilter, 
-                new PortalDataKeyFileProcessor(this.dataKeyTypes, dataToImport, options));
+        final PortalDataKeyFileProcessor fileProcessor = new PortalDataKeyFileProcessor(this.dataKeyTypes, options);
+		this.directoryScanner.scanDirectoryNoResults(directory, fileFilter, fileProcessor);
+        final long resourceCount = fileProcessor.getResourceCount();
+		logger.info("Found {} files to Import from: {}", resourceCount, directory);
         
         final boolean failOnError = options != null ? options.isFailOnError() : true;
         final AtomicBoolean failed = new AtomicBoolean(false);
+        
+        //Map of files to import, grouped by type
+        final ConcurrentMap<PortalDataKey, Queue<Resource>> dataToImport = fileProcessor.getDataToImport();
         
         //Import the data files
         for (final PortalDataKey portalDataKey : this.dataKeyImportOrder) {
