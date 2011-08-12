@@ -434,6 +434,11 @@
         <extension>wbmp</extension>
         <mime-type>image/vnd.wap.wbmp</mime-type>
     </mime-mapping>
+    
+    <error-page>
+        <error-code>500</error-code>
+        <location>/500.html</location>
+    </error-page>
 
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
