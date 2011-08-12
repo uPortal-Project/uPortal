@@ -33,8 +33,6 @@
           <name>width</name>
           <value>50%</value>
         </structure-attribute>
-        <!-- <channel unremovable="" immutable="" hidden="" fname="person-attributes"/> 
-        <channel unremovable="" immutable="" hidden="" fname="css-viewer"/> -->
       </column>
       <column unremovable="N" immutable="N" hidden="N" name="Column 2">
         <structure-attribute type="folder">
@@ -42,7 +40,6 @@
           <value>50%</value>
         </structure-attribute>
         <channel unremovable="" immutable="" hidden="" fname="snooper"/>
-        <!-- <channel unremovable="" immutable="" hidden="" fname="uportal-data-dictionary"/> -->
       </column>
     </tab>
     <tab unremovable="N" immutable="N" hidden="N" name="Testing">

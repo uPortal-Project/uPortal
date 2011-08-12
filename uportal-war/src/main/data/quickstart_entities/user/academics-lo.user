@@ -20,12 +20,10 @@
 -->
 
 
-<user script="classpath://org/jasig/portal/io/import-user_v3-2.crn" username="demo">
+<user script="classpath://org/jasig/portal/io/import-user_v3-2.crn" username="academics-lo">
   <default-user>defaultTemplateUser</default-user>
   <person-directory>
-    <encrptd-pswd>(MD5)IAnYXaWGdqTkifNNwo0bfIIphj2NPvSG</encrptd-pswd>
-    <givenName>Demo</givenName>
-    <sn>User</sn>
-    <mail>demo.user@example.org</mail>
+    <givenName>Academics</givenName>
+    <sn>Layout Owner</sn>
   </person-directory>
 </user>

@@ -36,17 +36,14 @@
           <name>width</name>
           <value>50%</value>
         </structure-attribute>
-        <channel unremovable="" immutable="" hidden="" fname="admin-feature"/>
-        <channel unremovable="" immutable="" hidden="" fname="RegisterPortal"/>
+        <channel unremovable="" immutable="" hidden="" fname="portal-administration"/>
       </column>
       <column unremovable="N" immutable="N" hidden="N" name="Column">
         <structure-attribute type="folder">
           <name>width</name>
           <value>50%</value>
         </structure-attribute>
-        <channel unremovable="" immutable="" hidden="" fname="portal-administration"/>
-        <channel unremovable="" immutable="" hidden="" fname="passwordmgr"/>
-        <channel unremovable="" immutable="" hidden="" fname="ImportExportPortlet"/>
+        <channel unremovable="" immutable="" hidden="" fname="please-register"/>
       </column>
     </tab>
   </root>

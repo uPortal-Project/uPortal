@@ -71,6 +71,12 @@
                     people who have made uPortal possible can know that their 
                     code is working for you as well.
                 </p>
+                
+                <p>
+                    To list your deployment, please fill out 
+                    <a href="https://spreadsheets.google.com/viewform?formkey=dHJIS3g5d0c3ajZXZVRwZUpPNWNXcHc6MQ" 
+                    target="_blank">this short form</a>.
+                </p>
             ]]>
         </value>
     </portlet-preference>

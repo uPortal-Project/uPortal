@@ -33,16 +33,13 @@
           <name>width</name>
           <value>50%</value>
         </structure-attribute>
-        <channel unremovable="" immutable="" hidden="" fname="student-feature"/>
-        <channel unremovable="" immutable="" hidden="" fname="notifications"/>
+        <channel unremovable="" immutable="" hidden="" fname="courses"/>
       </column>
       <column unremovable="N" immutable="N" hidden="N" name="Column 2">
         <structure-attribute type="folder">
           <name>width</name>
           <value>50%</value>
         </structure-attribute>
-        <channel unremovable="" immutable="" hidden="" fname="whos-online"/>
-        <channel unremovable="" immutable="" hidden="" fname="courses"/>
       </column>
     </tab>
   </root>

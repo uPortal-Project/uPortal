@@ -19,37 +19,29 @@
 
 -->
 
-
 <portlet-definition
-    xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" 
+    xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition ../../../resources/xsd/io/portlet-definition/portlet-definition-4.0.xsd"
-   
-    version="4.0"
->
-
-  <title>Directory</title>
-  <name>Directory</name>
-  <fname>directory</fname>
-  <desc>Directory of users and contact information</desc>
-  <type>Portlet</type>
-  <timeout>30000</timeout>
-  <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
-    <up:isFramework>true</up:isFramework>
-    <up:portletName>Directory</up:portletName>
-  </portlet-descriptor>
+    version="4.0">
+    <title>Google Docs</title>
+    <name>Google Docs</name>
+    <fname>google-docs</fname>
+    <desc>View your active Google documents</desc>
+    <type>Portlet</type>
+    <timeout>60000</timeout>
+    <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
+        <up:webAppName>/jasig-widget-portlets</up:webAppName>
+        <up:portletName>gadget</up:portletName>
+    </portlet-descriptor>
     <category>Information</category>
-    <group>Authenticated Users</group>
+    <group>Everyone</group>
     <parameter>
-      <name>disableDynamicTitle</name>
-      <value>true</value> 
+        <name>editable</name>
+        <value>true</value>
     </parameter>
-	<parameter>
-      <name>iconUrl</name>
-      <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/mimetypes/x-office-address-book.png</value>
-    </parameter>
-    <parameter>
-        <name>mobileIconUrl</name>
-        <value>/uPortal/media/skins/icons/mobile/directory.png</value>
-    </parameter>
+    <portlet-preference>
+        <name>configuredUrl</name>
+        <value>http://www.gmodules.com/ig/ifr?url=http://hosting.gmodules.com/ig/gadgets/file/117985443574924869706/docs-list-gadget.xml&amp;up_numDocuments=20&amp;synd=open&amp;w=320&amp;h=200&amp;title=&amp;lang=en&amp;country=ALL&amp;border=&amp;output=js</value>
+    </portlet-preference>
 </portlet-definition>

@@ -69,9 +69,7 @@
       <name>locationCodes</name>
       <readOnly>false</readOnly>
       
-        <value>2442047</value>
         <value>2459115</value>
-        <value>615702</value>
         <value>1118370</value>
       
     </portlet-preference>
@@ -79,9 +77,7 @@
       <name>locations</name>
       <readOnly>false</readOnly>
       
-		<value>Los Angeles, CA</value>
         <value>New York, NY</value>
-        <value>Paris, France(Ile-De-France)</value>
         <value>Tokyo, Japan(Tokyo)</value>
       
     </portlet-preference>
@@ -90,8 +86,6 @@
       <readOnly>false</readOnly>
       
         <value>F</value>
-        <value>F</value>
-        <value>C</value>
         <value>C</value>
       
     </portlet-preference>

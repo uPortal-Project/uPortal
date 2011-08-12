@@ -35,27 +35,13 @@
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
     	<div class="titlebar">
-      		<h3 class="title" role="heading">User Administration</h3>
+      		<h3 class="title" role="heading">Portal Entity Administration</h3>
         </div>
         <div class="content">
             <ul>
                 <li>
                     <a href="<c:url value="/p/user-administration"/>">Manage Users</a>
                 </li>
-                <li>
-                    <a href="<c:url value="/p/AttributeSwapper"/>">Swap attributes</a>
-                </li>
-            </ul>
-        </div>
-	</div>
-	
-    <!-- Portlet Section -->
-    <div class="portlet-section" role="region">
-    	<div class="titlebar">
-      		<h3 class="title" role="heading">Portal Entity Administration</h3>
-        </div>
-        <div class="content">
-            <ul>
                 <li>
                     <a href="<c:url value="/p/portlet-admin"/>">Manage portlets</a>
                 </li>
@@ -66,7 +52,7 @@
                     <a href="<c:url value="/p/permissionsmanager"/>">Manage permissions</a>
                 </li>
                 <li>
-                    <a href="<c:url value="/p/fragment-audit"/>">Audit DLM Fragments</a>
+                    <a href="<c:url value="/p/permissionsmanager"/>">Manage DLM Fragments</a>
                 </li>
             </ul>
         </div>
@@ -84,6 +70,9 @@
                 </li>
                 <li>
                     <a href="<c:url value="/p/toggle-resources-aggregation"/>">Toggle JS/CSS Aggregation</a>
+                </li>
+                <li>
+                    <a href="<c:url value="/p/fragment-audit"/>">Audit DLM Fragments</a>
                 </li>
             </ul>
         </div>
