@@ -30,6 +30,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 
+import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.io.xml.AbstractJaxbDataHandler;
 import org.jasig.portal.io.xml.IPortalData;
 import org.jasig.portal.io.xml.IPortalDataType;
@@ -41,6 +42,7 @@ import org.jasig.portal.utils.ICounterStore;
 import org.jasig.portal.utils.SafeFilenameUtils;
 import org.jasig.portal.utils.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -68,6 +70,7 @@ public class UserImporterExporter extends
 	private DataSource dataSource;
     private ILocalAccountDao localAccountDao;
     private ICounterStore counterStore;
+    private IUserIdentityStore userIdentityStore;
     
     public void setForceDefaultUserName(boolean forceDefaultUserName) {
         this.forceDefaultUserName = forceDefaultUserName;
@@ -78,6 +81,11 @@ public class UserImporterExporter extends
     }
 
     @Autowired
+	public void setUserIdentityStore(IUserIdentityStore userIdentityStore) {
+		this.userIdentityStore = userIdentityStore;
+	}
+
+	@Autowired
     public void setUserPortalDataType(UserPortalDataType userPortalDataType) {
         this.userPortalDataType = userPortalDataType;
     }
@@ -222,8 +230,12 @@ public class UserImporterExporter extends
                     }
 	            },
 	            defaultUsername);
-	    final Tuple<Integer, Long> defaultUserInfo = DataAccessUtils.singleResult(defaultUserInfoResults);
-        return defaultUserInfo;
+	    try {
+	    	return DataAccessUtils.requiredSingleResult(defaultUserInfoResults);
+	    }
+	    catch (EmptyResultDataAccessException e) {
+	    	throw new RuntimeException("No user data found for default-user: " + defaultUsername, e);
+	    }
     }
 
     protected String getDefaultUsername(UserType data) {
@@ -243,7 +255,7 @@ public class UserImporterExporter extends
 	public UserType exportData(String userName) {
         final String defaultUserName = getDefaultUserName(userName);
         
-        final boolean isDefaultUser = this.isDefaultUser(userName);
+        final boolean isDefaultUser = this.userIdentityStore.isDefaultUser(userName);
 	    final UserType userType;
 	    if (isDefaultUser) {
 	        userType = new ExternalTemplateUser();
@@ -304,18 +316,6 @@ public class UserImporterExporter extends
         
         return null;
 	}
-    
-    protected boolean isDefaultUser(String userName) {
-        final List<Integer> defaultUserIdResults = this.jdbcOperations.queryForList(
-                "SELECT user_dflt_usr_id FROM up_user WHERE user_name = ?", Integer.class, userName);
-        final Integer defaultUserId = DataAccessUtils.singleResult(defaultUserIdResults);
-        
-        final List<Integer> defaultUSerInstancesResults = this.jdbcOperations.queryForList(
-                "SELECT count(user_name) FROM up_user WHERE user_dflt_usr_id = ?", Integer.class, defaultUserId);
-        final Integer defaultUserInstances = DataAccessUtils.singleResult(defaultUSerInstancesResults);
-        
-        return defaultUserInstances != null && defaultUserInstances > 0;
-    }
     
 
 	@Override

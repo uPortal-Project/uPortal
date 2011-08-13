@@ -38,7 +38,6 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 
-import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Cache;
@@ -47,9 +46,10 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.IndexColumn;
 import org.jasig.portal.portlet.om.IPortletPreference;
-import org.jasig.portal.portlet.om.IPortletPreferences;
 
 /**
+ * Internal class to the portlet entity/definition needed to have a sane DB schema and still share tables 
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
@@ -67,7 +67,7 @@ import org.jasig.portal.portlet.om.IPortletPreferences;
     )
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class PortletPreferencesImpl implements IPortletPreferences {
+class PortletPreferencesImpl {
     @Id
     @GeneratedValue(generator = "UP_PORTLET_PREFS_GEN")
     @Column(name = "PORTLET_PREFS_ID")
@@ -89,26 +89,19 @@ public class PortletPreferencesImpl implements IPortletPreferences {
         this.entityVersion = -1;
     }
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.om.portlet.prefs.IPortletPreferences#getPortletPreferences()
-     */
-    @Override
     public List<IPortletPreference> getPortletPreferences() {
         return this.portletPreferences;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.om.IPortletPreferences#replacePortletPreferences(java.util.List)
-     */
-    @Override
     public void setPortletPreferences(List<IPortletPreference> newPreferences) {
         if (this.portletPreferences == newPreferences) {
             return;
         }
         
-        Validate.notNull(newPreferences);
-        
-        if (this.portletPreferences == null) {
+        if (newPreferences == null) {
+        	this.portletPreferences = new ArrayList<IPortletPreference>(0);
+        }
+        else if (this.portletPreferences == null) {
             this.portletPreferences = newPreferences;
         }
         else {
@@ -146,10 +139,10 @@ public class PortletPreferencesImpl implements IPortletPreferences {
         if (object == this) {
             return true;
         }
-        if (!(object instanceof IPortletPreferences)) {
+        if (!(object instanceof PortletPreferencesImpl)) {
             return false;
         }
-        IPortletPreferences rhs = (IPortletPreferences) object;
+        PortletPreferencesImpl rhs = (PortletPreferencesImpl) object;
         return new EqualsBuilder()
             .append(this.portletPreferences, rhs.getPortletPreferences())
             .isEquals();

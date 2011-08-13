@@ -19,6 +19,7 @@
 
 package org.jasig.portal.portlet.dao.trans;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.portlet.WindowState;
@@ -28,7 +29,7 @@ import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
-import org.jasig.portal.portlet.om.IPortletPreferences;
+import org.jasig.portal.portlet.om.IPortletPreference;
 
 /**
  * @author Eric Dalquist
@@ -89,14 +90,6 @@ class TransientPortletEntity implements IPortletEntity {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.om.IPortletEntity#getPortletPreferences()
-     */
-    @Override
-    public IPortletPreferences getPortletPreferences() {
-        return this.delegatePortletEntity.getPortletPreferences();
-    }
-
-    /* (non-Javadoc)
      * @see org.jasig.portal.portlet.om.IPortletEntity#getUserId()
      */
     @Override
@@ -104,17 +97,17 @@ class TransientPortletEntity implements IPortletEntity {
         return this.delegatePortletEntity.getUserId();
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.om.IPortletEntity#setPortletPreferences(org.jasig.portal.portlet.om.IPortletPreferences)
-     */
     @Override
-    public void setPortletPreferences(IPortletPreferences portletPreferences) {
-        this.delegatePortletEntity.setPortletPreferences(portletPreferences);
-    }
-
-    
+	public List<IPortletPreference> getPortletPreferences() {
+		return delegatePortletEntity.getPortletPreferences();
+	}
 
     @Override
+	public void setPortletPreferences(List<IPortletPreference> portletPreferences) {
+		delegatePortletEntity.setPortletPreferences(portletPreferences);
+	}
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

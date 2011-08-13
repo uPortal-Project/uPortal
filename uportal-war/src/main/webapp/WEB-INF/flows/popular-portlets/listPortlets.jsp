@@ -118,7 +118,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       </div>
       
       <div id="${n}noneAdded" style="display: none;">
-        <p><spring:message code="No.apps.have.been.added.by.users.in.the.specified.time.period"/></p>
+        <p><spring:message code="no.apps.have.been.added.by.users.in.the.specified.time.period"/></p>
       </div> 
 
       <c:if test="${showAdminFeatures}">

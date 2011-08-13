@@ -1,0 +1,51 @@
+
+<channel-definition script="classpath://org/jasig/portal/io/import-channel_v3-2.crn">
+    <title>Identity Swapper</title>
+    <name>Identity Swapper</name>
+    <fname>IdentitySwapper</fname>
+    <desc>null</desc>
+    <type>Portlet</type>
+    <class>org.jasig.portal.channels.portlet.CSpringPortletAdaptor</class>
+    <timeout>600000</timeout>
+    <hasedit>N</hasedit>
+    <hashelp>N</hashelp>
+    <hasabout>N</hasabout>
+    <secure>N</secure>
+    <locale>en_US</locale>
+    <categories>
+        <category>Administration</category>
+    </categories>
+    <groups>
+        <group>Portal Administrators</group>
+    </groups>
+    <users/>
+    <parameters>
+        <parameter>
+            <name>portletName</name>
+            <value>IdentitySwapperPortlet</value>
+            <description/>
+            <ovrd>N</ovrd>
+        </parameter>
+        <parameter>
+            <name>isFrameworkPortlet</name>
+            <value>true</value>
+            <description/>
+            <ovrd>N</ovrd>
+        </parameter>
+        <parameter>
+            <name>testParam</name>
+            <value>true</value>
+            <description/>
+            <ovrd>N</ovrd>
+        </parameter>
+    </parameters>
+    <portletPreferences>
+        <portletPreference>
+            <name>TestName4</name>
+            <read-only>true</read-only>
+            <values>
+                <value>TestValue4</value>
+            </values>
+        </portletPreference>
+    </portletPreferences>
+</channel-definition>

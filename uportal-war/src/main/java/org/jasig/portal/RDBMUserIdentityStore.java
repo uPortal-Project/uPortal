@@ -36,8 +36,6 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.ILockableEntityGroup;
-import org.jasig.portal.layout.dao.IStylesheetUserPreferencesDao;
-import org.jasig.portal.portlet.dao.IPortletEntityDao;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
@@ -52,8 +50,6 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -202,11 +198,6 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
           log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
       stmt.executeUpdate(SQLDelete);
 
-      SQLDelete = "DELETE FROM UP_USER_PARAM WHERE USER_ID = " + uPortalUID;
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-      stmt.executeUpdate(SQLDelete);
-
       SQLDelete = "DELETE FROM UP_USER_PROFILE  WHERE USER_ID = " + uPortalUID;
       if (log.isDebugEnabled())
           log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
@@ -234,26 +225,6 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
       // START of Addition after bug declaration (bug id 1516)
       SQLDelete = "DELETE FROM UP_USER_LOCALE WHERE USER_ID = " + uPortalUID;
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-      stmt.executeUpdate(SQLDelete);
-
-      SQLDelete = "DELETE FROM UP_USER_PROFILE_MDATA WHERE USER_ID = " + uPortalUID;
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-      stmt.executeUpdate(SQLDelete);
-
-      SQLDelete = "DELETE FROM UP_USER_PROFILE_LOCALE WHERE USER_ID = " + uPortalUID;
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-      stmt.executeUpdate(SQLDelete);
-
-      SQLDelete = "DELETE FROM UP_USER_LAYOUT_MDATA WHERE USER_ID = " + uPortalUID;
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-      stmt.executeUpdate(SQLDelete);
-
-      SQLDelete = "DELETE FROM UP_LAYOUT_STRUCT_MDATA  WHERE USER_ID = " + uPortalUID;
       if (log.isDebugEnabled())
           log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
       stmt.executeUpdate(SQLDelete);
@@ -303,22 +274,37 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     * @see org.jasig.portal.IUserIdentityStore#getPortalUserName(int)
     */
    public String getPortalUserName(final int uPortalUID) {
-       final DataSource dataSource = RDBMServices.getDataSource();
-       final SimpleJdbcTemplate simpleJdbcTemplate = new SimpleJdbcTemplate(dataSource);
-
-       final List<String> results = simpleJdbcTemplate.query("SELECT USER_NAME FROM UP_USER WHERE USER_ID=?", this.userNameRowMapper, uPortalUID);
-       final String userName = (String)DataAccessUtils.singleResult(results);
-       return userName;
+       final List<String> results = this.jdbcOperations.queryForList(
+               "SELECT USER_NAME FROM UP_USER WHERE USER_ID=?", String.class, uPortalUID);
+       return DataAccessUtils.singleResult(results);
    }
    
-   private final UserNameRowMapper userNameRowMapper = new UserNameRowMapper();
-   private class UserNameRowMapper implements ParameterizedRowMapper<String> {
-       public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-           return rs.getString("USER_NAME");
-       }
-   }
+    /* (non-Javadoc)
+    * @see org.jasig.portal.IUserIdentityStore#getPortalUserId(java.lang.String)
+    */
+    @Override
+    public Integer getPortalUserId(String userName) {
+        final List<Integer> results = this.jdbcOperations.queryForList(
+                "SELECT USER_ID FROM UP_USER WHERE USER_NAME=?", Integer.class, userName);
+        return DataAccessUtils.singleResult(results);
+    }
 
-   private int __getPortalUID (IPerson person, boolean createPortalData) throws AuthorizationException {
+    private static final String IS_DEFAULT_USER_QUERY = 
+    		"SELECT count(*)\n" +
+			"FROM up_user upuA\n" +
+			"	right join up_user upuB on upuA.USER_ID = upuB.USER_DFLT_USR_ID\n" +
+			"WHERE upuA.user_name=?";
+    
+    /* (non-Javadoc)
+	 * @see org.jasig.portal.IUserIdentityStore#isDefaultUser(java.lang.String)
+	 */
+	@Override
+	public boolean isDefaultUser(String username) {
+		final int defaultUserCount = this.jdbcOperations.queryForInt(IS_DEFAULT_USER_QUERY, username);
+		return defaultUserCount > 0;
+    }
+
+	private int __getPortalUID (IPerson person, boolean createPortalData) throws AuthorizationException {
        PortalUser portalUser = null;
 
        try {
@@ -658,49 +644,6 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
               String query = null;
               String insert = null;
               try {
-                  // Update UP_USER_PARAM
-                  delete =
-                      "DELETE FROM UP_USER_PARAM " +
-                      "WHERE USER_ID=?";
-                  deleteStmt = con.prepareStatement(delete);
-                  deleteStmt.setInt(1, userId);
-                  if (log.isDebugEnabled())
-                      log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + userId + "): " + delete);
-                  deleteStmt.executeUpdate();
-                  deleteStmt.close();
-
-                  query =
-                      "SELECT USER_ID, USER_PARAM_NAME, USER_PARAM_VALUE " +
-                      "FROM UP_USER_PARAM " +
-                      "WHERE USER_ID=?";
-                  queryStmt = con.prepareStatement(query);
-                  queryStmt.setInt(1, templateUser.getUserId());
-                  if (log.isDebugEnabled())
-                      log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + templateUser.getUserId() + "): " + query);
-                  rs = queryStmt.executeQuery();
-
-                  insert =
-                      "INSERT INTO UP_USER_PARAM (USER_ID, USER_PARAM_NAME, USER_PARAM_VALUE) " +
-                      "VALUES(?, ?, ?)";
-                  insertStmt = con.prepareStatement(insert);
-                  while (rs.next()) {
-
-                      String userParamName = rs.getString("USER_PARAM_NAME");
-                      String userParamValue = rs.getString("USER_PARAM_VALUE");
-
-                      insertStmt.setInt(1, userId);
-                      insertStmt.setString(2, userParamName);
-                      insertStmt.setString(3, userParamValue);
-
-                      if (log.isDebugEnabled())
-                          log.debug("RDBMUserIdentityStore::updateUser(USER_ID=" + userId + ", USER_PARAM_NAME=" + userParamName + ", USER_PARAM_VALUE=" + userParamValue + "): " + insert);
-                      insertStmt.executeUpdate();
-                  }
-                  rs.close();
-                  queryStmt.close();
-                  insertStmt.close();
-
-
                   // Update UP_USER_PROFILE
                   delete =
                       "DELETE FROM UP_USER_PROFILE " +
@@ -822,42 +765,6 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
               ResultSet rs = null;
               String query = null;
               try {
-                  // Add to UP_USER_PARAM
-                  query =
-                      "SELECT USER_ID, USER_PARAM_NAME, USER_PARAM_VALUE " +
-                      "FROM UP_USER_PARAM " +
-                      "WHERE USER_ID=?";
-                  queryStmt = con.prepareStatement(query);
-                  queryStmt.setInt(1, templateUser.getUserId());
-                  if (log.isDebugEnabled())
-                      log.debug("RDBMUserIdentityStore::addNewUser(USER_ID=" + templateUser.getUserId() + "): " + query);
-                  rs = queryStmt.executeQuery();
-
-                  insert =
-                      "INSERT INTO UP_USER_PARAM (USER_ID, USER_PARAM_NAME, USER_PARAM_VALUE) " +
-                      "VALUES(?, ?, ?)";
-                  insertStmt = con.prepareStatement(insert);
-                  while (rs.next()) {
-                      String userParamName = rs.getString("USER_PARAM_NAME");
-                      String userParamValue = rs.getString("USER_PARAM_VALUE");
-
-                      insertStmt.setInt(1, newUID);
-                      insertStmt.setString(2, userParamName);
-                      insertStmt.setString(3, userParamValue);
-
-                      if (log.isDebugEnabled())
-                          log.debug("RDBMUserIdentityStore::addNewUser(USER_ID=" + newUID + ", USER_PARAM_NAME=" + userParamName + ", USER_PARAM_VALUE=" + userParamValue + "): " + insert);
-                      insertStmt.executeUpdate();
-                  }
-                  rs.close();
-                  queryStmt.close();
-
-                  if (insertStmt != null) {
-                    insertStmt.close();
-                    insertStmt = null;
-                  }
-
-
                   // Add to UP_USER_PROFILE
                   query =
                       "SELECT USER_ID, PROFILE_FNAME, PROFILE_NAME, DESCRIPTION, " +

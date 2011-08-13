@@ -593,9 +593,7 @@ table.purpose-layout td {margin:0; padding:0;}
 .fl-reorderer-header-avatar .portal-navigation-gripper {top: 0px; left: 0px; cursor: move; background: transparent url("../images/gripper.png") 0px 0px no-repeat;}
 .fl-reorderer-header-avatar .portal-flyout-container{display: none !important;}
 /* Drop Marker */
-.fl-reorderer-header-dropMarker {display: inline-block; border: 1px solid #d26600 !important; background-color: #F68922 !important; margin: 0 2px !important; filter:alpha(opacity=80) !important;
-    opacity:.8 !important; padding: .5em .31em !important; *display: inline !important; *height: 10px; *padding: 0em .13em !important; *zoom: 1 !important;}
-
+.fl-reorderer-header-dropMarker { + display: block; float:left; + border: 1px solid #d26600 !important; background-color: #F68922 !important; margin: 0 2px !important; filter:alpha(opacity=80) !important; opacity:.8 !important; padding: .5em .31em !important; *display: inline !important; *height: 10px; *padding: 0em .13em !important; *zoom: 1 !important;}
 
 /* Fluid Layout Customizer (Sidebar: drag and drop) */
 /* Avatar Icons (common) */

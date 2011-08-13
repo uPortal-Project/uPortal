@@ -47,7 +47,7 @@
   box-shadow: 0, 1px, 3px, rgba(0, 0, 0, 0.5);
 }
 .up a.button {
-  display: block;
+  display: inline-block;
 }
 .up .button[disabled='disabled'], .up button[disabled='disabled'], .up input[disabled='disabled'], .up input[disabled='disabled']:hover, .up input[disabled='disabled']:focus {
   background: #dcdcdc !important;
@@ -492,7 +492,7 @@
   text-decoration: none;
   font-weight: bold;
 }
-.up #portalNavigation .portal-navigation:hover {
+.up #portalNavigation .portal-navigation:hover, .up #portalNavigation .portal-navigation:focus {
   /* Tab hover. */
   background: #482f2f;
   background-image: -moz-linear-gradient(top, #482f2f, #855858, #855858 50%, #291b1b 0%);
@@ -500,7 +500,7 @@
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#482f2f', EndColorStr='#291b1b')";
   background-image: linear-gradient(top, #482f2f, #855858, #855858 50%, #291b1b 0%);
 }
-.up #portalNavigation .portal-navigation:hover .portal-navigation-link {
+.up #portalNavigation .portal-navigation:hover .portal-navigation-link, .up #portalNavigation .portal-navigation:focus .portal-navigation-link {
   /* Anchor tag within the list item. */
   color: white;
   text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.7);
@@ -813,11 +813,9 @@
 .up .up-gallery .gallery-inner .content-filters-wrapper h3:hover, .up .up-gallery .gallery-inner .content-filters-wrapper h3:focus {
   color: #e68537;
 }
-.up .up-gallery .gallery-inner .content-filters-wrapper .active h3 {
-  color: #d06b1a;
-}
 .up .up-gallery .gallery-inner .content-filters-wrapper .active h3 span {
   background: #404040;
+  color: white;
 }
 .up .up-gallery .gallery-inner .content-filters-wrapper .active h3:hover, .up .up-gallery .gallery-inner .content-filters-wrapper .active h3:focus {
   color: #e68537;

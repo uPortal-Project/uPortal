@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<layout>
+    <folder>
+        <portlet-header headerID="101"/>
+        <portlet-header headerID="102"/>
+        <portlet-header headerID="3"/>
+        <portlet-header headerID="4"/>
+        <portlet-header headerID="5"/>
+        <portlet-header headerID="7"/>
+        <portlet-header headerID="8"/>
+        <portlet-header headerID="9"/>
+    </folder>
+    <folder ID="0" type="root">
+        <folder ID="a" type="header">
+            <portlet portletID="101" fname="welcome-message"/>
+            <portlet portletID="102" fname="announcements"/>
+        </folder>
+        <folder ID="1" fname="my-tab" type="tab">
+            <name xml:lang="en">My Tab</name>
+            <folder ID="2" type="column">
+                <portlet portletID="3" fname="email"/>
+                <portlet portletID="4" fname="weather"/>
+                <portlet portletID="5" fname="campus-news"/>
+            </folder>
+            <folder ID="6" type="column">
+                <portlet portletID="7" fname="student-center"/>
+                <portlet portletID="8" fname="weather"/>
+                <portlet portletID="9" fname="campus-news"/>
+            </folder>
+        </folder>
+        <folder ID="11" fname="my-classes" type="tab">
+            <name xml:lang="en">My Classes {up-portlet-title(13)}</name>
+            <name xml:lang="de">My Classes {up-portlet-title(13)}</name>
+            <link href="{up-portlet-help(13)}">Help Link</link>
+            <name xml:lang="ja">My Classes {up-portlet-title(13)}</name>
+            <folder ID="12" type="column">
+                <portlet portletID="13" fname="course-dashboard"/>
+                <portlet portletID="14" fname="course-dashboard"/>
+            </folder>
+            <folder ID="16" type="column">
+                <portlet portletID="17" fname="course-list"/>
+                <portlet portletID="3" fname="email"/>
+            </folder>
+        </folder>
+    </folder>
+</layout>

@@ -19,12 +19,11 @@
 
 package org.jasig.portal.url.xml;
 
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-
-import static org.junit.Assert.assertTrue;
 
 import java.io.StringWriter;
 
@@ -63,8 +62,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassRelativeResourceLoader;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.util.xml.FixedXMLEventStreamReader;
 import org.springframework.util.xml.SimpleTransformErrorListener;
-import org.springframework.util.xml.StaxUtils;
 
 /**
  * @author Eric Dalquist
@@ -98,7 +97,7 @@ public class XsltPortalUrlProviderTest {
         //Load the XML document so it reads the same way the rendering pipeline reads XML
         final XMLInputFactory xmlInputFactory = XMLInputFactory.newFactory();
         final XMLEventReader eventReader = xmlInputFactory.createXMLEventReader(this.getClass().getResourceAsStream("test.xml"));
-        final XMLStreamReader streamReader= StaxUtils.createEventStreamReader(eventReader);
+        final XMLStreamReader streamReader = new FixedXMLEventStreamReader(eventReader);
         xmlSource = new StAXSource(streamReader);
         
         xslTemplate = tFactory.newTemplates(new StreamSource(this.getClass().getResourceAsStream("test.xsl")));

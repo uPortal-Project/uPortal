@@ -22,8 +22,6 @@ package org.jasig.portal.layout.dlm;
 import java.util.Collections;
 import java.util.List;
 
-import org.w3c.dom.NodeList;
-
 /**
  * Implementation of {@link ConfigurationLoader} that loads 
  * {@link FragmentDefinition} objects from the database using JPA/Hibernate.  
@@ -32,7 +30,7 @@ import org.w3c.dom.NodeList;
  * 
  * @author awills
  */
-public class RDBMConfigurationLoader extends LegacyConfigurationLoader {
+public class RDBMConfigurationLoader implements ConfigurationLoader {
     // Instance Members.
     private IFragmentDefinitionDao fragmentDao = null;
 
@@ -57,15 +55,6 @@ public class RDBMConfigurationLoader extends LegacyConfigurationLoader {
     @Override
     public FragmentDefinition getFragmentByName(String name) {
         return this.fragmentDao.getFragmentDefinition(name);
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.dlm.LegacyConfigurationLoader#getFragments(org.w3c.dom.NodeList)
-     */
-    @Override
-    protected List<FragmentDefinition> getFragments(NodeList frags) {
-        //Return null to just ignore the data from the dlm XML file
-        return null;
     }
     
     

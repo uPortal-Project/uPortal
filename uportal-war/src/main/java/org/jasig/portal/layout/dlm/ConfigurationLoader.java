@@ -38,13 +38,4 @@ public interface ConfigurationLoader {
      */
     public FragmentDefinition getFragmentByName(String ownerId);
     
-    /**
-     * @return The DLM configuration property
-     */
-    public String getProperty(String propertyName);
-
-    /**
-     * @return The number of properties
-     */
-    public int getPropertyCount();
 }

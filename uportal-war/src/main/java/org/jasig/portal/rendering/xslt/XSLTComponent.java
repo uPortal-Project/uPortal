@@ -50,6 +50,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.util.xml.FixedXMLEventStreamReader;
 import org.springframework.util.xml.SimpleTransformErrorListener;
 import org.springframework.util.xml.StaxUtils;
 import org.xml.sax.ContentHandler;
@@ -129,7 +130,7 @@ public class XSLTComponent extends StAXPipelineComponentWrapper implements BeanN
         //Wrap the event reader in a stream reader to avoid a JDK bug
         final XMLStreamReader streamReader;
         try {
-            streamReader = StaxUtils.createEventStreamReader(eventReader);
+            streamReader = new FixedXMLEventStreamReader(eventReader);
         }
         catch (XMLStreamException e) {
             throw new RuntimeException("Failed to create XMLStreamReader from XMLEventReader", e);

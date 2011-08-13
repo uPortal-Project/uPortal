@@ -47,7 +47,7 @@
   box-shadow: 0, 1px, 3px, rgba(0, 0, 0, 0.5);
 }
 .up a.button {
-  display: block;
+  display: inline-block;
 }
 .up .button[disabled='disabled'], .up button[disabled='disabled'], .up input[disabled='disabled'], .up input[disabled='disabled']:hover, .up input[disabled='disabled']:focus {
   background: #dcdcdc !important;
@@ -810,14 +810,12 @@
 .up .up-gallery .gallery-inner .content-filters-wrapper h3:hover, .up .up-gallery .gallery-inner .content-filters-wrapper h3:focus {
   color: #699bc4;
 }
-.up .up-gallery .gallery-inner .content-filters-wrapper .active h3 {
-  color: #404040;
-}
 .up .up-gallery .gallery-inner .content-filters-wrapper .active h3 span {
   background: #404040;
+  color: white;
 }
 .up .up-gallery .gallery-inner .content-filters-wrapper .active h3:hover, .up .up-gallery .gallery-inner .content-filters-wrapper .active h3:focus {
-  color: #b2cce1;
+  color: #8db3d3;
 }
 .up .up-gallery .gallery-inner .content-filters-wrapper h4 {
   /* Filter subtitles */

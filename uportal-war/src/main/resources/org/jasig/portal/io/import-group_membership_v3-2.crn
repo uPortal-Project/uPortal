@@ -29,15 +29,15 @@
  |   - ${PORTAL_CONTEXT}=uPortal's Spring ApplicationContext
  |   - ${SqlAttributes.DATA_SOURCE}=the DataSource for the PortalDb
  |   - ${SqlAttributes.TRANSACTION_MANAGER}=PlatformTransactionManager in use
- |   - Settings defined in classpath://properties/db/entities/import.properties
  |
  +-->
 <choose>
     <when test="${jexl(IMPORT_ACTION.equals('GROUP'))}">
+        <with-attribute key="ENTITY_TYPE" value="${valueOf(entity-type)}">
         <with>
             <attribute key="CREATOR">${valueOf(creator)}</attribute>
             <attribute key="DESCRIPTION">${valueOf(description)}</attribute>
-            <attribute key="ENTITY_TYPE_NAME">${valueOf(entity-type)}</attribute>
+            <attribute key="ENTITY_TYPE_NAME">${groovy("org.jasig.portal.channel.IChannelDefinition".equals(ENTITY_TYPE) ? "org.jasig.portal.portlet.om.IPortletDefinition" : ENTITY_TYPE)}</attribute>
             <attribute key="GROUP_NAME">${valueOf(name)}</attribute>
             <subtasks>
                 <with-attribute key="ENTITY_TYPE_ID" value="${crn(lookup-entity_type_id.crn)}">
@@ -68,6 +68,7 @@
                 </with-attribute>
             </subtasks>
         </with>
+        </with-attribute>
     </when>
     <when test="${jexl(IMPORT_ACTION.equals('MEMBERS'))}">
         <sql-query>

@@ -36,7 +36,7 @@
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
-            <xs:pattern value="[\w-]+"/>
+            <xs:pattern value="[\w-_]+"/>
         </xs:restriction>
     </xs:simpleType>
     

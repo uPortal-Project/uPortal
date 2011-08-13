@@ -21,7 +21,6 @@ package org.jasig.portal.io.xml;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -37,7 +36,6 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -62,6 +60,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.DirectoryScanner;
 import org.jasig.portal.utils.AntPatternFileFilter;
 import org.jasig.portal.utils.ConcurrentDirectoryScanner;
+import org.jasig.portal.utils.ResourceUtils;
 import org.jasig.portal.xml.StaxUtils;
 import org.jasig.portal.xml.XmlUtilities;
 import org.jasig.portal.xml.stream.BufferedXMLEventReader;
@@ -108,6 +107,8 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
     // Data importers mapped by PortalDataKey
     private Map<PortalDataKey, IDataImporter<Object>> portalDataImporters = Collections.emptyMap();
 
+    // ExportAll data types
+    private Set<IPortalDataType> exportAllPortalDataTypes = null;
     // All portal data types available for export
     private Set<IPortalDataType> exportPortalDataTypes = Collections.emptySet();
     // Data exporters mapped by IPortalDateType#getTypeId()
@@ -239,7 +240,16 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         this.portalDataExporters = Collections.unmodifiableMap(dataExportersMap);
         this.exportPortalDataTypes = Collections.unmodifiableSet(portalDataTypes);
     }
-
+    
+    /**
+     * Optional set of all portal data types to export. If not specified all available portal data types
+     * will be listed.
+     */
+    @javax.annotation.Resource(name="exportAllPortalDataTypes")
+    public void setExportAllPortalDataTypes(Set<IPortalDataType> exportAllPortalDataTypes) {
+    	this.exportAllPortalDataTypes = ImmutableSet.copyOf(exportAllPortalDataTypes);
+    }
+    
     /**
      * {@link IDataDeleter} implementations to delegate delete operations to. 
      */
@@ -311,16 +321,18 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
             fileFilter = new AntPatternFileFilter(true, false, this.dataFileIncludes, this.dataFileExcludes);
         }
         
-        //Map of files to import, grouped by type
-        final ConcurrentMap<PortalDataKey, Queue<Resource>> dataToImport = new ConcurrentHashMap<PortalDataKey, Queue<Resource>>();
-        
         //Scan the specified directory for files to import
         logger.info("Scanning for files to Import from: {}", directory);
-        this.directoryScanner.scanDirectoryNoResults(directory, fileFilter, 
-                new PortalDataKeyFileProcessor(this.dataKeyTypes, dataToImport, options));
+        final PortalDataKeyFileProcessor fileProcessor = new PortalDataKeyFileProcessor(this.dataKeyTypes, options);
+		this.directoryScanner.scanDirectoryNoResults(directory, fileFilter, fileProcessor);
+        final long resourceCount = fileProcessor.getResourceCount();
+		logger.info("Found {} files to Import from: {}", resourceCount, directory);
         
         final boolean failOnError = options != null ? options.isFailOnError() : true;
         final AtomicBoolean failed = new AtomicBoolean(false);
+        
+        //Map of files to import, grouped by type
+        final ConcurrentMap<PortalDataKey, Queue<Resource>> dataToImport = fileProcessor.getDataToImport();
         
         //Import the data files
         for (final PortalDataKey portalDataKey : this.dataKeyImportOrder) {
@@ -393,6 +405,11 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         this.importData(resource, null);
     }
     
+    @Override
+    public void importData(Source source) {
+		this.importData(source, null);
+    }
+    
     /**
      * @param portalDataKey Optional PortalDataKey to use, useful for batch imports where post-processing of keys has already take place
      */
@@ -406,18 +423,8 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         }
         
         try {
-            String resourceUri;
-            try {
-                resourceUri = resource.getURI().toString();
-            }
-            catch (FileNotFoundException e) {
-                resourceUri = resource.getDescription();
-            }
-            catch (IOException e) {
-                throw new RuntimeException("Could not create URI for resource: " + resource, e);
-            }
-            
-            this.importData(resource, new StreamSource(resourceStream, resourceUri), portalDataKey);
+            final String resourceUri = ResourceUtils.getResourceUri(resource);
+            this.importData(new StreamSource(resourceStream, resourceUri), portalDataKey);
         }
         finally {
             IOUtils.closeQuietly(resourceStream);
@@ -427,7 +434,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
     /* (non-Javadoc)
      * @see org.jasig.portal.io.xml.IEntityImportService#importEntity(javax.xml.transform.Source)
      */
-    protected final void importData(final Resource resource, final Source source, PortalDataKey portalDataKey) {
+    protected final void importData(final Source source, PortalDataKey portalDataKey) {
         //Get a StAX reader for the source to determine info about the data to import
         final BufferedXMLEventReader bufferedXmlEventReader = createSourceXmlEventReader(source);
         
@@ -438,17 +445,19 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
             bufferedXmlEventReader.reset();
         }
         
+        final String systemId = source.getSystemId();
+        
         //Post Process the PortalDataKey to see if more complex import operations are needed
         final IPortalDataType portalDataType = this.dataKeyTypes.get(portalDataKey);
-        if (portalDataType == null) {
-            throw new RuntimeException("No IPortalDataType configured for " + portalDataKey + ", the resource will be ignored: " + resource);
+		if (portalDataType == null) {
+            throw new RuntimeException("No IPortalDataType configured for " + portalDataKey + ", the resource will be ignored: " + systemId);
         }
-        final Set<PortalDataKey> postProcessedPortalDataKeys = portalDataType.postProcessPortalDataKey(resource, portalDataKey, bufferedXmlEventReader);
+        final Set<PortalDataKey> postProcessedPortalDataKeys = portalDataType.postProcessPortalDataKey(systemId, portalDataKey, bufferedXmlEventReader);
         bufferedXmlEventReader.reset();
         
         //If only a single result from post processing import
         if (postProcessedPortalDataKeys.size() == 1) {
-            this.importOrUpgradeData(resource, DataAccessUtils.singleResult(postProcessedPortalDataKeys), bufferedXmlEventReader);
+            this.importOrUpgradeData(systemId, DataAccessUtils.singleResult(postProcessedPortalDataKeys), bufferedXmlEventReader);
         }
         //If multiple results from post processing ordering is needed
         else {
@@ -457,7 +466,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
                 if (postProcessedPortalDataKeys.contains(orderedPortalDataKey)) {
                     //Reset the to start of the XML document for each import/upgrade call
                     bufferedXmlEventReader.reset();
-                    this.importOrUpgradeData(resource, orderedPortalDataKey, bufferedXmlEventReader);
+                    this.importOrUpgradeData(systemId, orderedPortalDataKey, bufferedXmlEventReader);
                 }
             }
         }
@@ -466,21 +475,21 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
     /**
      * Run the import/update process on the data
      */
-    protected final void importOrUpgradeData(Resource resource, PortalDataKey portalDataKey, XMLEventReader xmlEventReader) {
+    protected final void importOrUpgradeData(String systemId, PortalDataKey portalDataKey, XMLEventReader xmlEventReader) {
         //See if there is a registered importer for the data, if so import
         final IDataImporter<Object> dataImporterExporter = this.portalDataImporters.get(portalDataKey);
         if (dataImporterExporter != null) {
-            this.logger.debug("Importing: {}", resource);
+            this.logger.debug("Importing: {}", systemId);
             final Object data = unmarshallData(xmlEventReader, dataImporterExporter);
             dataImporterExporter.importData(data);
-            this.logger.info("Imported : {}", resource);
+            this.logger.info("Imported : {}", systemId);
             return;
         }
         
         //No importer, see if there is an upgrader, if so upgrade
         final IDataUpgrader dataUpgrader = this.portalDataUpgraders.get(portalDataKey);
         if (dataUpgrader != null) {
-            this.logger.debug("Upgrading: {}", resource);
+            this.logger.debug("Upgrading: {}", systemId);
             
             final StAXSource staxSource;
             try {
@@ -493,20 +502,21 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
             final DOMResult result = new DOMResult();
             final boolean doImport = dataUpgrader.upgradeData(staxSource, result);
             if (doImport) {
-                this.logger.info("Upgraded: {}", resource);
                 //If the upgrader didn't handle the import as well wrap the result DOM in a new Source and start the import process over again
                 final org.w3c.dom.Node node = result.getNode();
-                final DOMSource upgradedSource = new DOMSource(node);
-                this.importData(resource, upgradedSource, null);
+                final PortalDataKey upgradedPortalDataKey = new PortalDataKey(node);
+                this.logger.info("Upgraded: {} to {}", systemId, upgradedPortalDataKey);
+                final DOMSource upgradedSource = new DOMSource(node, systemId);
+                this.importData(upgradedSource, upgradedPortalDataKey);
             }
             else {
-                this.logger.info("Upgraded and Imported: {}", resource);
+                this.logger.info("Upgraded and Imported: {}", systemId);
             }
             return;
         }
         
         //No importer or upgrader found, fail
-        throw new IllegalArgumentException("Provided data " + portalDataKey + " has no registered importer or upgrader support: " + resource);
+        throw new IllegalArgumentException("Provided data " + portalDataKey + " has no registered importer or upgrader support: " + systemId);
     }
 
     protected Object unmarshallData(final XMLEventReader bufferedXmlEventReader, final IDataImporter<Object> dataImporterExporter) {
@@ -618,64 +628,81 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         final boolean failOnError = true; //options != null ? options.isFailOnError() : true;
         
         final AtomicBoolean failed = new AtomicBoolean(false);
-        
-        for (final String typeId : typeIds) {
-            final File typeDir = new File(directory, typeId);
-            logger.info("Exporting all data of type {} to {}", typeId, typeDir);
-            
-            final Iterable<? extends IPortalData> dataForType = this.getPortalData(typeId);
-            for (final IPortalData data : dataForType) {
-                final String dataId = data.getDataId();
-
-                //Check for completed futures on every iteration, needed to fail as fast as possible on an import exception
-                waitForFutures(exportFutures, failed, failOnError, false);
-                
-                //Create export task
-                Callable<Object> task = new Callable<Object>() {
-                    @Override
-                    public Object call() throws Exception {
-                        exportData(typeId, dataId, typeDir);
-                        return null;
-                    }
-                };
-                
-                //If failing on error add exception handling wrapper
-                if (failOnError) {
-                    task = new ErrorReportingCallable<Object>(exportFutures, failed, task);
-                }
-                
-                //If an exception has been reported stop immediately
-                if (failOnError && failed.get()) {
-                    break;
-                }
-                
-                //Submit the export task
-                final Future<?> exportFuture = this.importExportThreadPool.submit(task);
-                
-                //Set a reference to the new future in the callable, needed for error handling
-                if (task instanceof ErrorReportingCallable) {
-                    ((ErrorReportingCallable)task).setSelf(exportFuture);
-                }
-                
-                //Add the future for tracking
-                final ExportFuture futureHolder = new ExportFuture(exportFuture, typeId, dataId);
-                exportFutures.offer(futureHolder);
-            }
-            
-            //If an exception has been reported stop immediately
-            if (failOnError && failed.get()) {
-                break;
-            }
+        try {
+	        for (final String typeId : typeIds) {
+	            final File typeDir = new File(directory, typeId);
+	            logger.info("Adding all data of type {} to export queue: {}", typeId, typeDir);
+	            
+	            final Iterable<? extends IPortalData> dataForType = this.getPortalData(typeId);
+	            for (final IPortalData data : dataForType) {
+	                final String dataId = data.getDataId();
+	
+	                //Check for completed futures on every iteration, needed to fail as fast as possible on an import exception
+	                waitForFutures(exportFutures, failed, failOnError, false);
+	                
+	                //Create export task
+	                Callable<Object> task = new Callable<Object>() {
+	                    @Override
+	                    public Object call() throws Exception {
+	                        exportData(typeId, dataId, typeDir);
+	                        return null;
+	                    }
+	                };
+	                
+	                //If failing on error add exception handling wrapper
+	                if (failOnError) {
+	                    task = new ErrorReportingCallable<Object>(exportFutures, failed, task);
+	                }
+	                
+	                //If an exception has been reported stop immediately
+	                if (failOnError && failed.get()) {
+	                    break;
+	                }
+	                
+	                //Submit the export task
+	                final Future<?> exportFuture = this.importExportThreadPool.submit(task);
+	                
+	                //Set a reference to the new future in the callable, needed for error handling
+	                if (task instanceof ErrorReportingCallable) {
+	                    ((ErrorReportingCallable)task).setSelf(exportFuture);
+	                }
+	                
+	                //Add the future for tracking
+	                final ExportFuture futureHolder = new ExportFuture(exportFuture, typeId, dataId);
+	                exportFutures.offer(futureHolder);
+	            }
+	            
+	            //If an exception has been reported stop immediately
+	            if (failOnError && failed.get()) {
+	                break;
+	            }
+	        }
         }
-        
-        //Wait for all futures to complete
-        waitForFutures(exportFutures, failed, failOnError, true);
+        catch (RuntimeException e) {
+        	if (!failed.getAndSet(true)) {
+        		throw new RuntimeException("Halted due to failures", e);
+        	}
+
+        	throw e;
+        }
+        finally {
+	        //Wait for all futures to complete
+	        waitForFutures(exportFutures, failed, failOnError, true);
+        }
     }
 
     @Override
     public void exportAllData(File directory) {
+    	final Set<IPortalDataType> portalDataTypes;
+    	if (this.exportAllPortalDataTypes != null) {
+    		portalDataTypes = this.exportAllPortalDataTypes;
+    	}
+    	else {
+    		portalDataTypes = this.exportPortalDataTypes;
+    	}
+    	
         final Set<String> typeIds = new LinkedHashSet<String>();
-        for (final IPortalDataType portalDataType : this.exportPortalDataTypes) {
+		for (final IPortalDataType portalDataType : portalDataTypes) {
             typeIds.add(portalDataType.getTypeId());
         }
         this.exportAllDataOfType(typeIds, directory);

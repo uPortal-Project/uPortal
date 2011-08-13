@@ -148,7 +148,6 @@
         <up-shell-batch>
             <antcall target="db" />
             <antcall target="db-hibernate" />
-            <antcall target="i18n-db" />
             <antcall target="db-import" />
         </up-shell-batch>
         <echo message="Finished initializing database" />
@@ -175,13 +174,21 @@
         <echo file="${portal-shell-script}" append="true">
 //HBM2DDL Script
 try {
+	schemaExportBean = '${schemaExportBean}';
     logger.info('');
     logger.info('');
-    logger.info('HBM2DDL: ${schemaExportBean}');
-    ${schemaExportBean}.hbm2ddl('${export}'.toBoolean(), '${create}'.toBoolean(), '${drop}'.toBoolean(), /${outputFileEscaped}/ == 'null' ? null : /${outputFileEscaped}/ , '${haltOnError}'.toBoolean());
+    logger.info('HBM2DDL: ' + schemaExportBean);
+
+	export = '${export}'.toBoolean();
+	create = '${create}'.toBoolean();
+	drop = '${drop}'.toBoolean();
+	outputFile = /${outputFileEscaped}/;
+	haltOnError = '${haltOnError}'.toBoolean();
+        	
+    ${schemaExportBean}.hbm2ddl(export, create, drop, outputFile == 'null' ? null : outputFile , haltOnError);
 }
 catch (Exception e) {
-    throw new RuntimeException("db-hibernate for ${schemaExportBean} failed", e);
+    throw new RuntimeException("db-hibernate for ' + schemaExportBean + ' failed", e);
 }
         </echo>
 
@@ -215,15 +222,23 @@ try {
     //DbLoader Script
     logger.info('');
     logger.info('');
+
+	tablesFile = /${tablefileEscaped}/;
+	dataFile = /${datafileEscaped}/;
+	scriptFile = /${scriptfileEscaped}/;
+	droptables = '${droptables}'.toBoolean();
+	createtables = '${createtables}'.toBoolean();
+	populatetables = '${populatetables}'.toBoolean();
+
     dbLoaderConfig = new org.jasig.portal.tools.dbloader.DbLoaderConfigBuilder();
-    dbLoaderConfig.setTablesFile(/${tablefileEscaped}/);
-    dbLoaderConfig.setDataFile(/${datafileEscaped}/);
-    if (/${scriptfileEscaped}/ != 'null') {
-        dbLoaderConfig.setScriptFile(/${scriptfileEscaped}/);
+    dbLoaderConfig.setTablesFile(tablesFile);
+    dbLoaderConfig.setDataFile(dataFile);
+    if (scriptFile != 'null') {
+        dbLoaderConfig.setScriptFile(scriptFile);
     }
-    dbLoaderConfig.setDropTables('${droptables}'.toBoolean());
-    dbLoaderConfig.setCreateTables('${createtables}'.toBoolean());
-    dbLoaderConfig.setPopulateTables('${populatetables}'.toBoolean());
+    dbLoaderConfig.setDropTables(droptables);
+    dbLoaderConfig.setCreateTables(createtables);
+    dbLoaderConfig.setPopulateTables(populatetables);
     logger.info('Running DbLoader with: ' + dbLoaderConfig);
     dbLoader.process(dbLoaderConfig);
 }
@@ -237,25 +252,58 @@ catch (Exception e) {
         </antcall>
     </target>
 
-    <target name="i18n-db" depends="prodPrompt" description="Loads internationalization tables and data">
-        <antcall target="db">
-            <param name="tablefile" value="/properties/db/tables-i18n.xml" />
-            <param name="datafile" value="/properties/db/data-i18n.xml" />
-        </antcall>
-    </target>
-
-    <target name="db-import" depends="prodPrompt" description="Imports the default XML files to the database">
-        <!-- Use build.properties to override the entities.location setting -->
-        <property name="entities.location" value="uportal-war/src/main/data/default_entities" />
-
+    <target name="db-import-required" depends="prodPrompt" description="Imports the required data files to the database">
         <up-shell-batch>
             <antcall target="data-import">
                 <param name="dir" value="${basedir}/uportal-war/src/main/data/required_entities" />
             </antcall>
+        </up-shell-batch>
+    </target>
+
+    <target name="db-import-default" depends="prodPrompt" description="Imports the default data files to the database">
+        <!-- Use build.properties to override the entities.location setting -->
+        <property name="default_entities.location" value="uportal-war/src/main/data/default_entities" />
+
+        <up-shell-batch>
             <antcall target="data-import">
-                <param name="dir" value="${basedir}/${entities.location}" />
+                <param name="dir" value="${basedir}/${default_entities.location}" />
             </antcall>
         </up-shell-batch>
+    </target>
+
+    <target name="db-import-quickstart" depends="prodPrompt" description="Imports the quickstart data files to the database">
+        <!-- Use build.properties to override the entities.location setting -->
+        <property name="quickstart_entities.location" value="uportal-war/src/main/data/quickstart_entities" />
+
+        <up-shell-batch>
+            <antcall target="data-import">
+                <param name="dir" value="${basedir}/${quickstart_entities.location}" />
+            </antcall>
+        </up-shell-batch>
+    </target>
+
+    <target name="db-import" depends="prodPrompt" description="Imports the default XML files to the database">
+    	<up-shell-batch>
+            <antcall target="db-import-required"/>
+    		
+    		<if>
+    		    <not>
+    			    <isset property="noDefaultData"/>
+		    	</not>
+		    	<then>
+    			   <antcall target="db-import-default"/>
+	    		</then>
+			</if>
+            
+            <if>
+                <not>
+                    <isset property="noQuickstartData"/>
+                </not>
+                <then>
+                   <antcall target="db-import-quickstart"/>
+                </then>
+            </if>
+		</up-shell-batch>
     </target>
 
     <target name="dbtest" description="Displays information about the database defined in rdbm.properties">
@@ -337,7 +385,9 @@ catch (Exception e) {
 
         <echo file="${portal-shell-script}" append="true">
 try {
-    if ('${type}' == 'null') {
+	type = '${type}';
+        	
+    if (type == 'null') {
         //List Data Types Script
         types = portalDataHandlerService.getPortalDataTypes();
         logger.info('');
@@ -349,7 +399,6 @@ try {
     }
     else {
         //List Data Script
-        type = '${type}';
         data = portalDataHandlerService.getPortalData(type);
         logger.info('');
         logger.info('');
@@ -393,13 +442,16 @@ try {
     logger.info('');
     logger.info('');
     dataDir = /${dirFullEscaped}/;
-    if ('${type}' != 'null' &amp;&amp; '${sysid}' != 'null') { 
-        logger.info('Exporting Data ${sysid} of type ${type} to: ' + dataDir);
-        portalDataHandlerService.exportData('${type}', '${sysid}', new File(dataDir));
+	type = '${type}';
+	sysid = '${sysid}';
+
+    if (type != 'null' &amp;&amp; sysid != 'null') { 
+        logger.info('Exporting Data ' + sysid + ' of type ' + type + ' to: ' + dataDir);
+        portalDataHandlerService.exportData(type, sysid, new File(dataDir));
     }
-    else if ('${type}' != 'null') { 
-        logger.info('Exporting All Data of type ${type} to: ' + dataDir);
-        portalDataHandlerService.exportAllDataOfType(['${type}'] as Set, new File(dataDir));
+    else if (type != 'null') { 
+        logger.info('Exporting All Data of type ' + type + ' to: ' + dataDir);
+        portalDataHandlerService.exportAllDataOfType([type] as Set, new File(dataDir));
     }
     else { 
         logger.info('Exporting All Data to: ' + dataDir);
@@ -407,7 +459,7 @@ try {
     }
 }
 catch (Exception e) {
-    throw new RuntimeException("data-export for ${dir} and ${sysid} failed", e);
+    throw new RuntimeException("data-export for " + dataDir + " and " + sysid + " failed", e);
 }
         </echo>
 
@@ -454,12 +506,13 @@ if (dataDir == 'null') {
 	}
 }
 else {
+    pattern = /${pattern}/;
     logger.info('Importing Data from: ' + dataDir);
     try {
-        portalDataHandlerService.importData(new File(dataDir), '${pattern}' == 'null' ? null : '${pattern}', null);
+        portalDataHandlerService.importData(new File(dataDir), pattern == 'null' ? null : pattern, null);
     }
     catch (Exception e) {
-        throw new RuntimeException("data-import for " + dataDir + " and ${pattern} failed", e);
+        throw new RuntimeException("data-import for " + dataDir + " and " + pattern + " failed", e);
     }
 }        </echo>
 
@@ -974,6 +1027,11 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
     <target name="crn-delete">
         <echo>The "crn-delete" Ant task is no longer supported. Use 'ant data-delete' to delete portal data.</echo>
         <fail message="The 'crn-delete' Ant task is no longer supported. Use 'ant data-delete' to delete portal data.">
+        </fail>
+    </target>
+    <target name="i18n-db">
+        <echo>The "i18n-db" Ant task is no longer supported. Use "ant data-import" to import portal data.</echo>
+        <fail message="The 'i18n-db' Ant task is no longer supported. Use 'ant data-import' to import portal data.">
         </fail>
     </target>
 

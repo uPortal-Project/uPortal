@@ -24,6 +24,9 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 
 import org.apache.commons.lang.Validate;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 /**
  * Describes the type and version of a portal data XML file.
@@ -42,9 +45,54 @@ public class PortalDataKey {
      */
     public static final QName VERSION_ATTRIBUTE_NAME = new QName("version");
     
-    private QName name;
-    private String script;
-    private String version;
+    /**
+     * {@link #hashCode()} is called A LOT but never changes since this object and all field
+     * types are immutable. A local variable is used to cache the calculated hash code  
+     */
+    private int hash = 0;
+    
+    private final QName name;
+    private final String script;
+    private final String version;
+    
+    public PortalDataKey(Node rootElement) {
+        if (rootElement.getNodeType() == Node.DOCUMENT_NODE) {
+            rootElement = ((Document)rootElement).getDocumentElement();
+        }
+        
+        final String nodeName = rootElement.getNodeName();
+        final String namespaceURI = rootElement.getNamespaceURI();
+        
+        if (namespaceURI != null) {
+            this.name = new QName(namespaceURI, nodeName);
+        }
+        else {
+            this.name = new QName(nodeName);
+        }
+        
+        final NamedNodeMap attributes = rootElement.getAttributes();
+        if (attributes != null) {
+            final Node scriptAttr = attributes.getNamedItem(SCRIPT_ATTRIBUTE_NAME.getLocalPart());
+            if (scriptAttr != null) {
+                this.script = scriptAttr.getTextContent();
+            }
+            else {
+                this.script = null;
+            }
+            
+            final Node versionAttr = attributes.getNamedItem(VERSION_ATTRIBUTE_NAME.getLocalPart());
+            if (versionAttr != null) {
+                this.version = versionAttr.getTextContent();
+            }
+            else {
+                this.version = null;
+            }
+        }
+        else {
+            this.script = null;
+            this.version = null;
+        }
+    }
     
     public PortalDataKey(StartElement startElement) {
         this.name = startElement.getName();
@@ -82,12 +130,17 @@ public class PortalDataKey {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
-        result = prime * result + ((this.script == null) ? 0 : this.script.hashCode());
-        result = prime * result + ((this.version == null) ? 0 : this.version.hashCode());
-        return result;
+    	final int lHash = this.hash;
+    	if (lHash == 0) {
+	        final int prime = 31;
+	        int result = 1;
+	        result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
+	        result = prime * result + ((this.script == null) ? 0 : this.script.hashCode());
+	        result = prime * result + ((this.version == null) ? 0 : this.version.hashCode());
+	        this.hash = result;
+	        return result;
+    	}
+    	return lHash;
     }
 
     @Override

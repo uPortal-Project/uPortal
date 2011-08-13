@@ -29,7 +29,6 @@ import javax.xml.stream.XMLEventReader;
 
 import org.jasig.portal.io.xml.AbstractPortalDataType;
 import org.jasig.portal.io.xml.PortalDataKey;
-import org.springframework.core.io.Resource;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -122,7 +121,7 @@ public class GroupMembershipPortalDataType extends AbstractPortalDataType {
     }
 
     @Override
-    public Set<PortalDataKey> postProcessPortalDataKey(Resource input, PortalDataKey portalDataKey,
+    public Set<PortalDataKey> postProcessPortalDataKey(String systemId, PortalDataKey portalDataKey,
             XMLEventReader reader) {
         if (IMPORT_30_DATA_KEY.equals(portalDataKey)) {
             //Split the import into two phases

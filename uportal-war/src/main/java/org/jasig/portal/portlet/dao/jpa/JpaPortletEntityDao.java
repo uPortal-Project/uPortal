@@ -125,7 +125,7 @@ public class JpaPortletEntityDao extends BasePortalJpaDao implements IPortletEnt
     @Transactional
     public IPortletEntity createPortletEntity(IPortletDefinitionId portletDefinitionId, String layoutNodeId, int userId) {
         Validate.notNull(portletDefinitionId, "portletDefinitionId can not be null");
-        Validate.notNull(layoutNodeId, "layoutNodeId can not be null");
+        Validate.notEmpty(layoutNodeId, "layoutNodeId can not be null");
         
         final IPortletDefinition portletDefinition = this.portletDefinitionDao.getPortletDefinition(portletDefinitionId);
         if (portletDefinition == null) {

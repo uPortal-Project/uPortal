@@ -33,6 +33,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.stereotype.Service;
 
+import com.google.common.base.Function;
+
 /**
  * Implementation of {@link XPathOperations} that uses a {@link GenericKeyedObjectPool} to pool compiled {@link XPathExpression}
  * instances.
@@ -72,22 +74,20 @@ public class XPathPoolImpl implements XPathOperations, DisposableBean {
     public void destroy() throws Exception {
         this.pool.close();
     }
+    
 
     @Override
-    public <T> T doWithExpression(String expression, XPathExpressionCallback<T> callback) {
-        return this.doWithExpression(expression, null, callback);
+    public <T> T doWithExpression(String expression, Function<XPathExpression, T> callback) {
+        return this.<T>doWithExpression(expression, null, callback);
     }
 
     @Override
-    public <T> T doWithExpression(String expression, Map<String, ?> variables, XPathExpressionCallback<T> callback) {
+    public <T> T doWithExpression(String expression, Map<String, ?> variables, Function<XPathExpression, T> callback) {
         try {
             final XPathExpression xPathExpression = (XPathExpression)this.pool.borrowObject(expression);
             try {
                 this.variableResolver.setVariables(variables);
-                return callback.doWithExpression(xPathExpression);
-            }
-            catch (XPathExpressionException e) {
-                throw new RuntimeException("Failed to execute XPathExpression '" + expression + "' with variables " + variables, e);
+                return callback.apply(xPathExpression);
             }
             finally {
                 this.variableResolver.clearVariables();
@@ -104,22 +104,24 @@ public class XPathPoolImpl implements XPathOperations, DisposableBean {
 
     @Override
     public <T> T evaluate(String expression, final Object item, final QName returnType) {
-        return this.doWithExpression(expression, null, new XPathExpressionCallback<T>() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public T doWithExpression(XPathExpression xpathExpression) throws XPathExpressionException {
-                return (T)xpathExpression.evaluate(item, returnType);
-            }
-        });
+        return this.<T>evaluate(expression, null, item, returnType);
     }
 
     @Override
     public <T> T evaluate(String expression, Map<String, ?> variables, final Object item, final QName returnType) {
-        return this.doWithExpression(expression, variables, new XPathExpressionCallback<T>() {
+        return this.doWithExpression(expression, variables, new Function<XPathExpression, T>() {
+            /* (non-Javadoc)
+             * @see com.google.common.base.Function#apply(java.lang.Object)
+             */
             @SuppressWarnings("unchecked")
             @Override
-            public T doWithExpression(XPathExpression xpathExpression) throws XPathExpressionException {
-                return (T)xpathExpression.evaluate(item, returnType);
+            public T apply(XPathExpression xpathExpression) {
+                try {
+                    return (T)xpathExpression.evaluate(item, returnType);
+                }
+                catch (XPathExpressionException e) {
+                    throw new RuntimeException("Failed to execute XPathExpression '" + xpathExpression + "'", e);
+                }
             }
         });
     }

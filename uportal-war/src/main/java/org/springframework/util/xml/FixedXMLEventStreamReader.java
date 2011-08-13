@@ -28,13 +28,10 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.Comment;
-import javax.xml.stream.events.EntityReference;
 import javax.xml.stream.events.Namespace;
 import javax.xml.stream.events.ProcessingInstruction;
 import javax.xml.stream.events.StartDocument;
 import javax.xml.stream.events.XMLEvent;
-
-import org.springframework.util.xml.AbstractXMLStreamReader;
 
 /**
  * Fixed version of Springs's XMLEventStreamReader
@@ -52,6 +49,24 @@ public class FixedXMLEventStreamReader extends AbstractXMLStreamReader {
         this.eventReader = eventReader;
         event = eventReader.nextEvent();
     }
+
+    
+    /**
+     * See https://jira.springsource.org/browse/SPR-8457
+     */
+    public String getText() {
+        if (event.isCharacters()) { //Handles CHARACTERS, CDATA, & SPACE
+            return event.asCharacters().getData();
+        }
+        else if (event.getEventType() == XMLEvent.COMMENT) {
+            return ((Comment) event).getText();
+        }
+        else {
+            throw new IllegalStateException();
+        }
+    }
+    
+    
 
     public boolean isStandalone() {
         if (event.isStartDocument()) {
@@ -73,22 +88,6 @@ public class FixedXMLEventStreamReader extends AbstractXMLStreamReader {
 
     public int getTextStart() {
         return 0;
-    }
-
-    public String getText() {
-        if (event.isCharacters()) { //Handles CHARACTERS, CDATA, & SPACE
-            return event.asCharacters().getData();
-        }
-        else if (event.getEventType() == XMLEvent.COMMENT) {
-            return ((Comment) event).getText();
-        }
-        else if (event.getEventType() == XMLEvent.ENTITY_REFERENCE) {
-            //TODO this should be the replacement value, not sure how to resolve that
-            return ((EntityReference) event).getName();
-        }
-        else {
-            throw new IllegalStateException();
-        }
     }
 
     public String getPITarget() {

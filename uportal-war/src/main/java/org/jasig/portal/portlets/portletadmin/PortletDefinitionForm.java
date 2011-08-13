@@ -34,7 +34,6 @@ import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
 import org.jasig.portal.portlet.om.IPortletPreference;
-import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.portlet.om.PortletLifecycleState;
 import org.jasig.portal.portletpublishing.xml.MultiValuedPreferenceInputType;
 import org.jasig.portal.portletpublishing.xml.Parameter;
@@ -169,8 +168,7 @@ public class PortletDefinitionForm implements Serializable {
 			}
 		}
 		
-        final IPortletPreferences prefs = def.getPortletPreferences();
-        for (IPortletPreference pref : prefs.getPortletPreferences()) {
+        for (IPortletPreference pref : def.getPortletPreferences()) {
 			List<Attribute> attributes = new ArrayList<Attribute>();
 			for (String value : pref.getValues()) {
 				attributes.add(new Attribute(value));

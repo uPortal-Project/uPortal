@@ -26,7 +26,6 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 
 import org.apache.commons.lang.Validate;
-import org.springframework.core.io.Resource;
 
 /**
  * Base IPortalDataType implementation that should simplify most implementations
@@ -70,12 +69,12 @@ public abstract class AbstractPortalDataType implements IPortalDataType {
      * @see org.jasig.portal.io.xml.IPortalDataType#postProcessPortalDataKey(org.springframework.core.io.Resource, org.jasig.portal.io.xml.PortalDataKey, javax.xml.stream.XMLEventReader)
      */
     @Override
-    public Set<PortalDataKey> postProcessPortalDataKey(Resource input, PortalDataKey portalDataKey, XMLEventReader reader) {
-        final PortalDataKey singlePortalDataKey = this.postProcessSinglePortalDataKey(input, portalDataKey, reader);
+    public Set<PortalDataKey> postProcessPortalDataKey(String systemId, PortalDataKey portalDataKey, XMLEventReader reader) {
+        final PortalDataKey singlePortalDataKey = this.postProcessSinglePortalDataKey(systemId, portalDataKey, reader);
         return Collections.singleton(singlePortalDataKey);
     }
     
-    protected PortalDataKey postProcessSinglePortalDataKey(Resource input, PortalDataKey portalDataKey, XMLEventReader reader) {
+    protected PortalDataKey postProcessSinglePortalDataKey(String systemId, PortalDataKey portalDataKey, XMLEventReader reader) {
         return portalDataKey;
     }
     

@@ -26,15 +26,19 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
+import net.sf.ehcache.store.chm.ConcurrentHashMap;
+
 import org.apache.commons.io.IOUtils;
 import org.codehaus.stax2.XMLInputFactory2;
 import org.jasig.portal.io.xml.IPortalDataHandlerService.BatchImportOptions;
 import org.jasig.portal.utils.ConcurrentMapUtils;
+import org.jasig.portal.utils.ResourceUtils;
 import org.jasig.portal.xml.StaxUtils;
 import org.jasig.portal.xml.stream.BufferedXMLEventReader;
 import org.slf4j.Logger;
@@ -47,14 +51,14 @@ import com.google.common.base.Function;
 public final class PortalDataKeyFileProcessor implements Function<Resource, Object> {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
+    private final AtomicLong count = new AtomicLong();
+    private final ConcurrentMap<PortalDataKey, Queue<Resource>> dataToImport = new ConcurrentHashMap<PortalDataKey, Queue<Resource>>();
     private final Map<PortalDataKey, IPortalDataType> dataKeyTypes;
     private final XMLInputFactory xmlInputFactory;
-    private final ConcurrentMap<PortalDataKey, Queue<Resource>> dataToImport;
     private final BatchImportOptions options;
     
-    PortalDataKeyFileProcessor(Map<PortalDataKey, IPortalDataType> dataKeyTypes, ConcurrentMap<PortalDataKey, Queue<Resource>> dataToImport, BatchImportOptions options) {
+    PortalDataKeyFileProcessor(Map<PortalDataKey, IPortalDataType> dataKeyTypes, BatchImportOptions options) {
         this.dataKeyTypes = dataKeyTypes;
-        this.dataToImport = dataToImport;
         this.options = options;
         
         this.xmlInputFactory = XMLInputFactory.newFactory();
@@ -66,8 +70,24 @@ public final class PortalDataKeyFileProcessor implements Function<Resource, Obje
         this.xmlInputFactory.setProperty(XMLInputFactory.IS_VALIDATING, false); //Don't do any validation here
         this.xmlInputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false); //Don't load referenced DTDs here
     }
+    
+	/**
+	 * @return total number of resources to import
+	 */
+	public long getResourceCount() {
+		return count.get();
+	}
 
-    @Override
+	/**
+	 * @return Map of the data to import
+	 */
+	public ConcurrentMap<PortalDataKey, Queue<Resource>> getDataToImport() {
+		return dataToImport;
+	}
+
+
+
+	@Override
     public Object apply(Resource input) {
         final InputStream fis;
         try {
@@ -85,7 +105,7 @@ public final class PortalDataKeyFileProcessor implements Function<Resource, Obje
         final PortalDataKey portalDataKey;
         final BufferedXMLEventReader xmlEventReader;
         try {
-            xmlEventReader = new BufferedXMLEventReader(this.xmlInputFactory.createXMLEventReader(fis));
+            xmlEventReader = new BufferedXMLEventReader(this.xmlInputFactory.createXMLEventReader(fis), -1);
             
             final StartElement rootElement = StaxUtils.getRootElement(xmlEventReader);
             portalDataKey = new PortalDataKey(rootElement);
@@ -101,8 +121,8 @@ public final class PortalDataKeyFileProcessor implements Function<Resource, Obje
         finally {
             IOUtils.closeQuietly(fis);
         }
-        
         xmlEventReader.reset();
+        
         final IPortalDataType portalDataType = this.dataKeyTypes.get(portalDataKey);
         if (portalDataType == null) {
             logger.warn("No IPortalDataType configured for {}, the resource will be ignored: {}", portalDataKey, input);
@@ -110,7 +130,9 @@ public final class PortalDataKeyFileProcessor implements Function<Resource, Obje
         }
         
         //Allow the PortalDataType to do any necessary post-processing of the input, needed as some types require extra work
-        final Set<PortalDataKey> processedPortalDataKeys = portalDataType.postProcessPortalDataKey(input, portalDataKey, xmlEventReader);
+        final String resourceUri = ResourceUtils.getResourceUri(input);
+        final Set<PortalDataKey> processedPortalDataKeys = portalDataType.postProcessPortalDataKey(resourceUri, portalDataKey, xmlEventReader);
+        xmlEventReader.reset();
         
         for (final PortalDataKey processedPortalDataKey : processedPortalDataKeys) {
             //Add the PortalDataKey and File into the map
@@ -119,6 +141,7 @@ public final class PortalDataKeyFileProcessor implements Function<Resource, Obje
                 queue = ConcurrentMapUtils.putIfAbsent(this.dataToImport, processedPortalDataKey, new ConcurrentLinkedQueue<Resource>());
             }
             queue.offer(input);
+            count.incrementAndGet();
         }
         
         return null;

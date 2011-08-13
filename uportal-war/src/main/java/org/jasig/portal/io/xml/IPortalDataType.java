@@ -57,10 +57,10 @@ public interface IPortalDataType {
      * Post processes the resolved {@link PortalDataKey}, allows for data that needs to be retyped based on file name, returning
      * multiple data keys for data that needs a multi-pass import, and other operations.
      * 
-     * @param input The Resource the data key was parsed from
+     * @param systemId The url, file name or other system identifier for the data
      * @param portalDataKey The already parsed key, must be contained in the set returned by {@link #getDataKeyImportOrder()}
      * @param reader The XMLEventReader (set to the start of the XML event stream) to use for processing the input
      * @return One or more PortalDataKeys that represent the data
      */
-    public Set<PortalDataKey> postProcessPortalDataKey(Resource input, PortalDataKey portalDataKey, XMLEventReader reader);
+    public Set<PortalDataKey> postProcessPortalDataKey(String systemId, PortalDataKey portalDataKey, XMLEventReader reader);
 }

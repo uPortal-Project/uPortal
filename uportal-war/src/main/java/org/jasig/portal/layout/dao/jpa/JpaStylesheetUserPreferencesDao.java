@@ -43,7 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Eric Dalquist
  * @version $Revision$
  */
-@Repository
+@Repository("stylesheetUserPreferencesDao")
 public class JpaStylesheetUserPreferencesDao extends BasePortalJpaDao implements IStylesheetUserPreferencesDao {
     private static final String FIND_ALL_PREFERENCES_CACHE_REGION = StylesheetUserPreferencesImpl.class.getName() + ".query.FIND_ALL_PREFERENCES";
     private static final String FIND_PREFERENCES_BY_DESCRIPTOR_PERSON_PROFILE_CACHE_REGION = StylesheetUserPreferencesImpl.class.getName() + ".query.FIND_PREFERENCES_BY_DESCRIPTOR_PERSON_PROFILE_CACHE_REGION";

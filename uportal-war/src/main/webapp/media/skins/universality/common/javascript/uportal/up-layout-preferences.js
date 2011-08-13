@@ -502,6 +502,7 @@ var uportal = uportal || {};
             var id = up.defaultNodeIdExtractor(this);
             if (!confirm(that.options.messages.confirmRemovePortlet)) return false;
             $('#portlet_' + id).remove();
+            $("#portalSubnavLink_" + id).remove();
             that.persistence.update({action: 'removeElement', elementID: id});
             return false;
         });

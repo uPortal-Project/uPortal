@@ -25,7 +25,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.IUserPreferencesManager;
@@ -44,12 +43,13 @@ import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
-import org.jasig.portal.xml.xpath.XPathExpressionCallback;
 import org.jasig.portal.xml.xpath.XPathOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.google.common.base.Function;
 
 /**
  * Maps tabs and portlets to folder names and back. Handles a single set of tabs and uses tab IDs for folder names.
@@ -133,9 +133,9 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
         return this.xpathOperations.doWithExpression(
             defaultLayoutNodeIdExpression, 
             Collections.singletonMap("defaultTab", tabIndex), 
-            new XPathExpressionCallback<String>() {
+            new Function<XPathExpression, String>() {
                 @Override
-                public String doWithExpression(XPathExpression xPathExpression) throws XPathExpressionException {
+                public String apply(XPathExpression xPathExpression) {
                     return userLayout.findNodeId(xPathExpression);
                 }
             });
@@ -162,9 +162,9 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
         final String tabId = this.xpathOperations.doWithExpression(
                 tabIdExpression, 
                 Collections.singletonMap("nodeId", layoutNodeId), 
-                new XPathExpressionCallback<String>() {
+                new Function<XPathExpression, String>() {
                     @Override
-                    public String doWithExpression(XPathExpression xPathExpression) throws XPathExpressionException {
+                    public String apply(XPathExpression xPathExpression) {
                         return userLayout.findNodeId(xPathExpression);
                     }
                 });

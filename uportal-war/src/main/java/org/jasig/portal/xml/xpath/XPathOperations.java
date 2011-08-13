@@ -22,17 +22,33 @@ package org.jasig.portal.xml.xpath;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
+import javax.xml.xpath.XPathExpression;
+
+import com.google.common.base.Function;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
 public interface XPathOperations {
-    public <T> T doWithExpression(String expression, XPathExpressionCallback<T> callback);
+    /**
+     * Call the specified Function with the compiled {@link XPathExpression} version of the expression string
+     */
+    public <T> T doWithExpression(String expression, Function<XPathExpression, T> callback);
     
-    public <T> T doWithExpression(String expression, Map<String, ?> variables, XPathExpressionCallback<T> callback);
+    /**
+     * Call the specified Function with the compiled {@link XPathExpression} version of the expression string
+     * The provided variables will be available for the expression at evaluation time
+     */
+    public <T> T doWithExpression(String expression, Map<String, ?> variables, Function<XPathExpression, T> callback);
     
+    /**
+     * @see XPathExpression#evaluate(Object, QName)
+     */
     public <T> T evaluate(String expression, final Object item, final QName returnType);
     
+    /**
+     * @see XPathExpression#evaluate(Object, QName)
+     */
     public <T> T evaluate(String expression, Map<String, ?> variables, final Object item, final QName returnType);
 }

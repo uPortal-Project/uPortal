@@ -65,6 +65,7 @@
     </bean>
 
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <qualifier value="PortalDb" />
         <property name="entityManagerFactory" ref="factoryBean" />
     </bean>
     

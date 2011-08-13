@@ -19,11 +19,13 @@
 
 package org.jasig.portal.io.xml;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
+
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,15 +34,20 @@ import java.io.StringWriter;
 import java.util.TimeZone;
 
 import javax.sql.DataSource;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.jasig.portal.io.xml.permission.ExternalPermissionOwner;
 import org.jasig.portal.io.xml.ssd.ExternalStylesheetDescriptor;
 import org.jasig.portal.io.xml.user.UserType;
 import org.jasig.portal.utils.ICounterStore;
+import org.jasig.portal.utils.Tuple;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,6 +64,7 @@ import org.springframework.oxm.Unmarshaller;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.SimpleJdbcTestUtils;
+import org.w3c.dom.Element;
 
 import com.google.common.base.Function;
 
@@ -78,6 +86,16 @@ public class IdentityImportExportTest {
     private IDataImporter<UserType> userImporter;
     @javax.annotation.Resource(name="userImporterExporter")
     private IDataExporter<UserType> userExporter;
+    
+    @javax.annotation.Resource(name="permissionOwnerImporterExporter")
+    private IDataImporter<ExternalPermissionOwner> permissionOwnerImporter;
+    @javax.annotation.Resource(name="permissionOwnerImporterExporter")
+    private IDataExporter<ExternalPermissionOwner> permissionOwnerExporter;
+    
+    @javax.annotation.Resource(name="fragmentDefinitionImporter")
+    private IDataImporter<Tuple<String, Element>> fragmentDefinitionImporter;
+    @javax.annotation.Resource(name="fragmentDefinitionExporter")
+    private IDataExporter<Tuple<String, org.dom4j.Element>> fragmentDefinitionExporter;
     
     @Autowired private ICounterStore counterStore;
     private SimpleJdbcTemplate simpleJdbcTemplate;
@@ -165,6 +183,22 @@ public class IdentityImportExportTest {
     }
     
     @Test
+    public void testPermissionOwner40ImportExport() throws Exception {
+        final ClassPathResource permissionOwnerResource = new ClassPathResource("/org/jasig/portal/io/xml/permission-owner/test_4-0.permission-owner.xml");
+        
+        this.testIdentityImportExport(
+                this.permissionOwnerImporter, this.permissionOwnerExporter,
+                permissionOwnerResource,
+                new Function<ExternalPermissionOwner, String>() {
+
+                    @Override
+                    public String apply(ExternalPermissionOwner input) {
+                        return input.getFname();
+                    }
+                });
+    }
+    
+    @Test
     public void testUser40ImportExport() throws Exception {
         final ClassPathResource dataResource = new ClassPathResource("/org/jasig/portal/io/xml/user/test_4-0.user.xml");
         
@@ -179,26 +213,49 @@ public class IdentityImportExportTest {
                 });
     }
     
+  
+    @Test
+    public void testFragmentDefinition31ImportExport() throws Exception {
+        final ClassPathResource dataResource = new ClassPathResource("/org/jasig/portal/io/xml/fragment-definition/academic-tab_3-1.fragment-definition.xml");
+        
+        this.<Tuple<String, Element>>testIdentityImportExport(
+                this.fragmentDefinitionImporter, this.fragmentDefinitionExporter,
+                dataResource,
+                new Function<Tuple<String, Element>, String>() {
+                    @Override
+                    public String apply(Tuple<String, Element> input) {
+                        return "Academics Tab";
+                    }
+                });
+    }
     
     private <T> void testIdentityImportExport(
-            IDataImporter<T> dataImporter, IDataExporter<T> dataExporter, 
+            IDataImporter<T> dataImporter, IDataExporter<?> dataExporter, 
             Resource resource, Function<T, String> getName) throws Exception {
-        final String importData = toString(resource);
+        
+    	final String importData = toString(resource);
+        
+    	final XMLInputFactory xmlInputFactory = XMLInputFactory.newFactory();
+    	final XMLEventReader xmlEventReader = xmlInputFactory.createXMLEventReader(new StringReader(importData));
         
         //Unmarshall from XML
         final Unmarshaller unmarshaller = dataImporter.getUnmarshaller();
-        @SuppressWarnings("unchecked")
-        final T dataImport = (T)unmarshaller.unmarshal(new StreamSource(new StringReader(importData)));
+        final StAXSource source = new StAXSource(xmlEventReader);
+		@SuppressWarnings("unchecked")
+        final T dataImport = (T)unmarshaller.unmarshal(source);
         
         //Make sure the data was unmarshalled
-        assertNotNull(dataImport);
+        assertNotNull("Unmarshalled import data was null", dataImport);
         
         //Import the data
         dataImporter.importData(dataImport);
         
         //Export the data
         final String name = getName.apply(dataImport);
-        final T dataExport = dataExporter.exportData(name);
+        final Object dataExport = dataExporter.exportData(name);
+        
+        //Make sure the data was exported
+        assertNotNull("Exported data was null", dataExport);
         
         //Marshall to XML
         final Marshaller marshaller = dataExporter.getMarshaller();
@@ -206,13 +263,19 @@ public class IdentityImportExportTest {
         final StringWriter result = new StringWriter();
         marshaller.marshal(dataExport, new StreamResult(result));
         
-//        System.out.println(result.toString());
-//        System.out.println("");
-
         //Compare the exported XML data with the imported XML data, they should match
-        XMLUnit.setIgnoreWhitespace(true);
-        Diff d = new Diff(new StringReader(importData), new StringReader(result.toString()));
-        assertTrue("Export result differs from import" + d, d.similar());
+        final String resultString = result.toString();
+        try {
+	        XMLUnit.setIgnoreWhitespace(true);
+			Diff d = new Diff(new StringReader(importData), new StringReader(resultString));
+	        assertTrue("Export result differs from import" + d, d.similar());
+        }
+        catch (Exception e) {
+            throw new XmlTestException("Failed to assert similar between import XML and export XML", resultString, e);
+        }
+        catch (Error e) {
+        	throw new XmlTestException("Failed to assert similar between import XML and export XML", resultString, e);
+        }
     }
 
     protected String toString(Resource resource) throws IOException {

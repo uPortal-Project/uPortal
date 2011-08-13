@@ -298,7 +298,7 @@
     <div id="portalLogin" class="fl-widget">
       <div class="fl-widget-inner">
         <div class="fl-widget-titlebar">
-          <h2>Sign In</h2>
+          <h2><xsl:value-of select="upMsg:getMessage('sign.in', $USER_LANG)"/></h2>
         </div>
         <xsl:choose>
           <xsl:when test="$EXTERNAL_LOGIN_URL != ''">
@@ -586,8 +586,8 @@
    | render when no portlets have been added to a users layout.
   -->
   <xsl:template name="page.customize.message">
-      <h1>Customize this page.</h1>
-      <p>You can <strong>Add Stuff</strong>, change the page <strong>Layout</strong>, and pick your <strong>Colors.</strong> Click the <em>CUSTOMIZE</em> handle to get started.</p>
+      <h1><xsl:value-of select="upMsg:getMessage('customize.this.page', $USER_LANG)"/></h1>
+      <p><xsl:value-of select="upMsg:getMessage('customize.this.page.description', $USER_LANG)"/></p>
   </xsl:template>
   <!-- ========================================== -->
   

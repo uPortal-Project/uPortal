@@ -87,11 +87,11 @@
       <head>
         <title>
           <xsl:choose>
-            <xsl:when test="/layout_fragment">
-            	<xsl:value-of select="upMsg:getMessage('portal.name', $USER_LANG)" />: <xsl:value-of select="content/channel/@title"/>
+            <xsl:when test="//focused">
+            	<xsl:value-of select="upMsg:getMessage('portal.name', $USER_LANG)" />: {up-portlet-title(<xsl:value-of select="//focused/channel/@ID" />)}
             </xsl:when>
             <xsl:otherwise>
-            	<xsl:value-of select="upMsg:getMessage('portal.page.title', $USER_LANG)" />
+                <xsl:value-of select="upMsg:getMessage('portal.name', $USER_LANG)" />: <xsl:value-of select="/layout/navigation/tab[@activeTab='true']/@name"/>
             </xsl:otherwise>
           </xsl:choose>
         </title>

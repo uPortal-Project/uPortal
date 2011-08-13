@@ -36,6 +36,8 @@ import org.hibernate.type.descriptor.sql.VarcharTypeDescriptor;
  * @version $Revision$
  */
 public class FunctionalNameType extends BaseUserType<String> {
+    private static final long serialVersionUID = 1L;
+    
     public static final Pattern INVALID_CHARS_PATTERN = Pattern.compile("[^\\w-]");
     public static final Pattern VALID_CHARS_PATTERN = Pattern.compile("[\\w-]");
     public static final Pattern VALID_FNAME_PATTERN = Pattern.compile("^[\\w-]+$");
@@ -52,6 +54,13 @@ public class FunctionalNameType extends BaseUserType<String> {
 
         final Matcher matcher = VALID_FNAME_PATTERN.matcher(fname);
         return matcher.matches();
+    }
+    public static String makeValid(String fname) {
+        if (fname == null) {
+            return "_";
+        }
+        
+        return INVALID_CHARS_PATTERN.matcher(fname).replaceAll("_");
     }
 
     public FunctionalNameType() {

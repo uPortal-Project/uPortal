@@ -69,7 +69,6 @@ import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.jasig.portal.portlet.delegation.jsp.RenderPortletTag;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletPreference;
-import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.om.PortletCategory;
@@ -417,8 +416,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
 				preferenceList.add(new PortletPreferenceImpl(key, readOnly.getValue(), values));
 			}
 		}
-		final IPortletPreferences portletPreferences = portletDef.getPortletPreferences();
-		portletPreferences.setPortletPreferences(preferenceList);
+		portletDef.setPortletPreferences(preferenceList);
 	    
 	    portletPublishingService.savePortletDefinition(portletDef, publisher, Arrays.asList(categories), Arrays.asList(groupMembers));
 

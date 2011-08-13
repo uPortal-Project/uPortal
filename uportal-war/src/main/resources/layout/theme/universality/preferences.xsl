@@ -68,8 +68,8 @@
                        <div class="portlet-search-view">
                             <form class="portlet-search-form">
                                 <label for="portletSearch"><xsl:value-of select="upMsg:getMessage('search.stuff.add', $USER_LANG)"/></label>
-                                <input id="portletSearch" name="portletSearch" class="portlet-search-input" type="text" value="Search" />
-                                <input type="submit" value="Search" class="portlet-search-submit"/>
+                                <input id="portletSearch" name="portletSearch" class="portlet-search-input" type="text" value="{upMsg:getMessage('search', $USER_LANG)}" />
+                                <input type="submit" value="{upMsg:getMessage('search', $USER_LANG)}" class="portlet-search-submit"/>
                             </form>
                         </div>
                         <div class="categories">
@@ -189,7 +189,7 @@
                         <div class="ri-wrapper portlet-wrapper">
                         	<xsl:choose>
                                 <xsl:when test="$CONTEXT='addContent'">
-                                    <a class="ri-utility portlet-thumb-gripper" href="javascript:;" title="Drag to add content"><span>Drag Handle</span></a>
+                                    <a class="ri-utility portlet-thumb-gripper" href="javascript:;" title="{upMsg:getMessage('drag.to.add.content', $USER_LANG)}"><span>Drag Handle</span></a>
                                 </xsl:when>
                                 <xsl:otherwise>
                                     <div class="ri-utility"></div>
@@ -363,7 +363,7 @@
     	<xsl:if test="$AUTHENTICATED = 'true'">
         <div class="up-gallery">
             <h2 class="handle">
-                <a><span class="handle-arrow-up">Customize</span></a>
+                <a><span class="handle-arrow-up"><xsl:value-of select="upMsg:getMessage('customize', $USER_LANG)"/></span></a>
             </h2>
             <div class="fl-fix fl-col-mixed fl-col-mixed2 gallery-inner" style="display:none">
                 <div class="fl-col-side fl-force-left menu-wrapper">
@@ -453,7 +453,7 @@
            
      <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
      
-         <div class="edit-page-permissions-dialog" title="Edit Page Permissions">
+         <div class="edit-page-permissions-dialog" title="{upMsg:getMessage('edit.page.permissions', $USER_LANG)}">
             <div class="fl-widget portlet">
                 <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
                     <h2 class="title" role="heading"><xsl:value-of select="/layout/navigation/tab[@activeTab='true']/@name"/></h2>
@@ -462,20 +462,20 @@
                 <div class="fl-widget-content content portlet-content" role="main">
                     <div class="portlet-section" role="region">
                         <div class="titlebar">
-                            <h3 class="title" role="heading">Allow users to:</h3>
+                            <h3 class="title" role="heading"><xsl:value-of select="upMsg:getMessage('allow.users.to', $USER_LANG)"/>:</h3>
                         </div>
                         <div class="content">
                             <form>
                                 <p>
                                     <input type="hidden" name="nodeId" value="{/layout/navigation/tab[@activeTab='true']/@ID}"/>
-                                    <input type="checkbox" name="movable"/> Move this page<br />
-                                    <input type="checkbox" name="editable"/> Edit page properties<br />
-                                    <input type="checkbox" name="addChildAllowed"/> Add columns<br />
-                                    <input type="checkbox" name="deletable"/> Delete this page<br />
+                                    <input type="checkbox" name="movable"/> <xsl:value-of select="upMsg:getMessage('move.this.tab', $USER_LANG)"/><br />
+                                    <input type="checkbox" name="editable"/> <xsl:value-of select="upMsg:getMessage('edit.page.properties', $USER_LANG)"/><br />
+                                    <input type="checkbox" name="addChildAllowed"/> <xsl:value-of select="upMsg:getMessage('add.columns', $USER_LANG)"/><br />
+                                    <input type="checkbox" name="deletable"/> <xsl:value-of select="upMsg:getMessage('remove.this.tab', $USER_LANG)"/><br />
                                 </p>
                             
                                 <div class="buttons">
-                                    <input type="submit" class="button primary portlet-form-button" value="Update Permissions"/>
+                                    <input type="submit" class="button primary portlet-form-button" value="{upMsg:getMessage('update.permissions', $USER_LANG)}"/>
                                 </div>
                             </form>
                         </div>
@@ -484,7 +484,7 @@
              </div>
          </div>
          
-         <div class="edit-column-permissions-dialog" title="Edit Column Permissions">
+         <div class="edit-column-permissions-dialog" title="{upMsg:getMessage('edit.column.permissions', $USER_LANG)}">
             <div class="fl-widget portlet">
                 <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
                     <h2 class="title" role="heading"></h2>
@@ -492,24 +492,24 @@
             
                 <div class="fl-widget-content content portlet-content" role="main">
                     <form>
-                        <p>Allow users to:</p>
+                        <p><xsl:value-of select="upMsg:getMessage('allow.users.to', $USER_LANG)"/>:</p>
                         <p>
                             <input type="hidden" name="nodeId" value=""/>
-                            <input type="checkbox" name="movable"/> Move this column<br />
-                            <input type="checkbox" name="editable"/> Edit column properties<br />
-                            <input type="checkbox" name="addChildAllowed"/> Add portlets to this column<br />
-                            <input type="checkbox" name="deletable"/> Delete this column<br />
+                            <input type="checkbox" name="movable"/> <xsl:value-of select="upMsg:getMessage('move.this.column', $USER_LANG)"/><br />
+                            <input type="checkbox" name="editable"/> <xsl:value-of select="upMsg:getMessage('edit.column.properties', $USER_LANG)"/><br />
+                            <input type="checkbox" name="addChildAllowed"/> <xsl:value-of select="upMsg:getMessage('add.portlets.to.this.column', $USER_LANG)"/><br />
+                            <input type="checkbox" name="deletable"/> <xsl:value-of select="upMsg:getMessage('delete.this.column', $USER_LANG)"/><br />
                         </p>
                         
                         <div class="buttons">
-                            <input type="submit" class="button primary portlet-form-button" value="Update Permissions"/>
+                            <input type="submit" class="button primary portlet-form-button" value="{upMsg:getMessage('update.permissions', $USER_LANG)}"/>
                         </div>
                     </form>
                 </div>
             </div>
          </div>
          
-         <div class="edit-portlet-permissions-dialog" title="Edit Portlet Permissions">
+         <div class="edit-portlet-permissions-dialog" title="{upMsg:getMessage('edit.portlet.permissions', $USER_LANG)}">
             <div class="fl-widget portlet">
                 <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
                     <h2 class="title" role="heading"></h2>
@@ -518,18 +518,18 @@
                 <div class="fl-widget-content content portlet-content" role="main">
                     <div class="portlet-section" role="region">
                         <div class="titlebar">
-                            <h3 class="title" role="heading">Allow users to:</h3>
+                            <h3 class="title" role="heading"><xsl:value-of select="upMsg:getMessage('allow.users.to', $USER_LANG)"/>:</h3>
                         </div>
                         <div class="content">
                             <form>
                                 <p>
                                     <input type="hidden" name="nodeId"/>
-                                    <input type="checkbox" name="movable"/> Move this portlet<br />
-                                    <input type="checkbox" name="deletable"/> Delete this portlet<br />
+                                    <input type="checkbox" name="movable"/> <xsl:value-of select="upMsg:getMessage('move.this.portlet', $USER_LANG)"/><br />
+                                    <input type="checkbox" name="deletable"/> <xsl:value-of select="upMsg:getMessage('remove.this.portlet', $USER_LANG)"/><br />
                                 </p>
                                 
                                 <div class="buttons">
-                                    <input type="submit" class="button primary portlet-form-button" value="Update Permissions"/>
+                                    <input type="submit" class="button primary portlet-form-button" value="{upMsg:getMessage('update.permissions', $USER_LANG)}"/>
                                 </div>
                             </form>
                         </div>

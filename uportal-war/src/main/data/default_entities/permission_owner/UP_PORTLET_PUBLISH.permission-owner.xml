@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<permission-owner xmlns="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns2="https://source.jasig.org/schemas/uportal/io/user" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns4="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns5="https://source.jasig.org/schemas/uportal" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/permission-owner https://source.jasig.org/schemas/uportal/io/permission-owner/permission-owner-4.0.xsd">
+    <name>Portlet Publishing</name>
+    <fname>UP_PORTLET_PUBLISH</fname>
+    <desc>Permissions controlling the publishing and editing of uMobile content</desc>
+    <activity>
+        <name>Manage Approved</name>
+        <fname>MANAGE_APPROVED</fname>
+        <desc>Manage approved uMobile content.  This permission also implies the ability to create portlets.</desc>
+        <targetProvider>channelsAndCategoriesTargetProvider</targetProvider>
+    </activity>
+    <activity>
+        <name>Manage Expired</name>
+        <fname>MANAGE_EXPIRED</fname>
+        <desc>Manage expired uMobile content.  This permission also implies the ability to create, approve, and publish portlets.</desc>
+        <targetProvider>channelsAndCategoriesTargetProvider</targetProvider>
+    </activity>
+    <activity>
+        <name>Configure</name>
+        <fname>PORTLET_MODE_CONFIG</fname>
+        <desc>Access the configuration mode of a portlet.</desc>
+        <targetProvider>channelsAndCategoriesTargetProvider</targetProvider>
+    </activity>
+    <activity>
+        <name>Manage Created</name>
+        <fname>MANAGE_CREATED</fname>
+        <desc>Create uMobile content.</desc>
+        <targetProvider>channelsAndCategoriesTargetProvider</targetProvider>
+    </activity>
+    <activity>
+        <name>Manage Published</name>
+        <fname>MANAGE</fname>
+        <desc>Manage published uMobile content.  This permission also implies the ability to create and approve portlets.</desc>
+        <targetProvider>channelsAndCategoriesTargetProvider</targetProvider>
+    </activity>
+</permission-owner>

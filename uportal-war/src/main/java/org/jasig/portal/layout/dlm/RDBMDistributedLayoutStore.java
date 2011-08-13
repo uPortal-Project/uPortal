@@ -22,7 +22,9 @@ package org.jasig.portal.layout.dlm;
 import java.io.StringWriter;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -42,14 +44,12 @@ import javax.xml.xpath.XPathFactory;
 
 import net.sf.ehcache.Ehcache;
 
+import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.danann.cernunnos.Attributes;
-import org.danann.cernunnos.ReturnValueImpl;
-import org.danann.cernunnos.Task;
-import org.danann.cernunnos.runtime.RuntimeRequestResponse;
 import org.dom4j.io.DOMReader;
 import org.dom4j.io.DOMWriter;
+import org.dom4j.io.DocumentSource;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.jasig.portal.EntityIdentifier;
@@ -57,6 +57,8 @@ import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.RDBMServices;
+import org.jasig.portal.UserProfile;
+import org.jasig.portal.io.xml.IPortalDataHandlerService;
 import org.jasig.portal.layout.LayoutStructure;
 import org.jasig.portal.layout.StructureParameter;
 import org.jasig.portal.layout.StylesheetUserPreferencesImpl;
@@ -64,22 +66,30 @@ import org.jasig.portal.layout.dao.IStylesheetUserPreferencesDao;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.layout.simple.RDBMUserLayoutStore;
+import org.jasig.portal.portlet.dao.IPortletEntityDao;
+import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
 import org.jasig.portal.portlet.om.IPortletDescriptorKey;
+import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletPreference;
-import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.portlet.om.PortletLifecycleState;
+import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.BrokenSecurityContext;
 import org.jasig.portal.security.provider.PersonImpl;
 import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.Tuple;
+import org.jasig.portal.xml.XmlUtilities;
 import org.jasig.portal.xml.XmlUtilitiesImpl;
+import org.jasig.portal.xml.xpath.XPathOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.DataRetrievalFailureException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -105,6 +115,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     private static final Log LOG = LogFactory.getLog(RDBMDistributedLayoutStore.class);
 
     private final static Pattern USER_NODE_PATTERN = Pattern.compile("\\A([a-zA-Z]\\d*)\\z");
+    private final static Pattern DLM_NODE_PATTERN = Pattern.compile("u(\\d+)l\\d+([ns]\\d+)");
 
     private String systemDefaultUser = null;
     private boolean systemDefaultUserLoaded = false;
@@ -120,14 +131,42 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     private final org.dom4j.DocumentFactory fac = new org.dom4j.DocumentFactory();
     private final DOMReader reader = new DOMReader();
     private final DOMWriter writer = new DOMWriter();
-    private Task lookupNoderefTask;
-    private Task lookupPathrefTask;
-    private IUserIdentityStore identityStore;
+    private IUserIdentityStore userIdentityStore;
     private IStylesheetUserPreferencesDao stylesheetUserPreferencesDao;
+    private XPathOperations xPathOperations;
+    private XmlUtilities xmlUtilities;
+    private IPortletEntityRegistry portletEntityRegistry;
+    private IPortletEntityDao portletEntityDao;
+    private IPortalDataHandlerService portalDataHandlerService;
+
+    @Autowired
+	public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
+		this.portletEntityRegistry = portletEntityRegistry;
+	}
+
+	@Autowired
+	public void setPortalDataHandlerService(IPortalDataHandlerService portalDataHandlerService) {
+		this.portalDataHandlerService = portalDataHandlerService;
+	}
+
+	@Autowired
+    public void setPortletEntityDao(@Qualifier("transient") IPortletEntityDao portletEntityDao) {
+        this.portletEntityDao = portletEntityDao;
+    }
+
+    @Autowired
+    public void setXmlUtilities(XmlUtilities xmlUtilities) {
+        this.xmlUtilities = xmlUtilities;
+    }
+
+    @Autowired
+    public void setXPathOperations(XPathOperations xPathOperations) {
+        this.xPathOperations = xPathOperations;
+    }
 
     @Autowired
     public void setIdentityStore(IUserIdentityStore identityStore) {
-        this.identityStore = identityStore;
+        this.userIdentityStore = identityStore;
     }
 
     @Autowired
@@ -142,13 +181,6 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         this.fragmentNodeInfoCache = fragmentNodeInfoCache;
     }
 
-    public void setLookupNoderefTask(Task k) {
-        this.lookupNoderefTask = k;
-    }
-
-    public void setLookupPathrefTask(Task k) {
-        this.lookupPathrefTask = k;
-    }
 
     /**
      * Method for acquiring copies of fragment layouts to assist in debugging.
@@ -166,7 +198,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
         final List<FragmentDefinition> definitions = this.configurationLoader.getFragments();
         for (final FragmentDefinition fragmentDefinition : definitions) {
-            final Document layout = DocumentFactory.getNewDocument();
+            final Document layout = DocumentFactory.getThreadDocument();
             final UserView userView = activator.getUserView(fragmentDefinition);
             if (userView == null) {
                 this.log.warn("No UserView found for FragmentDefinition " + fragmentDefinition.getName()
@@ -325,9 +357,60 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
     public org.dom4j.Element exportLayout(IPerson person, IUserProfile profile) {
+        org.dom4j.Element layout = getExportLayoutDom(person, profile);
+        
+        final int userId = person.getID();
+        final String userName = person.getUserName();
+        final Set<IPortletEntity> portletEntities = this.portletEntityDao.getPortletEntitiesForUser(userId);
+        
+        org.dom4j.Element preferencesElement = null;
+        for (final Iterator<IPortletEntity> entityItr = portletEntities.iterator(); entityItr.hasNext(); ) {
+            final IPortletEntity portletEntity = entityItr.next();
+            final List<IPortletPreference> preferencesList = portletEntity.getPortletPreferences();
+            
+            //Only bother with entities that have preferences
+            if (!preferencesList.isEmpty()) {
+                final String layoutNodeId = portletEntity.getLayoutNodeId();
+                final String[] dlmPathref = this.getDlmPathref(userName, userId, layoutNodeId, layout);
+                if (dlmPathref == null || dlmPathref.length != 3 || dlmPathref[0] == null || dlmPathref[1] == null || dlmPathref[2] == null) {
+                    log.warn(portletEntity + " in user " + userName + "'s layout has no corresponding layout or portlet information and will be ignored");
+                    continue;
+                }
+                
+                for (final IPortletPreference portletPreference : preferencesList) {
+                    if (preferencesElement == null) {
+                        if (layout == null) {
+                            final org.dom4j.Document layoutDoc = new org.dom4j.DocumentFactory().createDocument();
+                            layout = layoutDoc.addElement("layout");
+                            layout.addNamespace("dlm", "http://www.uportal.org/layout/dlm");
+                        }
+                        preferencesElement = layout.addElement("preferences");
+                    }
+                    
+                    final org.dom4j.Element preferenceEntry = preferencesElement.addElement("entry");
+                    preferenceEntry.addAttribute("entity", dlmPathref[0] + ":" + dlmPathref[1]);
+                    preferenceEntry.addAttribute("channel", dlmPathref[2]);
+                    preferenceEntry.addAttribute("name", portletPreference.getName());
+                    
+                    for (final String value : portletPreference.getValues()) {
+                        final org.dom4j.Element valueElement = preferenceEntry.addElement("value");
+                        valueElement.setText(value);
+                    }
+                }
+            }
+        }
+        
+        if (layout != null) {
+        	layout.addAttribute("script", "classpath://org/jasig/portal/io/import-layout_v3-2.crn");
+        	layout.addAttribute("username", userName);
+        }
+        
+        return layout;
+    }
 
+    private org.dom4j.Element getExportLayoutDom(IPerson person, IUserProfile profile) {
         if (!this.layoutExistsForUser(person)) {
             return null;
         }
@@ -499,7 +582,6 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         }
 
         return layoutDoc.getRootElement();
-
     }
 
     protected void addStylesheetUserPreferencesAttributes(IPerson person, IUserProfile profile,
@@ -518,8 +600,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
                 final org.dom4j.Element element = layoutDoc.elementByID(nodeId);
                 if (element == null) {
-                    this.log.warn("No layout node with id '" + nodeId + "' found attributes will be ignored: "
-                            + attributes);
+                    this.log.warn("No node with id '" + nodeId + "' found in layout for: " + person.getUserName() + ". Stylesheet user preference layout attributes will be ignored: " + attributes);
                     continue;
                 }
 
@@ -548,25 +629,61 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     @SuppressWarnings("unchecked")
     @Transactional
     public void importLayout(org.dom4j.Element layout) {
-
+//    	try {
+//    	OutputFormat format = OutputFormat.createPrettyPrint();
+//        XMLWriter writer = new XMLWriter( System.out, format );
+//        writer.write( layout );
+//        writer.close();
+//    	}catch (Exception e) {
+//    		e.printStackTrace();
+//    	}
+        
+        //Get a ref to the prefs element and then remove it from the layout
+        final org.dom4j.Node preferencesElement = layout.selectSingleNode("preferences");
+        if (preferencesElement != null) {
+            preferencesElement.getParent().remove(preferencesElement);
+        }
+        
         final String ownerUsername = layout.valueOf("@username");
+        
+        //Get a ref to the profile element and then remove it from the layout
+        final org.dom4j.Node profileElement = layout.selectSingleNode("profile");
+        if (profileElement != null) {
+        	profileElement.getParent().remove(profileElement);
+        	
+        	final org.dom4j.Document profileDocument = new org.dom4j.DocumentFactory().createDocument();
+        	profileDocument.setRootElement((org.dom4j.Element)profileElement);
+        	profileDocument.setName(ownerUsername + ".profile");
+        	
+        	final DocumentSource profileSource = new DocumentSource(profileElement);
+			this.portalDataHandlerService.importData(profileSource);
+        }
+       
+
         IPerson person = null;
         IUserProfile profile = null;
         try {
             person = new PersonImpl();
             person.setUserName(ownerUsername);
-            final int ownerId = this.identityStore.getPortalUID(person);
+            final int ownerId = this.userIdentityStore.getPortalUID(person);
             if (ownerId == -1) {
                 final String msg = "No userId for username=" + ownerUsername;
                 throw new RuntimeException(msg);
             }
             person.setID(ownerId);
-            person.setSecurityContext(new BrokenSecurityContext());
-            profile = this.getUserProfileByFname(person, "default");
         }
         catch (final Throwable t) {
             throw new RuntimeException("Unrecognized user " + person.getUserName()
                     + "; you must import users before their layouts.", t);
+        }
+
+        try {
+	        person.setSecurityContext(new BrokenSecurityContext());
+	        profile = this.getUserProfileByFname(person, "default");
+        }
+        catch (final Throwable t) {
+            throw new RuntimeException("Failed to load profile for " + person.getUserName()
+                    + "; This user must have a profile for import to continue.", t);
         }
 
         // (6) Add database Ids & (5) Add dlm:plfID ...
@@ -676,7 +793,74 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             final String msg = "Unable to persist layout for user:  " + ownerUsername;
             throw new RuntimeException(msg, t);
         }
+        
+        if (preferencesElement != null) {
+        	final int ownerUserId = this.userIdentityStore.getPortalUserId(ownerUsername);
 
+        	//Delete all existing portlet preferences for the user's layout
+        	//TODO this assumes a single layout, when multi-layout support exists portlet entities will need to be re-worked to allow for a layout id to be associated with the entity
+        	final Set<IPortletEntity> portletEntities = this.portletEntityDao.getPortletEntitiesForUser(ownerUserId);
+        	for (final IPortletEntity portletEntity : portletEntities) {
+        		portletEntity.setPortletPreferences(null);
+        		
+        		if (portletEntityRegistry.shouldBePersisted(portletEntity)) {
+        			this.portletEntityDao.updatePortletEntity(portletEntity);
+        		}
+        		else {
+        			this.portletEntityDao.deletePortletEntity(portletEntity);
+        		}
+			}
+        	
+            final List<org.dom4j.Element> entries = preferencesElement.selectNodes("entry");
+            for (final org.dom4j.Element entry : entries) {
+                final String dlmPathRef = entry.attributeValue("entity");
+                final String fname = entry.attributeValue("channel");
+                final String prefName = entry.attributeValue("name");
+                
+                final String dlmNoderef = this.getDlmNoderef(person.getUserName(), dlmPathRef, fname, false, layout);
+                
+                if (dlmNoderef != null && !"".equals(dlmNoderef) && fname != null && !"null".equals(fname)) {
+                	final IPortletEntity portletEntity = this.getPortletEntity(fname, dlmNoderef, ownerUserId);
+                	final List<IPortletPreference> portletPreferences = portletEntity.getPortletPreferences();
+                	
+                	final List<org.dom4j.Element> valueElements = entry.selectNodes("value");
+                	final List<String> values = new ArrayList<String>(valueElements.size());
+                	for (final org.dom4j.Element valueElement : valueElements) {
+                		values.add(valueElement.getText());
+                	}
+                	
+                	portletPreferences.add(new PortletPreferenceImpl(prefName, false, values.toArray(new String[values.size()])));
+                	
+                	this.portletEntityDao.updatePortletEntity(portletEntity);
+                }
+            }
+        }
+    }
+    
+    protected IPortletEntity getPortletEntity(String fName, String layoutNodeId, int userId) {
+    	//Try getting the entity
+    	final IPortletEntity portletEntity = this.portletEntityDao.getPortletEntity(layoutNodeId, userId);
+        if (portletEntity != null) {
+            return portletEntity;
+        }
+        
+        //Load the portlet definition
+        final IPortletDefinition portletDefinition;
+        try {
+            portletDefinition = this.portletDefinitionRegistry.getPortletDefinitionByFname(fName);
+        }
+        catch (Exception e) {
+            throw new DataRetrievalFailureException("Failed to retrieve ChannelDefinition for fName='" + fName + "'", e);
+        }
+        
+        //The channel definition for the fName MUST exist for this class to function
+        if (portletDefinition == null) {
+            throw new EmptyResultDataAccessException("No ChannelDefinition exists for fName='" + fName + "'", 1);
+        }
+        
+        //create the portlet entity
+        final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();
+        return this.portletEntityDao.createPortletEntity(portletDefinitionId, layoutNodeId, userId);
     }
 
     protected void loadStylesheetUserPreferencesAttributes(IPerson person, IUserProfile profile,
@@ -785,119 +969,158 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
     private final String[] getDlmPathref(String layoutOwnerUsername, int layoutOwnerUserId, String dlmNoderef,
             org.dom4j.Element layout) {
+        
+        /*
+         * need to remove "org.dom4j.Element layout" as a paramter and make this method public and
+         * on the interface so that external code can call it.
+         * 
+         * OR
+         * 
+         * move the preferences export into exportLayout
+         */
 
-        // Assertions.
-        if (layoutOwnerUsername == null) {
-            final String msg = "Argument 'layoutOwnerUsername' cannot be null.";
-            throw new IllegalArgumentException(msg);
-        }
-        if (dlmNoderef == null) {
-            final String msg = "Argument 'dlmNoderef' cannot be null.";
-            throw new IllegalArgumentException(msg);
-        }
-        if (layout == null) {
-            final String msg = "Argument 'layout' cannot be null.";
-            throw new IllegalArgumentException(msg);
+        Validate.notNull(layoutOwnerUsername, "Argument 'layoutOwnerUsername' cannot be null.");
+        Validate.notNull(dlmNoderef, "Argument 'dlmNoderef' cannot be null.");
+        
+
+        
+        final Matcher dlmNodeMatcher = DLM_NODE_PATTERN.matcher(dlmNoderef);
+        if (dlmNodeMatcher.matches()) {
+            final String userId = dlmNodeMatcher.group(1);
+            final String nodeId = dlmNodeMatcher.group(2);
+            
+            
+            final Tuple<String, DistributedUserLayout> userLayoutInfo = getUserLayout(Integer.valueOf(userId));
+            
+            if (userLayoutInfo.second == null) {
+                this.log.warn("no layout for fragment user '" + userLayoutInfo.first + "' Specified dlmNoderef " + dlmNoderef + " cannot be resolved.");
+                return null;
+            }
+                                
+            final Document fragmentLayout = userLayoutInfo.second.getLayout();
+            final Node targetElement = this.xPathOperations.evaluate("//*[@ID = $nodeId]", Collections.singletonMap("nodeId", nodeId), fragmentLayout, XPathConstants.NODE);
+            
+            final String[] rslt = new String[3];
+            rslt[0] = userLayoutInfo.first;
+            rslt[1] = this.xmlUtilities.getUniqueXPath(targetElement);
+            rslt[2] = targetElement.getAttributes().getNamedItem("fname").getTextContent();
+            
+            return rslt;
         }
 
-        String[] rslt = null; // This will be the response if we can't make a match...
-
-        final Matcher m = USER_NODE_PATTERN.matcher(dlmNoderef);
-        if (m.find()) {
+        final Matcher userNodeMatcher = USER_NODE_PATTERN.matcher(dlmNoderef);
+        if (userNodeMatcher.find()) {
             // We need a pathref based on the new style of layout b/c on 
             // import this users own layout will not be in the database 
-            // when the path in computed back to an Id...
-            final String structId = m.group(1);
+            // when the path is computed back to an Id...
+            final String structId = userNodeMatcher.group(1);
             final org.dom4j.Node target = layout.selectSingleNode("//*[@ID = '" + structId + "']");
-            if (target != null) {
-                rslt = new String[3];
-                rslt[0] = layoutOwnerUsername;
-                rslt[1] = target.getUniquePath();
-                if (target.getName().equals("channel")) {
-                    rslt[2] = target.valueOf("@fname");
-                }
+            if (target == null) {
+                this.log.warn("no match found on layout for user '" + layoutOwnerUsername + "' for the specified dlmNoderef:  " + dlmNoderef);
+                return null;
             }
-            else {
-                this.log.warn("no match found on layout for user '" + layoutOwnerUsername
-                        + "' for the specified dlmNoderef:  " + dlmNoderef);
+            
+            final String[]  rslt = new String[3];
+            rslt[0] = layoutOwnerUsername;
+            rslt[1] = target.getUniquePath();
+            if (target.getName().equals("channel")) {
+                rslt[2] = target.valueOf("@fname");
             }
+                
+            return rslt;
         }
-        else {
-            final ReturnValueImpl rvi = new ReturnValueImpl();
-            final RuntimeRequestResponse tr = new RuntimeRequestResponse();
-            tr.setAttribute(Attributes.RETURN_VALUE, rvi);
-            tr.setAttribute("USER_NAME", layoutOwnerUsername);
-            tr.setAttribute("DLM_NODEREF", dlmNoderef);
-            tr.setAttribute("userLayoutStore", this);
-            this.lookupNoderefTask.perform(tr, new RuntimeRequestResponse());
+        
+        
+        return null;
+        
+    }
+    
+    private Tuple<String, DistributedUserLayout> getUserLayout(int userId) {
+        final String userName = userIdentityStore.getPortalUserName(userId);
+        
+        final PersonImpl person = new PersonImpl();
+        person.setUserName(userName);
+        person.setID(userId);
+        person.setSecurityContext(new BrokenSecurityContext());
+    
+        final UserProfile profile = this.getUserProfileByFname(person, UserProfile.DEFAULT_PROFILE_FNAME);
+        final DistributedUserLayout userLayout = this.getUserLayout(person, profile);
 
-            rslt = (String[]) rvi.getValue();
-        }
-
-        return rslt;
-
+        return new Tuple<String, DistributedUserLayout>(userName, userLayout);
     }
 
+    private static final Pattern DLM_PATH_REF_DELIM = Pattern.compile("\\:");
     private final String getDlmNoderef(String layoutOwner, String pathref, String fname, boolean isStructRef,
             org.dom4j.Element layoutElement) {
 
-        // Assertions.
-        if (layoutOwner == null) {
-            final String msg = "Argument 'layoutOwner' cannot be null.";
-            throw new IllegalArgumentException(msg);
-        }
-        if (pathref == null) {
-            final String msg = "Argument 'pathref' cannot be null.";
-            throw new IllegalArgumentException(msg);
-        }
-        // NB:  Argument 'fname' may be null...
-        if (layoutElement == null) {
-            final String msg = "Argument 'layoutElement' cannot be null.";
-            throw new IllegalArgumentException(msg);
-        }
+        Validate.notNull(layoutOwner, "Argument 'layoutOwner' cannot be null.");
+        Validate.notNull(pathref, "Argument 'pathref' cannot be null.");
 
-        String rslt = pathref; // This will be the response if we can't make a match...
-
-        if (pathref.startsWith(layoutOwner + ":")) {
+        final String[] pathTokens = DLM_PATH_REF_DELIM.split(pathref);
+        if (pathTokens.length <= 1) {
+            this.log.warn("Invalid DLM PathRef, no delimiter: " + pathref);
+            return "";
+        }
+        
+        if (pathTokens[0].equals(layoutOwner)) {
             // This an internal reference (our own layout);  we have to 
             // use the layoutExment (instead of load-limited-layout) b/c 
             // our layout may not be in the db...
-            final String[] pathTokens = pathref.split("\\:");
             final org.dom4j.Element target = (org.dom4j.Element) layoutElement.selectSingleNode(pathTokens[1]);
             if (target != null) {
-                rslt = target.valueOf("@ID");
+                return target.valueOf("@ID");
             }
-            else {
-                if (this.log.isWarnEnabled()) {
-                    this.log.warn("Unable to resolve pathref '" + pathref + "' for layoutOwner '" + layoutOwner + "'");
-                }
+
+            this.log.warn("Unable to resolve pathref '" + pathref + "' for layoutOwner '" + layoutOwner + "'");
+            return "";
+        }
+        
+        final String layoutOwnerName = pathTokens[0];
+        final String layoutPath = pathTokens[1];
+        
+        final Integer layoutOwnerUserId = this.userIdentityStore.getPortalUserId(layoutOwnerName);
+        if (layoutOwnerUserId == null) {
+        	this.log.warn("Unable to resolve pathref '" + pathref + "' for layoutOwner '" + layoutOwner + "', no userId found for userName: " + layoutOwnerName);
+            return "";
+        }
+        
+        final Tuple<String, DistributedUserLayout> userLayoutInfo = getUserLayout(layoutOwnerUserId);
+        final Document userLayout = userLayoutInfo.second.getLayout();
+        
+		final Node targetNode = this.xPathOperations.evaluate(layoutPath, userLayout, XPathConstants.NODE);
+        if (targetNode == null) {
+            this.log.warn("No layout node found for pathref: " + pathref);
+            return "";
+        }
+        
+        final NamedNodeMap attributes = targetNode.getAttributes();
+        if (fname != null) {
+            final Node fnameAttr = attributes.getNamedItem("fname");
+            if (fnameAttr == null) {
+                this.log.warn("Layout node for pathref does not have fname attribute: " + pathref);
+                return "";
+            }
+            
+            final String nodeFname = fnameAttr.getTextContent();
+            if (!fname.equals(nodeFname)) {
+                this.log.warn("fname '" + nodeFname + "' on layout node not match specified fname '" + fname + "' for pathref: " + pathref);
+                return "";
             }
         }
-        else {
-            final ReturnValueImpl rvi = new ReturnValueImpl();
-            final RuntimeRequestResponse tr = new RuntimeRequestResponse();
-            tr.setAttribute(Attributes.RETURN_VALUE, rvi);
-            tr.setAttribute("USER_NAME", layoutOwner);
-            tr.setAttribute("DLM_PATHREF", pathref);
-            tr.setAttribute("userLayoutStore", this);
-            if (fname != null) {
-                tr.setAttribute("FNAME", fname);
-            }
-            if (isStructRef) {
-                tr.setAttribute("IS_STRUCT_REF", Boolean.TRUE);
-            }
-            this.lookupPathrefTask.perform(tr, new RuntimeRequestResponse());
-
-            final String val = (String) rvi.getValue();
-            if (val != null) {
-                rslt = val;
-            }
+        
+        final Node structIdAttr = attributes.getNamedItem("struct-id");
+        if (structIdAttr != null) {
+	        final String structId = structIdAttr.getTextContent();
+	
+	        if (isStructRef) {
+	            return "u" + layoutOwnerUserId + "l1s" + structId;
+	        }
+	        
+	        return "u" + layoutOwnerUserId + "l1n" + structId;
         }
 
-        // Data got orphaned, nothing we can do;  we need to 
-        // be sure not to leave any that are too long...
-        return rslt.length() <= 35 ? rslt : "";
-
+        final Node idAttr = attributes.getNamedItem("ID");
+        return "u" + layoutOwnerUserId + "l1" + idAttr.getTextContent();
     }
 
     /**
@@ -1035,7 +1258,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 }
             }
         }
-        final String globalDefault = this.getProperty("defaultLayoutOwner");
+        final String globalDefault = PropertiesManager.getProperty("org.jasig.portal.layout.dlm.defaultLayoutOwner");
         if (globalDefault != null && globalDefault.equals(userName)) {
             return true;
         }
@@ -1215,20 +1438,6 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 this.updateCachedLayout(plf, profile, fragment);
             }
         }
-    }
-
-    /**
-       Returns the number of properties loaded from the dlm.xml file.
-     */
-    public int getPropertyCount() {
-        return this.configurationLoader.getPropertyCount();
-    }
-
-    /**
-       Returns the specified property loaded from dlm.xml or null if not found.
-     */
-    public String getProperty(String name) {
-        return this.configurationLoader.getProperty(name);
     }
 
     @Override
@@ -1874,14 +2083,12 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             return new MissingPortletDefinitionId();
         }
 
-        public IPortletPreferences getPortletPreferences() {
-            return null;
-        }
+		@Override
+		public List<IPortletPreference> getPortletPreferences() {
+			return Collections.emptyList();
+		}
 
-        public void setPortletPreferences(IPortletPreferences portletPreferences) {
-        }
-
-        public void addParameter(String name, String value) {
+		public void addParameter(String name, String value) {
         }
 
         @Override

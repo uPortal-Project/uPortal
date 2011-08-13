@@ -22,6 +22,7 @@ package org.jasig.portal.portlet.dao.jpa;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Cacheable;
@@ -61,7 +62,7 @@ import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
-import org.jasig.portal.portlet.om.IPortletPreferences;
+import org.jasig.portal.portlet.om.IPortletPreference;
 
 /**
  * @author Eric Dalquist
@@ -117,7 +118,7 @@ class PortletEntityImpl implements IPortletEntity {
     @OneToOne(cascade = { CascadeType.ALL }, orphanRemoval=true)
     @JoinColumn(name = "PORTLET_PREFS_ID", nullable = false)
     @Fetch(FetchMode.JOIN)
-    private PortletPreferencesImpl portletPreferences = null;
+    private final PortletPreferencesImpl portletPreferences;
 
     @Transient
     private IPortletEntityId portletEntityId = null;
@@ -228,23 +229,22 @@ class PortletEntityImpl implements IPortletEntity {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.om.portlet.IPortletEntity#getPortletPreferences()
-     */
-    @Override
-    public IPortletPreferences getPortletPreferences() {
-        return this.portletPreferences;
-    }
+	 * @see org.jasig.portal.portlet.om.IPortletEntity#getPortletPreferences()
+	 */
+	@Override
+	public List<IPortletPreference> getPortletPreferences() {
+		return portletPreferences.getPortletPreferences();
+	}
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.om.portlet.IPortletEntity#setPortletPreferences(org.jasig.portal.om.portlet.prefs.IPortletPreferences)
-     */
-    @Override
-    public void setPortletPreferences(IPortletPreferences portletPreferences) {
-        Validate.notNull(portletPreferences, "portletPreferences can not be null");
-        this.portletPreferences = (PortletPreferencesImpl)portletPreferences;
-    }
+	/* (non-Javadoc)
+	 * @see org.jasig.portal.portlet.om.IPortletEntity#setPortletPreferences(java.util.List)
+	 */
+	@Override
+	public void setPortletPreferences(List<IPortletPreference> portletPreferences) {
+		this.portletPreferences.setPortletPreferences(portletPreferences);
+	}
 
-    @Override
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

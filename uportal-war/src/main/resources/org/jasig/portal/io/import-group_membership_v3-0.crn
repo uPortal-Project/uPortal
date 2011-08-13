@@ -29,7 +29,6 @@
  |   - ${PORTAL_CONTEXT}=uPortal's Spring ApplicationContext
  |   - ${SqlAttributes.DATA_SOURCE}=the DataSource for the PortalDb
  |   - ${SqlAttributes.TRANSACTION_MANAGER}=PlatformTransactionManager in use
- |   - Settings defined in classpath://properties/db/entities/import.properties
  |
  +-->
 <with-attribute key="ENTITY_TYPE" value="${valueOf(entity-type)}">
@@ -37,7 +36,7 @@
         <when test="${groovy(ENTITY_TYPE.equals('org.jasig.portal.ChannelDefinition'))}">
             <delete-node node="${singleNode(entity-type)}"/>
             <append-node sibling="${singleNode(name)}">
-                <entity-type>org.jasig.portal.channel.IChannelDefinition</entity-type>
+                <entity-type>org.jasig.portal.portlet.om.IPortletDefinition</entity-type>
             </append-node>
             <crn location="import-group_membership_v3-2.crn"/>
         </when>

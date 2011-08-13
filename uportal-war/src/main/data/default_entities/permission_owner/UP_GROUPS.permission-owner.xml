@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<permission-owner xmlns="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns2="https://source.jasig.org/schemas/uportal/io/user" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns4="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns5="https://source.jasig.org/schemas/uportal" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/permission-owner https://source.jasig.org/schemas/uportal/io/permission-owner/permission-owner-4.0.xsd">
+    <name>Groups</name>
+    <fname>UP_GROUPS</fname>
+    <desc>Permissions controlling uMobile group and category viewing and management</desc>
+    <activity>
+        <name>View a group</name>
+        <fname>VIEW_GROUP</fname>
+        <desc>View detailed information about a uMobile group and its membership</desc>
+        <targetProvider>allGroupsTargetProvider</targetProvider>
+    </activity>
+    <activity>
+        <name>Edit group</name>
+        <fname>EDIT_GROUP</fname>
+        <desc>Edit a uMobile group's details and membership list</desc>
+        <targetProvider>allGroupsTargetProvider</targetProvider>
+    </activity>
+    <activity>
+        <name>Remove groups</name>
+        <fname>DELETE_GROUP</fname>
+        <desc>Delete a uMobile group</desc>
+        <targetProvider>allGroupsTargetProvider</targetProvider>
+    </activity>
+    <activity>
+        <name>Create group</name>
+        <fname>CREATE_GROUP</fname>
+        <desc>Create a uMobile groups</desc>
+        <targetProvider>allGroupsTargetProvider</targetProvider>
+    </activity>
+</permission-owner>

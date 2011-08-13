@@ -38,4 +38,16 @@ public final class XalanMessageHelper {
     public static String getMessage(String code, String language) {
         return messageHelper.getMessage(code, language);
     }
+    
+    public static String getMessage(String code, String language, String arg1) {
+        return messageHelper.getMessage(code, language, arg1);
+    }
+    
+    public static String getMessage(String code, String language, String arg1, String arg2) {
+        return messageHelper.getMessage(code, language, arg1, arg2);
+    }
+    
+    public static String getMessage(String code, String language, String arg1, String arg2, String arg3) {
+        return messageHelper.getMessage(code, language, arg1, arg2, arg3);
+    }
 }

@@ -71,7 +71,7 @@
                         <when test="${jexl(ENTITY_TYPE_NAME.equals('org.jasig.portal.security.IPerson'))}">
                             <with-attribute key="USER_NAME" value="${PRINCIPAL_KEY}">
                                 <choose>
-                                    <when test="${crn(${groovy(PORTAL_CONTEXT.getBean('is-user-included'))})}">
+                                    <when test="${groovy(isUserIncluded.apply(USER_NAME))}">
                                         <append-node>
                                             <principal>
                                                 <literal>${USER_NAME}</literal>

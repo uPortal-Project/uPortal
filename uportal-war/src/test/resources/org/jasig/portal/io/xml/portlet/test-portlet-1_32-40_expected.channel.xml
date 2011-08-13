@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<portlet-definition xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd" version="4.0">
+<ns22:title xmlns:ns22="https://source.jasig.org/schemas/uportal/io/portlet-definition">Test Portlet 1</ns22:title>
+<ns23:name xmlns:ns23="https://source.jasig.org/schemas/uportal/io/portlet-definition">Test Portlet 1</ns23:name>
+<ns24:fname xmlns:ns24="https://source.jasig.org/schemas/uportal/io/portlet-definition">test-portlet-1</ns24:fname>
+<ns25:desc xmlns:ns25="https://source.jasig.org/schemas/uportal/io/portlet-definition">Test portlet 1 from Apache Pluto</ns25:desc>
+<ns26:type xmlns:ns26="https://source.jasig.org/schemas/uportal/io/portlet-definition">Portlet</ns26:type>
+<ns27:timeout xmlns:ns27="https://source.jasig.org/schemas/uportal/io/portlet-definition">600000</ns27:timeout>
+<portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
+<up:webAppName>/pluto-testsuite</up:webAppName>
+<up:portletName>TestPortlet1</up:portletName>
+</portlet-descriptor>
+    <ns28:category xmlns:ns28="https://source.jasig.org/schemas/uportal/io/portlet-definition">Development</ns28:category>
+  
+    <ns29:group xmlns:ns29="https://source.jasig.org/schemas/uportal/io/portlet-definition">Everyone</ns29:group>
+  
+    
+    
+  <parameter>
+<name>hasedit</name>
+<value>false</value>
+</parameter>
+<parameter>
+<name>hashelp</name>
+<value>false</value>
+</parameter>
+<parameter>
+<name>hasabout</name>
+<value>false</value>
+</parameter>
+<parameter>
+<name>secure</name>
+<value>false</value>
+</parameter>
+<parameter>
+<name>locale</name>
+<value>false</value>
+</parameter>
+    <portlet-preference> 
+      <ns30:name xmlns:ns30="https://source.jasig.org/schemas/uportal/io/portlet-definition">TestName4</ns30:name>  
+      <readOnly>true</readOnly>  
+      
+        <ns31:value xmlns:ns31="https://source.jasig.org/schemas/uportal/io/portlet-definition">TestValue4</ns31:value>
+       
+    </portlet-preference>
+  </portlet-definition>

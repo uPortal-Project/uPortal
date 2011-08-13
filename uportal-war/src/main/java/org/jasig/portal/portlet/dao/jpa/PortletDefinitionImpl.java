@@ -67,7 +67,6 @@ import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
 import org.jasig.portal.portlet.om.IPortletDescriptorKey;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletPreference;
-import org.jasig.portal.portlet.om.IPortletPreferences;
 import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.portlet.om.PortletLifecycleState;
 
@@ -113,7 +112,7 @@ class PortletDefinitionImpl implements IPortletDefinition {
     @OneToOne(targetEntity = PortletPreferencesImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, orphanRemoval= true)
     @JoinColumn(name = "PORTLET_PREFS_ID", nullable = false)
     @Fetch(FetchMode.JOIN)
-    private IPortletPreferences portletPreferences = null;
+    private final PortletPreferencesImpl portletPreferences;
     
     @Column(name = "PORTLET_NAME", length = 128, nullable = false, unique = true)
     private String name;
@@ -256,21 +255,20 @@ class PortletDefinitionImpl implements IPortletDefinition {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.om.portlet.IPortletDefinition#getPortletPreferences()
-     */
-    @Override
-    public IPortletPreferences getPortletPreferences() {
-        return this.portletPreferences;
-    }
+	 * @see org.jasig.portal.portlet.om.IPortletEntity#getPortletPreferences()
+	 */
+	@Override
+	public List<IPortletPreference> getPortletPreferences() {
+		return portletPreferences.getPortletPreferences();
+	}
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.om.portlet.IPortletDefinition#setPortletPreferences(org.jasig.portal.om.portlet.prefs.IPortletPreferences)
-     */
-    @Override
-    public void setPortletPreferences(IPortletPreferences portletPreferences) {
-        Validate.notNull(portletPreferences, "portletPreferences can not be null");
-        this.portletPreferences = portletPreferences;
-    }
+	/* (non-Javadoc)
+	 * @see org.jasig.portal.portlet.om.IPortletEntity#setPortletPreferences(java.util.List)
+	 */
+	@Override
+	public void setPortletPreferences(List<IPortletPreference> portletPreferences) {
+		this.portletPreferences.setPortletPreferences(portletPreferences);
+	}
 
 	@Override
     public String getName() {
@@ -534,11 +532,6 @@ class PortletDefinitionImpl implements IPortletDefinition {
 	@Override
     public void removeParameter(String name) {
 		this.parameters.remove(name);
-	}
-
-	@Override
-    public void setPortletPreferences(List<IPortletPreference> portletPreferences) {
-		this.portletPreferences.setPortletPreferences(portletPreferences);
 	}
 
 	@Override
