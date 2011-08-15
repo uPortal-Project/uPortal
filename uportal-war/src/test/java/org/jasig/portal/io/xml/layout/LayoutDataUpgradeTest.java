@@ -36,4 +36,13 @@ public class LayoutDataUpgradeTest extends BaseXsltDataUpgraderTest {
                 new ClassPathResource("/org/jasig/portal/io/xml/layout/test_30.layout.xml"), 
                 new ClassPathResource("/org/jasig/portal/io/xml/layout/test_30-32_expected.layout.xml"));
     }
+    
+    @Test
+    public void testFragmentUpgrade30to32() throws Exception {
+        testXsltUpgrade(
+                new ClassPathResource("/org/jasig/portal/io/xml/layout/upgradeLayout_v3-2.xsl"), 
+                LayoutPortalDataType.IMPORT_30_DATA_KEY, 
+                new ClassPathResource("/org/jasig/portal/io/xml/layout/developer-lo_30.fragment-layout.xml"), 
+                new ClassPathResource("/org/jasig/portal/io/xml/layout/developer-lo_30-32_expected.fragment-layout.xml"));
+    }
 }

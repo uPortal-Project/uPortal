@@ -36,7 +36,7 @@
   </dlm:fragment-->
   
   <dlm:fragment name='Welcome' ownerID='welcome-lo' precedence='80'>
-    <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.PersonEvaluatorFactory'>
+    <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory'>
     <paren mode="AND">
         <paren mode="NOT">
           <attribute mode='memberOf' name='Portal Administrators'/>

@@ -32,6 +32,14 @@
         </layout>
     </xsl:template>
     
+    <xsl:template match="channel[@fname != 'header' and @fname != 'footer']">
+        <xsl:copy>
+            <xsl:apply-templates select="@*" />
+            <xsl:apply-templates select="param"/>
+            <xsl:apply-templates />
+        </xsl:copy>
+    </xsl:template>
+    
     <xsl:template match="root|header|footer|tab|column">
         <folder>
             <xsl:attribute name="type">
@@ -48,14 +56,6 @@
             <xsl:apply-templates select="param"/>
             <xsl:apply-templates />
         </folder>
-    </xsl:template>
-    
-    <xsl:template match="channel[fname != 'header' and fname != 'footer']">
-        <xsl:copy>
-            <xsl:apply-templates select="@*" />
-            <xsl:apply-templates select="param"/>
-            <xsl:apply-templates />
-        </xsl:copy>
     </xsl:template>
     
     <xsl:template match="param[starts-with(name/text(), 'cp:')]">
