@@ -23,6 +23,7 @@ package org.jasig.portal.portlet.container.cache;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 
@@ -50,8 +51,7 @@ public class CachedPortletData implements Serializable {
 	private byte[] byteData;
 	private String stringData;
 	private String contentType;
-	private Map<String, String[]> headers;
-	private Map<String, String> properties;
+	private Map<String, String[]> headers = Collections.emptyMap();
 	
 	/**
 	 * @return
@@ -132,18 +132,6 @@ public class CachedPortletData implements Serializable {
 	public void setHeaders(Map<String, String[]> headers) {
 		this.headers = headers;
 	}
-	/**
-	 * @return the properties
-	 */
-	public Map<String, String> getProperties() {
-		return properties;
-	}
-	/**
-	 * @param properties the properties to set
-	 */
-	public void setProperties(Map<String, String> properties) {
-		this.properties = properties;
-	}
 	
 	/**
 	 * 
@@ -173,8 +161,6 @@ public class CachedPortletData implements Serializable {
 		result = prime * result + ((etag == null) ? 0 : etag.hashCode());
 		result = prime * result + expirationTimeSeconds;
 		result = prime * result + ((headers == null) ? 0 : headers.hashCode());
-		result = prime * result
-				+ ((properties == null) ? 0 : properties.hashCode());
 		result = prime * result
 				+ ((stringData == null) ? 0 : stringData.hashCode());
 		result = prime * result
@@ -209,11 +195,6 @@ public class CachedPortletData implements Serializable {
 				return false;
 		} else if (!headers.equals(other.headers))
 			return false;
-		if (properties == null) {
-			if (other.properties != null)
-				return false;
-		} else if (!properties.equals(other.properties))
-			return false;
 		if (stringData == null) {
 			if (other.stringData != null)
 				return false;
@@ -230,8 +211,7 @@ public class CachedPortletData implements Serializable {
 	public String toString() {
 		return "CachedPortletData [etag=" + etag + ", timeStored=" + timeStored
 				+ ", expirationTimeSeconds=" + expirationTimeSeconds
-				+ ", contentType=" + contentType + ", headers=" + headers
-				+ ", properties=" + properties + "]";
+				+ ", contentType=" + contentType + ", headers=" + headers + "]";
 	}
 	
 	

@@ -21,6 +21,8 @@
  */
 package org.jasig.portal.portlet.container.cache;
 
+import java.util.Map;
+
 import javax.portlet.CacheControl;
 import javax.servlet.http.HttpServletRequest;
 
@@ -44,18 +46,36 @@ public interface IPortletCacheControlService {
 	 * @param portletWindowId
 	 * @return the {@link CacheControl} for the specified window id
 	 */
-	CacheControl getPortletCacheControl(IPortletWindowId portletWindowId, HttpServletRequest httpRequest);
+	CacheControl getPortletRenderCacheControl(IPortletWindowId portletWindowId, HttpServletRequest httpRequest);
 	
 	/**
-	 * Get the {@link CachedPortletData} for the portlet window id and request, if there is any.
+	 * 
+	 * @param portletWindowId
+	 * @param httpRequest
+	 * @return
+	 */
+	CacheControl getPortletResourceCacheControl(IPortletWindowId portletWindowId, HttpServletRequest httpRequest);
+	/**
+	 * Get the {@link CachedPortletData} for the portlet window id and render request, if there is any.
 	 * This method internally will determine if the data is stored in a public or private scoped cache.
 	 * If their is no portlet data for the windowId and request, this method returns null.
 	 * 
 	 * @param portletWindowId
 	 * @param httpRequest
-	 * @return the {@link CachedPortletData} to render for this request, or null if the portlet data was not cached
+	 * @return the {@link CachedPortletData} for this render request, or null if the portlet data was not cached
 	 */
-	CachedPortletData getCachedPortletData(IPortletWindowId portletWindowId, HttpServletRequest httpRequest);
+	CachedPortletData getCachedPortletRenderOutput(IPortletWindowId portletWindowId, HttpServletRequest httpRequest);
+	
+	/**
+	 *  Get the {@link CachedPortletData} for the portlet window id and resource request, if there is any.
+	 * This method internally will determine if the data is stored in a public or private scoped cache.
+	 * If their is no portlet data for the windowId and request, this method returns null.
+	 * 
+	 * @param portletWindowId
+	 * @param httpRequest
+	 * @return  the {@link CachedPortletData} for this resource request, or null if the portlet data was not cached
+	 */
+	CachedPortletData getCachedPortletResourceOutput(IPortletWindowId portletWindowId, HttpServletRequest httpRequest);
 	
 	/**
 	 * This method checks the portlet configuration and request to determine if the output should be captured
@@ -87,7 +107,7 @@ public interface IPortletCacheControlService {
 	 * @param contentType
 	 * @param cacheControl
 	 */
-	void cachePortletResourceOutput(IPortletWindowId portletWindowId, HttpServletRequest httpRequest, byte [] content, String contentType, CacheControl cacheControl);
+	void cachePortletResourceOutput(IPortletWindowId portletWindowId, HttpServletRequest httpRequest, byte [] content, String contentType, Map<String, String[]> headers, CacheControl cacheControl);
 	
 	/**
 	 * Purge any {@link CachedPortletData} for the portlet.

@@ -21,6 +21,7 @@ package org.jasig.portal.portlet.container;
 
 import java.util.Locale;
 
+import javax.portlet.CacheControl;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -72,5 +73,15 @@ public class PortletResourceResponseContextImpl extends PortletMimeResponseConte
     public void setLocale(Locale locale) {
         this.checkContextStatus();
         this.servletResponse.setLocale(locale);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.apache.pluto.container.PortletMimeResponseContext#getCacheControl()
+     */
+    @Override
+    public CacheControl getCacheControl() {
+        this.checkContextStatus();
+        CacheControl cacheControl = getPortletCacheControlService().getPortletResourceCacheControl(this.portletWindow.getPortletWindowId(), this.containerRequest);    
+        return cacheControl;
     }
 }

@@ -65,18 +65,26 @@ public class PortletCacheControlServiceImplTest {
 		this.cacheManager = cacheManager;
 	}
 
-	private Cache privateScopeCache;
-	private Cache publicScopeCache;
+	private Cache privateScopeRenderCache;
+	private Cache publicScopeRenderCache;
+	private Cache privateScopeResourceCache;
+	private Cache publicScopeResourceCache;
 	
 	@Before
 	public void getCaches() {
-		privateScopeCache = cacheManager.getCache("org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.privateScopePortletOutputCache");
-		publicScopeCache = cacheManager.getCache("org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.publicScopePortletOutputCache");
+		privateScopeRenderCache = cacheManager.getCache("org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.privateScopePortletRenderOutputCache");
+		publicScopeRenderCache = cacheManager.getCache("org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.publicScopePortletRenderOutputCache");
+		
+		privateScopeResourceCache = cacheManager.getCache("org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.privateScopePortletResourceOutputCache");
+		publicScopeResourceCache = cacheManager.getCache("org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.publicScopePortletResourceOutputCache");
 	}
 	@After
 	public void clearCaches() {
-		privateScopeCache.removeAll(true);
-		publicScopeCache.removeAll(true);
+		privateScopeRenderCache.removeAll(true);
+		publicScopeRenderCache.removeAll(true);
+		
+		privateScopeResourceCache.removeAll(true);
+		publicScopeResourceCache.removeAll(true);
 	}
 	@Test
 	public void testGetCacheControlDefault() {
@@ -89,8 +97,10 @@ public class PortletCacheControlServiceImplTest {
 		when(portletDefinition.getCacheScope()).thenReturn(null);
 		
 		PortletCacheControlServiceImpl cacheControlService = new PortletCacheControlServiceImpl();
-		cacheControlService.setPrivateScopePortletOutputCache(privateScopeCache);
-		cacheControlService.setPublicScopePortletDataCache(publicScopeCache);
+		cacheControlService.setPrivateScopePortletRenderOutputCache(privateScopeRenderCache);
+		cacheControlService.setPublicScopePortletRenderOutputCache(publicScopeRenderCache);
+		cacheControlService.setPrivateScopePortletResourceOutputCache(privateScopeResourceCache);
+		cacheControlService.setPublicScopePortletResourceOutputCache(publicScopeResourceCache);
 		
 		final IPortletWindowRegistry portletWindowRegistry = mock(IPortletWindowRegistry.class);
 		final IPortletWindow portletWindow = mock(IPortletWindow.class);
@@ -104,12 +114,12 @@ public class PortletCacheControlServiceImplTest {
 		when(portletEntityRegistry.getPortletEntity(httpRequest, portletEntityId)).thenReturn(portletEntity);
 		final IPortletDefinitionRegistry portletDefinitionRegistry = mock(IPortletDefinitionRegistry.class);
 		when(portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId)).thenReturn(portletDefinition);
-		
+
 		cacheControlService.setPortletWindowRegistry(portletWindowRegistry);
 		cacheControlService.setPortletDefinitionRegistry(portletDefinitionRegistry);
 		cacheControlService.setPortletEntityRegistry(portletEntityRegistry);
 		
-		CacheControl control = cacheControlService.getPortletCacheControl(portletWindowId, httpRequest);
+		CacheControl control = cacheControlService.getPortletRenderCacheControl(portletWindowId, httpRequest);
 		assertFalse(control.isPublicScope());
 		assertNull(control.getETag());
 	}
@@ -133,9 +143,10 @@ public class PortletCacheControlServiceImplTest {
 		when(portletDefinition.getExpirationCache()).thenReturn(300);
 		
 		PortletCacheControlServiceImpl cacheControlService = new PortletCacheControlServiceImpl();
-		cacheControlService.setPrivateScopePortletOutputCache(privateScopeCache);
-		cacheControlService.setPublicScopePortletDataCache(publicScopeCache);
-		
+		cacheControlService.setPrivateScopePortletRenderOutputCache(privateScopeRenderCache);
+		cacheControlService.setPublicScopePortletRenderOutputCache(publicScopeRenderCache);
+		cacheControlService.setPrivateScopePortletResourceOutputCache(privateScopeResourceCache);
+		cacheControlService.setPublicScopePortletResourceOutputCache(publicScopeResourceCache);
 		
 		final IPortletWindowRegistry portletWindowRegistry = mock(IPortletWindowRegistry.class);
 		final IPortletWindow portletWindow = mock(IPortletWindow.class);
@@ -156,7 +167,7 @@ public class PortletCacheControlServiceImplTest {
 		cacheControlService.setPortletDefinitionRegistry(portletDefinitionRegistry);
 		cacheControlService.setPortletEntityRegistry(portletEntityRegistry);
 		
-		CacheControl control = cacheControlService.getPortletCacheControl(portletWindowId, httpRequest);
+		CacheControl control = cacheControlService.getPortletRenderCacheControl(portletWindowId, httpRequest);
 		assertFalse(control.isPublicScope());
 		
 		control.setETag("123456");
@@ -165,7 +176,7 @@ public class PortletCacheControlServiceImplTest {
 		
 		// retrieve cachecontrol again, and return should have etag set
 		// note using 'nextHttpRequest' 
-		CacheControl afterCache = cacheControlService.getPortletCacheControl(portletWindowId, nextHttpRequest);
+		CacheControl afterCache = cacheControlService.getPortletRenderCacheControl(portletWindowId, nextHttpRequest);
 		Assert.assertEquals("123456", afterCache.getETag());
 	}
 	
@@ -180,8 +191,10 @@ public class PortletCacheControlServiceImplTest {
 		when(portletDefinition.getCacheScope()).thenReturn("private");
 		
 		PortletCacheControlServiceImpl cacheControlService = new PortletCacheControlServiceImpl();
-		cacheControlService.setPrivateScopePortletOutputCache(privateScopeCache);
-		cacheControlService.setPublicScopePortletDataCache(publicScopeCache);
+		cacheControlService.setPrivateScopePortletRenderOutputCache(privateScopeRenderCache);
+		cacheControlService.setPublicScopePortletRenderOutputCache(publicScopeRenderCache);
+		cacheControlService.setPrivateScopePortletResourceOutputCache(privateScopeResourceCache);
+		cacheControlService.setPublicScopePortletResourceOutputCache(publicScopeResourceCache);
 		final IPortletWindowRegistry portletWindowRegistry = mock(IPortletWindowRegistry.class);
 		final IPortletWindow portletWindow = mock(IPortletWindow.class);
 		final IPortletEntity portletEntity = mock(IPortletEntity.class);
@@ -194,12 +207,12 @@ public class PortletCacheControlServiceImplTest {
 		when(portletEntityRegistry.getPortletEntity(httpRequest, portletEntityId)).thenReturn(portletEntity);
 		final IPortletDefinitionRegistry portletDefinitionRegistry = mock(IPortletDefinitionRegistry.class);
 		when(portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId)).thenReturn(portletDefinition);
-		
+
 		cacheControlService.setPortletWindowRegistry(portletWindowRegistry);
 		cacheControlService.setPortletDefinitionRegistry(portletDefinitionRegistry);
 		cacheControlService.setPortletEntityRegistry(portletEntityRegistry);
 		
-		CacheControl control = cacheControlService.getPortletCacheControl(portletWindowId, httpRequest);
+		CacheControl control = cacheControlService.getPortletRenderCacheControl(portletWindowId, httpRequest);
 		assertFalse(control.isPublicScope());
 	}
 	
@@ -214,8 +227,10 @@ public class PortletCacheControlServiceImplTest {
 		when(portletDefinition.getCacheScope()).thenReturn(MimeResponse.PUBLIC_SCOPE);
 		
 		PortletCacheControlServiceImpl cacheControlService = new PortletCacheControlServiceImpl();
-		cacheControlService.setPrivateScopePortletOutputCache(privateScopeCache);
-		cacheControlService.setPublicScopePortletDataCache(publicScopeCache);
+		cacheControlService.setPrivateScopePortletRenderOutputCache(privateScopeRenderCache);
+		cacheControlService.setPublicScopePortletRenderOutputCache(publicScopeRenderCache);
+		cacheControlService.setPrivateScopePortletResourceOutputCache(privateScopeResourceCache);
+		cacheControlService.setPublicScopePortletResourceOutputCache(publicScopeResourceCache);
 		final IPortletWindowRegistry portletWindowRegistry = mock(IPortletWindowRegistry.class);
 		final IPortletWindow portletWindow = mock(IPortletWindow.class);
 		final IPortletEntity portletEntity = mock(IPortletEntity.class);
@@ -228,12 +243,12 @@ public class PortletCacheControlServiceImplTest {
 		when(portletEntityRegistry.getPortletEntity(httpRequest, portletEntityId)).thenReturn(portletEntity);
 		final IPortletDefinitionRegistry portletDefinitionRegistry = mock(IPortletDefinitionRegistry.class);
 		when(portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId)).thenReturn(portletDefinition);
-		
+
 		cacheControlService.setPortletWindowRegistry(portletWindowRegistry);
 		cacheControlService.setPortletDefinitionRegistry(portletDefinitionRegistry);
 		cacheControlService.setPortletEntityRegistry(portletEntityRegistry);
 		
-		CacheControl control = cacheControlService.getPortletCacheControl(portletWindowId, httpRequest);
+		CacheControl control = cacheControlService.getPortletRenderCacheControl(portletWindowId, httpRequest);
 		assertTrue(control.isPublicScope());
 	}
 }
