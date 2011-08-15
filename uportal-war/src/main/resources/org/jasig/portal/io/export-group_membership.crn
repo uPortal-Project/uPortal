@@ -20,7 +20,6 @@
 -->
 
 <with-attribute key="Attributes.NODE" value="${newDoc(group)}">
-  <properties location="${exportPropertiesLocation}">
     <sql-query>
         <sql>
             SELECT UPG.*, UPET.ENTITY_TYPE_NAME
@@ -93,5 +92,4 @@
     <return value="${Attributes.NODE}"/>
         </subtasks>
     </sql-query>
-  </properties>
 </with-attribute>

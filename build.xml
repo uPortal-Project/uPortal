@@ -156,7 +156,7 @@
     <target name="db-hibernate" depends="prodPrompt" description="Drops then creates Hibernate managed tables">
         <up-shell-batch>
             <antcall target="db-hibernate-portal" />
-            <antcall target="db-hibernate-stats" />
+            <!-- STATS DISABLED FOR 4.0 RELEASE <antcall target="db-hibernate-stats" /> -->
         </up-shell-batch>
     </target>
 
@@ -197,12 +197,14 @@ catch (Exception e) {
         </antcall>
     </target>
 
+	<!-- STATS DISABLED FOR 4.0 RELEASE
     <target name="db-hibernate-stats" depends="prodPrompt" description="Drops then creates Hibernate managed tables used for the database backed portal statistics">
         <antcall target="db-hibernate-portal">
             <param name="schemaExportBean" value="statsDbHibernateExport" />
             <param name="haltOnError" value="false" />
         </antcall>
     </target>
+    -->
 
     <target name="db" depends="prodPrompt" description="Loads database tables and data">
         <property name="tablefile" value="/properties/db/tables.xml" />
