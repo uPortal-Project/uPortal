@@ -478,9 +478,6 @@ public class PortletRendererImpl implements IPortletRenderer {
 				httpServletResponse.addHeader(headerName, value);
 			}
 		}
-		if(StringUtils.isNotBlank(cachedPortletData.getEtag()) && !headers.keySet().contains("ETag")) {
-			httpServletResponse.addHeader("ETag", cachedPortletData.getEtag());
-		}
 		
 		try {
 			ServletOutputStream servletOutputStream = httpServletResponse.getOutputStream();

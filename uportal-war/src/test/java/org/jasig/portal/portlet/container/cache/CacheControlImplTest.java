@@ -22,7 +22,6 @@ import junit.framework.Assert;
 
 import org.jasig.portal.portlet.container.CacheControlImpl;
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 /**
