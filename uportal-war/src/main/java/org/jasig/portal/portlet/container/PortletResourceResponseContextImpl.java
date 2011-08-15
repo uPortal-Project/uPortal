@@ -81,7 +81,7 @@ public class PortletResourceResponseContextImpl extends PortletMimeResponseConte
     @Override
     public CacheControl getCacheControl() {
         this.checkContextStatus();
-        CacheControl cacheControl = getPortletCacheControlService().getPortletResourceCacheControl(this.portletWindow.getPortletWindowId(), this.containerRequest);    
+        CacheControl cacheControl = getPortletCacheControlService().getPortletResourceCacheControl(this.portletWindow.getPortletWindowId(), this.containerRequest, this.containerResponse);    
         return cacheControl;
     }
 }

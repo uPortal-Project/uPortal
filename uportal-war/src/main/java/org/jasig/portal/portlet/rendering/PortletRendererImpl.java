@@ -403,7 +403,7 @@ public class PortletRendererImpl implements IPortletRenderer {
     	// have to invoke PortletContainer#doServeResource
     	
     	// check cacheControl AFTER portlet serveResource to see if the portlet said "useCachedContent"
-        CacheControl cacheControl = this.portletCacheControlService.getPortletResourceCacheControl(portletWindowId, httpServletRequest);
+        CacheControl cacheControl = this.portletCacheControlService.getPortletResourceCacheControl(portletWindowId, httpServletRequest, httpServletResponse);
         // construct stream to capture output
 		LimitedBufferOutputStream captureStream = new LimitedBufferOutputStream(this.portletCacheControlService.getCacheSizeThreshold());
        

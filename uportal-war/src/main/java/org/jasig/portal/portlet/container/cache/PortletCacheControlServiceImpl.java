@@ -29,6 +29,7 @@ import java.util.Map;
 import javax.portlet.CacheControl;
 import javax.portlet.MimeResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
@@ -186,16 +187,17 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
 		}
 		return cacheControl;
 	}
-	/* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.container.cache.IPortletCacheControlService#getPortletResourceCacheControl(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest)
+	/*
+	 * (non-Javadoc)
+	 * @see org.jasig.portal.portlet.container.cache.IPortletCacheControlService#getPortletResourceCacheControl(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
 	public CacheControl getPortletResourceCacheControl(
-			IPortletWindowId portletWindowId, HttpServletRequest httpRequest) {
+			IPortletWindowId portletWindowId, HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
 		Map<IPortletWindowId, CacheControl> map = PortalWebUtils.getMapRequestAttribute(httpRequest, REQUEST_ATTRIBUTE__PORTLET_CACHE_CONTROL_MAP);
 		CacheControl cacheControl = map.get(portletWindowId);
 		if(cacheControl == null) {
-			cacheControl = new CacheControlImpl();
+			cacheControl = new CacheControlImpl(httpResponse);
 			final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpRequest, portletWindowId);
 	        if(portletWindow == null) {
 	        	log.warn("portletWindowRegistry returned null portletWindow for " + portletWindowId + ", returning default cacheControl");

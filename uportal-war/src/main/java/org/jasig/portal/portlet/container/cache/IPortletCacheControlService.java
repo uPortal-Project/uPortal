@@ -25,6 +25,7 @@ import java.util.Map;
 
 import javax.portlet.CacheControl;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.portlet.om.IPortletWindowId;
 
@@ -52,9 +53,10 @@ public interface IPortletCacheControlService {
 	 * 
 	 * @param portletWindowId
 	 * @param httpRequest
-	 * @return
+	 * @param httpResponse
+	 * @return the {@link CacheControl} for the specifie window id
 	 */
-	CacheControl getPortletResourceCacheControl(IPortletWindowId portletWindowId, HttpServletRequest httpRequest);
+	CacheControl getPortletResourceCacheControl(IPortletWindowId portletWindowId, HttpServletRequest httpRequest, HttpServletResponse httpResponse);
 	/**
 	 * Get the {@link CachedPortletData} for the portlet window id and render request, if there is any.
 	 * This method internally will determine if the data is stored in a public or private scoped cache.
