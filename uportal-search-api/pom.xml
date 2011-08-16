@@ -45,6 +45,9 @@
                         <arg>-XtoString</arg>
                         <arg>-Xequals</arg>
                         <arg>-XhashCode</arg>
+                        <arg>-no-header</arg>
+                        <arg>-readOnly</arg>
+                        <arg>-mark-generated</arg>
                     </args>
                     <plugins>
                         <plugin>
