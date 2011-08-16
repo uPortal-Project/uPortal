@@ -21,6 +21,7 @@ package org.jasig.portal.portlet.container;
 
 import java.util.Collection;
 
+import javax.portlet.CacheControl;
 import javax.portlet.PortletMode;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -67,4 +68,13 @@ public class PortletRenderResponseContextImpl extends PortletMimeResponseContext
         this.servletRequest.setAttribute(IPortletRenderer.ATTRIBUTE__PORTLET_TITLE, title);
     }
 
+    /* (non-Javadoc)
+     * @see org.apache.pluto.container.PortletMimeResponseContext#getCacheControl()
+     */
+    @Override
+    public CacheControl getCacheControl() {
+        this.checkContextStatus();
+        CacheControl cacheControl = getPortletCacheControlService().getPortletRenderCacheControl(this.portletWindow.getPortletWindowId(), this.containerRequest);    
+        return cacheControl;
+    }
 }

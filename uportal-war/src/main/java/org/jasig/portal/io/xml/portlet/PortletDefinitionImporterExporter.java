@@ -158,14 +158,15 @@ public class PortletDefinitionImporterExporter
             if (cats != null && cats.length > 0) {
                 category = portletCategoryRegistry.getPortletCategory(cats[0].getKey());
             }
-            
             else {
                 category = portletCategoryRegistry.getPortletCategory(categoryName);
             }
             
-            if (category != null) {
-                categories.add(category);
+            if (category == null) {
+                throw new IllegalArgumentException("No category '" + categoryName + "' found when importing porltet: " + portletRep.getFname());
             }
+            
+            categories.add(category);
         }
 
         final List<IGroupMember> groups = new ArrayList<IGroupMember>();
@@ -179,9 +180,11 @@ public class PortletDefinitionImporterExporter
                 group = GroupService.findGroup(groupName);
             }
             
-            if (group != null) {
-                groups.add(group);
+            if (group == null) {
+                throw new IllegalArgumentException("No group '" + groupName + "' found when importing porltet: " + portletRep.getFname());
             }
+            
+            groups.add(group);
         }
         
         

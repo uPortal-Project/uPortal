@@ -50,7 +50,7 @@ import org.jasig.portal.url.UrlType;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class PortletMimeResponseContextImpl extends PortletResponseContextImpl implements PortletMimeResponseContext {
+public abstract class PortletMimeResponseContextImpl extends PortletResponseContextImpl implements PortletMimeResponseContext {
     
     private final IPortalUrlProvider portalUrlProvider;
     private final PrintWriter portletWriter;
@@ -72,7 +72,14 @@ public class PortletMimeResponseContextImpl extends PortletResponseContextImpl i
         this.portletCacheControlService = portletCacheControlService;
     }
 
-    /* (non-Javadoc)
+    /**
+	 * @return the portletCacheControlService
+	 */
+	public IPortletCacheControlService getPortletCacheControlService() {
+		return portletCacheControlService;
+	}
+
+	/* (non-Javadoc)
      * @see org.apache.pluto.container.PortletMimeResponseContext#flushBuffer()
      */
     @Override
@@ -97,17 +104,6 @@ public class PortletMimeResponseContextImpl extends PortletResponseContextImpl i
         }
 
         return this.servletResponse.getBufferSize();
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.pluto.container.PortletMimeResponseContext#getCacheControl()
-     */
-    @Override
-    public CacheControl getCacheControl() {
-        this.checkContextStatus();
-        
-        CacheControl cacheControl = this.portletCacheControlService.getPortletCacheControl(this.portletWindow.getPortletWindowId(), this.containerRequest);    
-        return cacheControl;
     }
 
     /* (non-Javadoc)

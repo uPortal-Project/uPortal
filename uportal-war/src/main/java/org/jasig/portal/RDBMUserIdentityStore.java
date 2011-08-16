@@ -58,6 +58,7 @@ import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.google.common.collect.MapMaker;
+import com.googlecode.ehcache.annotations.Cacheable;
 
 /**
  * SQL implementation for managing creation and removal of User Portal Data
@@ -299,6 +300,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 	 * @see org.jasig.portal.IUserIdentityStore#isDefaultUser(java.lang.String)
 	 */
 	@Override
+	@Cacheable(cacheName="org.jasig.portal.RDBMUserIdentityStore.isDefaultUser")
 	public boolean isDefaultUser(String username) {
 		final int defaultUserCount = this.jdbcOperations.queryForInt(IS_DEFAULT_USER_QUERY, username);
 		return defaultUserCount > 0;

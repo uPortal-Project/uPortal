@@ -37,6 +37,15 @@
     <!-- ******************** uPortal Framework Caches ******************** -->
     
     <!-- 
+     | Caches if the user is a default user (generally only used during import/export)
+     | - 1 x user
+     | - not replicated
+     +-->
+    <cache name="org.jasig.portal.RDBMUserIdentityStore.isDefaultUser"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    
+    <!-- 
      | Caches Skin Resource instances
      | - 1 x skin
      | - not replicated - represents local file system data
@@ -297,17 +306,33 @@
      
     <!-- 
      | Caches CachedPortletData objects
-     | - 1 per user per portlet that tells the container to cache it's content (see portlet MimeResponse#getCacheControl())
+     | - 1 per user per portlet that tells the container to cache it's render content (see portlet MimeResponse#getCacheControl())
      +-->   
-    <cache name="org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.privateScopePortletOutputCache"
+    <cache name="org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.privateScopePortletRenderOutputCache"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
         
     <!-- 
      | Caches CachedPortletData objects
-     | - 1 per user per portlet that tells the container to cache it's content in the PUBLIC_SCOPE (see portlet MimeResponse#getCacheControl())
+     | - 1 per user per portlet that tells the container to cache it's render content in the PUBLIC_SCOPE (see portlet MimeResponse#getCacheControl())
      +-->   
-    <cache name="org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.publicScopePortletOutputCache"
+    <cache name="org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.publicScopePortletRenderOutputCache"
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
+    <!-- 
+     | Caches CachedPortletData objects
+     | - 1 per user per portlet that tells the container to cache it's resource content (see portlet MimeResponse#getCacheControl())
+     +-->   
+    <cache name="org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.privateScopePortletResourceOutputCache"
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
+    <!-- 
+     | Caches CachedPortletData objects
+     | - 1 per user per portlet that tells the container to cache it's resource content in the PUBLIC_SCOPE (see portlet MimeResponse#getCacheControl())
+     +-->   
+    <cache name="org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.publicScopePortletResourceOutputCache"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
         

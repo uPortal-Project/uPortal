@@ -104,6 +104,9 @@ public class LimitedBufferStringWriter extends StringWriter {
 	 * Inspect the length of {@link #getBuffer()}.
 	 * If the newBytes argument plus the buffer length exceeds the threshold, return true.
 	 * 
+	 * Note: exceeding the threshold has the effect of clearing the buffer.
+	 * 
+	 * @see StringBuffer#delete(int, int)
 	 * @param newBytes
 	 * @return
 	 */
