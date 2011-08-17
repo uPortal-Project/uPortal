@@ -35,6 +35,7 @@ import net.sf.ehcache.Element;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.Validate;
+import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.IUserLayoutManager;
@@ -50,7 +51,9 @@ import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
@@ -148,7 +151,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         Validate.notNull(request, "HttpServletRequest cannot be null");
         Validate.notNull(portletDefinitionId, "portletDefinitionId cannot be null");
         
-        final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionId);
+        final IPortletDefinition portletDefinition = this.getPortletDefinition(request, portletDefinitionId);
         if (portletDefinition == null) {
             throw new IllegalArgumentException("No portlet definition found for id '" + portletDefinitionId + "'.");
         }
@@ -186,10 +189,15 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         
         final String channelPublishId = channelNode.getChannelPublishId();
         
-        final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(channelPublishId);
-        
-        final IPerson person = userInstance.getPerson();
-        return this.getOrCreatePortletEntity(request, portletDefinition.getPortletDefinitionId(), layoutNodeId, person.getID());
+        final IPortletDefinition portletDefinition = this.getPortletDefinition(userInstance, channelPublishId);
+
+        if (portletDefinition != null) {
+        	final IPerson person = userInstance.getPerson();
+	    	return this.getOrCreatePortletEntity(request, portletDefinition.getPortletDefinitionId(), layoutNodeId, person.getID());
+	    }
+	    
+	    // No permission to see the portlet
+	    return null;
     }
     
     /* (non-Javadoc)
@@ -377,6 +385,41 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         lock = createPortletEntityLock();
         return ConcurrentMapUtils.putIfAbsent(lockMap, portletEntityId, lock);
     }
+    
+    protected IPortletDefinition getPortletDefinition(HttpServletRequest request, String portletDefinitionIdStr) {
+    	final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+    	return this.getPortletDefinition(userInstance, portletDefinitionIdStr);
+    }
+    
+    protected IPortletDefinition getPortletDefinition(HttpServletRequest request, IPortletDefinitionId portletDefinitionId) {
+    	final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+    	return this.getPortletDefinition(userInstance, portletDefinitionId);
+    }
+    
+    protected IPortletDefinition getPortletDefinition(IUserInstance userInstance, String portletDefinitionIdStr) {
+    	final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionIdStr);
+    	return checkPortletDefinitionRenderPermissions(userInstance, portletDefinition);
+    }
+    
+    protected IPortletDefinition getPortletDefinition(IUserInstance userInstance, IPortletDefinitionId portletDefinitionId) {
+    	final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionId);
+    	return checkPortletDefinitionRenderPermissions(userInstance, portletDefinition);
+    }
+
+    private IPortletDefinition checkPortletDefinitionRenderPermissions(IUserInstance userInstance, final IPortletDefinition portletDefinition) {
+		if (portletDefinition == null) {
+    		return null;
+    	}
+        
+        final IPerson person = userInstance.getPerson();
+		final EntityIdentifier ei = person.getEntityIdentifier();
+	    final IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+	    if (ap.canRender(portletDefinition.getPortletDefinitionId().getStringId())) {
+	    	return portletDefinition;
+	    }
+	    
+	    return null;
+	}
     
     protected IPortletEntity createPersistentEntity(final IPortletEntity portletEntity, final IPortletEntityId wrapperPortletEntityId) {
         final IPortletDefinitionId portletDefinitionId = portletEntity.getPortletDefinitionId();
@@ -574,7 +617,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         
         //Verify the portlet definition id
         final String portletDefinitionIdString = idParts[0];
-        final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionIdString);
+        final IPortletDefinition portletDefinition = this.getPortletDefinition(request, portletDefinitionIdString);
         if (portletDefinition == null) {
             throw new IllegalArgumentException("No parent IPortletDefinition found for " + portletDefinitionIdString + " from entity id string: " + consistentEntityIdString);
         }

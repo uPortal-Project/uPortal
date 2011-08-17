@@ -26,6 +26,8 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import javax.servlet.http.HttpServletRequest;
+
 import net.sf.ehcache.Ehcache;
 
 import org.jasig.portal.IUserPreferencesManager;
@@ -69,7 +71,32 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
     private IPortletDefinitionDao jpaPortletDefinitionDao;
     private IPortletEntityDao jpaPortletEntityDao;
     
-    @InjectMocks private PortletEntityRegistryImpl portletEntityRegistry = new PortletEntityRegistryImpl(); 
+    @InjectMocks private PortletEntityRegistryImpl portletEntityRegistry = new PortletEntityRegistryImpl() {
+		@Override
+		protected IPortletDefinition getPortletDefinition(HttpServletRequest request, String portletDefinitionIdStr) {
+			//Can't unit test authZ code so this is a stand in
+			return jpaPortletDefinitionDao.getPortletDefinition(portletDefinitionIdStr);
+		}
+
+		@Override
+		protected IPortletDefinition getPortletDefinition(HttpServletRequest request, IPortletDefinitionId portletDefinitionId) {
+			//Can't unit test authZ code so this is a stand in
+			return jpaPortletDefinitionDao.getPortletDefinition(portletDefinitionId);
+		}
+
+		@Override
+		protected IPortletDefinition getPortletDefinition(IUserInstance userInstance, String portletDefinitionIdStr) {
+			//Can't unit test authZ code so this is a stand in
+			return jpaPortletDefinitionDao.getPortletDefinition(portletDefinitionIdStr);
+		}
+
+		@Override
+		protected IPortletDefinition getPortletDefinition(IUserInstance userInstance, IPortletDefinitionId portletDefinitionId) {
+			//Can't unit test authZ code so this is a stand in
+			return jpaPortletDefinitionDao.getPortletDefinition(portletDefinitionId);
+		}
+    	
+    }; 
     @Mock private IPortalRequestUtils portalRequestUtils;
     @Mock private IPortletDefinitionRegistry portletDefinitionRegistry;
     @Mock private Ehcache entityIdParseCache;
