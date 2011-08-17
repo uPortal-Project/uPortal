@@ -539,8 +539,11 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
     		}
         }
         
+        // we assume that response locale has been set to correct value
+        String locale = response.getLocale().toString();
+        
 		// return portlet title from channel definition
-        return portletDefinition.getTitle();
+        return portletDefinition.getTitle(locale);
     }
 
     @Override
