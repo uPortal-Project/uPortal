@@ -38,6 +38,7 @@
                 </bean>
                 <bean class="org.jasig.portal.url.MaxInactiveInterceptor"/>
                 <ref bean="requestParameterProcessorInterceptor"/>
+                <bean class="org.jasig.portal.i18n.LocaleManagementInterceptor" />
             </list>
         </property>
     </bean>
