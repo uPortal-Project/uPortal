@@ -169,16 +169,9 @@
             </bean>
         </property>
     </bean>
-    
-    <bean id="dtdSettingPipelineComponent" class="org.jasig.portal.rendering.DTDSettingPipelineComponent">
-        <property name="wrappedComponent" ref="themeTransformComponent" />
-        <property name="DTD">
-            <value>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;</value>
-        </property>
-    </bean>
-    
+
     <bean id="postThemeTransformLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
-        <property name="wrappedComponent" ref="dtdSettingPipelineComponent" />
+        <property name="wrappedComponent" ref="themeTransformComponent" />
         <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.POST_THEME" />
         <property name="logEvents" value="false" />
         <property name="logFullDocument" value="true" />
@@ -216,6 +209,11 @@
                 </entry>
             </map>
         </property>
+    </bean>
+    
+    <bean id="postSerializerLogger" class="org.jasig.portal.rendering.LoggingCharacterComponent">
+        <property name="wrappedComponent" ref="staxSerializingComponent" />
+        <property name="loggerName" value="org.jasig.portal.rendering.LoggingCharacterComponent.POST_SERIALIZER" />
     </bean>
     
     <bean id="themeCachingComponent" class="org.jasig.portal.rendering.cache.CachingCharacterPipelineComponent">

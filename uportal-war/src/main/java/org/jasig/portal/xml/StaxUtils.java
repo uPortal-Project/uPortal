@@ -20,9 +20,13 @@
 package org.jasig.portal.xml;
 
 import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
+
+import org.springframework.util.xml.StaxEventLexicalContentHandler;
+import org.xml.sax.ContentHandler;
 
 /**
  * Stax utility methods
@@ -51,4 +55,7 @@ public final class StaxUtils {
         return rootElement.asStartElement();
     }
     
+    public static ContentHandler createLexicalContentHandler(XMLEventWriter eventWriter) {
+        return new StaxEventLexicalContentHandler(eventWriter);
+    }
 }
