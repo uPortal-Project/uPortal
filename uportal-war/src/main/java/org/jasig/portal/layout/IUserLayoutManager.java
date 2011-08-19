@@ -27,6 +27,7 @@ import javax.xml.stream.XMLEventReader;
 
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
+import org.jasig.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType;
 import org.w3c.dom.Document;
 
 /**
@@ -316,5 +317,5 @@ public interface IUserLayoutManager {
      * @return an <code>IUserLayoutNodeDescription</code> instance
      * @exception PortalException if the error occurs.
      */
-    public IUserLayoutNodeDescription createNodeDescription( int nodeType ) throws PortalException;
+    public IUserLayoutNodeDescription createNodeDescription( LayoutNodeType nodeType ) throws PortalException;
 }

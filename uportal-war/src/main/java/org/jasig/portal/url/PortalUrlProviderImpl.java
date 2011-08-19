@@ -30,6 +30,7 @@ import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.api.portlet.DelegationRequest;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
+import org.jasig.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType;
 import org.jasig.portal.portlet.delegation.IPortletDelegationManager;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
@@ -114,14 +115,16 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider {
     public IPortalUrlBuilder getPortalUrlBuilderByLayoutNode(HttpServletRequest request, String layoutNodeId, UrlType urlType) {
         final IPortletWindowId portletWindowId;
         if (layoutNodeId != null) {
-            final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, layoutNodeId);
-            if (portletWindow == null) {
-                //No window so make sure the node is even in the layout
-                this.verifyLayoutNodeId(request, layoutNodeId);
-                portletWindowId = null;
+            final LayoutNodeType layoutNodeType = this.getLayoutNodeType(request, layoutNodeId);
+            if (layoutNodeType == LayoutNodeType.PORTLET) {
+                final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, layoutNodeId);
+                portletWindowId = portletWindow.getPortletWindowId();
+            }
+            else if (layoutNodeType == null) {
+                throw new IllegalArgumentException("No layout node exists for id: " + layoutNodeId);
             }
             else {
-                portletWindowId = portletWindow.getPortletWindowId();
+                portletWindowId = null;
             }
         }
         else {
@@ -217,14 +220,16 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider {
      * is a portlet node and if it is return the {@link IPortletWindowId} of the corresponding
      * portlet.
      */
-    protected void verifyLayoutNodeId(HttpServletRequest request, String folderNodeId) {
+    protected LayoutNodeType getLayoutNodeType(HttpServletRequest request, String folderNodeId) {
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
         final IUserLayoutNodeDescription node = userLayoutManager.getNode(folderNodeId);
         
         if (node == null) {
-            throw new IllegalArgumentException("No layout node exists for id: " + folderNodeId);
+            return null;
         }
+        
+        return node.getType();
     }
 }

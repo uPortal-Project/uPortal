@@ -31,12 +31,10 @@ import org.w3c.dom.Element;
  * @version 1.0
  */
 public interface IUserLayoutNodeDescription {
-
-    /**
-      * Constants indicating the type of a node
-      */
-    public static final int CHANNEL = 1;
-    public static final int FOLDER = 2;
+    public enum LayoutNodeType {
+        PORTLET,
+        FOLDER;
+    }
 
     /**
      * Returns a node Id.
@@ -65,7 +63,7 @@ public interface IUserLayoutNodeDescription {
      *
      * @return a type
      */
-    public int getType();
+    public LayoutNodeType getType();
 
     public void setName(String name);
 

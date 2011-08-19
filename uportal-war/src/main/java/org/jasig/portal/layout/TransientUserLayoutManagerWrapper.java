@@ -33,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
+import org.jasig.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType;
 import org.jasig.portal.layout.node.UserLayoutChannelDescription;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
@@ -277,7 +278,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
     }
 
 
-    public IUserLayoutNodeDescription createNodeDescription( int nodeType ) throws PortalException {
+    public IUserLayoutNodeDescription createNodeDescription( LayoutNodeType nodeType ) throws PortalException {
         return man.createNodeDescription(nodeType);
     }
 

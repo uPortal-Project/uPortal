@@ -42,6 +42,7 @@ import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
+import org.jasig.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.portlet.dao.IPortletEntityDao;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
@@ -631,7 +632,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         final String layoutNodeId = idParts[1];
         if (!layoutNodeId.startsWith(DELEGATE_LAYOUT_NODE_ID_PREFIX)) {
             final IUserLayoutNodeDescription node = userLayoutManager.getNode(layoutNodeId);
-            if (node == null || node.getType() != IUserLayoutNodeDescription.CHANNEL) {
+            if (node == null || node.getType() != LayoutNodeType.PORTLET) {
                 throw new IllegalArgumentException("No portlet layout node found for " + layoutNodeId + " from entity id string: " + consistentEntityIdString);
             }
         

@@ -19,9 +19,10 @@
 
 package org.jasig.portal.portlet.registry;
 
+import static org.mockito.Mockito.when;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -33,7 +34,7 @@ import net.sf.ehcache.Ehcache;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
-import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
+import org.jasig.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.dao.IPortletEntityDao;
 import org.jasig.portal.portlet.dao.IPortletTypeDao;
@@ -178,7 +179,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
         when(preferencesManager.getUserLayoutManager()).thenReturn(userLayoutManager);
         
         when(userLayoutManager.getNode(nodeId)).thenReturn(node);
-        when(node.getType()).thenReturn(IUserLayoutNodeDescription.CHANNEL);
+        when(node.getType()).thenReturn(LayoutNodeType.PORTLET);
         when(node.getChannelPublishId()).thenReturn(portDefId1.getStringId());
         
         final IPortletEntityId portletEntityId = this.execute(new Callable<IPortletEntityId>() {
@@ -305,7 +306,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
         when(preferencesManager.getUserLayoutManager()).thenReturn(userLayoutManager);
         
         when(userLayoutManager.getNode(nodeId)).thenReturn(node);
-        when(node.getType()).thenReturn(IUserLayoutNodeDescription.CHANNEL);
+        when(node.getType()).thenReturn(LayoutNodeType.PORTLET);
         when(node.getChannelPublishId()).thenReturn(portDefId1.getStringId());
 
         final IPortletEntityId portletEntityId = this.execute(new Callable<IPortletEntityId>() {
@@ -423,7 +424,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
         when(preferencesManager.getUserLayoutManager()).thenReturn(userLayoutManager);
         
         when(userLayoutManager.getNode(nodeId)).thenReturn(node);
-        when(node.getType()).thenReturn(IUserLayoutNodeDescription.CHANNEL);
+        when(node.getType()).thenReturn(LayoutNodeType.PORTLET);
         when(node.getChannelPublishId()).thenReturn(portDefId1.getStringId());
 
         final IPortletEntityId portletEntityId = this.execute(new Callable<IPortletEntityId>() {
@@ -511,7 +512,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
         when(preferencesManager.getUserLayoutManager()).thenReturn(userLayoutManager);
         
         when(userLayoutManager.getNode(nodeId)).thenReturn(node);
-        when(node.getType()).thenReturn(IUserLayoutNodeDescription.CHANNEL);
+        when(node.getType()).thenReturn(LayoutNodeType.PORTLET);
         when(node.getChannelPublishId()).thenReturn(portDefId1.getStringId());
 
         /*
@@ -607,7 +608,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
         when(preferencesManager.getUserLayoutManager()).thenReturn(userLayoutManager);
         
         when(userLayoutManager.getNode(nodeId)).thenReturn(node);
-        when(node.getType()).thenReturn(IUserLayoutNodeDescription.CHANNEL);
+        when(node.getType()).thenReturn(LayoutNodeType.PORTLET);
         when(node.getChannelPublishId()).thenReturn(portletDefId.getStringId());
 
 
@@ -691,7 +692,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
         when(preferencesManager.getUserLayoutManager()).thenReturn(userLayoutManager);
         
         when(userLayoutManager.getNode(nodeId)).thenReturn(node);
-        when(node.getType()).thenReturn(IUserLayoutNodeDescription.CHANNEL);
+        when(node.getType()).thenReturn(LayoutNodeType.PORTLET);
         when(node.getChannelPublishId()).thenReturn(portletDefId.getStringId());
 
 
@@ -775,7 +776,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
         when(preferencesManager.getUserLayoutManager()).thenReturn(userLayoutManager);
         
         when(userLayoutManager.getNode(nodeId)).thenReturn(node);
-        when(node.getType()).thenReturn(IUserLayoutNodeDescription.CHANNEL);
+        when(node.getType()).thenReturn(LayoutNodeType.PORTLET);
         when(node.getChannelPublishId()).thenReturn(portletDefId.getStringId());
 
 
@@ -834,7 +835,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
         when(preferencesManager.getUserLayoutManager()).thenReturn(userLayoutManager);
         
         when(userLayoutManager.getNode(nodeId)).thenReturn(node);
-        when(node.getType()).thenReturn(IUserLayoutNodeDescription.CHANNEL);
+        when(node.getType()).thenReturn(LayoutNodeType.PORTLET);
         when(node.getChannelPublishId()).thenReturn(portletDefId.getStringId());
 
 

@@ -35,8 +35,6 @@ import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
-import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
-import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.layout.om.IStylesheetParameterDescriptor;
 import org.jasig.portal.portlet.om.IPortletDefinition;
@@ -140,14 +138,10 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         Validate.notNull(request, "HttpServletRequest cannot be null");
         Validate.notNull(fname, "fname cannot be null");
         
-        final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinitionByFname(fname);
-        if (portletDefinition == null) {
-            logger.debug("No IPortletDefinition found for fname {}, no IPortletWindow will be returned.", fname);
-            return null;
-        }
+        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+        final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntityByFname(request, userInstance, fname);
         
-        final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();
-        final IPortletWindow portletWindow = this.getOrCreateDefaultPortletWindow(request, portletDefinitionId);
+        final IPortletWindow portletWindow = this.getOrCreateDefaultPortletWindow(request, portletEntity.getPortletEntityId());
         logger.trace("Found portlet window {} for portlet definition fname {}", portletWindow, fname);
         
         return portletWindow;
@@ -159,30 +153,15 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         Validate.notNull(subscribeId, "subscribeId cannot be null");
         
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
-        final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
-        final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
-        final IUserLayoutNodeDescription node = userLayoutManager.getNode(subscribeId);
-        if (node == null) {
-            logger.debug("No layout node found for id {}, no IPortletWindow will be returned.", subscribeId);
+        final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(request, userInstance, subscribeId);
+        if (portletEntity == null) {
+            logger.debug("No portlet entity found for id {}, no IPortletWindow will be returned.", subscribeId);
             return null;
         }
-        if (node.getType() != IUserLayoutChannelDescription.CHANNEL) {
-            logger.debug("Layout node for id {} is not a portlet, it is a {}, no IPortletWindow will be returned.", subscribeId, node.getType());
-            return null;
-        }
-        logger.trace("Found layout node {} for id {}", node, subscribeId);
+        logger.trace("Found portlet entity {} for id {}", portletEntity, subscribeId);
         
-        final IUserLayoutChannelDescription portletNode = (IUserLayoutChannelDescription)node;
-        final String channelPublishId = portletNode.getChannelPublishId();
-        final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(channelPublishId);
-        if (portletDefinition == null) {
-            logger.debug("No IPortletDefinition found for id {}, no IPortletWindow will be returned.", channelPublishId);
-            return null;
-        }
-        
-        final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();
-        final IPortletWindow portletWindow = this.getOrCreateDefaultPortletWindow(request, portletDefinitionId);
-        logger.trace("Found portlet window {} for layout node {}", portletWindow, portletNode);
+        final IPortletWindow portletWindow = this.getOrCreateDefaultPortletWindow(request, portletEntity.getPortletEntityId());
+        logger.trace("Found portlet window {} for layout node {}", portletWindow, subscribeId);
         
         return portletWindow;
     }

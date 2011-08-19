@@ -548,8 +548,8 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
      *
      * @return a type
      */
-    public int getType() {
-      return CHANNEL;
+    public LayoutNodeType getType() {
+      return LayoutNodeType.PORTLET;
     }
 
 	public String toString() {
