@@ -62,31 +62,6 @@
     <bean id="portalConversionService"
         class="org.jasig.portal.utils.web.flow.PortalConversionService"/>
     
-    <!-- Beans for the register-portal flow -->
-    <bean id="portalRegistrationHelper" class="org.jasig.portal.portlets.registerportal.PortalRegistrationHelper">
-        <property name="portalDataCollator" ref="portalDataCollator" />
-        <property name="portalDataSubmitter" ref="portalDataSubmitter" />
-    </bean>
-    
-    <bean id="portalDataCollator" class="org.jasig.portal.portlets.registerportal.PortalDataCollatorImpl">
-        <property name="collectors">
-            <list>
-                <bean class="org.jasig.portal.portlets.registerportal.data.JvmDataCollector" />
-                <bean class="org.jasig.portal.portlets.registerportal.data.PortalVersionsCollector">
-                    <property name="portalVersion" value="${org.jasig.portal.version}" />
-                </bean>
-                <bean class="org.jasig.portal.portlets.registerportal.data.DatabaseInfoCollector">
-                    <property name="databaseMetadata" ref="PortalDB.metadata" />
-                </bean>
-                <bean class="org.jasig.portal.portlets.registerportal.data.ContainerInfoCollector" />
-            </list>
-        </property>
-    </bean>
-    
-    <bean id="portalDataSubmitter" class="org.jasig.portal.portlets.registerportal.CommonsHttpPortalDataSubmitter">
-        <property name="submitUrl" value="http://developer.ja-sig.org/PortalRegistration/dataCollector/v1" />
-    </bean>
-
     <!-- bean for reset-user-layout flow -->
     <bean id="userLayoutHelper" class="org.jasig.portal.layout.UserLayoutHelperImpl">
         <property name="dataSource" ref="PortalDb"/>
