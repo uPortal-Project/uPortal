@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
+import net.sf.ehcache.config.CacheConfiguration;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -336,11 +337,13 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
 		
 		if(cacheControl.isPublicScope()) {
 			Serializable publicCacheKey = generatePublicScopePortletDataCacheKey(definitionId, portletWindow.getRenderParameters(), portletWindow.getPublicRenderParameters());
-			Element publicCacheElement = constructCacheElement(publicCacheKey, newData);
+			int ttl = findMinimumCacheTTL(publicScopePortletRenderOutputCache.getCacheConfiguration(), cacheControl);
+			Element publicCacheElement = constructCacheElement(publicCacheKey, newData, ttl);
 			this.publicScopePortletRenderOutputCache.put(publicCacheElement);		
 		} else {
 			Serializable privateCacheKey = generatePrivateScopePortletDataCacheKey(httpRequest, portletWindowId, entityId, definitionId, portletWindow.getRenderParameters());
-			Element privateCacheElement = constructCacheElement(privateCacheKey, newData);
+			int ttl = findMinimumCacheTTL(privateScopePortletRenderOutputCache.getCacheConfiguration(), cacheControl);
+			Element privateCacheElement = constructCacheElement(privateCacheKey, newData, ttl);
 			this.privateScopePortletRenderOutputCache.put(privateCacheElement);
 		}
 	}
@@ -366,26 +369,48 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
 		newData.setContentType(contentType);
 		newData.setHeaders(headers);
 		
+		
 		if(cacheControl.isPublicScope()) {
 			Serializable publicCacheKey = generatePublicScopePortletDataCacheKey(definitionId, portletWindow.getRenderParameters(), portletWindow.getPublicRenderParameters());
-			Element publicCacheElement = constructCacheElement(publicCacheKey, newData);
+			int ttl = findMinimumCacheTTL(publicScopePortletResourceOutputCache.getCacheConfiguration(), cacheControl);
+			Element publicCacheElement = constructCacheElement(publicCacheKey, newData, ttl);
 			this.publicScopePortletResourceOutputCache.put(publicCacheElement);		
 		} else {
 			Serializable privateCacheKey = generatePrivateScopePortletDataCacheKey(httpRequest, portletWindowId, entityId, definitionId, portletWindow.getRenderParameters());
-			Element privateCacheElement = constructCacheElement(privateCacheKey, newData);
+			int ttl = findMinimumCacheTTL(privateScopePortletResourceOutputCache.getCacheConfiguration(), cacheControl);
+			Element privateCacheElement = constructCacheElement(privateCacheKey, newData, ttl);
 			this.privateScopePortletResourceOutputCache.put(privateCacheElement);
 		}
 	}
 	
 	/**
-	 * Construct a cache {@link Element} from the key and data.
+	 * @param cacheConfig
+	 * @param cacheControl
+	 * @return the minimum value between the cache config and the expiration time set by the portlet
+	 */
+	protected int findMinimumCacheTTL(CacheConfiguration cacheConfig, CacheControl cacheControl) {
+		Integer cacheControlTTL = cacheControl.getExpirationTime();
+		Long cacheConfigTTL = cacheConfig.getTimeToLiveSeconds();
+		if(cacheControlTTL <= 0) {
+			return cacheConfigTTL.intValue();
+		}
+		Long result = Math.min(cacheConfigTTL, cacheControlTTL.longValue());
+		
+		return result.intValue();
+	}
+	/**
+	 * Construct a cache {@link Element} from the key, data, and time to live.
 	 * 
 	 * @param cacheKey
 	 * @param data
+	 * @param timeToLive
 	 * @return an appropriate {@link Element}, never null
 	 */
-	protected Element constructCacheElement(Serializable cacheKey, CachedPortletData data) {
-		return new Element(cacheKey, data);
+	protected Element constructCacheElement(Serializable cacheKey, CachedPortletData data, int timeToLive) {
+		if(timeToLive <= 0) {
+			return new Element(cacheKey, data);
+		}
+		return new Element(cacheKey, data, null, null, timeToLive);
 	}
 	/*
 	 * (non-Javadoc)
