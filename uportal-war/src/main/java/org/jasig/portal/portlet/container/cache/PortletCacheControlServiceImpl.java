@@ -66,7 +66,6 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
 	private IPortletWindowRegistry portletWindowRegistry;
 	private IPortletEntityRegistry portletEntityRegistry;
 	private IPortletDefinitionRegistry portletDefinitionRegistry;
-	//private IUrlSyntaxProvider urlSyntaxProvider;
 	
 	// key=sessionId+windowId+entityId+definitionId+renderParameters; value=CachedPortletData
     private Ehcache privateScopePortletRenderOutputCache;
@@ -306,10 +305,8 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
 	 * @see org.jasig.portal.portlet.container.cache.IPortletCacheControlService#shouldOutputBeCached(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest)
 	 */
 	@Override
-	public boolean shouldOutputBeCached(IPortletWindowId portletWindowId,
-			HttpServletRequest httpRequest) {
-		CacheControl control = getPortletRenderCacheControl(portletWindowId, httpRequest);
-		if(control.getExpirationTime() != 0) {
+	public boolean shouldOutputBeCached(CacheControl cacheControl) {
+		if(cacheControl.getExpirationTime() != 0) {
 			return true;
 		} else {
 			return false;
@@ -339,11 +336,11 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
 		
 		if(cacheControl.isPublicScope()) {
 			Serializable publicCacheKey = generatePublicScopePortletDataCacheKey(definitionId, portletWindow.getRenderParameters(), portletWindow.getPublicRenderParameters());
-			Element publicCacheElement = constructCacheElement(publicCacheKey, newData, expirationTime);
+			Element publicCacheElement = constructCacheElement(publicCacheKey, newData);
 			this.publicScopePortletRenderOutputCache.put(publicCacheElement);		
 		} else {
 			Serializable privateCacheKey = generatePrivateScopePortletDataCacheKey(httpRequest, portletWindowId, entityId, definitionId, portletWindow.getRenderParameters());
-			Element privateCacheElement = constructCacheElement(privateCacheKey, newData, expirationTime);
+			Element privateCacheElement = constructCacheElement(privateCacheKey, newData);
 			this.privateScopePortletRenderOutputCache.put(privateCacheElement);
 		}
 	}
@@ -371,31 +368,24 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
 		
 		if(cacheControl.isPublicScope()) {
 			Serializable publicCacheKey = generatePublicScopePortletDataCacheKey(definitionId, portletWindow.getRenderParameters(), portletWindow.getPublicRenderParameters());
-			Element publicCacheElement = constructCacheElement(publicCacheKey, newData, expirationTime);
+			Element publicCacheElement = constructCacheElement(publicCacheKey, newData);
 			this.publicScopePortletResourceOutputCache.put(publicCacheElement);		
 		} else {
 			Serializable privateCacheKey = generatePrivateScopePortletDataCacheKey(httpRequest, portletWindowId, entityId, definitionId, portletWindow.getRenderParameters());
-			Element privateCacheElement = constructCacheElement(privateCacheKey, newData, expirationTime);
+			Element privateCacheElement = constructCacheElement(privateCacheKey, newData);
 			this.privateScopePortletResourceOutputCache.put(privateCacheElement);
 		}
 	}
 	
 	/**
-	 * Construct a cache {@link Element} from the key and data based on the expiration time.
+	 * Construct a cache {@link Element} from the key and data.
 	 * 
 	 * @param cacheKey
 	 * @param data
-	 * @param expirationTime
 	 * @return an appropriate {@link Element}, never null
 	 */
-	protected Element constructCacheElement(Serializable cacheKey, CachedPortletData data, int expirationTime) {
-		if(expirationTime < 0) {
-			// negative cacheControl expiration time means "cache forever"
-			return new Element(cacheKey, data);
-		} else {
-			// null constructor arguments mean "use default from cache's configuration"
-			return new Element(cacheKey, data, null, null, expirationTime);
-		}
+	protected Element constructCacheElement(Serializable cacheKey, CachedPortletData data) {
+		return new Element(cacheKey, data);
 	}
 	/*
 	 * (non-Javadoc)

@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import junit.framework.Assert;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletContainerException;
 import org.apache.pluto.container.PortletWindow;
@@ -94,7 +95,7 @@ public class PortletRendererImplTest {
 		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
 		when(portletCacheControlService.getPortletRenderCacheControl(portletWindowId, request)).thenReturn(cacheControl);
 		when(portletCacheControlService.getCachedPortletRenderOutput(portletWindowId, request)).thenReturn(null);
-		when(portletCacheControlService.shouldOutputBeCached(portletWindowId, request)).thenReturn(false);
+		when(portletCacheControlService.shouldOutputBeCached(cacheControl)).thenReturn(false);
 		when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
 		
 		StringWriter writer = new StringWriter();
@@ -141,7 +142,7 @@ public class PortletRendererImplTest {
 		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
 		when(portletCacheControlService.getPortletRenderCacheControl(portletWindowId, request)).thenReturn(cacheControl);
 		when(portletCacheControlService.getCachedPortletRenderOutput(portletWindowId, request)).thenReturn(null);
-		when(portletCacheControlService.shouldOutputBeCached(portletWindowId, request)).thenReturn(true);
+		when(portletCacheControlService.shouldOutputBeCached(cacheControl)).thenReturn(true);
 		when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
 		
 		StringWriter writer = new StringWriter();
@@ -188,7 +189,7 @@ public class PortletRendererImplTest {
 		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
 		when(portletCacheControlService.getPortletRenderCacheControl(portletWindowId, request)).thenReturn(cacheControl);
 		when(portletCacheControlService.getCachedPortletRenderOutput(portletWindowId, request)).thenReturn(null);
-		when(portletCacheControlService.shouldOutputBeCached(portletWindowId, request)).thenReturn(true);
+		when(portletCacheControlService.shouldOutputBeCached(cacheControl)).thenReturn(true);
 		when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
 		
 		StringWriter writer = new StringWriter();
@@ -244,9 +245,8 @@ public class PortletRendererImplTest {
 		// verify we enter the first branch and never execute portletContainer#doRender
 		verify(portletContainer, never()).doRender(isA(PortletWindow.class), isA(PortletHttpServletRequestWrapper.class), isA(PortletHttpServletResponseWrapper.class));
 		// verify we never enter the other branch of the "should render cached output" if statement
-		verify(portletCacheControlService, never()).shouldOutputBeCached(portletWindowId, request);
+		verify(portletCacheControlService, never()).shouldOutputBeCached(cacheControl);
 	}
-	
 	/**
 	 * Mimic workflow when data cached portlet data using "validation" method is available.
 	 * 
@@ -255,7 +255,7 @@ public class PortletRendererImplTest {
 	 * @throws PortletException 
 	 */
 	@Test
-	public void doRenderMarkupCachedContentValidationMethodTest() throws PortletException, IOException, PortletContainerException {
+	public void doRenderMarkupCachedContentValidationNotExpiredMethodTest() throws PortletException, IOException, PortletContainerException {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		Date now = new Date();
@@ -291,10 +291,63 @@ public class PortletRendererImplTest {
 		portletRenderer.doRenderMarkup(portletWindowId, request, response, writer);
 		Assert.assertEquals("<p>Some content</p>", writer.toString());
 		
-		// presence of etag will skip the expiration cache branch and trigger a doRender
+		// verify we enter the first branch and never execute portletContainer#doRender
+		verify(portletContainer, never()).doRender(isA(PortletWindow.class), isA(PortletHttpServletRequestWrapper.class), isA(PortletHttpServletResponseWrapper.class));
+		// verify we never enter the other branch of the "should render cached output" if statement
+		verify(portletCacheControlService, never()).shouldOutputBeCached(cacheControl);
+	}
+	
+	/**
+	 * Mimic workflow when data cached portlet data using "validation" method is available.
+	 * 
+	 * @throws PortletContainerException 
+	 * @throws IOException 
+	 * @throws PortletException 
+	 */
+	@Test
+	public void doRenderMarkupCachedContentValidationMethodExpiredTest() throws PortletException, IOException, PortletContainerException {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		MockHttpServletResponse response = new MockHttpServletResponse();
+		Date now = new Date();
+		CacheControlImpl cacheControl = new CacheControlImpl();
+		// by setting useCachedContent to true, we are saying even though content is expired, replay it anyways (since etag is still valid)
+		cacheControl.setUseCachedContent(true);
+		cacheControl.setETag("123456");
+		cacheControl.setExpirationTime(300);
+		CachedPortletData cachedPortletData = new CachedPortletData();
+		cachedPortletData.setStringData("<p>Some content</p>");
+		cachedPortletData.setEtag("123456");
+		cachedPortletData.setExpirationTimeSeconds(cacheControl.getExpirationTime());
+		// set the time stored to be a time that will trigger the content to be expired
+		Date expiredTime = DateUtils.addSeconds(now, -301); 
+		cachedPortletData.setTimeStored(expiredTime);
+		
+		PortletRendererImpl portletRenderer = new PortletRendererImpl();
+		IPortletWindowId portletWindowId = mock(IPortletWindowId.class);
+		IPortletWindow portletWindow = mock(IPortletWindow.class);
+		IPortletCacheControlService portletCacheControlService = mock(IPortletCacheControlService.class);
+		portletRenderer.setPortletCacheControlService(portletCacheControlService);
+		IPortletWindowRegistry portletWindowRegistry = mock(IPortletWindowRegistry.class);
+		portletRenderer.setPortletWindowRegistry(portletWindowRegistry);
+		PortletDelegationLocator portletDelegationLocator = mock(PortletDelegationLocator.class);
+		portletRenderer.setPortletDelegationLocator(portletDelegationLocator);
+		PortletContainer portletContainer = mock(PortletContainer.class);
+		portletRenderer.setPortletContainer(portletContainer);
+		
+		PortletWindow plutoPortletWindow = mock(PortletWindow.class);
+		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
+		when(portletCacheControlService.getPortletRenderCacheControl(portletWindowId, request)).thenReturn(cacheControl);
+		when(portletCacheControlService.getCachedPortletRenderOutput(portletWindowId, request)).thenReturn(cachedPortletData);
+		when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
+		
+		StringWriter writer = new StringWriter();
+		portletRenderer.doRenderMarkup(portletWindowId, request, response, writer);
+		Assert.assertEquals("<p>Some content</p>", writer.toString());
+		
+		// context is expired, triggers doRender
 		verify(portletContainer, times(1)).doRender(isA(PortletWindow.class), isA(PortletHttpServletRequestWrapper.class), isA(PortletHttpServletResponseWrapper.class));
 		// verify we never enter the other branch of the "should render cached output" if statement
-		verify(portletCacheControlService, never()).shouldOutputBeCached(portletWindowId, request);
+		verify(portletCacheControlService, never()).shouldOutputBeCached(isA(CacheControl.class));
 	}
 	/**
 	 * Verify invoking portletRenderer#doAction removes cached content.
@@ -335,7 +388,7 @@ public class PortletRendererImplTest {
 		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
 		when(portletCacheControlService.getPortletRenderCacheControl(portletWindowId, request)).thenReturn(cacheControl);
 		when(portletCacheControlService.getCachedPortletRenderOutput(portletWindowId, request)).thenReturn(null);
-		when(portletCacheControlService.shouldOutputBeCached(portletWindowId, request)).thenReturn(true);
+		when(portletCacheControlService.shouldOutputBeCached(cacheControl)).thenReturn(true);
 		when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
 		
 
@@ -387,7 +440,7 @@ public class PortletRendererImplTest {
 		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
 		when(portletCacheControlService.getPortletResourceCacheControl(portletWindowId, request, response)).thenReturn(cacheControl);
 		when(portletCacheControlService.getCachedPortletResourceOutput(portletWindowId, request)).thenReturn(null);
-		when(portletCacheControlService.shouldOutputBeCached(portletWindowId, request)).thenReturn(false);
+		when(portletCacheControlService.shouldOutputBeCached(cacheControl)).thenReturn(false);
 		when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
 		
 		portletRenderer.doServeResource(portletWindowId, request, response);
@@ -434,7 +487,7 @@ public class PortletRendererImplTest {
 		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
 		when(portletCacheControlService.getPortletResourceCacheControl(portletWindowId, request, response)).thenReturn(cacheControl);
 		when(portletCacheControlService.getCachedPortletResourceOutput(portletWindowId, request)).thenReturn(null);
-		when(portletCacheControlService.shouldOutputBeCached(isA(IPortletWindowId.class), isA(PortletHttpServletRequestWrapper.class))).thenReturn(true);
+		when(portletCacheControlService.shouldOutputBeCached(cacheControl)).thenReturn(true);
 		when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
 		
 		portletRenderer.doServeResource(portletWindowId, request, response);
@@ -482,7 +535,7 @@ public class PortletRendererImplTest {
 		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
 		when(portletCacheControlService.getPortletResourceCacheControl(portletWindowId, request, response)).thenReturn(cacheControl);
 		when(portletCacheControlService.getCachedPortletRenderOutput(portletWindowId, request)).thenReturn(null);
-		when(portletCacheControlService.shouldOutputBeCached(isA(IPortletWindowId.class), isA(PortletHttpServletRequestWrapper.class))).thenReturn(true);
+		when(portletCacheControlService.shouldOutputBeCached(cacheControl)).thenReturn(true);
 		when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
 		
 		portletRenderer.doServeResource(portletWindowId, request, response);
@@ -542,7 +595,7 @@ public class PortletRendererImplTest {
 		// verify we enter the first branch and never execute portletContainer#doServeResource
 		verify(portletContainer, never()).doServeResource(isA(PortletWindow.class), isA(PortletHttpServletRequestWrapper.class), isA(PortletHttpServletResponseWrapper.class));
 		// verify we never enter the other branch of the "should render cached output" if statement
-		verify(portletCacheControlService, never()).shouldOutputBeCached(portletWindowId, request);
+		verify(portletCacheControlService, never()).shouldOutputBeCached(isA(CacheControl.class));
 	}
 	
 	/**
@@ -601,6 +654,6 @@ public class PortletRendererImplTest {
 		// verify we enter the first branch and never execute portletContainer#doServeResource
 		verify(portletContainer, never()).doServeResource(isA(PortletWindow.class), isA(PortletHttpServletRequestWrapper.class), isA(PortletHttpServletResponseWrapper.class));
 		// verify we never enter the other branch of the "should render cached output" if statement
-		verify(portletCacheControlService, never()).shouldOutputBeCached(portletWindowId, request);
+		verify(portletCacheControlService, never()).shouldOutputBeCached(isA(CacheControl.class));
 	}
 }
