@@ -122,6 +122,17 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                             
                             <div class="content">
                             
+                                <div class="permissions-loading-message portlet-msg-info portlet-msg info" role="status">
+                                    <div class="titlebar">
+                                    <h3 class="title"><spring:message code="loading"/> . . .</h3>
+                                  </div>
+                                  <div class="content">
+                                      <p><spring:message code="please.wait.while.the.system.finishes.loading.permissions"/></p>
+                                  </div>
+                                </div>
+                
+                                <p class="no-permissions-message" style="display:none"><spring:message code="no.user.permissions"/></p>
+                                
                                 <table class="portlet-table" id="${n}permissionsTable" summary="" xmlns:rsf="http://ponder.org.uk" style="width:100%;">
                                     <thead>
                                         <tr rsf:id="header:">
