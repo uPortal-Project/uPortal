@@ -22,9 +22,9 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <c:set var="n"><portlet:namespace/></c:set>
-<portlet:actionURL var="groupUrl">
+<portlet:actionURL var="userUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
-    <portlet:param name="_eventId" value="group"/>
+    <portlet:param name="_eventId" value="viewUserDetails"/>
 </portlet:actionURL>
 
 <portlet:actionURL var="createUrl">
@@ -66,7 +66,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   <!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar portlet-titlebar" role="sectionhead">
     <h2 class="title" role="heading">
-        <a href="${ groupUrl }">${ fn:escapeXml(person.name )}</a> > 
+        <a href="${ userUrl }">${ fn:escapeXml(person.name )}</a> > 
         <spring:message code="permissions"/>
     </h2>
   </div> <!-- end: portlet-titlebar -->
@@ -102,7 +102,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                         <li>
                                             <ul class="fl-pager-links flc-pager-links" style="margin:0; display:inline">
                                                 <li class="flc-pager-pageLink"><a href="javascript:;">1</a></li>
-                                                <li class="flc-pager-pageLink-disabled">2</li>
+                                                <li class="flc-pager-pageLink-skip">...</li>
                                                 <li class="flc-pager-pageLink"><a href="javascript:;">3</a></li>
                                             </ul>
                                         </li>
@@ -166,39 +166,22 @@ up.jQuery(function() {
     var $ = up.jQuery;
 
     var pager;
+    var targetUrl = "<c:url value="/api/assignments/target/2.${ person.name }.json?includeInherited=true"/>";
+    var principalUrl = "<c:url value="/api/assignments/principal/2.${ person.name }.json?includeInherited=true"/>";
     var editUrl = "${editUrl}";
     var deleteUrl = "${deleteUrl}";
 
-    var getPermissionsForTarget = function() {
+    var getPermissionAssignments = function(url) {
         var rslt;
         $.ajax({
-             url: "<c:url value="/api/permissionAssignments"/>",
+            url: url,
              async: false,
-             data: { target: '2.${ person.name }' },
              dataType: "json",
              error: function(XMLHttpRequest, textStatus, errorThrown) {
                 alert(textStatus + " : " + errorThrown);
              },
              success: function(data) {
-                rslt = data.permissionsList;
-             }
-        });
-        return rslt;
-    };
-
-    var getPermissionsForPrincipal = function() {
-        var rslt;
-        $.ajax({
-             url: "<c:url value="/api/permissionAssignments"/>",
-             async: false,
-             cache: false,
-             data: { principal: '2.${ person.name }' },
-             dataType: "json",
-             error: function(XMLHttpRequest, textStatus, errorThrown) {
-                alert(textStatus + " : " + errorThrown);
-             },
-             success: function(data) {
-                rslt = data.permissionsList;
+                rslt = data.assignments;
              }
         });
         return rslt;
@@ -208,31 +191,30 @@ up.jQuery(function() {
     var options = {
         annotateColumnRange: 'permissionOwner',
         columnDefs: [
-            { key: "permissionOwner", valuebinding: "*.ownerName", sortable: true },
-            { key: "permissionPrincipal", valuebinding: "*.principalName", sortable: true },
-            { key: "permissionActivity", valuebinding: "*.activityName", sortable: true },
-            { key: "permissionTarget", valuebinding: "*.targetName", sortable: true },
-            { key: "permissionType", valuebinding: "*.permissionType", sortable: true },
-            { key: "permissionEdit", valuebinding: "*.owner",
-                components: {
-                    target: editUrl.replace("OWNER", '${"${*.owner}"}')
-                                    .replace("ACTIVITY", '${"${*.activity}"}')
-                                    .replace("TARGET", '${"${*.target}"}'),
-                    linktext: "<spring:message code="edit"/>"
-                }
-            },
-            { key: "permissionDelete", valuebinding: "*.owner",
-                components: {
-                    target: deleteUrl.replace("OWNER", escape('${"${*.owner}"}'))
-                                    .replace("PRINCIPALTYPE", escape('${"${*.principalType}"}'))
-                                    .replace("PRINCIPALKEY", escape('${"${*.principalKey}"}'))
-                                    .replace("ACTIVITY", escape('${"${*.activity}"}'))
-                                    .replace("TARGET", escape('${"${*.target}"}'))
-                                    .replace("PERMISSIONTYPE", escape('${"${*.permissionType}"}')),
-                    linktext: "<spring:message code="delete"/>"
-                }
-            }
-        ],
+             { key: "permissionOwner", valuebinding: "*.ownerName", sortable: true },
+             { 
+                 key: "permissionActivity", 
+                 valuebinding: "*.activityName", 
+                 sortable: true,
+                 components: function (row, index) {
+                     var markup = '<span>${"${*.activityName}"}</span>';
+                     if (row.inherited) {
+                         markup += ' <span class="inherited-permission">Inherited</span>';
+                     }
+                     return { markup: markup };
+                 }
+             },
+             { key: "permissionPrincipal", valuebinding: "*.principalName", sortable: true },
+             { key: "permissionTarget", valuebinding: "*.targetName", sortable: true },
+             { key: "permissionEdit", valuebinding: "*.ownerKey",
+                 components: {
+                     target: editUrl.replace("OWNER", '${"${*.ownerKey}"}')
+                                     .replace("ACTIVITY", '${"${*.activityKey}"}')
+                                     .replace("TARGET", '${"${*.targetKey}"}'),
+                     linktext: "<spring:message code="edit"/>"
+                 }
+             }
+         ],
         bodyRenderer: {
           type: "fluid.pager.selfRender",
           options: {
@@ -253,13 +235,33 @@ up.jQuery(function() {
     };
 
     $(document).ready(function(){
+        var principalOptions, targetOptions, principalPager, targetPager, targetPermissions, principalPermissions;
         $("#${n}assignmentTabs").tabs();
-        var targetOptions = options;
-        targetOptions.dataModel = getPermissionsForTarget();
-        var targetPager = up.fluid.pager(".pager-container-target", targetOptions);
-        var principalOptions = options;
-        principalOptions.dataModel = getPermissionsForPrincipal();
-        var principalPager = up.fluid.pager(".pager-container-principal", principalOptions);
+        
+        principalPermissions = getPermissionAssignments(principalUrl);
+        if ($(principalPermissions).size() > 0) {
+            principalOptions = options;
+            principalOptions.dataModel = principalPermissions;
+            principalPager = up.fluid.pager(".pager-container-principal", principalOptions);
+            $("#${n}principalTab .view-pager").show();
+            $("#${n}principalTab .portlet-table").show();
+        } else {
+            $("#${n}principalTab .no-permissions-message").show();            
+        }
+        $("#${n}principalTab .permissions-loading-message").hide();
+
+        targetPermissions = getPermissionAssignments(targetUrl);
+        if ($(targetPermissions).size() > 0) {
+            targetOptions = options;
+            targetOptions.dataModel = targetPermissions;
+            targetPager = up.fluid.pager(".pager-container-target", targetOptions);
+            $("#${n}targetTab .view-pager").show();
+            $("#${n}targetTab .portlet-table").show();
+        } else {
+            $("#${n}targetTab .no-permissions-message").show();            
+        }
+        $("#${n}targetTab .permissions-loading-message").hide();
+
     });
     
 });
