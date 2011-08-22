@@ -483,7 +483,7 @@ public class PortletDefinitionImporterExporter
          final List<String> userList = rep.getUsers();
          
          final AuthorizationService authService = org.jasig.portal.services.AuthorizationService.instance();
-         final IPermissionManager pm = authService.newPermissionManager("UP_FRAMEWORK");
+         final IPermissionManager pm = authService.newPermissionManager("UP_PORTLET_SUBSCRIBE");
          final IAuthorizationPrincipal[] principals = pm.getAuthorizedPrincipals("SUBSCRIBE", IPermission.PORTLET_PREFIX + def.getPortletDefinitionId().getStringId());
          
          for (IAuthorizationPrincipal principal : principals) {
