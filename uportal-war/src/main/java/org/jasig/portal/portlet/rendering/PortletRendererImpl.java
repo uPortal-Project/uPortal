@@ -478,6 +478,9 @@ public class PortletRendererImpl implements IPortletRenderer {
 			}
 		}
 		
+		//Set the ETag again
+		httpServletResponse.setHeader("ETag", cachedPortletData.getEtag());
+		
 		try {
 			ServletOutputStream servletOutputStream = httpServletResponse.getOutputStream();
 			servletOutputStream.write(cachedPortletData.getByteData());
