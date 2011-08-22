@@ -69,7 +69,8 @@
     <view-state id="selectEntities">
         <transition on="back" to="back"/>
         <transition on="save" to="finish">
-            <set name="flowScope.groups" value="groupListHelper.getEntityBeans(requestParameters.groups)"/>
+            <set name="flashScope.groupArray" value="externalContext.getNativeRequest().getParameterValues('groups')"/>
+            <set name="flowScope.groups" value="groupListHelper.getEntityBeans(groupArray)"/>
         </transition>
         <transition on="cancel" to="cancel" bind="false"/>
     </view-state>
