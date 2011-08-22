@@ -251,11 +251,20 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     @Override
     public IPortletEntity getOrCreatePortletEntityByFname(HttpServletRequest request, IUserInstance userInstance, String fname, String preferredChannelSubscribeId) {
         try {
-            return this.getOrCreatePortletEntity(request, userInstance, preferredChannelSubscribeId);
+            final IPortletEntity portletEntity = this.getOrCreatePortletEntity(request, userInstance, preferredChannelSubscribeId);
+            
+            //Verify the fname matches before returning the entity
+            final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
+			if (fname.equals(portletDefinition.getFName())) {
+            	return portletEntity;
+            }
         }
         catch (PortalException pe) {
-            return this.getOrCreatePortletEntityByFname(request, userInstance, fname);
+            //Ignored, can be the case if no layout node exists for the specified subscribe ID
         }
+        
+        //Either the layout node didn't exist or the entity for the node doesn't match the requested fname
+        return this.getOrCreatePortletEntityByFname(request, userInstance, fname);
     }
     
     @Override
