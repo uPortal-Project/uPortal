@@ -19,10 +19,15 @@
 
 package org.jasig.portal.rest;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
+import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IAuthorizationService;
@@ -101,8 +106,15 @@ public class PrincipalsRESTController {
          */
         
         ModelAndView mv = new ModelAndView();
-        mv.addObject("groups", listHelper.search(EntityEnum.GROUP.toString(), query));
-        mv.addObject("people", listHelper.search(EntityEnum.PERSON.toString(), query));
+        List<JsonEntityBean> groups = new ArrayList<JsonEntityBean>();
+        groups.addAll(listHelper.search(EntityEnum.GROUP.toString(), query));
+        Collections.sort(groups);
+        mv.addObject("groups", groups);
+
+        List<JsonEntityBean> people = new ArrayList<JsonEntityBean>();
+        people.addAll(listHelper.search(EntityEnum.PERSON.toString(), query));
+        Collections.sort(people);
+        mv.addObject("people", people);
         mv.setViewName("json");
         
         return mv;
