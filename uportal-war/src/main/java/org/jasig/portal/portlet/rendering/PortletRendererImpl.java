@@ -462,7 +462,8 @@ public class PortletRendererImpl implements IPortletRenderer {
 		long start = System.currentTimeMillis();
 		
 		final String ifNoneMatch = httpServletRequest.getHeader("If-None-Match");
-		if(StringUtils.isNotBlank(ifNoneMatch) && ifNoneMatch.equals(cachedPortletData.getEtag())) {
+		final String etag = cachedPortletData.getEtag();
+		if(StringUtils.isNotBlank(ifNoneMatch) && ifNoneMatch.equals(etag)) {
 			// browser already has the content! send a 304
 			httpServletResponse.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
 			return System.currentTimeMillis() - start;
@@ -479,7 +480,9 @@ public class PortletRendererImpl implements IPortletRenderer {
 		}
 		
 		//Set the ETag again
-		httpServletResponse.setHeader("ETag", cachedPortletData.getEtag());
+		if (etag != null) {
+			httpServletResponse.setHeader("ETag", etag);
+		}
 		
 		try {
 			ServletOutputStream servletOutputStream = httpServletResponse.getOutputStream();
