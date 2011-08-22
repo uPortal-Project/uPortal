@@ -63,8 +63,8 @@ var up = up || {};
                             }
                         ]
                     },
-                    { ID: "layoutTitle", value: layout.columns.length + " Column" },
-                    { ID: "layoutDescription", value: layout.name },
+                    { ID: "layoutTitle", value: layout.columns.length + " " + that.options.strings[layout.columns.length == 1 ? 'column' : 'columns' ] },
+                    { ID: "layoutDescription", value: that.options.strings[layout.nameKey] },
                     {
                         ID: "layoutThumb", 
                         decorators: [
@@ -116,14 +116,23 @@ var up = up || {};
     // defaults
     fluid.defaults("up.LayoutSelector", {
         currentLayout: [ 50, 50 ],
+        strings: {
+            fullWidth: "Full-width",
+            narrowWide: "Narrow, wide",
+            even: "Even",
+            wideNarrow: "Wide, narrow",
+            narrowWideNarrow: "Narrow, wide, narrow",
+            column: "Column",
+            columns: "Columns"
+        },
         layouts: [ 
-            { name: "Full-width", columns: [ 100 ] },
-            { name: "Narrow, wide", columns: [ 40, 60 ] },
-            { name: "Even", columns: [ 50, 50 ] },
-            { name: "Wide, narrow", columns: [ 60, 40 ] },
-            { name: "Even", columns: [ 33, 34, 33 ] },
-            { name: "Narrow, wide, narrow", columns: [ 25, 50, 25 ] },
-            { name: "Even", columns: [ 25, 25, 25, 25 ] }
+            { nameKey: "fullWidth", columns: [ 100 ] },
+            { nameKey: "narrowWide", columns: [ 40, 60 ] },
+            { nameKey: "even", columns: [ 50, 50 ] },
+            { nameKey: "wideNarrow", columns: [ 60, 40 ] },
+            { nameKey: "even", columns: [ 33, 34, 33 ] },
+            { nameKey: "narrowWideNarrow", columns: [ 25, 50, 25 ] },
+            { nameKey: "even", columns: [ 25, 25, 25, 25 ] }
         ],
         imagePath: "test/",
         selectors: {

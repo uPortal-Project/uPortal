@@ -569,7 +569,14 @@
               messages: { 
                   confirmRemoveTab: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.tab', $USER_LANG)"/>', 
                   confirmRemovePortlet: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.portlet', $USER_LANG)"/>',
-                  addTabLabel: '<xsl:value-of select="upMsg:getMessage('my.tab', $USER_LANG)"/>'
+                  addTabLabel: '<xsl:value-of select="upMsg:getMessage('my.tab', $USER_LANG)"/>',
+                  column: '<xsl:value-of select="upMsg:getMessage('column', $USER_LANG)"/>',
+                  columns: '<xsl:value-of select="upMsg:getMessage('columns', $USER_LANG)"/>',
+                  fullWidth: '<xsl:value-of select="upMsg:getMessage('full.width', $USER_LANG)"/>',
+                  narrowWide: '<xsl:value-of select="upMsg:getMessage('narrow.wide', $USER_LANG)"/>',
+                  even: '<xsl:value-of select="upMsg:getMessage('even', $USER_LANG)"/>',
+                  wideNarrow: '<xsl:value-of select="upMsg:getMessage('wide.narrow', $USER_LANG)"/>',
+                  narrowWideNarrow: '<xsl:value-of select="upMsg:getMessage('narrow.wide.narrow', $USER_LANG)"/>'
               }
             }
           );
