@@ -461,7 +461,8 @@ var uportal = uportal || {};
                 }
             },
             tabContext: that.options.tabContext,
-            numberOfPortlets: that.options.numberOfPortlets
+            numberOfPortlets: that.options.numberOfPortlets,
+            addTabLabel: that.options.messages.addTabLabel
         });
         
         // initialize the portlet reorderer
