@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<stylesheet-descriptor xmlns="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:ns2="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns4="https://source.jasig.org/schemas/uportal" xmlns:ns5="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/user" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor/stylesheet-descriptor-4.0.xsd">
+    <name>DLMMobileColumns</name>
+    <description>Presents the DLM layout in terms of tabs and columns.</description>
+    <uri>classpath:/layout/structure/mobile-column/mobile-column.xsl</uri>
+    <url-syntax-helper>MobileUrlNodeSyntaxHelper</url-syntax-helper>
+    <stylesheet-parameter>
+        <name>userLayoutRoot</name>
+        <scope>REQUEST</scope>
+        <description>The id of the focused layout element</description>
+    </stylesheet-parameter>
+    <stylesheet-parameter>
+        <name>detached</name>
+        <default-value>false</default-value>
+        <scope>REQUEST</scope>
+        <description>If the request is for a detached portlet</description>
+    </stylesheet-parameter>
+    <layout-attribute>
+        <name>externalId</name>
+        <scope>PERSISTENT</scope>
+        <description>Identifier used to reference a tab externally, such as within a URL</description>
+        <targetElement>folder</targetElement>
+    </layout-attribute>
+</stylesheet-descriptor>

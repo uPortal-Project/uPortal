@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<portlet-definition xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns2="https://source.jasig.org/schemas/uportal" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns4="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:ns5="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/user" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd">
+    <title>Javascript Demos</title>
+    <name>Javascript Demos</name>
+    <fname>js-demo</fname>
+    <desc>Demonstrations of available jQuery functionality</desc>
+    <type>Advanced CMS</type>
+    <timeout>10000</timeout>
+    <portlet-descriptor>
+        <ns2:webAppName>/SimpleContentPortlet</ns2:webAppName>
+        <ns2:portletName>cms</ns2:portletName>
+    </portlet-descriptor>
+    <category>Demonstration</category>
+    <group>Everyone</group>
+    <parameter>
+        <name>disableDynamicTitle</name>
+        <value>true</value>
+    </parameter>
+    <parameter>
+        <name>iconUrl</name>
+        <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/applications-system.png</value>
+    </parameter>
+    <portlet-preference>
+        <name>content</name>
+        <readOnly>false</readOnly>
+        <value>
+            
+                &lt;script language=&quot;Javascript&quot; type=&quot;text/javascript&quot;&gt;
+                  up.jQuery(function() {
+                    var $ = up.jQuery;
+                
+                    $(document).ready(function(){
+                      // set up jQuery UI effects demo
+                      $(&quot;.effects-demo-outerbox&quot;).click(function(){ $(&quot;.effects-demo-innerbox&quot;).effect(&quot;bounce&quot;); });
+                      $(&quot;.effects a&quot;).click(function(){ 
+                        var effect = $(this).text();
+                        $(&quot;.effects-demo-innerbox h3&quot;).text(effect);
+                        $(&quot;.effects-demo-outerbox&quot;).unbind();
+                        if ($(this).parent().parent().hasClass(&quot;showhide-effects&quot;)) {
+                          $(&quot;.effects-demo-outerbox&quot;).click(function(){ $(&quot;.effects-demo-innerbox&quot;).toggle(effect.toLowerCase()); });
+                        } else if (effect == 'Scale') {
+                          $(&quot;.effects-demo-outerbox&quot;).toggle(
+                            function() { $(&quot;.effects-demo-innerbox&quot;).effect(&quot;scale&quot;, { percent: 50 }); }, 
+                            function() { $(&quot;.effects-demo-innerbox&quot;).effect(&quot;scale&quot;, { percent: 200 });
+                          });
+                        } else {
+                          $(&quot;.effects-demo-outerbox&quot;).click(function(){ $(&quot;.effects-demo-innerbox&quot;).effect(effect.toLowerCase()); });
+                        }
+                      });
+                      
+                      // set up jQuery UI widget demos
+                      $(&quot;.accordion-demo&quot;).accordion({ clearStyle:true, collapsible:true, active:false });
+                      $(&quot;.datepicker-demo&quot;).datepicker();
+                      $(&quot;.tabs-demo&quot;).tabs();
+                      
+                      // set up fluid component demos
+                      up.fluid.reorderList(&quot;.list-reorderer ol&quot;, { selectors: { movables: &quot;&gt; li&quot;} });
+                      up.fluid.pager(&quot;.pager-demo&quot;, {
+                        listeners: {
+                            onModelChange: function(link) {
+                                $(&quot;.fluid-pager-demo-items li&quot;).css(&quot;display&quot;, &quot;none&quot;);
+                                $(&quot;.fluid-pager-demo-items li:not(:lt(&quot; + link.pageIndex*5 +&quot;)):lt(5)&quot;).css(&quot;display&quot;, &quot;block&quot;);
+                                return false;
+                            }
+                        }
+                      });
+                      
+                      
+                      // set up demo switching functionality
+                      $(&quot;.demo-list li&quot;).click(function(){
+                        $(&quot;.demo-list&quot;).css(&quot;display&quot;, &quot;none&quot;);
+                        $(&quot;.&quot; + $(this).text().toLowerCase().replace(&quot; &quot;, &quot;-&quot;)).css(&quot;display&quot;, &quot;block&quot;);
+                        $(&quot;.demo-back-link&quot;).css(&quot;display&quot;, &quot;block&quot;);
+                        if ($(this).text() == 'Accordion') {
+                            console.log('accordion');
+                            $(&quot;.accordion-demo&quot;).accordion('activate', 0);
+                        }
+                        return false;
+                      });
+                      $(&quot;.demo-back-link&quot;).click(function(){
+                        $(&quot;.demo-back-link&quot;).css(&quot;display&quot;, &quot;none&quot;);
+                        $(&quot;.demo-container&quot;).css(&quot;display&quot;, &quot;none&quot;);
+                        $(&quot;.demo-list&quot;).css(&quot;display&quot;, &quot;block&quot;);
+                      });
+                    
+                    });
+                  });
+                &lt;/script&gt;
+            
+                &lt;style type=&quot;text/css&quot;&gt;
+                  .demo-container {display:none; max-width:600px}
+                  .demo-back-link {display:none}
+                  .effects ul, .effects li {list-style-type:none; margin: 0}
+                  .list-reorderer ol li {padding:5px; margin:5px;}
+                  .list-reorderer ul li {margin:0px; padding:0px;}
+                  .list-reorderer .orderable-default{background-color:#eee;}
+                  .list-reorderer .orderable-hover{background-color:lightyellow; cursor:move;}
+                  .list-reorderer .orderable-selected{background-color: #ddd;}
+                  .list-reorderer .orderable-dragging {background-color: lightyellow;}
+                  .list-reorderer ol .orderable-drop-marker {background-color: red; height:4px !important; padding:0 0 0 0; border-width: 0px !important; list-style-type:none; font-size:0px; line-height:0px; overflow:hidden;}
+                &lt;/style&gt;
+                
+                &lt;div class=&quot;demo-list&quot;&gt;
+                  &lt;h2&gt;jQuery UI Demos&lt;/h2&gt;
+                  &lt;ul&gt;
+                    &lt;li&gt;&lt;a href=&quot;javascript:;&quot;&gt;Datepicker&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a href=&quot;javascript:;&quot;&gt;Accordion&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a href=&quot;javascript:;&quot;&gt;Tabs&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a href=&quot;javascript:;&quot;&gt;Effects&lt;/a&gt;&lt;/li&gt;
+                  &lt;/ul&gt;
+                  
+                  &lt;p&gt;
+                    This uPortal release contains the jQuery UI 1.7.2 final release.  
+                    For more jQuery UI demos and sample source code, please visit 
+                    &lt;a href=&quot;http://jqueryui.com/demos/&quot; target=&quot;_blank&quot;&gt;http://jqueryui.com/demos&lt;/a&gt;.
+                  &lt;/p&gt;
+                  
+                  &lt;h2&gt;Fluid Component Demos&lt;/h2&gt;
+                  &lt;ul&gt;
+                    &lt;li&gt;&lt;a href=&quot;javascript:;&quot;&gt;Pager&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a href=&quot;javascript:;&quot;&gt;List Reorderer&lt;/a&gt;&lt;/li&gt;
+                  &lt;/ul&gt;
+                  
+                  &lt;p&gt;
+                    This uPortal release contains the Fluid 1.1.2 final release.  For more 
+                    Fluid demos and sample source code, please visit 
+                    &lt;a href=&quot;http://build.fluidproject.org/infusion/demos/&quot; 
+                        target=&quot;_blank&quot;&gt;http://build.fluidproject.org/infusion/demos/&lt;/a&gt;.
+                  &lt;/p&gt;
+                  
+                &lt;/div&gt;
+                
+                &lt;div class=&quot;demo-container accordion&quot;&gt;
+                  &lt;h2&gt;Accordion Demo&lt;/h2&gt;
+                  &lt;div class=&quot;accordion-demo&quot;&gt;
+                    &lt;h3&gt;&lt;a href=&quot;#&quot;&gt;Section 1&lt;/a&gt;&lt;/h3&gt;
+                    &lt;div&gt;&lt;p&gt;Proin euismod nibh ac enim. Nam augue est, tempus ut, semper id, ornare vel, lorem. Cras id ligula. Etiam porttitor ullamcorper felis. Proin egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris in nibh. Fusce eget odio. Duis bibendum elit eget ante. Ut sollicitudin tortor. Ut posuere lorem vitae mauris. Mauris lobortis felis nec nulla. Fusce accumsan sagittis ante. &lt;/p&gt;&lt;/div&gt;
+                    &lt;h3&gt;&lt;a href=&quot;#&quot;&gt;Section 2&lt;/a&gt;&lt;/h3&gt;
+                    &lt;div&gt;&lt;p&gt;Ut et nunc. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. In dapibus sagittis felis. Nullam tempus velit at nisi. Phasellus nulla tortor, commodo eu, lobortis ac, convallis nec, mi. Donec cursus eros ac velit. Sed mattis, tortor sed laoreet tempor, risus ipsum posuere nisi, non vehicula dui libero sed mauris. Sed nisl nulla, vulputate nec, ornare vel, ultricies at, nulla. Proin purus nisi, scelerisque eget, consequat quis, aliquet nec, pede. Pellentesque erat augue, rhoncus in, convallis sit amet, pellentesque a, leo. Duis tortor nunc, ornare ac, volutpat quis, molestie et, mauris. Cras rhoncus massa eget enim. Aliquam erat volutpat.&lt;/p&gt;&lt;/div&gt;
+                    &lt;h3&gt;&lt;a href=&quot;#&quot;&gt;Section 3&lt;/a&gt;&lt;/h3&gt;
+                    &lt;div&gt;&lt;p&gt;Aliquam a leo. Phasellus congue tempor massa. In hac habitasse platea dictumst. Ut eu arcu eu velit pulvinar tempus. Nullam sit amet lorem ut dolor sagittis viverra. Curabitur in lacus dictum risus ultrices bibendum. Ut eu nibh et mauris ornare condimentum. Duis iaculis rutrum nisi. Sed facilisis augue ut neque. Pellentesque cursus libero vel neque. Nunc ornare eleifend lorem. Praesent ultrices hendrerit purus. Sed vitae tortor. Nunc velit. Suspendisse potenti.&lt;/p&gt;
+                    &lt;p&gt;In hac habitasse platea dictumst. Nullam eget nisi id risus mollis porta. Morbi mollis gravida est. Cras vehicula tellus a lorem. Nunc risus metus, ultricies vel, cursus sit amet, rhoncus non, felis. Nunc porttitor diam id enim. Duis quam neque, eleifend id, faucibus quis, iaculis vitae, diam. Praesent ante. Fusce malesuada hendrerit sapien. Nulla tincidunt dui in diam. Integer pharetra. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In fermentum quam non magna. Sed a felis. Cras quis ipsum. Duis elit odio, facilisis scelerisque, vehicula et, posuere quis, elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris nibh quam, porttitor quis, commodo at, cursus ac, quam. Donec lacinia. Fusce eget justo quis libero egestas porttitor. &lt;/p&gt;&lt;/div&gt;
+                  &lt;/div&gt;
+                &lt;/div&gt;
+                
+                &lt;div class=&quot;demo-container datepicker&quot;&gt; 
+                  &lt;h2&gt;Datepicker demo&lt;/h2&gt;
+                  &lt;p&gt;Date: &lt;input class=&quot;datepicker-demo&quot; type=&quot;text&quot;/&gt;&lt;/p&gt; 
+                &lt;/div&gt;
+                
+                &lt;div class=&quot;demo-container tabs&quot;&gt;
+                  &lt;h2&gt;Tabs Demo&lt;/h2&gt;
+                  &lt;div class=&quot;tabs-demo&quot;&gt;
+                    &lt;ul&gt;
+                      &lt;li&gt;&lt;a href=&quot;#tabs-1&quot;&gt;Nunc tincidunt&lt;/a&gt;&lt;/li&gt;
+                      &lt;li&gt;&lt;a href=&quot;#tabs-2&quot;&gt;Proin dolor&lt;/a&gt;&lt;/li&gt;
+                      &lt;li&gt;&lt;a href=&quot;#tabs-3&quot;&gt;Aenean lacinia&lt;/a&gt;&lt;/li&gt;
+                    &lt;/ul&gt;
+                    &lt;div id=&quot;tabs-1&quot;&gt;
+                      &lt;p&gt;Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. Curabitur nec arcu. Donec sollicitudin mi sit amet mauris. Nam elementum quam ullamcorper ante. Etiam aliquet massa et lorem. Mauris dapibus lacus auctor risus. Aenean tempor ullamcorper leo. Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius sollicitudin. Sed ut dolor nec orci tincidunt interdum. Phasellus ipsum. Nunc tristique tempus lectus.&lt;/p&gt;
+                    &lt;/div&gt;
+                    &lt;div id=&quot;tabs-2&quot;&gt;
+                      &lt;p&gt;Morbi tincidunt, dui sit amet facilisis feugiat, odio metus gravida ante, ut pharetra massa metus id nunc. Duis scelerisque molestie turpis. Sed fringilla, massa eget luctus malesuada, metus eros molestie lectus, ut tempus eros massa ut dolor. Aenean aliquet fringilla sem. Suspendisse sed ligula in ligula suscipit aliquam. Praesent in eros vestibulum mi adipiscing adipiscing. Morbi facilisis. Curabitur ornare consequat nunc. Aenean vel metus. Ut posuere viverra nulla. Aliquam erat volutpat. Pellentesque convallis. Maecenas feugiat, tellus pellentesque pretium posuere, felis lorem euismod felis, eu ornare leo nisi vel felis. Mauris consectetur tortor et purus.&lt;/p&gt;
+                    &lt;/div&gt;
+                    &lt;div id=&quot;tabs-3&quot;&gt;
+                      &lt;p&gt;Mauris eleifend est et turpis. Duis id erat. Suspendisse potenti. Aliquam vulputate, pede vel vehicula accumsan, mi neque rutrum erat, eu congue orci lorem eget lorem. Vestibulum non ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce sodales. Quisque eu urna vel enim commodo pellentesque. Praesent eu risus hendrerit ligula tempus pretium. Curabitur lorem enim, pretium nec, feugiat nec, luctus a, lacus.&lt;/p&gt;
+                      &lt;p&gt;Duis cursus. Maecenas ligula eros, blandit nec, pharetra at, semper at, magna. Nullam ac lacus. Nulla facilisi. Praesent viverra justo vitae neque. Praesent blandit adipiscing velit. Suspendisse potenti. Donec mattis, pede vel pharetra blandit, magna ligula faucibus eros, id euismod lacus dolor eget odio. Nam scelerisque. Donec non libero sed nulla mattis commodo. Ut sagittis. Donec nisi lectus, feugiat porttitor, tempor ac, tempor vitae, pede. Aenean vehicula velit eu tellus interdum rutrum. Maecenas commodo. Pellentesque nec elit. Fusce in lacus. Vivamus a libero vitae lectus hendrerit hendrerit.&lt;/p&gt;
+                    &lt;/div&gt;
+                  &lt;/div&gt;
+                  
+                &lt;/div&gt;
+                
+                &lt;div class=&quot;demo-container effects&quot;&gt;
+                  &lt;h2&gt;jQuery Effects Demo&lt;/h2&gt;
+                  &lt;div class=&quot;fl-col-flex2&quot;&gt;
+                    &lt;div class=&quot;fl-col-flex60&quot;&gt;
+                      &lt;div class=&quot;effects-demo-outerbox ui-widget-content ui-corner-all&quot; style=&quot;height:240px;width:90%; text-align:center&quot;&gt;
+                        &lt;div class=&quot;effects-demo-innerbox ui-widget-content ui-corner-all&quot; style=&quot;min-width:100px; max-width: 200px; margin: 10px&quot;&gt;
+                          &lt;h3 class=&quot;ui-widget-header ui-corner-all&quot;&gt;Bounce&lt;/h3&gt;
+                          Contents!
+                        &lt;/div&gt;
+                      &lt;/div&gt;
+                      &lt;p&gt;Click in box above to view effect&lt;/p&gt;
+                      
+                    &lt;/div&gt;
+            
+                    &lt;div class=&quot;fl-col-flex40&quot;&gt;
+                      &lt;h3&gt;Choose an effect&lt;/h3&gt;
+                      &lt;div class=&quot;fl-col-flex2&quot;&gt;
+                        &lt;div class=&quot;fl-col-flex50&quot;&gt;
+                          &lt;h4&gt;General&lt;/h4&gt;
+                          &lt;ul class=&quot;general-effects&quot;&gt;
+                            &lt;li&gt;&lt;a href=&quot;javascript:;&quot;&gt;Bounce&lt;/a&gt;&lt;/li&gt;
+                            &lt;li&gt;&lt;a href=&quot;javascript:;&quot;&gt;Highlight&lt;/a&gt;&lt;/li&gt;
+                            &lt;li&gt;&lt;a href=&quot;javascript:;&quot;&gt;Pulsate&lt;/a&gt;&lt;/li&gt;
+                            &lt;li&gt;&lt;a href=&quot;javascript:;&quot;&gt;Scale&lt;/a&gt;&lt;/li&gt;
+                            &lt;li&gt;&lt;a href=&quot;javascript:;&quot;&gt;Shake&lt;/a&gt;&lt;/li&gt;
+                            &lt;!-- &lt;li&gt;&lt;a href=&quot;javascript:;&quot;&gt;Size&lt;/a&gt;&lt;/li&gt; --&gt;
+                            &lt;!-- &lt;li&gt;&lt;a href=&quot;javascript:;&quot;&gt;Transfer&lt;/a&gt;&lt;/li&gt; --&gt;
+                          &lt;/ul&gt;
+                        &lt;/div&gt;
+                        &lt;div class=&quot;fl-col-flex50&quot;&gt;
+                          &lt;h4&gt;Show/Hide&lt;/h4&gt;
+                          &lt;ul class=&quot;showhide-effects&quot;&gt;
+                            &lt;li&gt;&lt;a href=&quot;javascript:;&quot;&gt;Blind&lt;/a&gt;&lt;/li&gt;
+                            &lt;li&gt;&lt;a href=&quot;javascript:;&quot;&gt;Clip&lt;/a&gt;&lt;/li&gt;
+                            &lt;li&gt;&lt;a href=&quot;javascript:;&quot;&gt;Drop&lt;/a&gt;&lt;/li&gt;
+                            &lt;li&gt;&lt;a href=&quot;javascript:;&quot;&gt;Explode&lt;/a&gt;&lt;/li&gt;
+                            &lt;li&gt;&lt;a href=&quot;javascript:;&quot;&gt;Fold&lt;/a&gt;&lt;/li&gt;
+                            &lt;li&gt;&lt;a href=&quot;javascript:;&quot;&gt;Puff&lt;/a&gt;&lt;/li&gt;
+                            &lt;li&gt;&lt;a href=&quot;javascript:;&quot;&gt;Scale&lt;/a&gt;&lt;/li&gt;
+                            &lt;li&gt;&lt;a href=&quot;javascript:;&quot;&gt;Slide&lt;/a&gt;&lt;/li&gt;
+                          &lt;/ul&gt;
+                        &lt;/div&gt;
+                      &lt;/div&gt;
+                    &lt;/div&gt;
+                  &lt;/div&gt;
+                &lt;/div&gt;
+            
+                  &lt;div class=&quot;demo-container list-reorderer&quot;&gt;
+                    &lt;h2&gt;Fluid Reorderer: Sortable List&lt;/h2&gt;
+                    &lt;h3&gt;Conference Planning To-do List&lt;/h3&gt;
+                    &lt;ol&gt;
+                      &lt;li&gt;Select the date&lt;/li&gt;
+                      &lt;li&gt;Create promotional plan
+                        &lt;ul&gt;
+                          &lt;li&gt;email campaign&lt;/li&gt;
+                          &lt;li&gt;web site&lt;/li&gt;
+                          &lt;li&gt;print materials&lt;/li&gt;
+                        &lt;/ul&gt;
+                      &lt;/li&gt;
+                      &lt;li id=&quot;myUniquePrefix.orderable3&quot;&gt;Book facilities
+                        &lt;ul&gt;
+                          &lt;li&gt;Select building&lt;/li&gt;
+                          &lt;li&gt;Book rooms&lt;/li&gt;
+                        &lt;/ul&gt;
+                      &lt;/li&gt;
+                      &lt;li&gt;Book caterer&lt;/li&gt;
+                      &lt;li id=&quot;myUniquePrefix.orderable5&quot;&gt;Book block of hotel rooms&lt;/li&gt;
+                      &lt;li id=&quot;myUniquePrefix.orderable6&quot;&gt;
+                        Develop a conference daily schedule of events
+                      &lt;/li&gt;
+                      &lt;li&gt;Book speakers
+                        &lt;ul&gt;
+                          &lt;li&gt;Keynote&lt;/li&gt;
+                          &lt;li&gt;Internal/employee&lt;/li&gt;
+                        &lt;/ul&gt;
+                      &lt;/li&gt;
+                      &lt;li&gt;Plan the registration process
+                        &lt;ul&gt;
+                          &lt;li&gt;Deadline for early bird and final registrations&lt;/li&gt;
+                          &lt;li&gt;Create/enter data into database&lt;/li&gt;
+                          &lt;li&gt;Create/upload information for web registration&lt;/li&gt;
+                        &lt;/ul&gt;
+                      &lt;/li&gt;
+                      &lt;li id=&quot;myUniquePrefix.orderable9&quot;&gt;
+                        Book audio visual equipment and technicians
+                      &lt;/li&gt;
+                      &lt;li&gt;Create name tags and welcome packages
+                        &lt;ul&gt;
+                          &lt;li&gt;schedule of events&lt;/li&gt;
+                          &lt;li&gt;maps, tickets&lt;/li&gt;
+                          &lt;li&gt;paper, pen, trinkets&lt;/li&gt;
+                          &lt;li&gt;instructions&lt;/li&gt;
+                        &lt;/ul&gt;
+                      &lt;/li&gt;
+                    &lt;/ol&gt;
+                &lt;/div&gt;
+                
+                &lt;div class=&quot;demo-container pager&quot;&gt;
+                    &lt;h2&gt;Fluid Pager&lt;/h2&gt;
+                    
+                    &lt;div class=&quot;pager-demo fl-pager&quot;&gt;
+                      &lt;div id=&quot;pager-top&quot; class=&quot;flc-pager-top&quot;&gt;
+                        &lt;ul class=&quot;fl-pager-ui&quot;&gt;
+                             &lt;li&gt;&lt;a class=&quot;flc-pager-previous&quot; href=&quot;javascript:;&quot;&gt;&amp;lt; prev&lt;/a&gt;&lt;/li&gt;
+                             &lt;li&gt;
+                                &lt;ul class=&quot;fl-pager-links flc-pager-links&quot; style=&quot;margin:0; display:inline&quot;&gt;
+                                     &lt;li value=&quot;1&quot; class=&quot;flc-pager-pageLink&quot;&gt;&lt;a href=&quot;javascript:;&quot;&gt;1&lt;/a&gt;&lt;/li&gt;
+                                     &lt;li value=&quot;2&quot; class=&quot;flc-pager-pageLink&quot;&gt;&lt;a href=&quot;javascript:;&quot;&gt;2&lt;/a&gt;&lt;/li&gt;
+                                     &lt;li value=&quot;3&quot; class=&quot;flc-pager-pageLink&quot;&gt;&lt;a href=&quot;javascript:;&quot;&gt;3&lt;/a&gt;&lt;/li&gt;
+                                &lt;/ul&gt;
+                             &lt;/li&gt;
+                             &lt;li&gt;&lt;a class=&quot;flc-pager-next&quot; href=&quot;javascript:;&quot;&gt;next &amp;gt;&lt;/a&gt;&lt;/li&gt;
+                            &lt;!-- &lt;li&gt;
+                              &lt;span class=&quot;flc-pager-summary&quot;&gt;1 of 2&lt;/span&gt;
+                              &lt;span&gt; &lt;select class=&quot;pager-page-size flc-pager-page-size&quot;&gt;
+                                  &lt;option value=&quot;5&quot;&gt;5&lt;/option&gt;
+                                  &lt;option value=&quot;10&quot;&gt;10&lt;/option&gt;
+                              &lt;/select&gt;&lt;/span&gt;
+                            &lt;/li&gt;  --&gt;
+                        &lt;/ul&gt;
+                      &lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;div&gt;
+                        &lt;ul class=&quot;fluid-pager-demo-items&quot;&gt;
+                            &lt;li&gt;Item 1&lt;/li&gt;&lt;li&gt;Item 2&lt;/li&gt;&lt;li&gt;Item 3&lt;/li&gt;&lt;li&gt;Item 4&lt;/li&gt;&lt;li&gt;Item 5&lt;/li&gt;
+                            &lt;li&gt;Item 6&lt;/li&gt;&lt;li&gt;Item 7&lt;/li&gt;&lt;li&gt;Item 8&lt;/li&gt;&lt;li&gt;Item 9&lt;/li&gt;&lt;li&gt;Item 10&lt;/li&gt;
+                            &lt;li&gt;Item 11&lt;/li&gt;&lt;li&gt;Item 12&lt;/li&gt;&lt;li&gt;Item 13&lt;/li&gt;&lt;li&gt;Item 14&lt;/li&gt;&lt;li&gt;Item 15&lt;/li&gt;
+                        &lt;/ul&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                
+                &lt;div class=&quot;demo-back-link&quot; style=&quot;clear:both; padding:10px;&quot;&gt;
+                  &lt;p&gt;&lt;a href=&quot;javascript:;&quot;&gt;&amp;lt; Back to available demos list&lt;/a&gt;&lt;/p&gt;
+                &lt;/div&gt;
+            
+        </value>
+    </portlet-preference>
+</portlet-definition>
