@@ -41,9 +41,11 @@
     
     <sql-query>
         <sql>
-            SELECT UPGM.MEMBER_SERVICE, UPGM.MEMBER_KEY, UPGM.MEMBER_IS_GROUP
+            SELECT UPGM.MEMBER_SERVICE, UPGM.MEMBER_KEY, UPGM.MEMBER_IS_GROUP, UPG.GROUP_NAME
             FROM UP_GROUP_MEMBERSHIP UPGM
+                left join UP_GROUP UPG ON UPGM.MEMBER_IS_GROUP = 'T' AND UPGM.MEMBER_KEY = UPG.GROUP_ID
             WHERE UPGM.GROUP_ID = ?
+            ORDER BY UPG.GROUP_NAME, UPGM.MEMBER_SERVICE, UPGM.MEMBER_KEY
         </sql>
         <parameter value="${GROUP_ID}"/>
         <subtasks>
