@@ -1342,27 +1342,33 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
      * Returns the subscribe ID of a channel having the passed in functional
      * name or null if it can't find such a channel in the layout.
      */
+    @Override
     public String getSubscribeId(String fname) {
-        try
-        {
-                String expression = "//channel[@fname=\'"+fname+"\']";
-                XPathFactory fac = XPathFactory.newInstance();
-                XPath xpath = fac.newXPath();
-                Element fnameNode = (Element) xpath.evaluate(expression, this
-                        .getUserLayoutDOM(), XPathConstants.NODE);
-                if(fnameNode!=null) {
-                    return fnameNode.getAttribute("ID");
-                }
-        } catch (XPathExpressionException e)
-        {
-            LOG.error("Encountered exception while trying to identify " +
-                    "subscribe channel id for the fname=\""+fname+"\"" +
-                            " in layout of" 
-                            + owner.getAttribute(IPerson.USERNAME) + ".", e);
-        }
-        return null;
+    	final Map<String, String> variables = Collections.singletonMap("fname", fname);
+    	
+    	final Document userLayout = this.getUserLayoutDOM();
+    	final Element fnameNode = this.xpathOperations.evaluate("//channel[@fname=$fname]", variables, userLayout, XPathConstants.NODE);
+		if (fnameNode != null) {
+			return fnameNode.getAttribute("ID");
+		}
+    	
+    	return null;
     }
-
+    
+    public String getSubscribeId(String parentFolderId, String fname) {
+    	final Map<String, String> variables = new HashMap<String, String>();
+    	variables.put("parentFolderId", parentFolderId);
+    	variables.put("fname", fname);
+    	
+    	final Document userLayout = this.getUserLayoutDOM();
+    	final Element fnameNode = this.xpathOperations.evaluate("//folder[@ID=$parentFolderId]/descendant::channel[@fname=$fname]", variables, userLayout, XPathConstants.NODE);
+		if (fnameNode != null) {
+			return fnameNode.getAttribute("ID");
+		}
+    	
+    	return null;
+    }
+    
     public boolean addLayoutEventListener(LayoutEventListener l) {
         return listeners.add(l);
     }

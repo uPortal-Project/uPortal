@@ -118,10 +118,10 @@ public class MobileUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.url.IUrlNodeSyntaxHelper#getPortletForFolderName(javax.servlet.http.HttpServletRequest, java.lang.String)
-     */
-    @Override
-    public IPortletWindowId getPortletForFolderName(HttpServletRequest request, String folderName) {
+	 * @see org.jasig.portal.url.IUrlNodeSyntaxHelper#getPortletForFolderName(javax.servlet.http.HttpServletRequest, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public IPortletWindowId getPortletForFolderName(HttpServletRequest request, String targetedLayoutNodeId, String folderName) {
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         
         final String fname;

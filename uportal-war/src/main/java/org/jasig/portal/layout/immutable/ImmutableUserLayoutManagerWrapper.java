@@ -192,7 +192,14 @@ public class ImmutableUserLayoutManagerWrapper implements IUserLayoutManager {
         return man.getSubscribeId(fname);
     }
 
-    /**
+    /*
+	 * @see org.jasig.portal.layout.IUserLayoutManager#getSubscribeId(java.lang.String, java.lang.String)
+	 */
+	public String getSubscribeId(String parentFolderId, String fname) {
+		return man.getSubscribeId(parentFolderId, fname);
+	}
+
+	/**
      * A factory method to create an empty <code>IUserLayoutNodeDescription</code> instance
      *
      * @param nodeType a node type value

@@ -372,9 +372,16 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         }
         return subId;
     }
+    
+    /* (non-Javadoc)
+	 * @see org.jasig.portal.layout.IUserLayoutManager#getSubscribeId(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public String getSubscribeId(String parentFolderId, String fname) {
+		return this.man.getSubscribeId(parentFolderId, fname);
+	}
 
-
-    /**
+	/**
      * Get the current focused layout subscribe id.
      **/
     public String getFocusedId()

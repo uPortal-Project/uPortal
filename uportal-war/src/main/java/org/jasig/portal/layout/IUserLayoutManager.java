@@ -293,6 +293,16 @@ public interface IUserLayoutManager {
      * @return a <code>String</code> subscription id
      */
     public String getSubscribeId(String fname) throws PortalException;
+    
+    /**
+     * Returns a subscription id using the supplied functional name if it exists
+     * under the specified parent folder
+     *
+     * @param parentFolderId The id of the parent folder to look under
+     * @param fname  the functional name to lookup
+     * @return a <code>String</code> subscription id, null if the fname does not exist under the specified folder id.
+     */
+    public String getSubscribeId(String parentFolderId, String fname);
 
     /**
      * Returns an id of the root folder.

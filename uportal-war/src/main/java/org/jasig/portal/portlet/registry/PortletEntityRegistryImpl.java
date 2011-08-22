@@ -253,10 +253,12 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         try {
             final IPortletEntity portletEntity = this.getOrCreatePortletEntity(request, userInstance, preferredChannelSubscribeId);
             
-            //Verify the fname matches before returning the entity
-            final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
-			if (fname.equals(portletDefinition.getFName())) {
-            	return portletEntity;
+            if (portletEntity != null) {
+	            //Verify the fname matches before returning the entity
+	            final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
+				if (fname.equals(portletDefinition.getFName())) {
+	            	return portletEntity;
+				}
             }
         }
         catch (PortalException pe) {

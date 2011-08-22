@@ -223,36 +223,63 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
         return fname + PORTLET_PATH_ELEMENT_SEPERATOR + layoutNodeId;
     }
 
+    
     /* (non-Javadoc)
-     * @see org.jasig.portal.url.IUrlNodeSyntaxHelper#getPortletForFolderName(javax.servlet.http.HttpServletRequest, java.lang.String)
-     */
-    @Override
-    public IPortletWindowId getPortletForFolderName(HttpServletRequest request, String folderName) {
-        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
-        
-        final IPortletWindow portletWindow;
-        
+	 * @see org.jasig.portal.url.IUrlNodeSyntaxHelper#getPortletForFolderName(javax.servlet.http.HttpServletRequest, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public IPortletWindowId getPortletForFolderName(HttpServletRequest request, String targetedLayoutNodeId, String folderName) {
+        //Basic parsing of the 
+        final String fname;
+        String subscribeId = null;
         final int seperatorIndex = folderName.indexOf(PORTLET_PATH_ELEMENT_SEPERATOR);
         if (seperatorIndex <= 0 || seperatorIndex + 1 == folderName.length()) {
-            portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByFname(request, folderName);
+        	fname = folderName;
         }
         else {
-            //Get the subscribe ID and find the entity first
-            final String fname = folderName.substring(0, seperatorIndex);
-            final String subscribeId = folderName.substring(seperatorIndex + 1);
-    
-            final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntityByFname(request, userInstance, fname, subscribeId);
-            if (portletEntity == null) {
-                return null;
-            }
-            
-            final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
-            
-            portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindow(request, portletEntityId);
+            fname = folderName.substring(0, seperatorIndex);
+            subscribeId = folderName.substring(seperatorIndex + 1);
         }
         
+        //If a subscribeId was provided validate that it matches up with the fname
+        if (subscribeId != null) {
+	        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+	    	final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(request, userInstance, subscribeId);
+	    	if (portletEntity == null || !fname.equals(portletEntity.getPortletDefinition().getFName())) {
+	    		//If no entity found or the fname doesn't match ignore the provided subscribeId by setting it to null 
+	    		subscribeId = null;
+	    	}
+	    	else {
+	    		//subscribeId matches fname, lookup the window for the entity and return the windowId
+	    		final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
+	    		final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindow(request, portletEntityId);
+	    		return portletWindow.getPortletWindowId();
+	    	}
+        }
+        
+        //No valid subscribeId, find the best match based on the fname 
+        
+        //If a layout node is targeted then look for a matching subscribeId under that targeted node
+        if (targetedLayoutNodeId != null) {
+        	final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+        	final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
+        	final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
+        	
+        	//First look for the layout node only under the specified folder 
+        	subscribeId = userLayoutManager.getSubscribeId(targetedLayoutNodeId, fname);
+        }
+
+        //Find a subscribeId based on the fname
+        final IPortletWindow portletWindow;
+    	if (subscribeId == null) {
+    		portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByFname(request, fname);
+    	}
+    	else {
+    		portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, subscribeId);
+    	}
+        
         if (portletWindow == null) {
-            return null;
+        	return null;
         }
         
         return portletWindow.getPortletWindowId();
