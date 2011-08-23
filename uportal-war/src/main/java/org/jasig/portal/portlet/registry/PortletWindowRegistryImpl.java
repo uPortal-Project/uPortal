@@ -140,6 +140,9 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntityByFname(request, userInstance, fname);
+        if (portletEntity == null) {
+            return null;
+        }
         
         final IPortletWindow portletWindow = this.getOrCreateDefaultPortletWindow(request, portletEntity.getPortletEntityId());
         logger.trace("Found portlet window {} for portlet definition fname {}", portletWindow, fname);
