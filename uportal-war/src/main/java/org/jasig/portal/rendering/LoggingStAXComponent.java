@@ -103,7 +103,7 @@ public class LoggingStAXComponent extends StAXPipelineComponentWrapper {
                 }
             }
             
-            if (!peek && logFullDocument && logger.isDebugEnabled()) {
+            if (logFullDocument && logger.isDebugEnabled()) {
                 eventBuffer.add(event);
                 
                 if (event.isEndDocument()) {

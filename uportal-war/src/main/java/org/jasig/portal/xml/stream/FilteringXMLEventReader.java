@@ -19,20 +19,27 @@
 
 package org.jasig.portal.xml.stream;
 
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.EndElement;
+import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 /**
- * Base class for {@link XMLEventReader}s that just want to modify events without adding or
- * removing events from the reader stream.
+ * Base class for {@link XMLEventReader}s that want to modify or remove events from the reader stream.
+ * If a {@link StartElement} event is removed the subclass's {@link #filterEvent(XMLEvent, boolean)} will
+ * not see any events until after the matching {@link EndElement} event.
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
 public abstract class FilteringXMLEventReader extends BaseXMLEventReader {
+	private final Deque<QName> prunedElements = new LinkedList<QName>();
     private XMLEvent peekedEvent = null;
     
     public FilteringXMLEventReader(XMLEventReader reader) {
@@ -75,15 +82,50 @@ public abstract class FilteringXMLEventReader extends BaseXMLEventReader {
             peekedEvent = null;
             return event;
         }
-        
+
         do {
             event = super.getParent().nextEvent();
-            event = this.filterEvent(event, peek);
-        } while (event == null);
+
+            //If there are pruned elements in the queue filtering events is still needed
+    		if (!prunedElements.isEmpty()) {
+    		    //If another start element add it to the queue
+	    		if (event.isStartElement()) {
+	    		    final StartElement startElement = event.asStartElement();
+	    			prunedElements.push(startElement.getName());
+	    		}
+	    		//If end element pop the newest name of the queue and double check that the start/end elements match up
+	    		else if (event.isEndElement()) {
+	    			final QName startElementName = prunedElements.pop();
+	    			
+	    			final EndElement endElement = event.asEndElement();
+					final QName endElementName = endElement.getName();
+					
+					if (!startElementName.equals(endElementName)) {
+	    				throw new IllegalArgumentException("Malformed XMLEvent stream. Expected end element for " + startElementName + " but found end element for " + endElementName);
+	    			}
+	    		}
+	    		
+	    		event = null;
+	    	}
+    		else {
+                final XMLEvent filteredEvent = this.filterEvent(event, peek);
+                
+                //If the event is being removed and it is a start element all elements until the matching
+                //end element need to be removed as well
+                if (filteredEvent == null && event.isStartElement()) {
+                	final StartElement startElement = event.asStartElement();
+            		final QName name = startElement.getName();
+        			prunedElements.push(name);
+            	}
+                
+                event = filteredEvent;
+    		}
+        }
+        while (event == null);
         
         return event;
     }
-    
+
     /**
      * @param event The current event
      * @param peek If the event is from a {@link #peek()} call

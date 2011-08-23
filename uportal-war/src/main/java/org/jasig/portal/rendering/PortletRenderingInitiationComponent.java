@@ -115,18 +115,18 @@ public class PortletRenderingInitiationComponent extends StAXPipelineComponentWr
 
         @Override
         protected XMLEvent filterEvent(XMLEvent event, boolean peek) {
-            //Don't start any rendering on a peek event
-            if (peek) {
-                return event;
-            }
-            
-            if (event.isStartElement()) {
+        	if (event.isStartElement()) {
                 final StartElement startElement = event.asStartElement();
                 
                 final QName name = startElement.getName();
                 final String localName = name.getLocalPart();
                 if (IUserLayoutManager.CHANNEL.equals(localName)) {
                     final IPortletWindow portletWindow = getPortletWindow(request, startElement);
+					if (portletWindow == null) {
+						logger.warn("No portlet window found for: "  + localName);
+						return null;
+					}
+                    
                     final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
 
                     if (!portletExecutionManager.isPortletRenderRequested(portletWindowId, this.request, this.response)) {
@@ -140,18 +140,23 @@ public class PortletRenderingInitiationComponent extends StAXPipelineComponentWr
                     event = addPortletWindowId(startElement, portletWindowId);
                 }
                 else if(IUserLayoutManager.CHANNEL_HEADER.equals(localName)) {
-                     final IPortletWindow portletWindow = getPortletWindow(request, startElement);
-                     final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
+                	final IPortletWindow portletWindow = getPortletWindow(request, startElement);
+					if (portletWindow == null) {
+						logger.warn("No portlet window found for: " + localName);
+						return null;
+					}
 
-                     if (!portletExecutionManager.isPortletRenderHeaderRequested(portletWindowId, this.request, this.response)) {
-                         portletExecutionManager.startPortletHeadRender(portletWindowId, this.request, this.response);
-                         logger.debug("Initiated portlet head rendering for: {}", portletWindow);
-                     }
-                     else {
-                         logger.debug("Portlet header render already requested for: {}", portletWindow);
-                     }
+                    final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
+
+                    if (!portletExecutionManager.isPortletRenderHeaderRequested(portletWindowId, this.request, this.response)) {
+                        portletExecutionManager.startPortletHeadRender(portletWindowId, this.request, this.response);
+                        logger.debug("Initiated portlet head rendering for: {}", portletWindow);
+                    }
+                    else {
+                        logger.debug("Portlet header render already requested for: {}", portletWindow);
+                    }
                      
-                     event = addPortletWindowId(startElement, portletWindowId);
+                    event = addPortletWindowId(startElement, portletWindowId);
                 }
             } 
             

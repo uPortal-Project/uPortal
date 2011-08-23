@@ -127,7 +127,12 @@ public class XsltPortalUrlProvider {
         else {
             final IPortletWindowId targetPortletWindowId = portalUrlBuilder.getTargetPortletWindowId();
             if (targetPortletWindowId == null) {
-                this.logger.warn("Can only target the default portlet if the root portal-url targets a portlet.", new Throwable());
+            	if (this.logger.isDebugEnabled()) {
+            		this.logger.warn("Can only target the default portlet if the root portal-url targets a portlet.", new Throwable());
+            	}
+            	else {
+            		this.logger.warn("Can only target the default portlet if the root portal-url targets a portlet. Enable debug for stack trace.");
+            	}
                 return new FailSafePortletUrlBuilder(null, portalUrlBuilder);
             }
 
