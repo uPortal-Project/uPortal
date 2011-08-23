@@ -23,7 +23,7 @@
 <xsl:stylesheet version="1.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   
-  <xsl:output method="xml" indent="yes" media-type="text/html"/>
+  <xsl:output method="xml" indent="yes" media-type="text/html" doctype-public="-//W3C//DTD HTML 4.01 Transitional//EN" doctype-system="http://www.w3.org/TR/html4/loose.dtd"/>
   
   <xsl:param name="activeTabFName"></xsl:param>
   <xsl:param name="focusedPortletFName"></xsl:param>
@@ -43,7 +43,7 @@
   <xsl:template match="layout">
     <xsl:for-each select="folder[@type='root']">
       <layout xmlns:dlm="http://www.uportal.org/layout/dlm">
-        
+        <xsl:comment> test </xsl:comment>
         <header>
           <xsl:copy-of select="folder[@type='header']/portlet"/>
         </header>

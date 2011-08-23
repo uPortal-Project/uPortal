@@ -23,8 +23,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 
+import org.jasig.portal.IUserPreferencesManager;
+import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.mock.portlet.om.MockPortletEntityId;
 import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
@@ -50,6 +53,7 @@ public class SingleTabUrlNodeSyntaxHelperTest {
     @Mock IUserInstance userInstance;
     @Mock IPortletEntityRegistry portletEntityRegistry;
     @Mock IPortletWindowRegistry portletWindowRegistry;
+    @Mock IPortletDefinition portletDefinition;
     @Mock IPortletEntity portletEntity;
     @Mock IPortletWindow portletWindow;
     
@@ -62,12 +66,14 @@ public class SingleTabUrlNodeSyntaxHelperTest {
         final MockPortletWindowId portletWindowId = new MockPortletWindowId("wid");
         
         when(this.userInstanceManager.getUserInstance(request)).thenReturn(this.userInstance);
-        when(this.portletEntityRegistry.getOrCreatePortletEntityByFname(request, userInstance, "fname", "id")).thenReturn(portletEntity);
+        when(this.portletEntityRegistry.getOrCreatePortletEntity(request, userInstance, "id")).thenReturn(portletEntity);
+        when(this.portletEntity.getPortletDefinition()).thenReturn(portletDefinition);
+        when(this.portletDefinition.getFName()).thenReturn("fname");
         when(this.portletEntity.getPortletEntityId()).thenReturn(portletEntityId);
         when(this.portletWindowRegistry.getOrCreateDefaultPortletWindow(request, portletEntityId)).thenReturn(portletWindow);
         when(portletWindow.getPortletWindowId()).thenReturn(portletWindowId);
         
-        final IPortletWindowId parsedPortletWindowId = this.urlNodeSyntaxHelper.getPortletForFolderName(request, folder);
+        final IPortletWindowId parsedPortletWindowId = this.urlNodeSyntaxHelper.getPortletForFolderName(request, null, folder);
         assertNotNull(parsedPortletWindowId);
         assertEquals(portletWindowId, parsedPortletWindowId);
     }
@@ -82,7 +88,7 @@ public class SingleTabUrlNodeSyntaxHelperTest {
         when(this.portletWindowRegistry.getOrCreateDefaultPortletWindowByFname(request, folder)).thenReturn(portletWindow);
         when(portletWindow.getPortletWindowId()).thenReturn(portletWindowId);
         
-        final IPortletWindowId parsedPortletWindowId = this.urlNodeSyntaxHelper.getPortletForFolderName(request, folder);
+        final IPortletWindowId parsedPortletWindowId = this.urlNodeSyntaxHelper.getPortletForFolderName(request, null, folder);
         assertNotNull(parsedPortletWindowId);
         assertEquals(portletWindowId, parsedPortletWindowId);
     }

@@ -237,11 +237,13 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                     case PORTLET: {
                         parseStep = ParseStep.STATE;
                         
+                        final String targetedLayoutNodeId = portalRequestInfo.getTargetedLayoutNodeId();
+                        
                         if (PORTLET_PATH_PREFIX.equals(pathPart)) {
                             if (++pathPartIndex < requestPathParts.length) {
                                 pathPart = requestPathParts[pathPartIndex];
 
-                                targetedPortletWindowId = urlNodeSyntaxHelper.getPortletForFolderName(request, pathPart);
+                                targetedPortletWindowId = urlNodeSyntaxHelper.getPortletForFolderName(request, targetedLayoutNodeId, pathPart);
                             }
 
                             break;
@@ -251,7 +253,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                         final String[] targetedPortletIds = parameterMap.remove(PARAM_TARGET_PORTLET);
                         if (targetedPortletIds != null && targetedPortletIds.length > 0) {
                             final String targetedPortletString = targetedPortletIds[0];
-                            targetedPortletWindowId = urlNodeSyntaxHelper.getPortletForFolderName(request, targetedPortletString);
+                            targetedPortletWindowId = urlNodeSyntaxHelper.getPortletForFolderName(request, targetedLayoutNodeId, targetedPortletString);
                         }
                         
                     }

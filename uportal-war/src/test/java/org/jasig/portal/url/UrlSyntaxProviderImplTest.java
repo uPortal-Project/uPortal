@@ -296,7 +296,7 @@ public class UrlSyntaxProviderImplTest {
         when(this.portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
         when(urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request)).thenReturn(urlNodeSyntaxHelper);
         when(this.urlNodeSyntaxHelper.getLayoutNodeForFolderNames(request, Arrays.asList("n2"))).thenReturn("n2");
-        when(this.urlNodeSyntaxHelper.getPortletForFolderName(request, "fname.s3")).thenReturn(portletWindowId);
+        when(this.urlNodeSyntaxHelper.getPortletForFolderName(request, "n2", "fname.s3")).thenReturn(portletWindowId);
         when(this.portletWindowRegistry.getPortletWindowId(request, "pw2")).thenReturn(portletWindowId2);
         
         final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
@@ -390,7 +390,7 @@ public class UrlSyntaxProviderImplTest {
         when(this.portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
         when(urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request)).thenReturn(urlNodeSyntaxHelper);
         when(this.urlNodeSyntaxHelper.getLayoutNodeForFolderNames(request, Arrays.asList("n2"))).thenReturn("n2");
-        when(this.urlNodeSyntaxHelper.getPortletForFolderName(request, "fname.s3")).thenReturn(portletWindowId1);
+        when(this.urlNodeSyntaxHelper.getPortletForFolderName(request, "n2", "fname.s3")).thenReturn(portletWindowId1);
         when(this.portletWindowRegistry.getPortletWindowId(request, "pw2")).thenReturn(portletWindowId2);
         when(this.portletWindowRegistry.getPortletWindowId(request, "pw1")).thenReturn(portletWindowId1);
         
@@ -441,7 +441,7 @@ public class UrlSyntaxProviderImplTest {
         
         when(this.portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
         when(urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request)).thenReturn(urlNodeSyntaxHelper);
-        when(this.urlNodeSyntaxHelper.getPortletForFolderName(request, "portlet-admin.ctf3")).thenReturn(portletWindowId1);
+        when(this.urlNodeSyntaxHelper.getPortletForFolderName(request, null, "portlet-admin.ctf3")).thenReturn(portletWindowId1);
         when(this.portletWindowRegistry.getPortletWindowId(request, "71_dlg-44-ctf3-8_8")).thenReturn(portletWindowId2);
         when(this.portletWindowRegistry.getPortletWindowId(request, "44_ctf3_8")).thenReturn(portletWindowId1);
         

@@ -63,7 +63,13 @@ public class PortalSpELServiceImplTest {
     
     @Test
     public void testParser() {
-        String replaced = provider.parseString("${1+1}/${3+4}/path", request);
+        String replaced = provider.parseString("${1+1}", request);
+        assert "2".equals(replaced);
+        
+        replaced = provider.parseString("${1+1}/${3+4}", request);
+        assert "2/7".equals(replaced);
+        
+        replaced = provider.parseString("${1+1}/${3+4}/path", request);
         assert "2/7/path".equals(replaced);
     }
     

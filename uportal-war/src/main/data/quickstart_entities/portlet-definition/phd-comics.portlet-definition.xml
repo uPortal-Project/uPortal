@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<portlet-definition xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns2="https://source.jasig.org/schemas/uportal" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns4="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:ns5="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/user" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd">
+    <title>PHD Comics</title>
+    <name>PHD Comics</name>
+    <fname>phd-comics</fname>
+    <desc>Latest PHD Comics strip</desc>
+    <type>RSS</type>
+    <timeout>10000</timeout>
+    <portlet-descriptor>
+        <ns2:webAppName>/NewsReaderPortlet</ns2:webAppName>
+        <ns2:portletName>single-feed-news</ns2:portletName>
+    </portlet-descriptor>
+    <category>Entertainment</category>
+    <group>Everyone</group>
+    <parameter>
+        <name>iconUrl</name>
+        <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/emotes/face-smile.png</value>
+    </parameter>
+    <parameter>
+        <name>hasHelp</name>
+        <value>true</value>
+    </parameter>
+    <parameter>
+        <name>mobileIconUrl</name>
+        <value>/uPortal/media/skins/icons/mobile/feed.png</value>
+    </parameter>
+    <parameter>
+        <name>editable</name>
+        <value>true</value>
+    </parameter>
+    <portlet-preference>
+        <name>name</name>
+        <readOnly>false</readOnly>
+        <value>PhD Comics</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>url</name>
+        <readOnly>false</readOnly>
+        <value>http://www.phdcomics.com/gradfeed.php</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>summaryView</name>
+        <readOnly>false</readOnly>
+        <value>full</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>maxStories</name>
+        <readOnly>false</readOnly>
+        <value>1</value>
+    </portlet-preference>
+</portlet-definition>

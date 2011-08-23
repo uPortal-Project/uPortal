@@ -43,6 +43,7 @@
         <property name="alwaysUseMessageFormat" value="true" />
         <property name="cacheSeconds" value="60" />
         <property name="useCodeAsDefaultMessage" value="true" />
+        <property name="fallbackToSystemLocale" value="false" />
         <property name="basenames">
             <list>
                 <value>classpath:/properties/i18n/Messages</value>
@@ -71,4 +72,5 @@
         <property name="order" value="1"/>
     </bean>
     
+    <bean id="localeResolver" class="org.jasig.portal.i18n.LocaleManagerLocaleResolver" />
 </beans>

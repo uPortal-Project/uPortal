@@ -1,0 +1,60 @@
+<?xml version='1.0'?><!DOCTYPE layout PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<layout xmlns:dlm="http://www.uportal.org/layout/dlm"><!-- test -->
+    <header>
+        <portlet fname="welcome-message" id="101" />
+        <portlet fname="announcements" id="102" />
+    </header>
+    <navigation>
+        <tab id="1" fname="my-tab" activeTab="true">
+            <name lang="en">My Tab</name>
+            <tabPortlet id="3" fname="email" />
+            <tabPortlet id="4" fname="weather" />
+            <tabPortlet id="5" fname="campus-news" />
+            <tabPortlet id="7" fname="student-center" />
+            <tabPortlet id="8" fname="weather" />
+            <tabPortlet id="9" fname="campus-news" />
+        </tab>
+        <tab id="11" fname="my-classes">
+            <name lang="en">My Classes {up-portlet-title(13)}</name>
+            <name lang="de">My Classes {up-portlet-title(13)}</name>
+            <name lang="ja">My Classes {up-portlet-title(13)}</name>
+            <tabPortlet id="13" fname="course-dashboard" />
+            <tabPortlet id="14" fname="course-dashboard" />
+            <tabPortlet id="17" fname="course-list" />
+            <tabPortlet id="3" fname="email" />
+        </tab>
+    </navigation>
+    <content activeTabIndex="1">
+        <column id="2">
+            <portlet fname="email" id="3" />
+            <portlet fname="weather" id="4" />
+            <portlet fname="campus-news" id="5" />
+        </column>
+        <column id="6">
+            <portlet fname="student-center" id="7" />
+            <portlet fname="weather" id="8" />
+            <portlet fname="campus-news" id="9" />
+        </column>
+    </content>
+    <header />
+</layout>

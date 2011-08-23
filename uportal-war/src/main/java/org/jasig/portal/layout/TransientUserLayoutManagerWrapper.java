@@ -33,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
+import org.jasig.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType;
 import org.jasig.portal.layout.node.UserLayoutChannelDescription;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
@@ -277,7 +278,7 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
     }
 
 
-    public IUserLayoutNodeDescription createNodeDescription( int nodeType ) throws PortalException {
+    public IUserLayoutNodeDescription createNodeDescription( LayoutNodeType nodeType ) throws PortalException {
         return man.createNodeDescription(nodeType);
     }
 
@@ -371,9 +372,16 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         }
         return subId;
     }
+    
+    /* (non-Javadoc)
+	 * @see org.jasig.portal.layout.IUserLayoutManager#getSubscribeId(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public String getSubscribeId(String parentFolderId, String fname) {
+		return this.man.getSubscribeId(parentFolderId, fname);
+	}
 
-
-    /**
+	/**
      * Get the current focused layout subscribe id.
      **/
     public String getFocusedId()

@@ -56,10 +56,6 @@
     
     <bean id="postThemeTransformLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
         <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.POST_THEME" />
-        <property name="wrappedComponent" ref="dtdSettingPipelineComponent" />
-    </bean>
-    
-    <bean id="dtdSettingPipelineComponent" class="org.jasig.portal.rendering.DTDSettingPipelineComponent">
         <property name="wrappedComponent" ref="themeTransformComponent" />
     </bean>
     

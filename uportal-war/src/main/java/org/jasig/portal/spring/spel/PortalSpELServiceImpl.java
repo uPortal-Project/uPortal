@@ -19,9 +19,6 @@
 
 package org.jasig.portal.spring.spel;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import javax.servlet.http.HttpServletRequest;
 
 import net.sf.ehcache.Ehcache;
@@ -40,6 +37,7 @@ import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.ParseException;
+import org.springframework.expression.ParserContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Service;
@@ -54,13 +52,6 @@ import org.springframework.web.context.request.WebRequest;
  */
 @Service
 public class PortalSpELServiceImpl implements IPortalSpELService {
-    
-    /**
-     * Expression regex designed to match SpEL expressions contained in 
-     * a ${ } block
-     */
-    public final static Pattern EXPRESSION_REGEX = Pattern.compile("\\$\\{([^\\}]*)\\}");
-    
     protected final Log logger = LogFactory.getLog(this.getClass());
     
     private ExpressionParser expressionParser = new SpelExpressionParser();
@@ -92,8 +83,12 @@ public class PortalSpELServiceImpl implements IPortalSpELService {
 
     @Override
     public Expression parseExpression(String expressionString) throws ParseException {
+        return this.parseCachedExpression(expressionString, null);
+    }
+    
+    protected Expression parseCachedExpression(String expressionString, ParserContext parserContext) throws ParseException {
         if (this.expressionCache == null) {
-            return this.expressionParser.parseExpression(expressionString);
+            return parseExpression(expressionString, parserContext);
         }
         
         Element element = this.expressionCache.get(expressionString);
@@ -101,46 +96,26 @@ public class PortalSpELServiceImpl implements IPortalSpELService {
             return (Expression)element.getObjectValue();
         }
         
-        final Expression expression = this.expressionParser.parseExpression(expressionString);
+        final Expression expression = parseExpression(expressionString, parserContext);
+        
         element = new Element(expressionString, expression);
         this.expressionCache.put(element);
         
         return expression;
     }
 
-    @Override
-    public String parseString(String string, WebRequest request){
-        
-        // evaluate the supplied string against our expression regex
-        final Matcher m = EXPRESSION_REGEX.matcher(string);
-        
-        // Attempt to find the first match against the expression regex.  
-        // If the supplied string has no matches, just return the supplied 
-        // string without getting any SpEL resources.
-        if (!m.find()) {
-            return string;
+    protected Expression parseExpression(String expressionString, ParserContext parserContext) {
+        if (parserContext == null) {
+            return this.expressionParser.parseExpression(expressionString);
         }
 
-        // iterate through the list of matches, replacing each match in the 
-        // string with the SpEL-evaluated value
-        do {
-            
-            // find the current match
-            final String match = m.group();
-            
-            // parse the expression block
-            final String expressionString = m.group(1);
+        return this.expressionParser.parseExpression(expressionString, parserContext);
+    }
 
-            //Evaluate the expression
-            final String value = this.getValue(expressionString, request, String.class);
-            
-            // replace the current matched group in the string with the 
-            // parsed expression
-            string = string.replace(match, value);
-            
-        } while (m.find());
-        
-        return string;
+    @Override
+    public String parseString(String expressionString, WebRequest request) {
+        final Expression expression = this.parseCachedExpression(expressionString, TemplateParserContext.INSTANCE);
+        return this.getValue(expression, request, String.class);
     }
     
     @Override
@@ -220,4 +195,22 @@ public class PortalSpELServiceImpl implements IPortalSpELService {
         }
     }
 
+    static class TemplateParserContext implements ParserContext {
+        public static final TemplateParserContext INSTANCE = new TemplateParserContext();
+    
+        @Override
+        public String getExpressionPrefix() {
+            return "${";
+        }
+
+        @Override
+        public String getExpressionSuffix() {
+            return "}";
+        }
+
+        @Override
+        public boolean isTemplate() {
+            return true;
+        }
+    }
 }

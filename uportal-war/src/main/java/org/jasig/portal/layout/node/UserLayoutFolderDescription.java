@@ -79,8 +79,8 @@ public class UserLayoutFolderDescription extends UserLayoutNodeDescription imple
      *
      * @return a type
      */
-    public int getType() {
-      return FOLDER;
+    public LayoutNodeType getType() {
+      return LayoutNodeType.FOLDER;
     }
 
     /**

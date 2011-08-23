@@ -38,7 +38,7 @@
             <list>
                 <ref bean="cacheMaintenanceTrigger" />
                 <ref bean="statsQueueFlushingTrigger" />
-                <ref bean="statsPurgeTrigger" />
+                <!-- STATS ARE DISABLED IN 4.0 <ref bean="statsPurgeTrigger" />  -->
                 <ref bean="expiredPortletCookieRemovalTrigger" />
             </list>
         </property>

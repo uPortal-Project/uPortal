@@ -23,13 +23,13 @@ var uportal = uportal || {};
 (function($, fluid){
 
     var layouts = [ 
-       { name: "Full-width", columns: [ 100 ] },
-       { name: "Narrow, wide", columns: [ 40, 60 ] },
-       { name: "Even", columns: [ 50, 50 ] },
-       { name: "Wide, narrow", columns: [ 60, 40 ] },
-       { name: "Even", columns: [ 33, 34, 33 ] },
-       { name: "Narrow, wide, narrow", columns: [ 25, 50, 25 ] },
-       { name: "Even", columns: [ 25, 25, 25, 25 ] }
+       { nameKey: "fullWidth", columns: [ 100 ] },
+       { nameKey: "narrowWide", columns: [ 40, 60 ] },
+       { nameKey: "even", columns: [ 50, 50 ] },
+       { nameKey: "wideNarrow", columns: [ 60, 40 ] },
+       { nameKey: "even", columns: [ 33, 34, 33 ] },
+       { nameKey: "narrowWideNarrow", columns: [ 25, 50, 25 ] },
+       { nameKey: "even", columns: [ 25, 25, 25, 25 ] }
    ];
                
 
@@ -405,7 +405,8 @@ var uportal = uportal || {};
                                         onLayoutSelect: function(layout, componentThat) {
                                             updateColumns(layout, that);
                                         }
-                                    }
+                                    },
+                                    strings: that.options.messages
                                 });
                             }
                         }
@@ -461,7 +462,8 @@ var uportal = uportal || {};
                 }
             },
             tabContext: that.options.tabContext,
-            numberOfPortlets: that.options.numberOfPortlets
+            numberOfPortlets: that.options.numberOfPortlets,
+            addTabLabel: that.options.messages.addTabLabel
         });
         
         // initialize the portlet reorderer

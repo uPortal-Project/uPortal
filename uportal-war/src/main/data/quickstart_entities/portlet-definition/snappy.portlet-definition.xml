@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<portlet-definition xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns2="https://source.jasig.org/schemas/uportal" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns4="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:ns5="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/user" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd">
+    <title>Welcome</title>
+    <name>Welcome</name>
+    <fname>snappy</fname>
+    <desc>Mockup image rotator thingy.</desc>
+    <type>Advanced CMS</type>
+    <timeout>10000</timeout>
+    <portlet-descriptor>
+        <ns2:webAppName>/SimpleContentPortlet</ns2:webAppName>
+        <ns2:portletName>cms</ns2:portletName>
+    </portlet-descriptor>
+    <category>Information</category>
+    <group>Everyone</group>
+    <parameter>
+        <name>disableDynamicTitle</name>
+        <value>true</value>
+    </parameter>
+    <parameter>
+        <name>iconUrl</name>
+        <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/mimetypes/text-html.png</value>
+    </parameter>
+    <portlet-preference>
+        <name>content</name>
+        <readOnly>false</readOnly>
+        <value>
+            
+                &lt;style type=&quot;text/css&quot;&gt;
+                    .tab-image {
+                        margin: 0em;
+                        padding: 0em 1em 1em 0em;
+                    }
+                &lt;/style&gt;
+                
+                &lt;!--BEGIN SOURCE CODE FOR EXAMPLE =============================== --&gt;
+                &lt;div id=&quot;tabs-demo&quot; class=&quot;ui-tabs ui-widget ui-widget-content ui-corner-all&quot;&gt;
+                    &lt;ul class=&quot;ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all&quot;&gt;
+                        &lt;li class=&quot;ui-state-default ui-corner-top ui-tabs-selected ui-state-active&quot;&gt;
+                            &lt;a href=&quot;#tab1&quot; shape=&quot;rect&quot;&gt;&lt;span&gt;Lorem Ipsum 1&lt;/span&gt;&lt;/a&gt;
+                        &lt;/li&gt;
+                        &lt;li class=&quot;ui-state-default ui-corner-top&quot;&gt;
+                            &lt;a href=&quot;#tab2&quot; shape=&quot;rect&quot;&gt;&lt;span&gt;Lorem Ipsum 2&lt;/span&gt;&lt;/a&gt;
+                        &lt;/li&gt;
+                        &lt;li class=&quot;ui-state-default ui-corner-top&quot;&gt;
+                            &lt;a href=&quot;#tab3&quot; shape=&quot;rect&quot;&gt;&lt;span&gt;Lorem Ipsum 3&lt;/span&gt;&lt;/a&gt;
+                        &lt;/li&gt;
+                    &lt;/ul&gt;
+                    
+                    &lt;!--TAB 1--&gt;
+                    &lt;div id=&quot;tab1&quot; class=&quot;ui-tabs-panel ui-widget-content ui-corner-bottom&quot;&gt;
+                        &lt;img class=&quot;tab-image&quot; src=&quot;/uPortal/media/org/jasig/portal/channels/webproxy/tab1.jpg&quot; alt=&quot;Basketball Photo&quot; align=&quot;left&quot; /&gt;
+                        &lt;h1&gt;Lorem Ipsum 1&lt;/h1&gt;
+                        &lt;p&gt;Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Sed eget neque consequat sapien commodo ultricies. Mauris commodo lobortis elit. Mauris euismod. Fusce ac dui. Nullam in arcu. Morbi pulvinar. Vivamus lacinia ligula et dolor. Phasellus hendrerit nulla. Aliquam feugiat eleifend tellus. Nullam tristique nisi et est. Sed luctus magna ut dui. Nam aliquet metus laoreet tortor.&lt;/p&gt;
+                        &lt;p&gt;Duis erat mi, placerat vel, vulputate ac, commodo vel, mauris. Duis molestie. Sed urna erat, viverra sit amet, aliquam ut, facilisis a, magna. Nullam suscipit posuere justo. Curabitur ac augue. Maecenas eget orci. Aenean et purus. Curabitur non nulla sed metus convallis ornare. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Sed sed ipsum nec libero pharetra malesuada. Suspendisse potenti. Pellentesque et sapien non purus malesuada auctor. Nulla aliquet dui quis diam. Mauris dictum justo eget neque. Maecenas vel magna vitae neque volutpat eleifend. Fusce id massa ut nunc lobortis interdum. Duis libero justo, lacinia in, commodo nec, hendrerit sit amet, nulla. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.&lt;/p&gt;
+                        &lt;p&gt;Vivamus scelerisque fringilla urna. Nulla facilisi. Duis vestibulum. Nunc venenatis mauris quis quam. Pellentesque enim lorem, blandit in, interdum eu, interdum quis, diam. Cras malesuada tempus pede. In hac habitasse platea dictumst. Donec elementum, nisl id lobortis luctus, orci sapien mattis pede, vel posuere urna felis lacinia libero. Sed lobortis sem vitae felis. Morbi blandit. Aliquam ac dui id pede dignissim suscipit.&lt;/p&gt;
+                    &lt;/div&gt;
+                    
+                    &lt;!--TAB 2--&gt;
+                    &lt;div id=&quot;tab2&quot; class=&quot;ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide&quot;&gt;
+                        &lt;img class=&quot;tab-image&quot; src=&quot;/uPortal/media/org/jasig/portal/channels/webproxy/tab2.jpg&quot; alt=&quot;Basketball Photo&quot; align=&quot;left&quot; /&gt;
+                        &lt;h1&gt;Lorem Ipsum 2&lt;/h1&gt;
+                        &lt;p&gt;Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Sed eget neque consequat sapien commodo ultricies. Mauris commodo lobortis elit. Mauris euismod. Fusce ac dui. Nullam in arcu. Morbi pulvinar. Vivamus lacinia ligula et dolor. Phasellus hendrerit nulla. Aliquam feugiat eleifend tellus. Nullam tristique nisi et est. Sed luctus magna ut dui. Nam aliquet metus laoreet tortor.&lt;/p&gt;
+                        &lt;p&gt;Duis erat mi, placerat vel, vulputate ac, commodo vel, mauris. Duis molestie. Sed urna erat, viverra sit amet, aliquam ut, facilisis a, magna. Nullam suscipit posuere justo. Curabitur ac augue. Maecenas eget orci. Aenean et purus. Curabitur non nulla sed metus convallis ornare. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Sed sed ipsum nec libero pharetra malesuada. Suspendisse potenti. Pellentesque et sapien non purus malesuada auctor. Nulla aliquet dui quis diam. Mauris dictum justo eget neque. Maecenas vel magna vitae neque volutpat eleifend. Fusce id massa ut nunc lobortis interdum. Duis libero justo, lacinia in, commodo nec, hendrerit sit amet, nulla. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.&lt;/p&gt;
+                        &lt;p&gt;Vivamus scelerisque fringilla urna. Nulla facilisi. Duis vestibulum. Nunc venenatis mauris quis quam. Pellentesque enim lorem, blandit in, interdum eu, interdum quis, diam. Cras malesuada tempus pede. In hac habitasse platea dictumst. Donec elementum, nisl id lobortis luctus, orci sapien mattis pede, vel posuere urna felis lacinia libero. Sed lobortis sem vitae felis. Morbi blandit. Aliquam ac dui id pede dignissim suscipit.&lt;/p&gt;
+                        &lt;p&gt;Maecenas sed magna. Aenean vulputate viverra quam. Quisque in mi. Nulla diam dolor, ornare dictum, hendrerit non, fermentum nec, urna. Phasellus id metus. Quisque dictum, mauris ut lacinia sollicitudin, mi leo fermentum diam, eget venenatis velit nisi ac magna. Duis accumsan lectus in pede tincidunt fringilla. Nunc nunc nunc, dictum ac, laoreet et, blandit quis, diam. Praesent quis mauris in nisl pulvinar condimentum. Phasellus eleifend, erat eget lacinia consectetuer, enim ante pretium mi, et dignissim pede nulla in mi. Nunc ultrices ligula quis pede. Integer non lorem. Proin turpis. Ut elit augue, molestie eget, iaculis non, luctus vitae, nisl. Fusce cursus. Integer mattis nulla facilisis libero sagittis mattis.&lt;/p&gt;
+                   &lt;/div&gt;
+                    
+                    &lt;!--TAB 3--&gt;
+                    &lt;div id=&quot;tab3&quot; class=&quot;ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide&quot;&gt;
+                        &lt;img class=&quot;tab-image&quot; src=&quot;/uPortal/media/org/jasig/portal/channels/webproxy/tab3.jpg&quot; alt=&quot;Basketball Photo&quot; align=&quot;left&quot; /&gt;
+                        &lt;h1&gt;Lorem Ipsum 3&lt;/h1&gt;
+                        &lt;p&gt;Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Sed eget neque consequat sapien commodo ultricies. Mauris commodo lobortis elit. Mauris euismod. Fusce ac dui. Nullam in arcu. Morbi pulvinar. Vivamus lacinia ligula et dolor. Phasellus hendrerit nulla. Aliquam feugiat eleifend tellus. Nullam tristique nisi et est. Sed luctus magna ut dui. Nam aliquet metus laoreet tortor.&lt;/p&gt;
+                        &lt;p&gt;Duis erat mi, placerat vel, vulputate ac, commodo vel, mauris. Duis molestie. Sed urna erat, viverra sit amet, aliquam ut, facilisis a, magna. Nullam suscipit posuere justo. Curabitur ac augue. Maecenas eget orci. Aenean et purus. Curabitur non nulla sed metus convallis ornare. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Sed sed ipsum nec libero pharetra malesuada. Suspendisse potenti. Pellentesque et sapien non purus malesuada auctor. Nulla aliquet dui quis diam. Mauris dictum justo eget neque. Maecenas vel magna vitae neque volutpat eleifend. Fusce id massa ut nunc lobortis interdum. Duis libero justo, lacinia in, commodo nec, hendrerit sit amet, nulla. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.&lt;/p&gt;
+                        &lt;p&gt;Vivamus scelerisque fringilla urna. Nulla facilisi. Duis vestibulum. Nunc venenatis mauris quis quam. Pellentesque enim lorem, blandit in, interdum eu, interdum quis, diam. Cras malesuada tempus pede. In hac habitasse platea dictumst. Donec elementum, nisl id lobortis luctus, orci sapien mattis pede, vel posuere urna felis lacinia libero. Sed lobortis sem vitae felis. Morbi blandit. Aliquam ac dui id pede dignissim suscipit.&lt;/p&gt;
+                        &lt;p&gt;Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Sed eget neque consequat sapien commodo ultricies. Mauris commodo lobortis elit. Mauris euismod. Fusce ac dui. Nullam in arcu. Morbi pulvinar. Vivamus lacinia ligula et dolor. Phasellus hendrerit nulla. Aliquam feugiat eleifend tellus. Nullam tristique nisi et est. Sed luctus magna ut dui. Nam aliquet metus laoreet tortor.&lt;/p&gt;
+                        &lt;p&gt;Nulla nec nisi. Mauris ac dui. Aliquam at erat id nunc tincidunt consectetuer. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Vestibulum lobortis velit. Suspendisse sodales ipsum id libero. Cras quis mi vel magna dapibus luctus. Maecenas volutpat. In tincidunt. Cras interdum. Etiam imperdiet. Suspendisse lorem nulla, mattis in, luctus facilisis, dictum et, nibh. Nulla facilisi.&lt;/p&gt;
+                    &lt;/div&gt;
+                    
+                &lt;/div&gt;
+                &lt;script&gt;
+                    up.jQuery(document).ready(function(){
+                        up.jQuery(&quot;#tabs-demo&quot;).tabs();
+                    });
+                &lt;/script&gt;
+            
+        </value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>cleanContent</name>
+        <readOnly>false</readOnly>
+        <value>false</value>
+    </portlet-preference>
+</portlet-definition>

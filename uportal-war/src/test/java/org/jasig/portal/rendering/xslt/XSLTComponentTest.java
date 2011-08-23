@@ -19,8 +19,11 @@
 
 package org.jasig.portal.rendering.xslt;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.io.StringWriter;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -40,7 +43,10 @@ import javax.xml.transform.stream.StreamSource;
 
 import junit.framework.Assert;
 
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.easymock.EasyMock;
+import org.jasig.portal.io.xml.XmlTestException;
 import org.jasig.portal.rendering.PipelineEventReader;
 import org.jasig.portal.rendering.PipelineEventReaderImpl;
 import org.jasig.portal.rendering.StAXPipelineComponent;
@@ -50,6 +56,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
@@ -88,7 +95,31 @@ public class XSLTComponentTest {
         Assert.assertNotNull(eventReader);
         
         final String output = this.serializeXMLEventReader(eventReader.getEventReader());
-        this.logger.debug(output);
+        
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+
+        dbf.setValidating(false);
+        dbf.setFeature("http://xml.org/sax/features/namespaces", false);
+        dbf.setFeature("http://xml.org/sax/features/validation", false);
+        dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+        dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        
+        final DocumentBuilder db = dbf.newDocumentBuilder();
+        
+        XMLUnit.setIgnoreWhitespace(true);
+        try {
+            final Document expected = db.parse(this.getClass().getResourceAsStream("/org/jasig/portal/rendering/xslt/expected.xml"), "/org/jasig/portal/rendering/xslt/expected.xml");
+            final Document actual = db.parse(new InputSource(new StringReader(output)));
+            
+            Diff d = new Diff(expected, actual);
+            assertTrue("Upgraded data doesn't match expected data: " + d, d.similar());
+        }
+        catch (Exception e) {
+            throw new XmlTestException("Failed to assert similar between XSLT output and expected XML", output, e);
+        }
+        catch (Error e) {
+            throw new XmlTestException("Failed to assert similar between XSLT output and expected XML", output, e);
+        }
         
         EasyMock.verify(targetComponent, transformerSource);
     }

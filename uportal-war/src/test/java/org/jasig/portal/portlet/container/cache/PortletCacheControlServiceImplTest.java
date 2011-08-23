@@ -29,11 +29,13 @@ import javax.portlet.MimeResponse;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.config.CacheConfiguration;
 
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.jasig.portal.mock.portlet.om.MockPortletDefinitionId;
 import org.jasig.portal.mock.portlet.om.MockPortletEntityId;
 import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
+import org.jasig.portal.portlet.container.CacheControlImpl;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
@@ -250,5 +252,25 @@ public class PortletCacheControlServiceImplTest {
 		
 		CacheControl control = cacheControlService.getPortletRenderCacheControl(portletWindowId, httpRequest);
 		assertTrue(control.isPublicScope());
+	}
+	
+	@Test
+	public void testFindMinimumTTL() {
+		PortletCacheControlServiceImpl cacheControlService = new PortletCacheControlServiceImpl();
+		CacheConfiguration cacheConfig = new CacheConfiguration();
+		cacheConfig.setTimeToLiveSeconds(1800L);
+		CacheControl cacheControl = new CacheControlImpl();
+		// cacheControl expiration time unset, fail safe to cache config value
+		Assert.assertEquals(1800, cacheControlService.findMinimumCacheTTL(cacheConfig, cacheControl));
+		
+		cacheControl.setExpirationTime(60);
+		// cacheControl expiration time lesser, use it
+		Assert.assertEquals(60, cacheControlService.findMinimumCacheTTL(cacheConfig, cacheControl));
+		cacheControl.setExpirationTime(1800);
+		// identical
+		Assert.assertEquals(1800, cacheControlService.findMinimumCacheTTL(cacheConfig, cacheControl));
+		// cacheControl expiration time greater than cache, use cache config value
+		cacheConfig.setTimeToLiveSeconds(900L);
+		Assert.assertEquals(900, cacheControlService.findMinimumCacheTTL(cacheConfig, cacheControl));
 	}
 }

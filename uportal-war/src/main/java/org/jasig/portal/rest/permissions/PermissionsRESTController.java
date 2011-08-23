@@ -353,8 +353,8 @@ public class PermissionsRESTController {
         }
 
         IAuthorizationService authService = AuthorizationImpl.singleton();
-        IAuthorizationPrincipal p = authService.newPrincipal(target, IEntityGroup.class);
-        JsonEntityBean entity = groupListHelper.getEntityForPrincipal(p.getPrincipalString());
+        JsonEntityBean entity = groupListHelper.getEntityForPrincipal(target);
+        IAuthorizationPrincipal p = authService.newPrincipal(entity.getId(), entity.getEntityType().getClazz());
         
         Set<UniquePermission> inheritedAssignments = new HashSet<UniquePermission>();
         if (includeInherited) {

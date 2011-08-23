@@ -80,14 +80,14 @@ public interface IPortletCacheControlService {
 	CachedPortletData getCachedPortletResourceOutput(IPortletWindowId portletWindowId, HttpServletRequest httpRequest);
 	
 	/**
-	 * This method checks the portlet configuration and request to determine if the output should be captured
+	 * This method checks the {@link CacheControl} to determine if the output should be captured
 	 * for caching.
 	 * 
 	 * @param portletWindowId
 	 * @param httpRequest
-	 * @return true if the output of the portlet render should be captured for caching
+	 * @return true if the {@link CacheControl} indicates the output should be cached
 	 */
-	boolean shouldOutputBeCached(IPortletWindowId portletWindowId, HttpServletRequest httpRequest);
+	boolean shouldOutputBeCached(CacheControl cacheControl);
 	
 	/**
 	 * Store the output of a render request in the cache for the portlet and request. This method internally will determine

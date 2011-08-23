@@ -155,8 +155,13 @@ up.jQuery(function() {
 
         var submitForm = function(){
             var form = this;
+            if (!principalSuggest.getValue() || !permissionSuggest.getValue()) {
+                alert("<spring:message code="please.choose.principal.and.permission.from.the.autocomplete.menus"/>");
+                return false;
+            }
             form.principal.value = principalSuggest.getValue();
             form.activity.value = permissionSuggest.getValue();
+            return true;
         };
 
         var principalSuggest = up.Autocomplete(

@@ -30,6 +30,7 @@ import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.LayoutEventListener;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
+import org.jasig.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType;
 import org.w3c.dom.Document;
 
 
@@ -191,14 +192,21 @@ public class ImmutableUserLayoutManagerWrapper implements IUserLayoutManager {
         return man.getSubscribeId(fname);
     }
 
-    /**
+    /*
+	 * @see org.jasig.portal.layout.IUserLayoutManager#getSubscribeId(java.lang.String, java.lang.String)
+	 */
+	public String getSubscribeId(String parentFolderId, String fname) {
+		return man.getSubscribeId(parentFolderId, fname);
+	}
+
+	/**
      * A factory method to create an empty <code>IUserLayoutNodeDescription</code> instance
      *
      * @param nodeType a node type value
      * @return an <code>IUserLayoutNodeDescription</code> instance
      * @exception PortalException if the error occurs.
      */
-    public IUserLayoutNodeDescription createNodeDescription( int nodeType ) throws PortalException {
+    public IUserLayoutNodeDescription createNodeDescription( LayoutNodeType nodeType ) throws PortalException {
          return man.createNodeDescription(nodeType);
     }
 

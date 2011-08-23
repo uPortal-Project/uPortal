@@ -237,7 +237,7 @@ public abstract class UserLayoutNodeDescription implements IUserLayoutNodeDescri
      *
      * @return a type
      */
-    public abstract int getType();
+    public abstract LayoutNodeType getType();
 
 
     /**

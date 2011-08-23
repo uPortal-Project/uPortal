@@ -29,6 +29,7 @@ import static org.junit.Assert.assertNotNull;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
+import org.jasig.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType;
 import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
@@ -104,6 +105,7 @@ public class PortalUrlProviderImplTest {
         when(userInstance.getPreferencesManager()).thenReturn(preferencesManager);
         when(preferencesManager.getUserLayoutManager()).thenReturn(userLayoutManager);
         when(userLayoutManager.getNode(folderNodeId)).thenReturn(node);
+        when(node.getType()).thenReturn(LayoutNodeType.FOLDER);
         when(urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request)).thenReturn(urlNodeSyntaxHelper);
         when(urlNodeSyntaxHelper.getDefaultLayoutNodeId(request)).thenReturn(folderNodeId);
         
@@ -140,6 +142,7 @@ public class PortalUrlProviderImplTest {
         when(userInstance.getPreferencesManager()).thenReturn(preferencesManager);
         when(preferencesManager.getUserLayoutManager()).thenReturn(userLayoutManager);
         when(userLayoutManager.getNode(folderNodeId)).thenReturn(node);
+        when(node.getType()).thenReturn(LayoutNodeType.FOLDER);
         
         //Run the test
         final IPortalUrlBuilder urlBuilder = portalUrlProvider.getPortalUrlBuilderByLayoutNode(request, folderNodeId, UrlType.RENDER);
@@ -173,6 +176,11 @@ public class PortalUrlProviderImplTest {
     public void testGetPortalUrlBuilderByPortletLayoutNode() {
         //Setup mock objects
         when(urlProviderLayoutHelper.getDefaultLayoutNodeId(request)).thenReturn(folderNodeId);
+        when(userInstanceManager.getUserInstance(request)).thenReturn(userInstance);
+        when(userInstance.getPreferencesManager()).thenReturn(preferencesManager);
+        when(preferencesManager.getUserLayoutManager()).thenReturn(userLayoutManager);
+        when(userLayoutManager.getNode(folderNodeId)).thenReturn(node);
+        when(node.getType()).thenReturn(LayoutNodeType.PORTLET);
         when(portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, folderNodeId)).thenReturn(portletWindow);
         when(portletWindow.getPortletWindowId()).thenReturn(portletWindowId);
         

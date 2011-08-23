@@ -289,7 +289,7 @@
 /* list */
 .up-autocomplete-dropdown .up-autocomplete-matches {max-height: 250px; overflow: auto;}
 .up-autocomplete-dropdown .up-autocomplete-matches,
-.up-autocomplete-dropdown .up-autocomplete-matches li {padding: 0; margin: 0; list-style: none;}
+.up-autocomplete-dropdown .up-autocomplete-matches li {padding: 5px; margin: 0; list-style: none;}
 /* anchors */
 .up-autocomplete-dropdown .up-autocomplete-matches a {display: block; padding:0; text-decoration:none;}
 /* loader */

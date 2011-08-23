@@ -59,7 +59,10 @@ public interface IUrlNodeSyntaxHelper {
     public String getFolderNameForPortlet(HttpServletRequest request, IPortletWindowId portletWindowId);
     /**
      * Determine the targeted portlet window from the specified folder name
+     * 
+     * @param targetedLayoutNodeId Layout node id targeted by the current request, null if no layout node was targeted
+     * @param folderName the folder from the URL 
      */
-    public IPortletWindowId getPortletForFolderName(HttpServletRequest request, String folderName);
+    public IPortletWindowId getPortletForFolderName(HttpServletRequest request, String targetedLayoutNodeId, String folderName);
 
 }

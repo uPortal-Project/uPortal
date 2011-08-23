@@ -207,24 +207,12 @@ public class PortletRendererImpl implements IPortletRenderer {
     @Override
     public PortletRenderResult doRenderMarkup(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Writer writer) {
     	CachedPortletData cachedPortletData = this.portletCacheControlService.getCachedPortletRenderOutput(portletWindowId, httpServletRequest);
-    	
-    	// 1st cache control test: expiration based
-    	// confirm no etag
-    	if(cachedPortletData != null && cachedPortletData.getEtag() == null && !cachedPortletData.isExpired()) {
-    		// generate PortletRenderResult from cachedPortletData		
-        	final long renderStartTime = System.currentTimeMillis();
-        	PrintWriter printWriter = new PrintWriter(writer);
-            // send cached String data
-        	final String stringData = cachedPortletData.getStringData();
-        	if(null != stringData) {
-        		printWriter.write(stringData.toCharArray());
-        	}
-    					
-    		PortletRenderResult result = constructPortletRenderResult(httpServletRequest, System.currentTimeMillis() - renderStartTime);
-    		return result;
+    	if(cachedPortletData != null && !cachedPortletData.isExpired()) {
+    		// regardless if etag is set or not, we need to replay cachedPortlet Data if it's not expired
+    		return doRenderMarkupReplayCachedContent(httpServletRequest, writer, cachedPortletData);
     	}
     	
-    	// 2nd cache control test: validation based
+    	// cached data is either null or expired
     	// have to invoke PortletContainer#doRender
     	
     	// check cacheControl AFTER portlet render to see if the portlet said "useCachedContent"
@@ -238,21 +226,14 @@ public class PortletRendererImpl implements IPortletRenderer {
         
         boolean useCachedContent = cacheControl.useCachedContent();
         boolean cachedPortletDataNotNull = cachedPortletData != null;
-        boolean cachedPortletDataNotExpired = cachedPortletDataNotNull && !cachedPortletData.isExpired();
+        // we actually don't care if the content is expired at this point, the two prior fields will tell us if the portlet wants us to replay cached content
         if(logger.isDebugEnabled()) {
-        	logger.debug(portletWindowId + " useCachedContent=" + useCachedContent + ", cachedPortletDataNotNull=" + cachedPortletDataNotNull + ", cachedPortletDataNotExpired=" + cachedPortletDataNotExpired);
+        	logger.debug(portletWindowId + " useCachedContent=" + useCachedContent + ", cachedPortletDataNotNull=" + cachedPortletDataNotNull);
         }
-        if(useCachedContent && cachedPortletDataNotNull && cachedPortletDataNotExpired) {
-        	// generate PortletRenderResult from cachedPortletData		
-        	final long renderStartTime = System.currentTimeMillis();
-        	PrintWriter printWriter = new PrintWriter(writer);
-            // send cached String data
-    		printWriter.write(cachedPortletData.getStringData().toCharArray());
-    					
-    		result = constructPortletRenderResult(httpServletRequest, System.currentTimeMillis() - renderStartTime);
-    		return result;
+        if(useCachedContent && cachedPortletDataNotNull) {
+    		return doRenderMarkupReplayCachedContent(httpServletRequest, writer, cachedPortletData);
         } else {
-        	boolean shouldCache = this.portletCacheControlService.shouldOutputBeCached(portletWindowId, httpServletRequest);
+        	boolean shouldCache = this.portletCacheControlService.shouldOutputBeCached(cacheControl);
         	// put the captured content in the cache
         	if(shouldCache && !captureWriter.isLimitExceeded()) {
         		this.portletCacheControlService.cachePortletRenderOutput(portletWindowId, httpServletRequest, captureWriter.toString(), cacheControl);
@@ -262,6 +243,26 @@ public class PortletRendererImpl implements IPortletRenderer {
         }	
     }
     
+    /**
+     * Replay the cached content inside the {@link CachedPortletData} as the response to a doRenderMarkup.
+     * 
+     * @param httpServletRequest
+     * @param writer
+     * @param cachedPortletData
+     * @param portletWindow
+     * @return the {@link PortletRenderResult}
+     */
+    protected PortletRenderResult doRenderMarkupReplayCachedContent(HttpServletRequest httpServletRequest, Writer writer, CachedPortletData cachedPortletData) {
+    	// generate PortletRenderResult from cachedPortletData		
+    	final long renderStartTime = System.currentTimeMillis();
+    	PrintWriter printWriter = new PrintWriter(writer);
+        // send cached String data
+    	if(null != cachedPortletData.getStringData()) {
+    		printWriter.write(cachedPortletData.getStringData().toCharArray());
+    	}		
+		PortletRenderResult result = constructPortletRenderResult(httpServletRequest, System.currentTimeMillis() - renderStartTime);
+		return result;
+    }
     /**
      * Internal method to invoke {@link PortletContainer#doRender(org.apache.pluto.container.PortletWindow, HttpServletRequest, HttpServletResponse)}.
      * 
@@ -392,14 +393,12 @@ public class PortletRendererImpl implements IPortletRenderer {
 			HttpServletResponse httpServletResponse) {
 		final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
 		CachedPortletData cachedPortletData = this.portletCacheControlService.getCachedPortletResourceOutput(portletWindowId, httpServletRequest);
-    	
-    	// 1st cache control test: expiration based
-    	// confirm no etag
-    	if(cachedPortletData != null && cachedPortletData.getEtag() == null && !cachedPortletData.isExpired()) {
+    	if(cachedPortletData != null && !cachedPortletData.isExpired()) {
+    		// regardless if etag is set or not, we need to replay cachedPortlet Data if it's not expired
     		return doServeResourceCachedOutput(httpServletRequest, httpServletResponse, cachedPortletData, portletWindow);
     	}
 		
-    	// 2nd cache control test: validation based
+    	// cached data is either null or expired
     	// have to invoke PortletContainer#doServeResource
     	
     	// check cacheControl AFTER portlet serveResource to see if the portlet said "useCachedContent"
@@ -418,11 +417,11 @@ public class PortletRendererImpl implements IPortletRenderer {
 			
 			boolean useCachedContent = cacheControl.useCachedContent();
 	        boolean cachedPortletDataNotNull = cachedPortletData != null;
-	        boolean cachedPortletDataNotExpired = cachedPortletDataNotNull && !cachedPortletData.isExpired();
+	        // we actually don't care if the content is expired at this point, the two prior fields will tell us if the portlet wants us to replay cached content
 	        if(logger.isDebugEnabled()) {
-	        	logger.debug(portletWindowId + " useCachedContent=" + useCachedContent + ", cachedPortletDataNotNull=" + cachedPortletDataNotNull + ", cachedPortletDataNotExpired=" + cachedPortletDataNotExpired);
+	        	logger.debug(portletWindowId + " useCachedContent=" + useCachedContent + ", cachedPortletDataNotNull=" + cachedPortletDataNotNull);
 	        }
-	        if(useCachedContent && cachedPortletDataNotNull && cachedPortletDataNotExpired) {
+	        if(useCachedContent && cachedPortletDataNotNull) {
 	        	// the portlet could theoretically set an etag but write to the response erroneously
 	        	// check that the response hasn't already been written/committed
 	        	if(responseWrapper.isCommitted()) {
@@ -430,7 +429,7 @@ public class PortletRendererImpl implements IPortletRenderer {
 	        	}
 	        	return doServeResourceCachedOutput(httpServletRequest, responseWrapper, cachedPortletData, portletWindow);
 	        } else {
-	        	boolean shouldCache = this.portletCacheControlService.shouldOutputBeCached(portletWindowId, httpServletRequest);
+	        	boolean shouldCache = this.portletCacheControlService.shouldOutputBeCached(cacheControl);
 	        	// put the captured content in the cache
 	        	if(shouldCache && !captureStream.isThresholdExceeded()) {
 	        		this.portletCacheControlService.cachePortletResourceOutput(portletWindowId, httpServletRequest, captureStream.getCapturedContent(), responseWrapper.getContentType(), responseWrapper.getCapturedHeaders(), cacheControl);
@@ -463,7 +462,8 @@ public class PortletRendererImpl implements IPortletRenderer {
 		long start = System.currentTimeMillis();
 		
 		final String ifNoneMatch = httpServletRequest.getHeader("If-None-Match");
-		if(StringUtils.isNotBlank(ifNoneMatch) && ifNoneMatch.equals(cachedPortletData.getEtag())) {
+		final String etag = cachedPortletData.getEtag();
+		if(StringUtils.isNotBlank(ifNoneMatch) && ifNoneMatch.equals(etag)) {
 			// browser already has the content! send a 304
 			httpServletResponse.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
 			return System.currentTimeMillis() - start;
@@ -477,6 +477,11 @@ public class PortletRendererImpl implements IPortletRenderer {
 			for(String value: headerValues) {
 				httpServletResponse.addHeader(headerName, value);
 			}
+		}
+		
+		//Set the ETag again
+		if (etag != null) {
+			httpServletResponse.setHeader("ETag", etag);
 		}
 		
 		try {

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<stylesheet-descriptor xmlns="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:ns2="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns4="https://source.jasig.org/schemas/uportal" xmlns:ns5="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/user" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor/stylesheet-descriptor-4.0.xsd">
+    <name>DLMTabsColumns</name>
+    <description>Presents the DLM layout in terms of tabs and columns</description>
+    <uri>classpath:/layout/structure/columns/columns.xsl</uri>
+    <url-syntax-helper>SingleTabUrlNodeSyntaxHelper</url-syntax-helper>
+    <stylesheet-parameter>
+        <name>userLayoutRoot</name>
+        <scope>REQUEST</scope>
+        <description>The id of the focused layout element</description>
+    </stylesheet-parameter>
+    <stylesheet-parameter>
+        <name>defaultTab</name>
+        <default-value>1</default-value>
+        <scope>PERSISTENT</scope>
+        <description>The number of the DLM tab that is initially active</description>
+    </stylesheet-parameter>
+    <stylesheet-parameter>
+        <name>focusedTabID</name>
+        <scope>REQUEST</scope>
+        <description>The number of the DLM tab that is currently active</description>
+    </stylesheet-parameter>
+    <stylesheet-parameter>
+        <name>detached</name>
+        <default-value>false</default-value>
+        <scope>REQUEST</scope>
+        <description>If the request is for a detached portlet</description>
+    </stylesheet-parameter>
+    <layout-attribute>
+        <name>name</name>
+        <scope>SESSION</scope>
+        <description>Allow renaming a folder without having to reload the underlying layout DOM (this seems like a hack)</description>
+        <targetElement>folder</targetElement>
+    </layout-attribute>
+    <layout-attribute>
+        <name>width</name>
+        <default-value>100%</default-value>
+        <scope>PERSISTENT</scope>
+        <description>Width of a DLM column</description>
+        <targetElement>folder</targetElement>
+    </layout-attribute>
+    <layout-attribute>
+        <name>externalId</name>
+        <scope>PERSISTENT</scope>
+        <description>Identifier used to reference a tab externally, such as within a URL</description>
+        <targetElement>folder</targetElement>
+    </layout-attribute>
+    <layout-attribute>
+        <name>tabGroup</name>
+        <default-value>DEFAULT_TABGROUP</default-value>
+        <scope>PERSISTENT</scope>
+        <description>Allows the theme to sort tabs into groups (optional feature)</description>
+        <targetElement>folder</targetElement>
+    </layout-attribute>
+</stylesheet-descriptor>

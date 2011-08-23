@@ -79,6 +79,8 @@
             </sql>
             <parameter value="${valueOf(name)}"/>
             <subtasks>
+                <with-attribute key="MEMBER_COUNT" value="${valueOf(count(children/*))}">
+                <if test="${jexl(MEMBER_COUNT > 0)}">
                 <sql-transaction>
                     <sql-statement sql="DELETE FROM UP_GROUP_MEMBERSHIP WHERE GROUP_ID = ?">
                         <parameter value="${GROUP_ID}" />
@@ -105,6 +107,8 @@
                         </with>
                     </node-iterator>
                 </sql-transaction>
+                </if>
+                </with-attribute>
             </subtasks>
         </sql-query>
     </when>
