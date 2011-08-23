@@ -359,7 +359,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 		<!-- Buttons -->
     <div class="buttons">
     	<a class="button primary" href="${ saveUrl }"><spring:message code="save"/></a>
-    	<c:if test="${supportsConfig and portlet.id < 0}">
+    	<c:if test="${supportsConfig and portlet.id == null}">
     	   <a class="button primary" href="${ saveAndConfigUrl }"><spring:message code="save.and.configure"/></a>
     	</c:if>
     	<a class="button" href="${ cancelUrl }"><spring:message code="cancel"/></a>
