@@ -1987,11 +1987,11 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         }
 
         public Set<IPortletDefinitionParameter> getParameters() {
-            return null;
+            return Collections.emptySet();
         }
 
         public Map<String, IPortletDefinitionParameter> getParametersAsUnmodifiableMap() {
-            return null;
+            return Collections.emptyMap();
         }
 
         public Date getPublishDate() {

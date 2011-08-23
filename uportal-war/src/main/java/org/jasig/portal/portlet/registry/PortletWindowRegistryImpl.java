@@ -484,14 +484,19 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
 
         for (final String channelSubscribeId : allSubscribedChannels) {
             final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(request, userInstance, channelSubscribeId);
+            if (portletEntity == null) {
+                this.logger.debug("No portlet entity found for layout node {} for user {}", channelSubscribeId, userInstance.getPerson().getUserName());
+                continue;
+            }
             
             final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
             final IPortletWindow portletWindow = this.getOrCreateDefaultPortletWindow(request, portletEntityId);
-            if(portletWindow != null) {
-            	allLayoutWindows.add(portletWindow);
-            } else {
-            	this.logger.debug("skipping null result for getOrCreateDefaultPortletWindow on " + portletEntityId);
+            if (portletWindow == null) {
+                this.logger.debug("No portlet window found for {}", portletEntity);
+                continue;
             }
+            
+        	allLayoutWindows.add(portletWindow);
         }
         
         return allLayoutWindows;
