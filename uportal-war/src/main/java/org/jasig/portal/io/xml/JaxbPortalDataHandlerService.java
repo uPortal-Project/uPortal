@@ -571,6 +571,22 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
     }
 
     protected BufferedXMLEventReader createSourceXmlEventReader(final Source source) {
+        //If it is a StAXSource see if we can do better handling of it
+        if (source instanceof StAXSource) {
+            final StAXSource staxSource = (StAXSource)source;
+            XMLEventReader xmlEventReader = staxSource.getXMLEventReader();
+            if (xmlEventReader != null) {
+                if (xmlEventReader instanceof BufferedXMLEventReader) {
+                    final BufferedXMLEventReader bufferedXMLEventReader = (BufferedXMLEventReader)xmlEventReader;
+                    bufferedXMLEventReader.reset();
+                    bufferedXMLEventReader.mark(-1);
+                    return bufferedXMLEventReader;
+                }
+                
+                return new BufferedXMLEventReader(xmlEventReader, -1);
+            }
+        }
+        
         final XMLInputFactory xmlInputFactory = this.xmlUtilities.getXmlInputFactory();
         final XMLEventReader xmlEventReader;
         try {
@@ -756,6 +772,8 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
 		if(data == null) {
 			logger.info("portalDataExporter#deleteData returned null for typeId " + typeId + " and dataId " + dataId );
 		}
+		
+		throw new UnsupportedOperationException("Data Deletion is NOT supported");
 	}
     
     /**

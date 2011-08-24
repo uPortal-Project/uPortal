@@ -20,23 +20,32 @@
 package org.jasig.portal.rest;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.StartElement;
+import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.io.xml.IPortalDataHandlerService;
+import org.jasig.portal.io.xml.PortalDataKey;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.services.AuthorizationService;
+import org.jasig.portal.xml.StaxUtils;
+import org.jasig.portal.xml.XmlUtilities;
+import org.jasig.portal.xml.stream.BufferedXMLEventReader;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -60,7 +69,13 @@ public class ImportExportController {
     
     private IPersonManager personManager;
     private IPortalDataHandlerService portalDataHandlerService;
-    
+    private XmlUtilities xmlUtilities;
+
+    @Autowired
+    public void setXmlUtilities(XmlUtilities xmlUtilities) {
+        this.xmlUtilities = xmlUtilities;
+    }
+
     @Autowired
     public void setPersonManager(IPersonManager personManager) {
     	this.personManager = personManager;
@@ -71,33 +86,47 @@ public class ImportExportController {
         this.portalDataHandlerService = portalDataHandlerService;
     }
 
-    /**
-     * 
-     * @param entityFile
-     * @param request
-     * @param response
-     * @throws DocumentException
-     * @throws IOException
-     */
     @RequestMapping(value="/import", method = RequestMethod.POST)
     public void importEntity(@RequestParam("file") MultipartFile entityFile, 
-    		HttpServletRequest request, HttpServletResponse response) throws DocumentException, IOException {
-
-        // TODO: Permissions logic should be moved into the DAO layer
-        Document doc = new org.dom4j.io.SAXReader().read(entityFile.getInputStream());
-        final String entityType = doc.getRootElement().getName();
+    		HttpServletRequest request, HttpServletResponse response) throws IOException, XMLStreamException {
+        
+        //Get a StAX reader for the source to determine info about the data to import
+        final BufferedXMLEventReader bufferedXmlEventReader = createSourceXmlEventReader(entityFile);
+        final PortalDataKey portalDataKey = getPortalDataKey(bufferedXmlEventReader);
 
         final IPerson person = personManager.getPerson(request);
 		final EntityIdentifier ei = person.getEntityIdentifier();
 	    final IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-	    if (!ap.hasPermission("UP_SYSTEM", "IMPORT_ENTITY", entityType)) {
+	    if (!ap.hasPermission("UP_SYSTEM", "IMPORT_ENTITY", portalDataKey.getName().getLocalPart())) {
 	    	response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 	    	return;
 	    }
 
-	    portalDataHandlerService.importData(new InputStreamResource(entityFile.getInputStream(), entityFile.getName()));
+	    portalDataHandlerService.importData(new StAXSource(bufferedXmlEventReader));
 
         response.setStatus(HttpServletResponse.SC_OK);
+    }
+    
+    protected BufferedXMLEventReader createSourceXmlEventReader(MultipartFile multipartFile) throws IOException {
+        final InputStream inputStream = multipartFile.getInputStream();
+        final String name = multipartFile.getOriginalFilename();
+        
+        final XMLInputFactory xmlInputFactory = this.xmlUtilities.getXmlInputFactory();
+        final XMLEventReader xmlEventReader;
+        try {
+            xmlEventReader = xmlInputFactory.createXMLEventReader(name, inputStream);
+        }
+        catch (XMLStreamException e) {
+            throw new RuntimeException("Failed to create XML Event Reader for data Source", e);
+        }
+        return new BufferedXMLEventReader(xmlEventReader, -1);
+    }
+
+    protected PortalDataKey getPortalDataKey(final BufferedXMLEventReader bufferedXmlEventReader) {
+        final StartElement rootElement = StaxUtils.getRootElement(bufferedXmlEventReader);
+        final PortalDataKey portalDataKey = new PortalDataKey(rootElement);
+        bufferedXmlEventReader.reset();
+        return portalDataKey;
     }
     
     /**
@@ -108,12 +137,6 @@ public class ImportExportController {
      * a string that may be used as a unique identifier, but is dependent on the 
      * entity type.  For example, to delete the "demo" user one might use the 
      * path /entity/user/demo.
-     * 
-     * @param entityType
-     * @param entityId
-     * @param request
-     * @param response
-     * @throws IOException
      */
     @RequestMapping(value="/entity/{entityType}/{entityId}", method = RequestMethod.DELETE)
 	public void deleteEntity(@PathVariable("entityType") String entityType,
@@ -135,22 +158,12 @@ public class ImportExportController {
     	response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
 
-    /**
-     * 
-     * @param entityId
-     * @param entityType
-     * @param download
-     * @param request
-     * @param response
-     * @throws DocumentException
-     * @throws IOException
-     */
     @RequestMapping(value="/entity/{entityType}/{entityId}", method = RequestMethod.GET)
     public void exportEntity(@PathVariable("entityId") String entityId,
     		@PathVariable("entityType") String entityType,
     		@RequestParam(value="download", required=false) boolean download,
             HttpServletRequest request, HttpServletResponse response)
-            throws DocumentException, IOException {
+            throws IOException {
     	
 		final IPerson person = personManager.getPerson(request);
 		final EntityIdentifier ei = person.getEntityIdentifier();
@@ -162,18 +175,16 @@ public class ImportExportController {
 	    	response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 	    	return;
 	    }
+	    
+	    //Export the data into a string buffer
+	    final StringWriter exportBuffer = new StringWriter();
+	    final String fileName = portalDataHandlerService.exportData(entityType, entityId, new StreamResult(exportBuffer));
         
-	    // if the download boolean is set to true, set the response to be
-	    // downloaded as an attachment
-	    StreamResult result = new StreamResult();
-	    result.setOutputStream(response.getOutputStream());
 	    if (download) {
-	    	String fileName = entityId.concat(".").concat(entityType);
-	    	response.setHeader( "Content-Disposition", "attachment; filename=\"" + fileName + "\"" );
+	    	response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "." + entityType + ".xml\"");
 	    }
 	    
-	    // get the task associated with exporting this entity type 
-	    portalDataHandlerService.exportData(entityType, entityId, result);
+	    final PrintWriter responseWriter = response.getWriter();
+	    responseWriter.print(exportBuffer.getBuffer());
     }
-
 }
