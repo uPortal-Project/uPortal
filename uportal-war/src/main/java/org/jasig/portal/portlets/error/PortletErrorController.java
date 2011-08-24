@@ -38,7 +38,6 @@ import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
-import org.jasig.portal.portlet.rendering.PortletExecutionManager;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.url.IPortalRequestUtils;
@@ -62,8 +61,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 public class PortletErrorController {
-    public static final String REQUEST_ATTRIBUTE__CURRENT_FAILED_PORTLET_WINDOW_ID = PortletExecutionManager.class.getName() + ".CURRENT_FAILED_PORTLET_WINDOW_ID";
-    public static final String REQUEST_ATTRIBUTE__CURRENT_EXCEPTION_CAUSE = PortletExecutionManager.class.getName() + ".CURRENT_EXCEPTION_CAUSE";
+    public static final String REQUEST_ATTRIBUTE__CURRENT_FAILED_PORTLET_WINDOW_ID = PortletErrorController.class.getName() + ".CURRENT_FAILED_PORTLET_WINDOW_ID";
+    public static final String REQUEST_ATTRIBUTE__CURRENT_EXCEPTION_CAUSE = PortletErrorController.class.getName() + ".CURRENT_EXCEPTION_CAUSE";
 
 	protected static final String ERROR_OWNER = "UP_ERROR_CHAN";
 	protected static final String ERROR_ACTIVITY = "VIEW";

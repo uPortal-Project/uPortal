@@ -87,7 +87,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 /**
- * uPortal's approach to event coordination is to simply queue the events and rely on the {@link PortletExecutionManager}
+ * uPortal's approach to event coordination is to simply queue the events and rely on the {@link IPortletExecutionManager}
  * to handle event execution. What this class does is for each {@link #processEvents(PortletContainer, PortletWindow, HttpServletRequest, HttpServletResponse, List)}
  * request from the portlet container is to add them to a Queue scoped to the portal's request.
  * 

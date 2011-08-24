@@ -279,8 +279,11 @@ public class PortletRendererImpl implements IPortletRenderer {
         httpServletRequest = this.setupPortletRequest(httpServletRequest);
         httpServletResponse = this.setupPortletResponse(httpServletResponse);
         
-    	//Set the writer to capture the response
-        httpServletRequest.setAttribute(ATTRIBUTE__PORTLET_PRINT_WRITER, new PrintWriter(writer));
+    	//Set the writer to capture the response if not exclusive
+        //exclusive state writes the content directly to the response
+        if (!EXCLUSIVE.equals(portletWindow.getWindowState())) {
+            httpServletRequest.setAttribute(ATTRIBUTE__PORTLET_PRINT_WRITER, new PrintWriter(writer));
+        }
         
         //Execute the action, 
         if (this.logger.isDebugEnabled()) {
