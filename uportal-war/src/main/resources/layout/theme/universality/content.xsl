@@ -130,7 +130,7 @@
 				            <xsl:with-param name="url">
 				                <url:portal-url>
 				                    <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-				                    <url:portlet-url state="NORMAL" />
+				                    <url:portlet-url state="NORMAL" copyCurrentRenderParameters="true" />
 				                </url:portal-url>
 				            </xsl:with-param>
 				          </xsl:call-template>
@@ -148,7 +148,7 @@
 				            <xsl:with-param name="url">
 				                <url:portal-url>
 				                    <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-				                    <url:portlet-url state="MINIMIZED" />
+				                    <url:portlet-url state="MINIMIZED" copyCurrentRenderParameters="true" />
 				                </url:portal-url>
 				            </xsl:with-param>
 				          </xsl:call-template>
@@ -169,7 +169,7 @@
                     <xsl:with-param name="url">
                         <url:portal-url>
                             <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                            <url:portlet-url state="MAXIMIZED" />
+                            <url:portlet-url state="MAXIMIZED" copyCurrentRenderParameters="true" />
                         </url:portal-url>
                     </xsl:with-param>
                   </xsl:call-template>
@@ -241,7 +241,7 @@
             <xsl:with-param name="url">
                 <url:portal-url>
                     <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                    <url:portlet-url mode="HELP" />
+                    <url:portlet-url mode="HELP" copyCurrentRenderParameters="true" />
                 </url:portal-url>
             </xsl:with-param>
           </xsl:call-template>
@@ -259,7 +259,7 @@
             <xsl:with-param name="url">
                 <url:portal-url>
                     <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                    <url:portlet-url mode="ABOUT" />
+                    <url:portlet-url mode="ABOUT" copyCurrentRenderParameters="true" />
                 </url:portal-url>
             </xsl:with-param>
           </xsl:call-template>
@@ -277,7 +277,7 @@
             <xsl:with-param name="url">
                 <url:portal-url>
                     <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                    <url:portlet-url mode="EDIT" />
+                    <url:portlet-url mode="EDIT" copyCurrentRenderParameters="true" />
                 </url:portal-url>
             </xsl:with-param>
           </xsl:call-template>
@@ -295,7 +295,7 @@
             <xsl:with-param name="url">
                 <url:portal-url>
                     <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                    <url:portlet-url mode="PRINT" />
+                    <url:portlet-url mode="PRINT" copyCurrentRenderParameters="true" />
                 </url:portal-url>
             </xsl:with-param>
           </xsl:call-template>
@@ -313,7 +313,7 @@
             <xsl:with-param name="url">
                 <url:portal-url>
                     <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                    <url:portlet-url state="MAXIMIZED" />
+                    <url:portlet-url state="MAXIMIZED" copyCurrentRenderParameters="true" />
                 </url:portal-url>
             </xsl:with-param>
           </xsl:call-template>
@@ -349,7 +349,7 @@
             <xsl:with-param name="url">
                 <url:portal-url>
                     <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                    <url:portlet-url state="NORMAL" />
+                    <url:portlet-url state="NORMAL" copyCurrentRenderParameters="true" />
                 </url:portal-url>
             </xsl:with-param>
           </xsl:call-template>

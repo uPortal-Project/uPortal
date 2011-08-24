@@ -33,7 +33,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import javax.portlet.ActionRequest;
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
@@ -64,24 +63,25 @@ import com.google.common.collect.Sets;
  */
 @Component("portalUrlProvider")
 public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
-    public static final String SEPARATOR = "_";
-    public static final String PORTAL_PARAM_PREFIX                  = "uP" + SEPARATOR;
+    static final String SEPARATOR = "_";
+    static final String PORTAL_PARAM_PREFIX                  = "u" + SEPARATOR;
 
-    public static final String PORTLET_CONTROL_PREFIX               = "plC";
-    public static final String PORTLET_PARAM_PREFIX                 = "plP" + SEPARATOR;
-    public static final String PORTLET_PUBLIC_RENDER_PARAM_PREFIX   = "plG" + SEPARATOR;
-    public static final String PARAM_TARGET_PORTLET                 = PORTLET_CONTROL_PREFIX + "t";
-    public static final String PARAM_ADDITIONAL_PORTLET             = PORTLET_CONTROL_PREFIX + "a";
-    public static final String PARAM_DELEGATE_PARENT                = PORTLET_CONTROL_PREFIX + "d";
-    public static final String PARAM_RESOURCE_ID                    = PORTLET_CONTROL_PREFIX + "r";
-    public static final String PARAM_CACHEABILITY                   = PORTLET_CONTROL_PREFIX + "c";
-    public static final String PARAM_WINDOW_STATE                   = PORTLET_CONTROL_PREFIX + "s";
-    public static final String PARAM_PORTLET_MODE                   = PORTLET_CONTROL_PREFIX + "m";
+    static final String PORTLET_CONTROL_PREFIX               = "pC";
+    static final String PORTLET_PARAM_PREFIX                 = "pP" + SEPARATOR;
+    static final String PORTLET_PUBLIC_RENDER_PARAM_PREFIX   = "pG" + SEPARATOR;
+    static final String PARAM_TARGET_PORTLET                 = PORTLET_CONTROL_PREFIX + "t";
+    static final String PARAM_ADDITIONAL_PORTLET             = PORTLET_CONTROL_PREFIX + "a";
+    static final String PARAM_DELEGATE_PARENT                = PORTLET_CONTROL_PREFIX + "d";
+    static final String PARAM_RESOURCE_ID                    = PORTLET_CONTROL_PREFIX + "r";
+    static final String PARAM_CACHEABILITY                   = PORTLET_CONTROL_PREFIX + "c";
+    static final String PARAM_WINDOW_STATE                   = PORTLET_CONTROL_PREFIX + "s";
+    static final String PARAM_PORTLET_MODE                   = PORTLET_CONTROL_PREFIX + "m";
+    static final String PARAM_COPY_PARAMETERS                = PORTLET_CONTROL_PREFIX + "p";
     
-    public static final String SLASH = "/";
-    public static final String PORTLET_PATH_PREFIX = "p";
-    public static final String FOLDER_PATH_PREFIX = "f";
-    public static final String REQUEST_TYPE_SUFFIX = ".uP";
+    static final String SLASH = "/";
+    static final String PORTLET_PATH_PREFIX = "p";
+    static final String FOLDER_PATH_PREFIX = "f";
+    static final String REQUEST_TYPE_SUFFIX = ".uP";
     
     private static final Pattern SLASH_PATTERN = Pattern.compile(SLASH);
     private static final String PORTAL_CANONICAL_URL = UrlSyntaxProviderImpl.class.getName() + ".PORTAL_CANONICAL_URL";
@@ -439,6 +439,17 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                             portletRequestInfo.setPortletMode(PortletUtils.getPortletMode(values.get(0)));
                             break;
                         }
+                        case COPY_PARAMETERS: {
+                            final Map<String, List<String>> portletParameters = portletRequestInfo.getPortletParameters();
+                            
+                            final IPortletWindowId portletRequestInfoWindowId = portletRequestInfo.getPortletWindowId();
+                            final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletRequestInfoWindowId);
+                            final Map<String, String[]> renderParameters = portletWindow.getRenderParameters();
+                            
+                            ParameterMap.putAllList(portletParameters, renderParameters);
+                            
+                            break;
+                        }
                         default: {
                             //Uhoh, a new SuffixedPortletParameter was added without updating this switch block, don't fail but log a warning
                             this.logger.warn("Programming Error: An unknown SuffixedPortletParameter " + name + " was seen in the UrlSyntaxProvider, it will be ignored. ALL possible SuffixedPortletParameter should be handled. " + suffixedPortletParameter);
@@ -484,7 +495,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                     parameters = portalRequestInfo.getPortalParameters();
                 }
                 
-                ParameterMap.putAll(parameters, parameterMap);
+                ParameterMap.putAllList(parameters, parameterMap);
             }
             
             //If a portlet is targeted but no layout node is targeted must be maximized
@@ -852,15 +863,13 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                 break;
             }
         }
+        
+        if (portletUrlBuilder.getCopyCurrentRenderParameters()) {
+            url.addParameter(PARAM_COPY_PARAMETERS + suffixedPortletWindowId);
+        }
             
         final Map<String, String[]> parameters = portletUrlBuilder.getParameters();
-        if (targeted && statelessUrl && parameters.isEmpty()) {
-            //TODO need a way to designate portlet API generated urls and portal api generated urls 
-//            portletWindow = portletWindow != null ? portletWindow : this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
-//            final Map<String, String[]> currentParameters = portletWindow.getRenderParameters();
-//            url.addParametersArray(PORTLET_PARAM_PREFIX + suffixedPortletWindowId, currentParameters);
-        }
-        else if (!parameters.isEmpty()) {
+        if (!parameters.isEmpty()) {
             url.addParametersArray(PORTLET_PARAM_PREFIX + suffixedPortletWindowId, parameters);
         }
     }

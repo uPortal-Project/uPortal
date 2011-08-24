@@ -76,6 +76,22 @@ class FailSafePortletUrlBuilder implements IPortletUrlBuilder {
     public void setParameters(Map<String, List<String>> parameters) {
         //NOOP
     }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.url.IPortletUrlBuilder#setCopyCurrentRenderParameters(boolean)
+     */
+    @Override
+    public void setCopyCurrentRenderParameters(boolean copyCurrentRenderParameters) {
+        //NOOP
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.url.IPortletUrlBuilder#getCopyCurrentRenderParameters()
+     */
+    @Override
+    public boolean getCopyCurrentRenderParameters() {
+        return false;
+    }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IUrlBuilder#getParameters()

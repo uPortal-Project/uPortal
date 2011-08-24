@@ -47,6 +47,7 @@ class PortletUrlBuilder extends AbstractUrlBuilder implements IPortletUrlBuilder
     private PortletMode portletMode = null;
     private String resourceId = null;
     private String cacheability = null;
+    private boolean copyCurrentRenderParameters = false;
     
     public PortletUrlBuilder(IPortletWindowId portletWindowId, IPortalUrlBuilder portalUrlBuilder) {
         Preconditions.checkNotNull(portletWindowId, "IPortletWindowId can not be null");
@@ -79,6 +80,22 @@ class PortletUrlBuilder extends AbstractUrlBuilder implements IPortletUrlBuilder
     @Override
     public IPortalUrlBuilder getPortalUrlBuilder() {
         return this.portalUrlBuilder;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.url.IPortletUrlBuilder#setCopyCurrentRenderParameters(boolean)
+     */
+    @Override
+    public void setCopyCurrentRenderParameters(boolean copyCurrentRenderParameters) {
+        this.copyCurrentRenderParameters = copyCurrentRenderParameters;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.url.IPortletUrlBuilder#getCopyCurrentRenderParameters()
+     */
+    @Override
+    public boolean getCopyCurrentRenderParameters() {
+        return this.copyCurrentRenderParameters;
     }
 
     /* (non-Javadoc)

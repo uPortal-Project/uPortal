@@ -77,7 +77,13 @@ public class ParameterMap extends LinkedHashMap<String, String[]> {
         final Map<String, List<String>> newMap = new LinkedHashMap<String, List<String>>();
         
         for (final Map.Entry<String, String[]> parameterEntry : parameterMap.entrySet()) {
-            newMap.put(parameterEntry.getKey(), Arrays.asList(parameterEntry.getValue()));
+            final String[] values = parameterEntry.getValue();
+            if (values == null) {
+                newMap.put(parameterEntry.getKey(), null);
+            }
+            else {
+                newMap.put(parameterEntry.getKey(), Arrays.asList(values));
+            }
         }
         
         return newMap;
@@ -99,9 +105,27 @@ public class ParameterMap extends LinkedHashMap<String, String[]> {
         return newMap;
     }
     
-    public static void putAll(Map<String, List<String>> dest, Map<String, String[]> src) {
+    public static void putAllList(Map<String, List<String>> dest, Map<String, String[]> src) {
         for (final Map.Entry<String, String[]> parameterEntry : src.entrySet()) {
-            dest.put(parameterEntry.getKey(), Arrays.asList(parameterEntry.getValue()));
+            final String[] values = parameterEntry.getValue();
+            if (values == null) {
+                dest.put(parameterEntry.getKey(), null);
+            }
+            else {
+                dest.put(parameterEntry.getKey(), Arrays.asList(values));
+            }
+        }
+    }
+    
+    public static void putAllArray(Map<String, String[]> dest, Map<String, List<String>> src) {
+        for (final Map.Entry<String, List<String>> parameterEntry : src.entrySet()) {
+            final List<String> values = parameterEntry.getValue();
+            if (values == null) {
+                dest.put(parameterEntry.getKey(), null);
+            }
+            else {
+                dest.put(parameterEntry.getKey(), values.toArray(new String[values.size()]));
+            }
         }
     }
     

@@ -382,7 +382,7 @@ public class UrlStringBuilder implements Serializable, Cloneable {
                 name = this.encode(name);
                 
                 if (values == null || values.size() == 0) {
-                    url.append(name).append("=");
+                    url.append(name);
                 }
                 else {
                     for (final Iterator<String> valueItr = values.iterator(); valueItr.hasNext(); ) {

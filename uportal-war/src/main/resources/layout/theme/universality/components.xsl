@@ -451,7 +451,7 @@
             <xsl:with-param name="url">
                 <url:portal-url>
                     <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                    <url:portlet-url state="MAXIMIZED" />
+                    <url:portlet-url state="MAXIMIZED" copyCurrentRenderParameters="true" />
                 </url:portal-url>
             </xsl:with-param>
         </xsl:call-template>

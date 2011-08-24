@@ -191,6 +191,7 @@ public class XsltPortalUrlProviderTest {
         
         verify(portletUrlBuilder).setWindowState(new WindowState("maximized"));
         verify(portletUrlBuilder).addParameter("tmp", "blah");
+        verify(portletUrlBuilder).setCopyCurrentRenderParameters(false);
         verifyNoMoreInteractions(portletUrlBuilder);
         
         final String result = resultWriter.getBuffer().toString();
@@ -237,10 +238,12 @@ public class XsltPortalUrlProviderTest {
         verifyNoMoreInteractions(portalUrlBuilder);
         
         verify(portletUrlBuilder).addParameter("tmp", "blah");
+        verify(portletUrlBuilder).setCopyCurrentRenderParameters(false);
         verifyNoMoreInteractions(portletUrlBuilder);
         
         verify(portletUrlBuilder2).setWindowState(new WindowState("minimized"));
         verify(portletUrlBuilder2).addParameter("event", "param");
+        verify(portletUrlBuilder2).setCopyCurrentRenderParameters(false);
         verifyNoMoreInteractions(portletUrlBuilder2);
         
         final String result = resultWriter.getBuffer().toString();
