@@ -42,7 +42,7 @@
     </parameter>
     <parameter>
         <name>mobileIconUrl</name>
-        <value>/uPortal/media/skins/icons/mobile/search.png</value>
+        <value>/media/skins/icons/mobile/search.png</value>
     </parameter>
     <portlet-preference>
         <name>searchEngines</name>

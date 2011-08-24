@@ -111,7 +111,7 @@
     
         <!-- WAR Dependency Version Properties -->
         <BookmarksPortlet.version>1.0.10</BookmarksPortlet.version>
-        <CalendarPortlet.version>2.0.0-RC2</CalendarPortlet.version>
+        <CalendarPortlet.version>2.0.0-RC3-SNAPSHOT</CalendarPortlet.version>
         <CoursesPortlet.version>1.0.0-M1</CoursesPortlet.version>
         <cas-server.version>3.4.8</cas-server.version>
         <cas-clearpass.version>1.0.7.GA</cas-clearpass.version>
@@ -120,7 +120,7 @@
         <jasig-widget-portlets.version>1.0.0-RC3</jasig-widget-portlets.version>
         <googleportlet.version>0.4</googleportlet.version>
         <MapPortlet.version>1.0.0-M1</MapPortlet.version>
-        <NewsReaderPortlet.version>3.0.0-RC3</NewsReaderPortlet.version>
+        <NewsReaderPortlet.version>3.0.0-RC4-SNAPSHOT</NewsReaderPortlet.version>
         <SimpleContentPortlet.version>1.0.0</SimpleContentPortlet.version>
         <WeatherPortlet.version>1.0.8</WeatherPortlet.version>
         <WebProxyPortlet.version>1.1.6</WebProxyPortlet.version>
