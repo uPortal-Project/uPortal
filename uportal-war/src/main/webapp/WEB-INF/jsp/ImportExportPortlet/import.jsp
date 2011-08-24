@@ -113,6 +113,30 @@
                             </tr>
                         </table>
                         <div class="flc-uploader-total-progress fl-uploader-total-progress-okay">&nbsp;</div>
+                        <div class="flc-uploader-errorsPanel fl-uploader-errorsPanel">
+                             <div class="fl-uploader-errorsPanel-header"><span class="flc-uploader-errorPanel-header">Warnings:</span></div>
+            
+                             <!-- The markup for each error section will be rendered into these containers. -->
+                             <div class="flc-uploader-errorPanel-section-fileSize"></div>
+                             <div class="flc-uploader-errorPanel-section-numFiles"></div>
+                             
+                             <!-- Error section template.-->
+                             <div class="flc-uploader-errorPanel-section-tmplt fl-uploader-hidden-templates">
+                                 <div class="flc-uploader-errorPanel-section-title fl-uploader-errorPanel-section-title">
+                                     x files were too y and were not added to the queue.
+                                 </div>
+                                 
+                                 <div class="flc-uploader-errorPanel-section-details fl-uploader-errorPanel-section-details">
+                                     <p>The following files were not added:</p>
+                                     <p class="flc-uploader-errorPanel-section-files">file_1, file_2, file_3, file_4, file_5 </p>
+                                 </div>
+                                 
+                                 <button type="button" class="flc-uploader-errorPanel-section-toggleDetails fl-uploader-errorPanel-section-toggleDetails">Hide this list</button>
+                                 <button type="button" class="flc-uploader-errorPanel-section-removeButton fl-uploader-errorPanel-section-removeButton">
+                                     <span class="flc-uploader-erroredButton-text fl-uploader-hidden">Remove error</span>
+                                 </button>
+                             </div>
+                         </div> 
                     </div>
                 </div>
                 
