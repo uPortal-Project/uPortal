@@ -56,6 +56,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.util.WebUtils;
 
 /**
@@ -66,7 +67,9 @@ import org.springframework.web.util.WebUtils;
  * @version $Revision$
  */
 @Service("portletExecutionManager")
-public class PortletExecutionManager implements ApplicationEventPublisherAware, IPortletExecutionManager {
+public class PortletExecutionManager extends HandlerInterceptorAdapter
+        implements ApplicationEventPublisherAware, IPortletExecutionManager {
+    
     private static final long DEBUG_TIMEOUT = TimeUnit.HOURS.toMillis(1);
     private static final String PORTLET_HEADER_RENDERING_MAP = PortletExecutionManager.class.getName() + ".PORTLET_HEADER_RENDERING_MAP";
 	private static final String PORTLET_RENDERING_MAP = PortletExecutionManager.class.getName() + ".PORTLET_RENDERING_MAP";
@@ -121,6 +124,21 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
         this.applicationEventPublisher = applicationEventPublisher;
     }
     
+    
+
+    /* (non-Javadoc)
+     * @see org.springframework.web.servlet.handler.HandlerInterceptorAdapter#afterCompletion(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.Object, java.lang.Exception)
+     */
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
+            throws Exception {
+
+        final Map<IPortletWindowId, IPortletRenderExecutionWorker> portletHeaderRenderingMap = this.getPortletHeaderRenderingMap(request);
+        final Map<IPortletWindowId, IPortletRenderExecutionWorker> portletRenderingMap = this.getPortletRenderingMap(request);
+        
+        System.out.println("Found " + portletHeaderRenderingMap.size() + " header workers and " + portletRenderingMap.size() + " render workers");
+    }
+
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#doPortletAction(org.jasig.portal.portlet.om.IPortletEntityId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
