@@ -202,24 +202,15 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
             return this.future.get(timeout - (System.currentTimeMillis() - startTime), TimeUnit.MILLISECONDS);
         }
         catch (InterruptedException e) {
-            this.logger.warn("Execution failed on portlet " + this.portletWindowId, e);
+            this.logger.warn("Execution interrupted on portlet window " + this.portletWindowId, e);
             throw e;
         }
         catch (ExecutionException e) {
-            this.logger.warn("Execution failed on portlet " + this.portletWindowId, e);
+            this.logger.warn("Execution failed on portlet window " + this.portletWindowId, e);
             throw e;
         }
         catch (TimeoutException e) {
-            /* TODO
-             * timeout handling
-             *  render ErrorPortlet
-             *  mark soft-timeout in request/response, this only allows content output
-             *  wait for configured grace period
-             *  mark hard-timeout in request/response, any API fails
-             *  call future.cancel(true)
-             */
-            this.logger.warn("Execution failed on portlet " + this.portletWindowId, e);
-            this.future.cancel(true);
+            this.logger.warn("Execution timed out on portlet window " + this.portletWindowId, e);
             throw e;
         }
     }
