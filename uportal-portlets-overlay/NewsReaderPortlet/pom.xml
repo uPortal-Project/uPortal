@@ -33,23 +33,22 @@
     
 
     <build>
+        <filters>
+            <filter>../../${filters.file}</filter>
+        </filters>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
-                    <filters>
-                        <filter>${basedir}/../../uportal-war/target/classes/properties/rdbm.properties</filter>
-                    </filters>
                     <dependentWarExcludes>
                         WEB-INF/lib/hsqldb-*.jar
                     </dependentWarExcludes>
-                    <webResources>
-                        <resource>
-                            <directory>${basedir}/src/main/resources</directory>
-                            <targetPath>WEB-INF/classes</targetPath>
-                            <filtering>true</filtering>
-                        </resource>
-                    </webResources>
                 </configuration>
             </plugin>
            <plugin>
