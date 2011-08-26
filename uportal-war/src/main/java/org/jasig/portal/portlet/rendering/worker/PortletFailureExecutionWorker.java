@@ -138,6 +138,14 @@ final class PortletFailureExecutionWorker implements IPortletFailureExecutionWor
     public void cancel() {
         //NOOP
     }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker#getCancelCount()
+     */
+    @Override
+    public int getCancelCount() {
+        return 0;
+    }
 
     protected synchronized void renderError(long timeout) {
         //Make sure the error rendering only happens once

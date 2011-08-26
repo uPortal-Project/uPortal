@@ -57,6 +57,11 @@ public interface IPortletExecutionWorker<V> extends IPortletExecutionContext {
     public void cancel();
     
     /**
+     * @return The number of times that cancel has been called.
+     */
+    public int getCancelCount();
+    
+    /**
      * @return true If {@link #get(long)} has been called
      */
     public boolean isRetrieved();

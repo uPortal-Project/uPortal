@@ -31,6 +31,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -61,6 +63,8 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
     private volatile long submitted = 0;
     private volatile long started = 0;
     private volatile long complete = 0;
+    private final AtomicInteger cancelCount = new AtomicInteger();
+    private final AtomicBoolean canceled = new AtomicBoolean();
     private volatile boolean retrieved = false;
     
     public PortletExecutionWorker(
@@ -70,8 +74,8 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
         this.executorService = executorService;
         this.interceptors = interceptors;
         this.portletRenderer = portletRenderer;
-        this.request = request;
-        this.response = response;
+        this.request = new GuardingHttpServletRequest(request, canceled);
+        this.response = new GuardingHttpServletResponse(response, canceled);
         this.portletWindowId = portletWindowId;
     }
 
@@ -183,7 +187,7 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
 
     @Override
     public boolean isComplete() {
-        return this.complete > 0;
+        return this.complete > 0 || (this.future != null && this.future.isDone());
     }
     
     @Override
@@ -240,6 +244,8 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
                 for (final StackTraceElement stackTraceElement : stackTrace) {
                     errorBuilder.append("\t\tat ").append(stackTraceElement).append("\n");
                 }
+                
+                errorBuilder.append("Portal Stack Trace:");
             }
             
             this.logger.warn(errorBuilder, e);
@@ -257,9 +263,25 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
             throw new IllegalStateException("submit() must be called before cancel() can be called");
         }
         
+        //Mark worker as retrieved
         this.retrieved = true;
 
+        //Notify the guarding req/res wrappers that cancel has been called
+        this.canceled.set(true);
+        
+        //Cancel the future, interuppting the thread
         this.future.cancel(true);
+        
+        //Track the number of times cancel has been called
+        this.cancelCount.incrementAndGet();
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker#getCancelCount()
+     */
+    @Override
+    public final int getCancelCount() {
+        return this.cancelCount.get();
     }
 
     /* (non-Javadoc)
@@ -302,7 +324,6 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
         return this.complete - this.started;
     }
     
-    
 
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker#toString()
@@ -314,7 +335,9 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
                     "started=" + this.started + ", " +
                     "submitted=" + this.submitted + ", " +
                     "complete=" + this.complete + ", " +
-                    "retrieved=" + this.retrieved+ ", " +
+                    "retrieved=" + this.retrieved + ", " +
+                    "canceled=" + this.canceled + ", " +
+                    "cancelCount=" + this.cancelCount + ", " +
                     "wait=" + this.getWait() + ", " +
                     "duration=" + this.getDuration() + "]";
     }

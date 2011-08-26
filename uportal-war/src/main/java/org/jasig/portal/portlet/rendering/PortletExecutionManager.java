@@ -168,13 +168,20 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         }
         
         if (!portletRenderExecutionWorker.isComplete()) {
-            final IPortletWindowId portletWindowId = portletRenderExecutionWorker.getPortletWindowId();
-            final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
-            this.logger.warn("Portlet worker has not completed, adding to hung-worker cleanup queue: " + portletWindow);
-
-            portletRenderExecutionWorker.cancel();
-            hungWorkers.offer(portletRenderExecutionWorker);
+            cancelWorker(request, portletRenderExecutionWorker);
         }
+    }
+
+    /**
+     * Cancel the worker and add it to the hung workers queue
+     */
+    protected void cancelWorker(HttpServletRequest request, IPortletExecutionWorker<?> portletExecutionWorker) {
+        final IPortletWindowId portletWindowId = portletExecutionWorker.getPortletWindowId();
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
+        this.logger.warn(portletExecutionWorker + " has not completed, adding to hung-worker cleanup queue: " + portletWindow);
+
+        portletExecutionWorker.cancel();
+        hungWorkers.offer(portletExecutionWorker);
     }
     
     @Scheduled(fixedRate=200)
@@ -192,6 +199,12 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
             }
             //If the worker is still running cancel it
             else {
+                //Log a warning about the worker once every 30 seconds or so
+                final int cancelCount = worker.getCancelCount();
+                if (cancelCount % 150 == 0) {
+                    this.logger.warn(worker + " is still hung, cancel has been called " + cancelCount + " times");
+                }
+                
                 worker.cancel();
             }
         }
@@ -227,8 +240,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         
         //If the worker is still running add it to the hung-workers queue
         if (!portletActionExecutionWorker.isComplete()) {
-            portletActionExecutionWorker.cancel();
-            this.hungWorkers.offer(portletActionExecutionWorker);
+            cancelWorker(request, portletActionExecutionWorker);
         }
 		
 		final PortletEventQueue portletEventQueue = this.eventCoordinationService.getPortletEventQueue(request);
@@ -330,8 +342,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         
         //If the worker is still running add it to the hung-workers queue
         if (!eventWorker.isComplete()) {
-            eventWorker.cancel();
-            this.hungWorkers.offer(eventWorker);
+            cancelWorker(request, eventWorker);
         }
     }
     
@@ -441,8 +452,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         
         //If the worker is still running add it to the hung-workers queue
         if (!resourceWorker.isComplete()) {
-            resourceWorker.cancel();
-            this.hungWorkers.offer(resourceWorker);
+            cancelWorker(request, resourceWorker);
         }
 	}
 	
