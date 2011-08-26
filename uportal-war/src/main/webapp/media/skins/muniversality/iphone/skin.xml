@@ -36,6 +36,9 @@
 
   <!-- Support for legacy uPortal css classes. -->
   <css>legacy.css</css>
+  
+  <!-- Some overrides to the jquery-ui css. -->
+  <css>portal.css</css>
 
   <!-- Visual style for portlet content. An extension of the uportal3 skin. -->
   <css>../../universality/uportal3/portlet.css</css>
