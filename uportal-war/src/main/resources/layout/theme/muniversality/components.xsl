@@ -119,7 +119,7 @@
 <xsl:template name="mobile.header">
     <div class="flc-screenNavigator-navbar fl-navbar fl-table">
         <div class="fl-table-row">
-            <h1 class="fl-table-cell">uPortal Mobile</h1>
+            <h1 class="fl-table-cell"><xsl:value-of select="$TOKEN[@name='PORTAL_NAME']"/></h1>
             <div class="fl-table-cell up-mobile-nav">
                 <xsl:call-template name="mobile.auth.link"/>
             </div>
@@ -252,7 +252,7 @@
 | Only those with knowledge of xsl should configure this template.
 -->
 <xsl:template name="mobile.channel.title.focused">
-    <h1 class="fl-table-cell up-mobile-nav" style="display:none">uPortal Mobile</h1>
+    <h1 class="fl-table-cell up-mobile-nav" style="display:none"><xsl:value-of select="$TOKEN[@name='PORTAL_NAME']"/></h1>
     <h1 class="fl-table-cell up-mobile-focus">
         <xsl:value-of select="content/focused/channel/@name" />
     </h1>
