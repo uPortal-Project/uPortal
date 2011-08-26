@@ -12,6 +12,12 @@ public final class LayoutStoreProvider {
     private Task lookupNoderefTask;
     
     private RDBMDistributedLayoutStore layoutStore = null;
+    
+    public LayoutStoreProvider() {}
+    
+    public LayoutStoreProvider(RDBMDistributedLayoutStore layoutStore) {
+        this.layoutStore = layoutStore;
+    }
 
     public void setLookupNoderefTask(Task k) {
         this.lookupNoderefTask = k;

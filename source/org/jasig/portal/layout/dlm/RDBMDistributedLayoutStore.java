@@ -772,11 +772,12 @@ public class RDBMDistributedLayoutStore
             tr.setAttribute(Attributes.RETURN_VALUE, rvi);
             tr.setAttribute("USER_NAME", layoutOwnerUsername);
             tr.setAttribute("DLM_NODEREF", dlmNoderef);
+            tr.setAttribute("layoutStoreProvider", new LayoutStoreProvider(this));
             this.lookupNoderefTask.perform(tr, new RuntimeRequestResponse());
             
             rslt = (String[]) rvi.getValue();
         }
-        
+
         return rslt;
 
     }
@@ -990,7 +991,6 @@ public class RDBMDistributedLayoutStore
     private FragmentDefinition getOwnedFragment( IPerson person )
     {
         int userId = person.getID();
-        
         if ( definitions != null )
         {
             for( int i=0; i<definitions.length; i++ )
@@ -1013,14 +1013,13 @@ public class RDBMDistributedLayoutStore
     {
         Vector applicables = new Vector();
         
-        if ( definitions != null )
-        {
-            for( int i=0; i<definitions.length; i++ )
-                if ( definitions[i].isApplicable(person) )
-                {
+        if ( definitions != null ) {
+            for( int i=0; i<definitions.length; i++ ) {
+                if ( definitions[i].isApplicable(person) ) {
                     applicables.add( definitions[i].view.layout );
                 }
-        }
+            }
+        } 
 
         Document PLF = (Document) person.getAttribute( Constants.PLF );
 
@@ -1034,7 +1033,8 @@ public class RDBMDistributedLayoutStore
         PLFIntegrator.mergePLFintoILF( PLF, ILF, result );
         
         // push optimizations made during merge back into db.
-        if( result.changedPLF )
+        boolean readThisComment = false; // THIS BEHAVIOR IS A REALLY BAD IDEA FOR AN EXPORT BRANCH.  (A config that's not quite correct can harm data)
+        if( readThisComment && result.changedPLF )
         {
             super.setUserLayout( person, profile, PLF, false );
         }

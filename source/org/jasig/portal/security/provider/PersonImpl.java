@@ -150,6 +150,20 @@ public class PersonImpl implements IPerson {
     m_ID = sID;
   }
 
+  /* (non-Javadoc)
+   * @see org.jasig.portal.security.IPerson#getUserName()
+   */
+  public String getUserName() {
+      return (String)this.getAttribute(IPerson.USERNAME);
+  }
+
+  /* (non-Javadoc)
+   * @see org.jasig.portal.security.IPerson#setUserName(java.lang.String)
+   */
+  public void setUserName(String userName) {
+      this.setAttribute(IPerson.USERNAME, userName);
+  }
+
   /**
    * Returns the user's name that was established during authentication.
    * Correlates to cn (common name) in the eduPerson 1.0 specification.

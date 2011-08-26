@@ -11,7 +11,7 @@
     <!-- layout -->
     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('layout'))}">
         <sql-query>
-            <sql>SELECT user_id FROM up_user WHERE user_name = ?</sql>
+            <sql>SELECT user_id, user_name FROM up_user WHERE user_name = ?</sql>
             <parameter value="${SYSID}"/>
             <subtasks>
                 <with-attribute key="LAYOUT_DOC" value="${crn(export-layout.crn)}">
