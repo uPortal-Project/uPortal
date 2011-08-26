@@ -272,6 +272,7 @@ html { background-color:#E6EEFB; }
 .up .dashboard .up-portlet-controls .print { background:transparent url("images/print.gif") 0 0 no-repeat; }
 .up .dashboard .up-portlet-controls .focus { background:transparent url("images/focus.gif") 0 0 no-repeat; }
 .up .dashboard .up-portlet-controls .remove { background:transparent url("images/remove.gif") 0 0 no-repeat; }
+.up .dashboard .up-portlet-controls .restart { background:transparent url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/arrow_refresh.png") 0 0 no-repeat; }
 .up .dashboard .up-portlet-controls .add { background:transparent url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/application_add.png") 0 0 no-repeat; }
 .up .dashboard .up-portlet-controls span { visibility:hidden; font-size:0; padding-top:12px; padding-bottom:4px; }
 .up .up-portlet-content-wrapper { margin:0; background-color:#fff; border-left:1px solid #B1C6F2; border-right:1px solid #B1C6F2; border-bottom:1px solid #B1C6F2; }

@@ -144,6 +144,12 @@
   <!-- This template renders portlet controls.  Each control has a unique class for assigning icons or other specific presentation. -->
   <xsl:template name="controls">
     <div class="up-portlet-controls">
+    
+      <xsl:if test="./parameter[@name='allowRestart']/@value='true'"> <!-- Restart. -->
+		<a href="render.userLayoutRootNode.target.{@ID}.uP" title="{$TOKEN[@name='PORTLET_RESTART_LONG_LABEL']}" class="up-portlet-control restart">
+			<span><xsl:value-of select="$TOKEN[@name='PORTLET_RESTART_LABEL']"/></span>
+		</a>
+	  </xsl:if>
       <xsl:if test="not(@hasHelp='false')"> <!-- Help. -->
       	<a href="{$BASE_ACTION_URL}?uP_help_target={@ID}#{@ID}" title="{$TOKEN[@name='PORTLET_HELP_LONG_LABEL']}" class="up-portlet-control help">
       	  <span><xsl:value-of select="$TOKEN[@name='PORTLET_HELP_LABEL']"/></span>

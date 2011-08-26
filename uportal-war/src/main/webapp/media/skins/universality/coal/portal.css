@@ -331,6 +331,8 @@ html,
 .up .up-portlet-controls .remove:hover {background-position:-64px -16px;}
 .up .up-portlet-controls .add {background-position:-80px 0;}
 .up .up-portlet-controls .add:hover {background-position:-80px -16px;}
+.up .up-portlet-controls .restart { background:transparent url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/arrow_refresh.png") 0 0 no-repeat; }
+
 .up .up-portlet-controls .up-portlet-control span {display:none;}
 /* No Chrome */
 .up .no-chrome .up-portlet-content-wrapper {padding:1em; background-color:#fff; border:1px solid #333;}
