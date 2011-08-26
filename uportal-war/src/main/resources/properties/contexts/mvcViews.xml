@@ -32,8 +32,6 @@
            
     <bean name="jsonView" class="net.sf.json.spring.web.servlet.view.JsonView"/>
     
-    <bean name="xmlView" class="org.jasig.portal.spring.web.servlet.view.XmlView"/>
-    
     <bean name="sitemapView" class="org.springframework.web.servlet.view.xslt.XsltView">
         <property name="sourceKey" value="source" />
         <property name="url" value="classpath:/org/jasig/portal/portlets/sitemap/sitemap.xsl" />

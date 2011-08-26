@@ -194,7 +194,12 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
             return portletRegistryService.getPortlet(portletDescriptorKeys.first, portletDescriptorKeys.second);
         }
         catch (PortletContainerException e) {
-            this.logger.warn("No portlet descriptor could be found for the portlet definition, null will be returned: " + portletDefinition, e);
+            if (this.logger.isDebugEnabled()) {
+                this.logger.warn("No portlet descriptor could be found for the portlet definition, null will be returned: " + portletDefinition, e);
+            }
+            else {
+                this.logger.warn("No portlet descriptor could be found for the portlet definition, null will be returned: " + portletDefinition + " Enable DEBUG for stack trace.");
+            }
             return null;
         }
     }

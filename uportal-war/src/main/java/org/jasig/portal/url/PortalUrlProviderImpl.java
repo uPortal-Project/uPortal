@@ -113,26 +113,32 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider {
      */
     @Override
     public IPortalUrlBuilder getPortalUrlBuilderByLayoutNode(HttpServletRequest request, String layoutNodeId, UrlType urlType) {
-        final IPortletWindowId portletWindowId;
-        if (layoutNodeId != null) {
-            final LayoutNodeType layoutNodeType = this.getLayoutNodeType(request, layoutNodeId);
-            if (layoutNodeType == LayoutNodeType.PORTLET) {
-                final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, layoutNodeId);
-                portletWindowId = portletWindow.getPortletWindowId();
-            }
-            else if (layoutNodeType == null) {
-                throw new IllegalArgumentException("No layout node exists for id: " + layoutNodeId);
-            }
-            else {
-                portletWindowId = null;
-            }
-        }
-        else {
-            portletWindowId = null;
-        }
+        final IPortletWindowId portletWindowId = getPortletWindowId(request, layoutNodeId);
         
         return new PortalUrlBuilder(this.urlSyntaxProvider, request, layoutNodeId, portletWindowId, urlType);
     }
+
+    private IPortletWindowId getPortletWindowId(HttpServletRequest request, String layoutNodeId) {
+    	if (layoutNodeId == null) {
+    		return null;
+    	}
+    	
+        final LayoutNodeType layoutNodeType = this.getLayoutNodeType(request, layoutNodeId);
+        if (layoutNodeType == null) {
+            throw new IllegalArgumentException("No layout node exists for id: " + layoutNodeId);
+        }
+        
+        if (layoutNodeType != LayoutNodeType.PORTLET) {
+        	return null;
+        }
+        
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, layoutNodeId);
+        if (portletWindow == null) {
+        	return null;
+        }
+        
+        return portletWindow.getPortletWindowId();
+	}
 
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IPortalUrlProvider#getPortalUrlBuilderByPortletWindow(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindowId, org.jasig.portal.url.UrlType)

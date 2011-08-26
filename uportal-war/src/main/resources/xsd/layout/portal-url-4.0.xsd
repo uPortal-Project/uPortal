@@ -68,6 +68,7 @@
             <xs:extension base="baseUrlType">
                 <xs:attribute name="state" type="xs:string" />
                 <xs:attribute name="mode" type="xs:string" />
+                <xs:attribute name="copyCurrentRenderParameters" type="xs:boolean" default="false"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

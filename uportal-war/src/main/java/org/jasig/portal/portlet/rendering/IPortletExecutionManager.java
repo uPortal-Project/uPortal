@@ -52,9 +52,9 @@ public interface IPortletExecutionManager {
     public void doPortletAction(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
     
     /**
-     * @see #startPortletHeadRender(IPortletWindowId, HttpServletRequest, HttpServletResponse)
+     * @see #startPortletHeaderRender(IPortletWindowId, HttpServletRequest, HttpServletResponse)
      */
-    public void startPortletHeadRender(String subscribeId, HttpServletRequest request, HttpServletResponse response);
+    public void startPortletHeaderRender(String subscribeId, HttpServletRequest request, HttpServletResponse response);
 
     /**
      * Initiates the rendering worker for the portlet's HEAD output.
@@ -64,7 +64,7 @@ public interface IPortletExecutionManager {
      * @param request
      * @param response
      */
-    public void startPortletHeadRender(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
+    public void startPortletHeaderRender(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
     
     /**
      * @see #startPortletRender(IPortletWindowId, HttpServletRequest, HttpServletResponse)

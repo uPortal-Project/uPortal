@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.portlet.rendering.PortletExecutionManager;
+import org.jasig.portal.portlet.rendering.IPortletExecutionManager;
 import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;
@@ -50,7 +50,7 @@ public class PortalController {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     private IPortalRenderingPipeline portalRenderingPipeline;
-    private PortletExecutionManager portletExecutionManager;
+    private IPortletExecutionManager portletExecutionManager;
     private IPortalUrlProvider portalUrlProvider;
     private IUrlSyntaxProvider urlSyntaxProvider;
     
@@ -60,7 +60,7 @@ public class PortalController {
         this.portalRenderingPipeline = portalRenderingPipeline;
     }
     @Autowired
-    public void setPortletExecutionManager(PortletExecutionManager portletExecutionManager) {
+    public void setPortletExecutionManager(IPortletExecutionManager portletExecutionManager) {
         this.portletExecutionManager = portletExecutionManager;
     }
     @Autowired
@@ -73,8 +73,16 @@ public class PortalController {
     }
     
     @RequestMapping(headers={"org.jasig.portal.url.UrlType=RENDER", "org.jasig.portal.url.UrlState.EXCLUSIVE=true"})
-    public void renderExclusive(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        this.logger.debug("EXCLUSIVE REQUEST");
+    public void renderExclusive(HttpServletRequest request, HttpServletResponse response) {
+        final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
+        final IPortletRequestInfo portletRequestInfo = portalRequestInfo.getTargetedPortletRequestInfo();
+        
+        if (portletRequestInfo == null) {
+            throw new IllegalArgumentException("A portlet must be targeted when using the EXCLUSIVE WindowState: " + portalRequestInfo);
+        }
+        
+        final IPortletWindowId portletWindowId = portletRequestInfo.getPortletWindowId();
+        this.portletExecutionManager.getPortletOutput(portletWindowId, request, response);
     }
     
     @RequestMapping(headers={"org.jasig.portal.url.UrlType=RENDER"})

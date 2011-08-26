@@ -145,7 +145,7 @@ public class UrlSyntaxProviderImplTest {
         
         final String url = portalUrlBuilder.getUrlString();
         
-        assertEquals("/uPortal/f/n2/normal/render.uP?plCt=fname.s3", url);
+        assertEquals("/uPortal/f/n2/normal/render.uP?pCt=fname.s3", url);
     }
   
     @Test
@@ -176,7 +176,7 @@ public class UrlSyntaxProviderImplTest {
         
         final String url = portalUrlBuilder.getUrlString();
         
-        assertEquals("/uPortal/f/n2/p/fname.s3/detached/render.uP?plCm=edit", url);
+        assertEquals("/uPortal/f/n2/p/fname.s3/detached/render.uP?pCm=edit", url);
     }
 
     @Test
@@ -235,7 +235,7 @@ public class UrlSyntaxProviderImplTest {
         
         final String url = portalUrlBuilder.getUrlString();
                      
-        assertEquals("/uPortal/f/n2/normal/render.uP?plCt=fname.s3&plCs=minimized&plP_action=dashboard", url);
+        assertEquals("/uPortal/f/n2/normal/render.uP?pCt=fname.s3&pCs=minimized&pP_action=dashboard", url);
     }
 
     @Test
@@ -272,7 +272,7 @@ public class UrlSyntaxProviderImplTest {
         
         final String url = portalUrlBuilder.getUrlString();
                      
-        assertEquals("/uPortal/f/n2/normal/render.uP?plCt=fname.s3&plCs=minimized&plP_action=dashboard&plCa=pw2&plCm_pw2=help&plP_pw2_a=b&plP_pw2_b=c", url);
+        assertEquals("/uPortal/f/n2/normal/render.uP?pCt=fname.s3&pCs=minimized&pP_action=dashboard&pCa=pw2&pCm_pw2=help&pP_pw2_a=b&pP_pw2_b=c", url);
     }
     
     @Test
@@ -280,14 +280,14 @@ public class UrlSyntaxProviderImplTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/uPortal");
         request.setRequestURI("/f/n2/normal/render.uP");
-        request.setQueryString("?plCt=fname.s3&plCs=minimized&plP_action=dashboard&plCa=pw2&plCm_pw2=help&plP_pw2_a=b&plP_pw2_b=c");
-        request.addParameter("plCt", "fname.s3");
-        request.addParameter("plCs", "minimized");
-        request.addParameter("plP_action", "dashboard");
-        request.addParameter("plCa", "pw2");
-        request.addParameter("plCm_pw2", "help");
-        request.addParameter("plP_pw2_a", "b");
-        request.addParameter("plP_pw2_b", "c");
+        request.setQueryString("?pCt=fname.s3&pCs=minimized&pP_action=dashboard&pCa=pw2&pCm_pw2=help&pP_pw2_a=b&pP_pw2_b=c");
+        request.addParameter("pCt", "fname.s3");
+        request.addParameter("pCs", "minimized");
+        request.addParameter("pP_action", "dashboard");
+        request.addParameter("pCa", "pw2");
+        request.addParameter("pCm_pw2", "help");
+        request.addParameter("pP_pw2_a", "b");
+        request.addParameter("pP_pw2_b", "c");
         request.addParameter("postedParameter", "foobar");
         
         final MockPortletWindowId portletWindowId = new MockPortletWindowId("s3");
@@ -365,7 +365,7 @@ public class UrlSyntaxProviderImplTest {
         
         final String url = portalUrlBuilder.getUrlString();
                      
-        assertEquals("/uPortal/f/n2/normal/render.uP?plCt=fname.s3&plCs=minimized&plP_action=dashboard&plCa=pw2&plCd_pw2=pw1&plCm_pw2=help&plP_pw2_a=b&plP_pw2_b=c", url);
+        assertEquals("/uPortal/f/n2/normal/render.uP?pCt=fname.s3&pCs=minimized&pP_action=dashboard&pCa=pw2&pCd_pw2=pw1&pCm_pw2=help&pP_pw2_a=b&pP_pw2_b=c", url);
     }
     
     @Test
@@ -373,15 +373,15 @@ public class UrlSyntaxProviderImplTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/uPortal");
         request.setRequestURI("/f/n2/normal/render.uP");
-        request.setQueryString("?plCt=fname.s3&plCs=minimized&plP_action=dashboard&plCa=pw2&plCd_pw2=pw1&plCm_pw2=help&plP_pw2_a=b&plP_pw2_b=c");
-        request.addParameter("plCt", "fname.s3");
-        request.addParameter("plCs", "minimized");
-        request.addParameter("plP_action", "dashboard");
-        request.addParameter("plCa", "pw2");
-        request.addParameter("plCd_pw2", "pw1");
-        request.addParameter("plCm_pw2", "help");
-        request.addParameter("plP_pw2_a", "b");
-        request.addParameter("plP_pw2_b", "c");
+        request.setQueryString("?pCt=fname.s3&pCs=minimized&pP_action=dashboard&pCa=pw2&pCd_pw2=pw1&pCm_pw2=help&pP_pw2_a=b&pP_pw2_b=c");
+        request.addParameter("pCt", "fname.s3");
+        request.addParameter("pCs", "minimized");
+        request.addParameter("pP_action", "dashboard");
+        request.addParameter("pCa", "pw2");
+        request.addParameter("pCd_pw2", "pw1");
+        request.addParameter("pCm_pw2", "help");
+        request.addParameter("pP_pw2_a", "b");
+        request.addParameter("pP_pw2_b", "c");
         request.addParameter("postedParameter", "foobar");
         
         final MockPortletWindowId portletWindowId1 = new MockPortletWindowId("pw1");
@@ -428,12 +428,12 @@ public class UrlSyntaxProviderImplTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/uPortal");
         request.setRequestURI("/p/portlet-admin.ctf3/max/action.uP");
-        request.setQueryString("?plCa=71_dlg-44-ctf3-8_8&plCd_71_dlg-44-ctf3-8_8=44_ctf3_8&plP_71_dlg-44-ctf3-8_8_action=updateKey&plP_execution=e4s4&plP__eventId=configModeAction");
-        request.addParameter("plCa", "71_dlg-44-ctf3-8_8");
-        request.addParameter("plCd_71_dlg-44-ctf3-8_8", "44_ctf3_8");
-        request.addParameter("plP_71_dlg-44-ctf3-8_8_action", "updateKey");
-        request.addParameter("plP_execution", "e4s4");
-        request.addParameter("plP__eventId", "configModeAction");
+        request.setQueryString("?pCa=71_dlg-44-ctf3-8_8&pCd_71_dlg-44-ctf3-8_8=44_ctf3_8&pP_71_dlg-44-ctf3-8_8_action=updateKey&pP_execution=e4s4&pP__eventId=configModeAction");
+        request.addParameter("pCa", "71_dlg-44-ctf3-8_8");
+        request.addParameter("pCd_71_dlg-44-ctf3-8_8", "44_ctf3_8");
+        request.addParameter("pP_71_dlg-44-ctf3-8_8_action", "updateKey");
+        request.addParameter("pP_execution", "e4s4");
+        request.addParameter("pP__eventId", "configModeAction");
         request.addParameter("googleApiKey", "12345");
         
         final MockPortletWindowId portletWindowId1 = new MockPortletWindowId("44_ctf3_8");

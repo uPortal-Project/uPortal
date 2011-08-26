@@ -19,12 +19,8 @@
 
 package org.jasig.portal.jmx;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import org.jasig.portal.PortalException;
-import org.jasig.portal.ProblemsTable;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.services.Authentication;
 import org.jasig.portal.utils.MovingAverageSample;
@@ -45,6 +41,7 @@ public class FrameworkMBeanImpl implements FrameworkMBean {
      * Time/Data uPortal was started
      * @return Date
      */
+    @Override
     public Date getStartedAt() {
         return new Date(0); //PortalSessionManager.STARTED_AT;
     }
@@ -52,41 +49,38 @@ public class FrameworkMBeanImpl implements FrameworkMBean {
     /*
      * Track framework rendering performance
      */
+    @Override
     public long getRenderAverage() {
-        return getLastRender().average;
+        return this.getLastRender().average;
     }
 
+    @Override
     public long getRenderHighMax() {
-        return getLastRender().highMax;
+        return this.getLastRender().highMax;
     }
 
+    @Override
     public long getRenderLast() {
-        return getLastRender().lastSample;
+        return this.getLastRender().lastSample;
     }
 
+    @Override
     public long getRenderMin() {
-        return getLastRender().min;
+        return this.getLastRender().min;
     }
 
+    @Override
     public long getRenderMax() {
-        return getLastRender().max;
+        return this.getLastRender().max;
     }
 
+    @Override
     public long getRenderTotalRenders() {
-        return getLastRender().totalSamples;
+        return this.getLastRender().totalSamples;
     }
 
     public MovingAverageSample getLastRender() {
         return null;//StaticRenderingPipeline.getLastRenderSample();
-    }
-
-    public String[] getRecentProblems() {
-        final List<PortalException> rpe = ProblemsTable.getRecentPortalExceptions();
-        final ArrayList<String> al = new ArrayList<String>(rpe.size());
-        for (final PortalException pe : rpe) {
-            al.add(pe.getMessage());
-        }
-        return al.toArray(new String[al.size()]);
     }
 
     /*
@@ -96,34 +90,42 @@ public class FrameworkMBeanImpl implements FrameworkMBean {
         return RDBMServices.getLastDatabase();
     }
 
+    @Override
     public long getDatabaseAverage() {
-        return getLastDatabase().average;
+        return this.getLastDatabase().average;
     }
 
+    @Override
     public long getDatabaseHighMax() {
-        return getLastDatabase().highMax;
+        return this.getLastDatabase().highMax;
     }
 
+    @Override
     public long getDatabaseLast() {
-        return getLastDatabase().lastSample;
+        return this.getLastDatabase().lastSample;
     }
 
+    @Override
     public long getDatabaseMin() {
-        return getLastDatabase().min;
+        return this.getLastDatabase().min;
     }
 
+    @Override
     public long getDatabaseMax() {
-        return getLastDatabase().max;
+        return this.getLastDatabase().max;
     }
 
+    @Override
     public long getDatabaseTotalConnections() {
-        return getLastDatabase().totalSamples;
+        return this.getLastDatabase().totalSamples;
     }
 
+    @Override
     public int getRDBMActiveConnectionCount() {
         return RDBMServices.getActiveConnectionCount();
     }
-    
+
+    @Override
     public int getRDBMMaxConnectionCount() {
         return RDBMServices.getMaxConnectionCount();
     }
@@ -135,31 +137,38 @@ public class FrameworkMBeanImpl implements FrameworkMBean {
         return Authentication.lastAuthentication;
     }
 
+    @Override
     public long getAuthenticationAverage() {
         return Authentication.lastAuthentication.average;
     }
 
+    @Override
     public long getAuthenticationHighMax() {
         return Authentication.lastAuthentication.highMax;
     }
 
+    @Override
     public long getAuthenticationLast() {
         return Authentication.lastAuthentication.lastSample;
     }
 
+    @Override
     public long getAuthenticationMin() {
         return Authentication.lastAuthentication.min;
     }
 
+    @Override
     public long getAuthenticationMax() {
         return Authentication.lastAuthentication.max;
     }
 
+    @Override
     public long getAuthenticationTotalLogins() {
         return Authentication.lastAuthentication.totalSamples;
     }
 
     // Threads
+    @Override
     public long getThreadCount() {
         return -1;//PortalSessionManager.getThreadGroup().activeCount();
     }

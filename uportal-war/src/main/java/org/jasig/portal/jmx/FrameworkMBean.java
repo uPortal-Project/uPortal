@@ -31,8 +31,6 @@ public interface FrameworkMBean {
   public long getRenderMax();
   public long getRenderTotalRenders();
 
-  public String[] getRecentProblems();
-
   /* Database information */
   public int getRDBMActiveConnectionCount();
   public int getRDBMMaxConnectionCount();

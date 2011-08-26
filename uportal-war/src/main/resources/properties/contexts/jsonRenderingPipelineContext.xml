@@ -79,7 +79,7 @@
     </bean>
     
     <!-- portlet rendering initiation -->
-    <bean id="jsonPortletRenderingInitiationComponent" class="org.jasig.portal.rendering.PortletRenderingInitiationComponent">
+    <bean id="jsonPortletRenderingInitiationComponent" class="org.jasig.portal.rendering.PortletRenderingInitiationStAXComponent">
         <property name="wrappedComponent" ref="jsonStructureCachingComponent" />
     </bean>
     
@@ -207,9 +207,13 @@
         <property name="cache" ref="org.jasig.portal.rendering.THEME_TRANSFORM" />
     </bean>
     
+    <bean id="jsonPortletRenderingInitiationCharacterComponent" class="org.jasig.portal.rendering.PortletRenderingInitiationCharacterComponent">
+        <property name="wrappedComponent" ref="jsonThemeCachingComponent" />
+    </bean>
+    
     <!-- portlet content incorporation -->
     <bean id="jsonPortletRenderingIncorporationComponent" class="org.jasig.portal.rendering.PortletRenderingIncorporationComponent">
-        <property name="wrappedComponent" ref="jsonThemeCachingComponent" />
+        <property name="wrappedComponent" ref="jsonPortletRenderingInitiationCharacterComponent" />
     </bean>
     <bean id="jsonPortalRenderingPipeline" class="org.jasig.portal.json.rendering.JsonLayoutRenderingPipeline">
         <qualifier value="json"/>

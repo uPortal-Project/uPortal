@@ -170,7 +170,7 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
             	if(portletDefinition != null) {
             		portletDefs.add(portletDefinition);
             	} else {
-            		log.error("portletDefinition was null for groupMember key " + gm.getKey() );
+            		log.warn("portletDefinition was null for groupMember: " + gm );
             	}   
             }
         }

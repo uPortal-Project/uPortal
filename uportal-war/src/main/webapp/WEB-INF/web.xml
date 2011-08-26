@@ -223,15 +223,7 @@
     <filter-mapping>
         <filter-name>CharacterEncodingFilter</filter-name>
         <servlet-name>RenderingDispatcherServlet</servlet-name>
-    </filter-mapping>
-    
-    <filter-mapping>
-        <filter-name>CharacterEncodingFilter</filter-name>
         <servlet-name>JsonRenderingDispatcherServlet</servlet-name>
-    </filter-mapping>
-    
-    <filter-mapping>
-        <filter-name>CharacterEncodingFilter</filter-name>
         <servlet-name>MVCDispatcherServlet</servlet-name>
     </filter-mapping>
      
@@ -285,27 +277,11 @@
         <load-on-startup>3</load-on-startup>
     </servlet>
 
-    <!-- Uncomment this servlet and the corresponding servlet-mapping if ProxyWriter is enabled in portal.properties
-    <servlet>
-        <servlet-name>HttpProxyServlet</servlet-name>
-        <servlet-class>org.jasig.portal.HttpProxyServlet</servlet-class>
-    </servlet>
-    -->
-    <servlet>
-        <servlet-name>Problems</servlet-name>
-        <servlet-class>org.jasig.portal.Problems</servlet-class>
-    </servlet>
-
     <servlet>
         <servlet-name>Instrumentation</servlet-name>
         <servlet-class>org.jasig.portal.tools.checks.ChecksServlet</servlet-class>
     </servlet>
 
-    <servlet>
-        <servlet-name>UpdatePreferencesServlet</servlet-name>
-        <servlet-class>org.jasig.portal.layout.dlm.remoting.UpdatePreferencesServlet</servlet-class>
-    </servlet>
-    
     <!-- Supports view rendering -->
     <servlet>
         <servlet-name>ViewRendererServlet</servlet-name>
@@ -360,15 +336,6 @@
         <load-on-startup>0</load-on-startup>
     </servlet>
 
-    <servlet>
-        <servlet-name>ImportExportServlet</servlet-name>
-        <servlet-class>org.danann.cernunnos.runtime.web.CernunnosServlet</servlet-class>
-        <init-param>
-            <param-name>scriptLocation</param-name>
-            <param-value>ImportExportPortlet/doDownload</param-value>
-        </init-param>
-    </servlet>
-
     <!-- [INSERT JSPC FRAGMENT HERE] -->
 
     <servlet-mapping>
@@ -401,23 +368,8 @@
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>Problems</servlet-name>
-        <url-pattern>/problems</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
         <servlet-name>Instrumentation</servlet-name>
         <url-pattern>/instrumentation</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>UpdatePreferencesServlet</servlet-name>
-        <url-pattern>/ajax/preferences</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>ImportExportServlet</servlet-name>
-        <url-pattern>/ImportExportServlet/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

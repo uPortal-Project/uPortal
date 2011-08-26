@@ -112,27 +112,37 @@ public class XsltPortalUrlProvider {
     /**
      * Get the portlet URL builder for the specified fname or layoutId (fname takes precedence)
      */
-    public IPortletUrlBuilder getPortletUrlBuilder(HttpServletRequest request, IPortalUrlBuilder portalUrlBuilder, String fname, String layoutId, String state, String mode) {
+    public IPortletUrlBuilder getPortletUrlBuilder(HttpServletRequest request, IPortalUrlBuilder portalUrlBuilder, String fname, String layoutId, String state, String mode, String copyCurrentRenderParameters) {
         final IPortletUrlBuilder portletUrlBuilder;
+        
+        final IPortletWindow portletWindow;
         if (StringUtils.isNotEmpty(fname)) {
-            final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByFname(request, fname);
+            portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByFname(request, fname);
             final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
             portletUrlBuilder = portalUrlBuilder.getPortletUrlBuilder(portletWindowId);
         }
         else if (StringUtils.isNotEmpty(layoutId)) {
-            final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, layoutId);
+            portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, layoutId);
             final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
             portletUrlBuilder = portalUrlBuilder.getPortletUrlBuilder(portletWindowId);
         }
         else {
             final IPortletWindowId targetPortletWindowId = portalUrlBuilder.getTargetPortletWindowId();
             if (targetPortletWindowId == null) {
-                this.logger.warn("Can only target the default portlet if the root portal-url targets a portlet.", new Throwable());
+            	if (this.logger.isDebugEnabled()) {
+            		this.logger.warn("Can only target the default portlet if the root portal-url targets a portlet.", new Throwable());
+            	}
+            	else {
+            		this.logger.warn("Can only target the default portlet if the root portal-url targets a portlet. Enable debug for stack trace.");
+            	}
                 return new FailSafePortletUrlBuilder(null, portalUrlBuilder);
             }
 
             portletUrlBuilder = portalUrlBuilder.getTargetedPortletUrlBuilder();
+            portletWindow = this.portletWindowRegistry.getPortletWindow(request, targetPortletWindowId);
         }
+        
+        portletUrlBuilder.setCopyCurrentRenderParameters(Boolean.parseBoolean(copyCurrentRenderParameters));
         
         if (StringUtils.isNotEmpty(state)) {
             portletUrlBuilder.setWindowState(PortletUtils.getWindowState(state));

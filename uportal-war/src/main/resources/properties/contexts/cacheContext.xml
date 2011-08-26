@@ -21,9 +21,10 @@
 -->
 
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns="http://www.springframework.org/schema/beans" 
-       xsi:schemaLocation="
-           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+    xmlns="http://www.springframework.org/schema/beans"
+    xmlns:ehcache="http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring/ehcache-spring-1.2.xsd">
     
     <!-- This bean CANNOT be autowired or it will not function correctly -->
     <bean class="org.jasig.portal.utils.cache.EhcacheManagerBeanConfigurer">
@@ -42,13 +43,14 @@
     
     <!-- 
      | Annotation based caching support
-     +
-    <ehcache:annotations>
-        <ehcache:caching id="org.jasig.portal.web.skin.Resources" cacheName="org.jasig.portal.web.skin.Resources" />
-        <ehcache:caching id="org.jasig.portal.web.skin.Resources_DocumentFragment" cacheName="org.jasig.portal.web.skin.Resources_DocumentFragment" />
-    </ehcache:annotations>
-    -->
-
+     +-->
+    <ehcache:annotation-driven default-cache-key-generator="listCacheKeyGenerator" />
+    <ehcache:config>
+        <ehcache:evict-expired-elements />
+    </ehcache:config>
+    
+    <bean id="listCacheKeyGenerator" class="com.googlecode.ehcache.annotations.key.ListCacheKeyGenerator"/>
+    
     <!--
      | Service used by DLM to cache Layouts.
      +-->

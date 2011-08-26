@@ -96,4 +96,14 @@ public interface IPortletUrlBuilder extends IUrlBuilder {
      * @return Map containing currently set parameters.
      */
     public Map<String, String[]> getPublicRenderParameters(); 
+    
+    /**
+     * @param copyCurrentRenderParameters If set to true all current private render parameters are copied to the URL
+     */
+    public void setCopyCurrentRenderParameters(boolean copyCurrentRenderParameters);
+    
+    /**
+     * @return If the current private render parameters should be copied to the generared URL
+     */
+    public boolean getCopyCurrentRenderParameters();
 }

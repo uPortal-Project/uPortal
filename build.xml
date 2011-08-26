@@ -1177,6 +1177,7 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
             <uptodate property="@{project-name}.projectFilesUTD" targetfile="${@{project-name}.artifact}">
                 <srcfiles dir="@{project-path}" defaultexcludes="true">
                     <exclude name="${@{project-name}.build.directory}/" />
+                	<exclude name="src/main/data/" />
                 </srcfiles>
             </uptodate>
             <if>

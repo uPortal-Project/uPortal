@@ -19,9 +19,9 @@
 
 package org.jasig.portal.url;
 
-import java.util.Collections;
-import java.util.EnumSet;
 import java.util.Set;
+
+import com.google.common.collect.Sets;
 
 /**
  * Utility enum used in {@link UrlSyntaxProviderImpl} to simplify URL parsing a bit. Lists all of the portlet
@@ -36,14 +36,15 @@ enum SuffixedPortletParameter {
     CACHEABILITY(UrlSyntaxProviderImpl.PARAM_CACHEABILITY, UrlType.RESOURCE),
     DELEGATE_PARENT(UrlSyntaxProviderImpl.PARAM_DELEGATE_PARENT, UrlType.RENDER, UrlType.ACTION),
     WINDOW_STATE(UrlSyntaxProviderImpl.PARAM_WINDOW_STATE, UrlType.RENDER, UrlType.ACTION),
-    PORTLET_MODE(UrlSyntaxProviderImpl.PARAM_PORTLET_MODE, UrlType.RENDER, UrlType.ACTION);
+    PORTLET_MODE(UrlSyntaxProviderImpl.PARAM_PORTLET_MODE, UrlType.RENDER, UrlType.ACTION),
+    COPY_PARAMETERS(UrlSyntaxProviderImpl.PARAM_COPY_PARAMETERS, UrlType.RENDER);
     
     private final String parameterPrefix;
     private final Set<UrlType> validUrlTypes;
     
     private SuffixedPortletParameter(String parameterPrefix, UrlType validUrlType, UrlType... validUrlTypes) {
         this.parameterPrefix = parameterPrefix;
-        this.validUrlTypes = Collections.unmodifiableSet(EnumSet.of(validUrlType, validUrlTypes));
+        this.validUrlTypes = Sets.immutableEnumSet(validUrlType, validUrlTypes);
     }
     
     /**

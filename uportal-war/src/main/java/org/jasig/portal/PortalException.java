@@ -53,11 +53,6 @@ public class PortalException extends RuntimeException {
     boolean logPending = true;
     
     /**
-     * ErrorID categorizing this PortalException instance.
-     */
-    ErrorID errorID = Errors.legacy;
-    
-    /**
      * Parameter to the ErrorID's template message.
      */
     String parameter = null;
@@ -74,7 +69,6 @@ public class PortalException extends RuntimeException {
      * use a constructor that provides more information?
      */
     public PortalException() { 
-        ProblemsTable.store(this);
     }
 
     /**
@@ -85,7 +79,6 @@ public class PortalException extends RuntimeException {
      */
     public PortalException(Throwable cause) {
         super(cause);
-        ProblemsTable.store(this);
     }
 
     /**
@@ -96,19 +89,8 @@ public class PortalException extends RuntimeException {
      */
     public PortalException(String msg) {
         super(msg);
-        ProblemsTable.store(this);
     }
     
-    /**
-     * Instantiate a PortalException representing an instance of the
-     * type of error represented by the given ErrorID.
-     * @param errorid - type of error
-     */
-    public PortalException(ErrorID errorid) {
-    	super(errorid.getMessage());
-    	this.errorID=errorid;
-        ProblemsTable.store(this);
-    }
 
     /**
      * Instantiate a PortalException with the given message and underlying cause.
@@ -117,20 +99,7 @@ public class PortalException extends RuntimeException {
      */
     public PortalException(String msg, Throwable cause) {
         super(msg, cause);
-        ProblemsTable.store(this);
     }
-
-    /**
-     * Instantiate a PortalException representing an instance of the type of error
-     * represented by the given ErrorID, with the given underlying cause.
-     * @param errorid - type of error
-     * @param cause - underlying cause of error.
-     */
-	public PortalException(ErrorID errorid, Throwable cause) {
-		super(errorid.getMessage(), cause);
-		this.errorID=errorid;
-        ProblemsTable.store(this);
-	}
 
 
     /**
@@ -186,22 +155,6 @@ public class PortalException extends RuntimeException {
     public void setLogPending(boolean b) {
         this.logPending = b;
     }
-
-    /**
-     * Get the ErrorID representing the type of this error.
-     * @return the error ID
-     */
-    public ErrorID getErrorID() {
-        return this.errorID;
-    }
-
-    /**
-     * Set the ErrorID categorizing this PortalException.
-     * @param errorID the ErrorID categorizing this PortalException.
-     */
-    public void setErrorID(ErrorID errorID) {
-        this.errorID = errorID;
-    }
     
 
     /**
@@ -231,7 +184,6 @@ public class PortalException extends RuntimeException {
 		super(msg);
 		this.setReinstantiable(reinstantiate);
 		this.setRefreshable(refresh);
-        ProblemsTable.store(this);
 	}
 
     /**
@@ -247,7 +199,6 @@ public class PortalException extends RuntimeException {
 		super(msg, cause);
         this.setReinstantiable(reinstantiate);
         this.setRefreshable(refresh);
-        ProblemsTable.store(this);
 	}
 		
 	/**

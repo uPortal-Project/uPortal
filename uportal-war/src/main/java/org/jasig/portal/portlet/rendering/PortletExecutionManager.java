@@ -24,8 +24,10 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 
 import javax.portlet.Event;
@@ -54,8 +56,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.util.WebUtils;
 
 /**
@@ -66,7 +70,9 @@ import org.springframework.web.util.WebUtils;
  * @version $Revision$
  */
 @Service("portletExecutionManager")
-public class PortletExecutionManager implements ApplicationEventPublisherAware, IPortletExecutionManager {
+public class PortletExecutionManager extends HandlerInterceptorAdapter
+        implements ApplicationEventPublisherAware, IPortletExecutionManager {
+    
     private static final long DEBUG_TIMEOUT = TimeUnit.HOURS.toMillis(1);
     private static final String PORTLET_HEADER_RENDERING_MAP = PortletExecutionManager.class.getName() + ".PORTLET_HEADER_RENDERING_MAP";
 	private static final String PORTLET_RENDERING_MAP = PortletExecutionManager.class.getName() + ".PORTLET_RENDERING_MAP";
@@ -80,6 +86,11 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
     
     protected final Log logger = LogFactory.getLog(this.getClass());
     
+    /**
+     * Queue used to track workers that did not complete in their alloted time. 
+     */
+    private final Queue<IPortletExecutionWorker<?>> hungWorkers = new ConcurrentLinkedQueue<IPortletExecutionWorker<?>>();
+
     private ApplicationEventPublisher applicationEventPublisher;
     
     private boolean ignoreTimeouts = false;
@@ -121,6 +132,85 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
         this.applicationEventPublisher = applicationEventPublisher;
     }
     
+        /* (non-Javadoc)
+     * @see org.springframework.web.servlet.handler.HandlerInterceptorAdapter#afterCompletion(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.Object, java.lang.Exception)
+     */
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
+            throws Exception {
+
+        final Map<IPortletWindowId, IPortletRenderExecutionWorker> portletHeaderRenderingMap = this.getPortletHeaderRenderingMap(request);
+        for (final IPortletRenderExecutionWorker portletRenderExecutionWorker : portletHeaderRenderingMap.values()) {
+            checkWorkerCompletion(request, portletRenderExecutionWorker);
+        }
+        
+        final Map<IPortletWindowId, IPortletRenderExecutionWorker> portletRenderingMap = this.getPortletRenderingMap(request);
+        for (final IPortletRenderExecutionWorker portletRenderExecutionWorker : portletRenderingMap.values()) {
+            checkWorkerCompletion(request, portletRenderExecutionWorker);
+        }
+    }
+
+    /**
+     * Checks to see if a worker has been retrieved (not orphaned) and if it is complete.
+     */
+    protected void checkWorkerCompletion(HttpServletRequest request, IPortletRenderExecutionWorker portletRenderExecutionWorker) {
+        if (!portletRenderExecutionWorker.isRetrieved()) {
+            final IPortletWindowId portletWindowId = portletRenderExecutionWorker.getPortletWindowId();
+            final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
+            this.logger.warn("Portlet worker started but never retrieved for: " + portletWindow);
+            
+            try {
+                portletRenderExecutionWorker.get(0);
+            }
+            catch (Exception e) {
+                //Ignore exception here, we just want to get this worker to complete
+            }
+        }
+        
+        if (!portletRenderExecutionWorker.isComplete()) {
+            cancelWorker(request, portletRenderExecutionWorker);
+        }
+    }
+
+    /**
+     * Cancel the worker and add it to the hung workers queue
+     */
+    protected void cancelWorker(HttpServletRequest request, IPortletExecutionWorker<?> portletExecutionWorker) {
+        final IPortletWindowId portletWindowId = portletExecutionWorker.getPortletWindowId();
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
+        this.logger.warn(portletExecutionWorker + " has not completed, adding to hung-worker cleanup queue: " + portletWindow);
+
+        portletExecutionWorker.cancel();
+        hungWorkers.offer(portletExecutionWorker);
+    }
+    
+    @Scheduled(fixedRate=200)
+    public void cleanupHungWorkers() {
+        if (this.hungWorkers.isEmpty()) {
+            return;
+        }
+        
+        for (final Iterator<IPortletExecutionWorker<?>> workerItr = this.hungWorkers.iterator(); workerItr.hasNext(); ) {
+            final IPortletExecutionWorker<?> worker = workerItr.next();
+            
+            //If the worker completed remove it from queue
+            if (worker.isComplete()) {
+                workerItr.remove();
+            }
+            //If the worker is still running cancel it
+            else {
+                //Log a warning about the worker once every 30 seconds or so
+                final int cancelCount = worker.getCancelCount();
+                if (cancelCount % 150 == 0) {
+                    this.logger.warn(worker + " is still hung, cancel has been called " + cancelCount + " times");
+                }
+                
+                worker.cancel();
+            }
+        }
+        
+    }
+
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#doPortletAction(org.jasig.portal.portlet.om.IPortletEntityId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
@@ -147,6 +237,11 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
 	    	final Map<IPortletWindowId, Exception> portletFailureMap = getPortletErrorMap(request);
 			portletFailureMap.put(portletWindowId, e);
 		}
+        
+        //If the worker is still running add it to the hung-workers queue
+        if (!portletActionExecutionWorker.isComplete()) {
+            cancelWorker(request, portletActionExecutionWorker);
+        }
 		
 		final PortletEventQueue portletEventQueue = this.eventCoordinationService.getPortletEventQueue(request);
         this.doPortletEvents(portletEventQueue, request, response);
@@ -241,7 +336,13 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
         catch (Exception e) {
             // put the exception into the error map for the session
             //TODO event error handling?
-            logger.warn("Portlet '" + portletWindowId + "' threw an execption while executing an event. This chain of event handling will terminate.", e);
+            final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
+            logger.warn(portletWindow + " threw an execption while executing an event. This chain of event handling will terminate.", e);
+        }
+        
+        //If the worker is still running add it to the hung-workers queue
+        if (!eventWorker.isComplete()) {
+            cancelWorker(request, eventWorker);
         }
     }
     
@@ -251,14 +352,14 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
 	 * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#startPortletHeadRender(java.lang.String, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
-	public void startPortletHeadRender(String subscribeId,
+	public void startPortletHeaderRender(String subscribeId,
 			HttpServletRequest request, HttpServletResponse response) {
 		Assert.notNull(subscribeId, "subscribeId cannot be null");
         
         final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, subscribeId);
         
         if(portletWindow != null) {
-        	this.startPortletHeadRender(portletWindow.getPortletWindowId(), request, response);
+        	this.startPortletHeaderRender(portletWindow.getPortletWindowId(), request, response);
         } else {
         	this.logger.debug("ignoring startPortletHeadRender since getDefaultPortletWindow returned null for subscribeId " + subscribeId);
         }
@@ -268,10 +369,10 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
      * Only actually starts rendering the head if the portlet has the 'javax.portlet.renderHeaders' container-runtime-option
      * present and set to "true."
      * 
-	 * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#startPortletHeadRender(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#startPortletHeaderRender(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
-	public void startPortletHeadRender(IPortletWindowId portletWindowId,
+	public void startPortletHeaderRender(IPortletWindowId portletWindowId,
 			HttpServletRequest request, HttpServletResponse response) {
 		if(doesPortletNeedHeaderWorker(portletWindowId, request)) {
 			this.startPortletHeaderRenderInternal(portletWindowId, request, response);
@@ -348,6 +449,11 @@ public class PortletExecutionManager implements ApplicationEventPublisherAware, 
 				logger.fatal("caught IOException trying to send error response for failed resource worker", e);
 			}
 		}
+        
+        //If the worker is still running add it to the hung-workers queue
+        if (!resourceWorker.isComplete()) {
+            cancelWorker(request, resourceWorker);
+        }
 	}
 	
 

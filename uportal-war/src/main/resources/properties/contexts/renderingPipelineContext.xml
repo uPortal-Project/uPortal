@@ -95,7 +95,7 @@
     </bean>
     
     <!-- portlet rendering initiation -->
-    <bean id="portletRenderingInitiationComponent" class="org.jasig.portal.rendering.PortletRenderingInitiationComponent">
+    <bean id="portletRenderingInitiationComponent" class="org.jasig.portal.rendering.PortletRenderingInitiationStAXComponent">
         <property name="wrappedComponent" ref="structureCachingComponent" />
     </bean>
     
@@ -221,9 +221,13 @@
         <property name="cache" ref="org.jasig.portal.rendering.THEME_TRANSFORM" />
     </bean>
     
+    <bean id="portletRenderingInitiationCharacterComponent" class="org.jasig.portal.rendering.PortletRenderingInitiationCharacterComponent">
+        <property name="wrappedComponent" ref="themeCachingComponent" />
+    </bean>
+    
     <!-- portlet content incorporation -->
     <bean id="portletRenderingIncorporationComponent" class="org.jasig.portal.rendering.PortletRenderingIncorporationComponent">
-        <property name="wrappedComponent" ref="themeCachingComponent" />
+        <property name="wrappedComponent" ref="portletRenderingInitiationCharacterComponent" />
     </bean>
     <bean id="portalRenderingPipeline" class="org.jasig.portal.rendering.DynamicRenderingPipeline">
         <qualifier value="main" />

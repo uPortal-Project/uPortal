@@ -119,7 +119,7 @@
                         <xsl:with-param name="url">
                             <url:portal-url>
                                 <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                                <url:portlet-url state="MAXIMIZED" />
+                                <url:portlet-url state="MAXIMIZED" copyCurrentRenderParameters="true" />
                             </url:portal-url>
                         </xsl:with-param>
                     </xsl:call-template>
@@ -161,9 +161,7 @@
 -->
 <xsl:template name="mobile.header.focused">
     <xsl:variable name="basePortalUrl">
-        <xsl:call-template name="portalUrl">
-            <xsl:with-param name="url"/>
-        </xsl:call-template>
+        <xsl:call-template name="portalUrl" />
     </xsl:variable>
     <xsl:if test="not(//content/focused/@detached = 'true')">
         <div class="titlebar portlet-wrapper-titlebar" data-role="header" data-position="inline">

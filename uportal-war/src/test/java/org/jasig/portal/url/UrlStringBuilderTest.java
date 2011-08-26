@@ -91,7 +91,7 @@ public class UrlStringBuilderTest {
         builder.setParameter("p2", Arrays.asList("va,?", "v b"));
         
         final String url = builder.toString();
-        Assert.assertEquals("http://www.example.com:8080?p1=v1&p1=&p1=v2&p0=&p2=va%2C%3F&p2=v+b", url);
+        Assert.assertEquals("http://www.example.com:8080?p1=v1&p1=&p1=v2&p0&p2=va%2C%3F&p2=v+b", url);
     }
 
     @Test
@@ -114,7 +114,7 @@ public class UrlStringBuilderTest {
         builder.addParameters("uP_", p1);
         
         final String url = builder.toString();
-        Assert.assertEquals("/?a=b&a=c&b=&b=d&c=&uP_a=b&uP_a=c&uP_b=&uP_b=d&uP_c=", url);
+        Assert.assertEquals("/?a=b&a=c&b=&b=d&c&uP_a=b&uP_a=c&uP_b=&uP_b=d&uP_c", url);
     }
 
     @Test
