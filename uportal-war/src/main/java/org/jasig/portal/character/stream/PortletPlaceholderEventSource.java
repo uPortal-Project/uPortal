@@ -34,7 +34,7 @@ import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
-import org.jasig.portal.rendering.PortletRenderingInitiationComponent;
+import org.jasig.portal.rendering.PortletRenderingInitiationStAXComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,7 +72,7 @@ public abstract class PortletPlaceholderEventSource extends BasePlaceholderEvent
     public final List<CharacterEvent> getCharacterEvents(HttpServletRequest request, XMLEventReader eventReader, StartElement event) throws XMLStreamException {
         final IPortletWindowId portletWindowId;
         
-        final Attribute windowIdAttribute = event.getAttributeByName(PortletRenderingInitiationComponent.PORTLET_WINDOW_ID_ATTR_NAME);
+        final Attribute windowIdAttribute = event.getAttributeByName(PortletRenderingInitiationStAXComponent.PORTLET_WINDOW_ID_ATTR_NAME);
         if (windowIdAttribute != null) {
             final String windowIdStr = windowIdAttribute.getValue();
             portletWindowId = this.portletWindowRegistry.getPortletWindowId(request, windowIdStr);
@@ -80,7 +80,7 @@ public abstract class PortletPlaceholderEventSource extends BasePlaceholderEvent
         else {
             final Attribute idAttribute = event.getAttributeByName(IUserLayoutManager.ID_ATTR_NAME);
             if (idAttribute == null) {
-                this.logger.warn("StartElement " + event.getName() + " does not have a " + PortletRenderingInitiationComponent.PORTLET_WINDOW_ID_ATTR_NAME + " or " + IUserLayoutManager.ID_ATTR_NAME + " Attribute. No PortletPlaceholderEvent will be generated. " + event.getLocation());
+                this.logger.warn("StartElement " + event.getName() + " does not have a " + PortletRenderingInitiationStAXComponent.PORTLET_WINDOW_ID_ATTR_NAME + " or " + IUserLayoutManager.ID_ATTR_NAME + " Attribute. No PortletPlaceholderEvent will be generated. " + event.getLocation());
                 return null;
             }
             

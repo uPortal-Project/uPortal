@@ -61,6 +61,7 @@ final class PortletFailureExecutionWorker implements IPortletFailureExecutionWor
     private PortletRenderResult portletRenderResult;
     private String output;
     
+    private boolean retrieved = false;
     private long submitted = 0;
     private long completed = 0;
     
@@ -125,8 +126,17 @@ final class PortletFailureExecutionWorker implements IPortletFailureExecutionWor
 
     @Override
     public synchronized PortletRenderResult get(long timeout) throws Exception {
+        this.retrieved = true;
         this.renderError(timeout);
         return this.portletRenderResult;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker#cancel()
+     */
+    @Override
+    public void cancel() {
+        //NOOP
     }
 
     protected synchronized void renderError(long timeout) {
@@ -192,6 +202,11 @@ final class PortletFailureExecutionWorker implements IPortletFailureExecutionWor
     @Override
     public boolean isComplete() {
         return this.completed > 0;
+    }
+    
+    @Override
+    public boolean isRetrieved() {
+        return this.retrieved;
     }
 
     @Override

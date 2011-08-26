@@ -50,5 +50,14 @@ public interface IPortletExecutionWorker<V> extends IPortletExecutionContext {
      * @throws Exception The exception thrown by the portlet during execution if any
      */
     public V get(long timeout) throws Exception;
-
+    
+    /**
+     * Cancel the worker, interrupting the thread that is executing the worker
+     */
+    public void cancel();
+    
+    /**
+     * @return true If {@link #get(long)} has been called
+     */
+    public boolean isRetrieved();
 }

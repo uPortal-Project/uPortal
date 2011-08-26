@@ -227,20 +227,20 @@ public class PortletRendererImpl implements IPortletRenderer {
         boolean useCachedContent = cacheControl.useCachedContent();
         boolean cachedPortletDataNotNull = cachedPortletData != null;
         // we actually don't care if the content is expired at this point, the two prior fields will tell us if the portlet wants us to replay cached content
-        if(logger.isDebugEnabled()) {
+        if (logger.isDebugEnabled()) {
         	logger.debug(portletWindowId + " useCachedContent=" + useCachedContent + ", cachedPortletDataNotNull=" + cachedPortletDataNotNull);
         }
-        if(useCachedContent && cachedPortletDataNotNull) {
+        if (useCachedContent && cachedPortletDataNotNull) {
     		return doRenderMarkupReplayCachedContent(httpServletRequest, writer, cachedPortletData);
-        } else {
-        	boolean shouldCache = this.portletCacheControlService.shouldOutputBeCached(cacheControl);
-        	// put the captured content in the cache
-        	if(shouldCache && !captureWriter.isLimitExceeded()) {
-        		this.portletCacheControlService.cachePortletRenderOutput(portletWindowId, httpServletRequest, captureWriter.toString(), cacheControl);
-        	}
-        	
-        	return result;
-        }	
+        }
+        
+    	boolean shouldCache = this.portletCacheControlService.shouldOutputBeCached(cacheControl);
+    	// put the captured content in the cache
+    	if(shouldCache && !captureWriter.isLimitExceeded()) {
+    		this.portletCacheControlService.cachePortletRenderOutput(portletWindowId, httpServletRequest, captureWriter.toString(), cacheControl);
+    	}
+    	
+    	return result;
     }
     
     /**
@@ -431,13 +431,12 @@ public class PortletRendererImpl implements IPortletRenderer {
 	        		throw new PortletDispatchException("The portlet window '"+ portletWindow + "' indicated it wanted the portlet container to send the cached content, however the portlet wrote content anyways. This is a bug in the portlet; if it sets an etag on the response and sets useCachedContent to true it should not commit the response.", portletWindow);
 	        	}
 	        	return doServeResourceCachedOutput(httpServletRequest, responseWrapper, cachedPortletData, portletWindow);
-	        } else {
-	        	boolean shouldCache = this.portletCacheControlService.shouldOutputBeCached(cacheControl);
-	        	// put the captured content in the cache
-	        	if(shouldCache && !captureStream.isThresholdExceeded()) {
-	        		this.portletCacheControlService.cachePortletResourceOutput(portletWindowId, httpServletRequest, captureStream.getCapturedContent(), responseWrapper.getContentType(), responseWrapper.getCapturedHeaders(), cacheControl);
-	        	}
-	        }	
+	        }
+        	boolean shouldCache = this.portletCacheControlService.shouldOutputBeCached(cacheControl);
+        	// put the captured content in the cache
+        	if(shouldCache && !captureStream.isThresholdExceeded()) {
+        		this.portletCacheControlService.cachePortletResourceOutput(portletWindowId, httpServletRequest, captureStream.getCapturedContent(), responseWrapper.getContentType(), responseWrapper.getCapturedHeaders(), cacheControl);
+        	}
 		}
 		catch (PortletException pe) {
             throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing serveResource.", portletWindow, pe);

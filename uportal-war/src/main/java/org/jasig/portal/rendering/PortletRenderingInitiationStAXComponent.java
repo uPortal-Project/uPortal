@@ -49,13 +49,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.google.common.collect.Iterators;
 
 /**
- * Initiates portlet rendering based each encountered {@link XMLPipelineConstants#PORTLET} element in the
- * event stream
+ * Initiates portlet rendering based each encountered {@link IUserLayoutManager#CHANNEL_HEADER} and
+ * {@link IUserLayoutManager#CHANNEL} element in the event stream
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class PortletRenderingInitiationComponent extends StAXPipelineComponentWrapper {
+public class PortletRenderingInitiationStAXComponent extends StAXPipelineComponentWrapper {
     public static final QName PORTLET_WINDOW_ID_ATTR_NAME = new QName("portletWindowId");
     
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -149,7 +149,7 @@ public class PortletRenderingInitiationComponent extends StAXPipelineComponentWr
                     final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
 
                     if (!portletExecutionManager.isPortletRenderHeaderRequested(portletWindowId, this.request, this.response)) {
-                        portletExecutionManager.startPortletHeadRender(portletWindowId, this.request, this.response);
+                        portletExecutionManager.startPortletHeaderRender(portletWindowId, this.request, this.response);
                         logger.debug("Initiated portlet head rendering for: {}", portletWindow);
                     }
                     else {

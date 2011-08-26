@@ -19,6 +19,7 @@
 
 package org.jasig.portal.portlet.rendering.worker;
 
+import java.lang.Thread.State;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -56,9 +57,11 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
     protected final HttpServletResponse response;
     
     private volatile Future<V> future;
+    private volatile Thread workerThread;
     private volatile long submitted = 0;
     private volatile long started = 0;
     private volatile long complete = 0;
+    private volatile boolean retrieved = false;
     
     public PortletExecutionWorker(
             ExecutorService executorService, List<IPortletExecutionInterceptor> interceptors, IPortletRenderer portletRenderer, 
@@ -112,6 +115,9 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
              */
             @Override
             public V call() throws Exception {
+                //grab the current thread
+                workerThread = Thread.currentThread();
+                
                 //signal any threads waiting for the worker to start
                 started = System.currentTimeMillis();
                 startLatch.countDown();
@@ -136,6 +142,8 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
                     if (logger.isDebugEnabled()) {
                         logger.debug("Execution complete on portlet " + portletWindowId + " in " + getDuration() + "ms");
                     }
+                    
+                    workerThread = null;
                 }
             }
         });
@@ -178,6 +186,11 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
         return this.complete > 0;
     }
     
+    @Override
+    public boolean isRetrieved() {
+        return this.retrieved;
+    }
+    
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker#waitForStart()
      */
@@ -197,9 +210,12 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
             throw new IllegalStateException("submit() must be called before get(long) can be called");
         }
         
+        this.retrieved = true;
+        
         try {
             final long startTime = this.waitForStart(timeout);
-            return this.future.get(timeout - (System.currentTimeMillis() - startTime), TimeUnit.MILLISECONDS);
+            final long waitTime = Math.max(0, timeout - (System.currentTimeMillis() - startTime));
+            return this.future.get(waitTime, TimeUnit.MILLISECONDS);
         }
         catch (InterruptedException e) {
             this.logger.warn("Execution interrupted on portlet window " + this.portletWindowId, e);
@@ -210,9 +226,40 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
             throw e;
         }
         catch (TimeoutException e) {
-            this.logger.warn("Execution timed out on portlet window " + this.portletWindowId, e);
+            final StringBuilder errorBuilder = new StringBuilder("Execution timed out on portlet window ");
+            errorBuilder.append(this.portletWindowId);
+            
+            final Thread localWorkerThread = workerThread;
+            if (localWorkerThread != null) {
+                final State state = localWorkerThread.getState();
+                final StackTraceElement[] stackTrace = localWorkerThread.getStackTrace();
+                
+                errorBuilder.append("\n\tPortlet Thread State: ").append(state).append("\n");
+                errorBuilder.append("\tPortlet Thread Stack Trace: \n");
+                
+                for (final StackTraceElement stackTraceElement : stackTrace) {
+                    errorBuilder.append("\t\tat ").append(stackTraceElement).append("\n");
+                }
+            }
+            
+            this.logger.warn(errorBuilder, e);
+            
             throw e;
         }
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker#cancel()
+     */
+    @Override
+    public final void cancel() {
+        if (this.future == null) {
+            throw new IllegalStateException("submit() must be called before cancel() can be called");
+        }
+        
+        this.retrieved = true;
+
+        this.future.cancel(true);
     }
 
     /* (non-Javadoc)
@@ -267,6 +314,7 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
                     "started=" + this.started + ", " +
                     "submitted=" + this.submitted + ", " +
                     "complete=" + this.complete + ", " +
+                    "retrieved=" + this.retrieved+ ", " +
                     "wait=" + this.getWait() + ", " +
                     "duration=" + this.getDuration() + "]";
     }
