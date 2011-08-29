@@ -327,10 +327,10 @@
 		};
 		var deletePortlet = function(id) {
 			if (!confirm(settings.messages.confirmRemovePortlet)) return false;
-			$('#portlet_'+id).remove();
 			$.post(settings.preferencesUrl, {action: 'removeElement', elementID: id}, 
 			    function(xml){
 			        if ($("success", xml).text() == 'false') { handleServerError(xml); return false; }
+			        $('#portlet_'+id).remove();
 			    }
 			);
 		};
