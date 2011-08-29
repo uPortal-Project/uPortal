@@ -473,6 +473,55 @@ public class UrlSyntaxProviderImplTest {
         assertNull(portletRequestInfo2.getPortletMode());
         assertEquals(portletWindowId1, portletRequestInfo2.getDelegateParentWindowId());
     }
+    
+
+    
+    @Test
+    public void testSingleFolderPortletDelegationFnameSubscribeIdPostUrlParsing() throws Exception {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setContextPath("/uPortal");
+        request.setRequestURI("/p/portlet-admin.ctf3/max/resource.uP");
+        request.setQueryString("??pCa=30_dlg-16-ctf3-5_5&pCd_30_dlg-16-ctf3-5_5=16_ctf3_5&pCr_30_dlg-16-ctf3-5_5=preview&pP_execution=e2s3&pP__eventId=configModeAction");
+        request.addParameter("pCa", "30_dlg-16-ctf3-5_5");
+        request.addParameter("pCd_30_dlg-16-ctf3-5_5", "16_ctf3_5");
+        request.addParameter("pCr_30_dlg-16-ctf3-5_5", "preview");
+        request.addParameter("pP_execution", "e2s3");
+        request.addParameter("pP__eventId", "configModeAction");
+        request.addParameter("content", "<div>some content</div>"); //not on URL, was posted
+        
+        final MockPortletWindowId portletWindowId1 = new MockPortletWindowId("16_ctf3_5");
+        final MockPortletWindowId portletWindowId2 = new MockPortletWindowId("30_dlg-16-ctf3-5_5");
+        
+        when(this.portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
+        when(urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request)).thenReturn(urlNodeSyntaxHelper);
+        when(this.urlNodeSyntaxHelper.getPortletForFolderName(request, null, "portlet-admin.ctf3")).thenReturn(portletWindowId1);
+        when(this.portletWindowRegistry.getPortletWindowId(request, "30_dlg-16-ctf3-5_5")).thenReturn(portletWindowId2);
+        when(this.portletWindowRegistry.getPortletWindowId(request, "16_ctf3_5")).thenReturn(portletWindowId1);
+        
+        final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
+        
+        assertNotNull(portalRequestInfo);
+        assertNull(portalRequestInfo.getTargetedLayoutNodeId());
+        assertEquals(portletWindowId1, portalRequestInfo.getTargetedPortletWindowId());
+        assertEquals(UrlState.MAX, portalRequestInfo.getUrlState());
+        assertEquals(UrlType.RESOURCE, portalRequestInfo.getUrlType());
+        
+        final Map<IPortletWindowId, ? extends IPortletRequestInfo> portletRequestInfoMap = portalRequestInfo.getPortletRequestInfoMap();
+        assertNotNull(portletRequestInfoMap);
+        assertEquals(2, portletRequestInfoMap.size());
+        
+        final IPortletRequestInfo portletRequestInfo = portletRequestInfoMap.get(portletWindowId1);
+        assertNotNull(portletRequestInfo);
+        assertEquals(portletWindowId1, portletRequestInfo.getPortletWindowId());
+        assertEquals(ImmutableMap.of("execution", Arrays.asList("e2s3"), "_eventId", Arrays.asList("configModeAction")), portletRequestInfo.getPortletParameters());
+        assertNull(portletRequestInfo.getDelegateParentWindowId());
+        
+        final IPortletRequestInfo portletRequestInfo2 = portletRequestInfoMap.get(portletWindowId2);
+        assertNotNull(portletRequestInfo2);
+        assertEquals(portletWindowId2, portletRequestInfo2.getPortletWindowId());
+        assertEquals(ImmutableMap.of("content", Arrays.asList("<div>some content</div>")), portletRequestInfo2.getPortletParameters());
+        assertEquals(portletWindowId1, portletRequestInfo2.getDelegateParentWindowId());
+    }
 
     @Test
     public void testParsePortletWindowIdSuffix() {

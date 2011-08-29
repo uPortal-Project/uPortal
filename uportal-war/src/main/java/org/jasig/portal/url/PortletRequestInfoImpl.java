@@ -85,8 +85,6 @@ class PortletRequestInfoImpl implements IPortletRequestInfo {
 
     @Override
 	public IPortletWindowId getDelegateParentWindowId() {
-	    final UrlType urlType = this.portalRequestInfo.getUrlType();
-        Preconditions.checkArgument(urlType != UrlType.RESOURCE, "UrlType must not be %s but was", urlType);
         return delegateParentWindowId;
     }
 

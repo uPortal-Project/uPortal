@@ -28,6 +28,8 @@ import javax.portlet.ActionResponse;
 import javax.portlet.PortletMode;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+import javax.portlet.ResourceRequest;
+import javax.portlet.ResourceResponse;
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -140,6 +142,42 @@ public class PortletDelegationDispatcherImpl implements PortletDelegationDispatc
         final Map<String, String[]> parameters = portletUrlBuilder.getParameters();
         
         return new DelegationActionResponse(this.getDelegateState(), portletMode, windowState, parameters);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.api.portlet.PortletDelegationDispatcher#doServeResource(javax.portlet.ResourceRequest, javax.portlet.ResourceResponse)
+     */
+    @Override
+    public DelegationResponse doServeResource(ResourceRequest resourceRequest, ResourceResponse resourceResponse) throws IOException {
+        return this.doServeResource(resourceRequest, resourceResponse, null);
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.api.portlet.PortletDelegationDispatcher#doServeResource(javax.portlet.ResourceRequest, javax.portlet.ResourceResponse, org.jasig.portal.api.portlet.DelegationRequest)
+     */
+    @Override
+    public DelegationResponse doServeResource(ResourceRequest resourceRequest, ResourceResponse resourceResponse, DelegationRequest delegationRequest) throws IOException {
+        final HttpServletRequest request = this.portalRequestUtils.getPortletHttpRequest(resourceRequest);
+        final HttpServletResponse response = this.portalRequestUtils.getOriginalPortalResponse(resourceRequest);
+
+        //Sanity check that the dispatch is being called by the same user it was created for
+        final IPerson person = this.personManager.getPerson(request);
+        if (this.userId != person.getID()) {
+            throw new IllegalStateException("This dispatcher was created for userId " + this.userId + " but is being executed for userId " + person.getID());
+        }
+
+        this.setupDelegateRequestInfo(request, delegationRequest);
+        
+        try {
+            //TODO canRender permission checks!
+            this.portletRenderer.doServeResource(this.portletWindow.getPortletWindowId(), request, response);
+        }
+        catch (RuntimeException e) {
+            this.logger.error("Failed to render delegate", e);
+            throw e;
+        }
+        
+        return new DelegationResponse(this.getDelegateState());
     }
 
     @Override

@@ -26,6 +26,8 @@ import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+import javax.portlet.ResourceRequest;
+import javax.portlet.ResourceResponse;
 
 import org.jasig.portal.portlet.om.IPortletWindowId;
 
@@ -65,6 +67,25 @@ public interface PortletDelegationDispatcher {
      * @return The delegation response state, will indicate if the delegate sent a redirect
      */
     public DelegationActionResponse doAction(ActionRequest actionRequest, ActionResponse actionResponse, DelegationRequest delegationRequest) throws IOException;
+    
+    /**
+     * Calls {@link #doAction(ResourceRequest, ResourceResponse, DelegationRequest)} with no {@link DelegationRequest}
+     * data 
+     * 
+     * @see #doServeResource(ResourceRequest, ResourceResponse, DelegationRequest)
+     */
+    public DelegationResponse doServeResource(ResourceRequest resourceRequest, ResourceResponse resourceResponse) throws IOException;
+
+    /**
+     * Executes a portlet resource request on the delegate window. The state, mode and parameters in the delegation request (if set) are used
+     * by the delegate.
+     * 
+     * @param resourceRequest The current portlet's resource request
+     * @param resourceResponse The current portlet's resource response
+     * @param delegationRequest The state to set for the delegate and the basis for generated URLs
+     * @return The delegation response state, will indicate if the delegate sent a redirect
+     */
+    public DelegationResponse doServeResource(ResourceRequest resourceRequest, ResourceResponse resourceResponse, DelegationRequest delegationRequest) throws IOException;
     
     /**
      * Calls {@link #doRender(RenderRequest, RenderResponse, DelegationRequest, Writer)} with no {@link DelegationRequest}
