@@ -49,7 +49,7 @@ import org.jasig.portal.security.provider.NotSoOpaqueCredentials;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class CachedPasswordUserInfoService implements UserInfoService  {
 	
@@ -71,7 +71,7 @@ public class CachedPasswordUserInfoService implements UserInfoService  {
     /**
      * @param portalRequestUtils the portalRequestUtils to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         Validate.notNull(portalRequestUtils);
         this.portalRequestUtils = portalRequestUtils;
@@ -92,7 +92,7 @@ public class CachedPasswordUserInfoService implements UserInfoService  {
 	/**
 	 * @param userInstanceManager the UserInstanceManager
 	 */
-	@Required
+    @Autowired(required=true)
 	public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
 		this.userInstanceManager = userInstanceManager;
 	}
@@ -106,7 +106,7 @@ public class CachedPasswordUserInfoService implements UserInfoService  {
     /**
      * @param portletEntityRegistry the portletEntityRegistry to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
         this.portletEntityRegistry = portletEntityRegistry;
     }
@@ -120,7 +120,7 @@ public class CachedPasswordUserInfoService implements UserInfoService  {
     /**
      * @param portletWindowRegistry the portletWindowRegistry to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         this.portletWindowRegistry = portletWindowRegistry;
     }
@@ -134,17 +134,17 @@ public class CachedPasswordUserInfoService implements UserInfoService  {
     /**
      * @param portletDefinitionRegistry the portletDefinitionRegistry to set
      */
-    @Required
+    @Autowired(required=true)
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
 
-	public void setStringEncryptionService(
-			IStringEncryptionService stringEncryptionService) {
+    @Autowired
+	public void setStringEncryptionService(IStringEncryptionService stringEncryptionService) {
 		this.stringEncryptionService = stringEncryptionService;
 	}
 	
-	private boolean decryptPassword = true;
+	private boolean decryptPassword = false;
 	
 	/**
 	 * Set whether the password should be decrypted before adding it to the 

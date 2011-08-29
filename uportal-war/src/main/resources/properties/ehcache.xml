@@ -407,6 +407,14 @@
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
     <!-- 
+     | Caches PortletDefinitionImpl queries by name
+     | - 1 x published portlet
+     | - not replicated
+     +-->
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl.query.FIND_PORTLET_DEF_BY_NAME"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
+    <!-- 
      | Caches query that returns all portlet definitions
      | - 1
      | - not replicated
