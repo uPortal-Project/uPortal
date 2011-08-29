@@ -1,106 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Licensed to Jasig under one or more contributor license
-    agreements. See the NOTICE file distributed with this work
-    for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
-    Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
-    specific language governing permissions and limitations
-    under the License.
-
--->
-
-<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns="http://www.springframework.org/schema/beans"
-       xmlns:aop="http://www.springframework.org/schema/aop"
-       xmlns:tx="http://www.springframework.org/schema/tx"
-       xsi:schemaLocation="
-           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
-           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
-        
-    <bean id="counterStore" class="org.jasig.portal.utils.PooledCounterStore">
-        <property name="dataSource" ref="PortalDb" />
-        <property name="transactionManager" ref="transactionManager" />
-    </bean>
-
-    <bean id="permissionStore" class="org.jasig.portal.security.provider.RDBMPermissionImpl"/>
-
-    <!-- ********** JPA Beans ********** -->
-    
-    <aop:config>
-        <aop:pointcut id="jpaDaoExecution" 
-            expression="execution(* org.jasig.portal.*.dao.jpa.Jpa*Dao.*(..))"/>
-                
-        <aop:pointcut id="daoExecution" 
-            expression="execution(* org.jasig.portal.*.dao.*.*(..))"/>
-            
-        <aop:advisor advice-ref="jpaInterceptor" pointcut-ref="jpaDaoExecution"/>
-            
-        <aop:aspect ref="threadContextClassLoaderAspect">
-            <aop:around pointcut-ref="jpaDaoExecution" method="doThreadContextClassLoaderUpdate"/>
-        </aop:aspect>
-        
-        <aop:aspect ref="sqlNextExceptionLoggerAspect">
-            <aop:after-throwing pointcut-ref="daoExecution" method="logBatchUpdateExceptions" throwing="t"/>
-        </aop:aspect>
-    </aop:config>
-    
-    
-    <!-- Aspect to force the Thread.getContextClassLoader() to the correct loader on cross-context calls form portlets -->
-    <bean id="threadContextClassLoaderAspect" class="org.jasig.portal.portlet.dao.jpa.ThreadContextClassLoaderAspect" />
-    
-    <bean id="sqlNextExceptionLoggerAspect" class="org.jasig.portal.portlet.dao.jpa.SQLNextExceptionLoggerAspect" />
-
-    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-        <property name="dataSource" ref="PortalDb" />
-        <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
-        <property name="persistenceUnitName" value="uPortalPersistence" />
-    </bean>
-
-    <!-- Adapter that can inject a cacheProvider into the hibernate entity manager -->
-    <bean id="jpaVendorAdapter" class="org.jasig.portal.spring.orm.jpa.HibernateJpaVendorAdapter">
-        <!-- hibernateCacheProvider is a named service (org.jasig.portal.utils.cache.hibernate.EhCacheProvider) -->
-        <property name="cacheProvider" ref="hibernateCacheProvider" />
-    </bean>
-    
-    <bean id="jpaInterceptor" class="org.springframework.orm.jpa.JpaInterceptor">
-        <property name="entityManagerFactory" ref="entityManagerFactory" />
-    </bean>
-
-    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <property name="entityManagerFactory" ref="entityManagerFactory" />
-        <qualifier value="PortalDb"/>
-    </bean>
-    
-    
-    <tx:annotation-driven transaction-manager="transactionManager" />
-
-    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" lazy-init="false">
-        <property name="defaultPersistenceUnitName" value="uPortalPersistence" />
-    </bean>
-    
-    <!-- ********** Database Utilities ********** -->
-    <!-- dbLoader now autowired -->
-    <!-- 
-      export not autowired, since statsContext contains a separate instance 
-      of this same class configured for a different purpose 
-    -->
-    <bean name="portalDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport">
-        <property name="dataSource" ref="PortalDb" />  
-        <property name="configuration" ref="hibernateCfg" />
-    </bean>
-    <bean name="hibernateCfg" class="org.springframework.core.io.ClassPathResource">
-    	<constructor-arg><value>properties/db/hibernate.cfg.xml</value></constructor-arg>
-    </bean>
-</beans>
+<?xml version="1.0" encoding="UTF-8"?><!--    Licensed to Jasig under one or more contributor license    agreements. See the NOTICE file distributed with this work    for additional information regarding copyright ownership.    Jasig licenses this file to you under the Apache License,    Version 2.0 (the "License"); you may not use this file    except in compliance with the License. You may obtain a    copy of the License at:    http://www.apache.org/licenses/LICENSE-2.0    Unless required by applicable law or agreed to in writing,    software distributed under the License is distributed on    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY    KIND, either express or implied. See the License for the    specific language governing permissions and limitations    under the License.--><beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"       xmlns="http://www.springframework.org/schema/beans"       xmlns:aop="http://www.springframework.org/schema/aop"       xmlns:tx="http://www.springframework.org/schema/tx"       xsi:schemaLocation="           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">            <bean id="counterStore" class="org.jasig.portal.utils.PooledCounterStore">        <property name="dataSource" ref="PortalDb" />        <property name="transactionManager" ref="transactionManager" />    </bean>    <bean id="permissionStore" class="org.jasig.portal.security.provider.RDBMPermissionImpl"/>    <!-- ********** JPA Beans ********** -->        <aop:config>        <aop:pointcut id="jpaDaoExecution"             expression="execution(* org.jasig.portal.*.dao.jpa.Jpa*Dao.*(..))"/>                        <aop:pointcut id="daoExecution"             expression="execution(* org.jasig.portal.*.dao.*.*(..))"/>                    <aop:advisor advice-ref="jpaInterceptor" pointcut-ref="jpaDaoExecution"/>                    <aop:aspect ref="threadContextClassLoaderAspect">            <aop:around pointcut-ref="jpaDaoExecution" method="doThreadContextClassLoaderUpdate"/>        </aop:aspect>                <aop:aspect ref="sqlNextExceptionLoggerAspect">            <aop:after-throwing pointcut-ref="daoExecution" method="logBatchUpdateExceptions" throwing="t"/>        </aop:aspect>    </aop:config>            <!-- Aspect to force the Thread.getContextClassLoader() to the correct loader on cross-context calls form portlets -->    <bean id="threadContextClassLoaderAspect" class="org.jasig.portal.portlet.dao.jpa.ThreadContextClassLoaderAspect" />        <bean id="sqlNextExceptionLoggerAspect" class="org.jasig.portal.portlet.dao.jpa.SQLNextExceptionLoggerAspect" />    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">        <property name="dataSource" ref="PortalDb" />        <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />        <property name="persistenceUnitName" value="uPortalPersistence" />    </bean>    <!-- Adapter that can inject a cacheProvider into the hibernate entity manager -->    <bean id="jpaVendorAdapter" class="org.jasig.portal.spring.orm.jpa.HibernateJpaVendorAdapter">        <!-- hibernateCacheProvider is a named service (org.jasig.portal.utils.cache.hibernate.EhCacheProvider) -->        <property name="cacheProvider" ref="hibernateCacheProvider" />    </bean>        <bean id="jpaInterceptor" class="org.springframework.orm.jpa.JpaInterceptor">        <property name="entityManagerFactory" ref="entityManagerFactory" />    </bean>    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">        <property name="entityManagerFactory" ref="entityManagerFactory" />        <qualifier value="PortalDb"/>    </bean>            <tx:annotation-driven transaction-manager="transactionManager" />    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" lazy-init="false">        <property name="defaultPersistenceUnitName" value="uPortalPersistence" />    </bean>        <!-- ********** Database Utilities ********** -->    <!-- dbLoader now autowired -->    <!--       export not autowired, since statsContext contains a separate instance       of this same class configured for a different purpose     -->    <bean name="portalDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport">        <property name="dataSource" ref="PortalDb" />          <property name="configuration" ref="hibernateCfg" />    </bean>    <bean name="hibernateCfg" class="org.springframework.core.io.ClassPathResource">    	<constructor-arg><value>properties/db/hibernate.cfg.xml</value></constructor-arg>    </bean></beans>

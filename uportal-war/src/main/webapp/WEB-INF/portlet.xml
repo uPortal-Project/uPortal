@@ -1,617 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Licensed to Jasig under one or more contributor license
-    agreements. See the NOTICE file distributed with this work
-    for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
-    Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
-    specific language governing permissions and limitations
-    under the License.
-
--->
-
-<portlet-app xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd"
- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd"
- version="2.0">
-    <portlet>
-        <portlet-name>AttributeSwapperPortlet</portlet-name>
-        <display-name xml:lang="en">Attribute Swapper Portlet</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/attributeSwapperContext.xml</value>
-        </init-param>
-        <expiration-cache>0</expiration-cache>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>VIEW</portlet-mode>
-        </supports>
-        <supported-locale>en</supported-locale>
-        <portlet-info>
-            <title>Attribute Swapper Portlet</title>
-        </portlet-info>
-        
-        <portlet-preferences>
-            <preference>
-                <name>person-lookup.personSearchResults.resultsMessage</name>
-                <value>{0} ({1})</value>
-            </preference>
-            <preference>
-                <name>person-lookup.personSearchResults.resultsAttributes</name>
-                <value>displayName</value>
-                <value>username</value>
-            </preference>
-            <preference>
-                <name>person-lookup.personSearchResults.moreInfoAttributes</name>
-                <value>displayName</value>
-                <value>username</value>
-                <value>mail</value>
-            </preference>
-            <preference>
-                <name>person-lookup.personDetails.detailsAttributes.exclude</name>
-                <value>uid</value>
-                <value>user.login.id</value>
-                <value>userid</value>
-            </preference>
-            <preference>
-                <name>person-lookup.personLookup.queryAttributes.exclude</name>
-                <value>uid</value>
-                <value>user.login.id</value>
-                <value>userid</value>
-            </preference>
-            <preference>
-                <name>attribute-swapper.attributesForm.swappableAttributes.exclude</name>
-                <value>uid</value>
-                <value>user.login.id</value>
-                <value>userid</value>
-                <value>username</value>
-            </preference>
-        </portlet-preferences>
-    </portlet>
-    
-    <portlet>
-        <portlet-name>ExitFragmentAdministration</portlet-name>
-        <display-name xml:lang="en">Exit Fragment Administration</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/ExitFragmentAdministration-portlet.xml</value>
-        </init-param>
-        <expiration-cache>-1</expiration-cache>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>VIEW</portlet-mode>
-        </supports>
-        <supported-locale>en</supported-locale>
-        <portlet-info>
-            <title>ExitFragmentAdministration</title>
-        </portlet-info>
-    </portlet>
-    
-    <portlet>
-        <portlet-name>FragmentAdministration</portlet-name>
-        <display-name xml:lang="en">Exit Fragment Administration</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/FragmentAdministration-portlet.xml</value>
-        </init-param>
-        <expiration-cache>-1</expiration-cache>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>VIEW</portlet-mode>
-        </supports>
-        <supported-locale>en</supported-locale>
-        <portlet-info>
-            <title>FragmentAdministration</title>
-        </portlet-info>
-    </portlet>
-
-    <portlet> 
-        <portlet-name>ImportExportPortlet</portlet-name>  
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>/WEB-INF/classes/properties/contexts/portlet/ImportExportPortlet-portlet.xml</value>
-        </init-param>
-        <expiration-cache>-1</expiration-cache>
-        <supports> 
-            <mime-type>text/html</mime-type>  
-            <portlet-mode>view</portlet-mode> 
-        </supports>  
-        <portlet-info> 
-            <title>ImportExportPortlet</title> 
-        </portlet-info> 
-    </portlet> 
-
-    <portlet>
-        <portlet-name>IFrame</portlet-name>
-        <display-name xml:lang="en">Image</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/IFrame-portlet.xml</value>
-        </init-param>
-        <expiration-cache>0</expiration-cache>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>VIEW</portlet-mode>
-        </supports>
-        <supported-locale>en</supported-locale>
-        <portlet-info>
-            <title>IFrame</title>
-        </portlet-info>
-    </portlet>
-    
-    <portlet>
-        <portlet-name>Image</portlet-name>
-        <display-name xml:lang="en">Image</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/Image-portlet.xml</value>
-        </init-param>
-        <expiration-cache>0</expiration-cache>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>VIEW</portlet-mode>
-        </supports>
-        <supported-locale>en</supported-locale>
-        <portlet-info>
-            <title>Image</title>
-        </portlet-info>
-    </portlet>
-    
-    <portlet>
-        <portlet-name>Error</portlet-name>
-        <display-name xml:lang="en">Error</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/Error-portlet.xml</value>
-        </init-param>
-        <expiration-cache>0</expiration-cache>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>VIEW</portlet-mode>
-        </supports>
-        <supported-locale>en</supported-locale>
-        <portlet-info>
-            <title>Error</title>
-        </portlet-info>
-    </portlet>
-    
-    <portlet>
-        <portlet-name>GroupsAdministration</portlet-name>
-        <display-name xml:lang="en">Groups Administration Portlet</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/GroupsAdministration-portlet.xml</value>
-        </init-param>
-        <expiration-cache>0</expiration-cache>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>VIEW</portlet-mode>
-        </supports>
-        <supported-locale>en</supported-locale>
-        <portlet-info>
-            <title>Groups Administration Portlet</title>
-        </portlet-info>
-    </portlet>
-    
-    <portlet>
-        <portlet-name>PortletAdministration</portlet-name>
-        <display-name xml:lang="en">Portlet Administration Portlet</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/PortletAdministration-portlet.xml</value>
-        </init-param>
-        <expiration-cache>0</expiration-cache>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>VIEW</portlet-mode>
-        </supports>
-        <supported-locale>en</supported-locale>
-        <portlet-info>
-            <title>Portlet Administration Portlet</title>
-        </portlet-info>
-    </portlet>
-
-    <portlet>
-        <portlet-name>PortalAdministration</portlet-name>
-        <display-name xml:lang="en">Portal Administration</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/PortalAdministration-portlet.xml</value>
-        </init-param>
-        <expiration-cache>0</expiration-cache>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>VIEW</portlet-mode>
-        </supports>
-        <supported-locale>en</supported-locale>
-        <portlet-info>
-            <title>Portal Administration</title>
-        </portlet-info>
-    </portlet>
-        
-    <portlet>
-        <portlet-name>PermissionsAdministration</portlet-name>
-        <display-name xml:lang="en">Permissions Administration Portlet</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/PermissionsAdministration-portlet.xml</value>
-        </init-param>
-        <expiration-cache>0</expiration-cache>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>VIEW</portlet-mode>
-        </supports>
-        <supported-locale>en</supported-locale>
-        <portlet-info>
-            <title>Permissions Administration Portlet</title>
-        </portlet-info>
-    </portlet>
-
-    <portlet>
-        <portlet-name>SqlQuery</portlet-name>
-        <display-name xml:lang="en">Sql Query</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/SqlQuery-portlet.xml</value>
-        </init-param>
-        <expiration-cache>0</expiration-cache>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>VIEW</portlet-mode>
-            <portlet-mode>CONFIG</portlet-mode>
-        </supports>
-        <supported-locale>en</supported-locale>
-        <portlet-info>
-            <title>Sql Query</title>
-        </portlet-info>
-    </portlet>
-    
-    <portlet>
-        <portlet-name>Snooper</portlet-name>
-        <display-name xml:lang="en">User Locale</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/Snooper-portlet.xml</value>
-        </init-param>
-        <expiration-cache>0</expiration-cache>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>VIEW</portlet-mode>
-        </supports>
-        <supported-locale>en</supported-locale>
-        <portlet-info>
-            <title>Snooper</title>
-        </portlet-info>
-    </portlet>
-
-    <portlet>
-        <portlet-name>UserLocale</portlet-name>
-        <display-name xml:lang="en">User Locale</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/UserLocale-portlet.xml</value>
-        </init-param>
-        <expiration-cache>0</expiration-cache>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>VIEW</portlet-mode>
-        </supports>
-        <supported-locale>en</supported-locale>
-        <portlet-info>
-            <title>User Locale</title>
-        </portlet-info>
-    </portlet>
-    
-    <portlet>
-        <portlet-name>ToggleResourcesAggregation</portlet-name>
-        <display-name xml:lang="en">Toggle CSS/JavaScript Aggregation</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/ToggleResourcesAggregation-portlet.xml</value>
-        </init-param>
-        <expiration-cache>0</expiration-cache>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>VIEW</portlet-mode>
-        </supports>
-        <supported-locale>en</supported-locale>
-        <portlet-info>
-            <title>Toggle Resources Aggregation</title>
-        </portlet-info>
-    </portlet>
-    
-    <portlet>
-        <portlet-name>CacheManager</portlet-name>
-        <display-name xml:lang="en">Cache Manager</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/CacheManager-portlet.xml</value>
-        </init-param>
-        <expiration-cache>0</expiration-cache>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>VIEW</portlet-mode>
-        </supports>
-        <supported-locale>en</supported-locale>
-        <portlet-info>
-            <title>Cache Manager</title>
-        </portlet-info>
-    </portlet>
-    
-    <portlet>
-        <portlet-name>Sitemap</portlet-name>
-        <display-name xml:lang="en">Sitemap</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/Sitemap-portlet.xml</value>
-        </init-param>
-        <expiration-cache>0</expiration-cache>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>VIEW</portlet-mode>
-        </supports>
-        <supported-locale>en</supported-locale>
-        <portlet-info>
-            <title>Sitemap</title>
-        </portlet-info>
-    </portlet>
-    
-    <portlet>
-        <portlet-name>UserAdministration</portlet-name>
-        <display-name xml:lang="en">User Administration</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/UserAdministration-portlet.xml</value>
-        </init-param>
-        <expiration-cache>0</expiration-cache>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>VIEW</portlet-mode>
-        </supports>
-        <supported-locale>en</supported-locale>
-        <portlet-info>
-            <title>User Manager</title>
-        </portlet-info>
-        <portlet-preferences>
-            <preference>
-                <name>person-lookup.personDetails.detailsAttributes</name>
-                <value>username</value>
-                <value>mail</value>
-            </preference>
-        </portlet-preferences>
-    </portlet>
-    
-    <portlet>
-        <portlet-name>SelfEditAccount</portlet-name>
-        <display-name xml:lang="en">Edit My Portal Account</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/SelfEditAccount-portlet.xml</value>
-        </init-param>
-        <expiration-cache>0</expiration-cache>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>VIEW</portlet-mode>
-        </supports>
-        <supported-locale>en</supported-locale>
-        <portlet-info>
-            <title>Edit My Portal Account</title>
-        </portlet-info>
-    </portlet>
-    
-    <portlet>
-        <portlet-name>ResetMyLayout</portlet-name>
-        <display-name xml:lang="en">Reset My Layout</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/ResetMyLayout-portlet.xml</value>
-        </init-param>
-        <expiration-cache>0</expiration-cache>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>VIEW</portlet-mode>
-        </supports>
-        <supported-locale>en</supported-locale>
-        <portlet-info>
-            <title>Reset My Layout</title>
-        </portlet-info>
-    </portlet>
-
-    <portlet>
-        <portlet-name>FragmentAudit</portlet-name>
-        <display-name xml:lang="en">Audit DLM Fragments</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/FragmentAudit-portlet.xml</value>
-        </init-param>
-        <expiration-cache>0</expiration-cache>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>VIEW</portlet-mode>
-        </supports>
-        <supported-locale>en</supported-locale>
-        <portlet-info>
-            <title>Audit DLM Fragments</title>
-        </portlet-info>
-    </portlet>
-
-    <portlet>
-        <portlet-name>Search</portlet-name>
-        <display-name xml:lang="en">Search</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/Search-portlet.xml</value>
-        </init-param>
-        <expiration-cache>0</expiration-cache>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>VIEW</portlet-mode>
-        </supports>
-        <supported-locale>en</supported-locale>
-        <portlet-info>
-            <title>Search</title>
-        </portlet-info>
-        
-        <supported-processing-event>
-            <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchResults</qname>
-        </supported-processing-event>
-        
-        <supported-publishing-event>
-            <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchRequest</qname>
-        </supported-publishing-event>
-    </portlet>
-    
-    <portlet>
-        <portlet-name>Directory</portlet-name>
-        <display-name xml:lang="en">Directory</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/Directory-portlet.xml</value>
-        </init-param>
-        <expiration-cache>0</expiration-cache>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>VIEW</portlet-mode>
-        </supports>
-        <supported-locale>en</supported-locale>
-        <portlet-info>
-            <title>Directory</title>
-        </portlet-info>
-        
-        <supported-processing-event>
-            <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchRequest</qname>
-        </supported-processing-event>
-        
-        <supported-publishing-event>
-            <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchResults</qname>
-        </supported-publishing-event>
-    </portlet>
-    
-    <portlet>
-        <portlet-name>PopularPortlets</portlet-name>
-        <display-name xml:lang="en">Most Popular Apps</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/PopularPortlets-portlet.xml</value>
-        </init-param>
-        <expiration-cache>0</expiration-cache>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>VIEW</portlet-mode>
-        </supports>
-        <supported-locale>en</supported-locale>
-        <portlet-info>
-            <title>Most Popular Apps</title>
-        </portlet-info>
-    </portlet>
-
-    <portlet>
-        <portlet-name>Login</portlet-name>
-        <display-name xml:lang="en">Login</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/Login-portlet.xml</value>
-        </init-param>
-        <expiration-cache>0</expiration-cache>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>VIEW</portlet-mode>
-        </supports>
-        <supported-locale>en</supported-locale>
-        <portlet-info>
-            <title>Log In</title>
-        </portlet-info>
-    </portlet>
-
-    <portlet>
-        <portlet-name>ForgotPassword</portlet-name>
-        <display-name xml:lang="en">Forgot Password</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/ForgotPassword-portlet.xml</value>
-        </init-param>
-        <expiration-cache>0</expiration-cache>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>VIEW</portlet-mode>
-        </supports>
-        <supported-locale>en</supported-locale>
-        <portlet-info>
-            <title>Forgot Password</title>
-        </portlet-info>
-    </portlet>
-
-    <portlet>
-        <portlet-name>ResetPassword</portlet-name>
-        <display-name xml:lang="en">Reset Password</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/ResetPassword-portlet.xml</value>
-        </init-param>
-        <expiration-cache>0</expiration-cache>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>VIEW</portlet-mode>
-        </supports>
-        <supported-locale>en</supported-locale>
-        <portlet-info>
-            <title>Reset Password</title>
-        </portlet-info>
-    </portlet>
-
-    <custom-portlet-mode>
-        <description>Allows the portlet to render a preferences edit UI during publishing</description>
-        <portlet-mode>config</portlet-mode>
-    </custom-portlet-mode>    
-
-    <event-definition>
-        <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchRequest</qname>
-        <value-type>org.jasig.portal.search.SearchRequest</value-type>
-    </event-definition>
-    <event-definition>
-        <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchResults</qname>
-        <value-type>org.jasig.portal.search.SearchResults</value-type>
-    </event-definition>
-
-    <container-runtime-option>
-        <name>org.jasig.portal.globalEvent</name>
-        <value>{https://source.jasig.org/schemas/uportal/search}SearchRequest</value>
-    </container-runtime-option>
-</portlet-app>
+<?xml version="1.0" encoding="UTF-8"?><!--    Licensed to Jasig under one or more contributor license    agreements. See the NOTICE file distributed with this work    for additional information regarding copyright ownership.    Jasig licenses this file to you under the Apache License,    Version 2.0 (the "License"); you may not use this file    except in compliance with the License. You may obtain a    copy of the License at:    http://www.apache.org/licenses/LICENSE-2.0    Unless required by applicable law or agreed to in writing,    software distributed under the License is distributed on    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY    KIND, either express or implied. See the License for the    specific language governing permissions and limitations    under the License.--><portlet-app xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd" version="2.0">    <portlet>        <portlet-name>AttributeSwapperPortlet</portlet-name>        <display-name xml:lang="en">Attribute Swapper Portlet</display-name>        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>        <init-param>            <name>contextConfigLocation</name>            <value>classpath:/properties/contexts/portlet/attributeSwapperContext.xml</value>        </init-param>        <expiration-cache>0</expiration-cache>        <supports>            <mime-type>text/html</mime-type>            <portlet-mode>VIEW</portlet-mode>        </supports>        <supported-locale>en</supported-locale>        <portlet-info>            <title>Attribute Swapper Portlet</title>        </portlet-info>                <portlet-preferences>            <preference>                <name>person-lookup.personSearchResults.resultsMessage</name>                <value>{0} ({1})</value>            </preference>            <preference>                <name>person-lookup.personSearchResults.resultsAttributes</name>                <value>displayName</value>                <value>username</value>            </preference>            <preference>                <name>person-lookup.personSearchResults.moreInfoAttributes</name>                <value>displayName</value>                <value>username</value>                <value>mail</value>            </preference>            <preference>                <name>person-lookup.personDetails.detailsAttributes.exclude</name>                <value>uid</value>                <value>user.login.id</value>                <value>userid</value>            </preference>            <preference>                <name>person-lookup.personLookup.queryAttributes.exclude</name>                <value>uid</value>                <value>user.login.id</value>                <value>userid</value>            </preference>            <preference>                <name>attribute-swapper.attributesForm.swappableAttributes.exclude</name>                <value>uid</value>                <value>user.login.id</value>                <value>userid</value>                <value>username</value>            </preference>        </portlet-preferences>    </portlet>        <portlet>        <portlet-name>ExitFragmentAdministration</portlet-name>        <display-name xml:lang="en">Exit Fragment Administration</display-name>        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>        <init-param>            <name>contextConfigLocation</name>            <value>classpath:/properties/contexts/portlet/ExitFragmentAdministration-portlet.xml</value>        </init-param>        <expiration-cache>-1</expiration-cache>        <supports>            <mime-type>text/html</mime-type>            <portlet-mode>VIEW</portlet-mode>        </supports>        <supported-locale>en</supported-locale>        <portlet-info>            <title>ExitFragmentAdministration</title>        </portlet-info>    </portlet>        <portlet>        <portlet-name>FragmentAdministration</portlet-name>        <display-name xml:lang="en">Exit Fragment Administration</display-name>        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>        <init-param>            <name>contextConfigLocation</name>            <value>classpath:/properties/contexts/portlet/FragmentAdministration-portlet.xml</value>        </init-param>        <expiration-cache>-1</expiration-cache>        <supports>            <mime-type>text/html</mime-type>            <portlet-mode>VIEW</portlet-mode>        </supports>        <supported-locale>en</supported-locale>        <portlet-info>            <title>FragmentAdministration</title>        </portlet-info>    </portlet>    <portlet>         <portlet-name>ImportExportPortlet</portlet-name>          <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>        <init-param>            <name>contextConfigLocation</name>            <value>/WEB-INF/classes/properties/contexts/portlet/ImportExportPortlet-portlet.xml</value>        </init-param>        <expiration-cache>-1</expiration-cache>        <supports>             <mime-type>text/html</mime-type>              <portlet-mode>view</portlet-mode>         </supports>          <portlet-info>             <title>ImportExportPortlet</title>         </portlet-info>     </portlet>     <portlet>        <portlet-name>IFrame</portlet-name>        <display-name xml:lang="en">Image</display-name>        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>        <init-param>            <name>contextConfigLocation</name>            <value>classpath:/properties/contexts/portlet/IFrame-portlet.xml</value>        </init-param>        <expiration-cache>0</expiration-cache>        <supports>            <mime-type>text/html</mime-type>            <portlet-mode>VIEW</portlet-mode>        </supports>        <supported-locale>en</supported-locale>        <portlet-info>            <title>IFrame</title>        </portlet-info>    </portlet>        <portlet>        <portlet-name>Image</portlet-name>        <display-name xml:lang="en">Image</display-name>        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>        <init-param>            <name>contextConfigLocation</name>            <value>classpath:/properties/contexts/portlet/Image-portlet.xml</value>        </init-param>        <expiration-cache>0</expiration-cache>        <supports>            <mime-type>text/html</mime-type>            <portlet-mode>VIEW</portlet-mode>        </supports>        <supported-locale>en</supported-locale>        <portlet-info>            <title>Image</title>        </portlet-info>    </portlet>        <portlet>        <portlet-name>Error</portlet-name>        <display-name xml:lang="en">Error</display-name>        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>        <init-param>            <name>contextConfigLocation</name>            <value>classpath:/properties/contexts/portlet/Error-portlet.xml</value>        </init-param>        <expiration-cache>0</expiration-cache>        <supports>            <mime-type>text/html</mime-type>            <portlet-mode>VIEW</portlet-mode>        </supports>        <supported-locale>en</supported-locale>        <portlet-info>            <title>Error</title>        </portlet-info>    </portlet>        <portlet>        <portlet-name>GroupsAdministration</portlet-name>        <display-name xml:lang="en">Groups Administration Portlet</display-name>        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>        <init-param>            <name>contextConfigLocation</name>            <value>classpath:/properties/contexts/portlet/GroupsAdministration-portlet.xml</value>        </init-param>        <expiration-cache>0</expiration-cache>        <supports>            <mime-type>text/html</mime-type>            <portlet-mode>VIEW</portlet-mode>        </supports>        <supported-locale>en</supported-locale>        <portlet-info>            <title>Groups Administration Portlet</title>        </portlet-info>    </portlet>        <portlet>        <portlet-name>PortletAdministration</portlet-name>        <display-name xml:lang="en">Portlet Administration Portlet</display-name>        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>        <init-param>            <name>contextConfigLocation</name>            <value>classpath:/properties/contexts/portlet/PortletAdministration-portlet.xml</value>        </init-param>        <expiration-cache>0</expiration-cache>        <supports>            <mime-type>text/html</mime-type>            <portlet-mode>VIEW</portlet-mode>        </supports>        <supported-locale>en</supported-locale>        <portlet-info>            <title>Portlet Administration Portlet</title>        </portlet-info>    </portlet>    <portlet>        <portlet-name>PortalAdministration</portlet-name>        <display-name xml:lang="en">Portal Administration</display-name>        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>        <init-param>            <name>contextConfigLocation</name>            <value>classpath:/properties/contexts/portlet/PortalAdministration-portlet.xml</value>        </init-param>        <expiration-cache>0</expiration-cache>        <supports>            <mime-type>text/html</mime-type>            <portlet-mode>VIEW</portlet-mode>        </supports>        <supported-locale>en</supported-locale>        <portlet-info>            <title>Portal Administration</title>        </portlet-info>    </portlet>            <portlet>        <portlet-name>PermissionsAdministration</portlet-name>        <display-name xml:lang="en">Permissions Administration Portlet</display-name>        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>        <init-param>            <name>contextConfigLocation</name>            <value>classpath:/properties/contexts/portlet/PermissionsAdministration-portlet.xml</value>        </init-param>        <expiration-cache>0</expiration-cache>        <supports>            <mime-type>text/html</mime-type>            <portlet-mode>VIEW</portlet-mode>        </supports>        <supported-locale>en</supported-locale>        <portlet-info>            <title>Permissions Administration Portlet</title>        </portlet-info>    </portlet>    <portlet>        <portlet-name>SqlQuery</portlet-name>        <display-name xml:lang="en">Sql Query</display-name>        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>        <init-param>            <name>contextConfigLocation</name>            <value>classpath:/properties/contexts/portlet/SqlQuery-portlet.xml</value>        </init-param>        <expiration-cache>0</expiration-cache>        <supports>            <mime-type>text/html</mime-type>            <portlet-mode>VIEW</portlet-mode>            <portlet-mode>CONFIG</portlet-mode>        </supports>        <supported-locale>en</supported-locale>        <portlet-info>            <title>Sql Query</title>        </portlet-info>    </portlet>        <portlet>        <portlet-name>Snooper</portlet-name>        <display-name xml:lang="en">User Locale</display-name>        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>        <init-param>            <name>contextConfigLocation</name>            <value>classpath:/properties/contexts/portlet/Snooper-portlet.xml</value>        </init-param>        <expiration-cache>0</expiration-cache>        <supports>            <mime-type>text/html</mime-type>            <portlet-mode>VIEW</portlet-mode>        </supports>        <supported-locale>en</supported-locale>        <portlet-info>            <title>Snooper</title>        </portlet-info>    </portlet>    <portlet>        <portlet-name>UserLocale</portlet-name>        <display-name xml:lang="en">User Locale</display-name>        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>        <init-param>            <name>contextConfigLocation</name>            <value>classpath:/properties/contexts/portlet/UserLocale-portlet.xml</value>        </init-param>        <expiration-cache>0</expiration-cache>        <supports>            <mime-type>text/html</mime-type>            <portlet-mode>VIEW</portlet-mode>        </supports>        <supported-locale>en</supported-locale>        <portlet-info>            <title>User Locale</title>        </portlet-info>    </portlet>        <portlet>        <portlet-name>ToggleResourcesAggregation</portlet-name>        <display-name xml:lang="en">Toggle CSS/JavaScript Aggregation</display-name>        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>        <init-param>            <name>contextConfigLocation</name>            <value>classpath:/properties/contexts/portlet/ToggleResourcesAggregation-portlet.xml</value>        </init-param>        <expiration-cache>0</expiration-cache>        <supports>            <mime-type>text/html</mime-type>            <portlet-mode>VIEW</portlet-mode>        </supports>        <supported-locale>en</supported-locale>        <portlet-info>            <title>Toggle Resources Aggregation</title>        </portlet-info>    </portlet>        <portlet>        <portlet-name>CacheManager</portlet-name>        <display-name xml:lang="en">Cache Manager</display-name>        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>        <init-param>            <name>contextConfigLocation</name>            <value>classpath:/properties/contexts/portlet/CacheManager-portlet.xml</value>        </init-param>        <expiration-cache>0</expiration-cache>        <supports>            <mime-type>text/html</mime-type>            <portlet-mode>VIEW</portlet-mode>        </supports>        <supported-locale>en</supported-locale>        <portlet-info>            <title>Cache Manager</title>        </portlet-info>    </portlet>        <portlet>        <portlet-name>Sitemap</portlet-name>        <display-name xml:lang="en">Sitemap</display-name>        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>        <init-param>            <name>contextConfigLocation</name>            <value>classpath:/properties/contexts/portlet/Sitemap-portlet.xml</value>        </init-param>        <expiration-cache>0</expiration-cache>        <supports>            <mime-type>text/html</mime-type>            <portlet-mode>VIEW</portlet-mode>        </supports>        <supported-locale>en</supported-locale>        <portlet-info>            <title>Sitemap</title>        </portlet-info>    </portlet>        <portlet>        <portlet-name>UserAdministration</portlet-name>        <display-name xml:lang="en">User Administration</display-name>        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>        <init-param>            <name>contextConfigLocation</name>            <value>classpath:/properties/contexts/portlet/UserAdministration-portlet.xml</value>        </init-param>        <expiration-cache>0</expiration-cache>        <supports>            <mime-type>text/html</mime-type>            <portlet-mode>VIEW</portlet-mode>        </supports>        <supported-locale>en</supported-locale>        <portlet-info>            <title>User Manager</title>        </portlet-info>        <portlet-preferences>            <preference>                <name>person-lookup.personDetails.detailsAttributes</name>                <value>username</value>                <value>mail</value>            </preference>        </portlet-preferences>    </portlet>        <portlet>        <portlet-name>SelfEditAccount</portlet-name>        <display-name xml:lang="en">Edit My Portal Account</display-name>        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>        <init-param>            <name>contextConfigLocation</name>            <value>classpath:/properties/contexts/portlet/SelfEditAccount-portlet.xml</value>        </init-param>        <expiration-cache>0</expiration-cache>        <supports>            <mime-type>text/html</mime-type>            <portlet-mode>VIEW</portlet-mode>        </supports>        <supported-locale>en</supported-locale>        <portlet-info>            <title>Edit My Portal Account</title>        </portlet-info>    </portlet>        <portlet>        <portlet-name>ResetMyLayout</portlet-name>        <display-name xml:lang="en">Reset My Layout</display-name>        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>        <init-param>            <name>contextConfigLocation</name>            <value>classpath:/properties/contexts/portlet/ResetMyLayout-portlet.xml</value>        </init-param>        <expiration-cache>0</expiration-cache>        <supports>            <mime-type>text/html</mime-type>            <portlet-mode>VIEW</portlet-mode>        </supports>        <supported-locale>en</supported-locale>        <portlet-info>            <title>Reset My Layout</title>        </portlet-info>    </portlet>    <portlet>        <portlet-name>FragmentAudit</portlet-name>        <display-name xml:lang="en">Audit DLM Fragments</display-name>        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>        <init-param>            <name>contextConfigLocation</name>            <value>classpath:/properties/contexts/portlet/FragmentAudit-portlet.xml</value>        </init-param>        <expiration-cache>0</expiration-cache>        <supports>            <mime-type>text/html</mime-type>            <portlet-mode>VIEW</portlet-mode>        </supports>        <supported-locale>en</supported-locale>        <portlet-info>            <title>Audit DLM Fragments</title>        </portlet-info>    </portlet>    <portlet>        <portlet-name>Search</portlet-name>        <display-name xml:lang="en">Search</display-name>        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>        <init-param>            <name>contextConfigLocation</name>            <value>classpath:/properties/contexts/portlet/Search-portlet.xml</value>        </init-param>        <expiration-cache>0</expiration-cache>        <supports>            <mime-type>text/html</mime-type>            <portlet-mode>VIEW</portlet-mode>        </supports>        <supported-locale>en</supported-locale>        <portlet-info>            <title>Search</title>        </portlet-info>                <supported-processing-event>            <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchResults</qname>        </supported-processing-event>                <supported-publishing-event>            <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchRequest</qname>        </supported-publishing-event>    </portlet>        <portlet>        <portlet-name>Directory</portlet-name>        <display-name xml:lang="en">Directory</display-name>        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>        <init-param>            <name>contextConfigLocation</name>            <value>classpath:/properties/contexts/portlet/Directory-portlet.xml</value>        </init-param>        <expiration-cache>0</expiration-cache>        <supports>            <mime-type>text/html</mime-type>            <portlet-mode>VIEW</portlet-mode>        </supports>        <supported-locale>en</supported-locale>        <portlet-info>            <title>Directory</title>        </portlet-info>                <supported-processing-event>            <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchRequest</qname>        </supported-processing-event>                <supported-publishing-event>            <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchResults</qname>        </supported-publishing-event>    </portlet>        <portlet>        <portlet-name>PopularPortlets</portlet-name>        <display-name xml:lang="en">Most Popular Apps</display-name>        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>        <init-param>            <name>contextConfigLocation</name>            <value>classpath:/properties/contexts/portlet/PopularPortlets-portlet.xml</value>        </init-param>        <expiration-cache>0</expiration-cache>        <supports>            <mime-type>text/html</mime-type>            <portlet-mode>VIEW</portlet-mode>        </supports>        <supported-locale>en</supported-locale>        <portlet-info>            <title>Most Popular Apps</title>        </portlet-info>    </portlet>    <portlet>        <portlet-name>Login</portlet-name>        <display-name xml:lang="en">Login</display-name>        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>        <init-param>            <name>contextConfigLocation</name>            <value>classpath:/properties/contexts/portlet/Login-portlet.xml</value>        </init-param>        <expiration-cache>0</expiration-cache>        <supports>            <mime-type>text/html</mime-type>            <portlet-mode>VIEW</portlet-mode>        </supports>        <supported-locale>en</supported-locale>        <portlet-info>            <title>Log In</title>        </portlet-info>    </portlet>    <portlet>        <portlet-name>ForgotPassword</portlet-name>        <display-name xml:lang="en">Forgot Password</display-name>        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>        <init-param>            <name>contextConfigLocation</name>            <value>classpath:/properties/contexts/portlet/ForgotPassword-portlet.xml</value>        </init-param>        <expiration-cache>0</expiration-cache>        <supports>            <mime-type>text/html</mime-type>            <portlet-mode>VIEW</portlet-mode>        </supports>        <supported-locale>en</supported-locale>        <portlet-info>            <title>Forgot Password</title>        </portlet-info>    </portlet>    <portlet>        <portlet-name>ResetPassword</portlet-name>        <display-name xml:lang="en">Reset Password</display-name>        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>        <init-param>            <name>contextConfigLocation</name>            <value>classpath:/properties/contexts/portlet/ResetPassword-portlet.xml</value>        </init-param>        <expiration-cache>0</expiration-cache>        <supports>            <mime-type>text/html</mime-type>            <portlet-mode>VIEW</portlet-mode>        </supports>        <supported-locale>en</supported-locale>        <portlet-info>            <title>Reset Password</title>        </portlet-info>    </portlet>    <custom-portlet-mode>        <description>Allows the portlet to render a preferences edit UI during publishing</description>        <portlet-mode>config</portlet-mode>    </custom-portlet-mode>        <event-definition>        <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchRequest</qname>        <value-type>org.jasig.portal.search.SearchRequest</value-type>    </event-definition>    <event-definition>        <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchResults</qname>        <value-type>org.jasig.portal.search.SearchResults</value-type>    </event-definition>    <container-runtime-option>        <name>org.jasig.portal.globalEvent</name>        <value>{https://source.jasig.org/schemas/uportal/search}SearchRequest</value>    </container-runtime-option></portlet-app>

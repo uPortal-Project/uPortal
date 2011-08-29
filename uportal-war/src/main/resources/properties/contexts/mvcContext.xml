@@ -1,76 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Licensed to Jasig under one or more contributor license
-    agreements. See the NOTICE file distributed with this work
-    for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
-    Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
-    specific language governing permissions and limitations
-    under the License.
-
--->
-
-<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns="http://www.springframework.org/schema/beans" 
-       xsi:schemaLocation="
-           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
-           
-    <bean id="minimizedStateHandlerInterceptor" class="org.jasig.portal.portlets.MinimizedStateHandlerInterceptor" />           
-
-    <bean id="urlCanonicalizingFilter" class="org.jasig.portal.url.UrlCanonicalizingFilter" />
-    <bean id="createPortletCookieFilter" class="org.jasig.portal.utils.web.CreatePortletCookieFilter"/>
-    <bean id="multipartResolver"
-        class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-    
-        <!-- one of the properties available; the maximum file size in bytes -->
-        <property name="maxUploadSize" value="100000"/>
-    </bean>
-
-    <!--
-     | Message source for this context, loaded from localized "messages_xx" files
-     +-->
-    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-        <property name="alwaysUseMessageFormat" value="true" />
-        <property name="cacheSeconds" value="60" />
-        <property name="useCodeAsDefaultMessage" value="true" />
-        <property name="fallbackToSystemLocale" value="false" />
-        <property name="basenames">
-            <list>
-                <value>classpath:/properties/i18n/Messages</value>
-                <value>/WEB-INF/flows/person-lookup/person-lookup</value>
-                <value>/WEB-INF/flows/register-portal/register-portal</value>
-            </list>
-        </property>                                     
-    </bean>
-    
-    <!-- 
-     | XML view resolver for JSON view
-     +-->
-    <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver">
-        <property name="order" value="0"/>
-        <property name="location" value="classpath:properties/contexts/mvcViews.xml"/>
-    </bean>
-    
-    <!-- 
-     | Standard JSP view resolver
-     +-->
-    <bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="cache" value="true"/>
-        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
-        <property name="prefix" value="/WEB-INF/"/>
-        <property name="suffix" value=".jsp"/>
-        <property name="order" value="1"/>
-    </bean>
-    
-    <bean id="localeResolver" class="org.jasig.portal.i18n.LocaleManagerLocaleResolver" />
-</beans>
+<?xml version="1.0" encoding="UTF-8"?><!--    Licensed to Jasig under one or more contributor license    agreements. See the NOTICE file distributed with this work    for additional information regarding copyright ownership.    Jasig licenses this file to you under the Apache License,    Version 2.0 (the "License"); you may not use this file    except in compliance with the License. You may obtain a    copy of the License at:    http://www.apache.org/licenses/LICENSE-2.0    Unless required by applicable law or agreed to in writing,    software distributed under the License is distributed on    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY    KIND, either express or implied. See the License for the    specific language governing permissions and limitations    under the License.--><beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"       xmlns="http://www.springframework.org/schema/beans"        xsi:schemaLocation="           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">               <bean id="minimizedStateHandlerInterceptor" class="org.jasig.portal.portlets.MinimizedStateHandlerInterceptor" />               <bean id="urlCanonicalizingFilter" class="org.jasig.portal.url.UrlCanonicalizingFilter" />    <bean id="createPortletCookieFilter" class="org.jasig.portal.utils.web.CreatePortletCookieFilter"/>    <bean id="multipartResolver"        class="org.springframework.web.multipart.commons.CommonsMultipartResolver">            <!-- one of the properties available; the maximum file size in bytes -->        <property name="maxUploadSize" value="100000"/>    </bean>    <!--     | Message source for this context, loaded from localized "messages_xx" files     +-->    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">        <property name="alwaysUseMessageFormat" value="true" />        <property name="cacheSeconds" value="60" />        <property name="useCodeAsDefaultMessage" value="true" />        <property name="fallbackToSystemLocale" value="false" />        <property name="basenames">            <list>                <value>classpath:/properties/i18n/Messages</value>                <value>/WEB-INF/flows/person-lookup/person-lookup</value>                <value>/WEB-INF/flows/register-portal/register-portal</value>            </list>        </property>                                         </bean>        <!--      | XML view resolver for JSON view     +-->    <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver">        <property name="order" value="0"/>        <property name="location" value="classpath:properties/contexts/mvcViews.xml"/>    </bean>        <!--      | Standard JSP view resolver     +-->    <bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">        <property name="cache" value="true"/>        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>        <property name="prefix" value="/WEB-INF/"/>        <property name="suffix" value=".jsp"/>        <property name="order" value="1"/>    </bean>        <bean id="localeResolver" class="org.jasig.portal.i18n.LocaleManagerLocaleResolver" /></beans>

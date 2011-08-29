@@ -1,1001 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
-    <parent>
-        <groupId>org.jasig.parent</groupId>
-        <artifactId>jasig-parent</artifactId>
-        <version>31</version>
-    </parent>
-
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jasig.portal</groupId>
-    <artifactId>uportal-parent</artifactId>
-    <version>4.0.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
-
-    <name>uPortal Parent</name>
-    <description>The root project definition for the uPortal project.</description>
-    <url>${jasig-site-base}/uportal/${project.version}</url>
-    
-    <scm>
-        <connection>scm:svn:https://source.jasig.org/uPortal/trunk</connection>
-        <developerConnection>scm:svn:https://source.jasig.org/uPortal/trunk</developerConnection>
-        <url>https://developer.jasig.org/source/browse/jasigsvn/uPortal/trunk</url>
-    </scm>
-   <!-- 
-    <distributionManagement>
-        <site>
-            <id>developer.jasig</id>
-            <url>${jasig-site-dist-base}/uportal/${project.version}</url>
-        </site>
-    </distributionManagement>
-   --> 
-    <issueManagement>
-        <url>${jasig-issues-base}/UP</url>
-        <system>${jasig-issues-system}</system>
-    </issueManagement>
-    
-    <ciManagement>
-        <system>bamboo</system>
-        <url>http://developer.jasig.org/bamboo/browse/UP</url>
-        <notifiers>
-            <notifier>
-                <type>mail</type>
-                <sendOnError>true</sendOnError>
-                <sendOnFailure>true</sendOnFailure>
-                <sendOnSuccess>false</sendOnSuccess>
-                <sendOnWarning>false</sendOnWarning>
-                <configuration><address>uportal-dev@lists.ja-sig.org</address></configuration>
-            </notifier>
-        </notifiers>
-    </ciManagement>
-
-    <repositories>
-        <repository>            
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
-            <releases><enabled>false</enabled></releases>
-            <snapshots><enabled>true</enabled></snapshots>
-        </repository>
-        <repository>            
-            <id>apache-snapshots</id>
-            <name>Apache Snapshots</name>
-            <url>http://repository.apache.org/snapshots</url>
-            <releases><enabled>false</enabled></releases>
-            <snapshots><enabled>true</enabled></snapshots>
-        </repository>
-    </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>            
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
-            <releases><enabled>false</enabled></releases>
-            <snapshots><enabled>true</enabled></snapshots>
-        </pluginRepository>
-        <pluginRepository>            
-            <id>apache-snapshots</id>
-            <name>Apache Snapshots</name>
-            <url>http://repository.apache.org/snapshots</url>
-            <releases><enabled>false</enabled></releases>
-            <snapshots><enabled>true</enabled></snapshots>
-        </pluginRepository>
-    </pluginRepositories>
-
-
-    <properties>
-        <!-- The final name of the uPortal web-application -->
-        <uportal.docbase>uPortal</uportal.docbase>
-        <project-site-path>/uportal/${project.version}</project-site-path>
-        
-        <!-- The JDBC Driver used by uPortal -->
-        <jdbc.groupId>org.hsqldb</jdbc.groupId>
-        <jdbc.artifactId>hsqldb</jdbc.artifactId>
-        <jdbc.version>${hsqldb.version}</jdbc.version>
-    
-        <!--
-         | Environment name and filters file for environment-specific build
-         | settings.  By default <environment.name> is blank, and the filters 
-         | file is build.properties.
-         |
-         | You can override the default by passing a -Denvironment.name 
-         | parameter, which Ant will do for you if you invoke Ant with 
-         | -Denv={something}.  NOTE that Ant also adds a suffixed period (.) 
-         | character.  If you want to override the default environment.name by 
-         | invoking Maven directly, you will have to append a period yourself.
-         +-->
-        <env>local</env>
-        <filters.file>filters/${env}.properties</filters.file>
-    
-        <!-- WAR Dependency Version Properties -->
-        <BookmarksPortlet.version>1.0.10</BookmarksPortlet.version>
-        <cas-server.version>3.4.8</cas-server.version>
-        <cas-clearpass.version>1.0.7.GA</cas-clearpass.version>
-        <cas-proxy-test-portlet.version>1.0.0-RC3</cas-proxy-test-portlet.version>
-        <FunctionalTestsPortlet.version>1.1.0-RC1</FunctionalTestsPortlet.version>
-        <jasig-widget-portlets.version>1.0.0-RC3</jasig-widget-portlets.version>
-        <NewsReaderPortlet.version>3.0.0-RC2</NewsReaderPortlet.version>
-        <SimpleContentPortlet.version>1.0.0</SimpleContentPortlet.version>
-        <WeatherPortlet.version>1.0.8</WeatherPortlet.version>
-        <WebProxyPortlet.version>1.1.6</WebProxyPortlet.version>
-
-        <!-- Project Dependency Version Properties -->
-        <aopalliance.version>1.0</aopalliance.version>
-        <activation.version>1.1</activation.version>
-        <ant.version>1.8.2</ant.version>
-        <aspectjrt.version>1.6.11</aspectjrt.version>
-        <aspectjweaver.version>1.6.11</aspectjweaver.version>
-        <casclient.version>3.2.1</casclient.version>
-        <ccpp.version>1.0</ccpp.version>
-        <cernunnos.version>1.2.1</cernunnos.version>
-        <commons-cli.version>1.2</commons-cli.version>
-        <commons-codec.version>1.5</commons-codec.version>
-        <commons-collections.version>3.2.1</commons-collections.version>
-        <commons-dbcp.version>1.4</commons-dbcp.version>
-        <commons-httpclient.version>3.1</commons-httpclient.version>
-        <commons-io.version>2.0.1</commons-io.version>
-        <commons-lang.version>2.6</commons-lang.version>
-        <commons-logging.version>1.1.1</commons-logging.version>
-        <commons-logging-api.version>1.1</commons-logging-api.version>
-        <commons-pool.version>1.5.6</commons-pool.version>
-        <dom4j.version>1.6.1</dom4j.version>
-        <easymock.version>3.0</easymock.version>
-        <ejb3-persistence.version>1.0.1.GA</ejb3-persistence.version>
-        <ehcache.version>2.4.3</ehcache.version>
-        <ehcache-spring-annotations.version>1.2.0-M1</ehcache-spring-annotations.version>
-        <ehcache-web.version>2.0.3</ehcache-web.version>
-        <guava.version>r09</guava.version>
-        <groovy.version>1.8.0</groovy.version>
-        <grouperClient.version>1.6.3</grouperClient.version>
-        <hibernate.version>3.6.5.Final</hibernate.version>
-        <hibernate-jpamodelgen.version>1.1.1.Final</hibernate-jpamodelgen.version>
-        <hsqldb.version>2.2.4</hsqldb.version>
-        <jackson.version>1.8.3</jackson.version>
-        <jansi.version>1.6</jansi.version>
-        <javassist.version>3.15.0.GA</javassist.version> 
-        <jasypt.version>1.7.1</jasypt.version>
-        <jaxb2basics.version>0.6.2</jaxb2basics.version>
-        <jdom.version>1.0</jdom.version>
-        <jline.version>0.9.94</jline.version>
-        <json-lib-ext-spring.version>1.0.2</json-lib-ext-spring.version>
-        <jsp-api.version>2.1</jsp-api.version>
-        <jstl.version>1.1.2</jstl.version>
-        <jtidy.version>4aug2000r7-dev</jtidy.version>
-        <junit.version>4.8.2</junit.version>
-        <log4j.version>1.2.16</log4j.version>
-        <mail.version>1.4.1</mail.version>
-        <mockito.version>1.8.5</mockito.version>
-        <objenesis.version>1.2</objenesis.version>
-        <org.springframework.webflow.version>2.3.0.RELEASE</org.springframework.webflow.version>
-        <oro.version>2.0.8</oro.version>
-        <persistence-api.version>1.0</persistence-api.version>
-        <person-directory.version>1.5.0-RC6</person-directory.version>
-        <pluto.version>2.1.0-M2</pluto.version>
-        <portlet-api.version>2.0</portlet-api.version>
-        <quartz.version>1.8.4</quartz.version>
-        <resource-server.version>1.0.21-SNAPSHOT</resource-server.version>
-        <servlet-api.version>2.5</servlet-api.version>
-        <slf4j.version>1.6.1</slf4j.version>
-        <spring-framework.version>3.0.5.RELEASE</spring-framework.version>
-        <spring-ldap.version>1.3.1.RELEASE</spring-ldap.version>
-        <standard.version>1.1.2</standard.version>
-        <staxmate.version>2.0.1</staxmate.version>
-        <stringtemplate.version>4.0.2</stringtemplate.version>
-        <uportal-ear-deployer.version>1.0.1</uportal-ear-deployer.version>
-        <woodstox.version>4.1.1</woodstox.version>
-        <xmlunit.version>1.3</xmlunit.version>
-        <xstream.version>1.3.1</xstream.version>
-        
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
-    <modules>
-        <module>uportal-war</module>
-        <module>uportal-ear</module>
-        <module>uportal-portlets-overlay</module>
-        <module>bootstrap</module>
-        <module>uportal-search-api</module>
-    </modules>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.antlr</groupId>
-                <artifactId>stringtemplate</artifactId>
-                <version>${stringtemplate.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>aopalliance</groupId>
-                <artifactId>aopalliance</artifactId>
-                <version>${aopalliance.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${guava.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.googlecode.cernunnos</groupId>
-                <artifactId>cernunnos</artifactId>
-                <version>${cernunnos.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>cvsclient</artifactId>
-                        <groupId>org.netbeans.lib</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>net.sf.retrotranslator</groupId>
-                        <artifactId>retrotranslator-runtime</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>rhino</groupId>
-                        <artifactId>js</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <artifactId>js-engine</artifactId>
-                        <groupId>javax.script</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <artifactId>xercesImpl</artifactId>
-                        <groupId>xerces</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <artifactId>xml-apis</artifactId>
-                        <groupId>xml-apis</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>xom</groupId>
-                        <artifactId>xom</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.codehaus.groovy</groupId>
-                        <artifactId>groovy-all</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>com.googlecode.ehcache-spring-annotations</groupId>
-                <artifactId>ehcache-spring-annotations</artifactId>
-                <version>${ehcache-spring-annotations.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.thoughtworks.xstream</groupId>
-                <artifactId>xstream</artifactId>
-                <version>${xstream.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-cli</groupId>
-                <artifactId>commons-cli</artifactId>
-                <version>${commons-cli.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-codec</groupId>
-                <artifactId>commons-codec</artifactId>
-                <version>${commons-codec.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-collections</groupId>
-                <artifactId>commons-collections</artifactId>
-                <version>${commons-collections.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-dbcp</groupId>
-                <artifactId>commons-dbcp</artifactId>
-                <version>${commons-dbcp.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-httpclient</groupId>
-                <artifactId>commons-httpclient</artifactId>
-                <version>${commons-httpclient.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>${commons-io.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-lang</groupId>
-                <artifactId>commons-lang</artifactId>
-                <version>${commons-lang.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-logging</groupId>
-                <artifactId>commons-logging</artifactId>
-                <version>${commons-logging.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-logging</groupId>
-                <artifactId>commons-logging-api</artifactId>
-                <version>${commons-logging-api.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-pool</groupId>
-                <artifactId>commons-pool</artifactId>
-                <version>${commons-pool.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>dom4j</groupId>
-                <artifactId>dom4j</artifactId>
-                <version>${dom4j.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>xml-apis</artifactId>
-                        <groupId>xml-apis</groupId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>edu.internet2.middleware.grouper</groupId>
-                <artifactId>grouperClient</artifactId>
-                <version>${grouperClient.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hsqldb</groupId>
-                <artifactId>hsqldb</artifactId>
-                <version>${hsqldb.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hsqldb</groupId>
-                <artifactId>sqltool</artifactId>
-                <version>${hsqldb.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.javassist</groupId>
-                <artifactId>javassist</artifactId>
-                <version>${javassist.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.activation</groupId>
-                <artifactId>activation</artifactId>
-                <version>${activation.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.ccpp</groupId>
-                <artifactId>ccpp</artifactId>
-                <version>${ccpp.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.mail</groupId>
-                <artifactId>mail</artifactId>
-                <version>${mail.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.portlet</groupId>
-                <artifactId>portlet-api</artifactId>
-                <version>${portlet-api.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.servlet.jsp</groupId>
-                <artifactId>jsp-api</artifactId>
-                <version>${jsp-api.version}</version>
-            </dependency> 
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>jstl</artifactId>
-                <version>${jstl.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>servlet-api</artifactId>
-                <version>${servlet-api.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>jtidy</groupId>
-                <artifactId>jtidy</artifactId>
-                <version>${jtidy.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>jline</groupId>
-                <artifactId>jline</artifactId>
-                <version>${jline.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>log4j</groupId>
-                <artifactId>log4j</artifactId>
-                <version>${log4j.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.sun.jdmk</groupId>
-                        <artifactId>jmxtools</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sun.jmx</groupId>
-                        <artifactId>jmxri</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>javax.jms</groupId>
-                        <artifactId>jms</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>javax.mail</groupId>
-                        <artifactId>mail</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>net.sf.ehcache</groupId>
-                <artifactId>ehcache-core</artifactId>
-                <version>${ehcache.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.sf.ehcache</groupId>
-                <artifactId>ehcache-web</artifactId>
-                <version>${ehcache-web.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.sf.json-lib</groupId>
-                <artifactId>json-lib-ext-spring</artifactId>
-                <version>${json-lib-ext-spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jvnet.jaxb2_commons</groupId>
-                <artifactId>jaxb2-basics-runtime</artifactId>
-                <version>${jaxb2basics.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-core</artifactId>
-                <version>${mockito.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.objenesis</groupId>
-                <artifactId>objenesis</artifactId>
-                <version>${objenesis.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.quartz-scheduler</groupId>
-                <artifactId>quartz</artifactId>
-                <version>${quartz.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.ant</groupId>
-                <artifactId>ant</artifactId>
-                <version>${ant.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.ant</groupId>
-                <artifactId>ant-launcher</artifactId>
-                <version>${ant.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.portals.pluto</groupId>
-                <artifactId>pluto-ant-tasks</artifactId>
-                <version>${pluto.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.portals.pluto</groupId>
-                <artifactId>pluto-container</artifactId>
-                <version>${pluto.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>javax.xml.bind</groupId>
-                        <artifactId>jaxb-api</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sun.xml.bind</groupId>
-                        <artifactId>jaxb-impl</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>stax</groupId>
-                        <artifactId>stax</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.portals.pluto</groupId>
-                <artifactId>pluto-container-api</artifactId>
-                <version>${pluto.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.portals.pluto</groupId>
-                <artifactId>pluto-portal-driver</artifactId>
-                <version>${pluto.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.portals.pluto</groupId>
-                <artifactId>pluto-container-driver-api</artifactId>
-                <version>${pluto.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.portals.pluto</groupId>
-                <artifactId>pluto-taglib</artifactId>
-                <version>${pluto.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.portals.pluto</groupId>
-                <artifactId>pluto-util</artifactId>
-                <version>${pluto.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-jdk14</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.aspectj</groupId>
-                <artifactId>aspectjrt</artifactId>
-                <version>${aspectjrt.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.aspectj</groupId>
-                <artifactId>aspectjweaver</artifactId>
-                <version>${aspectjweaver.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.groovy</groupId>
-                <artifactId>groovy</artifactId>
-                <version>${groovy.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.jackson</groupId>
-                <artifactId>jackson-core-asl</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.jackson</groupId>
-                <artifactId>jackson-mapper-asl</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.staxmate</groupId>
-                <artifactId>staxmate</artifactId>
-                <version>${staxmate.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.woodstox</groupId>
-                <artifactId>woodstox-core-asl</artifactId>
-                <version>${woodstox.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>stax-api</artifactId>
-                        <groupId>javax.xml.stream</groupId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.easymock</groupId>
-                <artifactId>easymock</artifactId>
-                <version>${easymock.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.fusesource.jansi</groupId>
-                <artifactId>jansi</artifactId>
-                <version>${jansi.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-entitymanager</artifactId>
-                <version>${hibernate.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-jpamodelgen</artifactId>
-                <version>${hibernate-jpamodelgen.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jasig.cas.client</groupId>
-                <artifactId>cas-client-core</artifactId>
-                <version>${casclient.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jasig.cas3.extensions</groupId>
-                <artifactId>clearpass-integration-uportal</artifactId>
-                <version>${cas-clearpass.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jasig.portal</groupId>
-                <artifactId>uportal-ear-deployer</artifactId>
-                <version>${uportal-ear-deployer.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jasig.resourceserver</groupId>
-                <artifactId>resource-server-utils</artifactId>
-                <version>${resource-server.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jasig.service</groupId>
-                <artifactId>person-directory-api</artifactId>
-                <version>${person-directory.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jasig.service</groupId>
-                <artifactId>person-directory-impl</artifactId>
-                <version>${person-directory.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.sun.xml.bind</groupId>
-                        <artifactId>jaxb-impl</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>javax.xml.bind</groupId>
-                        <artifactId>jaxb-api</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>javax.xml.stream</groupId>
-                        <artifactId>stax-api</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework.ldap</groupId>
-                        <artifactId>spring-ldap</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency> 
-                <groupId>org.jasypt</groupId> 
-                <artifactId>jasypt</artifactId> 
-                <version>${jasypt.version}</version> 
-            </dependency> 
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-jcl</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-aop</artifactId>
-                <version>${spring-framework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-aspects</artifactId>
-                <version>${spring-framework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-beans</artifactId>
-                <version>${spring-framework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
-                <version>${spring-framework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context-support</artifactId>
-                <version>${spring-framework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-core</artifactId>
-                <version>${spring-framework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-jdbc</artifactId>
-                <version>${spring-framework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-orm</artifactId>
-                <version>${spring-framework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-oxm</artifactId>
-                <version>${spring-framework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test</artifactId>
-                <version>${spring-framework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-tx</artifactId>
-                <version>${spring-framework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-web</artifactId>
-                <version>${spring-framework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-webmvc</artifactId>
-                <version>${spring-framework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-webmvc-portlet</artifactId>
-                <version>${spring-framework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.ldap</groupId>
-                <artifactId>spring-ldap-core-tiger</artifactId>
-                <version>${spring-ldap.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.webflow</groupId>
-                <artifactId>spring-binding</artifactId>
-                <version>${org.springframework.webflow.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.webflow</groupId>
-                <artifactId>spring-webflow</artifactId>
-                <version>${org.springframework.webflow.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>oro</groupId>
-                <artifactId>oro</artifactId>
-                <version>${oro.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>taglibs</groupId>
-                <artifactId>standard</artifactId>
-                <version>${standard.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>xmlunit</groupId>
-                <artifactId>xmlunit</artifactId>
-                <version>${xmlunit.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-    
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-clean-plugin</artifactId>
-                <inherited>false</inherited>
-                <configuration>
-                    <filesets>
-                        <fileset>
-                            <directory>${basedir}/assembly/target</directory>
-                            <includes>
-                                <include>**</include>
-                            </includes>
-                            <followSymlinks>false</followSymlinks>
-                        </fileset>
-                    </filesets>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>enforce-versions</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                            <requireMavenVersion>
-                              <version>2.2</version>
-                            </requireMavenVersion>
-                            <requireJavaVersion>
-                              <version>1.6</version>
-                            </requireJavaVersion>
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.mycila.maven-license-plugin</groupId>
-                <artifactId>maven-license-plugin</artifactId>
-                <configuration>
-                    <aggregate>true</aggregate>
-                    <excludes>
-                        <exclude>**/NOTICE</exclude>
-                        <exclude>README</exclude>
-                        <exclude>LICENSE</exclude>
-                        <exclude>jquery.css</exclude>
-                        <exclude>data/*</exclude>
-                        <exclude>**/fluid/fluid.*.css</exclude>
-                        <exclude>**/*.channel</exclude>
-                        <exclude>**/*.channel-type</exclude>
-                        <exclude>**/*.entity-type</exclude>
-                        <exclude>**/*.fragment-layout</exclude>
-                        <exclude>**/*.group_membership</exclude>
-                        <exclude>**/*.layout</exclude>
-                        <exclude>**/*.permission</exclude>
-                        <exclude>**/*.permission_owner</exclude>
-                        <exclude>**/*.disabled</exclude>
-                        <exclude>**/*.permission_set</exclude>
-                        <exclude>**/*.profile</exclude>
-                        <exclude>**/*.structure</exclude>
-                        <exclude>**/*.theme</exclude>
-                        <exclude>**/*.user</exclude>
-                        <exclude>**/*.template-user</exclude>
-                        <exclude>**/*.example</exclude>
-                        <exclude>**/*.res</exclude>
-                        <exclude>**/*.ent</exclude>
-                        <exclude>**/*.psd</exclude>
-                        <exclude>build.properties</exclude>
-                        <exclude>**/src/main/webapp/media/skins/universality/hc/jquery-ui-1.7.2.custom/**</exclude>
-                    </excludes>
-                    <mapping>
-                        <crn>XML_STYLE</crn>
-                        <cpd>XML_STYLE</cpd>
-                        <ssl>XML_STYLE</ssl>
-                        <sdf>XML_STYLE</sdf>
-                        <tld>XML_STYLE</tld>
-                        <tag>DYNASCRIPT_STYLE</tag>
-                        <inc>DYNASCRIPT_STYLE</inc>
-                        <mappings>SCRIPT_STYLE</mappings>
-                    </mapping>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.jasig.maven</groupId>
-                <artifactId>maven-notice-plugin</artifactId>
-                <configuration>
-                    <noticeTemplate>NOTICE.template</noticeTemplate>
-                    <generateChildNotices>false</generateChildNotices>
-                    <excludedModules>
-                        <excludedModule>uportal-portlets-overlay</excludedModule>
-                        <excludedModule>bootstrap</excludedModule>
-                        <excludedModule>uportal-ear</excludedModule>
-                    </excludedModules>
-                </configuration>
-            </plugin>
-        </plugins>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <artifactId>maven-clean-plugin</artifactId>
-                    <version>2.4.1</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>2.3.2</version>
-                    <configuration>
-                        <source>1.6</source>
-                        <target>1.6</target>
-                        <encoding>${project.build.sourceEncoding}</encoding>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>2.6</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-ear-plugin</artifactId>
-                    <version>2.6</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>1.0.1</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-install-plugin</artifactId>
-                    <version>2.3.1</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.3.1</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <version>2.5</version>
-                </plugin>
-<!--
-                <plugin>
-                    <artifactId>maven-site-plugin</artifactId>
-                    <version>3.0-beta-3</version>
-                        <configuration>
-                            <reportPlugins>
-                                <plugin>
-                                    <artifactId>maven-project-info-reports-plugin</artifactId>
-                                    <version>2.4</version>
-                                </plugin>
-                                <plugin>
-                                    <artifactId>maven-surefire-report-plugin</artifactId>
-                                    <version>2.9</version>
-                                </plugin>
-                                <plugin>
-                                    <artifactId>maven-jxr-plugin</artifactId>
-                                    <version>2.2</version>
-                                </plugin>
-                                <plugin>
-                                    <groupId>org.codehaus.mojo</groupId>
-                                    <artifactId>cobertura-maven-plugin</artifactId>
-                                    <version>2.5.1</version>
-                                </plugin>
-                                <plugin>
-                                    <artifactId>maven-pmd-plugin</artifactId>
-                                    <version>2.5</version>
-                                    <configuration>
-                                        <linkXref>true</linkXref>
-                                        <sourceEncoding>utf-8</sourceEncoding>
-                                        <minimumTokens>100</minimumTokens>
-                                        <targetJdk>1.6</targetJdk>
-                                    </configuration>
-                                </plugin>
-                                <plugin>
-                                    <artifactId>maven-changelog-plugin</artifactId>
-                                    <version>2.2</version>
-                                </plugin>
-                                <plugin>
-                                    <groupId>org.codehaus.mojo</groupId>
-                                    <artifactId>taglist-maven-plugin</artifactId>
-                                    <version>2.4</version>
-                                </plugin>
-                                <plugin>
-                                    <groupId>org.codehaus.mojo</groupId>
-                                    <artifactId>findbugs-maven-plugin</artifactId>
-                                    <version>2.3.2</version>
-                                </plugin>
-                                <plugin>
-                                    <artifactId>maven-javadoc-plugin</artifactId>
-                                    <version>2.8</version>
-                                    <configuration>
-                                        <source>1.6</source>
-                                        <maxmemory>768m</maxmemory>
-                                        <links>
-                                            <link>http://java.sun.com/javase/6/docs/api/</link>
-                                            <link>http://java.sun.com/javaee/5/docs/api/</link>
-                                            <link>http://portals.apache.org/pluto/portlet-2.0-apidocs/</link>
-                                            <link>http://portals.apache.org/pluto/pluto-container/apidocs/</link>
-                                            <link>http://portals.apache.org/pluto/pluto-descriptor-api/apidocs/</link>
-                                            <link>http://static.springsource.org/spring/docs/3.0.x/javadoc-api/</link>
-                                            <link>http://static.springframework.org/spring-ldap/docs/1.2.0/api/spring-ldap/</link>
-                                            <link>http://developer.jasig.org/projects/person-directory/1.5.0-RC2/apidocs/</link>
-                                        </links>
-                                    </configuration>
-                                </plugin>
-                                <plugin>
-                                    <groupId>org.codehaus.mojo</groupId>
-                                    <artifactId>jdepend-maven-plugin</artifactId>
-                                    <version>2.0-beta-2</version>
-                                </plugin>
-                            </reportPlugins>
-                        </configuration>
-                </plugin>
--->
-                <plugin>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>2.1.2</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.9</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-war-plugin</artifactId>
-                    <version>2.1.1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.portals.pluto</groupId>
-                    <artifactId>maven-pluto-plugin</artifactId>
-                    <version>${pluto.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.jasig.portal</groupId>
-                    <artifactId>maven-uportal-plugin</artifactId>
-                    <version>1.0.0-M3</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
-
-    <profiles>
-        <profile>
-            <id>ci-local-site</id>
-            <distributionManagement>
-                <site>
-                    <id>ci-local-site</id>
-                    <url>${jasig-site-ci-dist-base}${project-site-path}</url>
-                </site>
-            </distributionManagement>
-        </profile>
-    </profiles>
-</project>
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">    <parent>        <groupId>org.jasig.parent</groupId>        <artifactId>jasig-parent</artifactId>        <version>31</version>    </parent>    <modelVersion>4.0.0</modelVersion>    <groupId>org.jasig.portal</groupId>    <artifactId>uportal-parent</artifactId>    <version>4.0.0-SNAPSHOT</version>    <packaging>pom</packaging>    <name>uPortal Parent</name>    <description>The root project definition for the uPortal project.</description>    <url>${jasig-site-base}/uportal/${project.version}</url>        <scm>        <connection>scm:svn:https://source.jasig.org/uPortal/trunk</connection>        <developerConnection>scm:svn:https://source.jasig.org/uPortal/trunk</developerConnection>        <url>https://developer.jasig.org/source/browse/jasigsvn/uPortal/trunk</url>    </scm>   <!--     <distributionManagement>        <site>            <id>developer.jasig</id>            <url>${jasig-site-dist-base}/uportal/${project.version}</url>        </site>    </distributionManagement>   -->     <issueManagement>        <url>${jasig-issues-base}/UP</url>        <system>${jasig-issues-system}</system>    </issueManagement>        <ciManagement>        <system>bamboo</system>        <url>http://developer.jasig.org/bamboo/browse/UP</url>        <notifiers>            <notifier>                <type>mail</type>                <sendOnError>true</sendOnError>                <sendOnFailure>true</sendOnFailure>                <sendOnSuccess>false</sendOnSuccess>                <sendOnWarning>false</sendOnWarning>                <configuration><address>uportal-dev@lists.ja-sig.org</address></configuration>            </notifier>        </notifiers>    </ciManagement>    <repositories>        <repository>                        <id>sonatype-nexus-snapshots</id>            <name>Sonatype Nexus Snapshots</name>            <url>http://oss.sonatype.org/content/repositories/snapshots</url>            <releases><enabled>false</enabled></releases>            <snapshots><enabled>true</enabled></snapshots>        </repository>        <repository>                        <id>apache-snapshots</id>            <name>Apache Snapshots</name>            <url>http://repository.apache.org/snapshots</url>            <releases><enabled>false</enabled></releases>            <snapshots><enabled>true</enabled></snapshots>        </repository>    </repositories>    <pluginRepositories>        <pluginRepository>                        <id>sonatype-nexus-snapshots</id>            <name>Sonatype Nexus Snapshots</name>            <url>http://oss.sonatype.org/content/repositories/snapshots</url>            <releases><enabled>false</enabled></releases>            <snapshots><enabled>true</enabled></snapshots>        </pluginRepository>        <pluginRepository>                        <id>apache-snapshots</id>            <name>Apache Snapshots</name>            <url>http://repository.apache.org/snapshots</url>            <releases><enabled>false</enabled></releases>            <snapshots><enabled>true</enabled></snapshots>        </pluginRepository>    </pluginRepositories>    <properties>        <!-- The final name of the uPortal web-application -->        <uportal.docbase>uPortal</uportal.docbase>        <project-site-path>/uportal/${project.version}</project-site-path>                <!-- The JDBC Driver used by uPortal -->        <jdbc.groupId>org.hsqldb</jdbc.groupId>        <jdbc.artifactId>hsqldb</jdbc.artifactId>        <jdbc.version>${hsqldb.version}</jdbc.version>            <!--         | Environment name and filters file for environment-specific build         | settings.  By default <environment.name> is blank, and the filters          | file is build.properties.         |         | You can override the default by passing a -Denvironment.name          | parameter, which Ant will do for you if you invoke Ant with          | -Denv={something}.  NOTE that Ant also adds a suffixed period (.)          | character.  If you want to override the default environment.name by          | invoking Maven directly, you will have to append a period yourself.         +-->        <env>local</env>        <filters.file>filters/${env}.properties</filters.file>            <!-- WAR Dependency Version Properties -->        <BookmarksPortlet.version>1.0.10</BookmarksPortlet.version>        <cas-server.version>3.4.8</cas-server.version>        <cas-clearpass.version>1.0.7.GA</cas-clearpass.version>        <cas-proxy-test-portlet.version>1.0.0-RC3</cas-proxy-test-portlet.version>        <FunctionalTestsPortlet.version>1.1.0-RC1</FunctionalTestsPortlet.version>        <jasig-widget-portlets.version>1.0.0-RC3</jasig-widget-portlets.version>        <NewsReaderPortlet.version>3.0.0-RC2</NewsReaderPortlet.version>        <SimpleContentPortlet.version>1.0.0</SimpleContentPortlet.version>        <WeatherPortlet.version>1.0.8</WeatherPortlet.version>        <WebProxyPortlet.version>1.1.6</WebProxyPortlet.version>        <!-- Project Dependency Version Properties -->        <aopalliance.version>1.0</aopalliance.version>        <activation.version>1.1</activation.version>        <ant.version>1.8.2</ant.version>        <aspectjrt.version>1.6.11</aspectjrt.version>        <aspectjweaver.version>1.6.11</aspectjweaver.version>        <casclient.version>3.2.1</casclient.version>        <ccpp.version>1.0</ccpp.version>        <cernunnos.version>1.2.1</cernunnos.version>        <commons-cli.version>1.2</commons-cli.version>        <commons-codec.version>1.5</commons-codec.version>        <commons-collections.version>3.2.1</commons-collections.version>        <commons-dbcp.version>1.4</commons-dbcp.version>        <commons-httpclient.version>3.1</commons-httpclient.version>        <commons-io.version>2.0.1</commons-io.version>        <commons-lang.version>2.6</commons-lang.version>        <commons-logging.version>1.1.1</commons-logging.version>        <commons-logging-api.version>1.1</commons-logging-api.version>        <commons-pool.version>1.5.6</commons-pool.version>        <dom4j.version>1.6.1</dom4j.version>        <easymock.version>3.0</easymock.version>        <ejb3-persistence.version>1.0.1.GA</ejb3-persistence.version>        <ehcache.version>2.4.3</ehcache.version>        <ehcache-spring-annotations.version>1.2.0-M1</ehcache-spring-annotations.version>        <ehcache-web.version>2.0.3</ehcache-web.version>        <guava.version>r09</guava.version>        <groovy.version>1.8.0</groovy.version>        <grouperClient.version>1.6.3</grouperClient.version>        <hibernate.version>3.6.5.Final</hibernate.version>        <hibernate-jpamodelgen.version>1.1.1.Final</hibernate-jpamodelgen.version>        <hsqldb.version>2.2.4</hsqldb.version>        <jackson.version>1.8.3</jackson.version>        <jansi.version>1.6</jansi.version>        <javassist.version>3.15.0.GA</javassist.version>         <jasypt.version>1.7.1</jasypt.version>        <jaxb2basics.version>0.6.2</jaxb2basics.version>        <jdom.version>1.0</jdom.version>        <jline.version>0.9.94</jline.version>        <json-lib-ext-spring.version>1.0.2</json-lib-ext-spring.version>        <jsp-api.version>2.1</jsp-api.version>        <jstl.version>1.1.2</jstl.version>        <jtidy.version>4aug2000r7-dev</jtidy.version>        <junit.version>4.8.2</junit.version>        <log4j.version>1.2.16</log4j.version>        <mail.version>1.4.1</mail.version>        <mockito.version>1.8.5</mockito.version>        <objenesis.version>1.2</objenesis.version>        <org.springframework.webflow.version>2.3.0.RELEASE</org.springframework.webflow.version>        <oro.version>2.0.8</oro.version>        <persistence-api.version>1.0</persistence-api.version>        <person-directory.version>1.5.0-RC6</person-directory.version>        <pluto.version>2.1.0-M2</pluto.version>        <portlet-api.version>2.0</portlet-api.version>        <quartz.version>1.8.4</quartz.version>        <resource-server.version>1.0.21-SNAPSHOT</resource-server.version>        <servlet-api.version>2.5</servlet-api.version>        <slf4j.version>1.6.1</slf4j.version>        <spring-framework.version>3.0.5.RELEASE</spring-framework.version>        <spring-ldap.version>1.3.1.RELEASE</spring-ldap.version>        <standard.version>1.1.2</standard.version>        <staxmate.version>2.0.1</staxmate.version>        <stringtemplate.version>4.0.2</stringtemplate.version>        <uportal-ear-deployer.version>1.0.1</uportal-ear-deployer.version>        <woodstox.version>4.1.1</woodstox.version>        <xmlunit.version>1.3</xmlunit.version>        <xstream.version>1.3.1</xstream.version>                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>    </properties>    <modules>        <module>uportal-war</module>        <module>uportal-ear</module>        <module>uportal-portlets-overlay</module>        <module>bootstrap</module>        <module>uportal-search-api</module>    </modules>    <dependencyManagement>        <dependencies>            <dependency>                <groupId>org.antlr</groupId>                <artifactId>stringtemplate</artifactId>                <version>${stringtemplate.version}</version>            </dependency>            <dependency>                <groupId>aopalliance</groupId>                <artifactId>aopalliance</artifactId>                <version>${aopalliance.version}</version>            </dependency>            <dependency>                <groupId>com.google.guava</groupId>                <artifactId>guava</artifactId>                <version>${guava.version}</version>            </dependency>            <dependency>                <groupId>com.googlecode.cernunnos</groupId>                <artifactId>cernunnos</artifactId>                <version>${cernunnos.version}</version>                <exclusions>                    <exclusion>                        <artifactId>cvsclient</artifactId>                        <groupId>org.netbeans.lib</groupId>                    </exclusion>                    <exclusion>                        <groupId>org.springframework</groupId>                        <artifactId>spring</artifactId>                    </exclusion>                    <exclusion>                        <groupId>net.sf.retrotranslator</groupId>                        <artifactId>retrotranslator-runtime</artifactId>                    </exclusion>                    <exclusion>                        <groupId>rhino</groupId>                        <artifactId>js</artifactId>                    </exclusion>                    <exclusion>                        <artifactId>js-engine</artifactId>                        <groupId>javax.script</groupId>                    </exclusion>                    <exclusion>                        <artifactId>xercesImpl</artifactId>                        <groupId>xerces</groupId>                    </exclusion>                    <exclusion>                        <artifactId>xml-apis</artifactId>                        <groupId>xml-apis</groupId>                    </exclusion>                    <exclusion>                        <groupId>xom</groupId>                        <artifactId>xom</artifactId>                    </exclusion>                    <exclusion>                        <groupId>org.codehaus.groovy</groupId>                        <artifactId>groovy-all</artifactId>                    </exclusion>                </exclusions>            </dependency>            <dependency>                <groupId>com.googlecode.ehcache-spring-annotations</groupId>                <artifactId>ehcache-spring-annotations</artifactId>                <version>${ehcache-spring-annotations.version}</version>            </dependency>            <dependency>                <groupId>com.thoughtworks.xstream</groupId>                <artifactId>xstream</artifactId>                <version>${xstream.version}</version>            </dependency>            <dependency>                <groupId>commons-cli</groupId>                <artifactId>commons-cli</artifactId>                <version>${commons-cli.version}</version>            </dependency>            <dependency>                <groupId>commons-codec</groupId>                <artifactId>commons-codec</artifactId>                <version>${commons-codec.version}</version>            </dependency>            <dependency>                <groupId>commons-collections</groupId>                <artifactId>commons-collections</artifactId>                <version>${commons-collections.version}</version>            </dependency>            <dependency>                <groupId>commons-dbcp</groupId>                <artifactId>commons-dbcp</artifactId>                <version>${commons-dbcp.version}</version>            </dependency>            <dependency>                <groupId>commons-httpclient</groupId>                <artifactId>commons-httpclient</artifactId>                <version>${commons-httpclient.version}</version>            </dependency>            <dependency>                <groupId>commons-io</groupId>                <artifactId>commons-io</artifactId>                <version>${commons-io.version}</version>            </dependency>            <dependency>                <groupId>commons-lang</groupId>                <artifactId>commons-lang</artifactId>                <version>${commons-lang.version}</version>            </dependency>            <dependency>                <groupId>commons-logging</groupId>                <artifactId>commons-logging</artifactId>                <version>${commons-logging.version}</version>            </dependency>            <dependency>                <groupId>commons-logging</groupId>                <artifactId>commons-logging-api</artifactId>                <version>${commons-logging-api.version}</version>            </dependency>            <dependency>                <groupId>commons-pool</groupId>                <artifactId>commons-pool</artifactId>                <version>${commons-pool.version}</version>            </dependency>            <dependency>                <groupId>dom4j</groupId>                <artifactId>dom4j</artifactId>                <version>${dom4j.version}</version>                <exclusions>                    <exclusion>                        <artifactId>xml-apis</artifactId>                        <groupId>xml-apis</groupId>                    </exclusion>                </exclusions>            </dependency>            <dependency>                <groupId>edu.internet2.middleware.grouper</groupId>                <artifactId>grouperClient</artifactId>                <version>${grouperClient.version}</version>            </dependency>            <dependency>                <groupId>org.hsqldb</groupId>                <artifactId>hsqldb</artifactId>                <version>${hsqldb.version}</version>            </dependency>            <dependency>                <groupId>org.hsqldb</groupId>                <artifactId>sqltool</artifactId>                <version>${hsqldb.version}</version>            </dependency>            <dependency>                <groupId>org.javassist</groupId>                <artifactId>javassist</artifactId>                <version>${javassist.version}</version>            </dependency>            <dependency>                <groupId>javax.activation</groupId>                <artifactId>activation</artifactId>                <version>${activation.version}</version>            </dependency>            <dependency>                <groupId>javax.ccpp</groupId>                <artifactId>ccpp</artifactId>                <version>${ccpp.version}</version>            </dependency>            <dependency>                <groupId>javax.mail</groupId>                <artifactId>mail</artifactId>                <version>${mail.version}</version>            </dependency>            <dependency>                <groupId>javax.portlet</groupId>                <artifactId>portlet-api</artifactId>                <version>${portlet-api.version}</version>            </dependency>            <dependency>                <groupId>javax.servlet.jsp</groupId>                <artifactId>jsp-api</artifactId>                <version>${jsp-api.version}</version>            </dependency>             <dependency>                <groupId>javax.servlet</groupId>                <artifactId>jstl</artifactId>                <version>${jstl.version}</version>            </dependency>            <dependency>                <groupId>javax.servlet</groupId>                <artifactId>servlet-api</artifactId>                <version>${servlet-api.version}</version>            </dependency>            <dependency>                <groupId>jtidy</groupId>                <artifactId>jtidy</artifactId>                <version>${jtidy.version}</version>            </dependency>            <dependency>                <groupId>jline</groupId>                <artifactId>jline</artifactId>                <version>${jline.version}</version>            </dependency>            <dependency>                <groupId>junit</groupId>                <artifactId>junit</artifactId>                <version>${junit.version}</version>            </dependency>            <dependency>                <groupId>log4j</groupId>                <artifactId>log4j</artifactId>                <version>${log4j.version}</version>                <exclusions>                    <exclusion>                        <groupId>com.sun.jdmk</groupId>                        <artifactId>jmxtools</artifactId>                    </exclusion>                    <exclusion>                        <groupId>com.sun.jmx</groupId>                        <artifactId>jmxri</artifactId>                    </exclusion>                    <exclusion>                        <groupId>javax.jms</groupId>                        <artifactId>jms</artifactId>                    </exclusion>                    <exclusion>                        <groupId>javax.mail</groupId>                        <artifactId>mail</artifactId>                    </exclusion>                </exclusions>            </dependency>            <dependency>                <groupId>net.sf.ehcache</groupId>                <artifactId>ehcache-core</artifactId>                <version>${ehcache.version}</version>            </dependency>            <dependency>                <groupId>net.sf.ehcache</groupId>                <artifactId>ehcache-web</artifactId>                <version>${ehcache-web.version}</version>            </dependency>            <dependency>                <groupId>net.sf.json-lib</groupId>                <artifactId>json-lib-ext-spring</artifactId>                <version>${json-lib-ext-spring.version}</version>            </dependency>            <dependency>                <groupId>org.jvnet.jaxb2_commons</groupId>                <artifactId>jaxb2-basics-runtime</artifactId>                <version>${jaxb2basics.version}</version>            </dependency>            <dependency>                <groupId>org.mockito</groupId>                <artifactId>mockito-core</artifactId>                <version>${mockito.version}</version>            </dependency>            <dependency>                <groupId>org.objenesis</groupId>                <artifactId>objenesis</artifactId>                <version>${objenesis.version}</version>            </dependency>            <dependency>                <groupId>org.quartz-scheduler</groupId>                <artifactId>quartz</artifactId>                <version>${quartz.version}</version>            </dependency>            <dependency>                <groupId>org.apache.ant</groupId>                <artifactId>ant</artifactId>                <version>${ant.version}</version>            </dependency>            <dependency>                <groupId>org.apache.ant</groupId>                <artifactId>ant-launcher</artifactId>                <version>${ant.version}</version>            </dependency>            <dependency>                <groupId>org.apache.portals.pluto</groupId>                <artifactId>pluto-ant-tasks</artifactId>                <version>${pluto.version}</version>            </dependency>            <dependency>                <groupId>org.apache.portals.pluto</groupId>                <artifactId>pluto-container</artifactId>                <version>${pluto.version}</version>                <exclusions>                    <exclusion>                        <groupId>javax.xml.bind</groupId>                        <artifactId>jaxb-api</artifactId>                    </exclusion>                    <exclusion>                        <groupId>com.sun.xml.bind</groupId>                        <artifactId>jaxb-impl</artifactId>                    </exclusion>                    <exclusion>                        <groupId>stax</groupId>                        <artifactId>stax</artifactId>                    </exclusion>                </exclusions>            </dependency>            <dependency>                <groupId>org.apache.portals.pluto</groupId>                <artifactId>pluto-container-api</artifactId>                <version>${pluto.version}</version>            </dependency>            <dependency>                <groupId>org.apache.portals.pluto</groupId>                <artifactId>pluto-portal-driver</artifactId>                <version>${pluto.version}</version>            </dependency>            <dependency>                <groupId>org.apache.portals.pluto</groupId>                <artifactId>pluto-container-driver-api</artifactId>                <version>${pluto.version}</version>            </dependency>            <dependency>                <groupId>org.apache.portals.pluto</groupId>                <artifactId>pluto-taglib</artifactId>                <version>${pluto.version}</version>            </dependency>            <dependency>                <groupId>org.apache.portals.pluto</groupId>                <artifactId>pluto-util</artifactId>                <version>${pluto.version}</version>                <exclusions>                    <exclusion>                        <groupId>org.slf4j</groupId>                        <artifactId>slf4j-jdk14</artifactId>                    </exclusion>                </exclusions>            </dependency>            <dependency>                <groupId>org.aspectj</groupId>                <artifactId>aspectjrt</artifactId>                <version>${aspectjrt.version}</version>            </dependency>            <dependency>                <groupId>org.aspectj</groupId>                <artifactId>aspectjweaver</artifactId>                <version>${aspectjweaver.version}</version>            </dependency>            <dependency>                <groupId>org.codehaus.groovy</groupId>                <artifactId>groovy</artifactId>                <version>${groovy.version}</version>            </dependency>            <dependency>                <groupId>org.codehaus.jackson</groupId>                <artifactId>jackson-core-asl</artifactId>                <version>${jackson.version}</version>            </dependency>            <dependency>                <groupId>org.codehaus.jackson</groupId>                <artifactId>jackson-mapper-asl</artifactId>                <version>${jackson.version}</version>            </dependency>            <dependency>                <groupId>org.codehaus.staxmate</groupId>                <artifactId>staxmate</artifactId>                <version>${staxmate.version}</version>            </dependency>            <dependency>                <groupId>org.codehaus.woodstox</groupId>                <artifactId>woodstox-core-asl</artifactId>                <version>${woodstox.version}</version>                <exclusions>                    <exclusion>                        <artifactId>stax-api</artifactId>                        <groupId>javax.xml.stream</groupId>                    </exclusion>                </exclusions>            </dependency>            <dependency>                <groupId>org.easymock</groupId>                <artifactId>easymock</artifactId>                <version>${easymock.version}</version>            </dependency>            <dependency>                <groupId>org.fusesource.jansi</groupId>                <artifactId>jansi</artifactId>                <version>${jansi.version}</version>            </dependency>            <dependency>                <groupId>org.hibernate</groupId>                <artifactId>hibernate-entitymanager</artifactId>                <version>${hibernate.version}</version>            </dependency>            <dependency>                <groupId>org.hibernate</groupId>                <artifactId>hibernate-jpamodelgen</artifactId>                <version>${hibernate-jpamodelgen.version}</version>            </dependency>            <dependency>                <groupId>org.jasig.cas.client</groupId>                <artifactId>cas-client-core</artifactId>                <version>${casclient.version}</version>            </dependency>            <dependency>                <groupId>org.jasig.cas3.extensions</groupId>                <artifactId>clearpass-integration-uportal</artifactId>                <version>${cas-clearpass.version}</version>            </dependency>            <dependency>                <groupId>org.jasig.portal</groupId>                <artifactId>uportal-ear-deployer</artifactId>                <version>${uportal-ear-deployer.version}</version>            </dependency>            <dependency>                <groupId>org.jasig.resourceserver</groupId>                <artifactId>resource-server-utils</artifactId>                <version>${resource-server.version}</version>            </dependency>            <dependency>                <groupId>org.jasig.service</groupId>                <artifactId>person-directory-api</artifactId>                <version>${person-directory.version}</version>            </dependency>            <dependency>                <groupId>org.jasig.service</groupId>                <artifactId>person-directory-impl</artifactId>                <version>${person-directory.version}</version>                <exclusions>                    <exclusion>                        <groupId>com.sun.xml.bind</groupId>                        <artifactId>jaxb-impl</artifactId>                    </exclusion>                    <exclusion>                        <groupId>javax.xml.bind</groupId>                        <artifactId>jaxb-api</artifactId>                    </exclusion>                    <exclusion>                        <groupId>javax.xml.stream</groupId>                        <artifactId>stax-api</artifactId>                    </exclusion>                    <exclusion>                        <groupId>org.springframework.ldap</groupId>                        <artifactId>spring-ldap</artifactId>                    </exclusion>                </exclusions>            </dependency>            <dependency>                 <groupId>org.jasypt</groupId>                 <artifactId>jasypt</artifactId>                 <version>${jasypt.version}</version>             </dependency>             <dependency>                <groupId>org.slf4j</groupId>                <artifactId>slf4j-api</artifactId>                <version>${slf4j.version}</version>            </dependency>            <dependency>                <groupId>org.slf4j</groupId>                <artifactId>slf4j-jcl</artifactId>                <version>${slf4j.version}</version>            </dependency>            <dependency>                <groupId>org.springframework</groupId>                <artifactId>spring-aop</artifactId>                <version>${spring-framework.version}</version>            </dependency>            <dependency>                <groupId>org.springframework</groupId>                <artifactId>spring-aspects</artifactId>                <version>${spring-framework.version}</version>            </dependency>            <dependency>                <groupId>org.springframework</groupId>                <artifactId>spring-beans</artifactId>                <version>${spring-framework.version}</version>            </dependency>            <dependency>                <groupId>org.springframework</groupId>                <artifactId>spring-context</artifactId>                <version>${spring-framework.version}</version>            </dependency>            <dependency>                <groupId>org.springframework</groupId>                <artifactId>spring-context-support</artifactId>                <version>${spring-framework.version}</version>            </dependency>            <dependency>                <groupId>org.springframework</groupId>                <artifactId>spring-core</artifactId>                <version>${spring-framework.version}</version>            </dependency>            <dependency>                <groupId>org.springframework</groupId>                <artifactId>spring-jdbc</artifactId>                <version>${spring-framework.version}</version>            </dependency>            <dependency>                <groupId>org.springframework</groupId>                <artifactId>spring-orm</artifactId>                <version>${spring-framework.version}</version>            </dependency>            <dependency>                <groupId>org.springframework</groupId>                <artifactId>spring-oxm</artifactId>                <version>${spring-framework.version}</version>            </dependency>            <dependency>                <groupId>org.springframework</groupId>                <artifactId>spring-test</artifactId>                <version>${spring-framework.version}</version>            </dependency>            <dependency>                <groupId>org.springframework</groupId>                <artifactId>spring-tx</artifactId>                <version>${spring-framework.version}</version>            </dependency>            <dependency>                <groupId>org.springframework</groupId>                <artifactId>spring-web</artifactId>                <version>${spring-framework.version}</version>            </dependency>            <dependency>                <groupId>org.springframework</groupId>                <artifactId>spring-webmvc</artifactId>                <version>${spring-framework.version}</version>            </dependency>            <dependency>                <groupId>org.springframework</groupId>                <artifactId>spring-webmvc-portlet</artifactId>                <version>${spring-framework.version}</version>            </dependency>            <dependency>                <groupId>org.springframework.ldap</groupId>                <artifactId>spring-ldap-core-tiger</artifactId>                <version>${spring-ldap.version}</version>            </dependency>            <dependency>                <groupId>org.springframework.webflow</groupId>                <artifactId>spring-binding</artifactId>                <version>${org.springframework.webflow.version}</version>            </dependency>            <dependency>                <groupId>org.springframework.webflow</groupId>                <artifactId>spring-webflow</artifactId>                <version>${org.springframework.webflow.version}</version>            </dependency>            <dependency>                <groupId>oro</groupId>                <artifactId>oro</artifactId>                <version>${oro.version}</version>            </dependency>            <dependency>                <groupId>taglibs</groupId>                <artifactId>standard</artifactId>                <version>${standard.version}</version>            </dependency>            <dependency>                <groupId>xmlunit</groupId>                <artifactId>xmlunit</artifactId>                <version>${xmlunit.version}</version>            </dependency>        </dependencies>    </dependencyManagement>        <build>        <plugins>            <plugin>                <artifactId>maven-clean-plugin</artifactId>                <inherited>false</inherited>                <configuration>                    <filesets>                        <fileset>                            <directory>${basedir}/assembly/target</directory>                            <includes>                                <include>**</include>                            </includes>                            <followSymlinks>false</followSymlinks>                        </fileset>                    </filesets>                </configuration>            </plugin>            <plugin>                <artifactId>maven-enforcer-plugin</artifactId>                <executions>                    <execution>                        <id>enforce-versions</id>                        <goals>                            <goal>enforce</goal>                        </goals>                        <configuration>                            <rules>                            <requireMavenVersion>                              <version>2.2</version>                            </requireMavenVersion>                            <requireJavaVersion>                              <version>1.6</version>                            </requireJavaVersion>                            </rules>                        </configuration>                    </execution>                </executions>            </plugin>            <plugin>                <groupId>com.mycila.maven-license-plugin</groupId>                <artifactId>maven-license-plugin</artifactId>                <configuration>                    <aggregate>true</aggregate>                    <excludes>                        <exclude>**/NOTICE</exclude>                        <exclude>README</exclude>                        <exclude>LICENSE</exclude>                        <exclude>jquery.css</exclude>                        <exclude>data/*</exclude>                        <exclude>**/fluid/fluid.*.css</exclude>                        <exclude>**/*.channel</exclude>                        <exclude>**/*.channel-type</exclude>                        <exclude>**/*.entity-type</exclude>                        <exclude>**/*.fragment-layout</exclude>                        <exclude>**/*.group_membership</exclude>                        <exclude>**/*.layout</exclude>                        <exclude>**/*.permission</exclude>                        <exclude>**/*.permission_owner</exclude>                        <exclude>**/*.disabled</exclude>                        <exclude>**/*.permission_set</exclude>                        <exclude>**/*.profile</exclude>                        <exclude>**/*.structure</exclude>                        <exclude>**/*.theme</exclude>                        <exclude>**/*.user</exclude>                        <exclude>**/*.template-user</exclude>                        <exclude>**/*.example</exclude>                        <exclude>**/*.res</exclude>                        <exclude>**/*.ent</exclude>                        <exclude>**/*.psd</exclude>                        <exclude>build.properties</exclude>                        <exclude>**/src/main/webapp/media/skins/universality/hc/jquery-ui-1.7.2.custom/**</exclude>                    </excludes>                    <mapping>                        <crn>XML_STYLE</crn>                        <cpd>XML_STYLE</cpd>                        <ssl>XML_STYLE</ssl>                        <sdf>XML_STYLE</sdf>                        <tld>XML_STYLE</tld>                        <tag>DYNASCRIPT_STYLE</tag>                        <inc>DYNASCRIPT_STYLE</inc>                        <mappings>SCRIPT_STYLE</mappings>                    </mapping>                </configuration>            </plugin>            <plugin>                <groupId>org.jasig.maven</groupId>                <artifactId>maven-notice-plugin</artifactId>                <configuration>                    <noticeTemplate>NOTICE.template</noticeTemplate>                    <generateChildNotices>false</generateChildNotices>                    <excludedModules>                        <excludedModule>uportal-portlets-overlay</excludedModule>                        <excludedModule>bootstrap</excludedModule>                        <excludedModule>uportal-ear</excludedModule>                    </excludedModules>                </configuration>            </plugin>        </plugins>        <pluginManagement>            <plugins>                <plugin>                    <artifactId>maven-clean-plugin</artifactId>                    <version>2.4.1</version>                </plugin>                <plugin>                    <artifactId>maven-compiler-plugin</artifactId>                    <version>2.3.2</version>                    <configuration>                        <source>1.6</source>                        <target>1.6</target>                        <encoding>${project.build.sourceEncoding}</encoding>                    </configuration>                </plugin>                <plugin>                    <artifactId>maven-deploy-plugin</artifactId>                    <version>2.6</version>                </plugin>                <plugin>                    <artifactId>maven-ear-plugin</artifactId>                    <version>2.6</version>                </plugin>                <plugin>                    <artifactId>maven-enforcer-plugin</artifactId>                    <version>1.0.1</version>                </plugin>                <plugin>                    <artifactId>maven-install-plugin</artifactId>                    <version>2.3.1</version>                </plugin>                <plugin>                    <artifactId>maven-jar-plugin</artifactId>                    <version>2.3.1</version>                </plugin>                <plugin>                    <artifactId>maven-resources-plugin</artifactId>                    <version>2.5</version>                </plugin><!--                <plugin>                    <artifactId>maven-site-plugin</artifactId>                    <version>3.0-beta-3</version>                        <configuration>                            <reportPlugins>                                <plugin>                                    <artifactId>maven-project-info-reports-plugin</artifactId>                                    <version>2.4</version>                                </plugin>                                <plugin>                                    <artifactId>maven-surefire-report-plugin</artifactId>                                    <version>2.9</version>                                </plugin>                                <plugin>                                    <artifactId>maven-jxr-plugin</artifactId>                                    <version>2.2</version>                                </plugin>                                <plugin>                                    <groupId>org.codehaus.mojo</groupId>                                    <artifactId>cobertura-maven-plugin</artifactId>                                    <version>2.5.1</version>                                </plugin>                                <plugin>                                    <artifactId>maven-pmd-plugin</artifactId>                                    <version>2.5</version>                                    <configuration>                                        <linkXref>true</linkXref>                                        <sourceEncoding>utf-8</sourceEncoding>                                        <minimumTokens>100</minimumTokens>                                        <targetJdk>1.6</targetJdk>                                    </configuration>                                </plugin>                                <plugin>                                    <artifactId>maven-changelog-plugin</artifactId>                                    <version>2.2</version>                                </plugin>                                <plugin>                                    <groupId>org.codehaus.mojo</groupId>                                    <artifactId>taglist-maven-plugin</artifactId>                                    <version>2.4</version>                                </plugin>                                <plugin>                                    <groupId>org.codehaus.mojo</groupId>                                    <artifactId>findbugs-maven-plugin</artifactId>                                    <version>2.3.2</version>                                </plugin>                                <plugin>                                    <artifactId>maven-javadoc-plugin</artifactId>                                    <version>2.8</version>                                    <configuration>                                        <source>1.6</source>                                        <maxmemory>768m</maxmemory>                                        <links>                                            <link>http://java.sun.com/javase/6/docs/api/</link>                                            <link>http://java.sun.com/javaee/5/docs/api/</link>                                            <link>http://portals.apache.org/pluto/portlet-2.0-apidocs/</link>                                            <link>http://portals.apache.org/pluto/pluto-container/apidocs/</link>                                            <link>http://portals.apache.org/pluto/pluto-descriptor-api/apidocs/</link>                                            <link>http://static.springsource.org/spring/docs/3.0.x/javadoc-api/</link>                                            <link>http://static.springframework.org/spring-ldap/docs/1.2.0/api/spring-ldap/</link>                                            <link>http://developer.jasig.org/projects/person-directory/1.5.0-RC2/apidocs/</link>                                        </links>                                    </configuration>                                </plugin>                                <plugin>                                    <groupId>org.codehaus.mojo</groupId>                                    <artifactId>jdepend-maven-plugin</artifactId>                                    <version>2.0-beta-2</version>                                </plugin>                            </reportPlugins>                        </configuration>                </plugin>-->                <plugin>                    <artifactId>maven-source-plugin</artifactId>                    <version>2.1.2</version>                </plugin>                <plugin>                    <artifactId>maven-surefire-plugin</artifactId>                    <version>2.9</version>                </plugin>                <plugin>                    <artifactId>maven-war-plugin</artifactId>                    <version>2.1.1</version>                </plugin>                <plugin>                    <groupId>org.apache.portals.pluto</groupId>                    <artifactId>maven-pluto-plugin</artifactId>                    <version>${pluto.version}</version>                </plugin>                <plugin>                    <groupId>org.jasig.portal</groupId>                    <artifactId>maven-uportal-plugin</artifactId>                    <version>1.0.0-M3</version>                </plugin>            </plugins>        </pluginManagement>    </build>    <profiles>        <profile>            <id>ci-local-site</id>            <distributionManagement>                <site>                    <id>ci-local-site</id>                    <url>${jasig-site-ci-dist-base}${project-site-path}</url>                </site>            </distributionManagement>        </profile>    </profiles></project>

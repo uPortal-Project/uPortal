@@ -1,141 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Licensed to Jasig under one or more contributor license
-    agreements. See the NOTICE file distributed with this work
-    for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
-    Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
-    specific language governing permissions and limitations
-    under the License.
-
--->
-
-<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns="http://www.springframework.org/schema/beans"
-       xmlns:util="http://www.springframework.org/schema/util"
-       xsi:schemaLocation="
-           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
-   
-    <bean id="portletThreadPool" class="org.jasig.portal.utils.threading.DynamicThreadPoolExecutorFactoryBean">
-        <property name="corePoolSize" value="${org.jasig.portal.portlet.worker.threadPool.initialThreads}" />
-        <property name="maxPoolSize" value="${org.jasig.portal.portlet.worker.threadPool.maxThreads}" />
-        <property name="queueCapacity" value="${org.jasig.portal.portlet.worker.threadPool.queueSize}" />
-        <property name="threadGroupName" value="uPortal-PortletExecutionThreadGroup" />
-        <property name="threadNamePrefix" value="uPortal-PortletExecutor-" />
-        <property name="threadPriority" value="${org.jasig.portal.portlet.worker.threadPool.threadPriority}" />
-        <property name="keepAliveSeconds" value="${org.jasig.portal.portlet.worker.threadPool.keepAliveSeconds}" />
-        <property name="daemon" value="true" />
-        <property name="allowCoreThreadTimeOut" value="true" />
-    </bean>
-    
-    <util:list id="portletExecutionInterceptors" value-type="org.jasig.portal.portlet.rendering.worker.IPortletExecutionInterceptor">
-        <ref bean="JpaPortletExecutionInterceptor"/>
-        <ref bean="LocaleThreadLocalPortletExecutionInterceptor"/>
-        <ref bean="RequestContextThreadLocalPortletExecutionInterceptor"/>
-        <ref bean="TrackingThreadLocalPortletExecutionInterceptor"/>
-        <ref bean="ThreadNamingPortletExecutionInterceptorAdaptor"/>
-    </util:list>
-    
-    <!-- 
-     | See PropertyToAttributePropertiesManager.setPropertyMappings
-     +-->
-    <util:map id="portletPropertyToAttributeMappings">
-    </util:map>
-    <!-- 
-     | See PropertyToAttributePropertiesManager.setNonNamespacedProperties
-     +-->
-    <util:set id="nonNamespacedPortletProperties">
-    </util:set>
-    
-    <bean id="portletContainer" class="org.jasig.portal.portlet.container.UportalPortletContainerImpl" destroy-method="destroy" init-method="init">
-        <constructor-arg value="#{servletContext.contextPath + '-PlutoPortletContainer'}" />
-        <constructor-arg>
-            <!-- TODO this setup will never let the portal webapp restart without leaking memory -->
-            <bean class="org.apache.pluto.container.driver.PlutoServices">
-                <constructor-arg ref="portalDriverServices" />
-            </bean>
-        </constructor-arg>
-    </bean>
-    
-    <bean id="portalContext" class="org.jasig.portal.portlet.container.PortalContextImpl">
-        <property name="windowStates">
-            <set value-type="javax.portlet.WindowState">
-                <value>MINIMIZED</value>
-                <value>NORMAL</value>
-                <value>MAXIMIZED</value>
-                <value>EXCLUSIVE</value>
-                <value>DETACHED</value>
-            </set>
-        </property>
-        <property name="portletModes">
-            <set value-type="javax.portlet.PortletMode">
-                <value>VIEW</value>
-                <value>EDIT</value>
-                <value>HELP</value>
-                <value>ABOUT</value>
-            </set>
-        </property>
-        <property name="portalProperties">
-        	<props>
-        		<prop key="javax.portlet.markup.head.element.support">true</prop>
-        	</props>
-        </property>
-        <property name="portalVersion" value="${org.jasig.portal.version}" />
-    </bean>
-    
-    <bean id="personDirectoryUserInfoService" class="org.jasig.portal.portlet.container.services.PersonDirectoryUserInfoService">
-        <property name="personAttributeDao" ref="personAttributeDao" />
-    </bean>
-    
-    <bean id="casTicketUserInfoService" class="org.jasig.portal.portlet.container.services.CasTicketUserInfoService" />
-    
-    <!--bean id="cachedPasswordUserInfoService" 
-        class="org.jasig.portal.portlet.container.services.CachedPasswordUserInfoService">
-        <property name="decryptPassword" value="false"/>
-    </bean-->
-    
-    <bean id="portalAdministrationService" class="org.apache.pluto.driver.container.DefaultPortalAdministrationService">
-    	<property name="administrativeRequestListeners">
-    		<list>
-    			<bean class="org.jasig.portal.portlet.container.services.AdministrativeRequestListenerController">
-                    <property name="listeners">
-                        <map>
-                            <entry key="sessionActionListener">
-                            	<bean class="org.jasig.portal.portlet.session.PortletSessionAdministrativeRequestListener" />
-                            </entry>
-                        </map>
-                    </property>
-                </bean>
-    		</list>
-    	</property>
-    	<property name="portletInvocationListeners">
-    		 <list>
-                <ref bean="portletSessionExpirationManager" />
-            </list>
-    	</property>
-    </bean>
-    
-    <!-- Portlet Container Services from Pluto -->
-    <bean id="portletInvokerService" class="org.apache.pluto.driver.container.DefaultPortletInvokerService" autowire="constructor" />
-    <bean id="namespaceMapper" class="org.apache.pluto.driver.container.DefaultNamespaceMapper"/>
-    <bean id="requestDispatcherService" class="org.apache.pluto.container.impl.RequestDispatcherServiceImpl" />
-    
-    <!--  <bean id="portletSessionExpirationManager" class="org.jasig.portal.portlet.session.PortletSessionExpirationManager" /> -->
-    <!--  
-    <bean id="requestAttributeService" class="org.jasig.portal.portlet.container.services.RequestAttributeServiceImpl">
-    	<property name="personAttributeDao" ref="personAttributeDao" />
-    </bean>
-    -->
-    
-</beans>
+<?xml version="1.0" encoding="UTF-8"?><!--    Licensed to Jasig under one or more contributor license    agreements. See the NOTICE file distributed with this work    for additional information regarding copyright ownership.    Jasig licenses this file to you under the Apache License,    Version 2.0 (the "License"); you may not use this file    except in compliance with the License. You may obtain a    copy of the License at:    http://www.apache.org/licenses/LICENSE-2.0    Unless required by applicable law or agreed to in writing,    software distributed under the License is distributed on    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY    KIND, either express or implied. See the License for the    specific language governing permissions and limitations    under the License.--><beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"       xmlns="http://www.springframework.org/schema/beans"       xmlns:util="http://www.springframework.org/schema/util"       xsi:schemaLocation="           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">       <bean id="portletThreadPool" class="org.jasig.portal.utils.threading.DynamicThreadPoolExecutorFactoryBean">        <property name="corePoolSize" value="${org.jasig.portal.portlet.worker.threadPool.initialThreads}" />        <property name="maxPoolSize" value="${org.jasig.portal.portlet.worker.threadPool.maxThreads}" />        <property name="queueCapacity" value="${org.jasig.portal.portlet.worker.threadPool.queueSize}" />        <property name="threadGroupName" value="uPortal-PortletExecutionThreadGroup" />        <property name="threadNamePrefix" value="uPortal-PortletExecutor-" />        <property name="threadPriority" value="${org.jasig.portal.portlet.worker.threadPool.threadPriority}" />        <property name="keepAliveSeconds" value="${org.jasig.portal.portlet.worker.threadPool.keepAliveSeconds}" />        <property name="daemon" value="true" />        <property name="allowCoreThreadTimeOut" value="true" />    </bean>        <util:list id="portletExecutionInterceptors" value-type="org.jasig.portal.portlet.rendering.worker.IPortletExecutionInterceptor">        <ref bean="JpaPortletExecutionInterceptor"/>        <ref bean="LocaleThreadLocalPortletExecutionInterceptor"/>        <ref bean="RequestContextThreadLocalPortletExecutionInterceptor"/>        <ref bean="TrackingThreadLocalPortletExecutionInterceptor"/>        <ref bean="ThreadNamingPortletExecutionInterceptorAdaptor"/>    </util:list>        <!--      | See PropertyToAttributePropertiesManager.setPropertyMappings     +-->    <util:map id="portletPropertyToAttributeMappings">    </util:map>    <!--      | See PropertyToAttributePropertiesManager.setNonNamespacedProperties     +-->    <util:set id="nonNamespacedPortletProperties">    </util:set>        <bean id="portletContainer" class="org.jasig.portal.portlet.container.UportalPortletContainerImpl" destroy-method="destroy" init-method="init">        <constructor-arg value="#{servletContext.contextPath + '-PlutoPortletContainer'}" />        <constructor-arg>            <!-- TODO this setup will never let the portal webapp restart without leaking memory -->            <bean class="org.apache.pluto.container.driver.PlutoServices">                <constructor-arg ref="portalDriverServices" />            </bean>        </constructor-arg>    </bean>        <bean id="portalContext" class="org.jasig.portal.portlet.container.PortalContextImpl">        <property name="windowStates">            <set value-type="javax.portlet.WindowState">                <value>MINIMIZED</value>                <value>NORMAL</value>                <value>MAXIMIZED</value>                <value>EXCLUSIVE</value>                <value>DETACHED</value>            </set>        </property>        <property name="portletModes">            <set value-type="javax.portlet.PortletMode">                <value>VIEW</value>                <value>EDIT</value>                <value>HELP</value>                <value>ABOUT</value>            </set>        </property>        <property name="portalProperties">        	<props>        		<prop key="javax.portlet.markup.head.element.support">true</prop>        	</props>        </property>        <property name="portalVersion" value="${org.jasig.portal.version}" />    </bean>        <bean id="personDirectoryUserInfoService" class="org.jasig.portal.portlet.container.services.PersonDirectoryUserInfoService">        <property name="personAttributeDao" ref="personAttributeDao" />    </bean>        <bean id="casTicketUserInfoService" class="org.jasig.portal.portlet.container.services.CasTicketUserInfoService" />        <!--bean id="cachedPasswordUserInfoService"         class="org.jasig.portal.portlet.container.services.CachedPasswordUserInfoService">        <property name="decryptPassword" value="false"/>    </bean-->        <bean id="portalAdministrationService" class="org.apache.pluto.driver.container.DefaultPortalAdministrationService">    	<property name="administrativeRequestListeners">    		<list>    			<bean class="org.jasig.portal.portlet.container.services.AdministrativeRequestListenerController">                    <property name="listeners">                        <map>                            <entry key="sessionActionListener">                            	<bean class="org.jasig.portal.portlet.session.PortletSessionAdministrativeRequestListener" />                            </entry>                        </map>                    </property>                </bean>    		</list>    	</property>    	<property name="portletInvocationListeners">    		 <list>                <ref bean="portletSessionExpirationManager" />            </list>    	</property>    </bean>        <!-- Portlet Container Services from Pluto -->    <bean id="portletInvokerService" class="org.apache.pluto.driver.container.DefaultPortletInvokerService" autowire="constructor" />    <bean id="namespaceMapper" class="org.apache.pluto.driver.container.DefaultNamespaceMapper"/>    <bean id="requestDispatcherService" class="org.apache.pluto.container.impl.RequestDispatcherServiceImpl" />        <!--  <bean id="portletSessionExpirationManager" class="org.jasig.portal.portlet.session.PortletSessionExpirationManager" /> -->    <!--      <bean id="requestAttributeService" class="org.jasig.portal.portlet.container.services.RequestAttributeServiceImpl">    	<property name="personAttributeDao" ref="personAttributeDao" />    </bean>    -->    </beans>

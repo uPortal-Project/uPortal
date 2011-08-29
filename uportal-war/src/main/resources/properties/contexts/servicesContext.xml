@@ -1,123 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Licensed to Jasig under one or more contributor license
-    agreements. See the NOTICE file distributed with this work
-    for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
-    Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
-    specific language governing permissions and limitations
-    under the License.
-
--->
-
-<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns="http://www.springframework.org/schema/beans" 
-       xmlns:util="http://www.springframework.org/schema/util"
-       xmlns:p="http://www.springframework.org/schema/p"
-       xsi:schemaLocation="
-           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
-
-    <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
-        <property name="messageConverters">
-            <util:list>
-                <bean class="org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter"/>
-            </util:list>
-        </property>
-    </bean>
-    
-    <util:list id="searchServices">
-        <bean class="org.jasig.portal.portlets.search.portletregistry.PortletRegistrySearchService"/>
-        <!--bean class="org.jasig.portal.portlets.search.gsa.GsaSearchService"
-            p:baseUrl="http://search.school.edu" p:site="Site"/-->
-    </util:list>
-
-    <bean id="permissionTargetProviderRegistry" class="org.jasig.portal.permission.target.PermissionTargetProviderRegistryImpl">
-        <property name="providers">
-            <map>
-                <entry key="allEntitiesTargetProvider">
-                    <bean class="org.jasig.portal.permission.target.EntityTargetProviderImpl">
-                        <constructor-arg>
-                            <util:set>
-                                <value>group</value>
-                                <value>person</value>
-                                <value>category</value>
-                                <value>portlet</value>
-                            </util:set>
-                        </constructor-arg>
-                    </bean>
-                </entry>
-                <entry key="allGroupsTargetProvider">
-                    <bean class="org.jasig.portal.permission.target.EntityTargetProviderImpl">
-                        <constructor-arg>
-                            <util:set>
-                                <value>group</value>
-                                <value>category</value>
-                            </util:set>
-                        </constructor-arg>
-                    </bean>
-                </entry>
-                <entry key="peopleAndGroupsTargetProvider">
-                    <bean class="org.jasig.portal.permission.target.EntityTargetProviderImpl">
-                        <constructor-arg>
-                            <util:set>
-                                <value>group</value>
-                                <value>person</value>
-                            </util:set>
-                        </constructor-arg>
-                    </bean>
-                </entry>
-                <entry key="channelsAndCategoriesTargetProvider">
-                    <bean class="org.jasig.portal.permission.target.EntityTargetProviderImpl">
-                        <constructor-arg>
-                            <util:set>
-                                <value>category</value>
-                                <value>portlet</value>
-                            </util:set>
-                        </constructor-arg>
-                    </bean>
-                </entry>
-                <entry key="errorChannelTargetProvider">
-                    <bean class="org.jasig.portal.permission.target.SimpleStringTargetProviderImpl">
-                        <property name="targets">
-                            <util:list>
-                                <bean class="org.jasig.portal.permission.target.PermissionTargetImpl">
-                                    <constructor-arg value="DETAILS"/>
-                                    <constructor-arg value="Stack Trace"/>
-                                </bean>
-                            </util:list>
-                        </property>
-                    </bean>
-                </entry>
-                <entry key="portalSystemTargetProvider">
-                    <bean class="org.jasig.portal.permission.target.SimpleStringTargetProviderImpl">
-                        <property name="targets">
-                            <util:list>
-                                <bean class="org.jasig.portal.permission.target.PermissionTargetImpl">
-                                    <constructor-arg value="ALL"/>
-                                    <constructor-arg value="All permissions"/>
-                                </bean>
-                            </util:list>
-                        </property>
-                    </bean>
-                </entry>
-                <entry key="userAttributesTargetProvider">
-                    <bean class="org.jasig.portal.permission.target.UserAttributesTargetProviderImpl">
-                        <property name="personAttributeDao" ref="personAttributeDao" />
-                    </bean>
-                </entry>
-            </map>
-        </property>
-    </bean>    
-    
-</beans>
+<?xml version="1.0" encoding="UTF-8"?><!--    Licensed to Jasig under one or more contributor license    agreements. See the NOTICE file distributed with this work    for additional information regarding copyright ownership.    Jasig licenses this file to you under the Apache License,    Version 2.0 (the "License"); you may not use this file    except in compliance with the License. You may obtain a    copy of the License at:    http://www.apache.org/licenses/LICENSE-2.0    Unless required by applicable law or agreed to in writing,    software distributed under the License is distributed on    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY    KIND, either express or implied. See the License for the    specific language governing permissions and limitations    under the License.--><beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"       xmlns="http://www.springframework.org/schema/beans"        xmlns:util="http://www.springframework.org/schema/util"       xmlns:p="http://www.springframework.org/schema/p"       xsi:schemaLocation="           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">    <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">        <property name="messageConverters">            <util:list>                <bean class="org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter"/>            </util:list>        </property>    </bean>        <util:list id="searchServices">        <bean class="org.jasig.portal.portlets.search.portletregistry.PortletRegistrySearchService"/>        <!--bean class="org.jasig.portal.portlets.search.gsa.GsaSearchService"            p:baseUrl="http://search.school.edu" p:site="Site"/-->    </util:list>    <bean id="permissionTargetProviderRegistry" class="org.jasig.portal.permission.target.PermissionTargetProviderRegistryImpl">        <property name="providers">            <map>                <entry key="allEntitiesTargetProvider">                    <bean class="org.jasig.portal.permission.target.EntityTargetProviderImpl">                        <constructor-arg>                            <util:set>                                <value>group</value>                                <value>person</value>                                <value>category</value>                                <value>portlet</value>                            </util:set>                        </constructor-arg>                    </bean>                </entry>                <entry key="allGroupsTargetProvider">                    <bean class="org.jasig.portal.permission.target.EntityTargetProviderImpl">                        <constructor-arg>                            <util:set>                                <value>group</value>                                <value>category</value>                            </util:set>                        </constructor-arg>                    </bean>                </entry>                <entry key="peopleAndGroupsTargetProvider">                    <bean class="org.jasig.portal.permission.target.EntityTargetProviderImpl">                        <constructor-arg>                            <util:set>                                <value>group</value>                                <value>person</value>                            </util:set>                        </constructor-arg>                    </bean>                </entry>                <entry key="channelsAndCategoriesTargetProvider">                    <bean class="org.jasig.portal.permission.target.EntityTargetProviderImpl">                        <constructor-arg>                            <util:set>                                <value>category</value>                                <value>portlet</value>                            </util:set>                        </constructor-arg>                    </bean>                </entry>                <entry key="errorChannelTargetProvider">                    <bean class="org.jasig.portal.permission.target.SimpleStringTargetProviderImpl">                        <property name="targets">                            <util:list>                                <bean class="org.jasig.portal.permission.target.PermissionTargetImpl">                                    <constructor-arg value="DETAILS"/>                                    <constructor-arg value="Stack Trace"/>                                </bean>                            </util:list>                        </property>                    </bean>                </entry>                <entry key="portalSystemTargetProvider">                    <bean class="org.jasig.portal.permission.target.SimpleStringTargetProviderImpl">                        <property name="targets">                            <util:list>                                <bean class="org.jasig.portal.permission.target.PermissionTargetImpl">                                    <constructor-arg value="ALL"/>                                    <constructor-arg value="All permissions"/>                                </bean>                            </util:list>                        </property>                    </bean>                </entry>                <entry key="userAttributesTargetProvider">                    <bean class="org.jasig.portal.permission.target.UserAttributesTargetProviderImpl">                        <property name="personAttributeDao" ref="personAttributeDao" />                    </bean>                </entry>            </map>        </property>    </bean>        </beans>
