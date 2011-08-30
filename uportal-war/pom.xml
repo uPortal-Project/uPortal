@@ -369,7 +369,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.portals.pluto</groupId>
+            <groupId>org.jasig.portal</groupId>
             <artifactId>pluto-taglib</artifactId>
             <scope>provided</scope>
         </dependency>
