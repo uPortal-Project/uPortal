@@ -236,9 +236,12 @@
     </view-state>
     
     <decision-state id="configModeAction">
+        <if test="externalContext.requestMap[T(javax.portlet.PortletRequest).LIFECYCLE_PHASE] == T(javax.portlet.PortletRequest).RESOURCE_PHASE" 
+            then="configModeResourceRequest"/>
+            
         <if test="externalContext.requestMap[T(javax.portlet.PortletRequest).LIFECYCLE_PHASE] == T(javax.portlet.PortletRequest).ACTION_PHASE" 
-            then="configModeActionRequest" 
-            else="configModeResourceRequest"/>
+            then="configModeActionRequest"
+            else="configMode"/>
     </decision-state>
 
     <action-state id="configModeActionRequest">
