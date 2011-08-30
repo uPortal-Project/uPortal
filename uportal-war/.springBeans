@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beansProjectDescription>
 	<version>1</version>
-	<pluginVersion><![CDATA[2.6.0.201103160035-RELEASE]]></pluginVersion>
+	<pluginVersion><![CDATA[2.7.1.201107082359-RELEASE]]></pluginVersion>
 	<configSuffixes>
 		<configSuffix><![CDATA[xml]]></configSuffix>
 	</configSuffixes>
@@ -20,7 +20,6 @@
 		<config>src/main/resources/properties/contexts/ldapContext.xml</config>
 		<config>src/main/resources/properties/contexts/locatorContext.xml</config>
 		<config>src/main/resources/properties/contexts/mvcContext.xml</config>
-		<config>src/main/resources/properties/contexts/mvcViews.xml</config>
 		<config>src/main/resources/properties/contexts/persistenceContext.xml</config>
 		<config>src/main/resources/properties/contexts/personDirectoryContext.xml</config>
 		<config>src/main/resources/properties/contexts/portletContainerContext.xml</config>
@@ -31,6 +30,7 @@
 		<config>src/main/resources/properties/contexts/servicesContext.xml</config>
 		<config>src/main/resources/properties/contexts/statsContext.xml</config>
 		<config>src/main/resources/properties/contexts/userContext.xml</config>
+		<config>src/main/resources/properties/contexts/views/mvcViews.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
@@ -51,7 +51,6 @@
 				<config>src/main/resources/properties/contexts/ldapContext.xml</config>
 				<config>src/main/resources/properties/contexts/locatorContext.xml</config>
 				<config>src/main/resources/properties/contexts/mvcContext.xml</config>
-				<config>src/main/resources/properties/contexts/mvcViews.xml</config>
 				<config>src/main/resources/properties/contexts/persistenceContext.xml</config>
 				<config>src/main/resources/properties/contexts/personDirectoryContext.xml</config>
 				<config>src/main/resources/properties/contexts/portletContainerContext.xml</config>
@@ -62,6 +61,7 @@
 				<config>src/main/resources/properties/contexts/servicesContext.xml</config>
 				<config>src/main/resources/properties/contexts/statsContext.xml</config>
 				<config>src/main/resources/properties/contexts/userContext.xml</config>
+				<config>src/main/resources/properties/contexts/views/mvcViews.xml</config>
 			</configs>
 		</configSet>
 	</configSets>

@@ -19,10 +19,6 @@
 
 package org.jasig.portal.api.portlet;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 
 /**
  * The resulting state of the delegation request
@@ -45,41 +41,43 @@ public class DelegationResponse {
         return this.delegateState;
     }
 
-
-    /**
-     * @see java.lang.Object#equals(Object)
-     */
-    @Override
-    public boolean equals(Object object) {
-        if (object == this) {
-            return true;
-        }
-        if (!(object instanceof DelegationResponse)) {
-            return false;
-        }
-        DelegationResponse rhs = (DelegationResponse) object;
-        return new EqualsBuilder()
-            .append(this.delegateState, rhs.delegateState)
-            .isEquals();
-    }
-
-    /**
+    /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(1445247369, -1009176817)
-            .append(this.delegateState)
-            .toHashCode();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.delegateState == null) ? 0 : this.delegateState.hashCode());
+        return result;
     }
 
-    /**
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        DelegationResponse other = (DelegationResponse) obj;
+        if (this.delegateState == null) {
+            if (other.delegateState != null)
+                return false;
+        }
+        else if (!this.delegateState.equals(other.delegateState))
+            return false;
+        return true;
+    }
+
+    /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-            .append("delegateState", this.delegateState)
-            .toString();
+        return "DelegationResponse [delegateState=" + this.delegateState + "]";
     }
 }

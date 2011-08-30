@@ -40,8 +40,6 @@ import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
-import javax.portlet.ResourceRequest;
-import javax.portlet.ResourceResponse;
 import javax.servlet.ServletContext;
 import javax.xml.bind.JAXBElement;
 
@@ -787,51 +785,33 @@ public class PortletAdministrationHelper implements ServletContextAware {
 		return false;
 	}
 	
+	public IPortletWindowId getDelegateWindowId(ExternalContext externalContext, String fname) {
+	    final PortletRequest nativeRequest = (PortletRequest)externalContext.getNativeRequest();
+        final PortletSession portletSession = nativeRequest.getPortletSession();
+        return (IPortletWindowId)portletSession.getAttribute(RenderPortletTag.DEFAULT_SESSION_KEY_PREFIX + fname);
+	}
 	
 	public boolean configModeAction(ExternalContext externalContext, String fname) throws IOException {
-	    final PortletRequest nativeRequest = (PortletRequest)externalContext.getNativeRequest();
-	    final Object phase = nativeRequest.getAttribute(PortletRequest.LIFECYCLE_PHASE);
+	    final ActionRequest actionRequest = (ActionRequest)externalContext.getNativeRequest();
+	    final ActionResponse actionResponse = (ActionResponse)externalContext.getNativeResponse();
 	    
-	    if (PortletRequest.ACTION_PHASE.equals(phase)) {
-    	    final ActionRequest actionRequest = (ActionRequest)nativeRequest;
-    	    final ActionResponse actionResponse = (ActionResponse)externalContext.getNativeResponse();
-    	    
-    	    final PortletSession portletSession = actionRequest.getPortletSession();
-    	    final IPortletWindowId portletWindowId = (IPortletWindowId)portletSession.getAttribute(RenderPortletTag.DEFAULT_SESSION_KEY_PREFIX + fname);
-    	    if (portletWindowId == null) {
-    	        throw new IllegalStateException("Cannot execute configModeAciton without a delegate window ID in the session for key: " + RenderPortletTag.DEFAULT_SESSION_KEY_PREFIX + fname);
-    	    }
-    	    
-    	    final PortletDelegationDispatcher requestDispatcher = this.portletDelegationLocator.getRequestDispatcher(actionRequest, portletWindowId);
-    	    
-    	    final DelegationActionResponse delegationResponse = requestDispatcher.doAction(actionRequest, actionResponse);
-    	    
-    	    final String redirectLocation = delegationResponse.getRedirectLocation();
-    	    final DelegateState delegateState = delegationResponse.getDelegateState();
-            if (redirectLocation != null || 
-    	            (delegationResponse.getPortletMode() != null && !IPortletRenderer.CONFIG.equals(delegationResponse.getPortletMode())) ||
-    	            !IPortletRenderer.CONFIG.equals(delegateState.getPortletMode())) {
-    	        
-    	        //The portlet sent a redirect OR changed it's mode away from CONFIG, assume it is done
-    	        return true;
-    	    }
+	    final IPortletWindowId portletWindowId = this.getDelegateWindowId(externalContext, fname);
+	    if (portletWindowId == null) {
+	        throw new IllegalStateException("Cannot execute configModeAciton without a delegate window ID in the session for key: " + RenderPortletTag.DEFAULT_SESSION_KEY_PREFIX + fname);
 	    }
-	    else if (PortletRequest.RESOURCE_PHASE.equals(phase)) {
-            final ResourceRequest resourceRequest = (ResourceRequest)nativeRequest;
-            final ResourceResponse resourceResponse = (ResourceResponse)externalContext.getNativeResponse();
-            
-            final PortletSession portletSession = resourceRequest.getPortletSession();
-            final IPortletWindowId portletWindowId = (IPortletWindowId)portletSession.getAttribute(RenderPortletTag.DEFAULT_SESSION_KEY_PREFIX + fname);
-            if (portletWindowId == null) {
-                throw new IllegalStateException("Cannot execute configModeAciton without a delegate window ID in the session for key: " + RenderPortletTag.DEFAULT_SESSION_KEY_PREFIX + fname);
-            }
-            
-	        final PortletDelegationDispatcher requestDispatcher = this.portletDelegationLocator.getRequestDispatcher(resourceRequest, portletWindowId);
-            
-            requestDispatcher.doServeResource(resourceRequest, resourceResponse);
-	    }
-	    else {
-	        this.logger.warn("Unknown portlet lifecycle phase: " + phase);
+	    
+	    final PortletDelegationDispatcher requestDispatcher = this.portletDelegationLocator.getRequestDispatcher(actionRequest, portletWindowId);
+	    
+	    final DelegationActionResponse delegationResponse = requestDispatcher.doAction(actionRequest, actionResponse);
+	    
+	    final String redirectLocation = delegationResponse.getRedirectLocation();
+	    final DelegateState delegateState = delegationResponse.getDelegateState();
+        if (redirectLocation != null || 
+	            (delegationResponse.getPortletMode() != null && !IPortletRenderer.CONFIG.equals(delegationResponse.getPortletMode())) ||
+	            !IPortletRenderer.CONFIG.equals(delegateState.getPortletMode())) {
+	        
+	        //The portlet sent a redirect OR changed it's mode away from CONFIG, assume it is done
+	        return true;
 	    }
 	    
 	    return false;
