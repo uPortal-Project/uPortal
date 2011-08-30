@@ -116,7 +116,7 @@
         <cas-proxy-test-portlet.version>1.0.0-RC3</cas-proxy-test-portlet.version>
         <FunctionalTestsPortlet.version>1.1.0-RC1</FunctionalTestsPortlet.version>
         <jasig-widget-portlets.version>1.0.0-RC3</jasig-widget-portlets.version>
-        <NewsReaderPortlet.version>3.0.0-RC2</NewsReaderPortlet.version>
+        <NewsReaderPortlet.version>3.0.0</NewsReaderPortlet.version>
         <SimpleContentPortlet.version>1.0.1</SimpleContentPortlet.version>
         <WeatherPortlet.version>1.0.8</WeatherPortlet.version>
         <WebProxyPortlet.version>1.1.6</WebProxyPortlet.version>
