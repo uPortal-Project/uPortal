@@ -34,7 +34,7 @@
     <group>Everyone</group>
     <parameter>
         <name>mobileIconUrl</name>
-        <value>/uPortal/media/skins/icons/mobile/calendar.png</value>
+        <value>/media/skins/icons/mobile/calendar.png</value>
     </parameter>
     <parameter>
         <name>iconUrl</name>
