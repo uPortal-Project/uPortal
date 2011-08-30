@@ -34,7 +34,7 @@ import com.google.common.collect.Sets;
 enum SuffixedPortletParameter {
     RESOURCE_ID(UrlSyntaxProviderImpl.PARAM_RESOURCE_ID, UrlType.RESOURCE),
     CACHEABILITY(UrlSyntaxProviderImpl.PARAM_CACHEABILITY, UrlType.RESOURCE),
-    DELEGATE_PARENT(UrlSyntaxProviderImpl.PARAM_DELEGATE_PARENT, UrlType.RENDER, UrlType.ACTION),
+    DELEGATE_PARENT(UrlSyntaxProviderImpl.PARAM_DELEGATE_PARENT, UrlType.RENDER, UrlType.ACTION, UrlType.RESOURCE),
     WINDOW_STATE(UrlSyntaxProviderImpl.PARAM_WINDOW_STATE, UrlType.RENDER, UrlType.ACTION),
     PORTLET_MODE(UrlSyntaxProviderImpl.PARAM_PORTLET_MODE, UrlType.RENDER, UrlType.ACTION),
     COPY_PARAMETERS(UrlSyntaxProviderImpl.PARAM_COPY_PARAMETERS, UrlType.RENDER);

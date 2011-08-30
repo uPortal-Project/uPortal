@@ -58,7 +58,7 @@
      +-->
     <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver">
         <property name="order" value="0"/>
-        <property name="location" value="classpath:properties/contexts/mvcViews.xml"/>
+        <property name="location" value="classpath:properties/contexts/views/mvcViews.xml"/>
     </bean>
     
     <!-- 

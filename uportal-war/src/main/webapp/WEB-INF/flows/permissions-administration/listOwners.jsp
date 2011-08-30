@@ -95,6 +95,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             </div>
             <span class="punctuation">?</span>
             <input type="submit" value="<spring:message code="show.me"/>"/>
+            <span class="permission-lookup-error-container" style="font-size: 13px; color: #dd7615;"></span>
         </form>
     </div>
   
@@ -209,7 +210,19 @@ up.jQuery(function() {
             }
         );
 
-        $("#${n}permissionLookupForm").submit(submitForm);
+        $("#${n}permissionLookupForm").submit(function () {
+            var form = $(this),
+                errorContainer = form.find(".permission-lookup-error-container");
+            
+            if ( principalSuggest.getValue() && permissionSuggest.getValue() ) {
+                submitForm();
+            } else {
+                if ( errorContainer.text().length < 1 ) {
+                    errorContainer.append("Please choose values from the autocomplete menus.");
+                }
+                return false;
+            }
+        });
     });
     
 });

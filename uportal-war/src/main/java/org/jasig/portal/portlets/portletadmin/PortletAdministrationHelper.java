@@ -785,13 +785,17 @@ public class PortletAdministrationHelper implements ServletContextAware {
 		return false;
 	}
 	
+	public IPortletWindowId getDelegateWindowId(ExternalContext externalContext, String fname) {
+	    final PortletRequest nativeRequest = (PortletRequest)externalContext.getNativeRequest();
+        final PortletSession portletSession = nativeRequest.getPortletSession();
+        return (IPortletWindowId)portletSession.getAttribute(RenderPortletTag.DEFAULT_SESSION_KEY_PREFIX + fname);
+	}
 	
 	public boolean configModeAction(ExternalContext externalContext, String fname) throws IOException {
 	    final ActionRequest actionRequest = (ActionRequest)externalContext.getNativeRequest();
 	    final ActionResponse actionResponse = (ActionResponse)externalContext.getNativeResponse();
 	    
-	    final PortletSession portletSession = actionRequest.getPortletSession();
-	    final IPortletWindowId portletWindowId = (IPortletWindowId)portletSession.getAttribute(RenderPortletTag.DEFAULT_SESSION_KEY_PREFIX + fname);
+	    final IPortletWindowId portletWindowId = this.getDelegateWindowId(externalContext, fname);
 	    if (portletWindowId == null) {
 	        throw new IllegalStateException("Cannot execute configModeAciton without a delegate window ID in the session for key: " + RenderPortletTag.DEFAULT_SESSION_KEY_PREFIX + fname);
 	    }
