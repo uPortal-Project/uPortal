@@ -877,11 +877,11 @@
           <!--<xsl:value-of select="uportal.org"/>-->
         </a>
         <xsl:call-template name="portal.pipe"/>
-        <a href="http://www.jasig.org/umobile" target="_blank" title="{upMsg:getMessage('go.to.uportal.download.site', $USER_LANG)}">
+        <a href="http://www.jasig.org/umobile/download" target="_blank" title="{upMsg:getMessage('go.to.uportal.download.site', $USER_LANG)}">
           <xsl:value-of select="upMsg:getMessage('download.uportal', $USER_LANG)"/>
         </a>
         <xsl:call-template name="portal.pipe"/>
-        <a href="http://www.jasig.org/umobile" target="_blank" title="{upMsg:getMessage('go.to.uportal.community.page', $USER_LANG)}">
+        <a href="http://www.jasig.org/umobile/community" target="_blank" title="{upMsg:getMessage('go.to.uportal.community.page', $USER_LANG)}">
           <xsl:value-of select="upMsg:getMessage('uportal.community', $USER_LANG)"/>
         </a>
         <xsl:call-template name="portal.pipe"/>
