@@ -67,7 +67,7 @@ removeExisting=true
 # Should the shared library location have all existing files removed when clean is run.
 # NOTE: Tomcat 6.0 does not include any libraries in shared/lib by default so as long as
 #       all required libraries are declared in the uportal-ear it is ok to set this to true.
-cleanShared=false
+cleanShared=true
 
 # Prompt the user before running ant tasks that could modify the database
 prodPrompt=false

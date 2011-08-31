@@ -24,6 +24,7 @@ import static junit.framework.Assert.assertTrue;
 import java.util.Set;
 
 import org.apache.tools.ant.DirectoryScanner;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -44,6 +45,7 @@ public class AntPatternFileFilterTest {
         assertTrue(accepted);
     }
     
+    @Ignore
     @Test
     public void testExactNameMatching() {
         final Set<String> dataFileIncludes = ImmutableSet.of("youtube.portlet.xml", "**/test.xml", "te?.xml", "te*.xml");
