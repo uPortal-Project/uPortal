@@ -821,6 +821,7 @@
                         <exclude>**/*.psd</exclude>
                         <exclude>build.properties</exclude>
                         <exclude>**/src/main/webapp/media/skins/universality/hc/jquery-ui-1.7.2.custom/**</exclude>
+                        <exclude>**/src/test/resources/org/jasig/portal/io/xml/**/*expected.*.xml</exclude>
                     </excludes>
                     <mapping>
                         <crn>XML_STYLE</crn>
