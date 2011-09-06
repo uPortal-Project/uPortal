@@ -45,6 +45,7 @@
 		<token name="BACK_TO_MAIN_IMG_ALT">Return to Multi-View</token>
 		<token name="BACK_TO_MAIN_IMG_TITLE">Return to Multi-View</token>
 		<token name="BACK_TO_MAIN_SPAN_TEXT">Back to Main</token>
+		<token name="FOCUSED_BACK">Back</token>
 		
 		<!-- Select Drop-Down Form -->
 		<token name="FORM_SELECT_LABEL">View:</token>

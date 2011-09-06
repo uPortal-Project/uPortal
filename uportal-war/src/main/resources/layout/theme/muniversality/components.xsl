@@ -227,7 +227,7 @@
             
             <div class="fl-table-cell up-mobile-focus">
                 <a id="up-page-back-button" href="{$BASE_ACTION_URL}?uP_root=root" class="fl-button fl-backButton">
-                    <span class="fl-button-inner">Back</span>
+                    <span class="fl-button-inner"><xsl:value-of select="$TOKEN[@name='FOCUSED_BACK']"/></span>
                 </a>
             </div>
 
