@@ -38,17 +38,19 @@ import org.xml.sax.ContentHandler;
 @Deprecated
 public class CSiteMap extends BaseChannel implements IPrivileged {
 
-    Document userLayoutDoc = null;
+    private PortalControlStructures pcs;
     private static final String sslUri = "sitemap.ssl";
         
     public void setPortalControlStructures(PortalControlStructures pcs)
         throws PortalException {
-        IUserLayout userLayout = pcs.getUserPreferencesManager().getUserLayoutManager().getUserLayout();
-        userLayoutDoc = DocumentFactory.getNewDocument();
-        userLayout.writeTo(userLayoutDoc);
+        this.pcs = pcs;
     }
 
     public void renderXML(ContentHandler out) throws PortalException {
+        IUserLayout userLayout = pcs.getUserPreferencesManager().getUserLayoutManager().getUserLayout();
+        Document userLayoutDoc = DocumentFactory.getNewDocument();
+        userLayout.writeTo(userLayoutDoc);
+
         XSLT xslt = XSLT.getTransformer(this, runtimeData.getLocales());
         xslt.setXML(userLayoutDoc);
         xslt.setXSL(sslUri, runtimeData.getBrowserInfo());
