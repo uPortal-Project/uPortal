@@ -254,7 +254,15 @@
 <xsl:template name="mobile.channel.title.focused">
     <h1 class="fl-table-cell up-mobile-nav" style="display:none"><xsl:value-of select="$TOKEN[@name='PORTAL_NAME']"/></h1>
     <h1 class="fl-table-cell up-mobile-focus">
-        <xsl:value-of select="content/focused/channel/@name" />
+        <xsl:variable name="CHANNEL_TITLE"><xsl:value-of select="content/focused/channel/@name"/></xsl:variable>
+		<xsl:choose>
+			<xsl:when test="$CHANNEL_TITLE != ''">
+				<xsl:value-of select="$CHANNEL_TITLE" />
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:text>&#160;</xsl:text>
+			</xsl:otherwise>
+		</xsl:choose>
     </h1>
 </xsl:template>
 <!-- ========================================================================= -->
