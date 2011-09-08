@@ -287,8 +287,8 @@
         <token name="PORTLET_DETACH_LONG_LABEL">To detach this portlet into a separate browser window</token>
         <token name="PORTLET_ADD_LABEL">Add to my layout</token>
         <token name="PORTLET_ADD_LONG_LABEL">Add this portlet to my layout</token>
-		<token name="PORTLET_RESTART_LABEL">Restart</token>
-		<token name="PORTLET_RESTART_LONG_LABEL">Restart the portlet</token>
+        <token name="PORTLET_RESTART_LABEL">Restart</token>
+        <token name="PORTLET_RESTART_LONG_LABEL">Restart the portlet</token>
         <!-- Footer Links -->
         <token name="JASIG_LABEL">JA-SIG Home</token>
         <token name="JASIG_LONG_LABEL">To go to the Java Architectures Special Interest Group Home</token>
