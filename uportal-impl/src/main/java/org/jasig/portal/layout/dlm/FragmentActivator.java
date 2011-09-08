@@ -26,6 +26,7 @@ import java.util.Vector;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.regex.Pattern;
 
 import net.sf.ehcache.store.chm.ConcurrentHashMap;
 
@@ -69,6 +70,10 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
     private static final int CHANNELS = 0;
     private static final int FOLDERS = 1;
     
+    private static final String PROPERTY_ALLOW_EXPANDED_CONTENT = "allowExpandedContent";
+    private static final Pattern STANDARD_PATTERN = Pattern.compile("\\A[Rr][Ee][Gg][Uu][Ll][Aa][Rr]\\z");
+    private static final Pattern EXPANDED_PATTERN = Pattern.compile(".*");
+
     public FragmentActivator( RDBMDistributedLayoutStore dls,
                               List<FragmentDefinition> fragments )
     {
@@ -509,8 +514,8 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
     }
 
     /**
-     * Removes all top level folders that are hidden, header, or footer and
-     * then changes all node ids to their globally safe incorporated version.
+     * Removes unwanted and hidden folders, then changes all node ids to their 
+     * globally safe incorporated version.
      */
     void fragmentizeLayout( UserView view,
                             FragmentDefinition fragment )
@@ -519,6 +524,13 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
         if ( view.getUserId() == -1 ||
              view.layout == null )
             return;
+
+        // Choose what types of content to apply from the fragment
+        Pattern contentPattern = STANDARD_PATTERN;  // default
+        boolean allowExpandedContent = Boolean.parseBoolean(dls.getProperty(PROPERTY_ALLOW_EXPANDED_CONTENT));
+        if (allowExpandedContent) {
+            contentPattern = EXPANDED_PATTERN;
+        }
 
         // remove all non-regular or hidden top level folders
         // skip root folder that is only child of top level layout element
@@ -538,8 +550,8 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
 
                 // strip out folder types 'header', 'footer' and regular, 
                 // hidden folder "User Preferences" since users have their own
-                if ( ! folder.getAttribute( "type" ).equals( "regular" ) ||
-                     folder.getAttribute( "hidden" ).equals( "true" ) )
+                boolean isApplicable = contentPattern.matcher(folder.getAttribute("type")).matches();
+                if (!isApplicable || folder.getAttribute("hidden").equals("true")) {
                     try
                     {
                         root.removeChild( folder );
@@ -553,6 +565,7 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
                               "'. The fragment will not be available for " +
                               "inclusion into user layouts.", e );
                     }
+                }
             }
         }
         // now re-lable all remaining nodes below root to have a safe system
