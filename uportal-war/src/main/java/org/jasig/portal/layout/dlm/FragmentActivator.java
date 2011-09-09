@@ -73,7 +73,7 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
     private static final int CHANNELS = 0;
     private static final int FOLDERS = 1;
     
-    private static final String PROPERTY_ALLOW_EXPANDED_CONTENT = "allowExpandedContent";
+    private static final String PROPERTY_ALLOW_EXPANDED_CONTENT = "org.jasig.portal.layout.dlm.allowExpandedContent";
     private static final Pattern STANDARD_PATTERN = Pattern.compile("\\A[Rr][Ee][Gg][Uu][Ll][Aa][Rr]\\z");
     private static final Pattern EXPANDED_PATTERN = Pattern.compile(".*");
 
