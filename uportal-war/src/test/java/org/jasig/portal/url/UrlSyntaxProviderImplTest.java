@@ -22,11 +22,10 @@
  */
 package org.jasig.portal.url;
 
-import static org.mockito.Mockito.when;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.portlet.PortletMode;
+import javax.portlet.ResourceURL;
 import javax.portlet.WindowState;
 
 import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
@@ -66,6 +66,7 @@ public class UrlSyntaxProviderImplTest {
     @Mock private IPortalRequestUtils portalRequestUtils;
     @Mock private IUrlNodeSyntaxHelperRegistry urlNodeSyntaxHelperRegistry;
     @Mock private IUrlNodeSyntaxHelper urlNodeSyntaxHelper;
+    @Mock private IPortalUrlProvider portalUrlProvider;
     @Mock private IPortletEntityRegistry portletEntityRegistry;
     @Mock private IPortletWindowRegistry portletWindowRegistry;
     @Mock private IPortletEntity portletEntity1;
@@ -94,7 +95,7 @@ public class UrlSyntaxProviderImplTest {
         
         when(portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
         when(urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request)).thenReturn(urlNodeSyntaxHelper);
-        when(urlNodeSyntaxHelper.getFolderNamesForLayoutNode(request, null)).thenReturn(Collections.EMPTY_LIST);
+        when(urlNodeSyntaxHelper.getFolderNamesForLayoutNode(request, null)).thenReturn(Collections.<String>emptyList());
         
         final PortalUrlBuilder portalUrlBuilder = new PortalUrlBuilder(urlSyntaxProvider, request, null, null, UrlType.RENDER);
         
@@ -521,6 +522,91 @@ public class UrlSyntaxProviderImplTest {
         assertEquals(portletWindowId2, portletRequestInfo2.getPortletWindowId());
         assertEquals(ImmutableMap.of("content", Arrays.asList("<div>some content</div>")), portletRequestInfo2.getPortletParameters());
         assertEquals(portletWindowId1, portletRequestInfo2.getDelegateParentWindowId());
+    }
+    
+
+
+    @Test
+    public void testDetachedResourceUrlGeneration() throws Exception {
+        final String layoutNodeId = "u12l1s5";
+        final String subscribeId = "u12l1n7";
+        final String fname = "news";
+        
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setContextPath("/uPortal");
+        
+        final MockPortletWindowId portletWindowId1 = new MockPortletWindowId("pw1");
+
+        when(portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
+        when(urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request)).thenReturn(urlNodeSyntaxHelper);
+        when(urlNodeSyntaxHelper.getFolderNamesForLayoutNode(request, subscribeId)).thenReturn(Arrays.asList(layoutNodeId));
+        when(urlNodeSyntaxHelper.getFolderNameForPortlet(request, portletWindowId1)).thenReturn(fname + "." + subscribeId);
+        
+        when(portletWindowRegistry.getPortletWindow(request, portletWindowId1)).thenReturn(portletWindow1);
+        when(portletWindow1.getPortletEntity()).thenReturn(portletEntity1);
+        when(portletWindow1.getWindowState()).thenReturn(IPortletRenderer.DETACHED);
+        when(portletEntity1.getLayoutNodeId()).thenReturn(subscribeId);
+        
+        final PortalUrlBuilder portalUrlBuilder = new PortalUrlBuilder(urlSyntaxProvider, request, layoutNodeId, portletWindowId1, UrlType.RESOURCE);
+        final IPortletUrlBuilder portletUrlBuilder1 = portalUrlBuilder.getPortletUrlBuilder(portletWindowId1);
+        portletUrlBuilder1.setCacheability(ResourceURL.PAGE);
+        
+        final String url = portalUrlBuilder.getUrlString();
+                     
+        assertEquals("/uPortal/f/u12l1s5/p/news.u12l1n7/detached/resource.uP?pCc=cacheLevelPage", url);
+    }
+    
+    @Test
+    public void testDetachedResourceUrlParsing() throws Exception {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setContextPath("/uPortal");
+        request.setRequestURI("/f/u12l1s5/p/news.u12l1n7/detached/resource.uP");
+        request.setQueryString("?pCc=cacheLevelPage");
+        request.addParameter("pCc", "cacheLevelPage");
+        
+        final MockPortletWindowId portletWindowId = new MockPortletWindowId("s3");
+        final MockPortletWindowId detachedPortletWindowId = new MockPortletWindowId("d3");
+        
+        when(this.portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
+        when(urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request)).thenReturn(urlNodeSyntaxHelper);
+        when(this.urlNodeSyntaxHelper.getLayoutNodeForFolderNames(request, Arrays.asList("u12l1s5"))).thenReturn("u12l1s5");
+        when(this.urlNodeSyntaxHelper.getPortletForFolderName(request, "u12l1s5", "news.u12l1n7")).thenReturn(portletWindowId);
+        when(this.portletWindowRegistry.getOrCreateStatelessPortletWindow(request, portletWindowId)).thenReturn(portletWindow1);
+        when(portletWindow1.getPortletWindowId()).thenReturn(detachedPortletWindowId);
+
+        
+        final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
+        
+        assertNotNull(portalRequestInfo);
+        assertEquals("u12l1s5", portalRequestInfo.getTargetedLayoutNodeId());
+        assertEquals(detachedPortletWindowId, portalRequestInfo.getTargetedPortletWindowId());
+        assertEquals(UrlState.DETACHED, portalRequestInfo.getUrlState());
+        assertEquals(UrlType.RESOURCE, portalRequestInfo.getUrlType());
+        
+        final Map<IPortletWindowId, ? extends IPortletRequestInfo> portletRequestInfoMap = portalRequestInfo.getPortletRequestInfoMap();
+        assertNotNull(portletRequestInfoMap);
+        assertEquals(1, portletRequestInfoMap.size());
+        
+        final IPortletRequestInfo portletRequestInfo = portletRequestInfoMap.get(detachedPortletWindowId);
+        assertNotNull(portletRequestInfo);
+        assertEquals(detachedPortletWindowId, portletRequestInfo.getPortletWindowId());
+        assertEquals(Collections.EMPTY_MAP, portletRequestInfo.getPortletParameters());
+        assertEquals(IPortletRenderer.DETACHED, portletRequestInfo.getWindowState());
+        assertNull(portletRequestInfo.getPortletMode());
+        assertEquals(ResourceURL.PAGE, portletRequestInfo.getCacheability());
+
+        
+        final PortalUrlBuilder portalUrlBuilder = new PortalUrlBuilder(urlSyntaxProvider, request, "u12l1s5", detachedPortletWindowId, UrlType.RESOURCE);
+        
+        when(this.portalUrlProvider.getPortalUrlBuilderByPortletWindow(request, detachedPortletWindowId, UrlType.RESOURCE)).thenReturn(portalUrlBuilder);
+        when(this.portletWindowRegistry.getPortletWindow(request, detachedPortletWindowId)).thenReturn(portletWindow2);
+        when(portletWindow2.getPortletEntity()).thenReturn(portletEntity1);
+        when(portletEntity1.getLayoutNodeId()).thenReturn("u12l1s5");
+        when(urlNodeSyntaxHelper.getFolderNameForPortlet(request, detachedPortletWindowId)).thenReturn("news.u12l1n7");
+        when(urlNodeSyntaxHelper.getFolderNamesForLayoutNode(request, "u12l1s5")).thenReturn(Collections.singletonList("u12l1s5"));
+        
+        final String canonicalUrl = this.urlSyntaxProvider.getCanonicalUrl(request);
+        assertEquals("/uPortal/f/u12l1s5/p/news.u12l1n7/detached/resource.uP?pCc=cacheLevelPage", canonicalUrl);
     }
 
     @Test
