@@ -832,6 +832,26 @@
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
-    
+    <!--
+     | Caches query results for finding a message by its code
+     | - 1 per each translated message (max = messages * supported locales)
+     +-->
+    <cache name="org.jasig.portal.i18n.JpaMessageDao.query.FIND_MESSAGE_BY_CODE_AND_LOCALE" 
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="60" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <!--
+     | Caches query results for finding a message by its locale
+     | - 1 per each supported locale
+     +-->
+    <cache name="org.jasig.portal.i18n.JpaMessageDao.query.FIND_MESSAGES_BY_LOCALE" 
+        eternal="false" maxElementsInMemory="200" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="60" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <!--
+     | Caches query results for finding a message by its locale and code (exact message)
+     | - 1 per each unique message code
+     +-->
+    <cache name="org.jasig.portal.i18n.JpaMessageDao.query.FIND_MESSAGE_BY_CODE" 
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="60" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     
 </ehcache>
