@@ -35,5 +35,8 @@
         <property name="resourcesDao" ref="resourcesDao" />
     </bean>
     
-    <bean id="resourcesDao" class="org.jasig.resource.aggr.ResourcesDaoImpl" /> 
+    <bean id="resourcesDao" class="org.jasig.resource.aggr.ResourcesDaoImpl" />
+    
+    <bean id="renderingThreadPoolMonitor" class="org.jasig.portal.ThreadPoolStatistics"/>
+
 </beans>

@@ -1061,7 +1061,7 @@ public class ChannelManager implements LayoutEventListener {
         final ChannelRuntimeData runtimeData = this.getChannelRuntimeData(request, channelSubscribeId, RequestType.ACTION);
 
         // Build a new channel renderer instance.
-        final IChannelRenderer channelRenderer = cChannelRendererFactory.newInstance(ch, runtimeData);
+        final IChannelRenderer channelRenderer = cChannelRendererFactory.newInstance(channel, ch, runtimeData);
 
         if (noTimeout) {
             channelRenderer.setTimeout(0);
@@ -1194,7 +1194,7 @@ public class ChannelManager implements LayoutEventListener {
         }
 
         // Build a new channel renderer instance.
-        final IChannelRenderer channelRenderer = cChannelRendererFactory.newInstance(ch, runtimeData);
+        final IChannelRenderer channelRenderer = cChannelRendererFactory.newInstance(channel, ch, runtimeData);
 
         channelRenderer.setCharacterCacheable(this.characterCaching);
         if(ch instanceof ICacheable) {

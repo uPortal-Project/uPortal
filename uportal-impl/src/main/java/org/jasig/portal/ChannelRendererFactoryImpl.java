@@ -19,8 +19,14 @@
 
 package org.jasig.portal;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RunnableFuture;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -28,7 +34,9 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.ChannelRenderer.IWorker;
 import org.jasig.portal.channels.error.CError;
+import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.utils.threading.PriorityThreadFactory;
 
@@ -56,11 +64,17 @@ public final class ChannelRendererFactoryImpl
     static ThreadPoolExecutor cErrorThreadPool = null;
 
     /** <p>Shared thread pool for all factories.</p> */
-    static ThreadPoolExecutor cSharedThreadPool = null;
+    static ChannelRenderThreadPoolExecutor cSharedThreadPool = null;
     
-    private class ChannelRenderThreadPoolExecutor extends ThreadPoolExecutor {
-        final AtomicLong activeThreads;
-        final AtomicLong maxActiveThreads;
+    public static class ChannelRenderThreadPoolExecutor extends ThreadPoolExecutor {
+        private final AtomicLong activeThreads;
+        private final AtomicLong maxActiveThreads;
+        
+        /*
+         * Track activeWorkers in a Set with ConcurrentHashMap multithreaded 
+         * behavior (see http://dhruba.name/2009/08/05/concurrent-set-implementations-in-java-6/)
+         */
+        private final Set<WorkerFutureTask<?>> activeWorkers = Collections.newSetFromMap(new ConcurrentHashMap<WorkerFutureTask<?>,Boolean>());
 
         public ChannelRenderThreadPoolExecutor(final AtomicLong activeThreads, final AtomicLong maxActiveThreads,
                 int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue,
@@ -70,6 +84,15 @@ public final class ChannelRendererFactoryImpl
             this.activeThreads = activeThreads;
             this.maxActiveThreads = maxActiveThreads;
         }
+        
+        @Override
+        protected <V> RunnableFuture<V> newTaskFor(Runnable r, V v) {
+            if (r instanceof IWorker) {
+                return new WorkerFutureTask<V>((IWorker) r);
+            } else {
+                return super.newTaskFor(r, v);
+            }
+        }
 
         @Override
         protected void beforeExecute(java.lang.Thread t, java.lang.Runnable r) {
@@ -78,12 +101,42 @@ public final class ChannelRendererFactoryImpl
             if (current > maxActiveThreads.get()) {
                 maxActiveThreads.set(current);
             }
+            if (r instanceof WorkerFutureTask) {
+                activeWorkers.add((WorkerFutureTask<?>) r);
+            }
         }
 
         @Override
         protected void afterExecute(java.lang.Runnable r, java.lang.Throwable t) {
             super.afterExecute(r, t);
             activeThreads.decrementAndGet();
+            if (r instanceof WorkerFutureTask) {
+                activeWorkers.remove((WorkerFutureTask<?>) r);
+            }
+        }
+        
+        public Set<IWorker> getActiveWorkers() {
+            Set<WorkerFutureTask<?>> workers = new HashSet<WorkerFutureTask<?>>(activeWorkers);  // defensive copy
+            Set<IWorker> rslt = new HashSet<IWorker>();
+            for (WorkerFutureTask<?> wft : workers) {
+                IWorker k = wft.getWorker();
+                rslt.add(k);
+            }
+            return rslt;
+        }
+    }
+    
+    private static final class WorkerFutureTask<V> extends FutureTask<V> {
+
+        private final IWorker worker;
+        
+        public WorkerFutureTask(IWorker worker) {
+            super(worker, null);
+            this.worker = worker;
+        }
+
+        public IWorker getWorker() {
+            return worker;
         }
     }
 
@@ -132,7 +185,7 @@ public final class ChannelRendererFactoryImpl
                     "threadPool_shared = " + sharedPool, x);
         }
 
-        cErrorThreadPool = new ThreadPoolExecutor(20, 20, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue(),
+        cErrorThreadPool = new ThreadPoolExecutor(20, 20, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(),
                 new PriorityThreadFactory(threadPriority, "ErrorRendering", PortalSessionManager.getThreadGroup()));
 
         final PriorityThreadFactory threadFactory = new PriorityThreadFactory(threadPriority, keyBase, PortalSessionManager.getThreadGroup());
@@ -155,7 +208,7 @@ public final class ChannelRendererFactoryImpl
      *
      * @return new instance of a channel renderer for the specified channel
      **/
-    public IChannelRenderer newInstance(IChannel channel, ChannelRuntimeData channelRuntimeData) {
+    public IChannelRenderer newInstance(IUserLayoutChannelDescription channelDesc, IChannel channel, ChannelRuntimeData channelRuntimeData) {
 
         ThreadPoolExecutor threadPoolExecutor = null;
         // Use special thread pool for CError channel rendering
@@ -201,6 +254,7 @@ public final class ChannelRendererFactoryImpl
             threadPoolExecutor = this.mThreadPool;
         }
 
-        return new ChannelRenderer(channel, channelRuntimeData, threadPoolExecutor);
+        return new ChannelRenderer(channelDesc, channel, channelRuntimeData, threadPoolExecutor);
     }
+
 }

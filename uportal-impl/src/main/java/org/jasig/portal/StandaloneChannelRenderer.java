@@ -35,6 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.channels.BaseChannel;
 import org.jasig.portal.i18n.LocaleManager;
+import org.jasig.portal.layout.node.UserLayoutChannelDescription;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.serialize.BaseMarkupSerializer;
 import org.jasig.portal.spring.locator.ChannelRequestParameterManagerLocator;
@@ -144,7 +145,7 @@ public class StandaloneChannelRenderer
         }
 
         // start rendering
-        IChannelRenderer cr = cChannelRendererFactory.newInstance( this, rd );
+        IChannelRenderer cr = cChannelRendererFactory.newInstance(new UserLayoutChannelDescription()/* SCR not really used... fix if we need to */, this, rd);
         cr.setTimeout (timeOut);
         cr.startRendering ();
 

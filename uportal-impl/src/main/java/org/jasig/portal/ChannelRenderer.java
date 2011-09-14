@@ -37,9 +37,9 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.channels.support.IChannelTitle;
 import org.jasig.portal.channels.support.IDynamicChannelTitleRenderer;
+import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.portlet.url.RequestType;
 import org.jasig.portal.properties.PropertiesManager;
-import org.jasig.portal.security.IPerson;
 import org.jasig.portal.spring.locator.CacheFactoryLocator;
 import org.jasig.portal.spring.locator.JpaInterceptorLocator;
 import org.jasig.portal.utils.SAX2BufferImpl;
@@ -83,6 +83,7 @@ public class ChannelRenderer
     
     public static final String SYSTEM_WIDE_CHANNEL_CACHE = "org.jasig.portal.ChannelRenderer.SYSTEM_WIDE_CHANNEL_CACHE";
 
+    protected final IUserLayoutChannelDescription channelDesc;
     protected final IChannel channel;
     protected final ChannelRuntimeData rd;
     protected Map<String, ChannelCacheEntry> channelCache;
@@ -113,8 +114,10 @@ public class ChannelRenderer
      * @param runtimeData a <code>ChannelRuntimeData</code> value
      * @param threadPool a <code>ThreadPool</code> value
      */
-    public ChannelRenderer (IChannel chan,ChannelRuntimeData runtimeData, ExecutorService threadPool) {
+    public ChannelRenderer (IUserLayoutChannelDescription channelDesc, IChannel chan,ChannelRuntimeData runtimeData, ExecutorService threadPool) {
+        Validate.notNull(channelDesc, "IUserLayoutChannelDescription can not be null");
         Validate.notNull(chan, "IChannel can not be null");
+        this.channelDesc = channelDesc;
         this.channel=chan;
         this.rd=runtimeData;
         this.rendering = false;
@@ -135,8 +138,8 @@ public class ChannelRenderer
      * @param groupSemaphore a <code>SetCheckInSemaphore</code> for the current rendering group
      * @param groupRenderingKey an <code>Object</code> to be used for check ins with the group semaphore
      */
-    public ChannelRenderer (IChannel chan,ChannelRuntimeData runtimeData, ExecutorService threadPool, SetCheckInSemaphore groupSemaphore, Object groupRenderingKey) {
-        this(chan,runtimeData,threadPool);
+    public ChannelRenderer (IUserLayoutChannelDescription channelDesc, IChannel chan,ChannelRuntimeData runtimeData, ExecutorService threadPool, SetCheckInSemaphore groupSemaphore, Object groupRenderingKey) {
+        this(channelDesc, chan,runtimeData,threadPool);
         this.groupSemaphore=groupSemaphore;
         this.groupRenderingKey=groupRenderingKey;
     }
@@ -189,7 +192,7 @@ public class ChannelRenderer
   {
     // start the rendering thread
 
-    final IWorker targetWorker = new Worker(this.channel, this.rd);
+    final IWorker targetWorker = new Worker(this.channelDesc, this.channel, this.rd);
     
     // Obtain JcrInterceptor bean
     final JpaInterceptor jpaInterceptor = JpaInterceptorLocator.getJpaInterceptor();
@@ -458,6 +461,7 @@ public class ChannelRenderer
 
 
     protected class Worker extends BaseTask implements IWorker {
+        private final IUserLayoutChannelDescription channelDesc;
         private final IChannel channel;
         private final ChannelRuntimeData rd;
         private final Map<TrackingThreadLocal<Object>, Object> currentData;
@@ -470,6 +474,7 @@ public class ChannelRenderer
         private SAX2BufferImpl buffer;
         private String cbuffer;
         
+        private volatile Long threadReceivedTime = null;
         private long renderTime;
         private boolean renderedFromCache = false;
 
@@ -478,7 +483,8 @@ public class ChannelRenderer
          */
         private String channelTitle = null;
 
-        public Worker(IChannel ch, ChannelRuntimeData runtimeData) {
+        public Worker(IUserLayoutChannelDescription channelDesc, IChannel ch, ChannelRuntimeData runtimeData) {
+            this.channelDesc = channelDesc;
             this.channel = ch;
             this.rd = runtimeData;
             this.requestAttributes = RequestContextHolder.getRequestAttributes();
@@ -495,6 +501,10 @@ public class ChannelRenderer
                 log.trace("Created " + this.toString());
             }
         }
+        
+        public IUserLayoutChannelDescription getUserLayoutChannelDescription() {
+            return channelDesc;
+        }
 
         public boolean isSetRuntimeDataComplete() {
             return this.setRuntimeDataComplete;
@@ -506,7 +516,7 @@ public class ChannelRenderer
                 log.trace("Started execution " + this.toString());
             }
             
-            final long startTime = System.currentTimeMillis();
+            threadReceivedTime = System.currentTimeMillis();
             try {
                 TrackingThreadLocal.setCurrentData(this.currentData);
                 RequestContextHolder.setRequestAttributes(this.requestAttributes);
@@ -704,7 +714,7 @@ public class ChannelRenderer
                 RequestContextHolder.resetRequestAttributes();
                 LocaleContextHolder.resetLocaleContext();
                 
-                this.renderTime = System.currentTimeMillis() - startTime;
+                this.renderTime = System.currentTimeMillis() - threadReceivedTime;
             }
 
             done = true;
@@ -842,6 +852,10 @@ public class ChannelRenderer
                 return null;
             }
         }
+        
+        public Long getThreadReceivedTime() {
+            return threadReceivedTime;
+        }
 
         /**
          * @return the renderTime
@@ -871,6 +885,8 @@ public class ChannelRenderer
     }
     
     protected interface IWorker extends Task {
+        
+        public IUserLayoutChannelDescription getUserLayoutChannelDescription();
 
         public boolean isSetRuntimeDataComplete();
 
@@ -892,6 +908,8 @@ public class ChannelRenderer
         public void setCharacterCache(String chars);
 
         public boolean done();
+        
+        public Long getThreadReceivedTime();
 
         /**
          * @return the renderTime

@@ -38,6 +38,7 @@
                 <ref bean="cacheMaintenanceTrigger" />
                 <ref bean="statsQueueFlushingTrigger" />
                 <ref bean="statsPurgeTrigger" />
+                <ref bean="renderingThreadPoolMonitorTrigger" />
             </list>
         </property>
     </bean>
@@ -93,4 +94,16 @@
         <property name="startDelay" value="300000" /><!-- Wait 5 minutes after startup -->
         <property name="repeatInterval" value="86400000" /><!-- Perform the purge once a day 86400000 -->
     </bean>
+    
+    <bean id="renderingThreadPoolMonitorTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+                <property name="targetMethod" value="logStatus" />
+                <property name="targetObject" ref="renderingThreadPoolMonitor" />
+            </bean>
+        </property>
+        <property name="startDelay" value="60000" /><!-- Wait 1 minute after startup -->
+        <property name="repeatInterval" value="60000" /><!-- Perform the purge once a minute -->
+    </bean>
+    
 </beans>

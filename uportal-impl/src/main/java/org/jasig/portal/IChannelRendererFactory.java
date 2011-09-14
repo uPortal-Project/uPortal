@@ -19,6 +19,8 @@
 
 package org.jasig.portal;
 
+import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
+
 /**
  * <p>The <code>IChannelRendererFactory</code> interface defines the factory
  * interface for <code>IChannelRenderer</code> objects. Provider
@@ -53,6 +55,7 @@ public interface IChannelRendererFactory
      * @return new instance of a channel renderer for the specified channel
      **/
     IChannelRenderer newInstance(
+        IUserLayoutChannelDescription channelDesc,
         IChannel channel,
         ChannelRuntimeData channelRuntimeData
         );

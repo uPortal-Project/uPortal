@@ -19,17 +19,32 @@
 
 package org.jasig.portal;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.ChannelRenderer.IWorker;
+import org.jasig.portal.ChannelRendererFactoryImpl.ChannelRenderThreadPoolExecutor;
+import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
 public class ThreadPoolStatistics {
+
+    private static final int MAXIMUM_ACCEPTABLE_LONG_RUNNERS = 3;
+    private static final long EXTRA_LONG_MULTIPLIER = 2L;
     private final boolean errorPool;
+    private final Log log = LogFactory.getLog(getClass());
     
     public ThreadPoolStatistics() {
         errorPool = false;
@@ -126,4 +141,102 @@ public class ThreadPoolStatistics {
     public long getCompletedTaskCount() {
         return getThreadPoolExecutor().getCompletedTaskCount();
     }
+    
+    public void logStatus() {
+        
+        // We can only log if we have a ChannelRenderThreadPoolExecutor (so not for errorPool)...
+        ThreadPoolExecutor exec = this.getThreadPoolExecutor();
+        if (!(exec instanceof ChannelRenderThreadPoolExecutor)) {
+            return;
+        }
+        ChannelRenderThreadPoolExecutor crtpe = (ChannelRenderThreadPoolExecutor) exec;
+        
+        // Gather current worker data
+        final Map<String,List<StatusTuple>> statusMap = new HashMap<String,List<StatusTuple>>();
+        Set<IWorker> activeWorkers = crtpe.getActiveWorkers();
+        for (Runnable r : activeWorkers) {
+            IWorker w = (IWorker) r;
+            IUserLayoutChannelDescription channelDesc = w.getUserLayoutChannelDescription();
+            String fname = channelDesc.getFunctionalName();
+            List<StatusTuple> list = statusMap.get(fname);
+            if (list == null) {
+                // First time...
+                list = new ArrayList<StatusTuple>();
+                statusMap.put(fname, list);
+            }
+            Long threadReceivedTime = w.getThreadReceivedTime();
+            Long elapsedTime = threadReceivedTime != null ? System.currentTimeMillis() - threadReceivedTime : null;
+            list.add(
+                new StatusTuple(channelDesc.getTimeout(), elapsedTime)
+            );
+        }
+        
+        for (Map.Entry<String,List<StatusTuple>> y : statusMap.entrySet()) {
+            logStatusByFname(y.getKey(), y.getValue());
+        }
+        
+    }
+    
+    private void logStatusByFname(String fname, List<StatusTuple> activeWorkers) {
+
+        int renderCount = 0;
+        int longRunningCount = 0;
+        long longestRunTime = 0;
+        long channelTimeout = 0;
+        
+        for (StatusTuple p : activeWorkers) {
+
+            ++renderCount;
+            long elapsedTime = p.getElapsedTime() != null ? p.getElapsedTime() : 0L;
+            if (elapsedTime > p.getTimeout()) {
+                ++longRunningCount;
+            }
+            if (elapsedTime > longestRunTime) {
+                longestRunTime = elapsedTime;
+            }
+            if (channelTimeout == 0) {
+                // get this once...
+                channelTimeout = p.getTimeout();
+            }
+        }
+        
+        // Build the report
+        StringBuilder bld = new StringBuilder();
+        bld.append("Active IWorker instances for channel '").append(fname)
+                        .append("' [numberCurrentlyRendering=").append(renderCount)
+                        .append(", numberExceedingTimeout=").append(longRunningCount)
+                        .append(", longestRunningMillis=").append(longestRunTime)
+                        .append("]");
+        
+        // Choose which level to log it
+        if (longRunningCount > MAXIMUM_ACCEPTABLE_LONG_RUNNERS && longestRunTime > EXTRA_LONG_MULTIPLIER * channelTimeout && log.isWarnEnabled()) {
+            log.warn(bld.toString());
+        } else if (longRunningCount > MAXIMUM_ACCEPTABLE_LONG_RUNNERS && log.isInfoEnabled()) {
+            log.info(bld.toString());
+        } else if (log.isTraceEnabled()) {
+            log.trace(bld.toString());
+        }
+        
+    }
+    
+    private static final class StatusTuple {
+
+        private final long timeout;
+        private final Long elapsedTime;
+        
+        public StatusTuple(long timeout, Long elapsedTime) {
+            this.timeout = timeout;
+            this.elapsedTime = elapsedTime;
+        }
+        
+        public long getTimeout() {
+            return timeout;
+        }
+        
+        public Long getElapsedTime() {
+            return elapsedTime;
+        }
+        
+    }
+
 }
