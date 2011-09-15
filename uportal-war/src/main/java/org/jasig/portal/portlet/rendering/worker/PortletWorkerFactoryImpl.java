@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
@@ -98,13 +99,15 @@ public class PortletWorkerFactoryImpl implements IPortletWorkerFactory {
      */
     @Override
     public IPortletActionExecutionWorker createActionWorker(HttpServletRequest request, HttpServletResponse response, IPortletWindowId portletWindowId) {
-        return new PortletActionExecutionWorker(portletThreadPool, executionInterceptors, portletRenderer, request, response, portletWindowId);
+        final String portletFname = this.getPortletFname(request, portletWindowId);
+        return new PortletActionExecutionWorker(portletThreadPool, executionInterceptors, portletRenderer, request, response, portletWindowId, portletFname);
     }
     
 
     @Override
     public IPortletEventExecutionWorker createEventWorker(HttpServletRequest request, HttpServletResponse response, IPortletWindowId portletWindowId, Event event) {
-        return new PortletEventExecutionWorker(portletThreadPool, executionInterceptors, portletRenderer, request, response, portletWindowId, event);
+        final String portletFname = this.getPortletFname(request, portletWindowId);
+        return new PortletEventExecutionWorker(portletThreadPool, executionInterceptors, portletRenderer, request, response, portletWindowId, portletFname, event);
     }
 
 
@@ -116,23 +119,26 @@ public class PortletWorkerFactoryImpl implements IPortletWorkerFactory {
 	public IPortletRenderExecutionWorker createRenderHeaderWorker(
 			HttpServletRequest request, HttpServletResponse response,
 			IPortletWindowId portletWindowId) {
-		return new PortletRenderHeaderExecutionWorker(portletThreadPool,executionInterceptors, portletRenderer, request, response, portletWindowId);
+	    final String portletFname = this.getPortletFname(request, portletWindowId);
+		return new PortletRenderHeaderExecutionWorker(portletThreadPool,executionInterceptors, portletRenderer, request, response, portletWindowId, portletFname);
 	}
 
 	@Override
     public IPortletRenderExecutionWorker createRenderWorker(HttpServletRequest request, HttpServletResponse response, IPortletWindowId portletWindowId) {
-        return new PortletRenderExecutionWorker(portletThreadPool, executionInterceptors, portletRenderer, request, response, portletWindowId);
+	    final String portletFname = this.getPortletFname(request, portletWindowId);
+        return new PortletRenderExecutionWorker(portletThreadPool, executionInterceptors, portletRenderer, request, response, portletWindowId, portletFname);
     }
 
     @Override
     public IPortletResourceExecutionWorker createResourceWorker(HttpServletRequest request, HttpServletResponse response, IPortletWindowId portletWindowId) {
-        return new PortletResourceExecutionWorker(portletThreadPool, executionInterceptors, portletRenderer, request, response, portletWindowId);
+        final String portletFname = this.getPortletFname(request, portletWindowId);
+        return new PortletResourceExecutionWorker(portletThreadPool, executionInterceptors, portletRenderer, request, response, portletWindowId, portletFname);
     }
     
     @Override
     public IPortletFailureExecutionWorker createFailureWorker(HttpServletRequest request, HttpServletResponse response, IPortletWindowId failedPortletWindowId, Exception cause) {
         final IPortletWindowId errorPortletWindowId = this.getErrorPortletWindowId(request, this.errorPortletFName);
-        return new PortletFailureExecutionWorker(portletRenderer, executionInterceptors, request, response, errorPortletWindowId, failedPortletWindowId, cause);
+        return new PortletFailureExecutionWorker(portletRenderer, executionInterceptors, request, response, errorPortletWindowId, failedPortletWindowId, this.errorPortletFName, cause);
         /*
         HttpSession session = request.getSession();
         Map<IPortletWindowId, Exception> portletFailureMap = safeRetrieveErrorMapFromSession(session);
@@ -151,5 +157,12 @@ public class PortletWorkerFactoryImpl implements IPortletWorkerFactory {
         final IPortletEntity errorPortletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(request, userInstance, errorPortletSubscribeId);
         final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindow(request, errorPortletEntity.getPortletEntityId());
         return portletWindow.getPortletWindowId();
+    }
+    
+    protected String getPortletFname(HttpServletRequest request, IPortletWindowId portletWindowId) {
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
+        final IPortletEntity portletEntity = portletWindow.getPortletEntity();
+        final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
+        return portletDefinition.getFName();
     }
 }

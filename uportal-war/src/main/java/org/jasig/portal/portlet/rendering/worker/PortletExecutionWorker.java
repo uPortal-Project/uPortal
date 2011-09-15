@@ -53,10 +53,11 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
     private final CountDownLatch startLatch = new CountDownLatch(1);
     private final ExecutorService executorService;
     private final List<IPortletExecutionInterceptor> interceptors;
-    protected final IPortletRenderer portletRenderer;
-    protected final IPortletWindowId portletWindowId;
-    protected final HttpServletRequest request;
-    protected final HttpServletResponse response;
+    final IPortletRenderer portletRenderer;
+    final IPortletWindowId portletWindowId;
+    final String portletFname;
+    final HttpServletRequest request;
+    final HttpServletResponse response;
     
     private volatile Future<V> future;
     private volatile Thread workerThread;
@@ -69,7 +70,7 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
     
     public PortletExecutionWorker(
             ExecutorService executorService, List<IPortletExecutionInterceptor> interceptors, IPortletRenderer portletRenderer, 
-            HttpServletRequest request, HttpServletResponse response, IPortletWindowId portletWindowId) {
+            HttpServletRequest request, HttpServletResponse response, IPortletWindowId portletWindowId, String portletFname) {
 
         this.executorService = executorService;
         this.interceptors = interceptors;
@@ -77,6 +78,7 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
         this.request = new GuardingHttpServletRequest(request, canceled);
         this.response = new GuardingHttpServletResponse(response, canceled);
         this.portletWindowId = portletWindowId;
+        this.portletFname = portletFname;
     }
 
     @Override
@@ -96,6 +98,14 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
     public IPortletWindowId getPortletWindowId() {
         return this.portletWindowId;
     }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.rendering.worker.IPortletExecutionContext#getPortletFname()
+     */
+    @Override
+    public String getPortletFname() {
+        return this.portletFname;
+    }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker#submit()
@@ -113,7 +123,7 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
             interceptor.preSubmit(request, response, this);
         }
         
-        this.future = this.executorService.submit(new Callable<V>() {
+        final Callable<V> callable = new PortletExecutionCallable<V>(new Callable<V>() {
             /* (non-Javadoc)
              * @see java.util.concurrent.Callable#call()
              */
@@ -150,7 +160,9 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
                     workerThread = null;
                 }
             }
-        });
+        }, this);
+        
+        this.future = this.executorService.submit(callable);
     }
     
     private void doPostExecution(Exception e) {
@@ -341,5 +353,4 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
                     "wait=" + this.getWait() + ", " +
                     "duration=" + this.getDuration() + "]";
     }
-    
 }

@@ -22,11 +22,19 @@ package org.jasig.portal.utils.threading;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.scheduling.concurrent.ExecutorConfigurationSupport;
 
 /**
  * Creates a {@link ThreadPoolExecutor} that behaves more like expected where new threads are created BEFORE
@@ -35,46 +43,176 @@ import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class DynamicThreadPoolExecutorFactoryBean 
-        extends ThreadPoolExecutorFactoryBean
-        implements RejectedExecutionHandler {
-        
+public class DynamicThreadPoolExecutorFactoryBean extends ExecutorConfigurationSupport implements
+        FactoryBean<ExecutorService>, InitializingBean, DisposableBean, RejectedExecutionHandler {
+
     private static final long serialVersionUID = 1L;
-    
+
     private RejectedExecutionHandler rejectedExecutionHandler = new ThreadPoolExecutor.AbortPolicy();
     private BlockingQueue<Runnable> blockingQueue;
+
+    private int corePoolSize = 1;
+
+    private int maxPoolSize = Integer.MAX_VALUE;
+
+    private int keepAliveSeconds = 60;
+
+    private boolean allowCoreThreadTimeOut = false;
+
+    private int queueCapacity = Integer.MAX_VALUE;
+
+    private boolean exposeUnconfigurableExecutor = false;
+
+    private ExecutorService exposedExecutor;
 
     @Override
     public void afterPropertiesSet() {
         super.setRejectedExecutionHandler(this);
         super.afterPropertiesSet();
     }
-    
+
     @Override
     public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
         if (!this.blockingQueue.offer(r)) {
             //We really are saturated (threads all busy and queue is full)
-            rejectedExecutionHandler.rejectedExecution(r, executor);
+            this.rejectedExecutionHandler.rejectedExecution(r, executor);
         }
     }
-    
+
+    /**
+     * Set the ThreadPoolExecutor's core pool size.
+     * Default is 1.
+     * <p><b>This setting can be modified at runtime, for example through JMX.</b>
+     */
+    public void setCorePoolSize(int corePoolSize) {
+        this.corePoolSize = corePoolSize;
+    }
+
+    /**
+     * Set the ThreadPoolExecutor's maximum pool size.
+     * Default is <code>Integer.MAX_VALUE</code>.
+     * <p><b>This setting can be modified at runtime, for example through JMX.</b>
+     */
+    public void setMaxPoolSize(int maxPoolSize) {
+        this.maxPoolSize = maxPoolSize;
+    }
+
+    /**
+     * Set the ThreadPoolExecutor's keep-alive seconds.
+     * Default is 60.
+     * <p><b>This setting can be modified at runtime, for example through JMX.</b>
+     */
+    public void setKeepAliveSeconds(int keepAliveSeconds) {
+        this.keepAliveSeconds = keepAliveSeconds;
+    }
+
+    /**
+     * Specify whether to allow core threads to time out. This enables dynamic
+     * growing and shrinking even in combination with a non-zero queue (since
+     * the max pool size will only grow once the queue is full).
+     * <p>Default is "false". Note that this feature is only available on Java 6
+     * or above. On Java 5, consider switching to the backport-concurrent
+     * version of ThreadPoolTaskExecutor which also supports this feature.
+     * @see java.util.concurrent.ThreadPoolExecutor#allowCoreThreadTimeOut(boolean)
+     */
+    public void setAllowCoreThreadTimeOut(boolean allowCoreThreadTimeOut) {
+        this.allowCoreThreadTimeOut = allowCoreThreadTimeOut;
+    }
+
+    /**
+     * Set the capacity for the ThreadPoolExecutor's BlockingQueue.
+     * Default is <code>Integer.MAX_VALUE</code>.
+     * <p>Any positive value will lead to a LinkedBlockingQueue instance;
+     * any other value will lead to a SynchronousQueue instance.
+     * @see java.util.concurrent.LinkedBlockingQueue
+     * @see java.util.concurrent.SynchronousQueue
+     */
+    public void setQueueCapacity(int queueCapacity) {
+        this.queueCapacity = queueCapacity;
+    }
+
+    /**
+     * Specify whether this FactoryBean should expose an unconfigurable
+     * decorator for the created executor.
+     * <p>Default is "false", exposing the raw executor as bean reference.
+     * Switch this flag to "true" to strictly prevent clients from
+     * modifying the executor's configuration.
+     * @see java.util.concurrent.Executors#unconfigurableScheduledExecutorService
+     */
+    public void setExposeUnconfigurableExecutor(boolean exposeUnconfigurableExecutor) {
+        this.exposeUnconfigurableExecutor = exposeUnconfigurableExecutor;
+    }
+
+    @Override
+    protected final ExecutorService initializeExecutor(ThreadFactory threadFactory,
+            RejectedExecutionHandler rejectedExecutionHandler) {
+
+        this.blockingQueue = this.createQueue(this.queueCapacity);
+        
+        final AlwaysFullBlockingQueue<Runnable> queue = new AlwaysFullBlockingQueue<Runnable>(this.blockingQueue);
+        
+        final ThreadPoolExecutor executor = this.createThreadPoolExecutor(this.corePoolSize, this.maxPoolSize,
+                this.keepAliveSeconds, threadFactory, rejectedExecutionHandler, queue);
+        
+        if (this.allowCoreThreadTimeOut) {
+            executor.allowCoreThreadTimeOut(true);
+        }
+
+        // Wrap executor with an unconfigurable decorator.
+        this.exposedExecutor = this.exposeUnconfigurableExecutor ? Executors.unconfigurableExecutorService(executor) : executor;
+
+        return executor;
+    }
+
+    protected ThreadPoolExecutor createThreadPoolExecutor(int corePoolSize, int maxPoolSize, int keepAliveSeconds,
+            ThreadFactory threadFactory, RejectedExecutionHandler rejectedExecutionHandler, BlockingQueue<Runnable> queue) {
+        return new ThreadPoolExecutor(corePoolSize, maxPoolSize,
+                keepAliveSeconds, TimeUnit.SECONDS, queue, threadFactory, rejectedExecutionHandler);
+    }
+
+    @Override
+    public ExecutorService getObject() throws Exception {
+        return this.exposedExecutor;
+    }
+
+    @Override
+    public Class<? extends ExecutorService> getObjectType() {
+        return this.exposedExecutor != null ? this.exposedExecutor.getClass() : ExecutorService.class;
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
+
     @Override
     public void setRejectedExecutionHandler(RejectedExecutionHandler rejectedExecutionHandler) {
         this.rejectedExecutionHandler = rejectedExecutionHandler;
     }
 
-    @Override
+    /**
+     * Create the BlockingQueue to use for the ThreadPoolExecutor.
+     * <p>A LinkedBlockingQueue instance will be created for a positive
+     * capacity value; a SynchronousQueue else.
+     * @param queueCapacity the specified queue capacity
+     * @return the BlockingQueue instance
+     * @see java.util.concurrent.LinkedBlockingQueue
+     * @see java.util.concurrent.SynchronousQueue
+     */
     protected BlockingQueue<Runnable> createQueue(int queueCapacity) {
-        this.blockingQueue = super.createQueue(queueCapacity);
-        return new AlwaysFullBlockingQueue<Runnable>(this.blockingQueue);
+        if (queueCapacity > 0) {
+            return new LinkedBlockingQueue<Runnable>(queueCapacity);
+        }
+
+        return new SynchronousQueue<Runnable>();
     }
-    
+
     /**
      * {@link BlockingQueue} where {@link BlockingQueue#offer(Object)} always returns false
      */
     private static final class AlwaysFullBlockingQueue<E> implements BlockingQueue<E> {
         private final BlockingQueue<E> blockingQueue;
-        
+
         public AlwaysFullBlockingQueue(BlockingQueue<E> blockingQueue) {
             this.blockingQueue = blockingQueue;
         }
