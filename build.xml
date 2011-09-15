@@ -672,10 +672,12 @@ else {
 
 
     <target name="md5passwd" depends="prodPrompt" description="Creates a user in the UP_PERSON_DIR table">
+        <fail unless="username">
+            You must specify a 'username' parameter (-Dusername={juser})
+        </fail>
+    	
         <uportal-war-macro>
-            <property name="username" value=" " />
-
-            <echo message="Invoking Md5Passwd" />
+            <echo message="Invoking creating/updating password for: ${username}" />
             <java dir="${basedir}" classname="org.jasig.portal.security.Md5Passwd">
                 <classpath refid="uportal-war-full.classpath" />
 
