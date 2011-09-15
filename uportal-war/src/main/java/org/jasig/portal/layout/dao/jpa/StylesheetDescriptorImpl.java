@@ -45,6 +45,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.dao.usertype.FunctionalNameType;
 import org.jasig.portal.layout.om.ILayoutAttributeDescriptor;
@@ -92,9 +93,10 @@ public class StylesheetDescriptorImpl implements IStylesheetDescriptor {
     @OneToMany(mappedBy = "stylesheetDescriptor", targetEntity = StylesheetUserPreferencesImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<IStylesheetUserPreferences> stylesheetUserPreferences = null;
     
-    @Column(name = "SS_NAME", length=100, nullable = false, unique = true)
+    @NaturalId
+    @Column(name = "SS_NAME", length=100, nullable = false)
     @Type(type = "fname")
-    private String name;
+    private final String name;
     
     @Column(name = "URL_SYNTAX_HELPER_NAME", length=100)
     private String urlNodeSyntaxHelperName;
@@ -132,12 +134,15 @@ public class StylesheetDescriptorImpl implements IStylesheetDescriptor {
     private StylesheetDescriptorImpl() {
         this.id = -1;
         this.entityVersion = -1;
+        this.name = null;
     }
     
     StylesheetDescriptorImpl(String name, String stylesheetResource) {
+        FunctionalNameType.validate(name);
+        
         this.id = -1;
         this.entityVersion = -1;
-        this.setName(name);
+        this.name = name;
         this.setStylesheetResource(stylesheetResource);
     }
     
@@ -163,15 +168,6 @@ public class StylesheetDescriptorImpl implements IStylesheetDescriptor {
     @Override
     public long getId() {
         return id;
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetDescriptor#setName(java.lang.String)
-     */
-    @Override
-    public void setName(String name) {
-        FunctionalNameType.validate(name);
-        this.name = name;
     }
 
     /* (non-Javadoc)

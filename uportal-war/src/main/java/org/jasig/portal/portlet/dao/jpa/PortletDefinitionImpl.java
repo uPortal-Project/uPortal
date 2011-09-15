@@ -59,6 +59,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.portlet.om.IPortletDefinition;
@@ -117,7 +118,8 @@ class PortletDefinitionImpl implements IPortletDefinition {
     @Column(name = "PORTLET_NAME", length = 128, nullable = false, unique = true)
     private String name;
 
-	@Column(name = "PORTLET_FNAME", length = 255, nullable = false, unique = true)
+    @NaturalId(mutable = true)
+	@Column(name = "PORTLET_FNAME", length = 255, nullable = false)
 	@Type(type = "fname")
 	private String fname;
 	

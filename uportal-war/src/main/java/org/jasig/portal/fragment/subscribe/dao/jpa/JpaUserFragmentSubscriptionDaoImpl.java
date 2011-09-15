@@ -19,15 +19,19 @@
 
 package org.jasig.portal.fragment.subscribe.dao.jpa;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.fragment.subscribe.IUserFragmentSubscription;
 import org.jasig.portal.fragment.subscribe.dao.IUserFragmentSubscriptionDao;
+import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.security.IPerson;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
@@ -41,91 +45,103 @@ import org.springframework.transaction.annotation.Transactional;
  * @version $Revision$ $Date$
  */
 @Repository
-public class JpaUserFragmentSubscriptionDaoImpl implements IUserFragmentSubscriptionDao {
-	
-	private static final String FIND_USER_FRAGMENT_INFO_BY_PERSON = 
-	        "from UserFragmentSubscriptionImpl subscription " +
-	        "where subscription.userId = :userId";
-
-	private static final String FIND_USER_FRAGMENT_INFO_BY_PERSON_AND_FRAGMENTOWNER = 
-        "from UserFragmentSubscriptionImpl subscription " +
-        "where subscription.userId = :userId and subscription.fragmentOwner = :fragmentOwner";
-	
-    private EntityManager entityManager;
+public class JpaUserFragmentSubscriptionDaoImpl extends BasePortalJpaDao implements IUserFragmentSubscriptionDao {
+    private static final String FIND_USER_FRAGMENT_INFO_BY_PERSON_CACHE_REGION = UserFragmentSubscriptionImpl.class.getName()
+            + ".query.FIND_USER_FRAGMENT_INFO_BY_PERSON";
     
-    /**
-     * @return the entityManager
-     */
-    public EntityManager getEntityManager() {
-        return entityManager;
-    }
-    /**
-     * @param entityManager the entityManager to set
-     */
-    @PersistenceContext(unitName="uPortalPersistence")
-    public void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
+    private static final String FIND_USER_FRAGMENT_INFO_BY_PERSON_CACHE_AND_OWNER_CACHE_REGION = UserFragmentSubscriptionImpl.class.getName()
+            + ".query.FIND_USER_FRAGMENT_INFO_BY_PERSON_CACHE_AND_OWNER";
+    
+    private CriteriaQuery<UserFragmentSubscriptionImpl> findUserFragmentInfoByPersonQuery;
+    private CriteriaQuery<UserFragmentSubscriptionImpl> findUserFragmentInfoByPersonAndOwnerQuery;
 
+    private ParameterExpression<Integer> userIdParameter;
+    private ParameterExpression<String> fragmentOwnerParameter;
+    
+    @Override
+    protected void buildCriteriaQueries(CriteriaBuilder criteriaBuilder) {
+        this.userIdParameter = criteriaBuilder.parameter(Integer.TYPE, "userId");
+        this.fragmentOwnerParameter = criteriaBuilder.parameter(String.class, "fragmentOwner");
+        
+        this.initFindUserFragmentInfoByPersonQuery(criteriaBuilder);
+        this.initFindUserFragmentInfoByPersonAndOwnerQuery(criteriaBuilder);
+    }
+    
+    protected void initFindUserFragmentInfoByPersonQuery(CriteriaBuilder cb) {
+        final CriteriaQuery<UserFragmentSubscriptionImpl> criteriaQuery = cb.createQuery(UserFragmentSubscriptionImpl.class);
+        final Root<UserFragmentSubscriptionImpl> root = criteriaQuery.from(UserFragmentSubscriptionImpl.class);
+        criteriaQuery.select(root);
+        criteriaQuery.where(cb.equal(root.get(UserFragmentSubscriptionImpl_.userId), this.userIdParameter));
+        
+        this.findUserFragmentInfoByPersonQuery = criteriaQuery;
+    }
+    
+    protected void initFindUserFragmentInfoByPersonAndOwnerQuery(CriteriaBuilder cb) {
+        final CriteriaQuery<UserFragmentSubscriptionImpl> criteriaQuery = cb.createQuery(UserFragmentSubscriptionImpl.class);
+        final Root<UserFragmentSubscriptionImpl> root = criteriaQuery.from(UserFragmentSubscriptionImpl.class);
+        criteriaQuery.select(root);
+        criteriaQuery.where(cb.and(cb.equal(root.get(UserFragmentSubscriptionImpl_.userId), this.userIdParameter),
+                cb.equal(root.get(UserFragmentSubscriptionImpl_.fragmentOwner), this.fragmentOwnerParameter)));
+        
+        this.findUserFragmentInfoByPersonAndOwnerQuery = criteriaQuery;
+    }
+    
+    @Override
     @Transactional
-	public IUserFragmentSubscription createUserFragmentInfo(IPerson person,
-			IPerson fragmentOwner) {
-		IUserFragmentSubscription userFragmentInfo = new UserFragmentSubscriptionImpl(person, fragmentOwner);
+    public IUserFragmentSubscription createUserFragmentInfo(IPerson person, IPerson fragmentOwner) {
+        final IUserFragmentSubscription userFragmentInfo = new UserFragmentSubscriptionImpl(person, fragmentOwner);
         this.entityManager.persist(userFragmentInfo);
 
-		return userFragmentInfo;
-	}
-
-    @Transactional
-    public void deleteUserFragmentInfo(
-			IUserFragmentSubscription userFragmentInfo) {
-		Validate.notNull(userFragmentInfo, "user fragment info can not be null");
-		userFragmentInfo.setInactive();
-		this.entityManager.merge(userFragmentInfo);
-
-	}
-	
-	@SuppressWarnings("unchecked")
-	public List<IUserFragmentSubscription> getUserFragmentInfo(IPerson person) {
-       final Query query = this.entityManager.createQuery(FIND_USER_FRAGMENT_INFO_BY_PERSON);
-       query.setParameter("userId", person.getID());
-       query.setHint("org.hibernate.cacheable", true);
-
-        
-       final List<IUserFragmentSubscription> userFragmentInfos = query.getResultList();
-       return userFragmentInfos;
-
-	}
-
-	@SuppressWarnings("unchecked")
-	public IUserFragmentSubscription getUserFragmentInfo(IPerson person,
-			IPerson fragmentOwner) {
-       final Query query = this.entityManager.createQuery(FIND_USER_FRAGMENT_INFO_BY_PERSON_AND_FRAGMENTOWNER);
-       query.setParameter("userId", person.getID());
-       query.setParameter("fragmentOwner", fragmentOwner.getUserName());
-       query.setHint("org.hibernate.cacheable", true);
-
-        
-       final List<IUserFragmentSubscription> userFragmentInfos = query.getResultList();
-       final UserFragmentSubscriptionImpl userFragmentInfo = (UserFragmentSubscriptionImpl)DataAccessUtils.uniqueResult(userFragmentInfos);
-        
-       return userFragmentInfo;
-
-	}
-	
-    public IUserFragmentSubscription getUserFragmentInfo(long userFragmentInfoId) {
-        
-        final UserFragmentSubscriptionImpl userFragmentInfo = this.entityManager.find(UserFragmentSubscriptionImpl.class, userFragmentInfoId);
-        
         return userFragmentInfo;
     }
 
+    @Override
     @Transactional
-	public void updateUserFragmentInfo(
-			IUserFragmentSubscription userFragmentInfo) {
-		Validate.notNull(userFragmentInfo, "user fragment info can not be null");
-		this.entityManager.merge(userFragmentInfo);
+    public void deleteUserFragmentInfo(IUserFragmentSubscription userFragmentInfo) {
+        Validate.notNull(userFragmentInfo, "user fragment info can not be null");
+        userFragmentInfo.setInactive();
+        this.entityManager.persist(userFragmentInfo);
 
-	}
+    }
+
+    @Override
+    public List<IUserFragmentSubscription> getUserFragmentInfo(IPerson person) {
+        final TypedQuery<UserFragmentSubscriptionImpl> query = createQuery(this.findUserFragmentInfoByPersonQuery,
+                FIND_USER_FRAGMENT_INFO_BY_PERSON_CACHE_REGION);
+        query.setParameter(this.userIdParameter, person.getID());
+
+        final List<UserFragmentSubscriptionImpl> fragmentSubscriptions = query.getResultList();
+        return new ArrayList<IUserFragmentSubscription>(fragmentSubscriptions);
+    }
+
+    @Override
+    public IUserFragmentSubscription getUserFragmentInfo(IPerson person, IPerson fragmentOwner) {
+        final TypedQuery<UserFragmentSubscriptionImpl> query = createQuery(this.findUserFragmentInfoByPersonAndOwnerQuery,
+                FIND_USER_FRAGMENT_INFO_BY_PERSON_CACHE_AND_OWNER_CACHE_REGION);
+        query.setParameter(this.userIdParameter, person.getID());
+        query.setParameter(this.fragmentOwnerParameter, fragmentOwner.getUserName());
+        query.setMaxResults(1);
+
+        final List<UserFragmentSubscriptionImpl> fragmentSubscriptions = query.getResultList();
+        return DataAccessUtils.uniqueResult(fragmentSubscriptions);
+
+    }
+
+    @Override
+    public IUserFragmentSubscription getUserFragmentInfo(long userFragmentInfoId) {
+
+        final UserFragmentSubscriptionImpl userFragmentInfo = this.entityManager
+                .find(UserFragmentSubscriptionImpl.class, userFragmentInfoId);
+
+        return userFragmentInfo;
+    }
+
+    @Override
+    @Transactional
+    public void updateUserFragmentInfo(IUserFragmentSubscription userFragmentInfo) {
+        Validate.notNull(userFragmentInfo, "user fragment info can not be null");
+        this.entityManager.persist(userFragmentInfo);
+
+    }
 
 }

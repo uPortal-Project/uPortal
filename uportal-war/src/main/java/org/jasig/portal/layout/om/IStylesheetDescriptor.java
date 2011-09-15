@@ -24,7 +24,6 @@ import java.util.Map;
 
 import javax.xml.transform.Transformer;
 
-import org.jasig.portal.dao.usertype.FunctionalNameType;
 import org.jasig.portal.io.xml.IPortalData;
 import org.jasig.portal.url.IUrlNodeSyntaxHelper;
 import org.jasig.portal.url.IUrlNodeSyntaxHelperRegistry;
@@ -42,11 +41,6 @@ public interface IStylesheetDescriptor extends IPortalData {
      */
     public long getId();
     
-    /**
-     * Unique, human readable name of the stylesheet
-     * Must validate against {@link FunctionalNameType#VALID_FNAME_PATTERN}
-     */
-    public void setName(String name);
     /**
      * Unique, human readable name of the stylesheet
      */

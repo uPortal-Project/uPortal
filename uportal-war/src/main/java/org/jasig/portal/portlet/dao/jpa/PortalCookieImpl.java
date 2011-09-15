@@ -41,6 +41,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.NaturalId;
 import org.jasig.portal.portlet.om.IPortalCookie;
 import org.jasig.portal.portlet.om.IPortletCookie;
 
@@ -80,7 +81,8 @@ class PortalCookieImpl implements IPortalCookie {
 	private final Date created;
 	@Column(name = "EXPIRES", nullable = false, updatable = true)
 	private Date expires;
-	@Column(name = "COOKIE_VALUE", length=100, nullable = false, updatable = false, unique = true)
+	@NaturalId
+	@Column(name = "COOKIE_VALUE", length=100, nullable = false)
 	private final String value;
 	
 	@OneToMany(targetEntity = PortletCookieImpl.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)

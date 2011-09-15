@@ -48,7 +48,9 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.NaturalId;
 import org.jasig.portal.persondir.ILocalAccountPerson;
+import org.springframework.util.Assert;
 
 @Entity
 @Table(name = "UP_PERSON_DIR")
@@ -76,8 +78,9 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
     @Column(name = "ENTITY_VERSION")
     private final long entityVersion;
     
-    @Column(name = "USER_NAME", length = 35, nullable = false, unique = true)
-    private String name;
+    @NaturalId
+    @Column(name = "USER_NAME", length = 35, nullable = false)
+    private final String name;
     
     @Column(name = "ENCRPTD_PSWD", length = 256)
     private String password;
@@ -95,9 +98,12 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
     private LocalAccountPersonImpl() {
         this.id = -1;
         this.entityVersion = -1;
+        this.name = null;
     }
     
     public LocalAccountPersonImpl(String name) {
+        Assert.notNull(name);
+        
         this.id = -1;
         this.entityVersion = -1;
         this.name = name;
@@ -114,14 +120,6 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
     @Override
     public String getName() {
         return name;
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.persondir.jpa.ILocalAccountPersonAttribute#setName(java.lang.String)
-     */
-    @Override
-    public void setName(String name) {
-        this.name = name;
     }
 
     /* (non-Javadoc)

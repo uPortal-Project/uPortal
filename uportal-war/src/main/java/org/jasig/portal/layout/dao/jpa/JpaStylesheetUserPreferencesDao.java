@@ -128,6 +128,7 @@ public class JpaStylesheetUserPreferencesDao extends BasePortalJpaDao implements
         return this.getStylesheetUserPreferences(stylesheetDescriptor, person.getID(), profile.getProfileId());
     }
     
+    @SuppressWarnings("deprecation")
     @Deprecated
     @Override
     public IStylesheetUserPreferences getStylesheetUserPreferences(IStylesheetDescriptor stylesheetDescriptor, int personId, int profileId) {

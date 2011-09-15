@@ -65,7 +65,7 @@ public class FragmentDefinition extends EvaluatorGroup
     private static final Log LOG = LogFactory.getLog(FragmentDefinition.class);
 
     @Column(name = "FRAGMENT_NAME", unique = true)
-    private String name = null;
+    private final String name;
 
     @Column(name = "OWNER_ID")
     private String ownerID = null;
@@ -85,7 +85,10 @@ public class FragmentDefinition extends EvaluatorGroup
     /**
      * No-arg constructor required by JPA/Hibernate.
      */
-    public FragmentDefinition () {}
+    @SuppressWarnings("unused")
+    private FragmentDefinition () {
+        this.name = null;
+    }
     
     /*
      * For unit testing...
@@ -102,6 +105,9 @@ public class FragmentDefinition extends EvaluatorGroup
      * @throws Exception
      */
     public FragmentDefinition ( Element e ) {
+        NamedNodeMap atts = e.getAttributes();
+        this.name = loadAttribute( "name", atts, true, e );
+        
         loadFromEelement(e);
     }
     
@@ -111,7 +117,6 @@ public class FragmentDefinition extends EvaluatorGroup
 
         NamedNodeMap atts = e.getAttributes();
         
-        this.name = loadAttribute( "name", atts, REQUIRED, e );
         this.ownerID = loadAttribute( "ownerID", atts, REQUIRED, e );
         this.defaultLayoutOwnerID = loadAttribute( "defaultLayoutOwnerID", 
                                                    atts, NOT_REQUIRED, e );

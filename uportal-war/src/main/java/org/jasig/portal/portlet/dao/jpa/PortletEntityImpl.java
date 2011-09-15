@@ -46,7 +46,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 import javax.portlet.WindowState;
 
@@ -55,6 +54,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
@@ -69,10 +69,7 @@ import org.jasig.portal.portlet.om.IPortletPreference;
  * @version $Revision$
  */
 @Entity
-@Table(
-        name = "UP_PORTLET_ENT", 
-        uniqueConstraints = @UniqueConstraint(name = "IDX_PORT_END__USR_LAY_NODE",  columnNames = { "LAYOUT_NODE_ID", "USER_ID" })
-    )
+@Table(name = "UP_PORTLET_ENT")
 @SequenceGenerator(
         name="UP_PORTLET_ENT_GEN",
         sequenceName="UP_PORTLET_ENT_SEQ",
@@ -97,10 +94,12 @@ class PortletEntityImpl implements IPortletEntity {
     @Column(name = "ENTITY_VERSION")
     private final long entityVersion;
     
-    @Column(name = "LAYOUT_NODE_ID", nullable = false, updatable = false)
+    @NaturalId
+    @Column(name = "LAYOUT_NODE_ID", nullable = false)
     private final String layoutNodeId;
 
-    @Column(name = "USER_ID", nullable = false, updatable = false)
+    @NaturalId
+    @Column(name = "USER_ID", nullable = false)
     private final int userId;
 
     //Hidden reference to the parent portlet definition, used by hibernate for referential integrety

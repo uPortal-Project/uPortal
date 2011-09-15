@@ -101,7 +101,7 @@ public class FragmentDefinitionImporter implements IDataImporter<Tuple<String, D
 		
 		FragmentDefinition fragmentDefinition = this.fragmentDefinitionDao.getFragmentDefinition(fragmentName);
 		if (fragmentDefinition == null) {
-			fragmentDefinition = new FragmentDefinition();
+			fragmentDefinition = new FragmentDefinition(fragmentDefElement);
 		}
 		
 		fragmentDefinition.loadFromEelement(fragmentDefElement);
