@@ -125,13 +125,5 @@ public class QoSThreadPoolExecutorFactoryBean extends DynamicThreadPoolExecutorF
             
             throw new UnsupportedOperationException();
         }
-
-        /* (non-Javadoc)
-         * @see java.util.concurrent.ThreadPoolExecutor#beforeExecute(java.lang.Thread, java.lang.Runnable)
-         */
-        @Override
-        protected void beforeExecute(Thread t, Runnable r) {
-            System.out.println(qualityOfServiceBlockingQueue.toString());
-        }
     }
 }
