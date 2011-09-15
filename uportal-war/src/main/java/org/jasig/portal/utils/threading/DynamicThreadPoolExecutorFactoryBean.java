@@ -62,7 +62,10 @@ public class DynamicThreadPoolExecutorFactoryBean extends ExecutorConfigurationS
     private int queueCapacity = Integer.MAX_VALUE;
 
     private boolean exposeUnconfigurableExecutor = false;
+    
+    private boolean purgeOnRejection = true;
 
+    private ThreadPoolExecutor threadPoolExecutor;
     private ExecutorService exposedExecutor;
 
     @Override
@@ -73,10 +76,31 @@ public class DynamicThreadPoolExecutorFactoryBean extends ExecutorConfigurationS
 
     @Override
     public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
-        if (!this.blockingQueue.offer(r)) {
-            //We really are saturated (threads all busy and queue is full)
-            this.rejectedExecutionHandler.rejectedExecution(r, executor);
+        if (this.blockingQueue.offer(r)) {
+            return;
         }
+            
+        //Purge canceled tasks that are still in the queue to see if that frees up any space
+        if (this.purgeOnRejection) {
+            this.threadPoolExecutor.purge();
+            
+            if (this.blockingQueue.offer(r)) {
+                //space freed up and the runnable was added to the queue
+                return;
+            }
+        }
+        
+        //We really are saturated (threads all busy and queue is full)
+        this.rejectedExecutionHandler.rejectedExecution(r, executor);
+    }
+    
+    /**
+     * Set if {@link ThreadPoolExecutor#purge()} should be called when a submitted task is rejected. If purge is
+     * called the task will be offered again and only if the queue is still full will it be passed on to the
+     * {@link RejectedExecutionHandler}
+     */
+    public void setPurgeOnRejection(boolean purgeOnRejection) {
+        this.purgeOnRejection = purgeOnRejection;
     }
 
     /**
@@ -151,17 +175,17 @@ public class DynamicThreadPoolExecutorFactoryBean extends ExecutorConfigurationS
         
         final AlwaysFullBlockingQueue<Runnable> queue = new AlwaysFullBlockingQueue<Runnable>(this.blockingQueue);
         
-        final ThreadPoolExecutor executor = this.createThreadPoolExecutor(this.corePoolSize, this.maxPoolSize,
+        this.threadPoolExecutor = this.createThreadPoolExecutor(this.corePoolSize, this.maxPoolSize,
                 this.keepAliveSeconds, threadFactory, rejectedExecutionHandler, queue);
         
         if (this.allowCoreThreadTimeOut) {
-            executor.allowCoreThreadTimeOut(true);
+            this.threadPoolExecutor.allowCoreThreadTimeOut(true);
         }
 
         // Wrap executor with an unconfigurable decorator.
-        this.exposedExecutor = this.exposeUnconfigurableExecutor ? Executors.unconfigurableExecutorService(executor) : executor;
+        this.exposedExecutor = this.exposeUnconfigurableExecutor ? Executors.unconfigurableExecutorService(this.threadPoolExecutor) : this.threadPoolExecutor;
 
-        return executor;
+        return this.exposedExecutor;
     }
 
     protected ThreadPoolExecutor createThreadPoolExecutor(int corePoolSize, int maxPoolSize, int keepAliveSeconds,
