@@ -314,6 +314,10 @@ public abstract class QualityOfServiceBlockingQueue<K, T> implements BlockingQue
             
             this.size -= count;
             
+            if (count > 0) {
+                this.notFull.signal();
+            }
+            
             return count;
         }
         finally {
