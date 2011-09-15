@@ -44,7 +44,7 @@ public class DatabaseMessageSource extends AbstractMessageSource implements Mess
             return null;
         }
         
-        Message message = messageDao.getMessage(code, locale.toString());
+        Message message = messageDao.getMessage(code, locale);
         return message != null ? new MessageFormat(message.getValue(), locale) : null;
     }
     
@@ -54,7 +54,7 @@ public class DatabaseMessageSource extends AbstractMessageSource implements Mess
             return null;
         }
         
-        Message message = messageDao.getMessage(code, locale.toString());
+        Message message = messageDao.getMessage(code, locale);
         return message != null ? message.getValue() : null;
     }
 }

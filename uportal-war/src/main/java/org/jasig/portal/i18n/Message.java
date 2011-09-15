@@ -1,5 +1,7 @@
 package org.jasig.portal.i18n;
 
+import java.util.Locale;
+
 /**
  * This interface represents localized messages used in database message source in order to enable
  * internationalization of dynamic messages like group names, tab titles, etc.
@@ -26,14 +28,6 @@ public interface Message {
     public String getCode();
     
     /**
-     * Set the message code that identifies the messages with same samantic meaning across all
-     * locales.
-     * 
-     * @param code
-     */
-    public void setCode(String code);
-    
-    /**
      * Get the locale specific message.
      * 
      * @return localized message.
@@ -52,12 +46,5 @@ public interface Message {
      * 
      * @return the locale of message.
      */
-    public String getLocale();
-    
-    /**
-     * Set the locale of the message.
-     * 
-     * @param locale locale of the message.
-     */
-    public void setLocale(String locale);
+    public Locale getLocale();
 }

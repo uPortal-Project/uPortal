@@ -2,8 +2,9 @@ package org.jasig.portal.i18n;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.jasig.portal.i18n.dao.IMessageDao;
@@ -34,40 +35,40 @@ public class JpaMultilingualMessageDaoTest extends BaseJpaDaoTest {
                 final String code = "Test message";
                 
                 // test #createMessage
-                final Message msgUS = messageDao.createMessage(code, "en_US", "Test message");
-                final Message msgUS2 = messageDao.createMessage("Test message 2", "en_US", "Test message2");
-                final Message msgLV = messageDao.createMessage(code, "lv_LV", "Testa ziņojums");
-                final Message msgDE = messageDao.createMessage(code, "de_DE", "Testnachricht");
+                final Message msgUS = messageDao.createMessage(code, new Locale("en_US"), "Test message");
+                final Message msgUS2 = messageDao.createMessage("Test message 2", new Locale("en_US"), "Test message2");
+                final Message msgLV = messageDao.createMessage(code, new Locale("lv_LV"), "Testa ziņojums");
+                final Message msgDE = messageDao.createMessage(code, new Locale("de_DE"), "Testnachricht");
                 
                 // test #getMessage
-                final Message actual1 = messageDao.getMessage(code, "lv_LV");
+                final Message actual1 = messageDao.getMessage(code, new Locale("lv_LV"));
                 assertEquals(msgLV, actual1);
                 
                 // test #updateMessage
                 msgLV.setValue("Labots testa ziņojums");
                 messageDao.updateMessage(msgLV);
                 
-                final Message actual2 = messageDao.getMessage(code, "lv_LV");
+                final Message actual2 = messageDao.getMessage(code, new Locale("lv_LV"));
                 assertEquals(msgLV, actual2);
                 
                 // test #getMessagesByCode
-                final ArrayList<Message> expected3 = new ArrayList<Message>();
+                final Set<Message> expected3 = new LinkedHashSet<Message>();
                 expected3.add(msgUS);
                 expected3.add(msgLV);
                 expected3.add(msgDE);
-                final List<Message> actual3 = messageDao.getMessagesByCode(code);
+                final Set<Message> actual3 = messageDao.getMessagesByCode(code);
                 assertEquals(expected3, actual3);
                 
                 // test #deleteMessage
                 messageDao.deleteMessage(msgDE);
-                final List<Message> actual4 = messageDao.getMessagesByCode(code);
+                final Set<Message> actual4 = messageDao.getMessagesByCode(code);
                 assertEquals(2, actual4.size());
                 
                 // test #getMessagesByLocale
-                final ArrayList<Message> expected5 = new ArrayList<Message>();
+                final Set<Message> expected5 = new LinkedHashSet<Message>();
                 expected5.add(msgUS);
                 expected5.add(msgUS2);
-                final List<Message> actual5 = messageDao.getMessagesByLocale("en_US");
+                final Set<Message> actual5 = messageDao.getMessagesByLocale(new Locale("en_US"));
                 assertEquals(expected5, actual5);
                 
                 return null;

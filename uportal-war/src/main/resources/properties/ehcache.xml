@@ -224,6 +224,20 @@
     <cache name="org.jasig.portal.fragment.subscribe.dao.jpa.UserFragmentSubscriptionImpl"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <!-- 
+     | Caches UserFragmentSubscription queries by user
+     | - 1 per active user
+     +-->
+    <cache name="org.jasig.portal.fragment.subscribe.dao.jpa.UserFragmentSubscriptionImpl.query.FIND_USER_FRAGMENT_INFO_BY_PERSON"
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <!-- 
+     | Caches UserFragmentSubscription queries by user and owner
+     | - 1 per fragment subscription per active user
+     +-->
+    <cache name="org.jasig.portal.fragment.subscribe.dao.jpa.UserFragmentSubscriptionImpl.query.FIND_USER_FRAGMENT_INFO_BY_PERSON_CACHE_AND_OWNER"
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     <!-- 
      | Caches DLM Evaluator object
@@ -832,25 +846,33 @@
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
+    
+    <!--
+     | Caches message
+     | - 1 per each translated message (max = messages * supported locales)
+     +-->
+    <cache name="org.jasig.portal.i18n.dao.jpa.MessageImpl" 
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="60" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <!--
      | Caches query results for finding a message by its code
      | - 1 per each translated message (max = messages * supported locales)
      +-->
-    <cache name="org.jasig.portal.i18n.JpaMessageDao.query.FIND_MESSAGE_BY_CODE_AND_LOCALE" 
+    <cache name="org.jasig.portal.i18n.dao.jpa.MessageImpl.query.FIND_MESSAGE_BY_CODE_AND_LOCALE" 
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="60" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <!--
      | Caches query results for finding a message by its locale
      | - 1 per each supported locale
      +-->
-    <cache name="org.jasig.portal.i18n.JpaMessageDao.query.FIND_MESSAGES_BY_LOCALE" 
+    <cache name="org.jasig.portal.i18n.dao.jpa.MessageImpl.query.FIND_MESSAGES_BY_LOCALE" 
         eternal="false" maxElementsInMemory="200" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="60" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <!--
      | Caches query results for finding a message by its locale and code (exact message)
      | - 1 per each unique message code
      +-->
-    <cache name="org.jasig.portal.i18n.JpaMessageDao.query.FIND_MESSAGE_BY_CODE" 
+    <cache name="org.jasig.portal.i18n.dao.jpa.MessageImpl.query.FIND_MESSAGE_BY_CODE" 
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="60" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     

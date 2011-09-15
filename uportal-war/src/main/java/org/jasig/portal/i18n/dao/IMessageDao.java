@@ -1,6 +1,7 @@
 package org.jasig.portal.i18n.dao;
 
-import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import org.jasig.portal.i18n.Message;
 
@@ -19,7 +20,7 @@ public interface IMessageDao {
      * @param locale The locale of the message to be retrieved.
      * @return The message for code and locale or null if such message could not be found.
      */
-    Message getMessage(String code, String locale);
+    Message getMessage(String code, Locale locale);
     
     /**
      * Creates, initializes and persists a new {@link Message} based on the spcified parameters.
@@ -29,7 +30,7 @@ public interface IMessageDao {
      * @param value Localized message string for the locale.
      * @return A newly created, initialized and persisted {@link Message}.
      */
-    Message createMessage(String code, String locale, String value);
+    Message createMessage(String code, Locale locale, String value);
     
     /**
      * Removes the {@link Message} from presistent store.
@@ -52,7 +53,7 @@ public interface IMessageDao {
      * @param locale The locale to retrieve messages for.
      * @return A list of all messages that are available for specific locale.
      */
-    List<Message> getMessagesByLocale(String locale);
+    Set<Message> getMessagesByLocale(Locale locale);
     
     /**
      * Get all messages matching the specified code.
@@ -60,5 +61,5 @@ public interface IMessageDao {
      * @param code The code to retrieve messages for.
      * @return A list of all translated messages for specific code.
      */
-    List<Message> getMessagesByCode(String code);
+    Set<Message> getMessagesByCode(String code);
 }
