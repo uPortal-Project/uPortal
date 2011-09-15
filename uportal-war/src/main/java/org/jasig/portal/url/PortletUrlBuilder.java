@@ -103,7 +103,6 @@ class PortletUrlBuilder extends AbstractUrlBuilder implements IPortletUrlBuilder
      */
     @Override
     public void setWindowState(WindowState windowState) {
-        Preconditions.checkArgument(this.urlType != UrlType.RESOURCE, "UrlType must not be %s but was", this.urlType);
         this.windowState = windowState;
     }
 
@@ -112,7 +111,6 @@ class PortletUrlBuilder extends AbstractUrlBuilder implements IPortletUrlBuilder
      */
     @Override
     public WindowState getWindowState() {
-        Preconditions.checkArgument(this.urlType != UrlType.RESOURCE, "UrlType must not be %s but was", this.urlType);
         return this.windowState;
     }
 
@@ -121,7 +119,6 @@ class PortletUrlBuilder extends AbstractUrlBuilder implements IPortletUrlBuilder
      */
     @Override
     public void setPortletMode(PortletMode portletMode) {
-        Preconditions.checkArgument(this.urlType != UrlType.RESOURCE, "UrlType must not be %s but was", this.urlType);
         this.portletMode = portletMode;
     }
 
@@ -130,7 +127,6 @@ class PortletUrlBuilder extends AbstractUrlBuilder implements IPortletUrlBuilder
      */
     @Override
     public PortletMode getPortletMode() {
-        Preconditions.checkArgument(this.urlType != UrlType.RESOURCE, "UrlType must not be %s but was", this.urlType);
         return this.portletMode;
     }
 

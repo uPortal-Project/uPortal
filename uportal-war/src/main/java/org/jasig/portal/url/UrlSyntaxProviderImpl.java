@@ -48,6 +48,7 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.utils.Tuple;
+import org.jasig.portal.utils.web.PortalWebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UrlPathHelper;
@@ -161,15 +162,17 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             return cachedPortalRequestInfo;
         }
         
-        // set a flag to say this request is currently being parsed
-        final Boolean inProgressAttr = (Boolean) request.getAttribute(PORTAL_REQUEST_PARSING_IN_PROGRESS_ATTR);
-        if(inProgressAttr != null && inProgressAttr) {
-            if(logger.isDebugEnabled()) {
-                logger.warn("Portal request info parsing already in progress, returning null");
+        synchronized (PortalWebUtils.getRequestAttributeMutex(request)) {
+            // set a flag to say this request is currently being parsed
+            final Boolean inProgressAttr = (Boolean) request.getAttribute(PORTAL_REQUEST_PARSING_IN_PROGRESS_ATTR);
+            if(inProgressAttr != null && inProgressAttr) {
+                if(logger.isDebugEnabled()) {
+                    logger.warn("Portal request info parsing already in progress, returning null");
+                }
+                return null;
             }
-            return null;
+            request.setAttribute(PORTAL_REQUEST_PARSING_IN_PROGRESS_ATTR, Boolean.TRUE);
         }
-        request.setAttribute(PORTAL_REQUEST_PARSING_IN_PROGRESS_ATTR, Boolean.TRUE);
         
         
         try {
@@ -632,18 +635,17 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             portletUrlBuilder.setParameters(portletParameters);
             
             switch (urlType) {
-                case RENDER:
-                case ACTION: {
-                    //state & mode for action & render requests
-                    portletUrlBuilder.setWindowState(portletRequestInfo.getWindowState());
-                    portletUrlBuilder.setPortletMode(portletRequestInfo.getPortletMode());
-                    break;
-                }
-                
                 case RESOURCE: {
                     //cacheability and resourceId for resource requests
                     portletUrlBuilder.setCacheability(portletRequestInfo.getCacheability());
                     portletUrlBuilder.setResourceId(portletRequestInfo.getResourceId());
+                }
+                
+                case RENDER:
+                case ACTION: {
+                    //state & mode for all requests
+                    portletUrlBuilder.setWindowState(portletRequestInfo.getWindowState());
+                    portletUrlBuilder.setPortletMode(portletRequestInfo.getPortletMode());
                     break;
                 }
             }
@@ -879,7 +881,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
      */
     protected UrlState determineUrlState(final UrlType urlType, final IPortletWindow portletWindow, final IPortletUrlBuilder targetedPortletUrlBuilder) {
         final WindowState requestedWindowState;
-        if (targetedPortletUrlBuilder == null || urlType == UrlType.RESOURCE) {
+        if (targetedPortletUrlBuilder == null) {
             requestedWindowState = null;
         }
         else {
