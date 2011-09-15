@@ -22,6 +22,22 @@
             <version>${CalendarPortlet.version}</version>
             <type>war</type>
         </dependency>
+
+        <dependency>
+            <groupId>org.jasig.portlet</groupId>
+            <artifactId>CalendarPortlet</artifactId>
+            <version>${CalendarPortlet.version}</version>
+            <classifier>classes</classifier>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.portlet</groupId>
+            <artifactId>portlet-api</artifactId>
+            <version>2.0</version>
+            <scope>provided</scope>
+        </dependency>
         
         <dependency>
             <groupId>${jdbc.groupId}</groupId>
