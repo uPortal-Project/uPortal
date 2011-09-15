@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jasig.umobile.server</groupId>
     <artifactId>umobile-parent</artifactId>
-    <version>1.0.0-RC2-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
 
     <name>uPortal Parent</name>
@@ -18,9 +18,9 @@
     <url>${jasig-site-base}/uportal/${project.version}</url>
     
     <scm>
-        <connection>scm:svn:https://source.jasig.org/uPortal/branches/umobile-trunk</connection>
-        <developerConnection>scm:svn:https://source.jasig.org/uPortal/branches/umobile-trunk</developerConnection>
-        <url>https://developer.jasig.org/source/browse/jasigsvn/uPortal/branches/umobile-trunk</url>
+        <connection>scm:svn:https://source.jasig.org/uPortal/tags/umobile-1.0.0</connection>
+        <developerConnection>scm:svn:https://source.jasig.org/uPortal/tags/umobile-1.0.0</developerConnection>
+        <url>https://developer.jasig.org/source/browse/jasigsvn/uPortal/tags/umobile-1.0.0</url>
     </scm>
    <!-- 
     <distributionManagement>
