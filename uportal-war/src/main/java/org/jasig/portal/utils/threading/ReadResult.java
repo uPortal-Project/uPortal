@@ -19,7 +19,7 @@
 
 package org.jasig.portal.utils.threading;
 
-public class ReadResult<T> {
+public final class ReadResult<T> {
     private final boolean doWriteLock;
     private final T result;
 
