@@ -37,6 +37,13 @@
     
     <bean id="resourcesDao" class="org.jasig.resource.aggr.ResourcesDaoImpl" />
     
-    <bean id="renderingThreadPoolMonitor" class="org.jasig.portal.ThreadPoolStatistics"/>
+    <bean id="renderingThreadPoolMonitor" class="org.jasig.portal.ThreadPoolStatistics">
+        <!-- 
+         | Change the following to a positive integer to prevent the rendering 
+         | thread pool from allocating more threads to portlets that are known 
+         | to be leaking them. 
+         +-->
+        <property name="numberPermittedErrantByFname" value="0"/>
+    </bean>
 
 </beans>

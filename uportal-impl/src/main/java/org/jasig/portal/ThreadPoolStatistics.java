@@ -21,6 +21,7 @@ package org.jasig.portal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -43,6 +44,10 @@ public class ThreadPoolStatistics {
 
     private static final int MAXIMUM_ACCEPTABLE_LONG_RUNNERS = 3;
     private static final long EXTRA_LONG_MULTIPLIER = 2L;
+
+    private int numberPermittedErrantByFname = 0;  // Configure in renderingPipelineContext.xml
+    private float errantTimeoutMultiplier = 2.0F;
+    
     private final boolean errorPool;
     private final Log log = LogFactory.getLog(getClass());
     
@@ -54,6 +59,30 @@ public class ThreadPoolStatistics {
         this.errorPool = errorPool;
     }
     
+    /**
+     * Maximum number of errant threads a portlet may occupy before the portlet 
+     * itself is considered errant.  An errant portlet will not be allocated 
+     * new threads (users will see the Error Channel).
+     * 
+     * @param numberPermittedErrantByFname The desired maximum, or 0 to turn the 
+     * feature off 
+     */
+    public void setNumberPermittedErrantByFname(int numberPermittedErrantByFname) {
+        this.numberPermittedErrantByFname = numberPermittedErrantByFname;
+    }
+    
+    /**
+     * Multiplier (of the timeout value configured in Portlet Manager) used to 
+     * calculate the point at which a rendering thread is considered errant.  So 
+     * if the multiplier is 2.0F, the thread is errant when it exceeds 2x the 
+     * timeout. 
+     * 
+     * @param errantTimeoutMultiplyer
+     */
+    public void setErrantTimeoutMultiplier(float errantTimeoutMultiplier) {
+        this.errantTimeoutMultiplier = errantTimeoutMultiplier;
+    }
+
     private ThreadPoolExecutor getThreadPoolExecutor() {
         if (errorPool) {
             return ChannelRendererFactoryImpl.cErrorThreadPool;
@@ -142,7 +171,7 @@ public class ThreadPoolStatistics {
         return getThreadPoolExecutor().getCompletedTaskCount();
     }
     
-    public void logStatus() {
+    public void analyze() {
         
         // We can only log if we have a ChannelRenderThreadPoolExecutor (so not for errorPool)...
         ThreadPoolExecutor exec = this.getThreadPoolExecutor();
@@ -171,15 +200,27 @@ public class ThreadPoolStatistics {
             );
         }
         
+        Set<String> errantPortlets = new HashSet<String>(); 
         for (Map.Entry<String,List<StatusTuple>> y : statusMap.entrySet()) {
-            logStatusByFname(y.getKey(), y.getValue());
+            String fname = y.getKey();
+            if (analyzePortlet(fname, y.getValue())) {
+                errantPortlets.add(fname);
+            }
         }
+        crtpe.setErrantPortlets(errantPortlets);
         
     }
     
-    private void logStatusByFname(String fname, List<StatusTuple> activeWorkers) {
+    /**
+     * 
+     * @param fname
+     * @param activeWorkers
+     * @return true If the portlet itself is in an errant state, otherwise false
+     */
+    private boolean analyzePortlet(String fname, List<StatusTuple> activeWorkers) {
 
         int renderCount = 0;
+        int errantCount = 0;
         int longRunningCount = 0;
         long longestRunTime = 0;
         long channelTimeout = 0;
@@ -188,16 +229,28 @@ public class ThreadPoolStatistics {
 
             ++renderCount;
             long elapsedTime = p.getElapsedTime() != null ? p.getElapsedTime() : 0L;
+            
+            // A thread is 'long-running' if it has exceeded the timeout
             if (elapsedTime > p.getTimeout()) {
                 ++longRunningCount;
             }
             if (elapsedTime > longestRunTime) {
                 longestRunTime = elapsedTime;
             }
+
+            // A thread is 'errant' if it meets the configured criteria;  a 
+            // portlet with too many errant threads will not be allocated new 
+            // ones
+            long errantThreashold = Math.round(this.errantTimeoutMultiplier * p.getTimeout());
+            if (elapsedTime > errantThreashold) {
+                ++errantCount;
+            }
+
+            // get this once...
             if (channelTimeout == 0) {
-                // get this once...
                 channelTimeout = p.getTimeout();
             }
+
         }
         
         // Build the report
@@ -205,6 +258,7 @@ public class ThreadPoolStatistics {
         bld.append("Active IWorker instances for channel '").append(fname)
                         .append("' [numberCurrentlyRendering=").append(renderCount)
                         .append(", numberExceedingTimeout=").append(longRunningCount)
+                        .append(", numberErrant=").append(errantCount)
                         .append(", longestRunningMillis=").append(longestRunTime)
                         .append("]");
         
@@ -216,6 +270,11 @@ public class ThreadPoolStatistics {
         } else if (log.isTraceEnabled()) {
             log.trace(bld.toString());
         }
+        
+        // Single whether this portlet itself should be considered errant
+        return numberPermittedErrantByFname < 1 // any value under 1 truns the feature off
+                    ? false 
+                    : errantCount > numberPermittedErrantByFname;
         
     }
     

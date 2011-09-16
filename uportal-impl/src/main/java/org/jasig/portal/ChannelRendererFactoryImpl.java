@@ -19,6 +19,7 @@
 
 package org.jasig.portal;
 
+import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -32,13 +33,18 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.ChannelRenderer.IWorker;
+import org.jasig.portal.channels.BaseChannel;
 import org.jasig.portal.channels.error.CError;
+import org.jasig.portal.channels.portlet.IPortletAdaptor;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.utils.threading.PriorityThreadFactory;
+import org.xml.sax.ContentHandler;
 
 /**
  * <p>The <code>ChannelRendererFactoryImpl</code> creates
@@ -65,10 +71,11 @@ public final class ChannelRendererFactoryImpl
 
     /** <p>Shared thread pool for all factories.</p> */
     static ChannelRenderThreadPoolExecutor cSharedThreadPool = null;
-    
+
     public static class ChannelRenderThreadPoolExecutor extends ThreadPoolExecutor {
         private final AtomicLong activeThreads;
         private final AtomicLong maxActiveThreads;
+        private volatile Set<String> errantPortlets = Collections.emptySet();
         
         /*
          * Track activeWorkers in a Set with ConcurrentHashMap multithreaded 
@@ -124,6 +131,18 @@ public final class ChannelRendererFactoryImpl
             }
             return rslt;
         }
+        
+        Set<String> getErrantPortlets() {
+            return this.errantPortlets;
+        }
+        
+        /**
+         * Package-private because the ThreadPoolStatistics class is the only one that should be setting
+         */
+        void setErrantPortlets(Set<String> errantPortlets) {
+            this.errantPortlets = Collections.unmodifiableSet(errantPortlets);
+        }
+
     }
     
     private static final class WorkerFutureTask<V> extends FutureTask<V> {
@@ -211,6 +230,8 @@ public final class ChannelRendererFactoryImpl
     public IChannelRenderer newInstance(IUserLayoutChannelDescription channelDesc, IChannel channel, ChannelRuntimeData channelRuntimeData) {
 
         ThreadPoolExecutor threadPoolExecutor = null;
+        Set<String> errant = Collections.emptySet();
+        
         // Use special thread pool for CError channel rendering
         if (channel instanceof CError) {
             threadPoolExecutor = cErrorThreadPool;
@@ -249,12 +270,85 @@ public final class ChannelRendererFactoryImpl
             }
 
             threadPoolExecutor = cSharedThreadPool;
+            errant = ((ChannelRenderThreadPoolExecutor) cSharedThreadPool).getErrantPortlets();
         }
         else {
             threadPoolExecutor = this.mThreadPool;
         }
+        
+        // Choose whether to submit the channel itself or to replace it due to errant threads
+        IChannel channelToSubmit = channel;  // default
+        if (errant.contains(channelDesc.getFunctionalName())) {
+            if (log.isDebugEnabled()) {
+                // This log entry can be at DEBUG because it's mostly 
+                // redundant with the stack trace that will be logged 
+                // when SkipRenderingBecauseOfTooManyErrantThreadsChannel 
+                // renders
+                log.debug("Skipping render of portlet '" + channelDesc.getFunctionalName() +
+                        "' because it is deemed to be errant (leaking rendering threads)");
+            }
+            channelToSubmit = new SkipRenderingBecauseOfTooManyErrantThreadsChannel(channelDesc.getFunctionalName());
+        }
 
-        return new ChannelRenderer(channelDesc, channel, channelRuntimeData, threadPoolExecutor);
+        return new ChannelRenderer(channelDesc, channelToSubmit, channelRuntimeData, threadPoolExecutor);
+    }
+
+    private static final class SkipRenderingBecauseOfTooManyErrantThreadsChannel extends BaseChannel implements IPortletAdaptor {
+        
+        private static final String EXCEPTION_MESSAGE = "The following portlet has been skipped because it has become unresponsive:  "; 
+        private final String fname;
+        
+        public SkipRenderingBecauseOfTooManyErrantThreadsChannel(String fname) {
+            this.fname = fname;
+        }
+
+        @Override
+        public void renderXML(ContentHandler out) throws PortalException {
+            throw new PortalException(EXCEPTION_MESSAGE + fname);
+        }
+
+        @Override
+        public void prepareForRefresh() {
+            throw new PortalException(EXCEPTION_MESSAGE + fname);
+        }
+
+        @Override
+        public void prepareForReset() {
+            throw new PortalException(EXCEPTION_MESSAGE + fname);
+        }
+
+        @Override
+        public void renderCharacters(PrintWriter pw) throws PortalException {
+            throw new PortalException(EXCEPTION_MESSAGE + fname);
+        }
+
+        @Override
+        public ChannelCacheKey generateKey() {
+            throw new PortalException(EXCEPTION_MESSAGE + fname);
+        }
+
+        @Override
+        public boolean isCacheValid(Object validity) {
+            throw new PortalException(EXCEPTION_MESSAGE + fname);
+        }
+
+        @Override
+        public void setResponse(HttpServletResponse response)
+                throws PortalException {
+            throw new PortalException(EXCEPTION_MESSAGE + fname);
+        }
+
+        @Override
+        public void processAction() throws PortalException {
+            throw new PortalException(EXCEPTION_MESSAGE + fname);
+        }
+
+        @Override
+        public void setPortalControlStructures(PortalControlStructures pcs)
+                throws PortalException {
+            throw new PortalException(EXCEPTION_MESSAGE + fname);
+        }
+        
     }
 
 }

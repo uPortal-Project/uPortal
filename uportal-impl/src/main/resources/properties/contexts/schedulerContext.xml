@@ -98,7 +98,7 @@
     <bean id="renderingThreadPoolMonitorTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
         <property name="jobDetail">
             <bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-                <property name="targetMethod" value="logStatus" />
+                <property name="targetMethod" value="analyze" />
                 <property name="targetObject" ref="renderingThreadPoolMonitor" />
             </bean>
         </property>
