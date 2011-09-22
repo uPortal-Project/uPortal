@@ -40,9 +40,6 @@
         
         <property name="hibernate.current_session_context_class">thread</property>
         
-        <mapping resource="properties/db/stats/portalEvents.hbm.xml"/>
-
-        <class-cache class="org.jasig.portal.events.EventType" usage="read-only"/>
-        <class-cache class="org.jasig.portal.events.handlers.db.StatsSession" usage="read-write"/>
+        <mapping resource="properties/db/global.hbm.xml"/> 
     </session-factory>
 </hibernate-configuration>

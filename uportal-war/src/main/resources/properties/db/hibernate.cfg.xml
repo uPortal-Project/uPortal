@@ -40,6 +40,7 @@
         <property name="hibernate.current_session_context_class">thread</property>
         
         <mapping resource="properties/db/global.hbm.xml"/> 
+        
         <mapping class="org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl"/>
         <mapping class="org.jasig.portal.layout.dao.jpa.LayoutAttributeDescriptorImpl"/>
         <mapping class="org.jasig.portal.layout.dao.jpa.OutputPropertyDescriptorImpl"/>
