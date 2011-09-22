@@ -144,22 +144,22 @@
         </aop:aspect>
     </aop:config>
     
-    <bean id="statsEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-        <property name="dataSource" ref="StatsDB" />
-        <property name="jpaVendorAdapter" ref="statsJpaVendorAdapter" />
-        <property name="persistenceUnitName" value="uPortalStatsPersistence" />
+    <bean id="statsEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="cacheManager">
         <qualifier value="stats"/>
-    </bean>
-
-    <!-- Adapater that can inject a cacheProvider into the hibernate entity manager -->
-    <bean id="statsJpaVendorAdapter" class="org.jasig.portal.spring.orm.jpa.HibernateJpaVendorAdapter">
-        <!-- <property name="databasePlatform" value="${hibernate.d ialect}" /> -->
-        <property name="cacheProvider" ref="hibernateCacheProvider" />
+        <property name="dataSource" ref="PortalDb" />
+        <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
+        <property name="persistenceUnitName" value="uPortalStatsPersistence" />
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.cache.region.factory_class">net.sf.ehcache.hibernate.SingletonEhCacheRegionFactory</prop>
+                <prop key="net.sf.ehcache.configurationResourceName">/properties/ehcache.xml</prop>
+            </props>
+        </property>
     </bean>
 
     <bean id="statsTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <property name="entityManagerFactory" ref="statsEntityManagerFactory" />
         <qualifier value="stats"/>
+        <property name="entityManagerFactory" ref="statsEntityManagerFactory" />
     </bean>
     
     <tx:advice id="statsTransactionAdvice" transaction-manager="statsTransactionManager">
