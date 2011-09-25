@@ -21,6 +21,7 @@ package org.jasig.portal.security.remoting;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IAuthorizationService;
@@ -28,10 +29,9 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.provider.AuthorizationImpl;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public abstract class AbstractPermissionsController implements InitializingBean {
+public abstract class AbstractPermissionsController {
     
     /**
      * Specifying the fName of a channel here pretty much violates the DRY 
@@ -40,7 +40,6 @@ public abstract class AbstractPermissionsController implements InitializingBean 
     private static final String PERMISSIONS_ADMIN_PORTLET_FNAME = "permissionsmanager";
     
     private IPortletDefinitionRegistry portletDefinitionRegistry;
-    private String portletId = null;
     private IPersonManager personManager;
     
     @Autowired
@@ -75,7 +74,14 @@ public abstract class AbstractPermissionsController implements InitializingBean 
                 // STEP (3):  Does this user have SUBSCRIBE permission for permissionsAdminChannel?
                 IAuthorizationService authServ = AuthorizationImpl.singleton();
                 IAuthorizationPrincipal principal = authServ.newPrincipal((String) person.getAttribute(IPerson.USERNAME), IPerson.class);
-                if (authServ.canPrincipalSubscribe(principal, this.portletId)) {
+                
+                final IPortletDefinition permissionsAdminPortlet = portletDefinitionRegistry.getPortletDefinitionByFname(PERMISSIONS_ADMIN_PORTLET_FNAME);
+                if (permissionsAdminPortlet == null) {
+                    return false;
+                }
+                
+                final String portletId = permissionsAdminPortlet.getPortletDefinitionId().getStringId();
+                if (authServ.canPrincipalSubscribe(principal, portletId)) {
                     return true;
                 }
 
@@ -85,9 +91,4 @@ public abstract class AbstractPermissionsController implements InitializingBean 
         return false;
 
     }
-
-    public void afterPropertiesSet() throws Exception {
-        this.portletId = portletDefinitionRegistry.getPortletDefinitionByFname(PERMISSIONS_ADMIN_PORTLET_FNAME).getPortletDefinitionId().getStringId();
-    }
-    
 }
