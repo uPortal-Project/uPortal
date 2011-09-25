@@ -33,7 +33,6 @@ import org.jasig.portal.fragment.subscribe.IUserFragmentSubscription;
 import org.jasig.portal.fragment.subscribe.dao.IUserFragmentSubscriptionDao;
 import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.security.IPerson;
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,18 +52,14 @@ public class JpaUserFragmentSubscriptionDaoImpl extends BasePortalJpaDao impleme
             + ".query.FIND_USER_FRAGMENT_INFO_BY_PERSON_CACHE_AND_OWNER";
     
     private CriteriaQuery<UserFragmentSubscriptionImpl> findUserFragmentInfoByPersonQuery;
-    private CriteriaQuery<UserFragmentSubscriptionImpl> findUserFragmentInfoByPersonAndOwnerQuery;
 
     private ParameterExpression<Integer> userIdParameter;
-    private ParameterExpression<String> fragmentOwnerParameter;
     
     @Override
     protected void buildCriteriaQueries(CriteriaBuilder criteriaBuilder) {
         this.userIdParameter = criteriaBuilder.parameter(Integer.TYPE, "userId");
-        this.fragmentOwnerParameter = criteriaBuilder.parameter(String.class, "fragmentOwner");
         
         this.initFindUserFragmentInfoByPersonQuery(criteriaBuilder);
-        this.initFindUserFragmentInfoByPersonAndOwnerQuery(criteriaBuilder);
     }
     
     protected void initFindUserFragmentInfoByPersonQuery(CriteriaBuilder cb) {
@@ -74,16 +69,6 @@ public class JpaUserFragmentSubscriptionDaoImpl extends BasePortalJpaDao impleme
         criteriaQuery.where(cb.equal(root.get(UserFragmentSubscriptionImpl_.userId), this.userIdParameter));
         
         this.findUserFragmentInfoByPersonQuery = criteriaQuery;
-    }
-    
-    protected void initFindUserFragmentInfoByPersonAndOwnerQuery(CriteriaBuilder cb) {
-        final CriteriaQuery<UserFragmentSubscriptionImpl> criteriaQuery = cb.createQuery(UserFragmentSubscriptionImpl.class);
-        final Root<UserFragmentSubscriptionImpl> root = criteriaQuery.from(UserFragmentSubscriptionImpl.class);
-        criteriaQuery.select(root);
-        criteriaQuery.where(cb.and(cb.equal(root.get(UserFragmentSubscriptionImpl_.userId), this.userIdParameter),
-                cb.equal(root.get(UserFragmentSubscriptionImpl_.fragmentOwner), this.fragmentOwnerParameter)));
-        
-        this.findUserFragmentInfoByPersonAndOwnerQuery = criteriaQuery;
     }
     
     @Override
@@ -116,15 +101,11 @@ public class JpaUserFragmentSubscriptionDaoImpl extends BasePortalJpaDao impleme
 
     @Override
     public IUserFragmentSubscription getUserFragmentInfo(IPerson person, IPerson fragmentOwner) {
-        final TypedQuery<UserFragmentSubscriptionImpl> query = createQuery(this.findUserFragmentInfoByPersonAndOwnerQuery,
-                FIND_USER_FRAGMENT_INFO_BY_PERSON_CACHE_AND_OWNER_CACHE_REGION);
-        query.setParameter(this.userIdParameter, person.getID());
-        query.setParameter(this.fragmentOwnerParameter, fragmentOwner.getUserName());
-        query.setMaxResults(1);
-
-        final List<UserFragmentSubscriptionImpl> fragmentSubscriptions = query.getResultList();
-        return DataAccessUtils.uniqueResult(fragmentSubscriptions);
-
+        final NaturalIdQueryBuilder<UserFragmentSubscriptionImpl> naturalIdQuery = this.createNaturalIdQuery(UserFragmentSubscriptionImpl.class, FIND_USER_FRAGMENT_INFO_BY_PERSON_CACHE_AND_OWNER_CACHE_REGION);
+        naturalIdQuery.setNaturalIdParam(UserFragmentSubscriptionImpl_.userId, person.getID());
+        naturalIdQuery.setNaturalIdParam(UserFragmentSubscriptionImpl_.fragmentOwner, fragmentOwner.getUserName());
+        
+        return naturalIdQuery.execute();
     }
 
     @Override

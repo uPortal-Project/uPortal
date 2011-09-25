@@ -40,7 +40,6 @@ import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataRetrievalFailureException;
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,10 +55,8 @@ public class JpaPortletEntityDao extends BasePortalJpaDao implements IPortletEnt
     private static final String FIND_PORTLET_ENTS_BY_PORTLET_DEF_CACHE_REGION = PortletEntityImpl.class.getName() + ".query.FIND_PORTLET_ENTS_BY_PORTLET_DEF";
     private static final String FIND_PORTLET_ENT_BY_CHAN_SUB_AND_USER_CACHE_REGION = PortletEntityImpl.class.getName() + ".query.FIND_PORTLET_ENT_BY_CHAN_SUB_AND_USER";
     
-    private CriteriaQuery<PortletEntityImpl> findEntityBySubIdAndUserIdQuery;
     private CriteriaQuery<PortletEntityImpl> findEntitiesForDefinitionQuery;
     private CriteriaQuery<PortletEntityImpl> findEntitiesForUserIdQuery;
-    private ParameterExpression<String> layoutNodeIdParameter;
     private ParameterExpression<Integer> userIdParameter;
     private ParameterExpression<PortletDefinitionImpl> portletDefinitionParameter;
 
@@ -73,27 +70,11 @@ public class JpaPortletEntityDao extends BasePortalJpaDao implements IPortletEnt
     
     @Override
     protected void buildCriteriaQueries(CriteriaBuilder cb) {
-        this.layoutNodeIdParameter = cb.parameter(String.class, "layoutNodeId");
         this.userIdParameter = cb.parameter(Integer.class, "userId");
         this.portletDefinitionParameter = cb.parameter(PortletDefinitionImpl.class, "portletDefinition");
         
-        this.findEntityBySubIdAndUserIdQuery = this.buildFindEntityBySubIdAndUserIdQuery(cb);
         this.findEntitiesForDefinitionQuery = this.buildFindEntitiesForDefinitionQuery(cb);
         this.findEntitiesForUserIdQuery = this.buildFindEntitiesForUserIdQuery(cb);
-    }
-
-    protected CriteriaQuery<PortletEntityImpl> buildFindEntityBySubIdAndUserIdQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<PortletEntityImpl> criteriaQuery = cb.createQuery(PortletEntityImpl.class);
-        final Root<PortletEntityImpl> entityRoot = criteriaQuery.from(PortletEntityImpl.class);
-        criteriaQuery.select(entityRoot);
-        criteriaQuery.where(
-            cb.and(
-                cb.equal(entityRoot.get(PortletEntityImpl_.layoutNodeId), this.layoutNodeIdParameter),
-                cb.equal(entityRoot.get(PortletEntityImpl_.userId), this.userIdParameter)
-            )
-        );
-        
-        return criteriaQuery;
     }
 
     protected CriteriaQuery<PortletEntityImpl> buildFindEntitiesForDefinitionQuery(final CriteriaBuilder cb) {
@@ -188,14 +169,11 @@ public class JpaPortletEntityDao extends BasePortalJpaDao implements IPortletEnt
     public IPortletEntity getPortletEntity(String layoutNodeId, int userId) {
         Validate.notNull(layoutNodeId, "portletEntity can not be null");
         
-        final TypedQuery<PortletEntityImpl> query = this.createQuery(findEntityBySubIdAndUserIdQuery, FIND_PORTLET_ENT_BY_CHAN_SUB_AND_USER_CACHE_REGION);
-        query.setParameter(this.layoutNodeIdParameter, layoutNodeId);
-        query.setParameter(this.userIdParameter, userId);
-        query.setMaxResults(1);
+        final NaturalIdQueryBuilder<PortletEntityImpl> naturalIdQuery = this.createNaturalIdQuery(PortletEntityImpl.class, FIND_PORTLET_ENT_BY_CHAN_SUB_AND_USER_CACHE_REGION);
+        naturalIdQuery.setNaturalIdParam(PortletEntityImpl_.layoutNodeId, layoutNodeId);
+        naturalIdQuery.setNaturalIdParam(PortletEntityImpl_.userId, userId);
         
-        final List<PortletEntityImpl> portletEntities = query.getResultList();
-        final IPortletEntity portletEntity = DataAccessUtils.uniqueResult(portletEntities);
-        return portletEntity;
+        return naturalIdQuery.execute();
     }
 
     /* (non-Javadoc)

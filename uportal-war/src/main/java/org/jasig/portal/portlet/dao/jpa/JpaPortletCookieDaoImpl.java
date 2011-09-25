@@ -42,7 +42,6 @@ import org.jasig.portal.portlet.dao.IPortletCookieDao;
 import org.jasig.portal.portlet.om.IPortalCookie;
 import org.jasig.portal.portlet.om.IPortletCookie;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,29 +59,14 @@ public class JpaPortletCookieDaoImpl extends BasePortalJpaDao implements IPortle
 	private final SecureRandom secureRandom = new SecureRandom();
 	private final Log log = LogFactory.getLog(this.getClass());
 
-	private CriteriaQuery<PortalCookieImpl> findPortalCookieByValueQuery;
 	private CriteriaQuery<PortalCookieImpl> findExpiredPortalCookieQuery;
-    private ParameterExpression<String> valueParameter;
     private ParameterExpression<Date> nowParameter;
 
     @Override
     protected void buildCriteriaQueries(CriteriaBuilder cb) {
-        this.valueParameter = cb.parameter(String.class, "value");
         this.nowParameter = cb.parameter(Date.class, "now");
         
-        this.findPortalCookieByValueQuery = this.buildFindPortalCookieByValueQuery(cb);
         this.findExpiredPortalCookieQuery = this.buildFindExpiredPortalCookieQuery(cb);
-    }
-    
-    protected CriteriaQuery<PortalCookieImpl> buildFindPortalCookieByValueQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<PortalCookieImpl> criteriaQuery = cb.createQuery(PortalCookieImpl.class);
-        final Root<PortalCookieImpl> typeRoot = criteriaQuery.from(PortalCookieImpl.class);
-        criteriaQuery.select(typeRoot);
-        criteriaQuery.where(
-            cb.equal(typeRoot.get(PortalCookieImpl_.value), this.valueParameter)
-        );
-        
-        return criteriaQuery;
     }
     
     protected CriteriaQuery<PortalCookieImpl> buildFindExpiredPortalCookieQuery(final CriteriaBuilder cb) {
@@ -133,13 +117,10 @@ public class JpaPortletCookieDaoImpl extends BasePortalJpaDao implements IPortle
 	 */
 	@Override
 	public IPortalCookie getPortalCookie(String portalCookieValue) {
-	    final TypedQuery<PortalCookieImpl> query = this.createQuery(this.findPortalCookieByValueQuery, FIND_COOKIE_BY_VALUE_CACHE_REGION);
-	    
-		query.setParameter(this.valueParameter, portalCookieValue);
-		query.setMaxResults(1);
+	    final NaturalIdQueryBuilder<PortalCookieImpl> naturalIdQuery = this.createNaturalIdQuery(PortalCookieImpl.class, FIND_COOKIE_BY_VALUE_CACHE_REGION);
+        naturalIdQuery.setNaturalIdParam(PortalCookieImpl_.value, portalCookieValue);
         
-		final List<PortalCookieImpl> results = query.getResultList();
-		return DataAccessUtils.uniqueResult(results);
+        return naturalIdQuery.execute();
 	}
 
     @Override

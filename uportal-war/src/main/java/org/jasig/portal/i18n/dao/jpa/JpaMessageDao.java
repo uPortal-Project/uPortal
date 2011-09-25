@@ -15,7 +15,6 @@ import org.apache.commons.lang.Validate;
 import org.jasig.portal.i18n.Message;
 import org.jasig.portal.i18n.dao.IMessageDao;
 import org.jasig.portal.jpa.BasePortalJpaDao;
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,8 +30,6 @@ public class JpaMessageDao extends BasePortalJpaDao implements IMessageDao {
     private static final String FIND_MESSAGE_BY_CODE_AND_LOCALE_CACHE_REGION = MessageImpl.class.getName()
             + ".query.FIND_MESSAGE_BY_CODE_AND_LOCALE";
     
-    private CriteriaQuery<MessageImpl> findMessageByCodeAndLocaleQuery;
-    
     private CriteriaQuery<MessageImpl> findMessageByCodeQuery;
     
     private CriteriaQuery<MessageImpl> findMessageByLocaleQuery;
@@ -46,20 +43,8 @@ public class JpaMessageDao extends BasePortalJpaDao implements IMessageDao {
         this.codeParameter = criteriaBuilder.parameter(String.class, "code");
         this.localeParameter = criteriaBuilder.parameter(Locale.class, "locale");
         
-        this.initFindMessageByCodeAndLocaleQuery(criteriaBuilder);
         this.initFindMessageByCodeQuery(criteriaBuilder);
         this.initFindMessageByLocaleQuery(criteriaBuilder);
-    }
-    
-    protected void initFindMessageByCodeAndLocaleQuery(CriteriaBuilder cb) {
-        final CriteriaQuery<MessageImpl> criteriaQuery = cb.createQuery(MessageImpl.class);
-        final Root<MessageImpl> root = criteriaQuery.from(MessageImpl.class);
-        criteriaQuery.select(root);
-        criteriaQuery.where(cb.and(cb.equal(root.get(MessageImpl_.code), this.codeParameter),
-                                   cb.equal(root.get(MessageImpl_.locale), this.localeParameter)));
-        criteriaQuery.orderBy(cb.asc(root.get(MessageImpl_.code)), cb.asc(root.get(MessageImpl_.locale)));
-        
-        this.findMessageByCodeAndLocaleQuery = criteriaQuery;
     }
     
     protected void initFindMessageByCodeQuery(CriteriaBuilder criteriaBuilder) {
@@ -120,14 +105,11 @@ public class JpaMessageDao extends BasePortalJpaDao implements IMessageDao {
     
     @Override
     public Message getMessage(String code, Locale locale) {
-        final TypedQuery<MessageImpl> query = createQuery(findMessageByCodeAndLocaleQuery,
-                                                      FIND_MESSAGE_BY_CODE_AND_LOCALE_CACHE_REGION);
-        query.setParameter(this.codeParameter, code);
-        query.setParameter(this.localeParameter, locale);
-        query.setMaxResults(1);
+        final NaturalIdQueryBuilder<MessageImpl> naturalIdQuery = this.createNaturalIdQuery(MessageImpl.class, FIND_MESSAGE_BY_CODE_AND_LOCALE_CACHE_REGION);
+        naturalIdQuery.setNaturalIdParam(MessageImpl_.code, code);
+        naturalIdQuery.setNaturalIdParam(MessageImpl_.locale, locale);
         
-        final List<MessageImpl> messages = query.getResultList();
-        return DataAccessUtils.uniqueResult(messages);
+        return naturalIdQuery.execute();
     }
     
     @Override

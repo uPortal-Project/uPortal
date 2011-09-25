@@ -26,7 +26,6 @@ import java.util.Set;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.logging.Log;
@@ -35,7 +34,6 @@ import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.permission.IPermissionActivity;
 import org.jasig.portal.permission.IPermissionOwner;
 import org.jasig.portal.permission.dao.IPermissionOwnerDao;
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,32 +53,16 @@ public class JpaPermissionOwnerDao extends BasePortalJpaDao implements IPermissi
     protected final Log log = LogFactory.getLog(getClass());
     
     private CriteriaQuery<PermissionOwnerImpl> findAllPermissionOwners;
-    private CriteriaQuery<PermissionOwnerImpl> findPermissionOwnerByFname;
-    private ParameterExpression<String> fnameParameter;
 
     @Override
     protected void buildCriteriaQueries(CriteriaBuilder cb) {
-        this.fnameParameter = cb.parameter(String.class, "fname");
-        
         this.findAllPermissionOwners = this.buildFindAllPermissionOwners(cb);
-        this.findPermissionOwnerByFname = this.buildFindPermissionOwnerByFname(cb);
     }
 
     protected CriteriaQuery<PermissionOwnerImpl> buildFindAllPermissionOwners(final CriteriaBuilder cb) {
         final CriteriaQuery<PermissionOwnerImpl> criteriaQuery = cb.createQuery(PermissionOwnerImpl.class);
         final Root<PermissionOwnerImpl> ownerRoot = criteriaQuery.from(PermissionOwnerImpl.class);
         criteriaQuery.select(ownerRoot);
-        
-        return criteriaQuery;
-    }
-
-    protected CriteriaQuery<PermissionOwnerImpl> buildFindPermissionOwnerByFname(final CriteriaBuilder cb) {
-        final CriteriaQuery<PermissionOwnerImpl> criteriaQuery = cb.createQuery(PermissionOwnerImpl.class);
-        final Root<PermissionOwnerImpl> ownerRoot = criteriaQuery.from(PermissionOwnerImpl.class);
-        criteriaQuery.select(ownerRoot);
-        criteriaQuery.where(
-                cb.equal(ownerRoot.get(PermissionOwnerImpl_.fname), this.fnameParameter)
-            );
         
         return criteriaQuery;
     }
@@ -129,15 +111,11 @@ public class JpaPermissionOwnerDao extends BasePortalJpaDao implements IPermissi
      * @see org.jasig.portal.permission.dao.IPermissionOwnerDao#getPermissionOwner(java.lang.String)
      */
     @Override
-    public IPermissionOwner getPermissionOwner(String fname){
-        final TypedQuery<PermissionOwnerImpl> query = this.createQuery(this.findPermissionOwnerByFname, FIND_PERMISSION_OWNER_BY_FNAME_CACHE_REGION);
-        query.setParameter(this.fnameParameter, fname);
-        query.setMaxResults(1);
+    public IPermissionOwner getPermissionOwner(String fname) {
+        final NaturalIdQueryBuilder<PermissionOwnerImpl> naturalIdQuery = this.createNaturalIdQuery(PermissionOwnerImpl.class, FIND_PERMISSION_OWNER_BY_FNAME_CACHE_REGION);
+        naturalIdQuery.setNaturalIdParam(PermissionOwnerImpl_.fname, fname);
         
-        final List<PermissionOwnerImpl> owners = query.getResultList();
-        final IPermissionOwner owner = DataAccessUtils.uniqueResult(owners);
-        return owner;
-        
+        return naturalIdQuery.execute();
     }
     
     /*

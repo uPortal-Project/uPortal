@@ -227,7 +227,7 @@ public class FragmentDefinition extends EvaluatorGroup
     private EvaluatorFactory loadEvaluatorFactory( String factoryClassName,
                                                    Node audience )
     {
-        Class theClass = null;
+        Class<?> theClass = null;
         try
         {
             theClass = Class.forName( factoryClassName );
