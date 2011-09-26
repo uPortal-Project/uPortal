@@ -43,6 +43,7 @@ import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.persondir.ILocalAccountDao;
 import org.jasig.portal.persondir.ILocalAccountPerson;
 import org.jasig.portal.persondir.LocalAccountQuery;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,6 +61,7 @@ public class JpaLocalAccountDaoImpl extends BasePortalJpaDao implements ILocalAc
     
     
     private CriteriaQuery<LocalAccountPersonImpl> findAllAccountsQuery;
+    private CriteriaQuery<LocalAccountPersonImpl> findAccountByNameQuery;
     private CriteriaQuery<String> findAvailableAttributesQuery;
     private ParameterExpression<String> nameParameter;
 
@@ -68,6 +70,7 @@ public class JpaLocalAccountDaoImpl extends BasePortalJpaDao implements ILocalAc
         this.nameParameter = cb.parameter(String.class, "name");
         
         this.findAllAccountsQuery = this.buildFindAllAccountsQuery(cb);
+        this.findAccountByNameQuery = this.buildFindAccountByNameQuery(cb);
         this.findAvailableAttributesQuery = this.buildFindAvailableAttributesQuery(cb);
     }
 
@@ -76,6 +79,18 @@ public class JpaLocalAccountDaoImpl extends BasePortalJpaDao implements ILocalAc
         final Root<LocalAccountPersonImpl> accountRoot = criteriaQuery.from(LocalAccountPersonImpl.class);
         accountRoot.fetch(LocalAccountPersonImpl_.attributes).fetch(LocalAccountPersonAttributeImpl_.values);
         criteriaQuery.select(accountRoot);
+        
+        return criteriaQuery;
+    }
+
+    protected CriteriaQuery<LocalAccountPersonImpl> buildFindAccountByNameQuery(final CriteriaBuilder cb) {
+        final CriteriaQuery<LocalAccountPersonImpl> criteriaQuery = cb.createQuery(LocalAccountPersonImpl.class);
+        final Root<LocalAccountPersonImpl> accountRoot = criteriaQuery.from(LocalAccountPersonImpl.class);
+        accountRoot.fetch(LocalAccountPersonImpl_.attributes).fetch(LocalAccountPersonAttributeImpl_.values);
+        criteriaQuery.select(accountRoot);
+        criteriaQuery.where(
+            cb.equal(accountRoot.get(LocalAccountPersonImpl_.name), this.nameParameter)
+        );
         
         return criteriaQuery;
     }
@@ -101,10 +116,11 @@ public class JpaLocalAccountDaoImpl extends BasePortalJpaDao implements ILocalAc
     
     @Override
     public ILocalAccountPerson getPerson(String username) {
-        final NaturalIdQueryBuilder<LocalAccountPersonImpl> naturalIdQuery = this.createNaturalIdQuery(LocalAccountPersonImpl.class, FIND_ACCOUNT_BY_NAME_CACHE_REGION);
-        naturalIdQuery.setNaturalIdParam(LocalAccountPersonImpl_.name, username);
+        final TypedQuery<LocalAccountPersonImpl> query = this.createQuery(this.findAccountByNameQuery, FIND_ACCOUNT_BY_NAME_CACHE_REGION);
+        query.setParameter(this.nameParameter, username);
         
-        return naturalIdQuery.execute();
+        final List<LocalAccountPersonImpl> accounts = query.getResultList();
+        return DataAccessUtils.uniqueResult(accounts);
     }
 
     @Override

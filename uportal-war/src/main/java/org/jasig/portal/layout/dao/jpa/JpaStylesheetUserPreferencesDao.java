@@ -24,6 +24,7 @@ import java.util.List;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
 import org.jasig.portal.IUserProfile;
@@ -32,6 +33,7 @@ import org.jasig.portal.layout.dao.IStylesheetUserPreferencesDao;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.security.IPerson;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,16 +49,40 @@ public class JpaStylesheetUserPreferencesDao extends BasePortalJpaDao implements
     private static final String FIND_PREFERENCES_BY_DESCRIPTOR_PERSON_PROFILE_CACHE_REGION = StylesheetUserPreferencesImpl.class.getName() + ".query.FIND_PREFERENCES_BY_DESCRIPTOR_PERSON_PROFILE_CACHE_REGION";
     
     private CriteriaQuery<StylesheetUserPreferencesImpl> findAllPreferences;
+    private CriteriaQuery<StylesheetUserPreferencesImpl> findPreferencesByDescriptorUserProfileQuery;
+    private ParameterExpression<StylesheetDescriptorImpl> stylesheetDescriptorParameter;
+    private ParameterExpression<Integer> userIdParameter;
+    private ParameterExpression<Integer> profileIdParameter;
     
     @Override
     protected void buildCriteriaQueries(CriteriaBuilder cb) {
+        this.stylesheetDescriptorParameter = cb.parameter(StylesheetDescriptorImpl.class, "stylesheetDescriptor");
+        this.userIdParameter = cb.parameter(Integer.class, "userId");
+        this.profileIdParameter = cb.parameter(Integer.class, "profileId");
+
         this.findAllPreferences = this.buildFindAllPreferences(cb);
+        this.findPreferencesByDescriptorUserProfileQuery = this.buildFindPreferencesByDescriptorUserProfileQuery(cb);
     }
     
     protected CriteriaQuery<StylesheetUserPreferencesImpl> buildFindAllPreferences(final CriteriaBuilder cb) {
         final CriteriaQuery<StylesheetUserPreferencesImpl> criteriaQuery = cb.createQuery(StylesheetUserPreferencesImpl.class);
         final Root<StylesheetUserPreferencesImpl> descriptorRoot = criteriaQuery.from(StylesheetUserPreferencesImpl.class);
         criteriaQuery.select(descriptorRoot);
+        
+        return criteriaQuery;
+    }
+    
+    protected CriteriaQuery<StylesheetUserPreferencesImpl> buildFindPreferencesByDescriptorUserProfileQuery(final CriteriaBuilder cb) {
+        final CriteriaQuery<StylesheetUserPreferencesImpl> criteriaQuery = cb.createQuery(StylesheetUserPreferencesImpl.class);
+        final Root<StylesheetUserPreferencesImpl> descriptorRoot = criteriaQuery.from(StylesheetUserPreferencesImpl.class);
+        criteriaQuery.select(descriptorRoot);
+        criteriaQuery.where(
+            cb.and(
+                cb.equal(descriptorRoot.get(StylesheetUserPreferencesImpl_.userId), this.userIdParameter),
+                cb.equal(descriptorRoot.get(StylesheetUserPreferencesImpl_.stylesheetDescriptor), this.stylesheetDescriptorParameter),
+                cb.equal(descriptorRoot.get(StylesheetUserPreferencesImpl_.profileId), this.profileIdParameter)
+            )
+        );
         
         return criteriaQuery;
     }
@@ -106,12 +132,15 @@ public class JpaStylesheetUserPreferencesDao extends BasePortalJpaDao implements
     @Deprecated
     @Override
     public IStylesheetUserPreferences getStylesheetUserPreferences(IStylesheetDescriptor stylesheetDescriptor, int personId, int profileId) {
-        final NaturalIdQueryBuilder<StylesheetUserPreferencesImpl> naturalIdQuery = this.createNaturalIdQuery(StylesheetUserPreferencesImpl.class, FIND_PREFERENCES_BY_DESCRIPTOR_PERSON_PROFILE_CACHE_REGION);
-        naturalIdQuery.setNaturalIdParam(StylesheetUserPreferencesImpl_.stylesheetDescriptor, (StylesheetDescriptorImpl)stylesheetDescriptor);
-        naturalIdQuery.setNaturalIdParam(StylesheetUserPreferencesImpl_.userId, personId);
-        naturalIdQuery.setNaturalIdParam(StylesheetUserPreferencesImpl_.profileId, profileId);
+        final TypedQuery<StylesheetUserPreferencesImpl> query = this.createQuery(findPreferencesByDescriptorUserProfileQuery, FIND_PREFERENCES_BY_DESCRIPTOR_PERSON_PROFILE_CACHE_REGION);
+        query.setMaxResults(1);
+        query.setParameter(this.stylesheetDescriptorParameter, (StylesheetDescriptorImpl)stylesheetDescriptor);
+        query.setParameter(this.userIdParameter, personId);
+        query.setParameter(this.profileIdParameter, profileId);
         
-        return naturalIdQuery.execute();
+        final List<StylesheetUserPreferencesImpl> results = query.getResultList();
+        
+        return DataAccessUtils.singleResult(results);
     }
 
     /* (non-Javadoc)
