@@ -51,6 +51,11 @@
             <props>
                 <prop key="hibernate.cache.use_query_cache">false</prop>
                 <prop key="hibernate.cache.use_second_level_cache">false</prop>
+                <!-- Uncomment for testing with a cache
+                <prop key="hibernate.cache.provider_class">org.hibernate.cache.HashtableCacheProvider</prop>
+                <prop key="hibernate.cache.use_query_cache">true</prop>
+                <prop key="hibernate.cache.use_second_level_cache">true</prop>
+                -->
             </props>
         </property>
     </bean>
