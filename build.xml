@@ -556,17 +556,6 @@ catch (Exception e) {
         </antcall>
     </target>
 
-    <target name="crn-make-data-xml" description="Runs the DbUnload tool against all tables listed in data.xml">
-        <uportal-war-macro>
-
-            <!-- Invoke Cernunnos specifying script and parameters -->
-            <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
-                <classpath refid="uportal-war-full.classpath" />
-                <arg value="classpath://org/jasig/portal/tools/dbloader/dbunload.crn" />
-            </java>
-        </uportal-war-macro>
-    </target>
-
     <target name="clean-shared" depends="checkForTomcat" description="Removes ALL shared libraries from the servlet container.">
         <mkdir dir="${server.base}/shared/lib"/>
         <delete>
@@ -1024,6 +1013,11 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
     <target name="crn-delete">
         <echo>The "crn-delete" Ant task is no longer supported. Use 'ant data-delete' to delete portal data.</echo>
         <fail message="The 'crn-delete' Ant task is no longer supported. Use 'ant data-delete' to delete portal data.">
+        </fail>
+    </target>
+    <target name="crn-make-data-xml">
+        <echo>The "crn-make-data-xml" Ant task is no longer supported. Use 'ant data-export' to export portal data.</echo>
+        <fail message="The 'crn-make-data-xml' Ant task is no longer supported. Use 'ant data-export' to export portal data.">
         </fail>
     </target>
     <target name="i18n-db">
