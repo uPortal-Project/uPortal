@@ -20,24 +20,27 @@
 
 -->
 
-<project name="${project.name} ${project.version}">
+<project xmlns="http://maven.apache.org/DECORATION/1.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd"
+    name="${project.name} ${project.version}">
+    
     <bannerLeft>
         <name>uPortal</name>
         <src>http://www.jasig.org/sites/jasig.webchuckhosting.com/files/uportalLogo.jpg</src>
         <href>http://www.jasig.org/uportal</href>
     </bannerLeft>
     <bannerRight>
-        <name>JA-SIG</name>
+        <name>Jasig</name>
         <src>http://www.jasig.org/sites/all/themes/jasig2/logo.png</src>
         <href>http://www.jasig.org</href>
     </bannerRight>
-    <publishDate position="left" format="MM-dd-yy hh:mm zz"/>
+    <publishDate format="MM-dd-yy hh:mm zz" position="right" />
+    <version position="right" />
+    
 
     <body>
-        <breadcrumbs>
-          <item name="Home" href="${project.url}"/>
-        </breadcrumbs>
-    
+        <menu ref="parent" />
         <menu ref="modules" />
         <menu ref="reports" />
     </body>
