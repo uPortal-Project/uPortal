@@ -78,9 +78,14 @@ public interface IPortalDataHandlerService {
     public void importData(Source source);
     
     /**
-     * @return All portal data types that can be exported or deleted from
+     * @return All portal data types that can be exported
      */
-    public Iterable<IPortalDataType> getPortalDataTypes();
+    public Iterable<IPortalDataType> getExportPortalDataTypes();
+    
+    /**
+     * @return All portal data types that can be deleted
+     */
+    public Iterable<IPortalDataType> getDeletePortalDataTypes();
     
     /**
      * @return All portal data for a specific portal data type, some types may return an empty set even if they contain data due size constraints.
@@ -110,7 +115,7 @@ public interface IPortalDataHandlerService {
     /**
      * Export all the portal data for each type and save it to the specified directory
      * 
-     * @param typeIds TypeIds from {@link #getPortalDataTypes()} to export all data for
+     * @param typeIds TypeIds from {@link #getExportPortalDataTypes()} to export all data for
      * @param directory Directory to save exported data to
      */
     public void exportAllDataOfType(Set<String> typeIds, File directory);

@@ -388,14 +388,12 @@ try {
 	type = '${type}';
         	
     if (type == 'null') {
+        dhs = portalDataHandlerService;
         //List Data Types Script
-        types = portalDataHandlerService.getPortalDataTypes();
         logger.info('');
         logger.info('');
-        logger.info('Portal Data Types:');
-        types.each() {
-            logger.info('    ' + it.getTypeId());
-        };
+        logger.info('Export and Delete Support by Data Type');
+    	org.jasig.portal.io.xml.PortalDataHandlerServiceUtils.format(dhs, logger);
     }
     else {
         //List Data Script
@@ -522,25 +520,40 @@ else {
     </target>
 
     <target name="data-delete" depends="prodPrompt" description="Deletes the specified entity">
-        <uportal-war-macro>
-            <fail unless="type">
-                You must specify a 'type' parameter (-Dtype={something}) from the following:  layout, channel,
-                group, user.
-            </fail>
+        <if>
+            <not>
+                <and>
+                    <isset property="type"/>
+                    <isset property="sysid"/>
+                </and>
+            </not>
+            <then>
+                <fail>Both '-Dtype' and '-Dsysid' must be specified for data delete. Use 'ant data-list' to determine available data types</fail>
+            </then>
+        </if>
 
-            <fail unless="sysid">
-                You must specify a 'sysid' parameter (-Dsysid={something}).  The value will be a valid username
-                (user or layout), fname (channel), or name (group).
-            </fail>
+        <groovy-safe-path property="dirFullEscaped" input="${dir}"/>
 
-            <!-- Invoke Cernunnos specifying script and parameters -->
-            <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
-                <classpath refid="uportal-war-full.classpath" />
-                <arg value="classpath://org/jasig/portal/io/delete.crn" />
-                <arg value="${type}" />
-                <arg value="${sysid}" />
-            </java>
-        </uportal-war-macro>
+        <echo>Creating Data Delete Script</echo>
+        <echo file="${portal-shell-script}" append="true">
+try {
+    //Data Delete Script
+    logger.info('');
+    logger.info('');
+    type = '${type}';
+    sysid = '${sysid}';
+
+    logger.info('Deleting Data ' + sysid + ' of type ' + type);
+    portalDataHandlerService.deleteData(type, sysid);
+}
+catch (Exception e) {
+    throw new RuntimeException("data-delete for " + type + " and " + sysid + " failed", e);
+}
+        </echo>
+
+        <antcall target="up-shell">
+            <param name="script" value="${portal-shell-script}"/>
+        </antcall>
     </target>
 
     <target name="crn-make-data-xml" description="Runs the DbUnload tool against all tables listed in data.xml">

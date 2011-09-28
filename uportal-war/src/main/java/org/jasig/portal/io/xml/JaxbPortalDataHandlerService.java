@@ -599,8 +599,13 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
     }
 
     @Override
-    public Iterable<IPortalDataType> getPortalDataTypes() {
+    public Iterable<IPortalDataType> getExportPortalDataTypes() {
         return this.exportPortalDataTypes;
+    }
+
+    @Override
+    public Iterable<IPortalDataType> getDeletePortalDataTypes() {
+        return this.deletePortalDataTypes;
     }
 
     @Override
@@ -767,13 +772,18 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
 
 	@Override
 	public void deleteData(String typeId, String dataId) {
-		final IDataDeleter<Object> portalDataExporter = this.portalDataDeleters.get(typeId);
-		final Object data = portalDataExporter.deleteData(dataId);
-		if(data == null) {
-			logger.info("portalDataExporter#deleteData returned null for typeId " + typeId + " and dataId " + dataId );
-		}
+		final IDataDeleter<Object> dataDeleter = this.portalDataDeleters.get(typeId);
+        if (dataDeleter == null) {
+            throw new IllegalArgumentException("No IDataDeleter exists for: " + typeId);   
+        }
 		
-		throw new UnsupportedOperationException("Data Deletion is NOT supported");
+		final Object data = dataDeleter.deleteData(dataId);
+		if (data != null) {
+			logger.info("Deleted data " + dataId + " of type " + typeId);
+		}
+		else {
+		    logger.info("No data " + dataId + " of type " + typeId + " exists to delete");
+		}
 	}
     
     /**

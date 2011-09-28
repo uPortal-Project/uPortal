@@ -36,9 +36,11 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 public class RequireSessionInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        final HttpSession session = request.getSession(false);
-        if (session != null) {
-            return true;
+        if (request.isRequestedSessionIdValid()) {
+            final HttpSession session = request.getSession(false);
+            if (session != null) {
+                return true;
+            }
         }
         
         //Session is null, redirect to Login servlet
