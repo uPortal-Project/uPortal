@@ -150,7 +150,7 @@
         <ehcache.version>2.4.5</ehcache.version>
         <ehcache-spring-annotations.version>1.2.0</ehcache-spring-annotations.version>
         <ehcache-web.version>2.0.3</ehcache-web.version>
-        <guava.version>r09</guava.version>
+        <guava.version>10.0</guava.version>
         <groovy.version>1.8.2</groovy.version>
         <grouperClient.version>1.6.3</grouperClient.version>
         <hibernate.version>3.6.7.Final</hibernate.version>
