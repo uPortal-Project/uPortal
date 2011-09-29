@@ -160,6 +160,13 @@
         </up-shell-batch>
     </target>
 
+    <target name="db-hibernate-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for both the portal and statistics schemas">
+        <up-shell-batch>
+            <antcall target="db-hibernate-portal-update" />
+            <antcall target="db-hibernate-stats-update" />
+        </up-shell-batch>
+    </target>
+
     <target name="db-hibernate-portal" depends="prodPrompt" description="Drops then creates Hibernate managed tables for the portal">
         <property name="schemaExportBean" value="portalDbHibernateExport" />
         <property name="export" value="true" />
@@ -196,9 +203,49 @@ catch (Exception e) {
             <param name="script" value="${portal-shell-script}"/>
         </antcall>
     </target>
+	
+    <target name="db-hibernate-portal-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for the portal schema">
+        <property name="schemaExportBean" value="portalDbHibernateExport" />
+        <property name="export" value="true" />
+        <property name="outputFile" value="null" />
+        <property name="haltOnError" value="true" />
+
+        <groovy-safe-path property="outputFileEscaped" input="${outputFile}" />
+
+        <echo>Creating HBM2DDL Update Script</echo>
+        <echo file="${portal-shell-script}" append="true">
+//HBM2DDL Update Script
+try {
+    schemaExportBean = '${schemaExportBean}';
+    logger.info('');
+    logger.info('');
+    logger.info('HBM2DDL Schema Update: ' + schemaExportBean);
+
+    export = '${export}'.toBoolean();
+    outputFile = /${outputFileEscaped}/;
+    haltOnError = '${haltOnError}'.toBoolean();
+            
+    ${schemaExportBean}.update(export, outputFile == 'null' ? null : outputFile , haltOnError);
+}
+catch (Exception e) {
+    throw new RuntimeException("db-hibernate-update for ' + schemaExportBean + ' failed", e);
+}
+        </echo>
+
+        <antcall target="up-shell">
+            <param name="script" value="${portal-shell-script}" />
+        </antcall>
+    </target>
 
     <target name="db-hibernate-stats" depends="prodPrompt" description="Drops then creates Hibernate managed tables used for the database backed portal statistics">
         <antcall target="db-hibernate-portal">
+            <param name="schemaExportBean" value="statsDbHibernateExport" />
+            <param name="haltOnError" value="false" />
+        </antcall>
+    </target>
+	
+    <target name="db-hibernate-stats-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for the statistics schema">
+        <antcall target="db-hibernate-portal-update">
             <param name="schemaExportBean" value="statsDbHibernateExport" />
             <param name="haltOnError" value="false" />
         </antcall>
@@ -348,21 +395,21 @@ catch (Exception e) {
                             <isset property="script" />
                         </and>
                         <then>
-                            <!--
-                            <echo>Running Portal Script: ${script}</echo>
-                            <concat>
-                                <path>
-                                    <pathelement location="${script}" />
-                                </path>
-                            </concat>
-                            -->
-                            <!-- Invoke import/export tool -->
-                            <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.shell.PortalShell">
-                                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
-                                <classpath refid="uportal-war-full.classpath" />
-                                <arg value="-s" />
-                                <arg value="${script}" />
-                            </java>
+                            <trycatch>
+                                 <try>
+                                    <!-- Invoke import/export tool -->
+                                    <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.shell.PortalShell">
+                                        <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+                                        <classpath refid="uportal-war-full.classpath" />
+                                        <arg value="-s" />
+                                        <arg value="${script}" />
+                                    </java>
+                                </try>
+                                <finally>   
+                                    <tempfile property="executed-portal-shell-script" destdir="${basedir}/target" prefix="upshell_" suffix=".groovy"/>
+                                	<copy file="${script}" tofile="${executed-portal-shell-script}" />
+                                </finally>
+                            </trycatch> 
                         </then>
                         <else>
                             <echo>No Script</echo>
