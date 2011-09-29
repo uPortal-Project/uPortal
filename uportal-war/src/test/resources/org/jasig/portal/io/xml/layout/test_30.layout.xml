@@ -28,6 +28,21 @@
     <footer unremovable="N" immutable="N" hidden="N" name="Footer folder">
       <channel unremovable="N" immutable="N" hidden="N" fname="footer"/>
     </footer>
+    <tab unremovable="N" immutable="N" hidden="N" name="Development">
+      <column unremovable="N" immutable="N" hidden="N" name="Column 1">
+        <structure-attribute type="folder">
+          <name>width</name>
+          <value>50%</value>
+        </structure-attribute>
+      </column>
+      <column unremovable="N" immutable="N" hidden="N" name="Column 2">
+        <structure-attribute type="folder">
+          <name>width</name>
+          <value>50%</value>
+        </structure-attribute>
+        <channel unremovable="" immutable="" hidden="" fname="Yale Events"/>
+      </column>
+    </tab>
   </root>
   <profile name="HTML browser profile"> 
     <description>A system profile for common web browsers</description>  
@@ -35,10 +50,10 @@
     <theme name="DLM XHTML"/> 
   </profile>
   <preferences>
-    <entry entity="news-tab:/layout/root/tab/column[2]/channel[1]" channel="Yale-Events" name="days">
+    <entry entity="news-tab:/layout/root/tab/column[2]/channel[1]" channel="Yale Events" name="days">
       <value>1</value>
     </entry>
-    <entry entity="news-tab:/layout/root/tab/column[2]/channel[1]" channel="Yale-Events" name="category">
+    <entry entity="news-tab:/layout/root/tab/column[2]/channel[1]" channel="Yale Events" name="category">
       <value>Music</value>
       <value>Theater</value>
       <value>Talks</value>

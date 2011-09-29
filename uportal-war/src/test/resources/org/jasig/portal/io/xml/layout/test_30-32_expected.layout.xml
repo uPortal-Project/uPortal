@@ -19,24 +19,33 @@
     under the License.
 
 -->
-<layout xmlns:dlm="http://www.uportal.org/layout/dlm"
-    script="classpath://org/jasig/portal/io/import-layout_v3-2.crn"
+<layout xmlns:dlm="http://www.uportal.org/layout/dlm" script="classpath://org/jasig/portal/io/import-layout_v3-2.crn"
     username="test">
-    <folder type="root" unremovable="true" immutable="false"
-        hidden="false" name="Root Folder">
-        <folder type="header" unremovable="true" immutable="true"
-            hidden="false" name="Header folder">
+    <folder type="root" unremovable="true" immutable="false" hidden="false" name="Root Folder">
+        <folder type="header" unremovable="true" immutable="true" hidden="false" name="Header folder">
 
-            <channel unremovable="false" immutable="false"
-                hidden="false" fname="login" />
+            <channel unremovable="false" immutable="false" hidden="false" fname="login" />
         </folder>
-        <folder type="footer" unremovable="false" immutable="false"
-            hidden="false" name="Footer folder">
+        <folder type="footer" unremovable="false" immutable="false" hidden="false" name="Footer folder">
 
+        </folder>
+        <folder type="regular" unremovable="false" immutable="false" hidden="false" name="Development">
+            <folder type="regular" unremovable="false" immutable="false" hidden="false" name="Column 1">
+                <structure-attribute type="folder">
+                    <name>width</name>
+                    <value>50%</value>
+                </structure-attribute>
+            </folder>
+            <folder type="regular" unremovable="false" immutable="false" hidden="false" name="Column 2">
+                <structure-attribute type="folder">
+                    <name>width</name>
+                    <value>50%</value>
+                </structure-attribute>
+                <channel unremovable="false" immutable="false" hidden="false" fname="Yale_Events" />
+            </folder>
         </folder>
     </folder>
-    <profile script="classpath://org/jasig/portal/io/import-profile_v3-2.crn"
-        username="test">
+    <profile script="classpath://org/jasig/portal/io/import-profile_v3-2.crn" username="test">
         <name>HTML browser profile</name>
         <fname>default</fname>
         <description>A system profile for common web browsers</description>
@@ -44,14 +53,12 @@
         <theme name="DLM XHTML" />
     </profile>
     <preferences>
-        <entry
-            entity="news-tab:/layout/folder[@type='root']/folder[@type='regular']/folder[@type='regular'][2]/channel[1]"
-            channel="Yale-Events" name="days">
+        <entry entity="news-tab:/layout/folder[@type='root']/folder[@type='regular']/folder[@type='regular'][2]/channel[1]"
+            channel="Yale_Events" name="days">
             <value>1</value>
         </entry>
-        <entry
-            entity="news-tab:/layout/folder[@type='root']/folder[@type='regular']/folder[@type='regular'][2]/channel[1]"
-            channel="Yale-Events" name="category">
+        <entry entity="news-tab:/layout/folder[@type='root']/folder[@type='regular']/folder[@type='regular'][2]/channel[1]"
+            channel="Yale_Events" name="category">
             <value>Music</value>
             <value>Theater</value>
             <value>Talks</value>
