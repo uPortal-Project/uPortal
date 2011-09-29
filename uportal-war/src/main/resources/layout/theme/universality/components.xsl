@@ -358,7 +358,15 @@
   <xsl:template name="welcome">  
     <xsl:if test="$AUTHENTICATED='true'"> <!-- Welcome only displays if the user is logged in. -->
       <div id="portalWelcome">
-          <xsl:value-of select="upMsg:getMessage('you.are.signed.in.as', $USER_LANG)"/>&#160;<span class="user-name"><xsl:value-of select="$USER_NAME"/></span>
+        <xsl:choose>
+          <xsl:when test="$userImpersonating = 'true'">
+            <xsl:value-of select="upMsg:getMessage('you.are.idswapped.as', $USER_LANG)"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="upMsg:getMessage('you.are.signed.in.as', $USER_LANG)"/>
+          </xsl:otherwise>
+        </xsl:choose>
+        &#160;<span class="user-name"><xsl:value-of select="$USER_NAME"/></span>
       </div>
     </xsl:if>
   </xsl:template>

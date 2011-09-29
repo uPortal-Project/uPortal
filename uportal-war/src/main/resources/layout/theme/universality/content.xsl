@@ -57,7 +57,7 @@
   <!--
    | This template renders the portlet containers: chrome and controls.
   -->
-  <xsl:template match="channel">
+  <xsl:template match="channel|blocked-channel">
     
     <xsl:variable name="PORTLET_LOCKED"> <!-- Test to determine if the portlet is locked in the layout. -->
       <xsl:choose> 
@@ -107,7 +107,7 @@
               <!-- ****** START: PORTLET CONTENT ****** -->
               <div id="portletContent_{@ID}" class="up-portlet-content-wrapper"> <!-- Portlet content container. -->
                 <div class="up-portlet-content-wrapper-inner">  <!-- Inner div for additional presentation/formatting options. -->
-                  <xsl:copy-of select="."/> <!-- Write in the contents of the portlet. -->
+                  <xsl:call-template name="portlet-content"/>
                 </div>
               </div>
           </xsl:when>
@@ -184,7 +184,7 @@
             <!-- ****** PORTLET CONTENT ****** -->
             <div id="portletContent_{@ID}" class="fl-widget-content fl-fix up-portlet-content-wrapper"> <!-- Portlet content container. -->
               <div class="up-portlet-content-wrapper-inner">  <!-- Inner div for additional presentation/formatting options. -->
-                <xsl:copy-of select="."/> <!-- Write in the contents of the portlet. -->
+                <xsl:call-template name="portlet-content"/>
               </div>
             </div>
             
@@ -202,6 +202,28 @@
   </xsl:template>
   <!-- ======================================= -->
   
+  <!-- ========== TEMPLATE: PORLET CONTENT ========== -->
+  <!-- ============================================== -->
+  <!--
+   | Renders the actual portlet content
+  -->
+  <xsl:template name="portlet-content">
+    <xsl:choose>
+        <xsl:when test="name() = 'blocked-channel'">
+            <xsl:choose>
+                <xsl:when test="parameter[@name='blockImpersonation']/@value = 'true'">
+                    <div><p><em><xsl:value-of select="upMsg:getMessage('hidden.in.impersonation.view', $USER_LANG)"/></em></p></div>
+                </xsl:when>
+                <xsl:otherwise>
+                    <div><p><em><xsl:value-of select="upMsg:getMessage('channel.blocked', $USER_LANG)"/></em></p></div>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:copy-of select="."/> <!-- Write in the contents of the portlet. -->
+        </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
   
   <!-- ========== TEMPLATE: PORLET FOCUSED ========== -->
   <!-- ============================================== -->
@@ -212,7 +234,7 @@
   	<div id="portalPageBodyColumns" class="columns-1">
 	  	<div class="portal-page-column column-1">
 	    	<div class="portal-page-column-inner"> <!-- Column inner div for additional presentation/formatting options.  -->
-	        <xsl:apply-templates select="channel"/>
+	        <xsl:apply-templates select="channel|blocked-channel"/>
 	      </div>
 	    </div>
     </div>

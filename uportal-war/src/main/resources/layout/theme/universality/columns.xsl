@@ -105,7 +105,7 @@
             <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
             	<div class="column-permissions"><a class="button portal-column-permissions-link" href="javascript:;"><span class="icon permissions"></span><xsl:value-of select="upMsg:getMessage('edit.column.x.permissions', $USER_LANG, $NUMBER)"/></a></div>
             </xsl:if>
-            <xsl:apply-templates select="channel"/> <!-- Render the column's portlets.  -->
+            <xsl:apply-templates select="channel|blocked-channel"/> <!-- Render the column's portlets.  -->
           </div>
         </div>
       </xsl:for-each>

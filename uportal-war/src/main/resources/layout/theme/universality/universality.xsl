@@ -127,6 +127,7 @@
    | YELLOW
    | Skin Settings can be used to change the location of skin files.
   -->
+  <xsl:param name="userImpersonating">false</xsl:param>
   <xsl:param name="skin">uportal3</xsl:param>
   <xsl:param name="CONTEXT_PATH">/NOT_SET</xsl:param>
   <xsl:variable name="SKIN" select="$skin"/>

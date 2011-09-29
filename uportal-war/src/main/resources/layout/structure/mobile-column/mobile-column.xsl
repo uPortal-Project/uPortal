@@ -75,6 +75,7 @@
 <!--=====START: PARAMETERS & VARIABLES=====-->
 <xsl:param name="userLayoutRoot">root</xsl:param>
 <xsl:param name="detached">false</xsl:param>
+<xsl:param name="userImpersonating">false</xsl:param>
 <!--=====END: PARAMETERS & VARIABLES=====-->
 
 
@@ -154,9 +155,17 @@
 
 <!--=====START: CHANNEL TEMPLATE RULE=====-->
 <xsl:template match="channel">
-    <xsl:if test="not(parameter[@name='hideFromMobile']/@value = 'true')">
-        <xsl:copy-of select="."/>
-    </xsl:if>
+  <xsl:choose>
+    <xsl:when test="not(parameter[@name='hideFromMobile']/@value = 'true') and $userImpersonating = 'true' and parameter[@name='blockImpersonation']/@value = 'true'">
+        <blocked-channel>
+            <xsl:copy-of select="@*"/>
+            <xsl:copy-of select="child::*"/>
+        </blocked-channel>
+    </xsl:when>
+    <xsl:when test="not(parameter[@name='hideFromMobile']/@value = 'true')">
+      <xsl:copy-of select="."/>
+    </xsl:when>
+  </xsl:choose>
 </xsl:template>
 <!--=====END: CHANNEL TEMPLATE RULE=====-->
 
