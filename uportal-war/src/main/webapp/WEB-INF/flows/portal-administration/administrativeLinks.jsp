@@ -52,7 +52,7 @@
                     <a href="<c:url value="/p/permissionsmanager"/>">Manage permissions</a>
                 </li>
                 <li>
-                    <a href="<c:url value="/p/fragment-audit"/>">Manage DLM Fragments</a>
+                    <a href="<c:url value="/p/fragment-admin"/>">Manage DLM Fragments</a>
                 </li>
             </ul>
         </div>
