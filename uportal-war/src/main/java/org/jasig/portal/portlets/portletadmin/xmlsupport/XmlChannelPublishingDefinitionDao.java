@@ -189,6 +189,7 @@ public class XmlChannelPublishingDefinitionDao implements IChannelPublishingDefi
             PortletPublishingDefinition config = (PortletPublishingDefinition) unmarshaller.unmarshal(paramStream);
             this.sharedParameters = config.getSteps();
         } catch (JAXBException e) {
+            logger.warn("Failed to parse: " + paramResource, e); 
         }
         finally {
             IOUtils.closeQuietly(paramStream);
