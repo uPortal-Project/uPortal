@@ -875,6 +875,20 @@ catch (Exception e) {
     </target>
 
     <!-- ============================== Utility Targets ============================== -->
+	
+	<target name="sync-schemas">
+        <fail unless="schemaDir">
+You must specify a 'schemaDir' parameter (-DschemaDir={/path/to/jasig/schemas/uportal/})
+NOTE THE TRAILING SLASH IS IMPORTANT
+        </fail>
+            	
+		<exec executable="rsync">
+			<arg value="-avC"/>
+			<arg value="${basedir}/uportal-war/src/main/resources/xsd/"/>
+			<arg value="${schemaDir}"/>
+		</exec>
+	</target>
+	
     <!--
      | Runs up-shell passing in the default shell script filename as the targeted script
      +-->
