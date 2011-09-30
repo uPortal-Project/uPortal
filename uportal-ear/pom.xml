@@ -123,7 +123,7 @@
             <version>${pluto.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.portals.pluto</groupId>
+            <groupId>org.jasig.portal</groupId>
             <artifactId>pluto-taglib</artifactId>
             <version>${pluto.version}</version>
         </dependency>
