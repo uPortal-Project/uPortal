@@ -50,8 +50,7 @@
     
     <target name="all" description="Generates all assemblies by running clean, source, and quickstart">
         <antcall target="clean" />
-        <antcall target="source" />
-        <antcall target="quickstart" />
+        <antcall target="prepare-deploy" />
     </target>
 
     <target name="clean" depends="prepare" description="Remove files used in packaging and generated packages and runs 'mvn clean' on the uPortal project.">
