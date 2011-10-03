@@ -25,6 +25,7 @@ swapper
     attributes reverted?
 
 
-
-
 how to track pipeline/portlet exceptions? just have it be a flag on the event?
+    separate portal exceptions db table?
+        would log all end-user visible pipeline & portlet exceptions
+        generates the error token that is displayed to the end user
