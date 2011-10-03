@@ -1,0 +1,30 @@
+rendering pipeline request
+    are there any sub-events here?
+
+portlet execution
+    action
+    event
+    render
+    resource
+
+layout customization
+    add folder/portlet
+    move folder/portlet
+    remove folder/portlet
+    update folder/portlet
+
+entity management
+    created
+    modified
+    deleted
+
+swapper
+    identity swapped
+    identity reverted
+    attributes swapped
+    attributes reverted?
+
+
+
+
+how to track pipeline/portlet exceptions? just have it be a flag on the event?
