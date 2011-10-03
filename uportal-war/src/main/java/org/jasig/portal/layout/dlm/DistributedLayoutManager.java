@@ -20,6 +20,7 @@
 package org.jasig.portal.layout.dlm;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -1369,11 +1370,19 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
     	return null;
     }
     
+    @Override
     public boolean addLayoutEventListener(LayoutEventListener l) {
         return listeners.add(l);
     }
+    
+    @Override
     public boolean removeLayoutEventListener(LayoutEventListener l) {
         return listeners.remove(l);
+    }
+
+    @Override
+    public void addLayoutEventListeners(Collection<LayoutEventListener> l) {
+        this.listeners.addAll(l);
     }
 
     /* (non-Javadoc)

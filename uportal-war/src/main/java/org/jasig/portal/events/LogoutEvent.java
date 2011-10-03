@@ -17,31 +17,35 @@
  * under the License.
  */
 
-package org.jasig.portal.events.support;
+package org.jasig.portal.events;
 
-import org.jasig.portal.events.EventType;
-import org.jasig.portal.events.PortalEvent;
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.Immutable;
 import org.jasig.portal.security.IPerson;
 
 /**
- * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 2.6
- *
  */
-public final class UserSessionCreatedPortalEvent extends PortalEvent {
+@Entity
+@Table(name = "UPE_LOGOUT_EVENT")
+@Inheritance(strategy=InheritanceType.JOINED)
+@PrimaryKeyJoinColumn(name="EVENT_ID")
+@Immutable
+public final class LogoutEvent extends PortalEvent {
     private static final long serialVersionUID = 1L;
     
-	public UserSessionCreatedPortalEvent(final Object source, final IPerson person) {
-		super(source, person, EventType.getEventType("SESSION_CREATED"));
-	}
+    private LogoutEvent() {
+        super();
+    }
 
-    /* (non-Javadoc)
-     * @see java.util.EventObject#toString()
-     */
-	@Override
-	public String toString() {
-		return "Session created for " + getDisplayName() + " at " + getTimestampAsDate(); 
-	}
+    LogoutEvent(Object source, String eventSessionId, IPerson person) {
+        super(source, eventSessionId, person);
+    }
 }

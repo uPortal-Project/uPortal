@@ -48,6 +48,7 @@
      | the caching DAO
      +-->
     <bean id="personAttributeDao" class="org.jasig.portal.portlets.swapper.OverwritingPersonAttributeDao">
+        <qualifier value="personAttributeDao"/>
         <property name="delegatePersonAttributeDao" ref="requestAttributeMergingDao" />
         <property name="attributeOverridesMap" ref="sessionAttributesOverridesMap" />
     </bean>

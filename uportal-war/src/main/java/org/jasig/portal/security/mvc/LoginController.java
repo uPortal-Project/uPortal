@@ -24,7 +24,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -218,7 +217,7 @@ public class LoginController implements InitializingBean {
         }
 
       // Attempt to authenticate using the incoming request
-      authenticationService.authenticate(principals, credentials, person);
+      authenticationService.authenticate(request, principals, credentials, person);
     } catch (Exception e) {
       // Log the exception
       log.error("Exception authenticating the request", e);

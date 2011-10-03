@@ -29,6 +29,7 @@
         </properties>
     </persistence-unit>
     <persistence-unit name="uPortalStatsPersistence" transaction-type="RESOURCE_LOCAL">
+        <mapping-file>properties/db/stats/orm.xml</mapping-file>
         <properties>
             <property name="hibernate.ejb.cfgfile" value="/properties/db/stats/hibernate.cfg.xml" />
             <property name="hibernate.archive.autodetection" value="" />

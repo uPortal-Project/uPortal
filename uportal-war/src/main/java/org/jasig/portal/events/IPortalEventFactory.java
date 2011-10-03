@@ -19,20 +19,21 @@
 
 package org.jasig.portal.events;
 
-/**
- * Simple Implementation of EventListener that calls the appropriate
- * <code>EventHandler</code> without extra processing.
- * 
- * @author Scott Battaglia
- * @version $Revision$ $Date$
- * @since 2.6
- * @deprecated Use {@link PortalEventListener}
- */
-@Deprecated
-public final class SimpleEventListener extends AbstractEventListener {
+import javax.servlet.http.HttpServletRequest;
 
-	protected void onApplicationEventInternal(final PortalEvent event,
-			final EventHandler handler) {
-		handler.handleEvent(event);
-	}
+import org.jasig.portal.security.IPerson;
+
+/**
+ * Used to create and publish portal events
+ * 
+ * @author Eric Dalquist
+ * @version $Revision$
+ */
+public interface IPortalEventFactory {
+    public LoginEvent createLoginEvent(HttpServletRequest request, Object source, IPerson person);
+    public void publishLoginEvent(HttpServletRequest request, Object source, IPerson person);
+    
+    public LogoutEvent createLogoutEvent(HttpServletRequest request, Object source, IPerson person);
+    public void publishLogoutEvent(HttpServletRequest request, Object source, IPerson person);
+
 }

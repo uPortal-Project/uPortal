@@ -30,7 +30,7 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
 import org.jasig.portal.events.PortalEvent;
-import org.jasig.portal.events.support.UserLoggedInPortalEvent;
+import org.jasig.portal.events.LoginEvent;
 import org.jasig.portal.events.support.UserLoggedOutPortalEvent;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.PersonImpl;
@@ -70,20 +70,20 @@ public class JpaPortalEventStorePerformanceProfiler extends AbstractDependencyIn
             facStaffPerson.setAttribute(IPerson.USERNAME, "facStaff");
             this.jpaPortalEventStore.addPersonGroups(facStaffPerson, new HashSet<String>(Arrays.asList("faculty", "staff", "admin")));
             
-            UserLoggedInPortalEvent loggedInPortalEvent;
+            LoginEvent loggedInPortalEvent;
             UserLoggedOutPortalEvent loggedOutPortalEvent;
             final Queue<PortalEvent> eventQueue = new LinkedList<PortalEvent>();
             
             while (eventQueue.size() < 500) {
-                loggedInPortalEvent = new UserLoggedInPortalEvent(this, adminPerson);
+                loggedInPortalEvent = new LoginEvent(this, adminPerson);
                 eventQueue.offer(loggedInPortalEvent);
                 loggedOutPortalEvent = new UserLoggedOutPortalEvent(this, adminPerson);
                 eventQueue.offer(loggedOutPortalEvent);
                 
-                loggedInPortalEvent = new UserLoggedInPortalEvent(this, studentPerson);
+                loggedInPortalEvent = new LoginEvent(this, studentPerson);
                 eventQueue.offer(loggedInPortalEvent);
                 
-                loggedInPortalEvent = new UserLoggedInPortalEvent(this, adminPerson);
+                loggedInPortalEvent = new LoginEvent(this, adminPerson);
                 eventQueue.offer(loggedInPortalEvent);
                 loggedOutPortalEvent = new UserLoggedOutPortalEvent(this, adminPerson);
                 eventQueue.offer(loggedOutPortalEvent);
@@ -91,17 +91,17 @@ public class JpaPortalEventStorePerformanceProfiler extends AbstractDependencyIn
                 loggedOutPortalEvent = new UserLoggedOutPortalEvent(this, studentPerson);
                 eventQueue.offer(loggedOutPortalEvent);
                 
-                loggedInPortalEvent = new UserLoggedInPortalEvent(this, facStaffPerson);
+                loggedInPortalEvent = new LoginEvent(this, facStaffPerson);
                 eventQueue.offer(loggedInPortalEvent);
                 loggedOutPortalEvent = new UserLoggedOutPortalEvent(this, facStaffPerson);
                 eventQueue.offer(loggedOutPortalEvent);
                 
-                loggedInPortalEvent = new UserLoggedInPortalEvent(this, facStaffPerson);
+                loggedInPortalEvent = new LoginEvent(this, facStaffPerson);
                 eventQueue.offer(loggedInPortalEvent);
                 loggedOutPortalEvent = new UserLoggedOutPortalEvent(this, facStaffPerson);
                 eventQueue.offer(loggedOutPortalEvent);
                 
-                loggedInPortalEvent = new UserLoggedInPortalEvent(this, studentPerson);
+                loggedInPortalEvent = new LoginEvent(this, studentPerson);
                 eventQueue.offer(loggedInPortalEvent);
                 loggedOutPortalEvent = new UserLoggedOutPortalEvent(this, studentPerson);
                 eventQueue.offer(loggedOutPortalEvent);
@@ -124,7 +124,7 @@ public class JpaPortalEventStorePerformanceProfiler extends AbstractDependencyIn
                         break;
                     }
                 }
-                this.jpaPortalEventStore.storePortalEvents(events);
+                this.jpaPortalEventStore.storeNewPortalEvents(events);
             }
             System.out.println(System.currentTimeMillis() - start);
         }

@@ -22,10 +22,12 @@ package org.jasig.portal.logging;
 import org.slf4j.Logger;
 
 /**
+ * Adds methods to Logger that only log the stack trace when debugging.
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface DebuggingExceptionLogger extends Logger {
+public interface ConditionalExceptionLogger extends Logger {
     
     /**
      * If info level is enabled logs:

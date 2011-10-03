@@ -272,12 +272,6 @@
     </filter-mapping>
 
     <servlet>
-        <servlet-name>Logout</servlet-name>
-        <servlet-class>org.jasig.portal.LogoutServlet</servlet-class>
-        <load-on-startup>3</load-on-startup>
-    </servlet>
-
-    <servlet>
         <servlet-name>Instrumentation</servlet-name>
         <servlet-class>org.jasig.portal.tools.checks.ChecksServlet</servlet-class>
     </servlet>
@@ -360,11 +354,6 @@
     <servlet-mapping>
         <servlet-name>JsonRenderingDispatcherServlet</servlet-name>
         <url-pattern>/layout.json</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>Logout</servlet-name>
-        <url-pattern>/Logout</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

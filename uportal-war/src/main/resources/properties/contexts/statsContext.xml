@@ -32,15 +32,15 @@
     <!--
      | This bean listens for all Spring ApplicationEvents and passes just the PortalEvents on to the configured
      | EventHandler.  
-     +-->
+     +
     <bean id="eventListener" class="org.jasig.portal.events.PortalEventListener">
         <property name="eventHandler" ref="portalEventMulticaster"/>
     </bean>
-    
+    -->
     <!-- 
      | Takes care of passing the single portal event to multiple handlers, uses a Spring TaskExecutor
      | to call each handler allowing for asynchronous event handling if desired.
-     +-->
+     +- ->
     <bean id="portalEventMulticaster" class="org.jasig.portal.events.handlers.PortalEventMulticaster">
         <property name="taskExecutor">
             <bean class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
@@ -57,7 +57,6 @@
         <property name="handlers">
             <list>
                 <ref bean="loggingEventHandler"/>
-                <!-- SUPPORTS DATABASE STORAGE OF PORTAL STATS -->
                 <ref bean="queueingEventHandler"/>
             </list>
         </property>
@@ -74,57 +73,28 @@
             </set>
         </property>
     </bean>
-    
+    -->
     <!--
      | Uncomment the <ref bean="queueingEventHandler"/> line above to enable database persistence of portal stats
      |
      | If you want to monitor the corresponding Hibernate SessionFactory via JMX uncomment the 'portalStatsHibernateStatisticsMBean'
      | bean in jmxContext.xml
      +-->
-    <!-- Queueing handler used to reduce database IO -->
+    <!-- Queueing handler used to reduce database IO 
     <bean id="queueingEventHandler" class="org.jasig.portal.events.handlers.QueueingEventHandler">
         <property name="supportGuest" value="true" />
         <property name="batchingEventHandler" ref="portalEventStore" />
         <property name="explicitMatching" value="false" />
         <property name="supportedEvents">
             <set value-type="java.lang.Class">
-                <!-- Explicitly list channel events to exclude ChannelInstanciatedInLayoutPortalEvent -->
                 <value>org.jasig.portal.events.support.ChannelAddedToLayoutPortalEvent</value>
                 <value>org.jasig.portal.events.support.ChannelRemovedFromLayoutPortalEvent</value>
-                <!-- 
-                <value>org.jasig.portal.events.support.ChannelMovedInLayoutPortalEvent</value>
-                <value>org.jasig.portal.events.support.ChannelTargetedInLayoutPortalEvent</value>
-                <value>org.jasig.portal.events.support.ChannelUpdatedInLayoutPortalEvent</value>
-                -->
-                
-                <!-- All timed channel events events -->
-                <!-- 
-                <value>org.jasig.portal.events.support.TimedChannelLayoutPortalEvent</value>
-                -->
-                
-                <!-- All channel definition events -->
-                <!-- 
-                <value>org.jasig.portal.events.support.PortletPortalEvent</value>
-                -->
-                
-                <!-- All layout node related events -->
-                <!-- 
-                <value>org.jasig.portal.events.support.LayoutPortalEvent</value>
-                -->
-                
-                <!-- Explicitly list top level events -->
-                <!-- 
-                <value>org.jasig.portal.events.support.UserLoggedInPortalEvent</value>
-                <value>org.jasig.portal.events.support.UserLoggedOutPortalEvent</value>
-                <value>org.jasig.portal.events.support.UserSessionCreatedPortalEvent</value>
-                <value>org.jasig.portal.events.support.UserSessionDestroyedPortalEvent</value>
-                -->
             </set>
         </property>
     </bean>
     
     <bean id="portalEventStore" class="org.jasig.portal.events.handlers.db.JpaPortalEventStore" />
-
+-->
     <!-- Stats specific JPA peristence configurtion below --> 
     <aop:config>
         <aop:pointcut id="statsJpaDaoExecution" 

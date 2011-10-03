@@ -28,7 +28,7 @@ import org.jasig.portal.security.IPerson;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface ITestablePortalEventStore extends IPortalEventStore {
+public interface ITestablePortalEventStore extends IPortalEventDao {
     public Map<IPerson, Set<String>> getPersonGroups();
 
     public void setPersonGroups(Map<IPerson, Set<String>> personGroups);

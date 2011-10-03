@@ -17,31 +17,16 @@
  * under the License.
  */
 
-package org.jasig.portal.events.support;
+package org.jasig.portal.utils;
 
-import org.jasig.portal.events.EventType;
-import org.jasig.portal.events.PortalEvent;
-import org.jasig.portal.security.IPerson;
+import java.io.Serializable;
 
 /**
+ * A serializable object, useful for mutex objects that need to live in serializable containers
  * 
- * @author Scott Battaglia
- * @version $Revision$ $Date$
- * @since 2.6
- *
+ * @author Eric Dalquist
+ * @version $Revision$
  */
-public final class UserLoggedInPortalEvent extends PortalEvent {
+public final class SerializableObject implements Serializable {
     private static final long serialVersionUID = 1L;
-    
-    public UserLoggedInPortalEvent(final Object source, final IPerson person) {
-		super(source, person, EventType.getEventType("LOGIN"));
-	}
-
-    /* (non-Javadoc)
-     * @see java.util.EventObject#toString()
-     */
-    @Override
-    public String toString() {
-		return getDisplayName() + " logged in successfully at " + getTimestampAsDate();
-	}
 }

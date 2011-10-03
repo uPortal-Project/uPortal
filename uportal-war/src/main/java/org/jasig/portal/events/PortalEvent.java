@@ -21,9 +21,20 @@ package org.jasig.portal.events;
 
 import java.util.Date;
 
-import org.apache.commons.lang.StringUtils;
-import org.jasig.portal.events.handlers.db.StatsSession;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
+
+import org.hibernate.annotations.Immutable;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.utils.SerializableObject;
 import org.springframework.context.ApplicationEvent;
 
 /**
@@ -34,88 +45,104 @@ import org.springframework.context.ApplicationEvent;
  * @since 2.6
  *
  */
+@Entity
+@Table(name = "UPE_EVENT")
+@Inheritance(strategy=InheritanceType.JOINED)
+@SequenceGenerator(
+        name="UPE_EVENT_GEN",
+        sequenceName="UPE_EVENT_SEQ",
+        allocationSize=1000
+    )
+@TableGenerator(
+        name="UPE_EVENT_GEN",
+        pkColumnValue="UPE_EVENT_PROP",
+        allocationSize=1000
+    )
+@Immutable
 public abstract class PortalEvent extends ApplicationEvent {
+    public static final Object UNKNOWN_SOURCE = new SerializableObject();
+    
+    private static final long serialVersionUID = 1L;
+   
+    @Id
+    @GeneratedValue(generator = "UPE_EVENT_GEN")
+    @Column(name="EVENT_ID")
+    private final long id;
+    
+    @Column(name="SESSION_ID", length=500, nullable=false)
+    private final String eventSessionId;
+    
+    @Column(name="USER_NAME", length=35, nullable=false)
+    private final String userName;
+    
+    @Transient
     private final IPerson person;
-    private EventType eventType;
-    private long id;
-    private Date timeStampAsDate;
-    private StatsSession statsSession;
 
-    public PortalEvent(final Object source, final IPerson person) {
+    @Transient
+    private Date timestampAsDate;
+    
+    PortalEvent() {
+        super(UNKNOWN_SOURCE);
+        this.id = -1;
+        this.eventSessionId = null;
+        this.person = null;
+        this.userName = null;
+    }
+
+    PortalEvent(Object source, String eventSessionId, IPerson person) {
         super(source);
+        this.id = -1;
+        this.eventSessionId = eventSessionId;
         this.person = person;
-        this.eventType = EventType.getEventType(this.getClass().getName(), null);
+        this.userName = this.person.getUserName();
     }
     
-    public PortalEvent(final Object source, final IPerson person, final EventType eventType) {
-        super(source);
-        this.person = person;
-        this.eventType = eventType;
+    /**
+     * @return Get the {@link #getTimestamp()} as a {@link Date}
+     */
+    public final Date getTimestampAsDate() {
+        Date d = this.timestampAsDate;
+        if (d == null) {
+            d = new Date(this.getTimestamp());
+            this.timestampAsDate = d;
+        }
+        
+        return d;
     }
 
+    final long getId() {
+        return this.id;
+    }
+
+    /**
+     * @return The unique id that groups a set of events.
+     */
+    public final String getEventSessionId() {
+        return this.eventSessionId;
+    }
+
+    /**
+     * @return The user name for the event
+     */
+    public final String getUserName() {
+        return this.userName;
+    }
+
+    /**
+     * @return The person the event was for, may return null if this event was loaded from a persistent store
+     */
     public final IPerson getPerson() {
         return this.person;
     }
-    public final Date getTimestampAsDate() {
-        //Don't bother with syncronization, doesn't matter if multiple Dates are created in a race condition
-        if (this.timeStampAsDate == null) {
-            final long timestamp = this.getTimestamp();
-            this.timeStampAsDate = new Date(timestamp);
-        }
 
-        return this.timeStampAsDate;
-    }
-
-    public final String getDescription() {
-        return this.toString();
-    }
-    public final void setDescription(String description) {
-        //ignore, method required for hibernate
-    }
-    public final void setTimestampAsDate(Date timestamp) {
-        //ignore, method required for hibernate
-    }
-    
-    public EventType getEventType() {
-        return eventType;
-    }
-    
-    public long getId() {
-        return id;
-    }
-    public void setId(long id) {
-        this.id = id;
-    }
-    
-    public StatsSession getStatsSession() {
-        return statsSession;
-    }
-    public void setStatsSession(StatsSession statsSession) {
-        this.statsSession = statsSession;
-    }
-
-    protected String getDisplayName() {
-        if (person == null) {
-            return "NULL_PERSON";
-        }
-
-        final String userName = StringUtils.trimToEmpty(((String) person.getAttribute(IPerson.USERNAME)));
-
-        if (person.isGuest()) {
-            return "GUEST_USER (" + userName + ")";
-        }
-
-        final String firstName = StringUtils.trimToEmpty((String) person.getAttribute("givenName"));
-        final String lastName = StringUtils.trimToEmpty((String) person.getAttribute("sn"));
-
-        return firstName + " " + lastName + " (" + userName + ")";
-    }
-    
     /* (non-Javadoc)
-     * @see java.util.EventObject#toString()
+     * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return this.getClass().getName() + " for "  + this.getDisplayName() + " at " + this.getTimestampAsDate();
+        return "PortalEvent [id=" + this.id + 
+                ", eventSessionId=" + this.eventSessionId + 
+                ", userName=" + this.userName + 
+                ", timestampAsDate=" + this.getTimestampAsDate() + "]";
     }
 }

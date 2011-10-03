@@ -19,6 +19,7 @@
 
 package org.jasig.portal.layout;
 
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Set;
 
@@ -263,6 +264,11 @@ public interface IUserLayoutManager {
      * @return a <code>boolean</code> success status
      */
     public boolean addLayoutEventListener(LayoutEventListener l);
+    
+    /**
+     * Add a collection listenters
+     */
+    public void addLayoutEventListeners(Collection<LayoutEventListener> l);
 
 
     /**

@@ -25,6 +25,6 @@ import org.jasig.portal.events.PortalEvent;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface IPortalEventStore {
-    public void storePortalEvents(PortalEvent... portalEvents);
+public interface IPortalEventDao {
+    public void storeNewPortalEvents(PortalEvent... portalEvents);
 }

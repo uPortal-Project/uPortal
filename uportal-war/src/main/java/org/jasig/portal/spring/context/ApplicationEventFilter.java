@@ -17,31 +17,19 @@
  * under the License.
  */
 
-package org.jasig.portal.events.support;
+package org.jasig.portal.spring.context;
 
-import org.jasig.portal.events.EventType;
-import org.jasig.portal.events.PortalEvent;
-import org.jasig.portal.security.IPerson;
+import org.springframework.context.ApplicationEvent;
 
 /**
+ * Filter for determining if an {@link ApplicationEvent} is supported
  * 
- * @author Scott Battaglia
- * @version $Revision$ $Date$
- * @since 2.6
- * 
+ * @author Eric Dalquist
+ * @version $Revision$
  */
-public final class UserSessionDestroyedPortalEvent extends PortalEvent {
-    private static final long serialVersionUID = 1L;
-    
-	public UserSessionDestroyedPortalEvent(final Object source, final IPerson person) {
-		super(source, person, EventType.getEventType("SESSION_DESTROYED"));
-	}
-
-    /* (non-Javadoc)
-     * @see java.util.EventObject#toString()
+public interface ApplicationEventFilter<E extends ApplicationEvent> {
+    /**
+     * @return true if the event is supported, false if not
      */
-	@Override
-	public String toString() {
-		return "Session destroyed for " + getDisplayName() + " at " + getTimestampAsDate();
-	}
+    public boolean supports(E event);
 }

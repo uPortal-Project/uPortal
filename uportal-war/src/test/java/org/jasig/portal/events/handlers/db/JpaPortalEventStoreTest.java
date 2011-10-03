@@ -28,6 +28,7 @@ import org.easymock.EasyMock;
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.events.PortalEvent;
+import org.jasig.portal.events.LoginEvent;
 import org.jasig.portal.events.support.ChannelAddedToLayoutPortalEvent;
 import org.jasig.portal.events.support.ChannelInstanciatedInLayoutPortalEvent;
 import org.jasig.portal.events.support.ChannelMovedInLayoutPortalEvent;
@@ -41,7 +42,6 @@ import org.jasig.portal.events.support.PortletActionInLayoutPortalEvent;
 import org.jasig.portal.events.support.PublishedPortletDefinitionPortalEvent;
 import org.jasig.portal.events.support.RemovedPortletDefinitionPortalEvent;
 import org.jasig.portal.events.support.UserAddedFolderToLayoutPortalEvent;
-import org.jasig.portal.events.support.UserLoggedInPortalEvent;
 import org.jasig.portal.events.support.UserLoggedOutPortalEvent;
 import org.jasig.portal.events.support.UserMovedFolderInLayoutPortalEvent;
 import org.jasig.portal.events.support.UserRemovedFolderFromLayoutPortalEvent;
@@ -86,8 +86,8 @@ public class JpaPortalEventStoreTest extends AbstractJpaTests {
         
         PortalEvent portalEvent;
         
-        portalEvent = new UserLoggedInPortalEvent(this, person);
-        this.jpaPortalEventStore.storePortalEvents(portalEvent);
+        portalEvent = new LoginEvent(this, person);
+        this.jpaPortalEventStore.storeNewPortalEvents(portalEvent);
         this.checkPoint();
         
         assertEquals(1, this.countRowsInTable("STATS_SESSION"));
@@ -100,7 +100,7 @@ public class JpaPortalEventStoreTest extends AbstractJpaTests {
         
         
         portalEvent = new UserLoggedOutPortalEvent(this, person);
-        this.jpaPortalEventStore.storePortalEvents(portalEvent);
+        this.jpaPortalEventStore.storeNewPortalEvents(portalEvent);
         this.checkPoint();
         
         assertEquals(1, this.countRowsInTable("STATS_SESSION"));
@@ -113,7 +113,7 @@ public class JpaPortalEventStoreTest extends AbstractJpaTests {
         
         
         portalEvent = new UserSessionCreatedPortalEvent(this, person);
-        this.jpaPortalEventStore.storePortalEvents(portalEvent);
+        this.jpaPortalEventStore.storeNewPortalEvents(portalEvent);
         this.checkPoint();
         
         assertEquals(1, this.countRowsInTable("STATS_SESSION"));
@@ -126,7 +126,7 @@ public class JpaPortalEventStoreTest extends AbstractJpaTests {
         
         
         portalEvent = new UserSessionDestroyedPortalEvent(this, person);
-        this.jpaPortalEventStore.storePortalEvents(portalEvent);
+        this.jpaPortalEventStore.storeNewPortalEvents(portalEvent);
         this.checkPoint();
         
         assertEquals(1, this.countRowsInTable("STATS_SESSION"));
@@ -150,7 +150,7 @@ public class JpaPortalEventStoreTest extends AbstractJpaTests {
         
         
         portalEvent = new PublishedPortletDefinitionPortalEvent(this, person, channelDefinition);
-        this.jpaPortalEventStore.storePortalEvents(portalEvent);
+        this.jpaPortalEventStore.storeNewPortalEvents(portalEvent);
         this.checkPoint();
         
         assertEquals(1, this.countRowsInTable("STATS_SESSION"));
@@ -163,7 +163,7 @@ public class JpaPortalEventStoreTest extends AbstractJpaTests {
         
         
         portalEvent = new ModifiedPortletDefinitionPortalEvent(this, person, channelDefinition);
-        this.jpaPortalEventStore.storePortalEvents(portalEvent);
+        this.jpaPortalEventStore.storeNewPortalEvents(portalEvent);
         this.checkPoint();
         
         assertEquals(1, this.countRowsInTable("STATS_SESSION"));
@@ -176,7 +176,7 @@ public class JpaPortalEventStoreTest extends AbstractJpaTests {
         
         
         portalEvent = new RemovedPortletDefinitionPortalEvent(this, person, channelDefinition);
-        this.jpaPortalEventStore.storePortalEvents(portalEvent);
+        this.jpaPortalEventStore.storeNewPortalEvents(portalEvent);
         this.checkPoint();
         
         assertEquals(1, this.countRowsInTable("STATS_SESSION"));
@@ -205,7 +205,7 @@ public class JpaPortalEventStoreTest extends AbstractJpaTests {
         
         
         portalEvent = new ChannelAddedToLayoutPortalEvent(this, person, userProfile, channelDescription, parentNodeDescription);
-        this.jpaPortalEventStore.storePortalEvents(portalEvent);
+        this.jpaPortalEventStore.storeNewPortalEvents(portalEvent);
         this.checkPoint();
         
         assertEquals(1, this.countRowsInTable("STATS_SESSION"));
@@ -218,7 +218,7 @@ public class JpaPortalEventStoreTest extends AbstractJpaTests {
         
         
         portalEvent = new ChannelUpdatedInLayoutPortalEvent(this, person, userProfile, channelDescription, parentNodeDescription);
-        this.jpaPortalEventStore.storePortalEvents(portalEvent);
+        this.jpaPortalEventStore.storeNewPortalEvents(portalEvent);
         this.checkPoint();
         
         assertEquals(1, this.countRowsInTable("STATS_SESSION"));
@@ -239,7 +239,7 @@ public class JpaPortalEventStoreTest extends AbstractJpaTests {
         
         
         portalEvent = new ChannelMovedInLayoutPortalEvent(this, person, userProfile, channelDescription, oldParentNodeDescription, parentNodeDescription);
-        this.jpaPortalEventStore.storePortalEvents(portalEvent);
+        this.jpaPortalEventStore.storeNewPortalEvents(portalEvent);
         this.checkPoint();
         
         assertEquals(1, this.countRowsInTable("STATS_SESSION"));
@@ -252,7 +252,7 @@ public class JpaPortalEventStoreTest extends AbstractJpaTests {
         
         
         portalEvent = new ChannelRemovedFromLayoutPortalEvent(this, person, userProfile, channelDescription, oldParentNodeDescription);
-        this.jpaPortalEventStore.storePortalEvents(portalEvent);
+        this.jpaPortalEventStore.storeNewPortalEvents(portalEvent);
         this.checkPoint();
         
         assertEquals(1, this.countRowsInTable("STATS_SESSION"));
@@ -265,7 +265,7 @@ public class JpaPortalEventStoreTest extends AbstractJpaTests {
         
         
         portalEvent = new ChannelRenderedInLayoutPortalEvent(this, person, userProfile, channelDescription, parentNodeDescription, 1234, false);
-        this.jpaPortalEventStore.storePortalEvents(portalEvent);
+        this.jpaPortalEventStore.storeNewPortalEvents(portalEvent);
         this.checkPoint();
         
         assertEquals(1, this.countRowsInTable("STATS_SESSION"));
@@ -278,7 +278,7 @@ public class JpaPortalEventStoreTest extends AbstractJpaTests {
         
         
         portalEvent = new ChannelTargetedInLayoutPortalEvent(this, person, userProfile, channelDescription, parentNodeDescription);
-        this.jpaPortalEventStore.storePortalEvents(portalEvent);
+        this.jpaPortalEventStore.storeNewPortalEvents(portalEvent);
         this.checkPoint();
         
         assertEquals(1, this.countRowsInTable("STATS_SESSION"));
@@ -291,7 +291,7 @@ public class JpaPortalEventStoreTest extends AbstractJpaTests {
         
         
         portalEvent = new ChannelInstanciatedInLayoutPortalEvent(this, person, userProfile, channelDescription, parentNodeDescription);
-        this.jpaPortalEventStore.storePortalEvents(portalEvent);
+        this.jpaPortalEventStore.storeNewPortalEvents(portalEvent);
         this.checkPoint();
         
         assertEquals(1, this.countRowsInTable("STATS_SESSION"));
@@ -312,7 +312,7 @@ public class JpaPortalEventStoreTest extends AbstractJpaTests {
         
         
         portalEvent = new UserAddedFolderToLayoutPortalEvent(this, person, userProfile, layoutFolderDescription);
-        this.jpaPortalEventStore.storePortalEvents(portalEvent);
+        this.jpaPortalEventStore.storeNewPortalEvents(portalEvent);
         this.checkPoint();
         
         assertEquals(1, this.countRowsInTable("STATS_SESSION"));
@@ -325,7 +325,7 @@ public class JpaPortalEventStoreTest extends AbstractJpaTests {
         
         
         portalEvent = new UserMovedFolderInLayoutPortalEvent(this, person, userProfile, layoutFolderDescription);
-        this.jpaPortalEventStore.storePortalEvents(portalEvent);
+        this.jpaPortalEventStore.storeNewPortalEvents(portalEvent);
         this.checkPoint();
         
         assertEquals(1, this.countRowsInTable("STATS_SESSION"));
@@ -338,7 +338,7 @@ public class JpaPortalEventStoreTest extends AbstractJpaTests {
         
         
         portalEvent = new UserRemovedFolderFromLayoutPortalEvent(this, person, userProfile, layoutFolderDescription);
-        this.jpaPortalEventStore.storePortalEvents(portalEvent);
+        this.jpaPortalEventStore.storeNewPortalEvents(portalEvent);
         this.checkPoint();
         
         assertEquals(1, this.countRowsInTable("STATS_SESSION"));
@@ -351,7 +351,7 @@ public class JpaPortalEventStoreTest extends AbstractJpaTests {
         
         
         portalEvent = new UserUpdatedFolderInLayoutPortalEvent(this, person, userProfile, layoutFolderDescription);
-        this.jpaPortalEventStore.storePortalEvents(portalEvent);
+        this.jpaPortalEventStore.storeNewPortalEvents(portalEvent);
         this.checkPoint();
         
         assertEquals(1, this.countRowsInTable("STATS_SESSION"));
@@ -364,7 +364,7 @@ public class JpaPortalEventStoreTest extends AbstractJpaTests {
         
         
         portalEvent = new PageRenderTimePortalEvent(this, person, userProfile, layoutFolderDescription, 12345);
-        this.jpaPortalEventStore.storePortalEvents(portalEvent);
+        this.jpaPortalEventStore.storeNewPortalEvents(portalEvent);
         this.checkPoint();
         
         assertEquals(1, this.countRowsInTable("STATS_SESSION"));
@@ -377,7 +377,7 @@ public class JpaPortalEventStoreTest extends AbstractJpaTests {
         
         
         portalEvent = new PortletActionInLayoutPortalEvent(this, person, userProfile, channelDescription, parentNodeDescription, 1236);
-        this.jpaPortalEventStore.storePortalEvents(portalEvent);
+        this.jpaPortalEventStore.storeNewPortalEvents(portalEvent);
         this.checkPoint();
         
         assertEquals(1, this.countRowsInTable("STATS_SESSION"));
@@ -396,8 +396,8 @@ public class JpaPortalEventStoreTest extends AbstractJpaTests {
         this.jpaPortalEventStore.addPersonGroups(person, new HashSet<String>(Arrays.asList("admin", "student")));
 
         
-        UserLoggedInPortalEvent loggedInPortalEvent = new UserLoggedInPortalEvent(this, person);
-        this.jpaPortalEventStore.storePortalEvents(loggedInPortalEvent);
+        LoginEvent loggedInPortalEvent = new LoginEvent(this, person);
+        this.jpaPortalEventStore.storeNewPortalEvents(loggedInPortalEvent);
         this.checkPoint();
         
         assertEquals(1, this.countRowsInTable("STATS_SESSION"));
@@ -407,7 +407,7 @@ public class JpaPortalEventStoreTest extends AbstractJpaTests {
         
         
         UserLoggedOutPortalEvent loggedOutPortalEvent = new UserLoggedOutPortalEvent(this, person);
-        this.jpaPortalEventStore.storePortalEvents(loggedOutPortalEvent);
+        this.jpaPortalEventStore.storeNewPortalEvents(loggedOutPortalEvent);
         this.checkPoint();
         
         assertEquals(1, this.countRowsInTable("STATS_SESSION"));
@@ -422,8 +422,8 @@ public class JpaPortalEventStoreTest extends AbstractJpaTests {
         person.setAttribute(IPerson.USERNAME, "student");
         this.jpaPortalEventStore.addPersonGroups(person, new HashSet<String>(Arrays.asList("developer", "student")));
         
-        loggedInPortalEvent = new UserLoggedInPortalEvent(this, person);
-        this.jpaPortalEventStore.storePortalEvents(loggedInPortalEvent);
+        loggedInPortalEvent = new LoginEvent(this, person);
+        this.jpaPortalEventStore.storeNewPortalEvents(loggedInPortalEvent);
         this.checkPoint();
         
         assertEquals(2, this.countRowsInTable("STATS_SESSION"));
@@ -433,7 +433,7 @@ public class JpaPortalEventStoreTest extends AbstractJpaTests {
         
         
         loggedOutPortalEvent = new UserLoggedOutPortalEvent(this, person);
-        this.jpaPortalEventStore.storePortalEvents(loggedOutPortalEvent);
+        this.jpaPortalEventStore.storeNewPortalEvents(loggedOutPortalEvent);
         this.checkPoint();
         
         assertEquals(2, this.countRowsInTable("STATS_SESSION"));

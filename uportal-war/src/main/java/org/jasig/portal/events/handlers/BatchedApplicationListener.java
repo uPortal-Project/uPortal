@@ -19,33 +19,22 @@
 
 package org.jasig.portal.events.handlers;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.events.PortalEvent;
-import org.springframework.util.Assert;
+import java.util.Collection;
+
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
 
 /**
- * Instance of Event Handler that delegates to Commons Logging and writes out
- * events at the INFO level.
+ * Handles batches of events as well as single events
  * 
- * @author Scott Battaglia
- * @version $Revision$ $Date$
- * @since 2.6
+ * @author Eric Dalquist
+ * @version $Revision$
  */
-public final class LoggingEventHandler extends AbstractLimitedSupportEventHandler {
-    private Log eventLogger = this.logger;
-    
+public interface BatchedApplicationListener<E extends ApplicationEvent> extends ApplicationListener<E> {
+
     /**
-     * @param logCategory A custom log category to use
+     * Handle a collection application event.
+     * @param event the event to respond to
      */
-    public void setLogCategory(String logCategory) {
-        Assert.notNull(logCategory);
-        this.eventLogger = LogFactory.getLog(logCategory);
-    }
-    
-    public void handleEvent(final PortalEvent event) {
-		if (this.eventLogger.isInfoEnabled()) {
-		    this.eventLogger.info(event.toString());
-		}
-	}
+    void onApplicationEvent(Collection<E> event);
 }
