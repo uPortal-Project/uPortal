@@ -17,29 +17,36 @@
  * under the License.
  */
 
-package org.jasig.portal.events.support;
+package org.jasig.portal.events;
 
-import org.jasig.portal.IUserProfile;
-import org.jasig.portal.events.EventType;
-import org.jasig.portal.events.LayoutPortalEvent;
-import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;
 
-public final class UserRemovedFolderFromLayoutPortalEvent extends LayoutPortalEvent {
+/**
+ * 
+ * @author Scott Battaglia
+ * @version $Revision$ $Date$
+ * @since 2.6
+ *
+ */
+public abstract class LayoutPortalEvent extends PortalEvent {
     private static final long serialVersionUID = 1L;
-
-	public UserRemovedFolderFromLayoutPortalEvent(final Object source, final IPerson person, final IUserProfile profile,
-            final IUserLayoutFolderDescription folder) {
-        super(source, person, profile, folder, EventType.getEventType("LAYOUT_FOLDER_REMOVED"));
+    
+    private final long layoutId;
+	
+	LayoutPortalEvent() {
+        super();
+        this.layoutId = -1;
     }
 
-    /* (non-Javadoc)
-     * @see java.util.EventObject#toString()
+	LayoutPortalEvent(Object source, String eventSessionId, IPerson person, long layoutId) {
+        super(source, eventSessionId, person);
+        this.layoutId = layoutId;
+    }
+
+    /**
+     * @return the layoutId
      */
-    @Override
-	public String toString() {
-		return "Folder " + getFolderString()
-                + " was removed from layout " + getProfile().getLayoutId()
-				+ " by " + getDisplayName() + " at " + getTimestampAsDate();
-	}
+    public long getLayoutId() {
+        return this.layoutId;
+    }
 }

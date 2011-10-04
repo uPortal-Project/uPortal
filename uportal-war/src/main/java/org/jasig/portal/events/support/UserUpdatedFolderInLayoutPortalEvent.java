@@ -21,6 +21,7 @@ package org.jasig.portal.events.support;
 
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.events.EventType;
+import org.jasig.portal.events.LayoutPortalEvent;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;
 

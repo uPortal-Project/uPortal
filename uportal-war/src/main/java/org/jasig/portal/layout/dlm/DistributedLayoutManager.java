@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -40,10 +39,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -51,12 +47,12 @@ import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserIdentityStoreFactory;
+import org.jasig.portal.events.IPortalEventFactory;
 import org.jasig.portal.layout.IFolderLocalNameResolver;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.LayoutEvent;
-import org.jasig.portal.layout.LayoutEventListener;
 import org.jasig.portal.layout.LayoutEventListenerAdapter;
 import org.jasig.portal.layout.LayoutMoveEvent;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
@@ -79,6 +75,8 @@ import org.jasig.portal.xml.XmlUtilities;
 import org.jasig.portal.xml.xpath.XPathOperations;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -101,10 +99,10 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
     private ILayoutCachingService layoutCachingService;
     private IUserLayoutStore distributedLayoutStore;
     private XPathOperations xpathOperations;
+    private IPortalEventFactory portalEventFactory;
     
     protected final IPerson owner;
     protected final IUserProfile profile;
-    protected Set<LayoutEventListener> listeners=new HashSet<LayoutEventListener>();
 
     /**
      * Holds the bean name of the configured folder label policy if any that is 
@@ -164,6 +162,11 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
         this.distributedLayoutStore = distributedLayoutStore;
     }
 
+    @Autowired
+    public void setPortalEventFactory(IPortalEventFactory portalEventFactory) {
+        this.portalEventFactory = portalEventFactory;
+    }
+
     @Override
     public void afterPropertiesSet() throws Exception {
         // Ensure a new layout gets loaded whenever a user logs in exceot for guest users
@@ -180,17 +183,17 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
         // This listener determines if one or more channels have been
         // added, and sets a state variable which is reset when the
         // layout saved event is triggered.
-        this.addLayoutEventListener(new LayoutEventListenerAdapter()
-        {
-            @Override
-            public void channelAdded(LayoutEvent ev) {
-                channelsAdded = true;
-            }
-            @Override
-            public void layoutSaved() {
-                channelsAdded = false;
-            }
-        });
+//        this.addLayoutEventListener(new LayoutEventListenerAdapter()
+//        {
+//            @Override
+//            public void channelAdded(LayoutEvent ev) {
+//                channelsAdded = true;
+//            }
+//            @Override
+//            public void layoutSaved() {
+//                channelsAdded = false;
+//            }
+//        });
     }
 
     private void setUserLayoutDOM(DistributedUserLayout userLayout) {
@@ -337,18 +340,6 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
                     "\", profileId=\"" + profile.getProfileId() 
                     + "\", layoutId=\"" + profile.getLayoutId() + "\"");
         }
-        try {
-            // inform listeners
-            for(Iterator i=listeners.iterator();i.hasNext();) {
-                LayoutEventListener lel=(LayoutEventListener)i.next();
-                lel.layoutLoaded();
-            }
-        } catch (Exception e) {
-               throw new PortalException("Exception encountered contacting " +
-                       "layout listeners of layout for userId=" +
-                       this.owner.getID() + ", profileId=" + 
-                       this.profile.getProfileId() ,e);
-        }
     }
 
     public synchronized void saveUserLayout() throws PortalException{
@@ -366,18 +357,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
                     ", profileId=" + this.profile.getProfileId(),e);
         }
 
-        try // inform listeners
-        {
-            for(Iterator i=listeners.iterator();i.hasNext();) {
-                LayoutEventListener lel=(LayoutEventListener)i.next();
-                lel.layoutSaved();
-            }
-        } catch (Exception e) {
-            throw new PortalException("Exception encountered contacting " +
-                    "layout listeners of layout for userId=" +
-                    this.owner.getID() + ", profileId=" + 
-                    this.profile.getProfileId() ,e);
-        }
+        this.channelsAdded = false;
     }
     
 
@@ -473,17 +453,16 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
             HandlerUtils.createPlfNodeAndPath( childElement,
                                                isChannel, owner );
 
-            // inform the listeners
-            LayoutEvent ev=new LayoutEvent(this,parent,node);
-            for(Iterator i=listeners.iterator();i.hasNext();) {
-                LayoutEventListener lel=(LayoutEventListener)i.next();
-                if(isChannel) {
-                    lel.channelAdded(ev);
-                } else {
-                    lel.folderAdded(ev);
-                }
+            // fire event
+            final int layoutId = this.getLayoutId();
+            if(isChannel) {
+                this.channelsAdded = true;
+                final String fname = ((IUserLayoutChannelDescription)node).getFunctionalName();
+                this.portalEventFactory.publishPortletAddedToLayoutPortalEvent(this, this.owner, layoutId, parent.getId(), fname);
+            } 
+            else {
+                this.portalEventFactory.publishFolderAddedToLayoutPortalEvent(this, this.owner, layoutId, node.getId());
             }
-            return node;
         }
         return null;
     }
@@ -514,20 +493,15 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
             TabColumnPrefsHandler.moveElement( childElement,
                                                oldParent,
                                                owner );
-            // inform the listeners
-            boolean isChannel=false;
-            if(node instanceof IUserLayoutChannelDescription) {
-                isChannel=true;
-            }
-            final IUserLayoutNodeDescription oldParentNode = this.getNode(oldParentNodeId);
-            LayoutMoveEvent ev=new LayoutMoveEvent(this, parent, node, oldParentNode);
-            for(Iterator i=listeners.iterator();i.hasNext();) {
-                LayoutEventListener lel=(LayoutEventListener)i.next();
-                if(isChannel) {
-                    lel.channelMoved(ev);
-                } else {
-                    lel.folderMoved(ev);
-                }
+            // fire event
+            final int layoutId = this.getLayoutId();
+            if (node instanceof IUserLayoutChannelDescription) {
+                this.channelsAdded = true;
+                final String fname = ((IUserLayoutChannelDescription)node).getFunctionalName();
+                this.portalEventFactory.publishPortletMovedInLayoutPortalEvent(this, this.owner, layoutId, oldParentNodeId, parent.getId(), fname);
+            } 
+            else {
+                this.portalEventFactory.publishFolderMovedInLayoutPortalEvent(this, this.owner, layoutId, oldParentNodeId, parent.getId());
             }
             return true;
         }
@@ -1370,20 +1344,6 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
     	return null;
     }
     
-    @Override
-    public boolean addLayoutEventListener(LayoutEventListener l) {
-        return listeners.add(l);
-    }
-    
-    @Override
-    public boolean removeLayoutEventListener(LayoutEventListener l) {
-        return listeners.remove(l);
-    }
-
-    @Override
-    public void addLayoutEventListeners(Collection<LayoutEventListener> l) {
-        this.listeners.addAll(l);
-    }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.layout.IUserLayoutManager#getUserLayout()

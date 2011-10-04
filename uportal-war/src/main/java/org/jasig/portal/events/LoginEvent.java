@@ -81,6 +81,7 @@ public final class LoginEvent extends PortalEvent {
     @Fetch(FetchMode.JOIN)
     private final Map<String, UserAttributeList> attributes;
     
+    @SuppressWarnings("unused")
     private LoginEvent() {
         super();
         this.groups = null;

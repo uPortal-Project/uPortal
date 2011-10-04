@@ -41,6 +41,7 @@ import org.jasig.portal.security.IPerson;
 public final class LogoutEvent extends PortalEvent {
     private static final long serialVersionUID = 1L;
     
+    @SuppressWarnings("unused")
     private LogoutEvent() {
         super();
     }

@@ -27,9 +27,10 @@ import java.util.Set;
 import org.easymock.EasyMock;
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.UserProfile;
+import org.jasig.portal.events.PortletAddedToLayoutPortalEvent;
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.LoginEvent;
-import org.jasig.portal.events.support.ChannelAddedToLayoutPortalEvent;
+import org.jasig.portal.events.FolderAddedToLayoutPortalEvent;
 import org.jasig.portal.events.support.ChannelInstanciatedInLayoutPortalEvent;
 import org.jasig.portal.events.support.ChannelMovedInLayoutPortalEvent;
 import org.jasig.portal.events.support.ChannelRemovedFromLayoutPortalEvent;
@@ -41,7 +42,6 @@ import org.jasig.portal.events.support.PageRenderTimePortalEvent;
 import org.jasig.portal.events.support.PortletActionInLayoutPortalEvent;
 import org.jasig.portal.events.support.PublishedPortletDefinitionPortalEvent;
 import org.jasig.portal.events.support.RemovedPortletDefinitionPortalEvent;
-import org.jasig.portal.events.support.UserAddedFolderToLayoutPortalEvent;
 import org.jasig.portal.events.support.UserLoggedOutPortalEvent;
 import org.jasig.portal.events.support.UserMovedFolderInLayoutPortalEvent;
 import org.jasig.portal.events.support.UserRemovedFolderFromLayoutPortalEvent;
@@ -204,7 +204,7 @@ public class JpaPortalEventStoreTest extends AbstractJpaTests {
         EasyMock.replay(channelDescription, parentNodeDescription);
         
         
-        portalEvent = new ChannelAddedToLayoutPortalEvent(this, person, userProfile, channelDescription, parentNodeDescription);
+        portalEvent = new PortletAddedToLayoutPortalEvent(this, person, userProfile, channelDescription, parentNodeDescription);
         this.jpaPortalEventStore.storeNewPortalEvents(portalEvent);
         this.checkPoint();
         
@@ -311,7 +311,7 @@ public class JpaPortalEventStoreTest extends AbstractJpaTests {
         EasyMock.replay(layoutFolderDescription);
         
         
-        portalEvent = new UserAddedFolderToLayoutPortalEvent(this, person, userProfile, layoutFolderDescription);
+        portalEvent = new FolderAddedToLayoutPortalEvent(this, person, userProfile, layoutFolderDescription);
         this.jpaPortalEventStore.storeNewPortalEvents(portalEvent);
         this.checkPoint();
         

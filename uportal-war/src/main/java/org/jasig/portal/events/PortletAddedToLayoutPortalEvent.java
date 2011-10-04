@@ -17,28 +17,42 @@
  * under the License.
  */
 
-package org.jasig.portal.events.support;
+package org.jasig.portal.events;
 
-import org.jasig.portal.IUserProfile;
-import org.jasig.portal.events.EventType;
-import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;
 
-public final class UserMovedFolderInLayoutPortalEvent extends LayoutPortalEvent {
-    private static final long serialVersionUID = 1L;
 
-	public UserMovedFolderInLayoutPortalEvent(final Object source, final IPerson person, final IUserProfile profile,
-            final IUserLayoutFolderDescription folder) {
-        super(source, person, profile, folder, EventType.getEventType("LAYOUT_FOLDER_MOVED"));
+public final class PortletAddedToLayoutPortalEvent extends LayoutPortalEvent {
+    private static final long serialVersionUID = 1L;
+    
+    private final String parentFolderId;
+    private final String fname;
+    
+    @SuppressWarnings("unused")
+    private PortletAddedToLayoutPortalEvent() {
+        super();
+        this.parentFolderId = null;
+        this.fname = null;
     }
 
-    /* (non-Javadoc)
-     * @see java.util.EventObject#toString()
+    PortletAddedToLayoutPortalEvent(Object source, String eventSessionId, IPerson person, long layoutId,
+            String parentFolderId, String fname) {
+        super(source, eventSessionId, person, layoutId);
+        this.parentFolderId = parentFolderId;
+        this.fname = fname;
+    }
+
+    /**
+     * @return the parentFolderId
      */
-    @Override
-	public String toString() {
-		return "Folder " + getFolderString()
-                + " was moved in layout " + getProfile().getLayoutId()
-				+ " by " + getDisplayName() + "  at " + getTimestampAsDate();
-	}
+    public String getParentFolderId() {
+        return this.parentFolderId;
+    }
+
+    /**
+     * @return the fname
+     */
+    public String getFname() {
+        return this.fname;
+    }
 }

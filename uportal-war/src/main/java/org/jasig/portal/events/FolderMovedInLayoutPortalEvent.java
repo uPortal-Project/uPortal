@@ -17,28 +17,33 @@
  * under the License.
  */
 
-package org.jasig.portal.events.support;
+package org.jasig.portal.events;
 
-import org.jasig.portal.IUserProfile;
-import org.jasig.portal.events.EventType;
-import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.security.IPerson;
 
-public final class UserAddedFolderToLayoutPortalEvent extends LayoutPortalEvent {
+
+public final class FolderMovedInLayoutPortalEvent extends LayoutPortalEvent {
     private static final long serialVersionUID = 1L;
 
-    public UserAddedFolderToLayoutPortalEvent(final Object source, final IPerson person, final IUserProfile profile,
-			final IUserLayoutFolderDescription folder) {
-		super(source, person, profile, folder, EventType.getEventType("LAYOUT_FOLDER_ADDED"));
-	}
+    private final String newFolderId;
+    
+    @SuppressWarnings("unused")
+    private FolderMovedInLayoutPortalEvent() {
+        super();
+        this.newFolderId = null;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.util.EventObject#toString()
-	 */
-	@Override
-	public String toString() {
-		return "Folder " + getFolderString()
-                + " was added to layout " + getProfile().getLayoutId()
-				+ " by " + getDisplayName() + " at " + getTimestampAsDate();
-	}
+    public FolderMovedInLayoutPortalEvent(Object source, String eventSessionId, IPerson person, long layoutId,
+            String newFolderId) {
+        super(source, eventSessionId, person, layoutId);
+        this.newFolderId = newFolderId;
+    }
+
+
+    /**
+     * @return the newFolderId
+     */
+    public String getNewFolderId() {
+        return this.newFolderId;
+    }
 }

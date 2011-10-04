@@ -30,10 +30,27 @@ import org.jasig.portal.security.IPerson;
  * @version $Revision$
  */
 public interface IPortalEventFactory {
-    public LoginEvent createLoginEvent(HttpServletRequest request, Object source, IPerson person);
     public void publishLoginEvent(HttpServletRequest request, Object source, IPerson person);
     
-    public LogoutEvent createLogoutEvent(HttpServletRequest request, Object source, IPerson person);
     public void publishLogoutEvent(HttpServletRequest request, Object source, IPerson person);
 
+    public void publishPortletAddedToLayoutPortalEvent(HttpServletRequest request, Object source, 
+            IPerson person, long layoutId, String parentFolderId, String fname);
+    public void publishPortletAddedToLayoutPortalEvent(Object source, 
+            IPerson person, long layoutId, String parentFolderId, String fname);
+    
+    public void publishPortletMovedInLayoutPortalEvent(HttpServletRequest request, Object source, 
+            IPerson person, long layoutId, String oldParentFolderId, String newParentFolderId, String fname);
+    public void publishPortletMovedInLayoutPortalEvent(Object source, 
+            IPerson person, long layoutId, String oldParentFolderId, String newParentFolderId, String fname);
+
+    public void publishFolderAddedToLayoutPortalEvent(HttpServletRequest request, Object source, 
+            IPerson person, long layoutId, String folderId);
+    public void publishFolderAddedToLayoutPortalEvent(Object source, 
+            IPerson person, long layoutId, String folderId);
+    
+    public void publishFolderMovedInLayoutPortalEvent(HttpServletRequest request, Object source, 
+            IPerson person, long layoutId, String oldParentFolderId, String newParentFolderId, String folderId);
+    public void publishFolderMovedInLayoutPortalEvent(Object source, 
+            IPerson person, long layoutId, String oldParentFolderId, String newParentFolderId, String folderId);
 }
