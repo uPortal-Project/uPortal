@@ -19,35 +19,29 @@
 
 package org.jasig.portal.events;
 
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Immutable;
-
 /**
- * @author Scott Battaglia
- * @version $Revision$ $Date$
- * @since 2.6
+ * @author Eric Dalquist
+ * @version $Revision$
  */
-@Entity
-@Table(name = "UPE_LOGOUT_EVENT")
-@Inheritance(strategy=InheritanceType.JOINED)
-@PrimaryKeyJoinColumn(name="EVENT_ID")
-@Immutable
-public final class LogoutEvent extends PortalEvent {
+public abstract class PortletExecutionEvent extends PortalEvent {
     private static final long serialVersionUID = 1L;
     
-    @SuppressWarnings("unused")
-    private LogoutEvent() {
+    private final long executionTime;
+
+    PortletExecutionEvent() {
         super();
+        this.executionTime = -1;
     }
 
-    LogoutEvent(PortalEventBuilder eventBuilder) {
+    PortletExecutionEvent(PortalEventBuilder eventBuilder, long executionTime) {
         super(eventBuilder);
+        this.executionTime = executionTime;
     }
 
-    
+    /**
+     * @return the executionTime
+     */
+    public long getExecutionTime() {
+        return this.executionTime;
+    }
 }

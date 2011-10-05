@@ -19,7 +19,6 @@
 
 package org.jasig.portal.events;
 
-import org.jasig.portal.security.IPerson;
 
 /**
  * 
@@ -38,8 +37,8 @@ public abstract class LayoutPortalEvent extends PortalEvent {
         this.layoutId = -1;
     }
 
-	LayoutPortalEvent(Object source, String eventSessionId, IPerson person, long layoutId) {
-        super(source, eventSessionId, person);
+	LayoutPortalEvent(PortalEventBuilder portalEventBuilder, long layoutId) {
+        super(portalEventBuilder);
         this.layoutId = layoutId;
     }
 

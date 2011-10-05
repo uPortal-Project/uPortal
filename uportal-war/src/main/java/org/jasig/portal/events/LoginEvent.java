@@ -44,7 +44,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Immutable;
-import org.jasig.portal.security.IPerson;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
@@ -88,9 +87,9 @@ public final class LoginEvent extends PortalEvent {
         this.attributes = null;
     }
 
-    LoginEvent(Object source, String eventSessionId, IPerson person, 
+    LoginEvent(PortalEventBuilder eventBuilder, 
             Set<String> groups, Map<String, List<String>> attributes) {
-        super(source, eventSessionId, person);
+        super(eventBuilder);
         this.groups = new LinkedHashSet<String>(groups);
         this.attributes = new LinkedHashMap<String, UserAttributeList>();
         for (final Map.Entry<String, List<String>> attributeEntry : attributes.entrySet()) {

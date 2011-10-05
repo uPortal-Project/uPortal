@@ -19,7 +19,6 @@
 
 package org.jasig.portal.events;
 
-import org.jasig.portal.security.IPerson;
 
 
 public final class FolderAddedToLayoutPortalEvent extends LayoutPortalEvent {
@@ -33,9 +32,8 @@ public final class FolderAddedToLayoutPortalEvent extends LayoutPortalEvent {
         this.newFolderId = null;
     }
 
-    public FolderAddedToLayoutPortalEvent(Object source, String eventSessionId, IPerson person, long layoutId,
-            String newFolderId) {
-        super(source, eventSessionId, person, layoutId);
+    public FolderAddedToLayoutPortalEvent(PortalEventBuilder portalEventBuilder, long layoutId, String newFolderId) {
+        super(portalEventBuilder, layoutId);
         this.newFolderId = newFolderId;
     }
 

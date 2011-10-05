@@ -32,6 +32,7 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.Validate;
 import org.hibernate.annotations.Immutable;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.utils.SerializableObject;
@@ -69,6 +70,9 @@ public abstract class PortalEvent extends ApplicationEvent {
     @Column(name="EVENT_ID")
     private final long id;
     
+    @Column(name="SERVER_ID", length=200, nullable=false)
+    private final String serverName;
+    
     @Column(name="SESSION_ID", length=500, nullable=false)
     private final String eventSessionId;
     
@@ -84,16 +88,19 @@ public abstract class PortalEvent extends ApplicationEvent {
     PortalEvent() {
         super(UNKNOWN_SOURCE);
         this.id = -1;
+        this.serverName = null;
         this.eventSessionId = null;
         this.person = null;
         this.userName = null;
     }
 
-    PortalEvent(Object source, String eventSessionId, IPerson person) {
-        super(source);
+    PortalEvent(PortalEventBuilder eventBuilder) {
+        super(eventBuilder.source);
+        
         this.id = -1;
-        this.eventSessionId = eventSessionId;
-        this.person = person;
+        this.serverName = eventBuilder.serverName;
+        this.eventSessionId = eventBuilder.eventSessionId;
+        this.person = eventBuilder.person;
         this.userName = this.person.getUserName();
     }
     
@@ -112,6 +119,13 @@ public abstract class PortalEvent extends ApplicationEvent {
 
     final long getId() {
         return this.id;
+    }
+    
+    /**
+     * @return the serverName that created the event
+     */
+    public final String getServerId() {
+        return this.serverName;
     }
 
     /**
@@ -141,8 +155,39 @@ public abstract class PortalEvent extends ApplicationEvent {
     @Override
     public String toString() {
         return "PortalEvent [id=" + this.id + 
+                ", serverName=" + this.serverName +
                 ", eventSessionId=" + this.eventSessionId + 
                 ", userName=" + this.userName + 
                 ", timestampAsDate=" + this.getTimestampAsDate() + "]";
+    }
+    
+    /**
+     * Builder to simplify construction of PortalEvents, should be extended by
+     * any subclass of PortalEvent that wants to simplify its constructor
+     */
+    static class PortalEventBuilder {
+        private final Object source;
+        private final String serverName;
+        private final String eventSessionId;
+        private final IPerson person;
+        
+         PortalEventBuilder(PortalEventBuilder portalEventBuilder) {
+            this(portalEventBuilder.source, 
+                    portalEventBuilder.serverName, 
+                    portalEventBuilder.eventSessionId, 
+                    portalEventBuilder.person);
+        }
+
+        PortalEventBuilder(Object source, String serverName, String eventSessionId, IPerson person) {
+            Validate.notNull(source, "source");
+            Validate.notNull(serverName, "serverName");
+            Validate.notNull(eventSessionId, "eventSessionId");
+            Validate.notNull(person, "person");
+            
+            this.source = source;
+            this.serverName = serverName;
+            this.eventSessionId = eventSessionId;
+            this.person = person;
+        }
     }
 }

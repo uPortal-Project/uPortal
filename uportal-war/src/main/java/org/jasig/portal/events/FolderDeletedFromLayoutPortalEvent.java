@@ -21,24 +21,35 @@ package org.jasig.portal.events;
 
 
 
-public final class FolderMovedInLayoutPortalEvent extends LayoutPortalEvent {
+public final class FolderDeletedFromLayoutPortalEvent extends LayoutPortalEvent {
     private static final long serialVersionUID = 1L;
 
     private final String oldParentFolderId;
-    private final String movedFolderId;
+    private final String deletedFolderId;
+    private final String deletedFolderName;
+    
     
     @SuppressWarnings("unused")
-    private FolderMovedInLayoutPortalEvent() {
+    private FolderDeletedFromLayoutPortalEvent() {
         super();
         this.oldParentFolderId = null;
-        this.movedFolderId = null;
+        this.deletedFolderId = null;
+        this.deletedFolderName = null;
     }
 
-    FolderMovedInLayoutPortalEvent(PortalEventBuilder portalEventBuilder, long layoutId,
-            String oldParentFolderId, String movedFolderId) {
+    FolderDeletedFromLayoutPortalEvent(PortalEventBuilder portalEventBuilder, long layoutId,
+            String oldParentFolderId, String deletedFolderId, String deletedFolderName) {
         super(portalEventBuilder, layoutId);
         this.oldParentFolderId = oldParentFolderId;
-        this.movedFolderId = movedFolderId;
+        this.deletedFolderId = deletedFolderId;
+        this.deletedFolderName = deletedFolderName;
+    }
+    
+    /**
+     * @return the deletedFolderName
+     */
+    public String getDeletedFolderName() {
+        return this.deletedFolderName;
     }
 
     /**
@@ -49,9 +60,9 @@ public final class FolderMovedInLayoutPortalEvent extends LayoutPortalEvent {
     }
 
     /**
-     * @return the movedFolderId
+     * @return the deletedFolderId
      */
-    public String getMovedFolderId() {
-        return this.movedFolderId;
+    public String getDeletedFolderId() {
+        return this.deletedFolderId;
     }
 }

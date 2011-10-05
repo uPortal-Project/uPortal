@@ -117,24 +117,6 @@ public interface IUserLayout {
      */
     public String getCacheKey() throws PortalException;
 
-
-    /**
-     * Register a layout event listener
-     *
-     * @param l a <code>LayoutEventListener</code> object
-     * @return a <code>boolean</code> success status
-     */
-    public boolean addLayoutEventListener(LayoutEventListener l);
-
-
-    /**
-     * Remove a registered layout event listener.
-     *
-     * @param l a <code>LayoutEventListener</code> object
-     * @return a <code>boolean</code> success status
-     */
-    public boolean removeLayoutEventListener(LayoutEventListener l);
-
     /**
      * Returns a layout Id associated with this manager/
      *

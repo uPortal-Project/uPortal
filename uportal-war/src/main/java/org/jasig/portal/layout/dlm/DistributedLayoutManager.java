@@ -20,7 +20,6 @@
 package org.jasig.portal.layout.dlm;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -52,9 +51,6 @@ import org.jasig.portal.layout.IFolderLocalNameResolver;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutStore;
-import org.jasig.portal.layout.LayoutEvent;
-import org.jasig.portal.layout.LayoutEventListenerAdapter;
-import org.jasig.portal.layout.LayoutMoveEvent;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
@@ -75,8 +71,6 @@ import org.jasig.portal.xml.XmlUtilities;
 import org.jasig.portal.xml.xpath.XPathOperations;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -530,19 +524,13 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
             TabColumnPrefsHandler.deleteNode( ilfNode, (Element) parent,
                                               owner );
             // inform the listeners
-            boolean isChannel=false;
-            if(nodeDescription instanceof IUserLayoutChannelDescription) {
-                isChannel=true;
+            final int layoutId = this.getLayoutId();
+            if (nodeDescription instanceof IUserLayoutChannelDescription) {
+                final IUserLayoutChannelDescription userLayoutChannelDescription = (IUserLayoutChannelDescription)nodeDescription;
+                this.portalEventFactory.publishPortletDeletedFromLayoutPortalEvent(this, this.owner, layoutId, parentNodeId, userLayoutChannelDescription.getFunctionalName());
             }
-            final IUserLayoutNodeDescription parentNode = this.getNode(parentNodeId);
-            LayoutMoveEvent ev=new LayoutMoveEvent(this, null, nodeDescription, parentNode);
-            for(Iterator i=listeners.iterator();i.hasNext();) {
-                LayoutEventListener lel=(LayoutEventListener)i.next();
-                if(isChannel) {
-                    lel.channelDeleted(ev);
-                } else {
-                    lel.folderDeleted(ev);
-                }
+            else {
+                this.portalEventFactory.publishFolderDeletedFromLayoutPortalEvent(this, this.owner, layoutId, parentNodeId, nodeDescription.getId(), nodeDescription.getName());
             }
 
             return true;
@@ -578,16 +566,6 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
                 IUserLayoutChannelDescription newChanDesc = 
                     (IUserLayoutChannelDescription) node;
                 updateChannelNode(nodeId, newChanDesc, oldChanDesc);
-
-                // inform the listeners
-                final String parentNodeId = this.getParentId(nodeId);
-                final IUserLayoutNodeDescription parentNode = this.getNode(parentNodeId);
-                LayoutEvent ev = new LayoutEvent(this, parentNode, node);
-                for (Iterator i = listeners.iterator(); i.hasNext();)
-                {
-                    LayoutEventListener lel = (LayoutEventListener) i.next();
-                    lel.channelUpdated(ev);
-                }
             }
             else
             {
@@ -600,15 +578,6 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
                 {
                     IUserLayoutFolderDescription newFolderDesc=(IUserLayoutFolderDescription) node;
                     updateFolderNode(nodeId, newFolderDesc, oldFolderDesc);
-
-                    // inform the listeners
-                    final String parentNodeId = this.getParentId(nodeId);
-                    final IUserLayoutNodeDescription parentNode = this.getNode(parentNodeId);
-                    LayoutEvent ev=new LayoutEvent(this, parentNode, node);
-                    for(Iterator i=listeners.iterator();i.hasNext();) {
-                        LayoutEventListener lel=(LayoutEventListener)i.next();
-                        lel.folderUpdated(ev);
-                    }
                 }
             }
             this.updateCacheKey();

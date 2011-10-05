@@ -21,31 +21,41 @@ package org.jasig.portal.events;
 
 
 
-public final class PortletAddedToLayoutPortalEvent extends LayoutPortalEvent {
+public final class PortletMovedInLayoutPortalEvent extends LayoutPortalEvent {
     private static final long serialVersionUID = 1L;
-    
-    private final String parentFolderId;
+
+    private final String oldParentFolderId;
+    private final String newParentFolderId;
     private final String fname;
     
     @SuppressWarnings("unused")
-    private PortletAddedToLayoutPortalEvent() {
+    private PortletMovedInLayoutPortalEvent() {
         super();
-        this.parentFolderId = null;
+        this.oldParentFolderId = null;
+        this.newParentFolderId = null;
         this.fname = null;
     }
 
-    PortletAddedToLayoutPortalEvent(PortalEventBuilder portalEventBuilder, long layoutId,
-            String parentFolderId, String fname) {
+    PortletMovedInLayoutPortalEvent(PortalEventBuilder portalEventBuilder, long layoutId,
+            String oldParentFolderId, String newParentFolderId, String fname) {
         super(portalEventBuilder, layoutId);
-        this.parentFolderId = parentFolderId;
+        this.oldParentFolderId = oldParentFolderId;
+        this.newParentFolderId = newParentFolderId;
         this.fname = fname;
     }
 
     /**
-     * @return the parentFolderId
+     * @return the oldParentFolderId
      */
-    public String getParentFolderId() {
-        return this.parentFolderId;
+    public String getOldParentFolderId() {
+        return this.oldParentFolderId;
+    }
+
+    /**
+     * @return the newParentFolderId
+     */
+    public String getNewParentFolderId() {
+        return this.newParentFolderId;
     }
 
     /**

@@ -17,37 +17,20 @@
  * under the License.
  */
 
-package org.jasig.portal.events;
-
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Immutable;
+package org.jasig.portal;
 
 /**
- * @author Scott Battaglia
- * @version $Revision$ $Date$
- * @since 2.6
+ * Provides information about the portal
+ * 
+ * @author Eric Dalquist
+ * @version $Revision$
  */
-@Entity
-@Table(name = "UPE_LOGOUT_EVENT")
-@Inheritance(strategy=InheritanceType.JOINED)
-@PrimaryKeyJoinColumn(name="EVENT_ID")
-@Immutable
-public final class LogoutEvent extends PortalEvent {
-    private static final long serialVersionUID = 1L;
-    
-    @SuppressWarnings("unused")
-    private LogoutEvent() {
-        super();
-    }
-
-    LogoutEvent(PortalEventBuilder eventBuilder) {
-        super(eventBuilder);
-    }
-
-    
+public interface IPortalInfoProvider {
+    /**
+     * The name of the server, clients can assume that this name will be unique across all
+     * servers in a cluster.
+     * 
+     * @return The name of the server
+     */
+    public String getServerName();
 }

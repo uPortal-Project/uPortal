@@ -282,13 +282,6 @@ public class TransientUserLayoutManagerWrapper implements IUserLayoutManager {
         return man.createNodeDescription(nodeType);
     }
 
-    public boolean addLayoutEventListener(LayoutEventListener l){
-        return man.addLayoutEventListener(l);
-    }
-    public boolean removeLayoutEventListener(LayoutEventListener l){
-        return man.removeLayoutEventListener(l);
-    }
-
 
     /**
      * Given a subscribe Id, return a ChannelDefinition.

@@ -19,10 +19,6 @@
 
 package org.jasig.portal.layout;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.immutable.ImmutableUserLayoutManagerWrapper;
@@ -30,7 +26,6 @@ import org.jasig.portal.security.IPerson;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 
@@ -45,16 +40,10 @@ public class UserLayoutManagerFactory implements BeanFactoryAware {
     public static final String USER_LAYOUT_MANAGER_PROTOTYPE_BEAN_NAME = "userLayoutManager";
     
     private BeanFactory beanFactory;
-    private Collection<LayoutEventListener> layoutEventListeners = Collections.emptySet();
     
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
         this.beanFactory = beanFactory;
-    }
-
-    @Autowired
-    public void setLayoutEventListeners(Collection<LayoutEventListener> layoutEventListeners) {
-        this.layoutEventListeners = new LinkedHashSet<LayoutEventListener>(layoutEventListeners);
     }
     
     /**
@@ -64,8 +53,6 @@ public class UserLayoutManagerFactory implements BeanFactoryAware {
      */
     public IUserLayoutManager getUserLayoutManager(IPerson person, IUserProfile profile) throws PortalException {
         final IUserLayoutManager userLayoutManager = (IUserLayoutManager)this.beanFactory.getBean(USER_LAYOUT_MANAGER_PROTOTYPE_BEAN_NAME, person, profile);
-        
-        userLayoutManager.addLayoutEventListeners(layoutEventListeners);
         
         return new TransientUserLayoutManagerWrapper(userLayoutManager);
     }

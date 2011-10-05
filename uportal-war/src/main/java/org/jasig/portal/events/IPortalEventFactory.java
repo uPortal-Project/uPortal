@@ -43,14 +43,24 @@ public interface IPortalEventFactory {
             IPerson person, long layoutId, String oldParentFolderId, String newParentFolderId, String fname);
     public void publishPortletMovedInLayoutPortalEvent(Object source, 
             IPerson person, long layoutId, String oldParentFolderId, String newParentFolderId, String fname);
+    
+    public void publishPortletDeletedFromLayoutPortalEvent(HttpServletRequest request, Object source, 
+            IPerson person, long layoutId, String oldParentFolderId, String fname);
+    public void publishPortletDeletedFromLayoutPortalEvent(Object source, 
+            IPerson person, long layoutId, String oldParentFolderId, String fname);
 
     public void publishFolderAddedToLayoutPortalEvent(HttpServletRequest request, Object source, 
-            IPerson person, long layoutId, String folderId);
+            IPerson person, long layoutId, String newFolderId);
     public void publishFolderAddedToLayoutPortalEvent(Object source, 
-            IPerson person, long layoutId, String folderId);
+            IPerson person, long layoutId, String newFolderId);
     
     public void publishFolderMovedInLayoutPortalEvent(HttpServletRequest request, Object source, 
-            IPerson person, long layoutId, String oldParentFolderId, String newParentFolderId, String folderId);
+            IPerson person, long layoutId, String oldParentFolderId, String movedFolderId);
     public void publishFolderMovedInLayoutPortalEvent(Object source, 
-            IPerson person, long layoutId, String oldParentFolderId, String newParentFolderId, String folderId);
+            IPerson person, long layoutId, String oldParentFolderId, String movedFolderId);
+
+    public void publishFolderDeletedFromLayoutPortalEvent(HttpServletRequest request, Object source, 
+            IPerson person, long layoutId, String oldParentFolderId, String deletedFolderId, String deletedFolderName);
+    public void publishFolderDeletedFromLayoutPortalEvent(Object source, 
+            IPerson person, long layoutId, String oldParentFolderId, String deletedFolderId, String deletedFolderName);
 }

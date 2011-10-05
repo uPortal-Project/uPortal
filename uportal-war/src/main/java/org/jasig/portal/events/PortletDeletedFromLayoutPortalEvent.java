@@ -19,35 +19,39 @@
 
 package org.jasig.portal.events;
 
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Table;
 
-import org.hibernate.annotations.Immutable;
 
-/**
- * @author Scott Battaglia
- * @version $Revision$ $Date$
- * @since 2.6
- */
-@Entity
-@Table(name = "UPE_LOGOUT_EVENT")
-@Inheritance(strategy=InheritanceType.JOINED)
-@PrimaryKeyJoinColumn(name="EVENT_ID")
-@Immutable
-public final class LogoutEvent extends PortalEvent {
+public final class PortletDeletedFromLayoutPortalEvent extends LayoutPortalEvent {
     private static final long serialVersionUID = 1L;
+
+    private final String oldParentFolderId;
+    private final String fname;
     
     @SuppressWarnings("unused")
-    private LogoutEvent() {
+    private PortletDeletedFromLayoutPortalEvent() {
         super();
+        this.oldParentFolderId = null;
+        this.fname = null;
     }
 
-    LogoutEvent(PortalEventBuilder eventBuilder) {
-        super(eventBuilder);
+    PortletDeletedFromLayoutPortalEvent(PortalEventBuilder portalEventBuilder, long layoutId,
+            String oldParentFolderId, String fname) {
+        super(portalEventBuilder, layoutId);
+        this.oldParentFolderId = oldParentFolderId;
+        this.fname = fname;
     }
 
-    
+    /**
+     * @return the oldParentFolderId
+     */
+    public String getOldParentFolderId() {
+        return this.oldParentFolderId;
+    }
+
+    /**
+     * @return the fname
+     */
+    public String getFname() {
+        return this.fname;
+    }
 }
