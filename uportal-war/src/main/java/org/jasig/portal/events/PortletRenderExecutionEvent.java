@@ -19,41 +19,39 @@
 
 package org.jasig.portal.events;
 
-import org.jasig.portal.security.IPerson;
-
-
-
-public final class FolderMovedInLayoutPortalEvent extends LayoutPortalEvent {
+/**
+ * @author Eric Dalquist
+ * @version $Revision$
+ */
+public final class PortletRenderExecutionEvent extends PortletExecutionEvent {
     private static final long serialVersionUID = 1L;
-
-    private final String oldParentFolderId;
-    private final String movedFolderId;
     
+    private final boolean targeted;
+    private final boolean cached;
+
     @SuppressWarnings("unused")
-    private FolderMovedInLayoutPortalEvent() {
-        super();
-        this.oldParentFolderId = null;
-        this.movedFolderId = null;
+    private PortletRenderExecutionEvent() {
+        this.targeted = false;
+        this.cached = false;
     }
 
-    FolderMovedInLayoutPortalEvent(PortalEventBuilder portalEventBuilder, IPerson layoutOwner, long layoutId,
-            String oldParentFolderId, String movedFolderId) {
-        super(portalEventBuilder, layoutOwner, layoutId);
-        this.oldParentFolderId = oldParentFolderId;
-        this.movedFolderId = movedFolderId;
-    }
-
-    /**
-     * @return the oldParentFolderId
-     */
-    public String getOldParentFolderId() {
-        return this.oldParentFolderId;
+    PortletRenderExecutionEvent(PortalEventBuilder eventBuilder, long executionTime, boolean targeted, boolean cached) {
+        super(eventBuilder, executionTime);
+        this.targeted = targeted;
+        this.cached = cached;
     }
 
     /**
-     * @return the movedFolderId
+     * @return If the portlet was explicitly targeted by the request that resulted in it rendering
      */
-    public String getMovedFolderId() {
-        return this.movedFolderId;
+    public boolean isTargeted() {
+        return this.targeted;
+    }
+
+    /**
+     * @return If the rendering was from cache
+     */
+    public boolean isCached() {
+        return this.cached;
     }
 }

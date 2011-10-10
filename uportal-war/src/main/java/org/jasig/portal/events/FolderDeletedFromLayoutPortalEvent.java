@@ -19,6 +19,8 @@
 
 package org.jasig.portal.events;
 
+import org.jasig.portal.security.IPerson;
+
 
 
 public final class FolderDeletedFromLayoutPortalEvent extends LayoutPortalEvent {
@@ -37,9 +39,9 @@ public final class FolderDeletedFromLayoutPortalEvent extends LayoutPortalEvent 
         this.deletedFolderName = null;
     }
 
-    FolderDeletedFromLayoutPortalEvent(PortalEventBuilder portalEventBuilder, long layoutId,
+    FolderDeletedFromLayoutPortalEvent(PortalEventBuilder portalEventBuilder, IPerson layoutOwner, long layoutId,
             String oldParentFolderId, String deletedFolderId, String deletedFolderName) {
-        super(portalEventBuilder, layoutId);
+        super(portalEventBuilder, layoutOwner, layoutId);
         this.oldParentFolderId = oldParentFolderId;
         this.deletedFolderId = deletedFolderId;
         this.deletedFolderName = deletedFolderName;

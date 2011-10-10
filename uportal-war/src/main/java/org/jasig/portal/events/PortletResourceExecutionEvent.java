@@ -19,41 +19,44 @@
 
 package org.jasig.portal.events;
 
-import org.jasig.portal.security.IPerson;
+import javax.portlet.ResourceRequest;
 
 
-
-public final class FolderMovedInLayoutPortalEvent extends LayoutPortalEvent {
+/**
+ * @author Eric Dalquist
+ * @version $Revision$
+ */
+public final class PortletResourceExecutionEvent extends PortletExecutionEvent {
     private static final long serialVersionUID = 1L;
-
-    private final String oldParentFolderId;
-    private final String movedFolderId;
     
+    private final String resourceId;
+    private final boolean cached;
+
     @SuppressWarnings("unused")
-    private FolderMovedInLayoutPortalEvent() {
-        super();
-        this.oldParentFolderId = null;
-        this.movedFolderId = null;
+    private PortletResourceExecutionEvent() {
+        this.resourceId = null;
+        this.cached = false;
     }
 
-    FolderMovedInLayoutPortalEvent(PortalEventBuilder portalEventBuilder, IPerson layoutOwner, long layoutId,
-            String oldParentFolderId, String movedFolderId) {
-        super(portalEventBuilder, layoutOwner, layoutId);
-        this.oldParentFolderId = oldParentFolderId;
-        this.movedFolderId = movedFolderId;
-    }
-
-    /**
-     * @return the oldParentFolderId
-     */
-    public String getOldParentFolderId() {
-        return this.oldParentFolderId;
+    PortletResourceExecutionEvent(PortalEventBuilder eventBuilder, long executionTime, String resourceId,
+            boolean cached) {
+        super(eventBuilder, executionTime);
+        this.resourceId = resourceId;
+        this.cached = cached;
     }
 
     /**
-     * @return the movedFolderId
+     * @return the resourceId
+     * @see ResourceRequest#getResourceID()
      */
-    public String getMovedFolderId() {
-        return this.movedFolderId;
+    public String getResourceId() {
+        return this.resourceId;
+    }
+
+    /**
+     * @return the cached
+     */
+    public boolean isCached() {
+        return this.cached;
     }
 }

@@ -19,6 +19,8 @@
 
 package org.jasig.portal.events;
 
+import org.jasig.portal.security.IPerson;
+
 
 
 public final class PortletMovedInLayoutPortalEvent extends LayoutPortalEvent {
@@ -36,9 +38,9 @@ public final class PortletMovedInLayoutPortalEvent extends LayoutPortalEvent {
         this.fname = null;
     }
 
-    PortletMovedInLayoutPortalEvent(PortalEventBuilder portalEventBuilder, long layoutId,
+    PortletMovedInLayoutPortalEvent(PortalEventBuilder portalEventBuilder, IPerson layoutOwner, long layoutId,
             String oldParentFolderId, String newParentFolderId, String fname) {
-        super(portalEventBuilder, layoutId);
+        super(portalEventBuilder, layoutOwner, layoutId);
         this.oldParentFolderId = oldParentFolderId;
         this.newParentFolderId = newParentFolderId;
         this.fname = fname;

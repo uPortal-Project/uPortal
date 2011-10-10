@@ -19,32 +19,32 @@
 
 package org.jasig.portal.events;
 
-import org.jasig.portal.security.IPerson;
+import javax.portlet.ActionRequest;
 
-
-
-public final class FolderAddedToLayoutPortalEvent extends LayoutPortalEvent {
+/**
+ * @author Eric Dalquist
+ * @version $Revision$
+ */
+public final class PortletActionExecutionEvent extends PortletExecutionEvent {
     private static final long serialVersionUID = 1L;
-
-    private final String newFolderId;
     
+    private final String actionName;
+
     @SuppressWarnings("unused")
-    private FolderAddedToLayoutPortalEvent() {
-        super();
-        this.newFolderId = null;
+    private PortletActionExecutionEvent() {
+        this.actionName = null;
     }
 
-    public FolderAddedToLayoutPortalEvent(PortalEventBuilder portalEventBuilder, IPerson layoutOwner, 
-            long layoutId, String newFolderId) {
-        super(portalEventBuilder, layoutOwner, layoutId);
-        this.newFolderId = newFolderId;
+    PortletActionExecutionEvent(PortalEventBuilder eventBuilder, long executionTime, String actionName) {
+        super(eventBuilder, executionTime);
+        this.actionName = actionName;
     }
-
 
     /**
-     * @return the newFolderId
+     * @return the actionName
+     * @see ActionRequest#ACTION_NAME
      */
-    public String getNewFolderId() {
-        return this.newFolderId;
+    public String getActionName() {
+        return this.actionName;
     }
 }

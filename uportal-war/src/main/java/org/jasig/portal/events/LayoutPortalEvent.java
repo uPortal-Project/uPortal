@@ -19,6 +19,8 @@
 
 package org.jasig.portal.events;
 
+import org.jasig.portal.security.IPerson;
+
 
 /**
  * 
@@ -31,15 +33,22 @@ public abstract class LayoutPortalEvent extends PortalEvent {
     private static final long serialVersionUID = 1L;
     
     private final long layoutId;
+    private final String layoutOwner;
+    private final IPerson layoutOwnerPerson;
+
 	
 	LayoutPortalEvent() {
         super();
         this.layoutId = -1;
+        this.layoutOwnerPerson = null;
+        this.layoutOwner = null;
     }
 
-	LayoutPortalEvent(PortalEventBuilder portalEventBuilder, long layoutId) {
+	LayoutPortalEvent(PortalEventBuilder portalEventBuilder, IPerson layoutOwner, long layoutId) {
         super(portalEventBuilder);
         this.layoutId = layoutId;
+        this.layoutOwnerPerson = layoutOwner;
+        this.layoutOwner = this.layoutOwnerPerson.getUserName();
     }
 
     /**
@@ -47,5 +56,19 @@ public abstract class LayoutPortalEvent extends PortalEvent {
      */
     public long getLayoutId() {
         return this.layoutId;
+    }
+
+    /**
+     * @return the layoutOwner
+     */
+    public String getLayoutOwner() {
+        return this.layoutOwner;
+    }
+
+    /**
+     * @return the layoutOwnerPerson
+     */
+    public IPerson getLayoutOwnerPerson() {
+        return this.layoutOwnerPerson;
     }
 }
