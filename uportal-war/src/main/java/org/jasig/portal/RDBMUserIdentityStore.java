@@ -19,6 +19,7 @@
 
 package  org.jasig.portal;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,10 +27,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
 
 import javax.sql.DataSource;
+
+import net.sf.ehcache.Ehcache;
+import net.sf.ehcache.constructs.blocking.CacheEntryFactory;
+import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,8 +44,8 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.services.SequenceGenerator;
-import org.jasig.portal.utils.ConcurrentMapUtils;
 import org.jasig.portal.utils.CounterStoreFactory;
+import org.jasig.portal.utils.SerializableObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
@@ -57,7 +60,6 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.google.common.collect.MapMaker;
 import com.googlecode.ehcache.annotations.Cacheable;
 
 /**
@@ -75,25 +77,23 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
   // Constants
     private static final String defaultTemplateUserName = PropertiesManager.getProperty("org.jasig.portal.services.Authentication.defaultTemplateUserName");
     private static final String templateAttrName = "uPortalTemplateUserName";
-    static int DEBUG = 0;
-    private static final ConcurrentMap<String, Object> userLocks = new MapMaker()
-        .expireAfterAccess(1, TimeUnit.MINUTES)
-        .makeMap();
-    
-    private static Object getLock(IPerson person) {
-        final String username = (String)person.getAttribute(IPerson.USERNAME);
-        
-        final Object lock = userLocks.get(username);
-        if (lock != null) {
-            return lock;
-        }
-        
-        return ConcurrentMapUtils.putIfAbsent(userLocks, username, new Object());
-    }
     
     private JdbcOperations jdbcOperations;
     private TransactionOperations transactionOperations;
+    private Ehcache userLockCache;
     
+    @Autowired
+    @Qualifier("org.jasig.portal.RDBMUserIdentityStore.userLockCache")
+    public void setUserLockCache(Ehcache userLockCache) {
+        this.userLockCache = new SelfPopulatingCache(userLockCache, new CacheEntryFactory() {
+            
+            @Override
+            public Object createEntry(Object key) throws Exception {
+                return new SerializableObject();
+            }
+        });
+    }
+
     @Autowired
     public void setPlatformTransactionManager(@Qualifier("PortalDb") PlatformTransactionManager platformTransactionManager) {
         this.transactionOperations = new TransactionTemplate(platformTransactionManager);
@@ -102,6 +102,11 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     @javax.annotation.Resource(name="PortalDb")
     public void setDataSource(DataSource dataSource) {
         this.jdbcOperations = new JdbcTemplate(dataSource);
+    }
+    
+    private Serializable getLock(IPerson person) {
+        final String username = (String)person.getAttribute(IPerson.USERNAME);
+        return this.userLockCache.get(username);
     }
     
  /**
