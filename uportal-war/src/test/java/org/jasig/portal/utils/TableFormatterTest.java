@@ -31,6 +31,9 @@ import org.junit.Test;
  * @version $Revision$
  */
 public class TableFormatterTest {
+
+	private static String newline = System.getProperty("line.separator");
+
     @Test
     public void testTableFormatter() {
         
@@ -58,11 +61,11 @@ public class TableFormatterTest {
         tableFormatter.format(new Formatter(result));
         
         final String expected =
-                " Data Type          | Export | Delete \n" +  
-                "--------------------+--------+--------\n" +
-                " portlet-definition | true   | true   \n" +
-                " portlet-type       | true   | true   \n" +
-                " entity             | true   | false  \n";
+                " Data Type          | Export | Delete " + newline +  
+                "--------------------+--------+--------" + newline +  
+                " portlet-definition | true   | true   " + newline +  
+                " portlet-type       | true   | true   " + newline +  
+                " entity             | true   | false  " + newline;
 
         assertEquals(expected, result.toString());
     }
