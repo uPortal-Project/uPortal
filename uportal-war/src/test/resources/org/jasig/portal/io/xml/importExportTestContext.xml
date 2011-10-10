@@ -29,21 +29,6 @@
                         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
                         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
                         
-    <!-- This bean CANNOT be autowired or it will not function correctly -->
-    <bean class="org.jasig.portal.utils.cache.EhcacheManagerBeanConfigurer">
-        <property name="cacheManager" ref="cacheManager" />
-    </bean>
-    
-    <!-- 
-     | The per-cache settings are configured in /uportal-war/src/main/resources/properties/ehcache.xml
-     | This file is specified by the cacheManager bean at the bottom of this document
-     +-->
-    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
-        <property name="cacheManagerName" value="uPortal.cacheManager" />
-        <property name="configLocation" value="classpath:/properties/ehcache.xml" />
-        <property name="shared" value="true" />
-    </bean>
-    
     <bean class="org.jasig.portal.io.xml.ssd.StylesheetDescriptorPortalDataType" />
     <bean id="stylesheetDescriptorImporterExporter" class="org.jasig.portal.io.xml.ssd.StylesheetDescriptorImporterExporter">
         <property name="contextPath" value="org.jasig.portal.io.xml.ssd" />
@@ -60,8 +45,12 @@
         <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/user https://source.jasig.org/schemas/uportal/io/user/user-4.0.xsd" />
     </bean>
     <bean id="localAccountDaoImpl" class="org.jasig.portal.persondir.dao.jpa.JpaLocalAccountDaoImpl" />
-    <bean id="userIdentityStore" class="org.jasig.portal.RDBMUserIdentityStore" />
-
+    <bean id="userIdentityStore" class="org.jasig.portal.RDBMUserIdentityStore">
+        <property name="userLockCache" ref="org.jasig.portal.RDBMUserIdentityStore.userLockCache" />
+    </bean>
+    <bean id="org.jasig.portal.RDBMUserIdentityStore.userLockCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+        <qualifier value="org.jasig.portal.RDBMUserIdentityStore.userLockCache" />
+    </bean>
     
     <bean class="org.jasig.portal.io.xml.permission.PermissionOwnerPortalDataType" />
     <bean id="permissionOwnerImporterExporter" class="org.jasig.portal.io.xml.permission.PermissionOwnerImporterExporter">
