@@ -39,7 +39,6 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.ILockableEntityGroup;
-import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.services.GroupService;
@@ -48,6 +47,7 @@ import org.jasig.portal.utils.CounterStoreFactory;
 import org.jasig.portal.utils.SerializableObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.ConnectionCallback;
@@ -71,17 +71,22 @@ import com.googlecode.ehcache.annotations.Cacheable;
 public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
     private static final Log log = LogFactory.getLog(RDBMUserIdentityStore.class);
-    private static String PROFILE_TABLE = "UP_USER_PROFILE";
+    private static final String PROFILE_TABLE = "UP_USER_PROFILE";
 
   //*********************************************************************
   // Constants
-    private static final String defaultTemplateUserName = PropertiesManager.getProperty("org.jasig.portal.services.Authentication.defaultTemplateUserName");
     private static final String templateAttrName = "uPortalTemplateUserName";
     
+    private String defaultTemplateUserName;
     private JdbcOperations jdbcOperations;
     private TransactionOperations transactionOperations;
     private Ehcache userLockCache;
     
+    @Value("${org.jasig.portal.services.Authentication.defaultTemplateUserName}")
+    public void setDefaultTemplateUserName(String defaultTemplateUserName) {
+        this.defaultTemplateUserName = defaultTemplateUserName;
+    }
+
     @Autowired
     @Qualifier("org.jasig.portal.RDBMUserIdentityStore.userLockCache")
     public void setUserLockCache(Ehcache userLockCache) {
