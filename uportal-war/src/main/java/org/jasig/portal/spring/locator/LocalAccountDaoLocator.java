@@ -47,7 +47,7 @@ public class LocalAccountDaoLocator extends AbstractBeanLocator<ILocalAccountDao
             locator = locatorInstance;
             if (locator == null) {
                 LOG.warn("Instance of '" + BEAN_NAME + "' still null after portal application context has been initialized");
-                return (ILocalAccountDao)applicationContext.getBean(BEAN_NAME, ILocalAccountDao.class);
+                return applicationContext.getBean(BEAN_NAME, ILocalAccountDao.class);
             }
         }
         

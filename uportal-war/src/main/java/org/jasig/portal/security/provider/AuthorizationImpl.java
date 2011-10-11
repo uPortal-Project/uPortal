@@ -52,10 +52,10 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IUpdatingPermissionManager;
 import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.spring.locator.CacheFactoryLocator;
 import org.jasig.portal.spring.locator.PortletCategoryRegistryLocator;
 import org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator;
 import org.jasig.portal.utils.cache.CacheFactory;
-import org.jasig.portal.utils.cache.CacheFactoryLocator;
 
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com

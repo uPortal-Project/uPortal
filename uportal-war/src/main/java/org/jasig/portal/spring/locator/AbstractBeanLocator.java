@@ -36,9 +36,9 @@ import org.springframework.util.Assert;
  */
 public abstract class AbstractBeanLocator<T> implements DisposableBean, InitializingBean {
     protected final Log logger = LogFactory.getLog(AbstractBeanLocator.class);
-    
+
     private final T instance;
-    
+
     public AbstractBeanLocator(T instance, Class<T> type) {
         Assert.notNull(instance, "instance must not be null");
         Assert.notNull(type, "type must not be null");
@@ -46,21 +46,23 @@ public abstract class AbstractBeanLocator<T> implements DisposableBean, Initiali
 
         this.instance = instance;
     }
-    
+
     protected abstract void setLocator(AbstractBeanLocator<T> locator);
-    
+
     protected abstract AbstractBeanLocator<T> getLocator();
 
     public final T getInstance() {
         return this.instance;
     }
-    
+
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
+    @Override
     public final void afterPropertiesSet() throws Exception {
         if (this.getLocator() != null) {
-            logger.warn("Static " + this.getClass().getName() + " reference has already been set and setInstance is being called");
+            this.logger.warn("Static " + this.getClass().getName()
+                    + " reference has already been set and setInstance is being called");
         }
         this.setLocator(this);
     }
@@ -68,9 +70,11 @@ public abstract class AbstractBeanLocator<T> implements DisposableBean, Initiali
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.DisposableBean#destroy()
      */
+    @Override
     public final void destroy() throws Exception {
         if (this.getLocator() == null) {
-            logger.warn("Static " + this.getClass().getName() + " reference is already null and destroy is being called");
+            this.logger.warn("Static " + this.getClass().getName()
+                    + " reference is already null and destroy is being called");
         }
         this.setLocator(null);
     }

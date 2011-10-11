@@ -42,7 +42,7 @@ public class PortalPasswordServiceLocator extends AbstractBeanLocator<IPortalPas
             locator = locatorInstance;
             if (locator == null) {
                 LOG.warn("Instance of '" + BEAN_NAME + "' still null after portal application context has been initialized");
-                return (IPortalPasswordService)applicationContext.getBean(BEAN_NAME, IPortalPasswordService.class);
+                return applicationContext.getBean(BEAN_NAME, IPortalPasswordService.class);
             }
         }
         

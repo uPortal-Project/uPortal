@@ -22,13 +22,11 @@ package  org.jasig.portal.services;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.UserIdentityStoreFactory;
 import org.jasig.portal.events.EventPublisherLocator;
 import org.jasig.portal.events.support.UserLoggedInPortalEvent;
 import org.jasig.portal.properties.PropertiesManager;
@@ -39,6 +37,8 @@ import org.jasig.portal.security.IPrincipal;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.security.provider.ChainingSecurityContext;
+import org.jasig.portal.spring.locator.PersonAttributeDaoLocator;
+import org.jasig.portal.spring.locator.UserIdentityStoreLocator;
 import org.jasig.portal.utils.MovingAverage;
 import org.jasig.portal.utils.MovingAverageSample;
 import org.jasig.services.persondir.IPersonAttributeDao;
@@ -146,7 +146,7 @@ public class Authentication {
          // Populate the person object using the PersonDirectory if applicable
          if (PropertiesManager.getPropertyAsBoolean("org.jasig.portal.services.Authentication.usePersonDirectory")) {
             // Retrieve all of the attributes associated with the person logging in
-            final IPersonAttributeDao pa = PersonDirectory.getPersonAttributeDao();
+            final IPersonAttributeDao pa = PersonAttributeDaoLocator.getPersonAttributeDao();
             final String username = this.getUsername(person);
             final IPersonAttributes personAttributes = pa.getPerson(username);
 
@@ -187,7 +187,7 @@ public class Authentication {
          }
          try {
             // Attempt to retrieve the UID
-            int newUID = UserIdentityStoreFactory.getUserIdentityStoreImpl().getPortalUID(person,
+            int newUID = UserIdentityStoreLocator.getUserIdentityStore().getPortalUID(person,
                   autocreate);
             person.setID(newUID);
          } catch (AuthorizationException ae) {

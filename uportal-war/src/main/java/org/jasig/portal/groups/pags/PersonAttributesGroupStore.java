@@ -49,7 +49,7 @@ import org.jasig.portal.groups.ILockableEntityGroup;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.RestrictedPerson;
-import org.jasig.portal.services.PersonDirectory;
+import org.jasig.portal.spring.locator.PersonAttributeDaoLocator;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 
@@ -146,7 +146,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
              { return false; }
          IPerson person = null;
          try {
-             IPersonAttributeDao pa = PersonDirectory.getPersonAttributeDao();
+             IPersonAttributeDao pa = PersonAttributeDaoLocator.getPersonAttributeDao();
              final IPersonAttributes personAttributes = pa.getPerson(member.getKey());
 
              RestrictedPerson rp = PersonFactory.createRestrictedPerson();

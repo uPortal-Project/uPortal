@@ -36,11 +36,6 @@
         <constructor-arg index="0" ref="userLayoutStore" />
     </bean>
     
-    <bean id="org.jasig.portal.spring.locator.JpaInterceptorLocator"
-            class="org.jasig.portal.spring.locator.JpaInterceptorLocator">
-        <constructor-arg index="0" ref="jpaInterceptor" />
-    </bean>
-    
     <bean id="org.jasig.portal.spring.locator.PersonManagerLocator" 
             class="org.jasig.portal.spring.locator.PersonManagerLocator">
     </bean>

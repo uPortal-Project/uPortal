@@ -23,7 +23,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.fragment.subscribe.dao.IUserFragmentSubscriptionDao;
 import org.jasig.portal.spring.PortalApplicationContextLocator;
-import org.jasig.portal.utils.cache.CacheFactory;
 import org.springframework.context.ApplicationContext;
 
 @Deprecated
@@ -45,7 +44,7 @@ public class UserFragmentSubscriptionDaoLocator  extends
             locator = locatorInstance;
             if (locator == null) {
                 LOG.warn("Instance of '" + BEAN_NAME + "' still null after portal application context has been initialized");
-                return (IUserFragmentSubscriptionDao)applicationContext.getBean(BEAN_NAME, CacheFactory.class);
+                return applicationContext.getBean(BEAN_NAME, IUserFragmentSubscriptionDao.class);
             }
         }
         

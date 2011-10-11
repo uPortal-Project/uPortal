@@ -47,7 +47,7 @@ public class PersonManagerLocator extends AbstractBeanLocator<IPersonManager> {
             locator = locatorInstance;
             if (locator == null) {
                 LOG.warn("Instance of '" + BEAN_NAME + "' still null after portal application context has been initialized");
-                return (IPersonManager)applicationContext.getBean(BEAN_NAME, IPersonManager.class);
+                return applicationContext.getBean(BEAN_NAME, IPersonManager.class);
             }
         }
         

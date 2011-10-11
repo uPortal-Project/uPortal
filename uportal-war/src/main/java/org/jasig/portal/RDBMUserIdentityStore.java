@@ -43,7 +43,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.services.SequenceGenerator;
-import org.jasig.portal.utils.CounterStoreFactory;
+import org.jasig.portal.spring.locator.CounterStoreLocator;
 import org.jasig.portal.utils.SerializableObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -378,7 +378,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
    }
   
   protected int getNewPortalUID(IPerson person) throws Exception {
-	return CounterStoreFactory.getCounterStoreImpl().getIncrementIntegerId("UP_USER");
+	return CounterStoreLocator.getCounterStore().getIncrementIntegerId("UP_USER");
   }
 
   static final protected void commit (Connection connection) {
