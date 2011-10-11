@@ -20,15 +20,13 @@
 package org.jasig.portal.portlet.rendering.worker;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.orm.jpa.EntityManagerFactoryUtils;
 import org.springframework.orm.jpa.EntityManagerHolder;
+import org.springframework.orm.jpa.JpaAccessor;
+import org.springframework.orm.jpa.JpaInterceptor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
@@ -38,55 +36,46 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
  * 
  * @author Eric Dalquist
  * @version $Revision$
+ * @see JpaInterceptor
  */
-@Service("JpaPortletExecutionInterceptor")
-public class JpaPortletExecutionInterceptor extends PortletExecutionInterceptorAdaptor {
+public class JpaPortletExecutionInterceptor extends JpaAccessor implements IPortletExecutionInterceptor {
+    private static final String IS_NEW = JpaPortletExecutionInterceptor.class.getName() + ".IS_NEW";
     private static final String ENTITY_MANAGER_FACTORY = JpaPortletExecutionInterceptor.class.getName() + ".ENTITY_MANAGER_FACTORY";
-    private static final String PARTICIPATE = JpaPortletExecutionInterceptor.class.getName() + ".PARTICIPATE";
-    
-    private EntityManagerFactory entityManagerFactory;
-
-    @Autowired
-    public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
-        this.entityManagerFactory = entityManagerFactory;
-    }
     
     @Override
     public void preExecution(HttpServletRequest request, HttpServletResponse response, IPortletExecutionContext context) {
-        //Use a local reference to the EntityManagerFactory to make sure we return the entity manager to the same place we got it from
-        final EntityManagerFactory emf = entityManagerFactory;
-        context.setExecutionAttribute(ENTITY_MANAGER_FACTORY, emf);        
-        
-        final boolean participate;
-        if (TransactionSynchronizationManager.hasResource(emf)) {
-            // Do not modify the EntityManager: just set the participate flag.
-            participate = true;
-        }
-        else {
-            logger.debug("Opening JPA EntityManager in PortletExecutionWorker for {}", context.getPortletWindowId());
-            try {
-                final EntityManager em = entityManagerFactory.createEntityManager();
-                TransactionSynchronizationManager.bindResource(emf, new EntityManagerHolder(em));
-            }
-            catch (PersistenceException ex) {
-                throw new DataAccessResourceFailureException("Could not create JPA EntityManager", ex);
-            }
+        // Determine current EntityManager: either the transactional one
+        // managed by the factory or a temporary one for the given invocation.
+        EntityManager em = getTransactionalEntityManager();
+        boolean isNewEm = false;
+        if (em == null) {
+            logger.debug("Creating new EntityManager for JpaInterceptor invocation");
+            em = createEntityManager();
+            isNewEm = true;
+            TransactionSynchronizationManager.bindResource(getEntityManagerFactory(), new EntityManagerHolder(em));
             
-            participate = false;
+            //For new EM store as attribute so it can be closed
+            context.setExecutionAttribute(ENTITY_MANAGER_FACTORY, em);
         }
         
-        context.setExecutionAttribute(PARTICIPATE, participate);
+        context.setExecutionAttribute(IS_NEW, isNewEm);
     }
 
     @Override
     public void postExecution(HttpServletRequest request, HttpServletResponse response, IPortletExecutionContext context, Exception e) {
-        final EntityManagerFactory emf = (EntityManagerFactory)context.getExecutionAttribute(ENTITY_MANAGER_FACTORY);
-        final boolean participate = (Boolean)context.getExecutionAttribute(PARTICIPATE);
-        
-        if (!participate) {
-            final EntityManagerHolder emHolder = (EntityManagerHolder)TransactionSynchronizationManager.unbindResource(emf);
-            logger.debug("Closing JPA EntityManager in PortletExecutionWorker for {}", context.getPortletWindowId());
-            EntityManagerFactoryUtils.closeEntityManager(emHolder.getEntityManager());
+        boolean isNewEm = (Boolean)context.getExecutionAttribute(IS_NEW);
+        if (isNewEm) {
+            TransactionSynchronizationManager.unbindResource(getEntityManagerFactory());
+            EntityManager em = (EntityManager)context.getExecutionAttribute(ENTITY_MANAGER_FACTORY);
+            EntityManagerFactoryUtils.closeEntityManager(em);
         }
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.rendering.worker.IPortletExecutionInterceptor#preSubmit(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.jasig.portal.portlet.rendering.worker.IPortletExecutionContext)
+     */
+    @Override
+    public void preSubmit(HttpServletRequest request, HttpServletResponse response, IPortletExecutionContext context) {
+        //noop
     }
 }

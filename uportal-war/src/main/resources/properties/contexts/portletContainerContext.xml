@@ -48,6 +48,10 @@
         <ref bean="ThreadNamingPortletExecutionInterceptorAdaptor"/>
     </util:list>
     
+    <bean id="JpaPortletExecutionInterceptor" class="org.jasig.portal.portlet.rendering.worker.JpaPortletExecutionInterceptor">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+    
     <!-- 
      | See PropertyToAttributePropertiesManager.setPropertyMappings
      +-->
