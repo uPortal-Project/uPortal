@@ -80,4 +80,13 @@ public interface IMessageDao {
      * @return A list of all translated messages for specific code.
      */
     Set<Message> getMessagesByCode(String code);
+    
+    /**
+     * Get all message codes regardless of translation. This can be used in order to find out the
+     * missing translations for specific locales.
+     * 
+     * @return A set of all message codes.
+     * @since uPortal 4.0.2
+     */
+    Set<String> getCodes();
 }

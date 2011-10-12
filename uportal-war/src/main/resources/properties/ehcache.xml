@@ -884,5 +884,12 @@
     <cache name="org.jasig.portal.i18n.dao.jpa.MessageImpl.query.FIND_MESSAGE_BY_CODE" 
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="60" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <!--
+     | Caches query results for finding message codes
+     | - 1 per each message code
+     +-->
+    <cache name="org.jasig.portal.i18n.dao.jpa.MessageImpl.query.FIND_MESSAGE_CODES" 
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="60" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     
 </ehcache>
