@@ -86,7 +86,19 @@ public class PortletRendererImplTest {
     @Mock private PortletWindow plutoPortletWindow;
     @Mock private IPortalRequestInfo portalRequestInfo;
 
+    private final String portletFname = "MyPortlet";
     
+    /**
+     * Does common setup of mock options needed for portlet execution
+     */
+    protected void setupPortletExecutionMocks(MockHttpServletRequest request) {
+        when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
+        when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
+        when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
+        when(portletEntity.getPortletDefinition()).thenReturn(portletDefinition);
+        when(portletDefinition.getFName()).thenReturn(portletFname);
+        when(urlSyntaxProvider.getPortalRequestInfo(isA(HttpServletRequest.class))).thenReturn(portalRequestInfo);
+    }
     
 	/**
 	 * {@link CacheControl} says don't cache, make sure no caching.
@@ -103,15 +115,11 @@ public class PortletRendererImplTest {
 		cacheControl.setUseCachedContent(false);
 		cacheControl.setExpirationTime(0);
 		
-		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
+		setupPortletExecutionMocks(request);
+		
 		when(portletCacheControlService.getPortletRenderCacheControl(portletWindowId, request)).thenReturn(cacheControl);
-		when(portletCacheControlService.getCachedPortletRenderOutput(portletWindowId, request)).thenReturn(null);
-		when(portletCacheControlService.shouldOutputBeCached(cacheControl)).thenReturn(false);
-		when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
-		when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
-		when(portletEntity.getPortletDefinition()).thenReturn(portletDefinition);
-		when(portletDefinition.getFName()).thenReturn("portlet");
-		when(urlSyntaxProvider.getPortalRequestInfo(isA(PortletHttpServletRequestWrapper.class))).thenReturn(portalRequestInfo);
+        when(portletCacheControlService.getCachedPortletRenderOutput(portletWindowId, request)).thenReturn(null);
+        when(portletCacheControlService.shouldOutputBeCached(cacheControl)).thenReturn(false);
 		when(portalRequestInfo.getTargetedPortletWindowId()).thenReturn(portletWindowId);
 		
 		StringWriter writer = new StringWriter();
@@ -141,15 +149,11 @@ public class PortletRendererImplTest {
 		cacheControl.setUseCachedContent(false);
 		cacheControl.setExpirationTime(300);
 		
-		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
+		setupPortletExecutionMocks(request);
+		
 		when(portletCacheControlService.getPortletRenderCacheControl(portletWindowId, request)).thenReturn(cacheControl);
 		when(portletCacheControlService.getCachedPortletRenderOutput(portletWindowId, request)).thenReturn(null);
 		when(portletCacheControlService.shouldOutputBeCached(cacheControl)).thenReturn(true);
-		when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
-		when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
-        when(portletEntity.getPortletDefinition()).thenReturn(portletDefinition);
-        when(portletDefinition.getFName()).thenReturn("portlet");
-        when(urlSyntaxProvider.getPortalRequestInfo(isA(PortletHttpServletRequestWrapper.class))).thenReturn(portalRequestInfo);
         when(portalRequestInfo.getTargetedPortletWindowId()).thenReturn(portletWindowId);
 
 		StringWriter writer = new StringWriter();
@@ -179,15 +183,10 @@ public class PortletRendererImplTest {
 		cacheControl.setUseCachedContent(false);
 		cacheControl.setExpirationTime(-1);
 		
-		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
+		setupPortletExecutionMocks(request);
 		when(portletCacheControlService.getPortletRenderCacheControl(portletWindowId, request)).thenReturn(cacheControl);
 		when(portletCacheControlService.getCachedPortletRenderOutput(portletWindowId, request)).thenReturn(null);
 		when(portletCacheControlService.shouldOutputBeCached(cacheControl)).thenReturn(true);
-		when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
-        when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
-        when(portletEntity.getPortletDefinition()).thenReturn(portletDefinition);
-        when(portletDefinition.getFName()).thenReturn("portlet");
-        when(urlSyntaxProvider.getPortalRequestInfo(isA(PortletHttpServletRequestWrapper.class))).thenReturn(portalRequestInfo);
         when(portalRequestInfo.getTargetedPortletWindowId()).thenReturn(portletWindowId);
 		
 		StringWriter writer = new StringWriter();
@@ -218,14 +217,10 @@ public class PortletRendererImplTest {
 		cachedPortletData.setExpirationTimeSeconds(cacheControl.getExpirationTime());
 		cachedPortletData.setTimeStored(now);
 		
-		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
+		setupPortletExecutionMocks(request);
+
 		when(portletCacheControlService.getPortletRenderCacheControl(portletWindowId, request)).thenReturn(cacheControl);
 		when(portletCacheControlService.getCachedPortletRenderOutput(portletWindowId, request)).thenReturn(cachedPortletData);
-		when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
-		when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
-        when(portletEntity.getPortletDefinition()).thenReturn(portletDefinition);
-        when(portletDefinition.getFName()).thenReturn("portlet");
-        when(urlSyntaxProvider.getPortalRequestInfo(isA(HttpServletRequest.class))).thenReturn(portalRequestInfo);
         when(portalRequestInfo.getTargetedPortletWindowId()).thenReturn(portletWindowId);
 
 		StringWriter writer = new StringWriter();
@@ -259,14 +254,9 @@ public class PortletRendererImplTest {
 		cachedPortletData.setExpirationTimeSeconds(cacheControl.getExpirationTime());
 		cachedPortletData.setTimeStored(now);
 		
-		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
+		setupPortletExecutionMocks(request);
 		when(portletCacheControlService.getPortletRenderCacheControl(portletWindowId, request)).thenReturn(cacheControl);
 		when(portletCacheControlService.getCachedPortletRenderOutput(portletWindowId, request)).thenReturn(cachedPortletData);
-		when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
-        when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
-        when(portletEntity.getPortletDefinition()).thenReturn(portletDefinition);
-        when(portletDefinition.getFName()).thenReturn("portlet");
-        when(urlSyntaxProvider.getPortalRequestInfo(isA(PortletHttpServletRequestWrapper.class))).thenReturn(portalRequestInfo);
         when(portalRequestInfo.getTargetedPortletWindowId()).thenReturn(portletWindowId);
 
 		StringWriter writer = new StringWriter();
@@ -304,14 +294,10 @@ public class PortletRendererImplTest {
 		Date expiredTime = DateUtils.addSeconds(now, -301); 
 		cachedPortletData.setTimeStored(expiredTime);
 		
-		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
+		setupPortletExecutionMocks(request);
+
 		when(portletCacheControlService.getPortletRenderCacheControl(portletWindowId, request)).thenReturn(cacheControl);
 		when(portletCacheControlService.getCachedPortletRenderOutput(portletWindowId, request)).thenReturn(cachedPortletData);
-		when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
-        when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
-        when(portletEntity.getPortletDefinition()).thenReturn(portletDefinition);
-        when(portletDefinition.getFName()).thenReturn("portlet");
-        when(urlSyntaxProvider.getPortalRequestInfo(isA(PortletHttpServletRequestWrapper.class))).thenReturn(portalRequestInfo);
         when(portalRequestInfo.getTargetedPortletWindowId()).thenReturn(portletWindowId);
 
 		StringWriter writer = new StringWriter();
@@ -345,17 +331,11 @@ public class PortletRendererImplTest {
 		cachedPortletData.setExpirationTimeSeconds(cacheControl.getExpirationTime());
 		cachedPortletData.setTimeStored(now);
 		
-		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
+		setupPortletExecutionMocks(request);
+		
 		when(portletCacheControlService.getPortletRenderCacheControl(portletWindowId, request)).thenReturn(cacheControl);
 		when(portletCacheControlService.getCachedPortletRenderOutput(portletWindowId, request)).thenReturn(null);
 		when(portletCacheControlService.shouldOutputBeCached(cacheControl)).thenReturn(true);
-		when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
-        when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
-        when(portletEntity.getPortletDefinition()).thenReturn(portletDefinition);
-        when(portletDefinition.getFName()).thenReturn("portlet");
-//        when(urlSyntaxProvider.getPortalRequestInfo(isA(PortletHttpServletRequestWrapper.class))).thenReturn(portalRequestInfo);
-//        when(portalRequestInfo.getTargetedPortletWindowId()).thenReturn(portletWindowId);
-
 
 		StringWriter writer = new StringWriter();
 		
@@ -388,11 +368,11 @@ public class PortletRendererImplTest {
 		cacheControl.setUseCachedContent(false);
 		cacheControl.setExpirationTime(0);
 		
-		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
+		setupPortletExecutionMocks(request);
+		
 		when(portletCacheControlService.getPortletResourceCacheControl(portletWindowId, request, response)).thenReturn(cacheControl);
 		when(portletCacheControlService.getCachedPortletResourceOutput(portletWindowId, request)).thenReturn(null);
 		when(portletCacheControlService.shouldOutputBeCached(cacheControl)).thenReturn(false);
-		when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
 		
 		portletRenderer.doServeResource(portletWindowId, request, response);
 		
@@ -421,11 +401,11 @@ public class PortletRendererImplTest {
 		cacheControl.setUseCachedContent(false);
 		cacheControl.setExpirationTime(300);
 		
-		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
+		setupPortletExecutionMocks(request);
+
 		when(portletCacheControlService.getPortletResourceCacheControl(portletWindowId, request, response)).thenReturn(cacheControl);
 		when(portletCacheControlService.getCachedPortletResourceOutput(portletWindowId, request)).thenReturn(null);
 		when(portletCacheControlService.shouldOutputBeCached(cacheControl)).thenReturn(true);
-		when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
 		
 		portletRenderer.doServeResource(portletWindowId, request, response);
 		
@@ -455,11 +435,11 @@ public class PortletRendererImplTest {
 		cacheControl.setUseCachedContent(false);
 		cacheControl.setExpirationTime(-1);
 		
-		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
+		setupPortletExecutionMocks(request);
+		
 		when(portletCacheControlService.getPortletResourceCacheControl(portletWindowId, request, response)).thenReturn(cacheControl);
 		when(portletCacheControlService.getCachedPortletRenderOutput(portletWindowId, request)).thenReturn(null);
 		when(portletCacheControlService.shouldOutputBeCached(cacheControl)).thenReturn(true);
-		when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
 		
 		portletRenderer.doServeResource(portletWindowId, request, response);
 		
@@ -490,10 +470,10 @@ public class PortletRendererImplTest {
 		cachedPortletData.setExpirationTimeSeconds(cacheControl.getExpirationTime());
 		cachedPortletData.setTimeStored(now);
 		
-		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
+		setupPortletExecutionMocks(request);
+		
 		when(portletCacheControlService.getPortletResourceCacheControl(portletWindowId, request, response)).thenReturn(cacheControl);
 		when(portletCacheControlService.getCachedPortletResourceOutput(portletWindowId, request)).thenReturn(cachedPortletData);
-		when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
 		
 		portletRenderer.doServeResource(portletWindowId, request, response);
 		// verify content matches what was in cache (no array support in Assert.assertEquals, check byte for byte)
@@ -534,10 +514,10 @@ public class PortletRendererImplTest {
 		cachedPortletData.setExpirationTimeSeconds(cacheControl.getExpirationTime());
 		cachedPortletData.setTimeStored(now);
 		
-		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
+		setupPortletExecutionMocks(request);
+		
 		when(portletCacheControlService.getPortletResourceCacheControl(portletWindowId, request, response)).thenReturn(cacheControl);
 		when(portletCacheControlService.getCachedPortletResourceOutput(portletWindowId, request)).thenReturn(cachedPortletData);
-		when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
 		
 		portletRenderer.doServeResource(portletWindowId, request, response);
 		// verify content matches what was in cache (no array support in Assert.assertEquals, check byte for byte)
