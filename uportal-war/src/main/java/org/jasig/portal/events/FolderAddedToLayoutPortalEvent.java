@@ -19,13 +19,26 @@
 
 package org.jasig.portal.events;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
+
+import org.apache.commons.lang.Validate;
 import org.jasig.portal.security.IPerson;
 
 
 
+@Entity
+@Table(name = "UPE_FADD_LAYOUT_EVENT")
+@Inheritance(strategy=InheritanceType.JOINED)
+@PrimaryKeyJoinColumn(name="EVENT_ID")
 public final class FolderAddedToLayoutPortalEvent extends LayoutPortalEvent {
     private static final long serialVersionUID = 1L;
 
+    @Column(name="NEW_FOLDER_ID", length=50, nullable=false)
     private final String newFolderId;
     
     @SuppressWarnings("unused")
@@ -34,9 +47,11 @@ public final class FolderAddedToLayoutPortalEvent extends LayoutPortalEvent {
         this.newFolderId = null;
     }
 
-    public FolderAddedToLayoutPortalEvent(PortalEventBuilder portalEventBuilder, IPerson layoutOwner, 
+    FolderAddedToLayoutPortalEvent(PortalEventBuilder portalEventBuilder, IPerson layoutOwner, 
             long layoutId, String newFolderId) {
         super(portalEventBuilder, layoutOwner, layoutId);
+        Validate.notNull(newFolderId, "newFolderId");
+        
         this.newFolderId = newFolderId;
     }
 
@@ -46,5 +61,14 @@ public final class FolderAddedToLayoutPortalEvent extends LayoutPortalEvent {
      */
     public String getNewFolderId() {
         return this.newFolderId;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return super.toString() + 
+                ", newFolderId=" + this.newFolderId + "]";
     }
 }

@@ -172,7 +172,10 @@ public class PortletRendererImpl implements IPortletRenderer {
         final long executionTime = System.currentTimeMillis() - start;
         
         final String actionName = getActionName(portletWindowId, httpServletRequest);
-        this.portalEventFactory.publishPortletActionExecutionEvent(httpServletRequest, this, executionTime, actionName);
+        final IPortletEntity portletEntity = portletWindow.getPortletEntity();
+        final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
+        final String fname = portletDefinition.getFName();
+        this.portalEventFactory.publishPortletActionExecutionEvent(httpServletRequest, this, fname, executionTime, actionName);
         
         return executionTime;
     }
@@ -231,8 +234,10 @@ public class PortletRendererImpl implements IPortletRenderer {
         }
         
         final long executionTime = System.currentTimeMillis() - start;
-        
-        this.portalEventFactory.publishPortletEventExecutionEvent(httpServletRequest, this, executionTime, event.getQName());
+        final IPortletEntity portletEntity = portletWindow.getPortletEntity();
+        final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
+        final String fname = portletDefinition.getFName();
+        this.portalEventFactory.publishPortletEventExecutionEvent(httpServletRequest, this, fname, executionTime, event.getQName());
         
         return executionTime;
     }
@@ -305,7 +310,12 @@ public class PortletRendererImpl implements IPortletRenderer {
 
     	final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(httpServletRequest);
         final boolean targeted = portletWindowId.equals(portalRequestInfo.getTargetedPortletWindowId());
-        this.portalEventFactory.publishPortletRenderExecutionEvent(httpServletRequest, this, executionTime, targeted, true);
+        
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
+        final IPortletEntity portletEntity = portletWindow.getPortletEntity();
+        final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
+        final String fname = portletDefinition.getFName();
+        this.portalEventFactory.publishPortletRenderExecutionEvent(httpServletRequest, this, fname, executionTime, targeted, true);
 
         return constructPortletRenderResult(httpServletRequest, executionTime);
     }
@@ -355,7 +365,10 @@ public class PortletRendererImpl implements IPortletRenderer {
         
         final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(httpServletRequest);
         final boolean targeted = portletWindowId.equals(portalRequestInfo.getTargetedPortletWindowId());
-        this.portalEventFactory.publishPortletRenderExecutionEvent(httpServletRequest, this, executionTime, targeted, false);
+        final IPortletEntity portletEntity = portletWindow.getPortletEntity();
+        final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
+        final String fname = portletDefinition.getFName();
+        this.portalEventFactory.publishPortletRenderExecutionEvent(httpServletRequest, this, fname, executionTime, targeted, false);
         
         return constructPortletRenderResult(httpServletRequest, executionTime);
     }
@@ -502,7 +515,10 @@ public class PortletRendererImpl implements IPortletRenderer {
 		
 		final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(httpServletRequest);
 		final String resourceId = getResourceId(portletWindowId, portalRequestInfo);
-        this.portalEventFactory.publishPortletResourceExecutionEvent(httpServletRequest, this, executionTime, resourceId, false);
+        final IPortletEntity portletEntity = portletWindow.getPortletEntity();
+        final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
+        final String fname = portletDefinition.getFName();
+        this.portalEventFactory.publishPortletResourceExecutionEvent(httpServletRequest, this, fname, executionTime, resourceId, false);
         
         return executionTime;
 	}
@@ -566,7 +582,10 @@ public class PortletRendererImpl implements IPortletRenderer {
         
         final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(httpServletRequest);
         final String resourceId = getResourceId(portletWindowId, portalRequestInfo);
-        this.portalEventFactory.publishPortletResourceExecutionEvent(httpServletRequest, this, executionTime, resourceId, true);
+        final IPortletEntity portletEntity = portletWindow.getPortletEntity();
+        final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
+        final String fname = portletDefinition.getFName();
+        this.portalEventFactory.publishPortletResourceExecutionEvent(httpServletRequest, this, fname, executionTime, resourceId, true);
         
         return executionTime;
 	}

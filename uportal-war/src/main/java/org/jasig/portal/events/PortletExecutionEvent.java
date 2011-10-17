@@ -19,22 +19,44 @@
 
 package org.jasig.portal.events;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.Type;
+import org.jasig.portal.dao.usertype.FunctionalNameType;
+
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Entity
+@Table(name = "UPE_PORTLET_EXEC_EVENT")
+@Inheritance(strategy=InheritanceType.JOINED)
+@PrimaryKeyJoinColumn(name="EVENT_ID")
 public abstract class PortletExecutionEvent extends PortalEvent {
     private static final long serialVersionUID = 1L;
     
+    @Column(name = "FNAME", length = 255, nullable = false)
+    @Type(type = "fname")
+    private final String fname;
+    
+    @Column(name="EXECUTION_TIME", nullable=false)
     private final long executionTime;
 
     PortletExecutionEvent() {
         super();
+        this.fname = null;
         this.executionTime = -1;
     }
 
-    PortletExecutionEvent(PortalEventBuilder eventBuilder, long executionTime) {
+    PortletExecutionEvent(PortalEventBuilder eventBuilder, String fname, long executionTime) {
         super(eventBuilder);
+        FunctionalNameType.validate(fname);
+        this.fname = fname;
         this.executionTime = executionTime;
     }
 
@@ -43,5 +65,22 @@ public abstract class PortletExecutionEvent extends PortalEvent {
      */
     public long getExecutionTime() {
         return this.executionTime;
+    }
+    
+    /**
+     * @return the fname
+     */
+    public String getFname() {
+        return this.fname;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return super.toString() + 
+                ", fname=" + this.fname + 
+                ", executionTime=" + this.executionTime;
     }
 }

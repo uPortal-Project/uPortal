@@ -19,7 +19,7 @@
 package org.jasig.portal.portlet.rendering;
 
 import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.mock;
+
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -43,15 +43,24 @@ import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletContainerException;
 import org.apache.pluto.container.PortletWindow;
 import org.jasig.portal.api.portlet.PortletDelegationLocator;
+import org.jasig.portal.events.IPortalEventFactory;
 import org.jasig.portal.portlet.container.CacheControlImpl;
 import org.jasig.portal.portlet.container.cache.CachedPortletData;
 import org.jasig.portal.portlet.container.cache.IPortletCacheControlService;
+import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.url.IPortalRequestInfo;
+import org.jasig.portal.url.IUrlSyntaxProvider;
 import org.jasig.portal.utils.web.PortletHttpServletRequestWrapper;
 import org.jasig.portal.utils.web.PortletHttpServletResponseWrapper;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -61,8 +70,24 @@ import org.springframework.mock.web.MockHttpServletResponse;
  * @author Nicholas Blair
  * @version $Id$
  */
+@RunWith(MockitoJUnitRunner.class)
 public class PortletRendererImplTest {
+    @InjectMocks private PortletRendererImpl portletRenderer = new PortletRendererImpl();
+    @Mock private IUrlSyntaxProvider urlSyntaxProvider;
+    @Mock private IPortalEventFactory portalEventFactory;
+    @Mock private IPortletCacheControlService portletCacheControlService;
+    @Mock private IPortletWindowRegistry portletWindowRegistry;
+    @Mock private PortletContainer portletContainer;
+    @Mock private PortletDelegationLocator portletDelegationLocator;
+    @Mock private IPortletWindowId portletWindowId;
+    @Mock private IPortletWindow portletWindow;
+    @Mock private IPortletEntity portletEntity;
+    @Mock private IPortletDefinition portletDefinition;
+    @Mock private PortletWindow plutoPortletWindow;
+    @Mock private IPortalRequestInfo portalRequestInfo;
 
+    
+    
 	/**
 	 * {@link CacheControl} says don't cache, make sure no caching.
 	 * 
@@ -78,25 +103,16 @@ public class PortletRendererImplTest {
 		cacheControl.setUseCachedContent(false);
 		cacheControl.setExpirationTime(0);
 		
-		PortletRendererImpl portletRenderer = new PortletRendererImpl();
-		IPortletWindowId portletWindowId = mock(IPortletWindowId.class);
-		IPortletWindow portletWindow = mock(IPortletWindow.class);
-		
-		IPortletCacheControlService portletCacheControlService = mock(IPortletCacheControlService.class);
-		portletRenderer.setPortletCacheControlService(portletCacheControlService);
-		IPortletWindowRegistry portletWindowRegistry = mock(IPortletWindowRegistry.class);
-		portletRenderer.setPortletWindowRegistry(portletWindowRegistry);
-		PortletContainer portletContainer = mock(PortletContainer.class);
-		portletRenderer.setPortletContainer(portletContainer);
-		PortletDelegationLocator portletDelegationLocator = mock(PortletDelegationLocator.class);
-		portletRenderer.setPortletDelegationLocator(portletDelegationLocator);
-		
-		PortletWindow plutoPortletWindow = mock(PortletWindow.class);
 		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
 		when(portletCacheControlService.getPortletRenderCacheControl(portletWindowId, request)).thenReturn(cacheControl);
 		when(portletCacheControlService.getCachedPortletRenderOutput(portletWindowId, request)).thenReturn(null);
 		when(portletCacheControlService.shouldOutputBeCached(cacheControl)).thenReturn(false);
 		when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
+		when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
+		when(portletEntity.getPortletDefinition()).thenReturn(portletDefinition);
+		when(portletDefinition.getFName()).thenReturn("portlet");
+		when(urlSyntaxProvider.getPortalRequestInfo(isA(PortletHttpServletRequestWrapper.class))).thenReturn(portalRequestInfo);
+		when(portalRequestInfo.getTargetedPortletWindowId()).thenReturn(portletWindowId);
 		
 		StringWriter writer = new StringWriter();
 		portletRenderer.doRenderMarkup(portletWindowId, request, response, writer);
@@ -125,26 +141,17 @@ public class PortletRendererImplTest {
 		cacheControl.setUseCachedContent(false);
 		cacheControl.setExpirationTime(300);
 		
-		PortletRendererImpl portletRenderer = new PortletRendererImpl();
-		IPortletWindowId portletWindowId = mock(IPortletWindowId.class);
-		IPortletWindow portletWindow = mock(IPortletWindow.class);
-		
-		IPortletCacheControlService portletCacheControlService = mock(IPortletCacheControlService.class);
-		portletRenderer.setPortletCacheControlService(portletCacheControlService);
-		IPortletWindowRegistry portletWindowRegistry = mock(IPortletWindowRegistry.class);
-		portletRenderer.setPortletWindowRegistry(portletWindowRegistry);
-		PortletContainer portletContainer = mock(PortletContainer.class);
-		portletRenderer.setPortletContainer(portletContainer);
-		PortletDelegationLocator portletDelegationLocator = mock(PortletDelegationLocator.class);
-		portletRenderer.setPortletDelegationLocator(portletDelegationLocator);
-		
-		PortletWindow plutoPortletWindow = mock(PortletWindow.class);
 		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
 		when(portletCacheControlService.getPortletRenderCacheControl(portletWindowId, request)).thenReturn(cacheControl);
 		when(portletCacheControlService.getCachedPortletRenderOutput(portletWindowId, request)).thenReturn(null);
 		when(portletCacheControlService.shouldOutputBeCached(cacheControl)).thenReturn(true);
 		when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
-		
+		when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
+        when(portletEntity.getPortletDefinition()).thenReturn(portletDefinition);
+        when(portletDefinition.getFName()).thenReturn("portlet");
+        when(urlSyntaxProvider.getPortalRequestInfo(isA(PortletHttpServletRequestWrapper.class))).thenReturn(portalRequestInfo);
+        when(portalRequestInfo.getTargetedPortletWindowId()).thenReturn(portletWindowId);
+
 		StringWriter writer = new StringWriter();
 		portletRenderer.doRenderMarkup(portletWindowId, request, response, writer);
 		
@@ -172,25 +179,16 @@ public class PortletRendererImplTest {
 		cacheControl.setUseCachedContent(false);
 		cacheControl.setExpirationTime(-1);
 		
-		PortletRendererImpl portletRenderer = new PortletRendererImpl();
-		IPortletWindowId portletWindowId = mock(IPortletWindowId.class);
-		IPortletWindow portletWindow = mock(IPortletWindow.class);
-		
-		IPortletCacheControlService portletCacheControlService = mock(IPortletCacheControlService.class);
-		portletRenderer.setPortletCacheControlService(portletCacheControlService);
-		IPortletWindowRegistry portletWindowRegistry = mock(IPortletWindowRegistry.class);
-		portletRenderer.setPortletWindowRegistry(portletWindowRegistry);
-		PortletContainer portletContainer = mock(PortletContainer.class);
-		portletRenderer.setPortletContainer(portletContainer);
-		PortletDelegationLocator portletDelegationLocator = mock(PortletDelegationLocator.class);
-		portletRenderer.setPortletDelegationLocator(portletDelegationLocator);
-		
-		PortletWindow plutoPortletWindow = mock(PortletWindow.class);
 		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
 		when(portletCacheControlService.getPortletRenderCacheControl(portletWindowId, request)).thenReturn(cacheControl);
 		when(portletCacheControlService.getCachedPortletRenderOutput(portletWindowId, request)).thenReturn(null);
 		when(portletCacheControlService.shouldOutputBeCached(cacheControl)).thenReturn(true);
 		when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
+        when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
+        when(portletEntity.getPortletDefinition()).thenReturn(portletDefinition);
+        when(portletDefinition.getFName()).thenReturn("portlet");
+        when(urlSyntaxProvider.getPortalRequestInfo(isA(PortletHttpServletRequestWrapper.class))).thenReturn(portalRequestInfo);
+        when(portalRequestInfo.getTargetedPortletWindowId()).thenReturn(portletWindowId);
 		
 		StringWriter writer = new StringWriter();
 		portletRenderer.doRenderMarkup(portletWindowId, request, response, writer);
@@ -220,24 +218,16 @@ public class PortletRendererImplTest {
 		cachedPortletData.setExpirationTimeSeconds(cacheControl.getExpirationTime());
 		cachedPortletData.setTimeStored(now);
 		
-		PortletRendererImpl portletRenderer = new PortletRendererImpl();
-		IPortletWindowId portletWindowId = mock(IPortletWindowId.class);
-		IPortletWindow portletWindow = mock(IPortletWindow.class);
-		IPortletCacheControlService portletCacheControlService = mock(IPortletCacheControlService.class);
-		portletRenderer.setPortletCacheControlService(portletCacheControlService);
-		IPortletWindowRegistry portletWindowRegistry = mock(IPortletWindowRegistry.class);
-		portletRenderer.setPortletWindowRegistry(portletWindowRegistry);
-		PortletDelegationLocator portletDelegationLocator = mock(PortletDelegationLocator.class);
-		portletRenderer.setPortletDelegationLocator(portletDelegationLocator);
-		PortletContainer portletContainer = mock(PortletContainer.class);
-		portletRenderer.setPortletContainer(portletContainer);
-		
-		PortletWindow plutoPortletWindow = mock(PortletWindow.class);
 		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
 		when(portletCacheControlService.getPortletRenderCacheControl(portletWindowId, request)).thenReturn(cacheControl);
 		when(portletCacheControlService.getCachedPortletRenderOutput(portletWindowId, request)).thenReturn(cachedPortletData);
 		when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
-		
+		when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
+        when(portletEntity.getPortletDefinition()).thenReturn(portletDefinition);
+        when(portletDefinition.getFName()).thenReturn("portlet");
+        when(urlSyntaxProvider.getPortalRequestInfo(isA(HttpServletRequest.class))).thenReturn(portalRequestInfo);
+        when(portalRequestInfo.getTargetedPortletWindowId()).thenReturn(portletWindowId);
+
 		StringWriter writer = new StringWriter();
 		portletRenderer.doRenderMarkup(portletWindowId, request, response, writer);
 		Assert.assertEquals("<p>Some content</p>", writer.toString());
@@ -269,24 +259,16 @@ public class PortletRendererImplTest {
 		cachedPortletData.setExpirationTimeSeconds(cacheControl.getExpirationTime());
 		cachedPortletData.setTimeStored(now);
 		
-		PortletRendererImpl portletRenderer = new PortletRendererImpl();
-		IPortletWindowId portletWindowId = mock(IPortletWindowId.class);
-		IPortletWindow portletWindow = mock(IPortletWindow.class);
-		IPortletCacheControlService portletCacheControlService = mock(IPortletCacheControlService.class);
-		portletRenderer.setPortletCacheControlService(portletCacheControlService);
-		IPortletWindowRegistry portletWindowRegistry = mock(IPortletWindowRegistry.class);
-		portletRenderer.setPortletWindowRegistry(portletWindowRegistry);
-		PortletDelegationLocator portletDelegationLocator = mock(PortletDelegationLocator.class);
-		portletRenderer.setPortletDelegationLocator(portletDelegationLocator);
-		PortletContainer portletContainer = mock(PortletContainer.class);
-		portletRenderer.setPortletContainer(portletContainer);
-		
-		PortletWindow plutoPortletWindow = mock(PortletWindow.class);
 		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
 		when(portletCacheControlService.getPortletRenderCacheControl(portletWindowId, request)).thenReturn(cacheControl);
 		when(portletCacheControlService.getCachedPortletRenderOutput(portletWindowId, request)).thenReturn(cachedPortletData);
 		when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
-		
+        when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
+        when(portletEntity.getPortletDefinition()).thenReturn(portletDefinition);
+        when(portletDefinition.getFName()).thenReturn("portlet");
+        when(urlSyntaxProvider.getPortalRequestInfo(isA(PortletHttpServletRequestWrapper.class))).thenReturn(portalRequestInfo);
+        when(portalRequestInfo.getTargetedPortletWindowId()).thenReturn(portletWindowId);
+
 		StringWriter writer = new StringWriter();
 		portletRenderer.doRenderMarkup(portletWindowId, request, response, writer);
 		Assert.assertEquals("<p>Some content</p>", writer.toString());
@@ -322,24 +304,16 @@ public class PortletRendererImplTest {
 		Date expiredTime = DateUtils.addSeconds(now, -301); 
 		cachedPortletData.setTimeStored(expiredTime);
 		
-		PortletRendererImpl portletRenderer = new PortletRendererImpl();
-		IPortletWindowId portletWindowId = mock(IPortletWindowId.class);
-		IPortletWindow portletWindow = mock(IPortletWindow.class);
-		IPortletCacheControlService portletCacheControlService = mock(IPortletCacheControlService.class);
-		portletRenderer.setPortletCacheControlService(portletCacheControlService);
-		IPortletWindowRegistry portletWindowRegistry = mock(IPortletWindowRegistry.class);
-		portletRenderer.setPortletWindowRegistry(portletWindowRegistry);
-		PortletDelegationLocator portletDelegationLocator = mock(PortletDelegationLocator.class);
-		portletRenderer.setPortletDelegationLocator(portletDelegationLocator);
-		PortletContainer portletContainer = mock(PortletContainer.class);
-		portletRenderer.setPortletContainer(portletContainer);
-		
-		PortletWindow plutoPortletWindow = mock(PortletWindow.class);
 		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
 		when(portletCacheControlService.getPortletRenderCacheControl(portletWindowId, request)).thenReturn(cacheControl);
 		when(portletCacheControlService.getCachedPortletRenderOutput(portletWindowId, request)).thenReturn(cachedPortletData);
 		when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
-		
+        when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
+        when(portletEntity.getPortletDefinition()).thenReturn(portletDefinition);
+        when(portletDefinition.getFName()).thenReturn("portlet");
+        when(urlSyntaxProvider.getPortalRequestInfo(isA(PortletHttpServletRequestWrapper.class))).thenReturn(portalRequestInfo);
+        when(portalRequestInfo.getTargetedPortletWindowId()).thenReturn(portletWindowId);
+
 		StringWriter writer = new StringWriter();
 		portletRenderer.doRenderMarkup(portletWindowId, request, response, writer);
 		Assert.assertEquals("<p>Some content</p>", writer.toString());
@@ -371,26 +345,17 @@ public class PortletRendererImplTest {
 		cachedPortletData.setExpirationTimeSeconds(cacheControl.getExpirationTime());
 		cachedPortletData.setTimeStored(now);
 		
-		PortletRendererImpl portletRenderer = new PortletRendererImpl();
-		IPortletWindowId portletWindowId = mock(IPortletWindowId.class);
-		IPortletWindow portletWindow = mock(IPortletWindow.class);
-		IPortletCacheControlService portletCacheControlService = mock(IPortletCacheControlService.class);
-		portletRenderer.setPortletCacheControlService(portletCacheControlService);
-		IPortletWindowRegistry portletWindowRegistry = mock(IPortletWindowRegistry.class);
-		portletRenderer.setPortletWindowRegistry(portletWindowRegistry);
-		PortletDelegationLocator portletDelegationLocator = mock(PortletDelegationLocator.class);
-		portletRenderer.setPortletDelegationLocator(portletDelegationLocator);
-		PortletContainer portletContainer = mock(PortletContainer.class);
-		
-		portletRenderer.setPortletContainer(portletContainer);
-		
-		PortletWindow plutoPortletWindow = mock(PortletWindow.class);
 		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
 		when(portletCacheControlService.getPortletRenderCacheControl(portletWindowId, request)).thenReturn(cacheControl);
 		when(portletCacheControlService.getCachedPortletRenderOutput(portletWindowId, request)).thenReturn(null);
 		when(portletCacheControlService.shouldOutputBeCached(cacheControl)).thenReturn(true);
 		when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
-		
+        when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
+        when(portletEntity.getPortletDefinition()).thenReturn(portletDefinition);
+        when(portletDefinition.getFName()).thenReturn("portlet");
+//        when(urlSyntaxProvider.getPortalRequestInfo(isA(PortletHttpServletRequestWrapper.class))).thenReturn(portalRequestInfo);
+//        when(portalRequestInfo.getTargetedPortletWindowId()).thenReturn(portletWindowId);
+
 
 		StringWriter writer = new StringWriter();
 		
@@ -423,20 +388,6 @@ public class PortletRendererImplTest {
 		cacheControl.setUseCachedContent(false);
 		cacheControl.setExpirationTime(0);
 		
-		PortletRendererImpl portletRenderer = new PortletRendererImpl();
-		IPortletWindowId portletWindowId = mock(IPortletWindowId.class);
-		IPortletWindow portletWindow = mock(IPortletWindow.class);
-		
-		IPortletCacheControlService portletCacheControlService = mock(IPortletCacheControlService.class);
-		portletRenderer.setPortletCacheControlService(portletCacheControlService);
-		IPortletWindowRegistry portletWindowRegistry = mock(IPortletWindowRegistry.class);
-		portletRenderer.setPortletWindowRegistry(portletWindowRegistry);
-		PortletContainer portletContainer = mock(PortletContainer.class);
-		portletRenderer.setPortletContainer(portletContainer);
-		PortletDelegationLocator portletDelegationLocator = mock(PortletDelegationLocator.class);
-		portletRenderer.setPortletDelegationLocator(portletDelegationLocator);
-		
-		PortletWindow plutoPortletWindow = mock(PortletWindow.class);
 		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
 		when(portletCacheControlService.getPortletResourceCacheControl(portletWindowId, request, response)).thenReturn(cacheControl);
 		when(portletCacheControlService.getCachedPortletResourceOutput(portletWindowId, request)).thenReturn(null);
@@ -470,20 +421,6 @@ public class PortletRendererImplTest {
 		cacheControl.setUseCachedContent(false);
 		cacheControl.setExpirationTime(300);
 		
-		PortletRendererImpl portletRenderer = new PortletRendererImpl();
-		IPortletWindowId portletWindowId = mock(IPortletWindowId.class);
-		IPortletWindow portletWindow = mock(IPortletWindow.class);
-		
-		IPortletCacheControlService portletCacheControlService = mock(IPortletCacheControlService.class);
-		portletRenderer.setPortletCacheControlService(portletCacheControlService);
-		IPortletWindowRegistry portletWindowRegistry = mock(IPortletWindowRegistry.class);
-		portletRenderer.setPortletWindowRegistry(portletWindowRegistry);
-		PortletContainer portletContainer = mock(PortletContainer.class);
-		portletRenderer.setPortletContainer(portletContainer);
-		PortletDelegationLocator portletDelegationLocator = mock(PortletDelegationLocator.class);
-		portletRenderer.setPortletDelegationLocator(portletDelegationLocator);
-		
-		PortletWindow plutoPortletWindow = mock(PortletWindow.class);
 		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
 		when(portletCacheControlService.getPortletResourceCacheControl(portletWindowId, request, response)).thenReturn(cacheControl);
 		when(portletCacheControlService.getCachedPortletResourceOutput(portletWindowId, request)).thenReturn(null);
@@ -518,20 +455,6 @@ public class PortletRendererImplTest {
 		cacheControl.setUseCachedContent(false);
 		cacheControl.setExpirationTime(-1);
 		
-		PortletRendererImpl portletRenderer = new PortletRendererImpl();
-		IPortletWindowId portletWindowId = mock(IPortletWindowId.class);
-		IPortletWindow portletWindow = mock(IPortletWindow.class);
-		
-		IPortletCacheControlService portletCacheControlService = mock(IPortletCacheControlService.class);
-		portletRenderer.setPortletCacheControlService(portletCacheControlService);
-		IPortletWindowRegistry portletWindowRegistry = mock(IPortletWindowRegistry.class);
-		portletRenderer.setPortletWindowRegistry(portletWindowRegistry);
-		PortletContainer portletContainer = mock(PortletContainer.class);
-		portletRenderer.setPortletContainer(portletContainer);
-		PortletDelegationLocator portletDelegationLocator = mock(PortletDelegationLocator.class);
-		portletRenderer.setPortletDelegationLocator(portletDelegationLocator);
-		
-		PortletWindow plutoPortletWindow = mock(PortletWindow.class);
 		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
 		when(portletCacheControlService.getPortletResourceCacheControl(portletWindowId, request, response)).thenReturn(cacheControl);
 		when(portletCacheControlService.getCachedPortletRenderOutput(portletWindowId, request)).thenReturn(null);
@@ -567,19 +490,6 @@ public class PortletRendererImplTest {
 		cachedPortletData.setExpirationTimeSeconds(cacheControl.getExpirationTime());
 		cachedPortletData.setTimeStored(now);
 		
-		PortletRendererImpl portletRenderer = new PortletRendererImpl();
-		IPortletWindowId portletWindowId = mock(IPortletWindowId.class);
-		IPortletWindow portletWindow = mock(IPortletWindow.class);
-		IPortletCacheControlService portletCacheControlService = mock(IPortletCacheControlService.class);
-		portletRenderer.setPortletCacheControlService(portletCacheControlService);
-		IPortletWindowRegistry portletWindowRegistry = mock(IPortletWindowRegistry.class);
-		portletRenderer.setPortletWindowRegistry(portletWindowRegistry);
-		PortletDelegationLocator portletDelegationLocator = mock(PortletDelegationLocator.class);
-		portletRenderer.setPortletDelegationLocator(portletDelegationLocator);
-		PortletContainer portletContainer = mock(PortletContainer.class);
-		portletRenderer.setPortletContainer(portletContainer);
-		
-		PortletWindow plutoPortletWindow = mock(PortletWindow.class);
 		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
 		when(portletCacheControlService.getPortletResourceCacheControl(portletWindowId, request, response)).thenReturn(cacheControl);
 		when(portletCacheControlService.getCachedPortletResourceOutput(portletWindowId, request)).thenReturn(cachedPortletData);
@@ -624,19 +534,6 @@ public class PortletRendererImplTest {
 		cachedPortletData.setExpirationTimeSeconds(cacheControl.getExpirationTime());
 		cachedPortletData.setTimeStored(now);
 		
-		PortletRendererImpl portletRenderer = new PortletRendererImpl();
-		IPortletWindowId portletWindowId = mock(IPortletWindowId.class);
-		IPortletWindow portletWindow = mock(IPortletWindow.class);
-		IPortletCacheControlService portletCacheControlService = mock(IPortletCacheControlService.class);
-		portletRenderer.setPortletCacheControlService(portletCacheControlService);
-		IPortletWindowRegistry portletWindowRegistry = mock(IPortletWindowRegistry.class);
-		portletRenderer.setPortletWindowRegistry(portletWindowRegistry);
-		PortletDelegationLocator portletDelegationLocator = mock(PortletDelegationLocator.class);
-		portletRenderer.setPortletDelegationLocator(portletDelegationLocator);
-		PortletContainer portletContainer = mock(PortletContainer.class);
-		portletRenderer.setPortletContainer(portletContainer);
-		
-		PortletWindow plutoPortletWindow = mock(PortletWindow.class);
 		when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
 		when(portletCacheControlService.getPortletResourceCacheControl(portletWindowId, request, response)).thenReturn(cacheControl);
 		when(portletCacheControlService.getCachedPortletResourceOutput(portletWindowId, request)).thenReturn(cachedPortletData);

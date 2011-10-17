@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -32,13 +34,13 @@ import javax.persistence.criteria.Root;
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.i18n.Message;
 import org.jasig.portal.i18n.dao.IMessageDao;
-import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.jasig.portal.jpa.BaseJpaDao;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class JpaMessageDao extends BasePortalJpaDao implements IMessageDao {
+public class JpaMessageDao extends BaseJpaDao implements IMessageDao {
     
     private static final String FIND_MESSAGES_BY_CODE_CACHE_REGION = MessageImpl.class.getName()
             + ".query.FIND_MESSAGES_BY_CODE";
@@ -50,14 +52,21 @@ public class JpaMessageDao extends BasePortalJpaDao implements IMessageDao {
             + ".query.FIND_MESSAGE_BY_CODE_AND_LOCALE";
     
     private CriteriaQuery<MessageImpl> findMessageByCodeAndLocaleQuery;
-    
     private CriteriaQuery<MessageImpl> findMessageByCodeQuery;
-    
     private CriteriaQuery<MessageImpl> findMessageByLocaleQuery;
-    
     private ParameterExpression<String> codeParameter;
-    
     private ParameterExpression<Locale> localeParameter;
+    private EntityManager entityManager;
+
+    @PersistenceContext(unitName = "uPortalPersistence")
+    public final void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+    
+    @Override
+    protected EntityManager getEntityManager() {
+        return this.entityManager;
+    }
     
     @Override
     protected void buildCriteriaQueries(CriteriaBuilder criteriaBuilder) {

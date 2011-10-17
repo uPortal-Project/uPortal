@@ -19,14 +19,32 @@
 
 package org.jasig.portal.events;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
+
+import org.apache.commons.lang.Validate;
+import org.hibernate.annotations.Type;
+import org.jasig.portal.dao.usertype.FunctionalNameType;
 import org.jasig.portal.security.IPerson;
 
 
 
+@Entity
+@Table(name = "UPE_PADD_LAYOUT_EVENT")
+@Inheritance(strategy=InheritanceType.JOINED)
+@PrimaryKeyJoinColumn(name="EVENT_ID")
 public final class PortletAddedToLayoutPortalEvent extends LayoutPortalEvent {
     private static final long serialVersionUID = 1L;
     
+    @Column(name="PARENT_FOLDER_ID", length=50, nullable=false)
     private final String parentFolderId;
+    
+    @Column(name = "FNAME", length = 255, nullable = false)
+    @Type(type = "fname")
     private final String fname;
     
     @SuppressWarnings("unused")
@@ -39,6 +57,9 @@ public final class PortletAddedToLayoutPortalEvent extends LayoutPortalEvent {
     PortletAddedToLayoutPortalEvent(PortalEventBuilder portalEventBuilder, IPerson layoutOwner, long layoutId,
             String parentFolderId, String fname) {
         super(portalEventBuilder, layoutOwner, layoutId);
+        Validate.notNull(parentFolderId, "parentFolderId");
+        FunctionalNameType.validate(fname);
+        
         this.parentFolderId = parentFolderId;
         this.fname = fname;
     }
@@ -55,5 +76,15 @@ public final class PortletAddedToLayoutPortalEvent extends LayoutPortalEvent {
      */
     public String getFname() {
         return this.fname;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return super.toString() + 
+                ", parentFolderId=" + this.parentFolderId + 
+                ", fname=" + this.fname + "]";
     }
 }

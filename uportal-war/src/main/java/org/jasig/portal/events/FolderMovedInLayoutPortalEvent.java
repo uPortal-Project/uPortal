@@ -19,14 +19,28 @@
 
 package org.jasig.portal.events;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
+
+import org.apache.commons.lang.Validate;
 import org.jasig.portal.security.IPerson;
 
 
 
+@Entity
+@Table(name = "UPE_FMOV_LAYOUT_EVENT")
+@Inheritance(strategy=InheritanceType.JOINED)
+@PrimaryKeyJoinColumn(name="EVENT_ID")
 public final class FolderMovedInLayoutPortalEvent extends LayoutPortalEvent {
     private static final long serialVersionUID = 1L;
 
+    @Column(name="OLD_PARENT_FOLDER_ID", length=50, nullable=false)
     private final String oldParentFolderId;
+    @Column(name="MOVED_FOLDER_ID", length=50, nullable=false)
     private final String movedFolderId;
     
     @SuppressWarnings("unused")
@@ -39,6 +53,9 @@ public final class FolderMovedInLayoutPortalEvent extends LayoutPortalEvent {
     FolderMovedInLayoutPortalEvent(PortalEventBuilder portalEventBuilder, IPerson layoutOwner, long layoutId,
             String oldParentFolderId, String movedFolderId) {
         super(portalEventBuilder, layoutOwner, layoutId);
+        Validate.notNull(oldParentFolderId, "oldParentFolderId");
+        Validate.notNull(movedFolderId, "movedFolderId");
+        
         this.oldParentFolderId = oldParentFolderId;
         this.movedFolderId = movedFolderId;
     }
@@ -56,4 +73,16 @@ public final class FolderMovedInLayoutPortalEvent extends LayoutPortalEvent {
     public String getMovedFolderId() {
         return this.movedFolderId;
     }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return super.toString() + 
+                ", oldParentFolderId=" + this.oldParentFolderId + 
+                ", movedFolderId=" + this.movedFolderId + "]";
+    }
+    
+    
 }

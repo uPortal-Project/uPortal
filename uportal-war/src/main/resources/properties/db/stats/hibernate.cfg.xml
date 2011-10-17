@@ -43,7 +43,23 @@
         <mapping resource="properties/db/global.hbm.xml"/> 
         
         <mapping class="org.jasig.portal.events.PortalEvent"/>
+        
         <mapping class="org.jasig.portal.events.LoginEvent"/>
+        <mapping class="org.jasig.portal.events.LoginEvent$UserAttributeList"/>
         <mapping class="org.jasig.portal.events.LogoutEvent"/>
+        
+        <mapping class="org.jasig.portal.events.LayoutPortalEvent"/>
+        <mapping class="org.jasig.portal.events.FolderAddedToLayoutPortalEvent"/>
+        <mapping class="org.jasig.portal.events.FolderDeletedFromLayoutPortalEvent"/>
+        <mapping class="org.jasig.portal.events.FolderMovedInLayoutPortalEvent"/>
+        <mapping class="org.jasig.portal.events.PortletAddedToLayoutPortalEvent"/>
+        <mapping class="org.jasig.portal.events.PortletDeletedFromLayoutPortalEvent"/>
+        <mapping class="org.jasig.portal.events.PortletMovedInLayoutPortalEvent"/>
+        
+        <mapping class="org.jasig.portal.events.PortletExecutionEvent"/>
+        <mapping class="org.jasig.portal.events.PortletActionExecutionEvent"/>
+        <mapping class="org.jasig.portal.events.PortletEventExecutionEvent"/>
+        <mapping class="org.jasig.portal.events.PortletRenderExecutionEvent"/>
+        <mapping class="org.jasig.portal.events.PortletResourceExecutionEvent"/>
     </session-factory>
 </hibernate-configuration>

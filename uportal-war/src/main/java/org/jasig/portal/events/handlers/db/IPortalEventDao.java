@@ -19,12 +19,30 @@
 
 package org.jasig.portal.events.handlers.db;
 
+import java.util.Collection;
+import java.util.List;
+
 import org.jasig.portal.events.PortalEvent;
+import org.jasig.portal.events.handlers.BatchedApplicationListener;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface IPortalEventDao {
-    public void storeNewPortalEvents(PortalEvent... portalEvents);
+public interface IPortalEventDao extends BatchedApplicationListener<PortalEvent> {
+    void storePortalEvent(PortalEvent portalEvent);
+    void storePortalEvents(PortalEvent... portalEvents);
+    void storePortalEvents(Iterable<PortalEvent> portalEvents);
+    
+    /**
+     * @param startTime The inclusive start time to get events for
+     * @param endTime The exclusive end time to get events for
+     * @return All events between the two times in {@link PortalEvent#getTimestamp()} order
+     */
+    List<PortalEvent> getPortalEvents(long startTime, long endTime);
+    
+    /**
+     * @param events Events to delete
+     */
+    void deletePortalEvents(Collection<PortalEvent> events);
 }

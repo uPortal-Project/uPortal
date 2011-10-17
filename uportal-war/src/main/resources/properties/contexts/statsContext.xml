@@ -93,15 +93,15 @@
         </property>
     </bean>
     
-    <bean id="portalEventStore" class="org.jasig.portal.events.handlers.db.JpaPortalEventStore" />
+    <bean id="portalEventStore" class="org.jasig.portal.events.JpaPortalEventStore" />
 -->
     <!-- Stats specific JPA peristence configurtion below --> 
     <aop:config>
         <aop:pointcut id="statsJpaDaoExecution" 
-            expression="execution(* org.jasig.portal.events.handlers.db.*Jpa*.*(..))"/>
+            expression="execution(* org.jasig.portal.events.*Jpa*.*(..))"/>
                 
         <aop:pointcut id="statsDaoExecution" 
-            expression="execution(* org.jasig.portal.events.handlers.db.*Jpa*.*(..))"/>
+            expression="execution(* org.jasig.portal.events.*Jpa*.*(..))"/>
         
         <aop:advisor advice-ref="statsTransactionAdvice" pointcut-ref="statsJpaDaoExecution"/>
             
@@ -116,7 +116,7 @@
     
     <bean id="statsEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="cacheManager">
         <qualifier value="stats"/>
-        <property name="dataSource" ref="PortalDb" />
+        <property name="dataSource" ref="StatsDB" />
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="persistenceUnitName" value="uPortalStatsPersistence" />
         <property name="jpaProperties">
@@ -142,9 +142,5 @@
     <bean name="statsDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport">
         <property name="configuration" value="classpath:/properties/db/stats/hibernate.cfg.xml" />
         <property name="dataSource" ref="StatsDB" />
-    </bean>
-
-    <bean name="expiredEventsPurger" class="org.jasig.portal.events.handlers.db.ExpiredEventsPurger">
-        <property name="expirationThresholdDays" value="366" /><!-- Longest available reporting period, by default, is 1 year -->
     </bean>
 </beans>

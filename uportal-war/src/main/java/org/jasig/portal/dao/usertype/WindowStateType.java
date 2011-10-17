@@ -19,13 +19,8 @@
 
 package org.jasig.portal.dao.usertype;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import javax.portlet.WindowState;
 
-import org.hibernate.HibernateException;
 import org.hibernate.type.descriptor.sql.VarcharTypeDescriptor;
 
 /**
@@ -35,22 +30,9 @@ import org.hibernate.type.descriptor.sql.VarcharTypeDescriptor;
  * @version $Revision$
  */
 public class WindowStateType extends BaseUserType<WindowState> {
-
+    private static final long serialVersionUID = 1L;
+    
     public WindowStateType() {
         super(VarcharTypeDescriptor.INSTANCE, WindowStateTypeDescriptor.INSTANCE);
     }
-
-    @Override
-    public WindowState nullSafeGet(ResultSet rs, String[] names, Object owner) throws HibernateException, SQLException {
-        // TODO Auto-generated method stub
-        return super.nullSafeGet(rs, names, owner);
-    }
-
-    @Override
-    public void nullSafeSet(PreparedStatement st, Object value, int index) throws HibernateException, SQLException {
-        // TODO Auto-generated method stub
-        super.nullSafeSet(st, value, index);
-    }
-    
-    
 }

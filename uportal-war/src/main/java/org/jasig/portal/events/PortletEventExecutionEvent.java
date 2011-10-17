@@ -19,25 +19,41 @@
 
 package org.jasig.portal.events;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
 import javax.portlet.EventRequest;
 import javax.xml.namespace.QName;
+
+import org.apache.commons.lang.Validate;
+import org.hibernate.annotations.Type;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Entity
+@Table(name = "UPE_PORTLET_EVENT_EVENT")
+@Inheritance(strategy=InheritanceType.JOINED)
+@PrimaryKeyJoinColumn(name="EVENT_ID")
 public final class PortletEventExecutionEvent extends PortletExecutionEvent {
     private static final long serialVersionUID = 1L;
-    
-    private final QName eventName;
 
+    @Column(name = "QNAME", length = 1000, nullable = false)
+    @Type(type = "qname")
+    private final QName eventName;
+    
     @SuppressWarnings("unused")
     private PortletEventExecutionEvent() {
         this.eventName = null;
     }
 
-    PortletEventExecutionEvent(PortalEventBuilder eventBuilder, long executionTime, QName eventName) {
-        super(eventBuilder, executionTime);
+    PortletEventExecutionEvent(PortalEventBuilder eventBuilder, String fname, long executionTime, QName eventName) {
+        super(eventBuilder, fname, executionTime);
+        Validate.notNull(eventName, "eventName");
         this.eventName = eventName;
     }
 
@@ -47,5 +63,14 @@ public final class PortletEventExecutionEvent extends PortletExecutionEvent {
      */
     public QName getEventName() {
         return this.eventName;
+    }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return super.toString() + 
+                ", eventName=" + this.eventName + "]";
     }
 }

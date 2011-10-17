@@ -276,50 +276,50 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
     
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.events.IPortalEventFactory#publishPortletActionExecutionEvent(javax.servlet.http.HttpServletRequest, java.lang.Object, long, java.lang.String)
+     * @see org.jasig.portal.events.IPortalEventFactory#publishPortletActionExecutionEvent(javax.servlet.http.HttpServletRequest, java.lang.Object, java.lang.String, long, java.lang.String)
      */
     @Override
-    public void publishPortletActionExecutionEvent(HttpServletRequest request, Object source, long executionTime,
+    public void publishPortletActionExecutionEvent(HttpServletRequest request, Object source, String fname, long executionTime,
             String actionName) {
         
         final PortalEventBuilder eventBuilder = this.createPortalEventBuilder(source, request);
-        final PortletActionExecutionEvent portletActionExecutionEvent = new PortletActionExecutionEvent(eventBuilder, executionTime, actionName);
+        final PortletActionExecutionEvent portletActionExecutionEvent = new PortletActionExecutionEvent(eventBuilder, fname, executionTime, actionName);
         this.applicationEventPublisher.publishEvent(portletActionExecutionEvent);
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.events.IPortalEventFactory#publishPortletEventExecutionEvent(javax.servlet.http.HttpServletRequest, java.lang.Object, long, javax.xml.namespace.QName)
+     * @see org.jasig.portal.events.IPortalEventFactory#publishPortletEventExecutionEvent(javax.servlet.http.HttpServletRequest, java.lang.Object, java.lang.String, long, javax.xml.namespace.QName)
      */
     @Override
-    public void publishPortletEventExecutionEvent(HttpServletRequest request, Object source, long executionTime,
+    public void publishPortletEventExecutionEvent(HttpServletRequest request, Object source, String fname, long executionTime,
             QName eventName) {
 
         final PortalEventBuilder eventBuilder = this.createPortalEventBuilder(source, request);
-        final PortletEventExecutionEvent portletEventExecutionEvent = new PortletEventExecutionEvent(eventBuilder, executionTime, eventName);
+        final PortletEventExecutionEvent portletEventExecutionEvent = new PortletEventExecutionEvent(eventBuilder, fname, executionTime, eventName);
         this.applicationEventPublisher.publishEvent(portletEventExecutionEvent);
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.events.IPortalEventFactory#publishPortletRenderExecutionEvent(javax.servlet.http.HttpServletRequest, java.lang.Object, long, boolean, boolean)
+     * @see org.jasig.portal.events.IPortalEventFactory#publishPortletRenderExecutionEvent(javax.servlet.http.HttpServletRequest, java.lang.Object, java.lang.String, long, boolean, boolean)
      */
     @Override
-    public void publishPortletRenderExecutionEvent(HttpServletRequest request, Object source, long executionTime,
+    public void publishPortletRenderExecutionEvent(HttpServletRequest request, Object source, String fname, long executionTime,
             boolean targeted, boolean cached) {
         
         final PortalEventBuilder eventBuilder = this.createPortalEventBuilder(source, request);
-        final PortletRenderExecutionEvent portletRenderExecutionEvent = new PortletRenderExecutionEvent(eventBuilder, executionTime, targeted, cached);
+        final PortletRenderExecutionEvent portletRenderExecutionEvent = new PortletRenderExecutionEvent(eventBuilder, fname, executionTime, targeted, cached);
         this.applicationEventPublisher.publishEvent(portletRenderExecutionEvent);
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.events.IPortalEventFactory#publishPortletResourceExecutionEvent(javax.servlet.http.HttpServletRequest, java.lang.Object, long, java.lang.String, boolean)
+     * @see org.jasig.portal.events.IPortalEventFactory#publishPortletResourceExecutionEvent(javax.servlet.http.HttpServletRequest, java.lang.Object, java.lang.String, long, java.lang.String, boolean)
      */
     @Override
-    public void publishPortletResourceExecutionEvent(HttpServletRequest request, Object source, long executionTime,
+    public void publishPortletResourceExecutionEvent(HttpServletRequest request, Object source, String fname, long executionTime,
             String resourceId, boolean cached) {
 
         final PortalEventBuilder eventBuilder = this.createPortalEventBuilder(source, request);
-        final PortletResourceExecutionEvent portletResourceExecutionEvent = new PortletResourceExecutionEvent(eventBuilder, executionTime, resourceId, cached);
+        final PortletResourceExecutionEvent portletResourceExecutionEvent = new PortletResourceExecutionEvent(eventBuilder, fname, executionTime, resourceId, cached);
         this.applicationEventPublisher.publishEvent(portletResourceExecutionEvent);
     }
     

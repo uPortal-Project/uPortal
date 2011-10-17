@@ -22,7 +22,6 @@ package org.jasig.portal.events.handlers;
 import java.util.Collection;
 
 import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationListener;
 
 /**
  * Handles batches of events as well as single events
@@ -30,11 +29,11 @@ import org.springframework.context.ApplicationListener;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface BatchedApplicationListener<E extends ApplicationEvent> extends ApplicationListener<E> {
+public interface BatchedApplicationListener<E extends ApplicationEvent> {
 
     /**
      * Handle a collection application event.
      * @param event the event to respond to
      */
-    void onApplicationEvent(Collection<E> event);
+    void onApplicationEvent(Collection<E> events);
 }

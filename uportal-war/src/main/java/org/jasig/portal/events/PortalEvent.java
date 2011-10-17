@@ -154,11 +154,11 @@ public abstract class PortalEvent extends ApplicationEvent {
      */
     @Override
     public String toString() {
-        return "PortalEvent [id=" + this.id + 
+        return this.getClass().getSimpleName() + " [id=" + this.id + 
                 ", serverName=" + this.serverName +
                 ", eventSessionId=" + this.eventSessionId + 
                 ", userName=" + this.userName + 
-                ", timestampAsDate=" + this.getTimestampAsDate() + "]";
+                ", timestampAsDate=" + this.getTimestampAsDate();
     }
     
     /**

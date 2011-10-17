@@ -19,6 +19,15 @@
 
 package org.jasig.portal.events;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.apache.commons.lang.Validate;
 import org.jasig.portal.security.IPerson;
 
 
@@ -29,11 +38,20 @@ import org.jasig.portal.security.IPerson;
  * @since 2.6
  *
  */
+@Entity
+@Table(name = "UPE_LAYOUT_EVENT")
+@Inheritance(strategy=InheritanceType.JOINED)
+@PrimaryKeyJoinColumn(name="EVENT_ID")
 public abstract class LayoutPortalEvent extends PortalEvent {
     private static final long serialVersionUID = 1L;
     
+    @Column(name="LAYOUT_ID", nullable=false)
     private final long layoutId;
+    
+    @Column(name="LAYOUT_OWNER_USER_NAME", length=200, nullable=false)
     private final String layoutOwner;
+    
+    @Transient
     private final IPerson layoutOwnerPerson;
 
 	
@@ -46,6 +64,8 @@ public abstract class LayoutPortalEvent extends PortalEvent {
 
 	LayoutPortalEvent(PortalEventBuilder portalEventBuilder, IPerson layoutOwner, long layoutId) {
         super(portalEventBuilder);
+        Validate.notNull(layoutOwner, "layoutOwner");
+        
         this.layoutId = layoutId;
         this.layoutOwnerPerson = layoutOwner;
         this.layoutOwner = this.layoutOwnerPerson.getUserName();
@@ -70,5 +90,16 @@ public abstract class LayoutPortalEvent extends PortalEvent {
      */
     public IPerson getLayoutOwnerPerson() {
         return this.layoutOwnerPerson;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return super.toString() + 
+                ", layoutId=" + this.layoutId + 
+                ", layoutOwner=" + this.layoutOwner + 
+                ", layoutOwnerPerson=" + this.layoutOwnerPerson;
     }
 }

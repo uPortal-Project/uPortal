@@ -26,6 +26,8 @@ import org.hibernate.type.descriptor.sql.VarcharTypeDescriptor;
  * @version $Revision$
  */
 public class NullSafeStringType extends BaseNullSafeStringType {
+    private static final long serialVersionUID = 1L;
+    
     public NullSafeStringType() {
         super(VarcharTypeDescriptor.INSTANCE);
     }

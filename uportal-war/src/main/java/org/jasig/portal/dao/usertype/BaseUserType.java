@@ -42,6 +42,8 @@ import org.hibernate.usertype.UserType;
  * @version $Revision$
  */
 public abstract class BaseUserType<T> implements UserType, Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private static final WrapperOptions OPTIONS = new WrapperOptions() {
         @Override
         public boolean useStreamForLobBinding() {

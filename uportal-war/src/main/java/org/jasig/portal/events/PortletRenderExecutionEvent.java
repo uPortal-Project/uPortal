@@ -19,14 +19,28 @@
 
 package org.jasig.portal.events;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
+
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Entity
+@Table(name = "UPE_PORTLET_RENDER_EVENT")
+@Inheritance(strategy=InheritanceType.JOINED)
+@PrimaryKeyJoinColumn(name="EVENT_ID")
 public final class PortletRenderExecutionEvent extends PortletExecutionEvent {
     private static final long serialVersionUID = 1L;
     
+    @Column(name="TARGETED", nullable=false)
     private final boolean targeted;
+    
+    @Column(name="CACHED", nullable=false)
     private final boolean cached;
 
     @SuppressWarnings("unused")
@@ -35,8 +49,8 @@ public final class PortletRenderExecutionEvent extends PortletExecutionEvent {
         this.cached = false;
     }
 
-    PortletRenderExecutionEvent(PortalEventBuilder eventBuilder, long executionTime, boolean targeted, boolean cached) {
-        super(eventBuilder, executionTime);
+    PortletRenderExecutionEvent(PortalEventBuilder eventBuilder, String fname, long executionTime, boolean targeted, boolean cached) {
+        super(eventBuilder, fname, executionTime);
         this.targeted = targeted;
         this.cached = cached;
     }
@@ -53,5 +67,15 @@ public final class PortletRenderExecutionEvent extends PortletExecutionEvent {
      */
     public boolean isCached() {
         return this.cached;
+    }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return super.toString() + 
+                ", targeted=" + this.targeted + 
+                ", cached=" + this.cached + "]";
     }
 }

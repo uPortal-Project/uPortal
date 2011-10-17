@@ -21,6 +21,8 @@ package org.jasig.portal.layout.dao.jpa;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -28,7 +30,7 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
 import org.jasig.portal.IUserProfile;
-import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.jasig.portal.jpa.BaseJpaDao;
 import org.jasig.portal.layout.dao.IStylesheetUserPreferencesDao;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.layout.om.IStylesheetUserPreferences;
@@ -44,7 +46,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @version $Revision$
  */
 @Repository("stylesheetUserPreferencesDao")
-public class JpaStylesheetUserPreferencesDao extends BasePortalJpaDao implements IStylesheetUserPreferencesDao {
+public class JpaStylesheetUserPreferencesDao extends BaseJpaDao implements IStylesheetUserPreferencesDao {
     private static final String FIND_ALL_PREFERENCES_CACHE_REGION = StylesheetUserPreferencesImpl.class.getName() + ".query.FIND_ALL_PREFERENCES";
     private static final String FIND_PREFERENCES_BY_DESCRIPTOR_PERSON_PROFILE_CACHE_REGION = StylesheetUserPreferencesImpl.class.getName() + ".query.FIND_PREFERENCES_BY_DESCRIPTOR_PERSON_PROFILE_CACHE_REGION";
     
@@ -53,6 +55,17 @@ public class JpaStylesheetUserPreferencesDao extends BasePortalJpaDao implements
     private ParameterExpression<StylesheetDescriptorImpl> stylesheetDescriptorParameter;
     private ParameterExpression<Integer> userIdParameter;
     private ParameterExpression<Integer> profileIdParameter;
+    private EntityManager entityManager;
+
+    @PersistenceContext(unitName = "uPortalPersistence")
+    public final void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+    
+    @Override
+    protected EntityManager getEntityManager() {
+        return this.entityManager;
+    }
     
     @Override
     protected void buildCriteriaQueries(CriteriaBuilder cb) {

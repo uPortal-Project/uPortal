@@ -42,13 +42,8 @@ import org.springframework.beans.factory.InitializingBean;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public abstract class BasePortalJpaDao implements InitializingBean {
-    protected EntityManager entityManager;
-
-    @PersistenceContext(unitName = "uPortalPersistence")
-    public final void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
+public abstract class BaseJpaDao implements InitializingBean {
+    protected abstract EntityManager getEntityManager();
     
     @Override
     public final void afterPropertiesSet() throws Exception {
@@ -68,7 +63,7 @@ public abstract class BasePortalJpaDao implements InitializingBean {
      * @return Get the {@link CriteriaBuilder} to use to generate {@link CriteriaQuery}
      */
     protected final CriteriaBuilder getCriteriaBuilder() {
-        final EntityManagerFactory entityManagerFactory = this.entityManager.getEntityManagerFactory();
+        final EntityManagerFactory entityManagerFactory = this.getEntityManager().getEntityManagerFactory();
         return entityManagerFactory.getCriteriaBuilder();
     }
 
@@ -78,14 +73,14 @@ public abstract class BasePortalJpaDao implements InitializingBean {
      * @param cacheRegion The hibernate query cache region to use for the query
      */
     protected final <T> TypedQuery<T> createQuery(CriteriaQuery<T> criteriaQuery, String cacheRegion) {
-        final TypedQuery<T> query = this.entityManager.createQuery(criteriaQuery);
+        final TypedQuery<T> query = this.getEntityManager().createQuery(criteriaQuery);
         query.setHint("org.hibernate.cacheable", true);
         query.setHint("org.hibernate.cacheRegion", cacheRegion);
         return query;
     }
     
     protected final <T> T executeNaturalIdQuery(Class<T> type, Map<? extends Attribute<T, ?>, ?> params, String cacheRegion) {
-        final Session session = entityManager.unwrap(Session.class);
+        final Session session = getEntityManager().unwrap(Session.class);
         
         final NaturalIdentifier naturalIdRestriction = Restrictions.naturalId();
         for (Map.Entry<? extends Attribute<T, ?>, ?> paramEntry : params.entrySet()) {
@@ -104,7 +99,7 @@ public abstract class BasePortalJpaDao implements InitializingBean {
     }
     
     public <T> NaturalIdQueryBuilder<T> createNaturalIdQuery(Class<T> entityType, String cacheRegion) {
-        final Session session = entityManager.unwrap(Session.class);
+        final Session session = getEntityManager().unwrap(Session.class);
         return new NaturalIdQueryBuilder<T>(session, entityType, cacheRegion);
     }
 

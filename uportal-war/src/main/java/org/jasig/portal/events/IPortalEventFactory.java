@@ -78,11 +78,11 @@ public interface IPortalEventFactory {
     //********** Portlet Execution Events **********//
     
     public void publishPortletActionExecutionEvent(HttpServletRequest request, Object source, 
-            long executionTime, String actionName);
+            String fname, long executionTime, String actionName);
     public void publishPortletEventExecutionEvent(HttpServletRequest request, Object source, 
-            long executionTime, QName eventName);
+            String fname, long executionTime, QName eventName);
     public void publishPortletRenderExecutionEvent(HttpServletRequest request, Object source, 
-            long executionTime, boolean targeted, boolean cached);
+            String fname, long executionTime, boolean targeted, boolean cached);
     public void publishPortletResourceExecutionEvent(HttpServletRequest request, Object source, 
-            long executionTime, String resourceId, boolean cached);
+            String fname, long executionTime, String resourceId, boolean cached);
 }

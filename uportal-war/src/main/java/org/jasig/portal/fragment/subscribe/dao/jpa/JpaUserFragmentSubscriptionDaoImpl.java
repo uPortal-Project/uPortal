@@ -22,6 +22,8 @@ package org.jasig.portal.fragment.subscribe.dao.jpa;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -31,7 +33,7 @@ import javax.persistence.criteria.Root;
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.fragment.subscribe.IUserFragmentSubscription;
 import org.jasig.portal.fragment.subscribe.dao.IUserFragmentSubscriptionDao;
-import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.jasig.portal.jpa.BaseJpaDao;
 import org.jasig.portal.security.IPerson;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
@@ -45,7 +47,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @version $Revision$ $Date$
  */
 @Repository
-public class JpaUserFragmentSubscriptionDaoImpl extends BasePortalJpaDao implements IUserFragmentSubscriptionDao {
+public class JpaUserFragmentSubscriptionDaoImpl extends BaseJpaDao implements IUserFragmentSubscriptionDao {
     private static final String FIND_USER_FRAGMENT_INFO_BY_PERSON_CACHE_REGION = UserFragmentSubscriptionImpl.class.getName()
             + ".query.FIND_USER_FRAGMENT_INFO_BY_PERSON";
     
@@ -57,6 +59,18 @@ public class JpaUserFragmentSubscriptionDaoImpl extends BasePortalJpaDao impleme
 
     private ParameterExpression<Integer> userIdParameter;
     private ParameterExpression<String> fragmentOwnerParameter;
+    
+    private EntityManager entityManager;
+
+    @PersistenceContext(unitName = "uPortalPersistence")
+    public final void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+    
+    @Override
+    protected EntityManager getEntityManager() {
+        return this.entityManager;
+    }
     
     @Override
     protected void buildCriteriaQueries(CriteriaBuilder criteriaBuilder) {

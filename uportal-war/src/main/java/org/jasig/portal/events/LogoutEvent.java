@@ -25,8 +25,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Immutable;
-
 /**
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -36,7 +34,6 @@ import org.hibernate.annotations.Immutable;
 @Table(name = "UPE_LOGOUT_EVENT")
 @Inheritance(strategy=InheritanceType.JOINED)
 @PrimaryKeyJoinColumn(name="EVENT_ID")
-@Immutable
 public final class LogoutEvent extends PortalEvent {
     private static final long serialVersionUID = 1L;
     
