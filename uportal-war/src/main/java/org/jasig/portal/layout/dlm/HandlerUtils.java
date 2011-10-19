@@ -21,8 +21,8 @@ package org.jasig.portal.layout.dlm;
 
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.IUserLayoutStore;
-import org.jasig.portal.layout.UserLayoutStoreFactory;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.spring.locator.UserLayoutStoreLocator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -128,7 +128,7 @@ public class HandlerUtils
         plfNode.setIdAttribute(Constants.ATT_ID, true);
 
         IUserLayoutStore uls = null;
-        uls = UserLayoutStoreFactory.getUserLayoutStoreImpl();
+        uls = UserLayoutStoreLocator.getUserLayoutStore();
         
         if ( plfNode.getAttribute( Constants.ATT_PLF_ID ).equals( "" ) )
         {

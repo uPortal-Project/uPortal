@@ -45,7 +45,6 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.UserIdentityStoreFactory;
 import org.jasig.portal.events.IPortalEventFactory;
 import org.jasig.portal.layout.IFolderLocalNameResolver;
 import org.jasig.portal.layout.IUserLayout;
@@ -67,6 +66,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.AuthorizationImpl;
 import org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator;
+import org.jasig.portal.spring.locator.UserIdentityStoreLocator;
 import org.jasig.portal.xml.XmlUtilities;
 import org.jasig.portal.xml.xpath.XPathOperations;
 import org.springframework.beans.factory.InitializingBean;
@@ -1418,8 +1418,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
 
                 try
                 {
-                    IUserIdentityStore userStore = UserIdentityStoreFactory
-                        .getUserIdentityStoreImpl();
+                    IUserIdentityStore userStore = UserIdentityStoreLocator.getUserIdentityStore();
                     portalID = userStore.getPortalUID(person);
                     person.setID(portalID);
                 } 
@@ -1467,8 +1466,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
                     org.jasig.portal.Constants.TEMPLATE_USER_NAME_ATT, 
                     FragmentDefinition.getDefaultLayoutOwnerId() );
         }
-        IUserIdentityStore userStore = UserIdentityStoreFactory
-            .getUserIdentityStoreImpl();
+        IUserIdentityStore userStore = UserIdentityStoreLocator.getUserIdentityStore();
 
         try
         {

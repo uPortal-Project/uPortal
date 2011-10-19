@@ -44,7 +44,7 @@ public class PortletDefinitionRegistryLocator extends AbstractBeanLocator<IPortl
             locator = locatorInstance;
             if (locator == null) {
                 LOG.warn("Instance of '" + BEAN_NAME + "' still null after portal application context has been initialized");
-                return (IPortletDefinitionRegistry)applicationContext.getBean(BEAN_NAME, IPortletDefinitionRegistry.class);
+                return applicationContext.getBean(BEAN_NAME, IPortletDefinitionRegistry.class);
             }
         }
         

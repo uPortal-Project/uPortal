@@ -26,7 +26,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.spring.PortalApplicationContextLocator;
-import org.jasig.portal.utils.cache.CacheFactory;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -52,7 +51,7 @@ public class UserIdentityStoreLocator extends
             locator = locatorInstance;
             if (locator == null) {
                 LOG.warn("Instance of '" + BEAN_NAME + "' still null after portal application context has been initialized");
-                return (IUserIdentityStore)applicationContext.getBean(BEAN_NAME, CacheFactory.class);
+                return applicationContext.getBean(BEAN_NAME, IUserIdentityStore.class);
             }
         }
         

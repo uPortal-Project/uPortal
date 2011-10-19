@@ -19,7 +19,7 @@
 
  package org.jasig.portal.groups;
 
-import org.jasig.portal.services.PersonDirectory;
+import org.jasig.portal.spring.locator.PersonAttributeDaoLocator;
 import org.jasig.services.persondir.IPersonAttributeDao;
 
 /**
@@ -68,7 +68,7 @@ public class PersonDirNameFinderFactory implements IEntityNameFinderFactory {
         // set since we decided to invoke this method but before we acquired
         // the lock on this object
         if (PERSON_DIR_NAME_FINDER_INSTANCE == null) {
-            IPersonAttributeDao personAttributeDao = PersonDirectory
+            IPersonAttributeDao personAttributeDao = PersonAttributeDaoLocator
                     .getPersonAttributeDao();
             PERSON_DIR_NAME_FINDER_INSTANCE = new PersonDirNameFinder(
                     personAttributeDao);

@@ -40,6 +40,9 @@
      | Message source for this context, loaded from localized "messages_xx" files
      +-->
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="parentMessageSource">
+          <bean class="org.jasig.portal.i18n.DatabaseMessageSource" />
+        </property>
         <property name="alwaysUseMessageFormat" value="true" />
         <property name="cacheSeconds" value="60" />
         <property name="useCodeAsDefaultMessage" value="true" />

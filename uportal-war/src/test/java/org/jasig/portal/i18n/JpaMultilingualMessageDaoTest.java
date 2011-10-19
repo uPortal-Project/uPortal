@@ -89,6 +89,13 @@ public class JpaMultilingualMessageDaoTest extends BaseJpaDaoTest {
                 final Set<Message> actual5 = messageDao.getMessagesByLocale(new Locale("en_US"));
                 assertEquals(expected5, actual5);
                 
+                // test #getCodes
+                final Set<String> expected6 = new LinkedHashSet<String>();
+                expected6.add("Test message");
+                expected6.add("Test message 2");
+                final Set<String> actual6 = messageDao.getCodes();
+                assertEquals(expected6, actual6);
+                
                 return null;
             }
         });

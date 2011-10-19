@@ -47,7 +47,7 @@ public class EntityCachingServiceLocator extends AbstractBeanLocator<IEntityCach
             locator = locatorInstance;
             if (locator == null) {
                 LOG.warn("Instance of '" + BEAN_NAME + "' still null after portal application context has been initialized");
-                return (IEntityCachingService)applicationContext.getBean(BEAN_NAME, IEntityCachingService.class);
+                return applicationContext.getBean(BEAN_NAME, IEntityCachingService.class);
             }
         }
         

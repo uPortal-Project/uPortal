@@ -31,8 +31,8 @@ import javax.naming.Name;
 import javax.naming.NameParser;
 import javax.naming.NamingException;
 
+import org.jasig.portal.spring.locator.CacheFactoryLocator;
 import org.jasig.portal.utils.cache.CacheFactory;
-import org.jasig.portal.utils.cache.CacheFactoryLocator;
 /**
  * A composite key and type that uniquely identify a portal entity.  The composite
  * key contains a service name, which may be compound, and a native key, which is

@@ -47,7 +47,7 @@ public class CounterStoreLocator extends AbstractBeanLocator<ICounterStore> {
             locator = locatorInstance;
             if (locator == null) {
                 LOG.warn("Instance of '" + BEAN_NAME + "' still null after portal application context has been initialized");
-                return (ICounterStore)applicationContext.getBean(BEAN_NAME, ICounterStore.class);
+                return applicationContext.getBean(BEAN_NAME, ICounterStore.class);
             }
         }
         

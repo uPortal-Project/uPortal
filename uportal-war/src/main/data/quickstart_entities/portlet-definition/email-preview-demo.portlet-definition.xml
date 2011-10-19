@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<portlet-definition xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns2="https://source.jasig.org/schemas/uportal" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/user" xmlns:ns4="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns5="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd">
+    <title>Email Preview Demo</title>
+    <name>Email Preview Demo</name>
+    <fname>email-preview-demo</fname>
+    <desc>Demo version of the Jasig Email Preview portlet</desc>
+    <type>Portlet</type>
+    <timeout>20000</timeout>
+    <portlet-descriptor>
+        <ns2:webAppName>/email-preview</ns2:webAppName>
+        <ns2:portletName>demo-email-preview</ns2:portletName>
+    </portlet-descriptor>
+    <category>Demonstration</category>
+    <group>Everyone</group>
+    <parameter>
+        <name>alternate</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>disableDynamicTitle</name>
+        <value>true</value>
+    </parameter>
+    <parameter>
+        <name>showChrome</name>
+        <value>true</value>
+    </parameter>
+    <parameter>
+        <name>hasHelp</name>
+        <value>true</value>
+    </parameter>
+    <parameter>
+        <name>blockImpersonation</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>hideFromMobile</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>highlight</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>editable</name>
+        <value>true</value>
+    </parameter>
+    <parameter>
+        <name>hasAbout</name>
+        <value>false</value>
+    </parameter>
+    <portlet-preference>
+        <name>protocol</name>
+        <readOnly>true</readOnly>
+        <value>IMAPS</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>host</name>
+        <readOnly>true</readOnly>
+        <value>jasig.org</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>port</name>
+        <readOnly>true</readOnly>
+        <value>993</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>usernameSuffix</name>
+        <readOnly>true</readOnly>
+        <value>@jasig.org</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>linkServiceKey</name>
+        <readOnly>true</readOnly>
+        <value>default</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>helpTitle</name>
+        <readOnly>true</readOnly>
+        <value>Email Preview Demo</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>helpInstructions</name>
+        <readOnly>true</readOnly>
+        <value>This email portlet definition is for demonstration purposes only. To use this portlet in your portal, publish the non-demo version in Portlet Manager.</value>
+    </portlet-preference>
+</portlet-definition>

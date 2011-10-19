@@ -51,9 +51,14 @@ public class JpaMessageDao extends BaseJpaDao implements IMessageDao {
     private static final String FIND_MESSAGE_BY_CODE_AND_LOCALE_CACHE_REGION = MessageImpl.class.getName()
             + ".query.FIND_MESSAGE_BY_CODE_AND_LOCALE";
     
+    private static final String FIND_MESSAGE_CODES_CACHE_REGION = MessageImpl.class.getName()
+            + ".query.FIND_MESSAGE_CODES";
+    
     private CriteriaQuery<MessageImpl> findMessageByCodeAndLocaleQuery;
     private CriteriaQuery<MessageImpl> findMessageByCodeQuery;
     private CriteriaQuery<MessageImpl> findMessageByLocaleQuery;
+    private CriteriaQuery<String> findCodes;
+    
     private ParameterExpression<String> codeParameter;
     private ParameterExpression<Locale> localeParameter;
     private EntityManager entityManager;
@@ -76,6 +81,7 @@ public class JpaMessageDao extends BaseJpaDao implements IMessageDao {
         this.initFindMessageByCodeAndLocaleQuery(criteriaBuilder);
         this.initFindMessageByCodeQuery(criteriaBuilder);
         this.initFindMessageByLocaleQuery(criteriaBuilder);
+        this.initFindCodes(criteriaBuilder);
     }
     
     protected void initFindMessageByCodeAndLocaleQuery(CriteriaBuilder cb) {
@@ -107,6 +113,14 @@ public class JpaMessageDao extends BaseJpaDao implements IMessageDao {
         criteriaQuery.orderBy(criteriaBuilder.asc(root.get(MessageImpl_.code)));
         
         this.findMessageByLocaleQuery = criteriaQuery;
+    }
+    
+    protected void initFindCodes(CriteriaBuilder criteriaBuilder) {
+        final CriteriaQuery<String> criteriaQuery = criteriaBuilder.createQuery(String.class);
+        final Root<MessageImpl> root = criteriaQuery.from(MessageImpl.class);
+        criteriaQuery.select(root.get(MessageImpl_.code));
+        criteriaQuery.groupBy(root.get(MessageImpl_.code));
+        this.findCodes = criteriaQuery;
     }
     
     @Override
@@ -171,5 +185,12 @@ public class JpaMessageDao extends BaseJpaDao implements IMessageDao {
         query.setParameter(codeParameter, code);
         final List<MessageImpl> messages = query.getResultList();
         return new LinkedHashSet<Message>(messages);
+    }
+    
+    @Override
+    public Set<String> getCodes() {
+        final TypedQuery<String> query = createQuery(findCodes, FIND_MESSAGE_CODES_CACHE_REGION);
+        final List<String> codes = query.getResultList();
+        return new LinkedHashSet<String>(codes);
     }
 }

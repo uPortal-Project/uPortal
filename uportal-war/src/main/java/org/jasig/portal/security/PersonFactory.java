@@ -20,10 +20,10 @@
 package org.jasig.portal.security;
 
 import org.jasig.portal.IUserIdentityStore;
-import org.jasig.portal.UserIdentityStoreFactory;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.provider.PersonImpl;
 import org.jasig.portal.security.provider.RestrictedPerson;
+import org.jasig.portal.spring.locator.UserIdentityStoreLocator;
 import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
 
 /**
@@ -58,7 +58,7 @@ public class PersonFactory {
         @Override
         protected Integer createSingleton(Object... args) {
             final IPerson person = (IPerson)args[0];
-            final IUserIdentityStore userIdentityStore = UserIdentityStoreFactory.getUserIdentityStoreImpl();
+            final IUserIdentityStore userIdentityStore = UserIdentityStoreLocator.getUserIdentityStore();
             try {
                 return userIdentityStore.getPortalUID(person);
             }

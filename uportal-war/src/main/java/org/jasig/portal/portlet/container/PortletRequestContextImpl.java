@@ -39,6 +39,7 @@ import org.apache.pluto.container.PortletRequestContext;
 import org.apache.pluto.container.driver.PortletServlet;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.jasig.portal.portlet.container.services.IPortletCookieService;
+import org.jasig.portal.portlet.container.services.RequestAttributeService;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
@@ -61,6 +62,7 @@ public class PortletRequestContextImpl extends AbstractPortletContextImpl implem
     protected final IRequestPropertiesManager requestPropertiesManager;
     protected final IPortalRequestInfo portalRequestInfo;
     protected final IPortletRequestInfo portletRequestInfo;
+    protected final RequestAttributeService requestAttributeService;
     
     //Objects provided by the PortletServlet via the init method
     //The servlet objects are from the scope of the cross-context dispatch
@@ -71,7 +73,7 @@ public class PortletRequestContextImpl extends AbstractPortletContextImpl implem
             PortletContainer portletContainer, IPortletWindow portletWindow,
             HttpServletRequest containerRequest, HttpServletResponse containerResponse,
             IRequestPropertiesManager requestPropertiesManager, IPortalRequestInfo portalRequestInfo,
-            IPortletCookieService portletCookieService) {
+            IPortletCookieService portletCookieService, RequestAttributeService requestAttributeService) {
         
         super(portletContainer, portletWindow, containerRequest, containerResponse, portletCookieService);
         
@@ -80,6 +82,7 @@ public class PortletRequestContextImpl extends AbstractPortletContextImpl implem
 
         this.requestPropertiesManager = requestPropertiesManager;
         this.portalRequestInfo = portalRequestInfo;
+        this.requestAttributeService = requestAttributeService;
         
         final IPortletWindowId portletWindowId = this.portletWindow.getPortletWindowId();
         final Map<IPortletWindowId, ? extends IPortletRequestInfo> portletRequestInfoMap = this.portalRequestInfo.getPortletRequestInfoMap();
@@ -142,7 +145,7 @@ public class PortletRequestContextImpl extends AbstractPortletContextImpl implem
         	return result;
         }
         
-        return null;
+        return this.requestAttributeService.getAttribute(this.servletRequest, portletWindow.getPlutoPortletWindow(), name);
     }
 
     /* (non-Javadoc)
@@ -225,10 +228,14 @@ public class PortletRequestContextImpl extends AbstractPortletContextImpl implem
         return Collections.emptyMap();
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.apache.pluto.container.PortletRequestContext#getAttribute(java.lang.String, javax.servlet.ServletRequest)
+     */
 	@Override
-	public Object getAttribute(String arg0, ServletRequest arg1) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object getAttribute(String name, ServletRequest request) {
+       // TODO what is relationship with #getAttribute(String)? 
+        return null;
 	}
 
 }

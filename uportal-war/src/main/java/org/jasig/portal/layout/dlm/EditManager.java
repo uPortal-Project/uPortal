@@ -23,8 +23,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.IUserLayoutStore;
-import org.jasig.portal.layout.UserLayoutStoreFactory;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.spring.locator.UserLayoutStoreLocator;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -55,7 +55,7 @@ public class EditManager
     {
         if ( dls == null )
         {
-            dls = UserLayoutStoreFactory.getUserLayoutStoreImpl();
+            dls = UserLayoutStoreLocator.getUserLayoutStore();
         }
         return dls;
     }

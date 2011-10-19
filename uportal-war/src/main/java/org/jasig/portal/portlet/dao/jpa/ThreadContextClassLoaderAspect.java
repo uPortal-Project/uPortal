@@ -20,6 +20,8 @@
 package org.jasig.portal.portlet.dao.jpa;
 
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.core.Ordered;
 
 /**
@@ -29,11 +31,12 @@ import org.springframework.core.Ordered;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Aspect
 public class ThreadContextClassLoaderAspect implements Ordered {
-    
     /* (non-Javadoc)
      * @see org.springframework.core.Ordered#getOrder()
      */
+    @Override
     public int getOrder() {
         return Ordered.HIGHEST_PRECEDENCE;
     }
@@ -42,11 +45,13 @@ public class ThreadContextClassLoaderAspect implements Ordered {
      * Wraps the targeted execution, switching the current thread's context class loader
      * to this classes class loader.
      */
+    @Pointcut
     public Object doThreadContextClassLoaderUpdate(ProceedingJoinPoint pjp) throws Throwable {
         final Thread currentThread = Thread.currentThread();
         final ClassLoader previousClassLoader = currentThread.getContextClassLoader();
-        
+
         try {
+            //This class's classloader should always be the portal's classloader
             currentThread.setContextClassLoader(this.getClass().getClassLoader());
             return pjp.proceed();
         }

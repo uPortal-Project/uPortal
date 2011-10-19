@@ -19,10 +19,10 @@
 
 package org.jasig.portal.utils.web;
 
-import java.io.Serializable;
-
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
+
+import org.jasig.portal.utils.SerializableObject;
 
 /**
  * Servlet 2.3 HttpSessionListener that automatically exposes the
@@ -43,7 +43,7 @@ public class RequestAttributeMutexListener implements ServletRequestListener {
      * @see javax.servlet.ServletRequestListener#requestInitialized(javax.servlet.ServletRequestEvent)
      */
     public void requestInitialized(ServletRequestEvent sre) {
-        sre.getServletRequest().setAttribute(PortalWebUtils.REQUEST_MUTEX_ATTRIBUTE, new Mutex());
+        sre.getServletRequest().setAttribute(PortalWebUtils.REQUEST_MUTEX_ATTRIBUTE, new SerializableObject());
     }
 
     /* (non-Javadoc)
@@ -51,13 +51,5 @@ public class RequestAttributeMutexListener implements ServletRequestListener {
      */
     public void requestDestroyed(ServletRequestEvent sre) {
         sre.getServletRequest().removeAttribute(PortalWebUtils.REQUEST_MUTEX_ATTRIBUTE);
-    }
-
-    /**
-     * The mutex to be registered.
-     * Doesn't need to be anything but a plain Object to synchronize on.
-     */
-    private static class Mutex implements Serializable {
-        private static final long serialVersionUID = 1L;
     }
 }

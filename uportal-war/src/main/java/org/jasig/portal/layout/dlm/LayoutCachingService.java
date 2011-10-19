@@ -31,8 +31,8 @@ import org.jasig.portal.events.LoginEvent;
 import org.jasig.portal.events.LogoutEvent;
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.layout.IUserLayoutStore;
-import org.jasig.portal.layout.UserLayoutStoreFactory;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.spring.locator.UserLayoutStoreLocator;
 import org.jasig.portal.utils.Tuple;
 import org.springframework.context.ApplicationListener;
 
@@ -77,7 +77,7 @@ public class LayoutCachingService implements ApplicationListener<PortalEvent>, I
             }
             
             //No provided profile, invalidate all layouts for the user
-            final IUserLayoutStore userLayoutStore = UserLayoutStoreFactory.getUserLayoutStoreImpl();
+            final IUserLayoutStore userLayoutStore = UserLayoutStoreLocator.getUserLayoutStore();
             final Hashtable<Integer, UserProfile> userProfiles;
             try {
                 userProfiles = userLayoutStore.getUserProfileList(person);

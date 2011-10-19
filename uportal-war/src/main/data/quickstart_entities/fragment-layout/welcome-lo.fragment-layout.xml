@@ -31,6 +31,7 @@
           <name>width</name>
           <value>60%</value>
         </structure-attribute>
+        <channel fname="email-preview-demo" unremovable="false" hidden="false" immutable="false" ID="n12" dlm:moveAllowed="false" dlm:deleteAllowed="false"/>
         <channel fname="pbookmarks" unremovable="false" hidden="false" immutable="false" ID="n7" dlm:moveAllowed="false" dlm:deleteAllowed="false"/>
       </folder>
       <folder ID="s9" hidden="false" immutable="false" name="Column" type="regular" unremovable="false">
