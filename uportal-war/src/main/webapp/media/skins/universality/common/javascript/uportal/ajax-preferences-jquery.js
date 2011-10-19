@@ -341,7 +341,7 @@
 		    var data = {action: 'addTab', tabGroup: $("#activeTabGroup").text()};
 			$.post(settings.preferencesUrl, data, function(xml) {
                 if ($("success", xml).text() == 'false') { handleServerError(xml); return false; }
-				window.location = settings.portalUrl + "?uP_root=root&amp;uP_sparam=activeTab&amp;activeTab=" + 
+				window.location = settings.portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + 
 					($("#portalNavigationList > li").length + 1);
 			});
 		};
@@ -350,7 +350,7 @@
 			$.post(settings.preferencesUrl, {action: 'removeElement', elementID: settings.tabId}, 
 			    function(xml) {
                 if ($("success", xml).text() == 'false') { handleServerError(xml); return false; }
-				window.location = settings.portalUrl + "?uP_root=root&amp;uP_sparam=activeTab&amp;activeTab=1"; 
+				window.location = settings.portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=1"; 
 			});
 		};
 		var moveTab = function(direction) {
@@ -421,7 +421,7 @@
 		};
 		var redoTabs = function(tabId) {
 			$("[id*=tabLink_]").each(function(i){
-				$(this).attr("href", settings.portalUrl + "?uP_root=root&amp;uP_sparam=activeTab&amp;activeTab=" + (i+1));
+				$(this).attr("href", settings.portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + (i+1));
 			});
 		//	fly.closeSubnav(tabId);
 		};
@@ -464,7 +464,7 @@
 		    	},
 		    	function(xml) {
 		    	    if ($("success", xml).text() == 'false') { handleServerError(xml); return false; }
-					window.location = settings.portalUrl + "?uP_root=root&amp;uP_sparam=activeTab&amp;activeTab=" + tabPosition;
+					window.location = settings.portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + tabPosition;
 		    	}
 		    );
 			return false;
