@@ -85,7 +85,9 @@
         </property>
     </bean>
 
-    <bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" /> 
+    <bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" >
+        <property name="generateDdl" value="true" />
+    </bean> 
     
     <bean id="jpaInterceptor" class="org.springframework.orm.jpa.JpaInterceptor">
         <property name="entityManagerFactory" ref="entityManagerFactory" />
@@ -99,9 +101,7 @@
     
     <tx:annotation-driven transaction-manager="transactionManager" />
 
-    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" lazy-init="false">
-        <property name="defaultPersistenceUnitName" value="uPortalPersistence" />
-    </bean>
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
     
     <!-- ********** Database Utilities ********** -->
     <!-- dbLoader now autowired -->
@@ -110,10 +110,7 @@
       of this same class configured for a different purpose 
     -->
     <bean name="portalDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport">
-        <property name="dataSource" ref="PortalDb" />  
-        <property name="configuration" ref="hibernateCfg" />
-    </bean>
-    <bean name="hibernateCfg" class="org.springframework.core.io.ClassPathResource">
-    	<constructor-arg><value>properties/db/hibernate.cfg.xml</value></constructor-arg>
+        <property name="dataSource" ref="PortalDb" />
+        <property name="persistenceUnitName" value="uPortalPersistence" />
     </bean>
 </beans>

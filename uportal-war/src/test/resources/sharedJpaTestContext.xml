@@ -30,7 +30,7 @@
                         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
                         
     <bean id="rdbmPropertiesPlacholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="location" value="classpath:/properties/dataSource.properties" />
+        <property name="location" value="classpath:/dataSource.properties" />
     </bean>
 
     <bean id="PortalDb" class="org.springframework.jdbc.datasource.SingleConnectionDataSource">

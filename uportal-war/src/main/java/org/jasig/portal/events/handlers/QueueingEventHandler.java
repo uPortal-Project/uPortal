@@ -26,9 +26,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.spring.context.FilteringApplicationListener;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.context.ApplicationEvent;
 
 /**
  * Queues PortalEvents in a local {@link ConcurrentLinkedQueue} and flushes the events to the configured
@@ -38,28 +38,28 @@ import org.springframework.beans.factory.DisposableBean;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class QueueingEventHandler extends FilteringApplicationListener<PortalEvent> implements DisposableBean {
-    private final Queue<PortalEvent> eventQueue = new ConcurrentLinkedQueue<PortalEvent>();
+public abstract class QueueingEventHandler<E extends ApplicationEvent> 
+        extends FilteringApplicationListener<E> implements DisposableBean {
+    
+    private final Queue<E> eventQueue = new ConcurrentLinkedQueue<E>();
     private final Lock flushLock = new ReentrantLock();
     private int batchSize = 25;
-    private BatchedApplicationListener<PortalEvent> batchedApplicationListener;
-    
-    public void setBatchedApplicationListener(BatchedApplicationListener<PortalEvent> batchedApplicationListener) {
-        this.batchedApplicationListener = batchedApplicationListener;
-    }
+    private List<E> eventBuffer = new ArrayList<E>(this.batchSize);
+
 
     /**
      * The maximum number of events to be flushed to the {@link BatchingEventHandler} per call.
      */
     public void setBatchSize(int batchSize) {
         this.batchSize = batchSize;
+        eventBuffer = new ArrayList<E>(this.batchSize);
     }
     
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.DisposableBean#destroy()
      */
     @Override
-    public void destroy() throws Exception {
+    public final void destroy() throws Exception {
         this.flush();
     }
     
@@ -67,9 +67,17 @@ public class QueueingEventHandler extends FilteringApplicationListener<PortalEve
      * @see org.jasig.portal.spring.context.FilteringApplicationListener#onFilteredApplicationEvent(org.springframework.context.ApplicationEvent)
      */
     @Override
-    protected void onFilteredApplicationEvent(PortalEvent event) {
+    protected final void onFilteredApplicationEvent(E event) {
         this.eventQueue.offer(event);
     }
+    
+    /**
+     * Handle a batch of application events, these events have been filtered by the 
+     * parent {@link FilteringApplicationListener}
+     * 
+     * @param events Events to handle
+     */
+    protected abstract void onApplicationEvents(Iterable<E> events);
     
     /**
      * Flushes the queued PortalEvents to the configured {@link BatchingEventHandler}. If <code>force</code> is false
@@ -79,7 +87,7 @@ public class QueueingEventHandler extends FilteringApplicationListener<PortalEve
      * 
      * @param force Forces flushing events to the {@link BatchingEventHandler} even if there are fewer than <code>flushCount</code> PortalEvents in the queue.
      */
-    public void flush() {
+    public final void flush() {
         if (eventQueue.isEmpty()) {
             //No events to flush
             return;
@@ -92,33 +100,31 @@ public class QueueingEventHandler extends FilteringApplicationListener<PortalEve
             return;
         }
         try {
-            final List<PortalEvent> eventBuffer = new ArrayList<PortalEvent>(this.batchSize);
-
-            while (this.eventQueue.isEmpty()) {
+            while (!this.eventQueue.isEmpty()) {
                 //Clear the buffer for re-use
                 eventBuffer.clear();
                 
                 //Pop events off the queue into the buffer
                 while (!this.eventQueue.isEmpty() && eventBuffer.size() < this.batchSize) {
-                    final PortalEvent event = eventQueue.poll();
+                    final E event = eventQueue.poll();
                     eventBuffer.add(event);
                 }
 
                 if (this.logger.isDebugEnabled()) {
-                    this.logger.debug("Flushing " + eventBuffer.size() + " PortalEvents to " + this.batchedApplicationListener);
+                    this.logger.debug("Flushing " + eventBuffer.size() + " events");
                 }
 
                 //Write events out to batching listener
                 try {
-                    this.batchedApplicationListener.onApplicationEvent(eventBuffer);
+                    this.onApplicationEvents(eventBuffer);
                 }
                 catch (Throwable t) {
-                    this.logger.error("An exception was thrown while trying to flush " + eventBuffer.size() + " PortalEvents to " + this.batchedApplicationListener, t);
+                    this.logger.error("An exception was thrown while trying to flush " + eventBuffer.size() + " events", t);
 
                     final StringBuilder failedEvents = new StringBuilder();
                     failedEvents.append("The following events that were being flushed, some may have been persisted correctly");
 
-                    for (final PortalEvent portalEvent : eventBuffer) {
+                    for (final E portalEvent : eventBuffer) {
                         failedEvents.append("\n\t");
                         try {
                             failedEvents.append(portalEvent.toString());
@@ -135,6 +141,9 @@ public class QueueingEventHandler extends FilteringApplicationListener<PortalEve
 
         }
         finally {
+            //Clear the buffer to avoid memory leaks
+            eventBuffer.clear();
+            
             this.flushLock.unlock();
         }
     }

@@ -55,6 +55,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.stereotype.Service;
 import org.springframework.web.util.WebUtils;
 
 /**
@@ -65,6 +66,7 @@ import org.springframework.web.util.WebUtils;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Service
 public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationEventPublisherAware {
     private static final String EVENT_SESSION_MUTEX = PortalEventFactoryImpl.class.getName() + ".EVENT_SESSION_MUTEX";
     private static final String EVENT_SESSION_ID_ATTR = PortalEventFactoryImpl.class.getName() + ".EVENT_SESSION_ID_ATTR";
@@ -100,6 +102,7 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
         this.attributeExcludes = attributeExcludes;
     }
 
+    @Autowired
     public void setPortalInfoProvider(IPortalInfoProvider portalInfoProvider) {
         this.portalInfoProvider = portalInfoProvider;
     }

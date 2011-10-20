@@ -96,21 +96,12 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
         
         return criteriaQuery;
     }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.events.handlers.BatchedApplicationListener#onApplicationEvent(java.util.Collection)
-     */
-    @Override
-    @Transactional
-    public void onApplicationEvent(Collection<PortalEvent> events) {
-        this.storePortalEvents(events);
-    }
     
     /* (non-Javadoc)
      * @see org.jasig.portal.events.handlers.db.IPortalEventDao#storePortalEvent(org.jasig.portal.events.PortalEvent)
      */
     @Override
-    @Transactional
+    @Transactional(value="statsTransactionManager")
     public void storePortalEvent(PortalEvent portalEvent) {
         this.entityManager.persist(portalEvent);
     }
@@ -119,7 +110,7 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
      * @see org.jasig.portal.events.handlers.db.IPortalEventDao#storePortalEvents(org.jasig.portal.events.PortalEvent[])
      */
     @Override
-    @Transactional
+    @Transactional(value="statsTransactionManager")
     public void storePortalEvents(PortalEvent... portalEvents) {
         for (final PortalEvent portalEvent : portalEvents) {
             try {
@@ -135,7 +126,7 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
      * @see org.jasig.portal.events.handlers.db.IPortalEventDao#storePortalEvents(java.lang.Iterable)
      */
     @Override
-    @Transactional
+    @Transactional(value="statsTransactionManager")
     public void storePortalEvents(Iterable<PortalEvent> portalEvents) {
         for (final PortalEvent portalEvent : portalEvents) {
             try {
@@ -163,12 +154,10 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
      * @see org.jasig.portal.events.handlers.db.IPortalEventDao#deletePortalEvents(java.util.Collection)
      */
     @Override
-    @Transactional
+    @Transactional(value="statsTransactionManager")
     public void deletePortalEvents(Collection<PortalEvent> events) {
         for (final PortalEvent event : events) {
             this.entityManager.remove(event);
         }
     }
-    
-    
 }

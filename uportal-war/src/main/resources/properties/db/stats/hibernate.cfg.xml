@@ -40,7 +40,7 @@
         
         <property name="hibernate.current_session_context_class">thread</property>
         
-        <mapping resource="properties/db/global.hbm.xml"/> 
+        <mapping resource="properties/db/global.hbm.xml"/>
         
         <mapping class="org.jasig.portal.events.PortalEvent"/>
         

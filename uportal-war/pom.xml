@@ -596,6 +596,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <argLine>-Xmx512m -XX:MaxPermSize=512m</argLine>
+                    <systemPropertyVariables>
+                        <org.jasig.portal.test>true</org.jasig.portal.test>
+                    </systemPropertyVariables>
                     <includes>
                         <include>**/Test*.java</include>
                         <include>**/*Test.java</include>

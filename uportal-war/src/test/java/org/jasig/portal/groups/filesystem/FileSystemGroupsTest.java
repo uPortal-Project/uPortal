@@ -35,7 +35,6 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import junit.framework.TestCase;
 import junit.textui.TestRunner;
 
 import org.apache.commons.logging.Log;
@@ -53,6 +52,7 @@ import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.rdbm.TransientDatasource;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -75,6 +75,7 @@ import org.junit.rules.TemporaryFolder;
  * @author Dan Ellentuck
  * @version $Revision$
  */
+@Ignore
 public class FileSystemGroupsTest {
     protected static final Log LOG = LogFactory.getLog(FileSystemGroupsTest.class);
 

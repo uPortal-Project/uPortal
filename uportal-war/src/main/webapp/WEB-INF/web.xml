@@ -369,6 +369,7 @@
     <servlet-mapping>
         <servlet-name>AuthenticationDispatcherServlet</servlet-name>
         <url-pattern>/Login</url-pattern>
+        <url-pattern>/Logout</url-pattern>
     </servlet-mapping>
 
     <mime-mapping>

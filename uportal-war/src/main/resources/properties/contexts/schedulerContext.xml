@@ -33,5 +33,6 @@
     
     <task:scheduled-tasks scheduler="uPortalTaskScheduler">
         <task:scheduled ref="portletCookieDao" method="purgeExpiredCookies" fixed-delay="60000"/>
+        <task:scheduled ref="PortalEventDaoQueuingEventHandler" method="flush" fixed-delay="1000"/>
     </task:scheduled-tasks>
 </beans>

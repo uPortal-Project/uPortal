@@ -34,7 +34,7 @@
 
     
     <bean id="rdbmPropertiesPlacholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="location" value="classpath:/properties/dataSource.properties" />
+        <property name="location" value="classpath:/dataSource.properties" />
     </bean>
 
     <bean id="StatsDB" class="org.springframework.jdbc.datasource.SingleConnectionDataSource">
@@ -47,7 +47,7 @@
         <property name="autoCommit" value="true" />
     </bean>
     
-    <bean id="factoryBean" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="">
+    <bean id="statsEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="StatsDB" />
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="persistenceUnitName" value="uPortalStatsPersistence" />
@@ -69,12 +69,12 @@
     </bean>
     
     <bean id="jpaInterceptor" class="org.springframework.orm.jpa.JpaInterceptor">
-        <property name="entityManagerFactory" ref="factoryBean" />
+        <property name="entityManagerFactory" ref="statsEntityManagerFactory" />
     </bean>
 
-    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <qualifier value="StatsDB" />
-        <property name="entityManagerFactory" ref="factoryBean" />
+    <bean id="statsTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <qualifier value="stats"/>
+        <property name="entityManagerFactory" ref="statsEntityManagerFactory" />
     </bean>
     
     <tx:annotation-driven transaction-manager="transactionManager" />

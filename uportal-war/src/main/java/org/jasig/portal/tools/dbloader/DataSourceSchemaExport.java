@@ -19,21 +19,24 @@
 
 package org.jasig.portal.tools.dbloader;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import javax.persistence.spi.PersistenceUnitInfo;
 import javax.sql.DataSource;
 
 import org.hibernate.cfg.Configuration;
-import org.hibernate.cfg.Environment;
 import org.hibernate.cfg.Settings;
+import org.hibernate.ejb.Ejb3Configuration;
 import org.hibernate.ejb.InjectionSettingsFactory;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.hibernate.tool.hbm2ddl.SchemaUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.Resource;
+import org.springframework.jdbc.datasource.lookup.SingleDataSourceLookup;
+import org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Runs the Hibernate Schema Export tool using the specified DataSource for the target DB.
@@ -44,18 +47,23 @@ import org.springframework.core.io.Resource;
 public class DataSourceSchemaExport implements ISchemaExport {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
-    private Resource configurationResource;
     private DataSource dataSource;
     
     private final Object configLock = new Object();
     private Configuration cachedConfiguration;
     private Settings cachedSettings;
-    
+    private String persistenceUnitName;
+
+
     /**
-     * @param configuration the hibernate configuration to use
+     * Specify the name of the EntityManagerFactory configuration.
+     * <p>Default is none, indicating the default EntityManagerFactory
+     * configuration. The persistence provider will throw an exception if
+     * ambiguous EntityManager configurations are found.
+     * @see javax.persistence.Persistence#createEntityManagerFactory(String)
      */
-    public void setConfiguration(Resource configuration) {
-        this.configurationResource = configuration;
+    public void setPersistenceUnitName(String persistenceUnitName) {
+        this.persistenceUnitName = persistenceUnitName;
     }
 
     /**
@@ -169,18 +177,22 @@ public class DataSourceSchemaExport implements ISchemaExport {
                 return configuration;
             }
             
-            //Load the config data
-            configuration = new Configuration();
-            try {
-                configuration.configure(this.configurationResource.getURL());
-            }
-            catch (IOException e) {
-                throw new IllegalArgumentException("Could not load configuration file '" + this.configurationResource + "'", e);
-            }
+            //Use DefaultPersistenceUnitManager and Ejb3Configuration to build hibernate configuration object
+            final DefaultPersistenceUnitManager defaultPersistenceUnitManager = new DefaultPersistenceUnitManager();
+            defaultPersistenceUnitManager.setDataSourceLookup(new SingleDataSourceLookup(dataSource));
+            defaultPersistenceUnitManager.setDefaultDataSource(dataSource);
+            defaultPersistenceUnitManager.afterPropertiesSet();
+            final PersistenceUnitInfo persistenceUnitInfo = defaultPersistenceUnitManager.obtainPersistenceUnitInfo(this.persistenceUnitName);
+            
+            final Ejb3Configuration configBuilder = new Ejb3Configuration();
+            final Ejb3Configuration jpaConfiguration = configBuilder.configure(
+                    persistenceUnitInfo,
+                    ImmutableMap.of(
+                            "hibernate.cache.use_query_cache", "false",
+                            "hibernate.cache.use_second_level_cache", "false"));
+            
+            configuration = jpaConfiguration.getHibernateConfiguration();
 
-            //Specify that the connection provider will be injected
-            configuration.setProperty(Environment.CONNECTION_PROVIDER, org.hibernate.ejb.connection.InjectedDataSourceConnectionProvider.class.getName());
-                
             //Build the entity mappings
             configuration.buildMappings();
 

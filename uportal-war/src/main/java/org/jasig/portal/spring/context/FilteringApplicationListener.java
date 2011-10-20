@@ -19,6 +19,7 @@
 
 package org.jasig.portal.spring.context;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.core.OrderComparator;
 
 import com.google.common.collect.ImmutableList;
 
@@ -44,6 +46,8 @@ public abstract class FilteringApplicationListener<E extends ApplicationEvent> i
      * @param applicationEventFilters The list of filters to test each event with
      */
     public final void setApplicationEventFilters(List<ApplicationEventFilter<E>> applicationEventFilters) {
+        applicationEventFilters = new ArrayList<ApplicationEventFilter<E>>(applicationEventFilters);
+        Collections.sort(applicationEventFilters, OrderComparator.INSTANCE);
         this.applicationEventFilters = ImmutableList.copyOf(applicationEventFilters);
     }
 

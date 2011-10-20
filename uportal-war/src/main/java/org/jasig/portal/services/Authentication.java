@@ -43,6 +43,7 @@ import org.jasig.portal.utils.MovingAverageSample;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 /**
@@ -73,7 +74,7 @@ public class Authentication {
     private IPersonAttributeDao personAttributeDao;
 
     @Autowired
-    public void setPersonAttributeDao(IPersonAttributeDao personAttributeDao) {
+    public void setPersonAttributeDao(@Qualifier("personAttributeDao") IPersonAttributeDao personAttributeDao) {
         this.personAttributeDao = personAttributeDao;
     }
 

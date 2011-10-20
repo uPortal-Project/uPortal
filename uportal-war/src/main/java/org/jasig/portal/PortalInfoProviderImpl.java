@@ -146,6 +146,10 @@ public class PortalInfoProviderImpl implements IPortalInfoProvider {
     }
     
     protected String getNetworkInterfaceName(String networkInterfaceName) {
+        if (networkInterfaceName == null) {
+            return null;
+        }
+        
         this.logger.info("Attempting to resolve serverName using NetworkInterface named ({})", networkInterfaceName);
         
         final NetworkInterface networkInterface;

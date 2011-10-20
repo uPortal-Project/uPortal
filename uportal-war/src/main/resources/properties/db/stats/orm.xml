@@ -6,7 +6,7 @@
     version="2.0">
     <mapped-superclass class="org.springframework.context.ApplicationEvent">
         <attributes>
-            <basic name="timestamp" access="FIELD">
+            <basic name="timestamp">
                 <column name="TIMESTAMP" updatable="false" nullable="false" />
             </basic>
         </attributes>

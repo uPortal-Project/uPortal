@@ -19,13 +19,15 @@
 
 package org.jasig.portal.spring;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class LazyPortalApplicationContextTest extends TestCase {
+public class LazyPortalApplicationContextTest {
+    
+    @Test(expected=IllegalStateException.class)
     public void testLazyLoadingPortalApplicationContext() throws Exception {
         PortalApplicationContextLocator.getApplicationContext();
     }

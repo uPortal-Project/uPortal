@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -74,13 +73,11 @@ public final class LoginEvent extends PortalEvent {
         joinColumns = @JoinColumn(name = "ATTR_ID")
     )
     @Column(name = "GROUP_KEY")
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
     private final Set<String> groups;
     
     @OneToMany(targetEntity = UserAttributeList.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "LOGIN_EVENT_ID", nullable = false)
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
     private final Collection<UserAttributeList> attributes;
 
@@ -135,7 +132,6 @@ public final class LoginEvent extends PortalEvent {
             pkColumnValue="UPE_LOGIN_USER_ATTR",
             allocationSize=500
         )
-    @Cacheable
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Immutable
     static class UserAttributeList {
@@ -155,7 +151,6 @@ public final class LoginEvent extends PortalEvent {
         @IndexColumn(name = "VALUE_ORDER")
         @Type(type = "nullSafeString")
         @Column(name = "ATTR_VALUE")
-        @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
         @Fetch(FetchMode.JOIN)
         private final List<String> values = new ArrayList<String>(0);
 

@@ -76,17 +76,18 @@ public class LoginController implements InitializingBean {
     
     private IPersonManager personManager;
 
-    @Autowired(required = true)
+    @Autowired
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
     }
-    
+
+    @Autowired
+    public void setAuthenticationService(Authentication authenticationService) {
+        this.authenticationService = authenticationService;
+    }
+
     @Override
     public void afterPropertiesSet() throws Exception {
-        
-        // initialize the authentication service
-        this.authenticationService = new Authentication();
-
         this.credentialTokens = new HashMap<String,String>(1);
         this.principalTokens = new HashMap<String,String>(1);
         

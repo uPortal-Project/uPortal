@@ -19,29 +19,34 @@
 
 package org.jasig.portal.events.handlers.db;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.jasig.portal.events.PortalEvent;
+import org.jasig.portal.events.handlers.QueueingEventHandler;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
+ * Hands off queued portal events for storage by the IPortalEventDao
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface IPortalEventDao {
-    void storePortalEvent(PortalEvent portalEvent);
-    void storePortalEvents(PortalEvent... portalEvents);
-    void storePortalEvents(Iterable<PortalEvent> portalEvents);
+@Service("PortalEventDaoQueuingEventHandler")
+public class PortalEventDaoQueuingEventHandler extends QueueingEventHandler<PortalEvent> {
+    private IPortalEventDao portalEventDao;
     
     /**
-     * @param startTime The inclusive start time to get events for
-     * @param endTime The exclusive end time to get events for
-     * @return All events between the two times in {@link PortalEvent#getTimestamp()} order
+     * @param portalEventDao the portalEventDao to set
      */
-    List<PortalEvent> getPortalEvents(long startTime, long endTime);
-    
-    /**
-     * @param events Events to delete
+    @Autowired
+    public void setPortalEventDao(IPortalEventDao portalEventDao) {
+        this.portalEventDao = portalEventDao;
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.events.handlers.QueueingEventHandler#onApplicationEvents(java.lang.Iterable)
      */
-    void deletePortalEvents(Collection<PortalEvent> events);
+    @Override
+    protected void onApplicationEvents(Iterable<PortalEvent> events) {
+        this.portalEventDao.storePortalEvents(events);
+    }
 }
