@@ -57,7 +57,7 @@ public class PropertiesFilesIsIncludedUser implements Function<String, Boolean> 
 	/**
 	 * @param userNames just the {@link Map#keySet()} is used.
 	 */
-	public void setUserNames(Map<String, Object> userNames) {
+	public void setUserNamesMap(Map<String, Object> userNames) {
 		this.userNames = userNames.keySet();
 		this.allUsers = this.userNames.contains("*");
 	}

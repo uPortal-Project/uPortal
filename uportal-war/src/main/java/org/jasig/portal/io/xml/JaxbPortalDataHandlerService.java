@@ -37,6 +37,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -351,7 +352,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
 	                continue;
 	            }
 	
-	            final Queue<ImportFuture<?>> importFutures = new LinkedList<ImportFuture<?>>();
+	            final Queue<ImportFuture<?>> importFutures = new ConcurrentLinkedQueue<ImportFuture<?>>();
 	            
 	            final int fileCount = files.size();
 	            logger.info("Importing {} files of type {}", fileCount, portalDataKey);
@@ -599,8 +600,13 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
     }
 
     @Override
-    public Iterable<IPortalDataType> getPortalDataTypes() {
+    public Iterable<IPortalDataType> getExportPortalDataTypes() {
         return this.exportPortalDataTypes;
+    }
+
+    @Override
+    public Iterable<IPortalDataType> getDeletePortalDataTypes() {
+        return this.deletePortalDataTypes;
     }
 
     @Override
@@ -673,7 +679,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
 
     @Override
     public void exportAllDataOfType(Set<String> typeIds, File directory) {
-        final Queue<ExportFuture<?>> exportFutures = new LinkedList<ExportFuture<?>>();
+        final Queue<ExportFuture<?>> exportFutures = new ConcurrentLinkedQueue<ExportFuture<?>>();
         final boolean failOnError = true; //options != null ? options.isFailOnError() : true;
         
         final AtomicBoolean failed = new AtomicBoolean(false);
@@ -767,13 +773,18 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
 
 	@Override
 	public void deleteData(String typeId, String dataId) {
-		final IDataDeleter<Object> portalDataExporter = this.portalDataDeleters.get(typeId);
-		final Object data = portalDataExporter.deleteData(dataId);
-		if(data == null) {
-			logger.info("portalDataExporter#deleteData returned null for typeId " + typeId + " and dataId " + dataId );
-		}
+		final IDataDeleter<Object> dataDeleter = this.portalDataDeleters.get(typeId);
+        if (dataDeleter == null) {
+            throw new IllegalArgumentException("No IDataDeleter exists for: " + typeId);   
+        }
 		
-		throw new UnsupportedOperationException("Data Deletion is NOT supported");
+		final Object data = dataDeleter.deleteData(dataId);
+		if (data != null) {
+			logger.info("Deleted data " + dataId + " of type " + typeId);
+		}
+		else {
+		    logger.info("No data " + dataId + " of type " + typeId + " exists to delete");
+		}
 	}
     
     /**

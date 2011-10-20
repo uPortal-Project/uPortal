@@ -583,7 +583,7 @@
      | Nested Tasks
      +-->
     <bean id="isUserIncluded" class="org.jasig.portal.io.PropertiesFilesIsIncludedUser">
-        <property name="userNames">
+        <property name="userNamesMap">
             <util:properties local-override="true" location="classpath:/properties/export_included_users.properties">
                 <!-- Properties listed here are in addition to the properties in the flat file -->
                 <prop key="system"/>

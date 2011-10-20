@@ -26,6 +26,8 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 
 import org.apache.commons.lang.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base IPortalDataType implementation that should simplify most implementations
@@ -34,6 +36,8 @@ import org.apache.commons.lang.Validate;
  * @version $Revision$
  */
 public abstract class AbstractPortalDataType implements IPortalDataType {
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    
     private final QName defaultQName;
     
     public AbstractPortalDataType(QName defaultQName) {

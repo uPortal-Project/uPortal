@@ -37,6 +37,7 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.NaturalId;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletType;
 
@@ -81,7 +82,8 @@ public class PortletTypeImpl implements Serializable, IPortletType {
     private Set<IPortletDefinition> portletDefinitions = null;
 
 
-    @Column(name = "TYPE_NAME", length = 70, unique = true, nullable = false)
+    @NaturalId
+    @Column(name = "TYPE_NAME", length = 70)
     private final String name;
 
 	@Column(name = "TYPE_DESCR", length = 2000)

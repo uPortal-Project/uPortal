@@ -183,7 +183,21 @@
 | Only those with knowledge of xsl should configure this template.
 -->
 <xsl:template name="mobile.channel.content.focused">
+  <xsl:choose>
+    <xsl:when test="//content/focused/blocked-channel">
+        <xsl:choose>
+            <xsl:when test="parameter[@name='blockImpersonation']/@value = 'true'">
+                <div><p><em><xsl:value-of select="upMsg:getMessage('hidden.in.impersonation.view', $USER_LANG)"/></em></p></div>
+            </xsl:when>
+            <xsl:otherwise>
+                <div><p><em><xsl:value-of select="upMsg:getMessage('channel.blocked', $USER_LANG)"/></em></p></div>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:when>
+    <xsl:otherwise>
       <xsl:copy-of select="//content/focused/channel" />
+    </xsl:otherwise>
+  </xsl:choose>
 </xsl:template>
 <!-- ========================================================================= -->
 

@@ -39,17 +39,13 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.UserIdentityStoreFactory;
 import org.jasig.portal.layout.IFolderLocalNameResolver;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
@@ -74,6 +70,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.AuthorizationImpl;
 import org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator;
+import org.jasig.portal.spring.locator.UserIdentityStoreLocator;
 import org.jasig.portal.xml.XmlUtilities;
 import org.jasig.portal.xml.xpath.XPathOperations;
 import org.springframework.beans.factory.InitializingBean;
@@ -1480,8 +1477,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
 
                 try
                 {
-                    IUserIdentityStore userStore = UserIdentityStoreFactory
-                        .getUserIdentityStoreImpl();
+                    IUserIdentityStore userStore = UserIdentityStoreLocator.getUserIdentityStore();
                     portalID = userStore.getPortalUID(person);
                     person.setID(portalID);
                 } 
@@ -1529,8 +1525,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
                     org.jasig.portal.Constants.TEMPLATE_USER_NAME_ATT, 
                     FragmentDefinition.getDefaultLayoutOwnerId() );
         }
-        IUserIdentityStore userStore = UserIdentityStoreFactory
-            .getUserIdentityStoreImpl();
+        IUserIdentityStore userStore = UserIdentityStoreLocator.getUserIdentityStore();
 
         try
         {

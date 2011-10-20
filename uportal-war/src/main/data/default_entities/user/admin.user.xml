@@ -35,6 +35,11 @@
         <value>amy.administrator@university.edu</value>
     </attribute>
     <attribute>
+        <name>alternateEmailAddress</name>
+        <value>amy.webmaster@university.edu</value>
+        <value>amy.geologist@university.edu</value>
+    </attribute>
+    <attribute>
         <name>telephoneNumber</name>
         <value>(555) 555-5555</value>
     </attribute>

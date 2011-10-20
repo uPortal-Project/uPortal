@@ -49,7 +49,7 @@ public class PortalDbLocator extends AbstractBeanLocator<DataSource> {
             locator = locatorInstance;
             if (locator == null) {
                 LOG.warn("Instance of '" + BEAN_NAME + "' still null after portal application context has been initialized");
-                return (DataSource)applicationContext.getBean(BEAN_NAME, DataSource.class);
+                return applicationContext.getBean(BEAN_NAME, DataSource.class);
             }
         }
         

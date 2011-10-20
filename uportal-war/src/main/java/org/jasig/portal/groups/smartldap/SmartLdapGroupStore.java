@@ -22,9 +22,9 @@ package org.jasig.portal.groups.smartldap;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -35,9 +35,6 @@ import org.apache.commons.logging.LogFactory;
 import org.danann.cernunnos.Task;
 import org.danann.cernunnos.runtime.RuntimeRequestResponse;
 import org.danann.cernunnos.runtime.ScriptRunner;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
-
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.groups.ComponentGroupServiceDescriptor;
 import org.jasig.portal.groups.EntityGroupImpl;
@@ -51,7 +48,9 @@ import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.ILockableEntityGroup;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
-import org.jasig.portal.services.PersonDirectory;
+import org.jasig.portal.spring.locator.PersonAttributeDaoLocator;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 public final class SmartLdapGroupStore implements IEntityGroupStore {
 		
@@ -169,7 +168,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
     		List<Object> seedValue = new LinkedList<Object>();
     		seedValue.add(ei.getKey());
     		seed.put(IPerson.USERNAME, seedValue);
-    		Map<String,List<Object>> attr = PersonDirectory.getPersonAttributeDao().getMultivaluedUserAttributes(seed);
+    		Map<String,List<Object>> attr = PersonAttributeDaoLocator.getPersonAttributeDao().getMultivaluedUserAttributes(seed);
             // avoid NPEs and unnecessary IPerson creation
             if (attr != null && !attr.isEmpty()) {
                 IPerson p = PersonFactory.createPerson();

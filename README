@@ -10,9 +10,9 @@ the uPortal Confluence site http://www.ja-sig.org/wiki/display/UPC/Home
 JDK 1.6 - Just a JRE is not sufficient, a full JDK is required
 Servlet 2.5 Container - Tomcat 6.0 is recommended, there some configuration
     changes that must be made for Tomcat 6.0 which are documented in the uPortal
-    manual. http://jasig.org/wiki/display/UPM31/01+Tomcat
+    manual. https://wiki.jasig.org/display/UPM40/Installing+Tomcat
 Maven 2.2.1 or later
-Ant 1.7.1 or 1.8.2
+Ant 1.8.2 or later
     
     
 +------------------------------------------------------------------------------+
@@ -21,10 +21,9 @@ Ant 1.7.1 or 1.8.2
 uPortal uses Maven for its project configuration and build system. An Ant
 build.xml is also provided which handles the initialization and deployment
 related tasks. As a uPortal deployer you will likely only ever need to use the
-Ant tasks. Ant 1.8.2 is recommended, although Ant 1.7.1 is acceptable.
-Note that Ant 1.7.0 has a SERIOUS bug and will NOT work with uPortal.
+Ant tasks. Ant 1.8.2 or later is required
 
-Ant tasks:
+Ant tasks (run "ant -p" for a full list) :
     hsql - Starts a HSQL database instance. The default uPortal configuration
         points to this database and it can be used for portal development.
 
@@ -37,7 +36,7 @@ Ant tasks:
         deploys uPortal, shared libraries and all packaged portlets to the
         container
    
-    init-db - Sets up the uPortal database. DROPS ALL EXISTING uPortal tables
+    initdb - Sets up the uPortal database. DROPS ALL EXISTING uPortal tables
         re-creates them and populates them with the default uPortal data
         WARNING: This DROPS and re-creates the uPortal database
     
@@ -56,10 +55,10 @@ Ant tasks:
 The uportal-user@lists.ja-sig.org email address is the best place to go with 
 questions related to configuring or deploying uPortal. Information about joining
 the list is available on the JA-SIG wiki: 
-    http://www.ja-sig.org/wiki/display/JSG/uportal-user
+    https://wiki.jasig.org/display/JSG/uportal-user
 
-Additionaly there is a collaborative manual in progress on the wiki which has
-some HOWTO and related documentation: http://jasig.org/wiki/display/UPM30
+The uPortal manual is a collaborative document on the wiki which has
+more detailed documentation: https://wiki.jasig.org/display/UPM40
 
 +------------------------------------------------------------------------------+
 | Other Notes                                                                  |

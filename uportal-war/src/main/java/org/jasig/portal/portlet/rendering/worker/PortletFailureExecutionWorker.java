@@ -56,6 +56,7 @@ final class PortletFailureExecutionWorker implements IPortletFailureExecutionWor
     private final HttpServletResponse response;
     private final IPortletWindowId errorPortletWindowId;
     private final IPortletWindowId failedPortletWindowId;
+    private final String failedPortletFname;
     private final Exception cause;
 
     private PortletRenderResult portletRenderResult;
@@ -68,7 +69,7 @@ final class PortletFailureExecutionWorker implements IPortletFailureExecutionWor
     public PortletFailureExecutionWorker(
             IPortletRenderer portletRenderer, List<IPortletExecutionInterceptor> interceptors,
             HttpServletRequest request, HttpServletResponse response, IPortletWindowId errorPortletWindowId,
-            IPortletWindowId failedPortletWindowId, Exception cause) {
+            IPortletWindowId failedPortletWindowId, String failedPortletFname, Exception cause) {
         
         this.portletRenderer = portletRenderer;
         this.interceptors = interceptors;
@@ -76,6 +77,7 @@ final class PortletFailureExecutionWorker implements IPortletFailureExecutionWor
         this.response = response;
         this.errorPortletWindowId = errorPortletWindowId;
         this.failedPortletWindowId = failedPortletWindowId;
+        this.failedPortletFname = failedPortletFname;
         this.cause = cause;
     }
 
@@ -195,6 +197,14 @@ final class PortletFailureExecutionWorker implements IPortletFailureExecutionWor
     @Override
     public IPortletWindowId getPortletWindowId() {
         return this.failedPortletWindowId;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.rendering.worker.IPortletExecutionContext#getPortletFname()
+     */
+    @Override
+    public String getPortletFname() {
+        return this.failedPortletFname;
     }
 
     @Override

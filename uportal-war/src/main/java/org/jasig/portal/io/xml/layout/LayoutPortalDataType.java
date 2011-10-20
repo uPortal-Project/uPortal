@@ -145,7 +145,7 @@ public class LayoutPortalDataType extends AbstractPortalDataType {
 				}
 			}
 			else {
-				System.out.println("No username attribute on StartElement for " + systemId);
+			    logger.warn("No username attribute on StartElement for {}", systemId);
 			}
         }
         

@@ -20,7 +20,7 @@
 package org.jasig.portal.layout.dlm;
 
 import org.jasig.portal.layout.IUserLayoutStore;
-import org.jasig.portal.layout.UserLayoutStoreFactory;
+import org.jasig.portal.spring.locator.UserLayoutStoreLocator;
 
 /**
  * @version $Revision$ $Date$
@@ -64,7 +64,7 @@ public final class Precedence
             return;
         }
                 
-        final IUserLayoutStore dls = UserLayoutStoreFactory.getUserLayoutStoreImpl();
+        final IUserLayoutStore dls = UserLayoutStoreLocator.getUserLayoutStore();
                 
         this.precedence = dls.getFragmentPrecedence( fragmentIndex );
         this.index = fragmentIndex;

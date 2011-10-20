@@ -19,13 +19,21 @@
 
 package org.jasig.portal.jpa;
 
+import java.util.Map;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.metamodel.Attribute;
 
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.NaturalIdentifier;
+import org.hibernate.criterion.Restrictions;
+import org.jasig.portal.utils.PrimitiveUtils;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
@@ -74,5 +82,55 @@ public abstract class BasePortalJpaDao implements InitializingBean {
         query.setHint("org.hibernate.cacheable", true);
         query.setHint("org.hibernate.cacheRegion", cacheRegion);
         return query;
+    }
+    
+    protected final <T> T executeNaturalIdQuery(Class<T> type, Map<? extends Attribute<T, ?>, ?> params, String cacheRegion) {
+        final Session session = entityManager.unwrap(Session.class);
+        
+        final NaturalIdentifier naturalIdRestriction = Restrictions.naturalId();
+        for (Map.Entry<? extends Attribute<T, ?>, ?> paramEntry : params.entrySet()) {
+            final Attribute<T, ?> attribute = paramEntry.getKey();
+            final Class<?> paramType = attribute.getJavaType();
+            final Object value = paramEntry.getValue();
+            naturalIdRestriction.set(attribute.getName(), paramType.cast(value));
+        }
+        
+        final Criteria criteria = session.createCriteria(type);
+        criteria.add(naturalIdRestriction)
+            .setCacheable(true)
+            .setCacheRegion(cacheRegion);
+        
+        return type.cast(criteria.uniqueResult()); 
+    }
+    
+    public <T> NaturalIdQueryBuilder<T> createNaturalIdQuery(Class<T> entityType, String cacheRegion) {
+        final Session session = entityManager.unwrap(Session.class);
+        return new NaturalIdQueryBuilder<T>(session, entityType, cacheRegion);
+    }
+
+    public static class NaturalIdQueryBuilder<T> {
+        private final Class<T> entityType;
+        private final Criteria criteria;
+        private final NaturalIdentifier naturalIdRestriction;
+        
+        private NaturalIdQueryBuilder(Session session, Class<T> entityType, String cacheRegion) {
+            this.entityType = entityType;
+            this.criteria = session.createCriteria(this.entityType);
+            this.criteria.setCacheable(true);
+            this.criteria.setCacheRegion(cacheRegion);
+            
+            this.naturalIdRestriction = Restrictions.naturalId();
+        }
+        
+        public <V> NaturalIdQueryBuilder<T> setNaturalIdParam(Attribute<T, V> attribute, V value) {
+            final Class<V> valueType = PrimitiveUtils.toReferenceClass(attribute.getJavaType());
+            this.naturalIdRestriction.set(attribute.getName(), valueType.cast(value));
+            return this;
+        }
+        
+        public T execute() {
+            this.criteria.add(this.naturalIdRestriction);
+            return this.entityType.cast(criteria.uniqueResult());
+        }
     }
 }

@@ -45,9 +45,9 @@ public class PortletRenderHeaderExecutionWorker extends
     
     public PortletRenderHeaderExecutionWorker(
             ExecutorService executorService, List<IPortletExecutionInterceptor> interceptors, IPortletRenderer portletRenderer, 
-            HttpServletRequest request, HttpServletResponse response, IPortletWindowId portletWindowId) {
+            HttpServletRequest request, HttpServletResponse response, IPortletWindowId portletWindowId, String portletFname) {
         
-        super(executorService, interceptors, portletRenderer, request, response, portletWindowId);
+        super(executorService, interceptors, portletRenderer, request, response, portletWindowId, portletFname);
     }
 
     @Override

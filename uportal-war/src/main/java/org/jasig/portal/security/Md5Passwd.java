@@ -19,16 +19,10 @@
 
 package org.jasig.portal.security;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.security.NoSuchAlgorithmException;
-import java.sql.SQLException;
 
-import org.jasig.portal.persondir.ILocalAccountDao;
-import org.jasig.portal.persondir.ILocalAccountPerson;
-import org.jasig.portal.spring.locator.LocalAccountDaoLocator;
-import org.jasig.portal.spring.locator.PortalPasswordServiceLocator;
+import org.jasig.portal.spring.PortalApplicationContextLocator;
+import org.springframework.context.ApplicationContext;
 
 /**
  * <p>A utility class that demonstrates changing and locking md5 passwords in
@@ -39,65 +33,22 @@ import org.jasig.portal.spring.locator.PortalPasswordServiceLocator;
  * @author Andrew Newman, newman@yale.edu
  * @version $Revision$
  */
-public class Md5Passwd {
+public final class Md5Passwd {
+    public static void main(String[] args) throws IOException {
+        final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
+        final IPasswordUpdateTool passwordUpdateTool = applicationContext.getBean(IPasswordUpdateTool.class);
 
-  public Md5Passwd(String user, boolean create, boolean lock)
-      throws IOException, NoSuchAlgorithmException, SQLException {
-
-    // Make sure user is specified correctly
-    if (user == null || user.trim().length() <= 0) {
-      System.out.println("You did not specify a valid user name.  Please try again.");
-      System.exit(0);
-    }
-
-    // attempt to get the account form the database
-    ILocalAccountDao accountDao = LocalAccountDaoLocator.getLocalAccountDao();    
-    ILocalAccountPerson account = accountDao.getPerson(user);
-    
-    if (account == null) {
-        if (!create) {
-            System.out.println("No such user: " + user);
+        if (args.length == 1 && args[0].charAt(0) != '-') {
+            passwordUpdateTool.updatePassword(args[0], false);
+        }
+        else if (args.length == 2 && args[0].equals("-c") && args[1].charAt(0) != '-') {
+            passwordUpdateTool.updatePassword(args[1], true);
+        }
+        else {
+            System.err.println("Usage \"Md5Passwd [-c| -l] <user>\"");
             return;
         }
-        
-        account = accountDao.createPerson(user);
     }
-
-    String spass;
-    if (!lock) {
-        System.out.print("Enter Password for " + user + ": ");
-        System.out.flush(); // Needed for prompt to appear when running from Ant.
-        BufferedReader d = new BufferedReader(new InputStreamReader(System.in));
-        spass = d.readLine();
-    } else {
-        spass = "*LCK";
-    }
-
-    // update the user's password
-    IPortalPasswordService passwordService = PortalPasswordServiceLocator.getPortalPasswordService();
-    String encryptedPassword = passwordService.encryptPassword(spass);
-    account.setPassword(encryptedPassword);
-    accountDao.updateAccount(account);
-
-    System.out.println("Password Updated...");
-    return;
-  }
-
-  public static void main(String[] args)
-      throws IOException, NoSuchAlgorithmException, SQLException {
-
-    if (args.length == 1 && args[0].charAt(0) != '-')
-      new Md5Passwd(args[0], false, false);
-    else if (args.length == 2 && args[0].equals("-c") &&
-        args[1].charAt(0) != '-')
-      new Md5Passwd(args[1], true, false);
-    else if (args.length == 2 && args[0].equals("-l") &&
-        args[1].charAt(0) != '-')
-      new Md5Passwd(args[1], false, true);
-    else {
-      System.err.println("Usage \"Md5Passwd [-c| -l] <user>\"");
-      return;
-    }
-  }
-
+    
+    private Md5Passwd() {}
 }

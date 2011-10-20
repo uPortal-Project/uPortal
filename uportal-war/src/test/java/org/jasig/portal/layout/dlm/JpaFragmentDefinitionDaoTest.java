@@ -103,6 +103,13 @@ public class JpaFragmentDefinitionDaoTest extends BaseJpaDaoTest {
         public static FragmentDefinition newFragmentDefinition(String name) {
             return new FragmentDefinition(name);
         }
+
+        /**
+         * @param name
+         */
+        public MockFragmentDefinition(String name) {
+            super(name);
+        }
     }
 
 }

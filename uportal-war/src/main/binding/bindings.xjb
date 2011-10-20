@@ -16,14 +16,14 @@
     </jaxb:bindings>
     
     <!-- Generic uPortal Schemas -->
-    <jaxb:bindings schemaLocation="../resources/xsd/common-types.xsd">
+    <jaxb:bindings schemaLocation="../resources/xsd/common-types-4.0.xsd">
         <jaxb:schemaBindings>
             <jaxb:package name="org.jasig.portal.xml" />
         </jaxb:schemaBindings>
     </jaxb:bindings>
       
     <!-- Import/Export Schemas  -->
-    <jaxb:bindings schemaLocation="../resources/xsd/io/common-io-types.xsd">
+    <jaxb:bindings schemaLocation="../resources/xsd/io/common-io-types-4.0.xsd">
         <jaxb:schemaBindings>
             <jaxb:package name="org.jasig.portal.io.xml" />
         </jaxb:schemaBindings>
@@ -72,7 +72,7 @@
         </jaxb:schemaBindings>
     </jaxb:bindings>
     
-    <jaxb:bindings schemaLocation="../resources/xsd/portlet-publishing/portlet-publishing-definition.xsd">
+    <jaxb:bindings schemaLocation="../resources/xsd/portlet-publishing/portlet-publishing-definition-4.0.xsd">
         <jaxb:bindings node="//xs:element[@name='step']">
             <jaxb:property name="steps"/>
         </jaxb:bindings>

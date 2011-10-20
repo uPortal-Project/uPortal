@@ -125,10 +125,6 @@ public class HibernateDbLoader implements IDbLoader, ResourceLoaderAware {
             dialect = this.jdbcTemplate.execute(new ConnectionCallback<Dialect>() {
                 @Override
                 public Dialect doInConnection(Connection con) throws SQLException, DataAccessException {
-//                    final DatabaseMetaData metaData = con.getMetaData();
-//                    final DialectResolverSet dialectResolverSet = new DialectResolverSet();
-//                    dialectResolverSet.addResolver(new Mysql5DialectResolver());
-//                    dialectResolverSet.addResolver(new StandardDialectResolver());
                     return DialectFactory.buildDialect(new Properties(), con);
                 }
             });

@@ -23,6 +23,9 @@
 <xsl:stylesheet
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:dlm="http://www.uportal.org/layout/dlm"
+  xmlns:fname="http://xml.apache.org/xalan/java/org.jasig.portal.dao.usertype.FunctionalNameType"
+  extension-element-prefixes="fname"
+  exclude-result-prefixes="fname"
   version="1.0">
 
     <xsl:template match="layout">
@@ -95,7 +98,10 @@
                     <xsl:with-param name="path-ref" select="@entity"/>
                 </xsl:call-template>
             </xsl:attribute>
-          <xsl:copy-of select="@channel|@name|value|text()"/>
+          <xsl:attribute name="channel">
+                <xsl:value-of select="fname:makeValid(@channel)"/>
+            </xsl:attribute>
+          <xsl:copy-of select="@name|value|text()"/>
         </xsl:copy>
     </xsl:template>
   
@@ -134,6 +140,11 @@
         </xsl:choose>
     </xsl:template>
     
+    <xsl:template match="@fname">
+        <xsl:attribute name="fname">
+            <xsl:value-of select="fname:makeValid(.)"/>
+        </xsl:attribute>
+    </xsl:template>
     <xsl:template match="@*[.='Y']">
         <xsl:attribute name="{name()}">
             <xsl:text>true</xsl:text>

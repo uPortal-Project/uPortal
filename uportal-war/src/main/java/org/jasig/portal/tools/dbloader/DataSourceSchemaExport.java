@@ -20,25 +20,20 @@
 package org.jasig.portal.tools.dbloader;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
-import org.hibernate.dialect.Dialect;
-import org.hibernate.dialect.resolver.DialectFactory;
+import org.hibernate.cfg.Settings;
+import org.hibernate.ejb.InjectionSettingsFactory;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
+import org.hibernate.tool.hbm2ddl.SchemaUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.ConnectionCallback;
-import org.springframework.jdbc.core.JdbcOperations;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * Runs the Hibernate Schema Export tool using the specified DataSource for the target DB.
@@ -49,114 +44,72 @@ import org.springframework.jdbc.core.JdbcTemplate;
 public class DataSourceSchemaExport implements ISchemaExport {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
-    private Resource configuration;
-    private JdbcOperations jdbcOperations;
-    private String dialect;
+    private Resource configurationResource;
+    private DataSource dataSource;
+    
+    private final Object configLock = new Object();
+    private Configuration cachedConfiguration;
+    private Settings cachedSettings;
     
     /**
-     * @param configuration the configuration to set
+     * @param configuration the hibernate configuration to use
      */
     public void setConfiguration(Resource configuration) {
-        this.configuration = configuration;
+        this.configurationResource = configuration;
     }
 
     /**
-     * @param dataSource the dataSource to set
+     * @param dataSource the dataSource to use
      */
     public void setDataSource(DataSource dataSource) {
-        final JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-        jdbcTemplate.afterPropertiesSet();
-        this.jdbcOperations = jdbcTemplate;
+        this.dataSource = dataSource;
     }
-
-    /**
-     * @param dialect the dialect to set
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.tools.dbl.ISchemaExport#hbm2ddl(boolean, boolean, boolean, java.lang.String, boolean)
      */
-    public void setDialect(String dialect) {
-        this.dialect = dialect;
+    @SuppressWarnings("deprecation")
+    @Override
+    public void hbm2ddl(boolean export, boolean create, boolean drop, String outputFile, boolean haltOnError) {
+        this.create(export, create, drop, outputFile, haltOnError);
     }
 
-    /**
-     * @param export If the database should have the SQL executed agaisnt it
-     * @param drop If existing database objects should be dropped before creating new objects
-     * @param outputFile Optional file to write out the SQL to.
+    /* (non-Javadoc)
+     * @see org.jasig.portal.tools.dbloader.ISchemaExport#create(boolean, boolean, boolean, java.lang.String, boolean)
      */
     @Override
-    public void hbm2ddl(final boolean export, final boolean create, final boolean drop, final String outputFile, final boolean haltOnError) {
-        final Configuration configuration = new Configuration();
-        try {
-            configuration.configure(this.configuration.getURL());
-        }
-        catch (IOException e) {
-            throw new IllegalArgumentException("Could not load configuration file '" + this.configuration + "'", e);
-        }
-        
-        
-        if (StringUtils.isNotEmpty(this.dialect)) {
-            configuration.setProperty(Environment.DIALECT, this.dialect);
-        }
-        else {
-            final Dialect dialect = this.jdbcOperations.execute(new ConnectionCallback<Dialect>() {
-                @Override
-                public Dialect doInConnection(Connection con) throws SQLException, DataAccessException {
-                    return DialectFactory.buildDialect(configuration.getProperties(), con);
-                }
-            });
-            
-            final String dialectName = dialect.getClass().getName();
-            configuration.setProperty(Environment.DIALECT, dialectName);
-            this.logger.info("Resolved Hibernate Dialect: {}", dialectName);
-        }
-            
-            
-        configuration.buildMappings();
+    public void create(final boolean export, final boolean create, final boolean drop, final String outputFile, final boolean haltOnError) {
+        final SchemaExport exporter = createExporter(outputFile, haltOnError);
         
         if (drop) {
-            this.jdbcOperations.execute(new ConnectionCallback<Object>() {
-                @Override
-                public Object doInConnection(Connection con) throws SQLException, DataAccessException {
-                    final SchemaExport exporter = createExporter(outputFile, haltOnError, configuration, con);
-                    exporter.execute(true, export, true, false);
-                    return null;
-                }
-            });
+            exporter.execute(true, export, true, false);
         }
         
         if (create) {
-            this.jdbcOperations.execute(new ConnectionCallback<Object>() {
-                @Override
-                public Object doInConnection(Connection con) throws SQLException, DataAccessException {
-                    final SchemaExport exporter = createExporter(outputFile, haltOnError, configuration, con);
-                    exporter.execute(true, export, false, true);
-        
-                    if (haltOnError) {
-                        final List<Exception> exceptions = exporter.getExceptions();
-                        if (!exceptions.isEmpty()) {
-                            final Exception e = exceptions.get(exceptions.size() - 1);
-                            
-                            if (e instanceof RuntimeException) {
-                                throw (RuntimeException)e;
-                            }
-                            
-                            logger.error("Schema Export threw " + exceptions.size() + " exceptions and was halted");
-                            throw new RuntimeException(e);
-                        }
+            exporter.execute(true, export, false, true);
+
+            if (haltOnError) {
+                @SuppressWarnings("unchecked")
+                final List<Exception> exceptions = exporter.getExceptions();
+                if (!exceptions.isEmpty()) {
+                    final Exception e = exceptions.get(exceptions.size() - 1);
+                    
+                    if (e instanceof RuntimeException) {
+                        throw (RuntimeException)e;
                     }
-                    return null;
+                    
+                    logger.error("Schema Export threw " + exceptions.size() + " exceptions and was halted");
+                    throw new RuntimeException(e);
                 }
-            });
+            }
         }
     }
 
-    /**
-     * @param outputFile
-     * @param haltOnError
-     * @param configuration
-     * @param connection
-     * @return
-     */
-    protected SchemaExport createExporter(String outputFile, boolean haltOnError, final Configuration configuration, Connection connection) {
-        final SchemaExport exporter = new SchemaExport(configuration, connection);
+    protected SchemaExport createExporter(String outputFile, boolean haltOnError) {
+        final Configuration configuration = this.getConfiguration();
+        final Settings settings = this.getSettings();
+        
+        final SchemaExport exporter = new SchemaExport(configuration, settings);
         exporter.setHaltOnError(haltOnError);
         if (outputFile != null) {
             exporter.setFormat(true);
@@ -166,5 +119,93 @@ public class DataSourceSchemaExport implements ISchemaExport {
             exporter.setFormat(false);
         }
         return exporter;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.tools.dbloader.ISchemaExport#update(boolean, boolean, boolean, java.lang.String, boolean)
+     */
+    @Override
+    public void update(boolean export, String outputFile, boolean haltOnError) {
+        final SchemaUpdate updater = this.createUpdater(outputFile, haltOnError);
+        
+        updater.execute(true, export);
+
+        if (haltOnError) {
+            @SuppressWarnings("unchecked")
+            final List<Exception> exceptions = updater.getExceptions();
+            if (!exceptions.isEmpty()) {
+                final Exception e = exceptions.get(exceptions.size() - 1);
+                
+                if (e instanceof RuntimeException) {
+                    throw (RuntimeException)e;
+                }
+                
+                logger.error("Schema Update threw " + exceptions.size() + " exceptions and was halted");
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    protected SchemaUpdate createUpdater(String outputFile, boolean haltOnError) {
+        final Configuration configuration = this.getConfiguration();
+        final Settings settings = this.getSettings();
+        
+        final SchemaUpdate updateer = new SchemaUpdate(configuration, settings);
+        updateer.setHaltOnError(haltOnError);
+        if (outputFile != null) {
+            updateer.setFormat(true);
+            updateer.setOutputFile(outputFile);
+        }
+        else {
+            updateer.setFormat(false);
+        }
+        return updateer;
+    }
+    
+    protected final Configuration getConfiguration() {
+        synchronized (configLock) {
+            Configuration configuration = this.cachedConfiguration;
+            if (configuration != null) {
+                return configuration;
+            }
+            
+            //Load the config data
+            configuration = new Configuration();
+            try {
+                configuration.configure(this.configurationResource.getURL());
+            }
+            catch (IOException e) {
+                throw new IllegalArgumentException("Could not load configuration file '" + this.configurationResource + "'", e);
+            }
+
+            //Specify that the connection provider will be injected
+            configuration.setProperty(Environment.CONNECTION_PROVIDER, org.hibernate.ejb.connection.InjectedDataSourceConnectionProvider.class.getName());
+                
+            //Build the entity mappings
+            configuration.buildMappings();
+
+            //Cache then return the config
+            this.cachedConfiguration = configuration;
+            return configuration;
+        }
+    }
+
+    protected final Settings getSettings() {
+        synchronized (configLock) {
+            Settings settings = this.cachedSettings;
+            if (settings != null) {
+                return settings;
+            }
+
+            final InjectionSettingsFactory injectionSettingsFactory = new InjectionSettingsFactory();
+            injectionSettingsFactory.setConnectionProviderInjectionData(Collections.singletonMap("dataSource", this.dataSource));
+            
+            final Configuration configuration = this.getConfiguration();
+            settings = injectionSettingsFactory.buildSettings(configuration.getProperties());
+
+            //Cache then config the settings
+            this.cachedSettings = settings;
+            return settings;
+        }
     }
 }

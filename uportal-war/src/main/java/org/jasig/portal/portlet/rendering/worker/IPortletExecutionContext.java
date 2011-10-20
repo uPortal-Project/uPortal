@@ -21,6 +21,7 @@ package org.jasig.portal.portlet.rendering.worker;
 
 import java.util.Map;
 
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 
 /**
@@ -60,6 +61,11 @@ public interface IPortletExecutionContext {
      * @return The ID of the portlet window this context is for
      */
     public IPortletWindowId getPortletWindowId();
+    
+    /**
+     * @return The fname of for the portlet window (from {@link IPortletDefinition#getFName()}
+     */
+    public String getPortletFname();
     
     /**
      * @return true If the worker has been submitted

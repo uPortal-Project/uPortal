@@ -51,6 +51,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.layout.om.IStylesheetUserPreferences;
@@ -87,15 +88,18 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     @Column(name = "ENTITY_VERSION")
     private final long entityVersion;
     
+    @NaturalId
     @ManyToOne(targetEntity = StylesheetDescriptorImpl.class, optional = false)
     @JoinColumn(name = "UP_SS_DESCRIPTOR_ID", nullable = false)
     private final IStylesheetDescriptor stylesheetDescriptor;
     
     //TODO eventually turn into object reference to IPerson
+    @NaturalId
     @Column(name = "USER_ID", nullable = false, updatable = false)
     private final int userId;
     
     //TODO eventually turn into object reference to UserProfile
+    @NaturalId
     @Column(name = "PROFILE_ID", nullable = false, updatable = false)
     private final int profileId;
     

@@ -47,7 +47,7 @@ public class CacheFactoryLocator extends AbstractBeanLocator<CacheFactory> {
             locator = locatorInstance;
             if (locator == null) {
                 LOG.warn("Instance of '" + BEAN_NAME + "' still null after portal application context has been initialized");
-                return (CacheFactory)applicationContext.getBean(BEAN_NAME, CacheFactory.class);
+                return applicationContext.getBean(BEAN_NAME, CacheFactory.class);
             }
         }
         

@@ -55,12 +55,14 @@ import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.PersonImpl;
+import org.junit.Ignore;
 import org.springframework.test.jpa.AbstractJpaTests;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Ignore
 public class JpaPortalEventStoreTest extends AbstractJpaTests {
     private ITestablePortalEventStore jpaPortalEventStore;
 

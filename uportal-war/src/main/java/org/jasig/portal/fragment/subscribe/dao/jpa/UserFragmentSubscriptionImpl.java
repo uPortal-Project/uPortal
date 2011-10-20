@@ -35,12 +35,12 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.NaturalId;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.fragment.subscribe.IUserFragmentSubscription;
 import org.jasig.portal.security.IPerson;
@@ -54,11 +54,7 @@ import org.jasig.portal.security.IPerson;
  */
 
 @Entity
-@Table(name = "UP_USER_FRAGMENT_SUBSCRIPTION",
-	       uniqueConstraints = {
-		      @UniqueConstraint(columnNames = {"USER_ID","FRAGMENT_OWNER"})
-			}
-		)
+@Table(name = "UP_USER_FRAGMENT_SUBSCRIPTION")
 @SequenceGenerator(
         name="UP_USER_FRAGMENT_SUBSCRIPTION_GEN",
         sequenceName="UP_USER_FRAGMENT_SUB_SEQ",
@@ -71,7 +67,7 @@ import org.jasig.portal.security.IPerson;
     )
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class UserFragmentSubscriptionImpl implements IUserFragmentSubscription {
+class UserFragmentSubscriptionImpl implements IUserFragmentSubscription {
 	
    //Properties are final to stop changes in code, hibernate overrides the final via reflection to set their values
    @Id
@@ -83,10 +79,12 @@ public class UserFragmentSubscriptionImpl implements IUserFragmentSubscription {
    @Column(name = "ENTITY_VERSION")
    private final long entityVersion;
    
+   @NaturalId
    @Column(name = "USER_ID", updatable = false, nullable = false)
    @Index(name = "IDX_USER_FRAG__USER", columnNames = "USER_ID")
    private final int userId;
    
+   @NaturalId
    @Column(name = "FRAGMENT_OWNER",updatable = false, nullable = false)
    private final String fragmentOwner;
    

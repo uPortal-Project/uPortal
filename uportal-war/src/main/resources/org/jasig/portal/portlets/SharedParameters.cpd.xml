@@ -83,6 +83,17 @@
             </single-choice-parameter-input>
         </parameter>
     
+        
+        <parameter>
+            <name>blockImpersonation</name>
+            <label>hide.in.impersonation.view</label>
+            <single-choice-parameter-input display="select">
+                <default>false</default>
+                <option value="false" label="false"/>
+                <option value="true" label="true"/>
+            </single-choice-parameter-input>
+        </parameter>
+
         <parameter>
             <name>quicklink</name>
             <label>quicklinks.index</label>

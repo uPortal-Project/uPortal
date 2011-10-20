@@ -22,18 +22,17 @@ package org.jasig.portal.security.provider;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IPersonManager;
-import org.jasig.portal.security.PersonFactory;
-import org.jasig.portal.security.PortalSecurityException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.PersonFactory;
+import org.jasig.portal.security.PortalSecurityException;
 
 /**
  * Manages the storage of an IPerson object in a user's session.
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
  */
-public class SimplePersonManager implements IPersonManager {
+public class SimplePersonManager extends AbstractPersonManager {
     
     private static final Log log = LogFactory.getLog(SimplePersonManager.class);
     

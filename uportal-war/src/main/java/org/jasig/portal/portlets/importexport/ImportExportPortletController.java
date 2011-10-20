@@ -99,8 +99,9 @@ public class ImportExportPortletController {
     public ModelAndView getExportView(PortletRequest request) {
     	Map<String,Object> model = new HashMap<String,Object>();
     
-    	// add a list of all permitted export types
-    	final List<IPortalDataType> types = getAllowedTypes(request, EXPORT_PERMISSION);
+        // add a list of all permitted export types
+    	final Iterable<IPortalDataType> exportPortalDataTypes = this.portalDataHandlerService.getExportPortalDataTypes();
+    	final List<IPortalDataType> types = getAllowedTypes(request, EXPORT_PERMISSION, exportPortalDataTypes);
     	model.put("supportedTypes", types);
     	
         return new ModelAndView("/jsp/ImportExportPortlet/export", model);
@@ -117,7 +118,8 @@ public class ImportExportPortletController {
     	Map<String,Object> model = new HashMap<String,Object>();
     	
     	// add a list of all permitted deletion types
-    	final List<IPortalDataType> types = getAllowedTypes(request, DELETE_PERMISSION);
+    	final Iterable<IPortalDataType> deletePortalDataTypes = this.portalDataHandlerService.getDeletePortalDataTypes();
+    	final List<IPortalDataType> types = getAllowedTypes(request, DELETE_PERMISSION, deletePortalDataTypes);
     	model.put("supportedTypes", types);
     	
         return new ModelAndView("/jsp/ImportExportPortlet/delete", model);
@@ -131,7 +133,7 @@ public class ImportExportPortletController {
      * @param activityName
      * @return
      */
-    protected List<IPortalDataType> getAllowedTypes(PortletRequest request, String activityName) {
+    protected List<IPortalDataType> getAllowedTypes(PortletRequest request, String activityName, Iterable<IPortalDataType> dataTypes) {
 
     	// get the authorization principal representing the current user
         final HttpServletRequest httpServletRequest = this.portalRequestUtils.getPortletHttpRequest(request);
@@ -139,8 +141,6 @@ public class ImportExportPortletController {
 		final EntityIdentifier ei = person.getEntityIdentifier();
 	    final IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
 
-	    final Iterable<IPortalDataType> dataTypes = this.portalDataHandlerService.getPortalDataTypes();
-	    
 	    // filter the list of configured import/export types by user permission
     	final List<IPortalDataType> results = new ArrayList<IPortalDataType>();
     	for (IPortalDataType type : dataTypes) {

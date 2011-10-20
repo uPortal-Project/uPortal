@@ -156,7 +156,14 @@
     <target name="db-hibernate" depends="prodPrompt" description="Drops then creates Hibernate managed tables">
         <up-shell-batch>
             <antcall target="db-hibernate-portal" />
-            <!-- STATS DISABLED FOR 4.0 RELEASE <antcall target="db-hibernate-stats" /> -->
+            <antcall target="db-hibernate-stats" />
+        </up-shell-batch>
+    </target>
+
+    <target name="db-hibernate-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for both the portal and statistics schemas">
+        <up-shell-batch>
+            <antcall target="db-hibernate-portal-update" />
+            <antcall target="db-hibernate-stats-update" />
         </up-shell-batch>
     </target>
 
@@ -196,15 +203,53 @@ catch (Exception e) {
             <param name="script" value="${portal-shell-script}"/>
         </antcall>
     </target>
+	
+    <target name="db-hibernate-portal-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for the portal schema">
+        <property name="schemaExportBean" value="portalDbHibernateExport" />
+        <property name="export" value="true" />
+        <property name="outputFile" value="null" />
+        <property name="haltOnError" value="true" />
 
-	<!-- STATS DISABLED FOR 4.0 RELEASE
+        <groovy-safe-path property="outputFileEscaped" input="${outputFile}" />
+
+        <echo>Creating HBM2DDL Update Script</echo>
+        <echo file="${portal-shell-script}" append="true">
+//HBM2DDL Update Script
+try {
+    schemaExportBean = '${schemaExportBean}';
+    logger.info('');
+    logger.info('');
+    logger.info('HBM2DDL Schema Update: ' + schemaExportBean);
+
+    export = '${export}'.toBoolean();
+    outputFile = /${outputFileEscaped}/;
+    haltOnError = '${haltOnError}'.toBoolean();
+            
+    ${schemaExportBean}.update(export, outputFile == 'null' ? null : outputFile , haltOnError);
+}
+catch (Exception e) {
+    throw new RuntimeException("db-hibernate-update for ' + schemaExportBean + ' failed", e);
+}
+        </echo>
+
+        <antcall target="up-shell">
+            <param name="script" value="${portal-shell-script}" />
+        </antcall>
+    </target>
+
     <target name="db-hibernate-stats" depends="prodPrompt" description="Drops then creates Hibernate managed tables used for the database backed portal statistics">
         <antcall target="db-hibernate-portal">
             <param name="schemaExportBean" value="statsDbHibernateExport" />
             <param name="haltOnError" value="false" />
         </antcall>
     </target>
-    -->
+	
+    <target name="db-hibernate-stats-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for the statistics schema">
+        <antcall target="db-hibernate-portal-update">
+            <param name="schemaExportBean" value="statsDbHibernateExport" />
+            <param name="haltOnError" value="false" />
+        </antcall>
+    </target>
 
     <target name="db" depends="prodPrompt" description="Loads database tables and data">
         <property name="tablefile" value="/properties/db/tables.xml" />
@@ -350,21 +395,21 @@ catch (Exception e) {
                             <isset property="script" />
                         </and>
                         <then>
-                            <!--
-                            <echo>Running Portal Script: ${script}</echo>
-                            <concat>
-                                <path>
-                                    <pathelement location="${script}" />
-                                </path>
-                            </concat>
-                            -->
-                            <!-- Invoke import/export tool -->
-                            <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.shell.PortalShell">
-                                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
-                                <classpath refid="uportal-war-full.classpath" />
-                                <arg value="-s" />
-                                <arg value="${script}" />
-                            </java>
+                            <trycatch>
+                                 <try>
+                                    <!-- Invoke import/export tool -->
+                                    <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.shell.PortalShell">
+                                        <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+                                        <classpath refid="uportal-war-full.classpath" />
+                                        <arg value="-s" />
+                                        <arg value="${script}" />
+                                    </java>
+                                </try>
+                                <finally>   
+                                    <tempfile property="executed-portal-shell-script" destdir="${basedir}/target" prefix="upshell_" suffix=".groovy"/>
+                                	<copy file="${script}" tofile="${executed-portal-shell-script}" />
+                                </finally>
+                            </trycatch> 
                         </then>
                         <else>
                             <echo>No Script</echo>
@@ -390,14 +435,12 @@ try {
 	type = '${type}';
         	
     if (type == 'null') {
+        dhs = portalDataHandlerService;
         //List Data Types Script
-        types = portalDataHandlerService.getPortalDataTypes();
         logger.info('');
         logger.info('');
-        logger.info('Portal Data Types:');
-        types.each() {
-            logger.info('    ' + it.getTypeId());
-        };
+        logger.info('Export and Delete Support by Data Type');
+    	org.jasig.portal.io.xml.PortalDataHandlerServiceUtils.format(dhs, logger);
     }
     else {
         //List Data Script
@@ -542,36 +585,40 @@ else {
     </target>
 
     <target name="data-delete" depends="prodPrompt" description="Deletes the specified entity">
-        <uportal-war-macro>
-            <fail unless="type">
-                You must specify a 'type' parameter (-Dtype={something}) from the following:  layout, channel,
-                group, user.
-            </fail>
+        <if>
+            <not>
+                <and>
+                    <isset property="type"/>
+                    <isset property="sysid"/>
+                </and>
+            </not>
+            <then>
+                <fail>Both '-Dtype' and '-Dsysid' must be specified for data delete. Use 'ant data-list' to determine available data types</fail>
+            </then>
+        </if>
 
-            <fail unless="sysid">
-                You must specify a 'sysid' parameter (-Dsysid={something}).  The value will be a valid username
-                (user or layout), fname (channel), or name (group).
-            </fail>
+        <groovy-safe-path property="dirFullEscaped" input="${dir}"/>
 
-            <!-- Invoke Cernunnos specifying script and parameters -->
-            <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
-                <classpath refid="uportal-war-full.classpath" />
-                <arg value="classpath://org/jasig/portal/io/delete.crn" />
-                <arg value="${type}" />
-                <arg value="${sysid}" />
-            </java>
-        </uportal-war-macro>
-    </target>
+        <echo>Creating Data Delete Script</echo>
+        <echo file="${portal-shell-script}" append="true">
+try {
+    //Data Delete Script
+    logger.info('');
+    logger.info('');
+    type = '${type}';
+    sysid = '${sysid}';
 
-    <target name="crn-make-data-xml" description="Runs the DbUnload tool against all tables listed in data.xml">
-        <uportal-war-macro>
+    logger.info('Deleting Data ' + sysid + ' of type ' + type);
+    portalDataHandlerService.deleteData(type, sysid);
+}
+catch (Exception e) {
+    throw new RuntimeException("data-delete for " + type + " and " + sysid + " failed", e);
+}
+        </echo>
 
-            <!-- Invoke Cernunnos specifying script and parameters -->
-            <java fork="true" failonerror="true" dir="${basedir}" classname="org.danann.cernunnos.runtime.Main">
-                <classpath refid="uportal-war-full.classpath" />
-                <arg value="classpath://org/jasig/portal/tools/dbloader/dbunload.crn" />
-            </java>
-        </uportal-war-macro>
+        <antcall target="up-shell">
+            <param name="script" value="${portal-shell-script}"/>
+        </antcall>
     </target>
 
     <target name="clean-shared" depends="checkForTomcat" description="Removes ALL shared libraries from the servlet container.">
@@ -690,10 +737,12 @@ else {
 
 
     <target name="md5passwd" depends="prodPrompt" description="Creates a user in the UP_PERSON_DIR table">
+        <fail unless="username">
+            You must specify a 'username' parameter (-Dusername={juser})
+        </fail>
+    	
         <uportal-war-macro>
-            <property name="username" value=" " />
-
-            <echo message="Invoking Md5Passwd" />
+            <echo message="Invoking creating/updating password for: ${username}" />
             <java dir="${basedir}" classname="org.jasig.portal.security.Md5Passwd">
                 <classpath refid="uportal-war-full.classpath" />
 
@@ -844,6 +893,20 @@ else {
     </target>
 
     <!-- ============================== Utility Targets ============================== -->
+	
+	<target name="sync-schemas">
+        <fail unless="schemaDir">
+You must specify a 'schemaDir' parameter (-DschemaDir={/path/to/jasig/schemas/uportal/})
+NOTE THE TRAILING SLASH IS IMPORTANT
+        </fail>
+            	
+		<exec executable="rsync">
+			<arg value="-avC"/>
+			<arg value="${basedir}/uportal-war/src/main/resources/xsd/"/>
+			<arg value="${schemaDir}"/>
+		</exec>
+	</target>
+	
     <!--
      | Runs up-shell passing in the default shell script filename as the targeted script
      +-->
@@ -1029,6 +1092,11 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
     <target name="crn-delete">
         <echo>The "crn-delete" Ant task is no longer supported. Use 'ant data-delete' to delete portal data.</echo>
         <fail message="The 'crn-delete' Ant task is no longer supported. Use 'ant data-delete' to delete portal data.">
+        </fail>
+    </target>
+    <target name="crn-make-data-xml">
+        <echo>The "crn-make-data-xml" Ant task is no longer supported. Use 'ant data-export' to export portal data.</echo>
+        <fail message="The 'crn-make-data-xml' Ant task is no longer supported. Use 'ant data-export' to export portal data.">
         </fail>
     </target>
     <target name="i18n-db">

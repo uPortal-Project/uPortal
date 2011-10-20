@@ -35,10 +35,10 @@
      | The per-cache settings are configured in /uportal-war/src/main/resources/properties/ehcache.xml
      | This file is specified by the cacheManager bean at the bottom of this document
      +-->
-	
     <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
         <property name="cacheManagerName" value="uPortal.cacheManager" />
         <property name="configLocation" value="classpath:/properties/ehcache.xml" />
+        <property name="shared" value="true" />
     </bean>
     
     <!-- 

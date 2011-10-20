@@ -31,9 +31,9 @@ import org.jasig.portal.portlet.rendering.IPortletRenderer;
 class PortletActionExecutionWorker extends PortletExecutionWorker<Long> implements IPortletActionExecutionWorker {
     public PortletActionExecutionWorker(
             ExecutorService executorService, List<IPortletExecutionInterceptor> interceptors, IPortletRenderer portletRenderer, 
-            HttpServletRequest request, HttpServletResponse response, IPortletWindowId portletWindowId) {
+            HttpServletRequest request, HttpServletResponse response, IPortletWindowId portletWindowId, String portletFname) {
         
-        super(executorService, interceptors, portletRenderer, request, response, portletWindowId);
+        super(executorService, interceptors, portletRenderer, request, response, portletWindowId, portletFname);
     }
     
     @Override

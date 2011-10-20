@@ -76,6 +76,7 @@
                                 </map>
                             </property>
                         </bean>
+                        <bean class="org.jasig.portal.rendering.xslt.UserImpersonationTransformerConfigurationSource" />
                     </list>
                 </property>
             </bean>

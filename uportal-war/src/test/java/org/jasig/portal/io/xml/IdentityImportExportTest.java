@@ -64,6 +64,10 @@ import org.springframework.oxm.Unmarshaller;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.SimpleJdbcTestUtils;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.w3c.dom.Element;
 
 import com.google.common.base.Function;
@@ -76,6 +80,7 @@ import com.google.common.base.Function;
 @ContextConfiguration(locations = "classpath:/org/jasig/portal/io/xml/importExportTestContext.xml")
 public class IdentityImportExportTest {
     @Autowired private DataSource dataSource;
+    @Autowired private PlatformTransactionManager transactionManager;
     
     @javax.annotation.Resource(name="stylesheetDescriptorImporterExporter")
     private IDataImporter<ExternalStylesheetDescriptor> stylesheetDescriptorImporter;
@@ -99,6 +104,7 @@ public class IdentityImportExportTest {
     
     @Autowired private ICounterStore counterStore;
     private SimpleJdbcTemplate simpleJdbcTemplate;
+    private TransactionTemplate transactionTemplate;
     private int counter = 0;
     private TimeZone defaultTimeZone;
     
@@ -122,6 +128,8 @@ public class IdentityImportExportTest {
     @Before
     public void setup() {
         simpleJdbcTemplate = null;
+        
+        transactionTemplate = new TransactionTemplate(this.transactionManager);
         
         defaultTimeZone = TimeZone.getDefault();
         TimeZone.setDefault(TimeZone.getTimeZone("EST"));
@@ -230,7 +238,7 @@ public class IdentityImportExportTest {
     }
     
     private <T> void testIdentityImportExport(
-            IDataImporter<T> dataImporter, IDataExporter<?> dataExporter, 
+            final IDataImporter<T> dataImporter, final IDataExporter<?> dataExporter, 
             Resource resource, Function<T, String> getName) throws Exception {
         
     	final String importData = toString(resource);
@@ -252,7 +260,15 @@ public class IdentityImportExportTest {
         
         //Export the data
         final String name = getName.apply(dataImport);
-        final Object dataExport = dataExporter.exportData(name);
+        final Object dataExport = transactionTemplate.execute(new TransactionCallback<Object>() {
+            /* (non-Javadoc)
+             * @see org.springframework.transaction.support.TransactionCallback#doInTransaction(org.springframework.transaction.TransactionStatus)
+             */
+            @Override
+            public Object doInTransaction(TransactionStatus status) {
+                return dataExporter.exportData(name);
+            }
+        });
         
         //Make sure the data was exported
         assertNotNull("Exported data was null", dataExport);

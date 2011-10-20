@@ -99,8 +99,10 @@ public class StaticTransformerConfigurationSource implements TransformerConfigur
     public LinkedHashMap<String, Object> getParameters(HttpServletRequest request, HttpServletResponse response) {
         final ServletWebRequest webRequest = new ServletWebRequest(request, response);
         
+        //Clone the static parameter map
         final LinkedHashMap<String, Object> parameters = new LinkedHashMap<String, Object>(this.parameters);
         
+        //Add in any SpEL based parameters
         if (this.parameterExpressions != null) {
             for (final Map.Entry<String, Expression> expressionEntry : this.parameterExpressions.entrySet()) {
                 final Expression expression = expressionEntry.getValue();
@@ -112,7 +114,7 @@ public class StaticTransformerConfigurationSource implements TransformerConfigur
             }
         }
         
-        this.logger.debug("Returning transformer parameters: {}", this.parameters);
+        this.logger.debug("Returning transformer parameters: {}", parameters);
         
         return parameters;
     }

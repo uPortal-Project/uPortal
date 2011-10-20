@@ -31,7 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.services.PersonDirectory;
+import org.jasig.portal.spring.locator.PersonAttributeDaoLocator;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 
@@ -52,7 +52,7 @@ public class PersonDirPropertyFinder
     private Map<String, Map<String, List<Object>>> cache;
 
     public PersonDirPropertyFinder() {
-        pa = PersonDirectory.getPersonAttributeDao();
+        pa = PersonAttributeDaoLocator.getPersonAttributeDao();
         cache = new ReferenceMap(ReferenceMap.HARD, ReferenceMap.SOFT, 120, .75f, true);
     }
 

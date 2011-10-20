@@ -27,7 +27,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.PortalSecurityException;
@@ -40,7 +39,7 @@ import org.jasig.portal.security.PortalSecurityException;
  * @author Pete Boysen (pboysen@iastate.edu)
  * @version $Revision$
  */
-public class RemoteUserPersonManager implements IPersonManager {
+public class RemoteUserPersonManager extends AbstractPersonManager {
 
     private static final Log log = LogFactory.getLog(RemoteUserPersonManager.class);
     

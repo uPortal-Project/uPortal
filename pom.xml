@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:merge="http://maven.apache.org/plugin-merge" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>org.jasig.parent</groupId>
         <artifactId>jasig-parent</artifactId>
-        <version>31</version>
+        <version>32</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -116,6 +116,7 @@
         <cas-server.version>3.4.8</cas-server.version>
         <cas-clearpass.version>1.0.7.GA</cas-clearpass.version>
         <cas-proxy-test-portlet.version>1.0.0-RC3</cas-proxy-test-portlet.version>
+        <email-preview.version>1.1.1</email-preview.version>
         <FunctionalTestsPortlet.version>1.1.0-RC1</FunctionalTestsPortlet.version>
         <jasig-widget-portlets.version>1.0.0-RC3</jasig-widget-portlets.version>
         <googleportlet.version>0.4</googleportlet.version>
@@ -127,7 +128,7 @@
 
         <!-- Project Dependency Version Properties -->
         <aopalliance.version>1.0</aopalliance.version>
-        <activation.version>1.1</activation.version>
+        <activation.version>1.1.1</activation.version>
         <ant.version>1.8.2</ant.version>
         <aspectjrt.version>1.6.11</aspectjrt.version>
         <aspectjweaver.version>1.6.11</aspectjweaver.version>
@@ -147,29 +148,29 @@
         <dom4j.version>1.6.1</dom4j.version>
         <easymock.version>3.0</easymock.version>
         <ejb3-persistence.version>1.0.1.GA</ejb3-persistence.version>
-        <ehcache.version>2.4.3</ehcache.version>
-        <ehcache-spring-annotations.version>1.2.0-M1</ehcache-spring-annotations.version>
+        <ehcache.version>2.4.5</ehcache.version>
+        <ehcache-spring-annotations.version>1.2.0</ehcache-spring-annotations.version>
         <ehcache-web.version>2.0.3</ehcache-web.version>
-        <guava.version>r09</guava.version>
-        <groovy.version>1.8.0</groovy.version>
+        <guava.version>10.0</guava.version>
+        <groovy.version>1.8.2</groovy.version>
         <grouperClient.version>1.6.3</grouperClient.version>
-        <hibernate.version>3.6.5.Final</hibernate.version>
+        <hibernate.version>3.6.7.Final</hibernate.version>
         <hibernate-jpamodelgen.version>1.1.1.Final</hibernate-jpamodelgen.version>
         <hsqldb.version>2.2.4</hsqldb.version>
-        <jackson.version>1.8.3</jackson.version>
-        <jansi.version>1.6</jansi.version>
+        <jackson.version>1.8.5</jackson.version>
+        <jansi.version>1.7</jansi.version>
         <javassist.version>3.15.0.GA</javassist.version> 
-        <jasypt.version>1.7.1</jasypt.version>
+        <jasypt.version>1.8</jasypt.version>
         <jaxb2basics.version>0.6.2</jaxb2basics.version>
         <jdom.version>1.0</jdom.version>
         <jline.version>0.9.94</jline.version>
         <json-lib-ext-spring.version>1.0.2</json-lib-ext-spring.version>
-        <jsp-api.version>2.1</jsp-api.version>
+        <jsp-api.version>2.1.1</jsp-api.version>
         <jstl.version>1.1.2</jstl.version>
         <jtidy.version>4aug2000r7-dev</jtidy.version>
-        <junit.version>4.8.2</junit.version>
+        <junit.version>4.9</junit.version>
         <log4j.version>1.2.16</log4j.version>
-        <mail.version>1.4.1</mail.version>
+        <mail.version>1.4.4</mail.version>
         <mockito.version>1.8.5</mockito.version>
         <objenesis.version>1.2</objenesis.version>
         <org.springframework.webflow.version>2.3.0.RELEASE</org.springframework.webflow.version>
@@ -181,18 +182,20 @@
         <quartz.version>1.8.4</quartz.version>
         <resource-server.version>1.0.21</resource-server.version>
         <servlet-api.version>2.5</servlet-api.version>
-        <slf4j.version>1.6.1</slf4j.version>
-        <spring-framework.version>3.0.5.RELEASE</spring-framework.version>
+        <slf4j.version>1.6.2</slf4j.version>
+        <spring-framework.version>3.0.6.RELEASE</spring-framework.version>
         <spring-ldap.version>1.3.1.RELEASE</spring-ldap.version>
         <standard.version>1.1.2</standard.version>
         <staxmate.version>2.0.1</staxmate.version>
         <stringtemplate.version>4.0.2</stringtemplate.version>
         <uportal-ear-deployer.version>1.0.1</uportal-ear-deployer.version>
-        <uportal-search-api.version>4.0.0</uportal-search-api.version>
-        <woodstox.version>4.1.1</woodstox.version>
+        <uportal-search-api.version>4.0.1</uportal-search-api.version>
+        <woodstox.version>4.1.2</woodstox.version>
         <xmlunit.version>1.3</xmlunit.version>
-        <xstream.version>1.3.1</xstream.version>
+        <xstream.version>1.4.1</xstream.version>
         
+        <project.build.sourceVersion>1.6</project.build.sourceVersion>
+        <project.build.targetVersion>1.6</project.build.targetVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -871,8 +874,6 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>2.3.2</version>
                     <configuration>
-                        <source>1.6</source>
-                        <target>1.6</target>
                         <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
                 </plugin>
@@ -900,80 +901,32 @@
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>2.5</version>
                 </plugin>
-<!--
                 <plugin>
+                    <groupId>org.jasig.maven</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.0-beta-3</version>
-                        <configuration>
-                            <reportPlugins>
-                                <plugin>
-                                    <artifactId>maven-project-info-reports-plugin</artifactId>
-                                    <version>2.4</version>
-                                </plugin>
-                                <plugin>
-                                    <artifactId>maven-surefire-report-plugin</artifactId>
-                                    <version>2.9</version>
-                                </plugin>
-                                <plugin>
-                                    <artifactId>maven-jxr-plugin</artifactId>
-                                    <version>2.2</version>
-                                </plugin>
-                                <plugin>
-                                    <groupId>org.codehaus.mojo</groupId>
-                                    <artifactId>cobertura-maven-plugin</artifactId>
-                                    <version>2.5.1</version>
-                                </plugin>
-                                <plugin>
-                                    <artifactId>maven-pmd-plugin</artifactId>
-                                    <version>2.5</version>
-                                    <configuration>
-                                        <linkXref>true</linkXref>
-                                        <sourceEncoding>utf-8</sourceEncoding>
-                                        <minimumTokens>100</minimumTokens>
-                                        <targetJdk>1.6</targetJdk>
-                                    </configuration>
-                                </plugin>
-                                <plugin>
-                                    <artifactId>maven-changelog-plugin</artifactId>
-                                    <version>2.2</version>
-                                </plugin>
-                                <plugin>
-                                    <groupId>org.codehaus.mojo</groupId>
-                                    <artifactId>taglist-maven-plugin</artifactId>
-                                    <version>2.4</version>
-                                </plugin>
-                                <plugin>
-                                    <groupId>org.codehaus.mojo</groupId>
-                                    <artifactId>findbugs-maven-plugin</artifactId>
-                                    <version>2.3.2</version>
-                                </plugin>
-                                <plugin>
-                                    <artifactId>maven-javadoc-plugin</artifactId>
-                                    <version>2.8</version>
-                                    <configuration>
-                                        <source>1.6</source>
-                                        <maxmemory>768m</maxmemory>
-                                        <links>
-                                            <link>http://java.sun.com/javase/6/docs/api/</link>
-                                            <link>http://java.sun.com/javaee/5/docs/api/</link>
-                                            <link>http://portals.apache.org/pluto/portlet-2.0-apidocs/</link>
-                                            <link>http://portals.apache.org/pluto/pluto-container/apidocs/</link>
-                                            <link>http://portals.apache.org/pluto/pluto-descriptor-api/apidocs/</link>
-                                            <link>http://static.springsource.org/spring/docs/3.0.x/javadoc-api/</link>
-                                            <link>http://static.springframework.org/spring-ldap/docs/1.2.0/api/spring-ldap/</link>
-                                            <link>http://developer.jasig.org/projects/person-directory/1.5.0-RC2/apidocs/</link>
-                                        </links>
-                                    </configuration>
-                                </plugin>
-                                <plugin>
-                                    <groupId>org.codehaus.mojo</groupId>
-                                    <artifactId>jdepend-maven-plugin</artifactId>
-                                    <version>2.0-beta-2</version>
-                                </plugin>
-                            </reportPlugins>
-                        </configuration>
+                    <configuration>
+                        <defaultMergePolicy>MERGE</defaultMergePolicy>
+                        <reportPlugins combine.children="append">
+                            <plugin>
+                                <artifactId>maven-javadoc-plugin</artifactId>
+                                <version>2.8</version>
+                                <configuration>
+                                    <links merge:children="BOTH" merge:removeDuplicates="true">
+                                        <link>http://java.sun.com/javase/6/docs/api/</link>
+                                        <link>http://java.sun.com/javaee/5/docs/api/</link>
+                                        <link>http://portals.apache.org/pluto/portlet-2.0-apidocs/</link>
+                                        <link>http://portals.apache.org/pluto/pluto-container/apidocs/</link>
+                                        <link>http://portals.apache.org/pluto/pluto-descriptor-api/apidocs/</link>
+                                        <link>http://static.springsource.org/spring/docs/3.0.x/javadoc-api/</link>
+                                        <link>http://static.springframework.org/spring-ldap/docs/1.2.0/api/spring-ldap/</link>
+                                        <link>http://developer.jasig.org/projects/person-directory/1.5.0-RC2/apidocs/</link>
+                                    </links>
+                                    <maxmemory>768m</maxmemory>
+                                </configuration>
+                            </plugin>
+                        </reportPlugins>
+                    </configuration>
                 </plugin>
--->
                 <plugin>
                     <artifactId>maven-source-plugin</artifactId>
                     <version>2.1.2</version>
@@ -1001,12 +954,28 @@
     </build>
 
     <profiles>
+        <!-- 
+         | Used by the continuous integrations server to deploy the project site.
+         +-->
         <profile>
             <id>ci-local-site</id>
             <distributionManagement>
                 <site>
                     <id>ci-local-site</id>
-                    <url>${jasig-site-ci-dist-base}${project-site-path}</url>
+                    <url>${jasig-site-ci-dist-base}/uportal/${project.version}</url>
+                </site>
+            </distributionManagement>
+        </profile>
+        <!-- 
+         | Should be activated manually by a developer that wishes to deploy a maven site for
+         | the project
+         +-->
+        <profile>
+            <id>manual-site</id>
+            <distributionManagement>
+                <site>
+                    <id>developer.jasig</id>
+                    <url>${jasig-site-dist-base}/uportal/${project.version}</url>
                 </site>
             </distributionManagement>
         </profile>

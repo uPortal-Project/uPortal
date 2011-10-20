@@ -31,6 +31,7 @@ import org.jasig.portal.IUserProfile;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.RestrictedPerson;
+import org.jasig.portal.spring.locator.UserLayoutStoreLocator;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.simple.SimpleJdbcDaoSupport;
@@ -74,7 +75,7 @@ public class UserLayoutHelperImpl extends SimpleJdbcDaoSupport implements IUserL
 		int uid = userIdentityStore.getPortalUID( person, false );
 		person.setID(uid);
 
-		IUserLayoutStore userLayoutStore = UserLayoutStoreFactory.getUserLayoutStoreImpl();
+		IUserLayoutStore userLayoutStore = UserLayoutStoreLocator.getUserLayoutStore();
 		try {
 			// determine user profile            
 			IUserProfile userProfile = userLayoutStore.getUserProfileByFname(person, DEFAULT_LAYOUT_FNAME);

@@ -39,16 +39,25 @@
     <!-- ********** JPA Beans ********** -->
     
     <aop:config>
-        <aop:pointcut id="jpaDaoExecution" 
-            expression="execution(* org.jasig.portal.*.dao.jpa.Jpa*Dao.*(..))"/>
-                
         <aop:pointcut id="daoExecution" 
             expression="execution(* org.jasig.portal.*.dao.*.*(..))"/>
             
-        <aop:advisor advice-ref="jpaInterceptor" pointcut-ref="jpaDaoExecution"/>
-            
         <aop:aspect ref="threadContextClassLoaderAspect">
-            <aop:around pointcut-ref="jpaDaoExecution" method="doThreadContextClassLoaderUpdate"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* javax.portlet.PortalContext.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.EventCoordinationService.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.FilterManagerService.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.PortletRequestContextService.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.PortletURLListenerService.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.UserInfoService.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.driver.PortalAdministrationService.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.PortletPreferencesService.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.PortletEnvironmentService.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.driver.PortletRegistryService.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.driver.PortletContextService.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.PortletInvokerService.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.NamespaceMapper.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.CCPPProfileService.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.RequestDispatcherService.*(..))"/>
         </aop:aspect>
         
         <aop:aspect ref="sqlNextExceptionLoggerAspect">
@@ -61,18 +70,22 @@
     <bean id="threadContextClassLoaderAspect" class="org.jasig.portal.portlet.dao.jpa.ThreadContextClassLoaderAspect" />
     
     <bean id="sqlNextExceptionLoggerAspect" class="org.jasig.portal.portlet.dao.jpa.SQLNextExceptionLoggerAspect" />
-
-    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+    
+    
+    
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="cacheManager">
         <property name="dataSource" ref="PortalDb" />
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="persistenceUnitName" value="uPortalPersistence" />
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.cache.region.factory_class">net.sf.ehcache.hibernate.SingletonEhCacheRegionFactory</prop>
+                <prop key="net.sf.ehcache.configurationResourceName">/properties/ehcache.xml</prop>
+            </props>
+        </property>
     </bean>
 
-    <!-- Adapter that can inject a cacheProvider into the hibernate entity manager -->
-    <bean id="jpaVendorAdapter" class="org.jasig.portal.spring.orm.jpa.HibernateJpaVendorAdapter">
-        <!-- hibernateCacheProvider is a named service (org.jasig.portal.utils.cache.hibernate.EhCacheProvider) -->
-        <property name="cacheProvider" ref="hibernateCacheProvider" />
-    </bean>
+    <bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" /> 
     
     <bean id="jpaInterceptor" class="org.springframework.orm.jpa.JpaInterceptor">
         <property name="entityManagerFactory" ref="entityManagerFactory" />

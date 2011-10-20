@@ -28,6 +28,7 @@
 <xsl:param name="focusedTabID">none</xsl:param>
 <xsl:param name="defaultTab">1</xsl:param>
 <xsl:param name="detached">false</xsl:param>
+<xsl:param name="userImpersonating">false</xsl:param>
 
 <!-- Used to build the tabGroupsList:  discover tab groups, add each to the list ONLY ONCE -->
 <xsl:key name="tabGroupKey" match="layout/folder/folder[@hidden='false' and @type='regular']" use="@tabGroup"/>
@@ -70,6 +71,7 @@
         <activeTabID><xsl:value-of select="$activeTabID"></xsl:value-of></activeTabID>
         <activeTabGroup><xsl:value-of select="$activeTabGroup"></xsl:value-of></activeTabGroup>
         <tabsInTabGroup><xsl:value-of select="count(/layout/folder/folder[@tabGroup=$activeTabGroup and @type='regular' and @hidden='false'])"/></tabsInTabGroup>
+        <userImpersonation><xsl:value-of select="$userImpersonating"/></userImpersonation>
     </debug>    
 </xsl:template>
 
@@ -282,7 +284,17 @@
 </xsl:template>
 
 <xsl:template match="channel">
-  <xsl:copy-of select="."/>
+  <xsl:choose>
+    <xsl:when test="$userImpersonating = 'true' and parameter[@name='blockImpersonation']/@value = 'true'">
+        <blocked-channel>
+            <xsl:copy-of select="@*"/>
+            <xsl:copy-of select="child::*"/>
+        </blocked-channel>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:copy-of select="."/>
+    </xsl:otherwise>
+  </xsl:choose>
 </xsl:template>
 
 <xsl:template match="parameter">
