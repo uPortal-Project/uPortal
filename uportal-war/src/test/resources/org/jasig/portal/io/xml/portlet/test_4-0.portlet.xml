@@ -37,8 +37,8 @@
     <type>Portlet</type>
     <timeout>600000</timeout>
     <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
-        <isFramework>true</isFramework>
-        <portletName>MISSING</portletName>
+        <up:isFramework>true</up:isFramework>
+        <up:portletName>MISSING</up:portletName>
     </portlet-descriptor>
     <parameter>
         <name>portletName</name>
