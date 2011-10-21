@@ -146,7 +146,7 @@
         <hibernate.version>3.6.7.Final</hibernate.version>
         <hibernate-jpamodelgen.version>1.1.1.Final</hibernate-jpamodelgen.version>
         <hsqldb.version>2.2.4</hsqldb.version>
-        <jackson.version>1.8.5</jackson.version>
+        <jackson.version>1.9.0</jackson.version>
         <jansi.version>1.7</jansi.version>
         <javassist.version>3.15.0.GA</javassist.version> 
         <jasypt.version>1.8</jasypt.version>
@@ -542,6 +542,11 @@
             <dependency>
                 <groupId>org.codehaus.jackson</groupId>
                 <artifactId>jackson-mapper-asl</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-xc</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
             <dependency>

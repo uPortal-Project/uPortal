@@ -19,32 +19,16 @@
 
 package org.jasig.portal.events;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Type;
 import org.jasig.portal.dao.usertype.FunctionalNameType;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
-@Entity
-@Table(name = "UPE_PORTLET_EXEC_EVENT")
-@Inheritance(strategy=InheritanceType.JOINED)
-@PrimaryKeyJoinColumn(name="EVENT_ID")
 public abstract class PortletExecutionEvent extends PortalEvent {
     private static final long serialVersionUID = 1L;
     
-    @Column(name = "FNAME", length = 255, nullable = false)
-    @Type(type = "fname")
     private final String fname;
-    
-    @Column(name="EXECUTION_TIME", nullable=false)
     private final long executionTime;
 
     PortletExecutionEvent() {

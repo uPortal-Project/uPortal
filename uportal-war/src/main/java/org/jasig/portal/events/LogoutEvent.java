@@ -19,21 +19,12 @@
 
 package org.jasig.portal.events;
 
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Table;
 
 /**
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 2.6
  */
-@Entity
-@Table(name = "UPE_LOGOUT_EVENT")
-@Inheritance(strategy=InheritanceType.JOINED)
-@PrimaryKeyJoinColumn(name="EVENT_ID")
 public final class LogoutEvent extends PortalEvent {
     private static final long serialVersionUID = 1L;
     
@@ -46,5 +37,11 @@ public final class LogoutEvent extends PortalEvent {
         super(eventBuilder);
     }
 
-    
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return super.toString() + "]";
+    }    
 }

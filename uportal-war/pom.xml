@@ -161,6 +161,11 @@
         </dependency>
         
         <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-xc</artifactId>
+        </dependency>
+        
+        <dependency>
             <groupId>org.codehaus.staxmate</groupId>
             <artifactId>staxmate</artifactId>
         </dependency>

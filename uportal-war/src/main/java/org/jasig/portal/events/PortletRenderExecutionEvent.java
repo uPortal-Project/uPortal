@@ -19,28 +19,15 @@
 
 package org.jasig.portal.events;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Table;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
-@Entity
-@Table(name = "UPE_PORTLET_RENDER_EVENT")
-@Inheritance(strategy=InheritanceType.JOINED)
-@PrimaryKeyJoinColumn(name="EVENT_ID")
 public final class PortletRenderExecutionEvent extends PortletExecutionEvent {
     private static final long serialVersionUID = 1L;
     
-    @Column(name="TARGETED", nullable=false)
     private final boolean targeted;
-    
-    @Column(name="CACHED", nullable=false)
     private final boolean cached;
 
     @SuppressWarnings("unused")

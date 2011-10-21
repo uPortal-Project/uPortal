@@ -21,19 +21,14 @@ package org.jasig.portal.events;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import javax.persistence.Transient;
-
 import org.apache.commons.lang.Validate;
-import org.hibernate.annotations.Immutable;
+import org.codehaus.jackson.annotate.JsonAutoDetect;
+import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonMethod;
+import org.codehaus.jackson.annotate.JsonTypeInfo;
+import org.codehaus.jackson.annotate.JsonTypeInfo.Id;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.utils.SerializableObject;
 import org.springframework.context.ApplicationEvent;
@@ -46,49 +41,25 @@ import org.springframework.context.ApplicationEvent;
  * @since 2.6
  *
  */
-@Entity
-@Table(name = "UPE_EVENT")
-@Inheritance(strategy=InheritanceType.JOINED)
-@SequenceGenerator(
-        name="UPE_EVENT_GEN",
-        sequenceName="UPE_EVENT_SEQ",
-        allocationSize=1000
-    )
-@TableGenerator(
-        name="UPE_EVENT_GEN",
-        pkColumnValue="UPE_EVENT_PROP",
-        allocationSize=1000
-    )
-@Immutable
+@JsonAutoDetect(value=JsonMethod.FIELD, fieldVisibility=Visibility.ANY)
+@JsonTypeInfo(use=Id.MINIMAL_CLASS)
+@JsonIgnoreProperties(value="source")
 public abstract class PortalEvent extends ApplicationEvent {
     public static final Object UNKNOWN_SOURCE = new SerializableObject();
     
     private static final long serialVersionUID = 1L;
    
-    @Id
-    @GeneratedValue(generator = "UPE_EVENT_GEN")
-    @Column(name="EVENT_ID")
-    private final long id;
-    
-    @Column(name="SERVER_ID", length=200, nullable=false)
-    private final String serverName;
-    
-    @Column(name="SESSION_ID", length=500, nullable=false)
+    private final String serverId;
     private final String eventSessionId;
-    
-    @Column(name="USER_NAME", length=35, nullable=false)
     private final String userName;
-    
-    @Transient
+    @JsonIgnore
     private final IPerson person;
-
-    @Transient
+    @JsonIgnore
     private Date timestampAsDate;
     
     PortalEvent() {
         super(UNKNOWN_SOURCE);
-        this.id = -1;
-        this.serverName = null;
+        this.serverId = null;
         this.eventSessionId = null;
         this.person = null;
         this.userName = null;
@@ -97,8 +68,7 @@ public abstract class PortalEvent extends ApplicationEvent {
     PortalEvent(PortalEventBuilder eventBuilder) {
         super(eventBuilder.source);
         
-        this.id = -1;
-        this.serverName = eventBuilder.serverName;
+        this.serverId = eventBuilder.serverName;
         this.eventSessionId = eventBuilder.eventSessionId;
         this.person = eventBuilder.person;
         this.userName = this.person.getUserName();
@@ -117,15 +87,11 @@ public abstract class PortalEvent extends ApplicationEvent {
         return d;
     }
 
-    final long getId() {
-        return this.id;
-    }
-    
     /**
-     * @return the serverName that created the event
+     * @return the serverId that created the event
      */
     public final String getServerId() {
-        return this.serverName;
+        return this.serverId;
     }
 
     /**
@@ -154,8 +120,7 @@ public abstract class PortalEvent extends ApplicationEvent {
      */
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + " [id=" + this.id + 
-                ", serverName=" + this.serverName +
+        return this.getClass().getSimpleName() + " [serverId=" + this.serverId +
                 ", eventSessionId=" + this.eventSessionId + 
                 ", userName=" + this.userName + 
                 ", timestampAsDate=" + this.getTimestampAsDate();
@@ -180,7 +145,7 @@ public abstract class PortalEvent extends ApplicationEvent {
 
         PortalEventBuilder(Object source, String serverName, String eventSessionId, IPerson person) {
             Validate.notNull(source, "source");
-            Validate.notNull(serverName, "serverName");
+            Validate.notNull(serverName, "serverId");
             Validate.notNull(eventSessionId, "eventSessionId");
             Validate.notNull(person, "person");
             

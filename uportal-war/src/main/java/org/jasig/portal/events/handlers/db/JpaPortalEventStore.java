@@ -19,8 +19,8 @@
 
 package org.jasig.portal.events.handlers.db;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -32,12 +32,14 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
 import org.jasig.portal.events.PortalEvent;
-import org.jasig.portal.events.PortalEvent_;
 import org.jasig.portal.jpa.BaseJpaDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 
 /**
  * Stores portal events using JPA/Hibenate no internal batch segmentation is done to the passed list
@@ -51,9 +53,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
-    private CriteriaQuery<PortalEvent> findPortalEventsForTimeRangeQuery;
-    private ParameterExpression<Long> startTimeParameter;
-    private ParameterExpression<Long> endTimeParameter;
+    private CriteriaQuery<PersistentPortalEvent> findPortalEventsForTimeRangeQuery;
+    private ParameterExpression<Date> startTimeParameter;
+    private ParameterExpression<Date> endTimeParameter;
 
 
     private EntityManager entityManager;
@@ -76,23 +78,23 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
     
     @Override
     protected void buildCriteriaQueries(CriteriaBuilder cb) {
-        this.startTimeParameter = cb.parameter(Long.class, "startTime");
-        this.endTimeParameter = cb.parameter(Long.class, "endTime");
+        this.startTimeParameter = cb.parameter(Date.class, "startTime");
+        this.endTimeParameter = cb.parameter(Date.class, "endTime");
         
         this.findPortalEventsForTimeRangeQuery = this.buildFindPortalEventsForTimeRangeQuery(cb);
     }
 
-    protected CriteriaQuery<PortalEvent> buildFindPortalEventsForTimeRangeQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<PortalEvent> criteriaQuery = cb.createQuery(PortalEvent.class);
-        final Root<PortalEvent> entityRoot = criteriaQuery.from(PortalEvent.class);
+    protected CriteriaQuery<PersistentPortalEvent> buildFindPortalEventsForTimeRangeQuery(final CriteriaBuilder cb) {
+        final CriteriaQuery<PersistentPortalEvent> criteriaQuery = cb.createQuery(PersistentPortalEvent.class);
+        final Root<PersistentPortalEvent> entityRoot = criteriaQuery.from(PersistentPortalEvent.class);
         criteriaQuery.select(entityRoot);
         criteriaQuery.where(
             cb.and(
-                cb.ge(entityRoot.get(PortalEvent_.timestamp), this.startTimeParameter),
-                cb.lessThan(entityRoot.get(PortalEvent_.timestamp), this.endTimeParameter)
+                cb.greaterThan(entityRoot.get(PersistentPortalEvent_.timestamp), this.startTimeParameter),
+                cb.lessThan(entityRoot.get(PersistentPortalEvent_.timestamp), this.endTimeParameter)
             )
         );
-        criteriaQuery.orderBy(cb.asc(entityRoot.get(PortalEvent_.timestamp)));
+        criteriaQuery.orderBy(cb.asc(entityRoot.get(PersistentPortalEvent_.timestamp)));
         
         return criteriaQuery;
     }
@@ -143,11 +145,18 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
      */
     @Override
     public List<PortalEvent> getPortalEvents(long startTime, long endTime) {
-        final TypedQuery<PortalEvent> query = this.getEntityManager().createQuery(this.findPortalEventsForTimeRangeQuery);
-        query.setParameter(this.startTimeParameter, startTime);
-        query.setParameter(this.endTimeParameter, endTime);
+        final TypedQuery<PersistentPortalEvent> query = this.getEntityManager().createQuery(this.findPortalEventsForTimeRangeQuery);
+        query.setParameter(this.startTimeParameter, new Date(startTime));
+        query.setParameter(this.endTimeParameter, new Date(endTime));
         
-        return new ArrayList<PortalEvent>(query.getResultList());
+        final List<PersistentPortalEvent> resultList = query.getResultList();
+        
+        return Lists.transform(resultList, new Function<PersistentPortalEvent, PortalEvent>() {
+            @Override
+            public PortalEvent apply(PersistentPortalEvent input) {
+                return input.getPortalEvent();
+            }
+        });
     }
 
     /* (non-Javadoc)

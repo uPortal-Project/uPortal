@@ -19,12 +19,6 @@
 
 package org.jasig.portal.events;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Table;
 import javax.portlet.ResourceRequest;
 
 
@@ -32,17 +26,10 @@ import javax.portlet.ResourceRequest;
  * @author Eric Dalquist
  * @version $Revision$
  */
-@Entity
-@Table(name = "UPE_PORTLET_RESOURCE_EVENT")
-@Inheritance(strategy=InheritanceType.JOINED)
-@PrimaryKeyJoinColumn(name="EVENT_ID")
 public final class PortletResourceExecutionEvent extends PortletExecutionEvent {
     private static final long serialVersionUID = 1L;
     
-    @Column(name="ACTION_NAME", length=500, nullable=true)
     private final String resourceId;
-    
-    @Column(name="CACHED", nullable=false)
     private final boolean cached;
 
     @SuppressWarnings("unused")
