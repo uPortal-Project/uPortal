@@ -28,12 +28,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.Lob;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 import org.hibernate.annotations.Immutable;
-import org.hibernate.annotations.Type;
 import org.jasig.portal.events.PortalEvent;
 
 /**
@@ -43,16 +43,16 @@ import org.jasig.portal.events.PortalEvent;
  * @version $Revision$
  */
 @Entity
-@Table(name = "UPE_RAW_EVENTS")
+@Table(name = "UP_RAW_EVENTS")
 @Inheritance(strategy=InheritanceType.JOINED)
 @SequenceGenerator(
-        name="UPE_RAW_EVENTS_GEN",
-        sequenceName="UPE_RAW_EVENTS_SEQ",
+        name="UP_RAW_EVENTS_GEN",
+        sequenceName="UP_RAW_EVENTS_SEQ",
         allocationSize=1000
     )
 @TableGenerator(
-        name="UPE_RAW_EVENTS_GEN",
-        pkColumnValue="UPE_RAW_EVENTS_PROP",
+        name="UP_RAW_EVENTS_GEN",
+        pkColumnValue="UP_RAW_EVENTS_PROP",
         allocationSize=1000
     )
 @Immutable
@@ -60,7 +60,7 @@ public class PersistentPortalEvent implements Serializable {
     private static final long serialVersionUID = 1L;
    
     @Id
-    @GeneratedValue(generator = "UPE_RAW_EVENTS_GEN")
+    @GeneratedValue(generator = "UP_RAW_EVENTS_GEN")
     @Column(name="EVENT_ID")
     @SuppressWarnings("unused")
     private final long id;
@@ -81,9 +81,9 @@ public class PersistentPortalEvent implements Serializable {
     @SuppressWarnings("unused")
     private final String userName;
     
-    @Column(name="EVENT_DATA", nullable=false)
-    @Type(type="jsonClob")
-    private final PortalEvent portalEvent;
+    @Column(name = "EVENT_DATA")
+    @Lob
+    private final String eventData; 
     
     /**
      * no-arg needed by hibernate
@@ -91,27 +91,27 @@ public class PersistentPortalEvent implements Serializable {
     @SuppressWarnings("unused")
     private PersistentPortalEvent() {
         this.id = -1;
-        this.portalEvent = null;
+        this.eventData = null;
         this.timestamp = null;
         this.serverId = null;
         this.eventSessionId = null;
         this.userName = null;
     }
     
-    PersistentPortalEvent(PortalEvent portalEvent) {
+    PersistentPortalEvent(PortalEvent portalEvent, String eventData) {
         this.id = -1;
-        this.portalEvent = portalEvent;
-        this.timestamp = this.portalEvent.getTimestampAsDate();
-        this.serverId = this.portalEvent.getServerId();
-        this.eventSessionId = this.portalEvent.getEventSessionId();
-        this.userName = this.portalEvent.getUserName();
+        this.eventData = eventData;
+        this.timestamp = portalEvent.getTimestampAsDate();
+        this.serverId = portalEvent.getServerId();
+        this.eventSessionId = portalEvent.getEventSessionId();
+        this.userName = portalEvent.getUserName();
     }
 
     /**
-     * @return the portalEvent
+     * @return the eventData
      */
-    public PortalEvent getPortalEvent() {
-        return this.portalEvent;
+    public String getEventData() {
+        return this.eventData;
     }
 
     /* (non-Javadoc)
@@ -119,6 +119,6 @@ public class PersistentPortalEvent implements Serializable {
      */
     @Override
     public String toString() {
-        return this.portalEvent.toString();
+        return this.eventData;
     }
 }

@@ -19,9 +19,8 @@
 
 package org.jasig.portal.events;
 
-import javax.xml.bind.annotation.XmlTransient;
-
 import org.apache.commons.lang.Validate;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.jasig.portal.security.IPerson;
 
 
@@ -38,7 +37,7 @@ public abstract class LayoutPortalEvent extends PortalEvent {
     private final long layoutId;
     private final String layoutOwner;
     
-    @XmlTransient
+    @JsonIgnore
     private final IPerson layoutOwnerPerson;
 
 	

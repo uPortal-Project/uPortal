@@ -22,6 +22,7 @@ package org.jasig.portal.events;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -101,7 +102,7 @@ public class JpaPortalEventStoreTest extends BaseJpaDaoTest {
             @Override
             public Object call() throws Exception {
                 //Get all events
-                final List<PortalEvent> portalEvents = portalEventDao.getPortalEvents(0, Long.MAX_VALUE);
+                final List<PortalEvent> portalEvents = portalEventDao.getPortalEvents(new Date(0), new Date(Long.MAX_VALUE));
                 assertEquals(12, portalEvents.size());
                 
                 final Iterator<PortalEvent> eventItr = portalEvents.iterator();
@@ -124,7 +125,7 @@ public class JpaPortalEventStoreTest extends BaseJpaDaoTest {
                 assertTrue(eventItr.next() instanceof LogoutEvent);
                 
                 //Delete the events
-                portalEventDao.deletePortalEvents(portalEvents);
+                portalEventDao.deletePortalEvents(new Date(0), new Date(Long.MAX_VALUE));
                 
                 return null;
             }
@@ -133,7 +134,7 @@ public class JpaPortalEventStoreTest extends BaseJpaDaoTest {
         execute(new Callable<Object>() {
             @Override
             public Object call() throws Exception {
-                final List<PortalEvent> portalEvents = portalEventDao.getPortalEvents(0, Long.MAX_VALUE);
+                final List<PortalEvent> portalEvents = portalEventDao.getPortalEvents(new Date(0), new Date(Long.MAX_VALUE));
                 assertEquals(0, portalEvents.size());
                 
                 return null;

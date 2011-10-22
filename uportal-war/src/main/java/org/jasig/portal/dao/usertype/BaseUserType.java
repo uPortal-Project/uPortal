@@ -146,6 +146,7 @@ public abstract class BaseUserType<T> implements UserType, Serializable {
      * @see org.hibernate.usertype.UserType#nullSafeGet(java.sql.ResultSet, java.lang.String[], java.lang.Object)
      */
      @Override
+     @SuppressWarnings({ "deprecation" })
      public T nullSafeGet(ResultSet rs, String[] names, Object owner) throws HibernateException, SQLException {
          final ValueExtractor<T> extractor = this.sqlTypeDescriptor.getExtractor(this.javaTypeDescriptor);
          return extractor.extract(rs, names[0], OPTIONS);
@@ -155,7 +156,7 @@ public abstract class BaseUserType<T> implements UserType, Serializable {
       * @see org.hibernate.usertype.UserType#nullSafeSet(java.sql.PreparedStatement, java.lang.Object, int)
       */
      @Override
-     @SuppressWarnings("unchecked")
+     @SuppressWarnings({ "unchecked", "deprecation" })
      public void nullSafeSet(PreparedStatement st, Object value, int index) throws HibernateException, SQLException {
          final ValueBinder<T> binder = this.sqlTypeDescriptor.getBinder(this.javaTypeDescriptor);
          binder.bind(st, (T)value, index, OPTIONS);

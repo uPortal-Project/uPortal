@@ -38,11 +38,12 @@ import org.hibernate.type.descriptor.java.DataHelper;
  * @version $Revision$
  */
 public class QNameTypeDescriptor extends AbstractTypeDescriptor<QName> {
-    private static final long serialVersionUID = 1L;
     public static final QNameTypeDescriptor INSTANCE = new QNameTypeDescriptor();
+    
+    private static final long serialVersionUID = 1L;
 
     private QNameTypeDescriptor() {
-        super(QName.class, QNameMutabilityPlan.INSTANCE);
+        super(QName.class);
     }
 
     @Override
