@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     Licensed to Jasig under one or more contributor license
@@ -222,6 +222,7 @@
     
     <filter-mapping>
         <filter-name>CharacterEncodingFilter</filter-name>
+        <servlet-name>AuthenticationDispatcherServlet</servlet-name>
         <servlet-name>RenderingDispatcherServlet</servlet-name>
         <servlet-name>JsonRenderingDispatcherServlet</servlet-name>
         <servlet-name>MVCDispatcherServlet</servlet-name>

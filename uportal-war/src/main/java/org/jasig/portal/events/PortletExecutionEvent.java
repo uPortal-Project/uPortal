@@ -19,9 +19,16 @@
 
 package org.jasig.portal.events;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.Validate;
 import org.jasig.portal.dao.usertype.FunctionalNameType;
 
 /**
+ * Constructor assumes that Map passed in is completely immutable
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
@@ -30,18 +37,23 @@ public abstract class PortletExecutionEvent extends PortalEvent {
     
     private final String fname;
     private final long executionTime;
+    private final Map<String, List<String>> parameters;
 
     PortletExecutionEvent() {
         super();
         this.fname = null;
         this.executionTime = -1;
+        this.parameters = Collections.emptyMap();
     }
 
-    PortletExecutionEvent(PortalEventBuilder eventBuilder, String fname, long executionTime) {
+    PortletExecutionEvent(PortalEventBuilder eventBuilder, String fname, long executionTime, Map<String, List<String>> parameters) {
         super(eventBuilder);
         FunctionalNameType.validate(fname);
+        Validate.notNull(parameters, "parameters");
+        
         this.fname = fname;
         this.executionTime = executionTime;
+        this.parameters = parameters;
     }
 
     /**
@@ -65,6 +77,7 @@ public abstract class PortletExecutionEvent extends PortalEvent {
     public String toString() {
         return super.toString() + 
                 ", fname=" + this.fname + 
-                ", executionTime=" + this.executionTime;
+                ", executionTime=" + this.executionTime +
+                ", parameters=" + this.parameters.size();
     }
 }

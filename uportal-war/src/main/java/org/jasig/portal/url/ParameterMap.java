@@ -26,6 +26,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+
 /**
  * Special type of map for dealing with request parameters. Extends a {@link LinkedHashMap} and adds custom {@link #toString()},
  * {@link #hashCode()}, and {@link #equals(Object)} methods that deal with having values that are String[] correctly.
@@ -103,6 +107,38 @@ public class ParameterMap extends LinkedHashMap<String, String[]> {
         }
         
         return newMap;
+    }
+    
+    public static Map<String, List<String>> immutableCopyOfListMap(Map<String, List<String>> parameterMap) {
+        final Builder<String, List<String>> builder = ImmutableMap.builder();
+        
+        for (final Map.Entry<String, List<String>> parameterEntry : parameterMap.entrySet()) {
+            final List<String> values = parameterEntry.getValue();
+            if (values == null) {
+                builder.put(parameterEntry.getKey(), null); 
+            }
+            else {
+                builder.put(parameterEntry.getKey(), ImmutableList.copyOf(values));   
+            }
+        }
+        
+        return builder.build();
+    }
+    
+    public static Map<String, List<String>> immutableCopyOfArrayMap(Map<String, String[]> parameterMap) {
+        final Builder<String, List<String>> builder = ImmutableMap.builder();
+        
+        for (final Map.Entry<String, String[]> parameterEntry : parameterMap.entrySet()) {
+            final String[] values = parameterEntry.getValue();
+            if (values == null) {
+                builder.put(parameterEntry.getKey(), null);
+            }
+            else {
+                builder.put(parameterEntry.getKey(), ImmutableList.copyOf(values));
+            }
+        }
+        
+        return builder.build();
     }
     
     public static void putAllList(Map<String, List<String>> dest, Map<String, String[]> src) {

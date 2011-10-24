@@ -20,7 +20,6 @@
 package  org.jasig.portal.security.mvc;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -128,13 +127,6 @@ public class LoginController implements InitializingBean {
       response.setHeader("Pragma","no-cache");
       response.setHeader("Cache-Control","no-cache");
       response.setDateHeader("Expires",0);
-
-    // Call to setCharacterEncoding method should be done before any call to req.getParameter() method.
-    try {
-        request.setCharacterEncoding("UTF-8");
-    } catch (UnsupportedEncodingException uee) {
-        log.error("Unable to set UTF-8 character encoding!", uee);
-    }
 
     // Clear out the existing session for the user if they have one
     String targetUid = null;

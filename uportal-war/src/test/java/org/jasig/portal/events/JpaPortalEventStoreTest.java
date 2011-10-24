@@ -20,7 +20,6 @@
 package org.jasig.portal.events;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 import java.util.Iterator;
@@ -30,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import javax.portlet.ActionRequest;
 import javax.xml.namespace.QName;
 
 import org.jasig.portal.events.handlers.db.IPortalEventDao;
@@ -57,48 +57,43 @@ public class JpaPortalEventStoreTest extends BaseJpaDaoTest {
     private IPortalEventDao portalEventDao;
     
     @Test
-    public void testStoreAllEvents() throws Exception {
+    public void testStoreSingleEvents() throws Exception {
+        final List<PortalEvent> originalEvents = generateEvents();
+
         execute(new Callable<Object>() {
             @Override
             public Object call() throws Exception {
-                final String sessionId = "1234567890123_system_AAAAAAAAAAA";
-                final PortalEvent.PortalEventBuilder eventBuilder = new PortalEvent.PortalEventBuilder(this, "example.com", sessionId, SystemPerson.INSTANCE);
-                
-                final Set<String> groups = ImmutableSet.of("Student", "Employee");
-                final Map<String, List<String>> attributes = ImmutableMap.of("username", (List<String>)ImmutableList.of("system"), "roles", (List<String>)ImmutableList.of("student", "employee"));
-                portalEventDao.storePortalEvent(new LoginEvent(eventBuilder, groups, attributes));
-
-                Thread.sleep(1);
-                portalEventDao.storePortalEvent(new FolderAddedToLayoutPortalEvent(eventBuilder, SystemPerson.INSTANCE, 1, "n32"));
-                Thread.sleep(1);
-                portalEventDao.storePortalEvent(new FolderMovedInLayoutPortalEvent(eventBuilder, SystemPerson.INSTANCE, 1, "n12", "n32"));
-                Thread.sleep(1);
-                portalEventDao.storePortalEvent(new FolderDeletedFromLayoutPortalEvent(eventBuilder, SystemPerson.INSTANCE, 1, "n24", "n32", "My Tab"));
-                
-                Thread.sleep(1);
-                portalEventDao.storePortalEvent(new PortletAddedToLayoutPortalEvent(eventBuilder, SystemPerson.INSTANCE, 1, "n32", "portletA"));
-                Thread.sleep(1);
-                portalEventDao.storePortalEvent(new PortletMovedInLayoutPortalEvent(eventBuilder, SystemPerson.INSTANCE, 1, "n32", "n24", "portletA"));
-                Thread.sleep(1);
-                portalEventDao.storePortalEvent(new PortletDeletedFromLayoutPortalEvent(eventBuilder, SystemPerson.INSTANCE, 1, "n24", "portletA"));
-                
-                
-                Thread.sleep(1);
-                portalEventDao.storePortalEvent(new PortletActionExecutionEvent(eventBuilder, "portletA", 5, null));
-                Thread.sleep(1);
-                portalEventDao.storePortalEvent(new PortletEventExecutionEvent(eventBuilder, "portletA", 7, new QName("http://www.jasig.org/foo", "event", "e")));
-                Thread.sleep(1);
-                portalEventDao.storePortalEvent(new PortletRenderExecutionEvent(eventBuilder, "portletA", 13, true, false));
-                Thread.sleep(1);
-                portalEventDao.storePortalEvent(new PortletResourceExecutionEvent(eventBuilder, "portletA", 17, "someImage.jpg", false));
-                
-                Thread.sleep(1);
-                portalEventDao.storePortalEvent(new LogoutEvent(eventBuilder));
+                for (final PortalEvent event : originalEvents) {
+                    portalEventDao.storePortalEvent(event);
+                }
                 
                 return null;
             }
         });
         
+        verifyEvents(originalEvents);
+    }
+    
+    @Test
+    public void testStoreBatchEvents() throws Exception {
+        final List<PortalEvent> originalEvents = generateEvents();
+
+        execute(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                portalEventDao.storePortalEvents(originalEvents);
+                
+                return null;
+            }
+        });
+        
+        verifyEvents(originalEvents);
+    }
+
+    /**
+     * @param originalEvents
+     */
+    protected void verifyEvents(final List<PortalEvent> originalEvents) {
         execute(new Callable<Object>() {
             @Override
             public Object call() throws Exception {
@@ -112,26 +107,14 @@ public class JpaPortalEventStoreTest extends BaseJpaDaoTest {
                     }
                 });
                 
-                assertEquals(12, portalEvents.size());
+                assertEquals(originalEvents.size(), portalEvents.size());
                 
+                final Iterator<PortalEvent> originalEventItr = originalEvents.iterator();
                 final Iterator<PortalEvent> eventItr = portalEvents.iterator();
                 
-                assertTrue(eventItr.next() instanceof LoginEvent);
-                
-                assertTrue(eventItr.next() instanceof FolderAddedToLayoutPortalEvent);
-                assertTrue(eventItr.next() instanceof FolderMovedInLayoutPortalEvent);
-                assertTrue(eventItr.next() instanceof FolderDeletedFromLayoutPortalEvent);
-
-                assertTrue(eventItr.next() instanceof PortletAddedToLayoutPortalEvent);
-                assertTrue(eventItr.next() instanceof PortletMovedInLayoutPortalEvent);
-                assertTrue(eventItr.next() instanceof PortletDeletedFromLayoutPortalEvent);
-                
-                assertTrue(eventItr.next() instanceof PortletActionExecutionEvent);
-                assertTrue(eventItr.next() instanceof PortletEventExecutionEvent);
-                assertTrue(eventItr.next() instanceof PortletRenderExecutionEvent);
-                assertTrue(eventItr.next() instanceof PortletResourceExecutionEvent);
-                
-                assertTrue(eventItr.next() instanceof LogoutEvent);
+                while (originalEventItr.hasNext()) {
+                    assertEquals(originalEventItr.next().getClass(), eventItr.next().getClass());
+                }
                 
                 //Delete the events
                 portalEventDao.deletePortalEvents(new Date(0), new Date(Long.MAX_VALUE));
@@ -157,5 +140,47 @@ public class JpaPortalEventStoreTest extends BaseJpaDaoTest {
                 return null;
             }
         });
+    }
+    
+    protected List<PortalEvent> generateEvents() throws Exception {
+        final String sessionId = "1234567890123_system_AAAAAAAAAAA";
+        final PortalEvent.PortalEventBuilder eventBuilder = new PortalEvent.PortalEventBuilder(this, "example.com", sessionId, SystemPerson.INSTANCE);
+        
+        final Set<String> groups = ImmutableSet.of("Student", "Employee");
+        final Map<String, List<String>> attributes = ImmutableMap.of("username", (List<String>)ImmutableList.of("system"), "roles", (List<String>)ImmutableList.of("student", "employee"));
+
+        
+        final List<PortalEvent> events = new LinkedList<PortalEvent>();
+        
+        events.add(new LoginEvent(eventBuilder, groups, attributes));
+
+        Thread.sleep(1);
+        events.add(new FolderAddedToLayoutPortalEvent(eventBuilder, SystemPerson.INSTANCE, 1, "n32"));
+        Thread.sleep(1);
+        events.add(new FolderMovedInLayoutPortalEvent(eventBuilder, SystemPerson.INSTANCE, 1, "n12", "n32"));
+        Thread.sleep(1);
+        events.add(new FolderDeletedFromLayoutPortalEvent(eventBuilder, SystemPerson.INSTANCE, 1, "n24", "n32", "My Tab"));
+        
+        Thread.sleep(1);
+        events.add(new PortletAddedToLayoutPortalEvent(eventBuilder, SystemPerson.INSTANCE, 1, "n32", "portletA"));
+        Thread.sleep(1);
+        events.add(new PortletMovedInLayoutPortalEvent(eventBuilder, SystemPerson.INSTANCE, 1, "n32", "n24", "portletA"));
+        Thread.sleep(1);
+        events.add(new PortletDeletedFromLayoutPortalEvent(eventBuilder, SystemPerson.INSTANCE, 1, "n24", "portletA"));
+        
+        
+        Thread.sleep(1);
+        events.add(new PortletActionExecutionEvent(eventBuilder, "portletA", 5, ImmutableMap.<String, List<String>>of(ActionRequest.ACTION_NAME, ImmutableList.of("foobar"))));
+        Thread.sleep(1);
+        events.add(new PortletEventExecutionEvent(eventBuilder, "portletA", 7, ImmutableMap.<String, List<String>>of(), new QName("http://www.jasig.org/foo", "event", "e")));
+        Thread.sleep(1);
+        events.add(new PortletRenderExecutionEvent(eventBuilder, "portletA", 13, ImmutableMap.<String, List<String>>of(), true, false));
+        Thread.sleep(1);
+        events.add(new PortletResourceExecutionEvent(eventBuilder, "portletA", 17, ImmutableMap.<String, List<String>>of(), "someImage.jpg", false));
+        
+        Thread.sleep(1);
+        events.add(new LogoutEvent(eventBuilder));
+        
+        return events;
     }
 }

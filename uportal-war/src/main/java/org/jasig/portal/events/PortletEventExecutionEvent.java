@@ -19,6 +19,9 @@
 
 package org.jasig.portal.events;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.portlet.EventRequest;
 import javax.xml.namespace.QName;
 
@@ -38,8 +41,8 @@ public final class PortletEventExecutionEvent extends PortletExecutionEvent {
         this.eventName = null;
     }
 
-    PortletEventExecutionEvent(PortalEventBuilder eventBuilder, String fname, long executionTime, QName eventName) {
-        super(eventBuilder, fname, executionTime);
+    PortletEventExecutionEvent(PortalEventBuilder eventBuilder, String fname, long executionTime, Map<String, List<String>> parameters, QName eventName) {
+        super(eventBuilder, fname, executionTime, parameters);
         Validate.notNull(eventName, "eventName");
         this.eventName = eventName;
     }

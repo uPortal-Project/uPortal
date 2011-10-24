@@ -119,13 +119,14 @@ class PortalRequestInfoImpl implements IPortalRequestInfo {
     public Map<IPortletWindowId, PortletRequestInfoImpl> getPortletRequestInfoMap() {
         return this.portletRequestInfo;
     }
+    @Override
     public PortletRequestInfoImpl getPortletRequestInfo(IPortletWindowId portletWindowId) {
         PortletRequestInfoImpl portletRequestInfo = this.portletRequestInfo.get(portletWindowId);
-        if (portletRequestInfo != null) {
+        if (readOnly || portletRequestInfo != null) {
+            //If read only return null is ok
             return portletRequestInfo;
         }
         
-        this.checkReadOnly();
         portletRequestInfo = new PortletRequestInfoImpl(portletWindowId, this);
         this.portletRequestInfo.put(portletWindowId, portletRequestInfo);
         return portletRequestInfo;

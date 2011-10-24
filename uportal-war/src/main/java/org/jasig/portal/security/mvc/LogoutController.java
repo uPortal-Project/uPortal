@@ -37,7 +37,6 @@ import org.jasig.portal.events.IPortalEventFactory;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.ISecurityContext;
-import org.jasig.portal.security.PersonManagerFactory;
 import org.jasig.portal.utils.ResourceLoader;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +59,12 @@ public class LogoutController implements InitializingBean {
 
     private Map<String, String> redirectMap;
     private IPortalEventFactory portalEventFactory;
+    private IPersonManager personManager;
+
+    @Autowired
+    public void setPersonManager(IPersonManager personManager) {
+        this.personManager = personManager;
+    }
 
     @Autowired
     public void setPortalEventFactory(IPortalEventFactory portalEventFactory) {
@@ -116,8 +121,7 @@ public class LogoutController implements InitializingBean {
         if (session != null) {
             // Record that an authenticated user is requesting to log out
             try {
-                final IPersonManager personManagerInstance = PersonManagerFactory.getPersonManagerInstance();
-                final IPerson person = personManagerInstance.getPerson(request);
+                final IPerson person = personManager.getPerson(request);
                 if (person != null && person.getSecurityContext().isAuthenticated()) {
                     this.portalEventFactory.publishLogoutEvent(request, this, person);
                 }
@@ -184,7 +188,7 @@ public class LogoutController implements InitializingBean {
         }
         try {
             // Get the person object associated with the request
-            person = PersonManagerFactory.getPersonManagerInstance().getPerson(request);
+            person = this.personManager.getPerson(request);
             if (person != null) {
                 // Retrieve the security context for the user
                 final ISecurityContext securityContext = person.getSecurityContext();

@@ -18,6 +18,7 @@
  */
 package org.jasig.portal.portlet.rendering;
 
+import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
 
 import static org.mockito.Mockito.never;
@@ -28,6 +29,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -92,6 +94,8 @@ public class PortletRendererImplTest {
      * Does common setup of mock options needed for portlet execution
      */
     protected void setupPortletExecutionMocks(MockHttpServletRequest request) {
+        when(portletWindowRegistry.getPortletWindow(isA(HttpServletRequest.class), eq(portletWindowId))).thenReturn(portletWindow);
+        when(portletWindow.getRenderParameters()).thenReturn(Collections.<String, String[]>emptyMap());
         when(portletWindow.getPlutoPortletWindow()).thenReturn(plutoPortletWindow);
         when(portletWindowRegistry.getPortletWindow(request, portletWindowId)).thenReturn(portletWindow);
         when(portletWindow.getPortletEntity()).thenReturn(portletEntity);

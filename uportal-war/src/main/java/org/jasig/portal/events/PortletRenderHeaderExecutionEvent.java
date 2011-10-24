@@ -22,26 +22,40 @@ package org.jasig.portal.events;
 import java.util.List;
 import java.util.Map;
 
+
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
-public final class PortletActionExecutionEvent extends PortletExecutionEvent {
+public final class PortletRenderHeaderExecutionEvent extends PortletExecutionEvent {
     private static final long serialVersionUID = 1L;
-   
+    
+    private final boolean targeted;
+
     @SuppressWarnings("unused")
-    private PortletActionExecutionEvent() {
+    private PortletRenderHeaderExecutionEvent() {
+        this.targeted = false;
     }
 
-    PortletActionExecutionEvent(PortalEventBuilder eventBuilder, String fname, long executionTime, Map<String, List<String>> parameters) {
+    PortletRenderHeaderExecutionEvent(PortalEventBuilder eventBuilder, String fname, long executionTime, Map<String, List<String>> parameters, boolean targeted) {
         super(eventBuilder, fname, executionTime, parameters);
+        this.targeted = targeted;
     }
 
+    /**
+     * @return If the portlet was explicitly targeted by the request that resulted in it rendering
+     */
+    public boolean isTargeted() {
+        return this.targeted;
+    }
+
+    
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return super.toString() + "]";
+        return super.toString() + 
+                ", targeted=" + this.targeted + "]";
     }
 }

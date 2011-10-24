@@ -36,6 +36,7 @@ import javax.servlet.http.HttpSession;
 import javax.xml.namespace.QName;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.IPortalInfoProvider;
 import org.jasig.portal.events.PortalEvent.PortalEventBuilder;
 import org.jasig.portal.groups.IGroupMember;
@@ -45,6 +46,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.SystemPerson;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.utils.IncludeExcludeUtils;
 import org.jasig.portal.utils.SerializableObject;
@@ -57,6 +59,10 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.WebUtils;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 
 /**
  * @author Eric Dalquist
@@ -75,6 +81,8 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
     
     private final SecureRandom sessionIdTokenGenerator = new SecureRandom();
     
+    private int maxParameters = 50;
+    private int maxParameterLength = 500;
     private Set<String> groupIncludes = Collections.emptySet();
     private Set<String> groupExcludes = Collections.emptySet();
     private Set<String> attributeIncludes = Collections.emptySet();
@@ -85,19 +93,57 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
     private IPersonManager personManager;
     private ApplicationEventPublisher applicationEventPublisher;
     
+    /**
+     * Maximum number of parameters to allow in an event, also used
+     * to limit the number of values for multi-valued parameters.
+     * 
+     * Defaults to 50
+     */
+    public void setMaxParameters(int maxParameters) {
+        this.maxParameters = maxParameters;
+    }
 
+    /**
+     * Maximum length of parameter names or values.
+     * 
+     * Defaults to 500 characters.
+     */
+    public void setMaxParameterLength(int maxParameterLength) {
+        this.maxParameterLength = maxParameterLength;
+    }
+
+    /**
+     * Set of groups to be explicitly included in the {@link LoginEvent}
+     * 
+     * @see IncludeExcludeUtils#included(Object, java.util.Collection, java.util.Collection)
+     */
     public void setGroupIncludes(Set<String> groupIncludes) {
         this.groupIncludes = groupIncludes;
     }
 
+    /**
+     * Set of groups to be explicitly excluded in the {@link LoginEvent}
+     * 
+     * @see IncludeExcludeUtils#included(Object, java.util.Collection, java.util.Collection)
+     */
     public void setGroupExcludes(Set<String> groupExcludes) {
         this.groupExcludes = groupExcludes;
     }
 
+    /**
+     * Set of attributes to be explicitly included in the {@link LoginEvent}
+     * 
+     * @see IncludeExcludeUtils#included(Object, java.util.Collection, java.util.Collection)
+     */
     public void setAttributeIncludes(Set<String> attributeIncludes) {
         this.attributeIncludes = attributeIncludes;
     }
 
+    /**
+     * Set of attributes to be explicitly excluded in the {@link LoginEvent}
+     * 
+     * @see IncludeExcludeUtils#included(Object, java.util.Collection, java.util.Collection)
+     */
     public void setAttributeExcludes(Set<String> attributeExcludes) {
         this.attributeExcludes = attributeExcludes;
     }
@@ -283,10 +329,11 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
      */
     @Override
     public void publishPortletActionExecutionEvent(HttpServletRequest request, Object source, String fname, long executionTime,
-            String actionName) {
+            Map<String, List<String>> parameters) {
         
+        parameters = pruneParameters(parameters);
         final PortalEventBuilder eventBuilder = this.createPortalEventBuilder(source, request);
-        final PortletActionExecutionEvent portletActionExecutionEvent = new PortletActionExecutionEvent(eventBuilder, fname, executionTime, actionName);
+        final PortletActionExecutionEvent portletActionExecutionEvent = new PortletActionExecutionEvent(eventBuilder, fname, executionTime, parameters);
         this.applicationEventPublisher.publishEvent(portletActionExecutionEvent);
     }
 
@@ -295,11 +342,25 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
      */
     @Override
     public void publishPortletEventExecutionEvent(HttpServletRequest request, Object source, String fname, long executionTime,
-            QName eventName) {
+            Map<String, List<String>> parameters, QName eventName) {
 
+        parameters = pruneParameters(parameters);
         final PortalEventBuilder eventBuilder = this.createPortalEventBuilder(source, request);
-        final PortletEventExecutionEvent portletEventExecutionEvent = new PortletEventExecutionEvent(eventBuilder, fname, executionTime, eventName);
+        final PortletEventExecutionEvent portletEventExecutionEvent = new PortletEventExecutionEvent(eventBuilder, fname, executionTime, parameters, eventName);
         this.applicationEventPublisher.publishEvent(portletEventExecutionEvent);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.events.IPortalEventFactory#publishPortletRenderHeaderExecutionEvent(javax.servlet.http.HttpServletRequest, java.lang.Object, java.lang.String, long, boolean)
+     */
+    @Override
+    public void publishPortletRenderHeaderExecutionEvent(HttpServletRequest request, Object source, String fname,
+            long executionTime, Map<String, List<String>> parameters, boolean targeted) {
+
+        parameters = pruneParameters(parameters);
+        final PortalEventBuilder eventBuilder = this.createPortalEventBuilder(source, request);
+        final PortletRenderHeaderExecutionEvent portletRenderHeaderExecutionEvent = new PortletRenderHeaderExecutionEvent(eventBuilder, fname, executionTime, parameters, targeted);
+        this.applicationEventPublisher.publishEvent(portletRenderHeaderExecutionEvent);
     }
 
     /* (non-Javadoc)
@@ -307,10 +368,11 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
      */
     @Override
     public void publishPortletRenderExecutionEvent(HttpServletRequest request, Object source, String fname, long executionTime,
-            boolean targeted, boolean cached) {
+            Map<String, List<String>> parameters, boolean targeted, boolean cached) {
         
+        parameters = pruneParameters(parameters);
         final PortalEventBuilder eventBuilder = this.createPortalEventBuilder(source, request);
-        final PortletRenderExecutionEvent portletRenderExecutionEvent = new PortletRenderExecutionEvent(eventBuilder, fname, executionTime, targeted, cached);
+        final PortletRenderExecutionEvent portletRenderExecutionEvent = new PortletRenderExecutionEvent(eventBuilder, fname, executionTime, parameters, targeted, cached);
         this.applicationEventPublisher.publishEvent(portletRenderExecutionEvent);
     }
 
@@ -319,11 +381,25 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
      */
     @Override
     public void publishPortletResourceExecutionEvent(HttpServletRequest request, Object source, String fname, long executionTime,
-            String resourceId, boolean cached) {
+            Map<String, List<String>> parameters, String resourceId, boolean cached) {
 
+        parameters = pruneParameters(parameters);
         final PortalEventBuilder eventBuilder = this.createPortalEventBuilder(source, request);
-        final PortletResourceExecutionEvent portletResourceExecutionEvent = new PortletResourceExecutionEvent(eventBuilder, fname, executionTime, resourceId, cached);
+        final PortletResourceExecutionEvent portletResourceExecutionEvent = new PortletResourceExecutionEvent(eventBuilder, fname, executionTime, parameters, resourceId, cached);
         this.applicationEventPublisher.publishEvent(portletResourceExecutionEvent);
+    }
+    
+    @Override
+    public void publishPortalRenderEvent(HttpServletRequest request, Object source, String requestPathInfo, long executionTime, 
+            IPortalRequestInfo portalRequestInfo) {
+        final PortalEventBuilder eventBuilder = this.createPortalEventBuilder(source, request);
+        
+        final Map<String, List<String>> portalParameters = this.pruneParameters(portalRequestInfo.getPortalParameters());
+        final PortalRenderEvent portalRenderEvent = new PortalRenderEvent(eventBuilder, requestPathInfo, executionTime,
+                portalRequestInfo.getUrlState(), portalRequestInfo.getUrlType(), portalParameters,
+                portalRequestInfo.getTargetedLayoutNodeId());
+        
+        this.applicationEventPublisher.publishEvent(portalRenderEvent);
     }
     
     protected PortalEventBuilder createPortalEventBuilder(Object source, HttpServletRequest request) {
@@ -455,5 +531,40 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
             
             return mutex;
         } 
+    }
+    
+    protected final Map<String, List<String>> pruneParameters(Map<String, List<String>> parameters) {
+        final Builder<String, List<String>> builder = ImmutableMap.builder();
+        
+        int paramCount = 0;
+        for (final Map.Entry<String, List<String>> parameterEntry : parameters.entrySet()) {
+            if (paramCount == this.maxParameters) {
+                break;
+            }
+            paramCount++;
+            
+            final String name = StringUtils.left(parameterEntry.getKey(), this.maxParameterLength);
+            final List<String> values = parameterEntry.getValue();
+            if (values == null) {
+                builder.put(name, null);
+            }
+            else {
+                final com.google.common.collect.ImmutableList.Builder<String> valuesBuilder = ImmutableList.builder();
+                
+                int valueCount = 0;
+                for (final String value : values) {
+                    if (valueCount == this.maxParameters) {
+                        break;
+                    }
+                    valueCount++;
+                    
+                    valuesBuilder.add(StringUtils.left(value, this.maxParameterLength));
+                }
+                
+                builder.put(name, valuesBuilder.build());
+            }
+        }
+        
+        return builder.build();
     }
 }

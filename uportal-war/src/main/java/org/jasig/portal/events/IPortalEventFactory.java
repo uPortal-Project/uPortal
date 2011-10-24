@@ -19,10 +19,14 @@
 
 package org.jasig.portal.events;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.namespace.QName;
 
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.url.IPortalRequestInfo;
 
 /**
  * Used to create and publish portal events
@@ -78,11 +82,18 @@ public interface IPortalEventFactory {
     //********** Portlet Execution Events **********//
     
     public void publishPortletActionExecutionEvent(HttpServletRequest request, Object source, 
-            String fname, long executionTime, String actionName);
+            String fname, long executionTime, Map<String, List<String>> parameters);
     public void publishPortletEventExecutionEvent(HttpServletRequest request, Object source, 
-            String fname, long executionTime, QName eventName);
+            String fname, long executionTime, Map<String, List<String>> parameters, QName eventName);
+    public void publishPortletRenderHeaderExecutionEvent(HttpServletRequest request, Object source, 
+            String fname, long executionTime, Map<String, List<String>> parameters, boolean targeted);
     public void publishPortletRenderExecutionEvent(HttpServletRequest request, Object source, 
-            String fname, long executionTime, boolean targeted, boolean cached);
+            String fname, long executionTime, Map<String, List<String>> parameters, boolean targeted, boolean cached);
     public void publishPortletResourceExecutionEvent(HttpServletRequest request, Object source, 
-            String fname, long executionTime, String resourceId, boolean cached);
+            String fname, long executionTime, Map<String, List<String>> parameters, String resourceId, boolean cached);
+    
+    //********** Portal Rendering Pipeline Events **********//
+    
+    public void publishPortalRenderEvent(HttpServletRequest request, Object source, String requestPathInfo, long executionTime,
+            IPortalRequestInfo portalRequestInfo);
 }

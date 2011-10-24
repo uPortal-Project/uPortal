@@ -31,8 +31,12 @@ import org.jasig.portal.character.stream.CharacterEventReader;
 import org.jasig.portal.character.stream.events.CharacterDataEvent;
 import org.jasig.portal.character.stream.events.CharacterEvent;
 import org.jasig.portal.character.stream.events.CharacterEventTypes;
+import org.jasig.portal.events.IPortalEventFactory;
+import org.jasig.portal.url.IPortalRequestInfo;
+import org.jasig.portal.url.IUrlSyntaxProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Top level class that initiates rendering via a {@link CharacterPipelineComponent}
@@ -47,6 +51,19 @@ public class DynamicRenderingPipeline implements IPortalRenderingPipeline {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
     private CharacterPipelineComponent pipeline;
+    private IPortalEventFactory portalEventFactory;
+    private IUrlSyntaxProvider urlSyntaxProvider;
+    
+
+    @Autowired
+    public void setUrlSyntaxProvider(IUrlSyntaxProvider urlSyntaxProvider) {
+        this.urlSyntaxProvider = urlSyntaxProvider;
+    }
+
+    @Autowired
+    public void setPortalEventFactory(IPortalEventFactory portalEventFactory) {
+        this.portalEventFactory = portalEventFactory;
+    }
 
     /**
      * The root element in the rendering pipeline. This element MUST only return {@link CharacterEventTypes#CHARACTER}
@@ -62,6 +79,8 @@ public class DynamicRenderingPipeline implements IPortalRenderingPipeline {
         res.setHeader("pragma", "no-cache");
         res.setHeader("Cache-Control", "no-cache, max-age=0, must-revalidate");
         res.setDateHeader("Expires", 0);
+        
+        final long startTime = System.currentTimeMillis();
 
         final PipelineEventReader<CharacterEventReader, CharacterEvent> pipelineEventReader = this.pipeline.getEventReader(req, res);
         final String mediaType = getMediaType(req, res, pipelineEventReader);
@@ -82,6 +101,10 @@ public class DynamicRenderingPipeline implements IPortalRenderingPipeline {
             writer.flush();
             res.flushBuffer();
         }
+        
+        final long executionTime = System.currentTimeMillis() - startTime;
+        final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(req);
+        this.portalEventFactory.publishPortalRenderEvent(req, this, req.getPathInfo(), executionTime, portalRequestInfo);
     }
 
     /**

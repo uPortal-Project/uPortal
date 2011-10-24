@@ -211,9 +211,9 @@ public class Authentication {
                 log.error("Exception retrieving ID", ae);
                 throw new PortalSecurityException("Authentication Service: Exception retrieving UID");
             }
-
-            this.portalEventFactory.publishLoginEvent(request, this, person);
         }
+        
+        this.portalEventFactory.publishLoginEvent(request, this, person);
     }
 
     /**
