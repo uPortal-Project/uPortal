@@ -138,7 +138,7 @@
                 </xsl:variable>
                 <a href="{$portletUrl}" title="To view {@name}">
                     <span class="{$newItemCountClasses}">{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}</span>
-                    <span class="icon"><img class="portlet-icon" src="{$iconUrl}"/></span>
+                    <span class="icon"><img class="portlet-icon" src="{$iconUrl}" alt="{@name}"/></span>
                     <span class="title"><xsl:value-of select="@name" /></span>
                 </a>
             </div>
