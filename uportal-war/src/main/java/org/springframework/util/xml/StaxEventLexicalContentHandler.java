@@ -37,6 +37,9 @@ import org.xml.sax.ext.LexicalHandler;
  * @version $Revision$
  */
 public class StaxEventLexicalContentHandler extends StaxEventContentHandler implements LexicalHandler {
+    
+    public static final String EMPTY_SYSTEM_IDENTIFIER = "EMPTY";
+    
     private final XMLEventFactory eventFactory;
     private final XMLEventConsumer eventConsumer;
     
@@ -61,18 +64,27 @@ public class StaxEventLexicalContentHandler extends StaxEventContentHandler impl
     @Override
     public void startDTD(String name, String publicId, String systemId) throws SAXException {
         // System identifier must be specified to print DOCTYPE.
+
+        // This method is only called if the system identifier is specified.
+        // Since the HTML5 DOCTYPE declaration does not include a system 
+        // identifier, this code allows the static string EMPTY to serve as
+        // a temporary system id for doctypes which should not have one set.
+
         // If public identifier is specified print 'PUBLIC
-        // <public> <system>', if not, print 'SYSTEM <system>'.
+        // <public> <system>', or if a non-'EMPTY' system identifier is 
+        // specified, print 'SYSTEM <system>'.
 
         final StringBuilder dtdBuilder = new StringBuilder("<!DOCTYPE ");
-        dtdBuilder.append(name).append(" ");
+        dtdBuilder.append(name);
         if (publicId != null) {
-            dtdBuilder.append("PUBLIC \"").append(publicId).append("\" \"");
+            dtdBuilder.append(" PUBLIC \"").append(publicId).append("\" \"");
+            dtdBuilder.append(systemId).append("\"");
         }
-        else {
-            dtdBuilder.append("SYSTEM \"");
+        else if (!EMPTY_SYSTEM_IDENTIFIER.equals(systemId)) {
+            dtdBuilder.append(" SYSTEM \"");
+            dtdBuilder.append(systemId).append("\"");
         }
-        dtdBuilder.append(systemId).append("\">");
+        dtdBuilder.append(">");
 
         final DTD event = eventFactory.createDTD(dtdBuilder.toString());
         try {
