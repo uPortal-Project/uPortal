@@ -709,20 +709,6 @@
                             <sharedJavaScriptDirectory>media/skins/muniversality/common/javascript</sharedJavaScriptDirectory>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>aggregate-android-skin</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>aggregate</goal>
-                        </goals>
-                        <inherited>false</inherited>
-                        <configuration>
-                            <displayJsWarnings>false</displayJsWarnings>
-                            <skinConfigurationFile>src/main/webapp/media/skins/muniversality/android/skin.xml</skinConfigurationFile>
-                            <skinOutputDirectory>media/skins/muniversality/android/</skinOutputDirectory>
-                            <sharedJavaScriptDirectory>media/skins/muniversality/common/javascript</sharedJavaScriptDirectory>
-                        </configuration>
-                    </execution>
                 </executions>
             </plugin>
         </plugins>
