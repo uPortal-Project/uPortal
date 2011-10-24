@@ -90,6 +90,7 @@ public abstract class QueueingEventHandler<E extends ApplicationEvent>
     public final void flush() {
         if (eventQueue.isEmpty()) {
             //No events to flush
+            logger.trace("No events to flush, returning.");
             return;
         }
 

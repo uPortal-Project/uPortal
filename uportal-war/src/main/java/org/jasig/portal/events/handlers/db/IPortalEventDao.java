@@ -20,9 +20,10 @@
 package org.jasig.portal.events.handlers.db;
 
 import java.util.Date;
-import java.util.List;
 
 import org.jasig.portal.events.PortalEvent;
+
+import com.google.common.base.Function;
 
 /**
  * @author Eric Dalquist
@@ -36,9 +37,9 @@ public interface IPortalEventDao {
     /**
      * @param startTime The inclusive start time to get events for
      * @param endTime The exclusive end time to get events for
-     * @return All events between the two times in {@link PortalEvent#getTimestamp()} order
+     * @param handler Function which will be called for each event.
      */
-    List<PortalEvent> getPortalEvents(Date startTime, Date endTime);
+    void getPortalEvents(Date startTime, Date endTime, Function<PortalEvent, Object> handler);
     
     /**
      * @param events Events to delete

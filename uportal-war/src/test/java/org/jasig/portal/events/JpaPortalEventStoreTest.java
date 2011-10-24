@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,6 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -57,7 +59,6 @@ public class JpaPortalEventStoreTest extends BaseJpaDaoTest {
     @Test
     public void testStoreAllEvents() throws Exception {
         execute(new Callable<Object>() {
-            //Thread sleeps are to make sure the events have unique timestamp values
             @Override
             public Object call() throws Exception {
                 final String sessionId = "1234567890123_system_AAAAAAAAAAA";
@@ -102,7 +103,15 @@ public class JpaPortalEventStoreTest extends BaseJpaDaoTest {
             @Override
             public Object call() throws Exception {
                 //Get all events
-                final List<PortalEvent> portalEvents = portalEventDao.getPortalEvents(new Date(0), new Date(Long.MAX_VALUE));
+                final List<PortalEvent> portalEvents = new LinkedList<PortalEvent>();
+                portalEventDao.getPortalEvents(new Date(0), new Date(Long.MAX_VALUE), new Function<PortalEvent, Object>() {
+                    @Override
+                    public Object apply(PortalEvent input) {
+                        portalEvents.add(input);
+                        return null;
+                    }
+                });
+                
                 assertEquals(12, portalEvents.size());
                 
                 final Iterator<PortalEvent> eventItr = portalEvents.iterator();
@@ -134,7 +143,15 @@ public class JpaPortalEventStoreTest extends BaseJpaDaoTest {
         execute(new Callable<Object>() {
             @Override
             public Object call() throws Exception {
-                final List<PortalEvent> portalEvents = portalEventDao.getPortalEvents(new Date(0), new Date(Long.MAX_VALUE));
+                final List<PortalEvent> portalEvents = new LinkedList<PortalEvent>();
+                portalEventDao.getPortalEvents(new Date(0), new Date(Long.MAX_VALUE), new Function<PortalEvent, Object>() {
+                    @Override
+                    public Object apply(PortalEvent input) {
+                        portalEvents.add(input);
+                        return null;
+                    }
+                });
+                
                 assertEquals(0, portalEvents.size());
                 
                 return null;

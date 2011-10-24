@@ -457,6 +457,8 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
             else {
                 this.portalEventFactory.publishFolderAddedToLayoutPortalEvent(this, this.owner, layoutId, node.getId());
             }
+            
+            return node;
         }
         return null;
     }

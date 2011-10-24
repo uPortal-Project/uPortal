@@ -158,7 +158,7 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
     @Override
     public void publishPortletAddedToLayoutPortalEvent(HttpServletRequest request, Object source, IPerson layoutOwner,
             long layoutId, String parentFolderId, String fname) {
-        final PortalEventBuilder portalEventBuilder = this.createPortalEventBuilder(source, null);
+        final PortalEventBuilder portalEventBuilder = this.createPortalEventBuilder(source, request);
         
         final PortletAddedToLayoutPortalEvent portletAddedToLayoutPortalEvent = new PortletAddedToLayoutPortalEvent(portalEventBuilder, layoutOwner, layoutId, parentFolderId, fname);
         this.applicationEventPublisher.publishEvent(portletAddedToLayoutPortalEvent);
@@ -179,7 +179,7 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
     @Override
     public void publishPortletMovedInLayoutPortalEvent(HttpServletRequest request, Object source, IPerson layoutOwner,
             long layoutId, String oldParentFolderId, String newParentFolderId, String fname) {
-        final PortalEventBuilder portalEventBuilder = this.createPortalEventBuilder(source, null);
+        final PortalEventBuilder portalEventBuilder = this.createPortalEventBuilder(source, request);
         
         final PortletMovedInLayoutPortalEvent portletMovedInLayoutPortalEvent = new PortletMovedInLayoutPortalEvent(portalEventBuilder, layoutOwner, layoutId, oldParentFolderId, newParentFolderId, fname);
         this.applicationEventPublisher.publishEvent(portletMovedInLayoutPortalEvent);
@@ -200,7 +200,7 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
     @Override
     public void publishPortletDeletedFromLayoutPortalEvent(HttpServletRequest request, Object source, IPerson layoutOwner,
             long layoutId, String oldParentFolderId, String fname) {
-        final PortalEventBuilder portalEventBuilder = this.createPortalEventBuilder(source, null);
+        final PortalEventBuilder portalEventBuilder = this.createPortalEventBuilder(source, request);
         
         final PortletDeletedFromLayoutPortalEvent portletDeletedFromLayoutPortalEvent = new PortletDeletedFromLayoutPortalEvent(portalEventBuilder, layoutOwner, layoutId, oldParentFolderId, fname);
         this.applicationEventPublisher.publishEvent(portletDeletedFromLayoutPortalEvent);
@@ -221,7 +221,7 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
     @Override
     public void publishFolderAddedToLayoutPortalEvent(HttpServletRequest request, Object source, IPerson layoutOwner,
             long layoutId, String newFolderId) {
-        final PortalEventBuilder portalEventBuilder = this.createPortalEventBuilder(source, null);
+        final PortalEventBuilder portalEventBuilder = this.createPortalEventBuilder(source, request);
         
         final FolderAddedToLayoutPortalEvent folderAddedToLayoutPortalEvent = new FolderAddedToLayoutPortalEvent(portalEventBuilder, layoutOwner, layoutId, newFolderId);
         this.applicationEventPublisher.publishEvent(folderAddedToLayoutPortalEvent);
@@ -241,7 +241,7 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
     @Override
     public void publishFolderMovedInLayoutPortalEvent(HttpServletRequest request, Object source, IPerson layoutOwner,
             long layoutId, String oldParentFolderId, String movedFolderId) {
-        final PortalEventBuilder portalEventBuilder = this.createPortalEventBuilder(source, null);
+        final PortalEventBuilder portalEventBuilder = this.createPortalEventBuilder(source, request);
         
         final FolderMovedInLayoutPortalEvent folderMovedInLayoutPortalEvent = new FolderMovedInLayoutPortalEvent(portalEventBuilder, layoutOwner, layoutId, oldParentFolderId, movedFolderId);
         this.applicationEventPublisher.publishEvent(folderMovedInLayoutPortalEvent);
@@ -262,7 +262,7 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
     @Override
     public void publishFolderDeletedFromLayoutPortalEvent(HttpServletRequest request, Object source, IPerson layoutOwner,
             long layoutId, String oldParentFolderId, String deletedFolderId, String deletedFolderName) {
-        final PortalEventBuilder portalEventBuilder = this.createPortalEventBuilder(source, null);
+        final PortalEventBuilder portalEventBuilder = this.createPortalEventBuilder(source, request);
         
         final FolderDeletedFromLayoutPortalEvent folderDeletedFromLayoutPortalEvent = new FolderDeletedFromLayoutPortalEvent(portalEventBuilder, layoutOwner, layoutId, oldParentFolderId, deletedFolderId, deletedFolderName);
         this.applicationEventPublisher.publishEvent(folderDeletedFromLayoutPortalEvent);
@@ -339,7 +339,16 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
     
     protected IPerson getPerson(HttpServletRequest request) {
         if (request == null) {
-            return SystemPerson.INSTANCE;
+            try {
+                request = portalRequestUtils.getCurrentPortalRequest();
+            }
+            catch (IllegalStateException e) {
+                //Ignore
+            }
+            
+            if (request == null) {
+                return SystemPerson.INSTANCE;
+            }
         }
 
         return this.personManager.getPerson(request);

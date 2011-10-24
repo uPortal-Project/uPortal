@@ -34,6 +34,7 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 import org.hibernate.annotations.Immutable;
+import org.hibernate.annotations.Type;
 import org.jasig.portal.events.PortalEvent;
 
 /**
@@ -81,7 +82,11 @@ public class PersistentPortalEvent implements Serializable {
     @SuppressWarnings("unused")
     private final String userName;
     
-    @Column(name = "EVENT_DATA")
+    @Column(name="EVENT_TYPE", length=200, nullable=false)
+    @Type(type="class")
+    private final Class<PortalEvent> eventType;
+    
+    @Column(name = "EVENT_DATA", nullable=false)
     @Lob
     private final String eventData; 
     
@@ -96,8 +101,10 @@ public class PersistentPortalEvent implements Serializable {
         this.serverId = null;
         this.eventSessionId = null;
         this.userName = null;
+        this.eventType = null;
     }
     
+    @SuppressWarnings("unchecked")
     PersistentPortalEvent(PortalEvent portalEvent, String eventData) {
         this.id = -1;
         this.eventData = eventData;
@@ -105,6 +112,11 @@ public class PersistentPortalEvent implements Serializable {
         this.serverId = portalEvent.getServerId();
         this.eventSessionId = portalEvent.getEventSessionId();
         this.userName = portalEvent.getUserName();
+        this.eventType = (Class<PortalEvent>)portalEvent.getClass();
+    }
+    
+    public Class<PortalEvent> getEventType() {
+        return this.eventType;
     }
 
     /**
