@@ -548,7 +548,8 @@
 	border:1px solid #ccc;
 }
 .prm-mgr .permission-lookup form input[type="text"] {color:#999;}
-.prm-mgr .permission-lookup form input[type="text"]:focus {color:#000;}
+.prm-mgr .permission-lookup form input[type="text"]:focus,
+.prm-mgr .permission-lookup form input[type="text"].up-autocomplete-validinput {color:#000;}
 .prm-mgr .permission-lookup form input[type="submit"] {
 	font-size:120%;
 	font-weight: normal;
