@@ -34,6 +34,7 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 import org.hibernate.annotations.Immutable;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.events.PortalEvent;
 
@@ -66,6 +67,7 @@ public class PersistentPortalEvent implements Serializable {
     @SuppressWarnings("unused")
     private final long id;
     
+    @Index(name = "IDX_UP_RAW_EVENTS_TIMESTAMP")
     @Column(name="TIMESTAMP", nullable=false)
     @SuppressWarnings("unused")
     private final Date timestamp;
