@@ -216,6 +216,10 @@ public class PermissionsRESTController {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return null;
         }
+        
+        if (StringUtils.isNotBlank(query)) {
+            query = query.toLowerCase();
+        }
 
         List<IPermissionActivity> activities = new ArrayList<IPermissionActivity>();
         Collection<IPermissionOwner> owners = permissionOwnerDao.getAllPermissionOwners();
@@ -226,6 +230,7 @@ public class PermissionsRESTController {
                 }
             }
         }
+        Collections.sort(activities);
         
         ModelAndView mv = new ModelAndView();
         mv.addObject("activities", activities);
