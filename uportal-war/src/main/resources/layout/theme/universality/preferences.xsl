@@ -122,7 +122,11 @@
       <form action="javascript:;">
       <p>
        <label for="pageName" class="portlet-form-label"><xsl:value-of select="$TOKEN[@name='AJAX_EDIT_PAGE_PAGE_NAME']"/></label><br/>
-       <input id="pageName" name="pageName" type="text" size="20" value="{/layout/navigation/tab[@activeTab='true']/@name}"/>
+       <input id="pageName" name="pageName" type="text" size="20" value="{/layout/navigation/tab[@activeTab='true']/@name}">
+         <xsl:if test="/layout/navigation/tab[@activeTab='true']/@dlm:editAllowed='false'">
+            <xsl:attribute name="disabled">disabled</xsl:attribute>
+         </xsl:if>
+       </input>
       </p>
       <hr/>
       <fieldset>
