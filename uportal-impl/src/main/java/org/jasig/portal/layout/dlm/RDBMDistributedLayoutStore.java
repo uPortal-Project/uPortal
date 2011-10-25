@@ -2540,34 +2540,36 @@ public class RDBMDistributedLayoutStore
             if (parameters != null && isChannel)
             {
                 IChannelDefinition channelDef = channelRegistryStore.getChannelDefinition(chanId);
-                for (int i = 0; i < parameters.getLength(); i++)
-                {
-                    if (parameters.item(i).getNodeName().equals("parameter"))
+                if (channelDef != null) {
+                    for (int i = 0; i < parameters.getLength(); i++)
                     {
-                        Element parmElement = (Element) parameters.item(i);
-                        NamedNodeMap nm = parmElement.getAttributes();
-                        String parmName = nm.getNamedItem("name").getNodeValue();
-                        String parmValue = nm.getNamedItem("value").getNodeValue();
-                        Node override = nm.getNamedItem("override");
-
-                        // if no override specified then default to allowed
-                        if (override != null
-                            && !override.getNodeValue().equals("yes"))
+                        if (parameters.item(i).getNodeName().equals("parameter"))
                         {
-                            // can't override
-                        } else
-                        {
-                            // override only for adhoc or if diff from chan def
-                            IChannelParameter cp = channelDef.getParameter(parmName);
-                            if (cp == null || !cp.getValue().equals(parmValue))
+                            Element parmElement = (Element) parameters.item(i);
+                            NamedNodeMap nm = parmElement.getAttributes();
+                            String parmName = nm.getNamedItem("name").getNodeValue();
+                            String parmValue = nm.getNamedItem("value").getNodeValue();
+                            Node override = nm.getNamedItem("override");
+    
+                            // if no override specified then default to allowed
+                            if (override != null
+                                && !override.getNodeValue().equals("yes"))
                             {
-                                parmStmt.clearParameters();
-                                parmStmt.setInt(1, saveStructId);
-                                parmStmt.setString(2, parmName);
-                                parmStmt.setString(3, parmValue);
-                                if (LOG.isDebugEnabled())
-                                    LOG.debug(parmStmt);
-                                parmStmt.executeUpdate();
+                                // can't override
+                            } else
+                            {
+                                // override only for adhoc or if diff from chan def
+                                IChannelParameter cp = channelDef.getParameter(parmName);
+                                if (cp == null || !cp.getValue().equals(parmValue))
+                                {
+                                    parmStmt.clearParameters();
+                                    parmStmt.setInt(1, saveStructId);
+                                    parmStmt.setString(2, parmName);
+                                    parmStmt.setString(3, parmValue);
+                                    if (LOG.isDebugEnabled())
+                                        LOG.debug(parmStmt);
+                                    parmStmt.executeUpdate();
+                                }
                             }
                         }
                     }
