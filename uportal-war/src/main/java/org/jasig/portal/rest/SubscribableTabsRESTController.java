@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -41,10 +42,12 @@ import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
  * Returns JSON representing the list of subscribable fragments for the 
@@ -75,6 +78,9 @@ public class SubscribableTabsRESTController {
     @Autowired
     @Qualifier("dlmConfigurationLoader")
     private ConfigurationLoader configurationLoader;
+    
+    @Autowired
+    private MessageSource messageSource;
     
     @RequestMapping(value="/subscribableTabs.json", method = RequestMethod.GET)
     public ModelAndView getSubscriptionList(HttpServletRequest request)  {
@@ -119,6 +125,8 @@ public class SubscribableTabsRESTController {
 
     	// get the list of fragment definitions from DLM
         final List<FragmentDefinition> fragmentDefinitions = configurationLoader.getFragments();
+        
+        final Locale locale = RequestContextUtils.getLocale(request);
 
         // iterate through the list
         for (FragmentDefinition fragmentDefinition : fragmentDefinitions) {
@@ -133,9 +141,9 @@ public class SubscribableTabsRESTController {
                     
                     // create a JSON fragment bean and add it to our list
                     boolean subscribed = subscribedOwners.contains(owner);
-                    SubscribableFragment jsonFragment = new SubscribableFragment(
-                            fragmentDefinition.getName(), 
-                            fragmentDefinition.getDescription(), owner, subscribed);
+                    final String name = getMessage("fragment." + owner + ".name", fragmentDefinition.getName(), locale);
+                    final String description = getMessage("fragment." + owner + ".description", fragmentDefinition.getDescription(), locale);
+                    SubscribableFragment jsonFragment = new SubscribableFragment(name, description, owner, subscribed);
                     jsonFragments.add(jsonFragment);
                 }
                 
@@ -160,6 +168,10 @@ public class SubscribableTabsRESTController {
         }
         
         return false;
+	}
+	
+	protected String getMessage(String key, String defaultName, Locale locale) {
+        return messageSource.getMessage(key, new Object[] {}, defaultName, locale);
 	}
 
 	/**
