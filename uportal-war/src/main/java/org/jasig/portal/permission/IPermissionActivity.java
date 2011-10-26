@@ -30,7 +30,7 @@ package org.jasig.portal.permission;
  * @version $Revision$
  * @since 3.3
  */
-public interface IPermissionActivity {
+public interface IPermissionActivity extends Comparable<IPermissionActivity> {
 
     public Long getId();
     

@@ -34,6 +34,7 @@ var up = up || {};
 
         that.search = function () {
             
+            that.locate("input").removeClass("up-autocomplete-validinput");
             that.locate("dropdown").show();
             
             var results = that.options.searchFunction(that.locate("input").val());
@@ -53,6 +54,7 @@ var up = up || {};
                                         that.locate("input").val(result.text);
                                         that.state.currentValue = result.value;
                                         that.locate("dropdown").hide();
+                                        that.locate("input").addClass("up-autocomplete-validinput");
                                     } 
                                 }
                             ]
