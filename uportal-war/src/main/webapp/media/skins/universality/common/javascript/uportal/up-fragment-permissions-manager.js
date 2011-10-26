@@ -97,14 +97,14 @@ var up = up || {};
         // construct an appropriate data object from the form
         data.elementID = $(form).find("[name=nodeId]").val();
         data.action = "updatePermissions";
-        data.deletable = $(form).find("[name=deletable]").attr("checked");
-        data.movable = $(form).find("[name=movable]").attr("checked");
+        data.deletable = $(form.deletable).attr("checked") === "checked";
+        data.movable = $(form.movable).attr("checked") === "checked";
         
-        if ($(form.edit)) {
-            data.editable = $(form).find("[name=editable]").attr("checked");
+        if (form.editable) {
+            data.editable = $(form.editable).attr("checked") === "checked";
         }
-        if ($(form.canAddChild)) {
-            data.addChildAllowed = $(form).find("[name=addChildAllowed]").attr("checked");
+        if (form.addChildAllowed) {
+            data.addChildAllowed = $(form.addChildAllowed).attr("checked") === "checked";
         }
         
         $.post(that.options.savePermissionsUrl, data, null, "json");
