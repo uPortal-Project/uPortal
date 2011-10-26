@@ -45,7 +45,7 @@ public class TransientDatasource implements DataSource {
     public TransientDatasource() {
         
         final Properties dataSourceProperties = new Properties();
-        final InputStream dataSourcePropertiesStream = this.getClass().getResourceAsStream("/properties/dataSource.properties");
+        final InputStream dataSourcePropertiesStream = this.getClass().getResourceAsStream("/dataSource.properties");
         try {
             dataSourceProperties.load(dataSourcePropertiesStream);
         }

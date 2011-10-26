@@ -22,7 +22,7 @@ package org.jasig.portal.utils;
 import java.io.Serializable;
 
 /**
- * Object that implements {@link Serializable}
+ * A serializable object, useful for mutex objects that need to live in serializable containers
  * 
  * @author Eric Dalquist
  * @version $Revision$

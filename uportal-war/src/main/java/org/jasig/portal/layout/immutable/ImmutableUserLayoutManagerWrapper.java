@@ -28,7 +28,6 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutStore;
-import org.jasig.portal.layout.LayoutEventListener;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType;
 import org.w3c.dom.Document;
@@ -208,12 +207,5 @@ public class ImmutableUserLayoutManagerWrapper implements IUserLayoutManager {
      */
     public IUserLayoutNodeDescription createNodeDescription( LayoutNodeType nodeType ) throws PortalException {
          return man.createNodeDescription(nodeType);
-    }
-
-    public boolean addLayoutEventListener(LayoutEventListener l) {
-        return false;
-    }
-    public boolean removeLayoutEventListener(LayoutEventListener l) {
-        return false;
     }
 }

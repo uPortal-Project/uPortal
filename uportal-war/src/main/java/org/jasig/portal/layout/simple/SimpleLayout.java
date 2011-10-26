@@ -33,7 +33,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.IUserLayout;
-import org.jasig.portal.layout.LayoutEventListener;
 import org.jasig.portal.layout.dlm.DistributedUserLayout;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
@@ -158,18 +157,6 @@ public class SimpleLayout implements IUserLayout {
     @Override
     public String getCacheKey() throws PortalException {
         return cacheKey;
-    }
-
-    @Override
-    public boolean addLayoutEventListener(LayoutEventListener l) {
-        // TODO: Implement this!
-        return false;
-    }
-
-    @Override
-    public boolean removeLayoutEventListener(LayoutEventListener l) {
-        // TODO: Implement this!
-        return false;
     }
 
     @Override

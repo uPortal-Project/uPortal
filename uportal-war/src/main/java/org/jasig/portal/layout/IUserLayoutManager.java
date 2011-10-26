@@ -255,24 +255,6 @@ public interface IUserLayoutManager {
      */
     public String getCacheKey() throws PortalException;
 
-
-    /**
-     * Register a layout event listener
-     *
-     * @param l a <code>LayoutEventListener</code> object
-     * @return a <code>boolean</code> success status
-     */
-    public boolean addLayoutEventListener(LayoutEventListener l);
-
-
-    /**
-     * Remove a registered layout event listener.
-     *
-     * @param l a <code>LayoutEventListener</code> object
-     * @return a <code>boolean</code> success status
-     */
-    public boolean removeLayoutEventListener(LayoutEventListener l);
-
     /**
      * @deprecated {@link #getUserLayout()} should be used instead. Direct manipulation of the DOM can cause caching problems and issues where the layout manager doesn't know about DOM changes. Read https://lists.wisc.edu/read/messages?id=2167043 for more information.
      */

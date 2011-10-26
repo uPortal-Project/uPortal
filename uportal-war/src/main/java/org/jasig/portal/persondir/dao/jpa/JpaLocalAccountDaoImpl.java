@@ -27,7 +27,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
 import javax.persistence.Parameter;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CollectionJoin;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -39,7 +41,7 @@ import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.jasig.portal.jpa.BaseJpaDao;
 import org.jasig.portal.persondir.ILocalAccountDao;
 import org.jasig.portal.persondir.ILocalAccountPerson;
 import org.jasig.portal.persondir.LocalAccountQuery;
@@ -48,11 +50,23 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository("localAccountDao")
-public class JpaLocalAccountDaoImpl extends BasePortalJpaDao implements ILocalAccountDao {
+public class JpaLocalAccountDaoImpl extends BaseJpaDao implements ILocalAccountDao {
     private static final String FIND_ALL_ACCOUNTS_CACHE_REGION = LocalAccountPersonImpl.class.getName() + ".query.FIND_ALL_ACCOUNTS";
     private static final String FIND_ACCOUNT_BY_NAME_CACHE_REGION = LocalAccountPersonImpl.class.getName() + ".query.FIND_ACCOUNT_BY_NAME";
     private static final String ACCOUNT_SEARCH_CACHE_REGION = LocalAccountPersonImpl.class.getName() + ".query.ACCOUNT_SEARCH";
     private static final String FIND_AVAILABLE_ATTRIBUTES_CACHE_REGION = LocalAccountPersonAttributeImpl.class.getName() + ".query.FIND_AVAILABLE_ATTRIBUTES";
+    
+    private EntityManager entityManager;
+
+    @PersistenceContext(unitName = "uPortalPersistence")
+    public final void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+    
+    @Override
+    protected EntityManager getEntityManager() {
+        return this.entityManager;
+    }
 
     @Override
     public ILocalAccountPerson getPerson(long id) {

@@ -25,6 +25,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -37,7 +39,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.jasig.portal.jpa.BaseJpaDao;
 import org.jasig.portal.portlet.dao.IPortletCookieDao;
 import org.jasig.portal.portlet.om.IPortalCookie;
 import org.jasig.portal.portlet.om.IPortletCookie;
@@ -54,7 +56,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository("portletCookieDao")
 @Qualifier("persistence")
-public class JpaPortletCookieDaoImpl extends BasePortalJpaDao implements IPortletCookieDao {
+public class JpaPortletCookieDaoImpl extends BaseJpaDao implements IPortletCookieDao {
     private static final String FIND_COOKIE_BY_VALUE_CACHE_REGION = PortalCookieImpl.class.getName() + ".query.FIND_COOKIE_BY_VALUE";
     
 	private final SecureRandom secureRandom = new SecureRandom();
@@ -64,6 +66,17 @@ public class JpaPortletCookieDaoImpl extends BasePortalJpaDao implements IPortle
 	private CriteriaQuery<PortalCookieImpl> findExpiredPortalCookieQuery;
     private ParameterExpression<String> valueParameter;
     private ParameterExpression<Date> nowParameter;
+    private EntityManager entityManager;
+
+    @PersistenceContext(unitName = "uPortalPersistence")
+    public final void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+    
+    @Override
+    protected EntityManager getEntityManager() {
+        return this.entityManager;
+    }
 
     @Override
     protected void buildCriteriaQueries(CriteriaBuilder cb) {

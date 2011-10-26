@@ -57,7 +57,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @version $Id$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/properties/contexts/cacheContext.xml"})
+@ContextConfiguration(locations={"/portletCacheControlServiceTestContext.xml"})
 public class PortletCacheControlServiceImplTest {
 
 	

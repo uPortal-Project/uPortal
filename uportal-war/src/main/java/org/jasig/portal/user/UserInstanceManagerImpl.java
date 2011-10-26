@@ -62,7 +62,13 @@ public class UserInstanceManagerImpl implements IUserInstanceManager {
     private IPersonManager personManager;
     private IPortalRequestUtils portalRequestUtils;
     private IProfileMapper profileMapper;
-    
+    private UserLayoutManagerFactory userLayoutManagerFactory;
+
+    @Autowired
+    public void setUserLayoutManagerFactory(UserLayoutManagerFactory userLayoutManagerFactory) {
+        this.userLayoutManagerFactory = userLayoutManagerFactory;
+    }
+
     @Autowired
     public void setLocaleStore(ILocaleStore localeStore) {
         this.localeStore = localeStore;
@@ -143,9 +149,9 @@ public class UserInstanceManagerImpl implements IUserInstanceManager {
         final IUserProfile userProfile = this.getUserProfile(request, person, localeManager, userAgent);
 
         //Create the user layout manager and user instance object
-        IUserLayoutManager userLayoutManager = UserLayoutManagerFactory.getUserLayoutManager(person, userProfile);
+        IUserLayoutManager userLayoutManager = userLayoutManagerFactory.getUserLayoutManager(person, userProfile);
         if (person.isGuest()) {
-            userLayoutManager = UserLayoutManagerFactory.immutableUserLayoutManager(userLayoutManager);
+            userLayoutManager = userLayoutManagerFactory.immutableUserLayoutManager(userLayoutManager);
         }
         
         final UserPreferencesManager userPreferencesManager = new UserPreferencesManager(person, userProfile, userLayoutManager);

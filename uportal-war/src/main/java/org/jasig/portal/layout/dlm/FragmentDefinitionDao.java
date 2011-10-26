@@ -21,6 +21,8 @@ package org.jasig.portal.layout.dlm;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -28,20 +30,30 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.jasig.portal.jpa.BaseJpaDao;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class FragmentDefinitionDao extends BasePortalJpaDao implements IFragmentDefinitionDao {
+public class FragmentDefinitionDao extends BaseJpaDao implements IFragmentDefinitionDao {
     private static final String GET_ALL_FRAGMENTS_CACHE_REGION = FragmentDefinition.class.getName() + ".query.GET_ALL_FRAGMENTS";
     private static final String FIND_FRAGMENT_BY_NAME_CACHE_REGION = FragmentDefinition.class.getName() + ".query.FIND_FRAGMENT_BY_NAME";
-
 
     private CriteriaQuery<FragmentDefinition> findAllFragmentsQuery;
     private CriteriaQuery<FragmentDefinition> findFragmentByNameQuery;
     private ParameterExpression<String> nameParameter;
+    private EntityManager entityManager;
+
+    @PersistenceContext(unitName = "uPortalPersistence")
+    public final void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+    
+    @Override
+    protected EntityManager getEntityManager() {
+        return this.entityManager;
+    }
 
     @Override
     protected void buildCriteriaQueries(CriteriaBuilder cb) {

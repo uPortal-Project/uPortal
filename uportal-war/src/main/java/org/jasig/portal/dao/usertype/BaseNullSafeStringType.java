@@ -35,6 +35,8 @@ import org.hibernate.type.descriptor.sql.SqlTypeDescriptor;
  * @version $Revision$
  */
 public class BaseNullSafeStringType extends BaseUserType<String> {
+    private static final long serialVersionUID = 1L;
+    
     public static final char NOT_NULL_PREFIX = '_';
     
 

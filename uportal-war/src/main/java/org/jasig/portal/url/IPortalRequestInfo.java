@@ -66,6 +66,12 @@ public interface IPortalRequestInfo {
     public IPortletRequestInfo getTargetedPortletRequestInfo();
     
     /**
+     * @param portletWindowId The portlet window id.
+     * @return The {@link IPortletRequestInfo} for the window id, null if no request info for the window
+     */
+    public IPortletRequestInfo getPortletRequestInfo(IPortletWindowId portletWindowId);
+    
+    /**
      * @return Information for each of the portlets that has data on the request. The returned map is read only and will never be null.
      */
     public Map<IPortletWindowId, ? extends IPortletRequestInfo> getPortletRequestInfoMap();

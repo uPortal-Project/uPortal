@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -31,7 +33,7 @@ import javax.persistence.criteria.Root;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.jasig.portal.jpa.BaseJpaDao;
 import org.jasig.portal.permission.IPermissionActivity;
 import org.jasig.portal.permission.IPermissionOwner;
 import org.jasig.portal.permission.dao.IPermissionOwnerDao;
@@ -48,7 +50,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @since 3.3
  */
 @Repository("permissionOwnerDao")
-public class JpaPermissionOwnerDao extends BasePortalJpaDao implements IPermissionOwnerDao {
+public class JpaPermissionOwnerDao extends BaseJpaDao implements IPermissionOwnerDao {
     private static final String FIND_ALL_PERMISSION_OWNERS_CACHE_REGION = PermissionOwnerImpl.class.getName() + ".query.FIND_ALL_PERMISSION_OWNERS";
     private static final String FIND_PERMISSION_OWNER_BY_FNAME_CACHE_REGION = PermissionOwnerImpl.class.getName() + ".query.FIND_PERMISSION_OWNER_BY_FNAME";
     
@@ -57,6 +59,17 @@ public class JpaPermissionOwnerDao extends BasePortalJpaDao implements IPermissi
     private CriteriaQuery<PermissionOwnerImpl> findAllPermissionOwners;
     private CriteriaQuery<PermissionOwnerImpl> findPermissionOwnerByFname;
     private ParameterExpression<String> fnameParameter;
+    private EntityManager entityManager;
+
+    @PersistenceContext(unitName = "uPortalPersistence")
+    public final void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+    
+    @Override
+    protected EntityManager getEntityManager() {
+        return this.entityManager;
+    }
 
     @Override
     protected void buildCriteriaQueries(CriteriaBuilder cb) {

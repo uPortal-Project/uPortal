@@ -20,11 +20,9 @@
 package  org.jasig.portal.security.mvc;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -77,17 +75,18 @@ public class LoginController implements InitializingBean {
     
     private IPersonManager personManager;
 
-    @Autowired(required = true)
+    @Autowired
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
     }
-    
+
+    @Autowired
+    public void setAuthenticationService(Authentication authenticationService) {
+        this.authenticationService = authenticationService;
+    }
+
     @Override
     public void afterPropertiesSet() throws Exception {
-        
-        // initialize the authentication service
-        this.authenticationService = new Authentication();
-
         this.credentialTokens = new HashMap<String,String>(1);
         this.principalTokens = new HashMap<String,String>(1);
         
@@ -128,13 +127,6 @@ public class LoginController implements InitializingBean {
       response.setHeader("Pragma","no-cache");
       response.setHeader("Cache-Control","no-cache");
       response.setDateHeader("Expires",0);
-
-    // Call to setCharacterEncoding method should be done before any call to req.getParameter() method.
-    try {
-        request.setCharacterEncoding("UTF-8");
-    } catch (UnsupportedEncodingException uee) {
-        log.error("Unable to set UTF-8 character encoding!", uee);
-    }
 
     // Clear out the existing session for the user if they have one
     String targetUid = null;
@@ -218,7 +210,7 @@ public class LoginController implements InitializingBean {
         }
 
       // Attempt to authenticate using the incoming request
-      authenticationService.authenticate(principals, credentials, person);
+      authenticationService.authenticate(request, principals, credentials, person);
     } catch (Exception e) {
       // Log the exception
       log.error("Exception authenticating the request", e);

@@ -23,6 +23,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -30,7 +32,7 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.jasig.portal.jpa.BaseJpaDao;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.dao.IPortletEntityDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
@@ -51,7 +53,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 @Qualifier("persistence")
-public class JpaPortletEntityDao extends BasePortalJpaDao implements IPortletEntityDao {
+public class JpaPortletEntityDao extends BaseJpaDao implements IPortletEntityDao {
     private static final String FIND_PORTLET_ENTS_BY_USER_ID_CACHE_REGION = PortletEntityImpl.class.getName() + ".query.FIND_PORTLET_ENTS_BY_USER_ID";
     private static final String FIND_PORTLET_ENTS_BY_PORTLET_DEF_CACHE_REGION = PortletEntityImpl.class.getName() + ".query.FIND_PORTLET_ENTS_BY_PORTLET_DEF";
     private static final String FIND_PORTLET_ENT_BY_CHAN_SUB_AND_USER_CACHE_REGION = PortletEntityImpl.class.getName() + ".query.FIND_PORTLET_ENT_BY_CHAN_SUB_AND_USER";
@@ -64,6 +66,17 @@ public class JpaPortletEntityDao extends BasePortalJpaDao implements IPortletEnt
     private ParameterExpression<PortletDefinitionImpl> portletDefinitionParameter;
 
     private IPortletDefinitionDao portletDefinitionDao;
+    private EntityManager entityManager;
+
+    @PersistenceContext(unitName = "uPortalPersistence")
+    public final void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+    
+    @Override
+    protected EntityManager getEntityManager() {
+        return this.entityManager;
+    }
     
     
     @Autowired

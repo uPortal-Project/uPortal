@@ -161,6 +161,11 @@
         </dependency>
         
         <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-xc</artifactId>
+        </dependency>
+        
+        <dependency>
             <groupId>org.codehaus.staxmate</groupId>
             <artifactId>staxmate</artifactId>
         </dependency>
@@ -542,7 +547,7 @@
             <plugin>
                 <groupId>org.bsc.maven</groupId>
                 <artifactId>maven-processor-plugin</artifactId>
-                <version>2.0.2</version>
+                <version>2.0.5</version>
                 <executions>
                     <execution>
                         <id>process</id>
@@ -552,6 +557,10 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <outputDirectory>target/generated-sources/annotations</outputDirectory>
+                            <optionMap>
+                                <ormXmlList>/properties/db/stats/orm.xml</ormXmlList>
+                                <addGeneratedAnnotation>true</addGeneratedAnnotation>
+                            </optionMap>
                         </configuration>
                     </execution>
                 </executions>
@@ -592,6 +601,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <argLine>-Xmx512m -XX:MaxPermSize=512m</argLine>
+                    <systemPropertyVariables>
+                        <org.jasig.portal.test>true</org.jasig.portal.test>
+                    </systemPropertyVariables>
                     <includes>
                         <include>**/Test*.java</include>
                         <include>**/*Test.java</include>

@@ -22,6 +22,8 @@ package org.jasig.portal.portlet.dao.jpa;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -29,7 +31,7 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.jasig.portal.jpa.BaseJpaDao;
 import org.jasig.portal.portlet.dao.IPortletTypeDao;
 import org.jasig.portal.portlet.om.IPortletType;
 import org.springframework.dao.support.DataAccessUtils;
@@ -45,16 +47,24 @@ import org.springframework.transaction.annotation.Transactional;
  * @revision $Revision$
  */
 @Repository
-public class JpaPortletTypeDao extends BasePortalJpaDao implements IPortletTypeDao {
+public class JpaPortletTypeDao extends BaseJpaDao implements IPortletTypeDao {
     private static final String FIND_PORTLET_TYPE_BY_NAME_CACHE_REGION = PortletTypeImpl.class.getName() + ".query.FIND_PORTLET_TYPE_BY_NAME";
     private static final String FIND_ALL_PORTLET_TYPE_CACHE_REGION = PortletTypeImpl.class.getName() + ".query.FIND_ALL_PORTLET_TYPE";
-    
-    
-    // Public API methods
     
     private CriteriaQuery<PortletTypeImpl> findAllTypesQuery;
     private CriteriaQuery<PortletTypeImpl> findTypeByNameQuery;
     private ParameterExpression<String> nameParameter;
+    private EntityManager entityManager;
+
+    @PersistenceContext(unitName = "uPortalPersistence")
+    public final void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+    
+    @Override
+    protected EntityManager getEntityManager() {
+        return this.entityManager;
+    }
 
     @Override
     protected void buildCriteriaQueries(CriteriaBuilder cb) {

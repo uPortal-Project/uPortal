@@ -32,7 +32,7 @@
     
     <!-- ********** Stats DAO ********** -->
 
-    <bean id="jpaPortalEventStore" class="org.jasig.portal.events.handlers.db.GroupsStubJpaPortalEventStore">
+    <bean id="jpaPortalEventStore" class="org.jasig.portal.events.GroupsStubJpaPortalEventStore">
     </bean>
 
 
@@ -40,10 +40,10 @@
     
     <aop:config>
         <aop:pointcut id="jpaDaoExecution" 
-            expression="execution(* org.jasig.portal.events.handlers.db.*Jpa*.*(..))"/>
+            expression="execution(* org.jasig.portal.events.*Jpa*.*(..))"/>
                 
         <aop:pointcut id="daoExecution" 
-            expression="execution(* org.jasig.portal.events.handlers.db.*Jpa*.*(..))"/>
+            expression="execution(* org.jasig.portal.events.*Jpa*.*(..))"/>
             
         <aop:aspect ref="threadContextClassLoaderAspect">
             <aop:around pointcut-ref="jpaDaoExecution" method="doThreadContextClassLoaderUpdate"/>
