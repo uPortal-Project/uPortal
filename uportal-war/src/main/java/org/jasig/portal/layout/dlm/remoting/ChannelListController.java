@@ -45,6 +45,7 @@ import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.spring.spel.IPortalSpELService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -78,6 +79,7 @@ public class ChannelListController {
 	private IPersonManager personManager;
 	private IPortalSpELService spELService;
 	private ILocaleStore localeStore;
+	private MessageSource messageSource;
 	private static final String TYPE_SUBSCRIBE = "subscribe";
 	private static final String TYPE_MANAGE = "manage";
 	
@@ -150,6 +152,7 @@ public class ChannelListController {
 		
 		// construct a new channel category bean for this category
 		ChannelCategoryBean categoryBean = new ChannelCategoryBean(category);
+        categoryBean.setName(messageSource.getMessage(category.getName(), new Object[] {}, locale));
 		
 		// add the direct child channels for this category
 		Set<IPortletDefinition> portlets = portletCategoryRegistry.getChildPortlets(category);		
@@ -234,5 +237,10 @@ public class ChannelListController {
 	@Autowired
     public void setLocaleStore(ILocaleStore localeStore) {
         this.localeStore = localeStore;
+    }
+	
+	@Autowired
+    public void setMessageSource(MessageSource messageSource) {
+        this.messageSource = messageSource;
     }
 }

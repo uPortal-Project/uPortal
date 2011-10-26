@@ -337,6 +337,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     portletListView: {
                         type: "up.PortletAdministrationPortletListView"
                     },
+                    searchView: {
+                        options: {searchInvitationMessage: '<spring:message code="search.for.stuff" />'}
+                    },
                     listeners: {
                         onLoad: function(that) {
                             $("#${n}loadingMessage").hide();

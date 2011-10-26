@@ -246,6 +246,12 @@ var uportal = uportal || {};
                                 portletRegistry: {
                                     options: { portletListUrl: that.options.channelRegistryUrl }
                                 },
+                                searchView: {
+                                    options: {searchInvitationMessage: that.options.messages.searchForStuff}
+                                },
+                                categoryListView: {
+                                    options: {rootCategoryName: that.options.messages.allCategories}
+                                },
                                 listeners: {
                                     onPortletSelect: function(componentThat, portlet) {
                                         var options, firstChannel;
@@ -339,10 +345,14 @@ var uportal = uportal || {};
                                         options: { portletListUrl: that.options.channelRegistryUrl }
                                     },
                                     categoryListView: {
-                                        type: "up.AjaxLayoutCategoryListView"
+                                        type: "up.AjaxLayoutCategoryListView",
+                                        options: {rootCategoryName: that.options.messages.allCategories}
                                     },
                                     portletListView: {
                                         type: "up.AjaxLayoutPortletListView"
+                                    },
+                                    searchView: {
+                                        options: {searchInvitationMessage: that.options.messages.searchForStuff}
                                     },
                                     listeners: {
                                         // on portlet selection, redirect the
