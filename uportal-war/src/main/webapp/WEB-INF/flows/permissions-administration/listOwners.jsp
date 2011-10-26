@@ -134,13 +134,15 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                         </span>
                     </div>
                 </div> <!-- end: panel -->
-                <!-- Second column -->
                 <c:if test="${ split <= ownerStatus.index+1 and ownerStatus.index+1 < split+1 }">
                     </div>
+                    <!-- Second column -->
                     <div class="fl-col">
                 </c:if>
                 
             </c:forEach>
+            
+            </div>
     
         </div> <!-- end: panel list -->
 
