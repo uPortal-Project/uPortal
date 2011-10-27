@@ -22,8 +22,10 @@ package org.jasig.portal.concurrency.locking;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.LockTimeoutException;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -31,7 +33,7 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
 import org.hibernate.PessimisticLockException;
-import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.jasig.portal.jpa.BaseJpaDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -49,11 +51,25 @@ import com.google.common.collect.ImmutableMap;
  * @version $Revision$
  */
 @Repository
-public class JpaClusterLockDao extends BasePortalJpaDao implements IClusterLockDao {
+public class JpaClusterLockDao extends BaseJpaDao implements IClusterLockDao {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
     private ParameterExpression<String> nameParameter;
     private CriteriaQuery<ClusterMutex> clusterLockByNameQuery;
+    private EntityManager entityManager;
+
+    @PersistenceContext(unitName = "uPortalPersistence")
+    public final void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jasig.portal.jpa.BaseJpaDao#getEntityManager()
+     */
+    @Override
+    protected EntityManager getEntityManager() {
+        return this.entityManager;
+    }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.jpa.BaseJpaDao#buildCriteriaQueries(javax.persistence.criteria.CriteriaBuilder)
