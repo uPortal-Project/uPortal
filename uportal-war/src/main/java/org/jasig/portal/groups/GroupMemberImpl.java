@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.jasig.portal.EntityIdentifier;
@@ -346,10 +348,16 @@ protected java.util.Set primGetAllContainingGroups(IGroupMember member, Set s) t
     {
         IGroupMember gm = (IGroupMember) i.next();
         s.add(gm);
-        primGetAllContainingGroups(gm, s);
+        if(!alreadyContainedGroup.contains(gm)){
+        	alreadyContainedGroup.add(gm);
+        	primGetAllContainingGroups(gm, s);
+        }
     }
     return s;
 }
+//this short circuits circular dependencies found in grouper.
+private List<IGroupMember> alreadyContainedGroup = new LinkedList<IGroupMember>();
+
 /**
  * Removes the key of the <code>IEntityGroup</code> from our <code>Set</code> of group keys
  * by copying the keys, updating the copy, and replacing the old keys with the copy.
