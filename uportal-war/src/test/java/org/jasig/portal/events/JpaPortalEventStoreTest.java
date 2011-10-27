@@ -51,7 +51,7 @@ import com.google.common.collect.ImmutableSet;
  * @version $Revision$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:jpaStatsTestApplicationContext.xml")
+@ContextConfiguration(locations = "classpath:jpaRawEventsTestApplicationContext.xml")
 public class JpaPortalEventStoreTest extends BaseJpaDaoTest {
     @Autowired
     private IPortalEventDao portalEventDao;

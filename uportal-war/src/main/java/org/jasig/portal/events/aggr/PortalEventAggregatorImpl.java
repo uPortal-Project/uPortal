@@ -59,7 +59,7 @@ public class PortalEventAggregatorImpl {
      *      String lastPurgeHost
      */
     
-    @Transactional(value="aggrStatsTransactionManager")
+    @Transactional(value="aggrrawEventsTransactionManager")
     public void aggregateStatistics() {
         this.clusterLockService.doInTryLock(AGGREGATION_LOCK_NAME, new Function<String, Object>() {
             @Override

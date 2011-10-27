@@ -51,5 +51,13 @@
     
     <alias alias="PersonDB" name="PortalDb"/>
     
-    <alias alias="StatsDB" name="PortalDb" />
+    <!-- 
+     | DataSource used to store raw portal event data
+     +-->
+    <alias alias="RawEventsDB" name="PortalDb" />
+    
+    <!-- 
+     | DataSource used to store aggregated portal event data
+     +-->
+    <alias alias="AggrEventsDB" name="PortalDb" />
 </beans>

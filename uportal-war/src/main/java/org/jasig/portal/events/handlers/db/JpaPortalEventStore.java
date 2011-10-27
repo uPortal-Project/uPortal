@@ -76,7 +76,7 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
     /**
      * @param entityManager the entityManager to set
      */
-    @PersistenceContext(unitName = "uPortalStatsPersistence")
+    @PersistenceContext(unitName = "uPortalRawEventsPersistence")
     public void setEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
@@ -111,7 +111,7 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
      * @see org.jasig.portal.events.handlers.db.IPortalEventDao#storePortalEvent(org.jasig.portal.events.PortalEvent)
      */
     @Override
-    @Transactional(value="statsTransactionManager")
+    @Transactional(value="rawEventsTransactionManager")
     public void storePortalEvent(PortalEvent portalEvent) {
         final PersistentPortalEvent persistentPortalEvent = this.wrapPortalEvent(portalEvent);
         this.entityManager.persist(persistentPortalEvent);
@@ -121,7 +121,7 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
      * @see org.jasig.portal.events.handlers.db.IPortalEventDao#storePortalEvents(org.jasig.portal.events.PortalEvent[])
      */
     @Override
-    @Transactional(value="statsTransactionManager")
+    @Transactional(value="rawEventsTransactionManager")
     public void storePortalEvents(PortalEvent... portalEvents) {
         for (final PortalEvent portalEvent : portalEvents) {
             try {
@@ -137,7 +137,7 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
      * @see org.jasig.portal.events.handlers.db.IPortalEventDao#storePortalEvents(java.lang.Iterable)
      */
     @Override
-    @Transactional(value="statsTransactionManager")
+    @Transactional(value="rawEventsTransactionManager")
     public void storePortalEvents(Iterable<PortalEvent> portalEvents) {
         for (final PortalEvent portalEvent : portalEvents) {
             try {
@@ -170,7 +170,7 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
      * @see org.jasig.portal.events.handlers.db.IPortalEventDao#deletePortalEventsBefore(java.util.Date)
      */
     @Override
-    @Transactional(value="statsTransactionManager")
+    @Transactional(value="rawEventsTransactionManager")
     public void deletePortalEvents(Date startTime, Date endTime) {
         final Query query = this.entityManager.createQuery(this.deleteQuery);
         query.setParameter(this.startTimeParameter.getName(), startTime);

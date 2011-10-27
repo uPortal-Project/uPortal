@@ -638,54 +638,6 @@
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
         
-    
-    <!-- Portal Stats Hibernate Caches -->
-    
-    <!-- 
-     | Caches stats EventType objects
-     | - 1 x stats EventType
-     | - not replicated - data does not change
-     +-->
-    <cache name="PortalStats.org.jasig.portal.events.EventType"
-        eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    
-    <!-- 
-     | Caches stats StatsSession objects
-     | - 1 x user
-     | - not replicated - stats sessions do not change once created
-     +-->
-    <cache name="PortalStats.org.jasig.portal.events.handlers.db.StatsSession"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="7200" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    
-    <!-- 
-     | Caches last updated timestamp for each hibernate managed table
-     | - 1 x hibernate managed table
-     | - not replicated - used to track local modifications to tables
-     +-->
-    <cache name="PortalStats.org.hibernate.cache.UpdateTimestampsCache"
-        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
-
-    <!-- 
-     | Caches SQL query level results for entity queries that don't specify an explicit cache region
-     | - 1 x managed query result
-     | - not replicated - used to track local query results
-     +-->
-    <cache name="PortalStats.org.hibernate.cache.StandardQueryCache"
-        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
-
-
-    <!-- 
-     | Caches results of complex queries that show which portlets users have 
-     | added to their layouts and how often
-     +-->
-    <cache name="PortalStats.org.jasig.portal.rest.StatsLayoutModificationsController.portletsAdded"
-        eternal="false" maxElementsInMemory="25" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
-
     <!-- Portal javascript and css gzipping filter cache -->
 
     <cache name="org.jasig.portal.utils.cache.ConfigurablePageCachingFilter.PAGE_CACHE"
