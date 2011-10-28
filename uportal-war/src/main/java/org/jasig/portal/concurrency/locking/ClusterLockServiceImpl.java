@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.hibernate.LockOptions;
+import org.hibernate.TransactionException;
 import org.jasig.portal.utils.ConcurrentMapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -230,6 +231,10 @@ public class ClusterLockServiceImpl implements IClusterLockService, Initializing
                     return new TryLockFunctionResult<T>(lockFunction.apply(mutexName));
                 }
             });
+        }
+        catch (TransactionException e) {
+            logger.trace("doInTryLock({}, {}) - failed to aquire cluster mutex", mutexName, timeout);
+            return TryLockFunctionResult.getNotExecutedInstance();
         }
         catch (TransactionTimedOutException e) {
             logger.trace("doInTryLock({}, {}) - failed to aquire cluster mutex", mutexName, timeout);
