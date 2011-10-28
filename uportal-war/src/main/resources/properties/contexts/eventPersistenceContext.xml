@@ -29,11 +29,24 @@
            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
-    <bean id="statsEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="cacheManager">
-        <qualifier value="stats"/>
-        <property name="dataSource" ref="StatsDB" />
+    <bean id="rawEventsEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="cacheManager">
+        <qualifier value="rawEvents"/>
+        <property name="dataSource" ref="RawEventsDB" />
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
-        <property name="persistenceUnitName" value="uPortalStatsPersistence" />
+        <property name="persistenceUnitName" value="uPortalRawEventsPersistence" />
+    </bean>
+
+    <bean id="rawEventsTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <qualifier value="rawEvents"/>
+        <property name="entityManagerFactory" ref="rawEventsEntityManagerFactory" />
+    </bean>
+
+
+    <bean id="aggrEventsEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="cacheManager">
+        <qualifier value="aggrEvents"/>
+        <property name="dataSource" ref="AggrEventsDB" />
+        <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
+        <property name="persistenceUnitName" value="uPortalAggrEventsPersistence" />
         <property name="jpaProperties">
             <props>
                 <prop key="hibernate.cache.region.factory_class">net.sf.ehcache.hibernate.SingletonEhCacheRegionFactory</prop>
@@ -42,20 +55,20 @@
         </property>
     </bean>
 
-    <bean id="statsTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <qualifier value="stats"/>
-        <property name="entityManagerFactory" ref="statsEntityManagerFactory" />
+    <bean id="aggrEventsTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <qualifier value="AggrEventsDB"/>
+        <property name="entityManagerFactory" ref="aggrEventsEntityManagerFactory" />
     </bean>
-    
-    <tx:advice id="statsTransactionAdvice" transaction-manager="statsTransactionManager">
-        <tx:attributes>
-            <tx:method name="*"/>
-        </tx:attributes>
-    </tx:advice>
+
     <!-- ********** Database Utilities ********** -->
     
-    <bean name="statsDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport">
-        <property name="dataSource" ref="StatsDB" />
-        <property name="persistenceUnitName" value="uPortalStatsPersistence" />
+    <bean name="rawEventsDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport">
+        <property name="dataSource" ref="RawEventsDB" />
+        <property name="persistenceUnitName" value="uPortalRawEventsPersistence" />
+    </bean>
+    
+    <bean name="aggrEventsDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport">
+        <property name="dataSource" ref="AggrEventsDB" />
+        <property name="persistenceUnitName" value="uPortalAggrEventsPersistence" />
     </bean>
 </beans>

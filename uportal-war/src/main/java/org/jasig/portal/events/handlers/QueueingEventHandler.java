@@ -44,7 +44,10 @@ public abstract class QueueingEventHandler<E extends ApplicationEvent>
     private final Queue<E> eventQueue = new ConcurrentLinkedQueue<E>();
     private final Lock flushLock = new ReentrantLock();
     private int batchSize = 25;
+    
+    //Used to hold events to flush, MUST only be read/written from within the flushLock 
     private List<E> eventBuffer = new ArrayList<E>(this.batchSize);
+    
 
 
     /**

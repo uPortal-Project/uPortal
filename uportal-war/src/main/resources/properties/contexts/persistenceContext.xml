@@ -43,6 +43,12 @@
             expression="execution(* org.jasig.portal.*.dao.*.*(..))"/>
             
         <aop:aspect ref="threadContextClassLoaderAspect">
+            <!-- 
+             | ALL potential callbacks from a portlet through pluto and back into uPortal MUST be covered here. Tomcat switches the
+             | thread context classloader from uPortal's to the portlet's during the cross-context dispatch. On a call back into uPortal 
+             | from a portlet (generally via a Pluto SPI) the thread contxt classloader MUST be switched back to the uPortal classloader
+             | to avoid classloading issues during uPortal code execution.
+             +-->
             <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* javax.portlet.PortalContext.*(..))"/>
             <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.EventCoordinationService.*(..))"/>
             <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.FilterManagerService.*(..))"/>
@@ -70,8 +76,6 @@
     <bean id="threadContextClassLoaderAspect" class="org.jasig.portal.portlet.dao.jpa.ThreadContextClassLoaderAspect" />
     
     <bean id="sqlNextExceptionLoggerAspect" class="org.jasig.portal.portlet.dao.jpa.SQLNextExceptionLoggerAspect" />
-    
-    
     
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="cacheManager">
         <property name="dataSource" ref="PortalDb" />
@@ -104,11 +108,6 @@
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
     
     <!-- ********** Database Utilities ********** -->
-    <!-- dbLoader now autowired -->
-    <!-- 
-      export not autowired, since statsContext contains a separate instance 
-      of this same class configured for a different purpose 
-    -->
     <bean name="portalDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport">
         <property name="dataSource" ref="PortalDb" />
         <property name="persistenceUnitName" value="uPortalPersistence" />

@@ -82,7 +82,7 @@ public class StatsLayoutModificationsController implements InitializingBean {
     private CacheFactory cacheFactory;
     private final Log log = LogFactory.getLog(getClass());
     
-    @Resource(name="StatsDB")
+    @Resource(name="RawEventsDB")
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }

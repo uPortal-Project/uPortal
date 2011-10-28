@@ -51,7 +51,7 @@ import com.google.common.collect.ImmutableSet;
  * @version $Revision$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:jpaStatsTestApplicationContext.xml")
+@ContextConfiguration(locations = "classpath:jpaRawEventsTestApplicationContext.xml")
 public class JpaPortalEventStoreTest extends BaseJpaDaoTest {
     @Autowired
     private IPortalEventDao portalEventDao;
@@ -117,7 +117,7 @@ public class JpaPortalEventStoreTest extends BaseJpaDaoTest {
                 }
                 
                 //Delete the events
-                portalEventDao.deletePortalEvents(new Date(0), new Date(Long.MAX_VALUE));
+                portalEventDao.deletePortalEventsBefore(new Date(Long.MAX_VALUE));
                 
                 return null;
             }

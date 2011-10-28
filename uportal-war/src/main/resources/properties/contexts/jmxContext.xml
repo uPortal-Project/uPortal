@@ -40,7 +40,8 @@
                 <entry key="uPortal:section=Framework,name=Statistics" value-ref="portalFrameworkMBean" />
                 <entry key="uPortal:section=Framework,name=PortletThreadPool" value-ref="portletThreadPool" />
                 <entry key="uPortal:section=Persistence,name=HibernateStatistics" value-ref="hibernateStatisticsMBean"/>
-                <entry key="uPortal:section=Persistence,name=PortalStatsHibernateStatistics" value-ref="portalStatsHibernateStatisticsMBean"/>
+                <entry key="uPortal:section=Persistence,name=RawEventsHibernateStatistics" value-ref="rawEventsHibernateStatisticsMBean"/>
+                <entry key="uPortal:section=Persistence,name=AggrEventsHibernateStatistics" value-ref="aggrEventsHibernateStatisticsMBean"/>
                 <entry key="uPortal:section=Persistence,name=PortalDB" value-ref="PortalDb"/>
             </map>
         </property>
@@ -65,12 +66,23 @@
         </property>
     </bean>
 
-    <!-- Hibernate Stats persistence statistics -->
-    <bean id="portalStatsHibernateStatisticsMBean" class="org.hibernate.jmx.StatisticsService">
+    <!-- Hibernate Raw Events persistence statistics -->
+    <bean id="rawEventsHibernateStatisticsMBean" class="org.hibernate.jmx.StatisticsService">
         <property name="statisticsEnabled" value="true"/>
         <property name="sessionFactory">
             <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-                <property name="targetObject" ref="statsEntityManagerFactory" />
+                <property name="targetObject" ref="rawEventsEntityManagerFactory" />
+                <property name="targetMethod" value="getSessionFactory" />
+            </bean>
+        </property>
+    </bean>
+    
+    <!-- Hibernate Aggr Events persistence statistics -->
+    <bean id="aggrEventsHibernateStatisticsMBean" class="org.hibernate.jmx.StatisticsService">
+        <property name="statisticsEnabled" value="true"/>
+        <property name="sessionFactory">
+            <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                <property name="targetObject" ref="aggrEventsEntityManagerFactory" />
                 <property name="targetMethod" value="getSessionFactory" />
             </bean>
         </property>
