@@ -166,6 +166,11 @@ public class LoginController implements InitializingBean {
   	//  Create the user's session
     HttpSession s = request.getSession(true);
     
+    final String requestedProfile = request.getParameter("profile");
+    if (requestedProfile != null) {
+        s.setAttribute("profileKey", requestedProfile);
+    }
+    
   	IPerson person = null;
     try {
         final HashMap<String,String> principals;
