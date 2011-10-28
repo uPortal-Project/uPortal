@@ -97,14 +97,13 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
         this.selectQuery = 
                 "SELECT e " +
                 "FROM " + PersistentPortalEvent.class.getName() + " e " +
-        		"WHERE e." + PersistentPortalEvent_.timestamp.getName() + " >= :" + this.startTimeParameter.getName() + " " +
+        		"WHERE e." + PersistentPortalEvent_.timestamp.getName() + " > :" + this.startTimeParameter.getName() + " " +
                      "AND e." + PersistentPortalEvent_.timestamp.getName() + " <= :" + this.endTimeParameter.getName() + " " + 
         		"ORDER BY e." + PersistentPortalEvent_.timestamp.getName() + " ASC";
         
         this.deleteQuery = 
                 "DELETE FROM " + PersistentPortalEvent.class.getName() + " e " +
-        		"WHERE e." + PersistentPortalEvent_.timestamp.getName() + " >= :" + this.startTimeParameter.getName() + " " +  
-        		     "AND e." + PersistentPortalEvent_.timestamp.getName() + " <= :" + this.endTimeParameter.getName();
+        		"WHERE e." + PersistentPortalEvent_.timestamp.getName() + " <= :" + this.endTimeParameter.getName();
     }
     
     /* (non-Javadoc)
@@ -171,12 +170,10 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
      */
     @Override
     @Transactional(value="rawEventsTransactionManager")
-    public void deletePortalEvents(Date startTime, Date endTime) {
+    public int deletePortalEventsBefore(Date time) {
         final Query query = this.entityManager.createQuery(this.deleteQuery);
-        query.setParameter(this.startTimeParameter.getName(), startTime);
-        query.setParameter(this.endTimeParameter.getName(), endTime);
-        final int deleted = query.executeUpdate();
-        this.logger.debug("Purged {} events between {} and {}", new Object[] { deleted, startTime, endTime });
+        query.setParameter(this.endTimeParameter.getName(), time);
+        return query.executeUpdate();
     }
     
     protected PersistentPortalEvent wrapPortalEvent(PortalEvent event) {

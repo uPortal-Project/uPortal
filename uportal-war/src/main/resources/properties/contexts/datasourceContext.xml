@@ -52,12 +52,18 @@
     <alias alias="PersonDB" name="PortalDb"/>
     
     <!-- 
-     | DataSource used to store raw portal event data
+     | DataSource used to store raw portal event data, wrapper is used instead of alias so that Spring treats each
+     | DataSource as unique.
      +-->
-    <alias alias="RawEventsDB" name="PortalDb" />
+    <bean id="RawEventsDB" class="org.jasig.portal.utils.DataSourceWrapper">
+        <constructor-arg ref="PortalDb" />
+    </bean>
     
     <!-- 
-     | DataSource used to store aggregated portal event data
+     | DataSource used to store aggregated portal event data, wrapper is used instead of alias so that Spring treats each
+     | DataSource as unique.
      +-->
-    <alias alias="AggrEventsDB" name="PortalDb" />
+    <bean id="AggrEventsDB" class="org.jasig.portal.utils.DataSourceWrapper">
+        <constructor-arg ref="PortalDb" />
+    </bean>
 </beans>

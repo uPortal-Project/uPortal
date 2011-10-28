@@ -117,7 +117,7 @@ public class JpaPortalEventStoreTest extends BaseJpaDaoTest {
                 }
                 
                 //Delete the events
-                portalEventDao.deletePortalEvents(new Date(0), new Date(Long.MAX_VALUE));
+                portalEventDao.deletePortalEventsBefore(new Date(Long.MAX_VALUE));
                 
                 return null;
             }

@@ -17,32 +17,25 @@
  * under the License.
  */
 
-package org.jasig.portal.events.handlers.db;
+package org.jasig.portal.events.aggr;
 
-import java.util.Date;
-
-import org.jasig.portal.events.PortalEvent;
-
-import com.google.common.base.Function;
 
 /**
+ * Manages aggregation and purging of portal event data
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface IPortalEventDao {
-    void storePortalEvent(PortalEvent portalEvent);
-    void storePortalEvents(PortalEvent... portalEvents);
-    void storePortalEvents(Iterable<PortalEvent> portalEvents);
-    
+public interface IPortalEventAggregationManager {
+
     /**
-     * @param startTime The inclusive start time to get events for
-     * @param endTime The exclusive end time to get events for
-     * @param handler Function which will be called for each event.
+     * Requests that raw event data be aggregated
      */
-    void getPortalEvents(Date startTime, Date endTime, Function<PortalEvent, Object> handler);
-    
+    void aggregateRawEvents();
+
     /**
-     * @param events Events to delete
+     * Requests that raw event data be purged
      */
-    int deletePortalEventsBefore(Date endTime);
+    void purgeRawEvents();
+
 }

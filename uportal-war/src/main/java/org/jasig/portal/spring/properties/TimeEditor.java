@@ -17,32 +17,22 @@
  * under the License.
  */
 
-package org.jasig.portal.events.handlers.db;
+package org.jasig.portal.spring.properties;
 
-import java.util.Date;
+import java.beans.PropertyEditorSupport;
 
-import org.jasig.portal.events.PortalEvent;
-
-import com.google.common.base.Function;
+import org.jasig.portal.concurrency.Time;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface IPortalEventDao {
-    void storePortalEvent(PortalEvent portalEvent);
-    void storePortalEvents(PortalEvent... portalEvents);
-    void storePortalEvents(Iterable<PortalEvent> portalEvents);
-    
-    /**
-     * @param startTime The inclusive start time to get events for
-     * @param endTime The exclusive end time to get events for
-     * @param handler Function which will be called for each event.
+public class TimeEditor extends PropertyEditorSupport {
+    /* (non-Javadoc)
+     * @see java.beans.PropertyEditorSupport#setAsText(java.lang.String)
      */
-    void getPortalEvents(Date startTime, Date endTime, Function<PortalEvent, Object> handler);
-    
-    /**
-     * @param events Events to delete
-     */
-    int deletePortalEventsBefore(Date endTime);
+    @Override
+    public void setAsText(String text) throws IllegalArgumentException {
+        this.setValue(Time.valueOf(text));
+    }
 }
