@@ -22,9 +22,14 @@ package org.jasig.portal.events.aggr;
 import org.jasig.portal.events.PortalEvent;
 
 /**
+ * Defines a class that aggregates events
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
 public interface IPortalEventAggregator<E extends PortalEvent> {
+    /**
+     * Add the specified event to the aggregate
+     */
     public void aggregateEvent(E e);
 }

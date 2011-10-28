@@ -30,6 +30,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -80,6 +81,7 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
     protected final ConditionalExceptionLogger logger = new ConditionalExceptionLoggerImpl(LoggerFactory.getLogger(getClass()));
     
     private final SecureRandom sessionIdTokenGenerator = new SecureRandom();
+    private final AtomicReference<String> systemSessionId = new AtomicReference<String>();
     
     private int maxParameters = 50;
     private int maxParameterLength = 500;
@@ -436,6 +438,20 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
                 request = this.portalRequestUtils.getCurrentPortalRequest();
             }
             catch (IllegalStateException e) {
+                //System person is immutable, track their session id locally
+                if (person == SystemPerson.INSTANCE) {
+                    String sessionId = this.systemSessionId.get();
+                    if (sessionId == null) {
+                        sessionId = createSessionId(person);
+                        if (!systemSessionId.compareAndSet(null, sessionId)) {
+                            //Another thread beat us to CaS, grab the set value
+                            sessionId = systemSessionId.get();
+                        }
+                    }
+                    return sessionId;
+                }
+
+                //Try tracking sessionId in person object directly
                 synchronized (person) {
                     String sessionId = (String)person.getAttribute(EVENT_SESSION_ID_ATTR);
                     if (sessionId == null) {

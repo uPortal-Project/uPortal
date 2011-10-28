@@ -19,11 +19,13 @@
 
 package org.jasig.portal.events.aggr;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.mutable.MutableInt;
+import org.apache.commons.lang.time.DateUtils;
 import org.jasig.portal.IPortalInfoProvider;
 import org.jasig.portal.concurrency.Time;
 import org.jasig.portal.concurrency.locking.IClusterLockService;
@@ -149,10 +151,10 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
         if (lastAggregated == null) {
             lastAggregated = new Date(0);
         }
-        final Date newestEventTime = new Date(System.currentTimeMillis() - this.aggregationDelay.asMillis());
+        final Date newestEventTime = DateUtils.truncate(new Date(System.currentTimeMillis() - this.aggregationDelay.asMillis()), Calendar.MINUTE);
         eventAggregatorStatus.setLastEventDate(newestEventTime);
         
-        logger.debug("Starting aggregation of events between {} and {}", lastAggregated, newestEventTime);
+        logger.debug("Starting aggregation of events between {} (inc) and {} (exc)", lastAggregated, newestEventTime);
         final MutableInt events = new MutableInt();
 
         //Do aggregation, capturing the start and end dates

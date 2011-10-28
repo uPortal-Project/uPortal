@@ -843,5 +843,25 @@
     <cache name="org.jasig.portal.i18n.dao.jpa.MessageImpl.query.FIND_MESSAGE_CODES" 
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="60" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        
+
+    <!-- ==================== PortalEvent Aggregation Caches ==================== -->
+        
+    <!--
+     | Caches query results for finding message codes
+     | - 1 aggregation processing type
+     +-->
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.EventAggregatorStatusImpl" 
+        eternal="false" maxElementsInMemory="2" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="30" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <!--
+     | Caches query results for finding message codes
+     | - 1 aggregation processing type
+     +-->
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.EventAggregatorStatusImpl.query.FIND_AGGR_STATUS_BY_PROC_TYPE" 
+        eternal="false" maxElementsInMemory="2" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="30" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        
+        
     
 </ehcache>

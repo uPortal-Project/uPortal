@@ -97,13 +97,13 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
         this.selectQuery = 
                 "SELECT e " +
                 "FROM " + PersistentPortalEvent.class.getName() + " e " +
-        		"WHERE e." + PersistentPortalEvent_.timestamp.getName() + " > :" + this.startTimeParameter.getName() + " " +
-                     "AND e." + PersistentPortalEvent_.timestamp.getName() + " <= :" + this.endTimeParameter.getName() + " " + 
+        		"WHERE e." + PersistentPortalEvent_.timestamp.getName() + " >= :" + this.startTimeParameter.getName() + " " +
+                     "AND e." + PersistentPortalEvent_.timestamp.getName() + " < :" + this.endTimeParameter.getName() + " " + 
         		"ORDER BY e." + PersistentPortalEvent_.timestamp.getName() + " ASC";
         
         this.deleteQuery = 
                 "DELETE FROM " + PersistentPortalEvent.class.getName() + " e " +
-        		"WHERE e." + PersistentPortalEvent_.timestamp.getName() + " <= :" + this.endTimeParameter.getName();
+        		"WHERE e." + PersistentPortalEvent_.timestamp.getName() + " < :" + this.endTimeParameter.getName();
     }
     
     /* (non-Javadoc)
