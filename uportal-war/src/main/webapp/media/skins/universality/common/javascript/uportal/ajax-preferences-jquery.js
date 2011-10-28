@@ -229,6 +229,8 @@
 			$.post(settings.preferencesUrl, {action: 'changeColumns', tabId: settings.tabId, columns: newcolumns}, 
 				function(xml) { 
 			        if ($("success", xml).text() == 'false') { handleServerError(xml); return false; }
+				    
+				     /* UP-3233 remove dom manipulation and just refresh the page
 				    var columns = $('#portalPageBodyColumns > [id^=column_]');
 				    if (columns.length < newcolumns.length) {
 				    	$("newColumns > id", xml).each(function(){
@@ -271,7 +273,10 @@
 			    	// for IE radio button bug
 			    	$("#changeColumns").find("input").removeAttr("checked").removeAttr("defaultChecked");
 			    	$("#changeColumns").find("input[value=" + getCurrentLayoutString() + "]").attr("checked", "checked").attr("defaultChecked","defaultChecked");
-					
+					*/
+			    	
+			    	//refresh page so we get the correct markup
+			    	window.location = settings.portalUrl + "?uP_root=root&uP_sparam=activeTab&activeTab=" + settings.tabId;
 				});
 		};
 		
