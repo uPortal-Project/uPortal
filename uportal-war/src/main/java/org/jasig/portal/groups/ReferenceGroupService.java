@@ -27,13 +27,14 @@ import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.concurrency.IEntityLock;
 import org.jasig.portal.concurrency.LockingException;
-import org.jasig.portal.groups.local.EntitySearcherImpl;
+import org.jasig.portal.groups.local.ReferenceEntitySearcherImpl;
 import org.jasig.portal.groups.local.ITypedEntitySearcher;
-import org.jasig.portal.groups.local.searchers.RDBMChannelDefSearcher;
-import org.jasig.portal.groups.local.searchers.RDBMPersonSearcher;
+import org.jasig.portal.groups.local.searchers.PortletDefinitionSearcher;
+import org.jasig.portal.groups.local.searchers.PersonDirectorySearcher;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.EntityLockService;
+import org.jasig.portal.spring.locator.ReferenceEntitySearcherLocator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -64,8 +65,6 @@ public class ReferenceGroupService implements ILockableGroupService
     protected IEntityStore entityFactory = null;
     protected IEntityGroupStore groupFactory = null;
 
-    // Entity searcher
-    protected IEntitySearcher entitySearcher = null;
 
     // Are group members cached?  See portal.properties.
     private boolean cacheInUse;
@@ -360,11 +359,6 @@ protected IEntityGroup getGroupFromCache(String key) throws CachingException
 
     cacheInUse = PropertiesManager.getPropertyAsBoolean
           ("org.jasig.portal.groups.IEntityGroupService.useCache", DEFAULT_USE_CACHE);
-
-      ITypedEntitySearcher[] tes = new ITypedEntitySearcher[2];
-      tes[0]=new RDBMChannelDefSearcher();
-      tes[1]=new RDBMPersonSearcher();
-      entitySearcher = new EntitySearcherImpl(tes);
     }
 
 /**
@@ -537,6 +531,7 @@ throws GroupsException
   }
 
   public EntityIdentifier[] searchForEntities(String query, int method, Class type) throws GroupsException {
+      final IEntitySearcher entitySearcher = ReferenceEntitySearcherLocator.getReferenceEntitySearcher();
     return removeDuplicates(entitySearcher.searchForEntities(query,method,type));
   }
 

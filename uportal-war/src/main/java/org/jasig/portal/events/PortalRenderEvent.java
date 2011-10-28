@@ -60,7 +60,6 @@ public final class PortalRenderEvent extends PortalEvent {
         Validate.notNull(urlState, "urlType");
         Validate.notNull(urlType, "urlType");
         Validate.notNull(parameters, "parameters");
-        Validate.notNull(targetedLayoutNodeId, "targetedLayoutNodeId");
         
         this.requestPathInfo = requestPathInfo;
         this.urlState = urlState;
