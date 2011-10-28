@@ -345,8 +345,11 @@ protected java.util.Set primGetAllContainingGroups(IGroupMember member, Set s) t
     while ( i.hasNext() )
     {
         IGroupMember gm = (IGroupMember) i.next();
-        s.add(gm);
-        primGetAllContainingGroups(gm, s);
+        // avoid stack overflow in case of circular group dependencies
+        if (!s.contains(gm)) {
+            s.add(gm);
+            primGetAllContainingGroups(gm, s);
+        }
     }
     return s;
 }
