@@ -394,6 +394,10 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
     public EntityIdentifier[] searchForGroups(final String query,
             final int method,
             @SuppressWarnings("unchecked") final Class leaftype) {
+    	
+    	//only search for groups
+        if ( leaftype != IPerson.class )
+          { return new EntityIdentifier[] {}; }
 
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Searching Grouper for groups matching query: " + query);
@@ -409,7 +413,12 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
             
             GcFindGroups groupSearch = new GcFindGroups();
             WsQueryFilter filter = new WsQueryFilter();
-            filter.setQueryFilterType("FIND_BY_GROUP_NAME_APPROXIMATE");
+            //is this an exact search or fuzzy
+            if(method == IGroupConstants.IS){
+            	filter.setQueryFilterType("FIND_BY_GROUP_NAME_EXACT");
+            }else{
+            	filter.setQueryFilterType("FIND_BY_GROUP_NAME_APPROXIMATE");
+            }
             filter.setGroupName(query);
             groupSearch.assignQueryFilter(filter);
             WsFindGroupsResults results = groupSearch.execute();
