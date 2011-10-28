@@ -34,7 +34,7 @@
   <!-- Portlet Body -->
   <div class="fl-widget-content portlet-body" role="main">
 
-    <form:form modelAttribute="form" action="${queryUrl}" method="POST">
+    <form:form modelAttribute="form" action="${queryUrl}" method="POST" htmlEscape="false">
     
     <!-- Portlet Messages -->
     <spring:hasBindErrors name="form">
