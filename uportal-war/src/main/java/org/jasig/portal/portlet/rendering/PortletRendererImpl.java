@@ -87,7 +87,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class PortletRendererImpl implements IPortletRenderer {
-    private static final String IF_NONE_MATCH = "If-None-Match";
+    private static final String IF_MODIFIED_SINCE = "If-Modified-Since";
+
+	private static final String IF_NONE_MATCH = "If-None-Match";
 
 	protected final Log logger = LogFactory.getLog(this.getClass());
     
@@ -600,6 +602,19 @@ public class PortletRendererImpl implements IPortletRenderer {
 				return executionTime;
 			}
 		}
+		if(!cachedPortletData.isExpired()) {
+			long ifModifiedSince = httpServletRequest.getDateHeader(IF_MODIFIED_SINCE);
+			if(cachedPortletData.getTimeStored().getTime() == ifModifiedSince) {
+				// browser already has the content! send a 304
+				if(logger.isDebugEnabled()) {
+					logger.debug("returning 304 for portletWindowId " + portletWindowId + ", ifModifiedSince header=" + ifModifiedSince);
+				}
+				httpServletResponse.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+				final long executionTime = System.currentTimeMillis() - start;
+				publishResourceExecutionEvent(httpServletRequest, portletWindow, executionTime, true);
+				return executionTime;
+			}
+		}
 		
 		httpServletResponse.setContentType(cachedPortletData.getContentType());
 		Map<String, String[]> headers = cachedPortletData.getHeaders();
@@ -614,6 +629,8 @@ public class PortletRendererImpl implements IPortletRenderer {
 		//Set the ETag again
 		if (etag != null) {
 			httpServletResponse.setHeader("ETag", etag);
+		} else {
+			httpServletResponse.setDateHeader("Last-Modified", cachedPortletData.getTimeStored().getTime());
 		}
 		
 		try {
