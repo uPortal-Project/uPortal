@@ -53,4 +53,18 @@ public class CacheControlImplTest {
 		
 		Assert.assertNull(response.getHeader("ETag"));
 	}
+	
+	@Test
+	public void testSetExpirationTimeSetsCacheControl() {
+		MockHttpServletResponse response = new MockHttpServletResponse();
+		CacheControlImpl cacheControl = new CacheControlImpl(response);
+		// 0 value for expiration time should not trigger header set
+		cacheControl.setExpirationTime(0);
+		Assert.assertNull(response.getHeader(CacheControlImpl.CACHE_CONTROL));
+		cacheControl.setExpirationTime(300);
+		Assert.assertEquals("private, max-age=300, must-revalidate", response.getHeader(CacheControlImpl.CACHE_CONTROL));
+		// switching to public scope should trigger header overwrite
+		cacheControl.setPublicScope(true);
+		Assert.assertEquals("public, max-age=300, must-revalidate", response.getHeader(CacheControlImpl.CACHE_CONTROL));
+	}
 }

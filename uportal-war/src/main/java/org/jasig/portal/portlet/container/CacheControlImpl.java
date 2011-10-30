@@ -29,7 +29,8 @@ import org.apache.commons.lang.StringUtils;
  * @version $Revision$
  */
 public class CacheControlImpl implements CacheControl {
-    private String eTag;
+    public static final String CACHE_CONTROL = "Cache-Control";
+	private String eTag;
     // PLT.22.1 default expiration time is 0 ("always expired")
     private int expirationTime = 0;
     // PLT.22.1 cache scope is assumed private by default
@@ -96,6 +97,7 @@ public class CacheControlImpl implements CacheControl {
     @Override
     public void setExpirationTime(int time) {
         this.expirationTime = time;
+       	setCacheControlHeader();
     }
 
     /* (non-Javadoc)
@@ -104,6 +106,10 @@ public class CacheControlImpl implements CacheControl {
     @Override
     public void setPublicScope(boolean publicScope) {
         this.publicScope = publicScope;
+        // call setCacheControlHeader here and in setExpirationTime because portlets have no guaranteed
+        // order for calling setExpirationTime and setPublicScope, and the value of the Cache-Control header
+        // is sensitive to both values.
+        setCacheControlHeader();
     }
 
     /* (non-Javadoc)
@@ -120,6 +126,32 @@ public class CacheControlImpl implements CacheControl {
     @Override
     public boolean useCachedContent() {
         return this.useCachedContent;
+    }
+    
+    /**
+     * Sets the "Cache-Control" header on the reference to the {@link HttpServletResponse}.
+     * 
+     * This method does nothing if the {@link HttpServletResponse} is null or the expirationTime
+     * is less than or equal to 0.
+     * 
+     * Calling this method more than once is ok, setHeader is used to overwrite the value.
+     * 
+     * @see HttpServletResponse#setHeader(String, String)
+     */
+    protected void setCacheControlHeader() {
+    	if(httpResponse != null &&
+    			getExpirationTime() > 0) {
+    		StringBuilder value = new StringBuilder();
+    		if(isPublicScope()) {
+    			value.append("public, ");
+    		} else {
+    			value.append("private, ");
+    		}
+    		value.append("max-age=");
+    		value.append(this.expirationTime);
+    		value.append(", must-revalidate");
+    		httpResponse.setHeader(CACHE_CONTROL, value.toString());
+    	}
     }
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
