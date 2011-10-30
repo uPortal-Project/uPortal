@@ -52,6 +52,7 @@ public class CachedPortletData implements Serializable {
 	private String stringData;
 	private String contentType;
 	private Map<String, String[]> headers = Collections.emptyMap();
+	private int cacheConfigurationMaxTTL;
 	
 	/**
 	 * @return
@@ -133,6 +134,35 @@ public class CachedPortletData implements Serializable {
 		this.headers = headers;
 	}
 	
+	/**
+	 * @return the cacheConfigurationMaxTTL
+	 */
+	public int getCacheConfigurationMaxTTL() {
+		return cacheConfigurationMaxTTL;
+	}
+	/**
+	 * @param cacheConfigurationMaxTTL the cacheConfigurationMaxTTL to set
+	 */
+	public void setCacheConfigurationMaxTTL(int cacheConfigurationMaxTTL) {
+		this.cacheConfigurationMaxTTL = cacheConfigurationMaxTTL;
+	}
+	/**
+	 * Mutator method to allow the Portlet renderer to update the expiration time
+	 * for CachedPortletData instances that are expired.
+	 * 
+	 * Uses the min value of the argument and the {@link #getCacheConfigurationMaxTTL()}
+	 * values to update this fields timeStored.
+	 * 
+	 * Note: This method is synchronized, as multiple threads may be interacting with the same 
+	 * CachedPortletData instance concurrently.
+	 * 
+	 * the same portlet
+	 * @param requestedExpirationTimeSeconds
+	 */
+	public synchronized void updateExpirationTime(int requestedExpirationTimeSeconds) { 
+		this.expirationTimeSeconds = Math.min(requestedExpirationTimeSeconds, getCacheConfigurationMaxTTL());
+		this.timeStored = new Date();
+	}
 	/**
 	 * 
 	 * @return true if the {@link #getTimeStored()} is before the current time less expirationTimeSeconds, or if {@link CacheControl#getExpirationTime()} == 0
