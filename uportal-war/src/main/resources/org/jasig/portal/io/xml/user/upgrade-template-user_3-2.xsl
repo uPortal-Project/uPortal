@@ -20,9 +20,9 @@
 
 -->
 <xsl:stylesheet xmlns="https://source.jasig.org/schemas/uportal/io/user" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
-    <xsl:output indent="yes"/>
-    
     <xsl:import href="upgrade-user_3-2.xsl"/>
+
+    <xsl:output indent="yes"/>
     
     <xsl:template match="user">
         <template-user

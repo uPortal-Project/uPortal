@@ -97,7 +97,7 @@
    | RED
    | This statement instructs the XSL how to output.
   -->
-  <xsl:output method="xml" indent="yes" media-type="text/html" doctype-public="-//W3C//DTD HTML 4.01 Transitional//EN" doctype-system="http://www.w3.org/TR/html4/loose.dtd"/>
+  <xsl:output method="xml" indent="yes" media-type="text/html" doctype-system="EMPTY"/>
   <!-- ========================================= -->
   
   

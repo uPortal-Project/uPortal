@@ -21,6 +21,8 @@ package org.jasig.portal.layout.dao.jpa;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -28,7 +30,7 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.jasig.portal.jpa.BaseJpaDao;
 import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.springframework.dao.support.DataAccessUtils;
@@ -42,13 +44,24 @@ import org.springframework.transaction.annotation.Transactional;
  * @version $Revision$
  */
 @Repository("stylesheetDescriptorDao")
-public class JpaStylesheetDescriptorDao extends BasePortalJpaDao implements IStylesheetDescriptorDao {
+public class JpaStylesheetDescriptorDao extends BaseJpaDao implements IStylesheetDescriptorDao {
     private static final String FIND_ALL_DESCRIPTORS_CACHE_REGION = StylesheetDescriptorImpl.class.getName() + ".query.FIND_ALL_DESCRIPTORS";
     private static final String FIND_DESCRIPTOR_BY_NAME_CACHE_REGION = StylesheetDescriptorImpl.class.getName() + ".query.FIND_DESCRIPTOR_BY_NAME";
 
     private CriteriaQuery<StylesheetDescriptorImpl> findAllDescriptors;
     private CriteriaQuery<StylesheetDescriptorImpl> findDescriptorByNameQuery;
     private ParameterExpression<String> nameParameter;
+    private EntityManager entityManager;
+
+    @PersistenceContext(unitName = "uPortalPersistence")
+    public final void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+    
+    @Override
+    protected EntityManager getEntityManager() {
+        return this.entityManager;
+    }
     
     @Override
     protected void buildCriteriaQueries(CriteriaBuilder cb) {

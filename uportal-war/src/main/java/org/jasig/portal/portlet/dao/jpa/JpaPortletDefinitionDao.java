@@ -22,6 +22,8 @@ package org.jasig.portal.portlet.dao.jpa;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -29,7 +31,7 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.jasig.portal.jpa.BaseJpaDao;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
@@ -45,7 +47,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @version $Revision$
  */
 @Repository
-public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortletDefinitionDao {
+public class JpaPortletDefinitionDao extends BaseJpaDao implements IPortletDefinitionDao {
 
     private static final String FIND_ALL_PORTLET_DEFS_CACHE_REGION = PortletDefinitionImpl.class.getName() + ".query.FIND_ALL_PORTLET_DEFS";
     private static final String FIND_PORTLET_DEF_BY_FNAME_CACHE_REGION = PortletDefinitionImpl.class.getName() + ".query.FIND_PORTLET_DEF_BY_FNAME";
@@ -60,6 +62,17 @@ public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortle
     private ParameterExpression<String> fnameParameter;
     private ParameterExpression<String> nameParameter;
     private ParameterExpression<String> titleParameter;
+    private EntityManager entityManager;
+
+    @PersistenceContext(unitName = "uPortalPersistence")
+    public final void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+    
+    @Override
+    protected EntityManager getEntityManager() {
+        return this.entityManager;
+    }
     
     @Override
     protected void buildCriteriaQueries(CriteriaBuilder cb) {

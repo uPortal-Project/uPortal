@@ -1,0 +1,32 @@
+rendering pipeline request
+    are there any sub-events here?
+
+portlet execution
+    -duration
+    action
+        - action name (using that special action param)
+    event
+        - event qname
+    render
+        - targeted
+        - cached (none, expiration, invalidation)
+    resource
+        - resource id (using special resource id param)
+        - cached
+
+entity management
+    created
+    modified
+    deleted
+
+swapper
+    identity swapped
+    identity reverted
+    attributes swapped
+    attributes reverted?
+
+
+how to track pipeline/portlet exceptions? just have it be a flag on the event?
+    separate portal exceptions db table?
+        would log all end-user visible pipeline & portlet exceptions
+        generates the error token that is displayed to the end user

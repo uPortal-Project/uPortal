@@ -17,18 +17,19 @@
  * under the License.
  */
 
-package  org.jasig.portal.services;
+package org.jasig.portal.services;
 
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.events.EventPublisherLocator;
-import org.jasig.portal.events.support.UserLoggedInPortalEvent;
+import org.jasig.portal.IUserIdentityStore;
+import org.jasig.portal.events.IPortalEventFactory;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IAdditionalDescriptor;
 import org.jasig.portal.security.IOpaqueCredentials;
@@ -37,12 +38,13 @@ import org.jasig.portal.security.IPrincipal;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.security.provider.ChainingSecurityContext;
-import org.jasig.portal.spring.locator.PersonAttributeDaoLocator;
-import org.jasig.portal.spring.locator.UserIdentityStoreLocator;
 import org.jasig.portal.utils.MovingAverage;
 import org.jasig.portal.utils.MovingAverageSample;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 /**
  * Attempts to authenticate a user and retrieve attributes
@@ -57,278 +59,268 @@ import org.jasig.services.persondir.IPersonAttributes;
  * Changes put in to allow credentials and principals to be defined and held by each
  * context.
  */
+@Service
 public class Authentication {
-
     private static final Log log = LogFactory.getLog(Authentication.class);
 
-   private final static String BASE_CONTEXT_NAME = "root";
+    private final static String BASE_CONTEXT_NAME = "root";
 
-   protected org.jasig.portal.security.IPerson m_Person = null;
-   protected ISecurityContext ic = null;
+    // Metric counters
+    private static final MovingAverage authenticationTimes = new MovingAverage();
+    public static MovingAverageSample lastAuthentication = new MovingAverageSample();
 
+    private IUserIdentityStore userIdentityStore;
+    private IPortalEventFactory portalEventFactory;
+    private IPersonAttributeDao personAttributeDao;
 
-   // Metric counters
-   private static final MovingAverage authenticationTimes = new MovingAverage();
-   public static MovingAverageSample lastAuthentication = new MovingAverageSample();
+    @Autowired
+    public void setPersonAttributeDao(@Qualifier("personAttributeDao") IPersonAttributeDao personAttributeDao) {
+        this.personAttributeDao = personAttributeDao;
+    }
 
+    @Autowired
+    public void setUserIdentityStore(IUserIdentityStore userIdentityStore) {
+        this.userIdentityStore = userIdentityStore;
+    }
 
-   /**
-    * Attempts to authenticate a given IPerson based on a set of principals and credentials
-    * @param principals
-    * @param credentials
-    * @param person
-    * @exception PortalSecurityException
-    */
-   public void authenticate (HashMap principals, HashMap credentials, IPerson person) throws PortalSecurityException {
+    @Autowired
+    public void setPortalEventFactory(IPortalEventFactory portalEventFactory) {
+        this.portalEventFactory = portalEventFactory;
+    }
 
-      // Retrieve the security context for the user
-      ISecurityContext securityContext = person.getSecurityContext();
+    /**
+     * Attempts to authenticate a given IPerson based on a set of principals and credentials
+     * @param principals
+     * @param credentials
+     * @param person
+     * @exception PortalSecurityException
+     */
+    public void authenticate(HttpServletRequest request, Map<String, String> principals, Map<String, String> credentials, IPerson person) throws PortalSecurityException {
 
-      //Set the principals and credentials for the security context chain
-      this.configureSecurityContextChain(principals, credentials, person, securityContext, BASE_CONTEXT_NAME);
+        // Retrieve the security context for the user
+        final ISecurityContext securityContext = person.getSecurityContext();
 
-      // NOTE: The LoginServlet looks in the security.properties file to
-      // determine what tokens to look for that represent the principals and
-      // credentials for each context. It then retrieves the values from the request
-      // and stores the values in the principals and credentials HashMaps that are
-      // passed to the Authentication service.
+        //Set the principals and credentials for the security context chain
+        this.configureSecurityContextChain(principals, credentials, person, securityContext, BASE_CONTEXT_NAME);
 
-      // Attempt to authenticate the user
-      final long start = System.currentTimeMillis();
-      securityContext.authenticate();
-      final long elapsed = System.currentTimeMillis() - start;
-      // Check to see if the user was authenticated
-      if (securityContext.isAuthenticated()) {
-         lastAuthentication = authenticationTimes.add(elapsed); // metric
-         // Add the authenticated username to the person object
-         // the login name may have been provided or reset by the security provider
-         // so this needs to be done after authentication.
-         person.setAttribute(IPerson.USERNAME, securityContext.getPrincipal().getUID());
-         // Retrieve the additional descriptor from the security context
-         IAdditionalDescriptor addInfo = person.getSecurityContext().getAdditionalDescriptor();
-         // Process the additional descriptor if one was created
-         if (addInfo != null) {
-            // Replace the passed in IPerson with the additional descriptor if the
-            // additional descriptor is an IPerson object created by the security context
-            // NOTE: This is not the preferred method, creation of IPerson objects should be
-            //       handled by the PersonManager.
-            if (addInfo instanceof IPerson) {
-               IPerson newPerson = (IPerson)addInfo;
-               person.setFullName(newPerson.getFullName());
-               for (Enumeration e = newPerson.getAttributeNames(); e.hasMoreElements();) {
-                  String attributeName = (String)e.nextElement();
-                  person.setAttribute(attributeName, newPerson.getAttribute(attributeName));
-               }
-               resetEntityIdentifier(person, newPerson);
+        // NOTE: The LoginServlet looks in the security.properties file to
+        // determine what tokens to look for that represent the principals and
+        // credentials for each context. It then retrieves the values from the request
+        // and stores the values in the principals and credentials HashMaps that are
+        // passed to the Authentication service.
+
+        // Attempt to authenticate the user
+        final long start = System.currentTimeMillis();
+        securityContext.authenticate();
+        final long elapsed = System.currentTimeMillis() - start;
+        // Check to see if the user was authenticated
+        if (securityContext.isAuthenticated()) {
+            lastAuthentication = authenticationTimes.add(elapsed); // metric
+            // Add the authenticated username to the person object
+            // the login name may have been provided or reset by the security provider
+            // so this needs to be done after authentication.
+            person.setAttribute(IPerson.USERNAME, securityContext.getPrincipal().getUID());
+            // Retrieve the additional descriptor from the security context
+            final IAdditionalDescriptor addInfo = person.getSecurityContext().getAdditionalDescriptor();
+            // Process the additional descriptor if one was created
+            if (addInfo != null) {
+                // Replace the passed in IPerson with the additional descriptor if the
+                // additional descriptor is an IPerson object created by the security context
+                // NOTE: This is not the preferred method, creation of IPerson objects should be
+                //       handled by the PersonManager.
+                if (addInfo instanceof IPerson) {
+                    final IPerson newPerson = (IPerson) addInfo;
+                    person.setFullName(newPerson.getFullName());
+                    for (final Enumeration<String> e = newPerson.getAttributeNames(); e.hasMoreElements();) {
+                        final String attributeName = e.nextElement();
+                        person.setAttribute(attributeName, newPerson.getAttribute(attributeName));
+                    }
+                    this.resetEntityIdentifier(person, newPerson);
+                }
+                // If the additional descriptor is a map then we can
+                // simply copy all of these additional attributes into the IPerson
+                else if (addInfo instanceof Map) {
+                    // Cast the additional descriptor as a Map
+                    final Map<?, ?> additionalAttributes = (Map<?, ?>) addInfo;
+                    // Copy each additional attribute into the person object
+                    for (final Iterator<?> keys = additionalAttributes.keySet().iterator(); keys.hasNext();) {
+                        // Get a key
+                        final String key = (String) keys.next();
+                        // Set the attribute
+                        person.setAttribute(key, additionalAttributes.get(key));
+                    }
+                }
+                else if (addInfo instanceof ChainingSecurityContext.ChainingAdditionalDescriptor) {
+                    // do nothing
+                }
+                else {
+                    if (log.isWarnEnabled()) {
+                        log.warn("Authentication Service recieved " + "unknown additional descriptor [" + addInfo + "]");
+                    }
+                }
             }
-            // If the additional descriptor is a map then we can
-            // simply copy all of these additional attributes into the IPerson
-            else if (addInfo instanceof Map) {
-               // Cast the additional descriptor as a Map
-               Map additionalAttributes = (Map)addInfo;
-               // Copy each additional attribute into the person object
-               for (Iterator keys = additionalAttributes.keySet().iterator(); keys.hasNext();) {
-                  // Get a key
-                  String key = (String)keys.next();
-                  // Set the attribute
-                  person.setAttribute(key, additionalAttributes.get(key));
-               }
-            }
-            else if (addInfo instanceof ChainingSecurityContext.ChainingAdditionalDescriptor) {
-                // do nothing
-            }
-            else {
-                if (log.isWarnEnabled())
-                    log.warn("Authentication Service recieved " +
-                            "unknown additional descriptor [" + addInfo + "]");
-            }
-         }
-         // Populate the person object using the PersonDirectory if applicable
-         if (PropertiesManager.getPropertyAsBoolean("org.jasig.portal.services.Authentication.usePersonDirectory")) {
-            // Retrieve all of the attributes associated with the person logging in
-            final IPersonAttributeDao pa = PersonAttributeDaoLocator.getPersonAttributeDao();
-            final String username = this.getUsername(person);
-            final IPersonAttributes personAttributes = pa.getPerson(username);
+            // Populate the person object using the PersonDirectory if applicable
+            if (PropertiesManager.getPropertyAsBoolean("org.jasig.portal.services.Authentication.usePersonDirectory")) {
+                // Retrieve all of the attributes associated with the person logging in
+                final String username = this.getUsername(person);
+                final IPersonAttributes personAttributes = this.personAttributeDao.getPerson(username);
 
-            if (personAttributes != null) {
-            	// attribs may be null.  IPersonAttributeDao returns null when it does not recognize a user at all, as
-            	// distinguished from returning an empty Map of attributes when it recognizes a user has having no
-            	// attributes.
-                
-                person.setAttributes(personAttributes.getAttributes());
-            }
+                if (personAttributes != null) {
+                    // attribs may be null.  IPersonAttributeDao returns null when it does not recognize a user at all, as
+                    // distinguished from returning an empty Map of attributes when it recognizes a user has having no
+                    // attributes.
 
-         }
-         // Make sure the the user's fullname is set
-         if (person.getFullName() == null) {
-            // Use portal display name if one exists
-            if (person.getAttribute("portalDisplayName") != null) {
-               person.setFullName((String)person.getAttribute("portalDisplayName"));
+                    person.setAttributes(personAttributes.getAttributes());
+                }
+
             }
-            // If not try the eduPerson displyName
-            else if (person.getAttribute("displayName") != null) {
-               person.setFullName((String)person.getAttribute("displayName"));
-            }
-            // If still no FullName use an unrecognized string
+            // Make sure the the user's fullname is set
             if (person.getFullName() == null) {
-               person.setFullName("Unrecognized person: " + person.getAttribute(IPerson.USERNAME));
+                // Use portal display name if one exists
+                if (person.getAttribute("portalDisplayName") != null) {
+                    person.setFullName((String) person.getAttribute("portalDisplayName"));
+                }
+                // If not try the eduPerson displyName
+                else if (person.getAttribute("displayName") != null) {
+                    person.setFullName((String) person.getAttribute("displayName"));
+                }
+                // If still no FullName use an unrecognized string
+                if (person.getFullName() == null) {
+                    person.setFullName("Unrecognized person: " + person.getAttribute(IPerson.USERNAME));
+                }
             }
-         }
-         // Find the uPortal userid for this user or flunk authentication if not found
-         // The template username should actually be derived from directory information.
-         // The reference implemenatation sets the uPortalTemplateUserName to the default in
-         // the portal.properties file.
-         // A more likely template would be staff or faculty or undergraduate.
-         boolean autocreate = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.services.Authentication.autoCreateUsers");
-         // If we are going to be auto creating accounts then we must find the default template to use
-         if (autocreate && person.getAttribute("uPortalTemplateUserName") == null) {
-            String defaultTemplateUserName = PropertiesManager.getProperty("org.jasig.portal.services.Authentication.defaultTemplateUserName");
-            person.setAttribute("uPortalTemplateUserName", defaultTemplateUserName);
-         }
-         try {
-            // Attempt to retrieve the UID
-            int newUID = UserIdentityStoreLocator.getUserIdentityStore().getPortalUID(person,
-                  autocreate);
-            person.setID(newUID);
-         } catch (AuthorizationException ae) {
-            log.error("Exception retrieving ID", ae);
-            throw  new PortalSecurityException("Authentication Service: Exception retrieving UID");
-         }
+            // Find the uPortal userid for this user or flunk authentication if not found
+            // The template username should actually be derived from directory information.
+            // The reference implemenatation sets the uPortalTemplateUserName to the default in
+            // the portal.properties file.
+            // A more likely template would be staff or faculty or undergraduate.
+            final boolean autocreate = PropertiesManager
+                    .getPropertyAsBoolean("org.jasig.portal.services.Authentication.autoCreateUsers");
+            // If we are going to be auto creating accounts then we must find the default template to use
+            if (autocreate && person.getAttribute("uPortalTemplateUserName") == null) {
+                final String defaultTemplateUserName = PropertiesManager
+                        .getProperty("org.jasig.portal.services.Authentication.defaultTemplateUserName");
+                person.setAttribute("uPortalTemplateUserName", defaultTemplateUserName);
+            }
+            try {
+                // Attempt to retrieve the UID
+                final int newUID = this.userIdentityStore.getPortalUID(person, autocreate);
+                person.setID(newUID);
+            }
+            catch (final AuthorizationException ae) {
+                log.error("Exception retrieving ID", ae);
+                throw new PortalSecurityException("Authentication Service: Exception retrieving UID");
+            }
+        }
+        
+        this.portalEventFactory.publishLoginEvent(request, this, person);
+    }
 
-         //TODO add IPerson cache
+    /**
+     * Return the username to be used for authorization (exit hook)
+     * @param person
+     * @return usernmae
+     */
+    protected String getUsername(final IPerson person) {
+        return (String) person.getAttribute(IPerson.USERNAME);
+    }
 
-         // Record the successful authentication
-         EventPublisherLocator.getApplicationEventPublisher().publishEvent(new UserLoggedInPortalEvent(this, person));
-      }
-   }
+    /**
+     * Reset the entity identifier in the final person object (exit hook)
+     * @param person
+     * @param newPerson
+     */
+    protected void resetEntityIdentifier(final IPerson person, final IPerson newPerson) {
+    }
 
-   /**
-    * Return the username to be used for authorization (exit hook)
-    * @param person
-    * @return usernmae
-    */
-   protected String getUsername(final IPerson person) {
-	   return (String)person.getAttribute(IPerson.USERNAME);
-   }
+    /**
+     * Get the principal and credential for a specific context and store them in
+     * the context.
+     * @param principals
+     * @param credentials
+     * @param ctxName
+     * @param securityContext
+     * @param person
+     */
+    public void setContextParameters(Map<String, String> principals, Map<String, String> credentials, String ctxName,
+            ISecurityContext securityContext, IPerson person) {
 
-   /**
-    * Reset the entity identifier in the final person object (exit hook)
-    * @param person
-    * @param newPerson
-    */
-   protected void resetEntityIdentifier(final IPerson person, final IPerson newPerson) {
-   }
+        if (log.isDebugEnabled()) {
+            final StringBuilder msg = new StringBuilder();
+            msg.append("Preparing to authenticate;  setting parameters for context name '").append(ctxName)
+                    .append("', context class '").append(securityContext.getClass().getName()).append("'");
+            // Display principalTokens...
+            msg.append("\n\t Available Principal Tokens");
+            for (final Object o : principals.entrySet()) {
+                final Map.Entry<?, ?> y = (Map.Entry<?, ?>) o;
+                msg.append("\n\t\t").append(y.getKey()).append("=").append(y.getValue());
+            }
+            // Keep credentialTokens secret, but indicate whether they were provided...
+            msg.append("\n\t Available Credential Tokens");
+            for (final Object o : credentials.entrySet()) {
+                final Map.Entry<?, ?> y = (Map.Entry<?, ?>) o;
+                final String val = (String) y.getValue();
+                String valWasSpecified = null;
+                if (val != null) {
+                    valWasSpecified = val.trim().length() == 0 ? "empty" : "provided";
+                }
+                msg.append("\n\t\t").append(y.getKey()).append(" was ").append(valWasSpecified);
+            }
+            log.debug(msg.toString());
+        }
 
+        String username = principals.get(ctxName);
+        String credential = credentials.get(ctxName);
+        // If username or credential are null, this indicates that the token was not
+        // set in security properties. We will then use the value for root.
+        username = username != null ? username : (String) principals.get(BASE_CONTEXT_NAME);
+        credential = credential != null ? credential : (String) credentials.get(BASE_CONTEXT_NAME);
+        if (log.isDebugEnabled()) {
+            log.debug("Authentication::setContextParameters() username: " + username);
+        }
+        // Retrieve and populate an instance of the principal object
+        final IPrincipal principalInstance = securityContext.getPrincipalInstance();
+        if (username != null && !username.equals("")) {
+            principalInstance.setUID(username);
+        }
+        // Retrieve and populate an instance of the credentials object
+        final IOpaqueCredentials credentialsInstance = securityContext.getOpaqueCredentialsInstance();
+        if (credentialsInstance != null) {
+            credentialsInstance.setCredentials(credential);
+        }
+    }
 
-   /**
-    * Returns an IPerson object that can be used to hold site-specific attributes
-    * about the logged on user.  This information is established during
-    * authentication.
-    * @return An object that implements the
-    * <code>org.jasig.portal.security.IPerson</code> interface.
-    */
-   public IPerson getPerson () {
-      return  m_Person;
-   }
+    /**
+     * Recureses through the {@link ISecurityContext} chain, setting the credentials
+     * for each.
+     * TODO This functionality should be moved into the {@link org.jasig.portal.security.provider.ChainingSecurityContext}.
+     *
+     * @param principals
+     * @param credentials
+     * @param person
+     * @param securityContext
+     * @param baseContextName
+     * @throws PortalSecurityException
+     */
+    private void configureSecurityContextChain(final Map<String, String> principals,
+            final Map<String, String> credentials, final IPerson person, final ISecurityContext securityContext,
+            final String baseContextName) throws PortalSecurityException {
+        this.setContextParameters(principals, credentials, baseContextName, securityContext, person);
 
-   /**
-    * Returns an ISecurityContext object that can be used
-    * later. This object is passed as part of the IChannel Interface.
-    * The security context may be used to gain authorized access to
-    * services.
-    * @return An object that implements the
-    * <code>org.jasig.portal.security.ISecurityContext</code> interface.
-    */
-   public ISecurityContext getSecurityContext () {
-      return  ic;
-   }
+        // load principals and credentials for the subContexts
+        for (final Enumeration<String> subCtxNames = securityContext.getSubContextNames(); subCtxNames
+                .hasMoreElements();) {
+            final String fullSubCtxName = subCtxNames.nextElement();
 
-   /**
-    * Get the principal and credential for a specific context and store them in
-    * the context.
-    * @param principals
-    * @param credentials
-    * @param ctxName
-    * @param securityContext
-    * @param person
-    */
-   public void setContextParameters (HashMap principals, HashMap credentials, String ctxName,
-         ISecurityContext securityContext, IPerson person) {
-       
-       if (log.isDebugEnabled()) {
-           StringBuilder msg = new StringBuilder();
-           msg.append("Preparing to authenticate;  setting parameters for context name '")
-                               .append(ctxName).append("', context class '")
-                               .append(securityContext.getClass().getName())
-                               .append("'");
-           // Display principalTokens...
-           msg.append("\n\t Available Principal Tokens");
-           for (Object o : principals.entrySet()) {
-               Map.Entry<?, ?> y = (Map.Entry<?, ?>) o;
-               msg.append("\n\t\t").append(y.getKey()).append("=").append(y.getValue());
-           }
-           // Keep credentialTokens secret, but indicate whether they were provided...
-           msg.append("\n\t Available Credential Tokens");
-           for (Object o : credentials.entrySet()) {
-               Map.Entry<?, ?> y = (Map.Entry<?, ?>) o;
-               String val = (String) y.getValue();
-               String valWasSpecified = null;
-               if (val != null) {
-                   valWasSpecified = val.trim().length() == 0 ? "empty" : "provided";  
-               }
-               msg.append("\n\t\t").append(y.getKey()).append(" was ").append(valWasSpecified);
-           }
-           log.debug(msg.toString());
-       }
-       
-      String username = (String)principals.get(ctxName);
-      String credential = (String)credentials.get(ctxName);
-      // If username or credential are null, this indicates that the token was not
-      // set in security properties. We will then use the value for root.
-      username = (username != null ? username : (String)principals.get(BASE_CONTEXT_NAME));
-      credential = (credential != null ? credential : (String)credentials.get(BASE_CONTEXT_NAME));
-      if (log.isDebugEnabled())
-          log.debug("Authentication::setContextParameters() username: " + username);
-      // Retrieve and populate an instance of the principal object
-      IPrincipal principalInstance = securityContext.getPrincipalInstance();
-      if (username != null && !username.equals("")) {
-         principalInstance.setUID(username);
-      }
-      // Retrieve and populate an instance of the credentials object
-      IOpaqueCredentials credentialsInstance = securityContext.getOpaqueCredentialsInstance();
-      if (credentialsInstance != null) {
-          credentialsInstance.setCredentials(credential);
-      }
-   }
+            //Strip off the base of the name
+            String localSubCtxName = fullSubCtxName;
+            if (fullSubCtxName.startsWith(baseContextName + ".")) {
+                localSubCtxName = localSubCtxName.substring(baseContextName.length() + 1);
+            }
 
-   /**
-    * Recureses through the {@link ISecurityContext} chain, setting the credentials
-    * for each.
-    * TODO This functionality should be moved into the {@link org.jasig.portal.security.provider.ChainingSecurityContext}.
-    *
-    * @param principals
-    * @param credentials
-    * @param person
-    * @param securityContext
-    * @param baseContextName
-    * @throws PortalSecurityException
-    */
-   private void configureSecurityContextChain(final HashMap principals, final HashMap credentials, final IPerson person, final ISecurityContext securityContext, final String baseContextName) throws PortalSecurityException {
-       this.setContextParameters (principals, credentials, baseContextName, securityContext, person);
+            final ISecurityContext sc = securityContext.getSubContext(localSubCtxName);
 
-       // load principals and credentials for the subContexts
-       for (final Enumeration subCtxNames = securityContext.getSubContextNames(); subCtxNames.hasMoreElements(); ) {
-           final String fullSubCtxName = (String)subCtxNames.nextElement();
-
-           //Strip off the base of the name
-           String localSubCtxName = fullSubCtxName;
-           if (fullSubCtxName.startsWith(baseContextName + ".")) {
-               localSubCtxName = localSubCtxName.substring(baseContextName.length() + 1);
-           }
-
-           final ISecurityContext sc = securityContext.getSubContext(localSubCtxName);
-
-           this.configureSecurityContextChain(principals, credentials, person, sc, fullSubCtxName);
-       }
-   }
+            this.configureSecurityContextChain(principals, credentials, person, sc, fullSubCtxName);
+        }
+    }
 }

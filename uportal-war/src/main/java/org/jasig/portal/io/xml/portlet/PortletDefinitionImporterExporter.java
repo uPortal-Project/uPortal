@@ -30,9 +30,6 @@ import java.util.Set;
 
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.channel.IPortletPublishingService;
-import org.jasig.portal.events.support.ModifiedPortletDefinitionPortalEvent;
-import org.jasig.portal.events.support.PublishedPortletDefinitionPortalEvent;
-import org.jasig.portal.events.support.RemovedPortletDefinitionPortalEvent;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IEntityNameFinder;
@@ -65,8 +62,6 @@ import org.jasig.portal.utils.SafeFilenameUtils;
 import org.jasig.portal.xml.PortletDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -75,13 +70,12 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public class PortletDefinitionImporterExporter 
         extends AbstractJaxbDataHandler<ExternalPortletDefinition> 
-        implements IPortletPublishingService, ApplicationEventPublisherAware {
+        implements IPortletPublishingService {
 	
     private PortletPortalDataType portletPortalDataType;
     private IPortletTypeRegistry portletTypeRegistry;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPortletCategoryRegistry portletCategoryRegistry;
-    private ApplicationEventPublisher applicationEventPublisher;
     private boolean errorOnChannel = true;
 
     @Value("${org.jasig.portal.io.errorOnChannel}")
@@ -107,11 +101,6 @@ public class PortletDefinitionImporterExporter
     @Autowired
     public void setPortletCategoryRegistry(IPortletCategoryRegistry portletCategoryRegistry) {
         this.portletCategoryRegistry = portletCategoryRegistry;
-    }
-
-    @Override
-    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-        this.applicationEventPublisher = applicationEventPublisher;
     }
     
     @Override
@@ -350,14 +339,6 @@ public class PortletDefinitionImporterExporter
                     (newChannel ? "published" : "modified") + ".");
         }
 
-        // Record that a channel has been published or modified
-        //TODO move these events into the portlet definition registry
-        if (newChannel) {
-            applicationEventPublisher.publishEvent(new PublishedPortletDefinitionPortalEvent(definition, publisher, definition));
-        } else {
-            applicationEventPublisher.publishEvent(new ModifiedPortletDefinitionPortalEvent(definition, publisher, definition));
-        }
-
         return definition;
     }
 
@@ -386,10 +367,6 @@ public class PortletDefinitionImporterExporter
 
         // delete the channel
         portletDefinitionRegistry.deletePortletDefinition(portletDef);
-
-        // Record that a channel has been deleted
-        //TODO move these events into the portlet definition registry
-        applicationEventPublisher.publishEvent(new RemovedPortletDefinitionPortalEvent(portletDef, person, portletDef));
     }
 
     @Override
@@ -418,90 +395,91 @@ public class PortletDefinitionImporterExporter
     }
 
     protected ExternalPortletDefinition convert(IPortletDefinition def) {
-    	 ExternalPortletDefinition rep = new ExternalPortletDefinition();
+        ExternalPortletDefinition rep = new ExternalPortletDefinition();
          
-         rep.setVersion("4.0");
+        rep.setVersion("4.0");
          
-         rep.setFname(def.getFName());
-         rep.setDesc(def.getDescription());
-         rep.setName(def.getName());
-         rep.setTimeout(BigInteger.valueOf(def.getTimeout()));
-         rep.setActionTimeout(convertToBigInteger(def.getActionTimeout()));
-         rep.setEventTimeout(convertToBigInteger(def.getEventTimeout()));
-         rep.setRenderTimeout(convertToBigInteger(def.getRenderTimeout()));
-         rep.setResourceTimeout(convertToBigInteger(def.getResourceTimeout()));
-         rep.setTitle(def.getTitle());
-         rep.setType(def.getType().getName());
-         
-         
-         final org.jasig.portal.xml.PortletDescriptor portletDescriptor = new org.jasig.portal.xml.PortletDescriptor();
-         final IPortletDescriptorKey portletDescriptorKey = def.getPortletDescriptorKey();
-         if (portletDescriptorKey.isFrameworkPortlet()) {
-             portletDescriptor.setIsFramework(true);
-         }
-         else {
-             portletDescriptor.setWebAppName(portletDescriptorKey.getWebAppName());
-         }
-         portletDescriptor.setPortletName(portletDescriptorKey.getPortletName());
-         rep.setPortletDescriptor(portletDescriptor);
+        rep.setFname(def.getFName());
+        rep.setDesc(def.getDescription());
+        rep.setName(def.getName());
+        rep.setTimeout(BigInteger.valueOf(def.getTimeout()));
+        rep.setActionTimeout(convertToBigInteger(def.getActionTimeout()));
+        rep.setEventTimeout(convertToBigInteger(def.getEventTimeout()));
+        rep.setRenderTimeout(convertToBigInteger(def.getRenderTimeout()));
+        rep.setResourceTimeout(convertToBigInteger(def.getResourceTimeout()));
+        rep.setTitle(def.getTitle());
+        rep.setType(def.getType().getName());
          
          
-         final List<ExternalPortletParameter> parameterList = rep.getParameters();
-         for (IPortletDefinitionParameter param : def.getParameters()) {
-             final ExternalPortletParameter externalPortletParameter = new ExternalPortletParameter();
-             externalPortletParameter.setName(param.getName());
-             externalPortletParameter.setDescription(param.getDescription());
-             externalPortletParameter.setValue(param.getValue());
-             parameterList.add(externalPortletParameter);
-         }
+        final org.jasig.portal.xml.PortletDescriptor portletDescriptor = new org.jasig.portal.xml.PortletDescriptor();
+        final IPortletDescriptorKey portletDescriptorKey = def.getPortletDescriptorKey();
+        if (portletDescriptorKey.isFrameworkPortlet()) {
+            portletDescriptor.setIsFramework(true);
+        }
+        else {
+            portletDescriptor.setWebAppName(portletDescriptorKey.getWebAppName());
+        }
+        portletDescriptor.setPortletName(portletDescriptorKey.getPortletName());
+        rep.setPortletDescriptor(portletDescriptor);
+         
+         
+        final List<ExternalPortletParameter> parameterList = rep.getParameters();
+        for (IPortletDefinitionParameter param : def.getParameters()) {
+            final ExternalPortletParameter externalPortletParameter = new ExternalPortletParameter();
+            externalPortletParameter.setName(param.getName());
+            externalPortletParameter.setDescription(param.getDescription());
+            externalPortletParameter.setValue(param.getValue());
+            parameterList.add(externalPortletParameter);
+        }
 
          
-         final List<ExternalPortletPreference> portletPreferenceList = rep.getPortletPreferences();
-         for (IPortletPreference pref : def.getPortletPreferences()) {
-             final ExternalPortletPreference externalPortletPreference = new ExternalPortletPreference();
-             externalPortletPreference.setName(pref.getName());
-             externalPortletPreference.setReadOnly(pref.isReadOnly());
+        final List<ExternalPortletPreference> portletPreferenceList = rep.getPortletPreferences();
+        for (IPortletPreference pref : def.getPortletPreferences()) {
+            final ExternalPortletPreference externalPortletPreference = new ExternalPortletPreference();
+            externalPortletPreference.setName(pref.getName());
+            externalPortletPreference.setReadOnly(pref.isReadOnly());
              
-             final List<String> value = externalPortletPreference.getValues();
-             value.addAll(Arrays.asList(pref.getValues()));
+            final List<String> value = externalPortletPreference.getValues();
+            value.addAll(Arrays.asList(pref.getValues()));
              
-             portletPreferenceList.add(externalPortletPreference);
-         }
+            portletPreferenceList.add(externalPortletPreference);
+        }
          
          
-         final List<String> categoryList = rep.getCategories();
-         final IGroupMember gm = GroupService.getGroupMember(def.getPortletDefinitionId().getStringId(), IPortletDefinition.class);
-         final Iterator<IEntityGroup> categories = GroupService.getCompositeGroupService().findContainingGroups(gm);
-         while (categories.hasNext()) {
-        	IEntityGroup category = categories.next();
-        	categoryList.add(category.getName());
-         }
+        final List<String> categoryList = rep.getCategories();
+        final IGroupMember gm = GroupService.getGroupMember(def.getPortletDefinitionId().getStringId(), IPortletDefinition.class);
+        @SuppressWarnings("unchecked")
+        final Iterator<IEntityGroup> categories = GroupService.getCompositeGroupService().findContainingGroups(gm);
+        while (categories.hasNext()) {
+            IEntityGroup category = categories.next();
+            categoryList.add(category.getName());
+        }
         
          
          
-         final List<String> groupList = rep.getGroups();
-         final List<String> userList = rep.getUsers();
+        final List<String> groupList = rep.getGroups();
+        final List<String> userList = rep.getUsers();
+        
+        final AuthorizationService authService = org.jasig.portal.services.AuthorizationService.instance();
+        final IPermissionManager pm = authService.newPermissionManager("UP_PORTLET_SUBSCRIBE");
+        final IAuthorizationPrincipal[] principals = pm.getAuthorizedPrincipals("SUBSCRIBE", IPermission.PORTLET_PREFIX + def.getPortletDefinitionId().getStringId());
          
-         final AuthorizationService authService = org.jasig.portal.services.AuthorizationService.instance();
-         final IPermissionManager pm = authService.newPermissionManager("UP_PORTLET_SUBSCRIBE");
-         final IAuthorizationPrincipal[] principals = pm.getAuthorizedPrincipals("SUBSCRIBE", IPermission.PORTLET_PREFIX + def.getPortletDefinitionId().getStringId());
+        for (IAuthorizationPrincipal principal : principals) {
+            IGroupMember member = authService.getGroupMember(principal);
+            if (member.isGroup()) {
+                final EntityNameFinderService entityNameFinderService = EntityNameFinderService.instance();
+                final IEntityNameFinder nameFinder = entityNameFinderService.getNameFinder(member.getType());
+                try {
+                    groupList.add(nameFinder.getName(member.getKey()));
+                }
+                catch (Exception e) {
+                    throw new RuntimeException("Could not find group name for entity: " + member.getKey(), e);
+                }
+            } else {
+                userList.add(member.getKey());
+            }
+        }
          
-         for (IAuthorizationPrincipal principal : principals) {
-             IGroupMember member = authService.getGroupMember(principal);
-             if (member.isGroup()) {
-                 final EntityNameFinderService entityNameFinderService = EntityNameFinderService.instance();
-                 final IEntityNameFinder nameFinder = entityNameFinderService.getNameFinder(member.getType());
-                 try {
-                     groupList.add(nameFinder.getName(member.getKey()));
-                 }
-                 catch (Exception e) {
-                     throw new RuntimeException("Could not find group name for entity: " + member.getKey(), e);
-                 }
-             } else {
-                 userList.add(member.getKey());
-             }
-         }
-         
-         return rep;
+        return rep;
     }
 }

@@ -25,13 +25,36 @@
     xmlns:task="http://www.springframework.org/schema/task"
     xsi:schemaLocation="http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+    
     <task:annotation-driven executor="uPortalTaskExecutor" scheduler="uPortalTaskScheduler"/>
     
-    <task:scheduler id="uPortalTaskScheduler" pool-size="4" />
+    <bean id="uPortalTaskExecutor" class="org.jasig.portal.utils.threading.DynamicThreadPoolExecutorFactoryBean">
+        <property name="corePoolSize" value="${org.jasig.portal.task.exec.threadPool.initialThreads}" />
+        <property name="maxPoolSize" value="${org.jasig.portal.task.exec.threadPool.maxThreads}" />
+        <property name="queueCapacity" value="${org.jasig.portal.task.exec.threadPool.queueSize}" />
+        <property name="threadGroupName" value="uPortal-TaskExecutorThreadGroup" />
+        <property name="threadNamePrefix" value="uPortal-TaskExecutor-" />
+        <property name="threadPriority" value="${org.jasig.portal.task.exec.threadPool.threadPriority}" />
+        <property name="keepAliveSeconds" value="${org.jasig.portal.task.exec.threadPool.keepAliveSeconds}" />
+        <property name="daemon" value="true" />
+        <property name="allowCoreThreadTimeOut" value="true" />
+    </bean>
     
-    <task:executor id="uPortalTaskExecutor" pool-size="10" keep-alive="0" />
+    <bean id="uPortalTaskScheduler" class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler">
+        <property name="poolSize" value="${org.jasig.portal.task.sched.threadPool.poolSize}" />
+        <property name="threadGroupName" value="uPortal-TaskSchedulerThreadGroup" />
+        <property name="threadNamePrefix" value="uPortal-TaskScheduler-" />
+        <property name="daemon" value="true" />
+    </bean>
     
     <task:scheduled-tasks scheduler="uPortalTaskScheduler">
-        <task:scheduled ref="portletCookieDao" method="purgeExpiredCookies" fixed-delay="60000"/>
+        <!--
+         | Prime #s are used so that over time the executions will distribute themselves fairly evenly instead
+         | of always happening on at the same time (ex: always at 33 seconds of each minute)
+         +-->
+        <task:scheduled ref="portletCookieDao" method="purgeExpiredCookies" fixed-delay="59929"/>
+        <task:scheduled ref="PortalEventDaoQueuingEventHandler" method="flush" fixed-delay="997"/>
+        <task:scheduled ref="portalEventAggregationManager" method="aggregateRawEvents" fixed-delay="59957"/>
+        <task:scheduled ref="portalEventAggregationManager" method="purgeRawEvents" fixed-delay="59971"/>
     </task:scheduled-tasks>
 </beans>

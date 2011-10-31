@@ -19,31 +19,35 @@
 
 package org.jasig.portal.events.handlers.db;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.io.IOException;
+import java.util.Date;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.ParameterExpression;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.hibernate.Criteria;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.AnnotationIntrospector;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.introspect.JacksonAnnotationIntrospector;
+import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.ejb.HibernateEntityManager;
-import org.jasig.portal.events.BatchingEventHandler;
-import org.jasig.portal.events.EventType;
 import org.jasig.portal.events.PortalEvent;
-import org.jasig.portal.events.handlers.AbstractLimitedSupportEventHandler;
-import org.jasig.portal.groups.GroupsException;
-import org.jasig.portal.groups.IGroupMember;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.services.GroupService;
+import org.jasig.portal.jpa.BaseJpaDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.base.Function;
 
 /**
- * Stores portal events using JPA/Hibenate no internall batch segementation is done to the passed list
+ * Stores portal events using JPA/Hibenate no internal batch segmentation is done to the passed list
  * of {@link PortalEvent}s. If a {@link PortalEvent} is not mapped as a persistent entity a message is logged
  * at the WARN level and the event is ignored.
  * 
@@ -51,168 +55,159 @@ import org.springframework.stereotype.Repository;
  * @version $Revision$
  */
 @Repository
-public class JpaPortalEventStore extends AbstractLimitedSupportEventHandler implements BatchingEventHandler, IPortalEventStore {
-    protected final Log logger = LogFactory.getLog(this.getClass());
-    
-    protected static final String STATS_SESSION_ID_PERSON_ATTR = JpaPortalEventStore.class.getName() + ".StatsSessionId";
-    
+public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    private final ObjectMapper mapper;
+    private String deleteQuery;
+    private String selectQuery;
+    private ParameterExpression<Date> startTimeParameter;
+    private ParameterExpression<Date> endTimeParameter;
+
     private EntityManager entityManager;
-    private boolean logSessionGroups = true;
     
-    /**
-     * @return the entityManager
-     */
-    public EntityManager getEntityManager() {
-        return this.entityManager;
+    public JpaPortalEventStore() {
+        mapper = new ObjectMapper();
+        final AnnotationIntrospector pair = new AnnotationIntrospector.Pair(new JacksonAnnotationIntrospector(), new JaxbAnnotationIntrospector());
+        mapper.getDeserializationConfig().withAnnotationIntrospector(pair);
+        mapper.getSerializationConfig().withAnnotationIntrospector(pair);
     }
+
     /**
      * @param entityManager the entityManager to set
      */
-    @PersistenceContext(unitName = "uPortalStatsPersistence")
+    @PersistenceContext(unitName = "uPortalRawEventsPersistence")
     public void setEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
     
-    /**
-     * @return the logSessionGroups
+    /* (non-Javadoc)
+     * @see org.jasig.portal.jpa.BaseJpaDao#getEntityManager()
      */
-    public boolean isLogSessionGroups() {
-        return logSessionGroups;
-    }
-    /**
-     * If group keys should be included in the stats session. This can be disabled to reduce the ammount
-     * of data stored in the stats tables.
-     * 
-     * @param logSessionGroups the logSessionGroups to set
-     */
-    public void setLogSessionGroups(boolean logSessionGroups) {
-        this.logSessionGroups = logSessionGroups;
+    @Override
+    protected EntityManager getEntityManager() {
+        return this.entityManager;
     }
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.events.EventHandler#handleEvent(org.jasig.portal.events.PortalEvent)
-     */
-    public void handleEvent(PortalEvent event) {
-        this.storePortalEvents(event);
+    @Override
+    protected void buildCriteriaQueries(CriteriaBuilder cb) {
+        this.startTimeParameter = cb.parameter(Date.class, "startTime");
+        this.endTimeParameter = cb.parameter(Date.class, "endTime");
         
+        this.selectQuery = 
+                "SELECT e " +
+                "FROM " + PersistentPortalEvent.class.getName() + " e " +
+        		"WHERE e." + PersistentPortalEvent_.timestamp.getName() + " >= :" + this.startTimeParameter.getName() + " " +
+                     "AND e." + PersistentPortalEvent_.timestamp.getName() + " < :" + this.endTimeParameter.getName() + " " + 
+        		"ORDER BY e." + PersistentPortalEvent_.timestamp.getName() + " ASC";
+        
+        this.deleteQuery = 
+                "DELETE FROM " + PersistentPortalEvent.class.getName() + " e " +
+        		"WHERE e." + PersistentPortalEvent_.timestamp.getName() + " < :" + this.endTimeParameter.getName();
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.events.BatchingEventHandler#handleEvents(org.jasig.portal.events.PortalEvent[])
+     * @see org.jasig.portal.events.handlers.db.IPortalEventDao#storePortalEvent(org.jasig.portal.events.PortalEvent)
      */
-    public void handleEvents(PortalEvent... events) {
-        this.storePortalEvents(events);
+    @Override
+    @Transactional(value="rawEventsTransactionManager")
+    public void storePortalEvent(PortalEvent portalEvent) {
+        final PersistentPortalEvent persistentPortalEvent = this.wrapPortalEvent(portalEvent);
+        this.entityManager.persist(persistentPortalEvent);
     }
-    
+
     /* (non-Javadoc)
-     * @see org.jasig.portal.events.handlers.db.IPortalEventStore#storePortalEvents(org.jasig.portal.events.PortalEvent[])
+     * @see org.jasig.portal.events.handlers.db.IPortalEventDao#storePortalEvents(org.jasig.portal.events.PortalEvent[])
      */
+    @Override
+    @Transactional(value="rawEventsTransactionManager")
     public void storePortalEvents(PortalEvent... portalEvents) {
         for (final PortalEvent portalEvent : portalEvents) {
-            //Load the StatsSession into the event if it isn't already there
-            if (portalEvent.getStatsSession() == null) {
-                final IPerson person = portalEvent.getPerson();
-                final StatsSession statsSession = this.getStatsSession(person);
-                portalEvent.setStatsSession(statsSession);
-            }
-
-            //Ensure the EventType has been persisted, assumes un-persisted events have an id of 0
-            final EventType eventType = portalEvent.getEventType().intern();
-            if (eventType.getId() == 0 || !this.entityManager.contains(eventType)) {
-                //If an existing EventType is found load it, if not persist the one we have
-                //Due to EventType's behavior we don't need to replace the eventType with the foundEventType, they synchronize on load
-                final EventType foundEventType = this.findExistingEventType(eventType);
-                if (foundEventType == null) {
-                    this.entityManager.persist(eventType);
-                }
-            }
-            
             try {
-                this.entityManager.persist(portalEvent);
+                storePortalEvent(portalEvent);
             }
             catch (IllegalArgumentException iae) {
-                this.logger.warn(portalEvent.getClass().getName() + " is not mapped as a persistent entity and will not be stored. event=[" + portalEvent + "], message=" + iae.getMessage());
+                this.logger.warn(portalEvent.getClass().getName() + " is not mapped as a persistent entity and will not be stored. " + portalEvent + " Exception=" + iae.getMessage());
             }
         }
     }
 
-    /**
-     * Gets a StatsSession object for the specified person, creating, populating and persisting it if needed
+    /* (non-Javadoc)
+     * @see org.jasig.portal.events.handlers.db.IPortalEventDao#storePortalEvents(java.lang.Iterable)
      */
-    protected StatsSession getStatsSession(final IPerson person) {
-        //Gets the statsSessionId from the IPerson object
-        final Long statsSessionId = (Long)person.getAttribute(STATS_SESSION_ID_PERSON_ATTR);
-
-        StatsSession statsSession = null;
-        //Try and load the appropriate stats session based on the ID in the user's person object
-        if (statsSessionId != null && statsSessionId > 0) {
-            statsSession = this.entityManager.find(StatsSession.class, statsSessionId);
-        }
-        
-        //If no statsSessionId is found, create one for the user
-        if (statsSession == null) {
-            statsSession = new StatsSession();
-            final String userName = (String)person.getAttribute(IPerson.USERNAME);
-            statsSession.setUserName(userName);
-            
-            if (this.logSessionGroups) {
-                try {
-                    //Load the user's groups for this session
-                    this.updateStatsSessionGroups(statsSession, person);
-                }
-                catch (org.jasig.portal.groups.GroupsException ge) {
-                    this.logger.warn("Exception while loading groups for person='" + person + "' and session='" + statsSession + "'", ge);
-                }
+    @Override
+    @Transactional(value="rawEventsTransactionManager")
+    public void storePortalEvents(Iterable<PortalEvent> portalEvents) {
+        for (final PortalEvent portalEvent : portalEvents) {
+            try {
+                storePortalEvent(portalEvent);
             }
-            
-            this.entityManager.persist(statsSession);
-            
-            person.setAttribute(STATS_SESSION_ID_PERSON_ATTR, statsSession.getSessionId());
+            catch (IllegalArgumentException iae) {
+                this.logger.warn(portalEvent.getClass().getName() + " is not mapped as a persistent entity and will not be stored. " + portalEvent + " Exception=" + iae.getMessage());
+            }
         }
+    }
 
-        return statsSession;
+    /* (non-Javadoc)
+     * @see org.jasig.portal.events.handlers.db.IPortalEventDao#getPortalEvents(long, long)
+     */
+    @Override
+    public void getPortalEvents(Date startTime, Date endTime, Function<PortalEvent, Object> handler) {
+        final Session session = this.getEntityManager().unwrap(Session.class);
+        final org.hibernate.Query query = session.createQuery(this.selectQuery);
+        query.setParameter(this.startTimeParameter.getName(), startTime);
+        query.setParameter(this.endTimeParameter.getName(), endTime);
+        for (final ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY); results.next(); ) {
+            final PersistentPortalEvent persistentPortalEvent = (PersistentPortalEvent)results.get(0);
+            final PortalEvent portalEvent = this.toPortalEvent(persistentPortalEvent.getEventData(), persistentPortalEvent.getEventType());
+            handler.apply(portalEvent);
+            session.evict(persistentPortalEvent);
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.jasig.portal.events.handlers.db.IPortalEventDao#deletePortalEventsBefore(java.util.Date)
+     */
+    @Override
+    @Transactional(value="rawEventsTransactionManager")
+    public int deletePortalEventsBefore(Date time) {
+        final Query query = this.entityManager.createQuery(this.deleteQuery);
+        query.setParameter(this.endTimeParameter.getName(), time);
+        return query.executeUpdate();
     }
     
-    /**
-     * Sets the {@link StatsSession#setGroups(Set)} using the keys from the {@link IGroupMember}s returned by
-     * {@link IGroupMember#getAllContainingGroups()} 
-     */
-    protected void updateStatsSessionGroups(final StatsSession session, final IPerson person) throws GroupsException {
-        final IGroupMember member = GroupService.getGroupMember(person.getEntityIdentifier());
-        
-        final Set<String> groupKeys = new HashSet<String>();
-        for (final Iterator<IGroupMember> groupItr = member.getAllContainingGroups(); groupItr.hasNext(); ) {
-            final IGroupMember group = groupItr.next();
-            groupKeys.add(group.getKey());
-        }
-        
-        session.setGroups(groupKeys);
+    protected PersistentPortalEvent wrapPortalEvent(PortalEvent event) {
+        final String portalEventData = this.toString(event);
+        return new PersistentPortalEvent(event, portalEventData);
     }
 
-    /**
-     * Contains the logic to query for an already persisted EventType with the same type value.
-     */
-    protected EventType findExistingEventType(EventType eventType) {
-        if (eventType.getId() != 0) {
-            final EventType foundEventType = this.entityManager.find(EventType.class, eventType.getId());
-            if (foundEventType != null) {
-                return foundEventType;
-            }
-            
-            eventType.setId(0);
+    protected <E extends PortalEvent> E toPortalEvent(final String eventData, Class<E> eventType) {
+        try {
+            return mapper.readValue(eventData, eventType);
         }
-        
-        //No id, do a lookup based on the event type
-        final HibernateEntityManager hibernateEntityManager = ((HibernateEntityManager)this.entityManager);
-        final Session session = hibernateEntityManager.getSession();
-        
-        //Setup the Criteria query
-        final Criteria eventTypeCriteria = session.createCriteria(EventType.class);
-        eventTypeCriteria.add(Restrictions.naturalId().set("type", eventType.getType()));
-        eventTypeCriteria.setCacheable(true);
-        eventTypeCriteria.setMaxResults(1);
-        
-        final EventType foundEventType = (EventType)eventTypeCriteria.uniqueResult();
-        return foundEventType;
+        catch (JsonParseException e) {
+            throw new RuntimeException("Failed to deserialize PortalEvent data", e);
+        }
+        catch (JsonMappingException e) {
+            throw new RuntimeException("Failed to deserialize PortalEvent data", e);
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Failed to deserialize PortalEvent data", e);
+        }
+    }
+    
+    protected String toString(PortalEvent event) {
+        try {
+            return mapper.writeValueAsString(event);
+        }
+        catch (JsonParseException e) {
+            throw new RuntimeException("Failed to serialize PortalEvent data", e);
+        }
+        catch (JsonMappingException e) {
+            throw new RuntimeException("Failed to serialize PortalEvent data", e);
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Failed to serialize PortalEvent data", e);
+        }
     }
 }

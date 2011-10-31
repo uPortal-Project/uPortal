@@ -30,13 +30,5 @@
     </skin-description>
   </skin>
   
-  <skin>
-    <skin-key>android</skin-key>
-    <skin-name>android</skin-name>
-    <skin-description>
-      Android theme and skin.
-    </skin-description>
-  </skin>
-  
 </skins>
 

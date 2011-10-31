@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+    <bean id="rawEventsEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="cacheManager">
+        <qualifier value="rawEvents"/>
+        <property name="dataSource" ref="RawEventsDB" />
+        <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
+        <property name="persistenceUnitName" value="uPortalRawEventsPersistence" />
+    </bean>
+
+    <bean id="rawEventsTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <qualifier value="rawEvents"/>
+        <property name="entityManagerFactory" ref="rawEventsEntityManagerFactory" />
+    </bean>
+
+
+    <bean id="aggrEventsEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="cacheManager">
+        <qualifier value="aggrEvents"/>
+        <property name="dataSource" ref="AggrEventsDB" />
+        <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
+        <property name="persistenceUnitName" value="uPortalAggrEventsPersistence" />
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.cache.region.factory_class">net.sf.ehcache.hibernate.SingletonEhCacheRegionFactory</prop>
+                <prop key="net.sf.ehcache.configurationResourceName">/properties/ehcache.xml</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="aggrEventsTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <qualifier value="AggrEventsDB"/>
+        <property name="entityManagerFactory" ref="aggrEventsEntityManagerFactory" />
+    </bean>
+
+    <!-- ********** Database Utilities ********** -->
+    
+    <bean name="rawEventsDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport">
+        <property name="dataSource" ref="RawEventsDB" />
+        <property name="persistenceUnitName" value="uPortalRawEventsPersistence" />
+    </bean>
+    
+    <bean name="aggrEventsDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport">
+        <property name="dataSource" ref="AggrEventsDB" />
+        <property name="persistenceUnitName" value="uPortalAggrEventsPersistence" />
+    </bean>
+</beans>

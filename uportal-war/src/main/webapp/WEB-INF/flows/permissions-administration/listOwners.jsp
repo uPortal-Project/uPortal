@@ -134,13 +134,15 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                         </span>
                     </div>
                 </div> <!-- end: panel -->
-                <!-- Second column -->
                 <c:if test="${ split <= ownerStatus.index+1 and ownerStatus.index+1 < split+1 }">
                     </div>
+                    <!-- Second column -->
                     <div class="fl-col">
                 </c:if>
                 
             </c:forEach>
+            
+            </div>
     
         </div> <!-- end: panel list -->
 
@@ -154,8 +156,7 @@ up.jQuery(function() {
 
     $(document).ready(function(){
 
-        var submitForm = function(){
-            var form = this;
+        var submitForm = function(form){
             if (!principalSuggest.getValue() || !permissionSuggest.getValue()) {
                 alert("<spring:message code="please.choose.principal.and.permission.from.the.autocomplete.menus"/>");
                 return false;
@@ -211,11 +212,12 @@ up.jQuery(function() {
         );
 
         $("#${n}permissionLookupForm").submit(function () {
-            var form = $(this),
-                errorContainer = form.find(".permission-lookup-error-container");
+            var form, errorContainer;
+            form = this;
+            errorContainer = $(form).find(".permission-lookup-error-container");
             
             if ( principalSuggest.getValue() && permissionSuggest.getValue() ) {
-                submitForm();
+                submitForm(form);
             } else {
                 if ( errorContainer.text().length < 1 ) {
                     errorContainer.append("Please choose values from the autocomplete menus.");

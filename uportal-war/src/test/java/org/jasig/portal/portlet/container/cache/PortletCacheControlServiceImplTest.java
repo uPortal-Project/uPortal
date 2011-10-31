@@ -24,11 +24,14 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.Serializable;
+
 import javax.portlet.CacheControl;
 import javax.portlet.MimeResponse;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
 
 import org.apache.pluto.container.om.portlet.PortletDefinition;
@@ -57,7 +60,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @version $Id$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"/properties/contexts/cacheContext.xml"})
+@ContextConfiguration(locations={"/portletCacheControlServiceTestContext.xml"})
 public class PortletCacheControlServiceImplTest {
 
 	
@@ -255,22 +258,38 @@ public class PortletCacheControlServiceImplTest {
 	}
 	
 	@Test
-	public void testFindMinimumTTL() {
+	public void testConstructCacheElement() {
 		PortletCacheControlServiceImpl cacheControlService = new PortletCacheControlServiceImpl();
 		CacheConfiguration cacheConfig = new CacheConfiguration();
 		cacheConfig.setTimeToLiveSeconds(1800L);
 		CacheControl cacheControl = new CacheControlImpl();
+		
+		Serializable key = new Serializable() {
+			private static final long serialVersionUID = 1L;
+		};
+		CachedPortletData data = new CachedPortletData();
+		
 		// cacheControl expiration time unset, fail safe to cache config value
-		Assert.assertEquals(1800, cacheControlService.findMinimumCacheTTL(cacheConfig, cacheControl));
+		Element cacheElement = cacheControlService.constructCacheElement(key, data, cacheConfig, cacheControl);
+		Assert.assertEquals(0, cacheElement.getTimeToLive());
 		
 		cacheControl.setExpirationTime(60);
 		// cacheControl expiration time lesser, use it
-		Assert.assertEquals(60, cacheControlService.findMinimumCacheTTL(cacheConfig, cacheControl));
+		cacheElement = cacheControlService.constructCacheElement(key, data, cacheConfig, cacheControl);
+		Assert.assertEquals(60, cacheElement.getTimeToLive());
 		cacheControl.setExpirationTime(1800);
 		// identical
-		Assert.assertEquals(1800, cacheControlService.findMinimumCacheTTL(cacheConfig, cacheControl));
+		cacheElement = cacheControlService.constructCacheElement(key, data, cacheConfig, cacheControl);
+		Assert.assertEquals(1800, cacheElement.getTimeToLive());
 		// cacheControl expiration time greater than cache, use cache config value
 		cacheConfig.setTimeToLiveSeconds(900L);
-		Assert.assertEquals(900, cacheControlService.findMinimumCacheTTL(cacheConfig, cacheControl));
+		cacheElement = cacheControlService.constructCacheElement(key, data, cacheConfig, cacheControl);
+		Assert.assertEquals(900, cacheElement.getTimeToLive());
+		
+		// cacheControl indicates use validation method, defer to cache configuration
+		cacheControl.setExpirationTime(300);
+		cacheControl.setETag("123456");
+		cacheElement = cacheControlService.constructCacheElement(key, data, cacheConfig, cacheControl);
+		Assert.assertEquals(0, cacheElement.getTimeToLive());
 	}
 }

@@ -21,16 +21,13 @@ package org.jasig.portal.user;
 
 import java.util.Map;
 
-import org.jasig.portal.events.PortalEvent;
-import org.jasig.portal.events.support.UserLoggedOutPortalEvent;
-import org.jasig.portal.events.support.UserSessionDestroyedPortalEvent;
+import org.jasig.portal.events.LogoutEvent;
 import org.jasig.portal.security.IPerson;
 import org.jasig.services.persondir.support.CachingPersonAttributeDaoImpl;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 
 /**
@@ -42,36 +39,33 @@ import org.springframework.context.ApplicationListener;
  * @author Eric Dalquist
  * @version $Revision: 1.1 $
  */
-public class UserAttributesCacheCleaner implements ApplicationListener, ApplicationContextAware, InitializingBean {
+public class UserAttributesCacheCleaner implements ApplicationListener<LogoutEvent>, ApplicationContextAware,
+        InitializingBean {
     private ApplicationContext applicationContext;
     private Map<String, CachingPersonAttributeDaoImpl> cachingAttributeDaos;
 
     /* (non-Javadoc)
      * @see org.springframework.context.ApplicationContextAware#setApplicationContext(org.springframework.context.ApplicationContext)
      */
+    @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
-    
+
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
-    @SuppressWarnings("unchecked")
+    @Override
     public void afterPropertiesSet() throws Exception {
         this.cachingAttributeDaos = this.applicationContext.getBeansOfType(CachingPersonAttributeDaoImpl.class);
     }
 
-
     /* (non-Javadoc)
      * @see org.springframework.context.ApplicationListener#onApplicationEvent(org.springframework.context.ApplicationEvent)
      */
-    public void onApplicationEvent(ApplicationEvent event) {
-        if (!(event instanceof UserLoggedOutPortalEvent || event instanceof UserSessionDestroyedPortalEvent)) {
-            return;
-        }
-        
-        final PortalEvent portalEvent = (PortalEvent)event;
-        final IPerson person = portalEvent.getPerson();
+    @Override
+    public void onApplicationEvent(LogoutEvent event) {
+        final IPerson person = event.getPerson();
         final String userName = person.getUserName();
 
         for (final CachingPersonAttributeDaoImpl cachingAttributeDao : this.cachingAttributeDaos.values()) {

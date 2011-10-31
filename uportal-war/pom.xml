@@ -15,7 +15,7 @@
     <name>uMobile WAR</name>
     <description>The uPortal web application.</description>
     
-    <dependencies>
+    <dependencies>    
         <!-- ***** Portal JDBC Driver *****
          | The groupId, artifactId and version are configured in the root POM.
          +-->
@@ -159,6 +159,11 @@
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-asl</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-xc</artifactId>
         </dependency>
         
         <dependency>
@@ -543,7 +548,7 @@
             <plugin>
                 <groupId>org.bsc.maven</groupId>
                 <artifactId>maven-processor-plugin</artifactId>
-                <version>2.0.2</version>
+                <version>2.0.5</version>
                 <executions>
                     <execution>
                         <id>process</id>
@@ -553,6 +558,10 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <outputDirectory>target/generated-sources/annotations</outputDirectory>
+                            <optionMap>
+                                <ormXmlList>/properties/db/stats/orm.xml</ormXmlList>
+                                <addGeneratedAnnotation>true</addGeneratedAnnotation>
+                            </optionMap>
                         </configuration>
                     </execution>
                 </executions>
@@ -593,6 +602,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <argLine>-Xmx512m -XX:MaxPermSize=512m</argLine>
+                    <systemPropertyVariables>
+                        <org.jasig.portal.test>true</org.jasig.portal.test>
+                    </systemPropertyVariables>
                     <includes>
                         <include>**/Test*.java</include>
                         <include>**/*Test.java</include>
@@ -707,20 +719,6 @@
                             <displayJsWarnings>false</displayJsWarnings>
                             <skinConfigurationFile>src/main/webapp/media/skins/muniversality/iphone/skin.xml</skinConfigurationFile>
                             <skinOutputDirectory>media/skins/muniversality/iphone/</skinOutputDirectory>
-                            <sharedJavaScriptDirectory>media/skins/muniversality/common/javascript</sharedJavaScriptDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>aggregate-android-skin</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>aggregate</goal>
-                        </goals>
-                        <inherited>false</inherited>
-                        <configuration>
-                            <displayJsWarnings>false</displayJsWarnings>
-                            <skinConfigurationFile>src/main/webapp/media/skins/muniversality/android/skin.xml</skinConfigurationFile>
-                            <skinOutputDirectory>media/skins/muniversality/android/</skinOutputDirectory>
                             <sharedJavaScriptDirectory>media/skins/muniversality/common/javascript</sharedJavaScriptDirectory>
                         </configuration>
                     </execution>

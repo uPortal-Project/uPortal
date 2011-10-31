@@ -548,7 +548,8 @@
 	border:1px solid #ccc;
 }
 .prm-mgr .permission-lookup form input[type="text"] {color:#999;}
-.prm-mgr .permission-lookup form input[type="text"]:focus {color:#000;}
+.prm-mgr .permission-lookup form input[type="text"]:focus,
+.prm-mgr .permission-lookup form input[type="text"].up-autocomplete-validinput {color:#000;}
 .prm-mgr .permission-lookup form input[type="submit"] {
 	font-size:120%;
 	font-weight: normal;
@@ -583,3 +584,17 @@
 .prm-mgr.view-editperm #assignments select.inherit-grant {border-color:green;}
 .prm-mgr.view-editperm #assignments select.deny,
 .prm-mgr.view-editperm #assignments select.inherit-deny {border-color:red;}
+
+/** Database entity translator portlet. */
+.uptrans-entities-wrapper {float: left; margin-right: -200px; width: 200px;}
+.uptrans-entities-wrapper button {width: 100%;}
+.uptrans-entities {max-height: 400px; overflow: auto;}
+.uptrans-form-container {margin-left: 220px;}
+.uptrans-entity {padding: 5px; font-size: 107%; cursor: pointer;}
+.uptrans-entity:HOVER {background-color: orange!important;}
+.uptrans-form-container-wrapper {float: right; width: 100%;}
+.uptrans-form-container {display: none; margin-top: 15px;}
+.uptrans-form-container form fieldset {padding: 10px;}
+.uptrans-form-container form input[type="text"] {width: 100%;}
+.uptrans-form-container form .buttons {text-align: right;}
+.uptrans-form-container form textarea {width: 100%; height: 50px;}

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     Licensed to Jasig under one or more contributor license
@@ -222,6 +222,7 @@
     
     <filter-mapping>
         <filter-name>CharacterEncodingFilter</filter-name>
+        <servlet-name>AuthenticationDispatcherServlet</servlet-name>
         <servlet-name>RenderingDispatcherServlet</servlet-name>
         <servlet-name>JsonRenderingDispatcherServlet</servlet-name>
         <servlet-name>MVCDispatcherServlet</servlet-name>
@@ -270,12 +271,6 @@
         <filter-name>createPortletCookieFilter</filter-name>
         <servlet-name>RenderingDispatcherServlet</servlet-name>
     </filter-mapping>
-
-    <servlet>
-        <servlet-name>Logout</servlet-name>
-        <servlet-class>org.jasig.portal.LogoutServlet</servlet-class>
-        <load-on-startup>3</load-on-startup>
-    </servlet>
 
     <servlet>
         <servlet-name>Instrumentation</servlet-name>
@@ -363,11 +358,6 @@
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>Logout</servlet-name>
-        <url-pattern>/Logout</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
         <servlet-name>Instrumentation</servlet-name>
         <url-pattern>/instrumentation</url-pattern>
     </servlet-mapping>
@@ -380,6 +370,7 @@
     <servlet-mapping>
         <servlet-name>AuthenticationDispatcherServlet</servlet-name>
         <url-pattern>/Login</url-pattern>
+        <url-pattern>/Logout</url-pattern>
     </servlet-mapping>
 
     <mime-mapping>

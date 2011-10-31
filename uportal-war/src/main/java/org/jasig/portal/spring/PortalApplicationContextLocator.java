@@ -52,7 +52,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  */
 public class PortalApplicationContextLocator implements ServletContextListener {
     private static Log LOGGER = LogFactory.getLog(PortalApplicationContextLocator.class);
-    
+
     private static final SingletonDoubleCheckedCreator<ConfigurableApplicationContext> applicationContextCreator = new PortalApplicationContextCreator();
     private static Throwable directCreatorThrowable;
     private static ServletContext servletContext;
@@ -60,6 +60,7 @@ public class PortalApplicationContextLocator implements ServletContextListener {
     /* (non-Javadoc)
      * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
      */
+    @Override
     public void contextInitialized(ServletContextEvent sce) {
         servletContext = sce.getServletContext();
     }
@@ -67,10 +68,11 @@ public class PortalApplicationContextLocator implements ServletContextListener {
     /* (non-Javadoc)
      * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.ServletContextEvent)
      */
+    @Override
     public void contextDestroyed(ServletContextEvent sce) {
         servletContext = null;
     }
-    
+
     /**
      * @return <code>true</code> if a WebApplicationContext is available, <code>false</code> if only an ApplicationContext is available
      * @deprecated Only needed for using {@link #getRequiredWebApplicationContext()} or {@link #getWebApplicationContext()}.
@@ -79,7 +81,7 @@ public class PortalApplicationContextLocator implements ServletContextListener {
     public static boolean isRunningInWebApplication() {
         return servletContext != null;
     }
-    
+
     /**
      * @return The WebApplicationContext for the portal
      * @throws IllegalStateException if no ServletContext is available to retrieve a WebApplicationContext for or if the root WebApplicationContext could not be found
@@ -89,9 +91,10 @@ public class PortalApplicationContextLocator implements ServletContextListener {
     public static WebApplicationContext getRequiredWebApplicationContext() {
         final ServletContext context = servletContext;
         if (context == null) {
-            throw new IllegalStateException("No ServletContext is available to load a WebApplicationContext for. Is this ServletContextListener not configured or has the ServletContext been destroyed?");
+            throw new IllegalStateException(
+                    "No ServletContext is available to load a WebApplicationContext for. Is this ServletContextListener not configured or has the ServletContext been destroyed?");
         }
-        
+
         return WebApplicationContextUtils.getRequiredWebApplicationContext(context);
     }
 
@@ -105,7 +108,7 @@ public class PortalApplicationContextLocator implements ServletContextListener {
         if (context == null) {
             return null;
         }
-        
+
         return WebApplicationContextUtils.getWebApplicationContext(context);
     }
 
@@ -122,25 +125,28 @@ public class PortalApplicationContextLocator implements ServletContextListener {
 
         if (context != null) {
             LOGGER.debug("Using WebApplicationContext");
-            
+
             if (applicationContextCreator.isCreated()) {
-                final IllegalStateException createException = new IllegalStateException("A portal managed ApplicationContext has already been created but now a ServletContext is available and a WebApplicationContext will be returned. " +
-                        "This situation should be resolved by delaying calls to this class until after the web-application has completely initialized.");
+                final IllegalStateException createException = new IllegalStateException(
+                        "A portal managed ApplicationContext has already been created but now a ServletContext is available and a WebApplicationContext will be returned. "
+                                + "This situation should be resolved by delaying calls to this class until after the web-application has completely initialized.");
                 LOGGER.error(createException, createException);
                 LOGGER.error("Stack trace of original ApplicationContext creator", directCreatorThrowable);
                 throw createException;
             }
 
-            final WebApplicationContext webApplicationContext = WebApplicationContextUtils.getWebApplicationContext(context);
+            final WebApplicationContext webApplicationContext = WebApplicationContextUtils
+                    .getWebApplicationContext(context);
             if (webApplicationContext == null) {
-                throw new IllegalStateException("ServletContext is available but WebApplicationContextUtils.getWebApplicationContext(ServletContext) returned null. Either the application context failed to load or is not yet done loading.");
+                throw new IllegalStateException(
+                        "ServletContext is available but WebApplicationContextUtils.getWebApplicationContext(ServletContext) returned null. Either the application context failed to load or is not yet done loading.");
             }
             return webApplicationContext;
         }
-        
+
         return applicationContextCreator.get();
     }
-    
+
     /**
      * If the ApplicationContext returned by {@link #getApplicationContext()} is 'portal managed' the shutdown hook
      * for the context is called, closing and cleaning up all spring managed resources.
@@ -154,18 +160,24 @@ public class PortalApplicationContextLocator implements ServletContextListener {
             applicationContext.close();
         }
         else {
-            final IllegalStateException createException = new IllegalStateException("No portal managed ApplicationContext has been created, there is nothing to shutdown.");
+            final IllegalStateException createException = new IllegalStateException(
+                    "No portal managed ApplicationContext has been created, there is nothing to shutdown.");
             LOGGER.error(createException, createException);
         }
     }
-    
+
     /**
      * Creator class that knows how to instantiate the lazily initialized portal application context if needed
      */
-    private static class PortalApplicationContextCreator extends SingletonDoubleCheckedCreator<ConfigurableApplicationContext> {
-        
+    private static class PortalApplicationContextCreator extends
+            SingletonDoubleCheckedCreator<ConfigurableApplicationContext> {
+
         @Override
         protected ConfigurableApplicationContext createSingleton(Object... args) {
+            if (Boolean.getBoolean("org.jasig.portal.test")) {
+                throw new IllegalStateException(PortalApplicationContextLocator.class.getName() + " MUST NOT be used in unit tests");
+            }
+            
             LOGGER.info("Creating new lazily initialized GenericApplicationContext for the portal");
 
             final long startTime = System.currentTimeMillis();
@@ -180,7 +192,8 @@ public class PortalApplicationContextLocator implements ServletContextListener {
 
             directCreatorThrowable = new Throwable();
             directCreatorThrowable.fillInStackTrace();
-            LOGGER.info("Created new lazily initialized GenericApplicationContext for the portal in " + (System.currentTimeMillis() - startTime) + "ms");
+            LOGGER.info("Created new lazily initialized GenericApplicationContext for the portal in "
+                    + (System.currentTimeMillis() - startTime) + "ms");
 
             return genericApplicationContext;
         }

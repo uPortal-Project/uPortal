@@ -31,6 +31,7 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 
+import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -177,5 +178,14 @@ class PermissionActivityImpl implements IPermissionActivity, Serializable {
         return "PermissionActivityImpl [id=" + this.id + ", entityVersion=" + this.entityVersion + ", fname="
                 + this.fname + ", name=" + this.name + ", description=" + this.description + ", targetProviderKey="
                 + this.targetProviderKey + "]";
+    }
+
+    @Override
+    public int compareTo(IPermissionActivity activity) {
+        return new CompareToBuilder()
+                .append(this.name, activity.getName())
+                .append(this.targetProviderKey, activity.getTargetProviderKey())
+                .append(this.fname, activity.getFname())
+                .toComparison();
     }
 }

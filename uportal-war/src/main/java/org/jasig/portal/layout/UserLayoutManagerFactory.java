@@ -23,10 +23,10 @@ import org.jasig.portal.IUserProfile;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.immutable.ImmutableUserLayoutManagerWrapper;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.stereotype.Component;
 
 
 /**
@@ -35,32 +35,25 @@ import org.springframework.context.ApplicationContextAware;
  * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
  * @version 1.0
  */
-public class UserLayoutManagerFactory implements ApplicationContextAware {
+@Component
+public class UserLayoutManagerFactory implements BeanFactoryAware {
     public static final String USER_LAYOUT_MANAGER_PROTOTYPE_BEAN_NAME = "userLayoutManager";
     
-    private static ApplicationContext applicationContext;
+    private BeanFactory beanFactory;
     
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        UserLayoutManagerFactory.applicationContext = applicationContext;
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.beanFactory = beanFactory;
     }
     
-    private static ApplicationContext getApplicationContext() {
-        if (applicationContext != null) {
-            return applicationContext;
-        }
-        
-        return PortalApplicationContextLocator.getApplicationContext();
-    }
-
     /**
      * Obtain a regular user layout manager implementation
      *
      * @return an <code>IUserLayoutManager</code> value
      */
-    public static IUserLayoutManager getUserLayoutManager(IPerson person, IUserProfile profile) throws PortalException {
-        final ApplicationContext applicationContext = getApplicationContext();
-        final IUserLayoutManager userLayoutManager = (IUserLayoutManager)applicationContext.getBean(USER_LAYOUT_MANAGER_PROTOTYPE_BEAN_NAME, person, profile);
+    public IUserLayoutManager getUserLayoutManager(IPerson person, IUserProfile profile) throws PortalException {
+        final IUserLayoutManager userLayoutManager = (IUserLayoutManager)this.beanFactory.getBean(USER_LAYOUT_MANAGER_PROTOTYPE_BEAN_NAME, person, profile);
+        
         return new TransientUserLayoutManagerWrapper(userLayoutManager);
     }
 
@@ -71,7 +64,7 @@ public class UserLayoutManagerFactory implements ApplicationContextAware {
      * @return an immutable <code>IUserLayoutManager</code> value
      * @exception PortalException if an error occurs
      */
-    public static IUserLayoutManager immutableUserLayoutManager(IUserLayoutManager man) throws PortalException {
+    public IUserLayoutManager immutableUserLayoutManager(IUserLayoutManager man) throws PortalException {
         return new ImmutableUserLayoutManagerWrapper(man);
     }
 }
