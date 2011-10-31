@@ -175,7 +175,7 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
         });
         eventAggregatorStatus.setLastEnd(new Date());
         
-        logger.info("Aggregated {} events between {} and {}", new Object[] { events, lastAggregated, newestEventTime });
+        logger.debug("Aggregated {} events between {} and {}", new Object[] { events, lastAggregated, newestEventTime });
 
         //Store the results of the aggregation
         eventAggregationManagementDao.updateEventAggregatorStatus(eventAggregatorStatus);
@@ -212,7 +212,7 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
         //Purge events
         logger.debug("Starting purge of events before {}", purgeEnd);
         final int events = portalEventDao.deletePortalEventsBefore(purgeEnd);
-        logger.info("Purged {} events before {}", events, purgeEnd);
+        logger.debug("Purged {} events before {}", events, purgeEnd);
         
         //Update the status object and store it
         eventPurgerStatus.setLastEnd(new Date());

@@ -34,6 +34,6 @@ public class LoggingPortalEventAggregator implements IPortalEventAggregator<Port
     
     @Override
     public void aggregateEvent(PortalEvent e) {
-        logger.warn(e.toString());
+        logger.debug(e.toString());
     }
 }
