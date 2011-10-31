@@ -21,7 +21,7 @@
 
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 <c:set var="n"><portlet:namespace/></c:set>
-<portlet:actionURL var="queryUrl"/>
+<portlet:actionURL var="queryUrl" escapeXml="false"/>
 
 <!-- Portlet -->
 <div class="fl-widget portlet" role="section">
@@ -34,7 +34,7 @@
   <!-- Portlet Body -->
   <div class="fl-widget-content portlet-body" role="main">
 
-    <form:form modelAttribute="form" action="${queryUrl}" method="POST" htmlEscape="false">
+    <form:form modelAttribute="form" action="${queryUrl}" method="POST">
     
     <!-- Portlet Messages -->
     <spring:hasBindErrors name="form">
