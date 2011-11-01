@@ -104,7 +104,6 @@ public class TransientUserLayoutXMLEventReader extends InjectingXMLEventReader {
                         channelAttrs.add(EVENT_FACTORY.createAttribute("ID", subscribeId));
                         channelAttrs.add(EVENT_FACTORY.createAttribute("typeID", Integer.toString(chanDef.getType().getId())));
                         channelAttrs.add(EVENT_FACTORY.createAttribute("hidden", "false"));
-//                        channelAttrs.add(EVENT_FACTORY.createAttribute("editable", Boolean.toString(chanDef.isEditable())));
                         channelAttrs.add(EVENT_FACTORY.createAttribute("unremovable", "true"));
                         channelAttrs.add(EVENT_FACTORY.createAttribute("name", chanDef.getName()));
                         channelAttrs.add(EVENT_FACTORY.createAttribute("description", chanDef.getDescription()));
@@ -112,8 +111,7 @@ public class TransientUserLayoutXMLEventReader extends InjectingXMLEventReader {
                         channelAttrs.add(EVENT_FACTORY.createAttribute("chanID", chanDef.getPortletDefinitionId().getStringId()));
                         channelAttrs.add(EVENT_FACTORY.createAttribute("fname", chanDef.getFName()));
                         channelAttrs.add(EVENT_FACTORY.createAttribute("timeout", Integer.toString(chanDef.getTimeout())));
-//                        channelAttrs.add(EVENT_FACTORY.createAttribute("hasHelp", Boolean.toString(chanDef.hasHelp())));
-//                        channelAttrs.add(EVENT_FACTORY.createAttribute("hasAbout", Boolean.toString(chanDef.hasAbout())));
+                        channelAttrs.add(EVENT_FACTORY.createAttribute("transient", "true"));
 
                         final StartElement startChannel = EVENT_FACTORY.createStartElement(prefix, namespaceURI, IUserLayoutManager.CHANNEL, channelAttrs.iterator(), null);
                         transientEventBuffer.offer(startChannel);

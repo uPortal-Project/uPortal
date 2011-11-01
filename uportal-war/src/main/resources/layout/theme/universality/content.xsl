@@ -367,14 +367,21 @@
       </xsl:if>
       <xsl:if test="//focused"> <!-- Return from Focused. -->
         <xsl:variable name="portletReturnUrl">
-          <xsl:call-template name="portalUrl">
-            <xsl:with-param name="url">
-                <url:portal-url>
+          <xsl:choose>
+            <xsl:when test="@transient='true'">
+              <xsl:call-template name="portalUrl" />
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:call-template name="portalUrl">
+                <xsl:with-param name="url">
+                  <url:portal-url>
                     <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
                     <url:portlet-url state="NORMAL" copyCurrentRenderParameters="true" />
-                </url:portal-url>
-            </xsl:with-param>
-          </xsl:call-template>
+                  </url:portal-url>
+                </xsl:with-param>
+              </xsl:call-template>
+            </xsl:otherwise>
+          </xsl:choose>
         </xsl:variable>
         <a href="{$portletReturnUrl}" title="{upMsg:getMessage('return.to.dashboard.view', $USER_LANG)}" class="up-portlet-control return">
         	<xsl:if test="$USE_PORTLET_CONTROL_ICONS='true'">
