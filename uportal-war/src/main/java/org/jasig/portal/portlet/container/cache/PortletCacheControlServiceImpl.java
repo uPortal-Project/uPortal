@@ -349,13 +349,11 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
 			this.privateScopePortletRenderOutputCache.put(privateCacheElement);
 		}
 	}
-	/*
-	 * (non-Javadoc)
-	 * @see org.jasig.portal.portlet.container.cache.IPortletCacheControlService#cachePortletResourceOutput(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, byte[], java.lang.String, java.util.Map, javax.portlet.CacheControl)
-	 */
+
 	@Override
-	public void cachePortletResourceOutput(IPortletWindowId portletWindowId,
-			HttpServletRequest httpRequest, byte[] content, String contentType, Map<String, String[]> headers, CacheControl cacheControl) {
+    public void cachePortletResourceOutput(IPortletWindowId portletWindowId, HttpServletRequest httpRequest,
+            CachedPortletData cachedPortletData, CacheControl cacheControl) {
+	    
 		final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpRequest, portletWindowId);
         
         final IPortletEntityId entityId = portletWindow.getPortletEntityId();
@@ -363,23 +361,19 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
         final IPortletDefinitionId definitionId = entity.getPortletDefinitionId();	
 		
         final int expirationTime = cacheControl.getExpirationTime();
-		CachedPortletData newData = new CachedPortletData();
-		newData.setEtag(cacheControl.getETag());
-		newData.setByteData(content);
-		newData.setExpirationTimeSeconds(expirationTime);
-		newData.setTimeStored(new Date());
-		newData.setContentType(contentType);
-		newData.setHeaders(headers);
+        cachedPortletData.setEtag(cacheControl.getETag());
+        cachedPortletData.setExpirationTimeSeconds(expirationTime);
+        cachedPortletData.setTimeStored(new Date());
 		
 		if(cacheControl.isPublicScope()) {
-			newData.setCacheConfigurationMaxTTL(new Long(publicScopePortletResourceOutputCache.getCacheConfiguration().getTimeToLiveSeconds()).intValue());
+		    cachedPortletData.setCacheConfigurationMaxTTL(new Long(publicScopePortletResourceOutputCache.getCacheConfiguration().getTimeToLiveSeconds()).intValue());
 			Serializable publicCacheKey = generatePublicScopePortletDataCacheKey(definitionId, portletWindow.getRenderParameters(), portletWindow.getPublicRenderParameters());
-			Element publicCacheElement = constructCacheElement(publicCacheKey, newData, publicScopePortletResourceOutputCache.getCacheConfiguration(), cacheControl);
+			Element publicCacheElement = constructCacheElement(publicCacheKey, cachedPortletData, publicScopePortletResourceOutputCache.getCacheConfiguration(), cacheControl);
 			this.publicScopePortletResourceOutputCache.put(publicCacheElement);		
 		} else {
-			newData.setCacheConfigurationMaxTTL(new Long(privateScopePortletResourceOutputCache.getCacheConfiguration().getTimeToLiveSeconds()).intValue());
+		    cachedPortletData.setCacheConfigurationMaxTTL(new Long(privateScopePortletResourceOutputCache.getCacheConfiguration().getTimeToLiveSeconds()).intValue());
 			Serializable privateCacheKey = generatePrivateScopePortletDataCacheKey(httpRequest, portletWindowId, entityId, definitionId, portletWindow.getRenderParameters());
-			Element privateCacheElement = constructCacheElement(privateCacheKey, newData, privateScopePortletResourceOutputCache.getCacheConfiguration(), cacheControl);
+			Element privateCacheElement = constructCacheElement(privateCacheKey, cachedPortletData, privateScopePortletResourceOutputCache.getCacheConfiguration(), cacheControl);
 			this.privateScopePortletResourceOutputCache.put(privateCacheElement);
 		}
 	}

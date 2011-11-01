@@ -99,8 +99,8 @@ public class LimitedBufferStringWriter extends StringWriter {
 			super.write(str);
 		}
 	}
-	
-	/**
+
+    /**
 	 * Inspect the length of {@link #getBuffer()}.
 	 * If the newBytes argument plus the buffer length exceeds the threshold, return true.
 	 * 
