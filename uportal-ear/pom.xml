@@ -59,7 +59,7 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jasig.portal.portlets-overlay</groupId>
+            <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
             <artifactId>FunctionalTestsPortlet</artifactId>
             <version>${project.version}</version>
             <type>war</type>
@@ -206,7 +206,7 @@
                             <contextRoot>/email-preview</contextRoot>
                         </webModule>
                         <webModule>
-                            <groupId>org.jasig.portal.portlets-overlay</groupId>
+                            <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
                             <artifactId>FunctionalTestsPortlet</artifactId>
                             <bundleFileName>FunctionalTestsPortlet.war</bundleFileName>
                             <contextRoot>/FunctionalTestsPortlet</contextRoot>
