@@ -115,7 +115,7 @@
         <googleportlet.version>0.4</googleportlet.version>
         <MapPortlet.version>1.0.0-M1</MapPortlet.version>
         <NewsReaderPortlet.version>3.0.1-SNAPSHOT</NewsReaderPortlet.version>
-        <SimpleContentPortlet.version>1.0.1</SimpleContentPortlet.version>
+        <SimpleContentPortlet.version>1.0.2</SimpleContentPortlet.version>
         <WeatherPortlet.version>1.0.8</WeatherPortlet.version>
         <WebProxyPortlet.version>1.1.6</WebProxyPortlet.version>
 
@@ -173,7 +173,7 @@
         <pluto.version>2.1.0-M2</pluto.version>
         <portlet-api.version>2.0</portlet-api.version>
         <quartz.version>1.8.4</quartz.version>
-        <resource-server.version>1.0.22-SNAPSHOT</resource-server.version>
+        <resource-server.version>1.0.23</resource-server.version>
         <servlet-api.version>2.5</servlet-api.version>
         <slf4j.version>1.6.3</slf4j.version>
         <spring-framework.version>3.0.6.RELEASE</spring-framework.version>

@@ -20,7 +20,6 @@ package org.jasig.portal.portlet.rendering;
 
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
-
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -31,7 +30,7 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.portlet.CacheControl;
@@ -65,6 +64,8 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Tests for {@link PortletRendererImpl}.
@@ -385,7 +386,7 @@ public class PortletRendererImplTest {
 		portletRenderer.doServeResource(portletWindowId, request, response);
 		
 		verify(portletContainer, times(2)).doServeResource(isA(PortletWindow.class), isA(PortletHttpServletRequestWrapper.class), isA(PortletHttpServletResponseWrapper.class));
-		verify(portletCacheControlService, never()).cachePortletResourceOutput(isA(IPortletWindowId.class), isA(HttpServletRequest.class), isA(byte[].class), isA(String.class), isA(Map.class), isA(CacheControl.class));
+		verify(portletCacheControlService, never()).cachePortletResourceOutput(isA(IPortletWindowId.class), isA(HttpServletRequest.class), isA(CachedPortletData.class), isA(CacheControl.class));
 	}
 	
 	/**
@@ -416,7 +417,7 @@ public class PortletRendererImplTest {
 		
 		verify(portletContainer, times(1)).doServeResource(isA(PortletWindow.class), isA(PortletHttpServletRequestWrapper.class), isA(PortletHttpServletResponseWrapper.class));
 		
-		verify(portletCacheControlService, times(1)).cachePortletResourceOutput(isA(IPortletWindowId.class), isA(HttpServletRequest.class), isA(byte[].class), isA(String.class), isA(Map.class), isA(CacheControl.class));
+		verify(portletCacheControlService, times(1)).cachePortletResourceOutput(isA(IPortletWindowId.class), isA(HttpServletRequest.class), isA(CachedPortletData.class), isA(CacheControl.class));
 	}
 	
 	/**
@@ -450,7 +451,7 @@ public class PortletRendererImplTest {
 		
 		verify(portletContainer, times(1)).doServeResource(isA(PortletWindow.class), isA(PortletHttpServletRequestWrapper.class), isA(PortletHttpServletResponseWrapper.class));
 		
-		verify(portletCacheControlService, times(1)).cachePortletResourceOutput(isA(IPortletWindowId.class), isA(HttpServletRequest.class), isA(byte[].class), isA(String.class), isA(Map.class), isA(CacheControl.class));
+		verify(portletCacheControlService, times(1)).cachePortletResourceOutput(isA(IPortletWindowId.class), isA(HttpServletRequest.class), isA(CachedPortletData.class), isA(CacheControl.class));
 	}
 	
 	/**
@@ -684,9 +685,10 @@ public class PortletRendererImplTest {
 		CachedPortletData cachedPortletData = new CachedPortletData();
 		cachedPortletData.setContentType("application/json");
 		byte [] content = "{ \"hello\": \"world\" }".getBytes();
-		Map<String, String[]> headers = new HashMap<String, String[]>();
-		headers.put("header1", new String[] {"value1"});
-		headers.put("header2", new String[] {"value2", "value3"});
+		Map<String, List<Object>> headers = ImmutableMap.<String, List<Object>>of(
+		        "header1", Arrays.<Object>asList("value1"),
+		        "header2", Arrays.<Object>asList("value2", "value3"));
+		        
 		cachedPortletData.setHeaders(headers);
 		cachedPortletData.setByteData(content);
 		cachedPortletData.setExpirationTimeSeconds(cacheControl.getExpirationTime());

@@ -20,12 +20,12 @@
 package org.jasig.portal.portlet.rendering;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -53,8 +53,8 @@ import org.jasig.portal.events.IPortalEventFactory;
 import org.jasig.portal.portlet.OutputCapturingHttpServletResponseWrapper;
 import org.jasig.portal.portlet.PortletDispatchException;
 import org.jasig.portal.portlet.container.cache.CachedPortletData;
+import org.jasig.portal.portlet.container.cache.CachingPortletHttpServletResponseWrapper;
 import org.jasig.portal.portlet.container.cache.IPortletCacheControlService;
-import org.jasig.portal.portlet.container.cache.LimitedBufferOutputStream;
 import org.jasig.portal.portlet.container.cache.LimitedBufferStringWriter;
 import org.jasig.portal.portlet.container.cache.TeeServletOutputStream;
 import org.jasig.portal.portlet.container.cache.TeeWriter;
@@ -496,14 +496,13 @@ public class PortletRendererImpl implements IPortletRenderer {
     	// have to invoke PortletContainer#doServeResource
         CacheControl cacheControl = this.portletCacheControlService.getPortletResourceCacheControl(portletWindowId, httpServletRequest, httpServletResponse);
         // construct stream to capture output
-		LimitedBufferOutputStream captureStream = new LimitedBufferOutputStream(this.portletCacheControlService.getCacheSizeThreshold());
        
 	    final long start = System.currentTimeMillis();
 		try {
 			//Setup the request and response
 	        httpServletRequest = this.setupPortletRequest(httpServletRequest);
 	        // use overloaded setup to override the outputstream
-	        PortletHttpServletResponseWrapper responseWrapper = this.setupPortletResponse(httpServletResponse, captureStream, true);
+	        CachingPortletHttpServletResponseWrapper responseWrapper = this.setupCachingPortletResponse(httpServletResponse, this.portletCacheControlService.getCacheSizeThreshold());
 			this.portletContainer.doServeResource(portletWindow.getPlutoPortletWindow(), httpServletRequest, responseWrapper);
 			// check cacheControl AFTER portlet serveResource to see if the portlet said "useCachedContent"
 			boolean useCachedContent = cacheControl.useCachedContent();
@@ -523,13 +522,13 @@ public class PortletRendererImpl implements IPortletRenderer {
 	        	}
 	        	cachedPortletData.updateExpirationTime(cacheControl.getExpirationTime());
 	        	return doServeResourceCachedOutput(portletWindowId, httpServletRequest, responseWrapper, cachedPortletData, portletWindow);
-	        } else {
-	        	boolean shouldCache = this.portletCacheControlService.shouldOutputBeCached(cacheControl);
-	        	// put the captured content in the cache
-	        	if(shouldCache && !captureStream.isThresholdExceeded()) {
-	        		this.portletCacheControlService.cachePortletResourceOutput(portletWindowId, httpServletRequest, captureStream.getCapturedContent(), responseWrapper.getContentType(), responseWrapper.getCapturedHeaders(), cacheControl);
-	        	}
 	        }
+	        
+        	boolean shouldCache = this.portletCacheControlService.shouldOutputBeCached(cacheControl);
+        	// put the captured content in the cache
+        	if(shouldCache && !responseWrapper.isThresholdExceeded()) {
+        		this.portletCacheControlService.cachePortletResourceOutput(portletWindowId, httpServletRequest, responseWrapper.getCachedPortletData(), cacheControl);
+        	}
 		}
 		catch (PortletException pe) {
             throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing serveResource.", portletWindow, pe);
@@ -588,6 +587,7 @@ public class PortletRendererImpl implements IPortletRenderer {
 	protected long doServeResourceCachedOutput(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, CachedPortletData cachedPortletData, IPortletWindow portletWindow) {
 		long start = System.currentTimeMillis();
 		
+		//If there is an etag and it matches the IF_NONE_MATCH header return a 304
 		final String etag = cachedPortletData.getEtag();
 		if(StringUtils.isNotBlank(etag)) {
 			final String ifNoneMatch = httpServletRequest.getHeader(IF_NONE_MATCH);
@@ -602,6 +602,8 @@ public class PortletRendererImpl implements IPortletRenderer {
 				return executionTime;
 			}
 		}
+		
+		//If the cached portlet data is not expired and the last mod date is within the IF_MODIFIED_SINCE window return a 304 
 		if(!cachedPortletData.isExpired()) {
 			long ifModifiedSince = httpServletRequest.getDateHeader(IF_MODIFIED_SINCE);
 			if(cachedPortletData.getTimeStored().getTime() == ifModifiedSince) {
@@ -616,13 +618,56 @@ public class PortletRendererImpl implements IPortletRenderer {
 			}
 		}
 		
-		httpServletResponse.setContentType(cachedPortletData.getContentType());
-		Map<String, String[]> headers = cachedPortletData.getHeaders();
-		for(Entry<String, String[]> header: headers.entrySet()) {
+		//********* Browser does NOT have the content, replay the cached response *********//
+		
+		//If provided set the status code
+        final Integer sc = cachedPortletData.getStatus();
+        if (sc != null) {
+            final String sm = cachedPortletData.getStatusMessage();
+            
+            if (sm != null) {
+                httpServletResponse.setStatus(sc, sm);
+            }
+            else {
+                httpServletResponse.setStatus(sc);
+            }
+        }
+        
+        final String characterEncoding = cachedPortletData.getCharacterEncoding();
+        if (characterEncoding != null) {
+            httpServletResponse.setCharacterEncoding(characterEncoding);
+        }
+        
+        final Integer contentLength = cachedPortletData.getContentLength();
+        if (contentLength != null) {
+            //We could derive this from the cached data but lets try to faithfully replay the cached response
+            httpServletResponse.setContentLength(contentLength);
+        }
+        
+        final String contentType = cachedPortletData.getContentType();
+        if (contentType != null) {
+            httpServletResponse.setContentType(contentType);
+        }
+        
+        final Locale locale = cachedPortletData.getLocale();
+        if (locale != null) {
+            httpServletResponse.setLocale(locale);
+        }
+		
+		//Replay headers
+		httpServletResponse.setContentType(contentType);
+		for(Entry<String, List<Object>> header: cachedPortletData.getHeaders().entrySet()) {
 			final String headerName = header.getKey();
-			final String [] headerValues = header.getValue();
-			for(String value: headerValues) {
-				httpServletResponse.addHeader(headerName, value);
+			for(final Object value: header.getValue()) {
+			    if (value instanceof Long) {
+			        httpServletResponse.addDateHeader(headerName, (Long)value);
+			    }
+			    else if (value instanceof Integer) {
+                    httpServletResponse.addIntHeader(headerName, (Integer)value);
+                }
+			    else {
+			        httpServletResponse.addHeader(headerName, (String)value);
+			    }
 			}
 		}
 		
@@ -633,12 +678,28 @@ public class PortletRendererImpl implements IPortletRenderer {
 			httpServletResponse.setDateHeader("Last-Modified", cachedPortletData.getTimeStored().getTime());
 		}
 		
-		try {
-			ServletOutputStream servletOutputStream = httpServletResponse.getOutputStream();
-			servletOutputStream.write(cachedPortletData.getByteData());
-		} catch (IOException e) {
-			 throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while writing cached resource content.", portletWindow, e);
-		} 
+		//Replay content
+		final byte[] byteData = cachedPortletData.getByteData();
+		if (byteData != null) {
+    		try {
+    			ServletOutputStream servletOutputStream = httpServletResponse.getOutputStream();
+                servletOutputStream.write(byteData);
+    		} catch (IOException e) {
+    			 throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while writing cached resource content.", portletWindow, e);
+    		} 
+		}
+		else {
+    		final String stringData = cachedPortletData.getStringData();
+            if (stringData != null) {
+                try {
+                    final PrintWriter writer = httpServletResponse.getWriter();
+                    writer.append(stringData);
+                } catch (IOException e) {
+                     throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while writing cached resource content.", portletWindow, e);
+                } 
+            }
+		}
+    		
 		
 		final long executionTime = System.currentTimeMillis() - start;
         
@@ -717,9 +778,9 @@ public class PortletRendererImpl implements IPortletRenderer {
      * @return the wrapepd response.
      * @throws IOException 
      */
-    protected PortletHttpServletResponseWrapper setupPortletResponse(HttpServletResponse httpServletResponse, OutputStream toTee, boolean captureHeaders) throws IOException {
-    	TeeServletOutputStream teeServletOutputStream = new TeeServletOutputStream(httpServletResponse.getOutputStream(), toTee);
-        final PortletHttpServletResponseWrapper portletHttpServletResponseWrapper = new PortletHttpServletResponseWrapper(httpServletResponse, teeServletOutputStream, captureHeaders);
+    protected CachingPortletHttpServletResponseWrapper setupCachingPortletResponse(HttpServletResponse httpServletResponse, int cacheThresholdSize) throws IOException {
+        final CachingPortletHttpServletResponseWrapper portletHttpServletResponseWrapper = 
+                new CachingPortletHttpServletResponseWrapper(httpServletResponse, cacheThresholdSize);
         return portletHttpServletResponseWrapper;
     }
     

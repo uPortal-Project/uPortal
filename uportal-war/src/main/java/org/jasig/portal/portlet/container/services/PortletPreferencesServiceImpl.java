@@ -234,13 +234,15 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
         //Linked hash map used to add preferences in order loaded from the descriptor, definition and entity
         final LinkedHashMap<String, PortletPreference> preferencesMap = new LinkedHashMap<String, PortletPreference>();
         
+        final boolean configMode = IPortletRenderer.CONFIG.equals(portletWindow.getPortletMode());
+        
         //Add descriptor preferences
         final List<IPortletPreference> descriptorPreferencesList = this.getDescriptorPreferences(portletDescriptor);
-        this.addPreferencesToMap(descriptorPreferencesList, preferencesMap);
+        this.addPreferencesToMap(descriptorPreferencesList, preferencesMap, configMode);
         
         //Add definition preferences
         final List<IPortletPreference> definitionPreferencesList = portletDefinition.getPortletPreferences();
-        this.addPreferencesToMap(definitionPreferencesList, preferencesMap);
+        this.addPreferencesToMap(definitionPreferencesList, preferencesMap, configMode);
         
         return preferencesMap;
 	}
@@ -274,7 +276,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
             if (this.isLoadFromEntity(portletRequest)) {
                 //Add entity preferences
                 final List<IPortletPreference> entityPreferencesList = portletEntity.getPortletPreferences();
-                this.addPreferencesToMap(entityPreferencesList, preferencesMap);
+                this.addPreferencesToMap(entityPreferencesList, preferencesMap, false);
     
                 if (!this.isLoadFromMemory(portletRequest) && !this.isStoreInEntity(portletRequest) && this.isStoreInMemory(portletRequest)) {
                     store(plutoPortletWindow, portletRequest, preferencesMap);
@@ -284,7 +286,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
             if (this.isLoadFromMemory(portletRequest)) {
                 //Add memory preferences
                 final List<IPortletPreference> entityPreferencesList = this.getSessionPreferences(portletEntity.getPortletEntityId(), httpServletRequest);
-                this.addPreferencesToMap(entityPreferencesList, preferencesMap);
+                this.addPreferencesToMap(entityPreferencesList, preferencesMap, false);
             }
         }
 
@@ -323,7 +325,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
         
         //Add deploy preferences
         final List<IPortletPreference> descriptorPreferencesList = this.getDescriptorPreferences(portletDescriptor);
-        this.addPreferencesToMap(descriptorPreferencesList, basePreferences);
+        this.addPreferencesToMap(descriptorPreferencesList, basePreferences, configMode);
   
         final Lock prefLock;
         if (configMode) {
@@ -354,7 +356,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
             //Add definition preferences if not config mode
             if (!configMode) {
                 final List<IPortletPreference> definitionPreferencesList = portletDefinition.getPortletPreferences();
-                this.addPreferencesToMap(definitionPreferencesList, basePreferences);
+                this.addPreferencesToMap(definitionPreferencesList, basePreferences, false);
             }
 
             final List<IPortletPreference> preferencesList = new ArrayList<IPortletPreference>(newPreferences.size());
@@ -426,13 +428,17 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
     /**
      * Add all of the preferences in the List to the Map using the preference name as the key
      */
-    protected void addPreferencesToMap(List<IPortletPreference> preferencesList, Map<String, PortletPreference> preferencesMap) {
+    protected void addPreferencesToMap(List<IPortletPreference> preferencesList, Map<String, PortletPreference> preferencesMap, boolean disableReadOnly) {
         if (preferencesList == null) {
             return;
         }
 
-        for (final IPortletPreference definitionPreference : preferencesList) {
-            preferencesMap.put(definitionPreference.getName(), new PortletPreferenceImpl(definitionPreference));
+        for (final IPortletPreference preference : preferencesList) {
+            final PortletPreferenceImpl clonedPreference = new PortletPreferenceImpl(preference);
+            if (disableReadOnly) {
+                clonedPreference.setReadOnly(false);
+            }
+            preferencesMap.put(preference.getName(), clonedPreference);
         }
     }
     

@@ -33,6 +33,7 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
 import org.hibernate.PessimisticLockException;
+import org.hibernate.TransactionException;
 import org.jasig.portal.jpa.BaseJpaDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -152,12 +153,16 @@ public class JpaClusterLockDao extends BaseJpaDao implements IClusterLockDao {
             
             return true;
         }
+        catch (TransactionException e) {
+            this.logger.debug(mutex + " is already locked", e);
+            return false;
+        }
         catch (LockTimeoutException e) {
-            this.logger.debug("{} is already locked", mutex);
+            this.logger.debug(mutex + " is already locked", e);
             return false;
         }
         catch (PessimisticLockException e) {
-            this.logger.debug("{} is already locked", mutex);
+            this.logger.debug(mutex + " is already locked", e);
             return false;
         }
     }

@@ -21,7 +21,7 @@
 
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 <c:set var="n"><portlet:namespace/></c:set>
-<portlet:actionURL var="queryUrl"/>
+<portlet:actionURL var="queryUrl" escapeXml="false"/>
 
 <!-- Portlet -->
 <div class="fl-widget portlet" role="section">

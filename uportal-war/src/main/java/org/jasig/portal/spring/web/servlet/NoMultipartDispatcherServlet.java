@@ -17,23 +17,26 @@
  * under the License.
  */
 
-package org.jasig.portal.events.aggr;
+package org.jasig.portal.spring.web.servlet;
 
-import org.jasig.portal.events.PortalEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.servlet.DispatcherServlet;
 
 /**
+ * {@link DispatcherServlet} that will NEVER touch multipart request data. Needed in uPortal so that
+ * the multipart request is passed on to the portlet correctly
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-@Service
-public class LoggingPortalEventAggregator implements IPortalEventAggregator<PortalEvent> {
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
-    
+public class NoMultipartDispatcherServlet extends DispatcherServlet {
+    private static final long serialVersionUID = 1L;
+
     @Override
-    public void aggregateEvent(PortalEvent e) {
-        logger.debug(e.toString());
+    protected HttpServletRequest checkMultipart(HttpServletRequest request) throws MultipartException {
+        return request;
     }
+
 }
