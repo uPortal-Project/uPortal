@@ -115,6 +115,16 @@ public class JpaStylesheetUserPreferencesDao extends BaseJpaDao implements IStyl
         
         return stylesheetUserPreferences;
     }
+    
+    @Transactional
+    @Override
+    public IStylesheetUserPreferences createStylesheetUserPreferences(IStylesheetDescriptor stylesheetDescriptor, int userId, int profileId) {
+        final StylesheetUserPreferencesImpl stylesheetUserPreferences = new StylesheetUserPreferencesImpl(stylesheetDescriptor, userId, profileId);
+        
+        this.entityManager.persist(stylesheetUserPreferences);
+        
+        return stylesheetUserPreferences;
+    }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.layout.dao.IStylesheetUserPreferencesDao#getStylesheetUserPreferences()

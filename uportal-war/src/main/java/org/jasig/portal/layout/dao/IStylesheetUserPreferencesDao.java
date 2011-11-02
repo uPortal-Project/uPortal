@@ -35,6 +35,12 @@ import org.jasig.portal.security.IPerson;
 public interface IStylesheetUserPreferencesDao {
     public IStylesheetUserPreferences createStylesheetUserPreferences(IStylesheetDescriptor stylesheetDescriptor, IPerson person, IUserProfile profile);
     
+    /**
+     * @deprecated Use {@link #createStylesheetUserPreferences(IStylesheetDescriptor, IPerson, IUserProfile)}
+     */
+    @Deprecated
+    public IStylesheetUserPreferences createStylesheetUserPreferences(IStylesheetDescriptor stylesheetDescriptor, int userId, int profileId);
+    
     public List<? extends IStylesheetUserPreferences> getStylesheetUserPreferences();
     
     public IStylesheetUserPreferences getStylesheetUserPreferences(long id);
@@ -42,7 +48,7 @@ public interface IStylesheetUserPreferencesDao {
     public IStylesheetUserPreferences getStylesheetUserPreferences(IStylesheetDescriptor stylesheetDescriptor, IPerson person, IUserProfile profile);
     
     /**
-     * @deprecated Use {@link #getStylesheetUserPreferences(IStylesheetDescriptor, IPerson, IUserProfile)} for better future compatibility
+     * @deprecated Use {@link #getStylesheetUserPreferences(IStylesheetDescriptor, IPerson, IUserProfile)}
      */
     @Deprecated
     public IStylesheetUserPreferences getStylesheetUserPreferences(IStylesheetDescriptor stylesheetDescriptor, int personId, int profileId);
