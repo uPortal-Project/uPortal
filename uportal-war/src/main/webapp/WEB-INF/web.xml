@@ -306,7 +306,7 @@
     
     <servlet>
         <servlet-name>RenderingDispatcherServlet</servlet-name>
-        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <servlet-class>org.jasig.portal.spring.web.servlet.NoMultipartDispatcherServlet</servlet-class>
         <init-param>
             <param-name>contextConfigLocation</param-name>
             <param-value>classpath:properties/contexts/servlet/renderingServletContext.xml</param-value>
@@ -316,7 +316,7 @@
         
     <servlet>
         <servlet-name>JsonRenderingDispatcherServlet</servlet-name>
-        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <servlet-class>org.jasig.portal.spring.web.servlet.NoMultipartDispatcherServlet</servlet-class>
         <init-param>
             <param-name>contextConfigLocation</param-name>
             <param-value>classpath:properties/contexts/servlet/jsonRenderingServletContext.xml</param-value>
