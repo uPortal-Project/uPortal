@@ -23,8 +23,10 @@ package org.jasig.portal.portlet.container.cache;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.portlet.CacheControl;
@@ -39,19 +41,24 @@ import org.apache.commons.lang.time.DateUtils;
  * @version $Id$
  */
 public class CachedPortletData implements Serializable {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 5509299103587289000L;
 
 	private String etag;
 	private Date timeStored;
 	private int expirationTimeSeconds;
+	private int cacheConfigurationMaxTTL;
+	
 	private byte[] byteData;
 	private String stringData;
+	
+	private Integer status;
+	private String statusMessage;
 	private String contentType;
-	private Map<String, String[]> headers = Collections.emptyMap();
+    private String charset;
+    private Integer contentLength;
+    private Locale locale;
+	private Map<String, List<Object>> headers = new LinkedHashMap<String, List<Object>>();
+
 	
 	/**
 	 * @return
@@ -121,18 +128,106 @@ public class CachedPortletData implements Serializable {
 		this.contentType = contentType;
 	}
 	/**
-	 * @return the headers
+     * @return the charset
+     */
+    public String getCharacterEncoding() {
+        return charset;
+    }
+    /**
+     * @param charset the charset to set
+     */
+    public void setCharacterEncoding(String charset) {
+        this.charset = charset;
+    }
+    /**
+     * @return the contentLength
+     */
+    public Integer getContentLength() {
+        return contentLength;
+    }
+    /**
+     * @param contentLength the contentLength to set
+     */
+    public void setContentLength(Integer contentLength) {
+        this.contentLength = contentLength;
+    }
+    /**
+     * @return the locale
+     */
+    public Locale getLocale() {
+        return locale;
+    }
+    /**
+     * @param locale the locale to set
+     */
+    public void setLocale(Locale locale) {
+        this.locale = locale;
+    }
+    /**
+     * @return the headers
+     */
+    public Map<String, List<Object>> getHeaders() {
+        return headers;
+    }
+    /**
+     * @param headers the headers to set
+     */
+    public void setHeaders(Map<String, List<Object>> headers) {
+        this.headers = headers;
+    }
+    /**
+     * @return the status
+     */
+    public Integer getStatus() {
+        return status;
+    }
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+    /**
+     * @return the statusMessage
+     */
+    public String getStatusMessage() {
+        return statusMessage;
+    }
+    /**
+     * @param statusMessage the statusMessage to set
+     */
+    public void setStatusMessage(String statusMessage) {
+        this.statusMessage = statusMessage;
+    }
+    /**
+	 * @return the cacheConfigurationMaxTTL
 	 */
-	public Map<String, String[]> getHeaders() {
-		return headers;
+	public int getCacheConfigurationMaxTTL() {
+		return cacheConfigurationMaxTTL;
 	}
 	/**
-	 * @param headers the headers to set
+	 * @param cacheConfigurationMaxTTL the cacheConfigurationMaxTTL to set
 	 */
-	public void setHeaders(Map<String, String[]> headers) {
-		this.headers = headers;
+	public void setCacheConfigurationMaxTTL(int cacheConfigurationMaxTTL) {
+		this.cacheConfigurationMaxTTL = cacheConfigurationMaxTTL;
 	}
-	
+	/**
+	 * Mutator method to allow the Portlet renderer to update the expiration time
+	 * for CachedPortletData instances that are expired.
+	 * 
+	 * Uses the min value of the argument and the {@link #getCacheConfigurationMaxTTL()}
+	 * values to update this fields timeStored.
+	 * 
+	 * Note: This method is synchronized, as multiple threads may be interacting with the same 
+	 * CachedPortletData instance concurrently.
+	 * 
+	 * the same portlet
+	 * @param requestedExpirationTimeSeconds
+	 */
+	public synchronized void updateExpirationTime(int requestedExpirationTimeSeconds) { 
+		this.expirationTimeSeconds = Math.min(requestedExpirationTimeSeconds, getCacheConfigurationMaxTTL());
+		this.timeStored = new Date();
+	}
 	/**
 	 * 
 	 * @return true if the {@link #getTimeStored()} is before the current time less expirationTimeSeconds, or if {@link CacheControl#getExpirationTime()} == 0

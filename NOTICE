@@ -144,6 +144,7 @@ This project includes:
   uPortal Search API under Apache License Version 2.0
   uPortal WAR under Apache License Version 2.0
   Woodstox under The Apache Software License, Version 2.0
+  Xml Compatibility extensions for Jackson under The Apache Software License, Version 2.0 or GNU Lesser General Public License (LGPL), Version 2.1
   XML Pull Parsing API under Public Domain
   XMLUnit for Java under BSD License
   XStream Core under BSD style

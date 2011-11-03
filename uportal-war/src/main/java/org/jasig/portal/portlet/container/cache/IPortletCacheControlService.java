@@ -21,8 +21,6 @@
  */
 package org.jasig.portal.portlet.container.cache;
 
-import java.util.Map;
-
 import javax.portlet.CacheControl;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -99,6 +97,7 @@ public interface IPortletCacheControlService {
 	 * @param cacheControl
 	 */
 	void cachePortletRenderOutput(IPortletWindowId portletWindowId, HttpServletRequest httpRequest, String content, CacheControl cacheControl);
+	
 	/**
 	 * Store the output of a resource request in the cache for the portlet and request. This method internally will determine
 	 * if the content needs to be stored in a public or private scoped cache.
@@ -109,7 +108,7 @@ public interface IPortletCacheControlService {
 	 * @param contentType
 	 * @param cacheControl
 	 */
-	void cachePortletResourceOutput(IPortletWindowId portletWindowId, HttpServletRequest httpRequest, byte [] content, String contentType, Map<String, String[]> headers, CacheControl cacheControl);
+	void cachePortletResourceOutput(IPortletWindowId portletWindowId, HttpServletRequest httpRequest, CachedPortletData cachedPortletData, CacheControl cacheControl);
 	
 	/**
 	 * Purge any {@link CachedPortletData} for the portlet.

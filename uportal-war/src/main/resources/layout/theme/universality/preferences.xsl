@@ -407,7 +407,7 @@
     <div id="ajaxMenus" style="display:none;">
         <!-- Add Channel Menu -->
         <div class="focused-content-dialog"
-            title="upMsg:getMessage('add.content', $USER_LANG)">
+            title="{upMsg:getMessage('add.content', $USER_LANG)}">
             <form>
                 <fieldset>
                     <legend>

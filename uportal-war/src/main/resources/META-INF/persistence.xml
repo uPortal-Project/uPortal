@@ -28,9 +28,15 @@
             <property name="hibernate.archive.autodetection" value="" />
         </properties>
     </persistence-unit>
-    <persistence-unit name="uPortalStatsPersistence" transaction-type="RESOURCE_LOCAL">
+    <persistence-unit name="uPortalRawEventsPersistence" transaction-type="RESOURCE_LOCAL">
         <properties>
-            <property name="hibernate.ejb.cfgfile" value="/properties/db/stats/hibernate.cfg.xml" />
+            <property name="hibernate.ejb.cfgfile" value="/properties/db/hibernate-raw-events.cfg.xml" />
+            <property name="hibernate.archive.autodetection" value="" />
+        </properties>
+    </persistence-unit>
+    <persistence-unit name="uPortalAggrEventsPersistence" transaction-type="RESOURCE_LOCAL">
+        <properties>
+            <property name="hibernate.ejb.cfgfile" value="/properties/db/hibernate-aggr-events.cfg.xml" />
             <property name="hibernate.archive.autodetection" value="" />
         </properties>
     </persistence-unit>

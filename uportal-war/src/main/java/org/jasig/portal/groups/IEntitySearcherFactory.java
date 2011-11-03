@@ -25,8 +25,8 @@ package org.jasig.portal.groups;
  * @version $Revision$
  */
 public interface IEntitySearcherFactory {
-/**
- * 
- */
-public IEntitySearcher newEntitySearcher() throws GroupsException;
+    /**
+     * 
+     */
+    public IEntitySearcher newEntitySearcher() throws GroupsException;
 }

@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jasig.portal</groupId>
         <artifactId>uportal-parent</artifactId>
-        <version>4.0.2-SNAPSHOT</version>
+        <version>4.0.3-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -14,7 +14,7 @@
     <name>uPortal WAR</name>
     <description>The uPortal web application.</description>
     
-    <dependencies>
+    <dependencies>    
         <!-- ***** Portal JDBC Driver *****
          | The groupId, artifactId and version are configured in the root POM.
          +-->
@@ -648,76 +648,34 @@
                 <groupId>org.jasig.resourceserver</groupId>
                 <artifactId>resource-server-plugin</artifactId>
                 <version>${resource-server.version}</version>
-                <configuration>
-                </configuration>
                 <executions>
                     <execution>
-                        <id>aggregate-universality-uportal3-skin</id>
+                        <id>aggregate-universality-skins</id>
                         <phase>prepare-package</phase>
                         <goals>
-                            <goal>aggregate</goal>
+                            <goal>batch-aggregate</goal>
                         </goals>
                         <inherited>false</inherited>
                         <configuration>
                             <displayJsWarnings>false</displayJsWarnings>
-                            <skinConfigurationFile>src/main/webapp/media/skins/universality/uportal3/skin.xml</skinConfigurationFile>
-                            <skinOutputDirectory>media/skins/universality/uportal3/</skinOutputDirectory>
+                            <includes>
+                                <include>media/skins/universality/**/skin.xml</include>
+                            </includes>
                             <sharedJavaScriptDirectory>media/skins/universality/common/javascript</sharedJavaScriptDirectory>
                         </configuration>
                     </execution>
                     <execution>
-                        <id>aggregate-universality-ivy-skin</id>
+                        <id>aggregate-muniversality-skins</id>
                         <phase>prepare-package</phase>
                         <goals>
-                            <goal>aggregate</goal>
+                            <goal>batch-aggregate</goal>
                         </goals>
                         <inherited>false</inherited>
                         <configuration>
                             <displayJsWarnings>false</displayJsWarnings>
-                            <skinConfigurationFile>src/main/webapp/media/skins/universality/ivy/skin.xml</skinConfigurationFile>
-                            <skinOutputDirectory>media/skins/universality/ivy/</skinOutputDirectory>
-                            <sharedJavaScriptDirectory>media/skins/universality/common/javascript</sharedJavaScriptDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>aggregate-universality-hc-skin</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>aggregate</goal>
-                        </goals>
-                        <inherited>false</inherited>
-                        <configuration>
-                            <displayJsWarnings>false</displayJsWarnings>
-                            <skinConfigurationFile>src/main/webapp/media/skins/universality/hc/skin.xml</skinConfigurationFile>
-                            <skinOutputDirectory>media/skins/universality/hc/</skinOutputDirectory>
-                            <sharedJavaScriptDirectory>media/skins/universality/common/javascript</sharedJavaScriptDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>aggregate-universality-coal-skin</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>aggregate</goal>
-                        </goals>
-                        <inherited>false</inherited>
-                        <configuration>
-                            <displayJsWarnings>false</displayJsWarnings>
-                            <skinConfigurationFile>src/main/webapp/media/skins/universality/coal/skin.xml</skinConfigurationFile>
-                            <skinOutputDirectory>media/skins/universality/coal/</skinOutputDirectory>
-                            <sharedJavaScriptDirectory>media/skins/universality/common/javascript</sharedJavaScriptDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>aggregate-iphone-skin</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>aggregate</goal>
-                        </goals>
-                        <inherited>false</inherited>
-                        <configuration>
-                            <displayJsWarnings>false</displayJsWarnings>
-                            <skinConfigurationFile>src/main/webapp/media/skins/muniversality/iphone/skin.xml</skinConfigurationFile>
-                            <skinOutputDirectory>media/skins/muniversality/iphone/</skinOutputDirectory>
+                            <includes>
+                                <include>media/skins/muniversality/**/skin.xml</include>
+                            </includes>
                             <sharedJavaScriptDirectory>media/skins/muniversality/common/javascript</sharedJavaScriptDirectory>
                         </configuration>
                     </execution>

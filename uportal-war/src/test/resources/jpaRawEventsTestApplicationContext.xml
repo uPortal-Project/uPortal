@@ -37,8 +37,8 @@
         <property name="location" value="classpath:/dataSource.properties" />
     </bean>
 
-    <bean id="StatsDB" class="org.springframework.jdbc.datasource.SingleConnectionDataSource">
-        <qualifier value="StatsDB" />
+    <bean id="RawEventsDB" class="org.springframework.jdbc.datasource.SingleConnectionDataSource">
+        <qualifier value="RawEventsDB" />
         <property name="driverClassName" value="${hibernate.connection.driver_class}" />
         <property name="url" value="${hibernate.connection.url}" />
         <property name="username" value="${hibernate.connection.username}" />
@@ -48,20 +48,9 @@
     </bean>
     
     <bean id="statsEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-        <property name="dataSource" ref="StatsDB" />
+        <property name="dataSource" ref="RawEventsDB" />
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
-        <property name="persistenceUnitName" value="uPortalStatsPersistence" />
-        <property name="jpaProperties">
-            <props>
-                <prop key="hibernate.cache.use_query_cache">false</prop>
-                <prop key="hibernate.cache.use_second_level_cache">false</prop>
-                <!-- Uncomment for testing with a cache
-                <prop key="hibernate.cache.provider_class">org.hibernate.cache.HashtableCacheProvider</prop>
-                <prop key="hibernate.cache.use_query_cache">true</prop>
-                <prop key="hibernate.cache.use_second_level_cache">true</prop>
-                -->
-            </props>
-        </property>
+        <property name="persistenceUnitName" value="uPortalRawEventsPersistence" />
     </bean>
 
     <bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
@@ -72,8 +61,8 @@
         <property name="entityManagerFactory" ref="statsEntityManagerFactory" />
     </bean>
 
-    <bean id="statsTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <qualifier value="stats"/>
+    <bean id="rawEventsTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <qualifier value="rawStats"/>
         <property name="entityManagerFactory" ref="statsEntityManagerFactory" />
     </bean>
     

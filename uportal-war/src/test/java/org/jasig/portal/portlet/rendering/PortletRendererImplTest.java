@@ -20,7 +20,6 @@ package org.jasig.portal.portlet.rendering;
 
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
-
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -31,7 +30,7 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.portlet.CacheControl;
@@ -65,6 +64,8 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Tests for {@link PortletRendererImpl}.
@@ -307,7 +308,8 @@ public class PortletRendererImplTest {
 		StringWriter writer = new StringWriter();
 		portletRenderer.doRenderMarkup(portletWindowId, request, response, writer);
 		Assert.assertEquals("<p>Some content</p>", writer.toString());
-		
+		// verify the expiration time has been updated
+		Assert.assertNotSame(expiredTime, cachedPortletData.getTimeStored());
 		// context is expired, triggers doRender
 		verify(portletContainer, times(1)).doRender(isA(PortletWindow.class), isA(PortletHttpServletRequestWrapper.class), isA(PortletHttpServletResponseWrapper.class));
 		// verify we never enter the other branch of the "should render cached output" if statement
@@ -384,7 +386,7 @@ public class PortletRendererImplTest {
 		portletRenderer.doServeResource(portletWindowId, request, response);
 		
 		verify(portletContainer, times(2)).doServeResource(isA(PortletWindow.class), isA(PortletHttpServletRequestWrapper.class), isA(PortletHttpServletResponseWrapper.class));
-		verify(portletCacheControlService, never()).cachePortletResourceOutput(isA(IPortletWindowId.class), isA(HttpServletRequest.class), isA(byte[].class), isA(String.class), isA(Map.class), isA(CacheControl.class));
+		verify(portletCacheControlService, never()).cachePortletResourceOutput(isA(IPortletWindowId.class), isA(HttpServletRequest.class), isA(CachedPortletData.class), isA(CacheControl.class));
 	}
 	
 	/**
@@ -415,7 +417,7 @@ public class PortletRendererImplTest {
 		
 		verify(portletContainer, times(1)).doServeResource(isA(PortletWindow.class), isA(PortletHttpServletRequestWrapper.class), isA(PortletHttpServletResponseWrapper.class));
 		
-		verify(portletCacheControlService, times(1)).cachePortletResourceOutput(isA(IPortletWindowId.class), isA(HttpServletRequest.class), isA(byte[].class), isA(String.class), isA(Map.class), isA(CacheControl.class));
+		verify(portletCacheControlService, times(1)).cachePortletResourceOutput(isA(IPortletWindowId.class), isA(HttpServletRequest.class), isA(CachedPortletData.class), isA(CacheControl.class));
 	}
 	
 	/**
@@ -449,7 +451,7 @@ public class PortletRendererImplTest {
 		
 		verify(portletContainer, times(1)).doServeResource(isA(PortletWindow.class), isA(PortletHttpServletRequestWrapper.class), isA(PortletHttpServletResponseWrapper.class));
 		
-		verify(portletCacheControlService, times(1)).cachePortletResourceOutput(isA(IPortletWindowId.class), isA(HttpServletRequest.class), isA(byte[].class), isA(String.class), isA(Map.class), isA(CacheControl.class));
+		verify(portletCacheControlService, times(1)).cachePortletResourceOutput(isA(IPortletWindowId.class), isA(HttpServletRequest.class), isA(CachedPortletData.class), isA(CacheControl.class));
 	}
 	
 	/**
@@ -493,6 +495,179 @@ public class PortletRendererImplTest {
 	}
 	
 	/**
+	 * Mimic workflow when cached portlet data using "validation" method is available.
+	 * 
+	 * @throws PortletContainerException 
+	 * @throws IOException 
+	 * @throws PortletException 
+	 */
+	@Test
+	public void doServeResourceCachedContentValidationMethodTest() throws PortletException, IOException, PortletContainerException {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		MockHttpServletResponse response = new MockHttpServletResponse();
+		Date now = new Date();
+		CacheControlImpl cacheControl = new CacheControlImpl();
+		cacheControl.setUseCachedContent(true);
+		cacheControl.setExpirationTime(300);
+		cacheControl.setETag("123456");
+		CachedPortletData cachedPortletData = new CachedPortletData();
+		cachedPortletData.setContentType("application/json");
+		byte [] content = "{ \"hello\": \"world\" }".getBytes();
+		cachedPortletData.setByteData(content);
+		cachedPortletData.setExpirationTimeSeconds(cacheControl.getExpirationTime());
+		cachedPortletData.setEtag("123456");
+		cachedPortletData.setTimeStored(now);
+		
+		setupPortletExecutionMocks(request);
+		
+		when(portletCacheControlService.getPortletResourceCacheControl(portletWindowId, request, response)).thenReturn(cacheControl);
+		when(portletCacheControlService.getCachedPortletResourceOutput(portletWindowId, request)).thenReturn(cachedPortletData);
+		
+		portletRenderer.doServeResource(portletWindowId, request, response);
+		// verify content matches what was in cache (no array support in Assert.assertEquals, check byte for byte)
+		byte [] fromResponse = response.getContentAsByteArray();
+		Assert.assertEquals(content.length, fromResponse.length);
+		for(int i = 0; i < content.length; i++) {
+			Assert.assertEquals(content[i], fromResponse[i]);
+		}
+		Assert.assertEquals(200, response.getStatus());
+		// verify we enter the first branch and never execute portletContainer#doServeResource
+		verify(portletContainer, never()).doServeResource(isA(PortletWindow.class), isA(PortletHttpServletRequestWrapper.class), isA(PortletHttpServletResponseWrapper.class));
+		// verify we never enter the other branch of the "should render cached output" if statement
+		verify(portletCacheControlService, never()).shouldOutputBeCached(isA(CacheControl.class));
+	}
+	
+	/**
+	 * Same as {@link #doServeResourceCachedContentValidationMethodTest()}, but simulate browser
+	 * sending If-None-Match header that matches the etag. Verify no content returned and a 304 status code.
+	 * 
+	 * @throws PortletException
+	 * @throws IOException
+	 * @throws PortletContainerException
+	 */
+	@Test
+	public void doServeResourceCachedContentValidationMethodNotModifiedTest() throws PortletException, IOException, PortletContainerException {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.addHeader("If-None-Match", "123456");
+		MockHttpServletResponse response = new MockHttpServletResponse();
+		Date now = new Date();
+		CacheControlImpl cacheControl = new CacheControlImpl();
+		cacheControl.setUseCachedContent(true);
+		cacheControl.setExpirationTime(300);
+		cacheControl.setETag("123456");
+		CachedPortletData cachedPortletData = new CachedPortletData();
+		cachedPortletData.setContentType("application/json");
+		byte [] content = "{ \"hello\": \"world\" }".getBytes();
+		cachedPortletData.setByteData(content);
+		cachedPortletData.setExpirationTimeSeconds(cacheControl.getExpirationTime());
+		cachedPortletData.setEtag("123456");
+		cachedPortletData.setTimeStored(now);
+		
+		setupPortletExecutionMocks(request);
+		
+		when(portletCacheControlService.getPortletResourceCacheControl(portletWindowId, request, response)).thenReturn(cacheControl);
+		when(portletCacheControlService.getCachedPortletResourceOutput(portletWindowId, request)).thenReturn(cachedPortletData);
+		
+		portletRenderer.doServeResource(portletWindowId, request, response);
+		//byte [] fromResponse = response.getContentAsByteArray();
+		
+		Assert.assertEquals(0, response.getContentLength());
+		Assert.assertEquals(304, response.getStatus());
+		// verify we enter the first branch and never execute portletContainer#doServeResource
+		verify(portletContainer, never()).doServeResource(isA(PortletWindow.class), isA(PortletHttpServletRequestWrapper.class), isA(PortletHttpServletResponseWrapper.class));
+		// verify we never enter the other branch of the "should render cached output" if statement
+		verify(portletCacheControlService, never()).shouldOutputBeCached(isA(CacheControl.class));
+	}
+	
+	/**
+	 * Same as {@link #doServeResourceCachedContentValidationMethodTest()}, but simulate browser
+	 * sending If-None-Match header with mismatched etag. Response is 200 with content and new etag
+	 * 
+	 * @throws PortletException
+	 * @throws IOException
+	 * @throws PortletContainerException
+	 */
+	@Test
+	public void doServeResourceCachedContentValidationMethodIfNoneMatchInvalidTest() throws PortletException, IOException, PortletContainerException {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.addHeader("If-None-Match", "123456");
+		MockHttpServletResponse response = new MockHttpServletResponse();
+		Date now = new Date();
+		CacheControlImpl cacheControl = new CacheControlImpl();
+		cacheControl.setUseCachedContent(true);
+		cacheControl.setExpirationTime(300);
+		cacheControl.setETag("123457");
+		CachedPortletData cachedPortletData = new CachedPortletData();
+		cachedPortletData.setContentType("application/json");
+		byte [] content = "{ \"hello\": \"world\" }".getBytes();
+		cachedPortletData.setByteData(content);
+		cachedPortletData.setExpirationTimeSeconds(cacheControl.getExpirationTime());
+		cachedPortletData.setEtag("123457");
+		cachedPortletData.setTimeStored(now);
+		
+		setupPortletExecutionMocks(request);
+		
+		when(portletCacheControlService.getPortletResourceCacheControl(portletWindowId, request, response)).thenReturn(cacheControl);
+		when(portletCacheControlService.getCachedPortletResourceOutput(portletWindowId, request)).thenReturn(cachedPortletData);
+		
+		portletRenderer.doServeResource(portletWindowId, request, response);
+		// verify content matches what was in cache (no array support in Assert.assertEquals, check byte for byte)
+		byte [] fromResponse = response.getContentAsByteArray();
+		Assert.assertEquals(content.length, fromResponse.length);
+		for(int i = 0; i < content.length; i++) {
+			Assert.assertEquals(content[i], fromResponse[i]);
+		}
+		Assert.assertEquals(200, response.getStatus());
+		Assert.assertEquals("123457", response.getHeader("ETag"));
+		// verify we enter the first branch and never execute portletContainer#doServeResource
+		verify(portletContainer, never()).doServeResource(isA(PortletWindow.class), isA(PortletHttpServletRequestWrapper.class), isA(PortletHttpServletResponseWrapper.class));
+		// verify we never enter the other branch of the "should render cached output" if statement
+		verify(portletCacheControlService, never()).shouldOutputBeCached(isA(CacheControl.class));
+	}
+	
+	/**
+	 * Same as {@link #doServeResourceCachedContentValidationMethodNotModifiedTest()}, however the CachedPortletData
+	 * is older than it's expiration time. Verify the renderer still detects the etag and returns 304 not modified.
+	 * 
+	 * @throws PortletException
+	 * @throws IOException
+	 * @throws PortletContainerException
+	 */
+	@Test
+	public void doServeResourceCachedContentValidationMethodNotModifiedInternalCacheExpiredTest() throws PortletException, IOException, PortletContainerException {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.addHeader("If-None-Match", "123456");
+		MockHttpServletResponse response = new MockHttpServletResponse();
+		Date now = new Date();
+		CacheControlImpl cacheControl = new CacheControlImpl();
+		cacheControl.setUseCachedContent(true);
+		cacheControl.setExpirationTime(300);
+		cacheControl.setETag("123456");
+		CachedPortletData cachedPortletData = new CachedPortletData();
+		cachedPortletData.setContentType("application/json");
+		byte [] content = "{ \"hello\": \"world\" }".getBytes();
+		cachedPortletData.setByteData(content);
+		cachedPortletData.setExpirationTimeSeconds(cacheControl.getExpirationTime());
+		cachedPortletData.setEtag("123456");
+		// set Time stored to a value prior to the expiration time
+		cachedPortletData.setTimeStored(DateUtils.addSeconds(now, -310));
+		
+		setupPortletExecutionMocks(request);
+		
+		when(portletCacheControlService.getPortletResourceCacheControl(portletWindowId, request, response)).thenReturn(cacheControl);
+		when(portletCacheControlService.getCachedPortletResourceOutput(portletWindowId, request)).thenReturn(cachedPortletData);
+		
+		portletRenderer.doServeResource(portletWindowId, request, response);
+		
+		Assert.assertEquals(0, response.getContentLength());
+		Assert.assertEquals(304, response.getStatus());
+		// since the cached content is expired, a doServeResource is going to be invoked
+		verify(portletContainer, times(1)).doServeResource(isA(PortletWindow.class), isA(PortletHttpServletRequestWrapper.class), isA(PortletHttpServletResponseWrapper.class));
+		// portlet said we should useCachedContent, so don't expect an attempt to "cache output"
+		verify(portletCacheControlService, never()).shouldOutputBeCached(isA(CacheControl.class));
+	}
+	
+	/**
 	 * Verify headers stored in cache are replayed on the response for cached doServeResource content.
 	 * 
 	 * @throws PortletContainerException 
@@ -510,9 +685,10 @@ public class PortletRendererImplTest {
 		CachedPortletData cachedPortletData = new CachedPortletData();
 		cachedPortletData.setContentType("application/json");
 		byte [] content = "{ \"hello\": \"world\" }".getBytes();
-		Map<String, String[]> headers = new HashMap<String, String[]>();
-		headers.put("header1", new String[] {"value1"});
-		headers.put("header2", new String[] {"value2", "value3"});
+		Map<String, List<Object>> headers = ImmutableMap.<String, List<Object>>of(
+		        "header1", Arrays.<Object>asList("value1"),
+		        "header2", Arrays.<Object>asList("value2", "value3"));
+		        
 		cachedPortletData.setHeaders(headers);
 		cachedPortletData.setByteData(content);
 		cachedPortletData.setExpirationTimeSeconds(cacheControl.getExpirationTime());

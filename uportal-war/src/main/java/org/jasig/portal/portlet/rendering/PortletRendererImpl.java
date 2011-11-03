@@ -20,12 +20,12 @@
 package org.jasig.portal.portlet.rendering;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -53,8 +53,8 @@ import org.jasig.portal.events.IPortalEventFactory;
 import org.jasig.portal.portlet.OutputCapturingHttpServletResponseWrapper;
 import org.jasig.portal.portlet.PortletDispatchException;
 import org.jasig.portal.portlet.container.cache.CachedPortletData;
+import org.jasig.portal.portlet.container.cache.CachingPortletHttpServletResponseWrapper;
 import org.jasig.portal.portlet.container.cache.IPortletCacheControlService;
-import org.jasig.portal.portlet.container.cache.LimitedBufferOutputStream;
 import org.jasig.portal.portlet.container.cache.LimitedBufferStringWriter;
 import org.jasig.portal.portlet.container.cache.TeeServletOutputStream;
 import org.jasig.portal.portlet.container.cache.TeeWriter;
@@ -87,7 +87,11 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class PortletRendererImpl implements IPortletRenderer {
-    protected final Log logger = LogFactory.getLog(this.getClass());
+    private static final String IF_MODIFIED_SINCE = "If-Modified-Since";
+
+	private static final String IF_NONE_MATCH = "If-None-Match";
+
+	protected final Log logger = LogFactory.getLog(this.getClass());
     
     protected static final String PORTLET_OUTPUT_CACHE_NAME = PortletRendererImpl.class.getName() + ".portletOutputCache";
     protected static final String PUBLIC_SCOPE_PORTLET_OUTPUT_CACHE_NAME = PortletRendererImpl.class.getName() + ".publicScopePortletOutputCache";
@@ -271,30 +275,27 @@ public class PortletRendererImpl implements IPortletRenderer {
     	// have to invoke PortletContainer#doRender
     	
     	// check cacheControl AFTER portlet render to see if the portlet said "useCachedContent"
-        CacheControl cacheControl = this.portletCacheControlService.getPortletRenderCacheControl(portletWindowId, httpServletRequest);
-        
+        CacheControl cacheControl = this.portletCacheControlService.getPortletRenderCacheControl(portletWindowId, httpServletRequest);   
         // alter writer argument to capture output
         LimitedBufferStringWriter captureWriter = new LimitedBufferStringWriter(this.portletCacheControlService.getCacheSizeThreshold());
         TeeWriter teeWriter = new TeeWriter(writer, captureWriter);
-        // invoke doRenderMarkupInternal
         PortletRenderResult result = doRenderMarkupInternal(portletWindowId, httpServletRequest, httpServletResponse, teeWriter);
         
         boolean useCachedContent = cacheControl.useCachedContent();
-        boolean cachedPortletDataNotNull = cachedPortletData != null;
-        // we actually don't care if the content is expired at this point, the two prior fields will tell us if the portlet wants us to replay cached content
-        if (logger.isDebugEnabled()) {
-        	logger.debug(portletWindowId + " useCachedContent=" + useCachedContent + ", cachedPortletDataNotNull=" + cachedPortletDataNotNull);
-        }
-        if (useCachedContent && cachedPortletDataNotNull) {
-    		return doRenderMarkupReplayCachedContent(portletWindowId, httpServletRequest, writer, cachedPortletData);
-        }
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
+		if(useCachedContent && cachedPortletData == null) {
+			throw new PortletDispatchException("The portlet window '"+ portletWindow + "' indicated via CacheControl#useCachedContent that the portal should render cached content, however there is no cached content to return. This is a portlet bug.", portletWindow);
+		}
         
-    	boolean shouldCache = this.portletCacheControlService.shouldOutputBeCached(cacheControl);
-    	// put the captured content in the cache
-    	if(shouldCache && !captureWriter.isLimitExceeded()) {
-    		this.portletCacheControlService.cachePortletRenderOutput(portletWindowId, httpServletRequest, captureWriter.toString(), cacheControl);
-    	}
-    	
+        if (useCachedContent) {
+        	cachedPortletData.updateExpirationTime(cacheControl.getExpirationTime());
+    		return doRenderMarkupReplayCachedContent(portletWindowId, httpServletRequest, writer, cachedPortletData);
+        } else {
+        	boolean shouldCache = this.portletCacheControlService.shouldOutputBeCached(cacheControl);
+        	if(shouldCache && !captureWriter.isLimitExceeded()) {
+        		this.portletCacheControlService.cachePortletRenderOutput(portletWindowId, httpServletRequest, captureWriter.toString(), cacheControl);
+        	}
+        }
     	return result;
     }
     
@@ -485,45 +486,48 @@ public class PortletRendererImpl implements IPortletRenderer {
 		final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
 		CachedPortletData cachedPortletData = this.portletCacheControlService.getCachedPortletResourceOutput(portletWindowId, httpServletRequest);
     	if(cachedPortletData != null && !cachedPortletData.isExpired()) {
-    		// regardless if etag is set or not, we need to replay cachedPortlet Data if it's not expired
+    		if(logger.isDebugEnabled()) {
+    			logger.debug("cached content available and not expired for portletWindowId " + portletWindowId );
+    		}
     		return doServeResourceCachedOutput(portletWindowId, httpServletRequest, httpServletResponse, cachedPortletData, portletWindow);
     	}
 		
     	// cached data is either null or expired
     	// have to invoke PortletContainer#doServeResource
-    	
-    	// check cacheControl AFTER portlet serveResource to see if the portlet said "useCachedContent"
         CacheControl cacheControl = this.portletCacheControlService.getPortletResourceCacheControl(portletWindowId, httpServletRequest, httpServletResponse);
         // construct stream to capture output
-		LimitedBufferOutputStream captureStream = new LimitedBufferOutputStream(this.portletCacheControlService.getCacheSizeThreshold());
        
 	    final long start = System.currentTimeMillis();
 		try {
 			//Setup the request and response
 	        httpServletRequest = this.setupPortletRequest(httpServletRequest);
 	        // use overloaded setup to override the outputstream
-	        PortletHttpServletResponseWrapper responseWrapper = this.setupPortletResponse(httpServletResponse, captureStream, true);
+	        CachingPortletHttpServletResponseWrapper responseWrapper = this.setupCachingPortletResponse(httpServletResponse, this.portletCacheControlService.getCacheSizeThreshold());
 			this.portletContainer.doServeResource(portletWindow.getPlutoPortletWindow(), httpServletRequest, responseWrapper);
-			// check cacheControls
-			
+			// check cacheControl AFTER portlet serveResource to see if the portlet said "useCachedContent"
 			boolean useCachedContent = cacheControl.useCachedContent();
-	        boolean cachedPortletDataNotNull = cachedPortletData != null;
+			if(useCachedContent && cachedPortletData == null) {
+				throw new PortletDispatchException("The portlet window '"+ portletWindow + "' indicated via CacheControl#useCachedContent that the portal should render cached content, however there is no cached content to return. This is a portlet bug.", portletWindow);
+			}
+	       
 	        // we actually don't care if the content is expired at this point, the two prior fields will tell us if the portlet wants us to replay cached content
-	        if(logger.isDebugEnabled()) {
-	        	logger.debug(portletWindowId + " useCachedContent=" + useCachedContent + ", cachedPortletDataNotNull=" + cachedPortletDataNotNull);
-	        }
-	        if(useCachedContent && cachedPortletDataNotNull) {
+	        if(useCachedContent) {
 	        	// the portlet could theoretically set an etag but write to the response erroneously
 	        	// check that the response hasn't already been written/committed
 	        	if(responseWrapper.isCommitted()) {
 	        		throw new PortletDispatchException("The portlet window '"+ portletWindow + "' indicated it wanted the portlet container to send the cached content, however the portlet wrote content anyways. This is a bug in the portlet; if it sets an etag on the response and sets useCachedContent to true it should not commit the response.", portletWindow);
 	        	}
+	        	if(logger.isDebugEnabled()) {
+	        		logger.debug("expired cached content deemed still valid by portletWindowId " + portletWindowId + ", updated expiration time");
+	        	}
+	        	cachedPortletData.updateExpirationTime(cacheControl.getExpirationTime());
 	        	return doServeResourceCachedOutput(portletWindowId, httpServletRequest, responseWrapper, cachedPortletData, portletWindow);
 	        }
+	        
         	boolean shouldCache = this.portletCacheControlService.shouldOutputBeCached(cacheControl);
         	// put the captured content in the cache
-        	if(shouldCache && !captureStream.isThresholdExceeded()) {
-        		this.portletCacheControlService.cachePortletResourceOutput(portletWindowId, httpServletRequest, captureStream.getCapturedContent(), responseWrapper.getContentType(), responseWrapper.getCapturedHeaders(), cacheControl);
+        	if(shouldCache && !responseWrapper.isThresholdExceeded()) {
+        		this.portletCacheControlService.cachePortletResourceOutput(portletWindowId, httpServletRequest, responseWrapper.getCachedPortletData(), cacheControl);
         	}
 		}
 		catch (PortletException pe) {
@@ -537,17 +541,27 @@ public class PortletRendererImpl implements IPortletRenderer {
         }
 		final long executionTime = System.currentTimeMillis() - start;
 		
-		final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(httpServletRequest);
-		final String resourceId = getResourceId(portletWindowId, portalRequestInfo);
-        final IPortletEntity portletEntity = portletWindow.getPortletEntity();
-        final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
-        final String fname = portletDefinition.getFName();
-        final Map<String, List<String>> parameters = this.getParameters(httpServletRequest, portletWindowId, false);
-        this.portalEventFactory.publishPortletResourceExecutionEvent(httpServletRequest, this, fname, executionTime, parameters, resourceId, false);
+		publishResourceExecutionEvent(httpServletRequest, portletWindow, executionTime, false);
         
         return executionTime;
 	}
-	
+	/**
+	 * Helper method to invoke {@link IPortalEventFactory#publishPortletResourceExecutionEvent(HttpServletRequest, Object, String, long, Map, String, boolean)}.
+	 * 
+	 * @param httpServletRequest
+	 * @param portletWindow
+	 * @param executionTime
+	 * @param cached
+	 */
+	private void publishResourceExecutionEvent(HttpServletRequest httpServletRequest, IPortletWindow portletWindow, long executionTime, boolean cached) {
+		final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(httpServletRequest);
+        final String resourceId = getResourceId(portletWindow.getPortletWindowId(), portalRequestInfo);
+        final IPortletEntity portletEntity = portletWindow.getPortletEntity();
+        final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
+        final String fname = portletDefinition.getFName();
+        final Map<String, List<String>> parameters = this.getParameters(httpServletRequest, portletWindow.getPortletWindowId(), false);
+        this.portalEventFactory.publishPortletResourceExecutionEvent(httpServletRequest, this, fname, executionTime, parameters, resourceId, cached);
+	}
     /**
      * The portlet resource request resourceId
      */
@@ -573,45 +587,123 @@ public class PortletRendererImpl implements IPortletRenderer {
 	protected long doServeResourceCachedOutput(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, CachedPortletData cachedPortletData, IPortletWindow portletWindow) {
 		long start = System.currentTimeMillis();
 		
-		final String ifNoneMatch = httpServletRequest.getHeader("If-None-Match");
+		//If there is an etag and it matches the IF_NONE_MATCH header return a 304
 		final String etag = cachedPortletData.getEtag();
-		if(StringUtils.isNotBlank(ifNoneMatch) && ifNoneMatch.equals(etag)) {
-			// browser already has the content! send a 304
-			httpServletResponse.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-			return System.currentTimeMillis() - start;
+		if(StringUtils.isNotBlank(etag)) {
+			final String ifNoneMatch = httpServletRequest.getHeader(IF_NONE_MATCH);
+			if(etag.equals(ifNoneMatch)) {
+				// browser already has the content! send a 304
+				if(logger.isDebugEnabled()) {
+					logger.debug("returning 304 for portletWindowId " + portletWindowId + ", ifNoneMatch header=" + ifNoneMatch + ", " + cachedPortletData.getEtag() + ", cachedPortletData#expired=" + cachedPortletData.isExpired());
+				}
+				httpServletResponse.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+				final long executionTime = System.currentTimeMillis() - start;
+				publishResourceExecutionEvent(httpServletRequest, portletWindow, executionTime, true);
+				return executionTime;
+			}
 		}
 		
-		httpServletResponse.setContentType(cachedPortletData.getContentType());
-		Map<String, String[]> headers = cachedPortletData.getHeaders();
-		for(Entry<String, String[]> header: headers.entrySet()) {
+		//If the cached portlet data is not expired and the last mod date is within the IF_MODIFIED_SINCE window return a 304 
+		if(!cachedPortletData.isExpired()) {
+			long ifModifiedSince = httpServletRequest.getDateHeader(IF_MODIFIED_SINCE);
+			if(cachedPortletData.getTimeStored().getTime() == ifModifiedSince) {
+				// browser already has the content! send a 304
+				if(logger.isDebugEnabled()) {
+					logger.debug("returning 304 for portletWindowId " + portletWindowId + ", ifModifiedSince header=" + ifModifiedSince);
+				}
+				httpServletResponse.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+				final long executionTime = System.currentTimeMillis() - start;
+				publishResourceExecutionEvent(httpServletRequest, portletWindow, executionTime, true);
+				return executionTime;
+			}
+		}
+		
+		//********* Browser does NOT have the content, replay the cached response *********//
+		
+		//If provided set the status code
+        final Integer sc = cachedPortletData.getStatus();
+        if (sc != null) {
+            final String sm = cachedPortletData.getStatusMessage();
+            
+            if (sm != null) {
+                httpServletResponse.setStatus(sc, sm);
+            }
+            else {
+                httpServletResponse.setStatus(sc);
+            }
+        }
+        
+        final String characterEncoding = cachedPortletData.getCharacterEncoding();
+        if (characterEncoding != null) {
+            httpServletResponse.setCharacterEncoding(characterEncoding);
+        }
+        
+        final Integer contentLength = cachedPortletData.getContentLength();
+        if (contentLength != null) {
+            //We could derive this from the cached data but lets try to faithfully replay the cached response
+            httpServletResponse.setContentLength(contentLength);
+        }
+        
+        final String contentType = cachedPortletData.getContentType();
+        if (contentType != null) {
+            httpServletResponse.setContentType(contentType);
+        }
+        
+        final Locale locale = cachedPortletData.getLocale();
+        if (locale != null) {
+            httpServletResponse.setLocale(locale);
+        }
+		
+		//Replay headers
+		httpServletResponse.setContentType(contentType);
+		for(Entry<String, List<Object>> header: cachedPortletData.getHeaders().entrySet()) {
 			final String headerName = header.getKey();
-			final String [] headerValues = header.getValue();
-			for(String value: headerValues) {
-				httpServletResponse.addHeader(headerName, value);
+			for(final Object value: header.getValue()) {
+			    if (value instanceof Long) {
+			        httpServletResponse.addDateHeader(headerName, (Long)value);
+			    }
+			    else if (value instanceof Integer) {
+                    httpServletResponse.addIntHeader(headerName, (Integer)value);
+                }
+			    else {
+			        httpServletResponse.addHeader(headerName, (String)value);
+			    }
 			}
 		}
 		
 		//Set the ETag again
 		if (etag != null) {
 			httpServletResponse.setHeader("ETag", etag);
+		} else {
+			httpServletResponse.setDateHeader("Last-Modified", cachedPortletData.getTimeStored().getTime());
 		}
 		
-		try {
-			ServletOutputStream servletOutputStream = httpServletResponse.getOutputStream();
-			servletOutputStream.write(cachedPortletData.getByteData());
-		} catch (IOException e) {
-			 throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while writing cached resource content.", portletWindow, e);
-		} 
+		//Replay content
+		final byte[] byteData = cachedPortletData.getByteData();
+		if (byteData != null) {
+    		try {
+    			ServletOutputStream servletOutputStream = httpServletResponse.getOutputStream();
+                servletOutputStream.write(byteData);
+    		} catch (IOException e) {
+    			 throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while writing cached resource content.", portletWindow, e);
+    		} 
+		}
+		else {
+    		final String stringData = cachedPortletData.getStringData();
+            if (stringData != null) {
+                try {
+                    final PrintWriter writer = httpServletResponse.getWriter();
+                    writer.append(stringData);
+                } catch (IOException e) {
+                     throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while writing cached resource content.", portletWindow, e);
+                } 
+            }
+		}
+    		
 		
 		final long executionTime = System.currentTimeMillis() - start;
         
-        final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(httpServletRequest);
-        final String resourceId = getResourceId(portletWindowId, portalRequestInfo);
-        final IPortletEntity portletEntity = portletWindow.getPortletEntity();
-        final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
-        final String fname = portletDefinition.getFName();
-        final Map<String, List<String>> parameters = this.getParameters(httpServletRequest, portletWindowId, false);
-        this.portalEventFactory.publishPortletResourceExecutionEvent(httpServletRequest, this, fname, executionTime, parameters, resourceId, true);
+		publishResourceExecutionEvent(httpServletRequest, portletWindow, executionTime, true);
         
         return executionTime;
 	}
@@ -686,9 +778,9 @@ public class PortletRendererImpl implements IPortletRenderer {
      * @return the wrapepd response.
      * @throws IOException 
      */
-    protected PortletHttpServletResponseWrapper setupPortletResponse(HttpServletResponse httpServletResponse, OutputStream toTee, boolean captureHeaders) throws IOException {
-    	TeeServletOutputStream teeServletOutputStream = new TeeServletOutputStream(httpServletResponse.getOutputStream(), toTee);
-        final PortletHttpServletResponseWrapper portletHttpServletResponseWrapper = new PortletHttpServletResponseWrapper(httpServletResponse, teeServletOutputStream, captureHeaders);
+    protected CachingPortletHttpServletResponseWrapper setupCachingPortletResponse(HttpServletResponse httpServletResponse, int cacheThresholdSize) throws IOException {
+        final CachingPortletHttpServletResponseWrapper portletHttpServletResponseWrapper = 
+                new CachingPortletHttpServletResponseWrapper(httpServletResponse, cacheThresholdSize);
         return portletHttpServletResponseWrapper;
     }
     

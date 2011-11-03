@@ -76,7 +76,7 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
     /**
      * @param entityManager the entityManager to set
      */
-    @PersistenceContext(unitName = "uPortalStatsPersistence")
+    @PersistenceContext(unitName = "uPortalRawEventsPersistence")
     public void setEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
@@ -98,20 +98,19 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
                 "SELECT e " +
                 "FROM " + PersistentPortalEvent.class.getName() + " e " +
         		"WHERE e." + PersistentPortalEvent_.timestamp.getName() + " >= :" + this.startTimeParameter.getName() + " " +
-                     "AND e." + PersistentPortalEvent_.timestamp.getName() + " <= :" + this.endTimeParameter.getName() + " " + 
+                     "AND e." + PersistentPortalEvent_.timestamp.getName() + " < :" + this.endTimeParameter.getName() + " " + 
         		"ORDER BY e." + PersistentPortalEvent_.timestamp.getName() + " ASC";
         
         this.deleteQuery = 
                 "DELETE FROM " + PersistentPortalEvent.class.getName() + " e " +
-        		"WHERE e." + PersistentPortalEvent_.timestamp.getName() + " >= :" + this.startTimeParameter.getName() + " " +  
-        		     "AND e." + PersistentPortalEvent_.timestamp.getName() + " <= :" + this.endTimeParameter.getName();
+        		"WHERE e." + PersistentPortalEvent_.timestamp.getName() + " < :" + this.endTimeParameter.getName();
     }
     
     /* (non-Javadoc)
      * @see org.jasig.portal.events.handlers.db.IPortalEventDao#storePortalEvent(org.jasig.portal.events.PortalEvent)
      */
     @Override
-    @Transactional(value="statsTransactionManager")
+    @Transactional(value="rawEventsTransactionManager")
     public void storePortalEvent(PortalEvent portalEvent) {
         final PersistentPortalEvent persistentPortalEvent = this.wrapPortalEvent(portalEvent);
         this.entityManager.persist(persistentPortalEvent);
@@ -121,7 +120,7 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
      * @see org.jasig.portal.events.handlers.db.IPortalEventDao#storePortalEvents(org.jasig.portal.events.PortalEvent[])
      */
     @Override
-    @Transactional(value="statsTransactionManager")
+    @Transactional(value="rawEventsTransactionManager")
     public void storePortalEvents(PortalEvent... portalEvents) {
         for (final PortalEvent portalEvent : portalEvents) {
             try {
@@ -137,7 +136,7 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
      * @see org.jasig.portal.events.handlers.db.IPortalEventDao#storePortalEvents(java.lang.Iterable)
      */
     @Override
-    @Transactional(value="statsTransactionManager")
+    @Transactional(value="rawEventsTransactionManager")
     public void storePortalEvents(Iterable<PortalEvent> portalEvents) {
         for (final PortalEvent portalEvent : portalEvents) {
             try {
@@ -170,13 +169,11 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
      * @see org.jasig.portal.events.handlers.db.IPortalEventDao#deletePortalEventsBefore(java.util.Date)
      */
     @Override
-    @Transactional(value="statsTransactionManager")
-    public void deletePortalEvents(Date startTime, Date endTime) {
+    @Transactional(value="rawEventsTransactionManager")
+    public int deletePortalEventsBefore(Date time) {
         final Query query = this.entityManager.createQuery(this.deleteQuery);
-        query.setParameter(this.startTimeParameter.getName(), startTime);
-        query.setParameter(this.endTimeParameter.getName(), endTime);
-        final int deleted = query.executeUpdate();
-        this.logger.debug("Purged {} events between {} and {}", new Object[] { deleted, startTime, endTime });
+        query.setParameter(this.endTimeParameter.getName(), time);
+        return query.executeUpdate();
     }
     
     protected PersistentPortalEvent wrapPortalEvent(PortalEvent event) {

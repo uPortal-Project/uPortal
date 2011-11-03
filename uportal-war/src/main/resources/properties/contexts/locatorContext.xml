@@ -91,4 +91,8 @@
         class="org.jasig.portal.spring.locator.PortalPasswordServiceLocator">
     </bean>
     
+    <bean id="org.jasig.portal.spring.locator.ReferenceEntitySearcherLocator" 
+        class="org.jasig.portal.spring.locator.ReferenceEntitySearcherLocator">
+    </bean>
+    
 </beans>

@@ -26,6 +26,8 @@ import org.jasig.portal.events.PortalEvent;
 import com.google.common.base.Function;
 
 /**
+ * Persists, retrieves and deletes portal events from a persistent store 
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
@@ -42,7 +44,7 @@ public interface IPortalEventDao {
     void getPortalEvents(Date startTime, Date endTime, Function<PortalEvent, Object> handler);
     
     /**
-     * @param events Events to delete
+     * Delete events with timestamps from before the specified date (exclusive)
      */
-    void deletePortalEvents(Date startTime, Date endTime);
+    int deletePortalEventsBefore(Date endTime);
 }

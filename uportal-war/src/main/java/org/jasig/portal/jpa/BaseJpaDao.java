@@ -23,7 +23,6 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -98,7 +97,7 @@ public abstract class BaseJpaDao implements InitializingBean {
         return type.cast(criteria.uniqueResult()); 
     }
     
-    public <T> NaturalIdQueryBuilder<T> createNaturalIdQuery(Class<T> entityType, String cacheRegion) {
+    public final <T> NaturalIdQueryBuilder<T> createNaturalIdQuery(Class<T> entityType, String cacheRegion) {
         final Session session = getEntityManager().unwrap(Session.class);
         return new NaturalIdQueryBuilder<T>(session, entityType, cacheRegion);
     }

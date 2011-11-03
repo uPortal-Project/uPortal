@@ -156,14 +156,16 @@
     <target name="db-hibernate" depends="prodPrompt" description="Drops then creates Hibernate managed tables">
         <up-shell-batch>
             <antcall target="db-hibernate-portal" />
-            <antcall target="db-hibernate-stats" />
+            <antcall target="db-hibernate-raw-events" />
+        	<antcall target="db-hibernate-aggr-events" />
         </up-shell-batch>
     </target>
 
-    <target name="db-hibernate-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for both the portal and statistics schemas">
+    <target name="db-hibernate-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for both the portal and event schemas">
         <up-shell-batch>
             <antcall target="db-hibernate-portal-update" />
-            <antcall target="db-hibernate-stats-update" />
+        	<antcall target="db-hibernate-raw-events-update" />
+            <antcall target="db-hibernate-aggr-events-update" />
         </up-shell-batch>
     </target>
 
@@ -237,16 +239,46 @@ catch (Exception e) {
         </antcall>
     </target>
 
-    <target name="db-hibernate-stats" depends="prodPrompt" description="Drops then creates Hibernate managed tables used for the database backed portal statistics">
+    <target name="db-hibernate-stats" depends="prodPrompt">
+        <echo level="warning">DEPRECATED: Use db-hibernate-raw-events and db-hibernate-aggr-events instead</echo>
+        <up-shell-batch>
+            <antcall target="db-hibernate-raw-events" />
+            <antcall target="db-hibernate-aggr-events" />
+        </up-shell-batch>
+    </target>
+	
+    <target name="db-hibernate-stats-update" depends="prodPrompt">
+    	<echo level="warning">DEPRECATED: Use db-hibernate-raw-events-update and db-hibernate-aggr-events-update instead</echo>
+        <up-shell-batch>
+            <antcall target="db-hibernate-raw-events-update" />
+            <antcall target="db-hibernate-aggr-events-update" />
+        </up-shell-batch>
+    </target>
+
+    <target name="db-hibernate-raw-events" depends="prodPrompt" description="Drops then creates Hibernate managed tables used for raw portal event storage">
         <antcall target="db-hibernate-portal">
-            <param name="schemaExportBean" value="statsDbHibernateExport" />
+            <param name="schemaExportBean" value="rawEventsDbHibernateExport" />
             <param name="haltOnError" value="false" />
         </antcall>
     </target>
-	
-    <target name="db-hibernate-stats-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for the statistics schema">
+    
+    <target name="db-hibernate-raw-events-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for raw portal event storage">
         <antcall target="db-hibernate-portal-update">
-            <param name="schemaExportBean" value="statsDbHibernateExport" />
+            <param name="schemaExportBean" value="rawEventsDbHibernateExport" />
+            <param name="haltOnError" value="false" />
+        </antcall>
+    </target>
+            	
+    <target name="db-hibernate-aggr-events" depends="prodPrompt" description="Drops then creates Hibernate managed tables used for aggregate portal event storage">
+        <antcall target="db-hibernate-portal">
+            <param name="schemaExportBean" value="aggrEventsDbHibernateExport" />
+            <param name="haltOnError" value="false" />
+        </antcall>
+    </target>
+    
+    <target name="db-hibernate-aggr-events-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for aggregate portal event storage">
+        <antcall target="db-hibernate-portal-update">
+            <param name="schemaExportBean" value="aggrEventsDbHibernateExport" />
             <param name="haltOnError" value="false" />
         </antcall>
     </target>

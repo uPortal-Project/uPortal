@@ -29,17 +29,17 @@
         <property name="hibernate.format_sql">true</property>
         <property name="hibernate.generate_statistics">true</property>
         
+        <property name="hibernate.max_fetch_depth">3</property>
+        <property name="hibernate.default_batch_fetch_size">4</property>
+        <property name="hibernate.id.new_generator_mappings">true</property>
+
         <property name="hibernate.cache.use_query_cache">true</property>
         <property name="hibernate.cache.use_second_level_cache">true</property>
         <property name="hibernate.cache.use_minimal_puts">true</property>
-        <property name="hibernate.jdbc.batch_size">25</property>
-        <property name="hibernate.max_fetch_depth">3</property>
-        <property name="hibernate.default_batch_fetch_size">1</property>
-        <property name="hibernate.id.new_generator_mappings">true</property>
         
         <property name="hibernate.current_session_context_class">thread</property>
         
-        <mapping resource="properties/db/global.hbm.xml"/> 
+        <mapping resource="properties/db/global.hbm.xml"/>
         
         <mapping class="org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl"/>
         <mapping class="org.jasig.portal.layout.dao.jpa.LayoutAttributeDescriptorImpl"/>
@@ -69,5 +69,6 @@
         <mapping class="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl"/>
         <mapping class="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl"/>
         <mapping class="org.jasig.portal.i18n.dao.jpa.MessageImpl"/>
+        <mapping class="org.jasig.portal.concurrency.locking.ClusterMutex"/>
     </session-factory>
 </hibernate-configuration>

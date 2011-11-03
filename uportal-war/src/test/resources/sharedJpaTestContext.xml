@@ -33,14 +33,19 @@
         <property name="location" value="classpath:/dataSource.properties" />
     </bean>
 
-    <bean id="PortalDb" class="org.springframework.jdbc.datasource.SingleConnectionDataSource">
-        <qualifier value="PortalDb" />
+    <bean id="PortalDb" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="${hibernate.connection.driver_class}" />
         <property name="url" value="${hibernate.connection.url}" />
         <property name="username" value="${hibernate.connection.username}" />
         <property name="password" value="${hibernate.connection.password}" />
-        <property name="suppressClose" value="true" />
-        <property name="autoCommit" value="true" />
+        
+        <property name="maxActive" value="50" />
+        <property name="maxIdle" value="10" />
+        <property name="maxWait" value="1000" />
+        <property name="removeAbandoned" value="true" />
+        <property name="removeAbandonedTimeout" value="300" />
+        <property name="logAbandoned" value="true" />
+        <property name="poolPreparedStatements" value="false" />
     </bean>
     
     <bean id="factoryBean" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="">

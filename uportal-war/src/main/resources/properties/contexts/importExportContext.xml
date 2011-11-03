@@ -510,6 +510,7 @@
                 <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
                 <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
                 <entry key="stylesheetDescriptorDao" value-ref="stylesheetDescriptorDao" />
+                <entry key="stylesheetUserPreferencesDao" value-ref="stylesheetUserPreferencesDao" />
                 <entry key="user_profile_structure_force"           value="${org.jasig.portal.io.forceDefaultStructure}" />
                 <entry key="user_profile_structure_name_default"    value="${org.jasig.portal.io.defaultStructureName}" />
                 <entry key="user_profile_theme_force"               value="${org.jasig.portal.io.forceDefaultTheme}" />
