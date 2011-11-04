@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 import javax.portlet.ActionRequest;
 import javax.xml.namespace.QName;
@@ -99,7 +100,7 @@ public class JpaPortalEventStoreTest extends BaseJpaDaoTest {
             public Object call() throws Exception {
                 //Get all events
                 final List<PortalEvent> portalEvents = new LinkedList<PortalEvent>();
-                portalEventDao.getPortalEvents(new Date(0), new Date(Long.MAX_VALUE), new Function<PortalEvent, Object>() {
+                portalEventDao.getPortalEvents(new Date(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1)), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1)), new Function<PortalEvent, Object>() {
                     @Override
                     public Object apply(PortalEvent input) {
                         portalEvents.add(input);
@@ -127,7 +128,7 @@ public class JpaPortalEventStoreTest extends BaseJpaDaoTest {
             @Override
             public Object call() throws Exception {
                 final List<PortalEvent> portalEvents = new LinkedList<PortalEvent>();
-                portalEventDao.getPortalEvents(new Date(0), new Date(Long.MAX_VALUE), new Function<PortalEvent, Object>() {
+                portalEventDao.getPortalEvents(new Date(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1)), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1)), new Function<PortalEvent, Object>() {
                     @Override
                     public Object apply(PortalEvent input) {
                         portalEvents.add(input);
