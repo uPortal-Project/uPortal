@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project-modules id="moduleCoreId" project-version="1.5.0">
-    <wb-module deploy-name="FunctionalTestsPortlet">
-        <wb-resource deploy-path="/" source-path="/src/main/webapp"/>
-        <property name="context-root" value="FunctionalTestsPortlet"/>
-        <property name="java-output-path" value="/org.jasig.portal.portlets-overlay.FunctionalTestsPortlet-3.0.8-SNAPSHOT/target/classes"/>
-    </wb-module>
-</project-modules>
