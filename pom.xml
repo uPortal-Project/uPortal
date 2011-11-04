@@ -18,9 +18,9 @@
     <url>${jasig-site-base}/uportal/${project.version}</url>
     
     <scm>
-        <connection>scm:svn:https://source.jasig.org/uPortal/branches/rel-3-2-patches</connection>
-        <developerConnection>scm:svn:https://source.jasig.org/uPortal/branches/rel-3-2-patches</developerConnection>
-        <url>https://developer.jasig.org/source/browse/jasigsvn/uPortal/branches/rel-3-2-patches</url>
+        <connection>scm:git:git://github.com/Jasig/uPortal.git</connection>
+        <developerConnection>scm:git:git@github.com:Jasig/uPortal.git</developerConnection>
+        <url>https://github.com/Jasig/uPortal/tree/rel-3-2-patches</url>
     </scm>
     
     <distributionManagement>
