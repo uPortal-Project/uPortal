@@ -30,6 +30,8 @@
             value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
         <set name="flowScope.attemptedUsername" 
             value="servletRequest.getSession().getAttribute('up_attemptedUserName')"/>
+        <set name="flowScope.profile"
+            value="loginPortletHelper.getSelectedProfile(externalContext.getNativeRequest())"/>
     </on-start>
 
     <!-- Display the user login form -->

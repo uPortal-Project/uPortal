@@ -65,6 +65,7 @@ public class LoginController implements InitializingBean {
     public static final String AUTH_ATTEMPTED_KEY = "up_authenticationAttempted";
     public static final String AUTH_ERROR_KEY = "up_authenticationError";
     public static final String ATTEMPTED_USERNAME_KEY = "up_attemptedUserName";
+    public static final String REQUESTED_PROFILE_KEY = "profile";
     
     protected final Log log = LogFactory.getLog(getClass());
     protected final Log swapperLog = LogFactory.getLog("org.jasig.portal.portlets.swapper");
@@ -166,7 +167,7 @@ public class LoginController implements InitializingBean {
   	//  Create the user's session
     HttpSession s = request.getSession(true);
     
-    final String requestedProfile = request.getParameter("profile");
+    final String requestedProfile = request.getParameter(REQUESTED_PROFILE_KEY);
     if (requestedProfile != null) {
         s.setAttribute("profileKey", requestedProfile);
     }
