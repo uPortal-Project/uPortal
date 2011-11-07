@@ -43,7 +43,7 @@ public class UserAgentProfileMapper implements IProfileMapper {
     protected Logger logger = LoggerFactory.getLogger(getClass());
     
     private List<Mapping> mappings = Collections.emptyList();
-    private String defaultProfileName = "default";
+    private String defaultProfileName = null;
     private String userAgentHeader = "User-Agent";
     
     
@@ -55,10 +55,9 @@ public class UserAgentProfileMapper implements IProfileMapper {
     }
 
     /**
-     * Default profile name to return if no match is found, defaults to "default".
+     * Default profile name to return if no match is found, defaults to <code>null</code>.
      */
     public void setDefaultProfileName(String defaultProfileName) {
-        Validate.notNull(defaultProfileName);
         this.defaultProfileName = defaultProfileName;
     }
 
