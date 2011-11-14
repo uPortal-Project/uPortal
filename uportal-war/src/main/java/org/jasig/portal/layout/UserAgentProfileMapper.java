@@ -19,11 +19,6 @@
 
 package org.jasig.portal.layout;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.Validate;
@@ -32,28 +27,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Maps User-Agents to profile names using regular expressions. A list of {@link Mapping}s is evaluated in
- * order and the first match is returned. If the user agent header is null or no match is found the 
- * {@link #setDefaultProfileName(String)} value is used.
+ * Maps User-Agents to profile names using the {@link UAgentInfo}class from MobileESP. Can cater for many different mobile devices
+ * and tables. If no match is found the {@link #setDefaultProfileName(String)} value is used.
  * 
  * @author Eric Dalquist
+ * @author Steve Swinsburg
  * @version $Revision$
  */
 public class UserAgentProfileMapper implements IProfileMapper {
     protected Logger logger = LoggerFactory.getLogger(getClass());
     
-    private List<Mapping> mappings = Collections.emptyList();
     private String defaultProfileName = null;
     private String userAgentHeader = "User-Agent";
+    private String httpAcceptHeader = "Accept";
     
+    private final String MOBILE_PROFILE_NAME = "mobileDefault";
     
-    /**
-     * Regular expression to Profile name mappings.
-     */
-    public void setMappings(List<Mapping> mappings) {
-        this.mappings = mappings;
-    }
-
     /**
      * Default profile name to return if no match is found, defaults to <code>null</code>.
      */
@@ -80,74 +69,28 @@ public class UserAgentProfileMapper implements IProfileMapper {
             return this.defaultProfileName;
         }
         
-        for (final Mapping mapping : this.mappings) {
-            final Matcher matcher = mapping.pattern.matcher(userAgent);
-            if (matcher.matches()) {
-                this.logger.debug("Matched {} header {} for {} returning profile {}", 
-                        new Object[] {this.userAgentHeader, person.getUserName(), mapping.profileName});
-                return mapping.profileName;
-            }
+        String acceptHeader = request.getHeader(this.httpAcceptHeader);
+        if (acceptHeader == null) {
+            this.logger.debug("No {} header for {}, continuing but may not be able to determine profile correctly", this.httpAcceptHeader, person.getUserName());
+            acceptHeader = "";
         }
+        
+        UAgentInfo agentInfo = new UAgentInfo(userAgent, acceptHeader);
+        
+        if(agentInfo.detectMobileQuick()) {
+        	this.logger.debug("Matched {} header {} for {} returning profile {}", new Object[] {this.userAgentHeader, person.getUserName(), MOBILE_PROFILE_NAME});
+        	return MOBILE_PROFILE_NAME;
+        }
+        
+        //to send tablet devices to the mobile profile, uncomment this block
+        /*
+        if(agentInfo.detectTierTablet()) {
+        	this.logger.debug("Matched {} header {} for {} returning profile {}", new Object[] {this.userAgentHeader, person.getUserName(), MOBILE_PROFILE_NAME});
+        	return MOBILE_PROFILE_NAME;
+        }
+        */
         
         this.logger.debug("No matching Mapping for {} header for {} returning default profile", this.userAgentHeader, person.getUserName());
         return defaultProfileName;
-    }
-    
-    public static class Mapping {
-        private Pattern pattern;
-        private String profileName;
-        
-        public void setPattern(String pattern) {
-            this.pattern = Pattern.compile(pattern);
-        }
-        
-        public void setProfileName(String profileName) {
-            this.profileName = profileName;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((this.pattern == null) ? 0 : this.pattern.hashCode());
-            result = prime * result + ((this.profileName == null) ? 0 : this.profileName.hashCode());
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            Mapping other = (Mapping) obj;
-            if (this.pattern == null) {
-                if (other.pattern != null) {
-                    return false;
-                }
-            }
-            else if (!this.pattern.equals(other.pattern)) {
-                return false;
-            }
-            if (this.profileName == null) {
-                if (other.profileName != null) {
-                    return false;
-                }
-            }
-            else if (!this.profileName.equals(other.profileName)) {
-                return false;
-            }
-            return true;
-        }
-
-        @Override
-        public String toString() {
-            return "Mapping [pattern=" + this.pattern + ", profileName=" + this.profileName + "]";
-        }
     }
 }
