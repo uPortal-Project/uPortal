@@ -339,7 +339,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
 
             GcGetMembers gcGetMembers = new GcGetMembers();
             gcGetMembers.addGroupName(group.getLocalKey());
-            gcGetMembers.assignIncludeSubjectDetail(true)
+            gcGetMembers.assignIncludeSubjectDetail(true);
             gcGetMembers.addSourceId("g:gsa");
 
             WsGetMembersResults results = gcGetMembers.execute();
