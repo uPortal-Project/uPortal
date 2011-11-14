@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 import javax.portlet.ActionRequest;
 import javax.xml.namespace.QName;
@@ -94,12 +95,15 @@ public class JpaPortalEventStoreTest extends BaseJpaDaoTest {
      * @param originalEvents
      */
     protected void verifyEvents(final List<PortalEvent> originalEvents) {
+        final Date startDate = new Date(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1));
+        final Date endDate = new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1));
+        
         execute(new Callable<Object>() {
             @Override
             public Object call() throws Exception {
                 //Get all events
                 final List<PortalEvent> portalEvents = new LinkedList<PortalEvent>();
-                portalEventDao.getPortalEvents(new Date(0), new Date(Long.MAX_VALUE), new Function<PortalEvent, Object>() {
+                portalEventDao.getPortalEvents(startDate, endDate, new Function<PortalEvent, Object>() {
                     @Override
                     public Object apply(PortalEvent input) {
                         portalEvents.add(input);
@@ -117,7 +121,7 @@ public class JpaPortalEventStoreTest extends BaseJpaDaoTest {
                 }
                 
                 //Delete the events
-                portalEventDao.deletePortalEventsBefore(new Date(Long.MAX_VALUE));
+                portalEventDao.deletePortalEventsBefore(endDate);
                 
                 return null;
             }
@@ -127,7 +131,7 @@ public class JpaPortalEventStoreTest extends BaseJpaDaoTest {
             @Override
             public Object call() throws Exception {
                 final List<PortalEvent> portalEvents = new LinkedList<PortalEvent>();
-                portalEventDao.getPortalEvents(new Date(0), new Date(Long.MAX_VALUE), new Function<PortalEvent, Object>() {
+                portalEventDao.getPortalEvents(startDate, endDate, new Function<PortalEvent, Object>() {
                     @Override
                     public Object apply(PortalEvent input) {
                         portalEvents.add(input);
