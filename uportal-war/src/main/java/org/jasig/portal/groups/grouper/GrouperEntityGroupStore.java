@@ -56,7 +56,6 @@ import edu.internet2.middleware.grouperClient.ws.StemScope;
 import edu.internet2.middleware.grouperClient.ws.beans.WsFindGroupsResults;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResults;
-import edu.internet2.middleware.grouperClient.ws.beans.WsGetMembersResult;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetMembersResults;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetSubjectsResults;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGroup;
@@ -135,7 +134,9 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
 
             // Search the Grouper server for groups with the specified local
             // key
-            LOGGER.debug("Searching Grouper for a direct match for key: " + key);
+        	if (LOGGER.isDebugEnabled()) {
+        		LOGGER.debug("Searching Grouper for a direct match for key: " + key);
+        	}
             WsGroup wsGroup = findGroupFromKey(key);
             if (wsGroup == null) {
               return null;
@@ -153,7 +154,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
 
         } catch (Exception e) {
             LOGGER.warn("Exception while attempting to retrieve " 
-                    + "group with key " + key + " from Grouper web services", e);
+                    + "group with key " + key + " from Grouper web services: " + e.getMessage());
             return null;
         }
 
@@ -232,7 +233,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
             } catch (Exception e) {
                 LOGGER.warn("Exception while attempting to retrieve "
                         + "parents for entity with key " + key
-                        + " from Grouper web services", e);
+                        + " from Grouper web services: " + e.getMessage());
                 return Collections.<IEntityGroup>emptyList().iterator();
             }
 
@@ -256,6 +257,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
             // execute a search for members of the specified group
             GcGetMembers getGroupsMembers = new GcGetMembers();
             getGroupsMembers.addGroupName(group.getLocalKey());
+            getGroupsMembers.assignIncludeSubjectDetail(true);
             WsGetMembersResults results = getGroupsMembers.execute();
             
             if (results == null || results.getResults() == null
@@ -273,26 +275,19 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
             // add each result to the member list
             for (WsSubject gInfo : gInfos) {
                 
-                // if the member is a person group
-                if (StringUtils.equals(gInfo.getSourceId(), "g:gsa")) {
-                  
-                  if (validKey(gInfo.getName())) {
-                    LOGGER.trace("creating group member: " + gInfo.getName());
-                    
-                    WsGroup wsGroup = findGroupFromKey(gInfo.getName());
-                    if (wsGroup != null) {
-                      IEntityGroup member = createUportalGroupFromGrouperGroup(wsGroup);
-                      members.add(member);
-                    }
-                }
-                }
-                
-                // otherwise assume the member is an individual person 
-                else {
-                    LOGGER.trace("creating leaf member: " + gInfo.getId());
-                    IGroupMember member = new EntityImpl(gInfo.getId(), IPerson.class);
-                    members.add(member);
-                }
+                // if the member is not a group (aka person)
+            	if (!StringUtils.equals(gInfo.getSourceId(), "g:gsa")) {
+
+					if (LOGGER.isDebugEnabled()) {
+						LOGGER.debug("creating leaf member:" + gInfo.getId()
+								+ " and name: " + gInfo.getName()
+								+ " from group: " + group.getLocalKey());
+					}
+					//use the name instead of id as it shows better in the display
+					IGroupMember member = new EntityImpl(gInfo.getName(),
+							IPerson.class);
+					members.add(member);
+				}
 
             }
 
@@ -302,7 +297,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
         } catch (Exception e) {
             LOGGER.warn("Exception while attempting to retrieve "
                     + "member entities of group with key " + group.getKey() 
-                    + " from Grouper web services", e);
+                    + " from Grouper web services: " + e.getMessage());
             return Collections.<IGroupMember>emptyList().iterator();
         }
 
@@ -344,11 +339,14 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
 
             GcGetMembers gcGetMembers = new GcGetMembers();
             gcGetMembers.addGroupName(group.getLocalKey());
+            gcGetMembers.assignIncludeSubjectDetail(true)
             gcGetMembers.addSourceId("g:gsa");
 
             WsGetMembersResults results = gcGetMembers.execute();
 
-            if (results == null || results.getResults() == null) {
+            if (results == null || results.getResults() == null
+					|| results.getResults().length == 0
+					|| results.getResults()[0].getWsSubjects() == null) {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER
                             .debug("No group-type members found for group with key "
@@ -358,31 +356,30 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
             }
 
             final List<IEntityGroup> members = new ArrayList<IEntityGroup>();
-            for (WsGetMembersResult wsg : results.getResults()) {
-                if (wsg.getWsSubjects() != null) {
-                    for (WsSubject wsSubject : wsg.getWsSubjects()) {
-                        if (validKey(wsSubject.getName())) {
-                            WsGroup wsGroup = findGroupFromKey(wsSubject
-                                    .getName());
-                            if (wsGroup != null) {
-                                IEntityGroup member = createUportalGroupFromGrouperGroup(wsGroup);
-                                members.add(member);
-                                if (LOGGER.isTraceEnabled()) {
-                                    LOGGER.trace("found IEntityGroup member: "
-                                            + member);
-                                }
-                            }
+            WsSubject[] subjects = results.getResults()[0].getWsSubjects();
+
+			for (WsSubject wsSubject : subjects) {
+                if (validKey(wsSubject.getName())) {
+                    WsGroup wsGroup = findGroupFromKey(wsSubject
+                            .getName());
+                    if (wsGroup != null) {
+                        IEntityGroup member = createUportalGroupFromGrouperGroup(wsGroup);
+                        members.add(member);
+                        if (LOGGER.isTraceEnabled()) {
+                            LOGGER.trace("found IEntityGroup member: "
+                                    + member);
                         }
                     }
                 }
             }
+
             
             return members.iterator();
             
         } catch (Exception e) {
             LOGGER.warn("Exception while attempting to retrieve "
                     + "member groups of group with key " + group.getKey() 
-                    + " from Grouper web services", e);
+                    + " from Grouper web services: " + e.getMessage());
             return Collections.<IGroupMember>emptyList().iterator();
         }
 
@@ -426,7 +423,9 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
             if (results != null && results.getGroupResults() != null) {
                 for (WsGroup g : results.getGroupResults()) {
                   if (validKey(g.getName())) {
-                    LOGGER.trace("Retrieved group: " + g.getName());
+                	  if (LOGGER.isTraceEnabled()) {
+                		  LOGGER.trace("Retrieved group: " + g.getName());
+                	  }
                     groups.add(new EntityIdentifier(g.getName(),
                             IEntityGroup.class));
                 }
@@ -444,7 +443,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
         } catch (Exception e) {
             LOGGER.warn("Exception while attempting to retrieve "
                     + "search results for query " + query + " and entity type " 
-                    + leaftype.getCanonicalName(), e);
+                    + leaftype.getCanonicalName() + " : " + e.getMessage());
             return new EntityIdentifier[] {};
         }
 
@@ -457,24 +456,36 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
     @SuppressWarnings("unchecked")
     public EntityIdentifier[] searchForEntities(String query, int method,
             Class type) throws GroupsException {
+    	
+    	// only search for groups
+		if (type != IPerson.class) {
+			return new EntityIdentifier[] {};
+		}
 
-        WsGetSubjectsResults wsGetSubjectsResults = new GcGetSubjects()
-                .assignSearchString(query).execute();
+		List<EntityIdentifier> entityIdentifiers = new ArrayList<EntityIdentifier>();
 
-        EntityIdentifier[] entityIdentifiers = new EntityIdentifier[GrouperClientUtils
-                .length(wsGetSubjectsResults.getWsSubjects())];
+		try {
 
-        int i = 0;
-        for (WsSubject wsSubject : wsGetSubjectsResults.getWsSubjects()) {
+			GcGetSubjects subjects = new GcGetSubjects();
+			subjects.assignIncludeSubjectDetail(true);
+			WsGetSubjectsResults results = subjects.assignSearchString(query)
+					.execute();
 
-            EntityIdentifier entityIdentifier = new EntityIdentifier(
-                    wsSubject.getId(),
-                    "g:gsa".equals(wsSubject.getSourceId()) ? EntityTypes.GROUP_ENTITY_TYPE
-                            : EntityTypes.LEAF_ENTITY_TYPE);
-            entityIdentifiers[i] = entityIdentifier;
-            i++;
-    }
-      return entityIdentifiers;
+			if (results != null && results.getWsSubjects() != null) {
+
+				for (WsSubject wsSubject : results.getWsSubjects()) {
+					entityIdentifiers.add(new EntityIdentifier(wsSubject
+							.getName(), EntityTypes.LEAF_ENTITY_TYPE));
+				}
+			}
+			return ((EntityIdentifier[]) entityIdentifiers.toArray());
+
+		} catch (Exception e) {
+			LOGGER.warn("Exception while attempting to retrieve "
+					+ "search results for query " + query + " and entity type "
+					+ type.getCanonicalName() + " : " + e.getMessage());
+			return new EntityIdentifier[] {};
+		}
     
     }
     
@@ -553,21 +564,28 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
      * @return the group or null
      */
     protected WsGroup findGroupFromKey(String key) {
-        GcFindGroups gcFindGroups = new GcFindGroups();
-        gcFindGroups.addGroupName(key);
-        WsFindGroupsResults results = gcFindGroups.execute();
+    	WsGroup wsGroup = null;
 
-        // if no results were returned, return null
-        if (results == null || results.getGroupResults() == null
-                || results.getGroupResults().length == 0) {
-            LOGGER.debug("Grouper service returned no matches for key " + key);
-            return null;
-        }
+		if (key != null) {
 
-        // construct a uPortal group representation of the first returned
-        // result
-        WsGroup wsGroup = results.getGroupResults()[0];
-        return wsGroup;
+			GcFindGroups gcFindGroups = new GcFindGroups();
+			gcFindGroups.addGroupName(key);
+			WsFindGroupsResults results = gcFindGroups.execute();
+
+			// if no results were returned, return null
+			if (results != null && results.getGroupResults() != null
+					&& results.getGroupResults().length > 0) {
+
+				if (LOGGER.isDebugEnabled()) {
+					LOGGER.debug("found group from key " + key + ": "
+							+ results.getGroupResults()[0]);
+				}
+
+				wsGroup = results.getGroupResults()[0];
+			}
+		}
+
+		return wsGroup;
     } 
 
     /**
