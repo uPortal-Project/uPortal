@@ -137,4 +137,20 @@ var up = up || {};
             clearTimeout(t);
         }, duration);
     };//end:function.
+    
+    /**
+     * Replaces all occurances of {0}, {1}, ..., {n} with values from argument array.
+     *  
+     * @param {String} message - message string.
+     * @param {Array} args - array of string objects.
+     * @returns Formatted message string.
+     */
+    up.formatMessage = function(message, args) {
+        var s = message;
+        for (var i = 0; i < args.length; i++) {
+            var reg = new RegExp("\\{" + i + "\\}", "gm");
+            s = s.replace(reg, args[i]);
+        }
+        return s;
+    };//end:function
 })(jQuery, fluid);
