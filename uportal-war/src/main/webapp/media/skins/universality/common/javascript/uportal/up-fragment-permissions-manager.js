@@ -82,7 +82,7 @@ var up = up || {};
         that.locate("permissionsDialog").dialog("close");
         that.events.onUpdatePermissions.fire(element, newPermissions);
         return false;
-    }
+    };
     
     /**
      * Save the permissions from the supplied form to the layout
@@ -216,7 +216,7 @@ var up = up || {};
             elementExtractor: function(that, link){
                 return $("#portalNavigationList li.active"); 
             },
-            titleExtractor: function(element){ return $("#portalNavigationList li.active a.portal-navigation-link span").text(); },
+            titleExtractor: function(element){ return $("#portalNavigationList li.active a.portal-navigation-link").attr("title"); },
             selectors: {
                 formTitle: "h2"
             }
@@ -235,7 +235,7 @@ var up = up || {};
                 return $(link).parents(".portal-page-column"); 
             },
             titleExtractor: function(element){ 
-                return "Column " + ($(".portal-page-column").index(element) + 1); 
+                return up.formatMessage(that.options.messages.columnX, [$(".portal-page-column").index(element) + 1]); 
             },
             selectors: {
                 formTitle: "h2"
@@ -294,6 +294,9 @@ var up = up || {};
             columnDialogLink: ".portal-column-permissions-link",
             portletDialog: ".edit-portlet-permissions-dialog",
             portletDialogLink: ".portlet-permissions-link"
+        }, 
+        messages: {
+            columnX: "Column {0}"
         }
     });
     

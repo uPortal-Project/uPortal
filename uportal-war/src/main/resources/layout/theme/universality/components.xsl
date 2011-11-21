@@ -477,8 +477,7 @@
   <!-- ========== TEMPLATE: WEB SEARCH ========== -->
   <!-- ========================================== -->
   <!--
-   | This template renders the web search component, a search form that runs a search query on the selected search engine.
-   | The list of search engines may be modified in the script file "search.js", which is located in webpages/media/skins/javascript.
+   | This template renders the web search component, a search form that forwards the search query to a search portlet.
   -->
   <xsl:template name="web.search">
     <div id="webSearchContainer" class="fl-widget">
