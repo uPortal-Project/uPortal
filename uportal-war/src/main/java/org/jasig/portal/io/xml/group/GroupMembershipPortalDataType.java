@@ -91,8 +91,8 @@ public class GroupMembershipPortalDataType extends AbstractPortalDataType {
 
     private static final List<PortalDataKey> PORTAL_DATA_KEYS = Arrays.asList(
             IMPORT_30_DATA_KEY, IMPORT_32_DATA_KEY, 
-            IMPORT_GROUP_30_DATA_KEY, IMPORT_MEMBERS_30_DATA_KEY,
-            IMPORT_GROUP_32_DATA_KEY, IMPORT_MEMBERS_32_DATA_KEY);
+            IMPORT_GROUP_30_DATA_KEY, IMPORT_GROUP_32_DATA_KEY,
+            IMPORT_MEMBERS_30_DATA_KEY, IMPORT_MEMBERS_32_DATA_KEY);
     private static final Set<PortalDataKey> GROUP_MEMBERS_30_KEYS = ImmutableSet.of(IMPORT_GROUP_30_DATA_KEY, IMPORT_MEMBERS_30_DATA_KEY);
     private static final Set<PortalDataKey> GROUP_MEMBERS_32_KEYS = ImmutableSet.of(IMPORT_GROUP_32_DATA_KEY, IMPORT_MEMBERS_32_DATA_KEY);
     
