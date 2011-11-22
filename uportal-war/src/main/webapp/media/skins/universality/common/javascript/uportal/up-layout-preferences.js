@@ -222,7 +222,10 @@ var uportal = uportal || {};
         
         that.persistence = up.LayoutPreferencesPersistence(
            container, 
-           { saveLayoutUrl: that.options.layoutPersistenceUrl }
+           { 
+               saveLayoutUrl: that.options.layoutPersistenceUrl,
+               messages: {error: that.options.messages.persistenceError }
+           }
         );
         
         that.urlProvider = up.UrlProvider(
@@ -534,7 +537,9 @@ var uportal = uportal || {};
         mediaPath: null,
         currentSkin: null,
         isFragmentMode: false,
-        messages: {}
+        messages: {
+            persistenceError: "Error persisting layout change"
+        }
     });
     
     
@@ -551,7 +556,10 @@ var uportal = uportal || {};
         
         that.persistence = up.LayoutPreferencesPersistence(
            container, 
-           { saveLayoutUrl: that.options.layoutPersistenceUrl }
+           { 
+               saveLayoutUrl: that.options.layoutPersistenceUrl,
+               messages: {error: that.options.messages.persistenceError }
+           }
         );
         
         that.urlProvider = up.UrlProvider(
@@ -604,7 +612,9 @@ var uportal = uportal || {};
     fluid.defaults("up.FocusedLayoutPreferences", {
         portalContext: "/uPortal",
         layoutPersistenceUrl: '/uPortal/api/layout',
-        messages: {}
+        messages: {
+            persistenceError: "Error persisting layout change"
+        }
     });
     
 })(jQuery, fluid);

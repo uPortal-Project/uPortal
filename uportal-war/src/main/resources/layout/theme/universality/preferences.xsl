@@ -441,6 +441,9 @@
                 {
                     portalContext: '<xsl:value-of select="$CONTEXT_PATH"/>',
                     layoutPersistenceUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout',
+                    messages: {
+                        persistenceError: '<xsl:value-of select="upMsg:getMessage('error.persisting.layout.change', $USER_LANG)"/>',
+                    }
                 }
             );
         });
@@ -550,7 +553,10 @@
               up.FragmentPermissionsManager(
                 "body",
                 {
-                  savePermissionsUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout'
+                  savePermissionsUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout',
+                  messages: {
+                    columnX: '<xsl:value-of select="upMsg:getMessage('column.x', $USER_LANG)"/>',
+                  }
                 }
               );
           </xsl:if>
@@ -578,7 +584,8 @@
                   wideNarrow: '<xsl:value-of select="upMsg:getMessage('wide.narrow', $USER_LANG)"/>',
                   narrowWideNarrow: '<xsl:value-of select="upMsg:getMessage('narrow.wide.narrow', $USER_LANG)"/>',
                   searchForStuff: '<xsl:value-of select="upMsg:getMessage('search.for.stuff', $USER_LANG)"/>',
-                  allCategories: '<xsl:value-of select="upMsg:getMessage('all(categories)', $USER_LANG)"/>'
+                  allCategories: '<xsl:value-of select="upMsg:getMessage('all(categories)', $USER_LANG)"/>',
+                  persistenceError: '<xsl:value-of select="upMsg:getMessage('error.persisting.layout.change', $USER_LANG)"/>',
               }
             }
           );
