@@ -47,7 +47,7 @@ var up = up || {};
     		$.ajax({ async: false, url: url,
     			type: "GET", dataType: "json", data: { entityType: entityTypes, q: searchTerm },
     			success: function(json) {
-    				entities = json.entities;
+    				entities = json.jsonEntityBeanList;
     			}
     		});
     		
@@ -68,8 +68,8 @@ var up = up || {};
     		$.ajax({ async: false, url: url,
     			type: "GET", dataType: "json",
     			success: function(json) {
-    				that.state.entityCache[fullId] = json.entity;
-    				entity = json.entity;
+    				that.state.entityCache[fullId] = json.jsonEntityBean;
+    				entity = json.jsonEntityBean;
     		    }
     		});
 
