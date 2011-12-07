@@ -35,6 +35,14 @@
     <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.GuestUserEvaluatorFactory'/>
   </dlm:fragment>
   
+  <dlm:fragment name='All' ownerID='all-lo' precedence='80'>
+    <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory'>
+      <paren mode="OR">     
+        <attribute mode='deepMemberOf' name='Everyone'/>
+      </paren>
+    </dlm:audience>
+  </dlm:fragment>
+
   <dlm:fragment name='Welcome' ownerID='welcome-lo' precedence='80'>
     <dlm:audience evaluatorFactory='org.jasig.portal.layout.dlm.providers.PersonEvaluatorFactory'>
     <paren mode="AND">
