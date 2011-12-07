@@ -1510,3 +1510,8 @@
   /* Emphasize the user's name. */
   font-weight: bold;
 }
+
+/*alerts area*/
+.up #portalHeaderBlock {
+    background: #294D6B;
+}

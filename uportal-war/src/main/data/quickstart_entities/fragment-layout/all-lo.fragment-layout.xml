@@ -19,28 +19,15 @@
     under the License.
 
 -->
-<layout xmlns:dlm="http://www.uportal.org/layout/dlm" script="classpath://org/jasig/portal/io/import-layout_v3-2.crn" username="admin-lo">
+<layout xmlns:dlm="http://www.uportal.org/layout/dlm" script="classpath://org/jasig/portal/io/import-layout_v3-2.crn" username="all-lo">
   <folder ID="s1" hidden="false" immutable="false" name="Root folder" type="root" unremovable="true">
     <folder ID="s2" hidden="true" immutable="true" name="Header folder" type="header" unremovable="true">
       <channel fname="fragment-admin-exit" unremovable="false" hidden="false" immutable="false" ID="n3"/>
     </folder>
-    <folder ID="s6" hidden="false" immutable="false" name="Footer folder" type="footer" unremovable="false"/>
-    <folder ID="s7" hidden="false" immutable="false" name="Admin Tools" type="regular" unremovable="false">
-      <folder ID="s8" hidden="false" immutable="false" name="Column" type="regular" unremovable="false">
-        <structure-attribute>
-          <name>width</name>
-          <value>50%</value>
-        </structure-attribute>
-        <channel fname="portal-administration" unremovable="false" hidden="false" immutable="false" ID="n9"/>
-      </folder>
-      <folder ID="s10" hidden="false" immutable="false" name="Column" type="regular" unremovable="false">
-        <structure-attribute>
-          <name>width</name>
-          <value>50%</value>
-        </structure-attribute>
-        <channel fname="please-register" unremovable="false" hidden="false" immutable="false" ID="n11"/>
-        <channel fname="emergency-alert-admin" unremovable="false" hidden="false" immutable="false" ID="n12"/>
-      </folder>
+    <folder ID="s4" hidden="false" immutable="true" name="Header folder" type="header" unremovable="true">
+      <channel fname="emergency-alert-demo" unremovable="false" hidden="false" immutable="false" ID="n5"/>
+      <channel fname="tips" unremovable="false" hidden="false" immutable="false" ID="n6"/>
     </folder>
+    <folder ID="s7" hidden="false" immutable="false" name="Footer folder" type="footer" unremovable="false"/>
   </folder>
 </layout>
