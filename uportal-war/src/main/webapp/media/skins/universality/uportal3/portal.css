@@ -1511,3 +1511,16 @@
   background: #cc0000;
   color: white;
 }
+
+/* tips area */
+.up #portalContentTopBlock .up-portlet-wrapper {
+	width: 50%;
+	margin: 0 auto;
+	margin-bottom: 1em;
+	padding: 10px;
+}
+
+/*alerts area*/
+.up #portalHeaderBlock {
+    background: #294D6B;
+}
