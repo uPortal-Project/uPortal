@@ -31,6 +31,7 @@ import org.jasig.portal.IUserProfile;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.i18n.ILocaleStore;
 import org.jasig.portal.i18n.LocaleManager;
+import org.jasig.portal.layout.dlm.Constants;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
@@ -160,7 +161,12 @@ public class UserLocaleHelper {
                 try {
                     localeManager.persistUserLocales(new Locale[] { userLocale });
                     localeStore.updateUserLocales(person, new Locale[] { userLocale });
-                    upm.getUserLayoutManager().loadUserLayout();
+                    
+                    // remove person layout framgent from session since it contains some of the data in previous
+                    // translation and won't be cleared until next logout-login (applies when using
+                    // RDBMDistributedLayoutStore as user layout store).
+                    person.setAttribute(Constants.PLF, null);
+                    upm.getUserLayoutManager().loadUserLayout(true);
                 } catch (Exception e) {
                     throw new PortalException(e);
                 }
