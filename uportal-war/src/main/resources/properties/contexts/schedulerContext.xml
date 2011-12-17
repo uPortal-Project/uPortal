@@ -40,7 +40,8 @@
         <property name="allowCoreThreadTimeOut" value="true" />
     </bean>
     
-    <bean id="uPortalTaskScheduler" class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler">
+    <bean id="uPortalTaskScheduler" class="org.jasig.portal.utils.threading.DelegatingThreadPoolTaskScheduler">
+        <property name="executorService" ref="uPortalTaskExecutor" />
         <property name="poolSize" value="${org.jasig.portal.task.sched.threadPool.poolSize}" />
         <property name="threadGroupName" value="uPortal-TaskSchedulerThreadGroup" />
         <property name="threadNamePrefix" value="uPortal-TaskScheduler-" />
