@@ -75,7 +75,7 @@
                             </bean>
                             <!-- Blackberry web browser -->
                             <bean class="org.jasig.portal.layout.UserAgentProfileMapper.Mapping">
-                                <property name="pattern" value=".*Blackberry.*" />
+                                <property name="pattern" value=".*Black[Bb]erry.*" />
                                 <property name="profileName" value="mobileDefault" />
                             </bean>
                             <!-- Opera Mobile web browser -->
