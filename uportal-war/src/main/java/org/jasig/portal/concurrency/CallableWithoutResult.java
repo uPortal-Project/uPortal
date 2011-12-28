@@ -17,20 +17,21 @@
  * under the License.
  */
 
-package org.jasig.portal.concurrency.locking;
+package org.jasig.portal.concurrency;
 
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.Callable;
 
 /**
- * Used for testing the DB side of the locking logic
- * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class DbOnlyClusterLockServiceImpl extends ClusterLockServiceImpl {
+public abstract class CallableWithoutResult implements Callable<Object> {
+
     @Override
-    protected ReentrantLock getLocalLock(String mutexName) {
-        //Returning a new lock every time results in no local locking
-        return new ReentrantLock();
+    public final Object call() throws Exception {
+        this.callWithoutResult();
+        return null;
     }
+
+    protected abstract void callWithoutResult();
 }

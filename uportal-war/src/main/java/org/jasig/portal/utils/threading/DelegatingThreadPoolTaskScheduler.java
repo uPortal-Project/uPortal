@@ -28,9 +28,11 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.jasig.portal.concurrency.Time;
 import org.springframework.scheduling.SchedulingTaskExecutor;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.Trigger;
+import org.springframework.scheduling.TriggerContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import com.google.common.util.concurrent.ForwardingFuture;
@@ -46,27 +48,71 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
     implements TaskScheduler, SchedulingTaskExecutor {
     private static final long serialVersionUID = 1L;
     
+    private volatile long initialized = System.currentTimeMillis();
+    private volatile long lastStartDelay = 0; 
+    
     private ExecutorService executorService;
+    private long initialDelay = 0;
     
     public void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
     }
 
+    /**
+     * delay to add to the start date for all scheduled tasks
+     * 
+     * @param initialDelay Delay before starting ANY scheduled task
+     */
+    public void setInitialDelay(Time initialDelay) {
+        this.initialDelay = initialDelay.asMillis();
+        this.lastStartDelay = this.initialDelay;
+    }
+
+    @Override
+    public void afterPropertiesSet() {
+        this.initialized = System.currentTimeMillis();
+        super.afterPropertiesSet();
+    }
+    
+    /**
+     * @return the additional start delay to add to any scheduled task
+     */
+    protected long getAdditionalStartDelay() {
+        //Only bother recalculating the start delay if the last time it was resulted in a delay
+        if (this.lastStartDelay != 0) {
+            this.lastStartDelay = Math.max(0, this.initialDelay - (System.currentTimeMillis() - this.initialized));
+            logger.error("Calculated additionalStartDelay of: " + this.lastStartDelay);
+        }
+        
+        return this.lastStartDelay;
+    }
+    
+    protected Date getDelayedStartDate(Date startDate) {
+        final long additionalStartDelay = this.getAdditionalStartDelay();
+        if (additionalStartDelay > 0) {
+            final Date newStartDate = new Date(startDate.getTime() + additionalStartDelay);
+            logger.error("Updated startDate with additionalStartDelay from " + startDate + " to " + newStartDate);
+            return newStartDate;
+        }
+        
+        return startDate;
+    }
+    
     @Override
     public void execute(Runnable task, long startTimeout) {
-        final DelegatingRunnable delegatingRunnable = new DelegatingRunnable(task);
+        final DelegatingRunnable delegatingRunnable = new DelegatingRunnable(this.executorService, task);
         super.execute(delegatingRunnable, startTimeout);
     }
 
     @Override
     public Future<?> submit(Runnable task) {
-        final DelegatingRunnable delegatingRunnable = new DelegatingRunnable(task);
+        final DelegatingRunnable delegatingRunnable = new DelegatingRunnable(this.executorService, task);
         return super.submit(delegatingRunnable);
     }
 
     @Override
     public <T> Future<T> submit(Callable<T> task) {
-        final DelegatingCallable<T> delegatingCallable = new DelegatingCallable<T>(task);
+        final DelegatingCallable<T> delegatingCallable = new DelegatingCallable<T>(this.executorService, task);
         final Future<Future<T>> future = super.submit(delegatingCallable);
         
         return new DelegatingForwardingFuture<T>(future);
@@ -74,56 +120,98 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
 
     @Override
     public void execute(Runnable task) {
-        final DelegatingRunnable delegatingRunnable = new DelegatingRunnable(task);
+        final DelegatingRunnable delegatingRunnable = new DelegatingRunnable(this.executorService, task);
         super.execute(delegatingRunnable);        
     }
 
     @Override
-    public ScheduledFuture<Object> schedule(Runnable task, Trigger trigger) {
-        final DelegatingRunnable delegatingRunnable = new DelegatingRunnable(task);
-        final ScheduledFuture<ScheduledFuture<Object>> future = super.schedule(delegatingRunnable, trigger);
+    public ScheduledFuture<Object> schedule(Runnable task, final Trigger trigger) {
+        //Wrap the trigger so that the first call to nextExecutionTime adds in the additionalStartDelay 
+        final Trigger wrappedTrigger = new Trigger() {
+            boolean firstExecution = false;
+            @Override
+            public Date nextExecutionTime(TriggerContext triggerContext) {
+                Date nextExecutionTime = trigger.nextExecutionTime(triggerContext);
+                if (firstExecution) {
+                    nextExecutionTime = getDelayedStartDate(nextExecutionTime);
+                    firstExecution = true;
+                }
+                return nextExecutionTime;
+            }
+        };
+        
+        final DelegatingRunnable delegatingRunnable = new DelegatingRunnable(this.executorService, task);
+        @SuppressWarnings("unchecked")
+        final ScheduledFuture<ScheduledFuture<Object>> future = super.schedule(delegatingRunnable, wrappedTrigger);
         return new DelegatingForwardingScheduledFuture<Object>(future);
     }
 
     @Override
     public ScheduledFuture<Object> schedule(Runnable task, Date startTime) {
-        final DelegatingRunnable delegatingRunnable = new DelegatingRunnable(task);
+        startTime = getDelayedStartDate(startTime);
+        
+        final DelegatingRunnable delegatingRunnable = new DelegatingRunnable(this.executorService, task);
+        @SuppressWarnings("unchecked")
         final ScheduledFuture<ScheduledFuture<Object>> future = super.schedule(delegatingRunnable, startTime);
         return new DelegatingForwardingScheduledFuture<Object>(future);
     }
 
     @Override
     public ScheduledFuture<Object> scheduleAtFixedRate(Runnable task, Date startTime, long period) {
-        final DelegatingRunnable delegatingRunnable = new DelegatingRunnable(task);
+        startTime = getDelayedStartDate(startTime);
+        
+        final DelegatingRunnable delegatingRunnable = new DelegatingRunnable(this.executorService, task);
+        @SuppressWarnings("unchecked")
         final ScheduledFuture<ScheduledFuture<Object>> future = super.scheduleAtFixedRate(delegatingRunnable, startTime, period);
         return new DelegatingForwardingScheduledFuture<Object>(future);
     }
 
     @Override
     public ScheduledFuture<Object> scheduleAtFixedRate(Runnable task, long period) {
-        final DelegatingRunnable delegatingRunnable = new DelegatingRunnable(task);
+        final long additionalStartDelay = this.getAdditionalStartDelay();
+        if (additionalStartDelay > 0) {
+            //If there is an additional delay use the alternate call which includes a startTime 
+            return this.scheduleAtFixedRate(task, new Date(), period);
+        }
+        
+        final DelegatingRunnable delegatingRunnable = new DelegatingRunnable(this.executorService, task);
+        @SuppressWarnings("unchecked")
         final ScheduledFuture<ScheduledFuture<Object>> future = super.scheduleAtFixedRate(delegatingRunnable, period);
         return new DelegatingForwardingScheduledFuture<Object>(future);
     }
 
     @Override
     public ScheduledFuture<Object> scheduleWithFixedDelay(Runnable task, Date startTime, long delay) {
-        final DelegatingRunnable delegatingRunnable = new DelegatingRunnable(task);
+        startTime = getDelayedStartDate(startTime);
+        
+        final DelegatingRunnable delegatingRunnable = new DelegatingRunnable(this.executorService, task);
+        @SuppressWarnings("unchecked")
         final ScheduledFuture<ScheduledFuture<Object>> future = super.scheduleWithFixedDelay(delegatingRunnable, startTime, delay);
         return new DelegatingForwardingScheduledFuture<Object>(future);
     }
 
     @Override
     public ScheduledFuture<Object> scheduleWithFixedDelay(Runnable task, long delay) {
-        final DelegatingRunnable delegatingRunnable = new DelegatingRunnable(task);
+        final long additionalStartDelay = this.getAdditionalStartDelay();
+        if (additionalStartDelay > 0) {
+            //If there is an additional delay use the alternate call which includes a startTime 
+            return this.scheduleWithFixedDelay(task, new Date(), delay);
+        }
+        
+        final DelegatingRunnable delegatingRunnable = new DelegatingRunnable(this.executorService, task);
+        @SuppressWarnings("unchecked")
         final ScheduledFuture<ScheduledFuture<Object>> future = super.scheduleWithFixedDelay(delegatingRunnable, delay);
         return new DelegatingForwardingScheduledFuture<Object>(future);
     }
+    
+    
 
-    private class DelegatingRunnable implements Runnable {
+    private static class DelegatingRunnable implements Runnable {
+        private final ExecutorService executorService;
         private final Runnable runnable;
         
-        public DelegatingRunnable(Runnable runnable) {
+        public DelegatingRunnable(ExecutorService executorService, Runnable runnable) {
+            this.executorService = executorService;
             this.runnable = runnable;
         }
 
@@ -133,10 +221,12 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
         }
     }
     
-    private class DelegatingCallable<T> implements Callable<Future<T>> {
+    private static class DelegatingCallable<T> implements Callable<Future<T>> {
+        private final ExecutorService executorService;
         private final Callable<T> callable;
 
-        public DelegatingCallable(Callable<T> callable) {
+        public DelegatingCallable(ExecutorService executorService, Callable<T> callable) {
+            this.executorService = executorService;
             this.callable = callable;
         }
 
@@ -172,24 +262,11 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
                 throw new RuntimeException(e);
             }
         }
-
-        @Override
-        public int hashCode() {
-            return this.delegate().hashCode();
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            return this.delegate().equals(obj);
-        }
     }
     
     private static class DelegatingForwardingScheduledFuture<V> extends DelegatingForwardingFuture<V> implements ScheduledFuture<V> {
-        private final ScheduledFuture<ScheduledFuture<V>> scheduledFuture;
-
         public DelegatingForwardingScheduledFuture(ScheduledFuture<ScheduledFuture<V>> scheduledFuture) {
             super(scheduledFuture);
-            this.scheduledFuture = scheduledFuture;
         }
 
         @Override

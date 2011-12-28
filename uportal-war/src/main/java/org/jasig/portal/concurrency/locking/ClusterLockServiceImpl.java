@@ -19,32 +19,24 @@
 
 package org.jasig.portal.concurrency.locking;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.hibernate.LockOptions;
-import org.hibernate.TransactionException;
-import org.jasig.portal.utils.ConcurrentMapUtils;
+import org.jasig.portal.concurrency.Time;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.TransactionTimedOutException;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionOperations;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
 import com.google.common.collect.MapMaker;
 
 /**
@@ -52,41 +44,22 @@ import com.google.common.collect.MapMaker;
  * @version $Revision$
  */
 @Service
-public class ClusterLockServiceImpl implements IClusterLockService, InitializingBean {
+public class ClusterLockServiceImpl implements IClusterLockService {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     
-    private final ConcurrentMap<String, ReentrantLock> localLocks = new MapMaker().weakValues().makeMap();
-
-    private final Cache<Integer, TransactionOperations> transactionOperations = CacheBuilder.newBuilder()
-            .maximumSize(100)
-            .build(new CacheLoader<Integer, TransactionOperations>() {
+    @SuppressWarnings("deprecation")
+    private final ConcurrentMap<String, ReentrantLock> localLocks = new MapMaker().weakValues().makeComputingMap(
+            new Function<String, ReentrantLock>() {
                 @Override
-                public TransactionOperations load(Integer key) throws Exception {
-                    int timeout = key.intValue();
-                    if (timeout >= 0) {
-                        //There is setup/teardown time involved in the db based locking, add 1 second to the lock timeout to avoid over-eager failures
-                        timeout = timeout + 1;
-                    }
-                    
-                    if (platformTransactionManager == null) {
-                        throw new IllegalStateException("Cannot use transactionOperations cache until after setPlatformTransactionManager has been called");
-                    }
-                    
-                    final TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
-                    transactionTemplate.setTimeout(timeout);
-                    //All locking related work MUST happen in its own transaction
-                    transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-                    transactionTemplate.afterPropertiesSet();
-                    return transactionTemplate;
+                public ReentrantLock apply(String input) {
+                    return new ReentrantLock(true);
                 }
             });
-    
-    
-    
+
+    private ExecutorService lockMonitorExecutorService;
     private IClusterLockDao clusterLockDao;
-    private PlatformTransactionManager platformTransactionManager;
-    private TransactionOperations noTimeoutTransactionOperations;
-    private TransactionOperations noWaitTransactionOperations;
+    private Time updateLockRate = Time.getTime(500, TimeUnit.MILLISECONDS);
+    private Time maximumLockDuration = Time.getTime(15, TimeUnit.MINUTES);
 
     @Autowired
     public void setClusterLockDao(IClusterLockDao clusterLockDao) {
@@ -94,156 +67,86 @@ public class ClusterLockServiceImpl implements IClusterLockService, Initializing
     }
 
     @Autowired
-    public void setPlatformTransactionManager(@Qualifier("PortalDb") PlatformTransactionManager platformTransactionManager) {
-        this.platformTransactionManager = platformTransactionManager;
+    void setLockMonitorExecutorService(@Qualifier("uPortalLockExecutor") ExecutorService lockMonitorExecutorService) {
+        this.lockMonitorExecutorService = lockMonitorExecutorService;
     }
-    
-    /* (non-Javadoc)
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+    /**
+     * Rate at which {@link IClusterLockDao#updateLock(String)} is called while a mutex is locked, defaults to 500ms
      */
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        this.noTimeoutTransactionOperations = this.transactionOperations.getUnchecked(TransactionDefinition.TIMEOUT_DEFAULT);
-        this.noWaitTransactionOperations = this.transactionOperations.getUnchecked(LockOptions.NO_WAIT);
-    }
-    
-    protected TransactionOperations getTransactionTemplate(int timeout) {
-        if (timeout == TransactionDefinition.TIMEOUT_DEFAULT) {
-            return this.noTimeoutTransactionOperations;
-        }
-        if (timeout == LockOptions.NO_WAIT) {
-            return this.noWaitTransactionOperations;
-        }
-        
-        return this.transactionOperations.getUnchecked(timeout);
+    void setUpdateLockRate(Time updateLockRate) {
+        this.updateLockRate = updateLockRate;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.concurrency.locking.IClusterLockService#doInLock(java.lang.String, com.google.common.base.Function)
+    /**
+     * Maximum duration that a lock can be held, functionally longest duration that the lockFunction can take to execute.
+     * Defaults to 15 minutes
      */
-    @Override
-    public <T> T doInLock(final String mutexName, final Function<String, T> lockFunction) {
-        this.logger.trace("doInLock({})", mutexName);
-        
-        final ReentrantLock lock = getLocalLock(mutexName);
-        lock.lock();
-        try {
-            this.logger.trace("doInLock({}) - aquired local lock", mutexName);
-            
-            return this.noTimeoutTransactionOperations.execute(new TransactionCallback<T>() {
-                @Override
-                public T doInTransaction(TransactionStatus status) {
-                    final ClusterMutex mutex = getClusterMutex(mutexName);
-                    
-                    logger.trace("doInLock({}) - found {}", mutexName, mutex);
-                    
-                    clusterLockDao.lock(mutex);
-                    
-                    logger.trace("doInLock({}) - db locked {}", mutexName, mutex);
-                    
-                    return lockFunction.apply(mutexName);
-                }
-            });
-        }
-        finally {
-            logger.trace("doInLock({}) - db unlocked", mutexName);
-            lock.unlock();
-            this.logger.trace("doInLock({}) - released local lock", mutexName);
-        }
+    void setMaximumLockDuration(Time maximumLockDuration) {
+        this.maximumLockDuration = maximumLockDuration;
     }
-    
+
     /* (non-Javadoc)
      * @see org.jasig.portal.concurrency.locking.IClusterLockService#doInTryLock(java.lang.String, com.google.common.base.Function)
      */
     @Override
-    public <T> TryLockFunctionResult<T> doInTryLock(String mutexName, Function<String, T> lockFunction) {
-        return this.doInTryLock(mutexName, LockOptions.NO_WAIT, TimeUnit.MILLISECONDS, lockFunction);
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.concurrency.locking.IClusterLockService#doInTryLock(java.lang.String, long, java.util.concurrent.TimeUnit, com.google.common.base.Function)
-     */
-    @Override
-    public <T> TryLockFunctionResult<T> doInTryLock(final String mutexName, final long time,
-            final TimeUnit unit, final Function<String, T> lockFunction) {
-        //Capture start time since we may have to deal with two different lock timeouts
-        final long startTime = System.currentTimeMillis();
-        final long timeout = unit.toMillis(time);
+    public <T> TryLockFunctionResult<T> doInTryLock(final String mutexName, Function<String, T> lockFunction) throws InterruptedException {
+        /*
+         * locking strategy requires 2 threads
+         * the caller thread is the 'work thread', it executes the lockFunction
+         * an additional 'lock thread' is used to acquire and maintain the database lock
+         */
         
-        this.logger.trace("doInTryLock({}, {})", mutexName, timeout);
+        this.logger.trace("doInLock({})", mutexName);
+        
+        //Thread coordination objects
+        final CountDownLatch dbLockLatch = new CountDownLatch(1);
+        final CountDownLatch workCompleteLatch = new CountDownLatch(1);
+        final AtomicBoolean dbLocked = new AtomicBoolean(false);
+        
+        
+        Future<Boolean> lockFuture = null;
         
         final ReentrantLock lock = getLocalLock(mutexName);
-        
-        //Try to get the local lock and determine the tx operations to use based on the lock wait duration
-        final TransactionOperations transactionOperations;
-        final boolean localLocked;
-        if (time == LockOptions.NO_WAIT) {
-            transactionOperations = this.noWaitTransactionOperations;
-            localLocked = lock.tryLock();
-        }
-        else {
-            transactionOperations = this.getTransactionTemplate((int)unit.toSeconds(time));
-            localLocked = lock.tryLock();
-        }
-        
-        //If the local lock failed return immediately
-        if (!localLocked) {
-            this.logger.trace("doInTryLock({}, {}) - failed to aquire local lock, returning notExecuted result", mutexName, timeout);
+        final boolean lockedLocally = lock.tryLock();
+        if (!lockedLocally) {
+            this.logger.trace("local lock already held for {}", mutexName);
             return TryLockFunctionResult.getNotExecutedInstance();
         }
-        
         try {
-            this.logger.trace("doInTryLock({}, {}) - aquired local lock", mutexName, timeout);
+            this.logger.trace("acquired local lock for {}", mutexName);
             
-            return transactionOperations.execute(new TransactionCallback<TryLockFunctionResult<T>>() {
-                @Override
-                public TryLockFunctionResult<T> doInTransaction(TransactionStatus status) {
-
-                    final ClusterMutex mutex = getClusterMutex(mutexName);
-                    
-                    logger.trace("doInTryLock({}, {}) - found {}", new Object[] { mutexName, timeout, mutex });
-                    
-                    //Since there may have been time spent waiting for the local lock recalculate the
-                    //time to spend waiting for a DB lock, if the recalculated time is less than 0 
-                    //return immediately
-                    final long lockTime;
-                    if (time == LockOptions.NO_WAIT) {
-                        lockTime = LockOptions.NO_WAIT;
-                    }
-                    else {
-                        lockTime = timeout - (startTime - System.currentTimeMillis());
-                        if (lockTime < 0) {
-                            logger.trace("doInTryLock({}, {}) - timeout passed before attempting aquisition of {}", new Object[] { mutexName, timeout, mutex });
-                            return TryLockFunctionResult.getNotExecutedInstance();
-                        }
-                    }
-                    
-                    //Try to acquire the DB side lock
-                    final boolean dbLocked = clusterLockDao.tryLock(mutex, lockTime, TimeUnit.MILLISECONDS);
-                    if (!dbLocked) {
-                        logger.trace("doInTryLock({}, {}) - failed to aquire {}", new Object[] { mutexName, timeout, mutex });
-                        return TryLockFunctionResult.getNotExecutedInstance();
-                    }
-                    
-                    logger.trace("doInTryLock({}, {}) - db locked {}", new Object[] { mutexName, timeout, mutex });
-                    
-                    //Locked! run the function and immediately return the result
-                    return new TryLockFunctionResult<T>(lockFunction.apply(mutexName));
-                }
-            });
-        }
-        catch (TransactionException e) {
-            logger.trace("doInTryLock({}, {}) - failed to aquire cluster mutex", mutexName, timeout);
-            return TryLockFunctionResult.getNotExecutedInstance();
-        }
-        catch (TransactionTimedOutException e) {
-            logger.trace("doInTryLock({}, {}) - failed to aquire cluster mutex", mutexName, timeout);
-            return TryLockFunctionResult.getNotExecutedInstance();
+            final DatabaseLockWorker databaseLockWorker = new DatabaseLockWorker(dbLocked, mutexName, dbLockLatch, workCompleteLatch);
+            lockFuture = this.lockMonitorExecutorService.submit(databaseLockWorker);
+            
+            //Wait for DB lock acquisition
+            dbLockLatch.await();
+            
+            if (!dbLocked.get()) {
+                //Failed to get DB lock, stop now
+                this.logger.trace("failed to aquire database lock, returning notExecuted result for: {}", mutexName);
+                return TryLockFunctionResult.getNotExecutedInstance();
+            }
+            
+            //Execute the lockFunction
+            return new TryLockFunctionResult<T>(lockFunction.apply(mutexName));
         }
         finally {
-            logger.trace("doInTryLock({}, {}) - db unlocked {}", mutexName, timeout);
+            //Signal db lock worker to release the lock
+            workCompleteLatch.countDown();
+            
+            if (lockFuture != null) {
+                //Wait for the db lock worker to complete 
+                try {
+                    lockFuture.get();
+                }
+                catch (ExecutionException e) {
+                    this.logger.warn("Lock manager thread for " + mutexName + " failed with an exception. Everything is cleaned up but this could indicate a problem with cluster locking", e.getCause());
+                }
+            }
+            
+            //Release the local lock
             lock.unlock();
-            this.logger.trace("doInTryLock({}, {}) - released local lock", mutexName, timeout);
+            this.logger.trace("released local lock for: {}", mutexName);
         }
     }
 
@@ -266,25 +169,84 @@ public class ClusterLockServiceImpl implements IClusterLockService, Initializing
             return true;
         }
         
-        final TryLockFunctionResult<String> result = this.doInTryLock(mutexName, 0, TimeUnit.MILLISECONDS, Functions.<String>identity());
+        final ClusterMutex clusterMutex = this.clusterLockDao.getClusterMutex(mutexName);
         
-        return !result.isExecuted();
+        return clusterMutex.isLocked();
     }
 
-    private ClusterMutex getClusterMutex(String mutexName) {
-        ClusterMutex mutex = this.clusterLockDao.getClusterMutex(mutexName);
-        if (mutex == null) {
-            this.clusterLockDao.createClusterMutex(mutexName);
-            mutex = this.clusterLockDao.getClusterMutex(mutexName);
-        }
-        return mutex;
+    /**
+     * The local Lock for the specified mutex
+     */
+    protected ReentrantLock getLocalLock(final String mutexName) {
+        return this.localLocks.get(mutexName);
     }
 
-    ReentrantLock getLocalLock(String mutexName) {
-        final ReentrantLock lock = localLocks.get(mutexName);
-        if (lock != null) {
-            return lock;
+    /**
+     * Callable that acquires, maintains, and releases a database lock
+     */
+    private final class DatabaseLockWorker implements Callable<Boolean> {
+        private final AtomicBoolean dbLocked;
+        private final String mutexName;
+        private final CountDownLatch dbLockLatch;
+        private final CountDownLatch workCompleteLatch;
+
+        private DatabaseLockWorker(AtomicBoolean dbLocked, String mutexName, CountDownLatch dbLockLatch,
+                CountDownLatch workCompleteLatch) {
+            this.dbLocked = dbLocked;
+            this.mutexName = mutexName;
+            this.dbLockLatch = dbLockLatch;
+            this.workCompleteLatch = workCompleteLatch;
         }
-        return ConcurrentMapUtils.putIfAbsent(this.localLocks, mutexName, new ReentrantLock(true));
+
+        @Override
+        public Boolean call() throws Exception {
+            try {
+                final long lockTimeout = System.currentTimeMillis() + maximumLockDuration.asMillis();
+                try {
+                    //Try to acquire the lock, set the success to the dbLocked holder
+                    this.dbLocked.set(clusterLockDao.getLock(this.mutexName));
+                }
+                finally {
+                    //Signal the work thread that we've attempted to get the DB lock, done in finally so
+                    //the work thread won't hang if something goes wrong during acquisition
+                    this.dbLockLatch.countDown();
+                    logger.trace("Signaled dbLockLatch for: {}", this.mutexName);
+                }
+                
+                //If acquisition failed return immediately
+                if (!this.dbLocked.get()) {
+                    logger.trace("failed to acquire db lock for: {}", this.mutexName);
+                    return false;
+                }
+                logger.trace("acquired db lock for: {}", this.mutexName);
+            
+                //wait for the work to complete using the updateLockRate as the wait duration, if the wait time
+                //passes without the work thread signaling completion update the mutex (signal we still have the lock)
+                //and wait again
+                while (!this.workCompleteLatch.await(updateLockRate.getDuration(), updateLockRate.getTimeUnit())) {
+                    clusterLockDao.updateLock(this.mutexName);
+                    
+                    if (lockTimeout < System.currentTimeMillis()) {
+                        //TODO is there some way to force the work thread to stop now that the lock thread is giving up?
+                        //TODO better exception type?
+                        throw new RuntimeException("The database lock has been held for more than " + maximumLockDuration + ", giving up and releasing the DB lock.");
+                    }
+                }
+            }
+            catch (Exception e) {
+                logger.warn("DB Lock Worker failed for " + mutexName + " due to an exception.", e);
+                throw e;
+            }
+            finally {
+                //If the db lock was acquired release it
+                if (this.dbLocked.get()) {
+                    clusterLockDao.releaseLock(this.mutexName);
+                    logger.trace("released db lock for: {}", this.mutexName);
+                }
+            }
+            
+            logger.trace("DB lock worker returning true: {}", this.mutexName);
+            return true;
+        }
     }
 }

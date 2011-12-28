@@ -19,8 +19,6 @@
 
 package org.jasig.portal.concurrency.locking;
 
-import java.util.concurrent.TimeUnit;
-
 import com.google.common.base.Function;
 
 /**
@@ -75,35 +73,13 @@ public interface IClusterLockService {
     
     /**
      * Execute the specified function within the named mutex. If the mutex is currently owned by another thread or
-     * server the method will block until the mutex is released or the calling thread is interrupted. 
-     * 
-     * @param mutexName Name of the lock (case sensitive)
-     * @param lockFunction The fuction to call within the lock context, the parameter to the function is the lock name
-     * @return The value returned by the lockFunction
-     */
-    <T> T doInLock(String mutexName, Function<String, T> lockFunction);
-    
-    /**
-     * Execute the specified function within the named mutex. If the mutex is currently owned by another thread or
      * server the method will return immediately 
      * 
      * @param mutexName Name of the lock (case sensitive)
      * @param lockFunction The fuction to call within the lock context, the parameter to the function is the lock name
      * @return The value returned by the lockFunction
      */
-    <T> TryLockFunctionResult<T> doInTryLock(String mutexName, Function<String, T> lockFunction);
-    
-    /**
-     * Execute the specified function within the named mutex. If the mutex is currently owned by another thread or
-     * server the method will block until the mutex is released or the calling thread is interrupted. 
-     * 
-     * @param mutexName Name of the lock (case sensitive)
-     * @param time the maximum time to wait for the lock
-     * @param unit the time unit of the {@code time} argument
-     * @param lockFunction The fuction to call within the lock context, the parameter to the function is the lock name
-     * @return The value returned by the lockFunction
-     */
-    <T> TryLockFunctionResult<T> doInTryLock(String mutexName, long time, TimeUnit unit, Function<String, T> lockFunction);
+    <T> TryLockFunctionResult<T> doInTryLock(String mutexName, Function<String, T> lockFunction) throws InterruptedException;
     
     /**
      * Check if the current thread already owns the specified lock

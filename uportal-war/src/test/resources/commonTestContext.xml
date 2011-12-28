@@ -29,37 +29,23 @@
                         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
                         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
                         
-    <import resource="classpath:commonTestContext.xml"/>
-                        
-    <bean id="uPortalLockExecutor" class="org.jasig.portal.utils.threading.DynamicThreadPoolExecutorFactoryBean">
-        <qualifier value="uPortalLockExecutor" />
-        <property name="corePoolSize" value="2" />
-        <property name="maxPoolSize" value="50" />
-        <property name="queueCapacity" value="0" />
-        <property name="threadGroupName" value="uPortal-LockExecutorThreadGroup" />
-        <property name="threadNamePrefix" value="uPortal-LockExecutor-" />
-        <property name="keepAliveSeconds" value="300" />
-        <property name="daemon" value="true" />
-        <property name="allowCoreThreadTimeOut" value="true" />
+    <bean class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+        <property name="propertyEditorRegistrars">
+            <list>
+                <ref bean="portalPropertyEditorRegistrar"/>
+            </list>
+        </property>
     </bean>
-    
-    <bean id="clusterLockService" class="org.jasig.portal.concurrency.locking.ClusterLockServiceImpl">
-        <qualifier value="normal" />
-    </bean>
-    
-    <bean id="dbOnlyClusterLockService" class="org.jasig.portal.concurrency.locking.DbOnlyClusterLockServiceImpl">
-        <qualifier value="dbOnly" />
+    <bean id="portalPropertyEditorRegistrar" class="org.jasig.portal.spring.properties.PortalPropertyEditorRegistrar">
+        <property name="propertyEditors">
+            <map key-type="java.lang.Class">
+                <entry key="javax.portlet.PortletMode"><bean class="org.jasig.portal.spring.properties.PortletModeEditor" /></entry>
+                <entry key="javax.portlet.WindowState"><bean class="org.jasig.portal.spring.properties.WindowStateEditor" /></entry>
+                <entry key="org.jasig.portal.concurrency.Time"><bean class="org.jasig.portal.spring.properties.TimeEditor" /></entry>
+            </map>
+        </property>
     </bean>
 
-    <bean id="clusterLockDao" class="org.jasig.portal.concurrency.locking.JpaClusterLockDao">
-        <property name="abandonedLockAge" value="100_MILLISECONDS" />
-    </bean>
-    
-    <bean id="portalInfoProvider" class="org.jasig.portal.spring.MockitoFactoryBean">
-        <constructor-arg value="org.jasig.portal.IPortalInfoProvider" />
-    </bean>
-    
-    <import resource="classpath:sharedJpaTestContext.xml"/>
 </beans>
 
 
