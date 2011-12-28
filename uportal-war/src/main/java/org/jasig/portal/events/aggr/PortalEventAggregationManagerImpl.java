@@ -103,25 +103,39 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
     @Override
     @Transactional(value="aggrEventsTransactionManager")
     public void aggregateRawEvents() {
-        this.clusterLockService.doInTryLock(AGGREGATION_LOCK_NAME, new Function<String, Object>() {
-            @Override
-            public Object apply(String input) {
-                doAggregation();
-                return null;
-            }
-        });
+        try {
+            this.clusterLockService.doInTryLock(AGGREGATION_LOCK_NAME, new Function<String, Object>() {
+                @Override
+                public Object apply(String input) {
+                    doAggregation();
+                    return null;
+                }
+            });
+        }
+        catch (InterruptedException e) {
+            logger.warn("Interrupted while aggregating", e);
+            Thread.currentThread().interrupt();
+            return;
+        }
     }
     
     @Override
     @Transactional(value="aggrEventsTransactionManager")
     public void purgeRawEvents() {
-        this.clusterLockService.doInTryLock(PURGE_LOCK_NAME, new Function<String, Object>() {
-            @Override
-            public Object apply(String input) {
-                doPurge();
-                return null;
-            }
-        });
+        try {
+            this.clusterLockService.doInTryLock(PURGE_LOCK_NAME, new Function<String, Object>() {
+                @Override
+                public Object apply(String input) {
+                    doPurge();
+                    return null;
+                }
+            });
+        }
+        catch (InterruptedException e) {
+            logger.warn("Interrupted while purging", e);
+            Thread.currentThread().interrupt();
+            return;
+        }
     }
     
     protected boolean supportsEvent(IPortalEventAggregator<PortalEvent> portalEventAggregator, Class<? extends PortalEvent> eventType) {

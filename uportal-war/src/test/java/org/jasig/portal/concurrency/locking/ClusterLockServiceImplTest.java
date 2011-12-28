@@ -19,6 +19,9 @@
 
 package org.jasig.portal.concurrency.locking;
 
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
@@ -27,13 +30,15 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.jasig.portal.IPortalInfoProvider;
 import org.jasig.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
 import org.jasig.portal.portlet.dao.jpa.BaseJpaDaoTest;
 import org.jasig.portal.test.ThreadGroupRunner;
 import org.jasig.portal.utils.threading.ThrowingRunnable;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
@@ -48,6 +53,8 @@ import com.google.common.base.Function;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaClusterLockDaoTestContext.xml")
 public class ClusterLockServiceImplTest extends BaseJpaDaoTest {
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    
     @Autowired
     @Qualifier("normal")
     private IClusterLockService clusterLockService;
@@ -55,83 +62,24 @@ public class ClusterLockServiceImplTest extends BaseJpaDaoTest {
     @Autowired
     @Qualifier("dbOnly")
     private IClusterLockService dbOnlyclusterLockService;
-
-    @Test
-    public void testLocalLockFunction() throws InterruptedException  {
-        testLockFunction(this.clusterLockService);
-    }
-
-    /**
-     * Can not be run against hsqldb due to lack of row level locking
-     */
-    @Test
-    @Ignore
-    public void testDbOnlyLockFunction() throws InterruptedException  {
-        testLockFunction(this.dbOnlyclusterLockService);
-    }
     
+    @Autowired
+    private IPortalInfoProvider portalInfoProvider;
+
     @Test
     public void testLocalTryLockFunction() throws InterruptedException  {
         testTryLockFunction(this.clusterLockService);
     }
 
-    /**
-     * Can not be run against hsqldb due to lack of row level locking
-     */
     @Test
-    @Ignore
     public void testDbOnlyTryLockFunction() throws InterruptedException  {
         testTryLockFunction(this.dbOnlyclusterLockService);
     }
 
-    private void testLockFunction(final IClusterLockService service) throws InterruptedException {
-        final ThreadGroupRunner threadGroupRunner = new ThreadGroupRunner("ClusterLockServiceImplTest-", true);
-        final String mutexName = "testLockFunction";
-        
-        final AtomicInteger counter = new AtomicInteger(0);
-        final AtomicBoolean concurrent = new AtomicBoolean(false);
-        
-        threadGroupRunner.addTask(10, new ThrowingRunnable() {
-            @Override
-            public void runWithException() throws Throwable {
-                execute(new Callable<Object>() {
-                    @Override
-                    public Object call() throws Exception {
-                        threadGroupRunner.tick(1);
-                        
-                        return service.doInLock(mutexName, new Function<String, Object>() {
-                            @Override
-                            public Object apply(String input) {
-                                if (concurrent.getAndSet(true)) {
-                                    fail("Only one thread should be in Function at a time");
-                                }
-                                
-                                try {
-                                    counter.incrementAndGet();
-                                    Thread.sleep(100);
-                                }
-                                catch (Exception e) {
-                                    throw new RuntimeException(e);
-                                }
-                                finally {
-                                    concurrent.set(false);
-                                }
-                                return null;
-                            }
-                        });
-                    }
-                });
-            }
-        });
-        
-        threadGroupRunner.start();
-        threadGroupRunner.join();
-
-        assertEquals(10, counter.get());
-        assertFalse(concurrent.get());
-    }
-
     private void testTryLockFunction(final IClusterLockService service) throws InterruptedException {
+        reset(portalInfoProvider);
+        when(portalInfoProvider.getServerName()).thenReturn("ServerA");
+        
         final ThreadGroupRunner threadGroupRunner = new ThreadGroupRunner("ClusterLockServiceImplTest-", true);
         final String mutexName = "testLockFunction";
         
@@ -140,7 +88,8 @@ public class ClusterLockServiceImplTest extends BaseJpaDaoTest {
         final AtomicInteger trueCounter = new AtomicInteger(0);
         final AtomicInteger falseCounter = new AtomicInteger(0);
         
-        threadGroupRunner.addTask(10, new ThrowingRunnable() {
+        final int threads = 3;
+        threadGroupRunner.addTask(threads, new ThrowingRunnable() {
             @Override
             public void runWithException() throws Throwable {
                 execute(new Callable<Object>() {
@@ -156,7 +105,9 @@ public class ClusterLockServiceImplTest extends BaseJpaDaoTest {
                                 
                                 try {
                                     executionCounter.incrementAndGet();
+                                    logger.debug("Starting 1500ms of work");
                                     Thread.sleep(1500);
+                                    logger.debug("Completed 1500ms of work");
                                 }
                                 catch (Exception e) {
                                     throw new RuntimeException(e);
@@ -186,7 +137,7 @@ public class ClusterLockServiceImplTest extends BaseJpaDaoTest {
 
         assertEquals(1, executionCounter.get());
         assertEquals(1, trueCounter.get());
-        assertEquals(9, falseCounter.get());
+        assertEquals(threads - 1, falseCounter.get());
         assertFalse(concurrent.get());
     }
 }

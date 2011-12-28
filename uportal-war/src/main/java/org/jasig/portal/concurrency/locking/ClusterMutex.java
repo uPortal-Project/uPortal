@@ -20,6 +20,7 @@
 package org.jasig.portal.concurrency.locking;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,11 +31,16 @@ import javax.persistence.InheritanceType;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Version;
 
 import org.apache.commons.lang.Validate;
 import org.hibernate.annotations.NaturalId;
+import org.springframework.util.Assert;
 
 /**
+ * Used to coordinate cluster wide locking via the database. Tracks the server that currently owns the lock, when
+ * the lock started, last updated and released.
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
@@ -51,7 +57,7 @@ import org.hibernate.annotations.NaturalId;
         pkColumnValue="UP_MUTEX_PROP",
         allocationSize=1
     )
-//Cannot be marked @Immutable otherwise it cannot be locked on
+//THIS CLASS CANNOT BE CACHED
 class ClusterMutex implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -60,13 +66,34 @@ class ClusterMutex implements Serializable {
     @Column(name="MUTEX_ID")
     private final long id;
     
+    @SuppressWarnings("unused")
+    @Version
+    @Column(name = "ENTITY_VERSION")
+    private final long entityVersion;
+    
     @NaturalId
     @Column(name="MUTEX_NAME", length=200, nullable=false)
     private final String name;
     
+    @Column(name="LOCKED", nullable=false)
+    private boolean locked = false;
+    
+    @Column(name="SERVER_ID", length=200)
+    private String serverId;
+    
+    @Column(name="LOCK_START", nullable=false)
+    private Date lockStart = new Date(0);
+    
+    @Column(name="LOCK_UPDATE", nullable=false)
+    private Date lastUpdate = new Date(0);
+    
+    @Column(name="LOCK_END", nullable=false)
+    private Date lockEnd = new Date(0);
+    
     @SuppressWarnings("unused")
     private ClusterMutex() {
         this.id = -1;
+        this.entityVersion = -1;
         this.name = null;
     }
 
@@ -74,6 +101,7 @@ class ClusterMutex implements Serializable {
         Validate.notNull(name, "name");
         
         this.id = -1;
+        this.entityVersion = 0;
         this.name = name;
     }
 
@@ -89,6 +117,72 @@ class ClusterMutex implements Serializable {
      */
     public String getName() {
         return this.name;
+    }
+
+    /**
+     * @return If the lock is currently held
+     */
+    public boolean isLocked() {
+        return this.locked;
+    }
+
+    /**
+     * @return the serverId
+     */
+    public String getServerId() {
+        return this.serverId;
+    }
+
+    /**
+     * @return the lockStart
+     */
+    public long getLockStart() {
+        return this.lockStart.getTime();
+    }
+
+    /**
+     * @return the lastUpdate
+     */
+    public long getLastUpdate() {
+        return this.lastUpdate.getTime();
+    }
+
+    /**
+     * @return the lockEnd
+     */
+    public long getLockEnd() {
+        return this.lockEnd.getTime();
+    }
+    
+
+    /**
+     * Mark the mutex as locked by the specific server
+     */
+    void lock(String serverId) {
+        Assert.notNull(serverId);
+        if (this.locked) {
+            throw new IllegalStateException("Cannot lock already locked mutex: " + this);
+        }
+        this.locked = true;
+        this.lockStart = new Date();
+        this.lastUpdate = this.lockStart;
+        this.serverId = serverId;
+    }
+    
+    void unlock() {
+        if (!this.locked) {
+            throw new IllegalStateException("Cannot unlock already unlocked mutex: " + this);
+        }
+        this.locked = false;
+        this.lockEnd = new Date();
+        this.serverId = null;
+    }
+
+    /**
+     * @param lastUpdate the lastUpdate to set
+     */
+    void updateLock() {
+        this.lastUpdate = new Date();
     }
 
     /* (non-Javadoc)
@@ -123,11 +217,10 @@ class ClusterMutex implements Serializable {
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return "ClusterMutex [id=" + this.id + ", name=" + this.name + "]";
+        return "ClusterMutex [id=" + this.id + ", name=" + this.name + ", locked=" + this.locked + ", serverId="
+                + this.serverId + ", lockStart=" + this.lockStart + ", lastUpdate=" + this.lastUpdate + ", lockEnd="
+                + this.lockEnd + "]";
     }
 }

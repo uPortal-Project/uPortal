@@ -19,12 +19,11 @@
 
 package org.jasig.portal.concurrency.locking;
 
-import java.util.concurrent.TimeUnit;
-
-import org.springframework.dao.DataIntegrityViolationException;
 
 /**
- * DB based locking DAO
+ * DB based locking DAO.
+ * <p/>
+ * Locks are NOT reentrant. If ServerA tries to call getLock twice the 2nd call will return false.
  * 
  * @author Eric Dalquist
  * @version $Revision$
@@ -32,35 +31,38 @@ import org.springframework.dao.DataIntegrityViolationException;
 interface IClusterLockDao {
 
     /**
-     * Get a cluster mutex with the specified name, will return null if the specified
-     * mutex doesn't exist. If null is returned and a mutex is required call {@link #createClusterMutex(String)}
-     * and then {@link #getClusterMutex(String)} again. 
-     */
-    ClusterMutex getClusterMutex(final String mutexName);
-
-    /**
-     * Creates a mutex with the specified name, does not return the mutex as it will likely be in an
-     * invalid state due to transaction scoping. To retrieve the newly created mutex call {@link #getClusterMutex(String)}.
+     * Get a cluster mutex with the specified name.
      * 
-     * @throws DataIntegrityViolationException If the lock already exists, this exception can be safely ignored
+     * @param mutexName the name of the mutex
      */
-    void createClusterMutex(final String mutexName) throws DataIntegrityViolationException;
-
-    /**
-     * Get a DB lock on the specified ClusterMutex object, MUST be called from within
-     * and existing transaction.
-     */
-    void lock(ClusterMutex mutex);
-
-    /**
-     * Try to get a DB lock on the specified ClusterMutex object, MUST be called from within
-     * and existing transaction.
-     */
-    boolean tryLock(ClusterMutex mutex, long time, TimeUnit unit);
+    ClusterMutex getClusterMutex(String mutexName);
+    //TODO test concurrent create
     
     /**
-     * Check if the specified mutex is locked
+     * Lock the specified mutex
+     * 
+     * @param mutexName The mutex to lock
+     * @return True if the lock was successfully acquired, false if the lock is already held.
      */
-    boolean isLocked(ClusterMutex mutex);
+    boolean getLock(String mutexName);
+    //TODO test concurrent lock
+    
+    /**
+     * Update the specified mutex, the mutex must already be locked by this server. It is expected
+     * that a locked mutex is updated at a regular interval to inform other servers that the lock is
+     * still live.
+     * 
+     * @param mutexName The mutex to update
+     * @throws IllegalMonitorStateException if this server does not currently own the lock
+     */
+    void updateLock(String mutexName);
+    
+    /**
+     * Release the specified mutex, the mutex must already be locked by this server.
+     * 
+     * @param mutexName The mutex to release
+     * @throws IllegalMonitorStateException if this server does not currently own the lock
+     */
+    void releaseLock(String mutexName);
 
 }
