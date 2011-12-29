@@ -43,5 +43,6 @@
         <mapping resource="properties/db/global.hbm.xml"/>
         
         <mapping class="org.jasig.portal.events.aggr.EventAggregatorStatusImpl"/>
+        <mapping class="org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl"/>
     </session-factory>
 </hibernate-configuration>
