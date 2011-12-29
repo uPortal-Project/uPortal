@@ -18,6 +18,7 @@
  */
 package org.jasig.portal.portlets.directory;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -151,6 +152,26 @@ public class DirectoryPortletController {
         return new ModelAndView(viewName, model);
     }
     
+    @RenderMapping(params="action=findByUsername")
+    public ModelAndView findPersonByUsername(RenderRequest request, @RequestParam String username) {
+        // get an authorization principal for the current requesting user
+        HttpServletRequest servletRequest = portalRequestUtils.getPortletHttpRequest(request);
+        IPerson currentUser = personManager.getPerson(servletRequest);
+
+        // get the set of people matching the search query
+        final IPersonAttributes person = this.lookupHelper.findPerson(currentUser, username);
+        
+        final boolean isMobile = isMobile(request);
+        String viewName = isMobile ? "/jsp/Directory/mobileDirectory" : "/jsp/Directory/directory";
+
+        final Map<String,Object> model = new HashMap<String, Object>();
+        model.put("query", username);
+        model.put("people", Collections.singletonList(person));
+        model.put("attributeNames", this.displayAttributes);
+
+        return new ModelAndView(viewName, model);
+    }
+    
     /**
      * Search the directory for people matching the search query.  Search results
      * will be scoped to the permissions of the user performing the search.
@@ -175,7 +196,7 @@ public class DirectoryPortletController {
         people = this.lookupHelper.searchForPeople(currentUser, queryAttributes);
         return people;
     }
-
+    
     /**
      * Determine if this should be a mobile view.
      * 
