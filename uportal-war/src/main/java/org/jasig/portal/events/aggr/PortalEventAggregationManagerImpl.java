@@ -178,6 +178,15 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
             public Object apply(PortalEvent input) {
                 events.increment();
                 
+                /*
+                 * TODO interval tracking
+                 * 
+     * If the next event crosses a time interval boundary, the boundary crossed along with its start and end
+     * dates are passed. Called before {@link #doWrite(PortalEvent)} is called on the event that crosses
+     * the boundary
+    public void handleIntervalBoundry(Interval interval, Map<Interval, IntervalInfo> intervals);
+                 */
+                
                 for (final IPortalEventAggregator<PortalEvent> portalEventAggregator : portalEventAggregators) {
                     if (supportsEvent(portalEventAggregator, input.getClass())) {
                         portalEventAggregator.aggregateEvent(input);
