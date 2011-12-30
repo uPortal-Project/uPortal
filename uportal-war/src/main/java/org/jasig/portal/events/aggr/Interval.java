@@ -50,7 +50,8 @@ public enum Interval {
      */
     MONTH,
     /**
-     * 3 Calendar months (Jan 1 - Mar 31, Apr 1 - Jun 30, Jul 1 - Sep 30, Oct 1 - Dec 31)
+     * As defined by the deployer, divides the calendar into 4 sections. 
+     * Default configuration is: 3 Calendar months (Jan 1 - Mar 31, Apr 1 - Jun 30, Jul 1 - Sep 30, Oct 1 - Dec 31)
      */
     CALENDAR_QUARTER,
     /**

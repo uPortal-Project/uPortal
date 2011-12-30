@@ -44,5 +44,6 @@
         
         <mapping class="org.jasig.portal.events.aggr.EventAggregatorStatusImpl"/>
         <mapping class="org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl"/>
+        <mapping class="org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl"/>
     </session-factory>
 </hibernate-configuration>

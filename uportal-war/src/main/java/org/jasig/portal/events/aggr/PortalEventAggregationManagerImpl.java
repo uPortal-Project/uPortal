@@ -21,16 +21,22 @@ package org.jasig.portal.events.aggr;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang.mutable.MutableInt;
 import org.apache.commons.lang.time.DateUtils;
 import org.jasig.portal.IPortalInfoProvider;
+import org.jasig.portal.concurrency.FunctionWithoutResult;
 import org.jasig.portal.concurrency.Time;
 import org.jasig.portal.concurrency.locking.IClusterLockService;
+import org.jasig.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.aggr.IEventAggregatorStatus.ProcessingType;
+import org.jasig.portal.events.aggr.dao.DateDimensionDao;
+import org.jasig.portal.events.aggr.dao.TimeDimensionDao;
 import org.jasig.portal.events.handlers.db.IPortalEventDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,20 +57,35 @@ import com.google.common.base.Function;
  */
 @Service("portalEventAggregationManager")
 public class PortalEventAggregationManagerImpl implements IPortalEventAggregationManager {
+    private static final String DIMENSION_LOCK_NAME = PortalEventAggregationManagerImpl.class.getName() + ".DIMENSION_LOCK";
     private static final String AGGREGATION_LOCK_NAME = PortalEventAggregationManagerImpl.class.getName() + ".AGGREGATION_LOCK";
     private static final String PURGE_LOCK_NAME = PortalEventAggregationManagerImpl.class.getName() + ".PURGE_LOCK";
     
     protected final Logger logger = LoggerFactory.getLogger(getClass());
+    private final AtomicBoolean checkedDimensions = new AtomicBoolean(false);
     
     private IEventAggregationManagementDao eventAggregationManagementDao;
     private IClusterLockService clusterLockService;
     private IPortalEventDao portalEventDao;
+    private TimeDimensionDao timeDimensionDao;
+    private DateDimensionDao dateDimensionDao;
     private IPortalInfoProvider portalInfoProvider;
     private Set<IPortalEventAggregator<PortalEvent>> portalEventAggregators;
     
     private Time aggregationDelay = Time.getTime(1, TimeUnit.MINUTES);
     private Time purgeDelay = Time.getTime(1, TimeUnit.DAYS);
-    
+    private Time dimensionPreloadBuffer = Time.getTime(30, TimeUnit.DAYS);
+
+    @Autowired
+    public void setTimeDimensionDao(TimeDimensionDao timeDimensionDao) {
+        this.timeDimensionDao = timeDimensionDao;
+    }
+
+    @Autowired
+    public void setDateDimensionDao(DateDimensionDao dateDimensionDao) {
+        this.dateDimensionDao = dateDimensionDao;
+    }
+
     @Autowired
     public void setPortalInfoProvider(IPortalInfoProvider portalInfoProvider) {
         this.portalInfoProvider = portalInfoProvider;
@@ -99,42 +120,72 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
     public void setPurgeDelay(Time purgeDelay) {
         this.purgeDelay = purgeDelay;
     }
+    
+    @Value("${org.jasig.portal.event.aggr.PortalEventAggregationManager.dimensionPreloadBuffer:30_DAYS}")
+    public void setDimensionPreloadBuffer(Time dimensionPreloadBuffer) {
+        if (dimensionPreloadBuffer.asDays() < 1) {
+            throw new IllegalArgumentException("dimensionPreloadBuffer must be at least 1 day. Is: " + dimensionPreloadBuffer);
+        }
+        this.dimensionPreloadBuffer = dimensionPreloadBuffer;
+    }
 
     @Override
     @Transactional(value="aggrEventsTransactionManager")
-    public void aggregateRawEvents() {
+    public boolean populateDimensions() {
         try {
-            this.clusterLockService.doInTryLock(AGGREGATION_LOCK_NAME, new Function<String, Object>() {
+            final TryLockFunctionResult<Object> result = this.clusterLockService.doInTryLock(DIMENSION_LOCK_NAME, new FunctionWithoutResult<String>() {
                 @Override
-                public Object apply(String input) {
-                    doAggregation();
-                    return null;
+                protected void applyWithoutResult(String input) {
+                    doPopulateDimensions();
                 }
             });
+            
+            return result.isExecuted();
         }
         catch (InterruptedException e) {
             logger.warn("Interrupted while aggregating", e);
             Thread.currentThread().interrupt();
-            return;
+            return false;
+        }
+    }
+
+    @Override
+    @Transactional(value="aggrEventsTransactionManager")
+    public boolean aggregateRawEvents() {
+        try {
+            final TryLockFunctionResult<Object> result = this.clusterLockService.doInTryLock(AGGREGATION_LOCK_NAME, new FunctionWithoutResult<String>() {
+                @Override
+                protected void applyWithoutResult(String input) {
+                    doAggregateRawEvents();
+                }
+            });
+            
+            return result.isExecuted();
+        }
+        catch (InterruptedException e) {
+            logger.warn("Interrupted while aggregating", e);
+            Thread.currentThread().interrupt();
+            return false;
         }
     }
     
     @Override
     @Transactional(value="aggrEventsTransactionManager")
-    public void purgeRawEvents() {
+    public boolean purgeRawEvents() {
         try {
-            this.clusterLockService.doInTryLock(PURGE_LOCK_NAME, new Function<String, Object>() {
+            final TryLockFunctionResult<Object> result = this.clusterLockService.doInTryLock(PURGE_LOCK_NAME, new FunctionWithoutResult<String>() {
                 @Override
-                public Object apply(String input) {
-                    doPurge();
-                    return null;
+                protected void applyWithoutResult(String input) {
+                    doPurgeRawEvents();
                 }
             });
+            
+            return result.isExecuted();
         }
         catch (InterruptedException e) {
             logger.warn("Interrupted while purging", e);
             Thread.currentThread().interrupt();
-            return;
+            return false;
         }
     }
     
@@ -149,9 +200,51 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
         return (typeArg == null || typeArg.isAssignableFrom(eventType));
     }
     
-    private void doAggregation() {
+    //use local flag to run on first call to doAggregation
+    private void doPopulateDimensions() {
+        if (!this.clusterLockService.isLockOwner(DIMENSION_LOCK_NAME)) {
+            throw new IllegalStateException("Can only be called when this thread owns cluster lock: " + DIMENSION_LOCK_NAME);
+        }
+        
+        final List<TimeDimension> timeDimensions = this.timeDimensionDao.getTimeDimensions();
+        if (timeDimensions.size() != (24 * 60)) {
+            this.logger.info("There are only " + timeDimensions.size() + " time dimensions in the database, there should be " + (24 * 60) + " creating missing dimensions");
+            
+            for (int hour = 0; hour <= 23; hour++) {
+                for (int minute = 0; minute <= 59; minute++) {
+                    //Create any missing time dimensions
+                    final TimeDimension timeDimension = this.timeDimensionDao.getTimeDimensionByHourMinute(hour, minute);
+                    if (timeDimension == null) {
+                        this.timeDimensionDao.createTimeDimension(hour, minute);
+                    }
+                }
+            }
+            
+        }
+    
+        /* this.dimensionPreloadBuffer
+         * 
+         * verify that all 24 * 60 time dimensions exist
+         * get newest date dimension
+         * if no date dimension get oldest and newest persistent events and create all dimensions in that range
+         * get newest date dimension
+         * create date dimensions until now + dimensionPreloadBuffer
+         * 
+         */
+        
+    }
+    
+    private void doAggregateRawEvents() {
         if (!this.clusterLockService.isLockOwner(AGGREGATION_LOCK_NAME)) {
             throw new IllegalStateException("Can only be called when this thread owns cluster lock: " + AGGREGATION_LOCK_NAME);
+        }
+        
+        if (!this.checkedDimensions.get() && this.checkedDimensions.compareAndSet(false, true)) {
+            //First time aggregation has happened, run populateDimensions to ensure enough dimension data exists
+            final boolean populatedDimensions = this.populateDimensions();
+            if (!populatedDimensions) {
+                this.logger.warn("First time doAggregateRawEvents has run and populateDimensions returned false, assuming current dimension data is available");
+            }
         }
 
         final IEventAggregatorStatus eventAggregatorStatus = eventAggregationManagementDao.getEventAggregatorStatus(ProcessingType.AGGREGATION);
@@ -204,7 +297,7 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
         eventAggregationManagementDao.updateEventAggregatorStatus(eventAggregatorStatus);
     }
 
-    private void doPurge() {
+    private void doPurgeRawEvents() {
         if (!this.clusterLockService.isLockOwner(PURGE_LOCK_NAME)) {
             throw new IllegalStateException("Can only be called when this thread owns cluster lock: " + PURGE_LOCK_NAME);
         }

@@ -17,30 +17,22 @@
  * under the License.
  */
 
-package org.jasig.portal.events.aggr;
+package org.jasig.portal.concurrency;
 
+import com.google.common.base.Function;
 
 /**
- * Manages aggregation and purging of portal event data
- * 
  * @author Eric Dalquist
  * @version $Revision$
+ * @see Function
  */
-public interface IPortalEventAggregationManager {
-    
-    /**
-     * Make sure {@link DateDimension} and {@link TimeDimension} objects exist for a reasonable distance into the future
-     */
-    boolean populateDimensions();
+public abstract class FunctionWithoutResult<F> implements Function<F, Object> {
 
-    /**
-     * Requests that raw event data be aggregated
-     */
-    boolean aggregateRawEvents();
+    @Override
+    public final Object apply(F input) {
+        this.applyWithoutResult(input);
+        return null;
+    }
 
-    /**
-     * Requests that raw event data be purged
-     */
-    boolean purgeRawEvents();
-
+    protected abstract void applyWithoutResult(F input);
 }

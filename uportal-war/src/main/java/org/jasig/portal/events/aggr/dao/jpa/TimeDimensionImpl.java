@@ -20,6 +20,7 @@
 package org.jasig.portal.events.aggr.dao.jpa;
 
 import java.io.Serializable;
+import java.util.Calendar;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -37,6 +38,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.NaturalId;
 import org.jasig.portal.events.aggr.TimeDimension;
 
 /**
@@ -67,7 +69,7 @@ class TimeDimensionImpl implements TimeDimension, Serializable {
     @Column(name="TIME_ID")
     private final long id;
     
-    @Index(name = "IDX_UP_TD_HOUR")
+    @NaturalId
     @Column(name="TD_HOUR", nullable=false)
     private final int hour;
     
@@ -75,7 +77,7 @@ class TimeDimensionImpl implements TimeDimension, Serializable {
     @Column(name="TD_FIVE_MINUTE_INCREMENT", nullable=false)
     private final int fiveMinuteIncrement;
     
-    @Index(name = "IDX_UP_TD_MINUTE")
+    @NaturalId
     @Column(name="TD_MINUTE", nullable=false)
     private final int minute;
     
@@ -92,21 +94,17 @@ class TimeDimensionImpl implements TimeDimension, Serializable {
         this.fiveMinuteIncrement = -1;
         this.minute = -1;
     }
-    TimeDimensionImpl(int hour, int fiveMinuteIncrement, int minute) {
-        if (hour < 0 || hour > 23) {
-            throw new IllegalArgumentException("Hour must be between 0 and 23, it is: " + hour);
-        }
-        if (fiveMinuteIncrement < 0 || fiveMinuteIncrement > 11) {
-            throw new IllegalArgumentException("FiveMinuteIncrement must be between 0 and 11, it is: " + fiveMinuteIncrement);
-        }
-        if (minute < 0 || minute > 59) {
-            throw new IllegalArgumentException("Minute must be between 0 and 59, it is: " + minute);
-        }
+    TimeDimensionImpl(int hour, int minute) {
+        final Calendar cal = Calendar.getInstance();
+        cal.setLenient(false); //Make the Calendar do the bounds checking, will throw IllegalArgumentException on call to getTime()
+        cal.clear();
+        cal.set(Calendar.HOUR_OF_DAY, hour);
+        cal.set(Calendar.MINUTE, minute);
         
         this.id = -1;
-        this.hour = hour;
-        this.fiveMinuteIncrement = fiveMinuteIncrement;
-        this.minute = minute;
+        this.hour = cal.get(Calendar.HOUR_OF_DAY);
+        this.minute = cal.get(Calendar.MINUTE);
+        this.fiveMinuteIncrement = this.minute / 5;
     }
 
     @Override
@@ -135,7 +133,6 @@ class TimeDimensionImpl implements TimeDimension, Serializable {
         if (h == 0) {
             final int prime = 31;
             h = 1;
-            h = prime * h + fiveMinuteIncrement;
             h = prime * h + hour;
             h = prime * h + minute;
         }
@@ -151,8 +148,6 @@ class TimeDimensionImpl implements TimeDimension, Serializable {
         if (getClass() != obj.getClass())
             return false;
         TimeDimensionImpl other = (TimeDimensionImpl) obj;
-        if (fiveMinuteIncrement != other.fiveMinuteIncrement)
-            return false;
         if (hour != other.hour)
             return false;
         if (minute != other.minute)

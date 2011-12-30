@@ -78,5 +78,5 @@ public interface DateDimension {
     /**
      * @return The optional designation of the current term the day exists in, may be null
      */
-    String getAcademicTerm();
+    String getTerm();
 }

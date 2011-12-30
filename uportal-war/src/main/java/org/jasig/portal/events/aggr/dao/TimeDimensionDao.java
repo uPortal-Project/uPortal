@@ -17,30 +17,34 @@
  * under the License.
  */
 
-package org.jasig.portal.events.aggr;
+package org.jasig.portal.events.aggr.dao;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import org.jasig.portal.events.aggr.TimeDimension;
 
 /**
- * Manages aggregation and purging of portal event data
+ * DAO for creation/lookup of time dimensions
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface IPortalEventAggregationManager {
-    
-    /**
-     * Make sure {@link DateDimension} and {@link TimeDimension} objects exist for a reasonable distance into the future
-     */
-    boolean populateDimensions();
+public interface TimeDimensionDao {
 
-    /**
-     * Requests that raw event data be aggregated
-     */
-    boolean aggregateRawEvents();
+    TimeDimension createTimeDimension(int hour, int minute);
 
-    /**
-     * Requests that raw event data be purged
-     */
-    boolean purgeRawEvents();
+    List<TimeDimension> getTimeDimensions();
+
+    TimeDimension getTimeDimensionById(long id);
+
+    TimeDimension getTimeDimensionByHourMinute(int hour, int minute);
+
+    TimeDimension getTimeDimensionForCalendar(Calendar calendar);
+
+    TimeDimension getTimeDimensionForTimeInMillis(long time);
+
+    TimeDimension getTimeDimensionForDate(Date date);
 
 }
