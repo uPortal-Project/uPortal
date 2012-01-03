@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.portlet.dao.jpa;
+package org.jasig.portal.test;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
@@ -28,6 +28,11 @@ import java.util.concurrent.Callable;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.jpa.JpaInterceptor;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionOperations;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * Base class for JPA based unit tests that want TX and entity manager support
@@ -37,11 +42,21 @@ import org.springframework.orm.jpa.JpaInterceptor;
  */
 public abstract class BaseJpaDaoTest {
     protected JpaInterceptor jpaInterceptor;
+    protected TransactionOperations transactionOperations;
     
     @Autowired
     public final void setJpaInterceptor(JpaInterceptor jpaInterceptor) {
         this.jpaInterceptor = jpaInterceptor;
     }
+
+    @Autowired
+    public void setPlatformTransactionManager(PlatformTransactionManager platformTransactionManager) {
+        final TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
+        transactionTemplate.afterPropertiesSet();
+        this.transactionOperations = transactionTemplate;
+    }
+
+
 
     /**
      * Executes the callback inside of a {@link JpaInterceptor}.
@@ -49,32 +64,7 @@ public abstract class BaseJpaDaoTest {
     @SuppressWarnings("unchecked")
     public final <T> T execute(final Callable<T> callable) {
         try {
-            return (T)this.jpaInterceptor.invoke(new MethodInvocation() {
-                @Override
-                public Object proceed() throws Throwable {
-                    return callable.call();
-                }
-                
-                @Override
-                public Object getThis() {
-                    throw new UnsupportedOperationException();
-                }
-                
-                @Override
-                public AccessibleObject getStaticPart() {
-                    throw new UnsupportedOperationException();
-                }
-                
-                @Override
-                public Object[] getArguments() {
-                    throw new UnsupportedOperationException();
-                }
-                
-                @Override
-                public Method getMethod() {
-                    throw new UnsupportedOperationException();
-                }
-            });
+            return (T)this.jpaInterceptor.invoke(new MethodInvocationCallable<T>(callable));
         }
         catch (Throwable e) {
             if (e instanceof RuntimeException) {
@@ -82,6 +72,19 @@ public abstract class BaseJpaDaoTest {
             }
             throw new RuntimeException(e);
         }
+    }
+    
+    /**
+     * Executes the callback inside of a {@link JpaInterceptor} inside of a {@link TransactionCallback}
+     */
+    public final <T> T executeInTransaction(final Callable<T> callable) {
+        return this.transactionOperations.execute(new TransactionCallback<T>() {
+
+            @Override
+            public T doInTransaction(TransactionStatus status) {
+                return execute(callable);
+            }
+        });
     }
 
     /**
@@ -125,4 +128,36 @@ public abstract class BaseJpaDaoTest {
         return retVal.get(0);
     }
 
+    private static final class MethodInvocationCallable<T> implements MethodInvocation {
+        private final Callable<T> callable;
+
+        private MethodInvocationCallable(Callable<T> callable) {
+            this.callable = callable;
+        }
+
+        @Override
+        public Object proceed() throws Throwable {
+            return callable.call();
+        }
+
+        @Override
+        public Object getThis() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public AccessibleObject getStaticPart() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Object[] getArguments() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Method getMethod() {
+            throw new UnsupportedOperationException();
+        }
+    }
 }

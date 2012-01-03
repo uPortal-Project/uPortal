@@ -100,6 +100,8 @@ class DateDimensionImpl implements DateDimension, Serializable {
     
     @Transient
     private int hashCode = 0;
+    @Transient
+    private Calendar cal = null;
 
     /**
      * no-arg needed by hibernate
@@ -117,7 +119,7 @@ class DateDimensionImpl implements DateDimension, Serializable {
     }
     DateDimensionImpl(int year, int month, int day, int quarter, String term) {
         if (quarter < 0 || quarter > 3) {
-            throw new IllegalArgumentException("Month must be between 0 and 3, it is: " + quarter);
+            throw new IllegalArgumentException("Quarter must be between 0 and 3, it is: " + quarter);
         }
         
         final Calendar cal = Calendar.getInstance();
@@ -169,6 +171,22 @@ class DateDimensionImpl implements DateDimension, Serializable {
     @Override
     public String getTerm() {
         return this.term;
+    }
+    
+    @Override
+    public Calendar getCalendar() {
+        Calendar c = cal;
+        if (c == null) {
+            c = Calendar.getInstance();
+            c.setLenient(false);
+            c.clear();
+            c.set(Calendar.YEAR, this.year);
+            c.set(Calendar.MONTH, this.month);
+            c.set(Calendar.DAY_OF_MONTH, this.day);
+            cal = c;
+        }
+        
+        return (Calendar)c.clone();
     }
     
     @Override

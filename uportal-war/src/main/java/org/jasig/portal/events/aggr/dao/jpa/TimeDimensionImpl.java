@@ -83,6 +83,8 @@ class TimeDimensionImpl implements TimeDimension, Serializable {
     
     @Transient
     private int hashCode = 0;
+    @Transient
+    private Calendar cal = null;
 
     /**
      * no-arg needed by hibernate
@@ -125,6 +127,21 @@ class TimeDimensionImpl implements TimeDimension, Serializable {
     @Override
     public int getMinute() {
         return this.minute;
+    }
+    
+    @Override
+    public Calendar getCalendar() {
+        Calendar c = cal;
+        if (c == null) {
+            c = Calendar.getInstance();
+            c.setLenient(false);
+            c.clear();
+            c.set(Calendar.HOUR_OF_DAY, this.hour);
+            c.set(Calendar.MINUTE, this.minute);
+            cal = c;
+        }
+        
+        return (Calendar)c.clone();
     }
     
     @Override

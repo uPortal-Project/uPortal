@@ -20,8 +20,12 @@
 package org.jasig.portal.events.handlers.db;
 
 import java.util.Date;
+import java.util.List;
+
+import javax.persistence.TypedQuery;
 
 import org.jasig.portal.events.PortalEvent;
+import org.springframework.dao.support.DataAccessUtils;
 
 import com.google.common.base.Function;
 
@@ -42,6 +46,16 @@ public interface IPortalEventDao {
      * @param handler Function which will be called for each event.
      */
     void getPortalEvents(Date startTime, Date endTime, Function<PortalEvent, Object> handler);
+    
+    /**
+     * @return The timestamp of the oldest event in the persitent store
+     */
+    Date getOldestPortalEventTimestamp();
+    
+    /**
+     * @return The timestamp of the most recent event in the persitent store
+     */
+    Date getNewestPortalEventTimestamp();
     
     /**
      * Delete events with timestamps from before the specified date (exclusive)

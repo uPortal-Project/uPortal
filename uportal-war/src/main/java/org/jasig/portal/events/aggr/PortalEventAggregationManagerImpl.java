@@ -201,44 +201,155 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
     }
     
     //use local flag to run on first call to doAggregation
-    private void doPopulateDimensions() {
-        if (!this.clusterLockService.isLockOwner(DIMENSION_LOCK_NAME)) {
-            throw new IllegalStateException("Can only be called when this thread owns cluster lock: " + DIMENSION_LOCK_NAME);
-        }
-        
+    void doPopulateDimensions() {
+        doPopulateTimeDimensions();
+        doPopulateDateDimensions();
+    }
+
+    /**
+     * Populate the time dimensions 
+     */
+    void doPopulateTimeDimensions() {
         final List<TimeDimension> timeDimensions = this.timeDimensionDao.getTimeDimensions();
-        if (timeDimensions.size() != (24 * 60)) {
-            this.logger.info("There are only " + timeDimensions.size() + " time dimensions in the database, there should be " + (24 * 60) + " creating missing dimensions");
-            
+        if (timeDimensions.isEmpty()) {
+            logger.info("No TimeDimensions exist, creating them");
+            //Create all time dimension 
             for (int hour = 0; hour <= 23; hour++) {
                 for (int minute = 0; minute <= 59; minute++) {
-                    //Create any missing time dimensions
-                    final TimeDimension timeDimension = this.timeDimensionDao.getTimeDimensionByHourMinute(hour, minute);
-                    if (timeDimension == null) {
-                        this.timeDimensionDao.createTimeDimension(hour, minute);
-                    }
+                    this.timeDimensionDao.createTimeDimension(hour, minute);
                 }
             }
-            
         }
-    
-        /* this.dimensionPreloadBuffer
-         * 
-         * verify that all 24 * 60 time dimensions exist
-         * get newest date dimension
-         * if no date dimension get oldest and newest persistent events and create all dimensions in that range
-         * get newest date dimension
-         * create date dimensions until now + dimensionPreloadBuffer
-         * 
-         */
+        else if (timeDimensions.size() != (24 * 60)) {
+            this.logger.info("There are only " + timeDimensions.size() + " time dimensions in the database, there should be " + (24 * 60) + " creating missing dimensions");
+            
+            Calendar nextCal = Calendar.getInstance();
+            nextCal.setLenient(false);
+            nextCal.clear();
+            nextCal.set(Calendar.HOUR_OF_DAY, 0);
+            nextCal.set(Calendar.MINUTE, 0);
+            
+            for (final TimeDimension timeDimension : timeDimensions) {
+                final Calendar tdCal = timeDimension.getCalendar();
+                if (nextCal.before(tdCal)) {
+                    do {
+                        this.timeDimensionDao.createTimeDimension(nextCal.get(Calendar.HOUR_OF_DAY), nextCal.get(Calendar.MINUTE));
+                        nextCal.add(Calendar.MINUTE, 1);
+                    } while (nextCal.before(tdCal));
+                }
+                else if (nextCal.after(tdCal)) {
+                    do {
+                        this.timeDimensionDao.createTimeDimension(tdCal.get(Calendar.HOUR_OF_DAY), tdCal.get(Calendar.MINUTE));
+                        tdCal.add(Calendar.MINUTE, 1);
+                    } while (nextCal.after(tdCal));
+                }
+                
+                nextCal = tdCal;
+                nextCal.add(Calendar.MINUTE, 1);
+            }
+            
+            //Add any missing calendars from the tail
+            final Calendar lastCal = Calendar.getInstance();
+            lastCal.setLenient(false);
+            lastCal.clear();
+            lastCal.set(Calendar.HOUR_OF_DAY, 23);
+            lastCal.set(Calendar.MINUTE, 59);
+            
+            while (nextCal.before(lastCal) || nextCal.equals(lastCal)) {
+                this.timeDimensionDao.createTimeDimension(nextCal.get(Calendar.HOUR_OF_DAY), nextCal.get(Calendar.MINUTE));
+                nextCal.add(Calendar.MINUTE, 1);
+            }
+        }
+        else {
+            this.logger.debug("Found expected " + timeDimensions.size() + " time dimensions");
+        }
+    }
+
+    void doPopulateDateDimensions() {
+        final Calendar now = Calendar.getInstance();
         
+        final Calendar startPop = Calendar.getInstance();
+        startPop.setLenient(false);
+        startPop.clear();
+        
+        final Calendar endPop = Calendar.getInstance();
+        endPop.setLenient(false);
+        endPop.clear();
+
+        // min(oldestPortalEventTimestamp - 1, now -1)
+        final Date oldestPortalEventTimestamp = this.portalEventDao.getOldestPortalEventTimestamp();
+        if (oldestPortalEventTimestamp == null || oldestPortalEventTimestamp.getTime() >= now.getTimeInMillis()) {
+            //no portal events or oldest event is after now, start at now - 1 day
+            startPop.set(Calendar.YEAR, now.get(Calendar.YEAR));
+            startPop.set(Calendar.MONTH, now.get(Calendar.MONTH));
+            startPop.set(Calendar.DAY_OF_MONTH, now.get(Calendar.DAY_OF_MONTH));
+            startPop.add(Calendar.DAY_OF_MONTH, -1);
+        }
+        else {
+            //portal events exist, start at oldest event - 1 day
+            final Calendar oldestEvent = Calendar.getInstance();
+            oldestEvent.setTime(oldestPortalEventTimestamp);
+            
+            startPop.set(Calendar.YEAR, oldestEvent.get(Calendar.YEAR));
+            startPop.set(Calendar.MONTH, oldestEvent.get(Calendar.MONTH));
+            startPop.set(Calendar.DAY_OF_MONTH, oldestEvent.get(Calendar.DAY_OF_MONTH));
+            startPop.add(Calendar.DAY_OF_MONTH, -1);
+        }
+        
+        //max(newestPortalEventTimestamp + dimensionPreloadBuffer, now + dimensionPreloadBuffer)
+        final Date newestPortalEventTimestamp = this.portalEventDao.getNewestPortalEventTimestamp();
+        if (newestPortalEventTimestamp == null || newestPortalEventTimestamp.getTime() <= now.getTimeInMillis()) {
+            //no portal events or newest event is before now, end at now + dimensionPreloadBuffer
+            endPop.set(Calendar.YEAR, now.get(Calendar.YEAR));
+            endPop.set(Calendar.MONTH, now.get(Calendar.MONTH));
+            endPop.set(Calendar.DAY_OF_MONTH, now.get(Calendar.DAY_OF_MONTH));
+            endPop.add(Calendar.DAY_OF_MONTH, (int)this.dimensionPreloadBuffer.asDays());
+        }
+        else {
+            //portal events exist, end at newest event + dimensionPreloadBuffer
+            final Calendar oldestEvent = Calendar.getInstance();
+            oldestEvent.setTime(oldestPortalEventTimestamp);
+            
+            endPop.set(Calendar.YEAR, oldestEvent.get(Calendar.YEAR));
+            endPop.set(Calendar.MONTH, oldestEvent.get(Calendar.MONTH));
+            endPop.set(Calendar.DAY_OF_MONTH, oldestEvent.get(Calendar.DAY_OF_MONTH));
+            endPop.add(Calendar.DAY_OF_MONTH, (int)this.dimensionPreloadBuffer.asDays());
+        }
+        
+        final DateDimension oldestDateDimension = this.dateDimensionDao.getOldestDateDimension();
+        if (oldestDateDimension == null) {
+            doPopulateDateDimensions(startPop, endPop);
+        }
+        else {
+            final Calendar oldestDimensionCal = oldestDateDimension.getCalendar();
+            if (oldestDimensionCal.after(startPop)) {
+                oldestDimensionCal.add(Calendar.DAY_OF_MONTH, -1);
+                doPopulateDateDimensions(startPop, oldestDimensionCal);
+            }
+            
+            final DateDimension newestDateDimension = this.dateDimensionDao.getNewestDateDimension();
+            final Calendar newestDimensionCal = newestDateDimension.getCalendar();
+            if (newestDimensionCal.before(endPop)) {
+                newestDimensionCal.add(Calendar.DAY_OF_MONTH, 1);
+                doPopulateDateDimensions(newestDimensionCal, endPop);
+            }
+                
+        }
     }
     
-    private void doAggregateRawEvents() {
-        if (!this.clusterLockService.isLockOwner(AGGREGATION_LOCK_NAME)) {
-            throw new IllegalStateException("Can only be called when this thread owns cluster lock: " + AGGREGATION_LOCK_NAME);
-        }
+    void doPopulateDateDimensions(Calendar start, Calendar end) {
+        //don't assume we can modify the caller's object
+        start = (Calendar)start.clone();
         
+        logger.info("Creating date dimensions from " + start.getTime() + " to " + end.getTime() + "  (inclusive)");
+        
+        while (start.before(end) || start.equals(end)) {
+            this.dateDimensionDao.createDateDimension(start);
+            start.add(Calendar.DAY_OF_MONTH, 1);
+        }
+    }
+    
+    void doAggregateRawEvents() {
         if (!this.checkedDimensions.get() && this.checkedDimensions.compareAndSet(false, true)) {
             //First time aggregation has happened, run populateDimensions to ensure enough dimension data exists
             final boolean populatedDimensions = this.populateDimensions();
@@ -297,11 +408,7 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
         eventAggregationManagementDao.updateEventAggregatorStatus(eventAggregatorStatus);
     }
 
-    private void doPurgeRawEvents() {
-        if (!this.clusterLockService.isLockOwner(PURGE_LOCK_NAME)) {
-            throw new IllegalStateException("Can only be called when this thread owns cluster lock: " + PURGE_LOCK_NAME);
-        }
-        
+    void doPurgeRawEvents() {
         final IEventAggregatorStatus eventPurgerStatus = eventAggregationManagementDao.getEventAggregatorStatus(ProcessingType.PURGING);
         
         //Update status with current server name

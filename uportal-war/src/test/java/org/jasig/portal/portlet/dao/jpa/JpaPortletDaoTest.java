@@ -40,6 +40,7 @@ import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletType;
+import org.jasig.portal.test.BaseJpaDaoTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -79,4 +79,9 @@ public interface DateDimension {
      * @return The optional designation of the current term the day exists in, may be null
      */
     String getTerm();
+    
+    /**
+     * @return A new Calendar instance that represents the state of the date dimension. All fields except year, month and day of month will be unset
+     */
+    Calendar getCalendar();
 }

@@ -76,28 +76,28 @@ public class JpaTimeDimensionDao extends BaseJpaDao implements TimeDimensionDao 
     
     protected CriteriaQuery<TimeDimensionImpl> buildFindAllTimeDimensions(final CriteriaBuilder cb) {
         final CriteriaQuery<TimeDimensionImpl> criteriaQuery = cb.createQuery(TimeDimensionImpl.class);
-        final Root<TimeDimensionImpl> definitionRoot = criteriaQuery.from(TimeDimensionImpl.class);
-        criteriaQuery.select(definitionRoot);
+        final Root<TimeDimensionImpl> dimensionRoot = criteriaQuery.from(TimeDimensionImpl.class);
+        criteriaQuery.select(dimensionRoot);
+        criteriaQuery.orderBy(cb.asc(dimensionRoot.get(TimeDimensionImpl_.hour)), cb.asc(dimensionRoot.get(TimeDimensionImpl_.minute)));
         
         return criteriaQuery;
     }
     
     protected CriteriaQuery<TimeDimensionImpl> buildFindTimeDimensionByHourMinuteQuery(final CriteriaBuilder cb) {
         final CriteriaQuery<TimeDimensionImpl> criteriaQuery = cb.createQuery(TimeDimensionImpl.class);
-        final Root<TimeDimensionImpl> definitionRoot = criteriaQuery.from(TimeDimensionImpl.class);
-        criteriaQuery.select(definitionRoot);
+        final Root<TimeDimensionImpl> dimensionRoot = criteriaQuery.from(TimeDimensionImpl.class);
+        criteriaQuery.select(dimensionRoot);
         criteriaQuery.where(
             cb.and(
-                    cb.equal(definitionRoot.get(TimeDimensionImpl_.hour), this.hourParameter),
-                    cb.equal(definitionRoot.get(TimeDimensionImpl_.minute), this.minuteParameter)
+                    cb.equal(dimensionRoot.get(TimeDimensionImpl_.hour), this.hourParameter),
+                    cb.equal(dimensionRoot.get(TimeDimensionImpl_.minute), this.minuteParameter)
             )
         );
         
         return criteriaQuery;
     }
-
     @Override
-    @Transactional
+    @Transactional("aggrEvents")
     public TimeDimension createTimeDimension(int hour, int minute) {
         final TimeDimension timeDimension = new TimeDimensionImpl(hour, minute);
         

@@ -560,25 +560,25 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
             paramCount++;
             
             final String name = StringUtils.left(parameterEntry.getKey(), this.maxParameterLength);
-            final List<String> values = parameterEntry.getValue();
+            List<String> values = parameterEntry.getValue();
             if (values == null) {
-                builder.put(name, null);
+                values = Collections.emptyList();
             }
-            else {
-                final com.google.common.collect.ImmutableList.Builder<String> valuesBuilder = ImmutableList.builder();
-                
-                int valueCount = 0;
-                for (final String value : values) {
-                    if (valueCount == this.maxParameters) {
-                        break;
-                    }
-                    valueCount++;
-                    
-                    valuesBuilder.add(StringUtils.left(value, this.maxParameterLength));
+            
+            
+            final com.google.common.collect.ImmutableList.Builder<String> valuesBuilder = ImmutableList.builder();
+            
+            int valueCount = 0;
+            for (final String value : values) {
+                if (valueCount == this.maxParameters) {
+                    break;
                 }
+                valueCount++;
                 
-                builder.put(name, valuesBuilder.build());
+                valuesBuilder.add(StringUtils.left(value, this.maxParameterLength));
             }
+            
+            builder.put(name, valuesBuilder.build());
         }
         
         return builder.build();

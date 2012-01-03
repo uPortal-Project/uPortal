@@ -53,4 +53,9 @@ public interface TimeDimension {
      * @see Calendar#HOUR_OF_DAY
      */
     int getMinute();
+    
+    /**
+     * @return A new Calendar instance that represents the state of the time dimension. All fields except hour and minute will be unset
+     */
+    Calendar getCalendar();
 }

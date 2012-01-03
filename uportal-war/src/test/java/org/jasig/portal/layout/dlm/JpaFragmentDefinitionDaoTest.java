@@ -30,7 +30,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import org.jasig.portal.portlet.dao.jpa.BaseJpaDaoTest;
+import org.jasig.portal.test.BaseJpaDaoTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

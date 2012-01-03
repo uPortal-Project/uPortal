@@ -21,12 +21,16 @@ package org.jasig.portal.events.handlers.db;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Root;
 
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.AnnotationIntrospector;
@@ -41,6 +45,7 @@ import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.jpa.BaseJpaDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,6 +66,8 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
     private final ObjectMapper mapper;
     private String deleteQuery;
     private String selectQuery;
+    private CriteriaQuery<Date> findNewestPersistentPortalEventTimestampQuery;
+    private CriteriaQuery<Date> findOldestPersistentPortalEventTimestampQuery;
     private ParameterExpression<Date> startTimeParameter;
     private ParameterExpression<Date> endTimeParameter;
 
@@ -104,6 +111,31 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
         this.deleteQuery = 
                 "DELETE FROM " + PersistentPortalEvent.class.getName() + " e " +
         		"WHERE e." + PersistentPortalEvent_.timestamp.getName() + " < :" + this.endTimeParameter.getName();
+        
+        this.findNewestPersistentPortalEventTimestampQuery = this.buildFindNewestPersistentPortalEventTimestamp(cb);
+        this.findOldestPersistentPortalEventTimestampQuery = this.buildFindOldestPersistentPortalEventTimestamp(cb);
+    }
+    
+    protected CriteriaQuery<Date> buildFindNewestPersistentPortalEventTimestamp(final CriteriaBuilder cb) {
+        final CriteriaQuery<Date> criteriaQuery = cb.createQuery(Date.class);
+        final Root<PersistentPortalEvent> eventRoot = criteriaQuery.from(PersistentPortalEvent.class);
+        
+        //Get the largest event timestamp
+        criteriaQuery
+            .select(cb.greatest(eventRoot.get(PersistentPortalEvent_.timestamp)));
+        
+        return criteriaQuery;
+    }
+    
+    protected CriteriaQuery<Date> buildFindOldestPersistentPortalEventTimestamp(final CriteriaBuilder cb) {
+        final CriteriaQuery<Date> criteriaQuery = cb.createQuery(Date.class);
+        final Root<PersistentPortalEvent> eventRoot = criteriaQuery.from(PersistentPortalEvent.class);
+        
+        //Get the smallest event timestamp
+        criteriaQuery
+            .select(cb.least(eventRoot.get(PersistentPortalEvent_.timestamp)));
+        
+        return criteriaQuery;
     }
     
     /* (non-Javadoc)
@@ -146,6 +178,22 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
                 this.logger.warn(portalEvent.getClass().getName() + " is not mapped as a persistent entity and will not be stored. " + portalEvent + " Exception=" + iae.getMessage());
             }
         }
+    }
+    
+    @Override
+    public Date getOldestPortalEventTimestamp() {
+        final TypedQuery<Date> query = this.getEntityManager().createQuery(this.findOldestPersistentPortalEventTimestampQuery);
+        query.setMaxResults(1);
+        final List<Date> results = query.getResultList();
+        return DataAccessUtils.singleResult(results);
+    }
+    
+    @Override
+    public Date getNewestPortalEventTimestamp() {
+        final TypedQuery<Date> query = this.getEntityManager().createQuery(this.findNewestPersistentPortalEventTimestampQuery);
+        query.setMaxResults(1);
+        final List<Date> results = query.getResultList();
+        return DataAccessUtils.singleResult(results);
     }
 
     /* (non-Javadoc)

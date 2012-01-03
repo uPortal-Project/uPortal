@@ -32,7 +32,13 @@ import org.jasig.portal.events.aggr.DateDimension;
  * @version $Revision$
  */
 public interface DateDimensionDao {
+    
+    DateDimension getNewestDateDimension();
+    
+    DateDimension getOldestDateDimension();
 
+    DateDimension createDateDimension(Calendar cal);
+    
     DateDimension createDateDimension(int year, int month, int day);
 
     List<DateDimension> getDateDimensions();

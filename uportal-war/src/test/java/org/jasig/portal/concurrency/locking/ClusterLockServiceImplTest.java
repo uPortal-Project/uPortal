@@ -32,7 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jasig.portal.IPortalInfoProvider;
 import org.jasig.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
-import org.jasig.portal.portlet.dao.jpa.BaseJpaDaoTest;
+import org.jasig.portal.test.BaseJpaDaoTest;
 import org.jasig.portal.test.ThreadGroupRunner;
 import org.jasig.portal.utils.threading.ThrowingRunnable;
 import org.junit.Test;
