@@ -333,7 +333,6 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
                 newestDimensionCal.add(Calendar.DAY_OF_MONTH, 1);
                 doPopulateDateDimensions(newestDimensionCal, endPop);
             }
-                
         }
     }
     
