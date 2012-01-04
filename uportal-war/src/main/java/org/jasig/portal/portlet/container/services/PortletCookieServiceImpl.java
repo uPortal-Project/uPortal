@@ -34,10 +34,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.jasig.portal.concurrency.FunctionWithoutResult;
+import org.jasig.portal.concurrency.locking.IClusterLockService;
 import org.jasig.portal.portlet.dao.IPortletCookieDao;
 import org.jasig.portal.portlet.om.IPortalCookie;
 import org.jasig.portal.portlet.om.IPortletCookie;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.ServletContextAware;
@@ -60,7 +64,13 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
 	 * Name of the {@link HttpSession} attribute used to track the value of the {@link IPortalCookie} (useful if the client does not accept cookies).
 	 */
 	static final String SESSION_ATTRIBUTE__PORTAL_COOKIE_ID = PortletCookieServiceImpl.class.getName() + ".PORTAL_COOKIE_ID";
-    private IPortletCookieDao portletCookieDao;
+	
+	private static final String PURGE_LOCK_NAME = PortletCookieServiceImpl.class.getName() + ".PURGE_LOCK";
+    
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
+	
+	private IPortletCookieDao portletCookieDao;
+	private IClusterLockService clusterLockService;
     
     protected static final int DEFAULT_MAX_AGE = (int)TimeUnit.DAYS.toSeconds(365);
     private String cookieName = DEFAULT_PORTAL_COOKIE_NAME;
@@ -75,7 +85,14 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
     public void setPortletCookieDao(IPortletCookieDao portletCookieDao) {
         this.portletCookieDao = portletCookieDao;
     }
-    
+
+    @Autowired
+    public void setClusterLockService(IClusterLockService clusterLockService) {
+        this.clusterLockService = clusterLockService;
+    }
+
+
+
     /* (non-Javadoc)
 	 * @see org.springframework.web.context.ServletContextAware#setServletContext(javax.servlet.ServletContext)
 	 */
@@ -244,6 +261,24 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
         
     }
     
+    @Override
+    public boolean purgeExpiredCookies() {
+        try {
+            this.clusterLockService.doInTryLock(PURGE_LOCK_NAME, new FunctionWithoutResult<String>() {
+                @Override
+                protected void applyWithoutResult(String input) {
+                    portletCookieDao.purgeExpiredCookies();
+                }
+            });
+            return true;
+        }
+        catch (InterruptedException e) {
+            logger.warn("Interrupted while purging expired cookies", e);
+            Thread.currentThread().interrupt();
+            return false;
+        }
+    }
+
     /**
      * Get the {@link Map} of {@link SessionOnlyPortletCookieImpl}s stored in the {@link HttpSession} specifically
      * used for storing {@link SessionOnlyPortletCookieImpl}s with a maxAge equal to -1.
@@ -352,9 +387,9 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
         	IPortalCookie portalCookieInSession = locatePortalCookieInSession(request.getSession());
         	if(null != portalCookieInSession) {
         		return  portalCookieInSession;
-        	} else {
-        		return null;
         	}
+
+    		return null;
         }
         
         final String value = cookie.getValue();

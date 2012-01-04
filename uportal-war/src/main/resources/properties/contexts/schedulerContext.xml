@@ -53,10 +53,13 @@
         <!--
          | Prime #s are used so that over time the executions will distribute themselves fairly evenly over time
          | instead of always happening on at the same time (ex: always at 33 seconds of each minute)
+         |
+         | Handy site for finding primes: http://www.numberempire.com/primenumbers.php
          +-->
-        <task:scheduled ref="portletCookieDao" method="purgeExpiredCookies" fixed-delay="59929"/> <!-- 1 minute period -->
-        <task:scheduled ref="PortalEventDaoQueuingEventHandler" method="flush" fixed-delay="997"/> <!-- 1 second period -->
-        <task:scheduled ref="portalEventAggregationManager" method="aggregateRawEvents" fixed-delay="59957"/> <!-- 1 minute period -->
-        <task:scheduled ref="portalEventAggregationManager" method="purgeRawEvents" fixed-delay="59971"/> <!-- 1 minute period -->
+        <task:scheduled ref="portletCookieService" method="purgeExpiredCookies" fixed-delay="59900"/> <!-- ~1 minute period -->
+        <task:scheduled ref="PortalEventDaoQueuingEventHandler" method="flush" fixed-delay="997"/> <!-- ~1 second period -->
+        <task:scheduled ref="portalEventAggregationManager" method="aggregateRawEvents" fixed-delay="59300"/> <!-- ~1 minute period -->
+        <task:scheduled ref="portalEventAggregationManager" method="purgeRawEvents" fixed-delay="58700"/> <!-- ~1 minute period -->
+        <task:scheduled ref="portalEventAggregationManager" method="populateDimensions" fixed-delay="85980000"/> <!-- ~24 hour period -->
     </task:scheduled-tasks>
 </beans>

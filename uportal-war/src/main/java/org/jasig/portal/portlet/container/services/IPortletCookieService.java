@@ -51,4 +51,9 @@ public interface IPortletCookieService {
      * Adds the specified cookie for the specified portlet.
      */
     public void addCookie(HttpServletRequest request, IPortletWindowId portletWindowId, Cookie cookie);
+    
+    /**
+     * Purges expired cookies
+     */
+    public boolean purgeExpiredCookies();
 }

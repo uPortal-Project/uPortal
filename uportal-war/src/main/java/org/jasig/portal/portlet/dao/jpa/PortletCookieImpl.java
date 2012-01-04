@@ -27,6 +27,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
@@ -39,6 +40,7 @@ import javax.servlet.http.Cookie;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.jasig.portal.portlet.om.IPortalCookie;
 import org.jasig.portal.portlet.om.IPortletCookie;
 
 /**
@@ -83,6 +85,10 @@ class PortletCookieImpl implements IPortletCookie {
 	@Version
     @Column(name = "ENTITY_VERSION")
     private final long entityVersion;
+	
+	@SuppressWarnings("unused")
+	@ManyToOne(targetEntity = PortalCookieImpl.class)
+	private final IPortalCookie portalCookie;
     
     @Column(name = "COOKIE_NAME", length=500, nullable = false, updatable = false)
 	private final String name;
@@ -111,15 +117,17 @@ class PortletCookieImpl implements IPortletCookie {
 		this.internalPortletCookieId = -1;
 		this.entityVersion = -1;
 		this.name = null;
+		this.portalCookie = null;
 	}
 	/**
 	 * 
 	 * @param name
 	 */
-	PortletCookieImpl(Cookie cookie) {
+	PortletCookieImpl(IPortalCookie portalCookie, Cookie cookie) {
 		this.internalPortletCookieId = -1;
 		this.entityVersion = -1;
 		this.name = cookie.getName();
+		this.portalCookie = portalCookie;
 		this.updateFromCookie(cookie);
 	}
 	
