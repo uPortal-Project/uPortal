@@ -268,72 +268,74 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
     void doPopulateDateDimensions() {
         final Calendar now = Calendar.getInstance();
         
-        final Calendar startPop = Calendar.getInstance();
-        startPop.setLenient(false);
-        startPop.clear();
+        final Calendar minEventDate = Calendar.getInstance();
+        minEventDate.setLenient(false);
+        minEventDate.clear();
         
-        final Calendar endPop = Calendar.getInstance();
-        endPop.setLenient(false);
-        endPop.clear();
+        final Calendar maxEventDate = Calendar.getInstance();
+        maxEventDate.setLenient(false);
+        maxEventDate.clear();
 
         // min(oldestPortalEventTimestamp - 1, now -1)
         final Date oldestPortalEventTimestamp = this.portalEventDao.getOldestPortalEventTimestamp();
         if (oldestPortalEventTimestamp == null || oldestPortalEventTimestamp.getTime() >= now.getTimeInMillis()) {
             //no portal events or oldest event is after now, start at now - 1 day
-            startPop.set(Calendar.YEAR, now.get(Calendar.YEAR));
-            startPop.set(Calendar.MONTH, now.get(Calendar.MONTH));
-            startPop.set(Calendar.DAY_OF_MONTH, now.get(Calendar.DAY_OF_MONTH));
-            startPop.add(Calendar.DAY_OF_MONTH, -1);
+            minEventDate.set(Calendar.YEAR, now.get(Calendar.YEAR));
+            minEventDate.set(Calendar.MONTH, now.get(Calendar.MONTH));
+            minEventDate.set(Calendar.DAY_OF_MONTH, now.get(Calendar.DAY_OF_MONTH));
+            minEventDate.add(Calendar.DAY_OF_MONTH, -1);
         }
         else {
             //portal events exist, start at oldest event - 1 day
             final Calendar oldestEvent = Calendar.getInstance();
             oldestEvent.setTime(oldestPortalEventTimestamp);
             
-            startPop.set(Calendar.YEAR, oldestEvent.get(Calendar.YEAR));
-            startPop.set(Calendar.MONTH, oldestEvent.get(Calendar.MONTH));
-            startPop.set(Calendar.DAY_OF_MONTH, oldestEvent.get(Calendar.DAY_OF_MONTH));
-            startPop.add(Calendar.DAY_OF_MONTH, -1);
+            minEventDate.set(Calendar.YEAR, oldestEvent.get(Calendar.YEAR));
+            minEventDate.set(Calendar.MONTH, oldestEvent.get(Calendar.MONTH));
+            minEventDate.set(Calendar.DAY_OF_MONTH, oldestEvent.get(Calendar.DAY_OF_MONTH));
+            minEventDate.add(Calendar.DAY_OF_MONTH, -1);
         }
         
         //max(newestPortalEventTimestamp + dimensionPreloadBuffer, now + dimensionPreloadBuffer)
         final Date newestPortalEventTimestamp = this.portalEventDao.getNewestPortalEventTimestamp();
         if (newestPortalEventTimestamp == null || newestPortalEventTimestamp.getTime() <= now.getTimeInMillis()) {
             //no portal events or newest event is before now, end at now + dimensionPreloadBuffer
-            endPop.set(Calendar.YEAR, now.get(Calendar.YEAR));
-            endPop.set(Calendar.MONTH, now.get(Calendar.MONTH));
-            endPop.set(Calendar.DAY_OF_MONTH, now.get(Calendar.DAY_OF_MONTH));
-            endPop.add(Calendar.DAY_OF_MONTH, (int)this.dimensionPreloadBuffer.asDays());
+            maxEventDate.set(Calendar.YEAR, now.get(Calendar.YEAR));
+            maxEventDate.set(Calendar.MONTH, now.get(Calendar.MONTH));
+            maxEventDate.set(Calendar.DAY_OF_MONTH, now.get(Calendar.DAY_OF_MONTH));
+            maxEventDate.add(Calendar.DAY_OF_MONTH, (int)this.dimensionPreloadBuffer.asDays());
         }
         else {
             //portal events exist, end at newest event + dimensionPreloadBuffer
             final Calendar oldestEvent = Calendar.getInstance();
-            oldestEvent.setTime(oldestPortalEventTimestamp);
+            oldestEvent.setTime(newestPortalEventTimestamp);
             
-            endPop.set(Calendar.YEAR, oldestEvent.get(Calendar.YEAR));
-            endPop.set(Calendar.MONTH, oldestEvent.get(Calendar.MONTH));
-            endPop.set(Calendar.DAY_OF_MONTH, oldestEvent.get(Calendar.DAY_OF_MONTH));
-            endPop.add(Calendar.DAY_OF_MONTH, (int)this.dimensionPreloadBuffer.asDays());
+            maxEventDate.set(Calendar.YEAR, oldestEvent.get(Calendar.YEAR));
+            maxEventDate.set(Calendar.MONTH, oldestEvent.get(Calendar.MONTH));
+            maxEventDate.set(Calendar.DAY_OF_MONTH, oldestEvent.get(Calendar.DAY_OF_MONTH));
+            maxEventDate.add(Calendar.DAY_OF_MONTH, (int)this.dimensionPreloadBuffer.asDays());
         }
         
         final DateDimension oldestDateDimension = this.dateDimensionDao.getOldestDateDimension();
         if (oldestDateDimension == null) {
-            doPopulateDateDimensions(startPop, endPop);
+            //No date dimensions, create from minEventDate to maxEventDate
+            doPopulateDateDimensions(minEventDate, maxEventDate);
         }
         else {
             final Calendar oldestDimensionCal = oldestDateDimension.getCalendar();
-            if (oldestDimensionCal.after(startPop)) {
+            if (oldestDimensionCal.after(minEventDate)) {
+                //the oldest event is after the oldest date dimension, create date dimensions to compensate
                 oldestDimensionCal.add(Calendar.DAY_OF_MONTH, -1);
-                doPopulateDateDimensions(startPop, oldestDimensionCal);
+                doPopulateDateDimensions(minEventDate, oldestDimensionCal);
             }
             
             final DateDimension newestDateDimension = this.dateDimensionDao.getNewestDateDimension();
             final Calendar newestDimensionCal = newestDateDimension.getCalendar();
-            if (newestDimensionCal.before(endPop)) {
+            if (newestDimensionCal.before(maxEventDate)) {
+                //the newest dimension is before either now or the newest event plus the dimensionPreloadBuffer, create date dimensions to pad
                 newestDimensionCal.add(Calendar.DAY_OF_MONTH, 1);
-                doPopulateDateDimensions(newestDimensionCal, endPop);
+                doPopulateDateDimensions(newestDimensionCal, maxEventDate);
             }
-                
         }
     }
     
