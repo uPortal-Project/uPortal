@@ -20,6 +20,7 @@
 package org.jasig.portal.events.aggr.dao.jpa;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.util.Collections;
@@ -27,7 +28,6 @@ import java.util.List;
 
 import org.jasig.portal.concurrency.CallableWithoutResult;
 import org.jasig.portal.events.aggr.DateDimension;
-import org.jasig.portal.events.aggr.PortalEventAggregationManagerImpl;
 import org.jasig.portal.events.aggr.dao.DateDimensionDao;
 import org.jasig.portal.events.aggr.dao.TimeDimensionDao;
 import org.jasig.portal.test.BaseJpaDaoTest;
@@ -79,6 +79,14 @@ public class JpaDateTimeDimensionDaoTest extends BaseJpaDaoTest {
                 dateDimensionDao.createDateDimension(2012, 0, 5);
                 dateDimensionDao.createDateDimension(2012, 0, 6);
                 dateDimensionDao.createDateDimension(2012, 0, 7);
+            }
+        });
+        
+        this.execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                final DateDimension dateDimension = dateDimensionDao.getDateDimensionByYearMonthDay(2012, 0, 1);
+                assertNotNull(dateDimension);
             }
         });
         

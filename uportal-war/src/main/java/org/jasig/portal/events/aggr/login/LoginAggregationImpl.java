@@ -19,25 +19,98 @@
 
 package org.jasig.portal.events.aggr.login;
 
+import java.io.Serializable;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import javax.persistence.Cacheable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
+
+import org.apache.commons.lang.Validate;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.Interval;
 import org.jasig.portal.events.aggr.TimeDimension;
+import org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl;
+import org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
-class LoginAggregationImpl implements LoginAggregation {
+@Entity
+@Table(name = "UP_LOGIN_EVENT_AGGREGATE")
+@Inheritance(strategy=InheritanceType.JOINED)
+@SequenceGenerator(
+        name="UP_LOGIN_EVENT_AGGREGATE_GEN",
+        sequenceName="UP_LOGIN_EVENT_AGGREGATE_SEQ",
+        allocationSize=1
+    )
+@TableGenerator(
+        name="UP_LOGIN_EVENT_AGGREGATE_GEN",
+        pkColumnValue="UP_LOGIN_EVENT_AGGREGATE_PROP",
+        allocationSize=1
+    )
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+class LoginAggregationImpl implements LoginAggregation, Serializable {
+    private static final long serialVersionUID = 1L;
     
+    @Id
+    @GeneratedValue(generator = "UP_LOGIN_EVENT_AGGREGATE_GEN")
+    @Column(name="ID")
+    @SuppressWarnings("unused")
+    private final long id;
+    
+    @ManyToOne(targetEntity=TimeDimensionImpl.class)
+    @JoinColumn(name = "TIME_DIMENSION_ID", nullable = false)
     private final TimeDimension timeDimension;
+
+    @ManyToOne(targetEntity=DateDimensionImpl.class)
+    @JoinColumn(name = "DATE_DIMENSION_ID", nullable = false)
     private final DateDimension dateDimension;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "INTERVAL", nullable = false)
     private final Interval interval;
+    
+    @Column(name = "GROUP_NAME", length=200)
     private final String groupName;
+    
+    @Column(name = "DURATION", nullable = false)
     private int duration;
+    
+    @Column(name = "LOGIN_COUNT", nullable = false)
     private int loginCount;
+    
+    @Column(name = "UNIQUE_LOGIN_COUNT", nullable = false)
     private int uniqueLoginCount;
     
+    @ElementCollection
+    @JoinTable(
+            name = "UP_LOGIN_EVENT_AGGREGATE__UIDS",
+            joinColumns = @JoinColumn(name = "LOGIN_AGGR_ID")
+        )
+    private Set<String> uniqueUserNames = new LinkedHashSet<String>();
+    
+    @SuppressWarnings("unused")
     private LoginAggregationImpl() {
+        this.id = -1;
         this.timeDimension = null;
         this.dateDimension = null;
         this.interval = null;
@@ -46,7 +119,11 @@ class LoginAggregationImpl implements LoginAggregation {
     
     LoginAggregationImpl(TimeDimension timeDimension, DateDimension dateDimension, 
             Interval interval, String groupName) {
+        Validate.notNull(timeDimension);
+        Validate.notNull(dateDimension);
+        Validate.notNull(interval);
         
+        this.id = -1;
         this.timeDimension = timeDimension;
         this.dateDimension = dateDimension;
         this.interval = interval;
@@ -86,6 +163,31 @@ class LoginAggregationImpl implements LoginAggregation {
     @Override
     public int getUniqueLoginCount() {
         return this.uniqueLoginCount;
+    }
+    
+    void setDuration(int duration) {
+        checkState();
+        
+        this.duration = duration;
+    }
+    
+    void countUser(String userName) {
+        checkState();
+        
+        if (this.uniqueUserNames.add(userName)) {
+            this.uniqueLoginCount++;
+        }
+        this.loginCount++;
+    }
+    
+    private void checkState() {
+        if (this.loginCount > 0 && this.uniqueUserNames.isEmpty()) {
+            throw new IllegalStateException("intervalComplete has been called, countUser can no longer be called");
+        }
+    }
+    
+    void intervalComplete() {
+        this.uniqueUserNames.clear();
     }
 
     @Override

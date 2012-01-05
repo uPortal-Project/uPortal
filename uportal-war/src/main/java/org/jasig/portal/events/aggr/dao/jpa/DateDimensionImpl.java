@@ -62,7 +62,7 @@ import org.jasig.portal.events.aggr.DateDimension;
 @Immutable
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-class DateDimensionImpl implements DateDimension, Serializable {
+public class DateDimensionImpl implements DateDimension, Serializable {
     private static final long serialVersionUID = 1L;
    
     @Id

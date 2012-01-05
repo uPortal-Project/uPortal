@@ -61,7 +61,7 @@ import org.jasig.portal.events.aggr.TimeDimension;
 @Immutable
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-class TimeDimensionImpl implements TimeDimension, Serializable {
+public class TimeDimensionImpl implements TimeDimension, Serializable {
     private static final long serialVersionUID = 1L;
    
     @Id

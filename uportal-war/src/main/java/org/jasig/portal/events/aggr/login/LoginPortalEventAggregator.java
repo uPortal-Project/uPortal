@@ -31,7 +31,10 @@ public class LoginPortalEventAggregator implements IPortalEventAggregator<LoginE
     @Override
     public void aggregateEvent(LoginEvent e) {
         // TODO Auto-generated method stub
-
     }
+    
+//    public void handleIntervalBoundry(Interval interval, Map<Interval, IntervalInfo> intervals) {
+//        For each interval info get the LoginAggregationImpl and call intervalComplete
+//    }
 
 }

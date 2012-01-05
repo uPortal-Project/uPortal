@@ -75,6 +75,7 @@ public class JpaDateDimensionDao extends BaseJpaDao implements DateDimensionDao 
     protected void buildCriteriaQueries(CriteriaBuilder cb) {
         this.yearParameter = cb.parameter(Integer.class, "hour");
         this.monthParameter = cb.parameter(Integer.class, "minute");
+        this.dayParameter = cb.parameter(Integer.class, "day");
         
         this.findAllDateDimensionsQuery = this.buildFindAllDateDimensions(cb);
         this.findDateDimensionByYearMonthDayQuery = this.buildFindDateDimensionByYearMonthDayQuery(cb);

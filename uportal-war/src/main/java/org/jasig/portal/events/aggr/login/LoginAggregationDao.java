@@ -17,36 +17,21 @@
  * under the License.
  */
 
-package org.jasig.portal.events.aggr.dao;
+package org.jasig.portal.events.aggr.login;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
+import org.jasig.portal.events.aggr.DateDimension;
+import org.jasig.portal.events.aggr.Interval;
 import org.jasig.portal.events.aggr.TimeDimension;
 
 /**
- * DAO for creation/lookup of time dimensions
- * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface TimeDimensionDao {
+public interface LoginAggregationDao {
+
+    LoginAggregation getLoginAggregation(DateDimension dateDimension, TimeDimension timeDimension);
+
+    LoginAggregation createLoginAggregation(DateDimension dateDimension, TimeDimension timeDimension, Interval interval, String groupName);
     
-    TimeDimension createTimeDimension(Calendar calendar);
-
-    TimeDimension createTimeDimension(int hour, int minute);
-
-    List<TimeDimension> getTimeDimensions();
-
-    TimeDimension getTimeDimensionById(long id);
-
-    TimeDimension getTimeDimensionByHourMinute(int hour, int minute);
-
-    TimeDimension getTimeDimensionForCalendar(Calendar calendar);
-
-    TimeDimension getTimeDimensionForTimeInMillis(long time);
-
-    TimeDimension getTimeDimensionForDate(Date date);
-
+    void updateLoginAggregation(LoginAggregation loginAggregation);
 }

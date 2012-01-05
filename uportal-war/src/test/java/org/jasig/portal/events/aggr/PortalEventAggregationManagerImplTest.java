@@ -60,8 +60,6 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
     @PersistenceContext(unitName = "uPortalAggrEventsPersistence")
     private EntityManager entityManager;
     @Autowired
-    private PlatformTransactionManager platformTransactionManager;
-    @Autowired
     private DateDimensionDao dateDimensionDao;
     @Autowired
     private TimeDimensionDao timeDimensionDao;
@@ -76,9 +74,7 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
         this.execute(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
-                final TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
-                transactionTemplate.afterPropertiesSet();
-                transactionTemplate.execute(new TransactionCallbackWithoutResult(){
+                transactionOperations.execute(new TransactionCallbackWithoutResult(){
                     @Override
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
                         final Query deleteTimeDimensionsQuery = entityManager.createQuery("delete from org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl");

@@ -96,6 +96,16 @@ public class JpaTimeDimensionDao extends BaseJpaDao implements TimeDimensionDao 
         
         return criteriaQuery;
     }
+    
+    
+    @Override
+    @Transactional("aggrEvents")
+    public TimeDimension createTimeDimension(Calendar calendar) {
+        final int hour = calendar.get(Calendar.HOUR);
+        final int minute = calendar.get(Calendar.MINUTE);
+        return this.createTimeDimension(hour, minute);
+    }
+
     @Override
     @Transactional("aggrEvents")
     public TimeDimension createTimeDimension(int hour, int minute) {
