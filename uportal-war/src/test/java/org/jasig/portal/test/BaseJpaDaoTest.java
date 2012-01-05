@@ -21,12 +21,26 @@ package org.jasig.portal.test;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
+import javax.persistence.metamodel.EntityType;
+import javax.persistence.metamodel.Metamodel;
+
 import org.aopalliance.intercept.MethodInvocation;
+import org.jasig.portal.concurrency.CallableWithoutResult;
+import org.junit.After;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.jpa.JpaInterceptor;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -35,14 +49,18 @@ import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
- * Base class for JPA based unit tests that want TX and entity manager support
+ * Base class for JPA based unit tests that want TX and entity manager support.
+ * Also deletes all hibernate managed data from the database after each test execution 
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
 public abstract class BaseJpaDaoTest {
+    protected Logger logger = LoggerFactory.getLogger(getClass());
+    
     protected JpaInterceptor jpaInterceptor;
     protected TransactionOperations transactionOperations;
+    
     
     @Autowired
     public final void setJpaInterceptor(JpaInterceptor jpaInterceptor) {
@@ -50,13 +68,54 @@ public abstract class BaseJpaDaoTest {
     }
 
     @Autowired
-    public void setPlatformTransactionManager(PlatformTransactionManager platformTransactionManager) {
+    public final void setPlatformTransactionManager(PlatformTransactionManager platformTransactionManager) {
         final TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
         transactionTemplate.afterPropertiesSet();
         this.transactionOperations = transactionTemplate;
     }
+    
+    protected abstract EntityManager getEntityManager();
 
+    /**
+     * Deletes ALL entities from the database
+     */
+    @After
+    public final void deleteAllEntities() {
+        final EntityManager entityManager = getEntityManager();
+        final EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
+        final Metamodel metamodel = entityManagerFactory.getMetamodel();
+        Set<EntityType<?>> entityTypes = new LinkedHashSet<EntityType<?>>(metamodel.getEntities());
 
+        do {
+            final Set<EntityType<?>> failedEntitieTypes = new HashSet<EntityType<?>>();
+            
+            for (final EntityType<?> entityType : entityTypes) {
+                final String entityClassName = entityType.getBindableJavaType().getName();
+                
+                try {
+                    this.executeInTransaction(new CallableWithoutResult() {
+                        @Override
+                        protected void callWithoutResult() {
+                            logger.info("Purging all: " + entityClassName);
+                            
+                            final Query query = entityManager.createQuery("SELECT e FROM " + entityClassName + " AS e");
+                            final List<?> entities = query.getResultList();
+                            logger.info("Found " + entities.size() + " " + entityClassName + " to delete");
+                            for (final Object entity : entities) {
+                                entityManager.remove(entity);
+                            }              
+                        }
+                    });
+                }
+                catch (DataIntegrityViolationException e) {
+                    logger.info("Failed to delete " + entityClassName + ". Must be a dependency of another entity");
+                    failedEntitieTypes.add(entityType);
+                }
+            }
+            
+            entityTypes = failedEntitieTypes;
+        } while (!entityTypes.isEmpty());
+    }
 
     /**
      * Executes the callback inside of a {@link JpaInterceptor}.

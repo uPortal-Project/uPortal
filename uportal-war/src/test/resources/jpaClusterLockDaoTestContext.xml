@@ -29,8 +29,6 @@
                         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
                         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
                         
-    <import resource="classpath:commonTestContext.xml"/>
-                        
     <bean id="uPortalLockExecutor" class="org.jasig.portal.utils.threading.DynamicThreadPoolExecutorFactoryBean">
         <qualifier value="uPortalLockExecutor" />
         <property name="corePoolSize" value="2" />
@@ -59,6 +57,21 @@
         <constructor-arg value="org.jasig.portal.IPortalInfoProvider" />
     </bean>
     
+    
+    <bean id="localPropertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="properties">
+            <props>
+                <prop key="persistenceUnitName">uPortalPersistence</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <qualifier value="PortalDb" />
+        <property name="entityManagerFactory" ref="factoryBean" />
+    </bean>
+    <bean id="PortalDb" parent="TestDb">
+        <qualifier value="PortalDb" />
+    </bean>
     <import resource="classpath:sharedJpaTestContext.xml"/>
 </beans>
 

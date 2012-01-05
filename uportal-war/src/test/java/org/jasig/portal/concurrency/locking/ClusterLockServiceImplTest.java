@@ -30,6 +30,9 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.jasig.portal.IPortalInfoProvider;
 import org.jasig.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
 import org.jasig.portal.test.BaseJpaDaoTest;
@@ -65,6 +68,14 @@ public class ClusterLockServiceImplTest extends BaseJpaDaoTest {
     
     @Autowired
     private IPortalInfoProvider portalInfoProvider;
+    
+    @PersistenceContext(unitName = "uPortalPersistence")
+    private EntityManager entityManager;
+    
+    @Override
+    protected EntityManager getEntityManager() {
+        return this.entityManager;
+    }
 
     @Test
     public void testLocalTryLockFunction() throws InterruptedException  {

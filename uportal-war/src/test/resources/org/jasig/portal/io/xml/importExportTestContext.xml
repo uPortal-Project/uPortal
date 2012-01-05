@@ -86,6 +86,21 @@
     <bean id="xmlUtilities" class="org.jasig.portal.xml.XmlUtilitiesImpl" />
     <bean id="xpathOperations" class="org.jasig.portal.xml.xpath.XPathPoolImpl" />
     
+    
+    <bean id="localPropertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="properties">
+            <props>
+                <prop key="persistenceUnitName">uPortalPersistence</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <qualifier value="PortalDb" />
+        <property name="entityManagerFactory" ref="factoryBean" />
+    </bean>
+    <bean id="PortalDb" parent="TestDb">
+        <qualifier value="PortalDb" />
+    </bean>
     <import resource="classpath:/sharedJpaTestContext.xml"/>
 </beans>
 

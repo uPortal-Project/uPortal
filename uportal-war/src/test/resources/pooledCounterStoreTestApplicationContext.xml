@@ -29,7 +29,6 @@
         <property name="location" value="classpath:/dataSource.properties" />
     </bean>
 
-    <bean class="org.jasig.portal.test.HsqldbShutdownListener" />
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="${hibernate.connection.driver_class}" />
         <property name="url" value="${hibernate.connection.url}" />

@@ -19,10 +19,9 @@
 
 package org.jasig.portal.events.aggr;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
-import static org.junit.Assert.assertEquals;
 
 import java.util.Collections;
 import java.util.Date;
@@ -42,7 +41,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.TransactionStatus;
@@ -51,18 +49,22 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 /**
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:jpaStatsAggregationTestContext.xml")
-@DirtiesContext
+@ContextConfiguration(locations = "classpath:jpaAggrEventsTestContext.xml")
 public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
     private PortalEventAggregationManagerImpl portalEventAggregationManager = new PortalEventAggregationManagerImpl();
     private IPortalEventDao portalEventDao;
 
-    @PersistenceContext(unitName = "uPortalAggrEventsPersistence")
-    private EntityManager entityManager;
     @Autowired
     private DateDimensionDao dateDimensionDao;
     @Autowired
     private TimeDimensionDao timeDimensionDao;
+    @PersistenceContext(unitName = "uPortalAggrEventsPersistence")
+    private EntityManager entityManager;
+    
+    @Override
+    protected EntityManager getEntityManager() {
+        return this.entityManager;
+    }
     
     @Before
     public void setup() {

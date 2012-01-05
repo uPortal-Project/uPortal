@@ -142,7 +142,7 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
      * @see org.jasig.portal.events.handlers.db.IPortalEventDao#storePortalEvent(org.jasig.portal.events.PortalEvent)
      */
     @Override
-    @Transactional(value="rawEventsTransactionManager")
+    @Transactional(value="rawEvents")
     public void storePortalEvent(PortalEvent portalEvent) {
         final PersistentPortalEvent persistentPortalEvent = this.wrapPortalEvent(portalEvent);
         this.entityManager.persist(persistentPortalEvent);
@@ -152,7 +152,7 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
      * @see org.jasig.portal.events.handlers.db.IPortalEventDao#storePortalEvents(org.jasig.portal.events.PortalEvent[])
      */
     @Override
-    @Transactional(value="rawEventsTransactionManager")
+    @Transactional(value="rawEvents")
     public void storePortalEvents(PortalEvent... portalEvents) {
         for (final PortalEvent portalEvent : portalEvents) {
             try {
@@ -168,7 +168,7 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
      * @see org.jasig.portal.events.handlers.db.IPortalEventDao#storePortalEvents(java.lang.Iterable)
      */
     @Override
-    @Transactional(value="rawEventsTransactionManager")
+    @Transactional(value="rawEvents")
     public void storePortalEvents(Iterable<PortalEvent> portalEvents) {
         for (final PortalEvent portalEvent : portalEvents) {
             try {
@@ -217,7 +217,7 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
      * @see org.jasig.portal.events.handlers.db.IPortalEventDao#deletePortalEventsBefore(java.util.Date)
      */
     @Override
-    @Transactional(value="rawEventsTransactionManager")
+    @Transactional(value="rawEvents")
     public int deletePortalEventsBefore(Date time) {
         final Query query = this.entityManager.createQuery(this.deleteQuery);
         query.setParameter(this.endTimeParameter.getName(), time);

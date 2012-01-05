@@ -25,7 +25,6 @@ import java.util.Calendar;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
 import org.jasig.portal.concurrency.CallableWithoutResult;
 import org.jasig.portal.events.aggr.DateDimension;
@@ -34,15 +33,11 @@ import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.dao.DateDimensionDao;
 import org.jasig.portal.events.aggr.dao.TimeDimensionDao;
 import org.jasig.portal.test.BaseJpaDaoTest;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 
 /**
  * TODO nuke all tables between test runs
@@ -51,11 +46,8 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
  * @version $Revision$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:jpaStatsAggregationTestContext.xml")
-@DirtiesContext
+@ContextConfiguration(locations = "classpath:jpaAggrEventsTestContext.xml")
 public class JpaLoginAggregationDaoTest extends BaseJpaDaoTest {
-    @PersistenceContext(unitName = "uPortalAggrEventsPersistence")
-    private EntityManager entityManager;
     @Autowired
     private LoginAggregationPrivateDao loginAggregationDao;
     @Autowired
@@ -63,23 +55,12 @@ public class JpaLoginAggregationDaoTest extends BaseJpaDaoTest {
     @Autowired
     private DateDimensionDao dateDimensionDao;
     
-    @Before
-    public void setup() {
-        this.execute(new CallableWithoutResult() {
-            @Override
-            protected void callWithoutResult() {
-                transactionOperations.execute(new TransactionCallbackWithoutResult(){
-                    @Override
-                    protected void doInTransactionWithoutResult(TransactionStatus status) {
-                        final Query deleteTimeDimensionsQuery = entityManager.createQuery("delete from org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl");
-                        deleteTimeDimensionsQuery.executeUpdate();
-                        
-                        final Query deleteDateDimensionsQuery = entityManager.createQuery("delete from org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl");
-                        deleteDateDimensionsQuery.executeUpdate();
-                    }
-                });
-            }
-        });
+    @PersistenceContext(unitName = "uPortalAggrEventsPersistence")
+    private EntityManager entityManager;
+    
+    @Override
+    protected EntityManager getEntityManager() {
+        return this.entityManager;
     }
     
     @Test

@@ -19,13 +19,11 @@
 
 package org.jasig.portal.io.xml;
 
-import static org.mockito.Matchers.anyString;
-
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.when;
-
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,12 +31,13 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.TimeZone;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.Diff;
@@ -46,6 +45,7 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.jasig.portal.io.xml.permission.ExternalPermissionOwner;
 import org.jasig.portal.io.xml.ssd.ExternalStylesheetDescriptor;
 import org.jasig.portal.io.xml.user.UserType;
+import org.jasig.portal.test.BaseJpaDaoTest;
 import org.jasig.portal.utils.ICounterStore;
 import org.jasig.portal.utils.Tuple;
 import org.junit.After;
@@ -64,10 +64,8 @@ import org.springframework.oxm.Unmarshaller;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.SimpleJdbcTestUtils;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
 import org.w3c.dom.Element;
 
 import com.google.common.base.Function;
@@ -78,9 +76,8 @@ import com.google.common.base.Function;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/org/jasig/portal/io/xml/importExportTestContext.xml")
-public class IdentityImportExportTest {
+public class IdentityImportExportTest extends BaseJpaDaoTest {
     @Autowired private DataSource dataSource;
-    @Autowired private PlatformTransactionManager transactionManager;
     
     @javax.annotation.Resource(name="stylesheetDescriptorImporterExporter")
     private IDataImporter<ExternalStylesheetDescriptor> stylesheetDescriptorImporter;
@@ -104,9 +101,16 @@ public class IdentityImportExportTest {
     
     @Autowired private ICounterStore counterStore;
     private SimpleJdbcTemplate simpleJdbcTemplate;
-    private TransactionTemplate transactionTemplate;
     private int counter = 0;
     private TimeZone defaultTimeZone;
+    
+    @PersistenceContext(unitName = "uPortalPersistence")
+    private EntityManager entityManager;
+    
+    @Override
+    protected EntityManager getEntityManager() {
+        return this.entityManager;
+    }
     
     protected void runSql(final String sql) {
         if (simpleJdbcTemplate == null) {
@@ -128,8 +132,6 @@ public class IdentityImportExportTest {
     @Before
     public void setup() {
         simpleJdbcTemplate = null;
-        
-        transactionTemplate = new TransactionTemplate(this.transactionManager);
         
         defaultTimeZone = TimeZone.getDefault();
         TimeZone.setDefault(TimeZone.getTimeZone("EST"));
@@ -260,7 +262,7 @@ public class IdentityImportExportTest {
         
         //Export the data
         final String name = getName.apply(dataImport);
-        final Object dataExport = transactionTemplate.execute(new TransactionCallback<Object>() {
+        final Object dataExport = transactionOperations.execute(new TransactionCallback<Object>() {
             /* (non-Javadoc)
              * @see org.springframework.transaction.support.TransactionCallback#doInTransaction(org.springframework.transaction.TransactionStatus)
              */

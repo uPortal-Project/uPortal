@@ -36,28 +36,31 @@ public class SQLNextExceptionLoggerAspect implements Ordered {
     protected final Log logger = LogFactory.getLog(this.getClass());
 
     private int order = 0;
-    
+
     /* (non-Javadoc)
      * @see org.springframework.core.Ordered#getOrder()
      */
+    @Override
     public int getOrder() {
         return this.order;
     }
+
     /**
      * @param order the order to set
      */
     public void setOrder(int order) {
         this.order = order;
     }
-    
+
     public void logBatchUpdateExceptions(Throwable t) {
+        System.err.println("CALLED");
         while (t != null && !(t instanceof SQLException)) {
             t = t.getCause();
         }
-        
+
         if (t instanceof SQLException) {
-            SQLException sqle = (SQLException)t;
-            
+            SQLException sqle = (SQLException) t;
+
             //If the SQLException is the root chain the results of getNextException as initCauses
             if (sqle.getCause() == null) {
                 SQLException nextException;

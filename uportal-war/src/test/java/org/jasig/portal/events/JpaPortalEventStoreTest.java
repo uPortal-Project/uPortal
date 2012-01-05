@@ -33,6 +33,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.portlet.ActionRequest;
 import javax.xml.namespace.QName;
 
@@ -60,6 +62,13 @@ import com.google.common.collect.ImmutableSet;
 public class JpaPortalEventStoreTest extends BaseJpaDaoTest {
     @Autowired
     private IPortalEventDao portalEventDao;
+    @PersistenceContext(unitName = "uPortalRawEventsPersistence")
+    private EntityManager entityManager;
+    
+    @Override
+    protected EntityManager getEntityManager() {
+        return this.entityManager;
+    }
     
     @Test
     public void testStoreSingleEvents() throws Exception {
