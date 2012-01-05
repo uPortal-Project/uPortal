@@ -386,6 +386,8 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
                 
                 /*
                  * TODO interval tracking
+                 *
+                 * https://source.jasig.org/sandbox/StatsAggregator/trunk/stats-aggr/src/main/java/org/jasig/portal/stats/item/write/BaseEventWriter.java
                  * 
      * If the next event crosses a time interval boundary, the boundary crossed along with its start and end
      * dates are passed. Called before {@link #doWrite(PortalEvent)} is called on the event that crosses
