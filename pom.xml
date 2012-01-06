@@ -383,14 +383,14 @@
                 <version>${servlet-api.version}</version>
             </dependency>
             <dependency>
-                <groupId>jtidy</groupId>
-                <artifactId>jtidy</artifactId>
-                <version>${jtidy.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>jline</groupId>
                 <artifactId>jline</artifactId>
                 <version>${jline.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jtidy</groupId>
+                <artifactId>jtidy</artifactId>
+                <version>${jtidy.version}</version>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>

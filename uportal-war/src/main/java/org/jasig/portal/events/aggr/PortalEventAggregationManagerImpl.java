@@ -21,7 +21,9 @@ package org.jasig.portal.events.aggr;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -36,6 +38,7 @@ import org.jasig.portal.concurrency.locking.IClusterLockService.TryLockFunctionR
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.aggr.IEventAggregatorStatus.ProcessingType;
 import org.jasig.portal.events.aggr.dao.DateDimensionDao;
+import org.jasig.portal.events.aggr.dao.IEventAggregationManagementDao;
 import org.jasig.portal.events.aggr.dao.TimeDimensionDao;
 import org.jasig.portal.events.handlers.db.IPortalEventDao;
 import org.slf4j.Logger;
@@ -376,6 +379,8 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
         
         logger.debug("Starting aggregation of events between {} (inc) and {} (exc)", lastAggregated, newestEventTime);
         final MutableInt events = new MutableInt();
+        
+        final Map<Interval, IntervalInfo> intervalInfo = new HashMap<Interval, IntervalInfo>();
 
         //Do aggregation, capturing the start and end dates
         eventAggregatorStatus.setLastStart(new Date());
@@ -383,6 +388,8 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
             @Override
             public Object apply(PortalEvent input) {
                 events.increment();
+                
+                
                 
                 /*
                  * TODO interval tracking

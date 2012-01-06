@@ -47,9 +47,15 @@ public class IntervalInfo implements Serializable {
     public Date getEnd() {
         return this.end;
     }
+    /**
+     * @return The date dimension that corresponds with the {@link #getStart()} value
+     */
     public DateDimension getDateDimension() {
         return dateDimension;
     }
+    /**
+     * @return The time dimension that corresponds with the {@link #getStart()} value
+     */
     public TimeDimension getTimeDimension() {
         return timeDimension;
     }

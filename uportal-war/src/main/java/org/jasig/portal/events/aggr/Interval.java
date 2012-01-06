@@ -19,6 +19,8 @@
 
 package org.jasig.portal.events.aggr;
 
+import java.util.Calendar;
+
 /**
  * Enumeration of all time intervals the event aggregation can handle. All of the example ranges are inclusive on both ends
  * 
@@ -27,6 +29,7 @@ package org.jasig.portal.events.aggr;
 public enum Interval {
     /**
      * 1 Minute
+     * @see Calendar#MINUTE
      */
     MINUTE,
     /**
@@ -35,18 +38,22 @@ public enum Interval {
     FIVE_MINUTE,
     /**
      * 1 Hour (minutes 0-59)
+     * @see Calendar#HOUR_OF_DAY
      */
     HOUR,
     /**
      * 1 Day (hours 0-23)
+     * @see Calendar#DAY_OF_MONTH
      */
     DAY,
     /**
      * 1 Week (7 days, Sunday-Saturday)
+     * @see Calendar#WEEK_OF_YEAR
      */
     WEEK,
     /**
      * 1 Calendar month (date 1 - last date of month)
+     * @see Calendar#MONTH
      */
     MONTH,
     /**
@@ -59,7 +66,8 @@ public enum Interval {
      */
     ACADEMIC_TERM,
     /**
-     * 1 Year (Jan 1 - Dec 31) 
+     * 1 Year (Jan 1 - Dec 31)
+     * @see Calendar#YEAR 
      */
     YEAR;
 }

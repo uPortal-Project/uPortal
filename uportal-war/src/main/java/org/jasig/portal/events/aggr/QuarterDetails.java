@@ -19,18 +19,25 @@
 
 package org.jasig.portal.events.aggr;
 
+import java.util.Date;
+
 /**
- * Operations central to the management of portal event aggregation
- * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface IEventAggregationManagementDao {
-    IEventAggregatorStatus getEventAggregatorStatus(IEventAggregatorStatus.ProcessingType processingType);
-    
-    void updateEventAggregatorStatus(IEventAggregatorStatus eventAggregatorStatus);
-    
-    /*
-     * Also manage date & time pivot tables here?
+public interface QuarterDetails {
+    /**
+     * @return The id of the quarter (0 - 3)
      */
+    int getQuarterId();
+    
+    /**
+     * @return Start of the quarter, inclusive
+     */
+    Date getStart();
+    
+    /**
+     * @return End of the quarter, inclusive
+     */
+    Date getEnd();
 }

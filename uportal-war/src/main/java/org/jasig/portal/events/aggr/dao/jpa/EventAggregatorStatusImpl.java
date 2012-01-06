@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.events.aggr;
+package org.jasig.portal.events.aggr.dao.jpa;
 
 import java.util.Date;
 
@@ -36,6 +36,8 @@ import javax.persistence.Version;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalId;
+import org.jasig.portal.events.aggr.IEventAggregatorStatus;
+import org.jasig.portal.events.aggr.IEventAggregatorStatus.ProcessingType;
 
 /**
  * @author Eric Dalquist

@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.events.aggr;
+package org.jasig.portal.events.aggr.dao.jpa;
 
 import java.util.List;
 
@@ -29,7 +29,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
+import org.jasig.portal.events.aggr.IEventAggregatorStatus;
 import org.jasig.portal.events.aggr.IEventAggregatorStatus.ProcessingType;
+import org.jasig.portal.events.aggr.dao.IEventAggregationManagementDao;
 import org.jasig.portal.jpa.BaseJpaDao;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;

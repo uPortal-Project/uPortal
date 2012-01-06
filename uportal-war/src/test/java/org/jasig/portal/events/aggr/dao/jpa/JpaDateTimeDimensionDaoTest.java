@@ -32,6 +32,7 @@ import javax.persistence.PersistenceContext;
 import org.jasig.portal.concurrency.CallableWithoutResult;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.dao.DateDimensionDao;
+import org.jasig.portal.events.aggr.dao.TimeDimensionDao;
 import org.jasig.portal.test.BaseJpaDaoTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,8 +48,8 @@ public class JpaDateTimeDimensionDaoTest extends BaseJpaDaoTest {
 	
     @Autowired
 	private DateDimensionDao dateDimensionDao;
-//    @Autowired
-//    private TimeDimensionDao timeDimensionDao;
+    @Autowired
+    private TimeDimensionDao timeDimensionDao;
     
     @PersistenceContext(unitName = "uPortalAggrEventsPersistence")
     private EntityManager entityManager;
@@ -59,7 +60,7 @@ public class JpaDateTimeDimensionDaoTest extends BaseJpaDaoTest {
     }
 
 	@Test
-	public void testGetMaxDateDimension() {
+	public void testGetMinMaxDateDimension() {
         this.execute(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
