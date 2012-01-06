@@ -53,27 +53,27 @@ public class SQLNextExceptionLoggerAspect implements Ordered {
     }
 
     public void logBatchUpdateExceptions(Throwable t) {
-        System.err.println("CALLED");
-        while (t != null && !(t instanceof SQLException)) {
+        while (!(t instanceof SQLException)) {
             t = t.getCause();
+            if (t == null) {
+                return;
+            }
         }
 
-        if (t instanceof SQLException) {
-            SQLException sqle = (SQLException) t;
+        SQLException sqle = (SQLException) t;
 
-            //If the SQLException is the root chain the results of getNextException as initCauses
-            if (sqle.getCause() == null) {
-                SQLException nextException;
-                while ((nextException = sqle.getNextException()) != null) {
-                    sqle.initCause(nextException);
-                    sqle = nextException;
-                }
+        //If the SQLException is the root chain the results of getNextException as initCauses
+        if (sqle.getCause() == null) {
+            SQLException nextException;
+            while ((nextException = sqle.getNextException()) != null) {
+                sqle.initCause(nextException);
+                sqle = nextException;
             }
-            //The SQLException already has a cause so log the results of all getNextException calls
-            else {
-                while ((sqle = sqle.getNextException()) != null) {
-                    this.logger.error("Logging getNextException for root SQLException: " + t, sqle);
-                }
+        }
+        //The SQLException already has a cause so log the results of all getNextException calls
+        else {
+            while ((sqle = sqle.getNextException()) != null) {
+                this.logger.error("Logging getNextException for root SQLException: " + t, sqle);
             }
         }
     }

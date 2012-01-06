@@ -40,7 +40,7 @@
     
     <aop:config>
         <aop:pointcut id="daoExecution" 
-            expression="execution(* org.jasig.portal.*.dao.*.*(..))"/>
+            expression="within(@org.springframework.stereotype.Repository *) &amp;&amp; execution(* org.jasig.portal..*.*(..))"/>
             
         <aop:aspect ref="threadContextClassLoaderAspect">
             <!-- 

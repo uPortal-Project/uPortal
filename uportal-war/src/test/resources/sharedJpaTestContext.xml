@@ -82,7 +82,7 @@
     
     <aop:config>
         <aop:pointcut id="daoExecution" 
-            expression="execution(@org.springframework.stereotype.Repository * org.jasig.portal.*.*(..))"/>
+            expression="within(@org.springframework.stereotype.Repository *) &amp;&amp; execution(* org.jasig.portal..*.*(..))"/>
             
         <aop:aspect ref="sqlNextExceptionLoggerAspect">
             <aop:after-throwing pointcut-ref="daoExecution" method="logBatchUpdateExceptions" throwing="t"/>
