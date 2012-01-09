@@ -20,8 +20,6 @@
 package org.jasig.portal.events.aggr.dao.jpa;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -35,6 +33,7 @@ import javax.persistence.criteria.Root;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.dao.TimeDimensionDao;
 import org.jasig.portal.jpa.BaseJpaDao;
+import org.joda.time.LocalTime;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -97,19 +96,10 @@ public class JpaTimeDimensionDao extends BaseJpaDao implements TimeDimensionDao 
         return criteriaQuery;
     }
     
-    
     @Override
     @Transactional("aggrEvents")
-    public TimeDimension createTimeDimension(Calendar calendar) {
-        final int hour = calendar.get(Calendar.HOUR);
-        final int minute = calendar.get(Calendar.MINUTE);
-        return this.createTimeDimension(hour, minute);
-    }
-
-    @Override
-    @Transactional("aggrEvents")
-    public TimeDimension createTimeDimension(int hour, int minute) {
-        final TimeDimension timeDimension = new TimeDimensionImpl(hour, minute);
+    public TimeDimension createTimeDimension(LocalTime time) {
+        final TimeDimension timeDimension = new TimeDimensionImpl(time.getHourOfDay(), time.getMinuteOfHour());
         
         this.entityManager.persist(timeDimension);
         
@@ -132,31 +122,10 @@ public class JpaTimeDimensionDao extends BaseJpaDao implements TimeDimensionDao 
     }
     
     @Override
-    public TimeDimension getTimeDimensionForDate(Date date) {
-        final Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        return this.getTimeDimensionForCalendar(cal);
-    }
-    
-    @Override
-    public TimeDimension getTimeDimensionForTimeInMillis(long time) {
-        final Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(time);
-        return this.getTimeDimensionForCalendar(cal);
-    }
-    
-    @Override
-    public TimeDimension getTimeDimensionForCalendar(Calendar calendar) {
-        final int hour = calendar.get(Calendar.HOUR);
-        final int minute = calendar.get(Calendar.MINUTE);
-        return this.getTimeDimensionByHourMinute(hour, minute);
-    }
-    
-    @Override
-    public TimeDimension getTimeDimensionByHourMinute(int hour, int minute) {
+    public TimeDimension getTimeDimensionByTime(LocalTime localTime) {
         final TypedQuery<TimeDimensionImpl> query = this.createQuery(this.findTimeDimensionByHourMinuteQuery, FIND_TIME_DIMENSION_BY_HOUR_MINUTE_CACHE_REGION);
-        query.setParameter(this.hourParameter, hour);
-        query.setParameter(this.minuteParameter, minute);
+        query.setParameter(this.hourParameter, localTime.getHourOfDay());
+        query.setParameter(this.minuteParameter, localTime.getMinuteOfHour());
         query.setMaxResults(1);
         
         final List<TimeDimensionImpl> portletDefinitions = query.getResultList();

@@ -20,7 +20,6 @@
 package org.jasig.portal.concurrency.locking;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.persistence.EntityManager;
 import javax.persistence.OptimisticLockException;
@@ -35,12 +34,14 @@ import javax.persistence.criteria.Root;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.jasig.portal.IPortalInfoProvider;
-import org.jasig.portal.concurrency.Time;
 import org.jasig.portal.jpa.BaseJpaDao;
+import org.joda.time.Duration;
+import org.joda.time.ReadableDuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -64,7 +65,7 @@ public class JpaClusterLockDao extends BaseJpaDao implements IClusterLockDao {
     private ParameterExpression<String> nameParameter;
     private CriteriaQuery<ClusterMutex> clusterLockByNameQuery;
     private EntityManager entityManager;
-    private Time abandonedLockAge = Time.getTime(5, TimeUnit.SECONDS);
+    private ReadableDuration abandonedLockAge = Duration.standardSeconds(5);
     private IPortalInfoProvider portalInfoProvider;
     private TransactionTemplate newTransactionTemplate;
     private TransactionTemplate defaultTransactionTemplate;
@@ -76,8 +77,9 @@ public class JpaClusterLockDao extends BaseJpaDao implements IClusterLockDao {
      * <p/>
      * IMPORTANT: this value must be larger than the maximum possible clock skew across all servers in the cluster. 
      */
-    public void setAbandonedLockAge(Time maximumLockAge) {
-        this.abandonedLockAge = maximumLockAge;
+    @Value("${org.jasig.portal.concurrency.locking.ClusterLockDao.abandonedLockAge:PT5S}")
+    public void setAbandonedLockAge(ReadableDuration abandonedLockAge) {
+        this.abandonedLockAge = abandonedLockAge;
     }
 
     @Autowired
@@ -327,7 +329,7 @@ public class JpaClusterLockDao extends BaseJpaDao implements IClusterLockDao {
      * Checks if the specified mutex is abandoned
      */
     protected boolean isLockAbandoned(final ClusterMutex clusterMutex) {
-        return clusterMutex.getLastUpdate() < (System.currentTimeMillis() - abandonedLockAge.asMillis());
+        return clusterMutex.getLastUpdate() < (System.currentTimeMillis() - abandonedLockAge.getMillis());
     }
     
     

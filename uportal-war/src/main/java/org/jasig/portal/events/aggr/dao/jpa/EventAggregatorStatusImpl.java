@@ -50,10 +50,6 @@ import org.joda.time.DateTime;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class EventAggregatorStatusImpl implements IEventAggregatorStatus {
     
-    static {
-        System.out.println("test");
-    }
-    
     @Id
     @GeneratedValue(generator = "UP_EVENT_AGGR_STATUS_GEN")
     @Column(name = "ID")

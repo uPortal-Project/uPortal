@@ -19,18 +19,15 @@
 
 package org.jasig.portal.events.aggr;
 
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang.mutable.MutableInt;
 import org.jasig.portal.IPortalInfoProvider;
 import org.jasig.portal.concurrency.FunctionWithoutResult;
-import org.jasig.portal.concurrency.Time;
 import org.jasig.portal.concurrency.locking.IClusterLockService;
 import org.jasig.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
 import org.jasig.portal.events.PortalEvent;
@@ -41,8 +38,8 @@ import org.jasig.portal.events.aggr.dao.TimeDimensionDao;
 import org.jasig.portal.events.handlers.db.IPortalEventDao;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
-import org.joda.time.Days;
 import org.joda.time.LocalTime;
+import org.joda.time.Period;
 import org.joda.time.ReadablePeriod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,9 +76,9 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
     private IPortalInfoProvider portalInfoProvider;
     private Set<IPortalEventAggregator<PortalEvent>> portalEventAggregators;
     
-    private Time aggregationDelay = Time.getTime(30, TimeUnit.SECONDS);
-    private Time purgeDelay = Time.getTime(1, TimeUnit.DAYS);
-    private ReadablePeriod dimensionPreloadBuffer = Days.days(30);
+    private ReadablePeriod aggregationDelay = Period.seconds(30);
+    private ReadablePeriod purgeDelay = Period.days(1);
+    private ReadablePeriod dimensionBuffer = Period.days(30);
 
     @Autowired
     public void setIntervalHelper(IntervalHelper intervalHelper) {
@@ -123,23 +120,23 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
         this.portalEventAggregators = portalEventAggregators;
     }
 
-    @Value("${org.jasig.portal.event.aggr.PortalEventAggregationManager.aggregationDelay:1_MINUTES}")
-    public void setAggregationDelay(Time aggregationDelay) {
+    @Value("${org.jasig.portal.event.aggr.PortalEventAggregationManager.aggregationDelay:PT30S}")
+    public void setAggregationDelay(ReadablePeriod aggregationDelay) {
         this.aggregationDelay = aggregationDelay;
     }
 
-    @Value("${org.jasig.portal.event.aggr.PortalEventAggregationManager.purgeDelay:1_DAYS}")
-    public void setPurgeDelay(Time purgeDelay) {
+    @Value("${org.jasig.portal.event.aggr.PortalEventAggregationManager.purgeDelay:P1D}")
+    public void setPurgeDelay(ReadablePeriod purgeDelay) {
         this.purgeDelay = purgeDelay;
     }
     
-//    @Value("${org.jasig.portal.event.aggr.PortalEventAggregationManager.dimensionPreloadBuffer:30_DAYS}")
-//    public void setDimensionPreloadBuffer(Time dimensionPreloadBuffer) {
-//        if (dimensionPreloadBuffer.asDays() < 1) {
-//            throw new IllegalArgumentException("dimensionPreloadBuffer must be at least 1 day. Is: " + dimensionPreloadBuffer);
-//        }
-//        this.dimensionPreloadBuffer = dimensionPreloadBuffer;
-//    }
+    @Value("${org.jasig.portal.event.aggr.PortalEventAggregationManager.dimensionBuffer:P30D}")
+    public void setDimensionPreloadBuffer(ReadablePeriod dimensionBuffer) {
+        if (new Period(dimensionBuffer).toStandardDays().getDays() < 1) {
+            throw new IllegalArgumentException("dimensionBuffer must be at least 1 day. Is: " + new Period(dimensionBuffer).toStandardDays().getDays());
+        }
+        this.dimensionBuffer = dimensionBuffer;
+    }
 
     @Override
     @Transactional(value="aggrEventsTransactionManager")
@@ -222,7 +219,6 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
      * Populate the time dimensions 
      */
     void doPopulateTimeDimensions() {
-        
         final List<TimeDimension> timeDimensions = this.timeDimensionDao.getTimeDimensions();
         if (timeDimensions.isEmpty()) {
             logger.info("No TimeDimensions exist, creating them");
@@ -256,7 +252,7 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
             nextTime = dimensionTime.plusMinutes(1);
         }
         
-        //Add any missing calendars from the tail
+        //Add any missing times from the tail
         while (nextTime.isBefore(lastTime) || nextTime.equals(lastTime)) {
             this.timeDimensionDao.createTimeDimension(nextTime);
             if (nextTime.equals(lastTime)) {
@@ -267,38 +263,65 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
     }
 
     void doPopulateDateDimensions() {
-        final DateTime now = DateTime.now();
+        final DateTime now = getNow();
         
         final IntervalInfo startIntervalInfo;
         final DateTime oldestPortalEventTimestamp = this.portalEventDao.getOldestPortalEventTimestamp();
         if (oldestPortalEventTimestamp == null || now.isBefore(oldestPortalEventTimestamp)) {
-            startIntervalInfo = this.intervalHelper.getIntervalInfo(Interval.YEAR, now);
+            startIntervalInfo = this.intervalHelper.getIntervalInfo(Interval.YEAR, now.minus(this.dimensionBuffer));
         }
         else {
-            startIntervalInfo = this.intervalHelper.getIntervalInfo(Interval.YEAR, oldestPortalEventTimestamp);
+            startIntervalInfo = this.intervalHelper.getIntervalInfo(Interval.YEAR, oldestPortalEventTimestamp.minus(this.dimensionBuffer));
         }
         
         final IntervalInfo endIntervalInfo;
         final DateTime newestPortalEventTimestamp = this.portalEventDao.getNewestPortalEventTimestamp();
         if (newestPortalEventTimestamp == null || now.isAfter(newestPortalEventTimestamp)) {
-            endIntervalInfo = this.intervalHelper.getIntervalInfo(Interval.YEAR, now.plus(this.dimensionPreloadBuffer));
+            endIntervalInfo = this.intervalHelper.getIntervalInfo(Interval.YEAR, now.plus(this.dimensionBuffer));
         }
         else {
-            endIntervalInfo = this.intervalHelper.getIntervalInfo(Interval.YEAR, newestPortalEventTimestamp.plus(this.dimensionPreloadBuffer));
+            endIntervalInfo = this.intervalHelper.getIntervalInfo(Interval.YEAR, newestPortalEventTimestamp.plus(this.dimensionBuffer));
         }
         
-        final DateMidnight start = startIntervalInfo.getDateDimension().getFullDate();
-        final DateMidnight end = endIntervalInfo.getDateDimension().getFullDate();
+        final DateMidnight start = startIntervalInfo.getStart().toDateMidnight();
+        final DateMidnight end = endIntervalInfo.getEnd().toDateMidnight();
         
         doPopulateDateDimensions(start, end);
     }
+
+    /**
+     * Exists to make this class testable
+     */
+    DateTime getNow() {
+        return DateTime.now();
+    }
     
-    void doPopulateDateDimensions(DateMidnight start, DateMidnight end) {
+    void doPopulateDateDimensions(final DateMidnight start, final DateMidnight end) {
         final List<DateDimension> dateDimensions = this.dateDimensionDao.getDateDimensionsBetween(start, end);
-        //TODO like time dimensions only create missing entries
-        while (start.isBefore(end)) {
-            this.dateDimensionDao.createDateDimension(start);
-            start = start.plusDays(1);
+        
+        DateMidnight nextDate = start;
+        for (final DateDimension dateDimension : dateDimensions) {
+            DateMidnight dimensionDate = dateDimension.getFullDate();
+            if (nextDate.isBefore(dimensionDate)) {
+                do {
+                    this.dateDimensionDao.createDateDimension(nextDate);
+                    nextDate = nextDate.plusDays(1);
+                } while (nextDate.isBefore(dimensionDate));
+            }
+            else if (nextDate.isAfter(dimensionDate)) {
+                do {
+                    this.dateDimensionDao.createDateDimension(dimensionDate);
+                    dimensionDate = dimensionDate.plusDays(1);
+                } while (nextDate.isAfter(dimensionDate));
+            }
+            
+            nextDate = dimensionDate.plusDays(1);
+        }
+        
+        //Add any missing dates from the tail
+        while (nextDate.isBefore(end)) {
+            this.dateDimensionDao.createDateDimension(nextDate);
+            nextDate = nextDate.plusDays(1);
         }
     }
     
@@ -323,7 +346,7 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
             lastAggregated = new DateTime(0);
         }
         
-        DateTime newestEventTime = new DateTime(System.currentTimeMillis() - this.aggregationDelay.asMillis()).secondOfMinute().roundFloorCopy();
+        DateTime newestEventTime = DateTime.now().minus(this.aggregationDelay).secondOfMinute().roundFloorCopy();
         eventAggregatorStatus.setLastEventDate(newestEventTime);
         
         logger.debug("Starting aggregation of events between {} (inc) and {} (exc)", lastAggregated, newestEventTime);
@@ -389,7 +412,7 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
         }
         
         //Calculate purge end date from most recent aggregation minus the purge delay
-        final DateTime purgeEnd = new DateTime(lastAggregated.getMillis() - purgeDelay.asMillis());
+        final DateTime purgeEnd = lastAggregated.minus(this.purgeDelay);
         eventPurgerStatus.setLastEventDate(purgeEnd);
         
         //Purge events

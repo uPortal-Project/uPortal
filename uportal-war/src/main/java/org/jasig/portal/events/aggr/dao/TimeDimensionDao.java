@@ -38,6 +38,6 @@ public interface TimeDimensionDao {
 
     TimeDimension getTimeDimensionById(long id);
 
-    TimeDimension getTimeDimensionForLocalTime(LocalTime localTime);
+    TimeDimension getTimeDimensionByTime(LocalTime localTime);
 
 }

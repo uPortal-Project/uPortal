@@ -71,7 +71,7 @@ public interface DateDimensionDao {
     /**
      * Get the {@link DateDimension} for the specified year, month and day.
      */
-    DateDimension getDateDimensionByDateMidnight(DateMidnight date);
+    DateDimension getDateDimensionByDate(DateMidnight date);
     
     
     /*  MANAGEMENT OF DEPLOYER DEFINED QUARTER/TERM DATA */

@@ -35,6 +35,7 @@
     <bean id="timeDimensionDao" class="org.jasig.portal.events.aggr.dao.jpa.JpaTimeDimensionDao" />    
     <bean id="dateDimensionDao" class="org.jasig.portal.events.aggr.dao.jpa.JpaDateDimensionDao" />
     <bean id="loginAggregationDao" class="org.jasig.portal.events.aggr.login.JpaLoginAggregationDao" />
+    <bean id="intervalHelper" class="org.jasig.portal.events.aggr.IntervalHelperImpl" />
     
     <bean id="localPropertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="properties">

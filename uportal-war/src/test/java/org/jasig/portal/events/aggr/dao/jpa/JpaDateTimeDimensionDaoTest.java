@@ -34,6 +34,7 @@ import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.dao.DateDimensionDao;
 import org.jasig.portal.events.aggr.dao.TimeDimensionDao;
 import org.jasig.portal.test.BaseJpaDaoTest;
+import org.joda.time.DateMidnight;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,23 +81,23 @@ public class JpaDateTimeDimensionDaoTest extends BaseJpaDaoTest {
         });
         
         
-        this.execute(new CallableWithoutResult() {
+        this.executeInTransaction(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
-                dateDimensionDao.createDateDimension(2012, 0, 1);
-                dateDimensionDao.createDateDimension(2012, 0, 2);
-                dateDimensionDao.createDateDimension(2012, 0, 3);
-                dateDimensionDao.createDateDimension(2012, 0, 4);
-                dateDimensionDao.createDateDimension(2012, 0, 5);
-                dateDimensionDao.createDateDimension(2012, 0, 6);
-                dateDimensionDao.createDateDimension(2012, 0, 7);
+                DateMidnight date = new DateMidnight(2012, 1, 1);
+                
+                for (int i = 0; i < 7; i++) {
+                    dateDimensionDao.createDateDimension(date);
+                    date = date.plusDays(1);
+                }
             }
         });
         
         this.execute(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
-                final DateDimension dateDimension = dateDimensionDao.getDateDimensionByYearMonthDay(2012, 0, 1);
+                DateMidnight date = new DateMidnight(2012, 1, 1);
+                final DateDimension dateDimension = dateDimensionDao.getDateDimensionByDate(date);
                 assertNotNull(dateDimension);
             }
         });
@@ -111,13 +112,36 @@ public class JpaDateTimeDimensionDaoTest extends BaseJpaDaoTest {
             }
         });
         
+        
+        this.execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                final DateMidnight start = new DateMidnight(2012, 1, 2);
+                final DateMidnight end = new DateMidnight(2012, 1, 6);
+                final List<DateDimension> dateDimensions = dateDimensionDao.getDateDimensionsBetween(start, end);
+                
+                assertEquals(4, dateDimensions.size());
+            }
+        });
+        
+        this.execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                final DateDimension oldestDateDimension = dateDimensionDao.getOldestDateDimension();
+                
+                assertEquals(2012, oldestDateDimension.getYear());
+                assertEquals(1, oldestDateDimension.getMonth());
+                assertEquals(1, oldestDateDimension.getDay());
+            }
+        });
+        
         this.execute(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
                 final DateDimension newestDateDimension = dateDimensionDao.getNewestDateDimension();
                 
                 assertEquals(2012, newestDateDimension.getYear());
-                assertEquals(0, newestDateDimension.getMonth());
+                assertEquals(1, newestDateDimension.getMonth());
                 assertEquals(7, newestDateDimension.getDay());
             }
         });

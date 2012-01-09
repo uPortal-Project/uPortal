@@ -21,7 +21,6 @@ package org.jasig.portal.events.aggr.dao.jpa;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -38,6 +37,7 @@ import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.QuarterDetails;
 import org.jasig.portal.events.aggr.dao.DateDimensionDao;
 import org.jasig.portal.jpa.BaseJpaDao;
+import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
@@ -50,17 +50,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public class JpaDateDimensionDao extends BaseJpaDao implements DateDimensionDao {
     private static final String FIND_ALL_DATE_DIMENSIONS_CACHE_REGION = DateDimensionImpl.class.getName() + ".query.FIND_ALL_DATE_DIMENSIONS";
+    private static final String FIND_ALL_DATE_DIMENSIONS_BETWEEN_CACHE_REGION = DateDimensionImpl.class.getName() + ".query.FIND_ALL_DATE_DIMENSIONS_BETWEEN";
     private static final String FIND_DATE_DIMENSION_BY_YEAR_MONTH_DAY_CACHE_REGION = DateDimensionImpl.class.getName() + ".query.FIND_DATE_DIMENSION_BY_YEAR_MONTH_DAY_CACHE_REGION";
     private static final String FIND_NEWEST_DATE_DIMENSION_CACHE_REGION = DateDimensionImpl.class.getName() + ".query.FIND_NEWEST_DATE_DIMENSION";
     private static final String FIND_OLDEST_DATE_DIMENSION_CACHE_REGION = DateDimensionImpl.class.getName() + ".query.FIND_OLDEST_DATE_DIMENSION";
     
     private CriteriaQuery<DateDimensionImpl> findAllDateDimensionsQuery;
+    private CriteriaQuery<DateDimensionImpl> findAllDateDimensionsBetweenQuery;
     private CriteriaQuery<DateDimensionImpl> findDateDimensionByYearMonthDayQuery;
     private CriteriaQuery<DateDimensionImpl> findNewestDateDimensionQuery;
     private CriteriaQuery<DateDimensionImpl> findOldestDateDimensionQuery;
-    private ParameterExpression<Integer> yearParameter;
-    private ParameterExpression<Integer> monthParameter;
-    private ParameterExpression<Integer> dayParameter;
+    private ParameterExpression<DateTime> dateTimeParameter;
+    private ParameterExpression<DateTime> endDateTimeParameter;
     
     private EntityManager entityManager;
 
@@ -76,11 +77,11 @@ public class JpaDateDimensionDao extends BaseJpaDao implements DateDimensionDao 
     
     @Override
     protected void buildCriteriaQueries(CriteriaBuilder cb) {
-        this.yearParameter = cb.parameter(Integer.class, "hour");
-        this.monthParameter = cb.parameter(Integer.class, "minute");
-        this.dayParameter = cb.parameter(Integer.class, "day");
+        this.dateTimeParameter = cb.parameter(DateTime.class, "dateTime");
+        this.endDateTimeParameter = cb.parameter(DateTime.class, "endDateTime");
         
         this.findAllDateDimensionsQuery = this.buildFindAllDateDimensions(cb);
+        this.findAllDateDimensionsBetweenQuery = this.buildFindDateDimensionsBetween(cb);
         this.findDateDimensionByYearMonthDayQuery = this.buildFindDateDimensionByYearMonthDayQuery(cb);
         this.findNewestDateDimensionQuery = this.buildFindNewestDateDimension(cb);
         this.findOldestDateDimensionQuery = this.buildFindOldestDateDimension(cb);
@@ -90,6 +91,21 @@ public class JpaDateDimensionDao extends BaseJpaDao implements DateDimensionDao 
         final CriteriaQuery<DateDimensionImpl> criteriaQuery = cb.createQuery(DateDimensionImpl.class);
         final Root<DateDimensionImpl> dimensionRoot = criteriaQuery.from(DateDimensionImpl.class);
         criteriaQuery.select(dimensionRoot);
+        criteriaQuery.orderBy(cb.asc(dimensionRoot.get(DateDimensionImpl_.fullDate)));
+        
+        return criteriaQuery;
+    }
+    
+    protected CriteriaQuery<DateDimensionImpl> buildFindDateDimensionsBetween(final CriteriaBuilder cb) {
+        final CriteriaQuery<DateDimensionImpl> criteriaQuery = cb.createQuery(DateDimensionImpl.class);
+        final Root<DateDimensionImpl> dimensionRoot = criteriaQuery.from(DateDimensionImpl.class);
+        criteriaQuery.select(dimensionRoot);
+        criteriaQuery.where(
+                cb.and(
+                        cb.greaterThanOrEqualTo(dimensionRoot.get(DateDimensionImpl_.fullDate), this.dateTimeParameter),
+                        cb.lessThan(dimensionRoot.get(DateDimensionImpl_.fullDate), this.endDateTimeParameter)
+                )
+            );
         criteriaQuery.orderBy(cb.asc(dimensionRoot.get(DateDimensionImpl_.fullDate)));
         
         return criteriaQuery;
@@ -136,11 +152,7 @@ public class JpaDateDimensionDao extends BaseJpaDao implements DateDimensionDao 
         final Root<DateDimensionImpl> dimensionRoot = criteriaQuery.from(DateDimensionImpl.class);
         criteriaQuery.select(dimensionRoot);
         criteriaQuery.where(
-            cb.and(
-                    cb.equal(dimensionRoot.get(DateDimensionImpl_.year), this.yearParameter),
-                    cb.equal(dimensionRoot.get(DateDimensionImpl_.month), this.monthParameter),
-                    cb.equal(dimensionRoot.get(DateDimensionImpl_.day), this.dayParameter)
-            )
+            cb.equal(dimensionRoot.get(DateDimensionImpl_.fullDate), this.dateTimeParameter)
         );
         
         return criteriaQuery;
@@ -161,21 +173,12 @@ public class JpaDateDimensionDao extends BaseJpaDao implements DateDimensionDao 
         final List<DateDimensionImpl> resultList = query.getResultList();
         return DataAccessUtils.singleResult(resultList);
     }
-
-    @Override
-    @Transactional("aggrEvents")
-    public DateDimension createDateDimension(Calendar cal) {
-        return this.createDateDimension(
-                cal.get(Calendar.YEAR), 
-                cal.get(Calendar.MONTH), 
-                cal.get(Calendar.DAY_OF_MONTH));
-    }
     
     @Override
     @Transactional("aggrEvents")
-    public DateDimension createDateDimension(int year, int month, int day) {
+    public DateDimension createDateDimension(DateMidnight cal) {
         //TODO qtr/term lookup
-        final DateDimension dateDimension = new DateDimensionImpl(year, month, day, 0, null);
+        final DateDimension dateDimension = new DateDimensionImpl(cal.getYear(), cal.getMonthOfYear(), cal.getDayOfMonth(), 0, null);
         
         this.entityManager.persist(dateDimension);
         
@@ -189,6 +192,16 @@ public class JpaDateDimensionDao extends BaseJpaDao implements DateDimensionDao 
         final List<DateDimensionImpl> portletDefinitions = query.getResultList();
         return new ArrayList<DateDimension>(portletDefinitions);
     }
+
+    @Override
+    public List<DateDimension> getDateDimensionsBetween(DateMidnight start, DateMidnight end) {
+        final TypedQuery<DateDimensionImpl> query = this.createQuery(this.findAllDateDimensionsBetweenQuery, FIND_ALL_DATE_DIMENSIONS_BETWEEN_CACHE_REGION);
+        query.setParameter(this.dateTimeParameter, start.toDateTime());
+        query.setParameter(this.endDateTimeParameter, end.toDateTime());
+        
+        final List<DateDimensionImpl> portletDefinitions = query.getResultList();
+        return new ArrayList<DateDimension>(portletDefinitions);
+    }
     
     @Override
     public DateDimension getDateDimensionById(long key) {
@@ -196,40 +209,31 @@ public class JpaDateDimensionDao extends BaseJpaDao implements DateDimensionDao 
         
         return dateDimension;
     }
-    
+
     @Override
-    public DateDimension getDateDimensionForDate(Date date) {
-        final Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        return this.getDateDimensionForCalendar(cal);
-    }
-    
-    @Override
-    public DateDimension getDateDimensionForTimeInMillis(long time) {
-        final Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(time);
-        return this.getDateDimensionForCalendar(cal);
-    }
-    
-    @Override
-    public DateDimension getDateDimensionForCalendar(Calendar calendar) {
-        final int year = calendar.get(Calendar.YEAR);
-        final int month = calendar.get(Calendar.MONTH);
-        final int day = calendar.get(Calendar.DAY_OF_MONTH);
-        return this.getDateDimensionByYearMonthDay(year, month, day);
-    }
-    
-    @Override
-    public DateDimension getDateDimensionByYearMonthDay(int year, int month, int day) {
+    public DateDimension getDateDimensionByDate(DateMidnight date) {
         final TypedQuery<DateDimensionImpl> query = this.createQuery(this.findDateDimensionByYearMonthDayQuery, FIND_DATE_DIMENSION_BY_YEAR_MONTH_DAY_CACHE_REGION);
-        query.setParameter(this.yearParameter, year);
-        query.setParameter(this.monthParameter, month);
-        query.setParameter(this.dayParameter, day);
+        query.setParameter(this.dateTimeParameter, date.toDateTime());
         query.setMaxResults(1);
         
         final List<DateDimensionImpl> portletDefinitions = query.getResultList();
         return DataAccessUtils.uniqueResult(portletDefinitions);
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     @Override
     public int getQuarter(Calendar calendar) {

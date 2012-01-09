@@ -28,7 +28,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.jasig.portal.concurrency.Time;
+import org.joda.time.ReadableDuration;
 import org.springframework.scheduling.SchedulingTaskExecutor;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.Trigger;
@@ -63,8 +63,8 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
      * 
      * @param initialDelay Delay before starting ANY scheduled task
      */
-    public void setInitialDelay(Time initialDelay) {
-        this.initialDelay = initialDelay.asMillis();
+    public void setInitialDelay(ReadableDuration initialDelay) {
+        this.initialDelay = initialDelay.getMillis();
         this.lastStartDelay = this.initialDelay;
     }
 

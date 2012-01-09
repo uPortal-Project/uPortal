@@ -29,11 +29,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.jasig.portal.concurrency.Time;
+import org.joda.time.Duration;
+import org.joda.time.ReadableDuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Function;
@@ -58,8 +60,8 @@ public class ClusterLockServiceImpl implements IClusterLockService {
 
     private ExecutorService lockMonitorExecutorService;
     private IClusterLockDao clusterLockDao;
-    private Time updateLockRate = Time.getTime(500, TimeUnit.MILLISECONDS);
-    private Time maximumLockDuration = Time.getTime(15, TimeUnit.MINUTES);
+    private ReadableDuration updateLockRate = Duration.millis(500);
+    private ReadableDuration maximumLockDuration = Duration.standardMinutes(15);
 
     @Autowired
     public void setClusterLockDao(IClusterLockDao clusterLockDao) {
@@ -67,13 +69,14 @@ public class ClusterLockServiceImpl implements IClusterLockService {
     }
 
     @Autowired
-    void setLockMonitorExecutorService(@Qualifier("uPortalLockExecutor") ExecutorService lockMonitorExecutorService) {
+    public void setLockMonitorExecutorService(@Qualifier("uPortalLockExecutor") ExecutorService lockMonitorExecutorService) {
         this.lockMonitorExecutorService = lockMonitorExecutorService;
     }
     /**
      * Rate at which {@link IClusterLockDao#updateLock(String)} is called while a mutex is locked, defaults to 500ms
      */
-    void setUpdateLockRate(Time updateLockRate) {
+    @Value("${org.jasig.portal.concurrency.locking.ClusterLockDao.abandonedLockAge:PT0.500S}")
+    public void setUpdateLockRate(ReadableDuration updateLockRate) {
         this.updateLockRate = updateLockRate;
     }
 
@@ -81,7 +84,8 @@ public class ClusterLockServiceImpl implements IClusterLockService {
      * Maximum duration that a lock can be held, functionally longest duration that the lockFunction can take to execute.
      * Defaults to 15 minutes
      */
-    void setMaximumLockDuration(Time maximumLockDuration) {
+    @Value("${org.jasig.portal.concurrency.locking.ClusterLockDao.abandonedLockAge:PT900S}")
+    public void setMaximumLockDuration(ReadableDuration maximumLockDuration) {
         this.maximumLockDuration = maximumLockDuration;
     }
 
@@ -201,7 +205,7 @@ public class ClusterLockServiceImpl implements IClusterLockService {
         @Override
         public Boolean call() throws Exception {
             try {
-                final long lockTimeout = System.currentTimeMillis() + maximumLockDuration.asMillis();
+                final long lockTimeout = System.currentTimeMillis() + maximumLockDuration.getMillis();
                 try {
                     //Try to acquire the lock, set the success to the dbLocked holder
                     this.dbLocked.set(clusterLockDao.getLock(this.mutexName));
@@ -223,7 +227,7 @@ public class ClusterLockServiceImpl implements IClusterLockService {
                 //wait for the work to complete using the updateLockRate as the wait duration, if the wait time
                 //passes without the work thread signaling completion update the mutex (signal we still have the lock)
                 //and wait again
-                while (!this.workCompleteLatch.await(updateLockRate.getDuration(), updateLockRate.getTimeUnit())) {
+                while (!this.workCompleteLatch.await(updateLockRate.getMillis(), TimeUnit.MILLISECONDS)) {
                     clusterLockDao.updateLock(this.mutexName);
                     
                     if (lockTimeout < System.currentTimeMillis()) {

@@ -19,14 +19,12 @@
 
 package org.jasig.portal.events.aggr;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -37,7 +35,9 @@ import org.jasig.portal.events.aggr.dao.DateDimensionDao;
 import org.jasig.portal.events.aggr.dao.TimeDimensionDao;
 import org.jasig.portal.events.handlers.db.IPortalEventDao;
 import org.jasig.portal.test.BaseJpaDaoTest;
+import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
+import org.joda.time.LocalTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,13 +52,15 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaAggrEventsTestContext.xml")
 public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
-    private PortalEventAggregationManagerImpl portalEventAggregationManager = new PortalEventAggregationManagerImpl();
+    private PortalEventAggregationManagerImpl portalEventAggregationManager;
     private IPortalEventDao portalEventDao;
 
     @Autowired
     private DateDimensionDao dateDimensionDao;
     @Autowired
     private TimeDimensionDao timeDimensionDao;
+    @Autowired
+    private IntervalHelper intervalHelper;
     @PersistenceContext(unitName = "uPortalAggrEventsPersistence")
     private EntityManager entityManager;
     
@@ -70,9 +72,17 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
     @Before
     public void setup() {
         portalEventDao = mock(IPortalEventDao.class);
+        
+        portalEventAggregationManager = new PortalEventAggregationManagerImpl() {
+            @Override
+            DateTime getNow() {
+                return new DateTime(1325881376117l);
+            }
+        };
         portalEventAggregationManager.setPortalEventDao(portalEventDao);
         portalEventAggregationManager.setDateDimensionDao(dateDimensionDao);
         portalEventAggregationManager.setTimeDimensionDao(timeDimensionDao);
+        portalEventAggregationManager.setIntervalHelper(intervalHelper);
         
         this.execute(new CallableWithoutResult() {
             @Override
@@ -124,15 +134,15 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
         this.executeInTransaction(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
-                timeDimensionDao.createTimeDimension(0, 1);
-                timeDimensionDao.createTimeDimension(0, 2);
-                timeDimensionDao.createTimeDimension(0, 3);
-                timeDimensionDao.createTimeDimension(0, 4);
-                timeDimensionDao.createTimeDimension(0, 7);
-                timeDimensionDao.createTimeDimension(0, 8);
-                timeDimensionDao.createTimeDimension(0, 9);
-                timeDimensionDao.createTimeDimension(1, 23);
-                timeDimensionDao.createTimeDimension(23, 58);
+                timeDimensionDao.createTimeDimension(new LocalTime(0, 1));
+                timeDimensionDao.createTimeDimension(new LocalTime(0, 2));
+                timeDimensionDao.createTimeDimension(new LocalTime(0, 3));
+                timeDimensionDao.createTimeDimension(new LocalTime(0, 4));
+                timeDimensionDao.createTimeDimension(new LocalTime(0, 7));
+                timeDimensionDao.createTimeDimension(new LocalTime(0, 8));
+                timeDimensionDao.createTimeDimension(new LocalTime(0, 9));
+                timeDimensionDao.createTimeDimension(new LocalTime(1, 23));
+                timeDimensionDao.createTimeDimension(new LocalTime(23, 58));
             }
         });
                 
@@ -182,28 +192,15 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
             @Override
             protected void callWithoutResult() {
                 final List<DateDimension> dateDimensions = dateDimensionDao.getDateDimensions();
-                assertEquals(32, dateDimensions.size());
+                assertEquals(731, dateDimensions.size());
+                final DateDimension oldestDateDimension = dateDimensionDao.getOldestDateDimension();
+                assertEquals(new DateMidnight("2011-01-01T00:00:00.000-06:00"), oldestDateDimension.getFullDate());
+                final DateDimension newestDateDimension = dateDimensionDao.getNewestDateDimension();
+                assertEquals(new DateMidnight("2012-12-31T00:00:00.000-06:00"), newestDateDimension.getFullDate());
             }
         });
         
-        when(portalEventDao.getOldestPortalEventTimestamp()).thenReturn(new DateTime(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(12)));
-        
-        this.executeInTransaction(new CallableWithoutResult() {
-            @Override
-            protected void callWithoutResult() {
-                portalEventAggregationManager.doPopulateDateDimensions();
-            }
-        });
-     
-        this.execute(new CallableWithoutResult() {
-            @Override
-            protected void callWithoutResult() {
-                final List<DateDimension> dateDimensions = dateDimensionDao.getDateDimensions();
-                assertEquals(44, dateDimensions.size());
-            }
-        });
-        
-        when(portalEventDao.getNewestPortalEventTimestamp()).thenReturn(new DateTime(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(12)));
+        when(portalEventDao.getOldestPortalEventTimestamp()).thenReturn(new DateTime().minusYears(1));
         
         this.executeInTransaction(new CallableWithoutResult() {
             @Override
@@ -216,7 +213,32 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
             @Override
             protected void callWithoutResult() {
                 final List<DateDimension> dateDimensions = dateDimensionDao.getDateDimensions();
-                assertEquals(56, dateDimensions.size());
+                assertEquals(1096, dateDimensions.size());
+                final DateDimension oldestDateDimension = dateDimensionDao.getOldestDateDimension();
+                assertEquals(new DateMidnight("2010-01-01T00:00:00.000-06:00"), oldestDateDimension.getFullDate());
+                final DateDimension newestDateDimension = dateDimensionDao.getNewestDateDimension();
+                assertEquals(new DateMidnight("2012-12-31T00:00:00.000-06:00"), newestDateDimension.getFullDate());
+            }
+        });
+        
+        when(portalEventDao.getNewestPortalEventTimestamp()).thenReturn(new DateTime().plusYears(1));
+        
+        this.executeInTransaction(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                portalEventAggregationManager.doPopulateDateDimensions();
+            }
+        });
+     
+        this.execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                final List<DateDimension> dateDimensions = dateDimensionDao.getDateDimensions();
+                assertEquals(1461, dateDimensions.size());
+                final DateDimension oldestDateDimension = dateDimensionDao.getOldestDateDimension();
+                assertEquals(new DateMidnight("2010-01-01T00:00:00.000-06:00"), oldestDateDimension.getFullDate());
+                final DateDimension newestDateDimension = dateDimensionDao.getNewestDateDimension();
+                assertEquals(new DateMidnight("2013-12-31T00:00:00.000-06:00"), newestDateDimension.getFullDate());
             }
         });
     }

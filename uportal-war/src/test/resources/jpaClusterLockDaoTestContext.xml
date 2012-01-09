@@ -50,7 +50,7 @@
     </bean>
 
     <bean id="clusterLockDao" class="org.jasig.portal.concurrency.locking.JpaClusterLockDao">
-        <property name="abandonedLockAge" value="100_MILLISECONDS" />
+        <property name="abandonedLockAge" value="PT0.100S" />
     </bean>
     
     <bean id="portalInfoProvider" class="org.jasig.portal.spring.MockitoFactoryBean">

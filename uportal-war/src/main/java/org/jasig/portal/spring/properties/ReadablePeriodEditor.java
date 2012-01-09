@@ -21,16 +21,18 @@ package org.jasig.portal.spring.properties;
 
 import java.beans.PropertyEditorSupport;
 
+import org.joda.time.Period;
+
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class TimeEditor extends PropertyEditorSupport {
+public class ReadablePeriodEditor extends PropertyEditorSupport {
     /* (non-Javadoc)
      * @see java.beans.PropertyEditorSupport#setAsText(java.lang.String)
      */
     @Override
     public void setAsText(String text) throws IllegalArgumentException {
-//        this.setValue(Time.valueOf(text));
+        this.setValue(Period.parse(text));
     }
 }

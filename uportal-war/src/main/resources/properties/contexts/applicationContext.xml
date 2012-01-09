@@ -41,7 +41,8 @@
             <map key-type="java.lang.Class">
                 <entry key="javax.portlet.PortletMode"><bean class="org.jasig.portal.spring.properties.PortletModeEditor" /></entry>
                 <entry key="javax.portlet.WindowState"><bean class="org.jasig.portal.spring.properties.WindowStateEditor" /></entry>
-                <entry key="org.jasig.portal.concurrency.Time"><bean class="org.jasig.portal.spring.properties.TimeEditor" /></entry>
+                <entry key="org.joda.time.ReadablePeriod"><bean class="org.jasig.portal.spring.properties.ReadablePeriodEditor" /></entry>
+                <entry key="org.joda.time.ReadableDuration"><bean class="org.jasig.portal.spring.properties.ReadableDurationEditor" /></entry>
             </map>
         </property>
     </bean>

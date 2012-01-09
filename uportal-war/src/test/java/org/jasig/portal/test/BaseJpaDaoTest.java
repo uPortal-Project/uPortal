@@ -137,11 +137,23 @@ public abstract class BaseJpaDaoTest {
      * Executes the callback inside of a {@link JpaInterceptor} inside of a {@link TransactionCallback}
      */
     public final <T> T executeInTransaction(final Callable<T> callable) {
-        return this.transactionOperations.execute(new TransactionCallback<T>() {
-
+        return execute(new Callable<T>() {
             @Override
-            public T doInTransaction(TransactionStatus status) {
-                return execute(callable);
+            public T call() throws Exception {
+                return transactionOperations.execute(new TransactionCallback<T>() {
+                    @Override
+                    public T doInTransaction(TransactionStatus status) {
+                        try {
+                            return callable.call();
+                        }
+                        catch (RuntimeException e) {
+                            throw e;
+                        }
+                        catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
             }
         });
     }

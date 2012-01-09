@@ -49,13 +49,13 @@ public class IntervalInfo implements Serializable {
         return this.end;
     }
     /**
-     * @return The date dimension that corresponds with the {@link #getStart()} value
+     * @return The date dimension that corresponds with the {@link #getStart()} value, null if no date dimension exists yet for the start {@link DateTime}
      */
     public DateDimension getDateDimension() {
         return dateDimension;
     }
     /**
-     * @return The time dimension that corresponds with the {@link #getStart()} value
+     * @return The time dimension that corresponds with the {@link #getStart()} value, null if no time dimension exists yet for the start {@link DateTime}
      */
     public TimeDimension getTimeDimension() {
         return timeDimension;

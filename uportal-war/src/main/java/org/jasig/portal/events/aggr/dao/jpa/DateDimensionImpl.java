@@ -124,7 +124,7 @@ public class DateDimensionImpl implements DateDimension, Serializable {
             throw new IllegalArgumentException("Quarter must be between 0 and 3, it is: " + quarter);
         }
         
-        this.dateMidnight = new DateMidnight(year, month + 1, day);
+        this.dateMidnight = new DateMidnight(year, month, day);
         
         this.id = -1;
         this.fullDate = dateMidnight.toDateTime();

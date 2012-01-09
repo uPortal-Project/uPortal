@@ -52,16 +52,10 @@ public class IntervalHelperImpl implements IntervalHelper {
         final DateTime end = determineEnd(interval, start);
         
         final LocalTime startTime = start.toLocalTime();
-        TimeDimension startTimeDimension = this.timeDimensionDao.getTimeDimensionForLocalTime(startTime);
-        if (startTimeDimension == null) {
-            startTimeDimension = this.timeDimensionDao.createTimeDimension(startTime);
-        }
-        
+        final TimeDimension startTimeDimension = this.timeDimensionDao.getTimeDimensionByTime(startTime);
+
         final DateMidnight startDateMidnight = start.toDateMidnight();
-        DateDimension startDateDimension = this.dateDimensionDao.getDateDimensionByDateMidnight(startDateMidnight);
-        if (startDateDimension == null) {
-            startDateDimension = this.dateDimensionDao.createDateDimension(startDateMidnight);
-        }
+        final DateDimension startDateDimension = this.dateDimensionDao.getDateDimensionByDate(startDateMidnight);
         
         return new IntervalInfo(start, end, startDateDimension, startTimeDimension);
     }
