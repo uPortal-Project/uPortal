@@ -19,12 +19,12 @@
 
 package org.jasig.portal.events.aggr;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -37,6 +37,7 @@ import org.jasig.portal.events.aggr.dao.DateDimensionDao;
 import org.jasig.portal.events.aggr.dao.TimeDimensionDao;
 import org.jasig.portal.events.handlers.db.IPortalEventDao;
 import org.jasig.portal.test.BaseJpaDaoTest;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -185,7 +186,7 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
             }
         });
         
-        when(portalEventDao.getOldestPortalEventTimestamp()).thenReturn(new Date(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(12)));
+        when(portalEventDao.getOldestPortalEventTimestamp()).thenReturn(new DateTime(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(12)));
         
         this.executeInTransaction(new CallableWithoutResult() {
             @Override
@@ -202,7 +203,7 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
             }
         });
         
-        when(portalEventDao.getNewestPortalEventTimestamp()).thenReturn(new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(12)));
+        when(portalEventDao.getNewestPortalEventTimestamp()).thenReturn(new DateTime(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(12)));
         
         this.executeInTransaction(new CallableWithoutResult() {
             @Override

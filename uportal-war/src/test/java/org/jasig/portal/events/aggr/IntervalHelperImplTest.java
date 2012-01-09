@@ -20,13 +20,10 @@
 package org.jasig.portal.events.aggr;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-
-import java.util.Calendar;
-import java.util.Date;
 
 import org.jasig.portal.events.aggr.dao.DateDimensionDao;
 import org.jasig.portal.events.aggr.dao.TimeDimensionDao;
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -45,171 +42,179 @@ public class IntervalHelperImplTest {
     
     @Test
     public void testGetIntervalInfo() {
-        final Calendar instant = Calendar.getInstance();
-        instant.setTimeInMillis(1325881376117l);
+        final DateTime instant = new DateTime(1325881376117l);
         
-        Calendar start, end;
+        assertEquals(2012, instant.getYear());
+        assertEquals(1, instant.getMonthOfYear());
+        assertEquals(6, instant.getDayOfMonth());
+        assertEquals(1, instant.getWeekOfWeekyear());
+        assertEquals(14, instant.getHourOfDay());
+        assertEquals(22, instant.getMinuteOfHour());
+        assertEquals(56, instant.getSecondOfMinute());
+        assertEquals(117, instant.getMillisOfSecond());
+        
+        DateTime start, end;
         
         
         // TEST YEAR
         
         start = this.helperImpl.determineStart(Interval.YEAR, instant);
-        assertEquals(2012, start.get(Calendar.YEAR));
-        assertEquals(0, start.get(Calendar.MONTH));
-        assertEquals(1, start.get(Calendar.DAY_OF_MONTH));
-        assertEquals(1, start.get(Calendar.WEEK_OF_YEAR));
-        assertEquals(0, start.get(Calendar.HOUR_OF_DAY));
-        assertEquals(0, start.get(Calendar.MINUTE));
-        assertEquals(0, start.get(Calendar.SECOND));
-        assertEquals(0, start.get(Calendar.MILLISECOND));
+        assertEquals(2012, start.getYear());
+        assertEquals(1, start.getMonthOfYear());
+        assertEquals(1, start.getDayOfMonth());
+        assertEquals(52, start.getWeekOfWeekyear());
+        assertEquals(0, start.getHourOfDay());
+        assertEquals(0, start.getMinuteOfHour());
+        assertEquals(0, start.getSecondOfMinute());
+        assertEquals(0, start.getMillisOfSecond());
         
         end = this.helperImpl.determineEnd(Interval.YEAR, start);
-        assertEquals(2013, end.get(Calendar.YEAR));
-        assertEquals(0, end.get(Calendar.MONTH));
-        assertEquals(1, end.get(Calendar.DAY_OF_MONTH));
-        assertEquals(1, end.get(Calendar.WEEK_OF_YEAR));
-        assertEquals(0, end.get(Calendar.HOUR_OF_DAY));
-        assertEquals(0, end.get(Calendar.MINUTE));
-        assertEquals(0, end.get(Calendar.SECOND));
-        assertEquals(0, end.get(Calendar.MILLISECOND));
+        assertEquals(2013, end.getYear());
+        assertEquals(1, end.getMonthOfYear());
+        assertEquals(1, end.getDayOfMonth());
+        assertEquals(1, end.getWeekOfWeekyear());
+        assertEquals(0, end.getHourOfDay());
+        assertEquals(0, end.getMinuteOfHour());
+        assertEquals(0, end.getSecondOfMinute());
+        assertEquals(0, end.getMillisOfSecond());
         
         
         // TEST MONTH
         
         start = this.helperImpl.determineStart(Interval.MONTH, instant);
-        assertEquals(2012, start.get(Calendar.YEAR));
-        assertEquals(0, start.get(Calendar.MONTH));
-        assertEquals(1, start.get(Calendar.DAY_OF_MONTH));
-        assertEquals(1, start.get(Calendar.WEEK_OF_YEAR));
-        assertEquals(0, start.get(Calendar.HOUR_OF_DAY));
-        assertEquals(0, start.get(Calendar.MINUTE));
-        assertEquals(0, start.get(Calendar.SECOND));
-        assertEquals(0, start.get(Calendar.MILLISECOND));
+        assertEquals(2012, start.getYear());
+        assertEquals(1, start.getMonthOfYear());
+        assertEquals(1, start.getDayOfMonth());
+        assertEquals(52, start.getWeekOfWeekyear());
+        assertEquals(0, start.getHourOfDay());
+        assertEquals(0, start.getMinuteOfHour());
+        assertEquals(0, start.getSecondOfMinute());
+        assertEquals(0, start.getMillisOfSecond());
         
         end = this.helperImpl.determineEnd(Interval.MONTH, start);
-        assertEquals(2012, end.get(Calendar.YEAR));
-        assertEquals(1, end.get(Calendar.MONTH));
-        assertEquals(1, end.get(Calendar.DAY_OF_MONTH));
-        assertEquals(5, end.get(Calendar.WEEK_OF_YEAR));
-        assertEquals(0, end.get(Calendar.HOUR_OF_DAY));
-        assertEquals(0, end.get(Calendar.MINUTE));
-        assertEquals(0, end.get(Calendar.SECOND));
-        assertEquals(0, end.get(Calendar.MILLISECOND));
+        assertEquals(2012, end.getYear());
+        assertEquals(2, end.getMonthOfYear());
+        assertEquals(1, end.getDayOfMonth());
+        assertEquals(5, end.getWeekOfWeekyear());
+        assertEquals(0, end.getHourOfDay());
+        assertEquals(0, end.getMinuteOfHour());
+        assertEquals(0, end.getSecondOfMinute());
+        assertEquals(0, end.getMillisOfSecond());
         
         
         // TEST WEEK
         
         start = this.helperImpl.determineStart(Interval.WEEK, instant);
-        assertEquals(2012, start.get(Calendar.YEAR));
-        assertEquals(0, start.get(Calendar.MONTH));
-        assertEquals(1, start.get(Calendar.DAY_OF_MONTH));
-        assertEquals(1, start.get(Calendar.WEEK_OF_YEAR));
-        assertEquals(0, start.get(Calendar.HOUR_OF_DAY));
-        assertEquals(0, start.get(Calendar.MINUTE));
-        assertEquals(0, start.get(Calendar.SECOND));
-        assertEquals(0, start.get(Calendar.MILLISECOND));
+        assertEquals(2012, start.getYear());
+        assertEquals(1, start.getMonthOfYear());
+        assertEquals(2, start.getDayOfMonth());
+        assertEquals(1, start.getWeekOfWeekyear());
+        assertEquals(0, start.getHourOfDay());
+        assertEquals(0, start.getMinuteOfHour());
+        assertEquals(0, start.getSecondOfMinute());
+        assertEquals(0, start.getMillisOfSecond());
         
         end = this.helperImpl.determineEnd(Interval.WEEK, start);
-        assertEquals(2012, end.get(Calendar.YEAR));
-        assertEquals(0, end.get(Calendar.MONTH));
-        assertEquals(8, end.get(Calendar.DAY_OF_MONTH));
-        assertEquals(2, end.get(Calendar.WEEK_OF_YEAR));
-        assertEquals(0, end.get(Calendar.HOUR_OF_DAY));
-        assertEquals(0, end.get(Calendar.MINUTE));
-        assertEquals(0, end.get(Calendar.SECOND));
-        assertEquals(0, end.get(Calendar.MILLISECOND));
+        assertEquals(2012, end.getYear());
+        assertEquals(1, end.getMonthOfYear());
+        assertEquals(9, end.getDayOfMonth());
+        assertEquals(2, end.getWeekOfWeekyear());
+        assertEquals(0, end.getHourOfDay());
+        assertEquals(0, end.getMinuteOfHour());
+        assertEquals(0, end.getSecondOfMinute());
+        assertEquals(0, end.getMillisOfSecond());
         
         
         // TEST DAY
         
         start = this.helperImpl.determineStart(Interval.DAY, instant);
-        assertEquals(2012, start.get(Calendar.YEAR));
-        assertEquals(0, start.get(Calendar.MONTH));
-        assertEquals(6, start.get(Calendar.DAY_OF_MONTH));
-        assertEquals(1, start.get(Calendar.WEEK_OF_YEAR));
-        assertEquals(0, start.get(Calendar.HOUR_OF_DAY));
-        assertEquals(0, start.get(Calendar.MINUTE));
-        assertEquals(0, start.get(Calendar.SECOND));
-        assertEquals(0, start.get(Calendar.MILLISECOND));
+        assertEquals(2012, start.getYear());
+        assertEquals(1, start.getMonthOfYear());
+        assertEquals(6, start.getDayOfMonth());
+        assertEquals(1, start.getWeekOfWeekyear());
+        assertEquals(0, start.getHourOfDay());
+        assertEquals(0, start.getMinuteOfHour());
+        assertEquals(0, start.getSecondOfMinute());
+        assertEquals(0, start.getMillisOfSecond());
         
         end = this.helperImpl.determineEnd(Interval.DAY, start);
-        assertEquals(2012, end.get(Calendar.YEAR));
-        assertEquals(0, end.get(Calendar.MONTH));
-        assertEquals(7, end.get(Calendar.DAY_OF_MONTH));
-        assertEquals(1, end.get(Calendar.WEEK_OF_YEAR));
-        assertEquals(0, end.get(Calendar.HOUR_OF_DAY));
-        assertEquals(0, end.get(Calendar.MINUTE));
-        assertEquals(0, end.get(Calendar.SECOND));
-        assertEquals(0, end.get(Calendar.MILLISECOND));
+        assertEquals(2012, end.getYear());
+        assertEquals(1, end.getMonthOfYear());
+        assertEquals(7, end.getDayOfMonth());
+        assertEquals(1, end.getWeekOfWeekyear());
+        assertEquals(0, end.getHourOfDay());
+        assertEquals(0, end.getMinuteOfHour());
+        assertEquals(0, end.getSecondOfMinute());
+        assertEquals(0, end.getMillisOfSecond());
         
         
         // TEST HOUR
         
         start = this.helperImpl.determineStart(Interval.HOUR, instant);
-        assertEquals(2012, start.get(Calendar.YEAR));
-        assertEquals(0, start.get(Calendar.MONTH));
-        assertEquals(6, start.get(Calendar.DAY_OF_MONTH));
-        assertEquals(1, start.get(Calendar.WEEK_OF_YEAR));
-        assertEquals(14, start.get(Calendar.HOUR_OF_DAY));
-        assertEquals(0, start.get(Calendar.MINUTE));
-        assertEquals(0, start.get(Calendar.SECOND));
-        assertEquals(0, start.get(Calendar.MILLISECOND));
+        assertEquals(2012, start.getYear());
+        assertEquals(1, start.getMonthOfYear());
+        assertEquals(6, start.getDayOfMonth());
+        assertEquals(1, start.getWeekOfWeekyear());
+        assertEquals(14, start.getHourOfDay());
+        assertEquals(0, start.getMinuteOfHour());
+        assertEquals(0, start.getSecondOfMinute());
+        assertEquals(0, start.getMillisOfSecond());
         
         end = this.helperImpl.determineEnd(Interval.HOUR, start);
-        assertEquals(2012, end.get(Calendar.YEAR));
-        assertEquals(0, end.get(Calendar.MONTH));
-        assertEquals(6, end.get(Calendar.DAY_OF_MONTH));
-        assertEquals(1, end.get(Calendar.WEEK_OF_YEAR));
-        assertEquals(15, end.get(Calendar.HOUR_OF_DAY));
-        assertEquals(0, end.get(Calendar.MINUTE));
-        assertEquals(0, end.get(Calendar.SECOND));
-        assertEquals(0, end.get(Calendar.MILLISECOND));
+        assertEquals(2012, end.getYear());
+        assertEquals(1, end.getMonthOfYear());
+        assertEquals(6, end.getDayOfMonth());
+        assertEquals(1, end.getWeekOfWeekyear());
+        assertEquals(15, end.getHourOfDay());
+        assertEquals(0, end.getMinuteOfHour());
+        assertEquals(0, end.getSecondOfMinute());
+        assertEquals(0, end.getMillisOfSecond());
         
         
         // TEST FIVE_MINUTE
         
         start = this.helperImpl.determineStart(Interval.FIVE_MINUTE, instant);
-        assertEquals(2012, start.get(Calendar.YEAR));
-        assertEquals(0, start.get(Calendar.MONTH));
-        assertEquals(6, start.get(Calendar.DAY_OF_MONTH));
-        assertEquals(1, start.get(Calendar.WEEK_OF_YEAR));
-        assertEquals(14, start.get(Calendar.HOUR_OF_DAY));
-        assertEquals(20, start.get(Calendar.MINUTE));
-        assertEquals(0, start.get(Calendar.SECOND));
-        assertEquals(0, start.get(Calendar.MILLISECOND));
+        assertEquals(2012, start.getYear());
+        assertEquals(1, start.getMonthOfYear());
+        assertEquals(6, start.getDayOfMonth());
+        assertEquals(1, start.getWeekOfWeekyear());
+        assertEquals(14, start.getHourOfDay());
+        assertEquals(20, start.getMinuteOfHour());
+        assertEquals(0, start.getSecondOfMinute());
+        assertEquals(0, start.getMillisOfSecond());
         
         end = this.helperImpl.determineEnd(Interval.FIVE_MINUTE, start);
-        assertEquals(2012, end.get(Calendar.YEAR));
-        assertEquals(0, end.get(Calendar.MONTH));
-        assertEquals(6, end.get(Calendar.DAY_OF_MONTH));
-        assertEquals(1, end.get(Calendar.WEEK_OF_YEAR));
-        assertEquals(14, end.get(Calendar.HOUR_OF_DAY));
-        assertEquals(25, end.get(Calendar.MINUTE));
-        assertEquals(0, end.get(Calendar.SECOND));
-        assertEquals(0, end.get(Calendar.MILLISECOND));
+        assertEquals(2012, end.getYear());
+        assertEquals(1, end.getMonthOfYear());
+        assertEquals(6, end.getDayOfMonth());
+        assertEquals(1, end.getWeekOfWeekyear());
+        assertEquals(14, end.getHourOfDay());
+        assertEquals(25, end.getMinuteOfHour());
+        assertEquals(0, end.getSecondOfMinute());
+        assertEquals(0, end.getMillisOfSecond());
         
         
         // TEST MINUTE
         
         start = this.helperImpl.determineStart(Interval.MINUTE, instant);
-        assertEquals(2012, start.get(Calendar.YEAR));
-        assertEquals(0, start.get(Calendar.MONTH));
-        assertEquals(6, start.get(Calendar.DAY_OF_MONTH));
-        assertEquals(1, start.get(Calendar.WEEK_OF_YEAR));
-        assertEquals(14, start.get(Calendar.HOUR_OF_DAY));
-        assertEquals(22, start.get(Calendar.MINUTE));
-        assertEquals(0, start.get(Calendar.SECOND));
-        assertEquals(0, start.get(Calendar.MILLISECOND));
+        assertEquals(2012, start.getYear());
+        assertEquals(1, start.getMonthOfYear());
+        assertEquals(6, start.getDayOfMonth());
+        assertEquals(1, start.getWeekOfWeekyear());
+        assertEquals(14, start.getHourOfDay());
+        assertEquals(22, start.getMinuteOfHour());
+        assertEquals(0, start.getSecondOfMinute());
+        assertEquals(0, start.getMillisOfSecond());
         
         end = this.helperImpl.determineEnd(Interval.MINUTE, start);
-        assertEquals(2012, end.get(Calendar.YEAR));
-        assertEquals(0, end.get(Calendar.MONTH));
-        assertEquals(6, end.get(Calendar.DAY_OF_MONTH));
-        assertEquals(1, end.get(Calendar.WEEK_OF_YEAR));
-        assertEquals(14, end.get(Calendar.HOUR_OF_DAY));
-        assertEquals(23, end.get(Calendar.MINUTE));
-        assertEquals(0, end.get(Calendar.SECOND));
-        assertEquals(0, end.get(Calendar.MILLISECOND));
+        assertEquals(2012, end.getYear());
+        assertEquals(1, end.getMonthOfYear());
+        assertEquals(6, end.getDayOfMonth());
+        assertEquals(1, end.getWeekOfWeekyear());
+        assertEquals(14, end.getHourOfDay());
+        assertEquals(23, end.getMinuteOfHour());
+        assertEquals(0, end.getSecondOfMinute());
+        assertEquals(0, end.getMillisOfSecond());
                 
     }
     

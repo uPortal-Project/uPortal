@@ -19,8 +19,8 @@
 
 package org.jasig.portal.events.aggr;
 
-import java.util.Calendar;
-import java.util.Date;
+import org.joda.time.DateMidnight;
+import org.joda.time.DateTimeFieldType;
 
 
 /**
@@ -36,13 +36,13 @@ public interface DateDimension {
     long getId();
     
     /**
-     * @return The fully built Date object for the date dimension. The time portion will be set to 00:00:00.000
+     * @return The fully built date for this date dimension
      */
-    Date getFullDate();
+    DateMidnight getFullDate();
     
     /**
      * @return The year the day exists in 
-     * @see Calendar#YEAR
+     * @see DateTimeFieldType#year()
      */
     int getYear();
 
@@ -57,13 +57,13 @@ public interface DateDimension {
      * Will only return values between 0 and 11 inclusive
      * 
      * @return The month of the year the day exists in 
-     * @see Calendar#MONTH
+     * @see DateTimeFieldType#monthOfYear()
      */
     int getMonth();
     
     /**
      * @return The week of the year the day exists in 
-     * @see Calendar#WEEK_OF_YEAR
+     * @see DateTimeFieldType#weekOfWeekyear()
      */
     int getWeek();
     
@@ -71,7 +71,7 @@ public interface DateDimension {
      * Will only return values between 0 and 31 inclusive
      * 
      * @return Day in the month
-     * @see Calendar#DAY_OF_MONTH
+     * @see DateTimeFieldType#dayOfMonth()
      */
     int getDay();
     
@@ -79,9 +79,4 @@ public interface DateDimension {
      * @return The optional designation of the current term the day exists in, may be null
      */
     String getTerm();
-    
-    /**
-     * @return A new Calendar instance that represents the state of the date dimension. All fields except year, month and day of month will be unset
-     */
-    Calendar getCalendar();
 }

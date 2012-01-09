@@ -80,7 +80,7 @@ public class JpaLoginAggregationDaoTest extends BaseJpaDaoTest {
             @Override
             protected void callWithoutResult() {
                 final DateDimension dateDimension = dateDimensionDao.getDateDimensionForCalendar(calendar);
-                final TimeDimension timeDimension = timeDimensionDao.getTimeDimensionForCalendar(calendar);
+                final TimeDimension timeDimension = timeDimensionDao.getTimeDimensionForLocalTime(calendar);
                 
                 final LoginAggregationImpl loginAggregation = loginAggregationDao.createLoginAggregation(dateDimension, timeDimension, Interval.FIVE_MINUTE, null);
 
@@ -101,7 +101,7 @@ public class JpaLoginAggregationDaoTest extends BaseJpaDaoTest {
             @Override
             protected void callWithoutResult() {
                 final DateDimension dateDimension = dateDimensionDao.getDateDimensionForCalendar(calendar);
-                final TimeDimension timeDimension = timeDimensionDao.getTimeDimensionForCalendar(calendar);
+                final TimeDimension timeDimension = timeDimensionDao.getTimeDimensionForLocalTime(calendar);
                 
                 final LoginAggregationImpl loginAggregation = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension);
                 
@@ -116,7 +116,7 @@ public class JpaLoginAggregationDaoTest extends BaseJpaDaoTest {
             @Override
             protected void callWithoutResult() {
                 final DateDimension dateDimension = dateDimensionDao.getDateDimensionForCalendar(calendar);
-                final TimeDimension timeDimension = timeDimensionDao.getTimeDimensionForCalendar(calendar);
+                final TimeDimension timeDimension = timeDimensionDao.getTimeDimensionForLocalTime(calendar);
                 
                 final LoginAggregationImpl loginAggregation = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension);
                 
@@ -137,7 +137,7 @@ public class JpaLoginAggregationDaoTest extends BaseJpaDaoTest {
             @Override
             protected void callWithoutResult() {
                 final DateDimension dateDimension = dateDimensionDao.getDateDimensionForCalendar(calendar);
-                final TimeDimension timeDimension = timeDimensionDao.getTimeDimensionForCalendar(calendar);
+                final TimeDimension timeDimension = timeDimensionDao.getTimeDimensionForLocalTime(calendar);
                 
                 final LoginAggregationImpl loginAggregation = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension);
                 
@@ -152,7 +152,7 @@ public class JpaLoginAggregationDaoTest extends BaseJpaDaoTest {
             @Override
             protected void callWithoutResult() {
                 final DateDimension dateDimension = dateDimensionDao.getDateDimensionForCalendar(calendar);
-                final TimeDimension timeDimension = timeDimensionDao.getTimeDimensionForCalendar(calendar);
+                final TimeDimension timeDimension = timeDimensionDao.getTimeDimensionForLocalTime(calendar);
                 
                 final LoginAggregationImpl loginAggregation = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension);
                 
@@ -169,7 +169,7 @@ public class JpaLoginAggregationDaoTest extends BaseJpaDaoTest {
             @Override
             protected void callWithoutResult() {
                 final DateDimension dateDimension = dateDimensionDao.getDateDimensionForCalendar(calendar);
-                final TimeDimension timeDimension = timeDimensionDao.getTimeDimensionForCalendar(calendar);
+                final TimeDimension timeDimension = timeDimensionDao.getTimeDimensionForLocalTime(calendar);
                 
                 final LoginAggregationImpl loginAggregation = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension);
                 

@@ -20,7 +20,6 @@
 package org.jasig.portal.events.aggr;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang.mutable.MutableInt;
-import org.apache.commons.lang.time.DateUtils;
 import org.jasig.portal.IPortalInfoProvider;
 import org.jasig.portal.concurrency.FunctionWithoutResult;
 import org.jasig.portal.concurrency.Time;
@@ -41,6 +39,11 @@ import org.jasig.portal.events.aggr.dao.DateDimensionDao;
 import org.jasig.portal.events.aggr.dao.IEventAggregationManagementDao;
 import org.jasig.portal.events.aggr.dao.TimeDimensionDao;
 import org.jasig.portal.events.handlers.db.IPortalEventDao;
+import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.LocalTime;
+import org.joda.time.ReadablePeriod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.support.AopUtils;
@@ -72,12 +75,18 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
     private IPortalEventDao portalEventDao;
     private TimeDimensionDao timeDimensionDao;
     private DateDimensionDao dateDimensionDao;
+    private IntervalHelper intervalHelper;
     private IPortalInfoProvider portalInfoProvider;
     private Set<IPortalEventAggregator<PortalEvent>> portalEventAggregators;
     
-    private Time aggregationDelay = Time.getTime(1, TimeUnit.MINUTES);
+    private Time aggregationDelay = Time.getTime(30, TimeUnit.SECONDS);
     private Time purgeDelay = Time.getTime(1, TimeUnit.DAYS);
-    private Time dimensionPreloadBuffer = Time.getTime(30, TimeUnit.DAYS);
+    private ReadablePeriod dimensionPreloadBuffer = Days.days(30);
+
+    @Autowired
+    public void setIntervalHelper(IntervalHelper intervalHelper) {
+        this.intervalHelper = intervalHelper;
+    }
 
     @Autowired
     public void setTimeDimensionDao(TimeDimensionDao timeDimensionDao) {
@@ -124,13 +133,13 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
         this.purgeDelay = purgeDelay;
     }
     
-    @Value("${org.jasig.portal.event.aggr.PortalEventAggregationManager.dimensionPreloadBuffer:30_DAYS}")
-    public void setDimensionPreloadBuffer(Time dimensionPreloadBuffer) {
-        if (dimensionPreloadBuffer.asDays() < 1) {
-            throw new IllegalArgumentException("dimensionPreloadBuffer must be at least 1 day. Is: " + dimensionPreloadBuffer);
-        }
-        this.dimensionPreloadBuffer = dimensionPreloadBuffer;
-    }
+//    @Value("${org.jasig.portal.event.aggr.PortalEventAggregationManager.dimensionPreloadBuffer:30_DAYS}")
+//    public void setDimensionPreloadBuffer(Time dimensionPreloadBuffer) {
+//        if (dimensionPreloadBuffer.asDays() < 1) {
+//            throw new IllegalArgumentException("dimensionPreloadBuffer must be at least 1 day. Is: " + dimensionPreloadBuffer);
+//        }
+//        this.dimensionPreloadBuffer = dimensionPreloadBuffer;
+//    }
 
     @Override
     @Transactional(value="aggrEventsTransactionManager")
@@ -213,144 +222,83 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
      * Populate the time dimensions 
      */
     void doPopulateTimeDimensions() {
+        
         final List<TimeDimension> timeDimensions = this.timeDimensionDao.getTimeDimensions();
         if (timeDimensions.isEmpty()) {
             logger.info("No TimeDimensions exist, creating them");
-            //Create all time dimension 
-            for (int hour = 0; hour <= 23; hour++) {
-                for (int minute = 0; minute <= 59; minute++) {
-                    this.timeDimensionDao.createTimeDimension(hour, minute);
-                }
-            }
         }
         else if (timeDimensions.size() != (24 * 60)) {
             this.logger.info("There are only " + timeDimensions.size() + " time dimensions in the database, there should be " + (24 * 60) + " creating missing dimensions");
-            
-            Calendar nextCal = Calendar.getInstance();
-            nextCal.setLenient(false);
-            nextCal.clear();
-            nextCal.set(Calendar.HOUR_OF_DAY, 0);
-            nextCal.set(Calendar.MINUTE, 0);
-            
-            for (final TimeDimension timeDimension : timeDimensions) {
-                final Calendar tdCal = timeDimension.getCalendar();
-                if (nextCal.before(tdCal)) {
-                    do {
-                        this.timeDimensionDao.createTimeDimension(nextCal.get(Calendar.HOUR_OF_DAY), nextCal.get(Calendar.MINUTE));
-                        nextCal.add(Calendar.MINUTE, 1);
-                    } while (nextCal.before(tdCal));
-                }
-                else if (nextCal.after(tdCal)) {
-                    do {
-                        this.timeDimensionDao.createTimeDimension(tdCal.get(Calendar.HOUR_OF_DAY), tdCal.get(Calendar.MINUTE));
-                        tdCal.add(Calendar.MINUTE, 1);
-                    } while (nextCal.after(tdCal));
-                }
-                
-                nextCal = tdCal;
-                nextCal.add(Calendar.MINUTE, 1);
-            }
-            
-            //Add any missing calendars from the tail
-            final Calendar lastCal = Calendar.getInstance();
-            lastCal.setLenient(false);
-            lastCal.clear();
-            lastCal.set(Calendar.HOUR_OF_DAY, 23);
-            lastCal.set(Calendar.MINUTE, 59);
-            
-            while (nextCal.before(lastCal) || nextCal.equals(lastCal)) {
-                this.timeDimensionDao.createTimeDimension(nextCal.get(Calendar.HOUR_OF_DAY), nextCal.get(Calendar.MINUTE));
-                nextCal.add(Calendar.MINUTE, 1);
-            }
         }
         else {
             this.logger.debug("Found expected " + timeDimensions.size() + " time dimensions");
+            return;
+        }
+            
+        LocalTime nextTime = new LocalTime(0, 0);
+        final LocalTime lastTime = new LocalTime(23, 59);
+        
+        for (final TimeDimension timeDimension : timeDimensions) {
+            LocalTime dimensionTime = timeDimension.getTime();
+            if (nextTime.isBefore(dimensionTime)) {
+                do {
+                    this.timeDimensionDao.createTimeDimension(nextTime);
+                    nextTime = nextTime.plusMinutes(1);
+                } while (nextTime.isBefore(dimensionTime));
+            }
+            else if (nextTime.isAfter(dimensionTime)) {
+                do {
+                    this.timeDimensionDao.createTimeDimension(dimensionTime);
+                    dimensionTime = dimensionTime.plusMinutes(1);
+                } while (nextTime.isAfter(dimensionTime));
+            }
+            
+            nextTime = dimensionTime.plusMinutes(1);
+        }
+        
+        //Add any missing calendars from the tail
+        while (nextTime.isBefore(lastTime) || nextTime.equals(lastTime)) {
+            this.timeDimensionDao.createTimeDimension(nextTime);
+            if (nextTime.equals(lastTime)) {
+                break;
+            }
+            nextTime = nextTime.plusMinutes(1);
         }
     }
 
     void doPopulateDateDimensions() {
-        final Calendar now = Calendar.getInstance();
+        final DateTime now = DateTime.now();
         
-        final Calendar minEventDate = Calendar.getInstance();
-        minEventDate.setLenient(false);
-        minEventDate.clear();
-        
-        final Calendar maxEventDate = Calendar.getInstance();
-        maxEventDate.setLenient(false);
-        maxEventDate.clear();
-
-        // min(oldestPortalEventTimestamp - 1, now -1)
-        final Date oldestPortalEventTimestamp = this.portalEventDao.getOldestPortalEventTimestamp();
-        if (oldestPortalEventTimestamp == null || oldestPortalEventTimestamp.getTime() >= now.getTimeInMillis()) {
-            //no portal events or oldest event is after now, start at now - 1 day
-            minEventDate.set(Calendar.YEAR, now.get(Calendar.YEAR));
-            minEventDate.set(Calendar.MONTH, now.get(Calendar.MONTH));
-            minEventDate.set(Calendar.DAY_OF_MONTH, now.get(Calendar.DAY_OF_MONTH));
-            minEventDate.add(Calendar.DAY_OF_MONTH, -1);
+        final IntervalInfo startIntervalInfo;
+        final DateTime oldestPortalEventTimestamp = this.portalEventDao.getOldestPortalEventTimestamp();
+        if (oldestPortalEventTimestamp == null || now.isBefore(oldestPortalEventTimestamp)) {
+            startIntervalInfo = this.intervalHelper.getIntervalInfo(Interval.YEAR, now);
         }
         else {
-            //portal events exist, start at oldest event - 1 day
-            final Calendar oldestEvent = Calendar.getInstance();
-            oldestEvent.setTime(oldestPortalEventTimestamp);
-            
-            minEventDate.set(Calendar.YEAR, oldestEvent.get(Calendar.YEAR));
-            minEventDate.set(Calendar.MONTH, oldestEvent.get(Calendar.MONTH));
-            minEventDate.set(Calendar.DAY_OF_MONTH, oldestEvent.get(Calendar.DAY_OF_MONTH));
-            minEventDate.add(Calendar.DAY_OF_MONTH, -1);
+            startIntervalInfo = this.intervalHelper.getIntervalInfo(Interval.YEAR, oldestPortalEventTimestamp);
         }
         
-        //max(newestPortalEventTimestamp + dimensionPreloadBuffer, now + dimensionPreloadBuffer)
-        final Date newestPortalEventTimestamp = this.portalEventDao.getNewestPortalEventTimestamp();
-        if (newestPortalEventTimestamp == null || newestPortalEventTimestamp.getTime() <= now.getTimeInMillis()) {
-            //no portal events or newest event is before now, end at now + dimensionPreloadBuffer
-            maxEventDate.set(Calendar.YEAR, now.get(Calendar.YEAR));
-            maxEventDate.set(Calendar.MONTH, now.get(Calendar.MONTH));
-            maxEventDate.set(Calendar.DAY_OF_MONTH, now.get(Calendar.DAY_OF_MONTH));
-            maxEventDate.add(Calendar.DAY_OF_MONTH, (int)this.dimensionPreloadBuffer.asDays());
+        final IntervalInfo endIntervalInfo;
+        final DateTime newestPortalEventTimestamp = this.portalEventDao.getNewestPortalEventTimestamp();
+        if (newestPortalEventTimestamp == null || now.isAfter(newestPortalEventTimestamp)) {
+            endIntervalInfo = this.intervalHelper.getIntervalInfo(Interval.YEAR, now.plus(this.dimensionPreloadBuffer));
         }
         else {
-            //portal events exist, end at newest event + dimensionPreloadBuffer
-            final Calendar oldestEvent = Calendar.getInstance();
-            oldestEvent.setTime(newestPortalEventTimestamp);
-            
-            maxEventDate.set(Calendar.YEAR, oldestEvent.get(Calendar.YEAR));
-            maxEventDate.set(Calendar.MONTH, oldestEvent.get(Calendar.MONTH));
-            maxEventDate.set(Calendar.DAY_OF_MONTH, oldestEvent.get(Calendar.DAY_OF_MONTH));
-            maxEventDate.add(Calendar.DAY_OF_MONTH, (int)this.dimensionPreloadBuffer.asDays());
+            endIntervalInfo = this.intervalHelper.getIntervalInfo(Interval.YEAR, newestPortalEventTimestamp.plus(this.dimensionPreloadBuffer));
         }
         
-        final DateDimension oldestDateDimension = this.dateDimensionDao.getOldestDateDimension();
-        if (oldestDateDimension == null) {
-            //No date dimensions, create from minEventDate to maxEventDate
-            doPopulateDateDimensions(minEventDate, maxEventDate);
-        }
-        else {
-            final Calendar oldestDimensionCal = oldestDateDimension.getCalendar();
-            if (oldestDimensionCal.after(minEventDate)) {
-                //the oldest event is after the oldest date dimension, create date dimensions to compensate
-                oldestDimensionCal.add(Calendar.DAY_OF_MONTH, -1);
-                doPopulateDateDimensions(minEventDate, oldestDimensionCal);
-            }
-            
-            final DateDimension newestDateDimension = this.dateDimensionDao.getNewestDateDimension();
-            final Calendar newestDimensionCal = newestDateDimension.getCalendar();
-            if (newestDimensionCal.before(maxEventDate)) {
-                //the newest dimension is before either now or the newest event plus the dimensionPreloadBuffer, create date dimensions to pad
-                newestDimensionCal.add(Calendar.DAY_OF_MONTH, 1);
-                doPopulateDateDimensions(newestDimensionCal, maxEventDate);
-            }
-        }
+        final DateMidnight start = startIntervalInfo.getDateDimension().getFullDate();
+        final DateMidnight end = endIntervalInfo.getDateDimension().getFullDate();
+        
+        doPopulateDateDimensions(start, end);
     }
     
-    void doPopulateDateDimensions(Calendar start, Calendar end) {
-        //don't assume we can modify the caller's object
-        start = (Calendar)start.clone();
-        
-        logger.info("Creating date dimensions from " + start.getTime() + " to " + end.getTime() + "  (inclusive)");
-        
-        while (start.before(end) || start.equals(end)) {
+    void doPopulateDateDimensions(DateMidnight start, DateMidnight end) {
+        final List<DateDimension> dateDimensions = this.dateDimensionDao.getDateDimensionsBetween(start, end);
+        //TODO like time dimensions only create missing entries
+        while (start.isBefore(end)) {
             this.dateDimensionDao.createDateDimension(start);
-            start.add(Calendar.DAY_OF_MONTH, 1);
+            start = start.plusDays(1);
         }
     }
     
@@ -370,11 +318,12 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
         eventAggregatorStatus.setServerName(serverName);
         
         //Calculate date range for aggregation
-        Date lastAggregated = eventAggregatorStatus.getLastEventDate();
+        DateTime lastAggregated = eventAggregatorStatus.getLastEventDate();
         if (lastAggregated == null) {
-            lastAggregated = new Date(0);
+            lastAggregated = new DateTime(0);
         }
-        final Date newestEventTime = DateUtils.truncate(new Date(System.currentTimeMillis() - this.aggregationDelay.asMillis()), Calendar.MINUTE);
+        
+        DateTime newestEventTime = new DateTime(System.currentTimeMillis() - this.aggregationDelay.asMillis()).secondOfMinute().roundFloorCopy();
         eventAggregatorStatus.setLastEventDate(newestEventTime);
         
         logger.debug("Starting aggregation of events between {} (inc) and {} (exc)", lastAggregated, newestEventTime);
@@ -383,7 +332,7 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
         final Map<Interval, IntervalInfo> intervalInfo = new HashMap<Interval, IntervalInfo>();
 
         //Do aggregation, capturing the start and end dates
-        eventAggregatorStatus.setLastStart(new Date());
+        eventAggregatorStatus.setLastStart(new DateTime());
         portalEventDao.getPortalEvents(lastAggregated, newestEventTime, new Function<PortalEvent, Object>() {
             @Override
             public Object apply(PortalEvent input) {
@@ -411,7 +360,7 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
                 return null;
             }
         });
-        eventAggregatorStatus.setLastEnd(new Date());
+        eventAggregatorStatus.setLastEnd(new DateTime());
         
         logger.debug("Aggregated {} events between {} and {}", new Object[] { events, lastAggregated, newestEventTime });
 
@@ -425,22 +374,22 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
         //Update status with current server name
         final String serverName = this.portalInfoProvider.getServerName();
         eventPurgerStatus.setServerName(serverName);
-        eventPurgerStatus.setLastStart(new Date());
+        eventPurgerStatus.setLastStart(new DateTime());
         
         //Determine date of most recently aggregated data
         final IEventAggregatorStatus eventAggregatorStatus = eventAggregationManagementDao.getEventAggregatorStatus(ProcessingType.AGGREGATION);
-        final Date lastAggregated = eventAggregatorStatus.getLastEventDate();
+        final DateTime lastAggregated = eventAggregatorStatus.getLastEventDate();
         if (lastAggregated == null) {
             //Nothing has been aggregated, skip purging
             
-            eventPurgerStatus.setLastEnd(new Date());
+            eventPurgerStatus.setLastEnd(new DateTime());
             eventAggregationManagementDao.updateEventAggregatorStatus(eventPurgerStatus);
             
             return;
         }
         
         //Calculate purge end date from most recent aggregation minus the purge delay
-        final Date purgeEnd = new Date(lastAggregated.getTime() - purgeDelay.asMillis());
+        final DateTime purgeEnd = new DateTime(lastAggregated.getMillis() - purgeDelay.asMillis());
         eventPurgerStatus.setLastEventDate(purgeEnd);
         
         //Purge events
@@ -449,7 +398,7 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
         logger.debug("Purged {} events before {}", events, purgeEnd);
         
         //Update the status object and store it
-        eventPurgerStatus.setLastEnd(new Date());
+        eventPurgerStatus.setLastEnd(new DateTime());
         eventAggregationManagementDao.updateEventAggregatorStatus(eventPurgerStatus);
     }
 }

@@ -19,11 +19,10 @@
 
 package org.jasig.portal.events.aggr.dao;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import org.jasig.portal.events.aggr.TimeDimension;
+import org.joda.time.LocalTime;
 
 /**
  * DAO for creation/lookup of time dimensions
@@ -33,20 +32,12 @@ import org.jasig.portal.events.aggr.TimeDimension;
  */
 public interface TimeDimensionDao {
     
-    TimeDimension createTimeDimension(Calendar calendar);
-
-    TimeDimension createTimeDimension(int hour, int minute);
+    TimeDimension createTimeDimension(LocalTime calendar);
 
     List<TimeDimension> getTimeDimensions();
 
     TimeDimension getTimeDimensionById(long id);
 
-    TimeDimension getTimeDimensionByHourMinute(int hour, int minute);
-
-    TimeDimension getTimeDimensionForCalendar(Calendar calendar);
-
-    TimeDimension getTimeDimensionForTimeInMillis(long time);
-
-    TimeDimension getTimeDimensionForDate(Date date);
+    TimeDimension getTimeDimensionForLocalTime(LocalTime localTime);
 
 }

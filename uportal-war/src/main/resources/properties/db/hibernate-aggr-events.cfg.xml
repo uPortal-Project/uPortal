@@ -42,7 +42,7 @@
         
         <mapping resource="properties/db/global.hbm.xml"/>
         
-        <mapping class="org.jasig.portal.events.aggr.EventAggregatorStatusImpl"/>
+        <mapping class="org.jasig.portal.events.aggr.dao.jpa.EventAggregatorStatusImpl"/>
         <mapping class="org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl"/>
         <mapping class="org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl"/>
         <mapping class="org.jasig.portal.events.aggr.login.LoginAggregationImpl"/>

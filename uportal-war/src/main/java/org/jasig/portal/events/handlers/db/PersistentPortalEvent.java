@@ -20,7 +20,6 @@
 package org.jasig.portal.events.handlers.db;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,6 +36,7 @@ import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.events.PortalEvent;
+import org.joda.time.DateTime;
 
 /**
  * Persistent wrapper for storing portal events
@@ -69,8 +69,9 @@ public class PersistentPortalEvent implements Serializable {
     
     @Index(name = "IDX_UP_RAW_EVENTS_TIMESTAMP")
     @Column(name="TIMESTAMP", nullable=false)
+    @Type(type = "dateTime")
     @SuppressWarnings("unused")
-    private final Date timestamp;
+    private final DateTime timestamp;
     
     @Column(name="SERVER_ID", length=200, nullable=false)
     @SuppressWarnings("unused")
@@ -110,7 +111,7 @@ public class PersistentPortalEvent implements Serializable {
     PersistentPortalEvent(PortalEvent portalEvent, String eventData) {
         this.id = -1;
         this.eventData = eventData;
-        this.timestamp = portalEvent.getTimestampAsDate();
+        this.timestamp = new DateTime(portalEvent.getTimestamp());
         this.serverId = portalEvent.getServerId();
         this.eventSessionId = portalEvent.getEventSessionId();
         this.userName = portalEvent.getUserName();

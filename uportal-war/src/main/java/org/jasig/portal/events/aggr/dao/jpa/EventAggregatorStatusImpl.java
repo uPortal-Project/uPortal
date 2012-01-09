@@ -19,8 +19,6 @@
 
 package org.jasig.portal.events.aggr.dao.jpa;
 
-import java.util.Date;
-
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -36,8 +34,9 @@ import javax.persistence.Version;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.Type;
 import org.jasig.portal.events.aggr.IEventAggregatorStatus;
-import org.jasig.portal.events.aggr.IEventAggregatorStatus.ProcessingType;
+import org.joda.time.DateTime;
 
 /**
  * @author Eric Dalquist
@@ -49,7 +48,12 @@ import org.jasig.portal.events.aggr.IEventAggregatorStatus.ProcessingType;
 @TableGenerator(name = "UP_EVENT_AGGR_STATUS_GEN", pkColumnValue = "UP_EVENT_AGGR_STATUS", allocationSize = 10)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-class EventAggregatorStatusImpl implements IEventAggregatorStatus {
+public class EventAggregatorStatusImpl implements IEventAggregatorStatus {
+    
+    static {
+        System.out.println("test");
+    }
+    
     @Id
     @GeneratedValue(generator = "UP_EVENT_AGGR_STATUS_GEN")
     @Column(name = "ID")
@@ -68,13 +72,16 @@ class EventAggregatorStatusImpl implements IEventAggregatorStatus {
     private String serverName;
     
     @Column(name="LAST_START")
-    private Date lastStart;
+    @Type(type="dateTime")
+    private DateTime lastStart;
     
     @Column(name="LAST_END")
-    private Date lastEnd;
+    @Type(type="dateTime")
+    private DateTime lastEnd;
     
     @Column(name="LAST_EVENT_DATE")
-    private Date lastEventDate;
+    @Type(type="dateTime")
+    private DateTime lastEventDateTime;
 
     @SuppressWarnings("unused")
     private EventAggregatorStatusImpl() {
@@ -100,33 +107,33 @@ class EventAggregatorStatusImpl implements IEventAggregatorStatus {
     }
 
     @Override
-    public Date getLastStart() {
+    public DateTime getLastStart() {
         return this.lastStart;
     }
 
     @Override
-    public void setLastStart(Date lastStart) {
+    public void setLastStart(DateTime lastStart) {
         this.lastStart = lastStart;
     }
 
     @Override
-    public Date getLastEnd() {
+    public DateTime getLastEnd() {
         return this.lastEnd;
     }
 
     @Override
-    public void setLastEnd(Date lastEnd) {
+    public void setLastEnd(DateTime lastEnd) {
         this.lastEnd = lastEnd;
     }
 
     @Override
-    public Date getLastEventDate() {
-        return this.lastEventDate;
+    public DateTime getLastEventDate() {
+        return this.lastEventDateTime;
     }
 
     @Override
-    public void setLastEventDate(Date lastEventDate) {
-        this.lastEventDate = lastEventDate;
+    public void setLastEventDate(DateTime lastEventDateTime) {
+        this.lastEventDateTime = lastEventDateTime;
     }
 
     @Override
@@ -160,6 +167,6 @@ class EventAggregatorStatusImpl implements IEventAggregatorStatus {
     public String toString() {
         return "EventAggregatorStatusImpl [id=" + this.id + ", entityVersion=" + this.entityVersion
                 + ", processingType=" + this.processingType + ", serverName=" + this.serverName + ", lastStart="
-                + this.lastStart + ", lastEnd=" + this.lastEnd + ", lastEventDate=" + this.lastEventDate + "]";
+                + this.lastStart + ", lastEnd=" + this.lastEnd + ", lastEventDateTime=" + this.lastEventDateTime + "]";
     }
 }

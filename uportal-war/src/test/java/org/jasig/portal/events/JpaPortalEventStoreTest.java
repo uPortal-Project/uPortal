@@ -25,7 +25,6 @@ import static org.junit.Assert.assertNull;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -43,6 +42,7 @@ import org.jasig.portal.concurrency.FunctionWithoutResult;
 import org.jasig.portal.events.handlers.db.IPortalEventDao;
 import org.jasig.portal.security.SystemPerson;
 import org.jasig.portal.test.BaseJpaDaoTest;
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,10 +93,10 @@ public class JpaPortalEventStoreTest extends BaseJpaDaoTest {
         execute(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
-                final Date oldestPortalEventTimestamp = portalEventDao.getOldestPortalEventTimestamp();
+                final DateTime oldestPortalEventTimestamp = portalEventDao.getOldestPortalEventTimestamp();
                 assertNull(oldestPortalEventTimestamp);
                 
-                final Date newestPortalEventTimestamp = portalEventDao.getNewestPortalEventTimestamp();
+                final DateTime newestPortalEventTimestamp = portalEventDao.getNewestPortalEventTimestamp();
                 assertNull(newestPortalEventTimestamp);
             }
         });
@@ -119,14 +119,14 @@ public class JpaPortalEventStoreTest extends BaseJpaDaoTest {
         execute(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
-                final Date oldestPortalEventTimestamp = portalEventDao.getOldestPortalEventTimestamp();
-                final Date newestPortalEventTimestamp = portalEventDao.getNewestPortalEventTimestamp();
+                final DateTime oldestPortalEventTimestamp = portalEventDao.getOldestPortalEventTimestamp();
+                final DateTime newestPortalEventTimestamp = portalEventDao.getNewestPortalEventTimestamp();
                 
                 assertNotNull(oldestPortalEventTimestamp);
                 assertNotNull(newestPortalEventTimestamp);
                 
-                assertEquals(originalEvents.get(0).getTimestampAsDate(), oldestPortalEventTimestamp);
-                assertEquals(originalEvents.get(originalEvents.size() - 1).getTimestampAsDate(), newestPortalEventTimestamp);
+                assertEquals(new DateTime(originalEvents.get(0).getTimestamp()), oldestPortalEventTimestamp);
+                assertEquals(new DateTime(originalEvents.get(originalEvents.size() - 1).getTimestamp()), newestPortalEventTimestamp);
             }
         });
         
@@ -137,8 +137,8 @@ public class JpaPortalEventStoreTest extends BaseJpaDaoTest {
      * @param originalEvents
      */
     protected void verifyEvents(final List<PortalEvent> originalEvents) {
-        final Date startDate = new Date(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1));
-        final Date endDate = new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1));
+        final DateTime startDate = new DateTime(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1));
+        final DateTime endDate = new DateTime(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1));
         
         execute(new CallableWithoutResult() {
             @Override

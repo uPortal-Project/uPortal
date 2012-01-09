@@ -20,8 +20,6 @@
 package org.jasig.portal.events.aggr.dao.jpa;
 
 import java.io.Serializable;
-import java.util.Calendar;
-import java.util.Date;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -40,7 +38,10 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.Type;
 import org.jasig.portal.events.aggr.DateDimension;
+import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
 
 /**
  * @author Eric Dalquist
@@ -72,7 +73,8 @@ public class DateDimensionImpl implements DateDimension, Serializable {
     
     @Index(name = "IDX_UP_DD_FULL_DATE")
     @Column(name="DD_FULL_DATE", nullable=false)
-    private final Date fullDate;
+    @Type(type = "dateTime")
+    private final DateTime fullDate;
     
     @NaturalId
     @Column(name="DD_YEAR", nullable=false)
@@ -101,7 +103,7 @@ public class DateDimensionImpl implements DateDimension, Serializable {
     @Transient
     private int hashCode = 0;
     @Transient
-    private Calendar cal = null;
+    private DateMidnight dateMidnight;
 
     /**
      * no-arg needed by hibernate
@@ -122,19 +124,14 @@ public class DateDimensionImpl implements DateDimension, Serializable {
             throw new IllegalArgumentException("Quarter must be between 0 and 3, it is: " + quarter);
         }
         
-        final Calendar cal = Calendar.getInstance();
-        cal.setLenient(false); //Make the Calendar do the bounds checking, will throw IllegalArgumentException on call to getTime()
-        cal.clear();
-        cal.set(Calendar.YEAR, year);
-        cal.set(Calendar.MONTH, month);
-        cal.set(Calendar.DAY_OF_MONTH, day);
+        this.dateMidnight = new DateMidnight(year, month + 1, day);
         
         this.id = -1;
-        this.fullDate = cal.getTime();
-        this.year = cal.get(Calendar.YEAR);
-        this.month = cal.get(Calendar.MONTH);
-        this.day = cal.get(Calendar.DAY_OF_MONTH);
-        this.week = cal.get(Calendar.WEEK_OF_YEAR);
+        this.fullDate = dateMidnight.toDateTime();
+        this.year = dateMidnight.getYear();
+        this.month = dateMidnight.getMonthOfYear();
+        this.day = dateMidnight.getDayOfMonth();
+        this.week = dateMidnight.getWeekOfWeekyear();
         this.quarter = quarter;
         this.term = term;
     }
@@ -143,10 +140,16 @@ public class DateDimensionImpl implements DateDimension, Serializable {
     public long getId() {
         return this.id;
     }
-
+    
     @Override
-    public Date getFullDate() {
-        return this.fullDate;
+    public DateMidnight getFullDate() {
+        DateMidnight dm = this.dateMidnight;
+        if (dm == null) {
+            dm = this.fullDate.toDateMidnight();
+            this.dateMidnight = dm;
+        }
+        
+        return dm;
     }
     @Override
     public int getYear() {
@@ -171,22 +174,6 @@ public class DateDimensionImpl implements DateDimension, Serializable {
     @Override
     public String getTerm() {
         return this.term;
-    }
-    
-    @Override
-    public Calendar getCalendar() {
-        Calendar c = cal;
-        if (c == null) {
-            c = Calendar.getInstance();
-            c.setLenient(false);
-            c.clear();
-            c.set(Calendar.YEAR, this.year);
-            c.set(Calendar.MONTH, this.month);
-            c.set(Calendar.DAY_OF_MONTH, this.day);
-            cal = c;
-        }
-        
-        return (Calendar)c.clone();
     }
     
     @Override

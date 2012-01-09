@@ -33,9 +33,12 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
+import org.jasig.portal.events.aggr.AcademicTermDetails;
 import org.jasig.portal.events.aggr.DateDimension;
+import org.jasig.portal.events.aggr.QuarterDetails;
 import org.jasig.portal.events.aggr.dao.DateDimensionDao;
 import org.jasig.portal.jpa.BaseJpaDao;
+import org.joda.time.DateTime;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -97,7 +100,7 @@ public class JpaDateDimensionDao extends BaseJpaDao implements DateDimensionDao 
         final Root<DateDimensionImpl> dimensionRoot = criteriaQuery.from(DateDimensionImpl.class);
         
         //Build subquery for max date
-        final Subquery<Date> maxDateSub = criteriaQuery.subquery(Date.class);
+        final Subquery<DateTime> maxDateSub = criteriaQuery.subquery(DateTime.class);
         final Root<DateDimensionImpl> maxDateDimensionSub = maxDateSub.from(DateDimensionImpl.class);
         maxDateSub
             .select(cb.greatest(maxDateDimensionSub.get(DateDimensionImpl_.fullDate)));
@@ -115,7 +118,7 @@ public class JpaDateDimensionDao extends BaseJpaDao implements DateDimensionDao 
         final Root<DateDimensionImpl> dimensionRoot = criteriaQuery.from(DateDimensionImpl.class);
         
         //Build subquery for max date
-        final Subquery<Date> maxDateSub = criteriaQuery.subquery(Date.class);
+        final Subquery<DateTime> maxDateSub = criteriaQuery.subquery(DateTime.class);
         final Root<DateDimensionImpl> maxDateDimensionSub = maxDateSub.from(DateDimensionImpl.class);
         maxDateSub
             .select(cb.least(maxDateDimensionSub.get(DateDimensionImpl_.fullDate)));
@@ -227,4 +230,44 @@ public class JpaDateDimensionDao extends BaseJpaDao implements DateDimensionDao 
         final List<DateDimensionImpl> portletDefinitions = query.getResultList();
         return DataAccessUtils.uniqueResult(portletDefinitions);
     }
+
+    @Override
+    public int getQuarter(Calendar calendar) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void addQuarter(Calendar start, Calendar end, int id) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public List<QuarterDetails> getConfiguredQuarters() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getAcademicTerm(Calendar calendar) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void addAcademicTerm(Calendar start, Calendar end, String term) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public List<AcademicTermDetails> getConfiguredAcademicTerms() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    
+    
+    
 }

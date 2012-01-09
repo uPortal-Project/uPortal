@@ -20,7 +20,6 @@
 package org.jasig.portal.events.handlers.db;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -43,6 +42,7 @@ import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.jpa.BaseJpaDao;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.support.DataAccessUtils;
@@ -66,10 +66,10 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
     private final ObjectMapper mapper;
     private String deleteQuery;
     private String selectQuery;
-    private CriteriaQuery<Date> findNewestPersistentPortalEventTimestampQuery;
-    private CriteriaQuery<Date> findOldestPersistentPortalEventTimestampQuery;
-    private ParameterExpression<Date> startTimeParameter;
-    private ParameterExpression<Date> endTimeParameter;
+    private CriteriaQuery<DateTime> findNewestPersistentPortalEventTimestampQuery;
+    private CriteriaQuery<DateTime> findOldestPersistentPortalEventTimestampQuery;
+    private ParameterExpression<DateTime> startTimeParameter;
+    private ParameterExpression<DateTime> endTimeParameter;
 
     private EntityManager entityManager;
     
@@ -98,8 +98,8 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
     
     @Override
     protected void buildCriteriaQueries(CriteriaBuilder cb) {
-        this.startTimeParameter = cb.parameter(Date.class, "startTime");
-        this.endTimeParameter = cb.parameter(Date.class, "endTime");
+        this.startTimeParameter = cb.parameter(DateTime.class, "startTime");
+        this.endTimeParameter = cb.parameter(DateTime.class, "endTime");
         
         this.selectQuery = 
                 "SELECT e " +
@@ -116,8 +116,8 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
         this.findOldestPersistentPortalEventTimestampQuery = this.buildFindOldestPersistentPortalEventTimestamp(cb);
     }
     
-    protected CriteriaQuery<Date> buildFindNewestPersistentPortalEventTimestamp(final CriteriaBuilder cb) {
-        final CriteriaQuery<Date> criteriaQuery = cb.createQuery(Date.class);
+    protected CriteriaQuery<DateTime> buildFindNewestPersistentPortalEventTimestamp(final CriteriaBuilder cb) {
+        final CriteriaQuery<DateTime> criteriaQuery = cb.createQuery(DateTime.class);
         final Root<PersistentPortalEvent> eventRoot = criteriaQuery.from(PersistentPortalEvent.class);
         
         //Get the largest event timestamp
@@ -127,8 +127,8 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
         return criteriaQuery;
     }
     
-    protected CriteriaQuery<Date> buildFindOldestPersistentPortalEventTimestamp(final CriteriaBuilder cb) {
-        final CriteriaQuery<Date> criteriaQuery = cb.createQuery(Date.class);
+    protected CriteriaQuery<DateTime> buildFindOldestPersistentPortalEventTimestamp(final CriteriaBuilder cb) {
+        final CriteriaQuery<DateTime> criteriaQuery = cb.createQuery(DateTime.class);
         final Root<PersistentPortalEvent> eventRoot = criteriaQuery.from(PersistentPortalEvent.class);
         
         //Get the smallest event timestamp
@@ -181,18 +181,18 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
     }
     
     @Override
-    public Date getOldestPortalEventTimestamp() {
-        final TypedQuery<Date> query = this.getEntityManager().createQuery(this.findOldestPersistentPortalEventTimestampQuery);
+    public DateTime getOldestPortalEventTimestamp() {
+        final TypedQuery<DateTime> query = this.getEntityManager().createQuery(this.findOldestPersistentPortalEventTimestampQuery);
         query.setMaxResults(1);
-        final List<Date> results = query.getResultList();
+        final List<DateTime> results = query.getResultList();
         return DataAccessUtils.singleResult(results);
     }
     
     @Override
-    public Date getNewestPortalEventTimestamp() {
-        final TypedQuery<Date> query = this.getEntityManager().createQuery(this.findNewestPersistentPortalEventTimestampQuery);
+    public DateTime getNewestPortalEventTimestamp() {
+        final TypedQuery<DateTime> query = this.getEntityManager().createQuery(this.findNewestPersistentPortalEventTimestampQuery);
         query.setMaxResults(1);
-        final List<Date> results = query.getResultList();
+        final List<DateTime> results = query.getResultList();
         return DataAccessUtils.singleResult(results);
     }
 
@@ -200,7 +200,7 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
      * @see org.jasig.portal.events.handlers.db.IPortalEventDao#getPortalEvents(long, long)
      */
     @Override
-    public void getPortalEvents(Date startTime, Date endTime, Function<PortalEvent, Object> handler) {
+    public void getPortalEvents(DateTime startTime, DateTime endTime, Function<PortalEvent, Object> handler) {
         final Session session = this.getEntityManager().unwrap(Session.class);
         final org.hibernate.Query query = session.createQuery(this.selectQuery);
         query.setParameter(this.startTimeParameter.getName(), startTime);
@@ -218,7 +218,7 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
      */
     @Override
     @Transactional(value="rawEvents")
-    public int deletePortalEventsBefore(Date time) {
+    public int deletePortalEventsBefore(DateTime time) {
         final Query query = this.entityManager.createQuery(this.deleteQuery);
         query.setParameter(this.endTimeParameter.getName(), time);
         return query.executeUpdate();

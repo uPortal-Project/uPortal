@@ -83,6 +83,10 @@ public class QuarterDetailsImpl implements QuarterDetails, Serializable {
     private final int quarterId;
     
     private QuarterDetailsImpl() {
+        this.id = -1;
+        this.start = null;
+        this.end = null;
+        this.quarterId = -1;
     }
     
     QuarterDetailsImpl(Date start, Date end, int quarterId) {

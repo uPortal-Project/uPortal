@@ -20,7 +20,6 @@
 package org.jasig.portal.events.aggr.dao.jpa;
 
 import java.io.Serializable;
-import java.util.Calendar;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -40,6 +39,7 @@ import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
 import org.jasig.portal.events.aggr.TimeDimension;
+import org.joda.time.LocalTime;
 
 /**
  * @author Eric Dalquist
@@ -84,7 +84,7 @@ public class TimeDimensionImpl implements TimeDimension, Serializable {
     @Transient
     private int hashCode = 0;
     @Transient
-    private Calendar cal = null;
+    private LocalTime time = null;
 
     /**
      * no-arg needed by hibernate
@@ -97,15 +97,10 @@ public class TimeDimensionImpl implements TimeDimension, Serializable {
         this.minute = -1;
     }
     TimeDimensionImpl(int hour, int minute) {
-        final Calendar cal = Calendar.getInstance();
-        cal.setLenient(false); //Make the Calendar do the bounds checking, will throw IllegalArgumentException on call to getTime()
-        cal.clear();
-        cal.set(Calendar.HOUR_OF_DAY, hour);
-        cal.set(Calendar.MINUTE, minute);
-        
         this.id = -1;
-        this.hour = cal.get(Calendar.HOUR_OF_DAY);
-        this.minute = cal.get(Calendar.MINUTE);
+        this.time = new LocalTime(hour, minute);
+        this.hour = this.time.getHourOfDay();
+        this.minute = this.time.getMinuteOfHour();
         this.fiveMinuteIncrement = this.minute / 5;
     }
 
@@ -113,7 +108,16 @@ public class TimeDimensionImpl implements TimeDimension, Serializable {
     public long getId() {
         return this.id;
     }
-
+    
+    @Override
+    public LocalTime getTime() {
+        LocalTime t = this.time;
+        if (t == null) {
+            t = new LocalTime(this.hour, this.minute);
+            this.time = t;
+        }
+        return t;
+    }
     @Override
     public int getHour() {
         return this.hour;
@@ -127,21 +131,6 @@ public class TimeDimensionImpl implements TimeDimension, Serializable {
     @Override
     public int getMinute() {
         return this.minute;
-    }
-    
-    @Override
-    public Calendar getCalendar() {
-        Calendar c = cal;
-        if (c == null) {
-            c = Calendar.getInstance();
-            c.setLenient(false);
-            c.clear();
-            c.set(Calendar.HOUR_OF_DAY, this.hour);
-            c.set(Calendar.MINUTE, this.minute);
-            cal = c;
-        }
-        
-        return (Calendar)c.clone();
     }
     
     @Override

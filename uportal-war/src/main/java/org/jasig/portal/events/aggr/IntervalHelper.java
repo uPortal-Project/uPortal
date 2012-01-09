@@ -7,6 +7,8 @@ package org.jasig.portal.events.aggr;
 
 import java.util.Date;
 
+import org.joda.time.DateTime;
+
 
 /**
  * Calculates the correct {@link IntervalInfo} that contains the spcified {@link Date} for the specified
@@ -21,5 +23,5 @@ public interface IntervalHelper {
      * @param date Date that the interval should contain
      * @return Information about the calculated interval
      */
-    public IntervalInfo getIntervalDates(Interval interval, Date date);
+    public IntervalInfo getIntervalInfo(Interval interval, DateTime date);
 }

@@ -1,12 +1,13 @@
 package org.jasig.portal.events.aggr;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.joda.time.DateTime;
+import org.joda.time.Period;
 import org.springframework.util.Assert;
 
 /**
@@ -16,16 +17,16 @@ import org.springframework.util.Assert;
 public class IntervalInfo implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private final Date start;
-    private final Date end;
+    private final DateTime start;
+    private final DateTime end;
     private final DateDimension dateDimension;
     private final TimeDimension timeDimension;
-    private int timeSpan = -1;
+    private Period period;
 
-    public IntervalInfo(Date start, Date end, DateDimension dateDimension, TimeDimension timeDimension) {
+    IntervalInfo(DateTime start, DateTime end, DateDimension dateDimension, TimeDimension timeDimension) {
         Assert.notNull(start, "start can not be null");
         Assert.notNull(end, "end can not be null");
-        if (!start.before(end)) {
+        if (!start.isBefore(end)) {
             throw new IllegalArgumentException("Start date must be before end date. start=" + start + ", end=" + end);
         }
         
@@ -38,13 +39,13 @@ public class IntervalInfo implements Serializable {
     /**
      * @return The first date in the interval, inclusive
      */
-    public Date getStart() {
+    public DateTime getStart() {
         return this.start;
     }
     /**
      * @return The last date in the interval, exclusive
      */
-    public Date getEnd() {
+    public DateTime getEnd() {
         return this.end;
     }
     /**
@@ -63,11 +64,13 @@ public class IntervalInfo implements Serializable {
     /**
      * @return Minutes between start and end
      */
-    public int getTimeSpan() {
-        if (this.timeSpan < 0) {
-            this.timeSpan = (int)((this.end.getTime() - this.start.getTime()) / (60l * 1000l));
+    public Period getPeriod() {
+        Period d = this.period;
+        if (d == null) {
+            d = new Period(this.start, this.end);
+            this.period = d;
         }
-        return this.timeSpan;
+        return d;
     }
 
     /**
@@ -113,7 +116,7 @@ public class IntervalInfo implements Serializable {
             .append("dateDimension", this.dateDimension)
             .append("timeDimension", this.timeDimension)
             .append("end", this.end)
-            .append("timeSpan", this.getTimeSpan())
+            .append("period", this.getPeriod())
             .toString();
     }
 }

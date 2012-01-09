@@ -19,7 +19,7 @@
 
 package org.jasig.portal.events.aggr;
 
-import java.util.Calendar;
+import org.joda.time.DateTimeFieldType;
 
 /**
  * Enumeration of all time intervals the event aggregation can handle. All of the example ranges are inclusive on both ends
@@ -29,45 +29,61 @@ import java.util.Calendar;
 public enum Interval {
     /**
      * 1 Minute
-     * @see Calendar#MINUTE
+     * @see DateTimeFieldType#minuteOfHour()
      */
-    MINUTE,
+    MINUTE(DateTimeFieldType.minuteOfHour()),
     /**
      * 5 Minutes (0-4,5-9,...,55-59)
      */
-    FIVE_MINUTE,
+    FIVE_MINUTE(null),
     /**
-     * 1 Hour (minutes 0-59)
-     * @see Calendar#HOUR_OF_DAY
+     * 1 Hour
+     * @see DateTimeFieldType#hourOfDay()
      */
-    HOUR,
+    HOUR(DateTimeFieldType.hourOfDay()),
     /**
-     * 1 Day (hours 0-23)
-     * @see Calendar#DAY_OF_MONTH
+     * 1 Day
+     * @see DateTimeFieldType#dayOfMonth()
      */
-    DAY,
+    DAY(DateTimeFieldType.dayOfMonth()),
     /**
-     * 1 Week (7 days, Sunday-Saturday)
-     * @see Calendar#WEEK_OF_YEAR
+     * 1 Week
+     * @see DateTimeFieldType#weekOfWeekyear()
      */
-    WEEK,
+    WEEK(DateTimeFieldType.weekOfWeekyear()),
     /**
-     * 1 Calendar month (date 1 - last date of month)
-     * @see Calendar#MONTH
+     * 1 Calendar month 
+     * @see DateTimeFieldType#monthOfYear()
      */
-    MONTH,
+    MONTH(DateTimeFieldType.monthOfYear()),
     /**
      * As defined by the deployer, divides the calendar into 4 sections. 
      * Default configuration is: 3 Calendar months (Jan 1 - Mar 31, Apr 1 - Jun 30, Jul 1 - Sep 30, Oct 1 - Dec 31)
      */
-    CALENDAR_QUARTER,
+    CALENDAR_QUARTER(null),
     /**
      * As defined by the deployer, unusable unless term boundaries have been configured.
      */
-    ACADEMIC_TERM,
+    ACADEMIC_TERM(null),
     /**
-     * 1 Year (Jan 1 - Dec 31)
-     * @see Calendar#YEAR 
+     * 1 Year
+     * @see DateTimeFieldType#year() 
      */
-    YEAR;
+    YEAR(DateTimeFieldType.year());
+    
+    private final DateTimeFieldType dateTimeFieldType;
+
+    /**
+     * @param dateTimeFieldType
+     */
+    private Interval(DateTimeFieldType dateTimeFieldType) {
+        this.dateTimeFieldType = dateTimeFieldType;
+    }
+
+    /**
+     * @return the {@link DateTimeFieldType} for the {@link Interval}, null if there is no mapping
+     */
+    public DateTimeFieldType getDateTimeFieldType() {
+        return this.dateTimeFieldType;
+    }
 }

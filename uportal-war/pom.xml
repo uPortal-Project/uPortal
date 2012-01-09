@@ -129,6 +129,16 @@
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time-hibernate</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>log4j</groupId>
@@ -235,7 +245,7 @@
             <groupId>org.jasypt</groupId> 
             <artifactId>jasypt</artifactId>  
         </dependency> 
-
+        
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jcl</artifactId>

@@ -21,6 +21,8 @@ package org.jasig.portal.events.aggr;
 
 import java.util.Calendar;
 
+import org.joda.time.LocalTime;
+
 
 /**
  * Describes a dimension in time (hours). Each object represents one minute in a 24 period
@@ -33,6 +35,12 @@ public interface TimeDimension {
      * @return The ID of the dimension
      */
     long getId();
+    
+    /**
+     * @return The time represented by this dimension
+     */
+    LocalTime getTime();
+    
     /**
      * Will only return values between 0 and 23 inclusive
      * 
@@ -53,9 +61,4 @@ public interface TimeDimension {
      * @see Calendar#HOUR_OF_DAY
      */
     int getMinute();
-    
-    /**
-     * @return A new Calendar instance that represents the state of the time dimension. All fields except hour and minute will be unset
-     */
-    Calendar getCalendar();
 }

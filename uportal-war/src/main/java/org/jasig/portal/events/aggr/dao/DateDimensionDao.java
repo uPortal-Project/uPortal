@@ -20,12 +20,12 @@
 package org.jasig.portal.events.aggr.dao;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import org.jasig.portal.events.aggr.AcademicTermDetails;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.QuarterDetails;
+import org.joda.time.DateMidnight;
 
 /**
  * DAO for creation/lookup of date dimensions
@@ -49,16 +49,19 @@ public interface DateDimensionDao {
      * Create the date specified date dimension
      * @return The created dimension
      */
-    DateDimension createDateDimension(int year, int month, int day);
-    /**
-     * @see #createDateDimension(int, int, int)
-     */
-    DateDimension createDateDimension(Calendar cal);
+    DateDimension createDateDimension(DateMidnight cal);
 
     /**
      * @return A list of all date dimensions in the persistent store, chronological order
      */
     List<DateDimension> getDateDimensions();
+    
+    /**
+     * @param start Start date (inclusive)
+     * @param end End date (exclusive)
+     * @return A list of the date dimensions that exist between the specified start and end
+     */
+    List<DateDimension> getDateDimensionsBetween(DateMidnight start, DateMidnight end);
 
     /**
      * @return The {@link DateDimension} corresponding to the specified id
@@ -68,21 +71,7 @@ public interface DateDimensionDao {
     /**
      * Get the {@link DateDimension} for the specified year, month and day.
      */
-    DateDimension getDateDimensionByYearMonthDay(int year, int month, int day);
-    /**
-     * @see #getDateDimensionByYearMonthDay(int, int, int)
-     */
-    DateDimension getDateDimensionForCalendar(Calendar calendar);
-    /**
-     * @param time in millis since epoch
-     * @see #getDateDimensionByYearMonthDay(int, int, int)
-     * @see System#currentTimeMillis()
-     */
-    DateDimension getDateDimensionForTimeInMillis(long time);
-    /**
-     * @see #getDateDimensionByYearMonthDay(int, int, int)
-     */
-    DateDimension getDateDimensionForDate(Date date);
+    DateDimension getDateDimensionByDateMidnight(DateMidnight date);
     
     
     /*  MANAGEMENT OF DEPLOYER DEFINED QUARTER/TERM DATA */
