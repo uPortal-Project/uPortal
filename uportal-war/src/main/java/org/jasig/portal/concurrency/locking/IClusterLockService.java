@@ -28,47 +28,17 @@ import com.google.common.base.Function;
  * @version $Revision$
  */
 public interface IClusterLockService {
-    public static class TryLockFunctionResult<T> {
-        private static final TryLockFunctionResult<?> NOT_EXECUTED_INSTANCE = new TryLockFunctionResult<Object>();
-        
-        @SuppressWarnings("unchecked")
-        static <T> TryLockFunctionResult<T> getNotExecutedInstance() {
-            return (TryLockFunctionResult<T>)NOT_EXECUTED_INSTANCE;
-        }
-        
-        private final boolean executed;
-        private final T result;
-
-        private TryLockFunctionResult() {
-            this.executed = false;
-            this.result = null;
-        }
-        TryLockFunctionResult(T result) {
-            this.executed = true;
-            this.result = result;
-        }
+    public interface TryLockFunctionResult<T> {
 
         /**
          * @return True if the function was executed, false if not
          */
-        public boolean isExecuted() {
-            return executed;
-        }
-
+        boolean isExecuted();
+        
         /**
          * @return The function result, if {@link #isExecuted()} returns false this method should be ignored
          */
-        public T getResult() {
-            return result;
-        }
-
-        /* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
-        @Override
-        public String toString() {
-            return "LockFunctionResult [executed=" + executed + ", result=" + result + "]";
-        }
+        T getResult();
     }
     
     /**

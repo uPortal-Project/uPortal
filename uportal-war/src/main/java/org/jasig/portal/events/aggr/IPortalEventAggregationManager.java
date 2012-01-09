@@ -30,16 +30,19 @@ public interface IPortalEventAggregationManager {
     
     /**
      * Make sure {@link DateDimension} and {@link TimeDimension} objects exist for a reasonable distance into the future
+     * @return If the dimensions were correctly populated
      */
     boolean populateDimensions();
 
     /**
      * Requests that raw event data be aggregated
+     * @return If the available events were aggregated
      */
     boolean aggregateRawEvents();
 
     /**
      * Requests that raw event data be purged
+     * @return If expired events were purged
      */
     boolean purgeRawEvents();
 

@@ -51,7 +51,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class JpaDateDimensionDao extends BaseJpaDao implements DateDimensionDao {
     private static final String FIND_ALL_DATE_DIMENSIONS_CACHE_REGION = DateDimensionImpl.class.getName() + ".query.FIND_ALL_DATE_DIMENSIONS";
     private static final String FIND_ALL_DATE_DIMENSIONS_BETWEEN_CACHE_REGION = DateDimensionImpl.class.getName() + ".query.FIND_ALL_DATE_DIMENSIONS_BETWEEN";
-    private static final String FIND_DATE_DIMENSION_BY_YEAR_MONTH_DAY_CACHE_REGION = DateDimensionImpl.class.getName() + ".query.FIND_DATE_DIMENSION_BY_YEAR_MONTH_DAY_CACHE_REGION";
+    private static final String FIND_DATE_DIMENSION_BY_DATE_CACHE_REGION = DateDimensionImpl.class.getName() + ".query.FIND_DATE_DIMENSION_BY_DATE";
     private static final String FIND_NEWEST_DATE_DIMENSION_CACHE_REGION = DateDimensionImpl.class.getName() + ".query.FIND_NEWEST_DATE_DIMENSION";
     private static final String FIND_OLDEST_DATE_DIMENSION_CACHE_REGION = DateDimensionImpl.class.getName() + ".query.FIND_OLDEST_DATE_DIMENSION";
     
@@ -212,7 +212,7 @@ public class JpaDateDimensionDao extends BaseJpaDao implements DateDimensionDao 
 
     @Override
     public DateDimension getDateDimensionByDate(DateMidnight date) {
-        final TypedQuery<DateDimensionImpl> query = this.createQuery(this.findDateDimensionByYearMonthDayQuery, FIND_DATE_DIMENSION_BY_YEAR_MONTH_DAY_CACHE_REGION);
+        final TypedQuery<DateDimensionImpl> query = this.createQuery(this.findDateDimensionByYearMonthDayQuery, FIND_DATE_DIMENSION_BY_DATE_CACHE_REGION);
         query.setParameter(this.dateTimeParameter, date.toDateTime());
         query.setMaxResults(1);
         

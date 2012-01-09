@@ -114,7 +114,7 @@ public class ClusterLockServiceImpl implements IClusterLockService {
         final boolean lockedLocally = lock.tryLock();
         if (!lockedLocally) {
             this.logger.trace("local lock already held for {}", mutexName);
-            return TryLockFunctionResult.getNotExecutedInstance();
+            return TryLockFunctionResultImpl.getNotExecutedInstance();
         }
         try {
             this.logger.trace("acquired local lock for {}", mutexName);
@@ -128,11 +128,11 @@ public class ClusterLockServiceImpl implements IClusterLockService {
             if (!dbLocked.get()) {
                 //Failed to get DB lock, stop now
                 this.logger.trace("failed to aquire database lock, returning notExecuted result for: {}", mutexName);
-                return TryLockFunctionResult.getNotExecutedInstance();
+                return TryLockFunctionResultImpl.getNotExecutedInstance();
             }
             
             //Execute the lockFunction
-            return new TryLockFunctionResult<T>(lockFunction.apply(mutexName));
+            return new TryLockFunctionResultImpl<T>(lockFunction.apply(mutexName));
         }
         finally {
             //Signal db lock worker to release the lock
@@ -251,6 +251,42 @@ public class ClusterLockServiceImpl implements IClusterLockService {
             
             logger.trace("DB lock worker returning true: {}", this.mutexName);
             return true;
+        }
+    }
+    
+    public static class TryLockFunctionResultImpl<T> implements TryLockFunctionResult<T> {
+        private static final TryLockFunctionResult<?> NOT_EXECUTED_INSTANCE = new TryLockFunctionResultImpl<Object>();
+        
+        @SuppressWarnings("unchecked")
+        static <T> TryLockFunctionResult<T> getNotExecutedInstance() {
+            return (TryLockFunctionResult<T>)NOT_EXECUTED_INSTANCE;
+        }
+        
+        private final boolean executed;
+        private final T result;
+
+        private TryLockFunctionResultImpl() {
+            this.executed = false;
+            this.result = null;
+        }
+        TryLockFunctionResultImpl(T result) {
+            this.executed = true;
+            this.result = result;
+        }
+
+        @Override
+        public boolean isExecuted() {
+            return executed;
+        }
+
+        @Override
+        public T getResult() {
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "LockFunctionResult [executed=" + executed + ", result=" + result + "]";
         }
     }
 }

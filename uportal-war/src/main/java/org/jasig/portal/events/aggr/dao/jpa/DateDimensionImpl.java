@@ -131,7 +131,7 @@ public class DateDimensionImpl implements DateDimension, Serializable {
         this.year = dateMidnight.getYear();
         this.month = dateMidnight.getMonthOfYear();
         this.day = dateMidnight.getDayOfMonth();
-        this.week = dateMidnight.getWeekOfWeekyear();
+        this.week = (dateMidnight.getWeekyear() * 100) + dateMidnight.getWeekOfWeekyear();
         this.quarter = quarter;
         this.term = term;
     }

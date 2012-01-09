@@ -19,6 +19,8 @@
 
 package org.jasig.portal.events.aggr;
 
+import java.util.Map;
+
 import org.jasig.portal.events.PortalEvent;
 
 /**
@@ -31,5 +33,13 @@ public interface IPortalEventAggregator<E extends PortalEvent> {
     /**
      * Add the specified event to the aggregate
      */
-    public void aggregateEvent(E e);
+    void aggregateEvent(E e);
+    
+    /**
+     * Handle crossing over an interval boundary, called after the LAST event of the interval is processed.
+     * 
+     * @param interval The type of interval that was crossed
+     * @param intervals Information about all intervals that the previous set of events was part of
+     */
+    void handleIntervalBoundry(Interval interval, Map<Interval, IntervalInfo> intervals);
 }

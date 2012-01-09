@@ -19,10 +19,9 @@
 
 package org.jasig.portal.events.handlers.db;
 
+import org.jasig.portal.concurrency.FunctionWithoutResult;
 import org.jasig.portal.events.PortalEvent;
 import org.joda.time.DateTime;
-
-import com.google.common.base.Function;
 
 /**
  * Persists, retrieves and deletes portal events from a persistent store 
@@ -38,9 +37,11 @@ public interface IPortalEventDao {
     /**
      * @param startTime The inclusive start time to get events for
      * @param endTime The exclusive end time to get events for
+     * @param maxEvents The maximum number events to retrieve.
      * @param handler Function which will be called for each event.
      */
-    void getPortalEvents(DateTime startTime, DateTime endTime, Function<PortalEvent, Object> handler);
+    void getPortalEvents(DateTime startTime, DateTime endTime, int maxEvents, FunctionWithoutResult<PortalEvent> handler);
+    void getPortalEvents(DateTime startTime, DateTime endTime, FunctionWithoutResult<PortalEvent> handler);
     
     /**
      * @return The timestamp of the oldest event in the persitent store

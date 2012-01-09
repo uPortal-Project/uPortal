@@ -21,6 +21,7 @@ package org.jasig.portal.events.aggr;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -28,12 +29,19 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
+import org.jasig.portal.IPortalInfoProvider;
 import org.jasig.portal.concurrency.CallableWithoutResult;
+import org.jasig.portal.concurrency.FunctionWithoutResult;
+import org.jasig.portal.concurrency.locking.IClusterLockService;
+import org.jasig.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
+import org.jasig.portal.events.PortalEventFactoryImpl;
+import org.jasig.portal.events.aggr.IEventAggregatorStatus.ProcessingType;
 import org.jasig.portal.events.aggr.dao.DateDimensionDao;
+import org.jasig.portal.events.aggr.dao.IEventAggregationManagementDao;
 import org.jasig.portal.events.aggr.dao.TimeDimensionDao;
 import org.jasig.portal.events.handlers.db.IPortalEventDao;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.test.BaseJpaDaoTest;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
@@ -41,11 +49,14 @@ import org.joda.time.LocalTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+
+import com.google.common.base.Function;
 
 /**
  */
@@ -54,6 +65,9 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
     private PortalEventAggregationManagerImpl portalEventAggregationManager;
     private IPortalEventDao portalEventDao;
+    private IClusterLockService clusterLockService;
+    private IEventAggregationManagementDao eventAggregationManagementDao;
+    private IPortalInfoProvider portalInfoProvider;
 
     @Autowired
     private DateDimensionDao dateDimensionDao;
@@ -63,16 +77,19 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
     private IntervalHelper intervalHelper;
     @PersistenceContext(unitName = "uPortalAggrEventsPersistence")
     private EntityManager entityManager;
-    
+
     @Override
     protected EntityManager getEntityManager() {
         return this.entityManager;
     }
-    
+
     @Before
     public void setup() {
         portalEventDao = mock(IPortalEventDao.class);
-        
+        clusterLockService = mock(IClusterLockService.class);
+        eventAggregationManagementDao = mock(IEventAggregationManagementDao.class);
+        portalInfoProvider = mock(IPortalInfoProvider.class);
+
         portalEventAggregationManager = new PortalEventAggregationManagerImpl() {
             @Override
             DateTime getNow() {
@@ -83,25 +100,12 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
         portalEventAggregationManager.setDateDimensionDao(dateDimensionDao);
         portalEventAggregationManager.setTimeDimensionDao(timeDimensionDao);
         portalEventAggregationManager.setIntervalHelper(intervalHelper);
-        
-        this.execute(new CallableWithoutResult() {
-            @Override
-            protected void callWithoutResult() {
-                transactionOperations.execute(new TransactionCallbackWithoutResult(){
-                    @Override
-                    protected void doInTransactionWithoutResult(TransactionStatus status) {
-                        final Query deleteTimeDimensionsQuery = entityManager.createQuery("delete from org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl");
-                        deleteTimeDimensionsQuery.executeUpdate();
-                        
-                        final Query deleteDateDimensionsQuery = entityManager.createQuery("delete from org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl");
-                        deleteDateDimensionsQuery.executeUpdate();
-                    }
-                });
-            }
-        });
+        portalEventAggregationManager.setClusterLockService(clusterLockService);
+        portalEventAggregationManager.setEventAggregationManagementDao(eventAggregationManagementDao);
+        //        portalEventAggregationManager.setPortalEventAggregators(null);
+        portalEventAggregationManager.setPortalInfoProvider(portalInfoProvider);
     }
 
-    
     @Test
     public void populateAllTimeDimensions() {
         this.execute(new CallableWithoutResult() {
@@ -111,24 +115,23 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
                 assertEquals(Collections.EMPTY_LIST, timeDimensions);
             }
         });
-        
+
         this.executeInTransaction(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
                 portalEventAggregationManager.doPopulateTimeDimensions();
             }
         });
-     
+
         this.execute(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
                 final List<TimeDimension> timeDimensions = timeDimensionDao.getTimeDimensions();
-                assertEquals(60*24, timeDimensions.size());
+                assertEquals(60 * 24, timeDimensions.size());
             }
         });
     }
 
-    
     @Test
     public void populateSomeTimeDimensions() {
         this.executeInTransaction(new CallableWithoutResult() {
@@ -145,7 +148,7 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
                 timeDimensionDao.createTimeDimension(new LocalTime(23, 58));
             }
         });
-                
+
         this.execute(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
@@ -153,24 +156,23 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
                 assertEquals(9, timeDimensions.size());
             }
         });
-        
+
         this.executeInTransaction(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
                 portalEventAggregationManager.doPopulateTimeDimensions();
             }
         });
-     
+
         this.execute(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
                 final List<TimeDimension> timeDimensions = timeDimensionDao.getTimeDimensions();
-                assertEquals(60*24, timeDimensions.size());
+                assertEquals(60 * 24, timeDimensions.size());
             }
         });
     }
 
-    
     @Test
     public void populateDefaultDateDimensions() {
         this.execute(new CallableWithoutResult() {
@@ -180,14 +182,14 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
                 assertEquals(Collections.EMPTY_LIST, dateDimensions);
             }
         });
-        
+
         this.executeInTransaction(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
                 portalEventAggregationManager.doPopulateDateDimensions();
             }
         });
-     
+
         this.execute(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
@@ -199,16 +201,16 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
                 assertEquals(new DateMidnight("2012-12-31T00:00:00.000-06:00"), newestDateDimension.getFullDate());
             }
         });
-        
+
         when(portalEventDao.getOldestPortalEventTimestamp()).thenReturn(new DateTime().minusYears(1));
-        
+
         this.executeInTransaction(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
                 portalEventAggregationManager.doPopulateDateDimensions();
             }
         });
-     
+
         this.execute(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
@@ -220,16 +222,16 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
                 assertEquals(new DateMidnight("2012-12-31T00:00:00.000-06:00"), newestDateDimension.getFullDate());
             }
         });
-        
+
         when(portalEventDao.getNewestPortalEventTimestamp()).thenReturn(new DateTime().plusYears(1));
-        
+
         this.executeInTransaction(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
                 portalEventAggregationManager.doPopulateDateDimensions();
             }
         });
-     
+
         this.execute(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
@@ -241,5 +243,25 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
                 assertEquals(new DateMidnight("2013-12-31T00:00:00.000-06:00"), newestDateDimension.getFullDate());
             }
         });
+    }
+
+    @Test
+    public void aggregateRawEvents()  throws Exception {
+        final TryLockFunctionResult tryLockFunctionResult = mock(TryLockFunctionResult.class);
+        when(this.clusterLockService.doInTryLock(Mockito.anyString(), Mockito.any(Function.class))).thenReturn(tryLockFunctionResult);
+        
+        final IEventAggregatorStatus eventAggregatorStatus = mock(IEventAggregatorStatus.class);
+        when(this.eventAggregationManagementDao.getEventAggregatorStatus(ProcessingType.AGGREGATION)).thenReturn(eventAggregatorStatus);
+        
+        when(this.portalInfoProvider.getServerName()).thenReturn("TEST_SERVER_NAME");
+        
+        this.executeInTransaction(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                portalEventAggregationManager.doAggregateRawEvents();
+            }
+        });
+        
+        verify(portalEventDao).getPortalEvents(Mockito.any(DateTime.class), Mockito.any(DateTime.class), Mockito.eq(5000), Mockito.any(FunctionWithoutResult.class));
     }
 }

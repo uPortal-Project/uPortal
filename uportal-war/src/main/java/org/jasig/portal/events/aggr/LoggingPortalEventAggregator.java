@@ -19,6 +19,8 @@
 
 package org.jasig.portal.events.aggr;
 
+import java.util.Map;
+
 import org.jasig.portal.events.PortalEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +36,11 @@ public class LoggingPortalEventAggregator implements IPortalEventAggregator<Port
     
     @Override
     public void aggregateEvent(PortalEvent e) {
-        logger.debug(e.toString());
+        logger.debug("EVENT  : {}", e);
+    }
+
+    @Override
+    public void handleIntervalBoundry(Interval interval, Map<Interval, IntervalInfo> intervals) {
+        logger.debug("INTERVAL: {} - {}", interval, intervals.get(interval));
     }
 }

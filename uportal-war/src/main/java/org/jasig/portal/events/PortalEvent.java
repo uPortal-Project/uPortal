@@ -31,6 +31,7 @@ import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.annotate.JsonTypeInfo.Id;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.utils.SerializableObject;
+import org.joda.time.DateTime;
 import org.springframework.context.ApplicationEvent;
 
 /**
@@ -55,7 +56,7 @@ public abstract class PortalEvent extends ApplicationEvent {
     @JsonIgnore
     private final IPerson person;
     @JsonIgnore
-    private Date timestampAsDate;
+    private DateTime timestampAsDate;
     
     PortalEvent() {
         super(UNKNOWN_SOURCE);
@@ -77,10 +78,10 @@ public abstract class PortalEvent extends ApplicationEvent {
     /**
      * @return Get the {@link #getTimestamp()} as a {@link Date}
      */
-    public final Date getTimestampAsDate() {
-        Date d = this.timestampAsDate;
+    public final DateTime getTimestampAsDate() {
+        DateTime d = this.timestampAsDate;
         if (d == null) {
-            d = new Date(this.getTimestamp());
+            d = new DateTime(this.getTimestamp());
             this.timestampAsDate = d;
         }
         

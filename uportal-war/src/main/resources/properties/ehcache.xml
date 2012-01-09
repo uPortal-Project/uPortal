@@ -846,22 +846,84 @@
         
 
     <!-- ==================== PortalEvent Aggregation Caches ==================== -->
+    
+        <!-- 
+     | Caches SQL query level results for entity queries that don't specify an explicit cache region
+     | - 1 x managed query result
+     | - not replicated - used to track local query results
+     +-->
+    <cache name="AggregateEvents.org.hibernate.cache.StandardQueryCache"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
+    <!-- 
+     | Caches last updated timestamp for each hibernate managed table
+     | - 1 x hibernate managed table
+     | - not replicated - used to track local modifications to tables
+     +-->
+    <cache name="AggregateEvents.org.hibernate.cache.UpdateTimestampsCache"
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
         
     <!--
-     | Caches query results for finding message codes
-     | - 1 aggregation processing type
+     | Caches event aggregation status objects
+     | - 1 x aggregation processing type
      +-->
     <cache name="AggregateEvents.org.jasig.portal.events.aggr.EventAggregatorStatusImpl" 
         eternal="false" maxElementsInMemory="2" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="30" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <!--
-     | Caches query results for finding message codes
-     | - 1 aggregation processing type
+     | Caches query results for event aggregation status objects
+     | - 1 x aggregation processing type
      +-->
     <cache name="AggregateEvents.org.jasig.portal.events.aggr.EventAggregatorStatusImpl.query.FIND_AGGR_STATUS_BY_PROC_TYPE" 
         eternal="false" maxElementsInMemory="2" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="30" memoryStoreEvictionPolicy="LRU" statistics="true"/>
         
+    <!--
+     | Caches date dimensions used when aggregating and querying event data, never change so never expire
+     | - 1 x day in stats history
+     +-->
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl" 
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <!--
+     | Caches query results for finding date dimensions
+     | - 1 x date range
+     +-->
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl.query.FIND_ALL_DATE_DIMENSIONS_BETWEEN" 
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <!--
+     | Caches query results for finding date dimensions
+     | - 1 x direct queried date
+     +-->
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl.query.FIND_DATE_DIMENSION_BY_DATE" 
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        
+    <!--
+     | Caches time dimensions used when aggregating and querying event data, never change so never expire
+     | - 1440
+     +-->
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl" 
+        eternal="false" maxElementsInMemory="1440" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <!--
+     | Caches query results for finding time dimensions
+     | - 1 x date range
+     +-->
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl.query.FIND_ALL_TIME_DIMENSIONS" 
+        eternal="false" maxElementsInMemory="1" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <!--
+     | Caches query results for finding message codes
+     | - 1 x direct queried date
+     +-->
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl.query.FIND_TIME_DIMENSION_BY_HOUR_MINUTE" 
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    
         
     
 </ehcache>

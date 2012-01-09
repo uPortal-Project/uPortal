@@ -19,22 +19,29 @@
 
 package org.jasig.portal.events.aggr.login;
 
+import java.util.Map;
+
 import org.jasig.portal.events.LoginEvent;
 import org.jasig.portal.events.aggr.IPortalEventAggregator;
+import org.jasig.portal.events.aggr.Interval;
+import org.jasig.portal.events.aggr.IntervalInfo;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
+//@Service
 public class LoginPortalEventAggregator implements IPortalEventAggregator<LoginEvent> {
-
+    
     @Override
     public void aggregateEvent(LoginEvent e) {
         // TODO Auto-generated method stub
     }
-    
-//    public void handleIntervalBoundry(Interval interval, Map<Interval, IntervalInfo> intervals) {
-//        For each interval info get the LoginAggregationImpl and call intervalComplete
-//    }
 
+    @Override
+    public void handleIntervalBoundry(Interval interval, Map<Interval, IntervalInfo> intervals) {
+        // TODO Auto-generated method stub
+        
+    }
+    
 }

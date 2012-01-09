@@ -48,7 +48,7 @@ import org.joda.time.DateTime;
 @TableGenerator(name = "UP_EVENT_AGGR_STATUS_GEN", pkColumnValue = "UP_EVENT_AGGR_STATUS", allocationSize = 10)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class EventAggregatorStatusImpl implements IEventAggregatorStatus {
+class EventAggregatorStatusImpl implements IEventAggregatorStatus {
     
     @Id
     @GeneratedValue(generator = "UP_EVENT_AGGR_STATUS_GEN")

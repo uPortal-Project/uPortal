@@ -79,19 +79,19 @@ public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEve
     }
 
     @Override
-    @Transactional(value="aggrEventsTransactionManager")
     public IEventAggregatorStatus getEventAggregatorStatus(ProcessingType processingType) {
         final TypedQuery<EventAggregatorStatusImpl> query = this.createQuery(findEventAggregatorStatusByProcessingTypeQuery, FIND_AGGR_STATUS_BY_PROC_TYPE_CACHE_REGION);
         query.setParameter(this.processingTypeParameter, processingType);
 
         final List<EventAggregatorStatusImpl> resultList = query.getResultList();
-        EventAggregatorStatusImpl eventAggregatorStatus = DataAccessUtils.singleResult(resultList);
-        
-        if (eventAggregatorStatus == null) {
-            eventAggregatorStatus = new EventAggregatorStatusImpl(processingType);
-            this.entityManager.persist(eventAggregatorStatus);
-        }
-        
+        return DataAccessUtils.singleResult(resultList);
+    }
+    
+    @Override
+    @Transactional(value="aggrEventsTransactionManager")
+    public IEventAggregatorStatus createEventAggregatorStatus(ProcessingType processingType) {
+        final EventAggregatorStatusImpl eventAggregatorStatus = new EventAggregatorStatusImpl(processingType);
+        this.entityManager.persist(eventAggregatorStatus);
         return eventAggregatorStatus;
     }
 

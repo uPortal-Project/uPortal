@@ -40,6 +40,7 @@ import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
+import org.jasig.portal.concurrency.FunctionWithoutResult;
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.jpa.BaseJpaDao;
 import org.joda.time.DateTime;
@@ -48,8 +49,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.google.common.base.Function;
 
 /**
  * Stores portal events using JPA/Hibenate no internal batch segmentation is done to the passed list
@@ -196,15 +195,21 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
         return DataAccessUtils.singleResult(results);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.events.handlers.db.IPortalEventDao#getPortalEvents(long, long)
-     */
     @Override
-    public void getPortalEvents(DateTime startTime, DateTime endTime, Function<PortalEvent, Object> handler) {
+    public void getPortalEvents(DateTime startTime, DateTime endTime, FunctionWithoutResult<PortalEvent> handler) {
+        this.getPortalEvents(startTime, endTime, -1, handler);
+    }
+    
+    @Override
+    public void getPortalEvents(DateTime startTime, DateTime endTime, int maxEvents, FunctionWithoutResult<PortalEvent> handler) {
         final Session session = this.getEntityManager().unwrap(Session.class);
         final org.hibernate.Query query = session.createQuery(this.selectQuery);
         query.setParameter(this.startTimeParameter.getName(), startTime);
         query.setParameter(this.endTimeParameter.getName(), endTime);
+        if (maxEvents > 0) {
+            query.setMaxResults(maxEvents);
+        }
+
         for (final ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY); results.next(); ) {
             final PersistentPortalEvent persistentPortalEvent = (PersistentPortalEvent)results.get(0);
             final PortalEvent portalEvent = this.toPortalEvent(persistentPortalEvent.getEventData(), persistentPortalEvent.getEventType());

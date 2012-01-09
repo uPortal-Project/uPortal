@@ -75,13 +75,13 @@ public class IntervalHelperImpl implements IntervalHelper {
 //                final int quarter = instantDateDimension.getQuarter();
 //                this.dateDimensionDao.getFirstDateDimension(Interval.CALENDAR_QUARTER, quarter);
                 
-                //TODO
-                return null;
+                //TODO treated as 3mo for now
+                return instant.year().roundFloorCopy().plusMonths((instant.getMonthOfYear() / 3) * 3);
             }
             case ACADEMIC_TERM: {
                 
-                //TODO
-                return null;
+                //TODO treated as 1yr for now
+                return instant.year().roundFloorCopy();
             }
         }
         
@@ -100,11 +100,11 @@ public class IntervalHelperImpl implements IntervalHelper {
             }
             case CALENDAR_QUARTER: {
                 //TODO
-                return null;
+                return start.plusMonths(3);
             }
             case ACADEMIC_TERM: {
                 //TODO
-                return null;
+                return start.plusYears(1);
             }
         }
         

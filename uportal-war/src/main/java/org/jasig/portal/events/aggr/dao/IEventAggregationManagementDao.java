@@ -20,7 +20,6 @@
 package org.jasig.portal.events.aggr.dao;
 
 import org.jasig.portal.events.aggr.IEventAggregatorStatus;
-import org.jasig.portal.events.aggr.IEventAggregatorStatus.ProcessingType;
 
 /**
  * Operations central to the management of portal event aggregation
@@ -31,9 +30,7 @@ import org.jasig.portal.events.aggr.IEventAggregatorStatus.ProcessingType;
 public interface IEventAggregationManagementDao {
     IEventAggregatorStatus getEventAggregatorStatus(IEventAggregatorStatus.ProcessingType processingType);
     
-    void updateEventAggregatorStatus(IEventAggregatorStatus eventAggregatorStatus);
+    IEventAggregatorStatus createEventAggregatorStatus(IEventAggregatorStatus.ProcessingType processingType);
     
-    /*
-     * Also manage date & time pivot tables here?
-     */
+    void updateEventAggregatorStatus(IEventAggregatorStatus eventAggregatorStatus);
 }
