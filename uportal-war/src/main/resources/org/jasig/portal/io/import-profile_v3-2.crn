@@ -58,7 +58,7 @@
                         <update-parameter value="${USER_ID}"/>
                         <update-parameter value="${valueOf(fname)}"/>
                         <insert-parameter value="${USER_ID}"/>
-						<insert-parameter value="${org.jasig.portal.io.SequenceGeneratorPhrase(UP_SS_THEME)}"/>
+                        <insert-parameter value="${org.jasig.portal.io.SequenceGeneratorPhrase(UP_SS_THEME)}"/>
                         <insert-parameter value="${valueOf(fname)}"/>
                         <insert-parameter value="${valueOf(name)}"/>
                         <insert-parameter value="${valueOf(description)}"/>
@@ -76,7 +76,7 @@
                         <parameter value="${USER_ID}"/>
                         <parameter value="${valueOf(fname)}" />
                         <subtasks>
-                            <with-attribute key="profileImportHelper" value="${groovy(new org.jasig.portal.io.xml.profile.ProfileImportHelper(stylesheetDescriptorDao, stylesheetUserPreferencesDao, STRUCTURE_STYLESHEET_ID, THEME_STYLESHEET_ID, USER_ID, PROFILE_ID))}">
+                            <with-attribute key="profileImportHelper" value="${groovy(new org.jasig.portal.io.xml.profile.ProfileImportHelper(stylesheetDescriptorDao, stylesheetUserPreferencesDao, STRUCTURE_STYLESHEET_ID, THEME_STYLESHEET_ID, USER_ID.intValue(), PROFILE_ID.intValue()))}">
                                 
                                 <!-- User (Profile) Parameters:  structure... -->
                                 <node-iterator xpath="structure/parameter">
@@ -117,7 +117,7 @@
                             </with-attribute>
                         </subtasks>
                     </sql-query>
-        		</sql-transaction>
+                </sql-transaction>
             </subtasks>
         </with>
     </subtasks>
