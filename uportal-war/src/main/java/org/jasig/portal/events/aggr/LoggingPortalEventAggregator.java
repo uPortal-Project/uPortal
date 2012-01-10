@@ -35,7 +35,12 @@ public class LoggingPortalEventAggregator implements IPortalEventAggregator<Port
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
     @Override
-    public void aggregateEvent(PortalEvent e) {
+    public boolean supports(Class<? extends PortalEvent> type) {
+        return true;
+    }
+
+    @Override
+    public void aggregateEvent(PortalEvent e, Map<Interval, IntervalInfo> currentIntervals) {
         logger.debug("EVENT  : {}", e);
     }
 

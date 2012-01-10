@@ -869,14 +869,14 @@
      | Caches event aggregation status objects
      | - 1 x aggregation processing type
      +-->
-    <cache name="AggregateEvents.org.jasig.portal.events.aggr.EventAggregatorStatusImpl" 
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.dao.jpa.EventAggregatorStatusImpl" 
         eternal="false" maxElementsInMemory="2" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="30" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <!--
      | Caches query results for event aggregation status objects
      | - 1 x aggregation processing type
      +-->
-    <cache name="AggregateEvents.org.jasig.portal.events.aggr.EventAggregatorStatusImpl.query.FIND_AGGR_STATUS_BY_PROC_TYPE" 
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.dao.jpa.EventAggregatorStatusImpl.query.FIND_AGGR_STATUS_BY_PROC_TYPE" 
         eternal="false" maxElementsInMemory="2" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="30" memoryStoreEvictionPolicy="LRU" statistics="true"/>
         

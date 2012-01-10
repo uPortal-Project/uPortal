@@ -65,6 +65,8 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
     private final ObjectMapper mapper;
     private String deleteQuery;
     private String selectQuery;
+    private String selectUnaggregatedQuery;
+    private int flushPeriod = 1000;
     private CriteriaQuery<DateTime> findNewestPersistentPortalEventTimestampQuery;
     private CriteriaQuery<DateTime> findOldestPersistentPortalEventTimestampQuery;
     private ParameterExpression<DateTime> startTimeParameter;
@@ -78,6 +80,14 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
         mapper.getDeserializationConfig().withAnnotationIntrospector(pair);
         mapper.getSerializationConfig().withAnnotationIntrospector(pair);
     }
+    
+    /**
+     * Frequency that updated events should be flushed during a call to {@link #aggregatePortalEvents(DateTime, DateTime, int, FunctionWithoutResult)}, defaults to 1000.
+     */
+    public void setAggregationFlushPeriod(int flushPeriod) {
+        this.flushPeriod = flushPeriod;
+    }
+
 
     /**
      * @param entityManager the entityManager to set
@@ -106,6 +116,14 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
         		"WHERE e." + PersistentPortalEvent_.timestamp.getName() + " >= :" + this.startTimeParameter.getName() + " " +
                      "AND e." + PersistentPortalEvent_.timestamp.getName() + " < :" + this.endTimeParameter.getName() + " " + 
         		"ORDER BY e." + PersistentPortalEvent_.timestamp.getName() + " ASC";
+        
+        this.selectUnaggregatedQuery = 
+                "SELECT e " +
+                "FROM " + PersistentPortalEvent.class.getName() + " e " +
+                "WHERE e." + PersistentPortalEvent_.timestamp.getName() + " >= :" + this.startTimeParameter.getName() + " " +
+                     "AND e." + PersistentPortalEvent_.timestamp.getName() + " < :" + this.endTimeParameter.getName() + " " +
+                     "AND (e." + PersistentPortalEvent_.aggregated.getName() + " is null OR e." + PersistentPortalEvent_.aggregated.getName() + " = false) " +
+                "ORDER BY e." + PersistentPortalEvent_.timestamp.getName() + " ASC";
         
         this.deleteQuery = 
                 "DELETE FROM " + PersistentPortalEvent.class.getName() + " e " +
@@ -196,6 +214,34 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
     }
 
     @Override
+    @Transactional(value="rawEvents")
+    public void aggregatePortalEvents(DateTime startTime, DateTime endTime, int maxEvents, FunctionWithoutResult<PortalEvent> handler) {
+        final Session session = this.getEntityManager().unwrap(Session.class);
+        final org.hibernate.Query query = session.createQuery(this.selectUnaggregatedQuery);
+        query.setParameter(this.startTimeParameter.getName(), startTime);
+        query.setParameter(this.endTimeParameter.getName(), endTime);
+        if (maxEvents > 0) {
+            query.setMaxResults(maxEvents);
+        }
+
+        int resultCount = 0;
+        for (final ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY); results.next(); ) {
+            final PersistentPortalEvent persistentPortalEvent = (PersistentPortalEvent)results.get(0);
+            final PortalEvent portalEvent = this.toPortalEvent(persistentPortalEvent.getEventData(), persistentPortalEvent.getEventType());
+            handler.apply(portalEvent);
+            persistentPortalEvent.setAggregated(true);
+            session.persist(persistentPortalEvent);
+            
+            //periodic flush and clear of session to manage memory demands
+            if (++resultCount % this.flushPeriod == 0) {
+                this.logger.debug("Aggregated {} events, flush and clear session.", resultCount);
+                session.flush();
+                session.clear();
+            }
+        }
+    }
+    
+    @Override
     public void getPortalEvents(DateTime startTime, DateTime endTime, FunctionWithoutResult<PortalEvent> handler) {
         this.getPortalEvents(startTime, endTime, -1, handler);
     }
@@ -214,6 +260,7 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
             final PersistentPortalEvent persistentPortalEvent = (PersistentPortalEvent)results.get(0);
             final PortalEvent portalEvent = this.toPortalEvent(persistentPortalEvent.getEventData(), persistentPortalEvent.getEventType());
             handler.apply(portalEvent);
+            persistentPortalEvent.setAggregated(true);
             session.evict(persistentPortalEvent);
         }
     }

@@ -21,6 +21,8 @@ package org.jasig.portal.events.aggr.login;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Set;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -41,8 +43,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
- * TODO nuke all tables between test runs
- * 
  * @author Eric Dalquist
  * @version $Revision$
  */
@@ -84,16 +84,30 @@ public class JpaLoginAggregationDaoTest extends BaseJpaDaoTest {
                 final DateDimension dateDimension = dateDimensionDao.getDateDimensionByDate(instantDate);
                 final TimeDimension timeDimension = timeDimensionDao.getTimeDimensionByTime(instantTime);
                 
-                final LoginAggregationImpl loginAggregation = loginAggregationDao.createLoginAggregation(dateDimension, timeDimension, Interval.FIVE_MINUTE, null);
+                final LoginAggregationImpl loginAggregationFiveMinute = loginAggregationDao.createLoginAggregation(dateDimension, timeDimension, Interval.FIVE_MINUTE, null);
+                final LoginAggregationImpl loginAggregationFiveMinuteGroup = loginAggregationDao.createLoginAggregation(dateDimension, timeDimension, Interval.FIVE_MINUTE, "groupA");
+                final LoginAggregationImpl loginAggregationHour = loginAggregationDao.createLoginAggregation(dateDimension, timeDimension, Interval.HOUR, null);
 
-                loginAggregation.countUser("joe");
-                loginAggregation.countUser("john");
-                loginAggregation.countUser("levi");
-                loginAggregation.countUser("erin");
-                loginAggregation.countUser("john");
-                loginAggregation.setDuration(1);
+                loginAggregationFiveMinute.countUser("joe");
+                loginAggregationFiveMinute.countUser("john");
+                loginAggregationFiveMinute.countUser("levi");
+                loginAggregationFiveMinute.countUser("erin");
+                loginAggregationFiveMinute.countUser("john");
+                loginAggregationFiveMinute.setDuration(1);
                 
-                loginAggregationDao.updateLoginAggregation(loginAggregation);
+                loginAggregationFiveMinuteGroup.countUser("joe");
+                loginAggregationFiveMinuteGroup.countUser("john");
+                loginAggregationFiveMinuteGroup.setDuration(1);
+                
+                loginAggregationHour.countUser("joe");
+                loginAggregationHour.countUser("john");
+                loginAggregationHour.countUser("levi");
+                loginAggregationHour.countUser("erin");
+                loginAggregationHour.countUser("john");
+                loginAggregationHour.setDuration(1);
+                
+                loginAggregationDao.updateLoginAggregation(loginAggregationFiveMinute);
+                loginAggregationDao.updateLoginAggregation(loginAggregationHour);
             }
         });
         
@@ -105,8 +119,25 @@ public class JpaLoginAggregationDaoTest extends BaseJpaDaoTest {
                 final DateDimension dateDimension = dateDimensionDao.getDateDimensionByDate(instantDate);
                 final TimeDimension timeDimension = timeDimensionDao.getTimeDimensionByTime(instantTime);
                 
-                final LoginAggregationImpl loginAggregation = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension);
+                final Set<LoginAggregationImpl> loginAggregationsFiveMinute = loginAggregationDao.getLoginAggregationsForInterval(dateDimension, timeDimension, Interval.FIVE_MINUTE);
+                assertEquals(2, loginAggregationsFiveMinute.size());
                 
+                for (final LoginAggregationImpl loginAggregation : loginAggregationsFiveMinute) {
+                    if (loginAggregation.getGroupName() == null) {
+                        assertEquals(5, loginAggregation.getLoginCount());
+                        assertEquals(4, loginAggregation.getUniqueLoginCount());
+                    }
+                    else {
+                        assertEquals(2, loginAggregation.getLoginCount());
+                        assertEquals(2, loginAggregation.getUniqueLoginCount());
+                    }
+                }
+                
+                
+                final Set<LoginAggregationImpl> loginAggregationsHour = loginAggregationDao.getLoginAggregationsForInterval(dateDimension, timeDimension, Interval.HOUR);
+                assertEquals(1, loginAggregationsHour.size());
+                
+                final LoginAggregationImpl loginAggregation = loginAggregationsHour.iterator().next();
                 assertEquals(5, loginAggregation.getLoginCount());
                 assertEquals(4, loginAggregation.getUniqueLoginCount());
             }
@@ -120,61 +151,108 @@ public class JpaLoginAggregationDaoTest extends BaseJpaDaoTest {
                 final DateDimension dateDimension = dateDimensionDao.getDateDimensionByDate(instantDate);
                 final TimeDimension timeDimension = timeDimensionDao.getTimeDimensionByTime(instantTime);
                 
-                final LoginAggregationImpl loginAggregation = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension);
+                final LoginAggregationImpl loginAggregationFiveMinute = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension, Interval.FIVE_MINUTE, null);
+                final LoginAggregationImpl loginAggregationFiveMinuteGroup = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension, Interval.FIVE_MINUTE, "groupA");
+                final LoginAggregationImpl loginAggregationHour = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension, Interval.HOUR, null);
                 
-                loginAggregation.countUser("john");
-                loginAggregation.countUser("elvira");
-                loginAggregation.countUser("levi");
-                loginAggregation.countUser("erin");
-                loginAggregation.countUser("gretchen");
-                loginAggregation.setDuration(3);
+                loginAggregationFiveMinute.countUser("john");
+                loginAggregationFiveMinute.countUser("elvira");
+                loginAggregationFiveMinute.countUser("levi");
+                loginAggregationFiveMinute.countUser("gretchen");
+                loginAggregationFiveMinute.countUser("erin");
+                loginAggregationFiveMinute.setDuration(2);
                 
-                loginAggregationDao.updateLoginAggregation(loginAggregation);
+                loginAggregationFiveMinuteGroup.countUser("gretchen");
+                loginAggregationFiveMinuteGroup.setDuration(2);
+                
+                loginAggregationHour.countUser("john");
+                loginAggregationHour.countUser("elvira");
+                loginAggregationHour.countUser("levi");
+                loginAggregationHour.countUser("gretchen");
+                loginAggregationHour.countUser("erin");
+                loginAggregationHour.setDuration(2);
+                
+                loginAggregationDao.updateLoginAggregation(loginAggregationFiveMinute);
+                loginAggregationDao.updateLoginAggregation(loginAggregationFiveMinuteGroup);
+                loginAggregationDao.updateLoginAggregation(loginAggregationHour);
             }
         });
-        
 
-        
         this.execute(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
                 final DateDimension dateDimension = dateDimensionDao.getDateDimensionByDate(instantDate);
                 final TimeDimension timeDimension = timeDimensionDao.getTimeDimensionByTime(instantTime);
                 
-                final LoginAggregationImpl loginAggregation = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension);
+                final Set<LoginAggregationImpl> loginAggregationsFiveMinute = loginAggregationDao.getLoginAggregationsForInterval(dateDimension, timeDimension, Interval.FIVE_MINUTE);
+                assertEquals(2, loginAggregationsFiveMinute.size());
                 
+                for (final LoginAggregationImpl loginAggregation : loginAggregationsFiveMinute) {
+                    if (loginAggregation.getGroupName() == null) {
+                        assertEquals(10, loginAggregation.getLoginCount());
+                        assertEquals(6, loginAggregation.getUniqueLoginCount());
+                    }
+                    else {
+                        assertEquals(3, loginAggregation.getLoginCount());
+                        assertEquals(3, loginAggregation.getUniqueLoginCount());
+                    }
+                }
+                
+                
+                final Set<LoginAggregationImpl> loginAggregationsHour = loginAggregationDao.getLoginAggregationsForInterval(dateDimension, timeDimension, Interval.HOUR);
+                assertEquals(1, loginAggregationsHour.size());
+                
+                final LoginAggregationImpl loginAggregation = loginAggregationsHour.iterator().next();
                 assertEquals(10, loginAggregation.getLoginCount());
                 assertEquals(6, loginAggregation.getUniqueLoginCount());
             }
         });
-        
 
-        
         this.executeInTransaction(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
                 final DateDimension dateDimension = dateDimensionDao.getDateDimensionByDate(instantDate);
                 final TimeDimension timeDimension = timeDimensionDao.getTimeDimensionByTime(instantTime);
                 
-                final LoginAggregationImpl loginAggregation = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension);
+                final LoginAggregationImpl loginAggregationFiveMinute = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension, Interval.FIVE_MINUTE, null);
+                final LoginAggregationImpl loginAggregationFiveMinuteGroup = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension, Interval.FIVE_MINUTE, "groupA");
+                final LoginAggregationImpl loginAggregationHour = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension, Interval.HOUR, null);
                 
-                loginAggregation.setDuration(5);
-                loginAggregation.intervalComplete();
+                loginAggregationFiveMinute.intervalComplete(5);
+                loginAggregationFiveMinuteGroup.intervalComplete(5);
+                loginAggregationHour.intervalComplete(60);
                 
-                loginAggregationDao.updateLoginAggregation(loginAggregation);
+                loginAggregationDao.updateLoginAggregation(loginAggregationFiveMinute);
+                loginAggregationDao.updateLoginAggregation(loginAggregationFiveMinuteGroup);
+                loginAggregationDao.updateLoginAggregation(loginAggregationHour);
             }
         });
-        
 
-        
         this.execute(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
                 final DateDimension dateDimension = dateDimensionDao.getDateDimensionByDate(instantDate);
                 final TimeDimension timeDimension = timeDimensionDao.getTimeDimensionByTime(instantTime);
                 
-                final LoginAggregationImpl loginAggregation = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension);
+                final Set<LoginAggregationImpl> loginAggregationsFiveMinute = loginAggregationDao.getLoginAggregationsForInterval(dateDimension, timeDimension, Interval.FIVE_MINUTE);
+                assertEquals(2, loginAggregationsFiveMinute.size());
                 
+                for (final LoginAggregationImpl loginAggregation : loginAggregationsFiveMinute) {
+                    if (loginAggregation.getGroupName() == null) {
+                        assertEquals(10, loginAggregation.getLoginCount());
+                        assertEquals(6, loginAggregation.getUniqueLoginCount());
+                    }
+                    else {
+                        assertEquals(3, loginAggregation.getLoginCount());
+                        assertEquals(3, loginAggregation.getUniqueLoginCount());
+                    }
+                }
+                
+                
+                final Set<LoginAggregationImpl> loginAggregationsHour = loginAggregationDao.getLoginAggregationsForInterval(dateDimension, timeDimension, Interval.HOUR);
+                assertEquals(1, loginAggregationsHour.size());
+                
+                final LoginAggregationImpl loginAggregation = loginAggregationsHour.iterator().next();
                 assertEquals(10, loginAggregation.getLoginCount());
                 assertEquals(6, loginAggregation.getUniqueLoginCount());
             }

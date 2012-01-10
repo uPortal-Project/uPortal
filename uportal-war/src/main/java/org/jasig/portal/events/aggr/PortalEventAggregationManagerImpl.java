@@ -19,6 +19,7 @@
 
 package org.jasig.portal.events.aggr;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -146,7 +147,7 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
         this.purgeDelay = purgeDelay;
     }
     
-    @Value("${org.jasig.portal.event.aggr.PortalEventAggregationManager.eventAggregationBatchSize:5}")
+    @Value("${org.jasig.portal.event.aggr.PortalEventAggregationManager.eventAggregationBatchSize:5000}")
     public void setEventAggregationBatchSize(int eventAggregationBatchSize) {
         this.eventAggregationBatchSize = eventAggregationBatchSize;
     }
@@ -230,17 +231,6 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
             Thread.currentThread().interrupt();
             return false;
         }
-    }
-    
-    protected boolean supportsEvent(IPortalEventAggregator<PortalEvent> portalEventAggregator, Class<? extends PortalEvent> eventType) {
-        Class<?> typeArg = GenericTypeResolver.resolveTypeArgument(portalEventAggregator.getClass(), IPortalEventAggregator.class);
-        if (typeArg == null || typeArg.equals(ApplicationEvent.class)) {
-            Class<?> targetClass = AopUtils.getTargetClass(portalEventAggregator);
-            if (targetClass != portalEventAggregator.getClass()) {
-                typeArg = GenericTypeResolver.resolveTypeArgument(targetClass, ApplicationListener.class);
-            }
-        }
-        return (typeArg == null || typeArg.isAssignableFrom(eventType));
     }
     
     //use local flag to run on first call to doAggregation
@@ -331,6 +321,8 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
     }
     
     void doPopulateDateDimensions(final DateMidnight start, final DateMidnight end) {
+        logger.info("Populating DateDimensions between {} and {}", start, end);
+        
         final List<DateDimension> dateDimensions = this.dateDimensionDao.getDateDimensionsBetween(start, end);
         
         DateMidnight nextDate = start;
@@ -394,7 +386,7 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
         //Do aggregation, capturing the start and end dates
         eventAggregatorStatus.setLastStart(DateTime.now());
         final long start = System.nanoTime();
-        portalEventDao.getPortalEvents(lastAggregated, newestEventTime, this.eventAggregationBatchSize, new AggregateEventsHandler(events, eventAggregatorStatus));
+        portalEventDao.aggregatePortalEvents(lastAggregated, newestEventTime, this.eventAggregationBatchSize, new AggregateEventsHandler(events, eventAggregatorStatus));
         eventAggregatorStatus.setLastEnd(new DateTime());
         
         logger.debug("Aggregated {} events between {} and {} in {}ms", new Object[] { events, lastAggregated, newestEventTime, TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start) });
@@ -449,6 +441,7 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
         private final IEventAggregatorStatus eventAggregatorStatus;
         
         private final Map<Interval, IntervalInfo> currentIntervalInfo = new HashMap<Interval, IntervalInfo>();
+        private final Map<Interval, IntervalInfo> readOnlyIntervalInfo = Collections.unmodifiableMap(currentIntervalInfo);
         
         private AggregateEventsHandler(MutableInt eventCounter, IEventAggregatorStatus eventAggregatorStatus) {
             this.eventCounter = eventCounter;
@@ -457,27 +450,35 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
 
         @Override
         protected void applyWithoutResult(PortalEvent event) {
-            final DateTime lastEventDate = eventAggregatorStatus.getLastEventDate();
+            final DateTime eventDate = event.getTimestampAsDate();
             
-            //Handle crossing interval boundaries
-            if (lastEventDate != null) {
-                if (this.currentIntervalInfo.isEmpty()) {
-                    //If first execution with a lastEventDate populate the current IntervalInfo for that previous date
-                    for (final Interval interval : Interval.values()) {
-                        final IntervalInfo intervalInfo = intervalHelper.getIntervalInfo(interval, lastEventDate);
-                        this.currentIntervalInfo.put(interval, intervalInfo);
-                    }
+            //If no interval data yet populate it.
+            if (this.currentIntervalInfo.isEmpty()) {
+                final DateTime intervalDate;
+                final DateTime lastEventDate = eventAggregatorStatus.getLastEventDate();
+                if (lastEventDate != null) {
+                    //If there was a previously aggregated event use that date to make sure an interval is not missed
+                    intervalDate = lastEventDate;
+                }
+                else {
+                    //Otherwise just use the current event date
+                    intervalDate = eventDate;
                 }
                 
                 for (final Interval interval : Interval.values()) {
-                    IntervalInfo intervalInfo = this.currentIntervalInfo.get(interval);
-                    if (!intervalInfo.getEnd().isAfter(lastEventDate)) {
-                        logger.debug("Crossing {} Interval, triggerd by {}", interval, event);
-                        this.doHandleIntervalBoundry(interval, this.currentIntervalInfo);
-                        
-                        intervalInfo = intervalHelper.getIntervalInfo(interval, lastEventDate); 
-                        this.currentIntervalInfo.put(interval, intervalInfo);
-                    }
+                    final IntervalInfo intervalInfo = intervalHelper.getIntervalInfo(interval, intervalDate);
+                    this.currentIntervalInfo.put(interval, intervalInfo);
+                }
+            }
+            
+            for (final Interval interval : Interval.values()) {
+                IntervalInfo intervalInfo = this.currentIntervalInfo.get(interval);
+                if (!intervalInfo.getEnd().isAfter(eventDate)) {
+                    logger.debug("Crossing {} Interval, triggerd by {}", interval, event);
+                    this.doHandleIntervalBoundry(interval, this.currentIntervalInfo);
+                    
+                    intervalInfo = intervalHelper.getIntervalInfo(interval, eventDate); 
+                    this.currentIntervalInfo.put(interval, intervalInfo);
                 }
             }
             
@@ -485,21 +486,24 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
             this.doAggregateEvent(event);
             
             //Update the status object with the event date
-            eventAggregatorStatus.setLastEventDate(event.getTimestampAsDate());
+            eventAggregatorStatus.setLastEventDate(eventDate);
         }
 
         private void doAggregateEvent(PortalEvent item) {
             eventCounter.increment();
+            
             for (final IPortalEventAggregator<PortalEvent> portalEventAggregator : portalEventAggregators) {
-                if (supportsEvent(portalEventAggregator, item.getClass())) {
-                    portalEventAggregator.aggregateEvent(item);
+                if (portalEventAggregator.supports(item.getClass())) {
+                    //TODO filter intervals for aggregator 
+                    portalEventAggregator.aggregateEvent(item, this.readOnlyIntervalInfo);
                 }
             }
         }
         
         private void doHandleIntervalBoundry(Interval interval, Map<Interval, IntervalInfo> intervals) {
             for (final IPortalEventAggregator<PortalEvent> portalEventAggregator : portalEventAggregators) {
-                portalEventAggregator.handleIntervalBoundry(interval, intervals);
+                //TODO filter intervals for aggregator
+                portalEventAggregator.handleIntervalBoundry(interval, this.readOnlyIntervalInfo);
             }
         }
     }

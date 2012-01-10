@@ -19,7 +19,9 @@
 
 package org.jasig.portal.events.aggr.login;
 
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -44,9 +46,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public class JpaLoginAggregationDao extends BaseJpaDao implements LoginAggregationPrivateDao {
 
-    private CriteriaQuery<LoginAggregationImpl> findLoginAggregationByDateAndTimeQuery;
+    private CriteriaQuery<LoginAggregationImpl> findLoginAggregationByDateTimeIntervalQuery;
+    private CriteriaQuery<LoginAggregationImpl> findLoginAggregationByDateTimeIntervalGroupQuery;
     private ParameterExpression<TimeDimension> timeDimensionParameter;
     private ParameterExpression<DateDimension> dateDimensionParameter;
+    private ParameterExpression<Interval> intervalParameter;
+    private ParameterExpression<String> groupNameParameter;
     
     private EntityManager entityManager;
 
@@ -65,28 +70,64 @@ public class JpaLoginAggregationDao extends BaseJpaDao implements LoginAggregati
     protected void buildCriteriaQueries(CriteriaBuilder cb) {
         this.timeDimensionParameter = cb.parameter(TimeDimension.class, "timeDimension");
         this.dateDimensionParameter = cb.parameter(DateDimension.class, "dateDimension");
+        this.intervalParameter = cb.parameter(Interval.class, "interval");
+        this.groupNameParameter = cb.parameter(String.class, "groupName");
         
-        this.findLoginAggregationByDateAndTimeQuery = this.buildFindLoginAggregationByDateAndTimeQuery(cb);
+        this.findLoginAggregationByDateTimeIntervalQuery = this.buildFindLoginAggregationByDateTimeIntervalQuery(cb);
+        this.findLoginAggregationByDateTimeIntervalGroupQuery = this.buildFindLoginAggregationByDateTimeIntervalGroupQuery(cb);
     }
     
-    protected CriteriaQuery<LoginAggregationImpl> buildFindLoginAggregationByDateAndTimeQuery(final CriteriaBuilder cb) {
+    protected CriteriaQuery<LoginAggregationImpl> buildFindLoginAggregationByDateTimeIntervalQuery(final CriteriaBuilder cb) {
         final CriteriaQuery<LoginAggregationImpl> criteriaQuery = cb.createQuery(LoginAggregationImpl.class);
         final Root<LoginAggregationImpl> root = criteriaQuery.from(LoginAggregationImpl.class);
         criteriaQuery.select(root);
-        criteriaQuery.where(cb.and(
-                cb.equal(root.get(LoginAggregationImpl_.dateDimension), this.dateDimensionParameter),
-                cb.equal(root.get(LoginAggregationImpl_.timeDimension), this.timeDimensionParameter)));
+        criteriaQuery.where(
+                cb.and(
+                    cb.equal(root.get(LoginAggregationImpl_.dateDimension), this.dateDimensionParameter),
+                    cb.equal(root.get(LoginAggregationImpl_.timeDimension), this.timeDimensionParameter),
+                    cb.equal(root.get(LoginAggregationImpl_.interval), this.intervalParameter)
+                )
+            );
+        
+        return criteriaQuery;
+    }
+    
+    protected CriteriaQuery<LoginAggregationImpl> buildFindLoginAggregationByDateTimeIntervalGroupQuery(final CriteriaBuilder cb) {
+        final CriteriaQuery<LoginAggregationImpl> criteriaQuery = cb.createQuery(LoginAggregationImpl.class);
+        final Root<LoginAggregationImpl> root = criteriaQuery.from(LoginAggregationImpl.class);
+        criteriaQuery.select(root);
+        criteriaQuery.where(
+                cb.and(
+                    cb.equal(root.get(LoginAggregationImpl_.dateDimension), this.dateDimensionParameter),
+                    cb.equal(root.get(LoginAggregationImpl_.timeDimension), this.timeDimensionParameter),
+                    cb.equal(root.get(LoginAggregationImpl_.interval), this.intervalParameter),
+                    cb.equal(root.get(LoginAggregationImpl_.groupName), this.groupNameParameter)
+                )
+            );
         
         return criteriaQuery;
     }
 
     
     @Override
-    public LoginAggregationImpl getLoginAggregation(DateDimension dateDimension, TimeDimension timeDimension) {
-        final TypedQuery<LoginAggregationImpl> query = this.createQuery(this.findLoginAggregationByDateAndTimeQuery, "FIND_BY_DATE_AND_TIME");
+    public Set<LoginAggregationImpl> getLoginAggregationsForInterval(DateDimension dateDimension, TimeDimension timeDimension, Interval interval) {
+        final TypedQuery<LoginAggregationImpl> query = this.createQuery(this.findLoginAggregationByDateTimeIntervalQuery, "FIND_BY_DATE_TIME_INTERVAL");
+        query.setParameter(this.dateDimensionParameter, dateDimension);
+        query.setParameter(this.timeDimensionParameter, timeDimension);
+        query.setParameter(this.intervalParameter, interval);
+        
+        final List<LoginAggregationImpl> results = query.getResultList();
+        return new LinkedHashSet<LoginAggregationImpl>(results);
+    }
+
+    @Override
+    public LoginAggregationImpl getLoginAggregation(DateDimension dateDimension, TimeDimension timeDimension, Interval interval, String groupName) {
+        final TypedQuery<LoginAggregationImpl> query = this.createQuery(this.findLoginAggregationByDateTimeIntervalGroupQuery, "FIND_BY_DATE_TIME_INTERVAL_GROUP");
         query.setMaxResults(1);
         query.setParameter(this.dateDimensionParameter, dateDimension);
         query.setParameter(this.timeDimensionParameter, timeDimension);
+        query.setParameter(this.intervalParameter, interval);
+        query.setParameter(this.groupNameParameter, groupName == null ? "" : groupName);
         
         final List<LoginAggregationImpl> results = query.getResultList();
         return DataAccessUtils.singleResult(results);
@@ -104,7 +145,7 @@ public class JpaLoginAggregationDao extends BaseJpaDao implements LoginAggregati
     
     @Transactional("aggrEvents")
     @Override
-    public void updateLoginAggregation(LoginAggregation loginAggregation) {
+    public void updateLoginAggregation(LoginAggregationImpl loginAggregation) {
         this.entityManager.persist(loginAggregation);
     }
         

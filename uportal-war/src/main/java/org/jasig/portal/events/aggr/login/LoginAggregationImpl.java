@@ -43,6 +43,7 @@ import javax.persistence.TableGenerator;
 import org.apache.commons.lang.Validate;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.NaturalId;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.Interval;
 import org.jasig.portal.events.aggr.TimeDimension;
@@ -77,19 +78,23 @@ class LoginAggregationImpl implements LoginAggregation, Serializable {
     @SuppressWarnings("unused")
     private final long id;
     
+    @NaturalId
     @ManyToOne(targetEntity=TimeDimensionImpl.class)
     @JoinColumn(name = "TIME_DIMENSION_ID", nullable = false)
     private final TimeDimension timeDimension;
 
+    @NaturalId
     @ManyToOne(targetEntity=DateDimensionImpl.class)
     @JoinColumn(name = "DATE_DIMENSION_ID", nullable = false)
     private final DateDimension dateDimension;
     
+    @NaturalId
     @Enumerated(EnumType.STRING)
     @Column(name = "INTERVAL", nullable = false)
     private final Interval interval;
     
-    @Column(name = "GROUP_NAME", length=200)
+    @NaturalId
+    @Column(name = "GROUP_NAME", length=200, nullable = false)
     private final String groupName;
     
     @Column(name = "DURATION", nullable = false)
@@ -127,7 +132,7 @@ class LoginAggregationImpl implements LoginAggregation, Serializable {
         this.timeDimension = timeDimension;
         this.dateDimension = dateDimension;
         this.interval = interval;
-        this.groupName = groupName;
+        this.groupName = groupName == null ? "" : groupName;
     }
 
     @Override
@@ -152,7 +157,7 @@ class LoginAggregationImpl implements LoginAggregation, Serializable {
 
     @Override
     public String getGroupName() {
-        return this.groupName;
+        return this.groupName.length() == 0 ? null : this.groupName;
     }
 
     @Override
@@ -186,7 +191,8 @@ class LoginAggregationImpl implements LoginAggregation, Serializable {
         }
     }
     
-    void intervalComplete() {
+    void intervalComplete(int duration) {
+        this.duration = duration;
         this.uniqueUserNames.clear();
     }
 

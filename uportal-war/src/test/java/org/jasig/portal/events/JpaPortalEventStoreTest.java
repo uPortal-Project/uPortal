@@ -30,7 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -72,6 +72,9 @@ public class JpaPortalEventStoreTest extends BaseJpaDaoTest {
     
     @Test
     public void testStoreSingleEvents() throws Exception {
+        final DateTime startDate = DateTime.now().minusDays(1);
+        final DateTime endDate = DateTime.now().plusDays(1);
+        
         final List<PortalEvent> originalEvents = generateEvents();
 
         execute(new CallableWithoutResult() {
@@ -83,11 +86,19 @@ public class JpaPortalEventStoreTest extends BaseJpaDaoTest {
             }
         });
         
-        verifyEvents(originalEvents);
+        verifyGetEvents(originalEvents, startDate, endDate);
+        verifyAggregateEvents(originalEvents, startDate, endDate);
+        verifyAggregateEvents(Collections.<PortalEvent>emptyList(), startDate, endDate);
+        deleteEvents(originalEvents, startDate, endDate);
+        verifyGetEvents(Collections.<PortalEvent>emptyList(), startDate, endDate);
+        verifyAggregateEvents(Collections.<PortalEvent>emptyList(), startDate, endDate);
     }
     
     @Test
     public void testStoreBatchEvents() throws Exception {
+        final DateTime startDate = DateTime.now().minusDays(1);
+        final DateTime endDate = DateTime.now().plusDays(1);
+        
         final List<PortalEvent> originalEvents = generateEvents();
         
         execute(new CallableWithoutResult() {
@@ -130,16 +141,15 @@ public class JpaPortalEventStoreTest extends BaseJpaDaoTest {
             }
         });
         
-        verifyEvents(originalEvents);
+        verifyGetEvents(originalEvents, startDate, endDate);
+        verifyAggregateEvents(originalEvents, startDate, endDate);
+        verifyAggregateEvents(Collections.<PortalEvent>emptyList(), startDate, endDate);
+        deleteEvents(originalEvents, startDate, endDate);
+        verifyGetEvents(Collections.<PortalEvent>emptyList(), startDate, endDate);
+        verifyAggregateEvents(Collections.<PortalEvent>emptyList(), startDate, endDate);
     }
 
-    /**
-     * @param originalEvents
-     */
-    protected void verifyEvents(final List<PortalEvent> originalEvents) {
-        final DateTime startDate = new DateTime(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1));
-        final DateTime endDate = new DateTime(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1));
-        
+    protected void verifyGetEvents(final List<PortalEvent> originalEvents, final DateTime startDate, final DateTime endDate) {
         execute(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
@@ -160,24 +170,52 @@ public class JpaPortalEventStoreTest extends BaseJpaDaoTest {
                 while (originalEventItr.hasNext()) {
                     assertEquals(originalEventItr.next().getClass(), eventItr.next().getClass());
                 }
-                
-                //Delete the events
-                portalEventDao.deletePortalEventsBefore(endDate);
             }
         });
-        
+    }
+
+    protected void verifyAggregateEvents(final List<PortalEvent> originalEvents, final DateTime startDate, final DateTime endDate) {
         execute(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
+                //Get all events
                 final List<PortalEvent> portalEvents = new LinkedList<PortalEvent>();
-                portalEventDao.getPortalEvents(startDate, endDate, new FunctionWithoutResult<PortalEvent>() {
-                    @Override
-                    protected void applyWithoutResult(PortalEvent input) {
-                        portalEvents.add(input);
-                    }
-                });
                 
-                assertEquals(0, portalEvents.size());
+                final AtomicReference<DateTime> nextStart = new AtomicReference<DateTime>(startDate);
+
+                //aggregate all events, 5 at a time.
+                final int loadSize = 10;
+                int startSize;
+                do {
+                    startSize = portalEvents.size();
+                    portalEventDao.aggregatePortalEvents(nextStart.get(), endDate, loadSize, new FunctionWithoutResult<PortalEvent>() {
+                        @Override
+                        protected void applyWithoutResult(PortalEvent input) {
+                            portalEvents.add(input);
+                            nextStart.set(input.getTimestampAsDate());
+                        }
+                    });
+                } while (loadSize + startSize == portalEvents.size());
+                
+                assertEquals(originalEvents.size(), portalEvents.size());
+                
+                final Iterator<PortalEvent> originalEventItr = originalEvents.iterator();
+                final Iterator<PortalEvent> eventItr = portalEvents.iterator();
+                
+                while (originalEventItr.hasNext()) {
+                    assertEquals(originalEventItr.next().getClass(), eventItr.next().getClass());
+                }
+            }
+        });
+    }
+     
+    protected void deleteEvents(final List<PortalEvent> originalEvents, final DateTime startDate, final DateTime endDate) {
+        execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                
+                //Delete the events
+                portalEventDao.deletePortalEventsBefore(endDate);
             }
         });
     }

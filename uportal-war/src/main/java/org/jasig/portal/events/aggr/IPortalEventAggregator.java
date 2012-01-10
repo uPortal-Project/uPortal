@@ -31,9 +31,17 @@ import org.jasig.portal.events.PortalEvent;
  */
 public interface IPortalEventAggregator<E extends PortalEvent> {
     /**
-     * Add the specified event to the aggregate
+     * @return true if this aggregator supports the specified event type
      */
-    void aggregateEvent(E e);
+    boolean supports(Class<? extends PortalEvent> type);
+    
+    /**
+     * Add the specified event to the aggregate
+     * 
+     * @param e The event to aggregate
+     * @param currentIntervals Information about all of the intervals the event exists in.
+     */
+    void aggregateEvent(E e, Map<Interval, IntervalInfo> currentIntervals);
     
     /**
      * Handle crossing over an interval boundary, called after the LAST event of the interval is processed.

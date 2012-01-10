@@ -19,19 +19,21 @@
 
 package org.jasig.portal.events.aggr.login;
 
+import java.util.Set;
+
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.Interval;
 import org.jasig.portal.events.aggr.TimeDimension;
 
 /**
+ * DAO used to query information about login aggregates: Total Logins and Unique Logins per date,time,interval,group
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface LoginAggregationDao {
+public interface LoginAggregationDao<T extends LoginAggregation> {
 
-    LoginAggregation getLoginAggregation(DateDimension dateDimension, TimeDimension timeDimension);
-
-    LoginAggregation createLoginAggregation(DateDimension dateDimension, TimeDimension timeDimension, Interval interval, String groupName);
+    Set<T> getLoginAggregationsForInterval(DateDimension dateDimension, TimeDimension timeDimension, Interval interval);
     
-    void updateLoginAggregation(LoginAggregation loginAggregation);
+    LoginAggregation getLoginAggregation(DateDimension dateDimension, TimeDimension timeDimension, Interval interval, String groupName);
 }

@@ -19,10 +19,11 @@
 
 package org.jasig.portal.events.aggr;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import static org.junit.Assert.assertEquals;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,13 +36,11 @@ import org.jasig.portal.concurrency.CallableWithoutResult;
 import org.jasig.portal.concurrency.FunctionWithoutResult;
 import org.jasig.portal.concurrency.locking.IClusterLockService;
 import org.jasig.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
-import org.jasig.portal.events.PortalEventFactoryImpl;
 import org.jasig.portal.events.aggr.IEventAggregatorStatus.ProcessingType;
 import org.jasig.portal.events.aggr.dao.DateDimensionDao;
 import org.jasig.portal.events.aggr.dao.IEventAggregationManagementDao;
 import org.jasig.portal.events.aggr.dao.TimeDimensionDao;
 import org.jasig.portal.events.handlers.db.IPortalEventDao;
-import org.jasig.portal.security.IPerson;
 import org.jasig.portal.test.BaseJpaDaoTest;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
@@ -51,8 +50,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -247,7 +244,7 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
 
     @Test
     public void aggregateRawEvents()  throws Exception {
-        final TryLockFunctionResult tryLockFunctionResult = mock(TryLockFunctionResult.class);
+        final TryLockFunctionResult<?> tryLockFunctionResult = mock(TryLockFunctionResult.class);
         when(this.clusterLockService.doInTryLock(Mockito.anyString(), Mockito.any(Function.class))).thenReturn(tryLockFunctionResult);
         
         final IEventAggregatorStatus eventAggregatorStatus = mock(IEventAggregatorStatus.class);
@@ -262,6 +259,6 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
             }
         });
         
-        verify(portalEventDao).getPortalEvents(Mockito.any(DateTime.class), Mockito.any(DateTime.class), Mockito.eq(5000), Mockito.any(FunctionWithoutResult.class));
+        verify(portalEventDao).aggregatePortalEvents(Mockito.any(DateTime.class), Mockito.any(DateTime.class), Mockito.eq(5000), Mockito.any(FunctionWithoutResult.class));
     }
 }

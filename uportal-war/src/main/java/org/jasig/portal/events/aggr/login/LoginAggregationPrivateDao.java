@@ -24,14 +24,18 @@ import org.jasig.portal.events.aggr.Interval;
 import org.jasig.portal.events.aggr.TimeDimension;
 
 /**
+ * Login Aggregation DAO used internally to create and update login aggregations
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-interface LoginAggregationPrivateDao extends LoginAggregationDao {
+interface LoginAggregationPrivateDao extends LoginAggregationDao<LoginAggregationImpl> {
 
     @Override
-    LoginAggregationImpl getLoginAggregation(DateDimension dateDimension, TimeDimension timeDimension);
+    LoginAggregationImpl getLoginAggregation(DateDimension dateDimension, TimeDimension timeDimension, Interval interval, String groupName);
     
-    @Override
     LoginAggregationImpl createLoginAggregation(DateDimension dateDimension, TimeDimension timeDimension, Interval interval, String groupName);
+    
+    void updateLoginAggregation(LoginAggregationImpl loginAggregation);
+
 }

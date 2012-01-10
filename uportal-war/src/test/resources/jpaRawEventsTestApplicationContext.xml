@@ -31,7 +31,9 @@
 
     <!-- JPA Test Context for DAOs that use the uPortalRawEventsPersistence PersistenceContext -->
 
-    <bean class="org.jasig.portal.events.handlers.db.JpaPortalEventStore" />
+    <bean class="org.jasig.portal.events.handlers.db.JpaPortalEventStore">
+        <property name="aggregationFlushPeriod" value="5" />
+    </bean>
     
     
     <bean id="localPropertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
