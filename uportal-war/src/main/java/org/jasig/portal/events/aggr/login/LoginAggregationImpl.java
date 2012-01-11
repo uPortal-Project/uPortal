@@ -49,6 +49,8 @@ import org.jasig.portal.events.aggr.Interval;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl;
 import org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl;
+import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl;
 
 /**
  * @author Eric Dalquist
@@ -94,8 +96,9 @@ class LoginAggregationImpl implements LoginAggregation, Serializable {
     private final Interval interval;
     
     @NaturalId
-    @Column(name = "GROUP_NAME", length=200, nullable = false)
-    private final String groupName;
+    @ManyToOne(targetEntity=AggregatedGroupMappingImpl.class)
+    @JoinColumn(name = "AGGREGATED_GROUP_ID", nullable = false)
+    private final AggregatedGroupMapping aggregatedGroup;
     
     @Column(name = "DURATION", nullable = false)
     private int duration;
@@ -119,20 +122,21 @@ class LoginAggregationImpl implements LoginAggregation, Serializable {
         this.timeDimension = null;
         this.dateDimension = null;
         this.interval = null;
-        this.groupName = null;
+        this.aggregatedGroup = null;
     }
     
     LoginAggregationImpl(TimeDimension timeDimension, DateDimension dateDimension, 
-            Interval interval, String groupName) {
+            Interval interval, AggregatedGroupMapping aggregatedGroup) {
         Validate.notNull(timeDimension);
         Validate.notNull(dateDimension);
         Validate.notNull(interval);
+        Validate.notNull(aggregatedGroup);
         
         this.id = -1;
         this.timeDimension = timeDimension;
         this.dateDimension = dateDimension;
         this.interval = interval;
-        this.groupName = groupName == null ? "" : groupName;
+        this.aggregatedGroup = aggregatedGroup;
     }
 
     @Override
@@ -156,8 +160,8 @@ class LoginAggregationImpl implements LoginAggregation, Serializable {
     }
 
     @Override
-    public String getGroupName() {
-        return this.groupName.length() == 0 ? null : this.groupName;
+    public AggregatedGroupMapping getAggregatedGroup() {
+        return this.aggregatedGroup;
     }
 
     @Override
@@ -201,7 +205,7 @@ class LoginAggregationImpl implements LoginAggregation, Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((dateDimension == null) ? 0 : dateDimension.hashCode());
-        result = prime * result + ((groupName == null) ? 0 : groupName.hashCode());
+        result = prime * result + ((aggregatedGroup == null) ? 0 : aggregatedGroup.hashCode());
         result = prime * result + ((interval == null) ? 0 : interval.hashCode());
         result = prime * result + ((timeDimension == null) ? 0 : timeDimension.hashCode());
         return result;
@@ -222,11 +226,11 @@ class LoginAggregationImpl implements LoginAggregation, Serializable {
         }
         else if (!dateDimension.equals(other.dateDimension))
             return false;
-        if (groupName == null) {
-            if (other.groupName != null)
+        if (aggregatedGroup == null) {
+            if (other.aggregatedGroup != null)
                 return false;
         }
-        else if (!groupName.equals(other.groupName))
+        else if (!aggregatedGroup.equals(other.aggregatedGroup))
             return false;
         if (interval != other.interval)
             return false;
@@ -242,7 +246,7 @@ class LoginAggregationImpl implements LoginAggregation, Serializable {
     @Override
     public String toString() {
         return "LoginAggregationImpl [timeDimension=" + timeDimension + ", dateDimension=" + dateDimension
-                + ", interval=" + interval + ", groupName=" + groupName + ", duration=" + duration + ", loginCount="
+                + ", interval=" + interval + ", groupName=" + aggregatedGroup + ", duration=" + duration + ", loginCount="
                 + loginCount + ", uniqueLoginCount=" + uniqueLoginCount + "]";
     }
 }

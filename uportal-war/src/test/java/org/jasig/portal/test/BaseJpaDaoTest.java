@@ -36,6 +36,7 @@ import javax.persistence.metamodel.Metamodel;
 
 import org.aopalliance.intercept.MethodInvocation;
 import org.jasig.portal.concurrency.CallableWithoutResult;
+import org.jasig.portal.spring.MockitoFactoryBean;
 import org.junit.After;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,6 +116,10 @@ public abstract class BaseJpaDaoTest {
             
             entityTypes = failedEntitieTypes;
         } while (!entityTypes.isEmpty());
+        
+        
+        //Reset all spring managed mocks after every test
+        MockitoFactoryBean.resetAllMocks();
     }
 
     /**

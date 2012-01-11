@@ -17,29 +17,14 @@
  * under the License.
  */
 
-package org.jasig.portal.events.aggr.login;
-
-import org.jasig.portal.events.LoginEvent;
-import org.jasig.portal.events.aggr.BaseAggregation;
-import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+package org.jasig.portal.events.aggr.groups;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface LoginAggregation extends BaseAggregation {
-    /**
-     * @return The group this aggregation is for, null if it is for all users
-     */
-    AggregatedGroupMapping getAggregatedGroup();
+public interface AggregatedGroupMapping {
+    String getGroupName();
     
-    /**
-     * @return Total number of {@link LoginEvent}s that occurred in the interval
-     */
-    int getLoginCount();
-    
-    /**
-     * @return Unique number of {@link LoginEvent}s that occurred in the interval, uniqueness is determined by {@link LoginEvent#getUserName()}
-     */
-    int getUniqueLoginCount();
+    String getGroupService();
 }

@@ -34,6 +34,7 @@ import javax.persistence.criteria.Root;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.Interval;
 import org.jasig.portal.events.aggr.TimeDimension;
+import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.jpa.BaseJpaDao;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
@@ -51,7 +52,7 @@ public class JpaLoginAggregationDao extends BaseJpaDao implements LoginAggregati
     private ParameterExpression<TimeDimension> timeDimensionParameter;
     private ParameterExpression<DateDimension> dateDimensionParameter;
     private ParameterExpression<Interval> intervalParameter;
-    private ParameterExpression<String> groupNameParameter;
+    private ParameterExpression<AggregatedGroupMapping> aggregatedGroupParameter;
     
     private EntityManager entityManager;
 
@@ -71,7 +72,7 @@ public class JpaLoginAggregationDao extends BaseJpaDao implements LoginAggregati
         this.timeDimensionParameter = cb.parameter(TimeDimension.class, "timeDimension");
         this.dateDimensionParameter = cb.parameter(DateDimension.class, "dateDimension");
         this.intervalParameter = cb.parameter(Interval.class, "interval");
-        this.groupNameParameter = cb.parameter(String.class, "groupName");
+        this.aggregatedGroupParameter = cb.parameter(AggregatedGroupMapping.class, "aggregatedGroup");
         
         this.findLoginAggregationByDateTimeIntervalQuery = this.buildFindLoginAggregationByDateTimeIntervalQuery(cb);
         this.findLoginAggregationByDateTimeIntervalGroupQuery = this.buildFindLoginAggregationByDateTimeIntervalGroupQuery(cb);
@@ -101,7 +102,7 @@ public class JpaLoginAggregationDao extends BaseJpaDao implements LoginAggregati
                     cb.equal(root.get(LoginAggregationImpl_.dateDimension), this.dateDimensionParameter),
                     cb.equal(root.get(LoginAggregationImpl_.timeDimension), this.timeDimensionParameter),
                     cb.equal(root.get(LoginAggregationImpl_.interval), this.intervalParameter),
-                    cb.equal(root.get(LoginAggregationImpl_.groupName), this.groupNameParameter)
+                    cb.equal(root.get(LoginAggregationImpl_.aggregatedGroup), this.aggregatedGroupParameter)
                 )
             );
         
@@ -121,13 +122,13 @@ public class JpaLoginAggregationDao extends BaseJpaDao implements LoginAggregati
     }
 
     @Override
-    public LoginAggregationImpl getLoginAggregation(DateDimension dateDimension, TimeDimension timeDimension, Interval interval, String groupName) {
+    public LoginAggregationImpl getLoginAggregation(DateDimension dateDimension, TimeDimension timeDimension, Interval interval, AggregatedGroupMapping aggregatedGroup) {
         final TypedQuery<LoginAggregationImpl> query = this.createQuery(this.findLoginAggregationByDateTimeIntervalGroupQuery, "FIND_BY_DATE_TIME_INTERVAL_GROUP");
         query.setMaxResults(1);
         query.setParameter(this.dateDimensionParameter, dateDimension);
         query.setParameter(this.timeDimensionParameter, timeDimension);
         query.setParameter(this.intervalParameter, interval);
-        query.setParameter(this.groupNameParameter, groupName == null ? "" : groupName);
+        query.setParameter(this.aggregatedGroupParameter, aggregatedGroup);
         
         final List<LoginAggregationImpl> results = query.getResultList();
         return DataAccessUtils.singleResult(results);
@@ -135,8 +136,8 @@ public class JpaLoginAggregationDao extends BaseJpaDao implements LoginAggregati
     
     @Transactional("aggrEvents")
     @Override
-    public LoginAggregationImpl createLoginAggregation(DateDimension dateDimension, TimeDimension timeDimension, Interval interval, String groupName) {
-        final LoginAggregationImpl loginAggregation = new LoginAggregationImpl(timeDimension, dateDimension, interval, groupName);
+    public LoginAggregationImpl createLoginAggregation(DateDimension dateDimension, TimeDimension timeDimension, Interval interval, AggregatedGroupMapping aggregatedGroup) {
+        final LoginAggregationImpl loginAggregation = new LoginAggregationImpl(timeDimension, dateDimension, interval, aggregatedGroup);
         
         this.entityManager.persist(loginAggregation);
         

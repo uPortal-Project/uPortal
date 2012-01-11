@@ -17,27 +17,20 @@
  * under the License.
  */
 
-package org.jasig.portal.events.aggr.login;
-
-import java.util.Set;
-
-import org.jasig.portal.events.aggr.DateDimension;
-import org.jasig.portal.events.aggr.Interval;
-import org.jasig.portal.events.aggr.TimeDimension;
-import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+package org.jasig.portal.events.aggr.groups;
 
 /**
- * DAO used to query information about login aggregates: Total Logins and Unique Logins per date,time,interval,group
+ * Used to map portal group keys to a more static group mapping object
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface LoginAggregationDao<T extends LoginAggregation> {
-
+public interface AggregatedGroupLookupDao {
     /**
-     * @return All login aggregations for the date, time and interval
+     * Get the group mapping object for the specified group key
+     * 
+     * @param portalGroupKey
+     * @return
      */
-    Set<T> getLoginAggregationsForInterval(DateDimension dateDimension, TimeDimension timeDimension, Interval interval);
-    
-    LoginAggregation getLoginAggregation(DateDimension dateDimension, TimeDimension timeDimension, Interval interval, AggregatedGroupMapping aggregatedGroup);
+    public AggregatedGroupMapping getGroupMapping(String portalGroupKey);
 }

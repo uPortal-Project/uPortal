@@ -20,9 +20,12 @@
 package org.jasig.portal.events.aggr.login;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Set;
 
+import javax.naming.CompositeName;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -32,6 +35,10 @@ import org.jasig.portal.events.aggr.Interval;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.dao.DateDimensionDao;
 import org.jasig.portal.events.aggr.dao.TimeDimensionDao;
+import org.jasig.portal.events.aggr.groups.AggregatedGroupLookupDao;
+import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.jasig.portal.groups.ICompositeGroupService;
+import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.test.BaseJpaDaoTest;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
@@ -50,11 +57,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = "classpath:jpaAggrEventsTestContext.xml")
 public class JpaLoginAggregationDaoTest extends BaseJpaDaoTest {
     @Autowired
+    private AggregatedGroupLookupDao aggregatedGroupLookupDao;
+    @Autowired
     private LoginAggregationPrivateDao loginAggregationDao;
     @Autowired
     private TimeDimensionDao timeDimensionDao;
     @Autowired
     private DateDimensionDao dateDimensionDao;
+    @Autowired
+    private ICompositeGroupService compositeGroupService;
     
     @PersistenceContext(unitName = "uPortalAggrEventsPersistence")
     private EntityManager entityManager;
@@ -65,7 +76,18 @@ public class JpaLoginAggregationDaoTest extends BaseJpaDaoTest {
     }
     
     @Test
-    public void testLoginAggregationLifecycle() {
+    public void testLoginAggregationLifecycle() throws Exception {
+        final IEntityGroup entityGroupA = mock(IEntityGroup.class);
+        when(entityGroupA.getServiceName()).thenReturn(new CompositeName("local"));
+        when(entityGroupA.getName()).thenReturn("Group A");
+        when(compositeGroupService.findGroup("local.0")).thenReturn(entityGroupA);
+        
+        final IEntityGroup entityGroupB = mock(IEntityGroup.class);
+        when(entityGroupB.getServiceName()).thenReturn(new CompositeName("local"));
+        when(entityGroupB.getName()).thenReturn("Group B");
+        when(compositeGroupService.findGroup("local.1")).thenReturn(entityGroupB);
+        
+        
         final DateTime instant = new DateTime(1326734644000l); //just a random time
         final DateMidnight instantDate = instant.toDateMidnight();
         final LocalTime instantTime = instant.toLocalTime();
@@ -83,21 +105,23 @@ public class JpaLoginAggregationDaoTest extends BaseJpaDaoTest {
             protected void callWithoutResult() {
                 final DateDimension dateDimension = dateDimensionDao.getDateDimensionByDate(instantDate);
                 final TimeDimension timeDimension = timeDimensionDao.getTimeDimensionByTime(instantTime);
+                final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
+                final AggregatedGroupMapping groupB = aggregatedGroupLookupDao.getGroupMapping("local.1");
                 
-                final LoginAggregationImpl loginAggregationFiveMinute = loginAggregationDao.createLoginAggregation(dateDimension, timeDimension, Interval.FIVE_MINUTE, null);
-                final LoginAggregationImpl loginAggregationFiveMinuteGroup = loginAggregationDao.createLoginAggregation(dateDimension, timeDimension, Interval.FIVE_MINUTE, "groupA");
-                final LoginAggregationImpl loginAggregationHour = loginAggregationDao.createLoginAggregation(dateDimension, timeDimension, Interval.HOUR, null);
+                final LoginAggregationImpl loginAggregationFiveMinuteGroupA = loginAggregationDao.createLoginAggregation(dateDimension, timeDimension, Interval.FIVE_MINUTE, groupA);
+                final LoginAggregationImpl loginAggregationFiveMinuteGroupB = loginAggregationDao.createLoginAggregation(dateDimension, timeDimension, Interval.FIVE_MINUTE, groupB);
+                final LoginAggregationImpl loginAggregationHour = loginAggregationDao.createLoginAggregation(dateDimension, timeDimension, Interval.HOUR, groupA);
 
-                loginAggregationFiveMinute.countUser("joe");
-                loginAggregationFiveMinute.countUser("john");
-                loginAggregationFiveMinute.countUser("levi");
-                loginAggregationFiveMinute.countUser("erin");
-                loginAggregationFiveMinute.countUser("john");
-                loginAggregationFiveMinute.setDuration(1);
+                loginAggregationFiveMinuteGroupA.countUser("joe");
+                loginAggregationFiveMinuteGroupA.countUser("john");
+                loginAggregationFiveMinuteGroupA.countUser("levi");
+                loginAggregationFiveMinuteGroupA.countUser("erin");
+                loginAggregationFiveMinuteGroupA.countUser("john");
+                loginAggregationFiveMinuteGroupA.setDuration(1);
                 
-                loginAggregationFiveMinuteGroup.countUser("joe");
-                loginAggregationFiveMinuteGroup.countUser("john");
-                loginAggregationFiveMinuteGroup.setDuration(1);
+                loginAggregationFiveMinuteGroupB.countUser("joe");
+                loginAggregationFiveMinuteGroupB.countUser("john");
+                loginAggregationFiveMinuteGroupB.setDuration(1);
                 
                 loginAggregationHour.countUser("joe");
                 loginAggregationHour.countUser("john");
@@ -106,7 +130,7 @@ public class JpaLoginAggregationDaoTest extends BaseJpaDaoTest {
                 loginAggregationHour.countUser("john");
                 loginAggregationHour.setDuration(1);
                 
-                loginAggregationDao.updateLoginAggregation(loginAggregationFiveMinute);
+                loginAggregationDao.updateLoginAggregation(loginAggregationFiveMinuteGroupA);
                 loginAggregationDao.updateLoginAggregation(loginAggregationHour);
             }
         });
@@ -118,12 +142,13 @@ public class JpaLoginAggregationDaoTest extends BaseJpaDaoTest {
             protected void callWithoutResult() {
                 final DateDimension dateDimension = dateDimensionDao.getDateDimensionByDate(instantDate);
                 final TimeDimension timeDimension = timeDimensionDao.getTimeDimensionByTime(instantTime);
+                final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
                 
                 final Set<LoginAggregationImpl> loginAggregationsFiveMinute = loginAggregationDao.getLoginAggregationsForInterval(dateDimension, timeDimension, Interval.FIVE_MINUTE);
                 assertEquals(2, loginAggregationsFiveMinute.size());
                 
                 for (final LoginAggregationImpl loginAggregation : loginAggregationsFiveMinute) {
-                    if (loginAggregation.getGroupName() == null) {
+                    if (loginAggregation.getAggregatedGroup().equals(groupA)) {
                         assertEquals(5, loginAggregation.getLoginCount());
                         assertEquals(4, loginAggregation.getUniqueLoginCount());
                     }
@@ -150,20 +175,22 @@ public class JpaLoginAggregationDaoTest extends BaseJpaDaoTest {
             protected void callWithoutResult() {
                 final DateDimension dateDimension = dateDimensionDao.getDateDimensionByDate(instantDate);
                 final TimeDimension timeDimension = timeDimensionDao.getTimeDimensionByTime(instantTime);
+                final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
+                final AggregatedGroupMapping groupB = aggregatedGroupLookupDao.getGroupMapping("local.1");
+
+                final LoginAggregationImpl loginAggregationFiveMinuteGroupA = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension, Interval.FIVE_MINUTE, groupA);
+                final LoginAggregationImpl loginAggregationFiveMinuteGroupB = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension, Interval.FIVE_MINUTE, groupB);
+                final LoginAggregationImpl loginAggregationHour = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension, Interval.HOUR, groupA);
                 
-                final LoginAggregationImpl loginAggregationFiveMinute = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension, Interval.FIVE_MINUTE, null);
-                final LoginAggregationImpl loginAggregationFiveMinuteGroup = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension, Interval.FIVE_MINUTE, "groupA");
-                final LoginAggregationImpl loginAggregationHour = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension, Interval.HOUR, null);
+                loginAggregationFiveMinuteGroupA.countUser("john");
+                loginAggregationFiveMinuteGroupA.countUser("elvira");
+                loginAggregationFiveMinuteGroupA.countUser("levi");
+                loginAggregationFiveMinuteGroupA.countUser("gretchen");
+                loginAggregationFiveMinuteGroupA.countUser("erin");
+                loginAggregationFiveMinuteGroupA.setDuration(2);
                 
-                loginAggregationFiveMinute.countUser("john");
-                loginAggregationFiveMinute.countUser("elvira");
-                loginAggregationFiveMinute.countUser("levi");
-                loginAggregationFiveMinute.countUser("gretchen");
-                loginAggregationFiveMinute.countUser("erin");
-                loginAggregationFiveMinute.setDuration(2);
-                
-                loginAggregationFiveMinuteGroup.countUser("gretchen");
-                loginAggregationFiveMinuteGroup.setDuration(2);
+                loginAggregationFiveMinuteGroupB.countUser("gretchen");
+                loginAggregationFiveMinuteGroupB.setDuration(2);
                 
                 loginAggregationHour.countUser("john");
                 loginAggregationHour.countUser("elvira");
@@ -172,8 +199,8 @@ public class JpaLoginAggregationDaoTest extends BaseJpaDaoTest {
                 loginAggregationHour.countUser("erin");
                 loginAggregationHour.setDuration(2);
                 
-                loginAggregationDao.updateLoginAggregation(loginAggregationFiveMinute);
-                loginAggregationDao.updateLoginAggregation(loginAggregationFiveMinuteGroup);
+                loginAggregationDao.updateLoginAggregation(loginAggregationFiveMinuteGroupA);
+                loginAggregationDao.updateLoginAggregation(loginAggregationFiveMinuteGroupB);
                 loginAggregationDao.updateLoginAggregation(loginAggregationHour);
             }
         });
@@ -183,12 +210,14 @@ public class JpaLoginAggregationDaoTest extends BaseJpaDaoTest {
             protected void callWithoutResult() {
                 final DateDimension dateDimension = dateDimensionDao.getDateDimensionByDate(instantDate);
                 final TimeDimension timeDimension = timeDimensionDao.getTimeDimensionByTime(instantTime);
+                final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
+
                 
                 final Set<LoginAggregationImpl> loginAggregationsFiveMinute = loginAggregationDao.getLoginAggregationsForInterval(dateDimension, timeDimension, Interval.FIVE_MINUTE);
                 assertEquals(2, loginAggregationsFiveMinute.size());
                 
                 for (final LoginAggregationImpl loginAggregation : loginAggregationsFiveMinute) {
-                    if (loginAggregation.getGroupName() == null) {
+                    if (loginAggregation.getAggregatedGroup().equals(groupA)) {
                         assertEquals(10, loginAggregation.getLoginCount());
                         assertEquals(6, loginAggregation.getUniqueLoginCount());
                     }
@@ -213,17 +242,19 @@ public class JpaLoginAggregationDaoTest extends BaseJpaDaoTest {
             protected void callWithoutResult() {
                 final DateDimension dateDimension = dateDimensionDao.getDateDimensionByDate(instantDate);
                 final TimeDimension timeDimension = timeDimensionDao.getTimeDimensionByTime(instantTime);
+                final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
+                final AggregatedGroupMapping groupB = aggregatedGroupLookupDao.getGroupMapping("local.1");
+
+                final LoginAggregationImpl loginAggregationFiveMinuteGroupA = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension, Interval.FIVE_MINUTE, groupA);
+                final LoginAggregationImpl loginAggregationFiveMinuteGroupB = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension, Interval.FIVE_MINUTE, groupB);
+                final LoginAggregationImpl loginAggregationHour = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension, Interval.HOUR, groupA);
                 
-                final LoginAggregationImpl loginAggregationFiveMinute = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension, Interval.FIVE_MINUTE, null);
-                final LoginAggregationImpl loginAggregationFiveMinuteGroup = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension, Interval.FIVE_MINUTE, "groupA");
-                final LoginAggregationImpl loginAggregationHour = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension, Interval.HOUR, null);
-                
-                loginAggregationFiveMinute.intervalComplete(5);
-                loginAggregationFiveMinuteGroup.intervalComplete(5);
+                loginAggregationFiveMinuteGroupA.intervalComplete(5);
+                loginAggregationFiveMinuteGroupB.intervalComplete(5);
                 loginAggregationHour.intervalComplete(60);
                 
-                loginAggregationDao.updateLoginAggregation(loginAggregationFiveMinute);
-                loginAggregationDao.updateLoginAggregation(loginAggregationFiveMinuteGroup);
+                loginAggregationDao.updateLoginAggregation(loginAggregationFiveMinuteGroupA);
+                loginAggregationDao.updateLoginAggregation(loginAggregationFiveMinuteGroupB);
                 loginAggregationDao.updateLoginAggregation(loginAggregationHour);
             }
         });
@@ -233,12 +264,13 @@ public class JpaLoginAggregationDaoTest extends BaseJpaDaoTest {
             protected void callWithoutResult() {
                 final DateDimension dateDimension = dateDimensionDao.getDateDimensionByDate(instantDate);
                 final TimeDimension timeDimension = timeDimensionDao.getTimeDimensionByTime(instantTime);
+                final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
                 
                 final Set<LoginAggregationImpl> loginAggregationsFiveMinute = loginAggregationDao.getLoginAggregationsForInterval(dateDimension, timeDimension, Interval.FIVE_MINUTE);
                 assertEquals(2, loginAggregationsFiveMinute.size());
                 
                 for (final LoginAggregationImpl loginAggregation : loginAggregationsFiveMinute) {
-                    if (loginAggregation.getGroupName() == null) {
+                    if (loginAggregation.getAggregatedGroup().equals(groupA)) {
                         assertEquals(10, loginAggregation.getLoginCount());
                         assertEquals(6, loginAggregation.getUniqueLoginCount());
                     }

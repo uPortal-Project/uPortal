@@ -59,6 +59,10 @@
         <qualifier value="aggrEvents"/>
         <property name="entityManagerFactory" ref="aggrEventsEntityManagerFactory" />
     </bean>
+    <bean id="aggrTransactionOperations" class="org.springframework.transaction.support.TransactionTemplate">
+        <qualifier value="aggrEvents"/>
+        <property name="transactionManager" ref="aggrEventsTransactionManager" />
+    </bean>
 
     <!-- ********** Database Utilities ********** -->
     

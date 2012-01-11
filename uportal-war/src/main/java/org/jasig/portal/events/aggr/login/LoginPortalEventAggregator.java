@@ -19,6 +19,7 @@
 
 package org.jasig.portal.events.aggr.login;
 
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,6 +30,8 @@ import org.jasig.portal.events.aggr.IPortalEventAggregator;
 import org.jasig.portal.events.aggr.Interval;
 import org.jasig.portal.events.aggr.IntervalInfo;
 import org.jasig.portal.events.aggr.TimeDimension;
+import org.jasig.portal.events.aggr.groups.AggregatedGroupLookupDao;
+import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.joda.time.Period;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,7 +46,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class LoginPortalEventAggregator implements IPortalEventAggregator<LoginEvent> {
     private LoginAggregationPrivateDao loginAggregationDao;
-    
+    private AggregatedGroupLookupDao aggregatedGroupLookupDao;
+
+    @Autowired
+    public void setAggregatedGroupLookupDao(AggregatedGroupLookupDao aggregatedGroupLookupDao) {
+        this.aggregatedGroupLookupDao = aggregatedGroupLookupDao;
+    }
+
     @Override
     public boolean supports(Class<? extends PortalEvent> type) {
         return LoginEvent.class.isAssignableFrom(type);
@@ -60,16 +69,20 @@ public class LoginPortalEventAggregator implements IPortalEventAggregator<LoginE
         final Set<String> groups = e.getGroups();
         final String userName = e.getUserName();
         
-        for (Map.Entry<Interval, IntervalInfo> intervalInfoEntry : currentIntervals.entrySet()) {
-            final Interval interval = intervalInfoEntry.getKey();
-            final IntervalInfo intervalInfo = intervalInfoEntry.getValue();
-            final DateDimension dateDimension = intervalInfo.getDateDimension();
-            final TimeDimension timeDimension = intervalInfo.getTimeDimension();
+        for (final String groupKey : groups) {
+            final AggregatedGroupMapping aggregatedGroup = this.aggregatedGroupLookupDao.getGroupMapping(groupKey);
+        
+            for (Map.Entry<Interval, IntervalInfo> intervalInfoEntry : currentIntervals.entrySet()) {
+                final Interval interval = intervalInfoEntry.getKey();
+                final IntervalInfo intervalInfo = intervalInfoEntry.getValue();
+                final DateDimension dateDimension = intervalInfo.getDateDimension();
+                final TimeDimension timeDimension = intervalInfo.getTimeDimension();
             
-            for (final String groupName : groups) {
-                LoginAggregationImpl loginAggregation = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension, interval, groupName);
+                LoginAggregationImpl loginAggregation = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension, interval, aggregatedGroup);
                 if (loginAggregation == null) {
-                    loginAggregation = loginAggregationDao.createLoginAggregation(dateDimension, timeDimension, interval, groupName);
+                    loginAggregation = loginAggregationDao.createLoginAggregation(dateDimension, timeDimension, interval, aggregatedGroup);
+                    final Period period = intervalInfo.getPeriod();
+                    loginAggregation.setDuration(period.getMinutes());
                 }
                 
                 loginAggregation.countUser(userName);
