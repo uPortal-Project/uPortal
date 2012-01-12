@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -58,6 +59,7 @@ import org.jasig.portal.IUserProfile;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.UserProfile;
+import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.io.xml.IPortalDataHandlerService;
 import org.jasig.portal.layout.LayoutStructure;
 import org.jasig.portal.layout.StructureParameter;
@@ -191,7 +193,8 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     public Map<String, Document> getFragmentLayoutCopies()
 
     {
-
+        // since this is only visible in fragment list in administrative protlet, use default portal locale
+        final Locale defaultLocale = LocaleManager.getPortalLocales()[0];
         final FragmentActivator activator = this.getFragmentActivator();
 
         final Map<String, Document> layouts = new HashMap<String, Document>();
@@ -199,7 +202,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         final List<FragmentDefinition> definitions = this.configurationLoader.getFragments();
         for (final FragmentDefinition fragmentDefinition : definitions) {
             final Document layout = DocumentFactory.getThreadDocument();
-            final UserView userView = activator.getUserView(fragmentDefinition);
+            final UserView userView = activator.getUserView(fragmentDefinition, defaultLocale);
             if (userView == null) {
                 this.log.warn("No UserView found for FragmentDefinition " + fragmentDefinition.getName()
                         + ", it will be skipped.");
@@ -232,6 +235,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             return null;
         }
 
+        final Locale locale = profile.getLocaleManager().getLocales()[0];
         final IStylesheetDescriptor stylesheetDescriptor = this.stylesheetDescriptorDao
                 .getStylesheetDescriptor(stylesheetDescriptorId);
         final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao
@@ -246,7 +250,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             final FragmentDefinition fragmentDefinition = this.configurationLoader.getFragmentByName(fragmentOwnerId);
 
             //UserView may be missing if the fragment isn't defined correctly
-            final UserView userView = fragmentActivator.getUserView(fragmentDefinition);
+            final UserView userView = fragmentActivator.getUserView(fragmentDefinition, locale);
             if (userView == null) {
                 this.log.warn("No UserView is present for fragment " + fragmentDefinition.getName()
                         + " it will be skipped when loading distributed stylesheet user preferences");
@@ -1218,6 +1222,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
        version. This is called when a fragment owner updates their layout.
      */
     private void updateCachedLayout(Document layout, IUserProfile profile, FragmentDefinition fragment) {
+        final Locale locale = profile.getLocaleManager().getLocales()[0];
         // need to make a copy that we can fragmentize
         layout = (Document) layout.cloneNode(true);
 
@@ -1225,7 +1230,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
         // Fix later to handle multiple profiles
         final Element root = layout.getDocumentElement();
-        final UserView userView = activator.getUserView(fragment);
+        final UserView userView = activator.getUserView(fragment, locale);
         if (userView == null) {
             throw new IllegalStateException("No UserView found for fragment: " + fragment.getName());
         }
@@ -1234,8 +1239,9 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 + Constants.FRAGMENT_ID_LAYOUT_PREFIX + "1");
         final UserView view = new UserView(userView.getUserId(), profile, layout);
         try {
+            activator.clearChacheForOwner(fragment.getOwnerId());
             activator.fragmentizeLayout(view, fragment);
-            activator.setUserView(fragment.getOwnerId(), view);
+            activator.setUserView(fragment.getOwnerId(), locale, view);
         }
         catch (final Exception e) {
             LOG.error("An exception occurred attempting to update a layout.", e);
@@ -1335,6 +1341,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     {
         final Set<String> fragmentNames = new LinkedHashSet<String>();
         final List<Document> applicables = new LinkedList<Document>();
+        final Locale locale = profile.getLocaleManager().getLocales()[0];
 
         final List<FragmentDefinition> definitions = this.configurationLoader.getFragments();
 
@@ -1352,7 +1359,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 }
 
                 if (fragmentDefinition.isApplicable(person)) {
-                    final UserView userView = activator.getUserView(fragmentDefinition);
+                    final UserView userView = activator.getUserView(fragmentDefinition, locale);
                     if (userView != null) {
                         applicables.add(userView.layout);
                     }
@@ -1454,6 +1461,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     public FragmentNodeInfo getFragmentNodeInfo(String sId) {
         // grab local pointers to variables subject to change at any time
         final List<FragmentDefinition> fragments = this.configurationLoader.getFragments();
+        final Locale defaultLocale = LocaleManager.getPortalLocales()[0];
 
         final FragmentActivator activator = this.getFragmentActivator();
 
@@ -1462,7 +1470,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
         if (info == null) {
             for (final FragmentDefinition fragmentDefinition : fragments) {
-                final UserView userView = activator.getUserView(fragmentDefinition);
+                final UserView userView = activator.getUserView(fragmentDefinition, defaultLocale);
                 if (userView == null) {
                     this.log.warn("No UserView is present for fragment " + fragmentDefinition.getName()
                             + " it will be skipped when fragment node information");
