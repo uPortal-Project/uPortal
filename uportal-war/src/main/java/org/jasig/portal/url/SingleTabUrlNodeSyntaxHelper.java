@@ -29,6 +29,7 @@ import javax.xml.xpath.XPathExpression;
 import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.concurrency.caching.RequestCache;
 import org.jasig.portal.layout.IStylesheetUserPreferencesService;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
@@ -106,6 +107,7 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IUrlNodeSyntaxHelper#getDefaultLayoutNodeId(javax.servlet.http.HttpServletRequest)
      */
+    @RequestCache(keyMask={false})
     @Override
     public String getDefaultLayoutNodeId(HttpServletRequest httpServletRequest) {
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(httpServletRequest);
@@ -158,6 +160,7 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IUrlNodeSyntaxHelper#getFolderNamesForLayoutNode(javax.servlet.http.HttpServletRequest, java.lang.String)
      */
+    @RequestCache(keyMask={false, true})
     @Override
     public List<String> getFolderNamesForLayoutNode(HttpServletRequest request, String layoutNodeId) {
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
@@ -185,6 +188,7 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IUrlNodeSyntaxHelper#getLayoutNodeForFolderNames(javax.servlet.http.HttpServletRequest, java.util.List)
      */
+    @RequestCache(keyMask={false, true})
     @Override
     public String getLayoutNodeForFolderNames(HttpServletRequest request, List<String> folderNames) {
         if (folderNames == null || folderNames.isEmpty()) {
@@ -216,6 +220,7 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IUrlNodeSyntaxHelper#getFolderNameForPortlet(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindowId)
      */
+    @RequestCache(keyMask={false, true})
     @Override
     public String getFolderNameForPortlet(HttpServletRequest request, IPortletWindowId portletWindowId) {
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
@@ -233,6 +238,7 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
     /* (non-Javadoc)
 	 * @see org.jasig.portal.url.IUrlNodeSyntaxHelper#getPortletForFolderName(javax.servlet.http.HttpServletRequest, java.lang.String, java.lang.String)
 	 */
+    @RequestCache(keyMask={false, true, true})
 	@Override
 	public IPortletWindowId getPortletForFolderName(HttpServletRequest request, String targetedLayoutNodeId, String folderName) {
         //Basic parsing of the 

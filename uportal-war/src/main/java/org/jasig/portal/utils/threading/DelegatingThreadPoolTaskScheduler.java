@@ -81,7 +81,7 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
         //Only bother recalculating the start delay if the last time it was resulted in a delay
         if (this.lastStartDelay != 0) {
             this.lastStartDelay = Math.max(0, this.initialDelay - (System.currentTimeMillis() - this.initialized));
-            logger.error("Calculated additionalStartDelay of: " + this.lastStartDelay);
+            logger.debug("Calculated additionalStartDelay of: " + this.lastStartDelay);
         }
         
         return this.lastStartDelay;
@@ -91,7 +91,7 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
         final long additionalStartDelay = this.getAdditionalStartDelay();
         if (additionalStartDelay > 0) {
             final Date newStartDate = new Date(startDate.getTime() + additionalStartDelay);
-            logger.error("Updated startDate with additionalStartDelay from " + startDate + " to " + newStartDate);
+            logger.debug("Updated startDate with additionalStartDelay from " + startDate + " to " + newStartDate);
             return newStartDate;
         }
         
