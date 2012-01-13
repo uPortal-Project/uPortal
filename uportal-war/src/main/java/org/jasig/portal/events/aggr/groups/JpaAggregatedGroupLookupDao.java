@@ -50,8 +50,6 @@ import org.springframework.transaction.support.TransactionOperations;
  */
 @Repository
 public class JpaAggregatedGroupLookupDao extends BaseJpaDao implements AggregatedGroupLookupDao {
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
-    
     private CriteriaQuery<AggregatedGroupMappingImpl> findGroupMappingByServiceAndNameQuery;
     private ParameterExpression<String> groupServiceParameter;
     private ParameterExpression<String> groupNameParameter;

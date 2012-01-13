@@ -33,6 +33,8 @@ import org.hibernate.Session;
 import org.hibernate.criterion.NaturalIdentifier;
 import org.hibernate.criterion.Restrictions;
 import org.jasig.portal.utils.PrimitiveUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
@@ -42,6 +44,8 @@ import org.springframework.beans.factory.InitializingBean;
  * @version $Revision$
  */
 public abstract class BaseJpaDao implements InitializingBean {
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    
     protected abstract EntityManager getEntityManager();
     
     @Override

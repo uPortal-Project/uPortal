@@ -22,6 +22,7 @@ package org.jasig.portal.events.aggr;
 import java.util.Map;
 
 import org.jasig.portal.events.PortalEvent;
+import org.jasig.portal.events.aggr.session.EventSession;
 
 /**
  * Defines a class that aggregates events
@@ -39,9 +40,10 @@ public interface IPortalEventAggregator<E extends PortalEvent> {
      * Add the specified event to the aggregate
      * 
      * @param e The event to aggregate
+     * @param eventSession Information about the event session associated with the event
      * @param currentIntervals Information about all of the intervals the event exists in.
      */
-    void aggregateEvent(E e, Map<Interval, IntervalInfo> currentIntervals);
+    void aggregateEvent(E e, EventSession eventSession, Map<Interval, IntervalInfo> currentIntervals);
     
     /**
      * Handle crossing over an interval boundary, called after the LAST event of the interval is processed.
