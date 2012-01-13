@@ -26,23 +26,16 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
 import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
-import org.jasig.portal.portlets.groupadmin.GroupAdministrationHelper;
-import org.jasig.portal.portlets.groupselector.EntityEnum;
-import org.jasig.portal.portlets.lookup.IPersonLookupHelper;
-import org.jasig.portal.security.IAuthorizationPrincipal;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IPersonManager;
-import org.jasig.portal.services.AuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 
 /**
  * EntitiesRESTController
@@ -53,9 +46,17 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class EntitiesRESTController  {
 
-	//private static final Log log = LogFactory.getLog(FindEntityController.class);
 	private IGroupListHelper groupListHelper;
-	private IPersonManager personManager;
+
+	/**
+     * <p>For injection of the group list helper.</p>
+     * @param groupListHelper IGroupListHelper instance
+     */
+    @Autowired
+    public void setGroupListHelper(IGroupListHelper groupListHelper) {
+        this.groupListHelper = groupListHelper;
+    }
+
 
 	/**
 	 * 
@@ -65,60 +66,18 @@ public class EntitiesRESTController  {
 	 * @param entityId
 	 * @return
 	 */
+    @PostAuthorize("hasPermission(returnObject, 'VIEW')")
     @RequestMapping(value="/entities/{entityType}/{entityId}.json", method = RequestMethod.GET)
-	public ModelAndView findEntity(HttpServletRequest request,
+	public JsonEntityBean findEntity(HttpServletRequest request,
 			HttpServletResponse response,
 			@PathVariable("entityType") String entityType,
 			@PathVariable("entityId") String entityId) {
 
-		final IPerson person = personManager.getPerson(request);
-		final EntityIdentifier ei = person.getEntityIdentifier();
-	    final IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-	    
-		JsonEntityBean result = groupListHelper.getEntity(entityType, entityId, true);
+		final JsonEntityBean result = groupListHelper.getEntity(entityType, entityId, true);
+		return result;
 
-		if (result == null) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            return null;
-		}
-
-		// get the type for this entity
-		EntityEnum type = result.getEntityType();
-
-		// if the located entity is a group, check to make sure the requesting
-		// user has the view group permission
-        if (type.isGroup()
-                && !ap.hasPermission(GroupAdministrationHelper.GROUPS_OWNER,
-                        GroupAdministrationHelper.VIEW_PERMISSION,
-                        result.getPrincipalString())) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return null;
-        } 
-        
-		// if the located entity is a person, check to make sure the requesting
-		// user has the view person permission
-        else if (type.equals(EntityEnum.PERSON)
-                && !ap.hasPermission(IPersonLookupHelper.USERS_OWNER,
-                        IPersonLookupHelper.VIEW_USER_PERMISSION,
-                        result.getPrincipalString())) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return null;
-            
-		}
-
-        // TODO: check permissions for portlets
-
-		// if a valid entity was returned and all permission checks passed,
-		// return the entity as a JSON object
-    	else {
-			ModelAndView mv = new ModelAndView();
-			mv.addObject("entity", result);
-			mv.setViewName("json");
-			return mv;
-		} 
-		
 	}
-
+    
     /**
      * 
      * @param request
@@ -127,16 +86,12 @@ public class EntitiesRESTController  {
      * @param entityTypes
      * @return
      */
+    @PostFilter("hasPermission(filterObject, 'VIEW')")
     @RequestMapping(value="/entities.json", method = RequestMethod.GET)
-	public ModelAndView doSearch(HttpServletRequest request,
+	public Set<JsonEntityBean> doSearch(HttpServletRequest request,
 			HttpServletResponse response,
 			@RequestParam("q") String query,
 			@RequestParam("entityType[]") List<String> entityTypes) {
-
-    	// get the authorization principal for this user
-		final IPerson person = personManager.getPerson(request);
-		final EntityIdentifier ei = person.getEntityIdentifier();
-	    final IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
 
 	    // initialize a set of entity beans
 		Set<JsonEntityBean> results = new HashSet<JsonEntityBean>();
@@ -144,32 +99,10 @@ public class EntitiesRESTController  {
 		// search each entity type for matching entities
 		for(String entityType : entityTypes) {
 			Set<JsonEntityBean> entities = groupListHelper.search(entityType, query);
-			// filter the matching entities according to the current user's permissions
-			for (JsonEntityBean entity : entities) {
-				if (ap.hasPermission(GroupAdministrationHelper.GROUPS_OWNER, GroupAdministrationHelper.VIEW_PERMISSION, entity.getPrincipalString())) {
-					results.add(entity);
-				}
-			}
+			results.addAll(entities);
 		}
 		
-		return new ModelAndView("jsonView", "entities", results);	
+		return results;	
 	}
 
-	/**
-	 * <p>For injection of the group list helper.</p>
-	 * @param groupListHelper IGroupListHelper instance
-	 */
-	@Autowired
-	public void setGroupListHelper(IGroupListHelper groupListHelper) {
-		this.groupListHelper = groupListHelper;
-	}
-
-	/**
-	 * <p>For injection of the person manager.  Used for authorization.</p>
-	 * @param personManager IPersonManager instance
-	 */
-	@Autowired
-	public void setPersonManager(IPersonManager personManager) {
-		this.personManager = personManager;
-	}
 }

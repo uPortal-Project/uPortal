@@ -437,11 +437,10 @@
     <!-- Quicklinks
     <xsl:call-template name="quicklinks"/> -->
     
-    <!-- SAMPLE:
+    <!-- Emergency Alert -->
     <div id="portalHeaderBlock">
-    	<p>CUSTOM CONTENTS.</p>
+      <xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'alert']/parent::*"/>
     </div>
-    -->
   </xsl:template>
   <!-- ============================================ -->
     
@@ -642,6 +641,10 @@
     	<p>CUSTOM CONTENTS.</p>
     </div>
     -->
+    <!-- Tips -->
+    <div id="portalContentTopBlock">
+        <xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'tips']/parent::*"/>
+    </div>
   </xsl:template>
   <!-- ================================================= -->
   

@@ -295,8 +295,12 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
       String[] keys = findMemberGroupKeys(group);
       List<IEntityGroup> results = new ArrayList<IEntityGroup>();
       for (int i = 0; i < keys.length; i++) {
-         results.add(cacheGet(keys[i]));
-      }
+          IEntityGroup g = cacheGet(keys[i]);
+          if (g == null) {
+             log.warn("Couldn't find a group with key '" + keys[i] + "' referenced by '" + group.getKey() + "'. Please check PAGSGroupStoreConfig.xml");
+          }
+          results.add(g);
+       }
       return results.iterator();
    }
 

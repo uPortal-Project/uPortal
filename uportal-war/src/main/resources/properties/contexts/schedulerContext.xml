@@ -40,7 +40,9 @@
         <property name="allowCoreThreadTimeOut" value="true" />
     </bean>
     
-    <bean id="uPortalTaskScheduler" class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler">
+    <bean id="uPortalTaskScheduler" class="org.jasig.portal.utils.threading.DelegatingThreadPoolTaskScheduler">
+        <property name="initialDelay" value="1_MINUTES" />
+        <property name="executorService" ref="uPortalTaskExecutor" />
         <property name="poolSize" value="${org.jasig.portal.task.sched.threadPool.poolSize}" />
         <property name="threadGroupName" value="uPortal-TaskSchedulerThreadGroup" />
         <property name="threadNamePrefix" value="uPortal-TaskScheduler-" />
@@ -49,12 +51,12 @@
     
     <task:scheduled-tasks scheduler="uPortalTaskScheduler">
         <!--
-         | Prime #s are used so that over time the executions will distribute themselves fairly evenly instead
-         | of always happening on at the same time (ex: always at 33 seconds of each minute)
+         | Prime #s are used so that over time the executions will distribute themselves fairly evenly over time
+         | instead of always happening on at the same time (ex: always at 33 seconds of each minute)
          +-->
-        <task:scheduled ref="portletCookieDao" method="purgeExpiredCookies" fixed-delay="59929"/>
-        <task:scheduled ref="PortalEventDaoQueuingEventHandler" method="flush" fixed-delay="997"/>
-        <task:scheduled ref="portalEventAggregationManager" method="aggregateRawEvents" fixed-delay="59957"/>
-        <task:scheduled ref="portalEventAggregationManager" method="purgeRawEvents" fixed-delay="59971"/>
+        <task:scheduled ref="portletCookieDao" method="purgeExpiredCookies" fixed-delay="59929"/> <!-- 1 minute period -->
+        <task:scheduled ref="PortalEventDaoQueuingEventHandler" method="flush" fixed-delay="997"/> <!-- 1 second period -->
+        <task:scheduled ref="portalEventAggregationManager" method="aggregateRawEvents" fixed-delay="59957"/> <!-- 1 minute period -->
+        <task:scheduled ref="portalEventAggregationManager" method="purgeRawEvents" fixed-delay="59971"/> <!-- 1 minute period -->
     </task:scheduled-tasks>
 </beans>

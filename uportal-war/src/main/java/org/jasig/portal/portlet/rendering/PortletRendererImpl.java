@@ -528,6 +528,12 @@ public class PortletRendererImpl implements IPortletRenderer {
         	// put the captured content in the cache
         	if(shouldCache && !responseWrapper.isThresholdExceeded()) {
         		this.portletCacheControlService.cachePortletResourceOutput(portletWindowId, httpServletRequest, responseWrapper.getCachedPortletData(), cacheControl);
+        		
+        		String etag = cacheControl.getETag();
+                if (etag != null) {
+                    httpServletResponse.setHeader("ETag", etag);
+                }
+
         	}
 		}
 		catch (PortletException pe) {

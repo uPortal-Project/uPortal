@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<portlet-definition version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd" xmlns:ns2="https://source.jasig.org/schemas/uportal" xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns4="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/user" xmlns:ns5="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <title>Tips</title>
+    <name>Tips</name>
+    <fname>tips</fname>
+    <desc>Tips on using the portal</desc>
+    <type>Portlet</type>
+    <timeout>20000</timeout>
+    <portlet-descriptor>
+        <ns2:webAppName>/jasig-widget-portlets</ns2:webAppName>
+        <ns2:portletName>tips</ns2:portletName>
+    </portlet-descriptor>
+    <category>Demonstration</category>
+    <group>Everyone</group>
+    <parameter>
+        <name>hasHelp</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>highlight</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>hasAbout</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>showChrome</name>
+        <value>true</value>
+    </parameter>
+    <parameter>
+        <name>role</name>
+        <value>tips</value>
+    </parameter>
+    <parameter>
+        <name>hideFromMobile</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>alternate</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>editable</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>disableDynamicTitle</name>
+        <value>true</value>
+    </parameter>
+    <parameter>
+        <name>blockImpersonation</name>
+        <value>false</value>
+    </parameter>
+    <portlet-preference>
+        <name>tips</name>
+        <readOnly>true</readOnly>
+        <value>The Service Desk can answer technical questions at (555) 555-5555 or servicedesk@jasig.org</value>
+        <value>When using a public computer, don't forget to sign out, or close the browser, when you're done</value>
+        <value>Quarters to semesters questions? Ask your advisor or visit the Student Help Center</value>
+        <value>New portlets can be added to your layout by clicking on 'Customize'</value>
+        <value>Many portlets can be moved dragging and dropping the portlet's header</value>
+        <value>Some portlets have configurable options (click on the gear icon in their header)</value>
+        <value>You can remove an unwanted portlet by clicking on the X in the portlet's header</value>
+        <value>Some portlets have more features if you focus on them by using the arrow icon in their header</value>
+        <value>This portal has a mobile interface for iPhones and Droids (you can use uPortal from your phone)</value>
+        <value>'Customize &lt; Layouts' allows you change the number of columns on a tab</value>
+        <value>'Add Tab' lets you create your own tab on which you can put any portlets you want</value>
+        <value>The Service Desk can reset your layout</value>
+        <value>Gmail users -- you can preview your Gmail in the portal</value>
+        <value>The Weather portlet lets you add other locations, so you can dream of vacationing in Hawaii or Aspen</value>
+        <value>Bug reports are always appreciated -- use http://issues.jasig.org</value>
+        <value>The email summary portlet can read and delete messages, but not reply to, or compose new, messages</value>
+        <value>The email summary portlet can show there are attachments, but cannot show you the contents of an attachment</value>
+        <value>The email summary portlet's 'Inbox' link will take you to your email service's web-based mail client</value>
+        <value>This portal is built on uPortal, which is open-source software to which many leading universities contribute</value>
+    </portlet-preference>
+</portlet-definition>

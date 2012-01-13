@@ -38,6 +38,9 @@
         <property name="beans">
             <map>
                 <entry key="uPortal:section=Framework,name=Statistics" value-ref="portalFrameworkMBean" />
+                <entry key="uPortal:section=Framework,name=uPortalTaskExecutor" value-ref="uPortalTaskExecutor" />
+                <entry key="uPortal:section=Framework,name=uPortalTaskScheduler" value-ref="uPortalTaskScheduler" />
+                <entry key="uPortal:section=Framework,name=uPortalLockExecutor" value-ref="uPortalLockExecutor" />
                 <entry key="uPortal:section=Framework,name=PortletThreadPool" value-ref="portletThreadPool" />
                 <entry key="uPortal:section=Persistence,name=HibernateStatistics" value-ref="hibernateStatisticsMBean"/>
                 <entry key="uPortal:section=Persistence,name=RawEventsHibernateStatistics" value-ref="rawEventsHibernateStatisticsMBean"/>

@@ -119,5 +119,33 @@
             </map>
         </property>
     </bean>    
-    
+
+    <util:map id="redirectionServices">
+        <entry key="person">
+            <bean class="org.jasig.portal.redirect.PortletRedirectionUrl"
+                p:fname="directory" p:mode="VIEW" p:type="RENDER">
+                <property name="dynamicParameters">
+                    <map>
+                        <entry key="id" value="username"/>
+                    </map>
+                </property>
+                <property name="additionalParameters">
+                    <map>
+                        <entry key="action" value="findByUsername"/>
+                    </map>
+                </property>
+            </bean>
+        </entry>
+        <entry key="location">
+            <bean class="org.jasig.portal.redirect.PortletRedirectionUrl"
+                    p:fname="map" p:mode="VIEW" p:type="RENDER">
+                <property name="dynamicParameters">
+                    <map>
+                        <entry key="id" value="location"/>
+                    </map>
+                </property>
+            </bean>
+        </entry>
+    </util:map>
+        
 </beans>
