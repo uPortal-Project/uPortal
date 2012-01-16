@@ -51,7 +51,7 @@ public class JpaStylesheetUserPreferencesDao extends BaseJpaDao implements IStyl
     private static final String FIND_PREFERENCES_BY_DESCRIPTOR_PERSON_PROFILE_CACHE_REGION = StylesheetUserPreferencesImpl.class.getName() + ".query.FIND_PREFERENCES_BY_DESCRIPTOR_PERSON_PROFILE_CACHE_REGION";
     
     private CriteriaQuery<StylesheetUserPreferencesImpl> findAllPreferences;
-    private CriteriaQuery<Long> findPreferenceIdByDescriptorPersonProfile;
+    private CriteriaQuery<StylesheetUserPreferencesImpl> findPreferencesByDescriptorUserProfileQuery;
     private ParameterExpression<StylesheetDescriptorImpl> stylesheetDescriptorParameter;
     private ParameterExpression<Integer> userIdParameter;
     private ParameterExpression<Integer> profileIdParameter;
@@ -74,7 +74,7 @@ public class JpaStylesheetUserPreferencesDao extends BaseJpaDao implements IStyl
         this.profileIdParameter = cb.parameter(Integer.class, "profileId");
 
         this.findAllPreferences = this.buildFindAllPreferences(cb);
-        this.findPreferenceIdByDescriptorPersonProfile = this.buildFindPreferenceIdByDescriptorPersonProfile(cb);
+        this.findPreferencesByDescriptorUserProfileQuery = this.buildFindPreferencesByDescriptorUserProfileQuery(cb);
     }
     
     protected CriteriaQuery<StylesheetUserPreferencesImpl> buildFindAllPreferences(final CriteriaBuilder cb) {
@@ -85,19 +85,21 @@ public class JpaStylesheetUserPreferencesDao extends BaseJpaDao implements IStyl
         return criteriaQuery;
     }
     
-    protected CriteriaQuery<Long> buildFindPreferenceIdByDescriptorPersonProfile(final CriteriaBuilder cb) {
-        final CriteriaQuery<Long> query = cb.createQuery(Long.class);
-        final Root<StylesheetUserPreferencesImpl> descriptorRoot = query.from(StylesheetUserPreferencesImpl.class);
-        query.select(descriptorRoot.get(StylesheetUserPreferencesImpl_.id).alias("id"));
-        query.where(
+    protected CriteriaQuery<StylesheetUserPreferencesImpl> buildFindPreferencesByDescriptorUserProfileQuery(final CriteriaBuilder cb) {
+        final CriteriaQuery<StylesheetUserPreferencesImpl> criteriaQuery = cb.createQuery(StylesheetUserPreferencesImpl.class);
+        final Root<StylesheetUserPreferencesImpl> descriptorRoot = criteriaQuery.from(StylesheetUserPreferencesImpl.class);
+        criteriaQuery.select(descriptorRoot);
+        criteriaQuery.where(
             cb.and(
                 cb.equal(descriptorRoot.get(StylesheetUserPreferencesImpl_.userId), this.userIdParameter),
                 cb.equal(descriptorRoot.get(StylesheetUserPreferencesImpl_.stylesheetDescriptor), this.stylesheetDescriptorParameter),
                 cb.equal(descriptorRoot.get(StylesheetUserPreferencesImpl_.profileId), this.profileIdParameter)
             )
         );
-        return query;
+        
+        return criteriaQuery;
     }
+    
 
     /* (non-Javadoc)
      * @see org.jasig.portal.layout.dao.IStylesheetUserPreferencesDao#createStylesheetUserPreferences(org.jasig.portal.layout.om.IStylesheetDescriptor, org.jasig.portal.security.IPerson, org.jasig.portal.UserProfile)
@@ -149,22 +151,19 @@ public class JpaStylesheetUserPreferencesDao extends BaseJpaDao implements IStyl
         return this.getStylesheetUserPreferences(stylesheetDescriptor, person.getID(), profile.getProfileId());
     }
     
+    @SuppressWarnings("deprecation")
     @Deprecated
     @Override
     public IStylesheetUserPreferences getStylesheetUserPreferences(IStylesheetDescriptor stylesheetDescriptor, int personId, int profileId) {
-        final TypedQuery<Long> idQuery = this.createQuery(findPreferenceIdByDescriptorPersonProfile, FIND_PREFERENCES_BY_DESCRIPTOR_PERSON_PROFILE_CACHE_REGION);
-        idQuery.setParameter(this.stylesheetDescriptorParameter, (StylesheetDescriptorImpl)stylesheetDescriptor);
-        idQuery.setParameter(this.userIdParameter, personId);
-        idQuery.setParameter(this.profileIdParameter, profileId);
+        final TypedQuery<StylesheetUserPreferencesImpl> query = this.createQuery(findPreferencesByDescriptorUserProfileQuery, FIND_PREFERENCES_BY_DESCRIPTOR_PERSON_PROFILE_CACHE_REGION);
+        query.setMaxResults(1);
+        query.setParameter(this.stylesheetDescriptorParameter, (StylesheetDescriptorImpl)stylesheetDescriptor);
+        query.setParameter(this.userIdParameter, personId);
+        query.setParameter(this.profileIdParameter, profileId);
         
-        /* It is faster to retrieve an ID of preferences and later load the stylesheet preferences by id, because
-         * otherwise hibernate is unable to fetch all joined entites in one SELECT statement - it issues an additional
-         * SELECT for each joined entity. */
-        final Long id = DataAccessUtils.singleResult(idQuery.getResultList());
-        if (id != null) {
-            return this.entityManager.find(StylesheetUserPreferencesImpl.class, id);
-        }
-        return null;
+        final List<StylesheetUserPreferencesImpl> results = query.getResultList();
+        
+        return DataAccessUtils.singleResult(results);
     }
 
     /* (non-Javadoc)
