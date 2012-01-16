@@ -33,6 +33,7 @@ import org.jasig.portal.concurrency.caching.RequestCache;
 import org.jasig.portal.layout.IStylesheetUserPreferencesService;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.PortletTabIdResolver;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.portlet.om.IPortletDefinition;
@@ -168,15 +169,7 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
         final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
         final IUserLayout userLayout = userLayoutManager.getUserLayout();
         
-        final String tabId = this.xpathOperations.doWithExpression(
-                tabIdExpression, 
-                Collections.singletonMap("nodeId", layoutNodeId), 
-                new Function<XPathExpression, String>() {
-                    @Override
-                    public String apply(XPathExpression xPathExpression) {
-                        return userLayout.findNodeId(xPathExpression);
-                    }
-                });
+        final String tabId = userLayout.findNodeId(new PortletTabIdResolver(layoutNodeId));
         
         if (StringUtils.isEmpty(tabId)) {
             return Collections.emptyList();
