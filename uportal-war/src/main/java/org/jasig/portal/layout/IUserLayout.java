@@ -140,6 +140,15 @@ public interface IUserLayout {
      * @return The ID of the resolved node, null if there is no match
      */
     public String findNodeId(XPathExpression xpathExpression);
+    
+    /**
+     * This method is for the same use as {@link #findNodeId(XPathExpression)}, but since DOM traversal is much faster
+     * than XPath evaluation, sometimes it is worth to implement manual document traversing.
+     * 
+     * @param finder {@link INodeIdResolver} to use against the layout DOM.
+     * @return The ID of the resolved node, null if there is no match.
+     */
+    public String findNodeId(INodeIdResolver finder);
 
      /**
      * Returns a list of node Ids in the layout.
