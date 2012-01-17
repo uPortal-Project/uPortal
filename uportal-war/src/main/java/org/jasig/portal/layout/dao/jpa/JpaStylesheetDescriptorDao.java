@@ -19,6 +19,8 @@
 
 package org.jasig.portal.layout.dao.jpa;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -111,7 +113,7 @@ public class JpaStylesheetDescriptorDao extends BaseJpaDao implements IStyleshee
     public List<? extends IStylesheetDescriptor> getStylesheetDescriptors() {
         final TypedQuery<StylesheetDescriptorImpl> query = this.createQuery(this.findAllDescriptors, FIND_ALL_DESCRIPTORS_CACHE_REGION);
         final List<StylesheetDescriptorImpl> results = query.getResultList();
-        return results;
+        return new ArrayList<IStylesheetDescriptor>(new LinkedHashSet<IStylesheetDescriptor>(results));
     }
 
     /* (non-Javadoc)

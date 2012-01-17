@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import org.jasig.portal.concurrency.CallableWithoutResult;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.dao.IPortletEntityDao;
 import org.jasig.portal.portlet.dao.IPortletTypeDao;
@@ -91,9 +92,9 @@ public class JpaPortletDaoTest extends BaseJpaDaoTest {
 
     @Test
     public void testNoopOperations() throws Exception {
-        execute(new Callable<Object>() {
+        execute(new CallableWithoutResult() {
             @Override
-            public Object call() throws Exception {
+            protected void callWithoutResult() {
                 final IPortletDefinitionId portletDefinitionId = new PortletDefinitionIdImpl(1);
                 final IPortletDefinition nullPortDef1 = jpaPortletDefinitionDao.getPortletDefinition(portletDefinitionId);
                 assertNull(nullPortDef1);
@@ -103,17 +104,15 @@ public class JpaPortletDaoTest extends BaseJpaDaoTest {
                 
                 final Set<IPortletEntity> portEnts = jpaPortletEntityDao.getPortletEntities(new PortletDefinitionIdImpl(1));
                 assertEquals(Collections.emptySet(), portEnts);
-                
-                return null;
             }
         });
     }
 
     @Test
     public void testAllDefinitionDaoMethods() throws Exception {
-        execute(new Callable<Object>() {
+        final IPortletDefinitionId portletDefinitionId = execute(new Callable<IPortletDefinitionId>() {
             @Override
-            public Object call() throws Exception {
+            public IPortletDefinitionId call() {
                 final IPortletType channelType = jpaChannelTypeDao.createPortletType("BaseType", "foobar");
                 
                 //Create a definition
@@ -124,8 +123,16 @@ public class JpaPortletDaoTest extends BaseJpaDaoTest {
                 assertEquals(chanDef1, portDef1a);
                 
                 //Create a second definition with the same app/portlet
-                IPortletDefinition chanDef2 = jpaPortletDefinitionDao.createPortletDefinition(channelType, "fname2", "Test Portlet 2", "Test Portlet 2 Title", "/uPortal", "portletName2", true);
+                final IPortletDefinition chanDef2 = jpaPortletDefinitionDao.createPortletDefinition(channelType, "fname2", "Test Portlet 2", "Test Portlet 2 Title", "/uPortal", "portletName2", true);
+                
+                return chanDef2.getPortletDefinitionId();
+            }
+        });
         
+        execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                final IPortletDefinition chanDef2 = jpaPortletDefinitionDao.getPortletDefinitionByFname("fname2");
         
                 // Add some preferences
                 final List<IPortletPreference> prefsList2 = chanDef2.getPortletPreferences();
@@ -133,10 +140,26 @@ public class JpaPortletDaoTest extends BaseJpaDaoTest {
                 prefsList2.add(new PortletPreferenceImpl("prefName2", true, "val3", "val4"));
                 
                 jpaPortletDefinitionDao.updatePortletDefinition(chanDef2);
-                
+            }
+        });
+        
+        execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                final IPortletDefinition chanDef2 = jpaPortletDefinitionDao.getPortletDefinitionByFname("fname2");
+        
+                // verify preferences
+                final List<IPortletPreference> prefsList2 = chanDef2.getPortletPreferences();
+                assertEquals(2, prefsList2.size());
+            }
+        });
+        
+        execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
                 
                 // Check prefs, remove one and another
-                final IPortletDefinition portDef3 = jpaPortletDefinitionDao.getPortletDefinition(chanDef2.getPortletDefinitionId());
+                final IPortletDefinition portDef3 = jpaPortletDefinitionDao.getPortletDefinitionByName("Test Portlet 2");
                 final List<IPortletPreference> prefsList3 = portDef3.getPortletPreferences();
                 
                 final List<IPortletPreference> expectedPrefsList3 = new ArrayList<IPortletPreference>();
@@ -150,10 +173,15 @@ public class JpaPortletDaoTest extends BaseJpaDaoTest {
                 prefsList3.add(new PortletPreferenceImpl("prefName3", false, "val5", "val6"));
                 
                 jpaPortletDefinitionDao.updatePortletDefinition(portDef3);
-                
+            }
+        });
         
+        execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+
                 // Check prefs
-                final IPortletDefinition portDef4 = jpaPortletDefinitionDao.getPortletDefinition(portDef3.getPortletDefinitionId());
+                final IPortletDefinition portDef4 = jpaPortletDefinitionDao.getPortletDefinition(portletDefinitionId);
                 final List<IPortletPreference> prefsList4 = portDef4.getPortletPreferences();
                 
                 final List<IPortletPreference> expectedPrefsList4 = new ArrayList<IPortletPreference>();
@@ -161,8 +189,6 @@ public class JpaPortletDaoTest extends BaseJpaDaoTest {
                 expectedPrefsList4.add(new PortletPreferenceImpl("prefName3", false, "val5", "val6"));
                 
                 assertEquals(expectedPrefsList4, prefsList4);
-                
-                return null;
             }
         });
     }

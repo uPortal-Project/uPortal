@@ -20,6 +20,7 @@
 package org.jasig.portal.portlet.dao.jpa;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -247,7 +248,7 @@ public class JpaPortletDefinitionDao extends BaseJpaDao implements IPortletDefin
 	    final TypedQuery<PortletDefinitionImpl> query = this.createQuery(this.findAllPortletDefinitions, FIND_ALL_PORTLET_DEFS_CACHE_REGION);
         
         final List<PortletDefinitionImpl> portletDefinitions = query.getResultList();
-        return new ArrayList<IPortletDefinition>(portletDefinitions);
+        return new ArrayList<IPortletDefinition>(new LinkedHashSet<IPortletDefinition>(portletDefinitions));
 	}
 	
     @Override

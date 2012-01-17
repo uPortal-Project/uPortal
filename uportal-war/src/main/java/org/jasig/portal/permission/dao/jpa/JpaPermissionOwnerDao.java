@@ -20,6 +20,7 @@
 package org.jasig.portal.permission.dao.jpa;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -112,7 +113,7 @@ public class JpaPermissionOwnerDao extends BaseJpaDao implements IPermissionOwne
         final TypedQuery<PermissionOwnerImpl> query = this.createQuery(this.findAllPermissionOwners, FIND_ALL_PERMISSION_OWNERS_CACHE_REGION);
         
         final List<PermissionOwnerImpl> resultList = query.getResultList();
-        return new ArrayList<IPermissionOwner>(resultList);
+        return new ArrayList<IPermissionOwner>(new LinkedHashSet<IPermissionOwner>(resultList));
     }
 
     /*
