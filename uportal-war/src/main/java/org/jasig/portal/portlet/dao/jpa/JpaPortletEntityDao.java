@@ -28,6 +28,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
@@ -94,6 +95,7 @@ public class JpaPortletEntityDao extends BaseJpaDao implements IPortletEntityDao
         final CriteriaQuery<PortletEntityImpl> criteriaQuery = cb.createQuery(PortletEntityImpl.class);
         final Root<PortletEntityImpl> entityRoot = criteriaQuery.from(PortletEntityImpl.class);
         criteriaQuery.select(entityRoot);
+        addFetches(entityRoot);
         criteriaQuery.where(
             cb.equal(entityRoot.get(PortletEntityImpl_.portletDefinition), this.portletDefinitionParameter)
         );
@@ -105,11 +107,22 @@ public class JpaPortletEntityDao extends BaseJpaDao implements IPortletEntityDao
         final CriteriaQuery<PortletEntityImpl> criteriaQuery = cb.createQuery(PortletEntityImpl.class);
         final Root<PortletEntityImpl> entityRoot = criteriaQuery.from(PortletEntityImpl.class);
         criteriaQuery.select(entityRoot);
+        addFetches(entityRoot);
         criteriaQuery.where(
             cb.equal(entityRoot.get(PortletEntityImpl_.userId), this.userIdParameter)
         );
         
         return criteriaQuery;
+    }
+
+    /**
+     * Add all the fetches needed for completely loading the object graph
+     */
+    protected void addFetches(final Root<PortletEntityImpl> definitionRoot) {
+        definitionRoot.fetch(PortletEntityImpl_.portletPreferences, JoinType.LEFT)
+            .fetch(PortletPreferencesImpl_.portletPreferences, JoinType.LEFT)
+            .fetch(PortletPreferenceImpl_.values, JoinType.LEFT);
+        definitionRoot.fetch(PortletEntityImpl_.windowStates, JoinType.LEFT);
     }
 
     /* (non-Javadoc)

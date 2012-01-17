@@ -83,6 +83,7 @@ public class JpaPermissionOwnerDao extends BaseJpaDao implements IPermissionOwne
         final CriteriaQuery<PermissionOwnerImpl> criteriaQuery = cb.createQuery(PermissionOwnerImpl.class);
         final Root<PermissionOwnerImpl> ownerRoot = criteriaQuery.from(PermissionOwnerImpl.class);
         criteriaQuery.select(ownerRoot);
+        ownerRoot.fetch(PermissionOwnerImpl_.activities);
         
         return criteriaQuery;
     }
@@ -91,6 +92,7 @@ public class JpaPermissionOwnerDao extends BaseJpaDao implements IPermissionOwne
         final CriteriaQuery<PermissionOwnerImpl> criteriaQuery = cb.createQuery(PermissionOwnerImpl.class);
         final Root<PermissionOwnerImpl> ownerRoot = criteriaQuery.from(PermissionOwnerImpl.class);
         criteriaQuery.select(ownerRoot);
+        ownerRoot.fetch(PermissionOwnerImpl_.activities);
         criteriaQuery.where(
                 cb.equal(ownerRoot.get(PermissionOwnerImpl_.fname), this.fnameParameter)
             );

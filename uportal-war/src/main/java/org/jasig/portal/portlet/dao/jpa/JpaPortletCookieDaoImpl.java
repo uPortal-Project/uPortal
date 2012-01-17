@@ -31,6 +31,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 import javax.servlet.http.Cookie;
@@ -91,6 +92,7 @@ public class JpaPortletCookieDaoImpl extends BaseJpaDao implements IPortletCooki
         final CriteriaQuery<PortalCookieImpl> criteriaQuery = cb.createQuery(PortalCookieImpl.class);
         final Root<PortalCookieImpl> typeRoot = criteriaQuery.from(PortalCookieImpl.class);
         criteriaQuery.select(typeRoot);
+        typeRoot.fetch(PortalCookieImpl_.portletCookies, JoinType.LEFT);
         criteriaQuery.where(
             cb.equal(typeRoot.get(PortalCookieImpl_.value), this.valueParameter)
         );
@@ -102,6 +104,7 @@ public class JpaPortletCookieDaoImpl extends BaseJpaDao implements IPortletCooki
         final CriteriaQuery<PortalCookieImpl> criteriaQuery = cb.createQuery(PortalCookieImpl.class);
         final Root<PortalCookieImpl> typeRoot = criteriaQuery.from(PortalCookieImpl.class);
         criteriaQuery.select(typeRoot);
+        typeRoot.fetch(PortalCookieImpl_.portletCookies, JoinType.LEFT);
         criteriaQuery.where(
             cb.lessThanOrEqualTo(typeRoot.get(PortalCookieImpl_.expires), this.nowParameter)
         );
