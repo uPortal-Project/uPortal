@@ -334,6 +334,16 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
         
+    <servlet>
+        <servlet-name>RedirectionDispatcherServlet</servlet-name>
+        <servlet-class>org.jasig.portal.spring.web.servlet.NoMultipartDispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:properties/contexts/servlet/redirectionServletContext.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+        
     <!-- Serves static resource content from .jar files such as spring-js.jar -->
     <servlet>
         <servlet-name>Resources Servlet</servlet-name>
@@ -365,6 +375,11 @@
     <servlet-mapping>
         <servlet-name>JsonRenderingDispatcherServlet</servlet-name>
         <url-pattern>/layout.json</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>RedirectionDispatcherServlet</servlet-name>
+        <url-pattern>/s/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

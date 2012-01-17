@@ -50,6 +50,7 @@ import org.jasig.portal.layout.IFolderLocalNameResolver;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutStore;
+import org.jasig.portal.layout.PortletSubscribeIdResolver;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
@@ -1290,15 +1291,8 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
      */
     @Override
     public String getSubscribeId(String fname) {
-    	final Map<String, String> variables = Collections.singletonMap("fname", fname);
-    	
     	final Document userLayout = this.getUserLayoutDOM();
-    	final Element fnameNode = this.xpathOperations.evaluate("//channel[@fname=$fname]", variables, userLayout, XPathConstants.NODE);
-		if (fnameNode != null) {
-			return fnameNode.getAttribute("ID");
-		}
-    	
-    	return null;
+        return new PortletSubscribeIdResolver(fname).traverseDocument(userLayout);
     }
     
     public String getSubscribeId(String parentFolderId, String fname) {

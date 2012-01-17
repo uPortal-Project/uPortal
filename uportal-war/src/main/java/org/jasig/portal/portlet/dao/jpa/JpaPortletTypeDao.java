@@ -146,7 +146,6 @@ public class JpaPortletTypeDao extends BaseJpaDao implements IPortletTypeDao {
 	public IPortletType getPortletType(String name) {
         final TypedQuery<PortletTypeImpl> query = this.createQuery(this.findTypeByNameQuery, FIND_PORTLET_TYPE_BY_NAME_CACHE_REGION);
         query.setParameter(this.nameParameter, name);
-        query.setMaxResults(1);
         
         final List<PortletTypeImpl> channelTypes = query.getResultList();
         return DataAccessUtils.uniqueResult(channelTypes);

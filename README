@@ -7,7 +7,7 @@ the uPortal Confluence site http://www.ja-sig.org/wiki/display/UPC/Home
 +------------------------------------------------------------------------------+
 | Requirements                                                                 |
 +------------------------------------------------------------------------------+
-JDK 1.6 - Just a JRE is not sufficient, a full JDK is required
+JDK 1.6.0_26 or later - Just a JRE is not sufficient, a full JDK is required
 Servlet 2.5 Container - Tomcat 6.0 is recommended, there some configuration
     changes that must be made for Tomcat 6.0 which are documented in the uPortal
     manual. https://wiki.jasig.org/display/UPM40/Installing+Tomcat

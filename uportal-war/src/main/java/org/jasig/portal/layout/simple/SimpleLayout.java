@@ -33,6 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.IUserLayout;
+import org.jasig.portal.layout.INodeIdResolver;
 import org.jasig.portal.layout.dlm.DistributedUserLayout;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
@@ -192,6 +193,11 @@ public class SimpleLayout implements IUserLayout {
         catch (XPathExpressionException e) {
             throw new PortalException("Exception while executing XPathExpression: " + xpathExpression, e);
         }
+    }
+    
+    @Override
+    public String findNodeId(INodeIdResolver finder) {
+        return finder.traverseDocument(this.layout);
     }
 
     @Override

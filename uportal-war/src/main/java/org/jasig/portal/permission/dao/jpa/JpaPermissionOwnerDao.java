@@ -20,6 +20,7 @@
 package org.jasig.portal.permission.dao.jpa;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -83,6 +84,7 @@ public class JpaPermissionOwnerDao extends BaseJpaDao implements IPermissionOwne
         final CriteriaQuery<PermissionOwnerImpl> criteriaQuery = cb.createQuery(PermissionOwnerImpl.class);
         final Root<PermissionOwnerImpl> ownerRoot = criteriaQuery.from(PermissionOwnerImpl.class);
         criteriaQuery.select(ownerRoot);
+        ownerRoot.fetch(PermissionOwnerImpl_.activities);
         
         return criteriaQuery;
     }
@@ -91,6 +93,7 @@ public class JpaPermissionOwnerDao extends BaseJpaDao implements IPermissionOwne
         final CriteriaQuery<PermissionOwnerImpl> criteriaQuery = cb.createQuery(PermissionOwnerImpl.class);
         final Root<PermissionOwnerImpl> ownerRoot = criteriaQuery.from(PermissionOwnerImpl.class);
         criteriaQuery.select(ownerRoot);
+        ownerRoot.fetch(PermissionOwnerImpl_.activities);
         criteriaQuery.where(
                 cb.equal(ownerRoot.get(PermissionOwnerImpl_.fname), this.fnameParameter)
             );
@@ -110,7 +113,7 @@ public class JpaPermissionOwnerDao extends BaseJpaDao implements IPermissionOwne
         final TypedQuery<PermissionOwnerImpl> query = this.createQuery(this.findAllPermissionOwners, FIND_ALL_PERMISSION_OWNERS_CACHE_REGION);
         
         final List<PermissionOwnerImpl> resultList = query.getResultList();
-        return new ArrayList<IPermissionOwner>(resultList);
+        return new ArrayList<IPermissionOwner>(new LinkedHashSet<IPermissionOwner>(resultList));
     }
 
     /*
@@ -145,7 +148,6 @@ public class JpaPermissionOwnerDao extends BaseJpaDao implements IPermissionOwne
     public IPermissionOwner getPermissionOwner(String fname){
         final TypedQuery<PermissionOwnerImpl> query = this.createQuery(this.findPermissionOwnerByFname, FIND_PERMISSION_OWNER_BY_FNAME_CACHE_REGION);
         query.setParameter(this.fnameParameter, fname);
-        query.setMaxResults(1);
         
         final List<PermissionOwnerImpl> owners = query.getResultList();
         final IPermissionOwner owner = DataAccessUtils.uniqueResult(owners);

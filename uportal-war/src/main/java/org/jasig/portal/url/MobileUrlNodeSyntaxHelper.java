@@ -24,6 +24,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.jasig.portal.concurrency.caching.RequestCache;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
@@ -104,6 +105,7 @@ public class MobileUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IUrlNodeSyntaxHelper#getFolderNameForPortlet(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindowId)
      */
+    @RequestCache
     @Override
     public String getFolderNameForPortlet(HttpServletRequest request, IPortletWindowId portletWindowId) {
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
@@ -120,6 +122,7 @@ public class MobileUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
     /* (non-Javadoc)
 	 * @see org.jasig.portal.url.IUrlNodeSyntaxHelper#getPortletForFolderName(javax.servlet.http.HttpServletRequest, java.lang.String, java.lang.String)
 	 */
+    @RequestCache
 	@Override
 	public IPortletWindowId getPortletForFolderName(HttpServletRequest request, String targetedLayoutNodeId, String folderName) {
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
