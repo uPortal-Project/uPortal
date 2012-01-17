@@ -489,14 +489,6 @@
         eternal="false" maxElementsInMemory="15000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <!-- 
-     | Caches queries by user & subscribe ID for PortletEntityImpl objects
-     | - 1 x subscribed portlet x user
-     | - replicated by invalidation
-     +-->
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl.query.FIND_PORTLET_ENT_BY_CHAN_SUB_AND_USER"
-        eternal="false" maxElementsInMemory="15000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <!-- 
      | Caches queries by portlet definition id for PortletEntityImpl objects
      | - 1 x portlet definition
      | - replicated by invalidation

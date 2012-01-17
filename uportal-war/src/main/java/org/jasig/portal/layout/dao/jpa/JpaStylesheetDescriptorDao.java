@@ -19,6 +19,8 @@
 
 package org.jasig.portal.layout.dao.jpa;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -26,6 +28,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
@@ -83,6 +86,9 @@ public class JpaStylesheetDescriptorDao extends BaseJpaDao implements IStyleshee
         final CriteriaQuery<StylesheetDescriptorImpl> criteriaQuery = cb.createQuery(StylesheetDescriptorImpl.class);
         final Root<StylesheetDescriptorImpl> descriptorRoot = criteriaQuery.from(StylesheetDescriptorImpl.class);
         criteriaQuery.select(descriptorRoot);
+        descriptorRoot.fetch(StylesheetDescriptorImpl_.layoutAttributes, JoinType.LEFT);
+        descriptorRoot.fetch(StylesheetDescriptorImpl_.outputProperties, JoinType.LEFT);
+        descriptorRoot.fetch(StylesheetDescriptorImpl_.stylesheetParameters, JoinType.LEFT);
         criteriaQuery.where(
             cb.equal(descriptorRoot.get(StylesheetDescriptorImpl_.name), this.nameParameter)
         );
@@ -107,7 +113,7 @@ public class JpaStylesheetDescriptorDao extends BaseJpaDao implements IStyleshee
     public List<? extends IStylesheetDescriptor> getStylesheetDescriptors() {
         final TypedQuery<StylesheetDescriptorImpl> query = this.createQuery(this.findAllDescriptors, FIND_ALL_DESCRIPTORS_CACHE_REGION);
         final List<StylesheetDescriptorImpl> results = query.getResultList();
-        return results;
+        return new ArrayList<IStylesheetDescriptor>(new LinkedHashSet<IStylesheetDescriptor>(results));
     }
 
     /* (non-Javadoc)
@@ -128,7 +134,7 @@ public class JpaStylesheetDescriptorDao extends BaseJpaDao implements IStyleshee
         query.setParameter(this.nameParameter, name);
         
         final List<StylesheetDescriptorImpl> results = query.getResultList();
-        return DataAccessUtils.singleResult(results);
+        return DataAccessUtils.uniqueResult(results);
     }
 
     /* (non-Javadoc)

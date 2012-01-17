@@ -94,7 +94,6 @@ public class FragmentDefinitionDao extends BaseJpaDao implements IFragmentDefini
     public FragmentDefinition getFragmentDefinition(String name) {
         final TypedQuery<FragmentDefinition> query = this.createQuery(this.findFragmentByNameQuery, FIND_FRAGMENT_BY_NAME_CACHE_REGION);
         query.setParameter(this.nameParameter, name);
-        query.setMaxResults(1);
         
         final List<FragmentDefinition> list = query.getResultList();
         final FragmentDefinition rslt = DataAccessUtils.uniqueResult(list);

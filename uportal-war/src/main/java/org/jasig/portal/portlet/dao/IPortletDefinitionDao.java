@@ -55,7 +55,7 @@ public interface IPortletDefinitionDao {
     
     public IPortletDefinition getPortletDefinitionByFname(String fname);
 
-    public IPortletDefinition getPortletDefinitionByName(String fname);
+    public IPortletDefinition getPortletDefinitionByName(String name);
 
     public List<IPortletDefinition> getPortletDefinitions();
 

@@ -134,7 +134,6 @@ public class JpaUserFragmentSubscriptionDaoImpl extends BaseJpaDao implements IU
                 FIND_USER_FRAGMENT_INFO_BY_PERSON_CACHE_AND_OWNER_CACHE_REGION);
         query.setParameter(this.userIdParameter, person.getID());
         query.setParameter(this.fragmentOwnerParameter, fragmentOwner.getUserName());
-        query.setMaxResults(1);
 
         final List<UserFragmentSubscriptionImpl> fragmentSubscriptions = query.getResultList();
         return DataAccessUtils.uniqueResult(fragmentSubscriptions);

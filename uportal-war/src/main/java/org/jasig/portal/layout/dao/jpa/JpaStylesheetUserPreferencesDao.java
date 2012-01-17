@@ -81,6 +81,7 @@ public class JpaStylesheetUserPreferencesDao extends BaseJpaDao implements IStyl
         final CriteriaQuery<StylesheetUserPreferencesImpl> criteriaQuery = cb.createQuery(StylesheetUserPreferencesImpl.class);
         final Root<StylesheetUserPreferencesImpl> descriptorRoot = criteriaQuery.from(StylesheetUserPreferencesImpl.class);
         criteriaQuery.select(descriptorRoot);
+        addFetches(descriptorRoot);
         
         return criteriaQuery;
     }
@@ -89,6 +90,7 @@ public class JpaStylesheetUserPreferencesDao extends BaseJpaDao implements IStyl
         final CriteriaQuery<StylesheetUserPreferencesImpl> criteriaQuery = cb.createQuery(StylesheetUserPreferencesImpl.class);
         final Root<StylesheetUserPreferencesImpl> descriptorRoot = criteriaQuery.from(StylesheetUserPreferencesImpl.class);
         criteriaQuery.select(descriptorRoot);
+        addFetches(descriptorRoot);
         criteriaQuery.where(
             cb.and(
                 cb.equal(descriptorRoot.get(StylesheetUserPreferencesImpl_.userId), this.userIdParameter),
@@ -98,6 +100,15 @@ public class JpaStylesheetUserPreferencesDao extends BaseJpaDao implements IStyl
         );
         
         return criteriaQuery;
+    }
+
+    /**
+     * Add the needed fetches to a critera query
+     */
+    protected void addFetches(final Root<StylesheetUserPreferencesImpl> descriptorRoot) {
+        descriptorRoot.fetch(StylesheetUserPreferencesImpl_.layoutAttributes);
+        descriptorRoot.fetch(StylesheetUserPreferencesImpl_.outputProperties);
+        descriptorRoot.fetch(StylesheetUserPreferencesImpl_.parameters);
     }
     
 
@@ -156,14 +167,13 @@ public class JpaStylesheetUserPreferencesDao extends BaseJpaDao implements IStyl
     @Override
     public IStylesheetUserPreferences getStylesheetUserPreferences(IStylesheetDescriptor stylesheetDescriptor, int personId, int profileId) {
         final TypedQuery<StylesheetUserPreferencesImpl> query = this.createQuery(findPreferencesByDescriptorUserProfileQuery, FIND_PREFERENCES_BY_DESCRIPTOR_PERSON_PROFILE_CACHE_REGION);
-        query.setMaxResults(1);
         query.setParameter(this.stylesheetDescriptorParameter, (StylesheetDescriptorImpl)stylesheetDescriptor);
         query.setParameter(this.userIdParameter, personId);
         query.setParameter(this.profileIdParameter, profileId);
         
         final List<StylesheetUserPreferencesImpl> results = query.getResultList();
         
-        return DataAccessUtils.singleResult(results);
+        return DataAccessUtils.uniqueResult(results);
     }
 
     /* (non-Javadoc)
