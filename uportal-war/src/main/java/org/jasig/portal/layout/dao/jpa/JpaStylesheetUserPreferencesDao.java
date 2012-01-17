@@ -167,14 +167,13 @@ public class JpaStylesheetUserPreferencesDao extends BaseJpaDao implements IStyl
     @Override
     public IStylesheetUserPreferences getStylesheetUserPreferences(IStylesheetDescriptor stylesheetDescriptor, int personId, int profileId) {
         final TypedQuery<StylesheetUserPreferencesImpl> query = this.createQuery(findPreferencesByDescriptorUserProfileQuery, FIND_PREFERENCES_BY_DESCRIPTOR_PERSON_PROFILE_CACHE_REGION);
-        query.setMaxResults(1);
         query.setParameter(this.stylesheetDescriptorParameter, (StylesheetDescriptorImpl)stylesheetDescriptor);
         query.setParameter(this.userIdParameter, personId);
         query.setParameter(this.profileIdParameter, profileId);
         
         final List<StylesheetUserPreferencesImpl> results = query.getResultList();
         
-        return DataAccessUtils.singleResult(results);
+        return DataAccessUtils.uniqueResult(results);
     }
 
     /* (non-Javadoc)

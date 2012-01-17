@@ -132,7 +132,7 @@ public class JpaStylesheetDescriptorDao extends BaseJpaDao implements IStyleshee
         query.setParameter(this.nameParameter, name);
         
         final List<StylesheetDescriptorImpl> results = query.getResultList();
-        return DataAccessUtils.singleResult(results);
+        return DataAccessUtils.uniqueResult(results);
     }
 
     /* (non-Javadoc)

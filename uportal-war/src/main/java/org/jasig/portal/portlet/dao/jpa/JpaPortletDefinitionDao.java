@@ -190,7 +190,6 @@ public class JpaPortletDefinitionDao extends BaseJpaDao implements IPortletDefin
     public IPortletDefinition getPortletDefinitionByFname(String fname) {
 	    final TypedQuery<PortletDefinitionImpl> query = this.createQuery(this.findDefinitionByFnameQuery, FIND_PORTLET_DEF_BY_FNAME_CACHE_REGION);
         query.setParameter(this.fnameParameter, fname);
-        query.setMaxResults(1);
         
         final List<PortletDefinitionImpl> portletDefinitions = query.getResultList();
         return DataAccessUtils.uniqueResult(portletDefinitions);
@@ -201,7 +200,6 @@ public class JpaPortletDefinitionDao extends BaseJpaDao implements IPortletDefin
     public IPortletDefinition getPortletDefinitionByName(String name) {
         final TypedQuery<PortletDefinitionImpl> query = this.createQuery(this.findDefinitionByNameQuery, FIND_PORTLET_DEF_BY_NAME_CACHE_REGION);
         query.setParameter(this.nameParameter, name);
-        query.setMaxResults(1);
         
         final List<PortletDefinitionImpl> portletDefinitions = query.getResultList();
         return DataAccessUtils.uniqueResult(portletDefinitions);

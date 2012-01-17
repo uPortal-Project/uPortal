@@ -147,7 +147,6 @@ public class JpaPermissionOwnerDao extends BaseJpaDao implements IPermissionOwne
     public IPermissionOwner getPermissionOwner(String fname){
         final TypedQuery<PermissionOwnerImpl> query = this.createQuery(this.findPermissionOwnerByFname, FIND_PERMISSION_OWNER_BY_FNAME_CACHE_REGION);
         query.setParameter(this.fnameParameter, fname);
-        query.setMaxResults(1);
         
         final List<PermissionOwnerImpl> owners = query.getResultList();
         final IPermissionOwner owner = DataAccessUtils.uniqueResult(owners);

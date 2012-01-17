@@ -93,6 +93,20 @@ public class JpaStylesheetDescriptorDaoTest extends BaseJpaDaoTest {
                 
                 assertNotSame(-1, stylesheetDescriptor.getId());
                 
+                StylesheetParameterDescriptorImpl ssp = new StylesheetParameterDescriptorImpl("ssp1", Scope.PERSISTENT);
+                ssp.setDefaultValue("value1");
+                stylesheetDescriptor.setStylesheetParameterDescriptor(ssp);
+                
+                ssp = new StylesheetParameterDescriptorImpl("ssp2", Scope.PERSISTENT);
+                ssp.setDefaultValue("value2");
+                stylesheetDescriptor.setStylesheetParameterDescriptor(ssp);
+                
+                ssp = new StylesheetParameterDescriptorImpl("ssp3", Scope.PERSISTENT);
+                ssp.setDefaultValue("value3");
+                stylesheetDescriptor.setStylesheetParameterDescriptor(ssp);
+                
+                stylesheetDescriptorDao.updateStylesheetDescriptor(stylesheetDescriptor);
+                
                 return stylesheetDescriptor.getName();
             }
         });

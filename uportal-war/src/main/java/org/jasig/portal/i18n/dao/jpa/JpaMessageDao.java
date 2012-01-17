@@ -165,7 +165,6 @@ public class JpaMessageDao extends BaseJpaDao implements IMessageDao {
                                                       FIND_MESSAGE_BY_CODE_AND_LOCALE_CACHE_REGION);
         query.setParameter(this.codeParameter, code);
         query.setParameter(this.localeParameter, locale);
-        query.setMaxResults(1);
         
         final List<MessageImpl> messages = query.getResultList();
         return DataAccessUtils.uniqueResult(messages);

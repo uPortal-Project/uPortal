@@ -152,7 +152,6 @@ public class JpaPortletCookieDaoImpl extends BaseJpaDao implements IPortletCooki
 	    final TypedQuery<PortalCookieImpl> query = this.createQuery(this.findPortalCookieByValueQuery, FIND_COOKIE_BY_VALUE_CACHE_REGION);
 	    
 		query.setParameter(this.valueParameter, portalCookieValue);
-		query.setMaxResults(1);
         
 		final List<PortalCookieImpl> results = query.getResultList();
 		return DataAccessUtils.uniqueResult(results);
