@@ -46,6 +46,13 @@
 
         <dependency>
             <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
+            <artifactId>CampusLifePortlets</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
             <artifactId>CoursesPortlet</artifactId>
             <version>${project.version}</version>
             <type>war</type>
@@ -192,6 +199,12 @@
                             <artifactId>CalendarPortlet</artifactId>
                             <bundleFileName>CalendarPortlet.war</bundleFileName>
                             <contextRoot>/CalendarPortlet</contextRoot>
+                        </webModule>
+                        <webModule>
+                            <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
+                            <artifactId>CampusLifePortlets</artifactId>
+                            <bundleFileName>CampusLifePortlets.war</bundleFileName>
+                            <contextRoot>/CampusLifePortlets</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.jasig.umobile.server.portlets-overlay</groupId>

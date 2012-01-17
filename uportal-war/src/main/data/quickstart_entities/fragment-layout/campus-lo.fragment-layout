@@ -33,13 +33,16 @@
           <name>width</name>
           <value>40%</value>
         </structure-attribute>
+        <channel unremovable="dining" immutable="" hidden="" fname="map"/>
+        <channel unremovable="computer-labs" immutable="" hidden="" fname="map"/>
       </column>
       <column unremovable="N" immutable="N" hidden="N" name="Column 2">
         <structure-attribute type="folder">
           <name>width</name>
           <value>60%</value>
         </structure-attribute>
-        <channel unremovable="" immutable="" hidden="" fname="google-maps-portlet"/>
+        <channel unremovable="laundry" immutable="" hidden="" fname="map"/>
+        <channel unremovable="athletics" immutable="" hidden="" fname="map"/>
       </column>
     </tab>
   </root>

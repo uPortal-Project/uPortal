@@ -18,7 +18,7 @@
         <!-- ===== Compile Time Dependencies ============================== -->
         <dependency>
             <groupId>org.jasig.portlet.courses</groupId>
-            <artifactId>CoursesPortlet</artifactId>
+            <artifactId>courses-portlet-webapp</artifactId>
             <version>${CoursesPortlet.version}</version>
             <type>war</type>
         </dependency>

@@ -32,6 +32,7 @@
           <value>50%</value>
         </structure-attribute>
         <channel fname="news" unremovable="" hidden="" immutable=""/>
+        <channel fname="athletics" unremovable="" hidden="" immutable=""/>
       </folder>
       <folder hidden="false" immutable="false" name="Column" type="regular" unremovable="false">
         <structure-attribute>
@@ -47,14 +48,25 @@
       <folder hidden="false" immutable="false" name="Column" type="regular" unremovable="false">
         <structure-attribute>
           <name>width</name>
-          <value>40%</value>
+          <value>60%</value>
         </structure-attribute>
         <channel fname="directory" unremovable="" hidden="" immutable=""/>
+        <channel fname="dining" unremovable="" hidden="" immutable=""/>
       </folder>
       <folder hidden="false" immutable="false" name="Column" type="regular" unremovable="false">
         <structure-attribute>
           <name>width</name>
-          <value>60%</value>
+          <value>40%</value>
+        </structure-attribute>
+        <channel fname="laundry" unremovable="" hidden="" immutable=""/>
+        <channel fname="computer-labs" unremovable="" hidden="" immutable=""/>
+      </folder>
+  </folder>
+  <folder hidden="false" immutable="false" name="Map" type="regular" unremovable="false">
+      <folder hidden="false" immutable="false" name="Column" type="regular" unremovable="false">
+        <structure-attribute>
+          <name>width</name>
+          <value>100%</value>
         </structure-attribute>
         <channel fname="map" unremovable="" hidden="" immutable=""/>
       </folder>

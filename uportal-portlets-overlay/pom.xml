@@ -18,6 +18,7 @@
     <modules>
         <module>BookmarksPortlet</module>
         <module>CalendarPortlet</module>
+        <module>CampusLifePortlets</module>
         <module>cas-proxy-test-portlet</module>
         <module>CoursesPortlet</module>
         <module>email-preview</module>
