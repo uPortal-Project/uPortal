@@ -26,8 +26,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.PostLoad;
 import javax.persistence.PostPersist;
 import javax.persistence.PostUpdate;
@@ -39,7 +37,6 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.Validate;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.events.aggr.AcademicTermDetails;
@@ -53,7 +50,6 @@ import org.joda.time.ReadableInstant;
  */
 @Entity
 @Table(name = "UP_ACADEMIC_TERM_DETAILS")
-@Inheritance(strategy=InheritanceType.JOINED)
 @SequenceGenerator(
         name="UP_ACADEMIC_TERM_DETAILS_GEN",
         sequenceName="UP_ACADEMIC_TERM_DETAILS_SEQ",
@@ -64,7 +60,6 @@ import org.joda.time.ReadableInstant;
         pkColumnValue="UP_ACADEMIC_TERM_DETAILS_PROP",
         allocationSize=1
     )
-@Immutable
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class AcademicTermDetailsImpl implements AcademicTermDetails, Serializable {
@@ -79,15 +74,15 @@ public class AcademicTermDetailsImpl implements AcademicTermDetails, Serializabl
     @NaturalId
     @Column(name="TERM_START", nullable=false)
     @Type(type="dateTime")
-    private final DateTime start;
+    private DateTime start;
     
     @NaturalId
     @Column(name="TERM_END", nullable=false)
     @Type(type="dateTime")
-    private final DateTime end;
+    private DateTime end;
 
     @Column(name="TERM_NAME", nullable=false)
-    private final String termName;
+    private String termName;
     
     @Transient
     private DateMidnight startDateMidnight;
@@ -102,7 +97,7 @@ public class AcademicTermDetailsImpl implements AcademicTermDetails, Serializabl
         this.termName = null;
     }
     
-    AcademicTermDetailsImpl(DateMidnight start, DateMidnight end, String termName) {
+    public AcademicTermDetailsImpl(DateMidnight start, DateMidnight end, String termName) {
         Validate.notNull(start);
         Validate.notNull(end);
         Validate.notNull(termName);
@@ -128,15 +123,33 @@ public class AcademicTermDetailsImpl implements AcademicTermDetails, Serializabl
     public String getTermName() {
         return this.termName;
     }
+    
+    @Override
+    public void setTermName(String termName) {
+        Validate.notNull(termName);
+        this.termName = termName;
+    }
 
     @Override
     public DateMidnight getStart() {
         return this.startDateMidnight;
     }
+    
+    @Override
+    public void setStart(DateMidnight start) {
+        this.startDateMidnight = start;
+        this.start = start.toDateTime();
+    }
 
     @Override
     public DateMidnight getEnd() {
         return this.endDateMidnight;
+    }
+
+    @Override
+    public void setEnd(DateMidnight end) {
+        this.endDateMidnight = end;
+        this.end = end.toDateTime();
     }
     
     @Override

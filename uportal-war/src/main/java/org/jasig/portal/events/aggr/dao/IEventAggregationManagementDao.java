@@ -19,7 +19,17 @@
 
 package org.jasig.portal.events.aggr.dao;
 
+import java.util.Set;
+import java.util.SortedSet;
+
+import org.jasig.portal.events.PortalEvent;
+import org.jasig.portal.events.aggr.AcademicTermDetails;
+import org.jasig.portal.events.aggr.AggregatedGroupConfig;
+import org.jasig.portal.events.aggr.AggregatedIntervalConfig;
 import org.jasig.portal.events.aggr.IEventAggregatorStatus;
+import org.jasig.portal.events.aggr.IPortalEventAggregator;
+import org.jasig.portal.events.aggr.QuarterDetails;
+import org.joda.time.DateMidnight;
 
 /**
  * Operations central to the management of portal event aggregation
@@ -28,9 +38,96 @@ import org.jasig.portal.events.aggr.IEventAggregatorStatus;
  * @version $Revision$
  */
 public interface IEventAggregationManagementDao {
+    /**
+     * Get the aggregation status for the specified processing type
+     */
     IEventAggregatorStatus getEventAggregatorStatus(IEventAggregatorStatus.ProcessingType processingType);
     
-    IEventAggregatorStatus createEventAggregatorStatus(IEventAggregatorStatus.ProcessingType processingType);
-    
+    /**
+     * Update changes to the aggregation status object
+     */
     void updateEventAggregatorStatus(IEventAggregatorStatus eventAggregatorStatus);
+
+    
+    
+    /**
+     * Default group includes/excludes, applied to all aggregators that do not have specific configurations.
+     */
+    AggregatedGroupConfig getDefaultAggregatedGroupConfig();
+    
+    /**
+     * Get the aggregated group configuration for the specified aggregator
+     */
+    AggregatedGroupConfig getAggregatedGroupConfig(Class<? extends IPortalEventAggregator> aggregatorType);
+    
+    /**
+     * Create config for specified aggregator
+     */
+    AggregatedGroupConfig createAggregatedGroupConfig(Class<? extends IPortalEventAggregator> aggregatorType);
+    
+    /**
+     * Store changes made to the specified config
+     */
+    void updateAggregatedGroupConfig(AggregatedGroupConfig aggregatedGroupConfig);
+    
+    /**
+     * Delete the specified configuration
+     */
+    void deleteAggregatedGroupConfig(AggregatedGroupConfig aggregatedGroupConfig);
+    
+    
+    
+    /**
+     * Default interval includes/excludes, applied to all aggregators that do not have specific configurations.
+     */
+    AggregatedIntervalConfig getDefaultAggregatedIntervalConfig();
+    
+    /**
+     * Get the aggregated interval configuration for the specified aggregator
+     */
+    AggregatedIntervalConfig getAggregatedIntervalConfig(Class<? extends IPortalEventAggregator> aggregatorType);
+    
+    /**
+     * Create config for specified aggregator
+     */
+    AggregatedIntervalConfig createAggregatedIntervalConfig(Class<? extends IPortalEventAggregator> aggregatorType);
+    
+    /**
+     * Store changes made to the specified config
+     */
+    void updateAggregatedIntervalConfig(AggregatedIntervalConfig aggregatedIntervalConfig);
+    
+    /**
+     * Delete the specified configuration
+     */
+    void deleteAggregatedIntervalConfig(AggregatedIntervalConfig aggregatedIntervalConfig);
+    
+    
+    
+    /**
+     * The configured quarter details
+     */
+    SortedSet<QuarterDetails> getQuartersDetails();
+    
+    /**
+     * Erase the existing quarter configuration and use the provided.
+     * @param quarterDetails Must contain four sequential quarters with no gaps between dates
+     */
+    void setQuarterDetails(Set<QuarterDetails> quarterDetails);
+    
+    /**
+     * The currently configured academic terms
+     */
+    SortedSet<AcademicTermDetails> getAcademicTermDetails();
+    
+    /**
+     * Adds a new academic term, if the term overlaps with an existing term an exception
+     * will be thrown.
+     */
+    void addAcademicTermDetails(DateMidnight start, DateMidnight end, String termName);
+    
+    /**
+     * Update the specified term details
+     */
+    void updateAcademicTermDetails(AcademicTermDetails academicTermDetails);
 }

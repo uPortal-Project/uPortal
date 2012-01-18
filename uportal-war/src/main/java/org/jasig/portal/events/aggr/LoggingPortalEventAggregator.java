@@ -22,6 +22,7 @@ package org.jasig.portal.events.aggr;
 import java.util.Map;
 
 import org.jasig.portal.events.PortalEvent;
+import org.jasig.portal.events.aggr.session.EventSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -40,7 +41,7 @@ public class LoggingPortalEventAggregator implements IPortalEventAggregator<Port
     }
 
     @Override
-    public void aggregateEvent(PortalEvent e, Map<Interval, IntervalInfo> currentIntervals) {
+    public void aggregateEvent(PortalEvent e, EventSession eventSession, Map<Interval, IntervalInfo> currentIntervals) {
         logger.debug("EVENT  : {}", e);
     }
 

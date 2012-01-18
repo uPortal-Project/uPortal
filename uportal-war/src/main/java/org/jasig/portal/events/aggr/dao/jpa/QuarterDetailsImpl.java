@@ -26,8 +26,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -50,7 +48,6 @@ import org.joda.time.ReadableInstant;
  */
 @Entity
 @Table(name = "UP_QUARTER_DETAILS")
-@Inheritance(strategy=InheritanceType.JOINED)
 @SequenceGenerator(
         name="UP_QUARTER_DETAILS_GEN",
         sequenceName="UP_QUARTER_DETAILS_SEQ",
@@ -94,7 +91,7 @@ public class QuarterDetailsImpl implements QuarterDetails, Serializable {
         this.quarterId = -1;
     }
     
-    QuarterDetailsImpl(MonthDay start, MonthDay end, int quarterId) {
+    public QuarterDetailsImpl(MonthDay start, MonthDay end, int quarterId) {
         Validate.notNull(start);
         Validate.notNull(end);
         if (start.isEqual(end)) {

@@ -26,8 +26,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -35,7 +33,6 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
@@ -49,7 +46,6 @@ import org.joda.time.DateTime;
  */
 @Entity
 @Table(name = "UP_DATE_DIMENSION")
-@Inheritance(strategy=InheritanceType.JOINED)
 @SequenceGenerator(
         name="UP_DATE_DIMENSION_GEN",
         sequenceName="UP_DATE_DIMENSION_SEQ",
@@ -60,7 +56,6 @@ import org.joda.time.DateTime;
         pkColumnValue="UP_DATE_DIMENSION_PROP",
         allocationSize=1
     )
-@Immutable
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class DateDimensionImpl implements DateDimension, Serializable {
@@ -72,33 +67,33 @@ public class DateDimensionImpl implements DateDimension, Serializable {
     private final long id;
     
     @Index(name = "IDX_UP_DD_FULL_DATE")
-    @Column(name="DD_FULL_DATE", nullable=false)
+    @Column(name="DD_FULL_DATE", nullable=false, updatable=false)
     @Type(type = "dateTime")
     private final DateTime fullDate;
     
     @NaturalId
-    @Column(name="DD_YEAR", nullable=false)
+    @Column(name="DD_YEAR", nullable=false, updatable=false)
     private final int year;
 
     @NaturalId
-    @Column(name="DD_MONTH", nullable=false)
+    @Column(name="DD_MONTH", nullable=false, updatable=false)
     private final int month;
 
     @NaturalId
-    @Column(name="DD_DAY", nullable=false)
+    @Column(name="DD_DAY", nullable=false, updatable=false)
     private final int day;
     
     @Index(name = "IDX_UP_DD_WEEK")
-    @Column(name="DD_WEEK", nullable=false)
+    @Column(name="DD_WEEK", nullable=false, updatable=false)
     private final int week;
     
     @Index(name = "IDX_UP_DD_QUARTER")
     @Column(name="DD_QUARTER", nullable=false)
-    private final int quarter;
+    private int quarter;
     
     @Index(name = "IDX_UP_DD_TERM")
     @Column(name="DD_TERM", length=200)
-    private final String term;
+    private String term;
     
     @Transient
     private int hashCode = 0;

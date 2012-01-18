@@ -24,6 +24,8 @@ import static org.junit.Assert.assertEquals;
 import java.util.Iterator;
 import java.util.SortedSet;
 
+import org.jasig.portal.events.aggr.EventDateTimeUtils;
+import org.jasig.portal.events.aggr.QuarterDetails;
 import org.joda.time.DateTime;
 import org.joda.time.MonthDay;
 import org.junit.Test;
@@ -38,15 +40,15 @@ public class QuarterDetailsImplTest {
     
     @Test
     public void testOrder() {
-        SortedSet<QuarterDetailsImpl> quarters = createStandardQuarters();
+        SortedSet<QuarterDetails> quarters = createStandardQuarters();
         verifyOrder(quarters);
         
         quarters = createOffsetQuarters();
         verifyOrder(quarters);
     }
 
-    protected void verifyOrder(SortedSet<QuarterDetailsImpl> quarters) {
-        final Iterator<QuarterDetailsImpl> itr = quarters.iterator();
+    protected void verifyOrder(SortedSet<QuarterDetails> quarters) {
+        final Iterator<QuarterDetails> itr = quarters.iterator();
         assertEquals(0, itr.next().getQuarterId());
         assertEquals(1, itr.next().getQuarterId());
         assertEquals(2, itr.next().getQuarterId());
@@ -55,7 +57,7 @@ public class QuarterDetailsImplTest {
     
     @Test
     public void testContains() {
-        SortedSet<QuarterDetailsImpl> quarters = createStandardQuarters();
+        SortedSet<QuarterDetails> quarters = createStandardQuarters();
         
         verifyContains(new DateTime(2012, 1, 1, 0, 0),              quarters, true,  false, false, false);
         verifyContains(new DateTime(2012, 2, 29, 15, 48),           quarters, true,  false, false, false);
@@ -72,16 +74,23 @@ public class QuarterDetailsImplTest {
         verifyContains(new DateTime(2012, 8, 29, 15, 48),           quarters, false, true,  false, false);
         verifyContains(new DateTime(2012, 12, 31, 23, 59, 59, 999), quarters, false, false, true,  false);
     }
-    protected void verifyContains(DateTime dt, SortedSet<QuarterDetailsImpl> quarters, boolean... contains) {
-        final Iterator<QuarterDetailsImpl> itr = quarters.iterator();
+    protected void verifyContains(DateTime dt, SortedSet<QuarterDetails> quarters, boolean... contains) {
+        final Iterator<QuarterDetails> itr = quarters.iterator();
         for (int q = 0; q < 4; q++) {
-            final QuarterDetailsImpl quarter = itr.next();
+            final QuarterDetails quarter = itr.next();
             assertEquals(dt + " is not between " + quarter.getStart() + " and " + quarter.getEnd(), contains[q], quarter.contains(dt));
         }
     }
+    
+    @Test
+    public void testValidateQuarters() {
+        EventDateTimeUtils.validateQuarters(createStandardQuarters());
+        
+        EventDateTimeUtils.validateQuarters(createOffsetQuarters());
+    }
 
-    protected SortedSet<QuarterDetailsImpl> createStandardQuarters() {
-        final SortedSet<QuarterDetailsImpl> quarters = ImmutableSortedSet.of(
+    protected SortedSet<QuarterDetails> createStandardQuarters() {
+        final SortedSet<QuarterDetails> quarters = ImmutableSortedSet.<QuarterDetails>of(
                 new QuarterDetailsImpl(new MonthDay(1, 1), new MonthDay(4, 1), 0),
                 new QuarterDetailsImpl(new MonthDay(7, 1), new MonthDay(10, 1), 2),
                 new QuarterDetailsImpl(new MonthDay(4, 1), new MonthDay(7, 1), 1),
@@ -90,8 +99,8 @@ public class QuarterDetailsImplTest {
         return quarters;
     }
 
-    protected SortedSet<QuarterDetailsImpl> createOffsetQuarters() {
-        final SortedSet<QuarterDetailsImpl> quarters = ImmutableSortedSet.of(
+    protected SortedSet<QuarterDetails> createOffsetQuarters() {
+        final SortedSet<QuarterDetails> quarters = ImmutableSortedSet.<QuarterDetails>of(
                 new QuarterDetailsImpl(new MonthDay(5, 1), new MonthDay(8, 1), 0),
                 new QuarterDetailsImpl(new MonthDay(11, 1), new MonthDay(2, 1), 2),
                 new QuarterDetailsImpl(new MonthDay(8, 1), new MonthDay(11, 1), 1),

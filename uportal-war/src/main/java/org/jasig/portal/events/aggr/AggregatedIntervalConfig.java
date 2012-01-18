@@ -17,24 +17,31 @@
  * under the License.
  */
 
-package org.jasig.portal.events.aggr.dao;
+package org.jasig.portal.events.aggr;
 
-import org.jasig.portal.events.aggr.EventAggregationConfiguration;
+import java.util.Set;
 
 /**
- * DAO for manipulating the {@link EventAggregationConfiguration}
+ * Configuration of interval includes/excludes
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface EventAggregationConfigurationDao {
+public interface AggregatedIntervalConfig {
+
     /**
-     * @return The current event aggregation configuration
+     * @return The aggregator the includes/excludes are for
      */
-    EventAggregationConfiguration getAggregationConfiguration();
-    
+    Class<? extends IPortalEventAggregator> getAggregatorType();
+
     /**
-     * Persist updates to the event aggregation configuration
+     * Intervals listed in this set will be excluded from aggregation.
      */
-    void updateEventAggregationConfiguration(EventAggregationConfiguration eventAggregationConfiguration);
+    Set<Interval> getIncludedIntervals();
+
+    /**
+     * If not empty only intervals listed in this set will included in aggregation.
+     */
+    Set<Interval> getExcludedIntervals();
+
 }

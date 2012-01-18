@@ -32,6 +32,7 @@ import org.jasig.portal.events.aggr.IntervalInfo;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupLookupDao;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.jasig.portal.events.aggr.session.EventSession;
 import org.joda.time.Period;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,7 +66,7 @@ public class LoginPortalEventAggregator implements IPortalEventAggregator<LoginE
 
     @Transactional("aggrEvents")
     @Override
-    public void aggregateEvent(LoginEvent e, Map<Interval, IntervalInfo> currentIntervals) {
+    public void aggregateEvent(LoginEvent e, EventSession eventSession, Map<Interval, IntervalInfo> currentIntervals) {
         final Set<String> groups = e.getGroups();
         final String userName = e.getUserName();
         

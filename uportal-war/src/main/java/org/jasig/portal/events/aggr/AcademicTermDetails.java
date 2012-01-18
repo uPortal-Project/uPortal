@@ -35,14 +35,29 @@ public interface AcademicTermDetails extends Comparable<AcademicTermDetails> {
     String getTermName();
     
     /**
-     * @return Start of the quarter, inclusive
+     * Set the name of the term
+     */
+    void setTermName(String termName);
+    
+    /**
+     * @return Start of the term, inclusive
      */
     DateMidnight getStart();
+    
+    /**
+     * Set the start of the term, inclusive
+     */
+    void setStart(DateMidnight start);
     
     /**
      * @return End of the quarter, exclusive
      */
     DateMidnight getEnd();
+    
+    /**
+     * Set the end of the term, exclusive
+     */
+    void setEnd(DateMidnight end);
     
     /**
      * @return true If the specified instant within the date range for the quarter
