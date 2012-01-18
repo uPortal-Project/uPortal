@@ -19,12 +19,9 @@
 
 package org.jasig.portal.events.aggr.dao;
 
-import java.util.Calendar;
 import java.util.List;
 
-import org.jasig.portal.events.aggr.AcademicTermDetails;
 import org.jasig.portal.events.aggr.DateDimension;
-import org.jasig.portal.events.aggr.QuarterDetails;
 import org.joda.time.DateMidnight;
 
 /**
@@ -72,45 +69,4 @@ public interface DateDimensionDao {
      * Get the {@link DateDimension} for the specified year, month and day.
      */
     DateDimension getDateDimensionByDate(DateMidnight date);
-    
-    
-    /*  MANAGEMENT OF DEPLOYER DEFINED QUARTER/TERM DATA */
-    
-    /**
-     * @param calendar The date to get the quarter for
-     * @return The quarter id (a value between 0 and 3)
-     */
-    int getQuarter(Calendar calendar);
-    /**
-     * @param start The first date in the quarter (inclusive)
-     * @param end The last date in the quarter (inclusive)
-     * @param id The quarter id, a value between 0 and 3
-     * @throws IllegalArgumentException If the specified start/end overlaps with another quarter or if there is a gap between two adjacent quarters
-     */
-    void addQuarter(Calendar start, Calendar end, int id);
-    
-    /**
-     * @return A list of all custom configured quarters
-     */
-    List<QuarterDetails> getConfiguredQuarters();
-    
-    
-    /**
-     * @param calendar The date to get the term for
-     * @return The name of the term, null if no term has been specified for the date
-     */
-    String getAcademicTerm(Calendar calendar);
-    
-    /**
-     * @param start The first date in the term (inclusive)
-     * @param end The last date in the term (inclusive)
-     * @param term The name of the term
-     * @throws IllegalArgumentException If the specified start/end overlaps with another term
-     */
-    void addAcademicTerm(Calendar start, Calendar end, String term);
-    
-    /**
-     * @return A list of all configured terms
-     */
-    List<AcademicTermDetails> getConfiguredAcademicTerms();
 }

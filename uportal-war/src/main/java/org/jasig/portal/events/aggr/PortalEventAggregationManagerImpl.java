@@ -20,6 +20,7 @@
 package org.jasig.portal.events.aggr;
 
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,11 +33,14 @@ import org.jasig.portal.IPortalInfoProvider;
 import org.jasig.portal.concurrency.FunctionWithoutResult;
 import org.jasig.portal.concurrency.locking.IClusterLockService;
 import org.jasig.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
+import org.jasig.portal.events.LoginEvent;
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.aggr.IEventAggregatorStatus.ProcessingType;
 import org.jasig.portal.events.aggr.dao.DateDimensionDao;
 import org.jasig.portal.events.aggr.dao.IEventAggregationManagementDao;
 import org.jasig.portal.events.aggr.dao.TimeDimensionDao;
+import org.jasig.portal.events.aggr.session.EventSession;
+import org.jasig.portal.events.aggr.session.EventSessionDao;
 import org.jasig.portal.events.handlers.db.IPortalEventDao;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
@@ -75,13 +79,14 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     private final AtomicBoolean checkedDimensions = new AtomicBoolean(false);
     
-    private IEventAggregationManagementDao eventAggregationManagementDao;
+    private IPortalInfoProvider portalInfoProvider;
     private IClusterLockService clusterLockService;
+    private IEventAggregationManagementDao eventAggregationManagementDao;
     private IPortalEventDao portalEventDao;
     private TimeDimensionDao timeDimensionDao;
     private DateDimensionDao dateDimensionDao;
     private IntervalHelper intervalHelper;
-    private IPortalInfoProvider portalInfoProvider;
+    private EventSessionDao eventSessionDao;
     private Set<IPortalEventAggregator<PortalEvent>> portalEventAggregators;
     private TransactionOperations aggrEventsTransactionOperations;
     
@@ -95,6 +100,13 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
         final TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
         transactionTemplate.afterPropertiesSet();
         this.aggrEventsTransactionOperations = transactionTemplate;
+    }
+    
+    
+
+    @Autowired
+    public void setEventSessionDao(EventSessionDao eventSessionDao) {
+        this.eventSessionDao = eventSessionDao;
     }
 
     @Autowired
@@ -153,7 +165,7 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
     }
 
     @Value("${org.jasig.portal.event.aggr.PortalEventAggregationManager.dimensionBuffer:P30D}")
-    public void setDimensionPreloadBuffer(ReadablePeriod dimensionBuffer) {
+    public void setDimensionBuffer(ReadablePeriod dimensionBuffer) {
         if (new Period(dimensionBuffer).toStandardDays().getDays() < 1) {
             throw new IllegalArgumentException("dimensionBuffer must be at least 1 day. Is: " + new Period(dimensionBuffer).toStandardDays().getDays());
         }
@@ -440,7 +452,7 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
         private final MutableInt eventCounter;
         private final IEventAggregatorStatus eventAggregatorStatus;
         
-        private final Map<Interval, IntervalInfo> currentIntervalInfo = new HashMap<Interval, IntervalInfo>();
+        private final Map<Interval, IntervalInfo> currentIntervalInfo = new EnumMap<Interval, IntervalInfo>(Interval.class);
         private final Map<Interval, IntervalInfo> readOnlyIntervalInfo = Collections.unmodifiableMap(currentIntervalInfo);
         
         private AggregateEventsHandler(MutableInt eventCounter, IEventAggregatorStatus eventAggregatorStatus) {
@@ -492,10 +504,18 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
         private void doAggregateEvent(PortalEvent item) {
             eventCounter.increment();
             
+            final EventSession eventSession;
+            if (item instanceof LoginEvent) {
+                eventSession = eventSessionDao.createEventSession((LoginEvent)item);
+            }
+            else {
+                eventSession = eventSessionDao.getEventSession(item.getEventSessionId());
+            }
+            
             for (final IPortalEventAggregator<PortalEvent> portalEventAggregator : portalEventAggregators) {
                 if (portalEventAggregator.supports(item.getClass())) {
-                    //TODO filter intervals for aggregator 
-                    portalEventAggregator.aggregateEvent(item, this.readOnlyIntervalInfo);
+                    //TODO filter intervals and groups for aggregator
+                    portalEventAggregator.aggregateEvent(item, eventSession, this.readOnlyIntervalInfo);
                 }
             }
         }

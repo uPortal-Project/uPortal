@@ -19,13 +19,16 @@
 
 package org.jasig.portal.events.aggr;
 
-import java.util.Date;
+import org.joda.time.MonthDay;
+import org.joda.time.ReadableInstant;
 
 /**
+ * Details about a quarter of the year. The first quarter will have ID 0, the second ID 1, etc...
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface QuarterDetails {
+public interface QuarterDetails extends Comparable<QuarterDetails> {
     /**
      * @return The id of the quarter (0 - 3)
      */
@@ -34,10 +37,21 @@ public interface QuarterDetails {
     /**
      * @return Start of the quarter, inclusive
      */
-    Date getStart();
+    MonthDay getStart();
     
     /**
-     * @return End of the quarter, inclusive
+     * @return End of the quarter, exclusive
      */
-    Date getEnd();
+    MonthDay getEnd();
+    
+    /**
+     * @return true If the specified instant is within the date range for the quarter
+     */
+    boolean contains(ReadableInstant instant);
+    
+    /**
+     * Compare to another {@link QuarterDetails}, must sort by {@link #getQuarterId()}
+     */
+    @Override
+    int compareTo(QuarterDetails o);
 }

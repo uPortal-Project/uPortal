@@ -17,28 +17,19 @@
  * under the License.
  */
 
-package org.jasig.portal.events.aggr.session;
+package org.jasig.portal.dao.usertype;
 
-import java.util.Set;
-
-import org.jasig.portal.events.PortalEvent;
-import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.hibernate.type.descriptor.sql.VarcharTypeDescriptor;
+import org.joda.time.MonthDay;
 
 /**
- * Defines data that is tracked across all events associated with the same {@link PortalEvent#getEventSessionId()}
- * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface EventSession {
+public class MonthDayType extends BaseUserType<MonthDay> {
+    private static final long serialVersionUID = 1L;
     
-    /**
-     * @see PortalEvent#getEventSessionId()
-     */
-    String getEventSessionId();
-    
-    /**
-     * @return The event store resolved group mappings for the event session, immutable
-     */
-    Set<AggregatedGroupMapping> getGroupMappings();
+    public MonthDayType() {
+        super(VarcharTypeDescriptor.INSTANCE, MonthDayTypeDescriptor.INSTANCE);
+    }
 }

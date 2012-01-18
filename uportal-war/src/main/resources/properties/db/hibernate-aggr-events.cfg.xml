@@ -45,7 +45,11 @@
         <mapping class="org.jasig.portal.events.aggr.dao.jpa.EventAggregatorStatusImpl"/>
         <mapping class="org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl"/>
         <mapping class="org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl"/>
+        <mapping class="org.jasig.portal.events.aggr.dao.jpa.EventAggregationConfigurationImpl"/>
+        <mapping class="org.jasig.portal.events.aggr.dao.jpa.QuarterDetailsImpl"/>
+        <mapping class="org.jasig.portal.events.aggr.dao.jpa.AcademicTermDetailsImpl"/>
         <mapping class="org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl"/>
+        <mapping class="org.jasig.portal.events.aggr.session.EventSessionImpl"/>
         <mapping class="org.jasig.portal.events.aggr.login.LoginAggregationImpl"/>
     </session-factory>
 </hibernate-configuration>

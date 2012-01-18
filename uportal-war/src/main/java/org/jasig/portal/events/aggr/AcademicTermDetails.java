@@ -19,13 +19,16 @@
 
 package org.jasig.portal.events.aggr;
 
-import java.util.Date;
+import org.joda.time.DateMidnight;
+import org.joda.time.ReadableInstant;
 
 /**
+ * Details about a term of the year
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface AcademicTermDetails {
+public interface AcademicTermDetails extends Comparable<AcademicTermDetails> {
     /**
      * @return The name of the term, cannot be null
      */
@@ -34,10 +37,21 @@ public interface AcademicTermDetails {
     /**
      * @return Start of the quarter, inclusive
      */
-    Date getStart();
+    DateMidnight getStart();
     
     /**
-     * @return End of the quarter, inclusive
+     * @return End of the quarter, exclusive
      */
-    Date getEnd();
+    DateMidnight getEnd();
+    
+    /**
+     * @return true If the specified instant within the date range for the quarter
+     */
+    boolean contains(ReadableInstant instant);
+    
+    /**
+     * Compare to another {@link AcademicTermDetails}, must sort by {@link #getStart()}
+     */
+    @Override
+    int compareTo(AcademicTermDetails o);
 }

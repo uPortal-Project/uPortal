@@ -24,8 +24,6 @@ import javax.xml.namespace.QName;
 import org.hibernate.type.descriptor.sql.VarcharTypeDescriptor;
 
 /**
- * Uses a regular expression to validate strings coming to/from the database.
- * 
  * @author Eric Dalquist
  * @version $Revision$
  */

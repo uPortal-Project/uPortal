@@ -40,6 +40,7 @@
     <typedef name="localDateTime" class="org.joda.time.contrib.hibernate.PersistentLocalDateTime" />
     <typedef name="duration" class="org.joda.time.contrib.hibernate.PersistentDuration" />
     <typedef name="period" class="org.joda.time.contrib.hibernate.PersistentPeriod" />
+    <typedef name="monthDay" class="org.jasig.portal.dao.usertype.MonthDayType" />
     
 </hibernate-mapping> 
 

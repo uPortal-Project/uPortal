@@ -20,7 +20,6 @@
 package org.jasig.portal.events.aggr.dao.jpa;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -32,9 +31,7 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
-import org.jasig.portal.events.aggr.AcademicTermDetails;
 import org.jasig.portal.events.aggr.DateDimension;
-import org.jasig.portal.events.aggr.QuarterDetails;
 import org.jasig.portal.events.aggr.dao.DateDimensionDao;
 import org.jasig.portal.jpa.BaseJpaDao;
 import org.joda.time.DateMidnight;
@@ -219,59 +216,4 @@ public class JpaDateDimensionDao extends BaseJpaDao implements DateDimensionDao 
         final List<DateDimensionImpl> portletDefinitions = query.getResultList();
         return DataAccessUtils.uniqueResult(portletDefinitions);
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-    @Override
-    public int getQuarter(Calendar calendar) {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public void addQuarter(Calendar start, Calendar end, int id) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public List<QuarterDetails> getConfiguredQuarters() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String getAcademicTerm(Calendar calendar) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public void addAcademicTerm(Calendar start, Calendar end, String term) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public List<AcademicTermDetails> getConfiguredAcademicTerms() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    
-    
-    
-    
 }

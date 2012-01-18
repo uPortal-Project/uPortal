@@ -17,28 +17,24 @@
  * under the License.
  */
 
-package org.jasig.portal.events.aggr.session;
+package org.jasig.portal.events.aggr.dao;
 
-import java.util.Set;
-
-import org.jasig.portal.events.PortalEvent;
-import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.jasig.portal.events.aggr.EventAggregationConfiguration;
 
 /**
- * Defines data that is tracked across all events associated with the same {@link PortalEvent#getEventSessionId()}
+ * DAO for manipulating the {@link EventAggregationConfiguration}
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface EventSession {
+public interface EventAggregationConfigurationDao {
+    /**
+     * @return The current event aggregation configuration
+     */
+    EventAggregationConfiguration getAggregationConfiguration();
     
     /**
-     * @see PortalEvent#getEventSessionId()
+     * Persist updates to the event aggregation configuration
      */
-    String getEventSessionId();
-    
-    /**
-     * @return The event store resolved group mappings for the event session, immutable
-     */
-    Set<AggregatedGroupMapping> getGroupMappings();
+    void updateEventAggregationConfiguration(EventAggregationConfiguration eventAggregationConfiguration);
 }

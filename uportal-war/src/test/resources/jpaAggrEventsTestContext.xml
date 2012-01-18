@@ -32,11 +32,13 @@
     <!-- JPA Test Context for DAOs that use the uPortalAggrEventsPersistence PersistenceContext -->
     
     
+    <bean id="intervalHelper" class="org.jasig.portal.events.aggr.IntervalHelperImpl" />
     <bean id="timeDimensionDao" class="org.jasig.portal.events.aggr.dao.jpa.JpaTimeDimensionDao" />    
     <bean id="dateDimensionDao" class="org.jasig.portal.events.aggr.dao.jpa.JpaDateDimensionDao" />
-    <bean id="loginAggregationDao" class="org.jasig.portal.events.aggr.login.JpaLoginAggregationDao" />
-    <bean id="intervalHelper" class="org.jasig.portal.events.aggr.IntervalHelperImpl" />
+    <bean id="eventAggregationConfigurationDao" class="org.jasig.portal.events.aggr.dao.jpa.JpaEventAggregationConfigurationDao" />
     <bean id="aggregatedGroupLookupDao" class="org.jasig.portal.events.aggr.groups.JpaAggregatedGroupLookupDao" />
+    <bean id="loginAggregationDao" class="org.jasig.portal.events.aggr.login.JpaLoginAggregationDao" />
+    <bean id="eventSessionDao" class="org.jasig.portal.events.aggr.session.JpaEventSessionDao" />
     
     <bean id="compositeGroupService" class="org.jasig.portal.spring.MockitoFactoryBean" >
         <constructor-arg value="org.jasig.portal.groups.ICompositeGroupService" />

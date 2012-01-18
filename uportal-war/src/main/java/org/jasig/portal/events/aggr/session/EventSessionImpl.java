@@ -31,6 +31,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -41,6 +42,8 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.Validate;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
@@ -79,7 +82,9 @@ public class EventSessionImpl implements EventSession, Serializable {
     private final String eventSessionId;
     
     @OneToMany(targetEntity=AggregatedGroupMappingImpl.class, fetch=FetchType.EAGER)
-    @JoinTable(name="UP_EVENT_SESSION_GROUPS")
+    @JoinTable(name="UP_EVENT_SESSION_GROUPS", inverseJoinColumns = @JoinColumn(name = "GROUP_ID"))
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @Fetch(FetchMode.JOIN)
     private final Set<AggregatedGroupMapping> groupMappings;
     
     @Column(name="LAST_ACCESSED", nullable=false)
@@ -153,6 +158,7 @@ public class EventSessionImpl implements EventSession, Serializable {
 
     @Override
     public String toString() {
-        return "EventSessionImpl [id=" + id + ", eventSessionId=" + eventSessionId + "]";
+        return "EventSessionImpl [id=" + this.id + ", eventSessionId=" + this.eventSessionId + ", lastAccessed="
+                + this.lastAccessed + "]";
     }
 }

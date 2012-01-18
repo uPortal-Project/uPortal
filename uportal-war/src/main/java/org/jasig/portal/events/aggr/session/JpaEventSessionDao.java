@@ -41,12 +41,14 @@ import org.joda.time.ReadablePeriod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Repository
 public class JpaEventSessionDao extends BaseJpaDao implements EventSessionDao {
     private String deleteByEventSessionIdQuery;
     private String deleteExpiredEventSessionsQuery;
@@ -58,7 +60,7 @@ public class JpaEventSessionDao extends BaseJpaDao implements EventSessionDao {
     private AggregatedGroupLookupDao aggregatedGroupLookupDao;
     private ReadablePeriod eventSessionDuration;
     
-    @Value("${org.jasig.portal.events.aggr.session.JpaEventSessionDao.eventSessionDuration:PT1D}")
+    @Value("${org.jasig.portal.events.aggr.session.JpaEventSessionDao.eventSessionDuration:P1D}")
     public void setEventSessionDuration(ReadablePeriod eventSessionDuration) {
         this.eventSessionDuration = eventSessionDuration;
     }
@@ -129,7 +131,10 @@ public class JpaEventSessionDao extends BaseJpaDao implements EventSessionDao {
         
         final List<EventSessionImpl> results = query.getResultList();
         
-        final EventSessionImpl eventSession = DataAccessUtils.singleResult(results);
+        final EventSessionImpl eventSession = DataAccessUtils.uniqueResult(results);
+        if (eventSession == null) {
+            return null;
+        }
         
         eventSession.recordAccess();
         this.entityManager.persist(eventSession);

@@ -134,6 +134,9 @@ public abstract class BaseJpaDaoTest {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException)e;
             }
+            if (e instanceof Error) {
+                throw (Error)e;
+            }
             throw new RuntimeException(e);
         }
     }

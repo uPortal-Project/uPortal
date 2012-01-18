@@ -17,28 +17,33 @@
  * under the License.
  */
 
-package org.jasig.portal.events.aggr.session;
+package org.jasig.portal.events;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-import org.jasig.portal.events.PortalEvent;
-import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.jasig.portal.events.PortalEvent.PortalEventBuilder;
+import org.jasig.portal.security.IPerson;
 
 /**
- * Defines data that is tracked across all events associated with the same {@link PortalEvent#getEventSessionId()}
+ * Utility used to create portal events for testing. Events all use package-private constructors but for tests
+ * a way to create them is needed.
+ * <p/>
+ * Add events creation methods here as needed for tests
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface EventSession {
+public final class TestEventFactory {
+    private TestEventFactory() {
+    }
     
-    /**
-     * @see PortalEvent#getEventSessionId()
-     */
-    String getEventSessionId();
+    public static LoginEvent newLoginEvent(Object source, String serverName, String eventSessionId, IPerson person, 
+            Set<String> groups, Map<String, List<String>> attributes) {
+        
+        final PortalEventBuilder portalEventBuilder = new PortalEventBuilder(source, serverName, eventSessionId, person);
+        return new LoginEvent(portalEventBuilder, groups, attributes);
+    }
     
-    /**
-     * @return The event store resolved group mappings for the event session, immutable
-     */
-    Set<AggregatedGroupMapping> getGroupMappings();
 }
