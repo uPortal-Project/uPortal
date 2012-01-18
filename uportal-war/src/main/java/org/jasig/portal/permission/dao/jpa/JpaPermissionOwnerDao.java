@@ -29,6 +29,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
@@ -84,7 +85,7 @@ public class JpaPermissionOwnerDao extends BaseJpaDao implements IPermissionOwne
         final CriteriaQuery<PermissionOwnerImpl> criteriaQuery = cb.createQuery(PermissionOwnerImpl.class);
         final Root<PermissionOwnerImpl> ownerRoot = criteriaQuery.from(PermissionOwnerImpl.class);
         criteriaQuery.select(ownerRoot);
-        ownerRoot.fetch(PermissionOwnerImpl_.activities);
+        ownerRoot.fetch(PermissionOwnerImpl_.activities, JoinType.LEFT);
         
         return criteriaQuery;
     }
@@ -93,7 +94,7 @@ public class JpaPermissionOwnerDao extends BaseJpaDao implements IPermissionOwne
         final CriteriaQuery<PermissionOwnerImpl> criteriaQuery = cb.createQuery(PermissionOwnerImpl.class);
         final Root<PermissionOwnerImpl> ownerRoot = criteriaQuery.from(PermissionOwnerImpl.class);
         criteriaQuery.select(ownerRoot);
-        ownerRoot.fetch(PermissionOwnerImpl_.activities);
+        ownerRoot.fetch(PermissionOwnerImpl_.activities, JoinType.LEFT);
         criteriaQuery.where(
                 cb.equal(ownerRoot.get(PermissionOwnerImpl_.fname), this.fnameParameter)
             );
