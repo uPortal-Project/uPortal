@@ -46,4 +46,10 @@ public interface IPortalEventAggregationManager {
      */
     boolean purgeRawEvents();
 
+    /**
+     * Requests that event session data be purged
+     * @return If expired event sessions were purged
+     */
+    boolean purgeEventSessions();
+
 }

@@ -126,7 +126,6 @@ public class JpaTimeDimensionDao extends BaseJpaDao implements TimeDimensionDao 
         final TypedQuery<TimeDimensionImpl> query = this.createQuery(this.findTimeDimensionByHourMinuteQuery, FIND_TIME_DIMENSION_BY_HOUR_MINUTE_CACHE_REGION);
         query.setParameter(this.hourParameter, localTime.getHourOfDay());
         query.setParameter(this.minuteParameter, localTime.getMinuteOfHour());
-        query.setMaxResults(1);
         
         final List<TimeDimensionImpl> portletDefinitions = query.getResultList();
         return DataAccessUtils.uniqueResult(portletDefinitions);

@@ -112,11 +112,10 @@ public class JpaAggregatedGroupLookupDao extends BaseJpaDao implements Aggregate
         final TypedQuery<AggregatedGroupMappingImpl> query = this.createQuery(this.findGroupMappingByServiceAndNameQuery, "SERVICE_AND_NAME");
         query.setParameter(this.groupServiceParameter, groupService);
         query.setParameter(this.groupNameParameter, groupName);
-        query.setMaxResults(1);
         
         final List<AggregatedGroupMappingImpl> resultList = query.getResultList();
         if (!resultList.isEmpty()) { 
-            return DataAccessUtils.singleResult(resultList);
+            return DataAccessUtils.uniqueResult(resultList);
         }
         
         return this.transactionOperations.execute(new TransactionCallback<AggregatedGroupMapping>() {

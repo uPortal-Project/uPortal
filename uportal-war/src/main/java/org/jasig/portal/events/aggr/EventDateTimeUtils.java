@@ -111,6 +111,10 @@ public final class EventDateTimeUtils {
      * @return The {@link DateRange} that contains the instant, null if no date range contains the instant
      */
     public static <DR extends DateRange<DT>, DT> DR findDateRange(ReadableInstant instant, Collection<DR> dateRanges) {
+        if (dateRanges.isEmpty()) {
+            return null;
+        }
+        
         for (final DR dateRange : dateRanges) {
             if (dateRange.compareTo(instant) == 0) {
                 return dateRange;
@@ -125,6 +129,10 @@ public final class EventDateTimeUtils {
      * date ranges by doing a binary search. The List must be sorted by {@link DateRange#getStart()}
      */
     public static <DR extends DateRange<DT>, DT> DR findDateRangeSorted(ReadableInstant instant, List<DR> dateRanges) {
+        if (dateRanges.isEmpty()) {
+            return null;
+        }
+        
         if (!(dateRanges instanceof RandomAccess)) {
             //Not random access not much use doing a binary search
             return findDateRange(instant, dateRanges);

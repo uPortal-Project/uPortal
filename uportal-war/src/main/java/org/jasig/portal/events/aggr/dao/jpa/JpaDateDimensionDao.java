@@ -158,17 +158,15 @@ public class JpaDateDimensionDao extends BaseJpaDao implements DateDimensionDao 
     @Override
     public DateDimension getNewestDateDimension() {
         final TypedQuery<DateDimensionImpl> query = this.createQuery(this.findNewestDateDimensionQuery, FIND_NEWEST_DATE_DIMENSION_CACHE_REGION);
-        query.setMaxResults(1);
         final List<DateDimensionImpl> resultList = query.getResultList();
-        return DataAccessUtils.singleResult(resultList);
+        return DataAccessUtils.uniqueResult(resultList);
     }
     
     @Override
     public DateDimension getOldestDateDimension() {
         final TypedQuery<DateDimensionImpl> query = this.createQuery(this.findOldestDateDimensionQuery, FIND_OLDEST_DATE_DIMENSION_CACHE_REGION);
-        query.setMaxResults(1);
         final List<DateDimensionImpl> resultList = query.getResultList();
-        return DataAccessUtils.singleResult(resultList);
+        return DataAccessUtils.uniqueResult(resultList);
     }
     
     @Override
@@ -210,7 +208,6 @@ public class JpaDateDimensionDao extends BaseJpaDao implements DateDimensionDao 
     public DateDimension getDateDimensionByDate(DateMidnight date) {
         final TypedQuery<DateDimensionImpl> query = this.createQuery(this.findDateDimensionByYearMonthDayQuery, FIND_DATE_DIMENSION_BY_DATE_CACHE_REGION);
         query.setParameter(this.dateTimeParameter, date.toDateTime());
-        query.setMaxResults(1);
         
         final List<DateDimensionImpl> portletDefinitions = query.getResultList();
         return DataAccessUtils.uniqueResult(portletDefinitions);

@@ -19,6 +19,7 @@
 
 package org.jasig.portal.events.aggr.login;
 
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,7 +30,6 @@ import org.jasig.portal.events.aggr.IPortalEventAggregator;
 import org.jasig.portal.events.aggr.Interval;
 import org.jasig.portal.events.aggr.IntervalInfo;
 import org.jasig.portal.events.aggr.TimeDimension;
-import org.jasig.portal.events.aggr.groups.AggregatedGroupLookupDao;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.events.aggr.session.EventSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,12 +45,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class LoginPortalEventAggregator implements IPortalEventAggregator<LoginEvent> {
     private LoginAggregationPrivateDao loginAggregationDao;
-    private AggregatedGroupLookupDao aggregatedGroupLookupDao;
-
-    @Autowired
-    public void setAggregatedGroupLookupDao(AggregatedGroupLookupDao aggregatedGroupLookupDao) {
-        this.aggregatedGroupLookupDao = aggregatedGroupLookupDao;
-    }
 
     @Override
     public boolean supports(Class<? extends PortalEvent> type) {
@@ -65,28 +59,37 @@ public class LoginPortalEventAggregator implements IPortalEventAggregator<LoginE
     @Transactional("aggrEvents")
     @Override
     public void aggregateEvent(LoginEvent e, EventSession eventSession, Map<Interval, IntervalInfo> currentIntervals) {
-        final Set<String> groups = e.getGroups();
-        final String userName = e.getUserName();
         
-        for (final String groupKey : groups) {
-            final AggregatedGroupMapping aggregatedGroup = this.aggregatedGroupLookupDao.getGroupMapping(groupKey);
-        
-            for (Map.Entry<Interval, IntervalInfo> intervalInfoEntry : currentIntervals.entrySet()) {
-                final Interval interval = intervalInfoEntry.getKey();
-                final IntervalInfo intervalInfo = intervalInfoEntry.getValue();
-                final DateDimension dateDimension = intervalInfo.getDateDimension();
-                final TimeDimension timeDimension = intervalInfo.getTimeDimension();
+        for (Map.Entry<Interval, IntervalInfo> intervalInfoEntry : currentIntervals.entrySet()) {
+            final Interval interval = intervalInfoEntry.getKey();
+            final IntervalInfo intervalInfo = intervalInfoEntry.getValue();
+            final DateDimension dateDimension = intervalInfo.getDateDimension();
+            final TimeDimension timeDimension = intervalInfo.getTimeDimension();
             
-                LoginAggregationImpl loginAggregation = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension, interval, aggregatedGroup);
-                if (loginAggregation == null) {
-                    loginAggregation = loginAggregationDao.createLoginAggregation(dateDimension, timeDimension, interval, aggregatedGroup);
-                    final int duration = intervalInfo.getDuration();
-                    loginAggregation.setDuration(duration);
+            final Set<AggregatedGroupMapping> groupMappings = new LinkedHashSet<AggregatedGroupMapping>(eventSession.getGroupMappings());
+        
+            final Set<LoginAggregationImpl> loginAggregations = this.loginAggregationDao.getLoginAggregationsForInterval(dateDimension, timeDimension, interval);
+            for (final LoginAggregationImpl loginAggregation : loginAggregations) {
+                //Remove the aggregation from the group set to mark that it has been updated
+                groupMappings.remove(loginAggregation.getAggregatedGroup());
+                updateAggregation(e, intervalInfo, loginAggregation);
+            }
+            
+            //Create any left over groups
+            if (!groupMappings.isEmpty()) {
+                for (final AggregatedGroupMapping aggregatedGroup : groupMappings) {
+                    final LoginAggregationImpl loginAggregation = loginAggregationDao.createLoginAggregation(dateDimension, timeDimension, interval, aggregatedGroup);
+                    updateAggregation(e, intervalInfo, loginAggregation);
                 }
-                
-                loginAggregation.countUser(userName);
             }
         }
+    }
+
+    private void updateAggregation(LoginEvent e, final IntervalInfo intervalInfo, final LoginAggregationImpl loginAggregation) {
+        final String userName = e.getUserName();
+        final int duration = intervalInfo.getDurationTo(e.getTimestampAsDate());
+        loginAggregation.setDuration(duration);
+        loginAggregation.countUser(userName);
     }
 
     @Transactional("aggrEvents")
@@ -98,7 +101,7 @@ public class LoginPortalEventAggregator implements IPortalEventAggregator<LoginE
         
         final Set<LoginAggregationImpl> loginAggregations = this.loginAggregationDao.getLoginAggregationsForInterval(dateDimension, timeDimension, interval);
         for (final LoginAggregationImpl loginAggregation : loginAggregations) {
-            final int duration = intervalInfo.getDuration();
+            final int duration = intervalInfo.getTotalDuration();
             loginAggregation.intervalComplete(duration);
             this.loginAggregationDao.updateLoginAggregation(loginAggregation);
         }

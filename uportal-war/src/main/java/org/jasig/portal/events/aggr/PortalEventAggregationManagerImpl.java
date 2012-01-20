@@ -72,7 +72,8 @@ import com.google.common.collect.Maps;
 public class PortalEventAggregationManagerImpl implements IPortalEventAggregationManager {
     private static final String DIMENSION_LOCK_NAME = PortalEventAggregationManagerImpl.class.getName() + ".DIMENSION_LOCK";
     private static final String AGGREGATION_LOCK_NAME = PortalEventAggregationManagerImpl.class.getName() + ".AGGREGATION_LOCK";
-    private static final String PURGE_LOCK_NAME = PortalEventAggregationManagerImpl.class.getName() + ".PURGE_LOCK";
+    private static final String PURGE_RAW_EVENTS_LOCK_NAME = PortalEventAggregationManagerImpl.class.getName() + ".PURGE_RAW_EVENTS_LOCK";
+    private static final String PURGE_EVENT_SESSION_LOCK_NAME = PortalEventAggregationManagerImpl.class.getName() + ".PURGE_EVENT_SESSION_LOCK_NAME";
     
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     private final AtomicBoolean checkedDimensions = new AtomicBoolean(false);
@@ -227,7 +228,7 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
     @Transactional(value="aggrEventsTransactionManager")
     public boolean purgeRawEvents() {
         try {
-            final TryLockFunctionResult<Object> result = this.clusterLockService.doInTryLock(PURGE_LOCK_NAME, new FunctionWithoutResult<String>() {
+            final TryLockFunctionResult<Object> result = this.clusterLockService.doInTryLock(PURGE_RAW_EVENTS_LOCK_NAME, new FunctionWithoutResult<String>() {
                 @Override
                 protected void applyWithoutResult(String input) {
                     doPurgeRawEvents();
@@ -243,6 +244,28 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
         }
     }
     
+    @Override
+    @Transactional(value="aggrEventsTransactionManager")
+    public boolean purgeEventSessions() {
+        try {
+            final TryLockFunctionResult<Object> result = this.clusterLockService.doInTryLock(PURGE_EVENT_SESSION_LOCK_NAME, new FunctionWithoutResult<String>() {
+                @Override
+                protected void applyWithoutResult(String input) {
+                    eventSessionDao.purgeExpiredEventSessions();
+                }
+            });
+            
+            return result.isExecuted();
+        }
+        catch (InterruptedException e) {
+            logger.warn("Interrupted while purging", e);
+            Thread.currentThread().interrupt();
+            return false;
+        }
+    }
+
+
+
     //use local flag to run on first call to doAggregation
     void doPopulateDimensions() {
         doPopulateTimeDimensions();

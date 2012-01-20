@@ -200,17 +200,15 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
     @Override
     public DateTime getOldestPortalEventTimestamp() {
         final TypedQuery<DateTime> query = this.getEntityManager().createQuery(this.findOldestPersistentPortalEventTimestampQuery);
-        query.setMaxResults(1);
         final List<DateTime> results = query.getResultList();
-        return DataAccessUtils.singleResult(results);
+        return DataAccessUtils.uniqueResult(results);
     }
     
     @Override
     public DateTime getNewestPortalEventTimestamp() {
         final TypedQuery<DateTime> query = this.getEntityManager().createQuery(this.findNewestPersistentPortalEventTimestampQuery);
-        query.setMaxResults(1);
         final List<DateTime> results = query.getResultList();
-        return DataAccessUtils.singleResult(results);
+        return DataAccessUtils.uniqueResult(results);
     }
 
     @Override

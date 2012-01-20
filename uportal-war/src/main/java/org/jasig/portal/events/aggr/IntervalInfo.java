@@ -8,6 +8,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.joda.time.DateTime;
 import org.joda.time.Minutes;
+import org.joda.time.ReadableInstant;
 import org.springframework.util.Assert;
 
 /**
@@ -62,9 +63,9 @@ public class IntervalInfo implements Serializable {
     }
 
     /**
-     * @return Minutes between start and end
+     * @return Minutes between {@link #getStart()} and {@link #getEnd()}
      */
-    public int getDuration() {
+    public int getTotalDuration() {
         int d = this.duration;
         if (d < 0) {
             d = Minutes.minutesBetween(this.start, this.end).getMinutes();
@@ -72,6 +73,17 @@ public class IntervalInfo implements Serializable {
             this.duration = d;
         }
         return d;
+    }
+    
+    /**
+     * @return Minutes between {@link #getStart()} and the end parameter, if the parameter is after {@link #getEnd()} then {@link #getEnd()} is used
+     */
+    public int getDurationTo(ReadableInstant end) {
+        if (end.isAfter(this.end)) {
+            return this.getTotalDuration();
+        }
+        
+        return Math.abs(Minutes.minutesBetween(this.start, end).getMinutes());
     }
 
     /**
@@ -117,7 +129,7 @@ public class IntervalInfo implements Serializable {
             .append("dateDimension", this.dateDimension)
             .append("timeDimension", this.timeDimension)
             .append("end", this.end)
-            .append("period", this.getDuration())
+            .append("period", this.getTotalDuration())
             .toString();
     }
 }

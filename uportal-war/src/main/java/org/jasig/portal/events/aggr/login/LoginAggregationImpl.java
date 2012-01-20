@@ -29,6 +29,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -109,7 +110,7 @@ class LoginAggregationImpl implements LoginAggregation, Serializable {
     @Column(name = "UNIQUE_LOGIN_COUNT", nullable = false)
     private int uniqueLoginCount;
     
-    @ElementCollection
+    @ElementCollection(fetch=FetchType.EAGER)
     @JoinTable(
             name = "UP_LOGIN_EVENT_AGGREGATE__UIDS",
             joinColumns = @JoinColumn(name = "LOGIN_AGGR_ID")
