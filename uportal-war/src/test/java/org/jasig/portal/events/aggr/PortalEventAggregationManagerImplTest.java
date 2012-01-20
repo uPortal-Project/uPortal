@@ -44,6 +44,7 @@ import org.jasig.portal.events.handlers.db.IPortalEventDao;
 import org.jasig.portal.test.BaseJpaDaoTest;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.LocalTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -90,7 +91,7 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
         portalEventAggregationManager = new PortalEventAggregationManagerImpl() {
             @Override
             DateTime getNow() {
-                return new DateTime(1325881376117l);
+                return new DateTime(1325881376117l, DateTimeZone.UTC);
             }
         };
         

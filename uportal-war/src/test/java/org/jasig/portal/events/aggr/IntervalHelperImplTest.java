@@ -24,6 +24,7 @@ import static org.junit.Assert.assertEquals;
 import org.jasig.portal.events.aggr.dao.DateDimensionDao;
 import org.jasig.portal.events.aggr.dao.TimeDimensionDao;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -42,13 +43,13 @@ public class IntervalHelperImplTest {
     
     @Test
     public void testGetIntervalInfo() {
-        final DateTime instant = new DateTime(1325881376117l);
+        final DateTime instant = new DateTime(1325881376117l, DateTimeZone.UTC);
         
         assertEquals(2012, instant.getYear());
         assertEquals(1, instant.getMonthOfYear());
         assertEquals(6, instant.getDayOfMonth());
         assertEquals(1, instant.getWeekOfWeekyear());
-        assertEquals(14, instant.getHourOfDay());
+        assertEquals(20, instant.getHourOfDay());
         assertEquals(22, instant.getMinuteOfHour());
         assertEquals(56, instant.getSecondOfMinute());
         assertEquals(117, instant.getMillisOfSecond());
@@ -155,7 +156,7 @@ public class IntervalHelperImplTest {
         assertEquals(1, start.getMonthOfYear());
         assertEquals(6, start.getDayOfMonth());
         assertEquals(1, start.getWeekOfWeekyear());
-        assertEquals(14, start.getHourOfDay());
+        assertEquals(20, start.getHourOfDay());
         assertEquals(0, start.getMinuteOfHour());
         assertEquals(0, start.getSecondOfMinute());
         assertEquals(0, start.getMillisOfSecond());
@@ -165,7 +166,7 @@ public class IntervalHelperImplTest {
         assertEquals(1, end.getMonthOfYear());
         assertEquals(6, end.getDayOfMonth());
         assertEquals(1, end.getWeekOfWeekyear());
-        assertEquals(15, end.getHourOfDay());
+        assertEquals(21, end.getHourOfDay());
         assertEquals(0, end.getMinuteOfHour());
         assertEquals(0, end.getSecondOfMinute());
         assertEquals(0, end.getMillisOfSecond());
@@ -178,7 +179,7 @@ public class IntervalHelperImplTest {
         assertEquals(1, start.getMonthOfYear());
         assertEquals(6, start.getDayOfMonth());
         assertEquals(1, start.getWeekOfWeekyear());
-        assertEquals(14, start.getHourOfDay());
+        assertEquals(20, start.getHourOfDay());
         assertEquals(20, start.getMinuteOfHour());
         assertEquals(0, start.getSecondOfMinute());
         assertEquals(0, start.getMillisOfSecond());
@@ -188,7 +189,7 @@ public class IntervalHelperImplTest {
         assertEquals(1, end.getMonthOfYear());
         assertEquals(6, end.getDayOfMonth());
         assertEquals(1, end.getWeekOfWeekyear());
-        assertEquals(14, end.getHourOfDay());
+        assertEquals(20, end.getHourOfDay());
         assertEquals(25, end.getMinuteOfHour());
         assertEquals(0, end.getSecondOfMinute());
         assertEquals(0, end.getMillisOfSecond());
@@ -201,7 +202,7 @@ public class IntervalHelperImplTest {
         assertEquals(1, start.getMonthOfYear());
         assertEquals(6, start.getDayOfMonth());
         assertEquals(1, start.getWeekOfWeekyear());
-        assertEquals(14, start.getHourOfDay());
+        assertEquals(20, start.getHourOfDay());
         assertEquals(22, start.getMinuteOfHour());
         assertEquals(0, start.getSecondOfMinute());
         assertEquals(0, start.getMillisOfSecond());
@@ -211,7 +212,7 @@ public class IntervalHelperImplTest {
         assertEquals(1, end.getMonthOfYear());
         assertEquals(6, end.getDayOfMonth());
         assertEquals(1, end.getWeekOfWeekyear());
-        assertEquals(14, end.getHourOfDay());
+        assertEquals(20, end.getHourOfDay());
         assertEquals(23, end.getMinuteOfHour());
         assertEquals(0, end.getSecondOfMinute());
         assertEquals(0, end.getMillisOfSecond());
