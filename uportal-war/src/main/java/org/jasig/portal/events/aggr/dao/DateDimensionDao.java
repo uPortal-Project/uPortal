@@ -46,7 +46,7 @@ public interface DateDimensionDao {
      * Create the date specified date dimension
      * @return The created dimension
      */
-    DateDimension createDateDimension(DateMidnight cal);
+    DateDimension createDateDimension(DateMidnight cal, int quarter, String term);
 
     /**
      * @return A list of all date dimensions in the persistent store, chronological order

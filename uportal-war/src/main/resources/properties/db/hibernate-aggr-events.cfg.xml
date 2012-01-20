@@ -47,8 +47,8 @@
         <mapping class="org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl"/>
         <mapping class="org.jasig.portal.events.aggr.dao.jpa.AggregatedGroupConfigImpl"/>
         <mapping class="org.jasig.portal.events.aggr.dao.jpa.AggregatedIntervalConfigImpl"/>
-        <mapping class="org.jasig.portal.events.aggr.dao.jpa.QuarterDetailsImpl"/>
-        <mapping class="org.jasig.portal.events.aggr.dao.jpa.AcademicTermDetailsImpl"/>
+        <mapping class="org.jasig.portal.events.aggr.dao.jpa.QuarterDetailImpl"/>
+        <mapping class="org.jasig.portal.events.aggr.dao.jpa.AcademicTermDetailImpl"/>
         <mapping class="org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl"/>
         <mapping class="org.jasig.portal.events.aggr.session.EventSessionImpl"/>
         <mapping class="org.jasig.portal.events.aggr.login.LoginAggregationImpl"/>

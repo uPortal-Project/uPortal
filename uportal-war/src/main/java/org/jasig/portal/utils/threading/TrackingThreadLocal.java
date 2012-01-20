@@ -25,11 +25,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import org.jasig.portal.portlet.rendering.worker.TrackingThreadLocalPortletExecutionInterceptor;
+
 /**
  * A ThreadLocal subclass that keeps track of all created instances. Using this ThreadLocal
- * subclass in uPortal allows any {@link java.lang.Runnable} wrapped by
- * {@link org.jasig.portal.utils.ThreadLocalCopyRunnable} to have the values copied into the
- * appropriate ThreadLocals in the child thread when the Runable is run. This avoids having
+ * subclass in uPortal allows any portlet execution thread wrapped by
+ * {@link TrackingThreadLocalPortletExecutionInterceptor} to have the values copied into the
+ * appropriate ThreadLocals in the child thread when the thread is run. This avoids having
  * to write explicit code for each ThreadLocal that needs to be copied.<br><br>  
  * 
  * The references kept the the ThreadLocal instances is done using a weak set so this tracking

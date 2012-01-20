@@ -173,9 +173,8 @@ public class JpaDateDimensionDao extends BaseJpaDao implements DateDimensionDao 
     
     @Override
     @Transactional("aggrEvents")
-    public DateDimension createDateDimension(DateMidnight cal) {
-        //TODO qtr/term lookup
-        final DateDimension dateDimension = new DateDimensionImpl(cal.getYear(), cal.getMonthOfYear(), cal.getDayOfMonth(), 0, null);
+    public DateDimension createDateDimension(DateMidnight cal, int quarter, String term) {
+        final DateDimension dateDimension = new DateDimensionImpl(cal.getYear(), cal.getMonthOfYear(), cal.getDayOfMonth(), quarter, term);
         
         this.entityManager.persist(dateDimension);
         

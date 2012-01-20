@@ -19,16 +19,14 @@
 
 package org.jasig.portal.events.aggr.dao;
 
-import java.util.Set;
-import java.util.SortedSet;
+import java.util.List;
 
-import org.jasig.portal.events.PortalEvent;
-import org.jasig.portal.events.aggr.AcademicTermDetails;
+import org.jasig.portal.events.aggr.AcademicTermDetail;
 import org.jasig.portal.events.aggr.AggregatedGroupConfig;
 import org.jasig.portal.events.aggr.AggregatedIntervalConfig;
 import org.jasig.portal.events.aggr.IEventAggregatorStatus;
 import org.jasig.portal.events.aggr.IPortalEventAggregator;
-import org.jasig.portal.events.aggr.QuarterDetails;
+import org.jasig.portal.events.aggr.QuarterDetail;
 import org.joda.time.DateMidnight;
 
 /**
@@ -41,7 +39,7 @@ public interface IEventAggregationManagementDao {
     /**
      * Get the aggregation status for the specified processing type
      */
-    IEventAggregatorStatus getEventAggregatorStatus(IEventAggregatorStatus.ProcessingType processingType);
+    IEventAggregatorStatus getEventAggregatorStatus(IEventAggregatorStatus.ProcessingType processingType, boolean create);
     
     /**
      * Update changes to the aggregation status object
@@ -105,20 +103,22 @@ public interface IEventAggregationManagementDao {
     
     
     /**
-     * The configured quarter details
+     * An immutable list of the configured quarter details sorted by its natural ordering
      */
-    SortedSet<QuarterDetails> getQuartersDetails();
+    List<QuarterDetail> getQuartersDetails();
     
     /**
      * Erase the existing quarter configuration and use the provided.
-     * @param quarterDetails Must contain four sequential quarters with no gaps between dates
+     * @param quarterDetail Must contain four sequential quarters with no gaps between dates
      */
-    void setQuarterDetails(Set<QuarterDetails> quarterDetails);
+    void setQuarterDetails(List<QuarterDetail> quarterDetail);
+    
+    
     
     /**
-     * The currently configured academic terms
+     * An immutable list of the currently configured academic terms sorted by its natural ordering
      */
-    SortedSet<AcademicTermDetails> getAcademicTermDetails();
+    List<AcademicTermDetail> getAcademicTermDetails();
     
     /**
      * Adds a new academic term, if the term overlaps with an existing term an exception
@@ -129,5 +129,10 @@ public interface IEventAggregationManagementDao {
     /**
      * Update the specified term details
      */
-    void updateAcademicTermDetails(AcademicTermDetails academicTermDetails);
+    void updateAcademicTermDetails(AcademicTermDetail academicTermDetail);
+    
+    /**
+     * Delete the specified term details
+     */
+    void deleteAcademicTermDetails(AcademicTermDetail academicTermDetail);
 }

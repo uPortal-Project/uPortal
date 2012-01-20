@@ -95,7 +95,7 @@ public class JpaLoginAggregationDaoTest extends BaseJpaDaoTest {
         this.executeInTransaction(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
-                dateDimensionDao.createDateDimension(instantDate);
+                dateDimensionDao.createDateDimension(instantDate, 0, null);
                 timeDimensionDao.createTimeDimension(instantTime);
             }
         });

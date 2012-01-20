@@ -26,6 +26,9 @@ import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -54,7 +57,7 @@ import org.jasig.portal.events.aggr.Interval;
 @TableGenerator(name = "UP_EVENT_AGGR_CONF_INTRVL_GEN", pkColumnValue = "UP_EVENT_AGGR_CONF_INTRVL", allocationSize = 1)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class AggregatedIntervalConfigImpl implements AggregatedIntervalConfig {
+public class AggregatedIntervalConfigImpl extends BaseAggregatedDimensionConfigImpl<Interval> implements AggregatedIntervalConfig {
     @Id
     @GeneratedValue(generator = "UP_EVENT_AGGR_CONF_INTRVL_GEN")
     @Column(name = "ID")
@@ -65,16 +68,20 @@ public class AggregatedIntervalConfigImpl implements AggregatedIntervalConfig {
     @Column(name = "AGGREGATOR_TYPE", nullable = false, updatable = false)
     private final Class<? extends IPortalEventAggregator> aggregatorType;
             
-    @ElementCollection
+    @ElementCollection(fetch=FetchType.EAGER)
     @JoinTable(name="UP_EVENT_AGGR_CONF_INTRVL_INC", joinColumns = @JoinColumn(name = "UP_EVENT_AGGR_CONF_INTRVL_ID"))
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
+    @Enumerated(EnumType.STRING)
+    @Column(name="INTERVAL")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private final Set<Interval> includedIntervals;
     
-    @ElementCollection
+    @ElementCollection(fetch=FetchType.EAGER)
     @JoinTable(name="UP_EVENT_AGGR_CONF_INTRVL_EXC", joinColumns = @JoinColumn(name = "UP_EVENT_AGGR_CONF_INTRVL_ID"))
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
+    @Enumerated(EnumType.STRING)
+    @Column(name="INTERVAL")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private final Set<Interval> excludedIntervals;
 
     @SuppressWarnings("unused")
@@ -97,41 +104,15 @@ public class AggregatedIntervalConfigImpl implements AggregatedIntervalConfig {
     public Class<? extends IPortalEventAggregator> getAggregatorType() {
         return aggregatorType;
     }
-
+    
     @Override
-    public Set<Interval> getIncludedIntervals() {
+    public Set<Interval> getIncluded() {
         return includedIntervals;
     }
 
     @Override
-    public Set<Interval> getExcludedIntervals() {
+    public Set<Interval> getExcluded() {
         return excludedIntervals;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((aggregatorType == null) ? 0 : aggregatorType.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        AggregatedIntervalConfigImpl other = (AggregatedIntervalConfigImpl) obj;
-        if (aggregatorType == null) {
-            if (other.aggregatorType != null)
-                return false;
-        }
-        else if (!aggregatorType.equals(other.aggregatorType))
-            return false;
-        return true;
     }
 
     @Override

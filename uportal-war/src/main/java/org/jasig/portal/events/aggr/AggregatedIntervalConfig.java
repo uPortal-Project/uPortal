@@ -19,7 +19,6 @@
 
 package org.jasig.portal.events.aggr;
 
-import java.util.Set;
 
 /**
  * Configuration of interval includes/excludes
@@ -27,21 +26,6 @@ import java.util.Set;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface AggregatedIntervalConfig {
-
-    /**
-     * @return The aggregator the includes/excludes are for
-     */
-    Class<? extends IPortalEventAggregator> getAggregatorType();
-
-    /**
-     * Intervals listed in this set will be excluded from aggregation.
-     */
-    Set<Interval> getIncludedIntervals();
-
-    /**
-     * If not empty only intervals listed in this set will included in aggregation.
-     */
-    Set<Interval> getExcludedIntervals();
+public interface AggregatedIntervalConfig extends BaseAggregatedDimensionConfig<Interval> {
 
 }

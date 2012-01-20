@@ -39,7 +39,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
-import org.jasig.portal.events.aggr.AcademicTermDetails;
+import org.jasig.portal.events.aggr.AcademicTermDetail;
+import org.jasig.portal.events.aggr.EventDateTimeUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.ReadableInstant;
@@ -49,25 +50,25 @@ import org.joda.time.ReadableInstant;
  * @version $Revision$
  */
 @Entity
-@Table(name = "UP_ACADEMIC_TERM_DETAILS")
+@Table(name = "UP_ACADEMIC_TERM_DETAIL")
 @SequenceGenerator(
-        name="UP_ACADEMIC_TERM_DETAILS_GEN",
-        sequenceName="UP_ACADEMIC_TERM_DETAILS_SEQ",
+        name="UP_ACADEMIC_TERM_DETAIL_GEN",
+        sequenceName="UP_ACADEMIC_TERM_DETAIL_SEQ",
         allocationSize=1
     )
 @TableGenerator(
-        name="UP_ACADEMIC_TERM_DETAILS_GEN",
-        pkColumnValue="UP_ACADEMIC_TERM_DETAILS_PROP",
+        name="UP_ACADEMIC_TERM_DETAIL_GEN",
+        pkColumnValue="UP_ACADEMIC_TERM_DETAIL_PROP",
         allocationSize=1
     )
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class AcademicTermDetailsImpl implements AcademicTermDetails, Serializable {
+public class AcademicTermDetailImpl implements AcademicTermDetail, Serializable {
     private static final long serialVersionUID = 1L;
    
     @SuppressWarnings("unused")
     @Id
-    @GeneratedValue(generator = "UP_ACADEMIC_TERM_DETAILS_GEN")
+    @GeneratedValue(generator = "UP_ACADEMIC_TERM_DETAIL_GEN")
     @Column(name="TERM_ID")
     private final long id;
     
@@ -90,19 +91,19 @@ public class AcademicTermDetailsImpl implements AcademicTermDetails, Serializabl
     private DateMidnight endDateMidnight;
     
     @SuppressWarnings("unused")
-    private AcademicTermDetailsImpl() {
+    private AcademicTermDetailImpl() {
         this.id = -1;
         this.start = null;
         this.end = null;
         this.termName = null;
     }
     
-    public AcademicTermDetailsImpl(DateMidnight start, DateMidnight end, String termName) {
+    public AcademicTermDetailImpl(DateMidnight start, DateMidnight end, String termName) {
         Validate.notNull(start);
         Validate.notNull(end);
         Validate.notNull(termName);
-        if (start.isEqual(end) || start.isBefore(end)) {
-            throw new IllegalArgumentException("start cannot be before or equal to end");
+        if (start.isEqual(end) || end.isBefore(start)) {
+            throw new IllegalArgumentException("end cannot be before or equal to start");
         }
         this.id = -1;
         this.start = start.toDateTime();
@@ -153,12 +154,12 @@ public class AcademicTermDetailsImpl implements AcademicTermDetails, Serializabl
     }
     
     @Override
-    public boolean contains(ReadableInstant instant) {
-        return this.endDateMidnight.isAfter(instant) && (this.startDateMidnight.isBefore(instant) || this.startDateMidnight.isEqual(instant));
+    public int compareTo(ReadableInstant instant) {
+        return EventDateTimeUtils.compareTo(this.start, this.end, instant);
     }
 
     @Override
-    public int compareTo(AcademicTermDetails o) {
+    public int compareTo(AcademicTermDetail o) {
         return this.getStart().compareTo(o.getStart());
     }
 
@@ -180,7 +181,7 @@ public class AcademicTermDetailsImpl implements AcademicTermDetails, Serializabl
             return false;
         if (getClass() != obj.getClass())
             return false;
-        AcademicTermDetailsImpl other = (AcademicTermDetailsImpl) obj;
+        AcademicTermDetailImpl other = (AcademicTermDetailImpl) obj;
         if (this.endDateMidnight == null) {
             if (other.endDateMidnight != null)
                 return false;
@@ -204,7 +205,7 @@ public class AcademicTermDetailsImpl implements AcademicTermDetails, Serializabl
 
     @Override
     public String toString() {
-        return "AcademicTermDetailsImpl [termName=" + this.termName + ", startDateMidnight="
+        return "AcademicTermDetailImpl [termName=" + this.termName + ", startDateMidnight="
                 + this.startDateMidnight + ", endDateMidnight=" + this.endDateMidnight + "]";
     }
 }

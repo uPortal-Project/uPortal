@@ -7,7 +7,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.joda.time.DateTime;
-import org.joda.time.Period;
+import org.joda.time.Minutes;
 import org.springframework.util.Assert;
 
 /**
@@ -21,7 +21,7 @@ public class IntervalInfo implements Serializable {
     private final DateTime end;
     private final DateDimension dateDimension;
     private final TimeDimension timeDimension;
-    private Period period;
+    private int duration = -1;
 
     IntervalInfo(DateTime start, DateTime end, DateDimension dateDimension, TimeDimension timeDimension) {
         Assert.notNull(start, "start can not be null");
@@ -64,11 +64,12 @@ public class IntervalInfo implements Serializable {
     /**
      * @return Minutes between start and end
      */
-    public Period getPeriod() {
-        Period d = this.period;
-        if (d == null) {
-            d = new Period(this.start, this.end);
-            this.period = d;
+    public int getDuration() {
+        int d = this.duration;
+        if (d < 0) {
+            d = Minutes.minutesBetween(this.start, this.end).getMinutes();
+            d = Math.abs(d);
+            this.duration = d;
         }
         return d;
     }
@@ -116,7 +117,7 @@ public class IntervalInfo implements Serializable {
             .append("dateDimension", this.dateDimension)
             .append("timeDimension", this.timeDimension)
             .append("end", this.end)
-            .append("period", this.getPeriod())
+            .append("period", this.getDuration())
             .toString();
     }
 }

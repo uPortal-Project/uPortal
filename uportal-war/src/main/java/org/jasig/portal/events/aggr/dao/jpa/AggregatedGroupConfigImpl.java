@@ -41,7 +41,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NaturalId;
-import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.aggr.AggregatedGroupConfig;
 import org.jasig.portal.events.aggr.IPortalEventAggregator;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
@@ -57,7 +56,7 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl;
 @TableGenerator(name = "UP_EVENT_AGGR_CONF_GROUPS_GEN", pkColumnValue = "UP_EVENT_AGGR_CONF_GROUPS", allocationSize = 1)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class AggregatedGroupConfigImpl implements AggregatedGroupConfig {
+public class AggregatedGroupConfigImpl extends BaseAggregatedDimensionConfigImpl<AggregatedGroupMapping> implements AggregatedGroupConfig {
     @Id
     @GeneratedValue(generator = "UP_EVENT_AGGR_CONF_GROUPS_GEN")
     @Column(name = "ID")
@@ -100,41 +99,17 @@ public class AggregatedGroupConfigImpl implements AggregatedGroupConfig {
     public Class<? extends IPortalEventAggregator> getAggregatorType() {
         return this.aggregatorType;
     }
-
+    
+    
+    
     @Override
-    public Set<AggregatedGroupMapping> getIncludedGroups() {
-        return includedGroups;
+    public Set<AggregatedGroupMapping> getIncluded() {
+        return this.includedGroups;
     }
 
     @Override
-    public Set<AggregatedGroupMapping> getExcludedGroups() {
-        return excludedGroups;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((aggregatorType == null) ? 0 : aggregatorType.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        AggregatedGroupConfigImpl other = (AggregatedGroupConfigImpl) obj;
-        if (aggregatorType == null) {
-            if (other.aggregatorType != null)
-                return false;
-        }
-        else if (!aggregatorType.equals(other.aggregatorType))
-            return false;
-        return true;
+    public Set<AggregatedGroupMapping> getExcluded() {
+        return this.excludedGroups;
     }
 
     @Override

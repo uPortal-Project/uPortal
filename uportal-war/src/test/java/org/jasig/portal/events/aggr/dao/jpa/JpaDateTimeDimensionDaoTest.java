@@ -87,7 +87,7 @@ public class JpaDateTimeDimensionDaoTest extends BaseJpaDaoTest {
                 DateMidnight date = new DateMidnight(2012, 1, 1);
                 
                 for (int i = 0; i < 7; i++) {
-                    dateDimensionDao.createDateDimension(date);
+                    dateDimensionDao.createDateDimension(date, 0, null);
                     date = date.plusDays(1);
                 }
             }

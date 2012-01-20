@@ -19,10 +19,8 @@
 
 package org.jasig.portal.events.aggr.dao.jpa;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -34,18 +32,17 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
-import org.jasig.portal.events.aggr.AcademicTermDetails;
+import org.jasig.portal.events.aggr.AcademicTermDetail;
 import org.jasig.portal.events.aggr.AggregatedGroupConfig;
 import org.jasig.portal.events.aggr.AggregatedIntervalConfig;
 import org.jasig.portal.events.aggr.EventDateTimeUtils;
 import org.jasig.portal.events.aggr.IEventAggregatorStatus;
 import org.jasig.portal.events.aggr.IEventAggregatorStatus.ProcessingType;
 import org.jasig.portal.events.aggr.IPortalEventAggregator;
-import org.jasig.portal.events.aggr.QuarterDetails;
+import org.jasig.portal.events.aggr.QuarterDetail;
 import org.jasig.portal.events.aggr.dao.IEventAggregationManagementDao;
 import org.jasig.portal.jpa.BaseJpaDao;
 import org.joda.time.DateMidnight;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.support.DataAccessUtils;
@@ -68,14 +65,12 @@ public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEve
     private CriteriaQuery<EventAggregatorStatusImpl> findEventAggregatorStatusByProcessingTypeQuery;
     private CriteriaQuery<AggregatedGroupConfigImpl> findGroupConfigForAggregatorQuery;
     private CriteriaQuery<AggregatedIntervalConfigImpl> findIntervalConfigForAggregatorQuery;
-    private CriteriaQuery<QuarterDetailsImpl> findAllQuarterDetailsQuery;
-    private CriteriaQuery<AcademicTermDetailsImpl> findAllAcademicTermDetailsQuery;
-    private CriteriaQuery<AcademicTermDetailsImpl> findAcademicTermDetailsForDateQuery;
+    private CriteriaQuery<QuarterDetailImpl> findAllQuarterDetailsQuery;
+    private CriteriaQuery<AcademicTermDetailImpl> findAllAcademicTermDetailsQuery;
     private String deleteAllQuarterDetailsQuery;
 
     private ParameterExpression<ProcessingType> processingTypeParameter;
     private ParameterExpression<Class> aggregatorTypeParameter;
-    private ParameterExpression<DateTime> dateTimeTypeParameter;
     
     private TransactionOperations transactionOperations;
     private EntityManager entityManager;
@@ -99,17 +94,15 @@ public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEve
     protected void buildCriteriaQueries(CriteriaBuilder cb) {
         this.processingTypeParameter = cb.parameter(ProcessingType.class, "processingType");
         this.aggregatorTypeParameter = cb.parameter(Class.class, "aggregatorType");
-        this.dateTimeTypeParameter = cb.parameter(DateTime.class, "dateTime");
         
         this.findEventAggregatorStatusByProcessingTypeQuery = buildFindEventAggregatorStatusByProcessingTypeQuery(cb);
         this.findGroupConfigForAggregatorQuery = buildFindGroupConfigForAggregatorQuery(cb);
         this.findIntervalConfigForAggregatorQuery = buildFindIntervalConfigForAggregatorQuery(cb);
         this.findAllQuarterDetailsQuery = buildFindAllQuarterDetailsQuery(cb);
         this.findAllAcademicTermDetailsQuery = buildFindAllAcademicTermDetailsQuery(cb);
-        this.findAcademicTermDetailsForDateQuery = this.buildFindAcademicTermDetailsForDateQuery(cb);
         
         this.deleteAllQuarterDetailsQuery = 
-                "DELETE FROM " + QuarterDetailsImpl.class.getName() + " e ";
+                "DELETE FROM " + QuarterDetailImpl.class.getName() + " e ";
     }
 
     protected CriteriaQuery<EventAggregatorStatusImpl> buildFindEventAggregatorStatusByProcessingTypeQuery(final CriteriaBuilder cb) {
@@ -149,34 +142,20 @@ public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEve
         return criteriaQuery;
     }
     
-    protected CriteriaQuery<QuarterDetailsImpl> buildFindAllQuarterDetailsQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<QuarterDetailsImpl> criteriaQuery = cb.createQuery(QuarterDetailsImpl.class);
-        final Root<QuarterDetailsImpl> entityRoot = criteriaQuery.from(QuarterDetailsImpl.class);
+    protected CriteriaQuery<QuarterDetailImpl> buildFindAllQuarterDetailsQuery(final CriteriaBuilder cb) {
+        final CriteriaQuery<QuarterDetailImpl> criteriaQuery = cb.createQuery(QuarterDetailImpl.class);
+        final Root<QuarterDetailImpl> entityRoot = criteriaQuery.from(QuarterDetailImpl.class);
         criteriaQuery.select(entityRoot);
+        criteriaQuery.orderBy(cb.asc(entityRoot.get(QuarterDetailImpl_.quarterId)));
         
         return criteriaQuery;
     }
 
-    protected CriteriaQuery<AcademicTermDetailsImpl> buildFindAllAcademicTermDetailsQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<AcademicTermDetailsImpl> criteriaQuery = cb.createQuery(AcademicTermDetailsImpl.class);
-        final Root<AcademicTermDetailsImpl> entityRoot = criteriaQuery.from(AcademicTermDetailsImpl.class);
+    protected CriteriaQuery<AcademicTermDetailImpl> buildFindAllAcademicTermDetailsQuery(final CriteriaBuilder cb) {
+        final CriteriaQuery<AcademicTermDetailImpl> criteriaQuery = cb.createQuery(AcademicTermDetailImpl.class);
+        final Root<AcademicTermDetailImpl> entityRoot = criteriaQuery.from(AcademicTermDetailImpl.class);
         criteriaQuery.select(entityRoot);
-        
-        return criteriaQuery;
-    }
-
-    protected CriteriaQuery<AcademicTermDetailsImpl> buildFindAcademicTermDetailsForDateQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<AcademicTermDetailsImpl> criteriaQuery = cb.createQuery(AcademicTermDetailsImpl.class);
-        final Root<AcademicTermDetailsImpl> entityRoot = criteriaQuery.from(AcademicTermDetailsImpl.class);
-        criteriaQuery.select(entityRoot);
-        criteriaQuery.where(
-                cb.and(
-                        cb.lessThanOrEqualTo(entityRoot.get(AcademicTermDetailsImpl_.start), dateTimeTypeParameter),
-                        cb.greaterThan(entityRoot.get(AcademicTermDetailsImpl_.end), dateTimeTypeParameter)
-                )
-                //TODO need to queryby two datetimes
-        );
-        
+        criteriaQuery.orderBy(cb.asc(entityRoot.get(AcademicTermDetailImpl_.start)));
         
         return criteriaQuery;
     }
@@ -184,7 +163,7 @@ public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEve
     
 
     @Override
-    public IEventAggregatorStatus getEventAggregatorStatus(final ProcessingType processingType) {
+    public IEventAggregatorStatus getEventAggregatorStatus(final ProcessingType processingType, boolean create) {
         final TypedQuery<EventAggregatorStatusImpl> query = this.createQuery(findEventAggregatorStatusByProcessingTypeQuery, FIND_AGGR_STATUS_BY_PROC_TYPE_CACHE_REGION);
         query.setParameter(this.processingTypeParameter, processingType);
 
@@ -192,7 +171,7 @@ public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEve
         EventAggregatorStatusImpl status = DataAccessUtils.uniqueResult(resultList);
         
         //Create the status object if it doesn't yet exist
-        if (status == null) {
+        if (status == null && create) {
             status = this.transactionOperations.execute(new TransactionCallback<EventAggregatorStatusImpl>() {
                 @Override
                 public EventAggregatorStatusImpl doInTransaction(TransactionStatus status) {
@@ -300,19 +279,19 @@ public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEve
     
 
     @Override
-    public SortedSet<QuarterDetails> getQuartersDetails() {
-        final TypedQuery<QuarterDetailsImpl> query = this.createQuery(this.findAllQuarterDetailsQuery, "ALL");
-        final List<QuarterDetailsImpl> results = query.getResultList();
+    public List<QuarterDetail> getQuartersDetails() {
+        final TypedQuery<QuarterDetailImpl> query = this.createQuery(this.findAllQuarterDetailsQuery, "ALL");
+        final List<QuarterDetailImpl> results = query.getResultList();
         if (results.size() == 4) {
-            return new TreeSet<QuarterDetails>(results);
+            return new ArrayList<QuarterDetail>(results);
         }
         
         //No valid quarters config in db, populate the standard quarters
-        return this.transactionOperations.execute(new TransactionCallback<SortedSet<QuarterDetails>>() {
+        return this.transactionOperations.execute(new TransactionCallback<List<QuarterDetail>>() {
 
             @Override
-            public SortedSet<QuarterDetails> doInTransaction(TransactionStatus status) {
-                final SortedSet<QuarterDetails> standardQuarters = EventDateTimeUtils.createStandardQuarters();
+            public List<QuarterDetail> doInTransaction(TransactionStatus status) {
+                final List<QuarterDetail> standardQuarters = EventDateTimeUtils.createStandardQuarters();
                 setQuarterDetails(standardQuarters);
                 return standardQuarters;
             }
@@ -321,36 +300,51 @@ public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEve
 
     @Override
     @Transactional(value="aggrEventsTransactionManager")
-    public void setQuarterDetails(Set<QuarterDetails> newQuarterDetails) {
+    public void setQuarterDetails(List<QuarterDetail> newQuarterDetails) {
         newQuarterDetails = EventDateTimeUtils.validateQuarters(newQuarterDetails);
         
         final Query deleteAllQuery = this.entityManager.createQuery(deleteAllQuarterDetailsQuery);
         deleteAllQuery.executeUpdate();
 
-        for (final QuarterDetails quarterDetails : newQuarterDetails) {
-            this.entityManager.persist(quarterDetails);
+        for (final QuarterDetail quarterDetail : newQuarterDetails) {
+            this.entityManager.persist(quarterDetail);
         }
     }
 
     @Override
-    public SortedSet<AcademicTermDetails> getAcademicTermDetails() {
-        final TypedQuery<AcademicTermDetailsImpl> query = this.createQuery(this.findAllAcademicTermDetailsQuery, "ALL");
-        return new TreeSet<AcademicTermDetails>(query.getResultList());
+    public List<AcademicTermDetail> getAcademicTermDetails() {
+        final TypedQuery<AcademicTermDetailImpl> query = this.createQuery(this.findAllAcademicTermDetailsQuery, "ALL");
+        return new ArrayList<AcademicTermDetail>(query.getResultList());
     }
 
     @Override
-    @Transactional(value="aggrEventsTransactionManager")
+    @Transactional(value="aggrEventsTransactionManager", noRollbackFor = IllegalArgumentException.class)
     public void addAcademicTermDetails(DateMidnight start, DateMidnight end, String termName) {
-        final TypedQuery<AcademicTermDetailsImpl> query = this.createQuery(this.findAcademicTermDetailsForDateQuery, "BY_CONTAINS_DATE");
-        query.setParameter(this.dateTimeTypeParameter, start.toDateTime());
-        
         //Check if term dates overlap and fail if they do
+        final List<AcademicTermDetail> academicTermDetail = this.getAcademicTermDetails();
+        AcademicTermDetail existingTerm = EventDateTimeUtils.findDateRangeSorted(start, academicTermDetail);
+        if (existingTerm != null) {
+            throw new IllegalArgumentException("Cannot create new term, the start date of " + start + " overlaps with existing term: " + existingTerm);
+        }
         
+        existingTerm = EventDateTimeUtils.findDateRangeSorted(end.minusDays(1), academicTermDetail);
+        if (existingTerm != null) {
+            throw new IllegalArgumentException("Cannot create new term, the end date of " + end + " overlaps with existing term: " + existingTerm);
+        }
+        
+        final AcademicTermDetailImpl newTerm = new AcademicTermDetailImpl(start, end, termName);
+        this.entityManager.persist(newTerm);
     }
 
     @Override
     @Transactional(value="aggrEventsTransactionManager")
-    public void updateAcademicTermDetails(AcademicTermDetails academicTermDetails) {
-        this.entityManager.persist(academicTermDetails);
+    public void updateAcademicTermDetails(AcademicTermDetail academicTermDetail) {
+        this.entityManager.persist(academicTermDetail);
+    }
+
+    @Override
+    @Transactional(value="aggrEventsTransactionManager")
+    public void deleteAcademicTermDetails(AcademicTermDetail academicTermDetail) {
+        this.entityManager.remove(academicTermDetail);
     }
 }

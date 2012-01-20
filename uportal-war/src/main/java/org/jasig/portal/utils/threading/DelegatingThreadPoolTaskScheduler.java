@@ -27,6 +27,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.joda.time.ReadableDuration;
 import org.springframework.scheduling.SchedulingTaskExecutor;
@@ -34,8 +35,6 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.TriggerContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
-
-import com.google.common.util.concurrent.ForwardingFuture;
 
 /**
  * Scheduling thread pool that upon invocation of the scheduled task immediately
@@ -236,53 +235,56 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
         }
     }
     
-    private static class DelegatingForwardingFuture<V> extends ForwardingFuture<V> {
+    private static class DelegatingForwardingFuture<V> implements Future<V> {
         private final Future<? extends Future<V>> future;
         
         public DelegatingForwardingFuture(Future<? extends Future<V>> future) {
             this.future = future;
         }
 
+
         @Override
-        protected Future<V> delegate() {
-            try {
-                return this.future.get();
-            }
-            catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            catch (ExecutionException e) {
-                final Throwable cause = e.getCause();
-                if (cause instanceof RuntimeException) {
-                    throw (RuntimeException)cause;
-                }
-                if (cause != null) {
-                    throw new RuntimeException(cause);
-                }
-                throw new RuntimeException(e);
-            }
+        public V get() throws InterruptedException, ExecutionException {
+            return this.future.get().get();
+        }
+
+        @Override
+        public V get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+            return this.future.get(timeout, unit).get(timeout, unit);
+        }
+
+        @Override
+        public boolean cancel(boolean mayInterruptIfRunning) {
+            return this.future.cancel(mayInterruptIfRunning);
+        }
+
+        @Override
+        public boolean isCancelled() {
+            return this.future.isCancelled();
+        }
+
+        @Override
+        public boolean isDone() {
+            return this.future.isDone();
         }
     }
     
     private static class DelegatingForwardingScheduledFuture<V> extends DelegatingForwardingFuture<V> implements ScheduledFuture<V> {
+        private final ScheduledFuture<ScheduledFuture<V>> future;
+        
         public DelegatingForwardingScheduledFuture(ScheduledFuture<ScheduledFuture<V>> scheduledFuture) {
             super(scheduledFuture);
-        }
-
-        @Override
-        protected ScheduledFuture<V> delegate() {
-            final Future<V> delegate = super.delegate();
-            return (ScheduledFuture<V>)delegate;
+            this.future = scheduledFuture;
         }
 
         @Override
         public long getDelay(TimeUnit unit) {
-            return this.delegate().getDelay(unit);
+            return this.future.getDelay(unit);
         }
 
         @Override
         public int compareTo(Delayed o) {
-            return this.delegate().compareTo(o);
+            return this.future.compareTo(o);
         }
     }
 }

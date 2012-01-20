@@ -19,39 +19,43 @@
 
 package org.jasig.portal.events.aggr;
 
-import org.joda.time.MonthDay;
-import org.joda.time.ReadableInstant;
+import java.util.Set;
+
+import org.jasig.portal.utils.IncludeExcludeUtils;
 
 /**
- * Details about a quarter of the year. The first quarter will have ID 0, the second ID 1, etc...
+ * Describes common Include/Exclude configuration of aggregation dimensions
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface QuarterDetails extends Comparable<QuarterDetails> {
+public interface BaseAggregatedDimensionConfig<D> {
+
     /**
-     * @return The id of the quarter (0 - 3)
+     * @return The aggregator the includes/excludes are for
      */
-    int getQuarterId();
+    Class<? extends IPortalEventAggregator> getAggregatorType();
     
     /**
-     * @return Start of the quarter, inclusive
+     * @return The revision number of the config object, can be used to detect changes
      */
-    MonthDay getStart();
+    long getVersion();
     
     /**
-     * @return End of the quarter, exclusive
+     * @param dimension The dimension to test
+     * @return true if it is included
+     * @see IncludeExcludeUtils#included(Object, java.util.Collection, java.util.Collection)
      */
-    MonthDay getEnd();
-    
+    boolean isIncluded(D dimension);
+
     /**
-     * @return true If the specified instant is within the date range for the quarter
+     * Dimensions listed in this set will be excluded from aggregation.
      */
-    boolean contains(ReadableInstant instant);
-    
+    Set<D> getIncluded();
+
     /**
-     * Compare to another {@link QuarterDetails}, must sort by {@link #getQuarterId()}
+     * If not empty only dimensions listed in this set will included in aggregation.
      */
-    @Override
-    int compareTo(QuarterDetails o);
+    Set<D> getExcluded();
+
 }

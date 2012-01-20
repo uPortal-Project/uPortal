@@ -6,10 +6,12 @@
 package org.jasig.portal.events.aggr;
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.events.aggr.dao.DateDimensionDao;
+import org.jasig.portal.events.aggr.dao.IEventAggregationManagementDao;
 import org.jasig.portal.events.aggr.dao.TimeDimensionDao;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
@@ -30,7 +32,13 @@ public class IntervalHelperImpl implements IntervalHelper {
     
     private TimeDimensionDao timeDimensionDao;
     private DateDimensionDao dateDimensionDao;
-    
+    private IEventAggregationManagementDao eventAggregationManagementDao;
+
+    @Autowired
+    public void setEventAggregationManagementDao(IEventAggregationManagementDao eventAggregationManagementDao) {
+        this.eventAggregationManagementDao = eventAggregationManagementDao;
+    }
+
     @Autowired
     public void setTimeDimensionDao(TimeDimensionDao timeDimensionDao) {
         this.timeDimensionDao = timeDimensionDao;
@@ -46,10 +54,38 @@ public class IntervalHelperImpl implements IntervalHelper {
      */
     @Override
     public IntervalInfo getIntervalInfo(Interval interval, DateTime date) {
+        //Chop off everything below the minutes (seconds, millis)
         final DateTime instant = date.minuteOfHour().roundFloorCopy();
         
-        final DateTime start = determineStart(interval, instant);
-        final DateTime end = determineEnd(interval, start);
+        //TODO cache this resolution ... best place would be in the current jpa session
+        
+        final DateTime start, end;
+        switch (interval) {
+            case CALENDAR_QUARTER: {
+                final List<QuarterDetail> quartersDetails = this.eventAggregationManagementDao.getQuartersDetails();
+                final QuarterDetail quarterDetail = EventDateTimeUtils.findDateRangeSorted(instant, quartersDetails);
+                start = quarterDetail.getStartDateMidnight(date).toDateTime();
+                end = quarterDetail.getEndDateMidnight(date).toDateTime();
+                break;
+            }
+            case ACADEMIC_TERM: {
+                final List<AcademicTermDetail> academicTermDetails = this.eventAggregationManagementDao.getAcademicTermDetails();
+                final AcademicTermDetail academicTermDetail = EventDateTimeUtils.findDateRangeSorted(date, academicTermDetails);
+                if (academicTermDetail == null) {
+                    return null;
+                }
+                
+                start = academicTermDetail.getStart().toDateTime();
+                end = academicTermDetail.getEnd().toDateTime();
+                
+                break;
+            }
+            default: {
+                start = determineStart(interval, instant);
+                end = determineEnd(interval, start);
+                
+            }
+        }
         
         final LocalTime startTime = start.toLocalTime();
         final TimeDimension startTimeDimension = this.timeDimensionDao.getTimeDimensionByTime(startTime);
@@ -66,23 +102,8 @@ public class IntervalHelperImpl implements IntervalHelper {
             return instant.property(dateTimeFieldType).roundFloorCopy();
         }
         
-        switch (interval) {
-            case FIVE_MINUTE: {
-                return instant.hourOfDay().roundFloorCopy().plusMinutes((instant.getMinuteOfHour() / 5) * 5);
-            }
-            case CALENDAR_QUARTER: {
-//                final DateDimension instantDateDimension = this.dateDimensionDao.getDateDimensionForCalendar(instant);
-//                final int quarter = instantDateDimension.getQuarter();
-//                this.dateDimensionDao.getFirstDateDimension(Interval.CALENDAR_QUARTER, quarter);
-                
-                //TODO treated as 3mo for now
-                return instant.year().roundFloorCopy().plusMonths((instant.getMonthOfYear() / 3) * 3);
-            }
-            case ACADEMIC_TERM: {
-                
-                //TODO treated as 1yr for now
-                return instant.year().roundFloorCopy();
-            }
+        if (interval == Interval.FIVE_MINUTE) {
+            return instant.hourOfDay().roundFloorCopy().plusMinutes((instant.getMinuteOfHour() / 5) * 5);
         }
         
         throw new IllegalArgumentException("Unsupportd Interval: " + interval);
@@ -94,18 +115,8 @@ public class IntervalHelperImpl implements IntervalHelper {
             return start.property(dateTimeFieldType).addToCopy(1);
         }
         
-        switch (interval) {
-            case FIVE_MINUTE: {
-                return start.plusMinutes(5);
-            }
-            case CALENDAR_QUARTER: {
-                //TODO
-                return start.plusMonths(3);
-            }
-            case ACADEMIC_TERM: {
-                //TODO
-                return start.plusYears(1);
-            }
+        if (interval == Interval.FIVE_MINUTE) {
+            return start.plusMinutes(5);
         }
         
         throw new IllegalArgumentException("Unsupportd Interval: " + interval);

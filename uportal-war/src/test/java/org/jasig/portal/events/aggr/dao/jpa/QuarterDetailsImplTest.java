@@ -22,15 +22,15 @@ package org.jasig.portal.events.aggr.dao.jpa;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Iterator;
-import java.util.SortedSet;
+import java.util.List;
 
 import org.jasig.portal.events.aggr.EventDateTimeUtils;
-import org.jasig.portal.events.aggr.QuarterDetails;
+import org.jasig.portal.events.aggr.QuarterDetail;
 import org.joda.time.DateTime;
 import org.joda.time.MonthDay;
 import org.junit.Test;
 
-import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.ImmutableList;
 
 /**
  * @author Eric Dalquist
@@ -40,15 +40,15 @@ public class QuarterDetailsImplTest {
     
     @Test
     public void testOrder() {
-        SortedSet<QuarterDetails> quarters = createStandardQuarters();
+        List<QuarterDetail> quarters = createStandardQuarters();
         verifyOrder(quarters);
         
         quarters = createOffsetQuarters();
         verifyOrder(quarters);
     }
 
-    protected void verifyOrder(SortedSet<QuarterDetails> quarters) {
-        final Iterator<QuarterDetails> itr = quarters.iterator();
+    protected void verifyOrder(List<QuarterDetail> quarters) {
+        final Iterator<QuarterDetail> itr = quarters.iterator();
         assertEquals(0, itr.next().getQuarterId());
         assertEquals(1, itr.next().getQuarterId());
         assertEquals(2, itr.next().getQuarterId());
@@ -56,29 +56,29 @@ public class QuarterDetailsImplTest {
     }
     
     @Test
-    public void testContains() {
-        SortedSet<QuarterDetails> quarters = createStandardQuarters();
+    public void testCompareToInstant() {
+        List<QuarterDetail> quarters = createStandardQuarters();
         
-        verifyContains(new DateTime(2012, 1, 1, 0, 0),              quarters, true,  false, false, false);
-        verifyContains(new DateTime(2012, 2, 29, 15, 48),           quarters, true,  false, false, false);
-        verifyContains(new DateTime(2012, 4, 29, 15, 48),           quarters, false, true,  false, false);
-        verifyContains(new DateTime(2012, 8, 29, 15, 48),           quarters, false, false, true,  false);
-        verifyContains(new DateTime(2012, 12, 31, 23, 59, 59, 999), quarters, false, false, false, true);
+        verifyCompareToInstant(new DateTime(2012, 1, 1, 0, 0),              quarters,  0,  1,  1,  1);
+        verifyCompareToInstant(new DateTime(2012, 2, 29, 15, 48),           quarters,  0,  1,  1,  1);
+        verifyCompareToInstant(new DateTime(2012, 4, 29, 15, 48),           quarters, -1,  0,  1,  1);
+        verifyCompareToInstant(new DateTime(2012, 8, 29, 15, 48),           quarters, -1, -1,  0,  1);
+        verifyCompareToInstant(new DateTime(2012, 12, 31, 23, 59, 59, 999), quarters, -1, -1, -1,  0);
         
         
         quarters = createOffsetQuarters();
         
-        verifyContains(new DateTime(2012, 1, 1, 0, 0),              quarters, false, false, true,  false);
-        verifyContains(new DateTime(2012, 2, 29, 15, 48),           quarters, false, false, false, true);
-        verifyContains(new DateTime(2012, 4, 29, 15, 48),           quarters, false, false, false, true);
-        verifyContains(new DateTime(2012, 8, 29, 15, 48),           quarters, false, true,  false, false);
-        verifyContains(new DateTime(2012, 12, 31, 23, 59, 59, 999), quarters, false, false, true,  false);
+        verifyCompareToInstant(new DateTime(2012, 1, 1, 0, 0),              quarters,  1,  1,  0,  1);
+        verifyCompareToInstant(new DateTime(2012, 2, 29, 15, 48),           quarters,  1,  1,  1,  0);
+        verifyCompareToInstant(new DateTime(2012, 4, 29, 15, 48),           quarters,  1,  1,  1,  0);
+        verifyCompareToInstant(new DateTime(2012, 8, 29, 15, 48),           quarters, -1,  0,  1,  -1);
+        verifyCompareToInstant(new DateTime(2012, 12, 31, 23, 59, 59, 999), quarters, -1, -1,  0,  -1);
     }
-    protected void verifyContains(DateTime dt, SortedSet<QuarterDetails> quarters, boolean... contains) {
-        final Iterator<QuarterDetails> itr = quarters.iterator();
+    protected void verifyCompareToInstant(DateTime dt, List<QuarterDetail> quarters, int... contains) {
+        final Iterator<QuarterDetail> itr = quarters.iterator();
         for (int q = 0; q < 4; q++) {
-            final QuarterDetails quarter = itr.next();
-            assertEquals(dt + " is not between " + quarter.getStart() + " and " + quarter.getEnd(), contains[q], quarter.contains(dt));
+            final QuarterDetail quarter = itr.next();
+            assertEquals(q + ": " + dt + " is not between " + quarter.getStart() + " and " + quarter.getEnd(), contains[q], quarter.compareTo(dt));
         }
     }
     
@@ -89,23 +89,16 @@ public class QuarterDetailsImplTest {
         EventDateTimeUtils.validateQuarters(createOffsetQuarters());
     }
 
-    protected SortedSet<QuarterDetails> createStandardQuarters() {
-        final SortedSet<QuarterDetails> quarters = ImmutableSortedSet.<QuarterDetails>of(
-                new QuarterDetailsImpl(new MonthDay(1, 1), new MonthDay(4, 1), 0),
-                new QuarterDetailsImpl(new MonthDay(7, 1), new MonthDay(10, 1), 2),
-                new QuarterDetailsImpl(new MonthDay(4, 1), new MonthDay(7, 1), 1),
-                new QuarterDetailsImpl(new MonthDay(10, 1), new MonthDay(1, 1), 3)
-                );
-        return quarters;
+    protected List<QuarterDetail> createStandardQuarters() {
+        return EventDateTimeUtils.createStandardQuarters();
     }
 
-    protected SortedSet<QuarterDetails> createOffsetQuarters() {
-        final SortedSet<QuarterDetails> quarters = ImmutableSortedSet.<QuarterDetails>of(
-                new QuarterDetailsImpl(new MonthDay(5, 1), new MonthDay(8, 1), 0),
-                new QuarterDetailsImpl(new MonthDay(11, 1), new MonthDay(2, 1), 2),
-                new QuarterDetailsImpl(new MonthDay(8, 1), new MonthDay(11, 1), 1),
-                new QuarterDetailsImpl(new MonthDay(2, 1), new MonthDay(5, 1), 3)
+    protected List<QuarterDetail> createOffsetQuarters() {
+        return ImmutableList.<QuarterDetail>of(
+                new QuarterDetailImpl(new MonthDay(5, 1), new MonthDay(8, 1), 0),
+                new QuarterDetailImpl(new MonthDay(8, 1), new MonthDay(11, 1), 1),
+                new QuarterDetailImpl(new MonthDay(11, 1), new MonthDay(2, 1), 2),
+                new QuarterDetailImpl(new MonthDay(2, 1), new MonthDay(5, 1), 3)
                 );
-        return quarters;
     }
 }

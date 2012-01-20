@@ -20,53 +20,35 @@
 package org.jasig.portal.events.aggr;
 
 import org.joda.time.DateMidnight;
+import org.joda.time.MonthDay;
 import org.joda.time.ReadableInstant;
 
 /**
- * Details about a term of the year
+ * Details about a quarter of the year. The first quarter will have ID 0, the second ID 1, etc...
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface AcademicTermDetails extends Comparable<AcademicTermDetails> {
+public interface QuarterDetail extends DateRange<MonthDay>, Comparable<QuarterDetail> {
+
     /**
-     * @return The name of the term, cannot be null
+     * @return Start of the range, inclusive. Resolved into year/month/day based on the specified instant
      */
-    String getTermName();
+    DateMidnight getStartDateMidnight(ReadableInstant instant);
     
     /**
-     * Set the name of the term
+     * @return End of the range, exclusive. Resolved into year/month/day based on the specified instant
      */
-    void setTermName(String termName);
+    DateMidnight getEndDateMidnight(ReadableInstant instant);
     
     /**
-     * @return Start of the term, inclusive
+     * @return The id of the quarter (0 - 3)
      */
-    DateMidnight getStart();
+    int getQuarterId();
     
     /**
-     * Set the start of the term, inclusive
-     */
-    void setStart(DateMidnight start);
-    
-    /**
-     * @return End of the quarter, exclusive
-     */
-    DateMidnight getEnd();
-    
-    /**
-     * Set the end of the term, exclusive
-     */
-    void setEnd(DateMidnight end);
-    
-    /**
-     * @return true If the specified instant within the date range for the quarter
-     */
-    boolean contains(ReadableInstant instant);
-    
-    /**
-     * Compare to another {@link AcademicTermDetails}, must sort by {@link #getStart()}
+     * Compare to another {@link QuarterDetail}, must sort by {@link #getQuarterId()}
      */
     @Override
-    int compareTo(AcademicTermDetails o);
+    int compareTo(QuarterDetail o);
 }

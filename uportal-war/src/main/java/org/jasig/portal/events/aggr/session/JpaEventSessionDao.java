@@ -48,10 +48,10 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Eric Dalquist
  * @version $Revision$
  */
-@Repository
+@Repository("eventSessionDao")
 public class JpaEventSessionDao extends BaseJpaDao implements EventSessionDao {
     private String deleteByEventSessionIdQuery;
-    private String deleteExpiredEventSessionsQuery;
+    private CriteriaQuery<EventSessionImpl> findExpiredEventSessionsQuery;
     private CriteriaQuery<EventSessionImpl> findByEventSessionIdQuery;
     private ParameterExpression<String> eventSessionIdParameter;
     private ParameterExpression<DateTime> dateTimeParameter;
@@ -91,9 +91,7 @@ public class JpaEventSessionDao extends BaseJpaDao implements EventSessionDao {
                 "DELETE FROM " + EventSessionImpl.class.getName() + " e " +
                 "WHERE e." + EventSessionImpl_.eventSessionId.getName() + " = :" + this.eventSessionIdParameter.getName();
         
-        this.deleteExpiredEventSessionsQuery = 
-                "DELETE FROM " + EventSessionImpl.class.getName() + " e " +
-                "WHERE e." + EventSessionImpl_.lastAccessed.getName() + " <= :" + this.dateTimeParameter.getName();
+        this.findExpiredEventSessionsQuery = this.buildFindExpiredEventSessionsQuery(cb);
     }
     
     protected CriteriaQuery<EventSessionImpl> buildFindByEventSessionIdQuery(final CriteriaBuilder cb) {
@@ -102,6 +100,17 @@ public class JpaEventSessionDao extends BaseJpaDao implements EventSessionDao {
         criteriaQuery.select(root);
         criteriaQuery.where(
                 cb.equal(root.get(EventSessionImpl_.eventSessionId), this.eventSessionIdParameter)
+            );
+        
+        return criteriaQuery;
+    }
+    
+    protected CriteriaQuery<EventSessionImpl> buildFindExpiredEventSessionsQuery(final CriteriaBuilder cb) {
+        final CriteriaQuery<EventSessionImpl> criteriaQuery = cb.createQuery(EventSessionImpl.class);
+        final Root<EventSessionImpl> root = criteriaQuery.from(EventSessionImpl.class);
+        criteriaQuery.select(root);
+        criteriaQuery.where(
+                cb.lessThanOrEqualTo(root.get(EventSessionImpl_.lastAccessed), this.dateTimeParameter)
             );
         
         return criteriaQuery;
@@ -153,8 +162,10 @@ public class JpaEventSessionDao extends BaseJpaDao implements EventSessionDao {
     @Transactional("aggrEvents")
     @Override
     public void purgeExpiredEventSessions() {
-        final Query query = this.entityManager.createQuery(this.deleteExpiredEventSessionsQuery);
-        query.setParameter(this.deleteExpiredEventSessionsQuery, DateTime.now().minus(eventSessionDuration));
-        query.executeUpdate();
+        final TypedQuery<EventSessionImpl> query = this.createQuery(this.findExpiredEventSessionsQuery, null);
+        query.setParameter(this.dateTimeParameter, DateTime.now().minus(eventSessionDuration));
+        for (final EventSessionImpl eventSession : query.getResultList()) {
+            this.entityManager.remove(eventSession);
+        }
     }
 }

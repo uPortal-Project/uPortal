@@ -93,6 +93,9 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
                 return new DateTime(1325881376117l);
             }
         };
+        
+        when(eventAggregationManagementDao.getQuartersDetails()).thenReturn(EventDateTimeUtils.createStandardQuarters());
+        
         portalEventAggregationManager.setPortalEventDao(portalEventDao);
         portalEventAggregationManager.setDateDimensionDao(dateDimensionDao);
         portalEventAggregationManager.setTimeDimensionDao(timeDimensionDao);
@@ -248,7 +251,7 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
         when(this.clusterLockService.doInTryLock(Mockito.anyString(), Mockito.any(Function.class))).thenReturn(tryLockFunctionResult);
         
         final IEventAggregatorStatus eventAggregatorStatus = mock(IEventAggregatorStatus.class);
-        when(this.eventAggregationManagementDao.getEventAggregatorStatus(ProcessingType.AGGREGATION)).thenReturn(eventAggregatorStatus);
+        when(this.eventAggregationManagementDao.getEventAggregatorStatus(ProcessingType.AGGREGATION, true)).thenReturn(eventAggregatorStatus);
         
         when(this.portalInfoProvider.getServerName()).thenReturn("TEST_SERVER_NAME");
         

@@ -22,6 +22,7 @@ package org.jasig.portal.events.aggr.session;
 import java.util.Set;
 
 import org.jasig.portal.events.PortalEvent;
+import org.jasig.portal.events.aggr.AggregatedGroupConfig;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 
 /**
@@ -41,4 +42,9 @@ public interface EventSession {
      * @return The event store resolved group mappings for the event session, immutable
      */
     Set<AggregatedGroupMapping> getGroupMappings();
+    
+    /**
+     * @return A view of this event session that filters the results of {@link #getGroupMappings()} using {@link AggregatedGroupConfig#isIncluded(AggregatedGroupMapping)}
+     */
+    EventSession getFilteredEventSession(AggregatedGroupConfig groupConfig);
 }

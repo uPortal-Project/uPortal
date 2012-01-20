@@ -36,7 +36,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
-import org.jasig.portal.events.aggr.QuarterDetails;
+import org.jasig.portal.events.aggr.EventDateTimeUtils;
+import org.jasig.portal.events.aggr.QuarterDetail;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.MonthDay;
@@ -47,26 +48,26 @@ import org.joda.time.ReadableInstant;
  * @version $Revision$
  */
 @Entity
-@Table(name = "UP_QUARTER_DETAILS")
+@Table(name = "UP_QUARTER_DETAIL")
 @SequenceGenerator(
-        name="UP_QUARTER_DETAILS_GEN",
-        sequenceName="UP_QUARTER_DETAILS_SEQ",
+        name="UP_QUARTER_DETAIL_GEN",
+        sequenceName="UP_QUARTER_DETAIL_SEQ",
         allocationSize=1
     )
 @TableGenerator(
-        name="UP_QUARTER_DETAILS_GEN",
-        pkColumnValue="UP_QUARTER_DETAILS_PROP",
+        name="UP_QUARTER_DETAIL_GEN",
+        pkColumnValue="UP_QUARTER_DETAIL_PROP",
         allocationSize=1
     )
 @Immutable
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class QuarterDetailsImpl implements QuarterDetails, Serializable {
+public class QuarterDetailImpl implements QuarterDetail, Serializable {
     private static final long serialVersionUID = 1L;
    
     @SuppressWarnings("unused")
     @Id
-    @GeneratedValue(generator = "UP_QUARTER_DETAILS_GEN")
+    @GeneratedValue(generator = "UP_QUARTER_DETAIL_GEN")
     @Column(name="QUARTER_ID")
     private final long id;
     
@@ -84,14 +85,14 @@ public class QuarterDetailsImpl implements QuarterDetails, Serializable {
     private final int quarterId;
     
     @SuppressWarnings("unused")
-    private QuarterDetailsImpl() {
+    private QuarterDetailImpl() {
         this.id = -1;
         this.start = null;
         this.end = null;
         this.quarterId = -1;
     }
     
-    public QuarterDetailsImpl(MonthDay start, MonthDay end, int quarterId) {
+    public QuarterDetailImpl(MonthDay start, MonthDay end, int quarterId) {
         Validate.notNull(start);
         Validate.notNull(end);
         if (start.isEqual(end)) {
@@ -112,37 +113,53 @@ public class QuarterDetailsImpl implements QuarterDetails, Serializable {
     public MonthDay getStart() {
         return this.start;
     }
+    
+    @Override
+    public DateMidnight getStartDateMidnight(ReadableInstant instant) {
+        final MonthDay instantMonthDay = new MonthDay(instant);
+        
+        //If the quarter wraps a year boundary AND
+        //   the instant MonthDay is before the start AND
+        //   the end is after the instant MonthDay
+        // then shift the start year back by one to deal with the year boundary
+        if (this.end.isBefore(this.start) && instantMonthDay.isBefore(this.start) && this.end.isAfter(instantMonthDay)) {
+            return this.start.toDateTime(new DateTime(instant).minusYears(1)).toDateMidnight();
+        }
+        
+        return this.start.toDateTime(instant).toDateMidnight();
+    }
+
+    @Override
+    public DateMidnight getEndDateMidnight(ReadableInstant instant) {
+        final MonthDay instantMonthDay = new MonthDay(instant);
+        
+        //If the quarter wraps a year boundary AND
+        //   the end is NOT after the instant MonthDay AND 
+        //   the instant MonthDay is NOT before the start
+        // then shift the end year forward by one to deal with the year boundary
+        if (this.end.isBefore(this.start) && !this.end.isAfter(instantMonthDay) && !instantMonthDay.isBefore(this.start)) {
+            return this.end.toDateTime(new DateTime(instant).plusYears(1)).toDateMidnight();
+        }
+        
+        return this.end.toDateTime(instant).toDateMidnight();
+    }
 
     @Override
     public MonthDay getEnd() {
         return this.end;
     }
     
+    
     @Override
-    public boolean contains(ReadableInstant instant) {
-        //start is before end, don't need to muck with years
-        if (this.start.isBefore(this.end)) {
-            final DateMidnight startDateTime = this.start.toDateTime(instant).toDateMidnight();
-            final DateMidnight endDateTime = this.end.toDateTime(instant).toDateMidnight();
-            return endDateTime.isAfter(instant) && (startDateTime.isBefore(instant) || startDateTime.isEqual(instant));
-        }
+    public int compareTo(ReadableInstant instant) {
+        final DateMidnight startDateTime = this.getStartDateMidnight(instant);
+        final DateMidnight endDateTime = this.getEndDateMidnight(instant);
         
-        //end is before start, first try shifting year one back
-        final DateTime dateTime = new DateTime(instant);
-        DateMidnight startDateTime = this.start.toDateTime(dateTime.minusYears(1)).toDateMidnight();
-        DateMidnight endDateTime = this.end.toDateTime(instant).toDateMidnight();
-        if (endDateTime.isAfter(instant) && (startDateTime.isBefore(instant) || startDateTime.isEqual(instant))) {
-            return true;
-        }
-        
-        //didn't match, try shifting year one forward
-        startDateTime = this.start.toDateTime(instant).toDateMidnight();
-        endDateTime = this.end.toDateTime(dateTime.plusYears(1)).toDateMidnight();
-        return endDateTime.isAfter(instant) && (startDateTime.isBefore(instant) || startDateTime.isEqual(instant));
+        return EventDateTimeUtils.compareTo(startDateTime, endDateTime, instant);
     }
 
     @Override
-    public int compareTo(QuarterDetails o) {
+    public int compareTo(QuarterDetail o) {
         return this.getQuarterId() - o.getQuarterId();
     }
 
@@ -164,7 +181,7 @@ public class QuarterDetailsImpl implements QuarterDetails, Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        QuarterDetailsImpl other = (QuarterDetailsImpl) obj;
+        QuarterDetailImpl other = (QuarterDetailImpl) obj;
         if (this.end == null) {
             if (other.end != null)
                 return false;
@@ -184,6 +201,6 @@ public class QuarterDetailsImpl implements QuarterDetails, Serializable {
 
     @Override
     public String toString() {
-        return "QuarterDetailsImpl [quarterId=" + this.quarterId + ", start=" + this.start + ", end=" + this.end + "]";
+        return "QuarterDetailImpl [quarterId=" + this.quarterId + ", start=" + this.start + ", end=" + this.end + "]";
     }
 }

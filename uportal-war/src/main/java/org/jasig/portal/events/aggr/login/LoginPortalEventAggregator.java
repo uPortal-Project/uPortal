@@ -19,7 +19,6 @@
 
 package org.jasig.portal.events.aggr.login;
 
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,7 +32,6 @@ import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupLookupDao;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.events.aggr.session.EventSession;
-import org.joda.time.Period;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,8 +80,8 @@ public class LoginPortalEventAggregator implements IPortalEventAggregator<LoginE
                 LoginAggregationImpl loginAggregation = loginAggregationDao.getLoginAggregation(dateDimension, timeDimension, interval, aggregatedGroup);
                 if (loginAggregation == null) {
                     loginAggregation = loginAggregationDao.createLoginAggregation(dateDimension, timeDimension, interval, aggregatedGroup);
-                    final Period period = intervalInfo.getPeriod();
-                    loginAggregation.setDuration(period.getMinutes());
+                    final int duration = intervalInfo.getDuration();
+                    loginAggregation.setDuration(duration);
                 }
                 
                 loginAggregation.countUser(userName);
@@ -93,15 +91,15 @@ public class LoginPortalEventAggregator implements IPortalEventAggregator<LoginE
 
     @Transactional("aggrEvents")
     @Override
-    public void handleIntervalBoundry(Interval interval, Map<Interval, IntervalInfo> intervals) {
+    public void handleIntervalBoundary(Interval interval, Map<Interval, IntervalInfo> intervals) {
         final IntervalInfo intervalInfo = intervals.get(interval);
         final DateDimension dateDimension = intervalInfo.getDateDimension();
         final TimeDimension timeDimension = intervalInfo.getTimeDimension();
         
         final Set<LoginAggregationImpl> loginAggregations = this.loginAggregationDao.getLoginAggregationsForInterval(dateDimension, timeDimension, interval);
         for (final LoginAggregationImpl loginAggregation : loginAggregations) {
-            final Period period = intervalInfo.getPeriod();
-            loginAggregation.intervalComplete(period.getMinutes());
+            final int duration = intervalInfo.getDuration();
+            loginAggregation.intervalComplete(duration);
             this.loginAggregationDao.updateLoginAggregation(loginAggregation);
         }
     }

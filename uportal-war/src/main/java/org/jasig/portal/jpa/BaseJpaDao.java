@@ -77,8 +77,10 @@ public abstract class BaseJpaDao implements InitializingBean {
      */
     protected final <T> TypedQuery<T> createQuery(CriteriaQuery<T> criteriaQuery, String cacheRegion) {
         final TypedQuery<T> query = this.getEntityManager().createQuery(criteriaQuery);
-        query.setHint("org.hibernate.cacheable", true);
-        query.setHint("org.hibernate.cacheRegion", cacheRegion);
+        if (cacheRegion != null) {
+            query.setHint("org.hibernate.cacheable", true);
+            query.setHint("org.hibernate.cacheRegion", cacheRegion);
+        }
         return query;
     }
     

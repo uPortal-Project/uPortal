@@ -19,14 +19,28 @@
 
 package org.jasig.portal.events.aggr;
 
-import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.joda.time.ReadableInstant;
 
 /**
- * Configuration of group includes/excludes
+ * Describes a basic date range with an inclusive start and and exclusive end
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface AggregatedGroupConfig extends BaseAggregatedDimensionConfig<AggregatedGroupMapping> {
-
+public interface DateRange<DT> {
+    
+    /**
+     * @return Start of the range, inclusive
+     */
+    DT getStart();
+    
+    /**
+     * @return End of the range, exclusive
+     */
+    DT getEnd();
+    
+    /**
+     * @see EventDateTimeUtils#compareTo(ReadableInstant, ReadableInstant, ReadableInstant)
+     */
+    int compareTo(ReadableInstant instant);
 }

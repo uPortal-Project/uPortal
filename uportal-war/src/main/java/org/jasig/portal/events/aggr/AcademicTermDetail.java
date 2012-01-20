@@ -19,34 +19,38 @@
 
 package org.jasig.portal.events.aggr;
 
-import java.util.Map;
-
-import org.jasig.portal.events.PortalEvent;
-import org.jasig.portal.events.aggr.session.EventSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
+import org.joda.time.DateMidnight;
 
 /**
+ * Details about a term of the year
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-@Service
-public class LoggingPortalEventAggregator implements IPortalEventAggregator<PortalEvent> {
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+public interface AcademicTermDetail extends DateRange<DateMidnight>, Comparable<AcademicTermDetail> {
+    /**
+     * @return The name of the term, cannot be null
+     */
+    String getTermName();
     
+    /**
+     * Set the name of the term
+     */
+    void setTermName(String termName);
+    
+    /**
+     * Set the start of the term, inclusive
+     */
+    void setStart(DateMidnight start);
+    
+    /**
+     * Set the end of the term, exclusive
+     */
+    void setEnd(DateMidnight end);
+    
+    /**
+     * Compare to another {@link AcademicTermDetail}, must sort by {@link #getStart()}
+     */
     @Override
-    public boolean supports(Class<? extends PortalEvent> type) {
-        return true;
-    }
-
-    @Override
-    public void aggregateEvent(PortalEvent e, EventSession eventSession, Map<Interval, IntervalInfo> currentIntervals) {
-        logger.debug("EVENT  : {}", e);
-    }
-
-    @Override
-    public void handleIntervalBoundary(Interval interval, Map<Interval, IntervalInfo> intervals) {
-        logger.debug("INTERVAL: {} - {}", interval, intervals.get(interval));
-    }
+    int compareTo(AcademicTermDetail o);
 }

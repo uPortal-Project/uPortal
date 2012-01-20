@@ -84,9 +84,14 @@ public class JpaEventSessionDaoTest extends BaseJpaDaoTest {
         
         final IPerson person = mock(IPerson.class);
 
-        final String eventSessionId = "1234567890_abcdefg";
+        final String eventSessionId1 = "1234567890_abcdefg";
+        final String eventSessionId2 = "0000000000_aaaaaaa";
         
-        final LoginEvent loginEvent = TestEventFactory.newLoginEvent(this, "testServer", eventSessionId, person, 
+        final LoginEvent loginEvent1 = TestEventFactory.newLoginEvent(this, "testServer", eventSessionId1, person, 
+                ImmutableSet.<String>of("local.0", "local.1"), 
+                Collections.<String, List<String>>emptyMap());
+        
+        final LoginEvent loginEvent2 = TestEventFactory.newLoginEvent(this, "testServer", eventSessionId2, person, 
                 ImmutableSet.<String>of("local.0", "local.1"), 
                 Collections.<String, List<String>>emptyMap());
         
@@ -95,18 +100,34 @@ public class JpaEventSessionDaoTest extends BaseJpaDaoTest {
         this.execute(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
-                final EventSession eventSession = eventSessionDao.getEventSession(eventSessionId);
-                assertNull(eventSession);
+                final EventSession eventSession1 = eventSessionDao.getEventSession(eventSessionId1);
+                assertNull(eventSession1);
+                
+                final EventSession eventSession2 = eventSessionDao.getEventSession(eventSessionId2);
+                assertNull(eventSession2);
             }
         });
         
         this.executeInTransaction(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
-                final EventSession eventSession = eventSessionDao.createEventSession(loginEvent);
+                final EventSession eventSession = eventSessionDao.createEventSession(loginEvent1);
                 assertNotNull(eventSession);
                 
-                assertEquals(eventSessionId, eventSession.getEventSessionId());
+                assertEquals(eventSessionId1, eventSession.getEventSessionId());
+                
+                final Set<AggregatedGroupMapping> groupMappings = eventSession.getGroupMappings();
+                assertEquals(2, groupMappings.size());
+            }
+        });
+        
+        this.executeInTransaction(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                final EventSession eventSession = eventSessionDao.createEventSession(loginEvent2);
+                assertNotNull(eventSession);
+                
+                assertEquals(eventSessionId2, eventSession.getEventSessionId());
                 
                 final Set<AggregatedGroupMapping> groupMappings = eventSession.getGroupMappings();
                 assertEquals(2, groupMappings.size());
@@ -116,13 +137,28 @@ public class JpaEventSessionDaoTest extends BaseJpaDaoTest {
         this.execute(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
-                final EventSession eventSession = eventSessionDao.getEventSession(eventSessionId);
+                final EventSession eventSession = eventSessionDao.getEventSession(eventSessionId1);
                 assertNotNull(eventSession);
                 
-                assertEquals(eventSessionId, eventSession.getEventSessionId());
+                assertEquals(eventSessionId1, eventSession.getEventSessionId());
                 
                 final Set<AggregatedGroupMapping> groupMappings = eventSession.getGroupMappings();
                 assertEquals(2, groupMappings.size());
+            }
+        });
+        
+        this.execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                eventSessionDao.purgeExpiredEventSessions();
+            }
+        });
+        
+        this.execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                final EventSession eventSession = eventSessionDao.getEventSession(eventSessionId1);
+                assertNull(eventSession);
             }
         });
     }

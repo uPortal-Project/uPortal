@@ -40,7 +40,7 @@ public interface IPortalEventAggregator<E extends PortalEvent> {
      * Add the specified event to the aggregate
      * 
      * @param e The event to aggregate
-     * @param eventSession Information about the event session associated with the event
+     * @param eventSession Information about the event session associated with the event, MAY BE NULL!
      * @param currentIntervals Information about all of the intervals the event exists in.
      */
     void aggregateEvent(E e, EventSession eventSession, Map<Interval, IntervalInfo> currentIntervals);
@@ -51,5 +51,5 @@ public interface IPortalEventAggregator<E extends PortalEvent> {
      * @param interval The type of interval that was crossed
      * @param intervals Information about all intervals that the previous set of events was part of
      */
-    void handleIntervalBoundry(Interval interval, Map<Interval, IntervalInfo> intervals);
+    void handleIntervalBoundary(Interval interval, Map<Interval, IntervalInfo> intervals);
 }
