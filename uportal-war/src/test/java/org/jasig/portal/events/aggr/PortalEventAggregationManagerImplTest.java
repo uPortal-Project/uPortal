@@ -19,11 +19,10 @@
 
 package org.jasig.portal.events.aggr;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import static org.junit.Assert.assertEquals;
 
 import java.util.Collections;
 import java.util.List;
@@ -44,7 +43,6 @@ import org.jasig.portal.events.handlers.db.IPortalEventDao;
 import org.jasig.portal.test.BaseJpaDaoTest;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.joda.time.LocalTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -91,7 +89,7 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
         portalEventAggregationManager = new PortalEventAggregationManagerImpl() {
             @Override
             DateTime getNow() {
-                return new DateTime(1325881376117l, DateTimeZone.UTC);
+                return new DateTime(1325881376117l);
             }
         };
         
@@ -197,9 +195,9 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
                 final List<DateDimension> dateDimensions = dateDimensionDao.getDateDimensions();
                 assertEquals(731, dateDimensions.size());
                 final DateDimension oldestDateDimension = dateDimensionDao.getOldestDateDimension();
-                assertEquals(new DateMidnight("2011-01-01T00:00:00.000-06:00"), oldestDateDimension.getFullDate());
+                assertEquals(new DateMidnight(2011, 1, 1), oldestDateDimension.getFullDate());
                 final DateDimension newestDateDimension = dateDimensionDao.getNewestDateDimension();
-                assertEquals(new DateMidnight("2012-12-31T00:00:00.000-06:00"), newestDateDimension.getFullDate());
+                assertEquals(new DateMidnight(2012, 12, 31), newestDateDimension.getFullDate());
             }
         });
 
@@ -218,9 +216,9 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
                 final List<DateDimension> dateDimensions = dateDimensionDao.getDateDimensions();
                 assertEquals(1096, dateDimensions.size());
                 final DateDimension oldestDateDimension = dateDimensionDao.getOldestDateDimension();
-                assertEquals(new DateMidnight("2010-01-01T00:00:00.000-06:00"), oldestDateDimension.getFullDate());
+                assertEquals(new DateMidnight(2010, 1, 1), oldestDateDimension.getFullDate());
                 final DateDimension newestDateDimension = dateDimensionDao.getNewestDateDimension();
-                assertEquals(new DateMidnight("2012-12-31T00:00:00.000-06:00"), newestDateDimension.getFullDate());
+                assertEquals(new DateMidnight(2012, 12, 31), newestDateDimension.getFullDate());
             }
         });
 
@@ -239,9 +237,9 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
                 final List<DateDimension> dateDimensions = dateDimensionDao.getDateDimensions();
                 assertEquals(1461, dateDimensions.size());
                 final DateDimension oldestDateDimension = dateDimensionDao.getOldestDateDimension();
-                assertEquals(new DateMidnight("2010-01-01T00:00:00.000-06:00"), oldestDateDimension.getFullDate());
+                assertEquals(new DateMidnight(2010, 01, 01), oldestDateDimension.getFullDate());
                 final DateDimension newestDateDimension = dateDimensionDao.getNewestDateDimension();
-                assertEquals(new DateMidnight("2013-12-31T00:00:00.000-06:00"), newestDateDimension.getFullDate());
+                assertEquals(new DateMidnight(2013, 12, 31), newestDateDimension.getFullDate());
             }
         });
     }
