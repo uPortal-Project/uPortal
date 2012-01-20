@@ -26,6 +26,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
@@ -106,9 +107,9 @@ public class JpaStylesheetUserPreferencesDao extends BaseJpaDao implements IStyl
      * Add the needed fetches to a critera query
      */
     protected void addFetches(final Root<StylesheetUserPreferencesImpl> descriptorRoot) {
-        descriptorRoot.fetch(StylesheetUserPreferencesImpl_.layoutAttributes);
-        descriptorRoot.fetch(StylesheetUserPreferencesImpl_.outputProperties);
-        descriptorRoot.fetch(StylesheetUserPreferencesImpl_.parameters);
+        descriptorRoot.fetch(StylesheetUserPreferencesImpl_.layoutAttributes, JoinType.LEFT);
+        descriptorRoot.fetch(StylesheetUserPreferencesImpl_.outputProperties, JoinType.LEFT);
+        descriptorRoot.fetch(StylesheetUserPreferencesImpl_.parameters, JoinType.LEFT);
     }
     
 

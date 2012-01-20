@@ -34,6 +34,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CollectionJoin;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
@@ -91,7 +92,7 @@ public class JpaLocalAccountDaoImpl extends BaseJpaDao implements ILocalAccountD
     protected CriteriaQuery<LocalAccountPersonImpl> buildFindAllAccountsQuery(final CriteriaBuilder cb) {
         final CriteriaQuery<LocalAccountPersonImpl> criteriaQuery = cb.createQuery(LocalAccountPersonImpl.class);
         final Root<LocalAccountPersonImpl> accountRoot = criteriaQuery.from(LocalAccountPersonImpl.class);
-        accountRoot.fetch(LocalAccountPersonImpl_.attributes).fetch(LocalAccountPersonAttributeImpl_.values);
+        accountRoot.fetch(LocalAccountPersonImpl_.attributes, JoinType.LEFT).fetch(LocalAccountPersonAttributeImpl_.values, JoinType.LEFT);
         criteriaQuery.select(accountRoot);
         
         return criteriaQuery;
@@ -100,7 +101,7 @@ public class JpaLocalAccountDaoImpl extends BaseJpaDao implements ILocalAccountD
     protected CriteriaQuery<LocalAccountPersonImpl> buildFindAccountByNameQuery(final CriteriaBuilder cb) {
         final CriteriaQuery<LocalAccountPersonImpl> criteriaQuery = cb.createQuery(LocalAccountPersonImpl.class);
         final Root<LocalAccountPersonImpl> accountRoot = criteriaQuery.from(LocalAccountPersonImpl.class);
-        accountRoot.fetch(LocalAccountPersonImpl_.attributes).fetch(LocalAccountPersonAttributeImpl_.values);
+        accountRoot.fetch(LocalAccountPersonImpl_.attributes, JoinType.LEFT).fetch(LocalAccountPersonAttributeImpl_.values, JoinType.LEFT);
         criteriaQuery.select(accountRoot);
         criteriaQuery.where(
             cb.equal(accountRoot.get(LocalAccountPersonImpl_.name), this.nameParameter)
