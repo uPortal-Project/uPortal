@@ -249,7 +249,7 @@ public class JpaClusterLockDao extends BaseJpaDao implements IClusterLockDao {
         return this.defaultTransactionTemplate.execute(new TransactionCallback<ClusterMutex>() {
             @Override
             public ClusterMutex doInTransaction(TransactionStatus status) {
-                final TypedQuery<ClusterMutex> query = entityManager.createQuery(clusterLockByNameQuery);
+                final TypedQuery<ClusterMutex> query = createQuery(clusterLockByNameQuery);
                 query.setParameter(nameParameter, mutexName);
                 final List<ClusterMutex> results = query.getResultList();
                 return DataAccessUtils.singleResult(results);

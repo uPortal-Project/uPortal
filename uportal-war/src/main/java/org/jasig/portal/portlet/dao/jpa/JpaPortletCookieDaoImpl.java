@@ -192,7 +192,7 @@ public class JpaPortletCookieDaoImpl extends BaseJpaDao implements IPortletCooki
             log.debug("finished purging " + deletedPortletCookies + " directly expired portlet cookies");
         }
         
-        final TypedQuery<PortletCookieImpl> expiredByParentCookiesQuery = this.entityManager.createQuery(findExpiredByParentPortletCookiesQuery);
+        final TypedQuery<PortletCookieImpl> expiredByParentCookiesQuery = this.createQuery(findExpiredByParentPortletCookiesQuery);
         expiredByParentCookiesQuery.setParameter(this.nowParameter.getName(), now);
         final List<PortletCookieImpl> indirectlyExpiredCookies = expiredByParentCookiesQuery.getResultList();
         for (final PortletCookieImpl portletCookieImpl : indirectlyExpiredCookies) {
