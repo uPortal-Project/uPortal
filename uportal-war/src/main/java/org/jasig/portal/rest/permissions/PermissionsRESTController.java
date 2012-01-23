@@ -108,7 +108,7 @@ public class PermissionsRESTController {
      * @param req
      * @param response
      * @return
-     * @throws Exception
+     * @throws Exception 
      */
     @PreAuthorize("hasPermission('string', 'ALL', new org.jasig.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
     @RequestMapping(value="/permissions/owners.json", method = RequestMethod.GET)
@@ -179,7 +179,7 @@ public class PermissionsRESTController {
      * @return
      * @throws Exception
      */
-    @PreAuthorize("hasPermission('string', 'ALL', new org.jasig.portal.spring.security.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
+    @PreAuthorize("hasPermission('string', 'ALL', new org.jasig.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
     @RequestMapping(value="/permissions/activities.json", method = RequestMethod.GET)
     public ModelAndView getActivities(
             @RequestParam(value="q", required=false) String query,
@@ -219,7 +219,7 @@ public class PermissionsRESTController {
      * @return
      * @throws Exception
      */
-    @PreAuthorize("hasPermission('string', 'ALL', new org.jasig.portal.spring.security.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
+    @PreAuthorize("hasPermission('string', 'ALL', new org.jasig.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
     @RequestMapping(value="/permissions/{activity}/targets.json", method = RequestMethod.GET)
     public ModelAndView getTargets(@PathVariable("activity") Long activityId,
             @RequestParam("q") String query,
@@ -247,7 +247,7 @@ public class PermissionsRESTController {
         return mv;
     }
     
-    @PreAuthorize("hasPermission('string', 'ALL', new org.jasig.portal.spring.security.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
+    @PreAuthorize("hasPermission('string', 'ALL', new org.jasig.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
     @RequestMapping("/assignments/principal/{principal}.json")
     public ModelAndView getAssignmentsForPrincipal(@PathVariable("principal") String principal, @RequestParam(value="includeInherited", required = false) boolean includeInherited, HttpServletRequest request, HttpServletResponse response) {
         
@@ -299,7 +299,7 @@ public class PermissionsRESTController {
         return mv;
     }
     
-    @PreAuthorize("hasPermission('string', 'ALL', new org.jasig.portal.spring.security.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
+    @PreAuthorize("hasPermission('string', 'ALL', new org.jasig.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
     @RequestMapping("/assignments/target/{target}.json")
     public ModelAndView getAssignmentsOnTarget(@PathVariable("target") String target, @RequestParam(value="includeInherited", required = false) boolean includeInherited, HttpServletRequest request, HttpServletResponse response) {
         
