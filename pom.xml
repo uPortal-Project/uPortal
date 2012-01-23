@@ -124,6 +124,7 @@
         <casclient.version>3.2.1</casclient.version>
         <ccpp.version>1.0</ccpp.version>
         <cernunnos.version>1.2.1</cernunnos.version>
+        <cglib.version>2.2.2</cglib.version>
         <commons-cli.version>1.2</commons-cli.version>
         <commons-codec.version>1.6</commons-codec.version>
         <commons-collections.version>3.2.1</commons-collections.version>
@@ -212,6 +213,11 @@
                 <groupId>aopalliance</groupId>
                 <artifactId>aopalliance</artifactId>
                 <version>${aopalliance.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cglib</groupId>
+                <artifactId>cglib</artifactId>
+                <version>${cglib.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>

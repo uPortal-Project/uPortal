@@ -468,6 +468,12 @@
         
         <!-- ===== Runtime Dependencies ======================================= -->
         <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        
+        <dependency>
             <groupId>org.fusesource.jansi</groupId>
             <artifactId>jansi</artifactId>
             <scope>runtime</scope>

@@ -38,7 +38,7 @@
 
     <!-- ********** JPA Beans ********** -->
     
-    <aop:config proxy-target-class="false">
+    <aop:config>
         <aop:pointcut id="daoExecution" 
             expression="within(@org.springframework.stereotype.Repository *) &amp;&amp; execution(* org.jasig.portal..*.*(..))"/>
             

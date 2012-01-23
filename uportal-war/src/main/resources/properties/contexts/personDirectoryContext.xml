@@ -58,7 +58,7 @@
      | other users and swapped attributes will be cleaned up on user logout.
      +-->
     <bean id="sessionAttributesOverridesMap" class="java.util.concurrent.ConcurrentHashMap" scope="globalSession">
-        <aop:scoped-proxy proxy-target-class="false" />
+        <aop:scoped-proxy />
     </bean>
 
 
@@ -101,7 +101,7 @@
 	<bean id="requestAdditionalDescriptors"
 		class="org.jasig.services.persondir.support.AdditionalDescriptors"
 		scope="globalSession">
-		<aop:scoped-proxy proxy-target-class="false" />
+		<aop:scoped-proxy />
 	</bean>
 
 	<!--
