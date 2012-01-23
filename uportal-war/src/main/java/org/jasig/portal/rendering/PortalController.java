@@ -45,7 +45,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @version $Revision$
  */
 @Controller
-@RequestMapping(value = "/*")
+@RequestMapping(value = "/**")
 public class PortalController {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     

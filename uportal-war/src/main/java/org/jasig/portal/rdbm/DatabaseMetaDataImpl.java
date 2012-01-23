@@ -384,7 +384,7 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
                     }
                     break;
                 }
-                catch (DataAccessException e) {
+                catch (Exception e) {
                     final String logMessage = "Join test failed: " +joinQueryString.getClass().getName() + " on statement: '" + joinTestQuery + "':";
                     
                     if (LOG.isDebugEnabled()) {

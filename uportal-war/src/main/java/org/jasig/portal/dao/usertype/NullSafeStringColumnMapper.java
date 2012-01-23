@@ -17,19 +17,31 @@
  * under the License.
  */
 
-package org.jasig.portal.utils;
+package org.jasig.portal.dao.usertype;
 
-import org.hibernate.dialect.MySQL5InnoDBDialect;
-import org.hibernate.service.jdbc.dialect.internal.BasicDialectResolver;
+import org.hibernate.HibernateException;
+import org.jadira.usertype.spi.shared.AbstractStringColumnMapper;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class Mysql5DialectResolver extends BasicDialectResolver {
+public class NullSafeStringColumnMapper extends AbstractStringColumnMapper<String> {
     private static final long serialVersionUID = 1L;
+    
+    public static final char NOT_NULL_PREFIX = '_';
 
-    public Mysql5DialectResolver() {
-        super("MySQL", 5, MySQL5InnoDBDialect.class);
+    @Override
+    public String fromNonNullValue(String s) {
+        if (s.charAt(0) != NOT_NULL_PREFIX) {
+            throw new HibernateException("Persistent storage of " + this.getClass().getName() + " corrupted, database contained string [" + s + "] which should be prefixed by: " + NOT_NULL_PREFIX);
+        }
+
+        return s.substring(1);
+    }
+
+    @Override
+    public String toNonNullValue(String value) {
+        return NOT_NULL_PREFIX + value;
     }
 }

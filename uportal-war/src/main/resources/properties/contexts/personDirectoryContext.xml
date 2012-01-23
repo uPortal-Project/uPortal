@@ -24,8 +24,8 @@
        xmlns="http://www.springframework.org/schema/beans" 
        xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="
-           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
     
     <!-- ********** User Information Support Beans ********** -->
     <!--
@@ -58,7 +58,7 @@
      | other users and swapped attributes will be cleaned up on user logout.
      +-->
     <bean id="sessionAttributesOverridesMap" class="java.util.concurrent.ConcurrentHashMap" scope="globalSession">
-        <aop:scoped-proxy />
+        <aop:scoped-proxy proxy-target-class="false" />
     </bean>
 
 
@@ -101,7 +101,7 @@
 	<bean id="requestAdditionalDescriptors"
 		class="org.jasig.services.persondir.support.AdditionalDescriptors"
 		scope="globalSession">
-		<aop:scoped-proxy />
+		<aop:scoped-proxy proxy-target-class="false" />
 	</bean>
 
 	<!--

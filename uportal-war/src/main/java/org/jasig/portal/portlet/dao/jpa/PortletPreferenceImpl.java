@@ -47,7 +47,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.IndexColumn;
-import org.jasig.portal.dao.usertype.BaseNullSafeStringType;
+import org.jasig.portal.dao.usertype.NullSafeStringColumnMapper;
 import org.jasig.portal.portlet.om.IPortletPreference;
 
 /**
@@ -227,7 +227,7 @@ public class PortletPreferenceImpl implements IPortletPreference {
                     this.values.add(NULL_MARKER);
                 }
                 else {
-                    this.values.add(BaseNullSafeStringType.NOT_NULL_PREFIX + value);
+                    this.values.add(NullSafeStringColumnMapper.NOT_NULL_PREFIX + value);
                 }
             }
         }

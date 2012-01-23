@@ -23,7 +23,7 @@
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="http://www.springframework.org/schema/beans"
     xmlns:ehcache="http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
 		http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring/ehcache-spring-1.2.xsd">
     
     <!-- This bean CANNOT be autowired or it will not function correctly -->
@@ -88,11 +88,12 @@
         <property name="filter">
             <bean class="org.jasig.resourceserver.utils.filter.PathBasedCacheExpirationFilter">
                 <property name="cacheMaxAges">
-                    <map>
+                    <map value-type="java.lang.Long">
                         <entry key="/**/*.aggr.min.js" value="31536000"/>
                         <entry key="/**/*.aggr.min.css" value="31536000"/>
                         <entry key="/**/*.min.js" value="31536000"/>
                         <entry key="/**/*.min.css" value="31536000"/>
+                        <entry key="/rs/**/*" value="31536000"/>
                         <entry key="/**/*.jpg" value="1800"/>
                         <entry key="/**/*.gif" value="1800"/>
                         <entry key="/**/*.png" value="1800"/>

@@ -19,45 +19,24 @@
 
 package org.jasig.portal.dao.usertype;
 
-import java.io.Serializable;
+import javax.xml.namespace.QName;
 
-import javax.portlet.WindowState;
-
-import org.hibernate.type.descriptor.java.MutabilityPlan;
-import org.jasig.portal.portlet.PortletUtils;
+import org.jadira.usertype.spi.shared.AbstractStringColumnMapper;
 
 /**
- * Mutability plan for WindowState
- * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class WindowStateMutabilityPlan implements MutabilityPlan<WindowState> {
+public class QNameColumnMapper extends AbstractStringColumnMapper<QName> {
     private static final long serialVersionUID = 1L;
-    
-    public static final WindowStateMutabilityPlan INSTANCE = new WindowStateMutabilityPlan();
 
     @Override
-    public boolean isMutable() {
-        return false;
+    public QName fromNonNullValue(String s) {
+        return QName.valueOf(s);
     }
 
     @Override
-    public WindowState deepCopy(WindowState value) {
-        return value;
-    }
-
-    @Override
-    public Serializable disassemble(WindowState value) {
-        if (value == null) {
-            return null;
-        }
-        
+    public String toNonNullValue(QName value) {
         return value.toString();
-    }
-
-    @Override
-    public WindowState assemble(Serializable cached) {
-        return PortletUtils.getWindowState((String)cached);
     }
 }

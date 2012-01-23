@@ -24,8 +24,8 @@
        xmlns="http://www.springframework.org/schema/beans" 
        xmlns:security="http://www.springframework.org/schema/security"
        xsi:schemaLocation="
-           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-           http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+           http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
            
     <bean id="minimizedStateHandlerInterceptor" class="org.jasig.portal.portlets.MinimizedStateHandlerInterceptor" />           
 

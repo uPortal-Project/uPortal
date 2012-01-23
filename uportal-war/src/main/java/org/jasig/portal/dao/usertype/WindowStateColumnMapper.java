@@ -17,19 +17,27 @@
  * under the License.
  */
 
-package org.jasig.portal.utils;
+package org.jasig.portal.dao.usertype;
 
-import org.hibernate.dialect.MySQL5InnoDBDialect;
-import org.hibernate.service.jdbc.dialect.internal.BasicDialectResolver;
+import javax.portlet.WindowState;
+
+import org.jadira.usertype.spi.shared.AbstractStringColumnMapper;
+import org.jasig.portal.portlet.PortletUtils;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class Mysql5DialectResolver extends BasicDialectResolver {
+public class WindowStateColumnMapper extends AbstractStringColumnMapper<WindowState> {
     private static final long serialVersionUID = 1L;
 
-    public Mysql5DialectResolver() {
-        super("MySQL", 5, MySQL5InnoDBDialect.class);
+    @Override
+    public WindowState fromNonNullValue(String s) {
+        return PortletUtils.getWindowState(s);
+    }
+
+    @Override
+    public String toNonNullValue(WindowState value) {
+        return value.toString();
     }
 }

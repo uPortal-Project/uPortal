@@ -17,19 +17,21 @@
  * under the License.
  */
 
-package org.jasig.portal.dao.usertype;
+package org.jasig.portal.tools.dbloader;
 
-import org.hibernate.type.descriptor.sql.VarcharTypeDescriptor;
-import org.joda.time.MonthDay;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.service.ServiceRegistry;
 
 /**
+ * Provides hibernate configuration and service registry for a persistence unit
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class MonthDayType extends BaseUserType<MonthDay> {
-    private static final long serialVersionUID = 1L;
+public interface HibernateToolConfigurationSource {
     
-    public MonthDayType() {
-        super(VarcharTypeDescriptor.INSTANCE, MonthDayTypeDescriptor.INSTANCE);
-    }
+    Configuration getConfiguration();
+
+    ServiceRegistry getServiceRegistry();
+
 }

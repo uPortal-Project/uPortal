@@ -30,18 +30,12 @@
     <typedef name="windowState" class="org.jasig.portal.dao.usertype.WindowStateType" />
     <typedef name="qname" class="org.jasig.portal.dao.usertype.QNameType" />
     
-    <!-- types from joda-time-hibernate -->
-    
-    <typedef name="dateTime" class="org.joda.time.contrib.hibernate.PersistentDateTime" />
-    <typedef name="instant" class="org.joda.time.contrib.hibernate.PersistentInstant" />
-    <typedef name="interval" class="org.joda.time.contrib.hibernate.PersistentInterval" />
-    <typedef name="localDate" class="org.joda.time.contrib.hibernate.PersistentLocalDate" />
-    <typedef name="localTime" class="org.joda.time.contrib.hibernate.PersistentLocalTimeExact" />
-    <typedef name="localDateTime" class="org.joda.time.contrib.hibernate.PersistentLocalDateTime" />
-    <typedef name="duration" class="org.joda.time.contrib.hibernate.PersistentDuration" />
-    <typedef name="period" class="org.joda.time.contrib.hibernate.PersistentPeriod" />
-    <typedef name="monthDay" class="org.jasig.portal.dao.usertype.MonthDayType" />
-    
+    <!-- usertypes -->
+    <typedef name="dateTime" class="org.jadira.usertype.dateandtime.joda.PersistentDateTime" />
+    <typedef name="dateTimeTZ" class="org.jadira.usertype.dateandtime.joda.PersistentDateTimeWithZone" />
+    <typedef name="dateMidnight" class="org.jadira.usertype.dateandtime.joda.PersistentDateMidnight" />
+    <typedef name="localTime" class="org.jadira.usertype.dateandtime.joda.PersistentLocalTime" />
+    <typedef name="monthDay" class="org.jadira.usertype.dateandtime.joda.PersistentMonthDayAsString" />
 </hibernate-mapping> 
 
  

@@ -30,7 +30,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.sql.DataSource;
 import javax.xml.parsers.ParserConfigurationException;
@@ -41,12 +40,13 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.dialect.Dialect;
-import org.hibernate.dialect.resolver.DialectFactory;
-import org.hibernate.engine.Mapping;
+import org.hibernate.engine.spi.Mapping;
 import org.hibernate.mapping.ForeignKey;
 import org.hibernate.mapping.Index;
 import org.hibernate.mapping.Table;
 import org.hibernate.mapping.UniqueKey;
+import org.hibernate.service.ServiceRegistry;
+import org.hibernate.service.jdbc.dialect.spi.DialectResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ResourceLoaderAware;
@@ -56,7 +56,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.NonTransientDataAccessResourceException;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.xml.sax.InputSource;
@@ -71,10 +70,10 @@ import org.xml.sax.SAXException;
  * @author Eric Dalquist
  * @version $Revision$
  */
-@Repository("dbLoader")
 public class HibernateDbLoader implements IDbLoader, ResourceLoaderAware {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
+    private HibernateToolConfigurationSource hibernateToolConfigurationSource;
     private JdbcTemplate jdbcTemplate;
     private TransactionTemplate transactionTemplate;
     private Dialect preferedDialect;
@@ -104,7 +103,10 @@ public class HibernateDbLoader implements IDbLoader, ResourceLoaderAware {
         this.preferedDialect = dialect;
     }
     
-    
+    public void setHibernateToolConfigurationSource(HibernateToolConfigurationSource hibernateToolConfigurationSource) {
+        this.hibernateToolConfigurationSource = hibernateToolConfigurationSource;
+    }
+
     @Override
     public void setResourceLoader(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
@@ -122,10 +124,13 @@ public class HibernateDbLoader implements IDbLoader, ResourceLoaderAware {
             dialect = this.preferedDialect;
         }
         else {
+            final ServiceRegistry serviceRegistry = this.hibernateToolConfigurationSource.getServiceRegistry();
+            final DialectResolver resolver = serviceRegistry.getService(DialectResolver.class);
+            
             dialect = this.jdbcTemplate.execute(new ConnectionCallback<Dialect>() {
                 @Override
                 public Dialect doInConnection(Connection con) throws SQLException, DataAccessException {
-                    return DialectFactory.buildDialect(new Properties(), con);
+                    return resolver.resolveDialect(con.getMetaData());
                 }
             });
             
