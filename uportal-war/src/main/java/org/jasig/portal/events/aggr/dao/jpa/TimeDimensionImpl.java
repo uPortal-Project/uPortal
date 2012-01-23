@@ -36,6 +36,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.Type;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.joda.time.LocalTime;
 
@@ -67,6 +68,11 @@ public class TimeDimensionImpl implements TimeDimension, Serializable {
     private final long id;
     
     @NaturalId
+    @Column(name="TD_TIME", nullable=false)
+    @Type(type = "localTime")
+    private final LocalTime time;
+    
+    @Index(name = "IDX_UP_TD_HOUR")
     @Column(name="TD_HOUR", nullable=false)
     private final int hour;
     
@@ -74,14 +80,12 @@ public class TimeDimensionImpl implements TimeDimension, Serializable {
     @Column(name="TD_FIVE_MINUTE_INCREMENT", nullable=false)
     private final int fiveMinuteIncrement;
     
-    @NaturalId
+    @Index(name = "IDX_UP_TD_MINUTE")
     @Column(name="TD_MINUTE", nullable=false)
     private final int minute;
     
     @Transient
     private int hashCode = 0;
-    @Transient
-    private LocalTime time = null;
 
     /**
      * no-arg needed by hibernate
@@ -89,13 +93,14 @@ public class TimeDimensionImpl implements TimeDimension, Serializable {
     @SuppressWarnings("unused")
     private TimeDimensionImpl() {
         this.id = -1;
+        this.time = null;
         this.hour = -1;
         this.fiveMinuteIncrement = -1;
         this.minute = -1;
     }
-    TimeDimensionImpl(int hour, int minute) {
+    TimeDimensionImpl(LocalTime time) {
         this.id = -1;
-        this.time = new LocalTime(hour, minute);
+        this.time = time.secondOfMinute().roundFloorCopy(); //truncate at minute level
         this.hour = this.time.getHourOfDay();
         this.minute = this.time.getMinuteOfHour();
         this.fiveMinuteIncrement = this.minute / 5;
@@ -108,12 +113,7 @@ public class TimeDimensionImpl implements TimeDimension, Serializable {
     
     @Override
     public LocalTime getTime() {
-        LocalTime t = this.time;
-        if (t == null) {
-            t = new LocalTime(this.hour, this.minute);
-            this.time = t;
-        }
-        return t;
+        return this.time;
     }
     @Override
     public int getHour() {
@@ -132,33 +132,34 @@ public class TimeDimensionImpl implements TimeDimension, Serializable {
     
     @Override
     public int hashCode() {
-        int h = hashCode;
+        int h = this.hashCode;
         if (h == 0) {
             final int prime = 31;
             h = 1;
-            h = prime * h + hour;
-            h = prime * h + minute;
+            h = prime * h + ((time == null) ? 0 : time.hashCode());
+            this.hashCode = h;
         }
         return h;
     }
-    
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof TimeDimension))
             return false;
-        TimeDimensionImpl other = (TimeDimensionImpl) obj;
-        if (hour != other.hour)
-            return false;
-        if (minute != other.minute)
+        TimeDimension other = (TimeDimension) obj;
+        if (time == null) {
+            if (other.getTime() != null)
+                return false;
+        }
+        else if (!time.equals(other.getTime()))
             return false;
         return true;
     }
     @Override
     public String toString() {
-        return "TimeDimension [id=" + id + ", hour=" + hour + ", fiveMinuteIncrement=" + fiveMinuteIncrement + ", minute=" + minute + "]";
+        return "TimeDimension [id=" + id + ", time=" + time + ", fiveMinuteIncrement=" + fiveMinuteIncrement + "]";
     }
 }

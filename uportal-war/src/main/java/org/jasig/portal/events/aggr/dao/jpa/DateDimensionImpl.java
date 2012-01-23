@@ -38,7 +38,7 @@ import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.joda.time.DateMidnight;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 /**
  * @author Eric Dalquist
@@ -66,20 +66,20 @@ public class DateDimensionImpl implements DateDimension, Serializable {
     @Column(name="DATE_ID")
     private final long id;
     
-    @Index(name = "IDX_UP_DD_FULL_DATE")
-    @Column(name="DD_FULL_DATE", nullable=false, updatable=false)
-    @Type(type = "dateTime")
-    private final DateTime fullDate;
-    
     @NaturalId
+    @Column(name="DD_DATE", nullable=false, updatable=false)
+    @Type(type = "localDate")
+    private final LocalDate date;
+    
+    @Index(name = "IDX_UP_DD_YEAR")
     @Column(name="DD_YEAR", nullable=false, updatable=false)
     private final int year;
 
-    @NaturalId
+    @Index(name = "IDX_UP_DD_MONTH")
     @Column(name="DD_MONTH", nullable=false, updatable=false)
     private final int month;
 
-    @NaturalId
+    @Index(name = "IDX_UP_DD_DAY")
     @Column(name="DD_DAY", nullable=false, updatable=false)
     private final int day;
     
@@ -99,14 +99,15 @@ public class DateDimensionImpl implements DateDimension, Serializable {
     private int hashCode = 0;
     @Transient
     private DateMidnight dateMidnight;
-
+    
     /**
      * no-arg needed by hibernate
      */
     @SuppressWarnings("unused")
     private DateDimensionImpl() {
         this.id = -1;
-        this.fullDate = null;
+        this.date = null;
+        this.dateMidnight = null;
         this.year = -1;
         this.month = -1;
         this.day = -1;
@@ -114,15 +115,15 @@ public class DateDimensionImpl implements DateDimension, Serializable {
         this.quarter = -1;
         this.term = null;
     }
-    DateDimensionImpl(int year, int month, int day, int quarter, String term) {
+    DateDimensionImpl(DateMidnight date, int quarter, String term) {
         if (quarter < 0 || quarter > 3) {
             throw new IllegalArgumentException("Quarter must be between 0 and 3, it is: " + quarter);
         }
         
-        this.dateMidnight = new DateMidnight(year, month, day);
+        this.dateMidnight = date;
         
         this.id = -1;
-        this.fullDate = dateMidnight.toDateTime();
+        this.date = this.dateMidnight.toLocalDate();
         this.year = dateMidnight.getYear();
         this.month = dateMidnight.getMonthOfYear();
         this.day = dateMidnight.getDayOfMonth();
@@ -137,10 +138,10 @@ public class DateDimensionImpl implements DateDimension, Serializable {
     }
     
     @Override
-    public DateMidnight getFullDate() {
+    public DateMidnight getDate() {
         DateMidnight dm = this.dateMidnight;
         if (dm == null) {
-            dm = this.fullDate.toDateMidnight();
+            dm = this.date.toDateMidnight();
             this.dateMidnight = dm;
         }
         
@@ -173,38 +174,36 @@ public class DateDimensionImpl implements DateDimension, Serializable {
     
     @Override
     public int hashCode() {
-        int h = hashCode;
+        int h = this.hashCode;
         if (h == 0) {
             final int prime = 31;
-            int result = 1;
-            result = prime * result + day;
-            result = prime * result + month;
-            result = prime * result + year;
-            return result;
+            h = 1;
+            h = prime * h + ((getDate() == null) ? 0 : getDate().hashCode());
+            this.hashCode = h;
         }
         return h;
     }
+    
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof DateDimension))
             return false;
-        DateDimensionImpl other = (DateDimensionImpl) obj;
-        if (day != other.day)
-            return false;
-        if (month != other.month)
-            return false;
-        if (year != other.year)
+        DateDimension other = (DateDimension) obj;
+        if (getDate() == null) {
+            if (other.getDate() != null)
+                return false;
+        }
+        else if (!getDate().equals(other.getDate()))
             return false;
         return true;
     }
     @Override
     public String toString() {
-        return "DateDimension [id=" + id + ", fullDate=" + fullDate + ", year=" + year + ", month=" + month
-                + ", day=" + day + ", week=" + week + ", quarter=" + quarter + ", term=" + term + "]";
+        return "DateDimension [id=" + id + ", date=" + getDate() + ", week=" + week + ", quarter=" + quarter + ", term=" + term + "]";
     }
     
 }

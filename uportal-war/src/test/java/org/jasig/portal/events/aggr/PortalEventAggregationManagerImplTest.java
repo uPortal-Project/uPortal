@@ -195,9 +195,9 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
                 final List<DateDimension> dateDimensions = dateDimensionDao.getDateDimensions();
                 assertEquals(731, dateDimensions.size());
                 final DateDimension oldestDateDimension = dateDimensionDao.getOldestDateDimension();
-                assertEquals(new DateMidnight(2011, 1, 1), oldestDateDimension.getFullDate());
+                assertEquals(new DateMidnight(2011, 1, 1), oldestDateDimension.getDate());
                 final DateDimension newestDateDimension = dateDimensionDao.getNewestDateDimension();
-                assertEquals(new DateMidnight(2012, 12, 31), newestDateDimension.getFullDate());
+                assertEquals(new DateMidnight(2012, 12, 31), newestDateDimension.getDate());
             }
         });
 
@@ -216,9 +216,9 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
                 final List<DateDimension> dateDimensions = dateDimensionDao.getDateDimensions();
                 assertEquals(1096, dateDimensions.size());
                 final DateDimension oldestDateDimension = dateDimensionDao.getOldestDateDimension();
-                assertEquals(new DateMidnight(2010, 1, 1), oldestDateDimension.getFullDate());
+                assertEquals(new DateMidnight(2010, 1, 1), oldestDateDimension.getDate());
                 final DateDimension newestDateDimension = dateDimensionDao.getNewestDateDimension();
-                assertEquals(new DateMidnight(2012, 12, 31), newestDateDimension.getFullDate());
+                assertEquals(new DateMidnight(2012, 12, 31), newestDateDimension.getDate());
             }
         });
 
@@ -237,9 +237,9 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
                 final List<DateDimension> dateDimensions = dateDimensionDao.getDateDimensions();
                 assertEquals(1461, dateDimensions.size());
                 final DateDimension oldestDateDimension = dateDimensionDao.getOldestDateDimension();
-                assertEquals(new DateMidnight(2010, 01, 01), oldestDateDimension.getFullDate());
+                assertEquals(new DateMidnight(2010, 01, 01), oldestDateDimension.getDate());
                 final DateDimension newestDateDimension = dateDimensionDao.getNewestDateDimension();
-                assertEquals(new DateMidnight(2013, 12, 31), newestDateDimension.getFullDate());
+                assertEquals(new DateMidnight(2013, 12, 31), newestDateDimension.getDate());
             }
         });
     }

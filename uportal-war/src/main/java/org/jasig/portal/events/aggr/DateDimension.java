@@ -38,7 +38,7 @@ public interface DateDimension {
     /**
      * @return The fully built date for this date dimension
      */
-    DateMidnight getFullDate();
+    DateMidnight getDate();
     
     /**
      * @return The year the day exists in 

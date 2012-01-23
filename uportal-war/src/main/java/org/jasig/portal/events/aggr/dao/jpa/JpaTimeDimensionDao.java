@@ -99,7 +99,7 @@ public class JpaTimeDimensionDao extends BaseJpaDao implements TimeDimensionDao 
     @Override
     @Transactional("aggrEvents")
     public TimeDimension createTimeDimension(LocalTime time) {
-        final TimeDimension timeDimension = new TimeDimensionImpl(time.getHourOfDay(), time.getMinuteOfHour());
+        final TimeDimension timeDimension = new TimeDimensionImpl(time);
         
         this.entityManager.persist(timeDimension);
         

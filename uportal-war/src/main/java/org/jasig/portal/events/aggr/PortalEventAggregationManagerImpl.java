@@ -363,7 +363,7 @@ public class PortalEventAggregationManagerImpl implements IPortalEventAggregatio
         
         DateMidnight nextDate = start;
         for (final DateDimension dateDimension : dateDimensions) {
-            DateMidnight dimensionDate = dateDimension.getFullDate();
+            DateMidnight dimensionDate = dateDimension.getDate();
             if (nextDate.isBefore(dimensionDate)) {
                 do {
                     createDateDimension(quartersDetails, academicTermDetails, nextDate);

@@ -33,7 +33,7 @@
     <!-- usertypes -->
     <typedef name="dateTime" class="org.jadira.usertype.dateandtime.joda.PersistentDateTime" />
     <typedef name="dateTimeTZ" class="org.jadira.usertype.dateandtime.joda.PersistentDateTimeWithZone" />
-    <typedef name="dateMidnight" class="org.jadira.usertype.dateandtime.joda.PersistentDateMidnight" />
+    <typedef name="localDate" class="org.jadira.usertype.dateandtime.joda.PersistentLocalDate" />
     <typedef name="localTime" class="org.jadira.usertype.dateandtime.joda.PersistentLocalTime" />
     <typedef name="monthDay" class="org.jadira.usertype.dateandtime.joda.PersistentMonthDayAsString" />
 </hibernate-mapping> 
