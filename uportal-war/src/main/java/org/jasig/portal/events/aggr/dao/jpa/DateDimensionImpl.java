@@ -20,12 +20,15 @@
 package org.jasig.portal.events.aggr.dao.jpa;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -37,6 +40,7 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.events.aggr.DateDimension;
+import org.jasig.portal.events.aggr.login.LoginAggregationImpl;
 import org.joda.time.DateMidnight;
 import org.joda.time.LocalDate;
 
@@ -94,6 +98,13 @@ public class DateDimensionImpl implements DateDimension, Serializable {
     @Index(name = "IDX_UP_DD_TERM")
     @Column(name="DD_TERM", length=200)
     private String term;
+    
+    /**
+     * NEVER used directly, simply needed for join queries
+     */
+    @SuppressWarnings("unused")
+    @OneToMany(mappedBy="dateDimension", fetch=FetchType.LAZY)
+    private Collection<LoginAggregationImpl> loginAggregations;
     
     @Transient
     private int hashCode = 0;

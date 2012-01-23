@@ -72,7 +72,7 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl;
     )
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-class LoginAggregationImpl implements LoginAggregation, Serializable {
+public class LoginAggregationImpl implements LoginAggregation, Serializable {
     private static final long serialVersionUID = 1L;
     
     @Id

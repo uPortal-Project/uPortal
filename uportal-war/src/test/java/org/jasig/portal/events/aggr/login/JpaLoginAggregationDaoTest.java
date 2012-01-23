@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.naming.CompositeName;
@@ -287,6 +288,24 @@ public class JpaLoginAggregationDaoTest extends BaseJpaDaoTest {
                 final LoginAggregationImpl loginAggregation = loginAggregationsHour.iterator().next();
                 assertEquals(10, loginAggregation.getLoginCount());
                 assertEquals(6, loginAggregation.getUniqueLoginCount());
+            }
+        });
+
+        this.execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                final DateDimension dateDimension = dateDimensionDao.getDateDimensionByDate(instantDate);
+                final TimeDimension timeDimension = timeDimensionDao.getTimeDimensionByTime(instantTime);
+                final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
+                
+                final List<LoginAggregation> loginAggregations = loginAggregationDao.getLoginAggregations(
+                        instantDate.monthOfYear().roundFloorCopy(),
+                        instantDate.monthOfYear().roundCeilingCopy(),
+                        Interval.FIVE_MINUTE,
+                        groupA);
+                        
+                        
+                assertEquals(1, loginAggregations.size());
             }
         });
     }
