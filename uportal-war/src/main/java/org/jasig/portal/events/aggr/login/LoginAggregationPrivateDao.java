@@ -20,7 +20,7 @@
 package org.jasig.portal.events.aggr.login;
 
 import org.jasig.portal.events.aggr.DateDimension;
-import org.jasig.portal.events.aggr.Interval;
+import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 
@@ -33,9 +33,9 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 interface LoginAggregationPrivateDao extends LoginAggregationDao<LoginAggregationImpl> {
 
     @Override
-    LoginAggregationImpl getLoginAggregation(DateDimension dateDimension, TimeDimension timeDimension, Interval interval, AggregatedGroupMapping aggregatedGroup);
+    LoginAggregationImpl getLoginAggregation(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval, AggregatedGroupMapping aggregatedGroup);
     
-    LoginAggregationImpl createLoginAggregation(DateDimension dateDimension, TimeDimension timeDimension, Interval interval, AggregatedGroupMapping aggregatedGroup);
+    LoginAggregationImpl createLoginAggregation(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval, AggregatedGroupMapping aggregatedGroup);
     
     void updateLoginAggregation(LoginAggregationImpl loginAggregation);
 

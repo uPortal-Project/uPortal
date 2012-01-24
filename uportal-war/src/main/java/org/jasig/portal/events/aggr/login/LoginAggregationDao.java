@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.jasig.portal.events.aggr.DateDimension;
-import org.jasig.portal.events.aggr.Interval;
+import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.joda.time.DateMidnight;
@@ -39,12 +39,12 @@ public interface LoginAggregationDao<T extends LoginAggregation> {
     /**
      * login aggregations in a date range for a specified interval and group
      */
-    List<LoginAggregation> getLoginAggregations(DateMidnight start, DateMidnight end, Interval interval, AggregatedGroupMapping... aggregatedGroupMapping);
+    List<LoginAggregation> getLoginAggregations(DateMidnight start, DateMidnight end, AggregationInterval interval, AggregatedGroupMapping... aggregatedGroupMapping);
 
     /**
      * @return All login aggregations for the date, time and interval
      */
-    Set<T> getLoginAggregationsForInterval(DateDimension dateDimension, TimeDimension timeDimension, Interval interval);
+    Set<T> getLoginAggregationsForInterval(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval);
     
-    LoginAggregation getLoginAggregation(DateDimension dateDimension, TimeDimension timeDimension, Interval interval, AggregatedGroupMapping aggregatedGroup);
+    LoginAggregation getLoginAggregation(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval, AggregatedGroupMapping aggregatedGroup);
 }

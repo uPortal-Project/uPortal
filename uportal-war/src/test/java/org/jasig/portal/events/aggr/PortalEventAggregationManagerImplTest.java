@@ -70,7 +70,7 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
     @Autowired
     private TimeDimensionDao timeDimensionDao;
     @Autowired
-    private IntervalHelper intervalHelper;
+    private AggregationIntervalHelper intervalHelper;
     @PersistenceContext(unitName = "uPortalAggrEventsPersistence")
     private EntityManager entityManager;
 

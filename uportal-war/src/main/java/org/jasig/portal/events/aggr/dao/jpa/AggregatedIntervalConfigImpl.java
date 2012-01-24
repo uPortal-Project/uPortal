@@ -45,7 +45,7 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NaturalId;
 import org.jasig.portal.events.aggr.AggregatedIntervalConfig;
 import org.jasig.portal.events.aggr.IPortalEventAggregator;
-import org.jasig.portal.events.aggr.Interval;
+import org.jasig.portal.events.aggr.AggregationInterval;
 
 /**
  * @author Eric Dalquist
@@ -57,7 +57,7 @@ import org.jasig.portal.events.aggr.Interval;
 @TableGenerator(name = "UP_EVENT_AGGR_CONF_INTRVL_GEN", pkColumnValue = "UP_EVENT_AGGR_CONF_INTRVL", allocationSize = 1)
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class AggregatedIntervalConfigImpl extends BaseAggregatedDimensionConfigImpl<Interval> implements AggregatedIntervalConfig {
+public class AggregatedIntervalConfigImpl extends BaseAggregatedDimensionConfigImpl<AggregationInterval> implements AggregatedIntervalConfig {
     @Id
     @GeneratedValue(generator = "UP_EVENT_AGGR_CONF_INTRVL_GEN")
     @Column(name = "ID")
@@ -74,7 +74,7 @@ public class AggregatedIntervalConfigImpl extends BaseAggregatedDimensionConfigI
     @Enumerated(EnumType.STRING)
     @Column(name="INTERVAL")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private final Set<Interval> includedIntervals;
+    private final Set<AggregationInterval> includedIntervals;
     
     @ElementCollection(fetch=FetchType.EAGER)
     @JoinTable(name="UP_EVENT_AGGR_CONF_INTRVL_EXC", joinColumns = @JoinColumn(name = "UP_EVENT_AGGR_CONF_INTRVL_ID"))
@@ -82,7 +82,7 @@ public class AggregatedIntervalConfigImpl extends BaseAggregatedDimensionConfigI
     @Enumerated(EnumType.STRING)
     @Column(name="INTERVAL")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private final Set<Interval> excludedIntervals;
+    private final Set<AggregationInterval> excludedIntervals;
 
     @SuppressWarnings("unused")
     private AggregatedIntervalConfigImpl() {
@@ -96,8 +96,8 @@ public class AggregatedIntervalConfigImpl extends BaseAggregatedDimensionConfigI
         Validate.notNull(aggregatorType);
         this.id = -1;
         this.aggregatorType = aggregatorType;
-        this.includedIntervals = new LinkedHashSet<Interval>();
-        this.excludedIntervals = new LinkedHashSet<Interval>();
+        this.includedIntervals = new LinkedHashSet<AggregationInterval>();
+        this.excludedIntervals = new LinkedHashSet<AggregationInterval>();
     }
 
     @Override
@@ -106,12 +106,12 @@ public class AggregatedIntervalConfigImpl extends BaseAggregatedDimensionConfigI
     }
     
     @Override
-    public Set<Interval> getIncluded() {
+    public Set<AggregationInterval> getIncluded() {
         return includedIntervals;
     }
 
     @Override
-    public Set<Interval> getExcluded() {
+    public Set<AggregationInterval> getExcluded() {
         return excludedIntervals;
     }
 
