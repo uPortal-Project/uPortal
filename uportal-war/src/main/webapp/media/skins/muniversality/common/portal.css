@@ -1,3 +1,21 @@
+/**
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a
+ * copy of the License at:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 /*====================================*/
 /* uMOBILE PORTAL */
 /*====================================*/
@@ -520,6 +538,9 @@ mathematical calculations. */
   padding: 0.2em 10px;
 }
 
+.up {
+  /* icons */
+}
 .up .ui-bar, .up .ui-li-divider {
   border-width: 1px;
   border-style: solid;
@@ -792,7 +813,24 @@ mathematical calculations. */
   @include gradient($c1, $c1dark);
   @include rounded(5px);*/
 }
+.up .ui-icon-map {
+  background-image: url(images/icons/location-18x18.png);
+}
+.up .ui-icon-phone {
+  background-image: url(images/icons/phone-18x18.png);
+}
 
+/* retina icons */
+@media only screen and (-webkit-min-device-pixel-ratio: 2) {
+  .up .ui-icon-map {
+    background-image: url(images/icons/location-36x36.png);
+    background-size: 18px 18px;
+  }
+  .up .ui-icon-phone {
+    background-image: url(images/icons/phone-36x36.png);
+    background-size: 18px 18px;
+  }
+}
 /*====================================*/
 /* PORTLET */
 /*====================================*/
@@ -803,8 +841,6 @@ mathematical calculations. */
   /* Courses portlet */
   /* Feeds */
   /* Calendar */
-  /* prevent truncation/wrapping of list items */
-  /* full items will be faded */
 }
 .up .ptl-courses .view-courses .utilities {
   margin-top: 2em;
@@ -991,23 +1027,9 @@ mathematical calculations. */
   border-color: black;
   color: black;
 }
-.up .laundry .washers h3,
-.up .laundry .dryers h3,
-.up .computer-lab .Windows h3,
-.up .computer-lab .OSX h3 {
-  display: block;
-  min-height: 24px;
-  line-height: 24px;
-  padding-left: 36px;
-  font-size: 10pt;
-  font-weight: normal;
+.up .no-ui-li-count {
+  padding-right: 0.7em;
 }
-.up .laundry .ui-li-static, .up .computer-lab .ui-li-static {
-  padding-right: 15px;
-}
-.up .laundry .washers h3.full,
-.up .laundry .dryers h3.full,
-.up .computer-lab .Windows h3.full,
-.up .computer-lab .OSX h3.full {
+.up .unavailable {
   opacity: 0.5;
 }

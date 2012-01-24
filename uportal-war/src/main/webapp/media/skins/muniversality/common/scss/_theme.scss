@@ -119,4 +119,27 @@
 			}
 		}
 	}
+	/* icons */
+	.ui-icon-map {
+		background-image: url(images/icons/location-18x18.png);
+	}
+	
+	.ui-icon-phone {
+		background-image: url(images/icons/phone-18x18.png);
+	}
+}
+
+/* retina icons */
+@media only screen and (-webkit-min-device-pixel-ratio: 2) {
+	.up {
+		.ui-icon-map {
+			background-image: url(images/icons/location-36x36.png);
+			background-size: 18px 18px;
+		}
+	
+		.ui-icon-phone {
+			background-image: url(images/icons/phone-36x36.png);
+			background-size: 18px 18px;
+		}
+	}
 }

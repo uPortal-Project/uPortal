@@ -185,29 +185,12 @@
 			@include color-box($cal9);
 		}
 	}
-	
-	.laundry .washers h3, 
-	.laundry .dryers h3, 
-	.computer-lab .Windows h3, 
-	.computer-lab .OSX h3 {
-		display: block;  
-		min-height: 24px;
-		line-height: 24px;
-		padding-left: 36px; 
-		font-size: 10pt;
-		font-weight: normal;
+
+	.no-ui-li-count {
+		padding-right: 0.7em;
 	}
 
-	/* prevent truncation/wrapping of list items */
-	.laundry .ui-li-static, .computer-lab .ui-li-static {
-		padding-right: 15px;
-	}
-
-	/* full items will be faded */
-	.laundry .washers h3.full, 
-	.laundry .dryers h3.full, 
-	.computer-lab .Windows h3.full, 
-	.computer-lab .OSX h3.full {
+	.unavailable {
 		opacity: 0.5;
 	}
 }
