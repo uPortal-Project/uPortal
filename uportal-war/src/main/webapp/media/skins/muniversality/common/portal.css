@@ -1,22 +1,3 @@
-/**
- * Licensed to Jasig under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
 /*====================================*/
 /* uMOBILE PORTAL */
 /*====================================*/
@@ -736,13 +717,26 @@ mathematical calculations. */
 .up .portlet-content .ui-btn-active a.ui-link-inherit {
   color: white;
 }
+.up .portlet-content .ui-li {
+  background-image: -moz-linear-gradient(top, #fcfcfc, #ededed);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #fcfcfc), color-stop(1, #ededed));
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#fcfcfc', EndColorStr='#ededed')";
+}
 .up .portlet-content .ui-li-divider {
   border-color: #38678f;
+  border-top: 1px solid #699bc4;
   background: #4682b4;
   color: white;
-  background-image: -moz-linear-gradient(top, #699bc4, #38678f);
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #699bc4), color-stop(1, #38678f));
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#699bc4', EndColorStr='#38678f')";
+  background-image: -moz-linear-gradient(top, #38678f, #699bc4);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #38678f), color-stop(1, #699bc4));
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#38678f', EndColorStr='#699bc4')";
+  -moz-box-shadow: 0 0 5px #999;
+  -webkit-box-shadow: 0 0 5px #999;
+  box-shadow: 0 0 5px #999;
+  z-index: 1;
+}
+.up .portlet-content .ui-li-divider .ui-grid-a .ui-block-b {
+  text-align: right;
 }
 .up .portlet-content .utilities .ui-btn-up-a, .up .portlet-content .utilities .ui-btn-up-b, .up .portlet-content .utilities .ui-btn-up-c, .up .portlet-content .utilities .ui-btn-up-d, .up .portlet-content .utilities .ui-btn-up-e {
   border-color: #143f27;
@@ -809,6 +803,8 @@ mathematical calculations. */
   /* Courses portlet */
   /* Feeds */
   /* Calendar */
+  /* prevent truncation/wrapping of list items */
+  /* full items will be faded */
 }
 .up .ptl-courses .view-courses .utilities {
   margin-top: 2em;
@@ -994,4 +990,24 @@ mathematical calculations. */
   background: rgba(0, 0, 0, 0.25);
   border-color: black;
   color: black;
+}
+.up .laundry .washers h3,
+.up .laundry .dryers h3,
+.up .computer-lab .Windows h3,
+.up .computer-lab .OSX h3 {
+  display: block;
+  min-height: 24px;
+  line-height: 24px;
+  padding-left: 36px;
+  font-size: 10pt;
+  font-weight: normal;
+}
+.up .laundry .ui-li-static, .up .computer-lab .ui-li-static {
+  padding-right: 15px;
+}
+.up .laundry .washers h3.full,
+.up .laundry .dryers h3.full,
+.up .computer-lab .Windows h3.full,
+.up .computer-lab .OSX h3.full {
+  opacity: 0.5;
 }
