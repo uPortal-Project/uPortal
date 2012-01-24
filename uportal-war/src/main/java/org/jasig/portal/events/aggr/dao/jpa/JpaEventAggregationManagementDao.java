@@ -60,8 +60,6 @@ import org.springframework.transaction.support.TransactionOperations;
 public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEventAggregationManagementDao {
     private static final Class<IPortalEventAggregator> DEFAULT_AGGREGATOR_TYPE = IPortalEventAggregator.class; 
     
-    private static final String FIND_AGGR_STATUS_BY_PROC_TYPE_CACHE_REGION = EventAggregatorStatusImpl.class.getName() + ".query.FIND_AGGR_STATUS_BY_PROC_TYPE";
-    
     private CriteriaQuery<EventAggregatorStatusImpl> findEventAggregatorStatusByProcessingTypeQuery;
     private CriteriaQuery<AggregatedGroupConfigImpl> findGroupConfigForAggregatorQuery;
     private CriteriaQuery<AggregatedIntervalConfigImpl> findIntervalConfigForAggregatorQuery;
@@ -164,7 +162,7 @@ public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEve
 
     @Override
     public IEventAggregatorStatus getEventAggregatorStatus(final ProcessingType processingType, boolean create) {
-        final TypedQuery<EventAggregatorStatusImpl> query = this.createQuery(findEventAggregatorStatusByProcessingTypeQuery, FIND_AGGR_STATUS_BY_PROC_TYPE_CACHE_REGION);
+        final TypedQuery<EventAggregatorStatusImpl> query = this.createCachedQuery(findEventAggregatorStatusByProcessingTypeQuery);
         query.setParameter(this.processingTypeParameter, processingType);
 
         final List<EventAggregatorStatusImpl> resultList = query.getResultList();
@@ -209,7 +207,7 @@ public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEve
 
     @Override
     public AggregatedGroupConfig getAggregatedGroupConfig(Class<? extends IPortalEventAggregator> aggregatorType) {
-        final TypedQuery<AggregatedGroupConfigImpl> query = this.createQuery(this.findGroupConfigForAggregatorQuery, "GROUP_CONFIG_FOR_AGGREGATOR");
+        final TypedQuery<AggregatedGroupConfigImpl> query = this.createCachedQuery(this.findGroupConfigForAggregatorQuery);
         query.setParameter(this.aggregatorTypeParameter, aggregatorType);
         return DataAccessUtils.uniqueResult(query.getResultList());
     }
@@ -252,7 +250,7 @@ public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEve
 
     @Override
     public AggregatedIntervalConfig getAggregatedIntervalConfig(Class<? extends IPortalEventAggregator> aggregatorType) {
-        final TypedQuery<AggregatedIntervalConfigImpl> query = this.createQuery(this.findIntervalConfigForAggregatorQuery, "INTERVAL_CONFIG_FOR_AGGREGATOR");
+        final TypedQuery<AggregatedIntervalConfigImpl> query = this.createCachedQuery(this.findIntervalConfigForAggregatorQuery);
         query.setParameter(this.aggregatorTypeParameter, aggregatorType);
         return DataAccessUtils.uniqueResult(query.getResultList());
     }
@@ -280,7 +278,7 @@ public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEve
 
     @Override
     public List<QuarterDetail> getQuartersDetails() {
-        final TypedQuery<QuarterDetailImpl> query = this.createQuery(this.findAllQuarterDetailsQuery, "ALL");
+        final TypedQuery<QuarterDetailImpl> query = this.createCachedQuery(this.findAllQuarterDetailsQuery);
         final List<QuarterDetailImpl> results = query.getResultList();
         if (results.size() == 4) {
             return new ArrayList<QuarterDetail>(results);
@@ -313,7 +311,7 @@ public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEve
 
     @Override
     public List<AcademicTermDetail> getAcademicTermDetails() {
-        final TypedQuery<AcademicTermDetailImpl> query = this.createQuery(this.findAllAcademicTermDetailsQuery, "ALL");
+        final TypedQuery<AcademicTermDetailImpl> query = this.createCachedQuery(this.findAllAcademicTermDetailsQuery);
         return new ArrayList<AcademicTermDetail>(query.getResultList());
     }
 

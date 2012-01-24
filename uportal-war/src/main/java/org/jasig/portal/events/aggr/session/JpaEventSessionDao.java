@@ -135,7 +135,7 @@ public class JpaEventSessionDao extends BaseJpaDao implements EventSessionDao {
     @Transactional("aggrEvents")
     @Override
     public EventSession getEventSession(String eventSessionId) {
-        final TypedQuery<EventSessionImpl> query = this.createQuery(this.findByEventSessionIdQuery, "FIND_BY_EVENT_SESSION_ID");
+        final TypedQuery<EventSessionImpl> query = this.createCachedQuery(this.findByEventSessionIdQuery);
         query.setParameter(this.eventSessionIdParameter, eventSessionId);
         
         final List<EventSessionImpl> results = query.getResultList();
@@ -162,7 +162,7 @@ public class JpaEventSessionDao extends BaseJpaDao implements EventSessionDao {
     @Transactional("aggrEvents")
     @Override
     public void purgeExpiredEventSessions() {
-        final TypedQuery<EventSessionImpl> query = this.createQuery(this.findExpiredEventSessionsQuery, null);
+        final TypedQuery<EventSessionImpl> query = this.createQuery(this.findExpiredEventSessionsQuery);
         query.setParameter(this.dateTimeParameter, DateTime.now().minus(eventSessionDuration));
         for (final EventSessionImpl eventSession : query.getResultList()) {
             this.entityManager.remove(eventSession);

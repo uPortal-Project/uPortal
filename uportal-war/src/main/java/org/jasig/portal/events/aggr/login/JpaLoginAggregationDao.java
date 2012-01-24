@@ -20,7 +20,6 @@
 package org.jasig.portal.events.aggr.login;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -148,8 +147,9 @@ public class JpaLoginAggregationDao extends BaseJpaDao implements LoginAggregati
         return criteriaQuery;
     }
     
+    @Override
     public List<LoginAggregation> getLoginAggregations(DateMidnight start, DateMidnight end, AggregationInterval interval, AggregatedGroupMapping... aggregatedGroupMapping) {
-        final TypedQuery<LoginAggregationImpl> query = this.createQuery(findLoginAggregationsByDateRangeQuery, null);
+        final TypedQuery<LoginAggregationImpl> query = this.createQuery(findLoginAggregationsByDateRangeQuery);
         query.setParameter(this.startDate, start.toLocalDate());
         query.setParameter(this.endDate, end.toLocalDate());
         query.setParameter(this.intervalParameter, interval);
@@ -161,7 +161,7 @@ public class JpaLoginAggregationDao extends BaseJpaDao implements LoginAggregati
     
     @Override
     public Set<LoginAggregationImpl> getLoginAggregationsForInterval(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval) {
-        final TypedQuery<LoginAggregationImpl> query = this.createQuery(this.findLoginAggregationByDateTimeIntervalQuery, "FIND_BY_DATE_TIME_INTERVAL");
+        final TypedQuery<LoginAggregationImpl> query = this.createCachedQuery(this.findLoginAggregationByDateTimeIntervalQuery);
         query.setParameter(this.dateDimensionParameter, dateDimension);
         query.setParameter(this.timeDimensionParameter, timeDimension);
         query.setParameter(this.intervalParameter, interval);
@@ -172,7 +172,7 @@ public class JpaLoginAggregationDao extends BaseJpaDao implements LoginAggregati
 
     @Override
     public LoginAggregationImpl getLoginAggregation(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval, AggregatedGroupMapping aggregatedGroup) {
-        final TypedQuery<LoginAggregationImpl> query = this.createQuery(this.findLoginAggregationByDateTimeIntervalGroupQuery, "FIND_BY_DATE_TIME_INTERVAL_GROUP");
+        final TypedQuery<LoginAggregationImpl> query = this.createCachedQuery(this.findLoginAggregationByDateTimeIntervalGroupQuery);
         query.setParameter(this.dateDimensionParameter, dateDimension);
         query.setParameter(this.timeDimensionParameter, timeDimension);
         query.setParameter(this.intervalParameter, interval);

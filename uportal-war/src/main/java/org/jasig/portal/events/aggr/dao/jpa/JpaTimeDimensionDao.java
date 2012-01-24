@@ -44,8 +44,6 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 public class JpaTimeDimensionDao extends BaseJpaDao implements TimeDimensionDao {
-    private static final String FIND_ALL_TIME_DIMENSIONS_CACHE_REGION = TimeDimensionImpl.class.getName() + ".query.FIND_ALL_TIME_DIMENSIONS";
-    private static final String FIND_TIME_DIMENSION_BY_HOUR_MINUTE_CACHE_REGION = TimeDimensionImpl.class.getName() + ".query.FIND_TIME_DIMENSION_BY_HOUR_MINUTE";
     
     private CriteriaQuery<TimeDimensionImpl> findAllTimeDimensionsQuery;
     private CriteriaQuery<TimeDimensionImpl> findTimeDimensionByHourMinuteQuery;
@@ -108,7 +106,7 @@ public class JpaTimeDimensionDao extends BaseJpaDao implements TimeDimensionDao 
 
     @Override
     public List<TimeDimension> getTimeDimensions() {
-        final TypedQuery<TimeDimensionImpl> query = this.createQuery(this.findAllTimeDimensionsQuery, FIND_ALL_TIME_DIMENSIONS_CACHE_REGION);
+        final TypedQuery<TimeDimensionImpl> query = this.createCachedQuery(this.findAllTimeDimensionsQuery);
         
         final List<TimeDimensionImpl> portletDefinitions = query.getResultList();
         return new ArrayList<TimeDimension>(portletDefinitions);
@@ -123,7 +121,7 @@ public class JpaTimeDimensionDao extends BaseJpaDao implements TimeDimensionDao 
     
     @Override
     public TimeDimension getTimeDimensionByTime(LocalTime localTime) {
-        final TypedQuery<TimeDimensionImpl> query = this.createQuery(this.findTimeDimensionByHourMinuteQuery, FIND_TIME_DIMENSION_BY_HOUR_MINUTE_CACHE_REGION);
+        final TypedQuery<TimeDimensionImpl> query = this.createCachedQuery(this.findTimeDimensionByHourMinuteQuery);
         query.setParameter(this.hourParameter, localTime.getHourOfDay());
         query.setParameter(this.minuteParameter, localTime.getMinuteOfHour());
         

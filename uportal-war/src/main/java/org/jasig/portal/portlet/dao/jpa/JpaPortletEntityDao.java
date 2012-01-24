@@ -55,9 +55,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Qualifier("persistence")
 public class JpaPortletEntityDao extends BaseJpaDao implements IPortletEntityDao {
-    private static final String FIND_PORTLET_ENTS_BY_USER_ID_CACHE_REGION = PortletEntityImpl.class.getName() + ".query.FIND_PORTLET_ENTS_BY_USER_ID";
-    private static final String FIND_PORTLET_ENTS_BY_PORTLET_DEF_CACHE_REGION = PortletEntityImpl.class.getName() + ".query.FIND_PORTLET_ENTS_BY_PORTLET_DEF";
-    
     private CriteriaQuery<PortletEntityImpl> findEntitiesForDefinitionQuery;
     private CriteriaQuery<PortletEntityImpl> findEntitiesForUserIdQuery;
     private ParameterExpression<Integer> userIdParameter;
@@ -219,7 +216,7 @@ public class JpaPortletEntityDao extends BaseJpaDao implements IPortletEntityDao
         
         final IPortletDefinition portletDefinition = this.portletDefinitionDao.getPortletDefinition(portletDefinitionId);
         
-        final TypedQuery<PortletEntityImpl> query = this.createQuery(this.findEntitiesForDefinitionQuery, FIND_PORTLET_ENTS_BY_PORTLET_DEF_CACHE_REGION);
+        final TypedQuery<PortletEntityImpl> query = this.createCachedQuery(this.findEntitiesForDefinitionQuery);
         query.setParameter(this.portletDefinitionParameter, (PortletDefinitionImpl)portletDefinition);
         
         final List<PortletEntityImpl> portletEntities = query.getResultList();
@@ -232,7 +229,7 @@ public class JpaPortletEntityDao extends BaseJpaDao implements IPortletEntityDao
     @Override
     @Transactional(readOnly=true)
     public Set<IPortletEntity> getPortletEntitiesForUser(int userId) {
-        final TypedQuery<PortletEntityImpl> query = this.createQuery(this.findEntitiesForUserIdQuery, FIND_PORTLET_ENTS_BY_USER_ID_CACHE_REGION);
+        final TypedQuery<PortletEntityImpl> query = this.createCachedQuery(this.findEntitiesForUserIdQuery);
         query.setParameter(this.userIdParameter, userId);
         
         final List<PortletEntityImpl> portletEntities = query.getResultList();

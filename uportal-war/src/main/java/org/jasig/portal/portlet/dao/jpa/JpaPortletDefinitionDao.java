@@ -50,12 +50,6 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 public class JpaPortletDefinitionDao extends BaseJpaDao implements IPortletDefinitionDao {
-
-    private static final String FIND_ALL_PORTLET_DEFS_CACHE_REGION = PortletDefinitionImpl.class.getName() + ".query.FIND_ALL_PORTLET_DEFS";
-    private static final String FIND_PORTLET_DEF_BY_FNAME_CACHE_REGION = PortletDefinitionImpl.class.getName() + ".query.FIND_PORTLET_DEF_BY_FNAME";
-    private static final String FIND_PORTLET_DEF_BY_NAME_CACHE_REGION = PortletDefinitionImpl.class.getName() + ".query.FIND_PORTLET_DEF_BY_NAME";
-    private static final String FIND_PORTLET_DEF_BY_NAME_OR_TITLE_CACHE_REGION = PortletDefinitionImpl.class.getName() + ".query.FIND_PORTLET_DEF_BY_NAME_OR_TITLE";
-
     private CriteriaQuery<PortletDefinitionImpl> findAllPortletDefinitions;
     private CriteriaQuery<PortletDefinitionImpl> findDefinitionByFnameQuery;
     private CriteriaQuery<PortletDefinitionImpl> findDefinitionByNameQuery;
@@ -189,7 +183,7 @@ public class JpaPortletDefinitionDao extends BaseJpaDao implements IPortletDefin
 	@Override
     @Transactional(readOnly=true)
     public IPortletDefinition getPortletDefinitionByFname(String fname) {
-	    final TypedQuery<PortletDefinitionImpl> query = this.createQuery(this.findDefinitionByFnameQuery, FIND_PORTLET_DEF_BY_FNAME_CACHE_REGION);
+	    final TypedQuery<PortletDefinitionImpl> query = this.createCachedQuery(this.findDefinitionByFnameQuery);
         query.setParameter(this.fnameParameter, fname);
         
         final List<PortletDefinitionImpl> portletDefinitions = query.getResultList();
@@ -199,7 +193,7 @@ public class JpaPortletDefinitionDao extends BaseJpaDao implements IPortletDefin
     @Override
     @Transactional(readOnly=true)
     public IPortletDefinition getPortletDefinitionByName(String name) {
-        final TypedQuery<PortletDefinitionImpl> query = this.createQuery(this.findDefinitionByNameQuery, FIND_PORTLET_DEF_BY_NAME_CACHE_REGION);
+        final TypedQuery<PortletDefinitionImpl> query = this.createCachedQuery(this.findDefinitionByNameQuery);
         query.setParameter(this.nameParameter, name);
         
         final List<PortletDefinitionImpl> portletDefinitions = query.getResultList();
@@ -218,7 +212,7 @@ public class JpaPortletDefinitionDao extends BaseJpaDao implements IPortletDefin
             criteriaQuery = this.findDefinitionByNameOrTitleQuery;
         }
         
-        final TypedQuery<PortletDefinitionImpl> query = this.createQuery(criteriaQuery, FIND_PORTLET_DEF_BY_NAME_OR_TITLE_CACHE_REGION);
+        final TypedQuery<PortletDefinitionImpl> query = this.createCachedQuery(criteriaQuery);
         query.setParameter("name", term);
         query.setParameter("title", term);
         
@@ -245,7 +239,7 @@ public class JpaPortletDefinitionDao extends BaseJpaDao implements IPortletDefin
 	@Override
 	@Transactional(readOnly=true)
     public List<IPortletDefinition> getPortletDefinitions() {
-	    final TypedQuery<PortletDefinitionImpl> query = this.createQuery(this.findAllPortletDefinitions, FIND_ALL_PORTLET_DEFS_CACHE_REGION);
+	    final TypedQuery<PortletDefinitionImpl> query = this.createCachedQuery(this.findAllPortletDefinitions);
         
         final List<PortletDefinitionImpl> portletDefinitions = query.getResultList();
         return new ArrayList<IPortletDefinition>(new LinkedHashSet<IPortletDefinition>(portletDefinitions));

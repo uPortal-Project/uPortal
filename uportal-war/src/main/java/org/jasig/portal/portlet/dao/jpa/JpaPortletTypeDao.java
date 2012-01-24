@@ -48,9 +48,6 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 public class JpaPortletTypeDao extends BaseJpaDao implements IPortletTypeDao {
-    private static final String FIND_PORTLET_TYPE_BY_NAME_CACHE_REGION = PortletTypeImpl.class.getName() + ".query.FIND_PORTLET_TYPE_BY_NAME";
-    private static final String FIND_ALL_PORTLET_TYPE_CACHE_REGION = PortletTypeImpl.class.getName() + ".query.FIND_ALL_PORTLET_TYPE";
-    
     private CriteriaQuery<PortletTypeImpl> findAllTypesQuery;
     private CriteriaQuery<PortletTypeImpl> findTypeByNameQuery;
     private ParameterExpression<String> nameParameter;
@@ -144,7 +141,7 @@ public class JpaPortletTypeDao extends BaseJpaDao implements IPortletTypeDao {
 	 */
     @Override
 	public IPortletType getPortletType(String name) {
-        final TypedQuery<PortletTypeImpl> query = this.createQuery(this.findTypeByNameQuery, FIND_PORTLET_TYPE_BY_NAME_CACHE_REGION);
+        final TypedQuery<PortletTypeImpl> query = this.createCachedQuery(this.findTypeByNameQuery);
         query.setParameter(this.nameParameter, name);
         
         final List<PortletTypeImpl> channelTypes = query.getResultList();
@@ -157,7 +154,7 @@ public class JpaPortletTypeDao extends BaseJpaDao implements IPortletTypeDao {
 	 */
     @Override
 	public List<IPortletType> getPortletTypes() {
-        final TypedQuery<PortletTypeImpl> query = this.createQuery(this.findAllTypesQuery, FIND_ALL_PORTLET_TYPE_CACHE_REGION);
+        final TypedQuery<PortletTypeImpl> query = this.createCachedQuery(this.findAllTypesQuery);
         final List<PortletTypeImpl> portletTypes = query.getResultList();
 		return new ArrayList<IPortletType>(portletTypes);
 	}

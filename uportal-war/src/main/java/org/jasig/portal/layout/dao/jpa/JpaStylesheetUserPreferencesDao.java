@@ -48,9 +48,6 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository("stylesheetUserPreferencesDao")
 public class JpaStylesheetUserPreferencesDao extends BaseJpaDao implements IStylesheetUserPreferencesDao {
-    private static final String FIND_ALL_PREFERENCES_CACHE_REGION = StylesheetUserPreferencesImpl.class.getName() + ".query.FIND_ALL_PREFERENCES";
-    private static final String FIND_PREFERENCES_BY_DESCRIPTOR_PERSON_PROFILE_CACHE_REGION = StylesheetUserPreferencesImpl.class.getName() + ".query.FIND_PREFERENCES_BY_DESCRIPTOR_PERSON_PROFILE_CACHE_REGION";
-    
     private CriteriaQuery<StylesheetUserPreferencesImpl> findAllPreferences;
     private CriteriaQuery<StylesheetUserPreferencesImpl> findPreferencesByDescriptorUserProfileQuery;
     private ParameterExpression<StylesheetDescriptorImpl> stylesheetDescriptorParameter;
@@ -143,7 +140,7 @@ public class JpaStylesheetUserPreferencesDao extends BaseJpaDao implements IStyl
      */
     @Override
     public List<? extends IStylesheetUserPreferences> getStylesheetUserPreferences() {
-        final TypedQuery<StylesheetUserPreferencesImpl> query = this.createQuery(this.findAllPreferences, FIND_ALL_PREFERENCES_CACHE_REGION);
+        final TypedQuery<StylesheetUserPreferencesImpl> query = this.createCachedQuery(this.findAllPreferences);
         return query.getResultList();
     }
     
@@ -167,7 +164,7 @@ public class JpaStylesheetUserPreferencesDao extends BaseJpaDao implements IStyl
     @Deprecated
     @Override
     public IStylesheetUserPreferences getStylesheetUserPreferences(IStylesheetDescriptor stylesheetDescriptor, int personId, int profileId) {
-        final TypedQuery<StylesheetUserPreferencesImpl> query = this.createQuery(findPreferencesByDescriptorUserProfileQuery, FIND_PREFERENCES_BY_DESCRIPTOR_PERSON_PROFILE_CACHE_REGION);
+        final TypedQuery<StylesheetUserPreferencesImpl> query = this.createCachedQuery(findPreferencesByDescriptorUserProfileQuery);
         query.setParameter(this.stylesheetDescriptorParameter, (StylesheetDescriptorImpl)stylesheetDescriptor);
         query.setParameter(this.userIdParameter, personId);
         query.setParameter(this.profileIdParameter, profileId);

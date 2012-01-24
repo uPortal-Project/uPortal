@@ -39,7 +39,7 @@ import org.springframework.beans.factory.InitializingBean;
  * @version $Revision$
  */
 public abstract class BaseJpaDao implements InitializingBean {
-    private static final String QUERY_AFFIX = ".query.";
+    private static final String QUERY_SUFFIX = ".Query";
     
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
@@ -73,7 +73,7 @@ public abstract class BaseJpaDao implements InitializingBean {
      * @param criteriaQuery The criteria to create the query from
      */
     protected final <T> TypedQuery<T> createQuery(CriteriaQuery<T> criteriaQuery) {
-        return this.createQuery(criteriaQuery, null);
+        return this.getEntityManager().createQuery(criteriaQuery);
     }
 
     /**
@@ -84,31 +84,26 @@ public abstract class BaseJpaDao implements InitializingBean {
      *                  a query with root class "org.jasig.portal.events.aggr.session.EventSessionImpl" and queryName "FIND_BY_EVENT_SESSION_ID"
      *                  will result in a region named "org.jasig.portal.events.aggr.session.EventSessionImpl.query.FIND_BY_EVENT_SESSION_ID"
      */
-    protected final <T> TypedQuery<T> createQuery(CriteriaQuery<T> criteriaQuery, String queryName) {
+    protected final <T> TypedQuery<T> createCachedQuery(CriteriaQuery<T> criteriaQuery) {
         final TypedQuery<T> query = this.getEntityManager().createQuery(criteriaQuery);
-        if (queryName != null) {
-            final String cacheRegion = getCacheRegionName(criteriaQuery, queryName);
-            
-            query.setHint("org.hibernate.cacheable", true);
-            query.setHint("org.hibernate.cacheRegion", cacheRegion);
-        }
+        final String cacheRegion = getCacheRegionName(criteriaQuery);
+        query.setHint("org.hibernate.cacheable", true);
+        query.setHint("org.hibernate.cacheRegion", cacheRegion);
         return query;
     }
 
     /**
-     * Creates the cache region name for the named query
+     * Creates the cache region name for the criteria query
      * 
-     * @param criteriaQuery
-     * @param queryName
-     * @return
+     * @param criteriaQuery The criteria to create the cache name for
      */
-    protected <T> String getCacheRegionName(CriteriaQuery<T> criteriaQuery, String queryName) {
+    protected <T> String getCacheRegionName(CriteriaQuery<T> criteriaQuery) {
         final Set<Root<?>> roots = criteriaQuery.getRoots();
         final Class<?> cacheRegionType = roots.iterator().next().getJavaType();
-        final String cacheRegion = cacheRegionType.getName() + QUERY_AFFIX + queryName;
+        final String cacheRegion = cacheRegionType.getName() + QUERY_SUFFIX;
         
         if (roots.size() > 1) {
-            logger.warn("Query " + queryName + " has " + roots.size() + " roots. The first will be used to generated the cache region name: " + cacheRegion);
+            logger.warn("Query " + criteriaQuery + " in " + this.getClass() + " has " + roots.size() + " roots. The first will be used to generated the cache region name: " + cacheRegion);
         }
         return cacheRegion;
     }

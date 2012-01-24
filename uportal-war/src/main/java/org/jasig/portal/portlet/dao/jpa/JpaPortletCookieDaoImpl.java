@@ -58,8 +58,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository("portletCookieDao")
 @Qualifier("persistence")
 public class JpaPortletCookieDaoImpl extends BaseJpaDao implements IPortletCookieDao {
-    private static final String FIND_COOKIE_BY_VALUE_CACHE_REGION = PortalCookieImpl.class.getName() + ".query.FIND_COOKIE_BY_VALUE";
-    
 	private final SecureRandom secureRandom = new SecureRandom();
 	private final Log log = LogFactory.getLog(this.getClass());
 
@@ -156,7 +154,7 @@ public class JpaPortletCookieDaoImpl extends BaseJpaDao implements IPortletCooki
 	 */
 	@Override
 	public IPortalCookie getPortalCookie(String portalCookieValue) {
-	    final TypedQuery<PortalCookieImpl> query = this.createQuery(this.findPortalCookieByValueQuery, FIND_COOKIE_BY_VALUE_CACHE_REGION);
+	    final TypedQuery<PortalCookieImpl> query = this.createCachedQuery(this.findPortalCookieByValueQuery);
 	    
 		query.setParameter(this.valueParameter, portalCookieValue);
         

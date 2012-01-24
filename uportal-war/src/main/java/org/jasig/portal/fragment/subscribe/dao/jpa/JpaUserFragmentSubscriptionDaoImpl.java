@@ -48,12 +48,6 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 public class JpaUserFragmentSubscriptionDaoImpl extends BaseJpaDao implements IUserFragmentSubscriptionDao {
-    private static final String FIND_USER_FRAGMENT_INFO_BY_PERSON_CACHE_REGION = UserFragmentSubscriptionImpl.class.getName()
-            + ".query.FIND_USER_FRAGMENT_INFO_BY_PERSON";
-    
-    private static final String FIND_USER_FRAGMENT_INFO_BY_PERSON_CACHE_AND_OWNER_CACHE_REGION = UserFragmentSubscriptionImpl.class.getName()
-            + ".query.FIND_USER_FRAGMENT_INFO_BY_PERSON_CACHE_AND_OWNER";
-    
     private CriteriaQuery<UserFragmentSubscriptionImpl> findUserFragmentInfoByPersonQuery;
     private CriteriaQuery<UserFragmentSubscriptionImpl> findUserFragmentInfoByPersonAndOwnerQuery;
 
@@ -120,8 +114,7 @@ public class JpaUserFragmentSubscriptionDaoImpl extends BaseJpaDao implements IU
 
     @Override
     public List<IUserFragmentSubscription> getUserFragmentInfo(IPerson person) {
-        final TypedQuery<UserFragmentSubscriptionImpl> query = createQuery(this.findUserFragmentInfoByPersonQuery,
-                FIND_USER_FRAGMENT_INFO_BY_PERSON_CACHE_REGION);
+        final TypedQuery<UserFragmentSubscriptionImpl> query = createCachedQuery(this.findUserFragmentInfoByPersonQuery);
         query.setParameter(this.userIdParameter, person.getID());
 
         final List<UserFragmentSubscriptionImpl> fragmentSubscriptions = query.getResultList();
@@ -130,8 +123,7 @@ public class JpaUserFragmentSubscriptionDaoImpl extends BaseJpaDao implements IU
 
     @Override
     public IUserFragmentSubscription getUserFragmentInfo(IPerson person, IPerson fragmentOwner) {
-        final TypedQuery<UserFragmentSubscriptionImpl> query = createQuery(this.findUserFragmentInfoByPersonAndOwnerQuery,
-                FIND_USER_FRAGMENT_INFO_BY_PERSON_CACHE_AND_OWNER_CACHE_REGION);
+        final TypedQuery<UserFragmentSubscriptionImpl> query = createCachedQuery(this.findUserFragmentInfoByPersonAndOwnerQuery);
         query.setParameter(this.userIdParameter, person.getID());
         query.setParameter(this.fragmentOwnerParameter, fragmentOwner.getUserName());
 

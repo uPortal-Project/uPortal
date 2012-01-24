@@ -53,9 +53,6 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository("permissionOwnerDao")
 public class JpaPermissionOwnerDao extends BaseJpaDao implements IPermissionOwnerDao {
-    private static final String FIND_ALL_PERMISSION_OWNERS_CACHE_REGION = PermissionOwnerImpl.class.getName() + ".query.FIND_ALL_PERMISSION_OWNERS";
-    private static final String FIND_PERMISSION_OWNER_BY_FNAME_CACHE_REGION = PermissionOwnerImpl.class.getName() + ".query.FIND_PERMISSION_OWNER_BY_FNAME";
-    
     protected final Log log = LogFactory.getLog(getClass());
     
     private CriteriaQuery<PermissionOwnerImpl> findAllPermissionOwners;
@@ -111,7 +108,7 @@ public class JpaPermissionOwnerDao extends BaseJpaDao implements IPermissionOwne
      */
     @Override
     public List<IPermissionOwner> getAllPermissionOwners() {
-        final TypedQuery<PermissionOwnerImpl> query = this.createQuery(this.findAllPermissionOwners, FIND_ALL_PERMISSION_OWNERS_CACHE_REGION);
+        final TypedQuery<PermissionOwnerImpl> query = this.createCachedQuery(this.findAllPermissionOwners);
         
         final List<PermissionOwnerImpl> resultList = query.getResultList();
         return new ArrayList<IPermissionOwner>(new LinkedHashSet<IPermissionOwner>(resultList));
@@ -147,7 +144,7 @@ public class JpaPermissionOwnerDao extends BaseJpaDao implements IPermissionOwne
      */
     @Override
     public IPermissionOwner getPermissionOwner(String fname){
-        final TypedQuery<PermissionOwnerImpl> query = this.createQuery(this.findPermissionOwnerByFname, FIND_PERMISSION_OWNER_BY_FNAME_CACHE_REGION);
+        final TypedQuery<PermissionOwnerImpl> query = this.createCachedQuery(this.findPermissionOwnerByFname);
         query.setParameter(this.fnameParameter, fname);
         
         final List<PermissionOwnerImpl> owners = query.getResultList();

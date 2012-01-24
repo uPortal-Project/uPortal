@@ -48,9 +48,6 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository("stylesheetDescriptorDao")
 public class JpaStylesheetDescriptorDao extends BaseJpaDao implements IStylesheetDescriptorDao {
-    private static final String FIND_ALL_DESCRIPTORS_CACHE_REGION = StylesheetDescriptorImpl.class.getName() + ".query.FIND_ALL_DESCRIPTORS";
-    private static final String FIND_DESCRIPTOR_BY_NAME_CACHE_REGION = StylesheetDescriptorImpl.class.getName() + ".query.FIND_DESCRIPTOR_BY_NAME";
-
     private CriteriaQuery<StylesheetDescriptorImpl> findAllDescriptors;
     private CriteriaQuery<StylesheetDescriptorImpl> findDescriptorByNameQuery;
     private ParameterExpression<String> nameParameter;
@@ -111,7 +108,7 @@ public class JpaStylesheetDescriptorDao extends BaseJpaDao implements IStyleshee
     
     @Override
     public List<? extends IStylesheetDescriptor> getStylesheetDescriptors() {
-        final TypedQuery<StylesheetDescriptorImpl> query = this.createQuery(this.findAllDescriptors, FIND_ALL_DESCRIPTORS_CACHE_REGION);
+        final TypedQuery<StylesheetDescriptorImpl> query = this.createCachedQuery(this.findAllDescriptors);
         final List<StylesheetDescriptorImpl> results = query.getResultList();
         return new ArrayList<IStylesheetDescriptor>(new LinkedHashSet<IStylesheetDescriptor>(results));
     }
@@ -130,7 +127,7 @@ public class JpaStylesheetDescriptorDao extends BaseJpaDao implements IStyleshee
      */
     @Override
     public IStylesheetDescriptor getStylesheetDescriptorByName(String name) {
-        final TypedQuery<StylesheetDescriptorImpl> query = this.createQuery(this.findDescriptorByNameQuery, FIND_DESCRIPTOR_BY_NAME_CACHE_REGION);
+        final TypedQuery<StylesheetDescriptorImpl> query = this.createCachedQuery(this.findDescriptorByNameQuery);
         query.setParameter(this.nameParameter, name);
         
         final List<StylesheetDescriptorImpl> results = query.getResultList();

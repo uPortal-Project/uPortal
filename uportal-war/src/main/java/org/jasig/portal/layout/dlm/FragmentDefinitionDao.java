@@ -37,9 +37,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class FragmentDefinitionDao extends BaseJpaDao implements IFragmentDefinitionDao {
-    private static final String GET_ALL_FRAGMENTS_CACHE_REGION = FragmentDefinition.class.getName() + ".query.GET_ALL_FRAGMENTS";
-    private static final String FIND_FRAGMENT_BY_NAME_CACHE_REGION = FragmentDefinition.class.getName() + ".query.FIND_FRAGMENT_BY_NAME";
-
     private CriteriaQuery<FragmentDefinition> findAllFragmentsQuery;
     private CriteriaQuery<FragmentDefinition> findFragmentByNameQuery;
     private ParameterExpression<String> nameParameter;
@@ -84,7 +81,7 @@ public class FragmentDefinitionDao extends BaseJpaDao implements IFragmentDefini
     
     @Override
     public List<FragmentDefinition> getAllFragments() {
-        final TypedQuery<FragmentDefinition> query = this.createQuery(this.findAllFragmentsQuery, GET_ALL_FRAGMENTS_CACHE_REGION);
+        final TypedQuery<FragmentDefinition> query = this.createCachedQuery(this.findAllFragmentsQuery);
         final List<FragmentDefinition> rslt = query.getResultList();
         return rslt;
         
@@ -92,7 +89,7 @@ public class FragmentDefinitionDao extends BaseJpaDao implements IFragmentDefini
 
     @Override
     public FragmentDefinition getFragmentDefinition(String name) {
-        final TypedQuery<FragmentDefinition> query = this.createQuery(this.findFragmentByNameQuery, FIND_FRAGMENT_BY_NAME_CACHE_REGION);
+        final TypedQuery<FragmentDefinition> query = this.createCachedQuery(this.findFragmentByNameQuery);
         query.setParameter(this.nameParameter, name);
         
         final List<FragmentDefinition> list = query.getResultList();

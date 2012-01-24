@@ -46,12 +46,6 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 public class JpaDateDimensionDao extends BaseJpaDao implements DateDimensionDao {
-    private static final String FIND_ALL_DATE_DIMENSIONS_CACHE_REGION = DateDimensionImpl.class.getName() + ".query.FIND_ALL_DATE_DIMENSIONS";
-    private static final String FIND_ALL_DATE_DIMENSIONS_BETWEEN_CACHE_REGION = DateDimensionImpl.class.getName() + ".query.FIND_ALL_DATE_DIMENSIONS_BETWEEN";
-    private static final String FIND_DATE_DIMENSION_BY_DATE_CACHE_REGION = DateDimensionImpl.class.getName() + ".query.FIND_DATE_DIMENSION_BY_DATE";
-    private static final String FIND_NEWEST_DATE_DIMENSION_CACHE_REGION = DateDimensionImpl.class.getName() + ".query.FIND_NEWEST_DATE_DIMENSION";
-    private static final String FIND_OLDEST_DATE_DIMENSION_CACHE_REGION = DateDimensionImpl.class.getName() + ".query.FIND_OLDEST_DATE_DIMENSION";
-    
     private CriteriaQuery<DateDimensionImpl> findAllDateDimensionsQuery;
     private CriteriaQuery<DateDimensionImpl> findAllDateDimensionsBetweenQuery;
     private CriteriaQuery<DateDimensionImpl> findDateDimensionByYearMonthDayQuery;
@@ -157,14 +151,14 @@ public class JpaDateDimensionDao extends BaseJpaDao implements DateDimensionDao 
     
     @Override
     public DateDimension getNewestDateDimension() {
-        final TypedQuery<DateDimensionImpl> query = this.createQuery(this.findNewestDateDimensionQuery, FIND_NEWEST_DATE_DIMENSION_CACHE_REGION);
+        final TypedQuery<DateDimensionImpl> query = this.createCachedQuery(this.findNewestDateDimensionQuery);
         final List<DateDimensionImpl> resultList = query.getResultList();
         return DataAccessUtils.uniqueResult(resultList);
     }
     
     @Override
     public DateDimension getOldestDateDimension() {
-        final TypedQuery<DateDimensionImpl> query = this.createQuery(this.findOldestDateDimensionQuery, FIND_OLDEST_DATE_DIMENSION_CACHE_REGION);
+        final TypedQuery<DateDimensionImpl> query = this.createCachedQuery(this.findOldestDateDimensionQuery);
         final List<DateDimensionImpl> resultList = query.getResultList();
         return DataAccessUtils.uniqueResult(resultList);
     }
@@ -181,7 +175,7 @@ public class JpaDateDimensionDao extends BaseJpaDao implements DateDimensionDao 
 
     @Override
     public List<DateDimension> getDateDimensions() {
-        final TypedQuery<DateDimensionImpl> query = this.createQuery(this.findAllDateDimensionsQuery, FIND_ALL_DATE_DIMENSIONS_CACHE_REGION);
+        final TypedQuery<DateDimensionImpl> query = this.createCachedQuery(this.findAllDateDimensionsQuery);
         
         final List<DateDimensionImpl> portletDefinitions = query.getResultList();
         return new ArrayList<DateDimension>(portletDefinitions);
@@ -189,7 +183,7 @@ public class JpaDateDimensionDao extends BaseJpaDao implements DateDimensionDao 
 
     @Override
     public List<DateDimension> getDateDimensionsBetween(DateMidnight start, DateMidnight end) {
-        final TypedQuery<DateDimensionImpl> query = this.createQuery(this.findAllDateDimensionsBetweenQuery, FIND_ALL_DATE_DIMENSIONS_BETWEEN_CACHE_REGION);
+        final TypedQuery<DateDimensionImpl> query = this.createCachedQuery(this.findAllDateDimensionsBetweenQuery);
         query.setParameter(this.dateTimeParameter, start.toLocalDate());
         query.setParameter(this.endDateTimeParameter, end.toLocalDate());
         
@@ -206,7 +200,7 @@ public class JpaDateDimensionDao extends BaseJpaDao implements DateDimensionDao 
 
     @Override
     public DateDimension getDateDimensionByDate(DateMidnight date) {
-        final TypedQuery<DateDimensionImpl> query = this.createQuery(this.findDateDimensionByYearMonthDayQuery, FIND_DATE_DIMENSION_BY_DATE_CACHE_REGION);
+        final TypedQuery<DateDimensionImpl> query = this.createCachedQuery(this.findDateDimensionByYearMonthDayQuery);
         query.setParameter(this.dateTimeParameter, date.toLocalDate());
         
         final List<DateDimensionImpl> portletDefinitions = query.getResultList();

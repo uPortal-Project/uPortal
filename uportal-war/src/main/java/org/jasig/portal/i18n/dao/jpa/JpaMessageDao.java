@@ -41,19 +41,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class JpaMessageDao extends BaseJpaDao implements IMessageDao {
-    
-    private static final String FIND_MESSAGES_BY_CODE_CACHE_REGION = MessageImpl.class.getName()
-            + ".query.FIND_MESSAGES_BY_CODE";
-    
-    private static final String FIND_MESSAGES_BY_LOCALE_CACHE_REGION = MessageImpl.class.getName()
-            + ".query.FIND_MESSAGES_BY_LOCALE";
-    
-    private static final String FIND_MESSAGE_BY_CODE_AND_LOCALE_CACHE_REGION = MessageImpl.class.getName()
-            + ".query.FIND_MESSAGE_BY_CODE_AND_LOCALE";
-    
-    private static final String FIND_MESSAGE_CODES_CACHE_REGION = MessageImpl.class.getName()
-            + ".query.FIND_MESSAGE_CODES";
-    
     private CriteriaQuery<MessageImpl> findMessageByCodeAndLocaleQuery;
     private CriteriaQuery<MessageImpl> findMessageByCodeQuery;
     private CriteriaQuery<MessageImpl> findMessageByLocaleQuery;
@@ -161,8 +148,7 @@ public class JpaMessageDao extends BaseJpaDao implements IMessageDao {
     
     @Override
     public Message getMessage(String code, Locale locale) {
-        final TypedQuery<MessageImpl> query = createQuery(findMessageByCodeAndLocaleQuery,
-                                                      FIND_MESSAGE_BY_CODE_AND_LOCALE_CACHE_REGION);
+        final TypedQuery<MessageImpl> query = createCachedQuery(findMessageByCodeAndLocaleQuery);
         query.setParameter(this.codeParameter, code);
         query.setParameter(this.localeParameter, locale);
         
@@ -172,7 +158,7 @@ public class JpaMessageDao extends BaseJpaDao implements IMessageDao {
     
     @Override
     public Set<Message> getMessagesByLocale(Locale locale) {
-        final TypedQuery<MessageImpl> query = createQuery(findMessageByLocaleQuery, FIND_MESSAGES_BY_LOCALE_CACHE_REGION);
+        final TypedQuery<MessageImpl> query = createCachedQuery(findMessageByLocaleQuery);
         query.setParameter(localeParameter, locale);
         final List<MessageImpl> messages = query.getResultList();
         return new LinkedHashSet<Message>(messages);
@@ -180,7 +166,7 @@ public class JpaMessageDao extends BaseJpaDao implements IMessageDao {
     
     @Override
     public Set<Message> getMessagesByCode(String code) {
-        final TypedQuery<MessageImpl> query = createQuery(findMessageByCodeQuery, FIND_MESSAGES_BY_CODE_CACHE_REGION);
+        final TypedQuery<MessageImpl> query = createCachedQuery(findMessageByCodeQuery);
         query.setParameter(codeParameter, code);
         final List<MessageImpl> messages = query.getResultList();
         return new LinkedHashSet<Message>(messages);
@@ -188,7 +174,7 @@ public class JpaMessageDao extends BaseJpaDao implements IMessageDao {
     
     @Override
     public Set<String> getCodes() {
-        final TypedQuery<String> query = createQuery(findCodes, FIND_MESSAGE_CODES_CACHE_REGION);
+        final TypedQuery<String> query = createCachedQuery(findCodes);
         final List<String> codes = query.getResultList();
         return new LinkedHashSet<String>(codes);
     }

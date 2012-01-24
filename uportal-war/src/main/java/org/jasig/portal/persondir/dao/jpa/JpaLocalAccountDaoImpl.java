@@ -52,11 +52,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository("localAccountDao")
 public class JpaLocalAccountDaoImpl extends BaseJpaDao implements ILocalAccountDao {
-    private static final String FIND_ALL_ACCOUNTS_CACHE_REGION = LocalAccountPersonImpl.class.getName() + ".query.FIND_ALL_ACCOUNTS";
-    private static final String FIND_ACCOUNT_BY_NAME_CACHE_REGION = LocalAccountPersonImpl.class.getName() + ".query.FIND_ACCOUNT_BY_NAME";
-    private static final String ACCOUNT_SEARCH_CACHE_REGION = LocalAccountPersonImpl.class.getName() + ".query.ACCOUNT_SEARCH";
-    private static final String FIND_AVAILABLE_ATTRIBUTES_CACHE_REGION = LocalAccountPersonAttributeImpl.class.getName() + ".query.FIND_AVAILABLE_ATTRIBUTES";
-    
     private EntityManager entityManager;
 
     @PersistenceContext(unitName = "uPortalPersistence")
@@ -131,7 +126,7 @@ public class JpaLocalAccountDaoImpl extends BaseJpaDao implements ILocalAccountD
     
     @Override
     public ILocalAccountPerson getPerson(String username) {
-        final TypedQuery<LocalAccountPersonImpl> query = this.createQuery(this.findAccountByNameQuery, FIND_ACCOUNT_BY_NAME_CACHE_REGION);
+        final TypedQuery<LocalAccountPersonImpl> query = this.createCachedQuery(this.findAccountByNameQuery);
         query.setParameter(this.nameParameter, username);
         
         final List<LocalAccountPersonImpl> accounts = query.getResultList();
@@ -140,7 +135,7 @@ public class JpaLocalAccountDaoImpl extends BaseJpaDao implements ILocalAccountD
 
     @Override
     public List<ILocalAccountPerson> getAllAccounts() {
-        final TypedQuery<LocalAccountPersonImpl> query = this.createQuery(this.findAllAccountsQuery, FIND_ALL_ACCOUNTS_CACHE_REGION);
+        final TypedQuery<LocalAccountPersonImpl> query = this.createCachedQuery(this.findAllAccountsQuery);
         
         final List<LocalAccountPersonImpl> accounts = query.getResultList();
         return new ArrayList<ILocalAccountPerson>(accounts);
@@ -233,7 +228,7 @@ public class JpaLocalAccountDaoImpl extends BaseJpaDao implements ILocalAccountD
         );
         
         //Create the query
-        final TypedQuery<LocalAccountPersonImpl> jpaQuery = this.createQuery(criteriaQuery, ACCOUNT_SEARCH_CACHE_REGION);
+        final TypedQuery<LocalAccountPersonImpl> jpaQuery = this.createCachedQuery(criteriaQuery);
         
         //Add all of the stored up parameters to the query
         for (Map.Entry<Parameter<String>, String> entry : params.entrySet()) {
@@ -248,7 +243,7 @@ public class JpaLocalAccountDaoImpl extends BaseJpaDao implements ILocalAccountD
 
     @Override
     public Set<String> getCurrentAttributeNames() {
-        final TypedQuery<String> query = this.createQuery(this.findAvailableAttributesQuery, FIND_AVAILABLE_ATTRIBUTES_CACHE_REGION);
+        final TypedQuery<String> query = this.createCachedQuery(this.findAvailableAttributesQuery);
 
         final List<String> nameList = query.getResultList();
         return new LinkedHashSet<String>(nameList);
