@@ -136,8 +136,8 @@ public class JpaPortalEventStoreTest extends BaseJpaDaoTest {
                 assertNotNull(oldestPortalEventTimestamp);
                 assertNotNull(newestPortalEventTimestamp);
                 
-                assertEquals(new DateTime(originalEvents.get(0).getTimestamp()), oldestPortalEventTimestamp);
-                assertEquals(new DateTime(originalEvents.get(originalEvents.size() - 1).getTimestamp()), newestPortalEventTimestamp);
+                assertEquals(originalEvents.get(0).getTimestampAsDate().getMillis(), oldestPortalEventTimestamp.getMillis());
+                assertEquals(originalEvents.get(originalEvents.size() - 1).getTimestampAsDate().getMillis(), newestPortalEventTimestamp.getMillis());
             }
         });
         
