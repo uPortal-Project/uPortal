@@ -26,6 +26,6 @@ package org.jasig.portal.events.aggr;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface AggregatedIntervalConfig extends BaseAggregatedDimensionConfig<Interval> {
+public interface AggregatedIntervalConfig extends BaseAggregatedDimensionConfig<AggregationInterval> {
 
 }

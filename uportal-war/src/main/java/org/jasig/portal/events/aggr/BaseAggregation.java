@@ -20,7 +20,7 @@
 package org.jasig.portal.events.aggr;
 
 import org.jasig.portal.events.aggr.DateDimension;
-import org.jasig.portal.events.aggr.Interval;
+import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.TimeDimension;
 
 /**
@@ -43,7 +43,7 @@ public interface BaseAggregation {
     /**
      * @return The interval the aggregation is for
      */
-    Interval getInterval();
+    AggregationInterval getInterval();
     
     /**
      * @return Duration in minutes of the aggregated time span

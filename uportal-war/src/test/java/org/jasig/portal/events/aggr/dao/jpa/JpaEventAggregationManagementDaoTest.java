@@ -39,7 +39,7 @@ import org.jasig.portal.events.aggr.AcademicTermDetail;
 import org.jasig.portal.events.aggr.AggregatedGroupConfig;
 import org.jasig.portal.events.aggr.AggregatedIntervalConfig;
 import org.jasig.portal.events.aggr.EventDateTimeUtils;
-import org.jasig.portal.events.aggr.Interval;
+import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.QuarterDetail;
 import org.jasig.portal.events.aggr.dao.IEventAggregationManagementDao;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupLookupDao;
@@ -159,8 +159,8 @@ public class JpaEventAggregationManagementDaoTest extends BaseJpaDaoTest {
                 assertEquals(0, loginAggregatedIntervalConfig.getExcluded().size());
                 assertEquals(0, loginAggregatedIntervalConfig.getIncluded().size());
                 
-                defaultAggregatedIntervalConfig.getIncluded().add(Interval.MINUTE);
-                loginAggregatedIntervalConfig.getExcluded().add(Interval.MINUTE);
+                defaultAggregatedIntervalConfig.getIncluded().add(AggregationInterval.MINUTE);
+                loginAggregatedIntervalConfig.getExcluded().add(AggregationInterval.MINUTE);
 
                 eventAggregationManagementDao.updateAggregatedIntervalConfig(defaultAggregatedIntervalConfig);
                 eventAggregationManagementDao.updateAggregatedIntervalConfig(loginAggregatedIntervalConfig);

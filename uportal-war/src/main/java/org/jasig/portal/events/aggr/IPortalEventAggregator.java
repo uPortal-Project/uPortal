@@ -43,7 +43,7 @@ public interface IPortalEventAggregator<E extends PortalEvent> {
      * @param eventSession Information about the event session associated with the event, MAY BE NULL!
      * @param currentIntervals Information about all of the intervals the event exists in.
      */
-    void aggregateEvent(E e, EventSession eventSession, Map<Interval, IntervalInfo> currentIntervals);
+    void aggregateEvent(E e, EventSession eventSession, Map<AggregationInterval, AggregationIntervalInfo> currentIntervals);
     
     /**
      * Handle crossing over an interval boundary, called after the LAST event of the interval is processed.
@@ -51,5 +51,5 @@ public interface IPortalEventAggregator<E extends PortalEvent> {
      * @param interval The type of interval that was crossed
      * @param intervals Information about all intervals that the previous set of events was part of
      */
-    void handleIntervalBoundary(Interval interval, Map<Interval, IntervalInfo> intervals);
+    void handleIntervalBoundary(AggregationInterval interval, Map<AggregationInterval, AggregationIntervalInfo> intervals);
 }

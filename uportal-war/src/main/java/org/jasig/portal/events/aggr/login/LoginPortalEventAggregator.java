@@ -27,8 +27,8 @@ import org.jasig.portal.events.LoginEvent;
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.IPortalEventAggregator;
-import org.jasig.portal.events.aggr.Interval;
-import org.jasig.portal.events.aggr.IntervalInfo;
+import org.jasig.portal.events.aggr.AggregationInterval;
+import org.jasig.portal.events.aggr.AggregationIntervalInfo;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.events.aggr.session.EventSession;
@@ -58,11 +58,11 @@ public class LoginPortalEventAggregator implements IPortalEventAggregator<LoginE
 
     @Transactional("aggrEvents")
     @Override
-    public void aggregateEvent(LoginEvent e, EventSession eventSession, Map<Interval, IntervalInfo> currentIntervals) {
+    public void aggregateEvent(LoginEvent e, EventSession eventSession, Map<AggregationInterval, AggregationIntervalInfo> currentIntervals) {
         
-        for (Map.Entry<Interval, IntervalInfo> intervalInfoEntry : currentIntervals.entrySet()) {
-            final Interval interval = intervalInfoEntry.getKey();
-            final IntervalInfo intervalInfo = intervalInfoEntry.getValue();
+        for (Map.Entry<AggregationInterval, AggregationIntervalInfo> intervalInfoEntry : currentIntervals.entrySet()) {
+            final AggregationInterval interval = intervalInfoEntry.getKey();
+            final AggregationIntervalInfo intervalInfo = intervalInfoEntry.getValue();
             final DateDimension dateDimension = intervalInfo.getDateDimension();
             final TimeDimension timeDimension = intervalInfo.getTimeDimension();
             
@@ -85,7 +85,7 @@ public class LoginPortalEventAggregator implements IPortalEventAggregator<LoginE
         }
     }
 
-    private void updateAggregation(LoginEvent e, final IntervalInfo intervalInfo, final LoginAggregationImpl loginAggregation) {
+    private void updateAggregation(LoginEvent e, final AggregationIntervalInfo intervalInfo, final LoginAggregationImpl loginAggregation) {
         final String userName = e.getUserName();
         final int duration = intervalInfo.getDurationTo(e.getTimestampAsDate());
         loginAggregation.setDuration(duration);
@@ -94,8 +94,8 @@ public class LoginPortalEventAggregator implements IPortalEventAggregator<LoginE
 
     @Transactional("aggrEvents")
     @Override
-    public void handleIntervalBoundary(Interval interval, Map<Interval, IntervalInfo> intervals) {
-        final IntervalInfo intervalInfo = intervals.get(interval);
+    public void handleIntervalBoundary(AggregationInterval interval, Map<AggregationInterval, AggregationIntervalInfo> intervals) {
+        final AggregationIntervalInfo intervalInfo = intervals.get(interval);
         final DateDimension dateDimension = intervalInfo.getDateDimension();
         final TimeDimension timeDimension = intervalInfo.getTimeDimension();
         

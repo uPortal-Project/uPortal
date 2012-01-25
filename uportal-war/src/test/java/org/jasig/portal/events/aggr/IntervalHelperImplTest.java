@@ -37,7 +37,7 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class IntervalHelperImplTest {
-    @InjectMocks private IntervalHelperImpl helperImpl = new IntervalHelperImpl();
+    @InjectMocks private AggregationIntervalHelperImpl helperImpl = new AggregationIntervalHelperImpl();
     @Mock private DateDimensionDao dateDimensionDao;
     @Mock private TimeDimensionDao timeDimensionDao;
     
@@ -59,7 +59,7 @@ public class IntervalHelperImplTest {
         
         // TEST YEAR
         
-        start = this.helperImpl.determineStart(Interval.YEAR, instant);
+        start = this.helperImpl.determineStart(AggregationInterval.YEAR, instant);
         assertEquals(2012, start.getYear());
         assertEquals(1, start.getMonthOfYear());
         assertEquals(1, start.getDayOfMonth());
@@ -69,7 +69,7 @@ public class IntervalHelperImplTest {
         assertEquals(0, start.getSecondOfMinute());
         assertEquals(0, start.getMillisOfSecond());
         
-        end = this.helperImpl.determineEnd(Interval.YEAR, start);
+        end = this.helperImpl.determineEnd(AggregationInterval.YEAR, start);
         assertEquals(2013, end.getYear());
         assertEquals(1, end.getMonthOfYear());
         assertEquals(1, end.getDayOfMonth());
@@ -82,7 +82,7 @@ public class IntervalHelperImplTest {
         
         // TEST MONTH
         
-        start = this.helperImpl.determineStart(Interval.MONTH, instant);
+        start = this.helperImpl.determineStart(AggregationInterval.MONTH, instant);
         assertEquals(2012, start.getYear());
         assertEquals(1, start.getMonthOfYear());
         assertEquals(1, start.getDayOfMonth());
@@ -92,7 +92,7 @@ public class IntervalHelperImplTest {
         assertEquals(0, start.getSecondOfMinute());
         assertEquals(0, start.getMillisOfSecond());
         
-        end = this.helperImpl.determineEnd(Interval.MONTH, start);
+        end = this.helperImpl.determineEnd(AggregationInterval.MONTH, start);
         assertEquals(2012, end.getYear());
         assertEquals(2, end.getMonthOfYear());
         assertEquals(1, end.getDayOfMonth());
@@ -105,7 +105,7 @@ public class IntervalHelperImplTest {
         
         // TEST WEEK
         
-        start = this.helperImpl.determineStart(Interval.WEEK, instant);
+        start = this.helperImpl.determineStart(AggregationInterval.WEEK, instant);
         assertEquals(2012, start.getYear());
         assertEquals(1, start.getMonthOfYear());
         assertEquals(2, start.getDayOfMonth());
@@ -115,7 +115,7 @@ public class IntervalHelperImplTest {
         assertEquals(0, start.getSecondOfMinute());
         assertEquals(0, start.getMillisOfSecond());
         
-        end = this.helperImpl.determineEnd(Interval.WEEK, start);
+        end = this.helperImpl.determineEnd(AggregationInterval.WEEK, start);
         assertEquals(2012, end.getYear());
         assertEquals(1, end.getMonthOfYear());
         assertEquals(9, end.getDayOfMonth());
@@ -128,7 +128,7 @@ public class IntervalHelperImplTest {
         
         // TEST DAY
         
-        start = this.helperImpl.determineStart(Interval.DAY, instant);
+        start = this.helperImpl.determineStart(AggregationInterval.DAY, instant);
         assertEquals(2012, start.getYear());
         assertEquals(1, start.getMonthOfYear());
         assertEquals(6, start.getDayOfMonth());
@@ -138,7 +138,7 @@ public class IntervalHelperImplTest {
         assertEquals(0, start.getSecondOfMinute());
         assertEquals(0, start.getMillisOfSecond());
         
-        end = this.helperImpl.determineEnd(Interval.DAY, start);
+        end = this.helperImpl.determineEnd(AggregationInterval.DAY, start);
         assertEquals(2012, end.getYear());
         assertEquals(1, end.getMonthOfYear());
         assertEquals(7, end.getDayOfMonth());
@@ -151,7 +151,7 @@ public class IntervalHelperImplTest {
         
         // TEST HOUR
         
-        start = this.helperImpl.determineStart(Interval.HOUR, instant);
+        start = this.helperImpl.determineStart(AggregationInterval.HOUR, instant);
         assertEquals(2012, start.getYear());
         assertEquals(1, start.getMonthOfYear());
         assertEquals(6, start.getDayOfMonth());
@@ -161,7 +161,7 @@ public class IntervalHelperImplTest {
         assertEquals(0, start.getSecondOfMinute());
         assertEquals(0, start.getMillisOfSecond());
         
-        end = this.helperImpl.determineEnd(Interval.HOUR, start);
+        end = this.helperImpl.determineEnd(AggregationInterval.HOUR, start);
         assertEquals(2012, end.getYear());
         assertEquals(1, end.getMonthOfYear());
         assertEquals(6, end.getDayOfMonth());
@@ -174,7 +174,7 @@ public class IntervalHelperImplTest {
         
         // TEST FIVE_MINUTE
         
-        start = this.helperImpl.determineStart(Interval.FIVE_MINUTE, instant);
+        start = this.helperImpl.determineStart(AggregationInterval.FIVE_MINUTE, instant);
         assertEquals(2012, start.getYear());
         assertEquals(1, start.getMonthOfYear());
         assertEquals(6, start.getDayOfMonth());
@@ -184,7 +184,7 @@ public class IntervalHelperImplTest {
         assertEquals(0, start.getSecondOfMinute());
         assertEquals(0, start.getMillisOfSecond());
         
-        end = this.helperImpl.determineEnd(Interval.FIVE_MINUTE, start);
+        end = this.helperImpl.determineEnd(AggregationInterval.FIVE_MINUTE, start);
         assertEquals(2012, end.getYear());
         assertEquals(1, end.getMonthOfYear());
         assertEquals(6, end.getDayOfMonth());
@@ -197,7 +197,7 @@ public class IntervalHelperImplTest {
         
         // TEST MINUTE
         
-        start = this.helperImpl.determineStart(Interval.MINUTE, instant);
+        start = this.helperImpl.determineStart(AggregationInterval.MINUTE, instant);
         assertEquals(2012, start.getYear());
         assertEquals(1, start.getMonthOfYear());
         assertEquals(6, start.getDayOfMonth());
@@ -207,7 +207,7 @@ public class IntervalHelperImplTest {
         assertEquals(0, start.getSecondOfMinute());
         assertEquals(0, start.getMillisOfSecond());
         
-        end = this.helperImpl.determineEnd(Interval.MINUTE, start);
+        end = this.helperImpl.determineEnd(AggregationInterval.MINUTE, start);
         assertEquals(2012, end.getYear());
         assertEquals(1, end.getMonthOfYear());
         assertEquals(6, end.getDayOfMonth());

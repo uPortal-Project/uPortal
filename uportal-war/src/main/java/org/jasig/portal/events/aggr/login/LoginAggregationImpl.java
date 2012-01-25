@@ -46,7 +46,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalId;
 import org.jasig.portal.events.aggr.DateDimension;
-import org.jasig.portal.events.aggr.Interval;
+import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl;
 import org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl;
@@ -94,7 +94,7 @@ public class LoginAggregationImpl implements LoginAggregation, Serializable {
     @NaturalId
     @Enumerated(EnumType.STRING)
     @Column(name = "INTERVAL", nullable = false)
-    private final Interval interval;
+    private final AggregationInterval interval;
     
     @NaturalId
     @ManyToOne(targetEntity=AggregatedGroupMappingImpl.class)
@@ -127,7 +127,7 @@ public class LoginAggregationImpl implements LoginAggregation, Serializable {
     }
     
     LoginAggregationImpl(TimeDimension timeDimension, DateDimension dateDimension, 
-            Interval interval, AggregatedGroupMapping aggregatedGroup) {
+            AggregationInterval interval, AggregatedGroupMapping aggregatedGroup) {
         Validate.notNull(timeDimension);
         Validate.notNull(dateDimension);
         Validate.notNull(interval);
@@ -151,7 +151,7 @@ public class LoginAggregationImpl implements LoginAggregation, Serializable {
     }
 
     @Override
-    public Interval getInterval() {
+    public AggregationInterval getInterval() {
         return this.interval;
     }
 

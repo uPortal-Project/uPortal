@@ -41,12 +41,12 @@ public class LoggingPortalEventAggregator implements IPortalEventAggregator<Port
     }
 
     @Override
-    public void aggregateEvent(PortalEvent e, EventSession eventSession, Map<Interval, IntervalInfo> currentIntervals) {
+    public void aggregateEvent(PortalEvent e, EventSession eventSession, Map<AggregationInterval, AggregationIntervalInfo> currentIntervals) {
         logger.debug("EVENT  : {}", e);
     }
 
     @Override
-    public void handleIntervalBoundary(Interval interval, Map<Interval, IntervalInfo> intervals) {
+    public void handleIntervalBoundary(AggregationInterval interval, Map<AggregationInterval, AggregationIntervalInfo> intervals) {
         logger.debug("INTERVAL: {} - {}", interval, intervals.get(interval));
     }
 }
