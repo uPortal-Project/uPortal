@@ -51,6 +51,7 @@ import com.google.common.base.Function;
 @Repository("stylesheetUserPreferencesDao")
 public class JpaStylesheetUserPreferencesDao extends BaseJpaDao implements IStylesheetUserPreferencesDao {
     private CriteriaQuery<StylesheetUserPreferencesImpl> findAllPreferences;
+    private CriteriaQuery<StylesheetUserPreferencesImpl> findAllPreferencesForUser;
     private CriteriaQuery<StylesheetUserPreferencesImpl> findPreferencesByDescriptorUserProfileQuery;
     private ParameterExpression<StylesheetDescriptorImpl> stylesheetDescriptorParameter;
     private ParameterExpression<Integer> userIdParameter;
@@ -104,6 +105,21 @@ public class JpaStylesheetUserPreferencesDao extends BaseJpaDao implements IStyl
                 return criteriaQuery;
             }
         });    
+        
+        this.findAllPreferencesForUser = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<StylesheetUserPreferencesImpl>>() {
+            @Override
+            public CriteriaQuery<StylesheetUserPreferencesImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<StylesheetUserPreferencesImpl> criteriaQuery = cb.createQuery(StylesheetUserPreferencesImpl.class);
+                final Root<StylesheetUserPreferencesImpl> descriptorRoot = criteriaQuery.from(StylesheetUserPreferencesImpl.class);
+                criteriaQuery.select(descriptorRoot);
+                addFetches(descriptorRoot);
+                criteriaQuery.where(
+                    cb.equal(descriptorRoot.get(StylesheetUserPreferencesImpl_.userId), userIdParameter)
+                );
+                
+                return criteriaQuery;
+            }
+        });    
     }
 
     /**
@@ -115,6 +131,14 @@ public class JpaStylesheetUserPreferencesDao extends BaseJpaDao implements IStyl
         descriptorRoot.fetch(StylesheetUserPreferencesImpl_.parameters, JoinType.LEFT);
     }
     
+
+    @Override
+    public List<? extends IStylesheetUserPreferences> getStylesheetUserPreferencesForUser(int personId) {
+        final TypedQuery<StylesheetUserPreferencesImpl> query = this.createCachedQuery(this.findAllPreferencesForUser);
+        query.setParameter(this.userIdParameter, personId);
+        
+        return query.getResultList();
+    }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.layout.dao.IStylesheetUserPreferencesDao#createStylesheetUserPreferences(org.jasig.portal.layout.om.IStylesheetDescriptor, org.jasig.portal.security.IPerson, org.jasig.portal.UserProfile)

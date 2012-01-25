@@ -767,16 +767,27 @@ catch (Exception e) {
     </target>
 
     <target name="deluser" depends="prodPrompt" description="Delete traces of a user from the portal database">
-        <uportal-war-macro>
-            <property name="user" value=" " />
+        <fail unless="user">
+            You must specify a 'user' parameter (-Duser={jdoe})
+        </fail>
 
-            <echo message="Invoking DeleteUser" />
-            <java dir="${basedir}" classname="org.jasig.portal.tools.DeleteUser" fork="true">
-                <classpath refid="uportal-war-full.classpath" />
+        <echo>Deleting user ${user}</echo>
+        <echo file="${portal-shell-script}" append="true">
+try {
+    //Delete USer Script
+    logger.info('');
+    logger.info('');
+    user = '${user}';
+    userIdentityStore.removePortalUID(user);
+}
+catch (Exception e) {
+    throw new RuntimeException("deluser for " + user + " failed", e);
+}
+        </echo>
 
-                <arg value="${user}" />
-            </java>
-        </uportal-war-macro>
+        <antcall target="up-shell">
+            <param name="script" value="${portal-shell-script}"/>
+        </antcall>
     </target>
 
     <target name="addstylesheet" depends="prodPrompt" description="Registers a new theme or structure">

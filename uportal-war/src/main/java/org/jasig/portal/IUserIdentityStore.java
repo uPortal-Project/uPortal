@@ -46,6 +46,7 @@ public interface IUserIdentityStore {
    */
   public int getPortalUID(IPerson person, boolean createPortalData) throws AuthorizationException;
 
+  public void removePortalUID(String userName) throws Exception;
   public void removePortalUID(int uPortalUID) throws Exception;
 
   /**
