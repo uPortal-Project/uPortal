@@ -49,6 +49,8 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Function;
+
 /**
  * JPA implementation of {@link IPortletCookieDao}.
  * 
@@ -80,9 +82,9 @@ public class JpaPortletCookieDaoImpl extends BaseJpaDao implements IPortletCooki
     }
 
     @Override
-    protected void buildCriteriaQueries(CriteriaBuilder cb) {
-        this.valueParameter = cb.parameter(String.class, "value");
-        this.nowParameter = cb.parameter(Date.class, "now");
+    public void afterPropertiesSet() throws Exception {
+        this.valueParameter = this.createParameterExpression(String.class, "value");
+        this.nowParameter = this.createParameterExpression(Date.class, "now");
         
         this.deletePortalCookieQueryString = 
                 "DELETE FROM " + PortalCookieImpl.class.getName() + " e " +
@@ -92,29 +94,33 @@ public class JpaPortletCookieDaoImpl extends BaseJpaDao implements IPortletCooki
                 "DELETE FROM " + PortletCookieImpl.class.getName() + " e " +
                 "WHERE e." + PortletCookieImpl_.expires.getName() + " <= :" + this.nowParameter.getName();
         
-        this.findPortalCookieByValueQuery = this.buildFindPortalCookieByValueQuery(cb);
-        this.findExpiredByParentPortletCookiesQuery = this.buildFindExpiredByParentPortletCookiesQuery(cb);
-    }
-    
-    protected CriteriaQuery<PortalCookieImpl> buildFindPortalCookieByValueQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<PortalCookieImpl> criteriaQuery = cb.createQuery(PortalCookieImpl.class);
-        final Root<PortalCookieImpl> typeRoot = criteriaQuery.from(PortalCookieImpl.class);
-        criteriaQuery.select(typeRoot);
-        typeRoot.fetch(PortalCookieImpl_.portletCookies, JoinType.LEFT);
-        criteriaQuery.where(
-            cb.equal(typeRoot.get(PortalCookieImpl_.value), this.valueParameter)
-        );
+        this.findPortalCookieByValueQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<PortalCookieImpl>>() {
+            @Override
+            public CriteriaQuery<PortalCookieImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<PortalCookieImpl> criteriaQuery = cb.createQuery(PortalCookieImpl.class);
+                final Root<PortalCookieImpl> typeRoot = criteriaQuery.from(PortalCookieImpl.class);
+                criteriaQuery.select(typeRoot);
+                typeRoot.fetch(PortalCookieImpl_.portletCookies, JoinType.LEFT);
+                criteriaQuery.where(
+                    cb.equal(typeRoot.get(PortalCookieImpl_.value), valueParameter)
+                );
+                
+                return criteriaQuery;
+            }
+        });
         
-        return criteriaQuery;
-    }
-    
-    protected CriteriaQuery<PortletCookieImpl> buildFindExpiredByParentPortletCookiesQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<PortletCookieImpl> criteriaQuery = cb.createQuery(PortletCookieImpl.class);
-        final Root<PortletCookieImpl> typeRoot = criteriaQuery.from(PortletCookieImpl.class);
-        criteriaQuery.select(typeRoot);
-        criteriaQuery.where(cb.lessThanOrEqualTo(typeRoot.get(PortletCookieImpl_.portalCookie).get(PortalCookieImpl_.expires), this.nowParameter));
         
-        return criteriaQuery;
+        this.findExpiredByParentPortletCookiesQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<PortletCookieImpl>>() {
+            @Override
+            public CriteriaQuery<PortletCookieImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<PortletCookieImpl> criteriaQuery = cb.createQuery(PortletCookieImpl.class);
+                final Root<PortletCookieImpl> typeRoot = criteriaQuery.from(PortletCookieImpl.class);
+                criteriaQuery.select(typeRoot);
+                criteriaQuery.where(cb.lessThanOrEqualTo(typeRoot.get(PortletCookieImpl_.portalCookie).get(PortalCookieImpl_.expires), nowParameter));
+                
+                return criteriaQuery;
+            }
+        });
     }
 	
 	/**

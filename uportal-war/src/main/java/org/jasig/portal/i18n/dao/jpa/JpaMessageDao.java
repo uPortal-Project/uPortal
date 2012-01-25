@@ -39,6 +39,8 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Function;
+
 @Repository
 public class JpaMessageDao extends BaseJpaDao implements IMessageDao {
     private CriteriaQuery<MessageImpl> findMessageByCodeAndLocaleQuery;
@@ -60,54 +62,65 @@ public class JpaMessageDao extends BaseJpaDao implements IMessageDao {
         return this.entityManager;
     }
     
+    
     @Override
-    protected void buildCriteriaQueries(CriteriaBuilder criteriaBuilder) {
-        this.codeParameter = criteriaBuilder.parameter(String.class, "code");
-        this.localeParameter = criteriaBuilder.parameter(Locale.class, "locale");
+    public void afterPropertiesSet() throws Exception {
+        this.codeParameter = this.createParameterExpression(String.class, "code");
+        this.localeParameter = this.createParameterExpression(Locale.class, "locale");
         
-        this.initFindMessageByCodeAndLocaleQuery(criteriaBuilder);
-        this.initFindMessageByCodeQuery(criteriaBuilder);
-        this.initFindMessageByLocaleQuery(criteriaBuilder);
-        this.initFindCodes(criteriaBuilder);
-    }
-    
-    protected void initFindMessageByCodeAndLocaleQuery(CriteriaBuilder cb) {
-        final CriteriaQuery<MessageImpl> criteriaQuery = cb.createQuery(MessageImpl.class);
-        final Root<MessageImpl> root = criteriaQuery.from(MessageImpl.class);
-        criteriaQuery.select(root);
-        criteriaQuery.where(cb.and(cb.equal(root.get(MessageImpl_.code), this.codeParameter),
-                                   cb.equal(root.get(MessageImpl_.locale), this.localeParameter)));
-        criteriaQuery.orderBy(cb.asc(root.get(MessageImpl_.code)), cb.asc(root.get(MessageImpl_.locale)));
+        this.findMessageByCodeAndLocaleQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<MessageImpl>>() {
+            @Override
+            public CriteriaQuery<MessageImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<MessageImpl> criteriaQuery = cb.createQuery(MessageImpl.class);
+                final Root<MessageImpl> root = criteriaQuery.from(MessageImpl.class);
+                criteriaQuery.select(root);
+                criteriaQuery.where(cb.and(cb.equal(root.get(MessageImpl_.code), codeParameter),
+                                           cb.equal(root.get(MessageImpl_.locale), localeParameter)));
+                criteriaQuery.orderBy(cb.asc(root.get(MessageImpl_.code)), cb.asc(root.get(MessageImpl_.locale)));
+                
+                return criteriaQuery;
+            }
+        });
         
-        this.findMessageByCodeAndLocaleQuery = criteriaQuery;
-    }
-    
-    protected void initFindMessageByCodeQuery(CriteriaBuilder criteriaBuilder) {
-        final CriteriaQuery<MessageImpl> criteriaQuery = criteriaBuilder.createQuery(MessageImpl.class);
-        final Root<MessageImpl> root = criteriaQuery.from(MessageImpl.class);
-        criteriaQuery.select(root);
-        criteriaQuery.where(criteriaBuilder.equal(root.get(MessageImpl_.code), this.codeParameter));
-        criteriaQuery.orderBy(criteriaBuilder.asc(root.get(MessageImpl_.locale)));
         
-        this.findMessageByCodeQuery = criteriaQuery;
-    }
-    
-    protected void initFindMessageByLocaleQuery(CriteriaBuilder criteriaBuilder) {
-        final CriteriaQuery<MessageImpl> criteriaQuery = criteriaBuilder.createQuery(MessageImpl.class);
-        final Root<MessageImpl> root = criteriaQuery.from(MessageImpl.class);
-        criteriaQuery.select(root);
-        criteriaQuery.where(criteriaBuilder.equal(root.get(MessageImpl_.locale), this.localeParameter));
-        criteriaQuery.orderBy(criteriaBuilder.asc(root.get(MessageImpl_.code)));
+        this.findMessageByCodeQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<MessageImpl>>() {
+            @Override
+            public CriteriaQuery<MessageImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<MessageImpl> criteriaQuery = cb.createQuery(MessageImpl.class);
+                final Root<MessageImpl> root = criteriaQuery.from(MessageImpl.class);
+                criteriaQuery.select(root);
+                criteriaQuery.where(cb.equal(root.get(MessageImpl_.code), codeParameter));
+                criteriaQuery.orderBy(cb.asc(root.get(MessageImpl_.locale)));
+                
+                return criteriaQuery;
+            }
+        });
         
-        this.findMessageByLocaleQuery = criteriaQuery;
-    }
-    
-    protected void initFindCodes(CriteriaBuilder criteriaBuilder) {
-        final CriteriaQuery<String> criteriaQuery = criteriaBuilder.createQuery(String.class);
-        final Root<MessageImpl> root = criteriaQuery.from(MessageImpl.class);
-        criteriaQuery.select(root.get(MessageImpl_.code));
-        criteriaQuery.groupBy(root.get(MessageImpl_.code));
-        this.findCodes = criteriaQuery;
+        
+        this.findMessageByLocaleQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<MessageImpl>>() {
+            @Override
+            public CriteriaQuery<MessageImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<MessageImpl> criteriaQuery = cb.createQuery(MessageImpl.class);
+                final Root<MessageImpl> root = criteriaQuery.from(MessageImpl.class);
+                criteriaQuery.select(root);
+                criteriaQuery.where(cb.equal(root.get(MessageImpl_.locale), localeParameter));
+                criteriaQuery.orderBy(cb.asc(root.get(MessageImpl_.code)));
+                
+                return criteriaQuery;
+            }
+        });
+
+        
+        this.findCodes = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<String>>() {
+            @Override
+            public CriteriaQuery<String> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<String> criteriaQuery = cb.createQuery(String.class);
+                final Root<MessageImpl> root = criteriaQuery.from(MessageImpl.class);
+                criteriaQuery.select(root.get(MessageImpl_.code));
+                criteriaQuery.groupBy(root.get(MessageImpl_.code));
+                return criteriaQuery;
+            }
+        });
     }
     
     @Override

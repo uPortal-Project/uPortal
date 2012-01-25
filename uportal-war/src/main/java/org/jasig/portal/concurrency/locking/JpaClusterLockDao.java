@@ -52,6 +52,8 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.google.common.base.Function;
+
 /**
  * DB based locking DAO using JPA2 locking APIs
  * 
@@ -110,24 +112,22 @@ public class JpaClusterLockDao extends BaseJpaDao implements IClusterLockDao {
         return this.entityManager;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.jpa.BaseJpaDao#buildCriteriaQueries(javax.persistence.criteria.CriteriaBuilder)
-     */
     @Override
-    protected void buildCriteriaQueries(CriteriaBuilder criteriaBuilder) {
-        this.nameParameter = criteriaBuilder.parameter(String.class, "name");
+    public void afterPropertiesSet() throws Exception {
+        this.nameParameter = this.createParameterExpression(String.class, "name");
         
-        this.clusterLockByNameQuery = buildGetClusterLockByNameQuery(criteriaBuilder);
-    }
-
-    protected CriteriaQuery<ClusterMutex> buildGetClusterLockByNameQuery(CriteriaBuilder criteriaBuilder) {
-        final CriteriaQuery<ClusterMutex> criteriaQuery = criteriaBuilder.createQuery(ClusterMutex.class);
-        final Root<ClusterMutex> definitionRoot = criteriaQuery.from(ClusterMutex.class);
-        criteriaQuery.select(definitionRoot);
-        criteriaQuery.where(
-            criteriaBuilder.equal(definitionRoot.get(ClusterMutex_.name), this.nameParameter)
-        );
-        return criteriaQuery;
+        this.clusterLockByNameQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<ClusterMutex>>() {
+            @Override
+            public CriteriaQuery<ClusterMutex> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<ClusterMutex> criteriaQuery = cb.createQuery(ClusterMutex.class);
+                final Root<ClusterMutex> definitionRoot = criteriaQuery.from(ClusterMutex.class);
+                criteriaQuery.select(definitionRoot);
+                criteriaQuery.where(
+                        cb.equal(definitionRoot.get(ClusterMutex_.name), nameParameter)
+                );
+                return criteriaQuery;
+            }
+        });
     }
 
     /* (non-Javadoc)

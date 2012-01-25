@@ -38,6 +38,8 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Function;
+
 /**
  * @author Eric Dalquist
  * @version $Revision$
@@ -47,8 +49,7 @@ public class JpaTimeDimensionDao extends BaseJpaDao implements TimeDimensionDao 
     
     private CriteriaQuery<TimeDimensionImpl> findAllTimeDimensionsQuery;
     private CriteriaQuery<TimeDimensionImpl> findTimeDimensionByHourMinuteQuery;
-    private ParameterExpression<Integer> hourParameter;
-    private ParameterExpression<Integer> minuteParameter;
+    private ParameterExpression<LocalTime> timeParameter;
     
     private EntityManager entityManager;
 
@@ -63,35 +64,35 @@ public class JpaTimeDimensionDao extends BaseJpaDao implements TimeDimensionDao 
     }
     
     @Override
-    protected void buildCriteriaQueries(CriteriaBuilder cb) {
-        this.hourParameter = cb.parameter(Integer.class, "hour");
-        this.minuteParameter = cb.parameter(Integer.class, "minute");
+    public void afterPropertiesSet() throws Exception {
+        this.timeParameter = this.createParameterExpression(LocalTime.class, "time");
         
-        this.findAllTimeDimensionsQuery = this.buildFindAllTimeDimensions(cb);
-        this.findTimeDimensionByHourMinuteQuery = this.buildFindTimeDimensionByHourMinuteQuery(cb);
-    }
-    
-    protected CriteriaQuery<TimeDimensionImpl> buildFindAllTimeDimensions(final CriteriaBuilder cb) {
-        final CriteriaQuery<TimeDimensionImpl> criteriaQuery = cb.createQuery(TimeDimensionImpl.class);
-        final Root<TimeDimensionImpl> dimensionRoot = criteriaQuery.from(TimeDimensionImpl.class);
-        criteriaQuery.select(dimensionRoot);
-        criteriaQuery.orderBy(cb.asc(dimensionRoot.get(TimeDimensionImpl_.hour)), cb.asc(dimensionRoot.get(TimeDimensionImpl_.minute)));
+        this.findAllTimeDimensionsQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<TimeDimensionImpl>>() {
+            @Override
+            public CriteriaQuery<TimeDimensionImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<TimeDimensionImpl> criteriaQuery = cb.createQuery(TimeDimensionImpl.class);
+                final Root<TimeDimensionImpl> dimensionRoot = criteriaQuery.from(TimeDimensionImpl.class);
+                criteriaQuery.select(dimensionRoot);
+                criteriaQuery.orderBy(cb.asc(dimensionRoot.get(TimeDimensionImpl_.time)));
+                
+                return criteriaQuery;
+            }
+        });
         
-        return criteriaQuery;
-    }
-    
-    protected CriteriaQuery<TimeDimensionImpl> buildFindTimeDimensionByHourMinuteQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<TimeDimensionImpl> criteriaQuery = cb.createQuery(TimeDimensionImpl.class);
-        final Root<TimeDimensionImpl> dimensionRoot = criteriaQuery.from(TimeDimensionImpl.class);
-        criteriaQuery.select(dimensionRoot);
-        criteriaQuery.where(
-            cb.and(
-                    cb.equal(dimensionRoot.get(TimeDimensionImpl_.hour), this.hourParameter),
-                    cb.equal(dimensionRoot.get(TimeDimensionImpl_.minute), this.minuteParameter)
-            )
-        );
         
-        return criteriaQuery;
+        this.findTimeDimensionByHourMinuteQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<TimeDimensionImpl>>() {
+            @Override
+            public CriteriaQuery<TimeDimensionImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<TimeDimensionImpl> criteriaQuery = cb.createQuery(TimeDimensionImpl.class);
+                final Root<TimeDimensionImpl> dimensionRoot = criteriaQuery.from(TimeDimensionImpl.class);
+                criteriaQuery.select(dimensionRoot);
+                criteriaQuery.where(
+                    cb.equal(dimensionRoot.get(TimeDimensionImpl_.time), timeParameter)
+                );
+                
+                return criteriaQuery;
+            }
+        });
     }
     
     @Override
@@ -122,8 +123,7 @@ public class JpaTimeDimensionDao extends BaseJpaDao implements TimeDimensionDao 
     @Override
     public TimeDimension getTimeDimensionByTime(LocalTime localTime) {
         final TypedQuery<TimeDimensionImpl> query = this.createCachedQuery(this.findTimeDimensionByHourMinuteQuery);
-        query.setParameter(this.hourParameter, localTime.getHourOfDay());
-        query.setParameter(this.minuteParameter, localTime.getMinuteOfHour());
+        query.setParameter(this.timeParameter, localTime.minuteOfHour().roundFloorCopy());
         
         final List<TimeDimensionImpl> portletDefinitions = query.getResultList();
         return DataAccessUtils.uniqueResult(portletDefinitions);

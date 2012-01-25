@@ -52,6 +52,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionOperations;
 
+import com.google.common.base.Function;
+
 /**
  * @author Eric Dalquist
  * @version $Revision$
@@ -89,76 +91,89 @@ public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEve
     }
     
     @Override
-    protected void buildCriteriaQueries(CriteriaBuilder cb) {
-        this.processingTypeParameter = cb.parameter(ProcessingType.class, "processingType");
-        this.aggregatorTypeParameter = cb.parameter(Class.class, "aggregatorType");
+    public void afterPropertiesSet() throws Exception {
+        this.processingTypeParameter = this.createParameterExpression(ProcessingType.class, "processingType");
+        this.aggregatorTypeParameter = this.createParameterExpression(Class.class, "aggregatorType");
         
-        this.findEventAggregatorStatusByProcessingTypeQuery = buildFindEventAggregatorStatusByProcessingTypeQuery(cb);
-        this.findGroupConfigForAggregatorQuery = buildFindGroupConfigForAggregatorQuery(cb);
-        this.findIntervalConfigForAggregatorQuery = buildFindIntervalConfigForAggregatorQuery(cb);
-        this.findAllQuarterDetailsQuery = buildFindAllQuarterDetailsQuery(cb);
-        this.findAllAcademicTermDetailsQuery = buildFindAllAcademicTermDetailsQuery(cb);
+        this.findEventAggregatorStatusByProcessingTypeQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<EventAggregatorStatusImpl>>() {
+            @Override
+            public CriteriaQuery<EventAggregatorStatusImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<EventAggregatorStatusImpl> criteriaQuery = cb.createQuery(EventAggregatorStatusImpl.class);
+                final Root<EventAggregatorStatusImpl> entityRoot = criteriaQuery.from(EventAggregatorStatusImpl.class);
+                criteriaQuery.select(entityRoot);
+                criteriaQuery.where(
+                    cb.equal(entityRoot.get(EventAggregatorStatusImpl_.processingType), processingTypeParameter)
+                );
+                
+                return criteriaQuery;
+            }
+        });
+        
+        
+        this.findGroupConfigForAggregatorQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<AggregatedGroupConfigImpl>>() {
+            @Override
+            public CriteriaQuery<AggregatedGroupConfigImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<AggregatedGroupConfigImpl> criteriaQuery = cb.createQuery(AggregatedGroupConfigImpl.class);
+                final Root<AggregatedGroupConfigImpl> entityRoot = criteriaQuery.from(AggregatedGroupConfigImpl.class);
+                criteriaQuery.select(entityRoot);
+                entityRoot.fetch(AggregatedGroupConfigImpl_.excludedGroups, JoinType.LEFT);
+                entityRoot.fetch(AggregatedGroupConfigImpl_.includedGroups, JoinType.LEFT);
+                criteriaQuery.where(
+                    cb.equal(entityRoot.get(AggregatedGroupConfigImpl_.aggregatorType), aggregatorTypeParameter)
+                );
+                
+                return criteriaQuery;
+            }
+        });
+        
+        
+        this.findIntervalConfigForAggregatorQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<AggregatedIntervalConfigImpl>>() {
+            @Override
+            public CriteriaQuery<AggregatedIntervalConfigImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<AggregatedIntervalConfigImpl> criteriaQuery = cb.createQuery(AggregatedIntervalConfigImpl.class);
+                final Root<AggregatedIntervalConfigImpl> entityRoot = criteriaQuery.from(AggregatedIntervalConfigImpl.class);
+                criteriaQuery.select(entityRoot);
+                entityRoot.fetch(AggregatedIntervalConfigImpl_.excludedIntervals, JoinType.LEFT);
+                entityRoot.fetch(AggregatedIntervalConfigImpl_.includedIntervals, JoinType.LEFT);
+                criteriaQuery.where(
+                    cb.equal(entityRoot.get(AggregatedIntervalConfigImpl_.aggregatorType), aggregatorTypeParameter)
+                );
+                
+                return criteriaQuery;
+            }
+        });
+        
+        
+        this.findAllQuarterDetailsQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<QuarterDetailImpl>>() {
+            @Override
+            public CriteriaQuery<QuarterDetailImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<QuarterDetailImpl> criteriaQuery = cb.createQuery(QuarterDetailImpl.class);
+                final Root<QuarterDetailImpl> entityRoot = criteriaQuery.from(QuarterDetailImpl.class);
+                criteriaQuery.select(entityRoot);
+                criteriaQuery.orderBy(cb.asc(entityRoot.get(QuarterDetailImpl_.quarterId)));
+                
+                return criteriaQuery;
+            }
+        });
+        
+        
+        this.findAllAcademicTermDetailsQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<AcademicTermDetailImpl>>() {
+            @Override
+            public CriteriaQuery<AcademicTermDetailImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<AcademicTermDetailImpl> criteriaQuery = cb.createQuery(AcademicTermDetailImpl.class);
+                final Root<AcademicTermDetailImpl> entityRoot = criteriaQuery.from(AcademicTermDetailImpl.class);
+                criteriaQuery.select(entityRoot);
+                criteriaQuery.orderBy(cb.asc(entityRoot.get(AcademicTermDetailImpl_.start)));
+                
+                return criteriaQuery;
+            }
+        });
+        
         
         this.deleteAllQuarterDetailsQuery = 
                 "DELETE FROM " + QuarterDetailImpl.class.getName() + " e ";
     }
 
-    protected CriteriaQuery<EventAggregatorStatusImpl> buildFindEventAggregatorStatusByProcessingTypeQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<EventAggregatorStatusImpl> criteriaQuery = cb.createQuery(EventAggregatorStatusImpl.class);
-        final Root<EventAggregatorStatusImpl> entityRoot = criteriaQuery.from(EventAggregatorStatusImpl.class);
-        criteriaQuery.select(entityRoot);
-        criteriaQuery.where(
-            cb.equal(entityRoot.get(EventAggregatorStatusImpl_.processingType), this.processingTypeParameter)
-        );
-        
-        return criteriaQuery;
-    }
-
-    protected CriteriaQuery<AggregatedGroupConfigImpl> buildFindGroupConfigForAggregatorQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<AggregatedGroupConfigImpl> criteriaQuery = cb.createQuery(AggregatedGroupConfigImpl.class);
-        final Root<AggregatedGroupConfigImpl> entityRoot = criteriaQuery.from(AggregatedGroupConfigImpl.class);
-        criteriaQuery.select(entityRoot);
-        entityRoot.fetch(AggregatedGroupConfigImpl_.excludedGroups, JoinType.LEFT);
-        entityRoot.fetch(AggregatedGroupConfigImpl_.includedGroups, JoinType.LEFT);
-        criteriaQuery.where(
-            cb.equal(entityRoot.get(AggregatedGroupConfigImpl_.aggregatorType), this.aggregatorTypeParameter)
-        );
-        
-        return criteriaQuery;
-    }
-
-    protected CriteriaQuery<AggregatedIntervalConfigImpl> buildFindIntervalConfigForAggregatorQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<AggregatedIntervalConfigImpl> criteriaQuery = cb.createQuery(AggregatedIntervalConfigImpl.class);
-        final Root<AggregatedIntervalConfigImpl> entityRoot = criteriaQuery.from(AggregatedIntervalConfigImpl.class);
-        criteriaQuery.select(entityRoot);
-        entityRoot.fetch(AggregatedIntervalConfigImpl_.excludedIntervals, JoinType.LEFT);
-        entityRoot.fetch(AggregatedIntervalConfigImpl_.includedIntervals, JoinType.LEFT);
-        criteriaQuery.where(
-            cb.equal(entityRoot.get(AggregatedIntervalConfigImpl_.aggregatorType), this.aggregatorTypeParameter)
-        );
-        
-        return criteriaQuery;
-    }
-    
-    protected CriteriaQuery<QuarterDetailImpl> buildFindAllQuarterDetailsQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<QuarterDetailImpl> criteriaQuery = cb.createQuery(QuarterDetailImpl.class);
-        final Root<QuarterDetailImpl> entityRoot = criteriaQuery.from(QuarterDetailImpl.class);
-        criteriaQuery.select(entityRoot);
-        criteriaQuery.orderBy(cb.asc(entityRoot.get(QuarterDetailImpl_.quarterId)));
-        
-        return criteriaQuery;
-    }
-
-    protected CriteriaQuery<AcademicTermDetailImpl> buildFindAllAcademicTermDetailsQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<AcademicTermDetailImpl> criteriaQuery = cb.createQuery(AcademicTermDetailImpl.class);
-        final Root<AcademicTermDetailImpl> entityRoot = criteriaQuery.from(AcademicTermDetailImpl.class);
-        criteriaQuery.select(entityRoot);
-        criteriaQuery.orderBy(cb.asc(entityRoot.get(AcademicTermDetailImpl_.start)));
-        
-        return criteriaQuery;
-    }
-    
-    
 
     @Override
     public IEventAggregatorStatus getEventAggregatorStatus(final ProcessingType processingType, boolean create) {

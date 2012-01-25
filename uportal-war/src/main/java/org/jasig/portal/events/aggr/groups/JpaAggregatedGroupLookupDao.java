@@ -40,6 +40,8 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionOperations;
 
+import com.google.common.base.Function;
+
 /**
  * JPA dao to manage aggregated group mappings
  * 
@@ -75,27 +77,28 @@ public class JpaAggregatedGroupLookupDao extends BaseJpaDao implements Aggregate
     protected EntityManager getEntityManager() {
         return this.entityManager;
     }
-    
+
     @Override
-    protected void buildCriteriaQueries(CriteriaBuilder cb) {
-        this.groupServiceParameter = cb.parameter(String.class, "groupService");
-        this.groupNameParameter = cb.parameter(String.class, "groupName");
+    public void afterPropertiesSet() throws Exception {
+        this.groupServiceParameter = this.createParameterExpression(String.class, "groupService");
+        this.groupNameParameter = this.createParameterExpression(String.class, "groupName");
         
-        this.findGroupMappingByServiceAndNameQuery = this.buildFindGroupMappingByServiceAndNameQuery(cb);
-    }
-    
-    protected CriteriaQuery<AggregatedGroupMappingImpl> buildFindGroupMappingByServiceAndNameQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<AggregatedGroupMappingImpl> criteriaQuery = cb.createQuery(AggregatedGroupMappingImpl.class);
-        final Root<AggregatedGroupMappingImpl> root = criteriaQuery.from(AggregatedGroupMappingImpl.class);
-        criteriaQuery.select(root);
-        criteriaQuery.where(
-                cb.and(
-                    cb.equal(root.get(AggregatedGroupMappingImpl_.groupService), this.groupServiceParameter),
-                    cb.equal(root.get(AggregatedGroupMappingImpl_.groupName), this.groupNameParameter)
-                )
-            );
-        
-        return criteriaQuery;
+        this.findGroupMappingByServiceAndNameQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<AggregatedGroupMappingImpl>>() {
+            @Override
+            public CriteriaQuery<AggregatedGroupMappingImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<AggregatedGroupMappingImpl> criteriaQuery = cb.createQuery(AggregatedGroupMappingImpl.class);
+                final Root<AggregatedGroupMappingImpl> root = criteriaQuery.from(AggregatedGroupMappingImpl.class);
+                criteriaQuery.select(root);
+                criteriaQuery.where(
+                        cb.and(
+                            cb.equal(root.get(AggregatedGroupMappingImpl_.groupService), groupServiceParameter),
+                            cb.equal(root.get(AggregatedGroupMappingImpl_.groupName), groupNameParameter)
+                        )
+                    );
+                
+                return criteriaQuery;
+            }
+        });
     }
 
     @Override

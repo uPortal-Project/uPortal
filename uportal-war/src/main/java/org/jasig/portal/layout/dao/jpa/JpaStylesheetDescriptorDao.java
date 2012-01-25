@@ -40,6 +40,8 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Function;
+
 /**
  * JPA DAO for stylesheet descriptor
  * 
@@ -64,33 +66,35 @@ public class JpaStylesheetDescriptorDao extends BaseJpaDao implements IStyleshee
     }
     
     @Override
-    protected void buildCriteriaQueries(CriteriaBuilder cb) {
-        this.nameParameter = cb.parameter(String.class, "name");
+    public void afterPropertiesSet() throws Exception {
+        this.nameParameter = this.createParameterExpression(String.class, "name");
         
-        this.findAllDescriptors = this.buildFindAllDescriptors(cb);
-        this.findDescriptorByNameQuery = this.buildFindDescriptorByNameQuery(cb);
-    }
-    
-    protected CriteriaQuery<StylesheetDescriptorImpl> buildFindAllDescriptors(final CriteriaBuilder cb) {
-        final CriteriaQuery<StylesheetDescriptorImpl> criteriaQuery = cb.createQuery(StylesheetDescriptorImpl.class);
-        final Root<StylesheetDescriptorImpl> descriptorRoot = criteriaQuery.from(StylesheetDescriptorImpl.class);
-        criteriaQuery.select(descriptorRoot);
+        this.findAllDescriptors = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<StylesheetDescriptorImpl>>() {
+            @Override
+            public CriteriaQuery<StylesheetDescriptorImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<StylesheetDescriptorImpl> criteriaQuery = cb.createQuery(StylesheetDescriptorImpl.class);
+                criteriaQuery.from(StylesheetDescriptorImpl.class);
+                return criteriaQuery;
+            }
+        });
         
-        return criteriaQuery;
-    }
-    
-    protected CriteriaQuery<StylesheetDescriptorImpl> buildFindDescriptorByNameQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<StylesheetDescriptorImpl> criteriaQuery = cb.createQuery(StylesheetDescriptorImpl.class);
-        final Root<StylesheetDescriptorImpl> descriptorRoot = criteriaQuery.from(StylesheetDescriptorImpl.class);
-        criteriaQuery.select(descriptorRoot);
-        descriptorRoot.fetch(StylesheetDescriptorImpl_.layoutAttributes, JoinType.LEFT);
-        descriptorRoot.fetch(StylesheetDescriptorImpl_.outputProperties, JoinType.LEFT);
-        descriptorRoot.fetch(StylesheetDescriptorImpl_.stylesheetParameters, JoinType.LEFT);
-        criteriaQuery.where(
-            cb.equal(descriptorRoot.get(StylesheetDescriptorImpl_.name), this.nameParameter)
-        );
         
-        return criteriaQuery;
+        this.findDescriptorByNameQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<StylesheetDescriptorImpl>>() {
+            @Override
+            public CriteriaQuery<StylesheetDescriptorImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<StylesheetDescriptorImpl> criteriaQuery = cb.createQuery(StylesheetDescriptorImpl.class);
+                final Root<StylesheetDescriptorImpl> descriptorRoot = criteriaQuery.from(StylesheetDescriptorImpl.class);
+                criteriaQuery.select(descriptorRoot);
+                descriptorRoot.fetch(StylesheetDescriptorImpl_.layoutAttributes, JoinType.LEFT);
+                descriptorRoot.fetch(StylesheetDescriptorImpl_.outputProperties, JoinType.LEFT);
+                descriptorRoot.fetch(StylesheetDescriptorImpl_.stylesheetParameters, JoinType.LEFT);
+                criteriaQuery.where(
+                    cb.equal(descriptorRoot.get(StylesheetDescriptorImpl_.name), nameParameter)
+                );
+                
+                return criteriaQuery;
+            }
+        });
     }
 
     /* (non-Javadoc)

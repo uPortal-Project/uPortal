@@ -50,6 +50,8 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Function;
+
 /**
  * Stores portal events using JPA/Hibenate no internal batch segmentation is done to the passed list
  * of {@link PortalEvent}s. If a {@link PortalEvent} is not mapped as a persistent entity a message is logged
@@ -106,9 +108,9 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
     }
     
     @Override
-    protected void buildCriteriaQueries(CriteriaBuilder cb) {
-        this.startTimeParameter = cb.parameter(DateTime.class, "startTime");
-        this.endTimeParameter = cb.parameter(DateTime.class, "endTime");
+    public void afterPropertiesSet() throws Exception {
+        this.startTimeParameter = this.createParameterExpression(DateTime.class, "startTime");
+        this.endTimeParameter = this.createParameterExpression(DateTime.class, "endTime");
         
         this.selectQuery = 
                 "SELECT e " +
@@ -129,31 +131,36 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
                 "DELETE FROM " + PersistentPortalEvent.class.getName() + " e " +
         		"WHERE e." + PersistentPortalEvent_.timestamp.getName() + " < :" + this.endTimeParameter.getName();
         
-        this.findNewestPersistentPortalEventTimestampQuery = this.buildFindNewestPersistentPortalEventTimestamp(cb);
-        this.findOldestPersistentPortalEventTimestampQuery = this.buildFindOldestPersistentPortalEventTimestamp(cb);
+        this.findNewestPersistentPortalEventTimestampQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<DateTime>>() {
+            @Override
+            public CriteriaQuery<DateTime> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<DateTime> criteriaQuery = cb.createQuery(DateTime.class);
+                final Root<PersistentPortalEvent> eventRoot = criteriaQuery.from(PersistentPortalEvent.class);
+                
+                //Get the largest event timestamp
+                criteriaQuery
+                    .select(cb.greatest(eventRoot.get(PersistentPortalEvent_.timestamp)));
+                
+                return criteriaQuery;
+            }
+        });
+        
+        
+        this.findOldestPersistentPortalEventTimestampQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<DateTime>>() {
+            @Override
+            public CriteriaQuery<DateTime> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<DateTime> criteriaQuery = cb.createQuery(DateTime.class);
+                final Root<PersistentPortalEvent> eventRoot = criteriaQuery.from(PersistentPortalEvent.class);
+                
+                //Get the smallest event timestamp
+                criteriaQuery
+                    .select(cb.least(eventRoot.get(PersistentPortalEvent_.timestamp)));
+                
+                return criteriaQuery;
+            }
+        });
     }
     
-    protected CriteriaQuery<DateTime> buildFindNewestPersistentPortalEventTimestamp(final CriteriaBuilder cb) {
-        final CriteriaQuery<DateTime> criteriaQuery = cb.createQuery(DateTime.class);
-        final Root<PersistentPortalEvent> eventRoot = criteriaQuery.from(PersistentPortalEvent.class);
-        
-        //Get the largest event timestamp
-        criteriaQuery
-            .select(cb.greatest(eventRoot.get(PersistentPortalEvent_.timestamp)));
-        
-        return criteriaQuery;
-    }
-    
-    protected CriteriaQuery<DateTime> buildFindOldestPersistentPortalEventTimestamp(final CriteriaBuilder cb) {
-        final CriteriaQuery<DateTime> criteriaQuery = cb.createQuery(DateTime.class);
-        final Root<PersistentPortalEvent> eventRoot = criteriaQuery.from(PersistentPortalEvent.class);
-        
-        //Get the smallest event timestamp
-        criteriaQuery
-            .select(cb.least(eventRoot.get(PersistentPortalEvent_.timestamp)));
-        
-        return criteriaQuery;
-    }
     
     /* (non-Javadoc)
      * @see org.jasig.portal.events.handlers.db.IPortalEventDao#storePortalEvent(org.jasig.portal.events.PortalEvent)

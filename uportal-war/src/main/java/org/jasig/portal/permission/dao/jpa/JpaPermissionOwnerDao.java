@@ -43,6 +43,8 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Function;
+
 /**
  * JpaPermissionOwnerDao provides a default JPA/Hibernate implementation of
  * the IPermissionOwnerDao interface.
@@ -71,34 +73,37 @@ public class JpaPermissionOwnerDao extends BaseJpaDao implements IPermissionOwne
     }
 
     @Override
-    protected void buildCriteriaQueries(CriteriaBuilder cb) {
-        this.fnameParameter = cb.parameter(String.class, "fname");
+    public void afterPropertiesSet() throws Exception {
+        this.fnameParameter = this.createParameterExpression(String.class, "fname");
         
-        this.findAllPermissionOwners = this.buildFindAllPermissionOwners(cb);
-        this.findPermissionOwnerByFname = this.buildFindPermissionOwnerByFname(cb);
-    }
-
-    protected CriteriaQuery<PermissionOwnerImpl> buildFindAllPermissionOwners(final CriteriaBuilder cb) {
-        final CriteriaQuery<PermissionOwnerImpl> criteriaQuery = cb.createQuery(PermissionOwnerImpl.class);
-        final Root<PermissionOwnerImpl> ownerRoot = criteriaQuery.from(PermissionOwnerImpl.class);
-        criteriaQuery.select(ownerRoot);
-        ownerRoot.fetch(PermissionOwnerImpl_.activities, JoinType.LEFT);
+        this.findAllPermissionOwners = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<PermissionOwnerImpl>>() {
+            @Override
+            public CriteriaQuery<PermissionOwnerImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<PermissionOwnerImpl> criteriaQuery = cb.createQuery(PermissionOwnerImpl.class);
+                final Root<PermissionOwnerImpl> ownerRoot = criteriaQuery.from(PermissionOwnerImpl.class);
+                criteriaQuery.select(ownerRoot);
+                ownerRoot.fetch(PermissionOwnerImpl_.activities, JoinType.LEFT);
+                
+                return criteriaQuery;
+            }
+        });
         
-        return criteriaQuery;
-    }
-
-    protected CriteriaQuery<PermissionOwnerImpl> buildFindPermissionOwnerByFname(final CriteriaBuilder cb) {
-        final CriteriaQuery<PermissionOwnerImpl> criteriaQuery = cb.createQuery(PermissionOwnerImpl.class);
-        final Root<PermissionOwnerImpl> ownerRoot = criteriaQuery.from(PermissionOwnerImpl.class);
-        criteriaQuery.select(ownerRoot);
-        ownerRoot.fetch(PermissionOwnerImpl_.activities, JoinType.LEFT);
-        criteriaQuery.where(
-                cb.equal(ownerRoot.get(PermissionOwnerImpl_.fname), this.fnameParameter)
-            );
         
-        return criteriaQuery;
+        this.findPermissionOwnerByFname = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<PermissionOwnerImpl>>() {
+            @Override
+            public CriteriaQuery<PermissionOwnerImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<PermissionOwnerImpl> criteriaQuery = cb.createQuery(PermissionOwnerImpl.class);
+                final Root<PermissionOwnerImpl> ownerRoot = criteriaQuery.from(PermissionOwnerImpl.class);
+                criteriaQuery.select(ownerRoot);
+                ownerRoot.fetch(PermissionOwnerImpl_.activities, JoinType.LEFT);
+                criteriaQuery.where(
+                        cb.equal(ownerRoot.get(PermissionOwnerImpl_.fname), fnameParameter)
+                    );
+                
+                return criteriaQuery;
+            }
+        });
     }
-
 
     /*
      * (non-Javadoc)

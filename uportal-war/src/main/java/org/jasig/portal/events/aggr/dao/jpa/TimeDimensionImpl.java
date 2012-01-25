@@ -111,7 +111,7 @@ public class TimeDimensionImpl implements TimeDimension, Serializable {
     }
     TimeDimensionImpl(LocalTime time) {
         this.id = -1;
-        this.time = time.secondOfMinute().roundFloorCopy(); //truncate at minute level
+        this.time = time.minuteOfHour().roundFloorCopy(); //truncate at minute level
         this.hour = this.time.getHourOfDay();
         this.minute = this.time.getMinuteOfHour();
         this.fiveMinuteIncrement = this.minute / 5;

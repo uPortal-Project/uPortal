@@ -40,6 +40,8 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Function;
+
 /**
  * JPA implementation of {@link IStylesheetUserPreferencesDao}
  * 
@@ -66,38 +68,42 @@ public class JpaStylesheetUserPreferencesDao extends BaseJpaDao implements IStyl
     }
     
     @Override
-    protected void buildCriteriaQueries(CriteriaBuilder cb) {
-        this.stylesheetDescriptorParameter = cb.parameter(StylesheetDescriptorImpl.class, "stylesheetDescriptor");
-        this.userIdParameter = cb.parameter(Integer.class, "userId");
-        this.profileIdParameter = cb.parameter(Integer.class, "profileId");
+    public void afterPropertiesSet() throws Exception {
+        this.stylesheetDescriptorParameter = this.createParameterExpression(StylesheetDescriptorImpl.class, "stylesheetDescriptor");
+        this.userIdParameter = this.createParameterExpression(Integer.class, "userId");
+        this.profileIdParameter = this.createParameterExpression(Integer.class, "profileId");
 
-        this.findAllPreferences = this.buildFindAllPreferences(cb);
-        this.findPreferencesByDescriptorUserProfileQuery = this.buildFindPreferencesByDescriptorUserProfileQuery(cb);
-    }
-    
-    protected CriteriaQuery<StylesheetUserPreferencesImpl> buildFindAllPreferences(final CriteriaBuilder cb) {
-        final CriteriaQuery<StylesheetUserPreferencesImpl> criteriaQuery = cb.createQuery(StylesheetUserPreferencesImpl.class);
-        final Root<StylesheetUserPreferencesImpl> descriptorRoot = criteriaQuery.from(StylesheetUserPreferencesImpl.class);
-        criteriaQuery.select(descriptorRoot);
-        addFetches(descriptorRoot);
+        this.findAllPreferences = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<StylesheetUserPreferencesImpl>>() {
+            @Override
+            public CriteriaQuery<StylesheetUserPreferencesImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<StylesheetUserPreferencesImpl> criteriaQuery = cb.createQuery(StylesheetUserPreferencesImpl.class);
+                final Root<StylesheetUserPreferencesImpl> descriptorRoot = criteriaQuery.from(StylesheetUserPreferencesImpl.class);
+                criteriaQuery.select(descriptorRoot);
+                addFetches(descriptorRoot);
+                
+                return criteriaQuery;
+            }
+        });
         
-        return criteriaQuery;
-    }
-    
-    protected CriteriaQuery<StylesheetUserPreferencesImpl> buildFindPreferencesByDescriptorUserProfileQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<StylesheetUserPreferencesImpl> criteriaQuery = cb.createQuery(StylesheetUserPreferencesImpl.class);
-        final Root<StylesheetUserPreferencesImpl> descriptorRoot = criteriaQuery.from(StylesheetUserPreferencesImpl.class);
-        criteriaQuery.select(descriptorRoot);
-        addFetches(descriptorRoot);
-        criteriaQuery.where(
-            cb.and(
-                cb.equal(descriptorRoot.get(StylesheetUserPreferencesImpl_.userId), this.userIdParameter),
-                cb.equal(descriptorRoot.get(StylesheetUserPreferencesImpl_.stylesheetDescriptor), this.stylesheetDescriptorParameter),
-                cb.equal(descriptorRoot.get(StylesheetUserPreferencesImpl_.profileId), this.profileIdParameter)
-            )
-        );
         
-        return criteriaQuery;
+        this.findPreferencesByDescriptorUserProfileQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<StylesheetUserPreferencesImpl>>() {
+            @Override
+            public CriteriaQuery<StylesheetUserPreferencesImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<StylesheetUserPreferencesImpl> criteriaQuery = cb.createQuery(StylesheetUserPreferencesImpl.class);
+                final Root<StylesheetUserPreferencesImpl> descriptorRoot = criteriaQuery.from(StylesheetUserPreferencesImpl.class);
+                criteriaQuery.select(descriptorRoot);
+                addFetches(descriptorRoot);
+                criteriaQuery.where(
+                    cb.and(
+                        cb.equal(descriptorRoot.get(StylesheetUserPreferencesImpl_.userId), userIdParameter),
+                        cb.equal(descriptorRoot.get(StylesheetUserPreferencesImpl_.stylesheetDescriptor), stylesheetDescriptorParameter),
+                        cb.equal(descriptorRoot.get(StylesheetUserPreferencesImpl_.profileId), profileIdParameter)
+                    )
+                );
+                
+                return criteriaQuery;
+            }
+        });    
     }
 
     /**

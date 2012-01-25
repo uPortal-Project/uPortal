@@ -44,6 +44,8 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Function;
+
 /**
  * @author Eric Dalquist
  * @version $Revision$
@@ -81,40 +83,45 @@ public class JpaEventSessionDao extends BaseJpaDao implements EventSessionDao {
     }
     
     @Override
-    protected void buildCriteriaQueries(CriteriaBuilder cb) {
-        this.eventSessionIdParameter = cb.parameter(String.class, "eventSessionId");
-        this.dateTimeParameter = cb.parameter(DateTime.class, "dateTime");
+    public void afterPropertiesSet() throws Exception {
+        this.eventSessionIdParameter = this.createParameterExpression(String.class, "eventSessionId");
+        this.dateTimeParameter = this.createParameterExpression(DateTime.class, "dateTime");
         
-        this.findByEventSessionIdQuery = this.buildFindByEventSessionIdQuery(cb);
+        this.findByEventSessionIdQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<EventSessionImpl>>() {
+            @Override
+            public CriteriaQuery<EventSessionImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<EventSessionImpl> criteriaQuery = cb.createQuery(EventSessionImpl.class);
+                final Root<EventSessionImpl> root = criteriaQuery.from(EventSessionImpl.class);
+                criteriaQuery.select(root);
+                criteriaQuery.where(
+                        cb.equal(root.get(EventSessionImpl_.eventSessionId), eventSessionIdParameter)
+                    );
+                
+                return criteriaQuery;
+            }
+        });
+        
+        
+        this.findExpiredEventSessionsQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<EventSessionImpl>>() {
+            @Override
+            public CriteriaQuery<EventSessionImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<EventSessionImpl> criteriaQuery = cb.createQuery(EventSessionImpl.class);
+                final Root<EventSessionImpl> root = criteriaQuery.from(EventSessionImpl.class);
+                criteriaQuery.select(root);
+                criteriaQuery.where(
+                        cb.lessThanOrEqualTo(root.get(EventSessionImpl_.lastAccessed), dateTimeParameter)
+                    );
+                
+                return criteriaQuery;
+            }
+        });
+        
         
         this.deleteByEventSessionIdQuery = 
                 "DELETE FROM " + EventSessionImpl.class.getName() + " e " +
                 "WHERE e." + EventSessionImpl_.eventSessionId.getName() + " = :" + this.eventSessionIdParameter.getName();
-        
-        this.findExpiredEventSessionsQuery = this.buildFindExpiredEventSessionsQuery(cb);
     }
     
-    protected CriteriaQuery<EventSessionImpl> buildFindByEventSessionIdQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<EventSessionImpl> criteriaQuery = cb.createQuery(EventSessionImpl.class);
-        final Root<EventSessionImpl> root = criteriaQuery.from(EventSessionImpl.class);
-        criteriaQuery.select(root);
-        criteriaQuery.where(
-                cb.equal(root.get(EventSessionImpl_.eventSessionId), this.eventSessionIdParameter)
-            );
-        
-        return criteriaQuery;
-    }
-    
-    protected CriteriaQuery<EventSessionImpl> buildFindExpiredEventSessionsQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<EventSessionImpl> criteriaQuery = cb.createQuery(EventSessionImpl.class);
-        final Root<EventSessionImpl> root = criteriaQuery.from(EventSessionImpl.class);
-        criteriaQuery.select(root);
-        criteriaQuery.where(
-                cb.lessThanOrEqualTo(root.get(EventSessionImpl_.lastAccessed), this.dateTimeParameter)
-            );
-        
-        return criteriaQuery;
-    }
 
     @Transactional("aggrEvents")
     @Override

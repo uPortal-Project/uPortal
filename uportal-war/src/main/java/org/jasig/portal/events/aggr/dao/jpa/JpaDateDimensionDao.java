@@ -40,6 +40,8 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Function;
+
 /**
  * @author Eric Dalquist
  * @version $Revision$
@@ -48,7 +50,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class JpaDateDimensionDao extends BaseJpaDao implements DateDimensionDao {
     private CriteriaQuery<DateDimensionImpl> findAllDateDimensionsQuery;
     private CriteriaQuery<DateDimensionImpl> findAllDateDimensionsBetweenQuery;
-    private CriteriaQuery<DateDimensionImpl> findDateDimensionByYearMonthDayQuery;
+    private CriteriaQuery<DateDimensionImpl> findDateDimensionByDateQuery;
     private CriteriaQuery<DateDimensionImpl> findNewestDateDimensionQuery;
     private CriteriaQuery<DateDimensionImpl> findOldestDateDimensionQuery;
     private ParameterExpression<LocalDate> dateTimeParameter;
@@ -67,86 +69,93 @@ public class JpaDateDimensionDao extends BaseJpaDao implements DateDimensionDao 
     }
     
     @Override
-    protected void buildCriteriaQueries(CriteriaBuilder cb) {
-        this.dateTimeParameter = cb.parameter(LocalDate.class, "dateTime");
-        this.endDateTimeParameter = cb.parameter(LocalDate.class, "endDateTime");
+    public void afterPropertiesSet() throws Exception {
+        this.dateTimeParameter = this.createParameterExpression(LocalDate.class, "dateTime");
+        this.endDateTimeParameter = this.createParameterExpression(LocalDate.class, "endDateTime");
         
-        this.findAllDateDimensionsQuery = this.buildFindAllDateDimensions(cb);
-        this.findAllDateDimensionsBetweenQuery = this.buildFindDateDimensionsBetween(cb);
-        this.findDateDimensionByYearMonthDayQuery = this.buildFindDateDimensionByYearMonthDayQuery(cb);
-        this.findNewestDateDimensionQuery = this.buildFindNewestDateDimension(cb);
-        this.findOldestDateDimensionQuery = this.buildFindOldestDateDimension(cb);
-    }
-    
-    protected CriteriaQuery<DateDimensionImpl> buildFindAllDateDimensions(final CriteriaBuilder cb) {
-        final CriteriaQuery<DateDimensionImpl> criteriaQuery = cb.createQuery(DateDimensionImpl.class);
-        final Root<DateDimensionImpl> dimensionRoot = criteriaQuery.from(DateDimensionImpl.class);
-        criteriaQuery.select(dimensionRoot);
-        criteriaQuery.orderBy(cb.asc(dimensionRoot.get(DateDimensionImpl_.date)));
+        this.findAllDateDimensionsQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<DateDimensionImpl>>() {
+            @Override
+            public CriteriaQuery<DateDimensionImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<DateDimensionImpl> criteriaQuery = cb.createQuery(DateDimensionImpl.class);
+                final Root<DateDimensionImpl> dimensionRoot = criteriaQuery.from(DateDimensionImpl.class);
+                criteriaQuery.orderBy(cb.asc(dimensionRoot.get(DateDimensionImpl_.date)));
+                return criteriaQuery;
+            }
+        });
         
-        return criteriaQuery;
-    }
-    
-    protected CriteriaQuery<DateDimensionImpl> buildFindDateDimensionsBetween(final CriteriaBuilder cb) {
-        final CriteriaQuery<DateDimensionImpl> criteriaQuery = cb.createQuery(DateDimensionImpl.class);
-        final Root<DateDimensionImpl> dimensionRoot = criteriaQuery.from(DateDimensionImpl.class);
-        criteriaQuery.select(dimensionRoot);
-        criteriaQuery.where(
-                cb.and(
-                        cb.greaterThanOrEqualTo(dimensionRoot.get(DateDimensionImpl_.date), this.dateTimeParameter),
-                        cb.lessThan(dimensionRoot.get(DateDimensionImpl_.date), this.endDateTimeParameter)
-                )
-            );
-        criteriaQuery.orderBy(cb.asc(dimensionRoot.get(DateDimensionImpl_.date)));
+        this.findAllDateDimensionsBetweenQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<DateDimensionImpl>>() {
+            @Override
+            public CriteriaQuery<DateDimensionImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<DateDimensionImpl> criteriaQuery = cb.createQuery(DateDimensionImpl.class);
+                final Root<DateDimensionImpl> dimensionRoot = criteriaQuery.from(DateDimensionImpl.class);
+                criteriaQuery.select(dimensionRoot);
+                criteriaQuery.where(
+                        cb.and(
+                                cb.greaterThanOrEqualTo(dimensionRoot.get(DateDimensionImpl_.date), dateTimeParameter),
+                                cb.lessThan(dimensionRoot.get(DateDimensionImpl_.date), endDateTimeParameter)
+                        )
+                    );
+                criteriaQuery.orderBy(cb.asc(dimensionRoot.get(DateDimensionImpl_.date)));
+                
+                return criteriaQuery;
+            }
+        });
         
-        return criteriaQuery;
-    }
-    
-    protected CriteriaQuery<DateDimensionImpl> buildFindNewestDateDimension(final CriteriaBuilder cb) {
-        final CriteriaQuery<DateDimensionImpl> criteriaQuery = cb.createQuery(DateDimensionImpl.class);
-        final Root<DateDimensionImpl> dimensionRoot = criteriaQuery.from(DateDimensionImpl.class);
+        this.findDateDimensionByDateQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<DateDimensionImpl>>() {
+            @Override
+            public CriteriaQuery<DateDimensionImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<DateDimensionImpl> criteriaQuery = cb.createQuery(DateDimensionImpl.class);
+                final Root<DateDimensionImpl> dimensionRoot = criteriaQuery.from(DateDimensionImpl.class);
+                criteriaQuery.select(dimensionRoot);
+                criteriaQuery.where(
+                    cb.equal(dimensionRoot.get(DateDimensionImpl_.date), dateTimeParameter)
+                );
+                
+                return criteriaQuery;
+            }
+        });
         
-        //Build subquery for max date
-        final Subquery<LocalDate> maxDateSub = criteriaQuery.subquery(LocalDate.class);
-        final Root<DateDimensionImpl> maxDateDimensionSub = maxDateSub.from(DateDimensionImpl.class);
-        maxDateSub
-            .select(cb.greatest(maxDateDimensionSub.get(DateDimensionImpl_.date)));
+        this.findNewestDateDimensionQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<DateDimensionImpl>>() {
+            @Override
+            public CriteriaQuery<DateDimensionImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<DateDimensionImpl> criteriaQuery = cb.createQuery(DateDimensionImpl.class);
+                final Root<DateDimensionImpl> dimensionRoot = criteriaQuery.from(DateDimensionImpl.class);
+                
+                //Build subquery for max date
+                final Subquery<LocalDate> maxDateSub = criteriaQuery.subquery(LocalDate.class);
+                final Root<DateDimensionImpl> maxDateDimensionSub = maxDateSub.from(DateDimensionImpl.class);
+                maxDateSub
+                    .select(cb.greatest(maxDateDimensionSub.get(DateDimensionImpl_.date)));
+                
+                //Get the date dimension
+                criteriaQuery
+                    .select(dimensionRoot)
+                    .where(cb.equal(dimensionRoot.get(DateDimensionImpl_.date), maxDateSub));
+                
+                return criteriaQuery;
+            }
+        });
         
-        //Get the date dimension
-        criteriaQuery
-            .select(dimensionRoot)
-            .where(cb.equal(dimensionRoot.get(DateDimensionImpl_.date), maxDateSub));
-        
-        return criteriaQuery;
-    }
-    
-    protected CriteriaQuery<DateDimensionImpl> buildFindOldestDateDimension(final CriteriaBuilder cb) {
-        final CriteriaQuery<DateDimensionImpl> criteriaQuery = cb.createQuery(DateDimensionImpl.class);
-        final Root<DateDimensionImpl> dimensionRoot = criteriaQuery.from(DateDimensionImpl.class);
-        
-        //Build subquery for max date
-        final Subquery<LocalDate> maxDateSub = criteriaQuery.subquery(LocalDate.class);
-        final Root<DateDimensionImpl> maxDateDimensionSub = maxDateSub.from(DateDimensionImpl.class);
-        maxDateSub
-            .select(cb.least(maxDateDimensionSub.get(DateDimensionImpl_.date)));
-        
-        //Get the date dimension
-        criteriaQuery
-            .select(dimensionRoot)
-            .where(cb.equal(dimensionRoot.get(DateDimensionImpl_.date), maxDateSub));
-        
-        return criteriaQuery;
-    }
-    
-    protected CriteriaQuery<DateDimensionImpl> buildFindDateDimensionByYearMonthDayQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<DateDimensionImpl> criteriaQuery = cb.createQuery(DateDimensionImpl.class);
-        final Root<DateDimensionImpl> dimensionRoot = criteriaQuery.from(DateDimensionImpl.class);
-        criteriaQuery.select(dimensionRoot);
-        criteriaQuery.where(
-            cb.equal(dimensionRoot.get(DateDimensionImpl_.date), this.dateTimeParameter)
-        );
-        
-        return criteriaQuery;
+        this.findOldestDateDimensionQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<DateDimensionImpl>>() {
+            @Override
+            public CriteriaQuery<DateDimensionImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<DateDimensionImpl> criteriaQuery = cb.createQuery(DateDimensionImpl.class);
+                final Root<DateDimensionImpl> dimensionRoot = criteriaQuery.from(DateDimensionImpl.class);
+                
+                //Build subquery for max date
+                final Subquery<LocalDate> maxDateSub = criteriaQuery.subquery(LocalDate.class);
+                final Root<DateDimensionImpl> maxDateDimensionSub = maxDateSub.from(DateDimensionImpl.class);
+                maxDateSub
+                    .select(cb.least(maxDateDimensionSub.get(DateDimensionImpl_.date)));
+                
+                //Get the date dimension
+                criteriaQuery
+                    .select(dimensionRoot)
+                    .where(cb.equal(dimensionRoot.get(DateDimensionImpl_.date), maxDateSub));
+                
+                return criteriaQuery;
+            }
+        });
     }
     
     @Override
@@ -200,7 +209,7 @@ public class JpaDateDimensionDao extends BaseJpaDao implements DateDimensionDao 
 
     @Override
     public DateDimension getDateDimensionByDate(DateMidnight date) {
-        final TypedQuery<DateDimensionImpl> query = this.createCachedQuery(this.findDateDimensionByYearMonthDayQuery);
+        final TypedQuery<DateDimensionImpl> query = this.createCachedQuery(this.findDateDimensionByDateQuery);
         query.setParameter(this.dateTimeParameter, date.toLocalDate());
         
         final List<DateDimensionImpl> portletDefinitions = query.getResultList();

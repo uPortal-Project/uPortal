@@ -34,8 +34,8 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
-import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.AggregationInterval;
+import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl;
 import org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl_;
@@ -47,6 +47,7 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -81,70 +82,77 @@ public class JpaLoginAggregationDao extends BaseJpaDao implements LoginAggregati
     
 
     @Override
-    protected void buildCriteriaQueries(CriteriaBuilder cb) {
-        this.timeDimensionParameter = cb.parameter(TimeDimension.class, "timeDimension");
-        this.dateDimensionParameter = cb.parameter(DateDimension.class, "dateDimension");
-        this.intervalParameter = cb.parameter(AggregationInterval.class, "interval");
-        this.aggregatedGroupParameter = cb.parameter(AggregatedGroupMapping.class, "aggregatedGroup");
-        this.aggregatedGroupsParameter = cb.parameter(Set.class, "aggregatedGroups");
-        this.startDate = cb.parameter(LocalDate.class, "startDate");
-        this.endDate = cb.parameter(LocalDate.class, "endDate");
+    public void afterPropertiesSet() throws Exception {
+        this.timeDimensionParameter = this.createParameterExpression(TimeDimension.class, "timeDimension");
+        this.dateDimensionParameter = this.createParameterExpression(DateDimension.class, "dateDimension");
+        this.intervalParameter = this.createParameterExpression(AggregationInterval.class, "interval");
+        this.aggregatedGroupParameter = this.createParameterExpression(AggregatedGroupMapping.class, "aggregatedGroup");
+        this.aggregatedGroupsParameter = this.createParameterExpression(Set.class, "aggregatedGroups");
+        this.startDate = this.createParameterExpression(LocalDate.class, "startDate");
+        this.endDate = this.createParameterExpression(LocalDate.class, "endDate");
         
-        this.findLoginAggregationByDateTimeIntervalQuery = this.buildFindLoginAggregationByDateTimeIntervalQuery(cb);
-        this.findLoginAggregationByDateTimeIntervalGroupQuery = this.buildFindLoginAggregationByDateTimeIntervalGroupQuery(cb);
-        this.findLoginAggregationsByDateRangeQuery = this.buildFindLoginAggregationsByDateRangeQuery(cb);
-    }
-    
-    protected CriteriaQuery<LoginAggregationImpl> buildFindLoginAggregationByDateTimeIntervalQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<LoginAggregationImpl> criteriaQuery = cb.createQuery(LoginAggregationImpl.class);
-        final Root<LoginAggregationImpl> root = criteriaQuery.from(LoginAggregationImpl.class);
-        criteriaQuery.select(root);
-        root.fetch(LoginAggregationImpl_.uniqueUserNames, JoinType.LEFT);
-        criteriaQuery.where(
-                cb.and(
-                    cb.equal(root.get(LoginAggregationImpl_.dateDimension), this.dateDimensionParameter),
-                    cb.equal(root.get(LoginAggregationImpl_.timeDimension), this.timeDimensionParameter),
-                    cb.equal(root.get(LoginAggregationImpl_.interval), this.intervalParameter)
-                )
-            );
+        this.findLoginAggregationByDateTimeIntervalQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<LoginAggregationImpl>>() {
+            @Override
+            public CriteriaQuery<LoginAggregationImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<LoginAggregationImpl> criteriaQuery = cb.createQuery(LoginAggregationImpl.class);
+                final Root<LoginAggregationImpl> root = criteriaQuery.from(LoginAggregationImpl.class);
+                criteriaQuery.select(root);
+                root.fetch(LoginAggregationImpl_.uniqueUserNames, JoinType.LEFT);
+                criteriaQuery.where(
+                        cb.and(
+                            cb.equal(root.get(LoginAggregationImpl_.dateDimension), dateDimensionParameter),
+                            cb.equal(root.get(LoginAggregationImpl_.timeDimension), timeDimensionParameter),
+                            cb.equal(root.get(LoginAggregationImpl_.interval), intervalParameter)
+                        )
+                    );
+                
+                return criteriaQuery;
+            }
+        });
+
         
-        return criteriaQuery;
-    }
-    
-    protected CriteriaQuery<LoginAggregationImpl> buildFindLoginAggregationByDateTimeIntervalGroupQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<LoginAggregationImpl> criteriaQuery = cb.createQuery(LoginAggregationImpl.class);
-        final Root<LoginAggregationImpl> root = criteriaQuery.from(LoginAggregationImpl.class);
-        criteriaQuery.select(root);
-        root.fetch(LoginAggregationImpl_.uniqueUserNames, JoinType.LEFT);
-        criteriaQuery.where(
-                cb.and(
-                    cb.equal(root.get(LoginAggregationImpl_.dateDimension), this.dateDimensionParameter),
-                    cb.equal(root.get(LoginAggregationImpl_.timeDimension), this.timeDimensionParameter),
-                    cb.equal(root.get(LoginAggregationImpl_.interval), this.intervalParameter),
-                    cb.equal(root.get(LoginAggregationImpl_.aggregatedGroup), this.aggregatedGroupParameter)
-                )
-            );
+        this.findLoginAggregationByDateTimeIntervalGroupQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<LoginAggregationImpl>>() {
+            @Override
+            public CriteriaQuery<LoginAggregationImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<LoginAggregationImpl> criteriaQuery = cb.createQuery(LoginAggregationImpl.class);
+                final Root<LoginAggregationImpl> root = criteriaQuery.from(LoginAggregationImpl.class);
+                criteriaQuery.select(root);
+                root.fetch(LoginAggregationImpl_.uniqueUserNames, JoinType.LEFT);
+                criteriaQuery.where(
+                        cb.and(
+                            cb.equal(root.get(LoginAggregationImpl_.dateDimension), dateDimensionParameter),
+                            cb.equal(root.get(LoginAggregationImpl_.timeDimension), timeDimensionParameter),
+                            cb.equal(root.get(LoginAggregationImpl_.interval), intervalParameter),
+                            cb.equal(root.get(LoginAggregationImpl_.aggregatedGroup), aggregatedGroupParameter)
+                        )
+                    );
+                
+                return criteriaQuery;
+            }
+        });
+
         
-        return criteriaQuery;
-    }
-    
-    protected CriteriaQuery<LoginAggregationImpl> buildFindLoginAggregationsByDateRangeQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<LoginAggregationImpl> criteriaQuery = cb.createQuery(LoginAggregationImpl.class);
-        
-        final Root<DateDimensionImpl> root = criteriaQuery.from(DateDimensionImpl.class);
-        final CollectionJoin<DateDimensionImpl, LoginAggregationImpl> loginAggrJoin = root.join(DateDimensionImpl_.loginAggregations, JoinType.LEFT);
-        
-        criteriaQuery.select(loginAggrJoin);
-        criteriaQuery.where(
-                cb.and(
-                        cb.between(root.get(DateDimensionImpl_.date), this.startDate, this.endDate),
-                        cb.equal(loginAggrJoin.get(LoginAggregationImpl_.interval), this.intervalParameter),
-                        loginAggrJoin.get(LoginAggregationImpl_.aggregatedGroup).in(this.aggregatedGroupsParameter)
-                )
-        );
-        criteriaQuery.orderBy(cb.desc(root.get(DateDimensionImpl_.date)));
-        
-        return criteriaQuery;
+        this.findLoginAggregationsByDateRangeQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<LoginAggregationImpl>>() {
+            @Override
+            public CriteriaQuery<LoginAggregationImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<LoginAggregationImpl> criteriaQuery = cb.createQuery(LoginAggregationImpl.class);
+                
+                final Root<DateDimensionImpl> root = criteriaQuery.from(DateDimensionImpl.class);
+                final CollectionJoin<DateDimensionImpl, LoginAggregationImpl> loginAggrJoin = root.join(DateDimensionImpl_.loginAggregations, JoinType.LEFT);
+                
+                criteriaQuery.select(loginAggrJoin);
+                criteriaQuery.where(
+                        cb.and(
+                                cb.between(root.get(DateDimensionImpl_.date), startDate, endDate),
+                                cb.equal(loginAggrJoin.get(LoginAggregationImpl_.interval), intervalParameter),
+                                loginAggrJoin.get(LoginAggregationImpl_.aggregatedGroup).in(aggregatedGroupsParameter)
+                        )
+                );
+                criteriaQuery.orderBy(cb.desc(root.get(DateDimensionImpl_.date)));
+                
+                return criteriaQuery;
+            }
+        });
     }
     
     @Override

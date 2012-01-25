@@ -50,6 +50,8 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Function;
+
 @Repository("localAccountDao")
 public class JpaLocalAccountDaoImpl extends BaseJpaDao implements ILocalAccountDao {
     private EntityManager entityManager;
@@ -76,42 +78,49 @@ public class JpaLocalAccountDaoImpl extends BaseJpaDao implements ILocalAccountD
     private ParameterExpression<String> nameParameter;
 
     @Override
-    protected void buildCriteriaQueries(CriteriaBuilder cb) {
-        this.nameParameter = cb.parameter(String.class, "name");
+    public void afterPropertiesSet() throws Exception {
+        this.nameParameter = this.createParameterExpression(String.class, "name");
         
-        this.findAllAccountsQuery = this.buildFindAllAccountsQuery(cb);
-        this.findAccountByNameQuery = this.buildFindAccountByNameQuery(cb);
-        this.findAvailableAttributesQuery = this.buildFindAvailableAttributesQuery(cb);
-    }
-
-    protected CriteriaQuery<LocalAccountPersonImpl> buildFindAllAccountsQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<LocalAccountPersonImpl> criteriaQuery = cb.createQuery(LocalAccountPersonImpl.class);
-        final Root<LocalAccountPersonImpl> accountRoot = criteriaQuery.from(LocalAccountPersonImpl.class);
-        accountRoot.fetch(LocalAccountPersonImpl_.attributes, JoinType.LEFT).fetch(LocalAccountPersonAttributeImpl_.values, JoinType.LEFT);
-        criteriaQuery.select(accountRoot);
+        this.findAllAccountsQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<LocalAccountPersonImpl>>() {
+            @Override
+            public CriteriaQuery<LocalAccountPersonImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<LocalAccountPersonImpl> criteriaQuery = cb.createQuery(LocalAccountPersonImpl.class);
+                final Root<LocalAccountPersonImpl> accountRoot = criteriaQuery.from(LocalAccountPersonImpl.class);
+                accountRoot.fetch(LocalAccountPersonImpl_.attributes, JoinType.LEFT).fetch(LocalAccountPersonAttributeImpl_.values, JoinType.LEFT);
+                criteriaQuery.select(accountRoot);
+                
+                return criteriaQuery;
+            }
+        });
         
-        return criteriaQuery;
-    }
-
-    protected CriteriaQuery<LocalAccountPersonImpl> buildFindAccountByNameQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<LocalAccountPersonImpl> criteriaQuery = cb.createQuery(LocalAccountPersonImpl.class);
-        final Root<LocalAccountPersonImpl> accountRoot = criteriaQuery.from(LocalAccountPersonImpl.class);
-        accountRoot.fetch(LocalAccountPersonImpl_.attributes, JoinType.LEFT).fetch(LocalAccountPersonAttributeImpl_.values, JoinType.LEFT);
-        criteriaQuery.select(accountRoot);
-        criteriaQuery.where(
-            cb.equal(accountRoot.get(LocalAccountPersonImpl_.name), this.nameParameter)
-        );
         
-        return criteriaQuery;
-    }
-
-    protected CriteriaQuery<String> buildFindAvailableAttributesQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<String> criteriaQuery = cb.createQuery(String.class);
-        final Root<LocalAccountPersonAttributeImpl> accountRoot = criteriaQuery.from(LocalAccountPersonAttributeImpl.class);
-        criteriaQuery.select(accountRoot.get(LocalAccountPersonAttributeImpl_.name));
-        criteriaQuery.distinct(true);
+        this.findAccountByNameQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<LocalAccountPersonImpl>>() {
+            @Override
+            public CriteriaQuery<LocalAccountPersonImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<LocalAccountPersonImpl> criteriaQuery = cb.createQuery(LocalAccountPersonImpl.class);
+                final Root<LocalAccountPersonImpl> accountRoot = criteriaQuery.from(LocalAccountPersonImpl.class);
+                accountRoot.fetch(LocalAccountPersonImpl_.attributes, JoinType.LEFT).fetch(LocalAccountPersonAttributeImpl_.values, JoinType.LEFT);
+                criteriaQuery.select(accountRoot);
+                criteriaQuery.where(
+                    cb.equal(accountRoot.get(LocalAccountPersonImpl_.name), nameParameter)
+                );
+                
+                return criteriaQuery;
+            }
+        });
         
-        return criteriaQuery;
+        
+        this.findAvailableAttributesQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<String>>() {
+            @Override
+            public CriteriaQuery<String> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<String> criteriaQuery = cb.createQuery(String.class);
+                final Root<LocalAccountPersonAttributeImpl> accountRoot = criteriaQuery.from(LocalAccountPersonAttributeImpl.class);
+                criteriaQuery.select(accountRoot.get(LocalAccountPersonAttributeImpl_.name));
+                criteriaQuery.distinct(true);
+                
+                return criteriaQuery;
+            }
+        });
     }
     
     @Override
@@ -169,7 +178,7 @@ public class JpaLocalAccountDaoImpl extends BaseJpaDao implements ILocalAccountD
 
     @Override
     public List<ILocalAccountPerson> getPeople(LocalAccountQuery query) {
-        final CriteriaBuilder cb = this.getCriteriaBuilder();
+        final CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
         
         final CriteriaQuery<LocalAccountPersonImpl> criteriaQuery = cb.createQuery(LocalAccountPersonImpl.class);
         final Root<LocalAccountPersonImpl> accountRoot = criteriaQuery.from(LocalAccountPersonImpl.class);
@@ -204,8 +213,8 @@ public class JpaLocalAccountDaoImpl extends BaseJpaDao implements ILocalAccountD
                 }
                 
                 //Create Parameter objects for the name and value, stick them in the params map for later use
-                final ParameterExpression<String> nameParam = cb.parameter(String.class, "attrName" + paramCount);
-                final ParameterExpression<String> valueParam = cb.parameter(String.class, "attrValue" + paramCount);
+                final ParameterExpression<String> nameParam = this.createParameterExpression(String.class, "attrName" + paramCount);
+                final ParameterExpression<String> valueParam = this.createParameterExpression(String.class, "attrValue" + paramCount);
                 
                 params.put(nameParam, entry.getKey());
                 params.put(valueParam, "%" + value.toLowerCase() + "%");

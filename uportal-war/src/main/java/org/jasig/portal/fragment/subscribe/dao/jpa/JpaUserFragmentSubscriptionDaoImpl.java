@@ -39,6 +39,8 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Function;
+
 /**
  * DAO for retrieving information about fragments (pre-formatted tabs) to 
  * which a user has subscribed.
@@ -67,31 +69,35 @@ public class JpaUserFragmentSubscriptionDaoImpl extends BaseJpaDao implements IU
     }
     
     @Override
-    protected void buildCriteriaQueries(CriteriaBuilder criteriaBuilder) {
-        this.userIdParameter = criteriaBuilder.parameter(Integer.TYPE, "userId");
-        this.fragmentOwnerParameter = criteriaBuilder.parameter(String.class, "fragmentOwner");
+    public void afterPropertiesSet() throws Exception {
+        this.userIdParameter = this.createParameterExpression(Integer.TYPE, "userId");
+        this.fragmentOwnerParameter = this.createParameterExpression(String.class, "fragmentOwner");
         
-        this.initFindUserFragmentInfoByPersonQuery(criteriaBuilder);
-        this.initFindUserFragmentInfoByPersonAndOwnerQuery(criteriaBuilder);
-    }
-    
-    protected void initFindUserFragmentInfoByPersonQuery(CriteriaBuilder cb) {
-        final CriteriaQuery<UserFragmentSubscriptionImpl> criteriaQuery = cb.createQuery(UserFragmentSubscriptionImpl.class);
-        final Root<UserFragmentSubscriptionImpl> root = criteriaQuery.from(UserFragmentSubscriptionImpl.class);
-        criteriaQuery.select(root);
-        criteriaQuery.where(cb.equal(root.get(UserFragmentSubscriptionImpl_.userId), this.userIdParameter));
+        this.findUserFragmentInfoByPersonQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<UserFragmentSubscriptionImpl>>() {
+            @Override
+            public CriteriaQuery<UserFragmentSubscriptionImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<UserFragmentSubscriptionImpl> criteriaQuery = cb.createQuery(UserFragmentSubscriptionImpl.class);
+                final Root<UserFragmentSubscriptionImpl> root = criteriaQuery.from(UserFragmentSubscriptionImpl.class);
+                criteriaQuery.select(root);
+                criteriaQuery.where(cb.equal(root.get(UserFragmentSubscriptionImpl_.userId), userIdParameter));
+                
+                return criteriaQuery;
+            }
+        });
+
         
-        this.findUserFragmentInfoByPersonQuery = criteriaQuery;
-    }
-    
-    protected void initFindUserFragmentInfoByPersonAndOwnerQuery(CriteriaBuilder cb) {
-        final CriteriaQuery<UserFragmentSubscriptionImpl> criteriaQuery = cb.createQuery(UserFragmentSubscriptionImpl.class);
-        final Root<UserFragmentSubscriptionImpl> root = criteriaQuery.from(UserFragmentSubscriptionImpl.class);
-        criteriaQuery.select(root);
-        criteriaQuery.where(cb.and(cb.equal(root.get(UserFragmentSubscriptionImpl_.userId), this.userIdParameter),
-                cb.equal(root.get(UserFragmentSubscriptionImpl_.fragmentOwner), this.fragmentOwnerParameter)));
-        
-        this.findUserFragmentInfoByPersonAndOwnerQuery = criteriaQuery;
+        this.findUserFragmentInfoByPersonAndOwnerQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<UserFragmentSubscriptionImpl>>() {
+            @Override
+            public CriteriaQuery<UserFragmentSubscriptionImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<UserFragmentSubscriptionImpl> criteriaQuery = cb.createQuery(UserFragmentSubscriptionImpl.class);
+                final Root<UserFragmentSubscriptionImpl> root = criteriaQuery.from(UserFragmentSubscriptionImpl.class);
+                criteriaQuery.select(root);
+                criteriaQuery.where(cb.and(cb.equal(root.get(UserFragmentSubscriptionImpl_.userId), userIdParameter),
+                        cb.equal(root.get(UserFragmentSubscriptionImpl_.fragmentOwner), fragmentOwnerParameter)));
+                
+                return criteriaQuery;
+            }
+        });
     }
     
     @Override

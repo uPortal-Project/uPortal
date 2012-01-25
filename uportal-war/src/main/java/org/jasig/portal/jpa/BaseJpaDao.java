@@ -26,11 +26,14 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+
+import com.google.common.base.Function;
 
 /**
  * Base class for JPA DAOs in the portal that contains common functions
@@ -46,25 +49,40 @@ public abstract class BaseJpaDao implements InitializingBean {
     protected abstract EntityManager getEntityManager();
     
     @Override
-    public final void afterPropertiesSet() throws Exception {
-        final CriteriaBuilder criteriaBuilder = this.getCriteriaBuilder();
-        this.buildCriteriaQueries(criteriaBuilder);
+    public void afterPropertiesSet() throws Exception {
     }
 
     /**
      * Subclasses can implement this method to generate {@link CriteriaQuery} objects.
      * Called by {@link #afterPropertiesSet()}
      */
-    protected void buildCriteriaQueries(CriteriaBuilder criteriaBuilder) {
+    protected void buildParameterExpressions(CriteriaBuilder criteriaBuilder) {
     }
-
-
-    /**
-     * @return Get the {@link CriteriaBuilder} to use to generate {@link CriteriaQuery}
-     */
-    protected final CriteriaBuilder getCriteriaBuilder() {
-        final EntityManagerFactory entityManagerFactory = this.getEntityManager().getEntityManagerFactory();
-        return entityManagerFactory.getCriteriaBuilder();
+    
+    protected <T> ParameterExpression<T> createParameterExpression(Class<T> paramClass) {
+        final EntityManager entityManager = this.getEntityManager();
+        final EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
+        final CriteriaBuilder criteriaBuilder = entityManagerFactory.getCriteriaBuilder();
+        
+        return criteriaBuilder.parameter(paramClass);
+    }
+    
+    protected <T> ParameterExpression<T> createParameterExpression(Class<T> paramClass, String name) {
+        final EntityManager entityManager = this.getEntityManager();
+        final EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
+        final CriteriaBuilder criteriaBuilder = entityManagerFactory.getCriteriaBuilder();
+        
+        return criteriaBuilder.parameter(paramClass, name);
+    }
+    
+    protected <T> CriteriaQuery<T> createCriteriaQuery(Function<CriteriaBuilder, CriteriaQuery<T>> builder) {
+        final EntityManager entityManager = this.getEntityManager();
+        final EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
+        final CriteriaBuilder criteriaBuilder = entityManagerFactory.getCriteriaBuilder();
+        
+        final CriteriaQuery<T> criteriaQuery = builder.apply(criteriaBuilder);
+        entityManager.createQuery(criteriaQuery); //pre-compile critera query to avoid race conditions when setting aliases
+        return criteriaQuery;
     }
     
     /**
