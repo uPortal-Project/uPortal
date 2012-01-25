@@ -39,6 +39,7 @@ import org.jasig.portal.io.xml.AbstractJaxbDataHandler;
 import org.jasig.portal.io.xml.IPortalData;
 import org.jasig.portal.io.xml.IPortalDataType;
 import org.jasig.portal.io.xml.PortalDataKey;
+import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
@@ -47,7 +48,6 @@ import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
-import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletTypeRegistry;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPermission;
@@ -74,7 +74,7 @@ public class PortletDefinitionImporterExporter
 	
     private PortletPortalDataType portletPortalDataType;
     private IPortletTypeRegistry portletTypeRegistry;
-    private IPortletDefinitionRegistry portletDefinitionRegistry;
+    private IPortletDefinitionDao portletDefinitionDao;
     private IPortletCategoryRegistry portletCategoryRegistry;
     private boolean errorOnChannel = true;
 
@@ -94,8 +94,8 @@ public class PortletDefinitionImporterExporter
     }
 
     @Autowired
-    public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
-        this.portletDefinitionRegistry = portletDefinitionRegistry;
+    public void setPortletDefinitionRegistry(IPortletDefinitionDao portletDefinitionRegistry) {
+        this.portletDefinitionDao = portletDefinitionRegistry;
     }
 
     @Autowired
@@ -115,7 +115,7 @@ public class PortletDefinitionImporterExporter
 
     @Override
     public Iterable<? extends IPortalData> getPortalData() {
-        return this.portletDefinitionRegistry.getAllPortletDefinitions();
+        return this.portletDefinitionDao.getPortletDefinitions();
     }
 
     @Transactional
@@ -178,9 +178,9 @@ public class PortletDefinitionImporterExporter
         
         
         final String fname = portletRep.getFname();
-        IPortletDefinition def = portletDefinitionRegistry.getPortletDefinitionByFname(fname);
+        IPortletDefinition def = portletDefinitionDao.getPortletDefinitionByFname(fname);
         if (def == null) {
-            def = portletDefinitionRegistry.createPortletDefinition(
+            def = portletDefinitionDao.createPortletDefinition(
                     portletType, 
                     fname, 
                     portletRep.getName(),
@@ -263,13 +263,13 @@ public class PortletDefinitionImporterExporter
     @Transactional
     @Override
 	public ExternalPortletDefinition deleteData(String fname) {
-    	final IPortletDefinition def = this.portletDefinitionRegistry.getPortletDefinitionByFname(fname);
+    	final IPortletDefinition def = this.portletDefinitionDao.getPortletDefinitionByFname(fname);
     	if(null == def) {
     		return null;
     	}
     	
 		ExternalPortletDefinition result = convert(def);
-		this.portletDefinitionRegistry.deletePortletDefinition(def);
+		this.portletDefinitionDao.deletePortletDefinition(def);
 		return result;
 	}
 
@@ -284,8 +284,8 @@ public class PortletDefinitionImporterExporter
         boolean newChannel = (definition.getPortletDefinitionId() == null);
 
         // save the channel
-        definition = portletDefinitionRegistry.updatePortletDefinition(definition);
-        definition = portletDefinitionRegistry.getPortletDefinitionByFname(definition.getFName());
+        definition = portletDefinitionDao.updatePortletDefinition(definition);
+        definition = portletDefinitionDao.getPortletDefinitionByFname(definition.getFName());
 
         final String defId = definition.getPortletDefinitionId().getStringId();
         final IEntity portletDefEntity = GroupService.getEntity(defId, IPortletDefinition.class);
@@ -345,7 +345,7 @@ public class PortletDefinitionImporterExporter
     @Transactional
     @Override
     public void removePortletDefinition(IPortletDefinition portletDefinition, IPerson person) {
-        IPortletDefinition portletDef = portletDefinitionRegistry.getPortletDefinition(portletDefinition.getPortletDefinitionId());
+        IPortletDefinition portletDef = portletDefinitionDao.getPortletDefinition(portletDefinition.getPortletDefinitionId());
 
         // Delete existing category memberships for this channel
         String portletDefinitionId = portletDefinition.getPortletDefinitionId().getStringId();
@@ -366,12 +366,12 @@ public class PortletDefinitionImporterExporter
         upm.removePermissions(oldPermissions);
 
         // delete the channel
-        portletDefinitionRegistry.deletePortletDefinition(portletDef);
+        portletDefinitionDao.deletePortletDefinition(portletDef);
     }
 
     @Override
     public ExternalPortletDefinition exportData(String fname) {
-        final IPortletDefinition def = this.portletDefinitionRegistry.getPortletDefinitionByFname(fname);
+        final IPortletDefinition def = this.portletDefinitionDao.getPortletDefinitionByFname(fname);
         if (def == null) {
             return null;
         }
