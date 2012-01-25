@@ -469,6 +469,18 @@ public class RDBMDistributedLayoutStore
             log.debug("Layout for user:  " + person.getUserName() 
                         + "\n" + str.getBuffer().toString());
         }
+        
+        /*
+         * Attempt to detect a corrupted layout; return null in such cases
+         */
+        
+        if (isLayoutCorrupt(layoutDoc)) {
+            if (log.isWarnEnabled()) {
+                log.warn("Layout for user:  " + person.getUserName() + " is corrupt;  " +
+                		                    "layout structures will not be exported.");
+            }
+            return null;
+        }
 
         /*
          * Clean up the DOM for export.
@@ -652,6 +664,30 @@ public class RDBMDistributedLayoutStore
 
         return layoutDoc.getRootElement();
 
+    }
+    
+    /**
+     * Attempts to detect known forms of corruption to avoid erroring-out on the 
+     * export (or subsequent import), and also to prevent migrating a bad layout.  
+     * Users whose layouts are culled in this fashion will have their layouts 
+     * reset through migration.
+     */
+    private boolean isLayoutCorrupt(org.dom4j.Document layoutDoc) {
+        
+        boolean rslt = false;  // until we find otherwise...
+
+        for (FormOfLayoutCorruption form : KNOWN_FORMS_OF_LAYOUT_CORRUPTION) {
+            if (form.detect(layoutDoc)) {
+                if (log.isWarnEnabled()) {
+                    log.warn("Corrupt layout detected: " + form.getMessage());
+                }
+                rslt = true;
+                break;
+            }
+        }
+        
+        return rslt;
+        
     }
         
     @SuppressWarnings("unchecked")
@@ -3001,6 +3037,25 @@ public class RDBMDistributedLayoutStore
         }
     }
     
+    private interface FormOfLayoutCorruption {
+        boolean detect(org.dom4j.Document layout);
+        String getMessage();
+    }
+    
+    private static final List<FormOfLayoutCorruption> KNOWN_FORMS_OF_LAYOUT_CORRUPTION = Collections.unmodifiableList(
+        Arrays.asList(new FormOfLayoutCorruption[] {
+
+            // One <channel> element inside another
+            new FormOfLayoutCorruption() {
+                public boolean detect(org.dom4j.Document layoutDoc) {
+                    return !layoutDoc.selectNodes("//channel/descendant::channel").isEmpty();
+                }
+                public String getMessage() { 
+                    return "one <channel> element inside another"; 
+                };
+            }
+
+        }));        
 
     private static final class MissingChannelDefinition extends XmlGeneratingBaseChannelDefinition {
         public static final IChannelDefinition INSTANCE = new MissingChannelDefinition();
