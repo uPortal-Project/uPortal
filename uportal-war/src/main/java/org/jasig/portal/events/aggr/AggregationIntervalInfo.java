@@ -25,8 +25,6 @@ public class AggregationIntervalInfo implements Serializable {
         Assert.notNull(aggregationInterval, "aggregationInterval can not be null");
         Assert.notNull(start, "start can not be null");
         Assert.notNull(end, "end can not be null");
-        Assert.notNull(dateDimension, "dateDimension can not be null");
-        Assert.notNull(timeDimension, "timeDimension can not be null");
         if (!start.isBefore(end)) {
             throw new IllegalArgumentException("Start date must be before end date. start=" + start + ", end=" + end);
         }

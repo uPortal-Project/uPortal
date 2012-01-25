@@ -32,7 +32,7 @@
     <!-- JPA Test Context for DAOs that use the uPortalAggrEventsPersistence PersistenceContext -->
     
     
-    <bean id="intervalHelper" class="org.jasig.portal.events.aggr.IntervalHelperImpl" />
+    <bean id="intervalHelper" class="org.jasig.portal.events.aggr.AggregationIntervalHelperImpl" />
     <bean id="timeDimensionDao" class="org.jasig.portal.events.aggr.dao.jpa.JpaTimeDimensionDao" />    
     <bean id="dateDimensionDao" class="org.jasig.portal.events.aggr.dao.jpa.JpaDateDimensionDao" />
     <bean id="eventAggregationManagementDao" class="org.jasig.portal.events.aggr.dao.jpa.JpaEventAggregationManagementDao" />
