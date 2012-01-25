@@ -19,7 +19,6 @@
 
 package org.jasig.portal.events.aggr.dao.jpa;
 
-import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -31,8 +30,6 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.events.aggr.IEventAggregatorStatus;
@@ -46,8 +43,6 @@ import org.joda.time.DateTime;
 @Table(name = "UP_EVENT_AGGR_STATUS")
 @SequenceGenerator(name = "UP_EVENT_AGGR_STATUS_GEN", sequenceName = "UP_EVENT_AGGR_STATUS_SEQ", allocationSize = 10)
 @TableGenerator(name = "UP_EVENT_AGGR_STATUS_GEN", pkColumnValue = "UP_EVENT_AGGR_STATUS", allocationSize = 10)
-@Cacheable
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 class EventAggregatorStatusImpl implements IEventAggregatorStatus {
     
     @Id
