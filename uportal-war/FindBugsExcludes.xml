@@ -1,0 +1,9 @@
+<FindBugsFilter>
+    <!-- 
+     | See http://findbugs.sourceforge.net/manual/filter.html for syntax 
+     + -->
+
+    <Match>
+        <Class name="~.*_" />
+    </Match>
+</FindBugsFilter>
