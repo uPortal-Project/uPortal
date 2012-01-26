@@ -48,7 +48,6 @@ import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.services.GroupService;
-import org.jasig.portal.services.SequenceGenerator;
 import org.jasig.portal.spring.locator.CounterStoreLocator;
 import org.jasig.portal.utils.SerializableObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -365,7 +364,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
    }
   
   protected int getNewPortalUID(IPerson person) throws Exception {
-	return CounterStoreLocator.getCounterStore().getIncrementIntegerId("UP_USER");
+	return CounterStoreLocator.getCounterStore().getNextId("UP_USER");
   }
 
   static final protected void commit (Connection connection) {
@@ -834,7 +833,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
   private int getNextKey()
   {
-      return SequenceGenerator.instance().getNextInt(PROFILE_TABLE);
+      return CounterStoreLocator.getCounterStore().getNextId(PROFILE_TABLE);
   }
 
   protected class PortalUser {

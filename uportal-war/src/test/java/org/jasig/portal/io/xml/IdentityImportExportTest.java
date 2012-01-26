@@ -138,7 +138,7 @@ public class IdentityImportExportTest extends BaseJpaDaoTest {
         
         counter = 0;
         reset(counterStore);
-        when(counterStore.getIncrementIntegerId(anyString())).thenAnswer(new Answer<Integer>() {
+        when(counterStore.getNextId(anyString())).thenAnswer(new Answer<Integer>() {
             @Override
             public Integer answer(InvocationOnMock invocation) throws Throwable {
                 return counter++;

@@ -29,7 +29,7 @@
      | DataSource objects used by the portal should be configured 
      +-->
 
-    <bean id="PortalDb" class="org.apache.commons.dbcp.BasicDataSource">
+    <bean id="PortalDb" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">>
         <qualifier value="PortalDb"/>
         <property name="driverClassName" value="${hibernate.connection.driver_class}" />
         <property name="url" value="${hibernate.connection.url}" />

@@ -171,7 +171,7 @@ public class PooledCounterStore implements ICounterStore {
     /* (non-Javadoc)
      * @see org.jasig.portal.utils.ICounterStore#getIncrementIntegerId(java.lang.String)
      */
-    public int getIncrementIntegerId(final String counterName) {
+    public int getNextId(final String counterName) {
         final CounterPool counterPool = this.counterPools.get(counterName);
         
         synchronized (counterPool) {

@@ -35,7 +35,7 @@ import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.services.GroupService;
-import org.jasig.portal.services.SequenceGenerator;
+import org.jasig.portal.spring.locator.CounterStoreLocator;
 import org.jasig.portal.utils.SqlTransaction;
 
 /**
@@ -1048,7 +1048,7 @@ private static java.lang.String getInsertMemberSql()
  */
 private String getNextKey() throws java.lang.Exception
 {
-    return SequenceGenerator.instance().getNext(GROUP_TABLE);
+    return Integer.toString(CounterStoreLocator.getCounterStore().getNextId(GROUP_TABLE));
 }
 /**
  * @return java.lang.String
