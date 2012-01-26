@@ -20,51 +20,136 @@
 
 -->
 
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <xsl:output method="xml" indent="no"/>
+<xsl:stylesheet
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
+    xmlns:upMsg="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanMessageHelper"
+    xmlns:upElemTitle="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanLayoutElementTitleHelper"
+    xsi:schemaLocation="https://source.jasig.org/schemas/uportal/layout/portal-url ../../../../../xsd/layout/portal-url-4.0.xsd"
+    exclude-result-prefixes="xsi url upMsg upElemTitle"
+    version="1.0">
+    
+  <xsl:import href="../../../../../layout/theme/urlTemplates.xsl" />
+  
+  <xsl:output method="xml" />
+  <xsl:strip-space elements="*"/>
+  
+  <xsl:param name="USER_LANG" />
+  
+  <!-- The following 2 parameters are for URL building. -->
+  <xsl:param name="CURRENT_REQUEST" />
+  <xsl:param name="XSLT_PORTAL_URL_PROVIDER" />
+  
+  <!-- Whether to use tab groups or not -->
+  <xsl:param name="USE_TAB_GROUPS" select="false" />
+  
+  <!-- Maximum number of tabs in a row when no tab groups are used -->
+  <xsl:param name="TAB_WRAP_COUNT" select="4" />
 
-  <xsl:param name="baseActionURL">baseActionURL not set</xsl:param>
+  <!-- Used to build the tabGroupsList:  discover tab groups, add each to the list ONLY ONCE -->
+  <xsl:key name="tabGroupKey" match="layout/folder/folder[@hidden='false' and @type='regular']" use="@tabGroup"/>
     
   <xsl:template match="/">
-      <xsl:apply-templates select="layout"/>
+    <xsl:choose>
+      <xsl:when test="$USE_TAB_GROUPS"><xsl:call-template name="tabGroupLayout" /></xsl:when>
+      <xsl:otherwise><xsl:call-template name="noTabGroupLayout" /></xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
-  
-  <xsl:template match="layout">
-      <xsl:apply-templates select="folder" mode="root"/>
-  </xsl:template>
-  
-  
-  <xsl:template match="folder" mode="root">
-    <xsl:apply-templates select="folder[@type='regular' and @hidden='false']" mode="group"/>
-  </xsl:template>
-  
-  <xsl:template match="folder" mode="group">
-    <xsl:variable name="POSITION" select="position()"/>
-    <xsl:if test="($POSITION - 1) mod 4 = 0">
-        <div class="fl-col-flex4">
-          <xsl:apply-templates select="../folder[@type='regular' and @hidden='false' and position()&lt;$POSITION+4 and (position()=$POSITION or position()&gt;$POSITION)]" mode="tab">
-            <xsl:with-param name="MAX_PREVIOUS_INDEX" select="$POSITION - 1"/>
-          </xsl:apply-templates>
+
+  <xsl:template name="tabGroupLayout">
+    <!-- Tab group layout:
+     |Tabgroup1
+     |   Tab1            Tab2          Tab3         (<== no limit to tab count)
+     |     -portlet1     -portlet4     -portlet6
+     |     -portlet2     -portlet5     -portlet7
+     |     -portlet3                   -...
+     |Tabgroup1
+     |   Tab4            ...
+     |     -portlet8
+     |     -portlet9
+     |     -...
+     |....
+     +-->
+    <xsl:for-each select="/layout/folder/folder[@type='regular' and @hidden='false']"><!-- These are standard tabs -->
+      <!-- Process only the first tab in each Tab Group (avoid duplicates) -->
+      <xsl:if test="self::node()[generate-id() = generate-id(key('tabGroupKey',@tabGroup)[1])]">
+        <xsl:variable name="CURRENT_TAB_GROUP" select="@tabGroup" />
+        <xsl:variable name="TABGROUP_LABEL">
+          <xsl:choose>
+            <xsl:when test="@name='DEFAULT_TABGROUP'"><xsl:value-of select="upMsg:getMessage('navigation.tabgroup.default', $USER_LANG)" /></xsl:when>
+            <xsl:otherwise><xsl:value-of select="upMsg:getMessage($CURRENT_TAB_GROUP, $USER_LANG)" /></xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+        <div class="fl-container-flex">
+          <h2><xsl:value-of select="$TABGROUP_LABEL" /></h2>
+          <xsl:for-each select="/layout/folder/folder[@type='regular' and @hidden='false' and @tabGroup=$CURRENT_TAB_GROUP]">
+            <xsl:apply-templates select="." mode="tab" />
+          </xsl:for-each>
         </div>
-    </xsl:if>
+      </xsl:if>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template name="noTabGroupLayout">
+    <!-- 
+     | Tab layout:
+     | Tab1          Tab2          Tab3          Tab4         (<== limited to $TAB_WRAP_COUNT)
+     |   -portlet1     -portlet5     -portlet7     -portlet8
+     |   -portlet2     -portlet6                   -portlet9
+     |   -portlet3                                 -portlet10
+     |   -portlet4
+     |
+     | Tab5 ....
+     +-->
+
+    <!-- Here we can't use muenchian grouping, because due to some bug key ignores "match" argument, hence calculations using position() are unusable -->
+    <xsl:for-each select="/layout/folder/folder[@type='regular' and @hidden='false']">
+      <xsl:if test="(position() mod $TAB_WRAP_COUNT)=1">
+        <xsl:variable name="ROW_NUM" select="ceiling(position() div $TAB_WRAP_COUNT)" />
+        <div class="fl-container-flex fl-col-flex4">
+          <xsl:for-each select="/layout/folder/folder[@type='regular' and @hidden='false']">
+            <xsl:if test="ceiling(position() div $TAB_WRAP_COUNT) = $ROW_NUM">
+              <xsl:apply-templates select="." mode="tab" />
+            </xsl:if>
+          </xsl:for-each>
+        </div>
+      </xsl:if>
+    </xsl:for-each>
   </xsl:template>
 
   <xsl:template match="folder" mode="tab">
-    <xsl:param name="MAX_PREVIOUS_INDEX">1</xsl:param>
+    <xsl:variable name="tabLinkUrl">
+      <xsl:call-template name="portalUrl">
+        <xsl:with-param name="url">
+          <url:portal-url>
+            <url:layoutId><xsl:value-of select="@ID" /></url:layoutId>
+          </url:portal-url>
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:variable>
     <div class="fl-col">
-        <h2><a href="{$baseActionURL}?uP_root=root&amp;uP_sparam=activeTab&amp;activeTab={$MAX_PREVIOUS_INDEX + position()}"><xsl:value-of select="@name"/></a></h2>
-        <ul>
-            <xsl:apply-templates select="folder" mode="column"/>
-        </ul>
+      <div><a href="{$tabLinkUrl}"><xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/></a></div>
+      <ul><xsl:apply-templates select="folder" mode="column" /></ul>
     </div>
   </xsl:template>
       
   <xsl:template match="folder" mode="column">
 		<xsl:apply-templates select="channel"/>
-  </xsl:template>  
-  
+  </xsl:template>
+
   <xsl:template match="channel">
-		<li><a href="{$baseActionURL}?uP_root={@ID}"><xsl:value-of select="@name"/></a></li>
+    <xsl:variable name="portletLinkUrl">
+      <xsl:call-template name="portalUrl">
+        <xsl:with-param name="url">
+          <url:portal-url>
+            <url:layoutId><xsl:value-of select="@ID" /></url:layoutId>
+            <url:portlet-url state="MAXIMIZED" />
+          </url:portal-url>
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:variable>
+    <li><a href="{$portletLinkUrl}"><xsl:value-of select="@name" /></a></li>
   </xsl:template>
     
 </xsl:stylesheet>
