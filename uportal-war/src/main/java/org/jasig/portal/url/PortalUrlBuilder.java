@@ -22,10 +22,12 @@ package org.jasig.portal.url;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.utils.ConcurrentMapUtils;
 
 import com.google.common.base.Preconditions;
 
@@ -43,7 +45,7 @@ class PortalUrlBuilder extends AbstractUrlBuilder implements IPortalActionUrlBui
     private final IPortletWindowId targetPortletWindowId;
     private final UrlType urlType;
     
-    private final Map<IPortletWindowId, IPortletUrlBuilder> portletUrlBuilders = new ConcurrentHashMap<IPortletWindowId, IPortletUrlBuilder>(); 
+    private final ConcurrentMap<IPortletWindowId, IPortletUrlBuilder> portletUrlBuilders = new ConcurrentHashMap<IPortletWindowId, IPortletUrlBuilder>(); 
     private String location;
     private String renderUrlParamName;
     
@@ -127,12 +129,9 @@ class PortalUrlBuilder extends AbstractUrlBuilder implements IPortalActionUrlBui
     public IPortletUrlBuilder getPortletUrlBuilder(IPortletWindowId portletWindowId) {
         IPortletUrlBuilder portletUrlBuilder;
         
-        synchronized (this.portletUrlBuilders) {
-            portletUrlBuilder = this.portletUrlBuilders.get(portletWindowId);
-            if (portletUrlBuilder == null) {
-                portletUrlBuilder = new PortletUrlBuilder(portletWindowId, this);
-                this.portletUrlBuilders.put(portletWindowId, portletUrlBuilder);
-            }
+        portletUrlBuilder = this.portletUrlBuilders.get(portletWindowId);
+        if (portletUrlBuilder == null) {
+            portletUrlBuilder = ConcurrentMapUtils.putIfAbsent(this.portletUrlBuilders, portletWindowId, new PortletUrlBuilder(portletWindowId, this));
         }
         
         return portletUrlBuilder;

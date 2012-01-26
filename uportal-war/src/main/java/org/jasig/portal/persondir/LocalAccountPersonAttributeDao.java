@@ -156,7 +156,6 @@ public class LocalAccountPersonAttributeDao extends AbstractDefaultAttributePers
         
         //Get the username from the query, if specified
         final IUsernameAttributeProvider usernameAttributeProvider = this.getUsernameAttributeProvider();
-        final String username = usernameAttributeProvider.getUsernameFromQuery(query);
         
         //Execute the query in the subclass
         final List<ILocalAccountPerson> unmappedPeople = localAccountDao.getPeople(queryBuilder);

@@ -125,13 +125,6 @@ protected void expire()
     setExpirationTime(new Date(0));
 }
 /**
- * @throws Throwable
- */
-protected void finalize() throws Throwable
-{
-    super.finalize();
-}
-/**
  * @return java.lang.String
  */
 public String getEntityKey() {

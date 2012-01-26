@@ -30,7 +30,7 @@ import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
  */
 @Deprecated
 public class SequenceGenerator {
-    public static String DEFAULT_COUNTER_NAME = "DEFAULT";
+    public static final String DEFAULT_COUNTER_NAME = "DEFAULT";
     
     private final static SingletonDoubleCheckedCreator<SequenceGenerator> INSTANCE = new SingletonDoubleCheckedCreator<SequenceGenerator>() {
         /* (non-Javadoc)

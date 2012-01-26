@@ -177,24 +177,22 @@ public class DbTest {
     System.out.println();
 
     Statement stmt = null;
-    String tabletypes = "";
-    String typeinfo = "";
+    StringBuilder tabletypes = new StringBuilder();
+    StringBuilder typeinfo = new StringBuilder();
     try {
         stmt = conn.createStatement();
         getTableTypes = dbMetaData.getTableTypes();
         while (getTableTypes.next()) {
-            tabletypes += getTableTypes.getString(1);
-            tabletypes += ",";
+            tabletypes.append(getTableTypes.getString(1)).append(",");
         }
-        tabletypes = tabletypes.substring(0, tabletypes.length() - 1);
+        tabletypes = tabletypes.deleteCharAt(tabletypes.length() - 1);
         System.out.println("Table Types: " + tabletypes);
 
         getTypeInfo = dbMetaData.getTypeInfo();
         while (getTypeInfo.next()) {
-            typeinfo += getTypeInfo.getString(1);
-            typeinfo += ",";
+            typeinfo.append(getTypeInfo.getString(1)).append(",");
         }
-        typeinfo = typeinfo.substring(0, typeinfo.length() - 1);
+        typeinfo = typeinfo.deleteCharAt(typeinfo.length() - 1);
         System.out.println("SQL Types:   " + typeinfo);
     }
     catch (SQLException ex) {

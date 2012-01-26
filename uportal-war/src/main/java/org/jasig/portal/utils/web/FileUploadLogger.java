@@ -19,6 +19,8 @@
 
 package org.jasig.portal.utils.web;
 
+import java.util.Arrays;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.fileupload.FileItemHeaders;
@@ -54,7 +56,7 @@ public class FileUploadLogger {
                 
                 final FileItemHeaders headers = next.getHeaders();
                 if (headers != null) {
-                    System.out.println("\t" + Iterators.toArray(headers.getHeaderNames(), String.class));
+                    System.out.println("\t" + Arrays.toString(Iterators.toArray(headers.getHeaderNames(), String.class)));
                 }
             }
         }

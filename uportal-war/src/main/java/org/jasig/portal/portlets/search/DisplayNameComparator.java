@@ -19,6 +19,7 @@
 
 package org.jasig.portal.portlets.search;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 import org.jasig.services.persondir.IPersonAttributes;
@@ -29,7 +30,8 @@ import org.jasig.services.persondir.IPersonAttributes;
  * @author Jen Bourey, jbourey@unicon.net
  * @version $Revision$
  */
-public class DisplayNameComparator implements Comparator<IPersonAttributes> {
+public class DisplayNameComparator implements Comparator<IPersonAttributes>, Serializable {
+    private static final long serialVersionUID = 1L;
 
     @Override
     public int compare(IPersonAttributes o1, IPersonAttributes o2) {

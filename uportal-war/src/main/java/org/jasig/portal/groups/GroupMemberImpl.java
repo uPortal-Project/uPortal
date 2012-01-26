@@ -43,7 +43,7 @@ public abstract class GroupMemberImpl implements IGroupMember
  * that underlies the <code>IGroupMember</code>.
  */
     private EntityIdentifier underlyingEntityIdentifier;
-    private static java.lang.Class defaultEntityType;
+    private static volatile java.lang.Class defaultEntityType;
 
 /*
  * The Set of keys to groups that contain this <code>IGroupMember</code>.

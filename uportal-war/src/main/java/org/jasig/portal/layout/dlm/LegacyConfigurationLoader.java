@@ -103,7 +103,7 @@ public class LegacyConfigurationLoader implements ConfigurationLoader {
             throw new IllegalArgumentException("Could parse dlm configuration resource "+ this.configurationFile, e);
         }
         
-        final NodeList propertyNodes = doc.getElementsByTagName( "dlm:property" );
+//        final NodeList propertyNodes = doc.getElementsByTagName( "dlm:property" );
         
         final NodeList fragmentNodes = doc.getElementsByTagName( "dlm:fragment" );
         final List<FragmentDefinition> localFragments = this.getFragments(fragmentNodes);

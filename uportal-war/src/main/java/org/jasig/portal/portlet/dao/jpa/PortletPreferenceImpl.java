@@ -68,7 +68,7 @@ import org.jasig.portal.portlet.om.IPortletPreference;
     )
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class PortletPreferenceImpl implements IPortletPreference {
+public class PortletPreferenceImpl implements IPortletPreference, Cloneable {
     private static final String NULL_MARKER = "NULL";
 
     @Id

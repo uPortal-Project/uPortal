@@ -45,13 +45,15 @@ public class CompositeEntityIdentifier extends org.jasig.portal.EntityIdentifier
 implements IGroupConstants
 {
     // static vars:
-    protected static String separator;
+    protected static final String separator;
     
     static {
+        String sep;
         try 
-            { separator = GroupServiceConfiguration.getConfiguration().getNodeSeparator(); }
+            { sep = GroupServiceConfiguration.getConfiguration().getNodeSeparator(); }
         catch (Exception ex) 
-            { separator = IGroupConstants.NODE_SEPARATOR; }
+            { sep = IGroupConstants.NODE_SEPARATOR; }
+        separator = sep;
     }
     
     // instance vars:

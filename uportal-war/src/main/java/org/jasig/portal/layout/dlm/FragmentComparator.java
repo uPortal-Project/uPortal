@@ -31,28 +31,19 @@ import java.util.Comparator;
  * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
-   
-public class FragmentComparator
-    implements Comparator
-{
+
+public class FragmentComparator implements Comparator {
     public static final String RCS_ID = "@(#) $Header$";
 
-    public int compare(Object obj1, Object obj2)
-    {
+    public int compare(Object obj1, Object obj2) {
         FragmentDefinition frag1 = (FragmentDefinition) obj1;
         FragmentDefinition frag2 = (FragmentDefinition) obj2;
-        
-        if( frag1.getPrecedence() == frag2.getPrecedence() )
-        {
+
+        if (frag1.getPrecedence() == frag2.getPrecedence()) {
             return frag1.getIndex() - frag2.getIndex();
         }
-        else
-        {
-            return (int)(frag2.getPrecedence() - frag1.getPrecedence());
+        else {
+            return (int) (frag2.getPrecedence() - frag1.getPrecedence());
         }
-    }
-    public boolean equals(Object obj)
-    {
-        return obj.equals (this);
     }
 }

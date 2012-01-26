@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.groups.IEntityGroup;
@@ -442,7 +441,7 @@ public class PermissionsRESTController {
         return perm;
     }
     
-    protected class UniquePermission {
+    protected static final class UniquePermission {
         
         private final String owner;
         private final String activity;
@@ -471,28 +470,48 @@ public class PermissionsRESTController {
         public boolean isInherited() {
             return inherited;
         }
-        
+
         @Override
-        public boolean equals(Object obj) {
-            
-            if ( !(obj instanceof JsonPermission )) {
-                return false;
-            }
-            
-            UniquePermission permission = (UniquePermission) obj;
-            if (this == permission) {
-                return true;
-            }
-            
-            return new EqualsBuilder()
-                .append(this.owner, permission.owner)
-                .append(this.activity, permission.activity)
-                .append(this.identifier, permission.identifier)
-                .isEquals();
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((this.activity == null) ? 0 : this.activity.hashCode());
+            result = prime * result + ((this.identifier == null) ? 0 : this.identifier.hashCode());
+            result = prime * result + (this.inherited ? 1231 : 1237);
+            result = prime * result + ((this.owner == null) ? 0 : this.owner.hashCode());
+            return result;
         }
 
-
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            UniquePermission other = (UniquePermission) obj;
+            if (this.activity == null) {
+                if (other.activity != null)
+                    return false;
+            }
+            else if (!this.activity.equals(other.activity))
+                return false;
+            if (this.identifier == null) {
+                if (other.identifier != null)
+                    return false;
+            }
+            else if (!this.identifier.equals(other.identifier))
+                return false;
+            if (this.inherited != other.inherited)
+                return false;
+            if (this.owner == null) {
+                if (other.owner != null)
+                    return false;
+            }
+            else if (!this.owner.equals(other.owner))
+                return false;
+            return true;
+        }
     }
-    
-
 }

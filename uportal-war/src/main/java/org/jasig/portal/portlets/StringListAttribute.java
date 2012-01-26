@@ -61,20 +61,30 @@ public class StringListAttribute implements Serializable {
         this.value = values;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(Object anObject) {
-        return this.value == anObject || (this.value != null && this.value.equals(anObject));
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
-        return this.value != null ? this.value.hashCode() : 0;
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.value == null) ? 0 : this.value.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        StringListAttribute other = (StringListAttribute) obj;
+        if (this.value == null) {
+            if (other.value != null)
+                return false;
+        }
+        else if (!this.value.equals(other.value))
+            return false;
+        return true;
     }
 
     /* (non-Javadoc)

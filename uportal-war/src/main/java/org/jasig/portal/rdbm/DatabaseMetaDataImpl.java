@@ -67,7 +67,6 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
     private static final Log LOG = LogFactory.getLog(DatabaseMetaDataImpl.class);
 
     /** Define the oracle TO_DATE format */
-    private static final SimpleDateFormat TO_DATE_FORMAT = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
 
     //Define the different join queries we know about with the
     //appropriately typed JoinQueryString implementation.
@@ -224,8 +223,9 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
         final StringBuffer sqlTS = new StringBuffer();
 
         if (useToDate) {
+            final SimpleDateFormat oracleToDate = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
             sqlTS.append("TO_DATE('");
-            sqlTS.append(TO_DATE_FORMAT.format(new Date(date)));
+            sqlTS.append(oracleToDate.format(new Date(date)));
             sqlTS.append("', 'YYYY MM DD HH24:MI:SS')");
         }
         else if (useTSWrapper) {

@@ -66,7 +66,7 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
     private String defaultLayoutNodeIdExpression = "/layout/folder/folder[@type='regular' and @hidden!='true'][$defaultTab]/@ID";
-    private String tabIdExpression = "/layout/folder/folder[@ID=$nodeId or descendant::node()[@ID=$nodeId]]/@ID";
+//    private String tabIdExpression = "/layout/folder/folder[@ID=$nodeId or descendant::node()[@ID=$nodeId]]/@ID";
     private String defaultTabParameter = "defaultTab";
     
     private IUserInstanceManager userInstanceManager;

@@ -276,7 +276,7 @@ public class SearchPortletController {
         return "UniversalityMobile".equals(themeName);
     }
     
-    public class SearchResultWrapper {
+    public static final class SearchResultWrapper {
         private final String portletUrl;
         private final String externalUrl;
         private final String title;

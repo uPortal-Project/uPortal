@@ -32,7 +32,7 @@ public class ParameterMapTest {
     public void testParameterMapClone() {
         final ParameterMap m1 = new ParameterMap();
         m1.put("foo", new String[] {"b1", "b2"});
-        m1.put("bar", (String[])null); 
+        m1.put("bar", new String[0]); 
         
         final ParameterMap m2 = new ParameterMap(m1);
         

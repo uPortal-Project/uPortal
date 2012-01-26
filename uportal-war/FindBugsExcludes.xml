@@ -6,4 +6,10 @@
     <Match>
         <Class name="~.*_" />
     </Match>
+    <Match>
+        <Class name="~org\.jasig\.portal\.spring\.locator\..*Locator" />
+    </Match>
+    <Match>
+       <Bug code="EQ_UNUSUAL" />
+     </Match>
 </FindBugsFilter>

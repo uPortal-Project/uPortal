@@ -875,7 +875,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         }
     }
     
-    private final class ErrorReportingCallable<T> implements Callable<T> {
+    private static final class ErrorReportingCallable<T> implements Callable<T> {
         private final Queue<? extends FutureHolder<?>> futures;
         private final AtomicBoolean failed;
         private final Callable<T> delegate;
