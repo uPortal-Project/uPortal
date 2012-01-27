@@ -21,8 +21,8 @@
 -->
 
 <xs:schema
-    xmlns="https://source.jasig.org/schemas/uportal/io/permission-owner"
-    targetNamespace="https://source.jasig.org/schemas/uportal/io/permission-owner"
+    xmlns="https://source.jasig.org/schemas/uportal/io/event-aggregation"
+    targetNamespace="https://source.jasig.org/schemas/uportal/io/event-aggregation"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:up="https://source.jasig.org/schemas/uportal"
@@ -39,6 +39,8 @@
                     <xs:sequence>
                         <xs:element name="aggregated-group-config" type="externalAggregatedGroupConfig" minOccurs="0" maxOccurs="unbounded"/>
                         <xs:element name="aggregated-interval-config" type="externalAggregatedIntervalConfig" minOccurs="0" maxOccurs="unbounded"/>
+                        <xs:element name="quarter-details" type="externalQuarterDetails" minOccurs="0" maxOccurs="4"/>
+                        <xs:element name="term-details" type="externalTermDetails" minOccurs="0" maxOccurs="unbounded"/>
                     </xs:sequence>
                     
                     <xs:attribute name="version" type="io:version40Type" use="required"/>
@@ -54,6 +56,14 @@
             <xs:selector xpath="aggregated-interval-config"/>
             <xs:field xpath="aggregator-type"/>
         </xs:unique>
+        <xs:unique name="unique-quarter-details">
+            <xs:selector xpath="quarter-details"/>
+            <xs:field xpath="id"/>
+        </xs:unique>
+        <xs:unique name="unique-term-details">
+            <xs:selector xpath="term-details"/>
+            <xs:field xpath="name"/>
+        </xs:unique>
     </xs:element>
 
     <xs:complexType name="externalAggregatedGroupConfig">
@@ -67,8 +77,8 @@
     <xs:complexType name="externalAggregatedIntervalConfig">
         <xs:sequence>
             <xs:element name="aggregator-type" type="xs:string"/>
-            <xs:element name="included-interval" type="xs:string" minOccurs="0"  maxOccurs="unbounded"/>
-            <xs:element name="excluded-interval" type="xs:string" minOccurs="0"  maxOccurs="unbounded"/>
+            <xs:element name="included-interval" type="externalAggregationInterval" minOccurs="0"  maxOccurs="unbounded"/>
+            <xs:element name="excluded-interval" type="externalAggregationInterval" minOccurs="0"  maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
     
@@ -76,6 +86,43 @@
         <xs:sequence>
             <xs:element name="groupService" type="xs:string"/>
             <xs:element name="groupName" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="externalAggregationInterval">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="MINUTE"/>
+            <xs:enumeration value="FIVE_MINUTE"/>
+            <xs:enumeration value="HOUR"/>
+            <xs:enumeration value="DAY"/>
+            <xs:enumeration value="WEEK"/>
+            <xs:enumeration value="MONTH"/>
+            <xs:enumeration value="CALENDAR_QUARTER"/>
+            <xs:enumeration value="ACADEMIC_TERM"/>
+            <xs:enumeration value="YEAR"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:complexType name="externalQuarterDetails">
+        <xs:sequence>
+            <xs:element name="id" type="externalQuarterId" />
+            <xs:element name="start" type="xs:string" />
+            <xs:element name="end" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:simpleType name="externalQuarterId">
+        <xs:restriction base="xs:int">
+            <xs:minInclusive value="0" />
+            <xs:maxExclusive value="3" />
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:complexType name="externalTermDetails">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string" />
+            <xs:element name="start" type="xs:date" />
+            <xs:element name="end" type="xs:date" />
         </xs:sequence>
     </xs:complexType>
 </xs:schema>
