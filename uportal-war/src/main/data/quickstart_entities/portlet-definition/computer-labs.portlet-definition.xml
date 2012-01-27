@@ -38,4 +38,8 @@
   </portlet-descriptor>
     <category>Information</category>
     <group>Everyone</group>
+    <parameter>
+        <name>mobileIconUrl</name>
+        <value>/media/skins/icons/mobile/computer-labs.png</value>
+    </parameter>
 </portlet-definition>
