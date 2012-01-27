@@ -29,7 +29,8 @@
         <property name="location" value="classpath:/dataSource.properties" />
     </bean>
 
-    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+    <bean id="PortalDb" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <qualifier value="PortalDb"/>
         <property name="driverClassName" value="${hibernate.connection.driver_class}" />
         <property name="url" value="${hibernate.connection.url}" />
         <property name="username" value="${hibernate.connection.username}" />
@@ -45,17 +46,33 @@
     </bean>
     
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="dataSource" />
+        <qualifier value="PortalDb"/>
+        <property name="dataSource" ref="PortalDb" />
     </bean>
-
-    <bean id="pooledCounterStore" class="org.jasig.portal.utils.PooledCounterStore">
-        <property name="dataSource" ref="dataSource" />
+    <bean id="transactionOperations" class="org.springframework.transaction.support.TransactionTemplate">
+        <qualifier value="PortalDb"/>
         <property name="transactionManager" ref="transactionManager" />
     </bean>
+    <bean id="jdbcOperations" class="org.springframework.jdbc.core.JdbcTemplate">
+        <qualifier value="PortalDb"/>
+        <property name="dataSource" ref="PortalDb" />
+    </bean>
+    
+    
+    <bean id="hibernateStyleCounterStoreOne" class="org.jasig.portal.utils.HibernateStyleCounterStore">
+        <qualifier value="one"/>
+        <property name="jdbcOperations" ref="jdbcOperations" />
+        <property name="transactionOperations" ref="transactionOperations" />
+        <property name="incrementSize" value="3" />
+        <property name="initialValue" value="1" />
+    </bean>
 
-    <bean id="pooledCounterStoreTwo" class="org.jasig.portal.utils.PooledCounterStore">
-        <property name="dataSource" ref="dataSource" />
-        <property name="transactionManager" ref="transactionManager" />
+    <bean id="hibernateStyleCounterStoreTwo" class="org.jasig.portal.utils.HibernateStyleCounterStore">
+        <qualifier value="two"/>
+        <property name="jdbcOperations" ref="jdbcOperations" />
+        <property name="transactionOperations" ref="transactionOperations" />
+        <property name="incrementSize" value="3" />
+        <property name="initialValue" value="1" />
     </bean>
 </beans>
 
