@@ -19,17 +19,33 @@
 
 package org.jasig.portal.utils;
 
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
+
+import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.MySQL5InnoDBDialect;
-import org.hibernate.service.jdbc.dialect.internal.BasicDialectResolver;
+import org.hibernate.service.jdbc.dialect.internal.AbstractDialectResolver;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class Mysql5DialectResolver extends BasicDialectResolver {
+public class PortalDialectResolver extends AbstractDialectResolver {
     private static final long serialVersionUID = 1L;
+    
+    protected final Dialect resolveDialectInternal(DatabaseMetaData metaData) throws SQLException {
+        final String databaseName = metaData.getDatabaseProductName();
+        final int databaseMajorVersion = metaData.getDatabaseMajorVersion();
+        final int databaseMinorVersion = metaData.getDatabaseMinorVersion();
+        
+        if ("MySQL".equals(databaseName) && 5 == databaseMajorVersion) {
+            return new MySQL5InnoDBDialect();
+        }
+        
+        if ("PostgreSQL".equals(databaseName) && 8 == databaseMajorVersion && databaseMinorVersion <= 1) {
+            return new PostgreSQL81Dialect();
+        }
 
-    public Mysql5DialectResolver() {
-        super("MySQL", 5, MySQL5InnoDBDialect.class);
+        return null;
     }
 }
