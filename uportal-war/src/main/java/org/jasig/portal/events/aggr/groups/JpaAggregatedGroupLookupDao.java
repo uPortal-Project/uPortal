@@ -100,18 +100,9 @@ public class JpaAggregatedGroupLookupDao extends BaseJpaDao implements Aggregate
             }
         });
     }
-
+    
     @Override
-    public AggregatedGroupMapping getGroupMapping(final String portalGroupKey) {
-        final IEntityGroup group = compositeGroupService.findGroup(portalGroupKey);
-        if (group == null) {
-            logger.info("No group found for key {}, no aggregate group mapping will be done and the group key will be ignored.", portalGroupKey);
-            return null;
-        }
-        
-        final String groupService = group.getServiceName().toString();
-        final String groupName = group.getName();
-
+    public AggregatedGroupMapping getGroupMapping(final String groupService, final String groupName) {
         final TypedQuery<AggregatedGroupMappingImpl> query = this.createCachedQuery(this.findGroupMappingByServiceAndNameQuery);
         query.setParameter(this.groupServiceParameter, groupService);
         query.setParameter(this.groupNameParameter, groupName);
@@ -127,10 +118,24 @@ public class JpaAggregatedGroupLookupDao extends BaseJpaDao implements Aggregate
                 final AggregatedGroupMappingImpl aggregatedGroupMapping = new AggregatedGroupMappingImpl(groupService, groupName);
                 entityManager.persist(aggregatedGroupMapping);
                 
-                logger.debug("Created {} for key {}", aggregatedGroupMapping, portalGroupKey);
+                logger.debug("Created {}", aggregatedGroupMapping);
                 
                 return aggregatedGroupMapping;
             }
         });
+    }
+
+    @Override
+    public AggregatedGroupMapping getGroupMapping(final String portalGroupKey) {
+        final IEntityGroup group = compositeGroupService.findGroup(portalGroupKey);
+        if (group == null) {
+            logger.info("No group found for key {}, no aggregate group mapping will be done and the group key will be ignored.", portalGroupKey);
+            return null;
+        }
+        
+        final String groupService = group.getServiceName().toString();
+        final String groupName = group.getName();
+        
+        return this.getGroupMapping(groupService, groupName);
     }
 }

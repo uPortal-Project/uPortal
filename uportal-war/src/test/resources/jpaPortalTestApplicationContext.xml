@@ -35,6 +35,7 @@
     <bean id="multilingualMessageDao" class="org.jasig.portal.i18n.dao.jpa.JpaMessageDao" />
     <bean id="localAccountDao" class="org.jasig.portal.persondir.dao.jpa.JpaLocalAccountDaoImpl" />
     <bean id="fragmentDefinitionDao" class="org.jasig.portal.layout.dlm.FragmentDefinitionDao" />
+    <bean id="permissionOwnerDao" class="org.jasig.portal.permission.dao.jpa.JpaPermissionOwnerDao" />
     <bean id="portletTypeDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletTypeDao" />
     <bean id="portletDefinitionDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletDefinitionDao" />
     <bean id="portletEntityDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletEntityDao" />

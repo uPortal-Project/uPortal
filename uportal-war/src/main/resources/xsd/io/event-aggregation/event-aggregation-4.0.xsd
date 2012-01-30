@@ -39,8 +39,8 @@
                     <xs:sequence>
                         <xs:element name="aggregated-group-config" type="externalAggregatedGroupConfig" minOccurs="0" maxOccurs="unbounded"/>
                         <xs:element name="aggregated-interval-config" type="externalAggregatedIntervalConfig" minOccurs="0" maxOccurs="unbounded"/>
-                        <xs:element name="quarter-details" type="externalQuarterDetails" minOccurs="0" maxOccurs="4"/>
-                        <xs:element name="term-details" type="externalTermDetails" minOccurs="0" maxOccurs="unbounded"/>
+                        <xs:element name="quarter-details" type="externalQuarterDetail" minOccurs="0" maxOccurs="4"/>
+                        <xs:element name="term-details" type="externalTermDetail" minOccurs="0" maxOccurs="unbounded"/>
                     </xs:sequence>
                     
                     <xs:attribute name="version" type="io:version40Type" use="required"/>
@@ -66,20 +66,32 @@
         </xs:unique>
     </xs:element>
 
-    <xs:complexType name="externalAggregatedGroupConfig">
+    <xs:complexType name="externalAggregatedDimensionConfig" abstract="true">
         <xs:sequence>
             <xs:element name="aggregator-type" type="xs:string"/>
-            <xs:element name="included-group" type="externalAggregatedGroupMapping" minOccurs="0"  maxOccurs="unbounded"/>
-            <xs:element name="excluded-group" type="externalAggregatedGroupMapping" minOccurs="0"  maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="externalAggregatedGroupConfig">
+        <xs:complexContent>
+            <xs:extension base="externalAggregatedDimensionConfig">
+                <xs:sequence>
+                    <xs:element name="include" type="externalAggregatedGroupMapping" minOccurs="0"  maxOccurs="unbounded"/>
+                    <xs:element name="exclude" type="externalAggregatedGroupMapping" minOccurs="0"  maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <xs:complexType name="externalAggregatedIntervalConfig">
-        <xs:sequence>
-            <xs:element name="aggregator-type" type="xs:string"/>
-            <xs:element name="included-interval" type="externalAggregationInterval" minOccurs="0"  maxOccurs="unbounded"/>
-            <xs:element name="excluded-interval" type="externalAggregationInterval" minOccurs="0"  maxOccurs="unbounded"/>
-        </xs:sequence>
+        <xs:complexContent>
+            <xs:extension base="externalAggregatedDimensionConfig">
+                <xs:sequence>
+                    <xs:element name="include" type="externalAggregationInterval" minOccurs="0"  maxOccurs="unbounded"/>
+                    <xs:element name="exclude" type="externalAggregationInterval" minOccurs="0"  maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
     
     <xs:complexType name="externalAggregatedGroupMapping">
@@ -103,7 +115,7 @@
         </xs:restriction>
     </xs:simpleType>
     
-    <xs:complexType name="externalQuarterDetails">
+    <xs:complexType name="externalQuarterDetail">
         <xs:sequence>
             <xs:element name="id" type="externalQuarterId" />
             <xs:element name="start" type="xs:string" />
@@ -114,11 +126,11 @@
     <xs:simpleType name="externalQuarterId">
         <xs:restriction base="xs:int">
             <xs:minInclusive value="0" />
-            <xs:maxExclusive value="3" />
+            <xs:maxInclusive value="3" />
         </xs:restriction>
     </xs:simpleType>
     
-    <xs:complexType name="externalTermDetails">
+    <xs:complexType name="externalTermDetail">
         <xs:sequence>
             <xs:element name="name" type="xs:string" />
             <xs:element name="start" type="xs:date" />

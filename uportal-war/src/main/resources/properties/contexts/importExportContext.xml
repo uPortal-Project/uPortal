@@ -46,6 +46,7 @@
     <bean id="fragmentLayoutPortalDataType" class="org.jasig.portal.io.xml.layout.FragmentLayoutPortalDataType"/>
     <bean id="layoutPortalDataType" class="org.jasig.portal.io.xml.layout.LayoutPortalDataType"/>
     <bean id="fragmentDefinitionPortalDataType" class="org.jasig.portal.io.xml.dlm.FragmentDefinitionPortalDataType"/>
+    <bean id="eventAggregationConfigurationPortalDataType" class="org.jasig.portal.io.xml.eventaggr.EventAggregationConfigurationPortalDataType" />
     
     <!--
      | Import order for portal data types 
@@ -67,6 +68,7 @@
         <ref bean="fragmentDefinitionPortalDataType" />
         <ref bean="fragmentLayoutPortalDataType" />
         <ref bean="layoutPortalDataType" />
+        <ref bean="eventAggregationConfigurationPortalDataType" />
     </util:list>
     
     <util:set id="exportAllPortalDataTypes">
@@ -82,6 +84,7 @@
         <ref bean="profilePortalDataType" />
         <ref bean="stylesheetDescriptorPortalDataType" />
         <ref bean="userPortalDataType" />
+        <ref bean="eventAggregationConfigurationPortalDataType" />
     </util:set>
 
     <!-- 
@@ -153,6 +156,12 @@
         <property name="schema" value="classpath:/xsd/io/permission-owner/permission-owner-4.0.xsd" />
         <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/permission-owner https://source.jasig.org/schemas/uportal/io/permission-owner/permission-owner-4.0.xsd" />
     </bean>
+    <bean id="eventAggregationConfigurationImporterExporter" class="org.jasig.portal.io.xml.eventaggr.EventAggregationConfigurationImporterExporter">
+        <property name="contextPath" value="org.jasig.portal.io.xml.eventaggr" />
+        <property name="schema" value="classpath:/xsd/io/event-aggregation/event-aggregation-4.0.xsd" />
+        <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/event-aggregation https://source.jasig.org/schemas/uportal/io/event-aggregation/event-aggregation-4.0.xsd" />
+    </bean>
+    
     
     <!-- 
      | Legacy Import classes for portal entities
