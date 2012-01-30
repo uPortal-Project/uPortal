@@ -153,6 +153,49 @@
         <echo message="Finished initializing database" />
     </target>
 
+    <target name="db-ddl" depends="prodPrompt" description="Create a SQL script of commands to drop and create the uPortal database">
+    	<fail unless="ddlFile">
+            You must specify a 'ddlFile' parameter (-DddlFile={uPortal.ddl})
+        </fail>
+
+    	<tempfile property="db-ddl-file" destdir="${basedir}/target" prefix="db-ddl." suffix=".sql"/>
+		<tempfile property="db-hibernate-portal-ddl-file" destdir="${basedir}/target" prefix="db-hibernate-portal-ddl." suffix=".sql"/>
+        <tempfile property="db-hibernate-aggr-events-ddl-file" destdir="${basedir}/target" prefix="db-hibernate-aggr-events-ddl." suffix=".sql"/>
+        <tempfile property="db-hibernate-raw-events-ddl-file" destdir="${basedir}/target" prefix="db-hibernate-raw-events-ddl." suffix=".sql"/>
+
+        <echo message="Creating database DDL and writing to ${ddlFile}" />
+    	<up-shell-batch>
+    	    <mkdir dir="${basedir}/target" />
+            <antcall target="db">
+                <param name="scriptfile" value="${db-ddl-file}" />
+        	</antcall>
+    		
+            <antcall target="db-hibernate-portal">
+    			<param name="export" value="false" />
+                <param name="outputFile" value="${db-hibernate-portal-ddl-file}" />
+            </antcall>
+            
+            <antcall target="db-hibernate-raw-events">
+                <param name="export" value="false" />
+                <param name="outputFile" value="${db-hibernate-raw-events-ddl-file}" />
+            </antcall>
+                    
+            <antcall target="db-hibernate-aggr-events">
+                <param name="export" value="false" />
+                <param name="outputFile" value="${db-hibernate-aggr-events-ddl-file}" />
+            </antcall>
+        </up-shell-batch>
+        
+        <concat destfile="${ddlFile}" fixlastline="yes">
+            <fileset file="${db-ddl-file}" />
+            <fileset file="${db-hibernate-portal-ddl-file}" />
+            <fileset file="${db-hibernate-raw-events-ddl-file}" />
+            <fileset file="${db-hibernate-aggr-events-ddl-file}" />
+        </concat>
+    	
+        <echo message="Finished creating database DDL: ${ddlFile}" />
+    </target>
+
     <target name="db-hibernate" depends="prodPrompt" description="Drops then creates Hibernate managed tables">
         <up-shell-batch>
             <antcall target="db-hibernate-portal" />
@@ -283,7 +326,7 @@ catch (Exception e) {
         </antcall>
     </target>
 
-    <target name="db" depends="prodPrompt" description="Loads database tables and data">
+    <target name="db" depends="prodPrompt" description="Loads legacy database tables and data. See: initdb">
         <property name="tablefile" value="/properties/db/tables.xml" />
         <property name="datafile" value="/properties/db/data.xml" />
         <property name="scriptfile" value="null" />
