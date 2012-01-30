@@ -20,7 +20,9 @@
 package org.jasig.portal.events.aggr.dao.jpa;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -63,7 +65,9 @@ public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEve
     private static final Class<IPortalEventAggregator> DEFAULT_AGGREGATOR_TYPE = IPortalEventAggregator.class; 
     
     private CriteriaQuery<EventAggregatorStatusImpl> findEventAggregatorStatusByProcessingTypeQuery;
+    private CriteriaQuery<AggregatedGroupConfigImpl> findAllGroupConfigsQuery;
     private CriteriaQuery<AggregatedGroupConfigImpl> findGroupConfigForAggregatorQuery;
+    private CriteriaQuery<AggregatedIntervalConfigImpl> findAllIntervalConfigsQuery;
     private CriteriaQuery<AggregatedIntervalConfigImpl> findIntervalConfigForAggregatorQuery;
     private CriteriaQuery<QuarterDetailImpl> findAllQuarterDetailsQuery;
     private CriteriaQuery<AcademicTermDetailImpl> findAllAcademicTermDetailsQuery;
@@ -109,6 +113,18 @@ public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEve
             }
         });
         
+        this.findAllGroupConfigsQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<AggregatedGroupConfigImpl>>() {
+            @Override
+            public CriteriaQuery<AggregatedGroupConfigImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<AggregatedGroupConfigImpl> criteriaQuery = cb.createQuery(AggregatedGroupConfigImpl.class);
+                final Root<AggregatedGroupConfigImpl> entityRoot = criteriaQuery.from(AggregatedGroupConfigImpl.class);
+                criteriaQuery.select(entityRoot);
+                entityRoot.fetch(AggregatedGroupConfigImpl_.excludedGroups, JoinType.LEFT);
+                entityRoot.fetch(AggregatedGroupConfigImpl_.includedGroups, JoinType.LEFT);
+                return criteriaQuery;
+            }
+        });
+        
         
         this.findGroupConfigForAggregatorQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<AggregatedGroupConfigImpl>>() {
             @Override
@@ -121,6 +137,20 @@ public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEve
                 criteriaQuery.where(
                     cb.equal(entityRoot.get(AggregatedGroupConfigImpl_.aggregatorType), aggregatorTypeParameter)
                 );
+                
+                return criteriaQuery;
+            }
+        });
+        
+        
+        this.findAllIntervalConfigsQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<AggregatedIntervalConfigImpl>>() {
+            @Override
+            public CriteriaQuery<AggregatedIntervalConfigImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<AggregatedIntervalConfigImpl> criteriaQuery = cb.createQuery(AggregatedIntervalConfigImpl.class);
+                final Root<AggregatedIntervalConfigImpl> entityRoot = criteriaQuery.from(AggregatedIntervalConfigImpl.class);
+                criteriaQuery.select(entityRoot);
+                entityRoot.fetch(AggregatedIntervalConfigImpl_.excludedIntervals, JoinType.LEFT);
+                entityRoot.fetch(AggregatedIntervalConfigImpl_.includedIntervals, JoinType.LEFT);
                 
                 return criteriaQuery;
             }
@@ -219,6 +249,14 @@ public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEve
         
         return groupConfig;
     }
+    
+
+    @Override
+    public Set<AggregatedGroupConfig> getAggregatedGroupConfigs() {
+        final TypedQuery<AggregatedGroupConfigImpl> query = this.createCachedQuery(this.findAllGroupConfigsQuery);
+        final List<AggregatedGroupConfigImpl> results = query.getResultList();
+        return new LinkedHashSet<AggregatedGroupConfig>(results);
+    }
 
     @Override
     public AggregatedGroupConfig getAggregatedGroupConfig(Class<? extends IPortalEventAggregator> aggregatorType) {
@@ -245,6 +283,15 @@ public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEve
     @Transactional(value="aggrEventsTransactionManager")
     public void deleteAggregatedGroupConfig(AggregatedGroupConfig aggregatedGroupConfig) {
         this.entityManager.remove(aggregatedGroupConfig);        
+    }
+    
+
+
+    @Override
+    public Set<AggregatedIntervalConfig> getAggregatedIntervalConfigs() {
+        final TypedQuery<AggregatedIntervalConfigImpl> query = this.createCachedQuery(this.findAllIntervalConfigsQuery);
+        final List<AggregatedIntervalConfigImpl> results = query.getResultList();
+        return new LinkedHashSet<AggregatedIntervalConfig>(results);
     }
 
     @Override

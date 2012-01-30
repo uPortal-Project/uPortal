@@ -580,6 +580,7 @@
                     <bindingDirectory>src/main/binding</bindingDirectory>
                     <schemaDirectory>src/main/resources/xsd</schemaDirectory>
                     <schemaIncludes>
+                        <include>io/event-aggregation/*.xsd</include>
                         <include>io/portlet-definition/*.xsd</include>
                         <include>io/portlet-type/*.xsd</include>
                         <include>io/stylesheet-descriptor/*.xsd</include>

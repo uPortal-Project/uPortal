@@ -57,5 +57,17 @@ public interface BaseAggregatedDimensionConfig<D> {
      * If not empty only dimensions listed in this set will included in aggregation.
      */
     Set<D> getExcluded();
+    
+    /**
+     * @return If this dimension equals another, equality is based solely on {@link #getAggregatorType()}
+     */
+    @Override
+    boolean equals(Object o);
+    
+    /**
+     * @return The hash code of this dimension, the hash is based solely on {@link #getAggregatorType()}
+     */
+    @Override
+    int hashCode();
 
 }

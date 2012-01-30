@@ -28,16 +28,21 @@
                         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
                         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
                         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
-                        
+
+    <!-- 
+     |  Stylesheet Descriptor Beans
+     +-->
     <bean class="org.jasig.portal.io.xml.ssd.StylesheetDescriptorPortalDataType" />
     <bean id="stylesheetDescriptorImporterExporter" class="org.jasig.portal.io.xml.ssd.StylesheetDescriptorImporterExporter">
         <property name="contextPath" value="org.jasig.portal.io.xml.ssd" />
         <property name="schema" value="classpath:/xsd/io/stylesheet-descriptor/stylesheet-descriptor-4.0.xsd" />
         <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor/stylesheet-descriptor-4.0.xsd" />
     </bean>
-    <bean id="stylesheetDescriptorDao" class="org.jasig.portal.layout.dao.jpa.JpaStylesheetDescriptorDao" />
 
     
+    <!-- 
+     |  User Beans
+     +-->
     <bean class="org.jasig.portal.io.xml.user.UserPortalDataType" />
     <bean id="userImporterExporter" class="org.jasig.portal.io.xml.user.UserImporterExporter">
         <property name="contextPath" value="org.jasig.portal.io.xml.user" />
@@ -53,14 +58,21 @@
         <qualifier value="org.jasig.portal.RDBMUserIdentityStore.userLockCache" />
     </bean>
     
+    
+    <!-- 
+     |  Permission Owner Beans
+     +-->
     <bean class="org.jasig.portal.io.xml.permission.PermissionOwnerPortalDataType" />
     <bean id="permissionOwnerImporterExporter" class="org.jasig.portal.io.xml.permission.PermissionOwnerImporterExporter">
         <property name="contextPath" value="org.jasig.portal.io.xml.permission" />
         <property name="schema" value="classpath:/xsd/io/permission-owner/permission-owner-4.0.xsd" />
         <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/permission-owner https://source.jasig.org/schemas/uportal/io/permission-owner/permission-owner-4.0.xsd" />
     </bean>
-    <bean id="permissionOwnerDao" class="org.jasig.portal.permission.dao.jpa.JpaPermissionOwnerDao" />
     
+    
+    <!-- 
+     |  Fragment Definition Beans
+     +-->
     <bean id="fragmentDefinitionPortalDataType" class="org.jasig.portal.io.xml.dlm.FragmentDefinitionPortalDataType" />
     <bean id="fragmentDefinitionImporter" class="org.jasig.portal.io.xml.dlm.FragmentDefinitionImporter">
     </bean>
@@ -69,10 +81,12 @@
         <property name="portalDataType" ref="fragmentDefinitionPortalDataType"/>
         <property name="portalDataRetriever" ref="fragmentDefinitionDataFunction" />
     </bean>
-    <bean id="fragmentDefinitionDao" class="org.jasig.portal.layout.dlm.FragmentDefinitionDao" />
 
     
     
+    <!-- 
+     |  Support Beans
+     +-->
     <bean id="counterStore" class="org.jasig.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.jasig.portal.utils.ICounterStore" />
     </bean>
@@ -85,7 +99,6 @@
 
     <bean id="xmlUtilities" class="org.jasig.portal.xml.XmlUtilitiesImpl" />
     <bean id="xpathOperations" class="org.jasig.portal.xml.xpath.XPathPoolImpl" />
-    
     
     <import resource="classpath:/jpaPortalTestApplicationContext.xml"/>
 </beans>

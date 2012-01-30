@@ -19,33 +19,19 @@
 
 package org.jasig.portal.io.xml;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.reset;
+
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.TimeZone;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.transform.stax.StAXSource;
-import javax.xml.transform.stream.StreamResult;
 
-import org.apache.commons.io.IOUtils;
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.XMLUnit;
 import org.jasig.portal.io.xml.permission.ExternalPermissionOwner;
 import org.jasig.portal.io.xml.ssd.ExternalStylesheetDescriptor;
 import org.jasig.portal.io.xml.user.UserType;
-import org.jasig.portal.test.BaseJpaDaoTest;
 import org.jasig.portal.utils.ICounterStore;
 import org.jasig.portal.utils.Tuple;
 import org.junit.After;
@@ -57,15 +43,10 @@ import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
-import org.springframework.oxm.Marshaller;
-import org.springframework.oxm.Unmarshaller;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.SimpleJdbcTestUtils;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.w3c.dom.Element;
 
 import com.google.common.base.Function;
@@ -76,7 +57,7 @@ import com.google.common.base.Function;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/org/jasig/portal/io/xml/importExportTestContext.xml")
-public class IdentityImportExportTest extends BaseJpaDaoTest {
+public class IdentityImportExportTest extends AbstractIdentityImportExportTest {
     @Autowired private DataSource dataSource;
     
     @javax.annotation.Resource(name="stylesheetDescriptorImporterExporter")
@@ -118,16 +99,6 @@ public class IdentityImportExportTest extends BaseJpaDaoTest {
         }
         SimpleJdbcTestUtils.executeSqlScript(simpleJdbcTemplate, new ByteArrayResource(sql.getBytes()), false);
     }
-    
-    @After
-    public void cleanup() {
-        if (defaultTimeZone != null) {
-            TimeZone.setDefault(defaultTimeZone);
-        }
-        
-        runSql("DROP TABLE UP_USER"); 
-        runSql("DROP TABLE UP_LAYOUT_STRUCT");
-    }
 
     @Before
     public void setup() {
@@ -137,7 +108,6 @@ public class IdentityImportExportTest extends BaseJpaDaoTest {
         TimeZone.setDefault(TimeZone.getTimeZone("EST"));
         
         counter = 0;
-        reset(counterStore);
         when(counterStore.getNextId(anyString())).thenAnswer(new Answer<Integer>() {
             @Override
             public Integer answer(InvocationOnMock invocation) throws Throwable {
@@ -173,6 +143,16 @@ public class IdentityImportExportTest extends BaseJpaDaoTest {
         		"   UNREMOVABLE varchar(1000),\n" + 
         		"   CONSTRAINT SYS_IDX_03 PRIMARY KEY (LAYOUT_ID,USER_ID,STRUCT_ID)\n" + 
         		");");
+    }
+    
+    @After
+    public void cleanup() {
+        if (defaultTimeZone != null) {
+            TimeZone.setDefault(defaultTimeZone);
+        }
+        
+        runSql("DROP TABLE UP_USER"); 
+        runSql("DROP TABLE UP_LAYOUT_STRUCT");
     }
 
     
@@ -237,72 +217,5 @@ public class IdentityImportExportTest extends BaseJpaDaoTest {
                         return "Academics Tab";
                     }
                 });
-    }
-    
-    private <T> void testIdentityImportExport(
-            final IDataImporter<T> dataImporter, final IDataExporter<?> dataExporter, 
-            Resource resource, Function<T, String> getName) throws Exception {
-        
-    	final String importData = toString(resource);
-        
-    	final XMLInputFactory xmlInputFactory = XMLInputFactory.newFactory();
-    	final XMLEventReader xmlEventReader = xmlInputFactory.createXMLEventReader(new StringReader(importData));
-        
-        //Unmarshall from XML
-        final Unmarshaller unmarshaller = dataImporter.getUnmarshaller();
-        final StAXSource source = new StAXSource(xmlEventReader);
-		@SuppressWarnings("unchecked")
-        final T dataImport = (T)unmarshaller.unmarshal(source);
-        
-        //Make sure the data was unmarshalled
-        assertNotNull("Unmarshalled import data was null", dataImport);
-        
-        //Import the data
-        dataImporter.importData(dataImport);
-        
-        //Export the data
-        final String name = getName.apply(dataImport);
-        final Object dataExport = transactionOperations.execute(new TransactionCallback<Object>() {
-            /* (non-Javadoc)
-             * @see org.springframework.transaction.support.TransactionCallback#doInTransaction(org.springframework.transaction.TransactionStatus)
-             */
-            @Override
-            public Object doInTransaction(TransactionStatus status) {
-                return dataExporter.exportData(name);
-            }
-        });
-        
-        //Make sure the data was exported
-        assertNotNull("Exported data was null", dataExport);
-        
-        //Marshall to XML
-        final Marshaller marshaller = dataExporter.getMarshaller();
-        
-        final StringWriter result = new StringWriter();
-        marshaller.marshal(dataExport, new StreamResult(result));
-        
-        //Compare the exported XML data with the imported XML data, they should match
-        final String resultString = result.toString();
-        try {
-	        XMLUnit.setIgnoreWhitespace(true);
-			Diff d = new Diff(new StringReader(importData), new StringReader(resultString));
-	        assertTrue("Export result differs from import" + d, d.similar());
-        }
-        catch (Exception e) {
-            throw new XmlTestException("Failed to assert similar between import XML and export XML", resultString, e);
-        }
-        catch (Error e) {
-        	throw new XmlTestException("Failed to assert similar between import XML and export XML", resultString, e);
-        }
-    }
-
-    protected String toString(Resource resource) throws IOException {
-        final InputStream inputStream = resource.getInputStream();
-        try {
-            return IOUtils.toString(inputStream);
-        }
-        finally {
-            IOUtils.closeQuietly(inputStream);
-        }
     }
 }

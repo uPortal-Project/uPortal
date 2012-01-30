@@ -28,9 +28,11 @@ package org.jasig.portal.events.aggr.groups;
 public interface AggregatedGroupLookupDao {
     /**
      * Get the group mapping object for the specified group key
-     * 
-     * @param portalGroupKey
-     * @return
      */
     public AggregatedGroupMapping getGroupMapping(String portalGroupKey);
+    
+    /**
+     * Get the group mapping for the specified service and name
+     */
+    public AggregatedGroupMapping getGroupMapping(String groupService, String groupName);
 }

@@ -473,6 +473,7 @@ try {
         logger.info('');
         logger.info('Export and Delete Support by Data Type');
     	org.jasig.portal.io.xml.PortalDataHandlerServiceUtils.format(dhs, logger);
+        logger.info('Add -Dtype=dataType To get a list of data keys for the type');
     }
     else {
         //List Data Script

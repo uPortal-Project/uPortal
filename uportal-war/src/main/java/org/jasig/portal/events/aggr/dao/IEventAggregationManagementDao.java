@@ -20,6 +20,7 @@
 package org.jasig.portal.events.aggr.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import org.jasig.portal.events.aggr.AcademicTermDetail;
 import org.jasig.portal.events.aggr.AggregatedGroupConfig;
@@ -47,6 +48,10 @@ public interface IEventAggregationManagementDao {
     void updateEventAggregatorStatus(IEventAggregatorStatus eventAggregatorStatus);
 
     
+    /**
+     * All aggregated group configurations
+     */
+    Set<AggregatedGroupConfig> getAggregatedGroupConfigs();
     
     /**
      * Default group includes/excludes, applied to all aggregators that do not have specific configurations.
@@ -74,6 +79,10 @@ public interface IEventAggregationManagementDao {
     void deleteAggregatedGroupConfig(AggregatedGroupConfig aggregatedGroupConfig);
     
     
+    /**
+     * @return All aggregated interval configurations
+     */
+    Set<AggregatedIntervalConfig> getAggregatedIntervalConfigs();
     
     /**
      * Default interval includes/excludes, applied to all aggregators that do not have specific configurations.
