@@ -55,6 +55,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.NonTransientDataAccessResourceException;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -182,6 +183,11 @@ public class HibernateDbLoader implements IDbLoader, ResourceLoaderAware {
                     script.addAll(dropScript);
                 }
             }
+
+            //Log any drop/create statements that failed 
+            for (final Map.Entry<String, DataAccessException> failedSqlEntry : failedSql.entrySet()) {
+                this.logger.warn("'" + failedSqlEntry.getKey() + "' failed to execute due to " + failedSqlEntry.getValue());
+            }
             
             //Generate and execute create table scripts
             if (configuration.isCreateTables()) {
@@ -197,11 +203,6 @@ public class HibernateDbLoader implements IDbLoader, ResourceLoaderAware {
                 else {
                     script.addAll(createScript);
                 }
-            }
-            
-            //Log any drop/create statements that failed 
-            for (final Map.Entry<String, DataAccessException> failedSqlEntry : failedSql.entrySet()) {
-                this.logger.warn("'" + failedSqlEntry.getKey() + "' failed to execute due to " + failedSqlEntry.getValue());
             }
         }
         
@@ -219,7 +220,9 @@ public class HibernateDbLoader implements IDbLoader, ResourceLoaderAware {
                 iterator.set(sql + ";");
             }
             
-            FileUtils.writeLines(new File(scriptFile), script);
+            final File outputFile = new File(scriptFile);
+            FileUtils.writeLines(outputFile, script);
+            this.logger.info("Saved DDL to: " + outputFile.getAbsolutePath());
         }
     }
     
