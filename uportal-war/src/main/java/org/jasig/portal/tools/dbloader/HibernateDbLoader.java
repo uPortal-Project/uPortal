@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -117,7 +118,14 @@ public class HibernateDbLoader implements IDbLoader, ResourceLoaderAware {
      */
     @Override
     public void process(DbLoaderConfig configuration) throws ParserConfigurationException, SAXException, IOException {
-        final List<String> script = new ArrayList<String>();
+        final String scriptFile = configuration.getScriptFile();
+        final List<String> script;
+        if (scriptFile == null) {
+            script = null;
+        }
+        else {
+            script = new LinkedList<String>();
+        }
         
         final Dialect dialect;
         if (this.preferedDialect != null) {
@@ -153,36 +161,42 @@ public class HibernateDbLoader implements IDbLoader, ResourceLoaderAware {
             
             //Generate and execute drop table scripts
             if (configuration.isDropTables()) {
-                this.logger.info("Dropping existing tables");
                 final List<String> dropScript = this.dropScript(tables.values(), dialect, defaultCatalog, defaultSchema);
 
-                for (final String sql : dropScript) {
-                    this.logger.info(sql);
-                    try {
-                        jdbcTemplate.update(sql);
-                    }
-                    catch (NonTransientDataAccessResourceException dae) {
-                        throw dae;
-                    }
-                    catch (DataAccessException dae) {
-                        failedSql.put(sql, dae);
+                if (script == null) {
+                    this.logger.info("Dropping existing tables");
+                    for (final String sql : dropScript) {
+                        this.logger.info(sql);
+                        try {
+                            jdbcTemplate.update(sql);
+                        }
+                        catch (NonTransientDataAccessResourceException dae) {
+                            throw dae;
+                        }
+                        catch (DataAccessException dae) {
+                            failedSql.put(sql, dae);
+                        }
                     }
                 }
-                
-                script.addAll(dropScript);
+                else {
+                    script.addAll(dropScript);
+                }
             }
             
             //Generate and execute create table scripts
             if (configuration.isCreateTables()) {
-                this.logger.info("Creating tables");
                 final List<String> createScript = this.createScript(tables.values(), dialect, mapping, defaultCatalog, defaultSchema);
 
-                for (final String sql : createScript) {
-                    this.logger.info(sql);
-                    jdbcTemplate.update(sql);
+                if (script == null) {
+                    this.logger.info("Creating tables");
+                    for (final String sql : createScript) {
+                        this.logger.info(sql);
+                        jdbcTemplate.update(sql);
+                    }
                 }
-                
-                script.addAll(createScript);
+                else {
+                    script.addAll(createScript);
+                }
             }
             
             //Log any drop/create statements that failed 
@@ -192,15 +206,14 @@ public class HibernateDbLoader implements IDbLoader, ResourceLoaderAware {
         }
         
         //Perform database population
-        if (configuration.isPopulateTables()) {
+        if (script == null && configuration.isPopulateTables()) {
             this.logger.info("Populating database");
             final Map<String, Map<String, Integer>> tableColumnTypes = tableData.getTableColumnTypes();
             this.populateTables(configuration, tableColumnTypes);
         }
         
         //Write out the script file
-        final String scriptFile = configuration.getScriptFile();
-        if (scriptFile != null) {
+        if (script != null) {
             for (final ListIterator<String> iterator = script.listIterator(); iterator.hasNext(); ) {
                 final String sql = iterator.next();
                 iterator.set(sql + ";");
