@@ -42,6 +42,8 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Function;
+
 /**
  * JPA implementation of the portlet definition DAO
  * 
@@ -50,12 +52,6 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 public class JpaPortletDefinitionDao extends BaseJpaDao implements IPortletDefinitionDao {
-
-    private static final String FIND_ALL_PORTLET_DEFS_CACHE_REGION = PortletDefinitionImpl.class.getName() + ".query.FIND_ALL_PORTLET_DEFS";
-    private static final String FIND_PORTLET_DEF_BY_FNAME_CACHE_REGION = PortletDefinitionImpl.class.getName() + ".query.FIND_PORTLET_DEF_BY_FNAME";
-    private static final String FIND_PORTLET_DEF_BY_NAME_CACHE_REGION = PortletDefinitionImpl.class.getName() + ".query.FIND_PORTLET_DEF_BY_NAME";
-    private static final String FIND_PORTLET_DEF_BY_NAME_OR_TITLE_CACHE_REGION = PortletDefinitionImpl.class.getName() + ".query.FIND_PORTLET_DEF_BY_NAME_OR_TITLE";
-
     private CriteriaQuery<PortletDefinitionImpl> findAllPortletDefinitions;
     private CriteriaQuery<PortletDefinitionImpl> findDefinitionByFnameQuery;
     private CriteriaQuery<PortletDefinitionImpl> findDefinitionByNameQuery;
@@ -77,79 +73,92 @@ public class JpaPortletDefinitionDao extends BaseJpaDao implements IPortletDefin
     }
     
     @Override
-    protected void buildCriteriaQueries(CriteriaBuilder cb) {
-        this.fnameParameter = cb.parameter(String.class, "fname");
-        this.nameParameter = cb.parameter(String.class, "name");
-        this.titleParameter = cb.parameter(String.class, "title");
+    public void afterPropertiesSet() throws Exception {
+        this.fnameParameter = this.createParameterExpression(String.class, "fname");
+        this.nameParameter = this.createParameterExpression(String.class, "name");
+        this.titleParameter = this.createParameterExpression(String.class, "title");
         
-        this.findAllPortletDefinitions = this.buildFindAllPortletDefinitions(cb);
-        this.findDefinitionByFnameQuery = this.buildFindDefinitionByFnameQuery(cb);
-        this.findDefinitionByNameQuery = this.buildFindDefinitionByNameQuery(cb);
-        this.findDefinitionByNameOrTitleQuery = this.buildFindDefinitionByNameOrTitleQuery(cb);
-        this.searchDefinitionByNameOrTitleQuery = this.buildSearchDefinitionByNameOrTitleQuery(cb);
-    }
+        this.findAllPortletDefinitions = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<PortletDefinitionImpl>>() {
+            @Override
+            public CriteriaQuery<PortletDefinitionImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<PortletDefinitionImpl> criteriaQuery = cb.createQuery(PortletDefinitionImpl.class);
+                final Root<PortletDefinitionImpl> definitionRoot = criteriaQuery.from(PortletDefinitionImpl.class);
+                criteriaQuery.select(definitionRoot);
+                addFetches(definitionRoot);
 
-    protected CriteriaQuery<PortletDefinitionImpl> buildFindAllPortletDefinitions(final CriteriaBuilder cb) {
-        final CriteriaQuery<PortletDefinitionImpl> criteriaQuery = cb.createQuery(PortletDefinitionImpl.class);
-        final Root<PortletDefinitionImpl> definitionRoot = criteriaQuery.from(PortletDefinitionImpl.class);
-        criteriaQuery.select(definitionRoot);
-        addFetches(definitionRoot);
+                return criteriaQuery;
+            }
+        });
 
-        return criteriaQuery;
-    }
-    
-    protected CriteriaQuery<PortletDefinitionImpl> buildFindDefinitionByFnameQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<PortletDefinitionImpl> criteriaQuery = cb.createQuery(PortletDefinitionImpl.class);
-        final Root<PortletDefinitionImpl> definitionRoot = criteriaQuery.from(PortletDefinitionImpl.class);
-        criteriaQuery.select(definitionRoot);
-        addFetches(definitionRoot);
-        criteriaQuery.where(
-            cb.equal(definitionRoot.get(PortletDefinitionImpl_.fname), this.fnameParameter)
-        );
         
-        return criteriaQuery;
-    }
-    
-    protected CriteriaQuery<PortletDefinitionImpl> buildFindDefinitionByNameQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<PortletDefinitionImpl> criteriaQuery = cb.createQuery(PortletDefinitionImpl.class);
-        final Root<PortletDefinitionImpl> definitionRoot = criteriaQuery.from(PortletDefinitionImpl.class);
-        criteriaQuery.select(definitionRoot);
-        addFetches(definitionRoot);
-        criteriaQuery.where(
-            cb.equal(definitionRoot.get(PortletDefinitionImpl_.name), this.nameParameter)
-        );
-        
-        return criteriaQuery;
-    }
+        this.findDefinitionByFnameQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<PortletDefinitionImpl>>() {
+            @Override
+            public CriteriaQuery<PortletDefinitionImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<PortletDefinitionImpl> criteriaQuery = cb.createQuery(PortletDefinitionImpl.class);
+                final Root<PortletDefinitionImpl> definitionRoot = criteriaQuery.from(PortletDefinitionImpl.class);
+                criteriaQuery.select(definitionRoot);
+                addFetches(definitionRoot);
+                criteriaQuery.where(
+                    cb.equal(definitionRoot.get(PortletDefinitionImpl_.fname), fnameParameter)
+                );
+                
+                return criteriaQuery;
+            }
+        });
 
-    protected CriteriaQuery<PortletDefinitionImpl> buildFindDefinitionByNameOrTitleQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<PortletDefinitionImpl> criteriaQuery = cb.createQuery(PortletDefinitionImpl.class);
-        final Root<PortletDefinitionImpl> definitionRoot = criteriaQuery.from(PortletDefinitionImpl.class);
-        criteriaQuery.select(definitionRoot);
-        addFetches(definitionRoot);
-        criteriaQuery.where(
-            cb.or(
-                cb.equal(definitionRoot.get(PortletDefinitionImpl_.name), this.nameParameter),
-                cb.equal(definitionRoot.get(PortletDefinitionImpl_.title), this.titleParameter)
-            )
-        );
         
-        return criteriaQuery;
-    }
-    
-    protected CriteriaQuery<PortletDefinitionImpl> buildSearchDefinitionByNameOrTitleQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<PortletDefinitionImpl> criteriaQuery = cb.createQuery(PortletDefinitionImpl.class);
-        final Root<PortletDefinitionImpl> definitionRoot = criteriaQuery.from(PortletDefinitionImpl.class);
-        criteriaQuery.select(definitionRoot);
-        addFetches(definitionRoot);
-        criteriaQuery.where(
-            cb.or(
-                cb.like(definitionRoot.get(PortletDefinitionImpl_.name), this.nameParameter),
-                cb.like(definitionRoot.get(PortletDefinitionImpl_.title), this.titleParameter)
-            )
-        );
+        this.findDefinitionByNameQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<PortletDefinitionImpl>>() {
+            @Override
+            public CriteriaQuery<PortletDefinitionImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<PortletDefinitionImpl> criteriaQuery = cb.createQuery(PortletDefinitionImpl.class);
+                final Root<PortletDefinitionImpl> definitionRoot = criteriaQuery.from(PortletDefinitionImpl.class);
+                criteriaQuery.select(definitionRoot);
+                addFetches(definitionRoot);
+                criteriaQuery.where(
+                    cb.equal(definitionRoot.get(PortletDefinitionImpl_.name), nameParameter)
+                );
+                
+                return criteriaQuery;
+            }
+        });
+
         
-        return criteriaQuery;
+        this.findDefinitionByNameOrTitleQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<PortletDefinitionImpl>>() {
+            @Override
+            public CriteriaQuery<PortletDefinitionImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<PortletDefinitionImpl> criteriaQuery = cb.createQuery(PortletDefinitionImpl.class);
+                final Root<PortletDefinitionImpl> definitionRoot = criteriaQuery.from(PortletDefinitionImpl.class);
+                criteriaQuery.select(definitionRoot);
+                addFetches(definitionRoot);
+                criteriaQuery.where(
+                    cb.or(
+                        cb.equal(definitionRoot.get(PortletDefinitionImpl_.name), nameParameter),
+                        cb.equal(definitionRoot.get(PortletDefinitionImpl_.title), titleParameter)
+                    )
+                );
+                
+                return criteriaQuery;
+            }
+        });
+
+        
+        this.searchDefinitionByNameOrTitleQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<PortletDefinitionImpl>>() {
+            @Override
+            public CriteriaQuery<PortletDefinitionImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<PortletDefinitionImpl> criteriaQuery = cb.createQuery(PortletDefinitionImpl.class);
+                final Root<PortletDefinitionImpl> definitionRoot = criteriaQuery.from(PortletDefinitionImpl.class);
+                criteriaQuery.select(definitionRoot);
+                addFetches(definitionRoot);
+                criteriaQuery.where(
+                    cb.or(
+                        cb.like(definitionRoot.get(PortletDefinitionImpl_.name), nameParameter),
+                        cb.like(definitionRoot.get(PortletDefinitionImpl_.title), titleParameter)
+                    )
+                );
+                
+                return criteriaQuery;
+            }
+        });
     }
 
     /**
@@ -189,7 +198,7 @@ public class JpaPortletDefinitionDao extends BaseJpaDao implements IPortletDefin
 	@Override
     @Transactional(readOnly=true)
     public IPortletDefinition getPortletDefinitionByFname(String fname) {
-	    final TypedQuery<PortletDefinitionImpl> query = this.createQuery(this.findDefinitionByFnameQuery, FIND_PORTLET_DEF_BY_FNAME_CACHE_REGION);
+	    final TypedQuery<PortletDefinitionImpl> query = this.createCachedQuery(this.findDefinitionByFnameQuery);
         query.setParameter(this.fnameParameter, fname);
         
         final List<PortletDefinitionImpl> portletDefinitions = query.getResultList();
@@ -199,7 +208,7 @@ public class JpaPortletDefinitionDao extends BaseJpaDao implements IPortletDefin
     @Override
     @Transactional(readOnly=true)
     public IPortletDefinition getPortletDefinitionByName(String name) {
-        final TypedQuery<PortletDefinitionImpl> query = this.createQuery(this.findDefinitionByNameQuery, FIND_PORTLET_DEF_BY_NAME_CACHE_REGION);
+        final TypedQuery<PortletDefinitionImpl> query = this.createCachedQuery(this.findDefinitionByNameQuery);
         query.setParameter(this.nameParameter, name);
         
         final List<PortletDefinitionImpl> portletDefinitions = query.getResultList();
@@ -218,7 +227,7 @@ public class JpaPortletDefinitionDao extends BaseJpaDao implements IPortletDefin
             criteriaQuery = this.findDefinitionByNameOrTitleQuery;
         }
         
-        final TypedQuery<PortletDefinitionImpl> query = this.createQuery(criteriaQuery, FIND_PORTLET_DEF_BY_NAME_OR_TITLE_CACHE_REGION);
+        final TypedQuery<PortletDefinitionImpl> query = this.createCachedQuery(criteriaQuery);
         query.setParameter("name", term);
         query.setParameter("title", term);
         
@@ -245,7 +254,7 @@ public class JpaPortletDefinitionDao extends BaseJpaDao implements IPortletDefin
 	@Override
 	@Transactional(readOnly=true)
     public List<IPortletDefinition> getPortletDefinitions() {
-	    final TypedQuery<PortletDefinitionImpl> query = this.createQuery(this.findAllPortletDefinitions, FIND_ALL_PORTLET_DEFS_CACHE_REGION);
+	    final TypedQuery<PortletDefinitionImpl> query = this.createCachedQuery(this.findAllPortletDefinitions);
         
         final List<PortletDefinitionImpl> portletDefinitions = query.getResultList();
         return new ArrayList<IPortletDefinition>(new LinkedHashSet<IPortletDefinition>(portletDefinitions));

@@ -46,7 +46,6 @@ import org.springframework.util.Assert;
  */
 @Entity
 @Table(name = "UP_MUTEX")
-@Inheritance(strategy=InheritanceType.JOINED)
 @SequenceGenerator(
         name="UP_MUTEX_GEN",
         sequenceName="UP_MUTEX_SEQ",

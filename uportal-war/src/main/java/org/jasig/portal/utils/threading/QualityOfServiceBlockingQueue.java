@@ -752,7 +752,7 @@ public abstract class QualityOfServiceBlockingQueue<K, T> implements BlockingQue
          */
         @Override
         public boolean hasNext() {
-            return (this.queueIterator != null && this.queueIterator.hasNext()) || this.queueIterator.hasNext();
+            return (this.elementIterator != null && this.elementIterator.hasNext()) || this.queueIterator.hasNext();
         }
 
         /* (non-Javadoc)

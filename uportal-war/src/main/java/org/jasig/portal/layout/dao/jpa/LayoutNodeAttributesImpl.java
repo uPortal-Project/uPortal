@@ -99,6 +99,13 @@ class LayoutNodeAttributesImpl {
         this.entityVersion = -1;
         this.nodeId = nodeId;
     }
+    
+    public LayoutNodeAttributesImpl(String nodeId, Map<String, String> attributes) {
+        this.id = -1;
+        this.entityVersion = -1;
+        this.nodeId = nodeId;
+        this.attributes.putAll(attributes);
+    }
 
     public long getId() {
         return this.id;

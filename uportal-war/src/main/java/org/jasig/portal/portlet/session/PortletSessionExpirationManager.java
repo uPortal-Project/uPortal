@@ -19,8 +19,11 @@
 
 package org.jasig.portal.portlet.session;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -153,7 +156,7 @@ public class PortletSessionExpirationManager implements PortletInvocationListene
     private static final class NonSerializableMapHolder<K, V> implements Map<K, V>, Serializable {
         private static final long serialVersionUID = 1L;
 
-        private final transient Map<K, V> delegate;
+        private transient Map<K, V> delegate;
 
         public NonSerializableMapHolder(Map<K, V> delegate) {
             this.delegate = delegate;
@@ -224,6 +227,10 @@ public class PortletSessionExpirationManager implements PortletInvocationListene
         @Override
         public String toString() {
             return delegate.toString();
+        }
+        
+        private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+            this.delegate = new LinkedHashMap<K, V>();
         }
     }
 }

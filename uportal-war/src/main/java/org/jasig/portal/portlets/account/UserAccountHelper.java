@@ -21,6 +21,7 @@ package org.jasig.portal.portlets.account;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -367,7 +368,7 @@ public class UserAccountHelper {
             helper.setFrom(portalEmailAddress, messageSource.getMessage("portal.name", new Object[]{}, locale));
 
             log.debug("Sending message to " + emailAddress + " from " + 
-                      message.getFrom() +  " subject " + message.getSubject());
+                      Arrays.toString(message.getFrom()) +  " subject " + message.getSubject());
             this.mailSender.send(message);
             
         } catch(MailException e) {

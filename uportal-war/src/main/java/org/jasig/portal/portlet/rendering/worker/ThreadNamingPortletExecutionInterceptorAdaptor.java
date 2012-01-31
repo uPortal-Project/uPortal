@@ -70,6 +70,11 @@ public class ThreadNamingPortletExecutionInterceptorAdaptor extends PortletExecu
 
     protected String getFname(HttpServletRequest request, IPortletWindowId portletWindowId) {
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
+        if (portletWindow == null) {
+            logger.warn("Failed to resolve IPortletWindow for id: " + portletWindowId + ", the id will be used instead of the fname");
+            return portletWindowId.toString();
+        }
+        
         final IPortletEntity portletEntity = portletWindow.getPortletEntity();
         final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
         return portletDefinition.getFName();

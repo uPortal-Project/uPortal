@@ -31,6 +31,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.jasig.portal.concurrency.CallableWithoutResult;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.dao.IPortletEntityDao;
@@ -41,6 +44,7 @@ import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletType;
+import org.jasig.portal.test.BaseJpaDaoTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,25 +57,23 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @version $Revision: 337 $
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:jpaPortletDaoTestContext.xml")
+@ContextConfiguration(locations = "classpath:jpaPortalTestApplicationContext.xml")
 public class JpaPortletDaoTest extends BaseJpaDaoTest {
+    @Autowired
     private IPortletTypeDao jpaChannelTypeDao;
+    @Autowired
     private IPortletDefinitionDao jpaPortletDefinitionDao;
+    @Autowired
     private IPortletEntityDao jpaPortletEntityDao;
 
-    @Autowired
-    public void setJpaPortletEntityDao(final IPortletEntityDao jpaPortletEntityDao) {
-        this.jpaPortletEntityDao = jpaPortletEntityDao;
+    @PersistenceContext(unitName = "uPortalPersistence")
+    private EntityManager entityManager;
+    
+    @Override
+    protected EntityManager getEntityManager() {
+        return this.entityManager;
     }
-    @Autowired
-    public void setJpaPortletDefinitionDao(final IPortletDefinitionDao dao) {
-        this.jpaPortletDefinitionDao = dao;
-    }
-    @Autowired
-    public void setJpaChannelTypeDao(IPortletTypeDao jpaChannelTypeDao) {
-        this.jpaChannelTypeDao = jpaChannelTypeDao;
-    }
-
+    
     @Before
     public void onSetUp() throws Exception {
         this.execute(new Callable<Object>() {

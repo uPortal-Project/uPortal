@@ -53,7 +53,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.provider.PersonImpl;
-import org.jasig.portal.services.SequenceGenerator;
+import org.jasig.portal.spring.locator.CounterStoreLocator;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ICounterStore;
 import org.jasig.portal.utils.Tuple;
@@ -264,7 +264,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
 
   private int getNextKey()
   {
-      return SequenceGenerator.instance().getNextInt(PROFILE_TABLE);
+      return CounterStoreLocator.getCounterStore().getNextId(PROFILE_TABLE);
   }
 
   /**

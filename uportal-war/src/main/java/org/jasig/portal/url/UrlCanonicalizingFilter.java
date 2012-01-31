@@ -84,7 +84,7 @@ public class UrlCanonicalizingFilter extends OncePerRequestFilter {
             final int redirectCount = this.getRedirectCount(request);
             if (!canonicalUri.equals(requestURI)) {
                 if (redirectCount < this.maximumRedirects) {
-                    this.setRedirectCount(response, redirectCount + 1);
+                    this.setRedirectCount(request, response, redirectCount + 1);
                     
                     final String encodeCanonicalUrl = response.encodeRedirectURL(canonicalUrl);
                     response.sendRedirect(encodeCanonicalUrl);
@@ -92,11 +92,11 @@ public class UrlCanonicalizingFilter extends OncePerRequestFilter {
                     return;
                 }
 
-                this.clearRedirectCount(response);
+                this.clearRedirectCount(request, response);
                 logger.debug("Not redirecting from {} to canonicalized URL {} due to limit of {} redirects", new Object[] {requestURI, canonicalUri, redirectCount});
             }
             else if (redirectCount > 0) {
-                this.clearRedirectCount(response);
+                this.clearRedirectCount(request, response);
             }
         }
         
@@ -118,14 +118,16 @@ public class UrlCanonicalizingFilter extends OncePerRequestFilter {
         filterChain.doFilter(httpServletRequestWrapper, httpServletResponseWrapper);
     }
     
-    protected void clearRedirectCount(HttpServletResponse response) {
+    protected void clearRedirectCount(HttpServletRequest request, HttpServletResponse response) {
         final Cookie cookie = new Cookie(COOKIE_NAME, "");
+        cookie.setPath(request.getContextPath());
         cookie.setMaxAge(0);
         response.addCookie(cookie);
     }
     
-    protected void setRedirectCount(HttpServletResponse response, int count) {
+    protected void setRedirectCount(HttpServletRequest request, HttpServletResponse response, int count) {
         final Cookie cookie = new Cookie(COOKIE_NAME, Integer.toString(count));
+        cookie.setPath(request.getContextPath());
         cookie.setMaxAge(30);
         response.addCookie(cookie);
     }

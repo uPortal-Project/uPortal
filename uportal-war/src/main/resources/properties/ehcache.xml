@@ -24,17 +24,23 @@
     xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd" updateCheck="false">
 
     <!--
+     | General direct-access portal caches are in the first section
+     | Hibernate entity caches are in the second section
+     | Portal Event Hibernate caches are in the third section
+     |
      | Please see http://ehcache.sourceforge.net/documentation/configuration.html for detailed information on
      | how to configurigure caches in this file
      +-->
-
+     
     <!-- Location of persistent caches on disk -->
     <diskStore path="java.io.tmpdir/uPortal" />
     
     <defaultCache eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
+    <!-- ****************************************************************** -->
     <!-- ******************** uPortal Framework Caches ******************** -->
+    <!-- ****************************************************************** -->
     
     <!-- 
      | Caches if the user is a default user (generally only used during import/export)
@@ -223,109 +229,8 @@
     <cache name="org.jasig.portal.security.IPermissionSet"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    
-    <!-- ******************** Hibernate Caches ******************** -->
-    
-    <!-- 
-     | Caches UserFragmentSubscriptions
-     | - 1 per fragment subscription per user
-     +-->
-    <cache name="org.jasig.portal.fragment.subscribe.dao.jpa.UserFragmentSubscriptionImpl"
-        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <!-- 
-     | Caches UserFragmentSubscription queries by user
-     | - 1 per active user
-     +-->
-    <cache name="org.jasig.portal.fragment.subscribe.dao.jpa.UserFragmentSubscriptionImpl.query.FIND_USER_FRAGMENT_INFO_BY_PERSON"
-        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <!-- 
-     | Caches UserFragmentSubscription queries by user and owner
-     | - 1 per fragment subscription per active user
-     +-->
-    <cache name="org.jasig.portal.fragment.subscribe.dao.jpa.UserFragmentSubscriptionImpl.query.FIND_USER_FRAGMENT_INFO_BY_PERSON_CACHE_AND_OWNER"
-        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    
-    <!-- 
-     | Caches DLM Evaluator object
-     | - 1 x per DLM layout fragment
-     | - replicated by invalidation
-     +-->
-    <cache name="org.jasig.portal.layout.dlm.Evaluator"
-        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <!--
-     | Query cache for Evaluator subclass FragmentDefinition
-     | - unique query, no parameters
-     +-->
-    <cache name="org.jasig.portal.layout.dlm.FragmentDefinition.evaluators"
-        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <!--
-     | Query cache for Evaluator subclass FragmentDefinition
-     | - unique query, no parameters
-     +-->
-    <cache name="org.jasig.portal.layout.dlm.FragmentDefinition.query.GET_ALL_FRAGMENTS"
-        eternal="false" maxElementsInMemory="1" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <!--
-     | Query cache for Evaluator subclass FragmentDefinition
-     | - 1 x per DLM layout fragment
-     +-->
-    <cache name="org.jasig.portal.layout.dlm.FragmentDefinition.query.FIND_FRAGMENT_BY_NAME"
-        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <!-- 
-     | Caches list of DLM Evaluators
-     | - 1 per parentheses in the evaluators
-     +-->
-    <cache name="org.jasig.portal.layout.dlm.providers.Paren.evaluators"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <!-- 
-     | Caches list of DLM Evaluators
-     | - 1 per evaluator group
-     +-->
-    <cache name="org.jasig.portal.layout.dlm.providers.EvaluatorGroup.evaluators"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
         
-    <!-- 
-     | Caches PermissionOwner objects
-     | - 1 x permission owner type
-     | - replicated by invalidation
-     +-->
-    <cache name="org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl"
-        eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <!-- 
-     | Caches PermissionOwner queries by fname
-     | - 1 x permission owner type
-     | - not replicated
-     +-->
-    <cache name="org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl.query.FIND_PERMISSION_OWNER_BY_FNAME"
-        eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
-        
-    <!-- 
-     | Caches IPermissionActivity objects within PermissionOwner objects
-     | - 1 per IPermissionActivity per permission owner type
-     | - replicated by invalidation
-     +-->
-    <cache name="org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl.activities"
-        eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    
-    <!-- 
-     | Caches PermissionActivity objects
-     | - 1 x permission activity
-     | - replicated by invalidation
-     +-->
-    <cache name="org.jasig.portal.permission.dao.jpa.PermissionActivityImpl"
-        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
      
     <!-- 
      | Caches CachedPortletData objects
@@ -358,119 +263,7 @@
     <cache name="org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.publicScopePortletResourceOutputCache"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
-        
-    <!-- 
-     | Caches PortalCookieImpl objects
-     | - 1 per "customer" per "year" (by default, or until they clear their cookies)
-     +-->   
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortalCookieImpl"
-        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <!-- 
-     | Caches queries for PortalCookieImpl objects by cookie value
-     | - 1 per active user
-     +-->   
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortalCookieImpl.query.FIND_COOKIE_BY_VALUE"
-        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
-        
-    <!-- 
-     | Caches the IPortletCookie collection within PortalCookieImpl objects
-     | - 1 per portlet cookie per "customer" per "year" (by default, or until they clear their cookies)
-     +-->  
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortalCookieImpl.portletCookies"
-        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />  
-    <!-- 
-     | Caches the PortletCookieImpl objects
-     | - 1 per portlet cookie per "customer" per "year" (by default, or until they clear their cookies)
-     +--> 
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletCookieImpl"
-        eternal="false" maxElementsInMemory="25000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    
-        
-    <!-- 
-     | Caches PortletType objects
-     | - 1 x channel type
-     | - replicated by invalidation
-     +-->
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletTypeImpl"
-        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <!-- 
-     | Query cache for PortletType
-     | - 1 x channel type
-     +-->
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletTypeImpl.query.FIND_PORTLET_TYPE_BY_NAME"
-        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <!-- 
-     | Query cache for PortletType
-     | - unique query that gets all channel types
-     +-->
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletTypeImpl.query.FIND_ALL_PORTLET_TYPE"
-        eternal="false" maxElementsInMemory="1" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
-    <!-- 
-     | Caches PortletDefinitionImpl objects
-     | - 1 x published portlet
-     | - replicated by invalidation
-     +-->
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
-    <!-- 
-     | Caches PortletDefinitionImpl queries by fname
-     | - 1 x published portlet
-     | - not replicated
-     +-->
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl.query.FIND_PORTLET_DEF_BY_FNAME"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
-    <!-- 
-     | Caches PortletDefinitionImpl queries by name
-     | - 1 x published portlet
-     | - not replicated
-     +-->
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl.query.FIND_PORTLET_DEF_BY_NAME"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
-    <!-- 
-     | Caches query that returns all portlet definitions
-     | - 1
-     | - not replicated
-     +-->
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl.query.FIND_ALL_PORTLET_DEFS"
-        eternal="false" maxElementsInMemory="1" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
-        
-    <!-- 
-     | Caches PortletLocalizationData objects within PortletDefinitionImpl objects
-     | - 1 per localization data x published portlets
-     | - replicated by invalidation
-     +-->
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl.localizations"
-        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
-    <!-- 
-     | Caches IPortletDefinitionParameter objects within PortletDefinitionImpl objects
-     | - 1 per portlet definition parameter x published portlets
-     | - replicated by invalidation
-     +-->
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl.parameters"
-        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
-    <!-- 
-     | Caches PortletDefinitionParameterImpl objects
-     | - 1 x published portlet
-     | - replicated by invalidation
-     +-->
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionParameterImpl"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
-        
     <!-- 
      | Caches parsing entity id strings into entity ids
      | - 1 x subscribed portlet x user
@@ -479,156 +272,7 @@
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl.idParseCache"
         eternal="false" maxElementsInMemory="15000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    
-    <!-- 
-     | Caches PortletEntityImpl objects
-     | - 1 x subscribed portlet x user
-     | - replicated by invalidation
-     +-->
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl"
-        eternal="false" maxElementsInMemory="15000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <!-- 
-     | Caches queries by portlet definition id for PortletEntityImpl objects
-     | - 1 x portlet definition
-     | - replicated by invalidation
-     +-->
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl.query.FIND_PORTLET_ENTS_BY_PORTLET_DEF"
-        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <!-- 
-     | Caches queries by user id for PortletEntityImpl objects
-     | - 1 x user
-     | - replicated by invalidation
-     +-->
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl.query.FIND_PORTLET_ENTS_BY_USER_ID"
-        eternal="false" maxElementsInMemory="1500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    
-    <!-- 
-     | Caches PortletPreferencesImpl objects
-     | - 1 x subscribed portlet x user
-     | - 1 x published portlet
-     | - replicated by invalidation
-     +-->
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl"
-        eternal="false" maxElementsInMemory="15500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    
-    <!-- 
-     | Caches PortletPreferencesImpl's list of preference objects
-     | - 1 x subscribed portlet x user
-     | - 1 x published portlet
-     | - replicated by invalidation
-     +-->
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl.portletPreferences"
-        eternal="false" maxElementsInMemory="15500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    
-    <!-- 
-     | Caches PortletPreferenceImpl
-     | - 1 x actual stored portlet preference
-     | - replicated by invalidation
-     +-->
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl"
-        eternal="false" maxElementsInMemory="2200" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    
-    <!-- 
-     | Caches PortletPreferenceImpl's list of values
-     | - 1 x actual stored portlet preference
-     | - replicated by invalidation
-     +-->
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl.values"
-        eternal="false" maxElementsInMemory="2200" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
-        
-    <!-- 
-     | Caches local users
-     | - 1 x local user
-     | - replicated by invalidation
-     +-->
-    <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl"
-        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
-        
-    <!-- 
-     | Caches query results for all local users
-     | - 1
-     | - replicated by invalidation
-     +-->
-    <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl.query.FIND_ALL_ACCOUNTS"
-        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />        
-    <!-- 
-     | Caches query results for finding a local user by name
-     | - 1 x local user
-     | - replicated by invalidation
-     +-->
-    <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl.query.FIND_ACCOUNT_BY_NAME"
-        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />       
-    <!-- 
-     | Caches query results for finding a local user with a search
-     | - 1 x local user
-     | - replicated by invalidation
-     +-->
-    <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl.query.ACCOUNT_SEARCH"
-        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />      
-    <!-- 
-     | Caches query results for finding a local user with a search
-     | - 1 x local user
-     | - replicated by invalidation
-     +-->
-    <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl.query.FIND_AVAILABLE_ATTRIBUTES"
-        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <!-- 
-     | Caches local users attributes
-     | - 1 x local user
-     | - replicated by invalidation
-     +-->
-    <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl.attributes"
-        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" /> 
-    
-    <!-- 
-     | Caches local users attributes
-     | - 10 x local user (approx)
-     | - replicated by invalidation
-     +-->
-    <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl"
-        eternal="false" maxElementsInMemory="5000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <!-- 
-     | Caches local users attributes' values
-     | - 1 x local user x # user attributes
-     | - replicated by invalidation
-     +-->
-    <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl.values"
-        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />       
-        
-        
-    
-    <!-- 
-     | Caches last updated timestamp for each hibernate managed table
-     | - 1 x hibernate managed table
-     | - not replicated - used to track local modifications to tables
-     +-->
-    <cache name="org.hibernate.cache.UpdateTimestampsCache"
-        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
-    <!-- 
-     | Caches SQL query level results for entity queries that don't specify an explicit cache region
-     | - 1 x managed query result
-     | - not replicated - used to track local query results
-     +-->
-    <cache name="org.hibernate.cache.StandardQueryCache"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
         
     <!-- Portal javascript and css gzipping filter cache -->
 
@@ -671,126 +315,7 @@
     <cache name="org.jasig.portal.rendering.THEME_TRANSFORM"
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    
-    <!-- 
-     | Caches LayoutNodeAttributeImpl objects
-     | - 1 per layout node attribute
-     +-->
-    <cache name="org.jasig.portal.layout.dao.jpa.LayoutNodeAttributesImpl"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <!-- 
-     | Caches the attributes collection within LayoutNodeAttributeImpl objects
-     | - 1 per layout node attribute
-     +-->
-    <cache name="org.jasig.portal.layout.dao.jpa.LayoutNodeAttributesImpl.attributes"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <!-- 
-     | Caches LayoutAttributeDescriptorImpl objects
-     | - 1 per layout attribute
-     +-->
-    <cache name="org.jasig.portal.layout.dao.jpa.LayoutAttributeDescriptorImpl"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <!-- 
-     | Caches targetElementNames collection within LayoutAttributeDescriptorImpl objects
-     | - 1 per layout attribute
-     +-->
-    <cache name="org.jasig.portal.layout.dao.jpa.LayoutAttributeDescriptorImpl.targetElementNames"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <!-- 
-     | Caches StylesheetUserPreferences
-     | - 1 per customization per user
-     | - replicated by invalidation
-     +-->
-    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetUserPreferencesImpl"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <!-- 
-     | Caches StylesheetUserPreferences queries by person and profile
-     | - 1 per customization per user
-     | - not replicated
-     +-->
-    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetUserPreferencesImpl.query.FIND_PREFERENCES_BY_DESCRIPTOR_PERSON_PROFILE_CACHE_REGION"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
-        
-    <!-- 
-     | Caches LayoutNodeAttributes collection within StylesheetUserPreferences
-     | - 1 per customization per user
-     +-->
-    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetUserPreferencesImpl.layoutAttributes"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <!-- 
-     | Caches outputProperties collection within StylesheetUserPreferences
-     | - 1 per customization per user
-     +-->
-    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetUserPreferencesImpl.outputProperties"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <!-- 
-     | Caches parameters collection within StylesheetUserPreferences
-     | - 1 per customization per user
-     +-->
-    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetUserPreferencesImpl.parameters"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <!-- 
-     | Caches outputproperties
-     | - 1 per output property per customization per user
-     +-->
-    <cache name="org.jasig.portal.layout.dao.jpa.OutputPropertyDescriptorImpl"
-        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <!-- 
-     | Caches StylesheetParameterDescriptor
-     | - 1 per stylesheet parameter per stylesheet
-     +-->
-    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetParameterDescriptorImpl"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
             
-    <!-- 
-     | Caches StylesheetDescriptor 
-     | - 1 per stylesheet used in the rendering pipeline
-     +-->
-    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <!-- 
-     | Caches StylesheetDescriptor queries
-     | - 1 per stylesheet used in the rendering pipeline
-     +-->
-    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl.query.FIND_DESCRIPTOR_BY_NAME"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
-        
-        
-    <!-- 
-     | Caches StylesheetDescriptor outputProperties
-     | - 1 per stylesheet output property x stylesheets used in the rendering pipeline
-     +-->
-    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl.outputProperties"
-        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <!-- 
-     | Caches StylesheetDescriptor stylesheet parameters
-     | - 1 per stylesheet parameter x stylesheets used in the rendering pipeline
-     +-->
-    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl.stylesheetParameters"
-        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <!-- 
-     | Caches StylesheetDescriptor layout attributes
-     | - 1 per stylesheet layout attribute x stylesheets used in the rendering pipeline
-     +-->
-    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl.layoutAttributes"
-        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
-        
     <!-- 
      | Caches resolution of events that are supported by the portlet deployment 
      | - 1 x portlet deployment x portlet event
@@ -800,6 +325,42 @@
         timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     
+
+
+    <!-- *********************************************************** -->
+    <!-- ***************** Portal Hibernate Caches ***************** -->
+    <!-- *********************************************************** -->     
+    
+    <!-- 
+     | Caches last updated timestamp for each hibernate managed table
+     | - 1 x hibernate managed table
+     | - not replicated - used to track local modifications to tables
+     +-->
+    <cache name="org.hibernate.cache.spi.UpdateTimestampsCache"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <!-- 
+     | Caches SQL query level results for entity queries that don't specify an explicit cache region
+     | - 1 x managed query result
+     | - not replicated - used to track local query results
+     +-->
+    <cache name="org.hibernate.cache.internal.StandardQueryCache"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    
+    <!-- NOT CACHED: org.jasig.portal.concurrency.locking.ClusterMutex -->    
+    
+    <!-- 
+     | Caches UserFragmentSubscriptions
+     | - 1 per fragment subscription per user
+     +-->
+    <cache name="org.jasig.portal.fragment.subscribe.dao.jpa.UserFragmentSubscriptionImpl"
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.fragment.subscribe.dao.jpa.UserFragmentSubscriptionImpl.Query"
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
     <!--
      | Caches message
      | - 1 per each translated message (max = messages * supported locales)
@@ -807,53 +368,371 @@
     <cache name="org.jasig.portal.i18n.dao.jpa.MessageImpl" 
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="60" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <!--
-     | Caches query results for finding a message by its code
-     | - 1 per each translated message (max = messages * supported locales)
-     +-->
-    <cache name="org.jasig.portal.i18n.dao.jpa.MessageImpl.query.FIND_MESSAGE_BY_CODE_AND_LOCALE" 
+    <cache name="org.jasig.portal.i18n.dao.jpa.MessageImpl.Query" 
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="60" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <!--
-     | Caches query results for finding a message by its locale
-     | - 1 per each supported locale
+            
+    <!-- 
+     | Caches StylesheetDescriptor 
+     | - 1 per stylesheet used in the rendering pipeline
      +-->
-    <cache name="org.jasig.portal.i18n.dao.jpa.MessageImpl.query.FIND_MESSAGES_BY_LOCALE" 
-        eternal="false" maxElementsInMemory="200" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="60" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <!--
-     | Caches query results for finding a message by its locale and code (exact message)
-     | - 1 per each unique message code
+    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl.Query"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl.outputProperties"
+        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl.stylesheetParameters"
+        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl.layoutAttributes"
+        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!-- 
+     | Caches StylesheetUserPreferences
+     | - 1 per customization per user
+     | - replicated by invalidation
      +-->
-    <cache name="org.jasig.portal.i18n.dao.jpa.MessageImpl.query.FIND_MESSAGE_BY_CODE" 
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="60" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <!--
-     | Caches query results for finding message codes
-     | - 1 per each message code
+    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetUserPreferencesImpl"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetUserPreferencesImpl.Query"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetUserPreferencesImpl.layoutAttributes"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetUserPreferencesImpl.outputProperties"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetUserPreferencesImpl.parameters"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.layout.dao.jpa.OutputPropertyDescriptorImpl"
+        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetParameterDescriptorImpl"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.layout.dao.jpa.LayoutNodeAttributesImpl"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.layout.dao.jpa.LayoutNodeAttributesImpl.attributes"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.layout.dao.jpa.LayoutAttributeDescriptorImpl"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.layout.dao.jpa.LayoutAttributeDescriptorImpl.targetElementNames"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    
+    <!-- 
+     | Caches DLM Evaluator object
+     | - 1 x per DLM layout fragment
+     | - replicated by invalidation
      +-->
-    <cache name="org.jasig.portal.i18n.dao.jpa.MessageImpl.query.FIND_MESSAGE_CODES" 
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="60" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="org.jasig.portal.layout.dlm.Evaluator"
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.layout.dlm.FragmentDefinition.evaluators"
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.layout.dlm.FragmentDefinition.Query"
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.layout.dlm.providers.Paren.evaluators"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.layout.dlm.providers.EvaluatorGroup.evaluators"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.layout.dlm.providers.AllUsersEvaluatorFactory"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.layout.dlm.providers.AttributeEvaluator"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluator"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.layout.dlm.providers.GuestUserEvaluatorFactory"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.layout.dlm.providers.SubscribedTabEvaluator"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
+    <!-- 
+     | Caches PermissionOwner objects
+     | - 1 x permission owner type
+     | - replicated by invalidation
+     +-->
+    <cache name="org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl"
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl.Query"
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl.activities"
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.permission.dao.jpa.PermissionActivityImpl"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
+    <!-- 
+     | Caches local users
+     | - 1 x local user
+     | - replicated by invalidation
+     +-->
+    <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl.Query"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />        
+    <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl.attributes"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" /> 
+    <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl"
+        eternal="false" maxElementsInMemory="5000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl.values"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />  
+
+    <!-- 
+     | Caches PortalCookieImpl objects
+     | - 1 per "customer" per "year" (by default, or until they clear their cookies)
+     +-->   
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortalCookieImpl"
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortalCookieImpl.Query"
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortalCookieImpl.portletCookies"
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />  
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletCookieImpl"
+        eternal="false" maxElementsInMemory="25000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!-- 
+     | Caches PortletDefinitionImpl objects
+     | - 1 x published portlet
+     | - replicated by invalidation
+     +-->
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl.Query"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl.localizations"
+        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl.parameters"
+        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionParameterImpl"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
+    
+    <!-- 
+     | Caches PortletEntityImpl objects
+     | - 1 x subscribed portlet x user
+     | - replicated by invalidation
+     +-->
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl"
+        eternal="false" maxElementsInMemory="15000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl.Query"
+        eternal="false" maxElementsInMemory="1500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl.windowStates"
+        eternal="false" maxElementsInMemory="15000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    
+    <!-- 
+     | Caches PortletPreferencesImpl objects
+     | - 1 x subscribed portlet x user
+     | - 1 x published portlet
+     | - replicated by invalidation
+     +-->
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl"
+        eternal="false" maxElementsInMemory="15500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl.portletPreferences"
+        eternal="false" maxElementsInMemory="15500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl"
+        eternal="false" maxElementsInMemory="2200" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl.values"
+        eternal="false" maxElementsInMemory="2200" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
+    <!-- 
+     | Caches PortletType objects
+     | - 1 x channel type
+     | - replicated by invalidation
+     +-->
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletTypeImpl"
+        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletTypeImpl.Query"
+        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    
         
 
-    <!-- ==================== PortalEvent Aggregation Caches ==================== -->
+    <!-- ********************************************************** -->
+    <!-- ***************** Event Hibernate Caches ***************** -->
+    <!-- ********************************************************** -->     
+
+    
+    <!-- 
+     | Caches SQL query level results for entity queries that don't specify an explicit cache region
+     | - 1 x managed query result
+     | - not replicated - used to track local query results
+     +-->
+    <cache name="AggregateEvents.org.hibernate.cache.internal.StandardQueryCache"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
+    <!-- 
+     | Caches last updated timestamp for each hibernate managed table
+     | - 1 x hibernate managed table
+     | - not replicated - used to track local modifications to tables
+     +-->
+    <cache name="AggregateEvents.org.hibernate.cache.spi.UpdateTimestampsCache"
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
         
     <!--
-     | Caches query results for finding message codes
-     | - 1 aggregation processing type
+     | Caches academic terms configured for aggregation intervals
+     | - 1 x configured academic term
      +-->
-    <cache name="AggregateEvents.org.jasig.portal.events.aggr.EventAggregatorStatusImpl" 
-        eternal="false" maxElementsInMemory="2" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="30" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.dao.jpa.AcademicTermDetailImpl" 
+        eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="3600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.dao.jpa.AcademicTermDetailImpl.Query" 
+        eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="3600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        
     <!--
-     | Caches query results for finding message codes
-     | - 1 aggregation processing type
+     | Caches aggregated group configuration
+     | - 1 x aggregator config
      +-->
-    <cache name="AggregateEvents.org.jasig.portal.events.aggr.EventAggregatorStatusImpl.query.FIND_AGGR_STATUS_BY_PROC_TYPE" 
-        eternal="false" maxElementsInMemory="2" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="30" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.dao.jpa.AggregatedGroupConfigImpl" 
+        eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="3600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.dao.jpa.AggregatedGroupConfigImpl.Query" 
+        eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="3600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.dao.jpa.AggregatedGroupConfigImpl.includedGroups" 
+        eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="3600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.dao.jpa.AggregatedGroupConfigImpl.excludedGroups" 
+        eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="3600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
         
+    <!--
+     | Caches aggregated interval configuration
+     | - 1 x aggregator config
+     +-->
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.dao.jpa.AggregatedIntervalConfigImpl" 
+        eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="3600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.dao.jpa.AggregatedIntervalConfigImpl.includedIntervals" 
+        eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="3600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.dao.jpa.AggregatedIntervalConfigImpl.excludedIntervals" 
+        eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="3600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.dao.jpa.AggregatedIntervalConfigImpl.Query" 
+        eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="3600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+
+    <!--
+     | Caches date dimensions used for aggregations 
+     | - 1 x date in event range (plus 1 year to either side)
+     +-->
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl" 
+        eternal="false" maxElementsInMemory="730" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="3600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl.Query" 
+        eternal="false" maxElementsInMemory="730" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="3600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+
+    <!-- NOT CACHED: org.jasig.portal.events.aggr.dao.jpa.EventAggregatorStatusImpl -->
         
+    <!--
+     | Caches quarters configured for aggregation intervals
+     | - 1 x quarter
+     +-->
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.dao.jpa.QuarterDetailImpl" 
+        eternal="false" maxElementsInMemory="4" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="3600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.dao.jpa.QuarterDetailImpl.Query" 
+        eternal="false" maxElementsInMemory="4" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="3600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+
+    <!--
+     | Caches time dimensions used for aggregations 
+     | - 1 x minute in day
+     +-->
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl" 
+        eternal="false" maxElementsInMemory="1440" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="3600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl.Query" 
+        eternal="false" maxElementsInMemory="1440" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="3600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+
+    <!--
+     | Caches mapping from uPortal group into long-term consistent event aggregate group 
+     | - 1 x portal group
+     +-->
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl" 
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="3600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl.Query" 
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="3600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+
+    <!--
+     | Caches login aggregations, primarily used during event aggregation 
+     | - 1 x group x interval
+     +-->
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.login.LoginAggregationImpl" 
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.login.LoginAggregationImpl.uniqueUserNames" 
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.login.LoginAggregationImpl.Query" 
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+
+    <!--
+     | Caches event session data, primarily used during aggregation 
+     | - 1 x concurrent user event
+     +-->
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.session.EventSessionImpl" 
+        eternal="false" maxElementsInMemory="1500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.session.EventSessionImpl.groupMappings" 
+        eternal="false" maxElementsInMemory="1500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.session.EventSessionImpl.Query" 
+        eternal="false" maxElementsInMemory="1500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+
     
 </ehcache>

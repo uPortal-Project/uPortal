@@ -48,6 +48,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Function;
+
 /**
  * @author Eric Dalquist
  * @version $Revision$
@@ -55,9 +57,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Qualifier("persistence")
 public class JpaPortletEntityDao extends BaseJpaDao implements IPortletEntityDao {
-    private static final String FIND_PORTLET_ENTS_BY_USER_ID_CACHE_REGION = PortletEntityImpl.class.getName() + ".query.FIND_PORTLET_ENTS_BY_USER_ID";
-    private static final String FIND_PORTLET_ENTS_BY_PORTLET_DEF_CACHE_REGION = PortletEntityImpl.class.getName() + ".query.FIND_PORTLET_ENTS_BY_PORTLET_DEF";
-    
     private CriteriaQuery<PortletEntityImpl> findEntitiesForDefinitionQuery;
     private CriteriaQuery<PortletEntityImpl> findEntitiesForUserIdQuery;
     private ParameterExpression<Integer> userIdParameter;
@@ -83,36 +82,40 @@ public class JpaPortletEntityDao extends BaseJpaDao implements IPortletEntityDao
     }
     
     @Override
-    protected void buildCriteriaQueries(CriteriaBuilder cb) {
-        this.userIdParameter = cb.parameter(Integer.class, "userId");
-        this.portletDefinitionParameter = cb.parameter(PortletDefinitionImpl.class, "portletDefinition");
+    public void afterPropertiesSet() throws Exception {
+        this.userIdParameter = this.createParameterExpression(Integer.class, "userId");
+        this.portletDefinitionParameter = this.createParameterExpression(PortletDefinitionImpl.class, "portletDefinition");
         
-        this.findEntitiesForDefinitionQuery = this.buildFindEntitiesForDefinitionQuery(cb);
-        this.findEntitiesForUserIdQuery = this.buildFindEntitiesForUserIdQuery(cb);
-    }
+        this.findEntitiesForDefinitionQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<PortletEntityImpl>>() {
+            @Override
+            public CriteriaQuery<PortletEntityImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<PortletEntityImpl> criteriaQuery = cb.createQuery(PortletEntityImpl.class);
+                final Root<PortletEntityImpl> entityRoot = criteriaQuery.from(PortletEntityImpl.class);
+                criteriaQuery.select(entityRoot);
+                addFetches(entityRoot);
+                criteriaQuery.where(
+                    cb.equal(entityRoot.get(PortletEntityImpl_.portletDefinition), portletDefinitionParameter)
+                );
+                
+                return criteriaQuery;
+            }
+        });
 
-    protected CriteriaQuery<PortletEntityImpl> buildFindEntitiesForDefinitionQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<PortletEntityImpl> criteriaQuery = cb.createQuery(PortletEntityImpl.class);
-        final Root<PortletEntityImpl> entityRoot = criteriaQuery.from(PortletEntityImpl.class);
-        criteriaQuery.select(entityRoot);
-        addFetches(entityRoot);
-        criteriaQuery.where(
-            cb.equal(entityRoot.get(PortletEntityImpl_.portletDefinition), this.portletDefinitionParameter)
-        );
         
-        return criteriaQuery;
-    }
-
-    protected CriteriaQuery<PortletEntityImpl> buildFindEntitiesForUserIdQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<PortletEntityImpl> criteriaQuery = cb.createQuery(PortletEntityImpl.class);
-        final Root<PortletEntityImpl> entityRoot = criteriaQuery.from(PortletEntityImpl.class);
-        criteriaQuery.select(entityRoot);
-        addFetches(entityRoot);
-        criteriaQuery.where(
-            cb.equal(entityRoot.get(PortletEntityImpl_.userId), this.userIdParameter)
-        );
-        
-        return criteriaQuery;
+        this.findEntitiesForUserIdQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<PortletEntityImpl>>() {
+            @Override
+            public CriteriaQuery<PortletEntityImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<PortletEntityImpl> criteriaQuery = cb.createQuery(PortletEntityImpl.class);
+                final Root<PortletEntityImpl> entityRoot = criteriaQuery.from(PortletEntityImpl.class);
+                criteriaQuery.select(entityRoot);
+                addFetches(entityRoot);
+                criteriaQuery.where(
+                    cb.equal(entityRoot.get(PortletEntityImpl_.userId), userIdParameter)
+                );
+                
+                return criteriaQuery;
+            }
+        });
     }
 
     /**
@@ -219,7 +222,7 @@ public class JpaPortletEntityDao extends BaseJpaDao implements IPortletEntityDao
         
         final IPortletDefinition portletDefinition = this.portletDefinitionDao.getPortletDefinition(portletDefinitionId);
         
-        final TypedQuery<PortletEntityImpl> query = this.createQuery(this.findEntitiesForDefinitionQuery, FIND_PORTLET_ENTS_BY_PORTLET_DEF_CACHE_REGION);
+        final TypedQuery<PortletEntityImpl> query = this.createCachedQuery(this.findEntitiesForDefinitionQuery);
         query.setParameter(this.portletDefinitionParameter, (PortletDefinitionImpl)portletDefinition);
         
         final List<PortletEntityImpl> portletEntities = query.getResultList();
@@ -232,7 +235,7 @@ public class JpaPortletEntityDao extends BaseJpaDao implements IPortletEntityDao
     @Override
     @Transactional(readOnly=true)
     public Set<IPortletEntity> getPortletEntitiesForUser(int userId) {
-        final TypedQuery<PortletEntityImpl> query = this.createQuery(this.findEntitiesForUserIdQuery, FIND_PORTLET_ENTS_BY_USER_ID_CACHE_REGION);
+        final TypedQuery<PortletEntityImpl> query = this.createCachedQuery(this.findEntitiesForUserIdQuery);
         query.setParameter(this.userIdParameter, userId);
         
         final List<PortletEntityImpl> portletEntities = query.getResultList();

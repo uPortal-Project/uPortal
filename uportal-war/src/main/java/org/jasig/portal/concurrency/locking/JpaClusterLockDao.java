@@ -20,7 +20,6 @@
 package org.jasig.portal.concurrency.locking;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.persistence.EntityManager;
 import javax.persistence.OptimisticLockException;
@@ -35,12 +34,14 @@ import javax.persistence.criteria.Root;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.jasig.portal.IPortalInfoProvider;
-import org.jasig.portal.concurrency.Time;
 import org.jasig.portal.jpa.BaseJpaDao;
+import org.joda.time.Duration;
+import org.joda.time.ReadableDuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -50,6 +51,8 @@ import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import com.google.common.base.Function;
 
 /**
  * DB based locking DAO using JPA2 locking APIs
@@ -64,7 +67,7 @@ public class JpaClusterLockDao extends BaseJpaDao implements IClusterLockDao {
     private ParameterExpression<String> nameParameter;
     private CriteriaQuery<ClusterMutex> clusterLockByNameQuery;
     private EntityManager entityManager;
-    private Time abandonedLockAge = Time.getTime(5, TimeUnit.SECONDS);
+    private ReadableDuration abandonedLockAge = Duration.standardSeconds(5);
     private IPortalInfoProvider portalInfoProvider;
     private TransactionTemplate newTransactionTemplate;
     private TransactionTemplate defaultTransactionTemplate;
@@ -76,8 +79,9 @@ public class JpaClusterLockDao extends BaseJpaDao implements IClusterLockDao {
      * <p/>
      * IMPORTANT: this value must be larger than the maximum possible clock skew across all servers in the cluster. 
      */
-    public void setAbandonedLockAge(Time maximumLockAge) {
-        this.abandonedLockAge = maximumLockAge;
+    @Value("${org.jasig.portal.concurrency.locking.ClusterLockDao.abandonedLockAge:PT5S}")
+    public void setAbandonedLockAge(ReadableDuration abandonedLockAge) {
+        this.abandonedLockAge = abandonedLockAge;
     }
 
     @Autowired
@@ -108,24 +112,22 @@ public class JpaClusterLockDao extends BaseJpaDao implements IClusterLockDao {
         return this.entityManager;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.jpa.BaseJpaDao#buildCriteriaQueries(javax.persistence.criteria.CriteriaBuilder)
-     */
     @Override
-    protected void buildCriteriaQueries(CriteriaBuilder criteriaBuilder) {
-        this.nameParameter = criteriaBuilder.parameter(String.class, "name");
+    public void afterPropertiesSet() throws Exception {
+        this.nameParameter = this.createParameterExpression(String.class, "name");
         
-        this.clusterLockByNameQuery = buildGetClusterLockByNameQuery(criteriaBuilder);
-    }
-
-    protected CriteriaQuery<ClusterMutex> buildGetClusterLockByNameQuery(CriteriaBuilder criteriaBuilder) {
-        final CriteriaQuery<ClusterMutex> criteriaQuery = criteriaBuilder.createQuery(ClusterMutex.class);
-        final Root<ClusterMutex> definitionRoot = criteriaQuery.from(ClusterMutex.class);
-        criteriaQuery.select(definitionRoot);
-        criteriaQuery.where(
-            criteriaBuilder.equal(definitionRoot.get(ClusterMutex_.name), this.nameParameter)
-        );
-        return criteriaQuery;
+        this.clusterLockByNameQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<ClusterMutex>>() {
+            @Override
+            public CriteriaQuery<ClusterMutex> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<ClusterMutex> criteriaQuery = cb.createQuery(ClusterMutex.class);
+                final Root<ClusterMutex> definitionRoot = criteriaQuery.from(ClusterMutex.class);
+                criteriaQuery.select(definitionRoot);
+                criteriaQuery.where(
+                        cb.equal(definitionRoot.get(ClusterMutex_.name), nameParameter)
+                );
+                return criteriaQuery;
+            }
+        });
     }
 
     /* (non-Javadoc)
@@ -247,7 +249,7 @@ public class JpaClusterLockDao extends BaseJpaDao implements IClusterLockDao {
         return this.defaultTransactionTemplate.execute(new TransactionCallback<ClusterMutex>() {
             @Override
             public ClusterMutex doInTransaction(TransactionStatus status) {
-                final TypedQuery<ClusterMutex> query = entityManager.createQuery(clusterLockByNameQuery);
+                final TypedQuery<ClusterMutex> query = createQuery(clusterLockByNameQuery);
                 query.setParameter(nameParameter, mutexName);
                 final List<ClusterMutex> results = query.getResultList();
                 return DataAccessUtils.singleResult(results);
@@ -327,7 +329,7 @@ public class JpaClusterLockDao extends BaseJpaDao implements IClusterLockDao {
      * Checks if the specified mutex is abandoned
      */
     protected boolean isLockAbandoned(final ClusterMutex clusterMutex) {
-        return clusterMutex.getLastUpdate() < (System.currentTimeMillis() - abandonedLockAge.asMillis());
+        return clusterMutex.getLastUpdate() < (System.currentTimeMillis() - abandonedLockAge.getMillis());
     }
     
     

@@ -33,6 +33,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
@@ -79,7 +80,7 @@ public class PortletTypeImpl implements Serializable, IPortletType {
     //MUST BE LAZY FETCH, this set should never actually be populated at runtime or performance will be TERRIBLE
     @SuppressWarnings("unused")
     @OneToMany(mappedBy = "portletType", targetEntity = PortletDefinitionImpl.class, cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, orphanRemoval = true)
-    private Set<IPortletDefinition> portletDefinitions = null;
+    private transient Set<IPortletDefinition> portletDefinitions = null;
 
 
     @NaturalId

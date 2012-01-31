@@ -157,9 +157,10 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
         // remove any query attributes that the user does not have permission
         // to view
         final Map<String, Object> inUseQuery = new HashMap<String, Object>();
-        for (String attr : query.keySet()) {
+        for (Map.Entry<String, Object> queryEntry : query.entrySet()) {
+            final String attr = queryEntry.getKey();
             if (permittedAttributes.contains(attr)) {
-                inUseQuery.put(attr, query.get(attr));
+                inUseQuery.put(attr, queryEntry.getValue());
             } else {
                 this.logger.warn("User '" + searcher.getName() + "' attempted searching on attribute '" + attr + "' which is not allowed in the current configuration. The attribute will be ignored.");
             }

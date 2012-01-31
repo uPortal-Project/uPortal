@@ -19,16 +19,19 @@
 
 package org.jasig.portal.tools.dbloader;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 
 import javax.persistence.spi.PersistenceUnitInfo;
 import javax.sql.DataSource;
 
 import org.hibernate.cfg.Configuration;
-import org.hibernate.cfg.Settings;
+import org.hibernate.cfg.Environment;
 import org.hibernate.ejb.Ejb3Configuration;
-import org.hibernate.ejb.InjectionSettingsFactory;
+import org.hibernate.internal.util.config.ConfigurationHelper;
+import org.hibernate.service.ServiceRegistry;
+import org.hibernate.service.ServiceRegistryBuilder;
+import org.hibernate.service.jdbc.dialect.spi.DialectResolver;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.hibernate.tool.hbm2ddl.SchemaUpdate;
 import org.slf4j.Logger;
@@ -47,32 +50,12 @@ import com.google.common.collect.ImmutableMap;
 public class DataSourceSchemaExport implements ISchemaExport {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
-    private DataSource dataSource;
-    
-    private final Object configLock = new Object();
-    private Configuration cachedConfiguration;
-    private Settings cachedSettings;
-    private String persistenceUnitName;
+    private HibernateToolConfigurationSource hibernateToolConfigurationSource;
 
-
-    /**
-     * Specify the name of the EntityManagerFactory configuration.
-     * <p>Default is none, indicating the default EntityManagerFactory
-     * configuration. The persistence provider will throw an exception if
-     * ambiguous EntityManager configurations are found.
-     * @see javax.persistence.Persistence#createEntityManagerFactory(String)
-     */
-    public void setPersistenceUnitName(String persistenceUnitName) {
-        this.persistenceUnitName = persistenceUnitName;
+    public void setHibernateToolConfigurationSource(HibernateToolConfigurationSource hibernateToolConfigurationSource) {
+        this.hibernateToolConfigurationSource = hibernateToolConfigurationSource;
     }
 
-    /**
-     * @param dataSource the dataSource to use
-     */
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-    
     /* (non-Javadoc)
      * @see org.jasig.portal.tools.dbl.ISchemaExport#hbm2ddl(boolean, boolean, boolean, java.lang.String, boolean)
      */
@@ -114,10 +97,10 @@ public class DataSourceSchemaExport implements ISchemaExport {
     }
 
     protected SchemaExport createExporter(String outputFile, boolean haltOnError) {
-        final Configuration configuration = this.getConfiguration();
-        final Settings settings = this.getSettings();
+        final Configuration configuration = this.hibernateToolConfigurationSource.getConfiguration();
+        final ServiceRegistry serviceRegistry = this.hibernateToolConfigurationSource.getServiceRegistry();
         
-        final SchemaExport exporter = new SchemaExport(configuration, settings);
+        final SchemaExport exporter = new SchemaExport( serviceRegistry, configuration );
         exporter.setHaltOnError(haltOnError);
         if (outputFile != null) {
             exporter.setFormat(true);
@@ -155,69 +138,18 @@ public class DataSourceSchemaExport implements ISchemaExport {
     }
 
     protected SchemaUpdate createUpdater(String outputFile, boolean haltOnError) {
-        final Configuration configuration = this.getConfiguration();
-        final Settings settings = this.getSettings();
+        final Configuration configuration = this.hibernateToolConfigurationSource.getConfiguration();
+        final ServiceRegistry serviceRegistry = this.hibernateToolConfigurationSource.getServiceRegistry();
         
-        final SchemaUpdate updateer = new SchemaUpdate(configuration, settings);
-        updateer.setHaltOnError(haltOnError);
+        final SchemaUpdate updater = new SchemaUpdate(serviceRegistry, configuration);
+        updater.setHaltOnError(haltOnError);
         if (outputFile != null) {
-            updateer.setFormat(true);
-            updateer.setOutputFile(outputFile);
+            updater.setFormat(true);
+            updater.setOutputFile(outputFile);
         }
         else {
-            updateer.setFormat(false);
+            updater.setFormat(false);
         }
-        return updateer;
-    }
-    
-    protected final Configuration getConfiguration() {
-        synchronized (configLock) {
-            Configuration configuration = this.cachedConfiguration;
-            if (configuration != null) {
-                return configuration;
-            }
-            
-            //Use DefaultPersistenceUnitManager and Ejb3Configuration to build hibernate configuration object
-            final DefaultPersistenceUnitManager defaultPersistenceUnitManager = new DefaultPersistenceUnitManager();
-            defaultPersistenceUnitManager.setDataSourceLookup(new SingleDataSourceLookup(dataSource));
-            defaultPersistenceUnitManager.setDefaultDataSource(dataSource);
-            defaultPersistenceUnitManager.afterPropertiesSet();
-            final PersistenceUnitInfo persistenceUnitInfo = defaultPersistenceUnitManager.obtainPersistenceUnitInfo(this.persistenceUnitName);
-            
-            final Ejb3Configuration configBuilder = new Ejb3Configuration();
-            final Ejb3Configuration jpaConfiguration = configBuilder.configure(
-                    persistenceUnitInfo,
-                    ImmutableMap.of(
-                            "hibernate.cache.use_query_cache", "false",
-                            "hibernate.cache.use_second_level_cache", "false"));
-            
-            configuration = jpaConfiguration.getHibernateConfiguration();
-
-            //Build the entity mappings
-            configuration.buildMappings();
-
-            //Cache then return the config
-            this.cachedConfiguration = configuration;
-            return configuration;
-        }
-    }
-
-    protected final Settings getSettings() {
-        synchronized (configLock) {
-            Settings settings = this.cachedSettings;
-            if (settings != null) {
-                return settings;
-            }
-
-            final InjectionSettingsFactory injectionSettingsFactory = new InjectionSettingsFactory();
-            injectionSettingsFactory.setConnectionProviderInjectionData(Collections.singletonMap("dataSource", this.dataSource));
-            
-            final Configuration configuration = this.getConfiguration();
-            settings = injectionSettingsFactory.buildSettings(configuration.getProperties());
-
-            //Cache then config the settings
-            this.cachedSettings = settings;
-            return settings;
-        }
+        return updater;
     }
 }

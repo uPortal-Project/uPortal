@@ -19,7 +19,7 @@
 
 package org.jasig.portal.events.aggr;
 
-import java.util.Date;
+import org.joda.time.DateTime;
 
 /**
  * Bean that tracks the status of portal event aggregator work.
@@ -54,20 +54,20 @@ public interface IEventAggregatorStatus {
     void setServerName(String serverName);
     
     /**
-     * @return Processing start date
+     * @return Processing start DateTime
      */
-    Date getLastStart();
-    void setLastStart(Date lastStart);
+    DateTime getLastStart();
+    void setLastStart(DateTime lastStart);
     
     /**
-     * @return Processing complete date
+     * @return Processing complete DateTime
      */
-    Date getLastEnd();
-    void setLastEnd(Date lastEnd);
+    DateTime getLastEnd();
+    void setLastEnd(DateTime lastEnd);
     
     /**
      * @return Timestamp of the last event processed
      */
-    Date getLastEventDate();
-    void setLastEventDate(Date lastEventDate);
+    DateTime getLastEventDate();
+    void setLastEventDate(DateTime lastEventDateTime);
 }

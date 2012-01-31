@@ -19,14 +19,15 @@
 
 package org.jasig.portal.portlet.registry;
 
-import static org.mockito.Mockito.when;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import net.sf.ehcache.Ehcache;
@@ -38,7 +39,6 @@ import org.jasig.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.dao.IPortletEntityDao;
 import org.jasig.portal.portlet.dao.IPortletTypeDao;
-import org.jasig.portal.portlet.dao.jpa.BaseJpaDaoTest;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
@@ -47,6 +47,7 @@ import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.test.BaseJpaDaoTest;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
@@ -66,10 +67,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @version $Revision$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:jpaPortletDaoTestContext.xml")
+@ContextConfiguration(locations = "classpath:jpaPortalTestApplicationContext.xml")
 public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
+    @Autowired
     private IPortletTypeDao jpaPortletTypeDao;
+    @Autowired
     private IPortletDefinitionDao jpaPortletDefinitionDao;
+    @Autowired
     private IPortletEntityDao jpaPortletEntityDao;
     
     @InjectMocks private PortletEntityRegistryImpl portletEntityRegistry = new PortletEntityRegistryImpl() {
@@ -108,17 +112,12 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
     @Mock private IUserLayoutChannelDescription node;
     @Mock private IPerson person;
     
-    @Autowired
-    public void setJpaPortletEntityDao(IPortletEntityDao jpaPortletEntityDao) {
-        this.jpaPortletEntityDao = jpaPortletEntityDao;
-    }
-    @Autowired
-    public void setJpaPortletDefinitionDao(IPortletDefinitionDao dao) {
-        this.jpaPortletDefinitionDao = dao;
-    }
-    @Autowired
-    public void setJpaChannelTypeDao(IPortletTypeDao jpaChannelTypeDao) {
-        this.jpaPortletTypeDao = jpaChannelTypeDao;
+    @PersistenceContext(unitName = "uPortalPersistence")
+    private EntityManager entityManager;
+    
+    @Override
+    protected EntityManager getEntityManager() {
+        return this.entityManager;
     }
 
     @Before

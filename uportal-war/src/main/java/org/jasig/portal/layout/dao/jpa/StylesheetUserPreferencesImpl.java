@@ -180,7 +180,6 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     @Override
     public void setStylesheetUserPreferences(IStylesheetUserPreferences source) {
         final Properties properties = source.getOutputProperties();
-        synchronized (this.outputProperties) {
             if (!this.outputProperties.equals(properties)) {
                 this.outputProperties.clear();
             }
@@ -188,25 +187,19 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
             for (final Entry<Object, Object> entry : properties.entrySet()) {
                 this.outputProperties.put((String)entry.getKey(), (String)entry.getValue());
             }
-        }
         
         final Map<String, String> parameters = source.getStylesheetParameters();
-        synchronized (this.parameters) {
-            if (!this.parameters.equals(parameters)) {
-                this.parameters.clear();
-            }
-            this.parameters.putAll(parameters);
+        if (!this.parameters.equals(parameters)) {
+            this.parameters.clear();
         }
+        this.parameters.putAll(parameters);
 
-        synchronized (this.layoutAttributes) {
-            final Map<String, Map<String, String>> attributes = source.getAllLayoutAttributes();
-            if (!this.layoutAttributes.equals(attributes)) {
-                this.layoutAttributes.clear();
-            }
-            
-            if (!this.layoutAttributes.equals(attributes)) {
-                this.layoutAttributes.clear();
-            }
+        final Map<String, Map<String, String>> attributes = source.getAllLayoutAttributes();
+        this.layoutAttributes.clear();
+        
+        for (final Map.Entry<String, Map<String, String>> attributeEntry : attributes.entrySet()) {
+            final String nodeId = attributeEntry.getKey();
+            this.layoutAttributes.put(nodeId, new LayoutNodeAttributesImpl(nodeId, attributeEntry.getValue()));
         }
     }
 
@@ -224,9 +217,7 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     
     @Override
     public String getOutputProperty(String name) {
-        synchronized (this.outputProperties) {
-            return this.outputProperties.get(name);
-        }
+        return this.outputProperties.get(name);
     }
 
     /* (non-Javadoc)
@@ -234,9 +225,7 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
      */
     @Override
     public String setOutputProperty(String name, String value) {
-        synchronized (this.outputProperties) {
-            return this.outputProperties.put(name, value);
-        }
+        return this.outputProperties.put(name, value);
     }
 
     /* (non-Javadoc)
@@ -244,9 +233,7 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
      */
     @Override
     public String removeOutputProperty(String name) {
-        synchronized (this.outputProperties) {
-            return this.outputProperties.remove(name);
-        }
+        return this.outputProperties.remove(name);
     }
 
     /* (non-Javadoc)
@@ -255,9 +242,7 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     @Override
     public Properties getOutputProperties() {
         final Properties props = new Properties();
-        synchronized (this.outputProperties) {
-            props.putAll(this.outputProperties);
-        }
+        props.putAll(this.outputProperties);
         return props;
     }
     
@@ -268,9 +253,7 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
 
     @Override
     public String getStylesheetParameter(String name) {
-        synchronized (this.parameters) {
-            return this.parameters.get(name);
-        }
+        return this.parameters.get(name);
     }
 
     /* (non-Javadoc)
@@ -278,9 +261,7 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
      */
     @Override
     public String setStylesheetParameter(String name, String value) {
-        synchronized (this.parameters) {
-            return this.parameters.put(name, value);
-        }
+        return this.parameters.put(name, value);
     }
 
     /* (non-Javadoc)
@@ -288,9 +269,7 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
      */
     @Override
     public String removeStylesheetParameter(String name) {
-        synchronized (this.parameters) {
-            return this.parameters.remove(name);
-        }
+        return this.parameters.remove(name);
     }
 
     /* (non-Javadoc)
@@ -298,10 +277,8 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
      */
     @Override
     public Map<String, String> getStylesheetParameters() {
-        synchronized (this.parameters) {
-            //Have to clone the underlying Map here so that we can guarantee thread safety
-            return Collections.unmodifiableMap(new LinkedHashMap<String, String>(this.parameters));
-        }
+        //Have to clone the underlying Map here so that we can guarantee thread safety
+        return Collections.unmodifiableMap(new LinkedHashMap<String, String>(this.parameters));
     }
     
     @Override
@@ -310,20 +287,17 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     }
 
     protected LayoutNodeAttributesImpl getLayoutNodeAttributes(String nodeId, boolean create) {
-        LayoutNodeAttributesImpl layoutAttribute;
-        synchronized (this.layoutAttributes) {
-            layoutAttribute = this.layoutAttributes.get(nodeId);
-            if (layoutAttribute != null) {
-                return layoutAttribute;
-            }
-            
-            if (!create) {
-                return null;
-            }
-
-            layoutAttribute = new LayoutNodeAttributesImpl(nodeId);
-            this.layoutAttributes.put(nodeId, layoutAttribute);
+        LayoutNodeAttributesImpl layoutAttribute = this.layoutAttributes.get(nodeId);
+        if (layoutAttribute != null) {
+            return layoutAttribute;
         }
+        
+        if (!create) {
+            return null;
+        }
+
+        layoutAttribute = new LayoutNodeAttributesImpl(nodeId);
+        this.layoutAttributes.put(nodeId, layoutAttribute);
         return layoutAttribute;
     }
     
@@ -331,10 +305,8 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     @Override
     public String getLayoutAttribute(String nodeId, String name) {
         final LayoutNodeAttributesImpl layoutAttribute = getLayoutNodeAttributes(nodeId, true);
-        synchronized (layoutAttribute) {
-            final Map<String, String> attributes = layoutAttribute.getAttributes();
-            return attributes.get(name);
-        }
+        final Map<String, String> attributes = layoutAttribute.getAttributes();
+        return attributes.get(name);
     }
 
     /* (non-Javadoc)
@@ -343,10 +315,8 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     @Override
     public String setLayoutAttribute(String nodeId, String name, String value) {
         final LayoutNodeAttributesImpl layoutAttribute = getLayoutNodeAttributes(nodeId, true);
-        synchronized (layoutAttribute) {
-            final Map<String, String> attributes = layoutAttribute.getAttributes();
-            return attributes.put(name, value);
-        }
+        final Map<String, String> attributes = layoutAttribute.getAttributes();
+        return attributes.put(name, value);
     }
 
     /* (non-Javadoc)
@@ -358,10 +328,8 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
         if (layoutAttribute == null) {
             return null;
         }
-        synchronized (layoutAttribute) {
-            final Map<String, String> attributes = layoutAttribute.getAttributes();
-            return attributes.remove(name);
-        }
+        final Map<String, String> attributes = layoutAttribute.getAttributes();
+        return attributes.remove(name);
     }
 
     /* (non-Javadoc)
@@ -373,22 +341,18 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
         if (layoutAttribute == null) {
             return Collections.emptyMap();
         }
-        synchronized (layoutAttribute) {
-            final Map<String, String> attributes = layoutAttribute.getAttributes();
-            return Collections.unmodifiableMap(new LinkedHashMap<String, String>(attributes));
-        }
+        final Map<String, String> attributes = layoutAttribute.getAttributes();
+        return Collections.unmodifiableMap(new LinkedHashMap<String, String>(attributes));
     }
     
     @Override
     public Map<String, Map<String, String>> getAllLayoutAttributes() {
         final Map<String, Map<String, String>> layoutAttributesClone = new TreeMap<String, Map<String,String>>();
 
-        synchronized (this.layoutAttributes) {
-            for (final Map.Entry<String, LayoutNodeAttributesImpl> layoutNodeAttribute : this.layoutAttributes.entrySet()) {
-                final String nodeId = layoutNodeAttribute.getKey();
-                final LayoutNodeAttributesImpl attributes = layoutNodeAttribute.getValue();
-                layoutAttributesClone.put(nodeId, Collections.unmodifiableMap(new TreeMap<String, String>(attributes.getAttributes())));
-            }
+        for (final Map.Entry<String, LayoutNodeAttributesImpl> layoutNodeAttribute : this.layoutAttributes.entrySet()) {
+            final String nodeId = layoutNodeAttribute.getKey();
+            final LayoutNodeAttributesImpl attributes = layoutNodeAttribute.getValue();
+            layoutAttributesClone.put(nodeId, Collections.unmodifiableMap(new TreeMap<String, String>(attributes.getAttributes())));
         }
         
         return Collections.unmodifiableMap(layoutAttributesClone);
@@ -396,9 +360,7 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     
     @Override
     public void clearLayoutAttributes(String nodeId) {
-        synchronized (this.layoutAttributes) {
-            this.layoutAttributes.remove(nodeId);
-        }
+        this.layoutAttributes.remove(nodeId);
     }
 
     @Override

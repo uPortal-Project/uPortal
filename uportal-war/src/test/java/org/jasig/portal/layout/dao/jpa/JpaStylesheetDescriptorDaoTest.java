@@ -30,6 +30,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.Callable;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
 import org.jasig.portal.layout.dao.IStylesheetUserPreferencesDao;
@@ -37,8 +40,8 @@ import org.jasig.portal.layout.om.IOutputPropertyDescriptor;
 import org.jasig.portal.layout.om.IStylesheetData.Scope;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.layout.om.IStylesheetUserPreferences;
-import org.jasig.portal.portlet.dao.jpa.BaseJpaDaoTest;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.test.BaseJpaDaoTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,21 +54,21 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @version $Revision$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:jpaStylesheetDescriptorDaoTestContext.xml")
+@ContextConfiguration(locations = "classpath:jpaPortalTestApplicationContext.xml")
 public class JpaStylesheetDescriptorDaoTest extends BaseJpaDaoTest {
+    @Autowired
     private IStylesheetDescriptorDao stylesheetDescriptorDao;
+    @Autowired
     private IStylesheetUserPreferencesDao stylesheetUserPreferencesDao;
 
-    @Autowired
-    public void setStylesheetDescriptorDao(IStylesheetDescriptorDao stylesheetDescriptorDao) {
-        this.stylesheetDescriptorDao = stylesheetDescriptorDao;
+    @PersistenceContext(unitName = "uPortalPersistence")
+    private EntityManager entityManager;
+    
+    @Override
+    protected EntityManager getEntityManager() {
+        return this.entityManager;
     }
     
-    @Autowired
-    public void setStylesheetUserPreferencesDao(IStylesheetUserPreferencesDao stylesheetUserPreferencesDao) {
-        this.stylesheetUserPreferencesDao = stylesheetUserPreferencesDao;
-    }
-
     @Before
     public void onSetUp() throws Exception {
         this.execute(new Callable<Object>() {

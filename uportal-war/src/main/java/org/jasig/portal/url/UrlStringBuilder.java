@@ -41,7 +41,7 @@ import org.apache.commons.lang.Validate;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class UrlStringBuilder implements Serializable, Cloneable {
+public final class UrlStringBuilder implements Serializable, Cloneable {
     private static final long serialVersionUID = 1L;
 
     private final String encoding;

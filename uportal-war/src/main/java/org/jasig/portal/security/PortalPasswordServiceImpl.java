@@ -31,8 +31,8 @@ import org.springframework.stereotype.Component;
 @Component("portalPasswordService")
 public class PortalPasswordServiceImpl implements IPortalPasswordService {
 
-    protected final String MD5_PREFIX = "(MD5)";
-    protected final String SHA256_PREFIX = "(SHA256)";
+    protected static final String MD5_PREFIX = "(MD5)";
+    protected static final String SHA256_PREFIX = "(SHA256)";
     
     private ConfigurablePasswordEncryptor md5Encryptor;    
     private ConfigurablePasswordEncryptor sha256Encryptor;

@@ -50,7 +50,7 @@ public abstract class ComparableExtractingComparator<T, C extends Comparable<C>>
             return this.comparator.compare(c1, c2);
         }
         
-        if (c1 == null && c1== c2) {
+        if (c1 == null && c1 == c2) {
             return 0;
         }
         

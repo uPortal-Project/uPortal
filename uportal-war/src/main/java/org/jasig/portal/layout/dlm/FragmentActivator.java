@@ -21,13 +21,13 @@ package org.jasig.portal.layout.dlm;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.regex.Pattern;
 
 import net.sf.ehcache.Ehcache;
-import net.sf.ehcache.store.chm.ConcurrentHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -189,8 +189,6 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
                 }
                 loadPreferences( view, fd);
                 fragmentizeLayout( view, fd);
-                fragmentizeTSUP( view, fd);
-                fragmentizeSSUP( view, fd);
                 this.setUserView(fd.getOwnerId(), locale, view);
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("\n\n------ done activating " + fd.getName() + " (locale = " + locale.toString() + ")" );
@@ -456,94 +454,7 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
         IPerson p = new PersonImpl();
         p.setID( view.getUserId() );
         p.setAttribute( "username", fragment.getOwnerId() );
-//      Don't think any stylesheet preferences work needs to be done here anymore
-//        try
-//        {
-//            view.structUserPrefs = userLayoutStore.getDistributedSSUP(p, view.profileId,
-//                    view.structureStylesheetId);
-//            view.themeUserPrefs = userLayoutStore.getDistributedTSUP(p, view.profileId,
-//                    view.themeStylesheetId);
-//        }
-//        catch( Exception e )
-//        {
-//            throw new RuntimeException(
-//                  "Anomaly occurred while loading structure or theme " +
-//                    "stylesheet user preferences for fragment '" +
-//                  fragment.getName() +
-//                  "'. The fragment will not be " +
-//                  "available for inclusion into user layouts.", e );
-//        }
     }
-
-    /**
-     * Changes channel and folder ids on the structure stylesheet user
-     * preference object to
-     * the globally safe version containing user id and layout id from which
-     * they came. This is done prior to these preferences being available for
-     * incorporation into a regular user's preferences from an incorporated
-     * layout. 
-     */
-    void fragmentizeSSUP( UserView view,
-                          FragmentDefinition fragment )
-    {
-        Element root = view.layout.getDocumentElement();
-        String labelBase = root.getAttribute( Constants.ATT_ID );
-//        fragmentizeIds( labelBase, view.structUserPrefs, FOLDERS );
-//        fragmentizeIds( labelBase, view.structUserPrefs, CHANNELS );
-    }
-
-    /**
-     * Changes channel ids on the theme stylesheet user preference object to
-     * the globally safe version containing user id and layout id from which
-     * they came. This is done prior to these preferences being available for
-     * incorporation into a regular user's preferences from an incorporated
-     * layout. 
-     */
-    void fragmentizeTSUP( UserView view,
-                          FragmentDefinition fragment )
-    {
-        Element root = view.layout.getDocumentElement();
-        String labelBase = root.getAttribute( Constants.ATT_ID );
-//        fragmentizeIds( labelBase, view.themeUserPrefs, CHANNELS );
-    }
-
-    //EricD 3/14 - commented out in conversion to new format of IStylesheetUserPreferences as node ID conversion requirements are not clear
-    //This may be needed in the future.
-//    /**
-//     * Changes user preference ids of folders or channels from the uPortal
-//     * default of sXX for
-//     * folders and nXX for channels to a globally safe value containing the
-//     * user id and layout id from which the node came.
-//     */
-//    private void fragmentizeIds( String labelBase,
-//                                 DistributedUserPreferences up,
-//                                 int which )
-//    {
-//        Enumeration elements = null;
-//        if ( which == CHANNELS )
-//            elements = up.getChannels();
-//        else
-//            elements = up.getFolders();
-//        
-//        // grab the list of elements that have user changed attributes
-//        Vector list = new Vector();
-//        while( elements.hasMoreElements() )
-//            list.add( elements.nextElement() );
-//        elements = list.elements();
-//        
-//        // now change their id's to the globally unique values
-//        while( elements.hasMoreElements() )
-//        {
-//            String id = (String) elements.nextElement();
-//            if ( ! id.startsWith( Constants.FRAGMENT_ID_USER_PREFIX ) ) // already converted don't change
-//            {
-//                if ( which == CHANNELS )
-//                    up.changeChannelId( id, labelBase + id );
-//                else
-//                    up.changeFolderId( id, labelBase + id );
-//            }
-//        }
-//    }
 
     /**
      * Removes unwanted and hidden folders, then changes all node ids to their 

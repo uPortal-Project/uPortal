@@ -282,11 +282,6 @@
         <servlet-name>RenderingDispatcherServlet</servlet-name>
     </filter-mapping>
 
-    <servlet>
-        <servlet-name>Instrumentation</servlet-name>
-        <servlet-class>org.jasig.portal.tools.checks.ChecksServlet</servlet-class>
-    </servlet>
-
     <!-- Supports view rendering -->
     <servlet>
         <servlet-name>ViewRendererServlet</servlet-name>
@@ -380,11 +375,6 @@
     <servlet-mapping>
         <servlet-name>RedirectionDispatcherServlet</servlet-name>
         <url-pattern>/s/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>Instrumentation</servlet-name>
-        <url-pattern>/instrumentation</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

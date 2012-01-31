@@ -56,7 +56,6 @@ public final class PortalRenderEvent extends PortalEvent {
     PortalRenderEvent(PortalEventBuilder eventBuilder, String requestPathInfo, long executionTime, UrlState urlState,
             UrlType urlType, Map<String, List<String>> parameters, String targetedLayoutNodeId) {
         super(eventBuilder);
-        Validate.notNull(requestPathInfo, "requestPathInfo");
         Validate.notNull(urlState, "urlType");
         Validate.notNull(urlType, "urlType");
         Validate.notNull(parameters, "parameters");

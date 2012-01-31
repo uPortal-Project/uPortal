@@ -53,7 +53,7 @@ import org.jasig.portal.portlets.StringListAttributeFactory;
 public class PortletDefinitionForm implements Serializable {
 	
 	private static final long serialVersionUID = 892741367149099647L;
-	protected final Log log = LogFactory.getLog(getClass());
+	protected transient final Log log = LogFactory.getLog(getClass());
 	
 	/**
 	 * Main portlet fields

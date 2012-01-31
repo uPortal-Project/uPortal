@@ -29,6 +29,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
@@ -42,6 +43,8 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Function;
+
 /**
  * JpaPermissionOwnerDao provides a default JPA/Hibernate implementation of
  * the IPermissionOwnerDao interface.
@@ -52,9 +55,6 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository("permissionOwnerDao")
 public class JpaPermissionOwnerDao extends BaseJpaDao implements IPermissionOwnerDao {
-    private static final String FIND_ALL_PERMISSION_OWNERS_CACHE_REGION = PermissionOwnerImpl.class.getName() + ".query.FIND_ALL_PERMISSION_OWNERS";
-    private static final String FIND_PERMISSION_OWNER_BY_FNAME_CACHE_REGION = PermissionOwnerImpl.class.getName() + ".query.FIND_PERMISSION_OWNER_BY_FNAME";
-    
     protected final Log log = LogFactory.getLog(getClass());
     
     private CriteriaQuery<PermissionOwnerImpl> findAllPermissionOwners;
@@ -73,34 +73,37 @@ public class JpaPermissionOwnerDao extends BaseJpaDao implements IPermissionOwne
     }
 
     @Override
-    protected void buildCriteriaQueries(CriteriaBuilder cb) {
-        this.fnameParameter = cb.parameter(String.class, "fname");
+    public void afterPropertiesSet() throws Exception {
+        this.fnameParameter = this.createParameterExpression(String.class, "fname");
         
-        this.findAllPermissionOwners = this.buildFindAllPermissionOwners(cb);
-        this.findPermissionOwnerByFname = this.buildFindPermissionOwnerByFname(cb);
-    }
-
-    protected CriteriaQuery<PermissionOwnerImpl> buildFindAllPermissionOwners(final CriteriaBuilder cb) {
-        final CriteriaQuery<PermissionOwnerImpl> criteriaQuery = cb.createQuery(PermissionOwnerImpl.class);
-        final Root<PermissionOwnerImpl> ownerRoot = criteriaQuery.from(PermissionOwnerImpl.class);
-        criteriaQuery.select(ownerRoot);
-        ownerRoot.fetch(PermissionOwnerImpl_.activities);
+        this.findAllPermissionOwners = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<PermissionOwnerImpl>>() {
+            @Override
+            public CriteriaQuery<PermissionOwnerImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<PermissionOwnerImpl> criteriaQuery = cb.createQuery(PermissionOwnerImpl.class);
+                final Root<PermissionOwnerImpl> ownerRoot = criteriaQuery.from(PermissionOwnerImpl.class);
+                criteriaQuery.select(ownerRoot);
+                ownerRoot.fetch(PermissionOwnerImpl_.activities, JoinType.LEFT);
+                
+                return criteriaQuery;
+            }
+        });
         
-        return criteriaQuery;
-    }
-
-    protected CriteriaQuery<PermissionOwnerImpl> buildFindPermissionOwnerByFname(final CriteriaBuilder cb) {
-        final CriteriaQuery<PermissionOwnerImpl> criteriaQuery = cb.createQuery(PermissionOwnerImpl.class);
-        final Root<PermissionOwnerImpl> ownerRoot = criteriaQuery.from(PermissionOwnerImpl.class);
-        criteriaQuery.select(ownerRoot);
-        ownerRoot.fetch(PermissionOwnerImpl_.activities);
-        criteriaQuery.where(
-                cb.equal(ownerRoot.get(PermissionOwnerImpl_.fname), this.fnameParameter)
-            );
         
-        return criteriaQuery;
+        this.findPermissionOwnerByFname = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<PermissionOwnerImpl>>() {
+            @Override
+            public CriteriaQuery<PermissionOwnerImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<PermissionOwnerImpl> criteriaQuery = cb.createQuery(PermissionOwnerImpl.class);
+                final Root<PermissionOwnerImpl> ownerRoot = criteriaQuery.from(PermissionOwnerImpl.class);
+                criteriaQuery.select(ownerRoot);
+                ownerRoot.fetch(PermissionOwnerImpl_.activities, JoinType.LEFT);
+                criteriaQuery.where(
+                        cb.equal(ownerRoot.get(PermissionOwnerImpl_.fname), fnameParameter)
+                    );
+                
+                return criteriaQuery;
+            }
+        });
     }
-
 
     /*
      * (non-Javadoc)
@@ -110,7 +113,7 @@ public class JpaPermissionOwnerDao extends BaseJpaDao implements IPermissionOwne
      */
     @Override
     public List<IPermissionOwner> getAllPermissionOwners() {
-        final TypedQuery<PermissionOwnerImpl> query = this.createQuery(this.findAllPermissionOwners, FIND_ALL_PERMISSION_OWNERS_CACHE_REGION);
+        final TypedQuery<PermissionOwnerImpl> query = this.createCachedQuery(this.findAllPermissionOwners);
         
         final List<PermissionOwnerImpl> resultList = query.getResultList();
         return new ArrayList<IPermissionOwner>(new LinkedHashSet<IPermissionOwner>(resultList));
@@ -146,7 +149,7 @@ public class JpaPermissionOwnerDao extends BaseJpaDao implements IPermissionOwne
      */
     @Override
     public IPermissionOwner getPermissionOwner(String fname){
-        final TypedQuery<PermissionOwnerImpl> query = this.createQuery(this.findPermissionOwnerByFname, FIND_PERMISSION_OWNER_BY_FNAME_CACHE_REGION);
+        final TypedQuery<PermissionOwnerImpl> query = this.createCachedQuery(this.findPermissionOwnerByFname);
         query.setParameter(this.fnameParameter, fname);
         
         final List<PermissionOwnerImpl> owners = query.getResultList();

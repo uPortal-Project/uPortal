@@ -34,7 +34,7 @@ import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.services.SequenceGenerator;
+import org.jasig.portal.spring.locator.CounterStoreLocator;
 
 /**
  * This class provides access to the entity types used by <code>IBasicEntities</code>
@@ -354,7 +354,7 @@ private static String getInsertEntityTypeSql()
  */
 private int getNextKey() throws java.lang.Exception
 {
-    return SequenceGenerator.instance().getNextInt(ENTITY_TYPE_TABLE);
+    return CounterStoreLocator.getCounterStore().getNextId(ENTITY_TYPE_TABLE);
 }
 
 /**

@@ -32,9 +32,9 @@ public class EntityTargetProviderImpl implements IPermissionTargetProvider, Seri
     
     private Set<String> allowedEntityTypes = new HashSet<String>();
     
-    protected final Log log = LogFactory.getLog(getClass());
+    protected transient final Log log = LogFactory.getLog(getClass());
     
-    private IGroupListHelper groupListHelper;
+    private transient IGroupListHelper groupListHelper;
     
     @Autowired(required = true)
     public void setGroupListHelper(IGroupListHelper helper) {

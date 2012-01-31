@@ -24,9 +24,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -39,10 +39,15 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.ILockableEntityGroup;
+import org.jasig.portal.layout.dao.IStylesheetUserPreferencesDao;
+import org.jasig.portal.layout.om.IStylesheetUserPreferences;
+import org.jasig.portal.persondir.ILocalAccountDao;
+import org.jasig.portal.persondir.ILocalAccountPerson;
+import org.jasig.portal.portlet.dao.IPortletEntityDao;
+import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.services.GroupService;
-import org.jasig.portal.services.SequenceGenerator;
 import org.jasig.portal.spring.locator.CounterStoreLocator;
 import org.jasig.portal.utils.SerializableObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +62,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -67,7 +73,7 @@ import com.googlecode.ehcache.annotations.Cacheable;
  * @author Susan Bramhall, Yale University (modify by Julien Marchal, University Nancy 2; Eric Dalquist - edalquist@unicon.net)
  * @version $Revision$
  */
-@Service
+@Service("userIdentityStore")
 public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
     private static final Log log = LogFactory.getLog(RDBMUserIdentityStore.class);
@@ -80,11 +86,29 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     private String defaultTemplateUserName;
     private JdbcOperations jdbcOperations;
     private TransactionOperations transactionOperations;
+    private IPortletEntityDao portletEntityDao;
+    private IStylesheetUserPreferencesDao stylesheetUserPreferencesDao;
+    private ILocalAccountDao localAccountDao;
     private Ehcache userLockCache;
     
     @Value("${org.jasig.portal.services.Authentication.defaultTemplateUserName}")
     public void setDefaultTemplateUserName(String defaultTemplateUserName) {
         this.defaultTemplateUserName = defaultTemplateUserName;
+    }
+    
+    @Autowired
+    public void setPortletEntityDao(@Qualifier("persistence") IPortletEntityDao portletEntityDao) {
+        this.portletEntityDao = portletEntityDao;
+    }
+
+    @Autowired
+    public void setStylesheetUserPreferencesDao(IStylesheetUserPreferencesDao stylesheetUserPreferencesDao) {
+        this.stylesheetUserPreferencesDao = stylesheetUserPreferencesDao;
+    }
+
+    @Autowired
+    public void setLocalAccountDao(ILocalAccountDao localAccountDao) {
+        this.localAccountDao = localAccountDao;
     }
 
     @Autowired
@@ -127,123 +151,85 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     return uPortalUID;
     }
 
+  @Override
+  public void removePortalUID(final String userName) {
+      this.transactionOperations.execute(new TransactionCallbackWithoutResult() {
+          @Override
+          protected void doInTransactionWithoutResult(TransactionStatus arg0) {
+              if (PersonFactory.GUEST_USERNAME.equals(userName)) {
+                  throw new IllegalArgumentException("CANNOT RESET LAYOUT FOR A GUEST USER");
+              }
+              
+              final int userId = jdbcOperations.queryForInt("SELECT USER_ID FROM UP_USER WHERE USER_NAME=?", userName);
+      
+              final int type = jdbcOperations.queryForInt("SELECT ENTITY_TYPE_ID FROM UP_ENTITY_TYPE WHERE ENTITY_TYPE_NAME = ?", IPerson.class.getName());
+              
+              jdbcOperations.update("DELETE FROM UP_PERMISSION WHERE PRINCIPAL_KEY=? AND PRINCIPAL_TYPE=?", userName, type);
+
+              
+              final List<Integer> groupIds = jdbcOperations.queryForList(
+                      "SELECT M.GROUP_ID " +
+                      "FROM UP_GROUP_MEMBERSHIP M, UP_GROUP G, UP_ENTITY_TYPE E " +
+                      "WHERE M.GROUP_ID = G.GROUP_ID " +
+                      "  AND G.ENTITY_TYPE_ID = E.ENTITY_TYPE_ID " +
+                      "  AND  E.ENTITY_TYPE_NAME = 'org.jasig.portal.security.IPerson'" +
+                      "  AND  M.MEMBER_KEY =? AND  M.MEMBER_IS_GROUP = 'F'", Integer.class, userName);
+
+              
+              // Remove from local group
+              // Delete from DeleteUser.java and place here
+              // must be made before delete user in UP_USER
+              for (final Integer groupId : groupIds) {
+                  jdbcOperations.update("DELETE FROM UP_GROUP_MEMBERSHIP WHERE MEMBER_KEY=? AND GROUP_ID=?", userName, groupId);
+              }
+
+              jdbcOperations.update("DELETE FROM UP_USER            WHERE USER_ID = ?", userId);
+              jdbcOperations.update("DELETE FROM UP_USER_LAYOUT     WHERE USER_ID = ?", userId);
+              jdbcOperations.update("DELETE FROM UP_USER_PROFILE    WHERE USER_ID = ?", userId);
+              jdbcOperations.update("DELETE FROM UP_LAYOUT_PARAM    WHERE USER_ID = ?", userId);
+              jdbcOperations.update("DELETE FROM UP_LAYOUT_STRUCT   WHERE USER_ID = ?", userId);
+              jdbcOperations.update("DELETE FROM UP_USER_LOCALE     WHERE USER_ID = ?", userId);
+              
+              //Purge all portlet entity data
+              final Set<IPortletEntity> portletEntities = portletEntityDao.getPortletEntitiesForUser(userId);
+              for (final IPortletEntity portletEntity : portletEntities) {
+                  portletEntityDao.deletePortletEntity(portletEntity);
+              }
+              
+              
+              //Purge all stylesheet preference data
+              final List<? extends IStylesheetUserPreferences> stylesheetUserPreferences = stylesheetUserPreferencesDao.getStylesheetUserPreferencesForUser(userId);
+              for (final IStylesheetUserPreferences stylesheetUserPreference : stylesheetUserPreferences) {
+                  stylesheetUserPreferencesDao.deleteStylesheetUserPreferences(stylesheetUserPreference);
+              }
+              
+              final ILocalAccountPerson person = localAccountDao.getPerson(userName);
+              if (person != null) {
+                  localAccountDao.deleteAccount(person);
+              }
+          }
+      });
+  }
+  
   /**
    *
    * removeuPortalUID
    * @param   uPortalUID integer key to uPortal data for a user
    * @throws SQLException exception if a sql error is encountered
    */
-  public void removePortalUID(final int uPortalUID) throws Exception {
+  @Override
+  public void removePortalUID(final int uPortalUID) {
       
-      this.transactionOperations.execute(new TransactionCallback<Object>() {
-          @Override
-          public Object doInTransaction(TransactionStatus status) {
-              return jdbcOperations.execute(new ConnectionCallback<Object>() {
-                  @Override
-                  public Object doInConnection(Connection con) throws SQLException, DataAccessException {
-    
-      java.sql.PreparedStatement ps = null;
-      Statement stmt = null;
-      ResultSet rs = null;
-      
-      // TODO get these working
-//      portletEntityDao.deletePortletEntitiesForUser(uPortalUID);
-//      stylesheetUserPreferencesDao.deleteStylesheetUserPreferencesForUser(uPortalUID)
-
-
-      // START of Addition after bug declaration (bug id 1516)
-      // Permissions delete
-      // must be made before delete user in UP_USER
-      rs = stmt.executeQuery("SELECT USER_NAME FROM UP_USER WHERE USER_ID="+uPortalUID);
-      String name = "";
-      if ( rs.next() )
-        name = rs.getString(1);
-      rs.close();
-      
-      if (PersonFactory.GUEST_USERNAME.equals(name)) {
-          throw new IllegalArgumentException("CANNOT RESET LAYOUT FOR A GUEST USER: " + uPortalUID);
-      }
-      
-      rs = stmt.executeQuery("SELECT ENTITY_TYPE_ID FROM UP_ENTITY_TYPE WHERE ENTITY_TYPE_NAME = 'org.jasig.portal.security.IPerson'");
-      int type = -1;
-      if ( rs.next() )
-        type = rs.getInt(1);
-      rs.close();
-      rs = null;
-      String SQLDelete = "DELETE FROM UP_PERMISSION WHERE PRINCIPAL_KEY='"+name+"' AND PRINCIPAL_TYPE="+type;
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-      stmt.executeUpdate(SQLDelete);
-
-      rs = stmt.executeQuery("SELECT M.GROUP_ID " +
-			"FROM UP_GROUP_MEMBERSHIP M, UP_GROUP G, UP_ENTITY_TYPE E " +
-			"WHERE M.GROUP_ID = G.GROUP_ID " +
-			"  AND G.ENTITY_TYPE_ID = E.ENTITY_TYPE_ID " +
-			"  AND  E.ENTITY_TYPE_NAME = 'org.jasig.portal.security.IPerson'" +
-			"  AND  M.MEMBER_KEY ='"+name+"' AND  M.MEMBER_IS_GROUP = 'F'");
-      java.util.Vector groups = new java.util.Vector();
-      while ( rs.next() )
-        groups.add(rs.getString(1));
-      rs.close();
-      rs = null;
-
-      // Remove from local group
-      // Delete from DeleteUser.java and place here
-      // must be made before delete user in UP_USER
-      ps = con.prepareStatement("DELETE FROM UP_GROUP_MEMBERSHIP WHERE MEMBER_KEY='"+name+"' AND GROUP_ID=?");
-      for ( int i = 0; i < groups.size(); i++ ) {
-        String group = (String) groups.get(i);
-        ps.setString(1,group);
-        ps.executeUpdate();
-      }
-      if ( ps != null ) ps.close();
-      // END of Addition after bug declaration (bug id 1516)
-
-      SQLDelete = "DELETE FROM UP_USER WHERE USER_ID = " + uPortalUID;
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-      stmt.executeUpdate(SQLDelete);
-
-      SQLDelete = "DELETE FROM UP_USER_LAYOUT  WHERE USER_ID = " + uPortalUID;
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-      stmt.executeUpdate(SQLDelete);
-
-      SQLDelete = "DELETE FROM UP_USER_PROFILE  WHERE USER_ID = " + uPortalUID;
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-      stmt.executeUpdate(SQLDelete);
-
-      SQLDelete = "DELETE FROM UP_USER_LAYOUT    WHERE USER_ID = " + uPortalUID;
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-      stmt.executeUpdate(SQLDelete);
-
-      SQLDelete = "DELETE FROM UP_LAYOUT_PARAM WHERE USER_ID = " + uPortalUID;
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-      stmt.executeUpdate(SQLDelete);
-
-      SQLDelete = "DELETE FROM UP_USER_UA_MAP WHERE USER_ID = " + uPortalUID;
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-      stmt.executeUpdate(SQLDelete);
-
-      SQLDelete = "DELETE FROM UP_LAYOUT_STRUCT  WHERE USER_ID = " + uPortalUID;
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-      stmt.executeUpdate(SQLDelete);
-
-      // START of Addition after bug declaration (bug id 1516)
-      SQLDelete = "DELETE FROM UP_USER_LOCALE WHERE USER_ID = " + uPortalUID;
-      if (log.isDebugEnabled())
-          log.debug("RDBMUserIdentityStore::removePortalUID(): " + SQLDelete);
-      stmt.executeUpdate(SQLDelete);
-      // END of Addition after bug declaration (bug id 1516)
-
-      return null;
-                  }
-              });
+      this.transactionOperations.execute(new TransactionCallbackWithoutResult() {
+        @Override
+        protected void doInTransactionWithoutResult(TransactionStatus arg0) {
+              final String name = jdbcOperations.queryForObject("SELECT USER_NAME FROM UP_USER WHERE USER_ID=?", String.class, uPortalUID);
+              if (name == null) {
+                  log.warn("No user exists for id " + uPortalUID + " Nothing will be deleted");
+                  return;
+              }
+                      
+              removePortalUID(name);
           }
       });
     }
@@ -378,7 +364,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
    }
   
   protected int getNewPortalUID(IPerson person) throws Exception {
-	return CounterStoreLocator.getCounterStore().getIncrementIntegerId("UP_USER");
+	return CounterStoreLocator.getCounterStore().getNextId("UP_USER");
   }
 
   static final protected void commit (Connection connection) {
@@ -847,7 +833,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
   private int getNextKey()
   {
-      return SequenceGenerator.instance().getNextInt(PROFILE_TABLE);
+      return CounterStoreLocator.getCounterStore().getNextId(PROFILE_TABLE);
   }
 
   protected class PortalUser {

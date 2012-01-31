@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 /*====================================*/
 /* uMOBILE PORTAL */
 /*====================================*/
@@ -539,6 +538,9 @@ mathematical calculations. */
   padding: 0.2em 10px;
 }
 
+.up {
+  /* icons */
+}
 .up .ui-bar, .up .ui-li-divider {
   border-width: 1px;
   border-style: solid;
@@ -736,13 +738,26 @@ mathematical calculations. */
 .up .portlet-content .ui-btn-active a.ui-link-inherit {
   color: white;
 }
+.up .portlet-content .ui-li {
+  background-image: -moz-linear-gradient(top, #fcfcfc, #ededed);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #fcfcfc), color-stop(1, #ededed));
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#fcfcfc', EndColorStr='#ededed')";
+}
 .up .portlet-content .ui-li-divider {
   border-color: #38678f;
+  border-top: 1px solid #699bc4;
   background: #4682b4;
   color: white;
-  background-image: -moz-linear-gradient(top, #699bc4, #38678f);
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #699bc4), color-stop(1, #38678f));
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#699bc4', EndColorStr='#38678f')";
+  background-image: -moz-linear-gradient(top, #38678f, #699bc4);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #38678f), color-stop(1, #699bc4));
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#38678f', EndColorStr='#699bc4')";
+  -moz-box-shadow: 0 0 5px #999;
+  -webkit-box-shadow: 0 0 5px #999;
+  box-shadow: 0 0 5px #999;
+  z-index: 1;
+}
+.up .portlet-content .ui-li-divider .ui-grid-a .ui-block-b {
+  text-align: right;
 }
 .up .portlet-content .utilities .ui-btn-up-a, .up .portlet-content .utilities .ui-btn-up-b, .up .portlet-content .utilities .ui-btn-up-c, .up .portlet-content .utilities .ui-btn-up-d, .up .portlet-content .utilities .ui-btn-up-e {
   border-color: #143f27;
@@ -798,7 +813,24 @@ mathematical calculations. */
   @include gradient($c1, $c1dark);
   @include rounded(5px);*/
 }
+.up .ui-icon-map {
+  background-image: url(images/icons/location-18x18.png);
+}
+.up .ui-icon-phone {
+  background-image: url(images/icons/phone-18x18.png);
+}
 
+/* retina icons */
+@media only screen and (-webkit-min-device-pixel-ratio: 2) {
+  .up .ui-icon-map {
+    background-image: url(images/icons/location-36x36.png);
+    background-size: 18px 18px;
+  }
+  .up .ui-icon-phone {
+    background-image: url(images/icons/phone-36x36.png);
+    background-size: 18px 18px;
+  }
+}
 /*====================================*/
 /* PORTLET */
 /*====================================*/
@@ -994,4 +1026,10 @@ mathematical calculations. */
   background: rgba(0, 0, 0, 0.25);
   border-color: black;
   color: black;
+}
+.up .no-ui-li-count {
+  padding-right: 0.7em;
+}
+.up .unavailable {
+  opacity: 0.5;
 }

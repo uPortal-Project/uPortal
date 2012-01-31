@@ -54,6 +54,7 @@
         <mapping class="org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluator" />
         <mapping class="org.jasig.portal.layout.dlm.providers.SubscribedTabEvaluator" />
         <mapping class="org.jasig.portal.layout.dlm.providers.GuestUserEvaluatorFactory" />
+        <mapping class="org.jasig.portal.layout.dlm.providers.EvaluatorGroup" />
         <mapping class="org.jasig.portal.layout.dlm.providers.Paren" />
         <mapping class="org.jasig.portal.permission.dao.jpa.PermissionActivityImpl" />
         <mapping class="org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl" />

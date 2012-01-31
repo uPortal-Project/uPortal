@@ -20,6 +20,9 @@
 package org.jasig.portal.portlet.delegation.jsp;
 
 import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -79,8 +82,8 @@ public class RenderPortletTag extends TagSupport {
     private String portletMode = null;
     
 
-    private WindowState parentUrlState = null;
-    private PortletMode parentUrlMode = null;
+    private transient WindowState parentUrlState = null;
+    private transient PortletMode parentUrlMode = null;
     private Map<String, List<String>> parentUrlParameters = null;
     
 
@@ -178,5 +181,32 @@ public class RenderPortletTag extends TagSupport {
     }
     protected void setParentUrlParameters(Map<String, List<String>> parentUrlParameters) {
         this.parentUrlParameters = parentUrlParameters;
+    }
+    
+
+
+    private void writeObject(ObjectOutputStream oos) throws IOException {
+        oos.defaultWriteObject();
+        oos.writeObject(this.parentUrlState.toString());
+        oos.writeObject(this.parentUrlMode.toString());
+    }
+    
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        //Read & validate non-transient fields
+        ois.defaultReadObject();
+        
+        
+        //Read & validate transient fields
+        final String portletModeStr = (String)ois.readObject();
+        if (portletModeStr == null) {
+            throw new InvalidObjectException("portletMode can not be null");
+        }
+        this.parentUrlMode = PortletUtils.getPortletMode(portletModeStr);
+        
+        final String windowStateStr = (String)ois.readObject();
+        if (windowStateStr == null) {
+            throw new InvalidObjectException("windowState can not be null");
+        }
+        this.parentUrlState = PortletUtils.getWindowState(windowStateStr);
     }
 }

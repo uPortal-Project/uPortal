@@ -19,22 +19,24 @@
 
 package org.jasig.portal.concurrency.locking;
 
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.when;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.jasig.portal.IPortalInfoProvider;
 import org.jasig.portal.concurrency.CallableWithoutResult;
-import org.jasig.portal.portlet.dao.jpa.BaseJpaDaoTest;
+import org.jasig.portal.test.BaseJpaDaoTest;
 import org.jasig.portal.test.ThreadGroupRunner;
 import org.jasig.portal.utils.threading.ThrowingRunnable;
 import org.junit.Test;
@@ -44,10 +46,6 @@ import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * @author Eric Dalquist
@@ -60,12 +58,13 @@ public class JpaClusterLockDaoTest extends BaseJpaDaoTest {
     private IClusterLockDao clusterLockDao;
     @Autowired
     private IPortalInfoProvider portalInfoProvider;
-    private TransactionTemplate transactionTemplate;
+
+    @PersistenceContext(unitName = "uPortalPersistence")
+    private EntityManager entityManager;
     
-    @Autowired
-    public void setPlatformTransactionManager(PlatformTransactionManager platformTransactionManager) {
-        this.transactionTemplate = new TransactionTemplate(platformTransactionManager);
-        this.transactionTemplate.afterPropertiesSet();
+    @Override
+    protected EntityManager getEntityManager() {
+        return this.entityManager;
     }
     
     @Test
@@ -78,24 +77,19 @@ public class JpaClusterLockDaoTest extends BaseJpaDaoTest {
         threadGroupRunner.addTask(3, new ThrowingRunnable() {
             @Override
             public void runWithException() throws Throwable {
-                execute(new CallableWithoutResult() {
+                executeInTransaction(new CallableWithoutResult() {
                     @Override
                     protected void callWithoutResult() {
-                        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-                            @Override
-                            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                                try {
-                                    final String mutexName = "testConcurrentCreation";
-                                    
-                                    threadGroupRunner.tick(1);
-                                    ClusterMutex mutex = clusterLockDao.getClusterMutex(mutexName);
-                                    assertNotNull(mutex);
-                                }
-                                catch (InterruptedException e) {
-                                    throw new RuntimeException(e);
-                                }
-                            }
-                        });
+                        try {
+                            final String mutexName = "testConcurrentCreation";
+                            
+                            threadGroupRunner.tick(1);
+                            ClusterMutex mutex = clusterLockDao.getClusterMutex(mutexName);
+                            assertNotNull(mutex);
+                        }
+                        catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 });
             }
@@ -128,29 +122,24 @@ public class JpaClusterLockDaoTest extends BaseJpaDaoTest {
         threadGroupRunner.addTask(3, new ThrowingRunnable() {
             @Override
             public void runWithException() throws Throwable {
-                execute(new CallableWithoutResult() {
+                executeInTransaction(new CallableWithoutResult() {
                     @Override
                     protected void callWithoutResult() {
-                        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-                            @Override
-                            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                                try {
-                                    threadGroupRunner.tick(1);
-                                    try {
-                                        final boolean locked = clusterLockDao.getLock(mutexName);
-                                        if (locked) {
-                                            lockCounter.incrementAndGet();
-                                        }
-                                    }
-                                    finally {
-                                        threadGroupRunner.tick(3);
-                                    }
-                                }
-                                catch (InterruptedException e) {
-                                    throw new RuntimeException(e);
+                        try {
+                            threadGroupRunner.tick(1);
+                            try {
+                                final boolean locked = clusterLockDao.getLock(mutexName);
+                                if (locked) {
+                                    lockCounter.incrementAndGet();
                                 }
                             }
-                        });
+                            finally {
+                                threadGroupRunner.tick(3);
+                            }
+                        }
+                        catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 });
             }
@@ -184,30 +173,24 @@ public class JpaClusterLockDaoTest extends BaseJpaDaoTest {
         threadGroupRunner.addTask(3, new ThrowingRunnable() {
             @Override
             public void runWithException() throws Throwable {
-                execute(new CallableWithoutResult() {
+                executeInTransaction(new CallableWithoutResult() {
                     @Override
                     protected void callWithoutResult() {
-                        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-                            @Override
-                            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                                try {
-                                    threadGroupRunner.tick(1);
-                                    try {
-                                        final boolean locked = clusterLockDao.getLock(mutexName);
-                                        if (locked) {
-                                            lockCounter.incrementAndGet();
-                                        }
-                                    }
-                                    finally {
-                                        threadGroupRunner.tick(3);
-                                    }
-                                }
-                                catch (InterruptedException e) {
-                                    throw new RuntimeException(e);
+                        try {
+                            threadGroupRunner.tick(1);
+                            try {
+                                final boolean locked = clusterLockDao.getLock(mutexName);
+                                if (locked) {
+                                    lockCounter.incrementAndGet();
                                 }
                             }
-                            
-                        });
+                            finally {
+                                threadGroupRunner.tick(3);
+                            }
+                        }
+                        catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 });
             }
@@ -262,7 +245,7 @@ public class JpaClusterLockDaoTest extends BaseJpaDaoTest {
         
         //test context configures a 100ms abandoned lock timeout
         for (int i = 0; i < 5; i++) {
-            TimeUnit.MILLISECONDS.sleep(50);
+            TimeUnit.MILLISECONDS.sleep(10);
             //try lock ServerB
             currentServer.set("ServerB");
             execute(new CallableWithoutResult() {
@@ -272,7 +255,7 @@ public class JpaClusterLockDaoTest extends BaseJpaDaoTest {
                     assertFalse(locked);
                 }
             });
-            TimeUnit.MILLISECONDS.sleep(50);
+            TimeUnit.MILLISECONDS.sleep(10);
             //ServerA update ping
             currentServer.set("ServerA");
             execute(new CallableWithoutResult() {

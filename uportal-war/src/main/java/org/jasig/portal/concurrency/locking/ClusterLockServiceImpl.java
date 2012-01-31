@@ -29,11 +29,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.jasig.portal.concurrency.Time;
+import org.joda.time.Duration;
+import org.joda.time.ReadableDuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Function;
@@ -58,8 +60,8 @@ public class ClusterLockServiceImpl implements IClusterLockService {
 
     private ExecutorService lockMonitorExecutorService;
     private IClusterLockDao clusterLockDao;
-    private Time updateLockRate = Time.getTime(500, TimeUnit.MILLISECONDS);
-    private Time maximumLockDuration = Time.getTime(15, TimeUnit.MINUTES);
+    private ReadableDuration updateLockRate = Duration.millis(500);
+    private ReadableDuration maximumLockDuration = Duration.standardMinutes(15);
 
     @Autowired
     public void setClusterLockDao(IClusterLockDao clusterLockDao) {
@@ -67,13 +69,14 @@ public class ClusterLockServiceImpl implements IClusterLockService {
     }
 
     @Autowired
-    void setLockMonitorExecutorService(@Qualifier("uPortalLockExecutor") ExecutorService lockMonitorExecutorService) {
+    public void setLockMonitorExecutorService(@Qualifier("uPortalLockExecutor") ExecutorService lockMonitorExecutorService) {
         this.lockMonitorExecutorService = lockMonitorExecutorService;
     }
     /**
      * Rate at which {@link IClusterLockDao#updateLock(String)} is called while a mutex is locked, defaults to 500ms
      */
-    void setUpdateLockRate(Time updateLockRate) {
+    @Value("${org.jasig.portal.concurrency.locking.ClusterLockDao.abandonedLockAge:PT0.500S}")
+    public void setUpdateLockRate(ReadableDuration updateLockRate) {
         this.updateLockRate = updateLockRate;
     }
 
@@ -81,7 +84,8 @@ public class ClusterLockServiceImpl implements IClusterLockService {
      * Maximum duration that a lock can be held, functionally longest duration that the lockFunction can take to execute.
      * Defaults to 15 minutes
      */
-    void setMaximumLockDuration(Time maximumLockDuration) {
+    @Value("${org.jasig.portal.concurrency.locking.ClusterLockDao.abandonedLockAge:PT900S}")
+    public void setMaximumLockDuration(ReadableDuration maximumLockDuration) {
         this.maximumLockDuration = maximumLockDuration;
     }
 
@@ -110,7 +114,7 @@ public class ClusterLockServiceImpl implements IClusterLockService {
         final boolean lockedLocally = lock.tryLock();
         if (!lockedLocally) {
             this.logger.trace("local lock already held for {}", mutexName);
-            return TryLockFunctionResult.getNotExecutedInstance();
+            return TryLockFunctionResultImpl.getNotExecutedInstance();
         }
         try {
             this.logger.trace("acquired local lock for {}", mutexName);
@@ -124,11 +128,11 @@ public class ClusterLockServiceImpl implements IClusterLockService {
             if (!dbLocked.get()) {
                 //Failed to get DB lock, stop now
                 this.logger.trace("failed to aquire database lock, returning notExecuted result for: {}", mutexName);
-                return TryLockFunctionResult.getNotExecutedInstance();
+                return TryLockFunctionResultImpl.getNotExecutedInstance();
             }
             
             //Execute the lockFunction
-            return new TryLockFunctionResult<T>(lockFunction.apply(mutexName));
+            return new TryLockFunctionResultImpl<T>(lockFunction.apply(mutexName));
         }
         finally {
             //Signal db lock worker to release the lock
@@ -201,7 +205,7 @@ public class ClusterLockServiceImpl implements IClusterLockService {
         @Override
         public Boolean call() throws Exception {
             try {
-                final long lockTimeout = System.currentTimeMillis() + maximumLockDuration.asMillis();
+                final long lockTimeout = System.currentTimeMillis() + maximumLockDuration.getMillis();
                 try {
                     //Try to acquire the lock, set the success to the dbLocked holder
                     this.dbLocked.set(clusterLockDao.getLock(this.mutexName));
@@ -223,7 +227,7 @@ public class ClusterLockServiceImpl implements IClusterLockService {
                 //wait for the work to complete using the updateLockRate as the wait duration, if the wait time
                 //passes without the work thread signaling completion update the mutex (signal we still have the lock)
                 //and wait again
-                while (!this.workCompleteLatch.await(updateLockRate.getDuration(), updateLockRate.getTimeUnit())) {
+                while (!this.workCompleteLatch.await(updateLockRate.getMillis(), TimeUnit.MILLISECONDS)) {
                     clusterLockDao.updateLock(this.mutexName);
                     
                     if (lockTimeout < System.currentTimeMillis()) {
@@ -247,6 +251,42 @@ public class ClusterLockServiceImpl implements IClusterLockService {
             
             logger.trace("DB lock worker returning true: {}", this.mutexName);
             return true;
+        }
+    }
+    
+    public static class TryLockFunctionResultImpl<T> implements TryLockFunctionResult<T> {
+        private static final TryLockFunctionResult<?> NOT_EXECUTED_INSTANCE = new TryLockFunctionResultImpl<Object>();
+        
+        @SuppressWarnings("unchecked")
+        static <T> TryLockFunctionResult<T> getNotExecutedInstance() {
+            return (TryLockFunctionResult<T>)NOT_EXECUTED_INSTANCE;
+        }
+        
+        private final boolean executed;
+        private final T result;
+
+        private TryLockFunctionResultImpl() {
+            this.executed = false;
+            this.result = null;
+        }
+        TryLockFunctionResultImpl(T result) {
+            this.executed = true;
+            this.result = result;
+        }
+
+        @Override
+        public boolean isExecuted() {
+            return executed;
+        }
+
+        @Override
+        public T getResult() {
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "LockFunctionResult [executed=" + executed + ", result=" + result + "]";
         }
     }
 }

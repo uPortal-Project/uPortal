@@ -27,10 +27,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.sql.DataSource;
 import javax.xml.parsers.ParserConfigurationException;
@@ -41,12 +41,13 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.dialect.Dialect;
-import org.hibernate.dialect.resolver.DialectFactory;
-import org.hibernate.engine.Mapping;
+import org.hibernate.engine.spi.Mapping;
 import org.hibernate.mapping.ForeignKey;
 import org.hibernate.mapping.Index;
 import org.hibernate.mapping.Table;
 import org.hibernate.mapping.UniqueKey;
+import org.hibernate.service.ServiceRegistry;
+import org.hibernate.service.jdbc.dialect.spi.DialectResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ResourceLoaderAware;
@@ -54,9 +55,9 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.NonTransientDataAccessResourceException;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.xml.sax.InputSource;
@@ -71,10 +72,10 @@ import org.xml.sax.SAXException;
  * @author Eric Dalquist
  * @version $Revision$
  */
-@Repository("dbLoader")
 public class HibernateDbLoader implements IDbLoader, ResourceLoaderAware {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
+    private HibernateToolConfigurationSource hibernateToolConfigurationSource;
     private JdbcTemplate jdbcTemplate;
     private TransactionTemplate transactionTemplate;
     private Dialect preferedDialect;
@@ -104,7 +105,10 @@ public class HibernateDbLoader implements IDbLoader, ResourceLoaderAware {
         this.preferedDialect = dialect;
     }
     
-    
+    public void setHibernateToolConfigurationSource(HibernateToolConfigurationSource hibernateToolConfigurationSource) {
+        this.hibernateToolConfigurationSource = hibernateToolConfigurationSource;
+    }
+
     @Override
     public void setResourceLoader(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
@@ -115,17 +119,27 @@ public class HibernateDbLoader implements IDbLoader, ResourceLoaderAware {
      */
     @Override
     public void process(DbLoaderConfig configuration) throws ParserConfigurationException, SAXException, IOException {
-        final List<String> script = new ArrayList<String>();
+        final String scriptFile = configuration.getScriptFile();
+        final List<String> script;
+        if (scriptFile == null) {
+            script = null;
+        }
+        else {
+            script = new LinkedList<String>();
+        }
         
         final Dialect dialect;
         if (this.preferedDialect != null) {
             dialect = this.preferedDialect;
         }
         else {
+            final ServiceRegistry serviceRegistry = this.hibernateToolConfigurationSource.getServiceRegistry();
+            final DialectResolver resolver = serviceRegistry.getService(DialectResolver.class);
+            
             dialect = this.jdbcTemplate.execute(new ConnectionCallback<Dialect>() {
                 @Override
                 public Dialect doInConnection(Connection con) throws SQLException, DataAccessException {
-                    return DialectFactory.buildDialect(new Properties(), con);
+                    return resolver.resolveDialect(con.getMetaData());
                 }
             });
             
@@ -148,60 +162,67 @@ public class HibernateDbLoader implements IDbLoader, ResourceLoaderAware {
             
             //Generate and execute drop table scripts
             if (configuration.isDropTables()) {
-                this.logger.info("Dropping existing tables");
                 final List<String> dropScript = this.dropScript(tables.values(), dialect, defaultCatalog, defaultSchema);
 
-                for (final String sql : dropScript) {
-                    this.logger.info(sql);
-                    try {
-                        jdbcTemplate.update(sql);
-                    }
-                    catch (NonTransientDataAccessResourceException dae) {
-                        throw dae;
-                    }
-                    catch (DataAccessException dae) {
-                        failedSql.put(sql, dae);
+                if (script == null) {
+                    this.logger.info("Dropping existing tables");
+                    for (final String sql : dropScript) {
+                        this.logger.info(sql);
+                        try {
+                            jdbcTemplate.update(sql);
+                        }
+                        catch (NonTransientDataAccessResourceException dae) {
+                            throw dae;
+                        }
+                        catch (DataAccessException dae) {
+                            failedSql.put(sql, dae);
+                        }
                     }
                 }
-                
-                script.addAll(dropScript);
+                else {
+                    script.addAll(dropScript);
+                }
             }
-            
-            //Generate and execute create table scripts
-            if (configuration.isCreateTables()) {
-                this.logger.info("Creating tables");
-                final List<String> createScript = this.createScript(tables.values(), dialect, mapping, defaultCatalog, defaultSchema);
 
-                for (final String sql : createScript) {
-                    this.logger.info(sql);
-                    jdbcTemplate.update(sql);
-                }
-                
-                script.addAll(createScript);
-            }
-            
             //Log any drop/create statements that failed 
             for (final Map.Entry<String, DataAccessException> failedSqlEntry : failedSql.entrySet()) {
                 this.logger.warn("'" + failedSqlEntry.getKey() + "' failed to execute due to " + failedSqlEntry.getValue());
             }
+            
+            //Generate and execute create table scripts
+            if (configuration.isCreateTables()) {
+                final List<String> createScript = this.createScript(tables.values(), dialect, mapping, defaultCatalog, defaultSchema);
+
+                if (script == null) {
+                    this.logger.info("Creating tables");
+                    for (final String sql : createScript) {
+                        this.logger.info(sql);
+                        jdbcTemplate.update(sql);
+                    }
+                }
+                else {
+                    script.addAll(createScript);
+                }
+            }
         }
         
         //Perform database population
-        if (configuration.isPopulateTables()) {
+        if (script == null && configuration.isPopulateTables()) {
             this.logger.info("Populating database");
             final Map<String, Map<String, Integer>> tableColumnTypes = tableData.getTableColumnTypes();
             this.populateTables(configuration, tableColumnTypes);
         }
         
         //Write out the script file
-        final String scriptFile = configuration.getScriptFile();
-        if (scriptFile != null) {
+        if (script != null) {
             for (final ListIterator<String> iterator = script.listIterator(); iterator.hasNext(); ) {
                 final String sql = iterator.next();
                 iterator.set(sql + ";");
             }
             
-            FileUtils.writeLines(new File(scriptFile), script);
+            final File outputFile = new File(scriptFile);
+            FileUtils.writeLines(outputFile, script);
+            this.logger.info("Saved DDL to: " + outputFile.getAbsolutePath());
         }
     }
     

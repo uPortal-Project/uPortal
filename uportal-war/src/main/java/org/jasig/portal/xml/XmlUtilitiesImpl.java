@@ -196,7 +196,7 @@ public class XmlUtilitiesImpl implements XmlUtilities {
         
         int count = 1;
         for (Node previousSibling = node.getPreviousSibling(); previousSibling != null; previousSibling = previousSibling.getPreviousSibling()) {
-            if (previousSibling.getNodeType() == Node.ELEMENT_NODE && previousSibling.getNodeName() == nodeName) {
+            if (previousSibling.getNodeType() == Node.ELEMENT_NODE && previousSibling.getNodeName().equals(nodeName)) {
                 count++;
             }
         }

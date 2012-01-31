@@ -19,15 +19,10 @@
 
 package org.jasig.portal.dao.usertype;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.hibernate.HibernateException;
-import org.hibernate.type.descriptor.java.StringTypeDescriptor;
-import org.hibernate.type.descriptor.sql.VarcharTypeDescriptor;
+import org.jadira.usertype.spi.shared.AbstractSingleColumnUserType;
 
 /**
  * Uses a regular expression to validate strings coming to/from the database.
@@ -35,7 +30,7 @@ import org.hibernate.type.descriptor.sql.VarcharTypeDescriptor;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class FunctionalNameType extends BaseUserType<String> {
+public class FunctionalNameType extends AbstractSingleColumnUserType<String, String, FunctionalNameColumnMapper> {
     private static final long serialVersionUID = 1L;
     
     public static final Pattern INVALID_CHARS_PATTERN = Pattern.compile("[^\\w-]");
@@ -61,33 +56,5 @@ public class FunctionalNameType extends BaseUserType<String> {
         }
         
         return INVALID_CHARS_PATTERN.matcher(fname).replaceAll("_");
-    }
-
-    public FunctionalNameType() {
-        super(VarcharTypeDescriptor.INSTANCE, StringTypeDescriptor.INSTANCE);
-    }
-
-    @Override
-    public String nullSafeGet(ResultSet rs, String[] names, Object owner) throws HibernateException, SQLException {
-        final String value = super.nullSafeGet(rs, names, owner);
-        
-        if (value == null) {
-            return null;
-        }
-        
-        if (!isValid(value)) {
-            throw new IllegalArgumentException("Value from database '" + value + "' does not validate against pattern: " + VALID_FNAME_PATTERN.pattern());
-        }
-
-        return value;
-    }
-
-    @Override
-    public void nullSafeSet(PreparedStatement st, Object value, int index) throws HibernateException, SQLException {
-        if (value != null && !isValid((String) value)) {
-            throw new IllegalArgumentException("Value being stored '" + value + "' does not validate against pattern: " + VALID_FNAME_PATTERN.pattern());
-        }
-        
-        super.nullSafeSet(st, value, index);
     }
 }

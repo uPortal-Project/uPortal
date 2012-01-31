@@ -118,24 +118,52 @@ public class JsonPermission implements Comparable<JsonPermission> {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        
-        if ( !(obj instanceof JsonPermission )) {
-            return false;
-        }
-        
-        JsonPermission permission = (JsonPermission) obj;
-        if (this == permission) {
-            return true;
-        }
-        
-        return new EqualsBuilder()
-            .append(this.ownerName, permission.ownerName)
-            .append(this.activityName, permission.activityName)
-            .append(this.principalName, permission.principalName)
-            .append(this.targetName, permission.targetName)
-            .append(this.inherited, permission.inherited)
-            .isEquals();
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.activityName == null) ? 0 : this.activityName.hashCode());
+        result = prime * result + (this.inherited ? 1231 : 1237);
+        result = prime * result + ((this.ownerName == null) ? 0 : this.ownerName.hashCode());
+        result = prime * result + ((this.principalName == null) ? 0 : this.principalName.hashCode());
+        result = prime * result + ((this.targetName == null) ? 0 : this.targetName.hashCode());
+        return result;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        JsonPermission other = (JsonPermission) obj;
+        if (this.activityName == null) {
+            if (other.activityName != null)
+                return false;
+        }
+        else if (!this.activityName.equals(other.activityName))
+            return false;
+        if (this.inherited != other.inherited)
+            return false;
+        if (this.ownerName == null) {
+            if (other.ownerName != null)
+                return false;
+        }
+        else if (!this.ownerName.equals(other.ownerName))
+            return false;
+        if (this.principalName == null) {
+            if (other.principalName != null)
+                return false;
+        }
+        else if (!this.principalName.equals(other.principalName))
+            return false;
+        if (this.targetName == null) {
+            if (other.targetName != null)
+                return false;
+        }
+        else if (!this.targetName.equals(other.targetName))
+            return false;
+        return true;
+    }
 }

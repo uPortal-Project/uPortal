@@ -33,8 +33,8 @@ import org.w3c.dom.Element;
  */
 public class LazyInitByDefaultBeanDefinitionDocumentReader extends DefaultBeanDefinitionDocumentReader {
     @Override
-    protected BeanDefinitionParserDelegate createHelper(XmlReaderContext readerContext, Element root) {
+    protected BeanDefinitionParserDelegate createHelper(XmlReaderContext readerContext, Element root, BeanDefinitionParserDelegate parentDelegate) {
         root.setAttribute(BeanDefinitionParserDelegate.DEFAULT_LAZY_INIT_ATTRIBUTE, "true");
-        return super.createHelper(readerContext, root);
+        return super.createHelper(readerContext, root, parentDelegate);
     }
 }

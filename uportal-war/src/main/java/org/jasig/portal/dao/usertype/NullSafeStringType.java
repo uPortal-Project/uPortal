@@ -19,16 +19,14 @@
 
 package org.jasig.portal.dao.usertype;
 
-import org.hibernate.type.descriptor.sql.VarcharTypeDescriptor;
+import org.jadira.usertype.spi.shared.AbstractSingleColumnUserType;
 
 /**
+ * UserType for mapping strings that can be both null or empty
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class NullSafeStringType extends BaseNullSafeStringType {
+public class NullSafeStringType extends AbstractSingleColumnUserType<String, String, NullSafeStringColumnMapper> {
     private static final long serialVersionUID = 1L;
-    
-    public NullSafeStringType() {
-        super(VarcharTypeDescriptor.INSTANCE);
-    }
 }

@@ -38,6 +38,8 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Function;
+
 /**
  * JPA/Hibernate implementation of IChannelTypeDao.  This DAO handles 
  * channel types and is not yet integrated with the channel definition persistence
@@ -48,9 +50,6 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 public class JpaPortletTypeDao extends BaseJpaDao implements IPortletTypeDao {
-    private static final String FIND_PORTLET_TYPE_BY_NAME_CACHE_REGION = PortletTypeImpl.class.getName() + ".query.FIND_PORTLET_TYPE_BY_NAME";
-    private static final String FIND_ALL_PORTLET_TYPE_CACHE_REGION = PortletTypeImpl.class.getName() + ".query.FIND_ALL_PORTLET_TYPE";
-    
     private CriteriaQuery<PortletTypeImpl> findAllTypesQuery;
     private CriteriaQuery<PortletTypeImpl> findTypeByNameQuery;
     private ParameterExpression<String> nameParameter;
@@ -67,30 +66,32 @@ public class JpaPortletTypeDao extends BaseJpaDao implements IPortletTypeDao {
     }
 
     @Override
-    protected void buildCriteriaQueries(CriteriaBuilder cb) {
-        this.nameParameter = cb.parameter(String.class, "name");
+    public void afterPropertiesSet() throws Exception {
+        this.nameParameter = this.createParameterExpression(String.class, "name");
         
-        this.findAllTypesQuery = this.buildFindAllTypesQuery(cb);
-        this.findTypeByNameQuery = this.buildFindTypeByNameQuery(cb);
-    }
-
-    protected CriteriaQuery<PortletTypeImpl> buildFindAllTypesQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<PortletTypeImpl> criteriaQuery = cb.createQuery(PortletTypeImpl.class);
-        final Root<PortletTypeImpl> typeRoot = criteriaQuery.from(PortletTypeImpl.class);
-        criteriaQuery.select(typeRoot);
+        this.findAllTypesQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<PortletTypeImpl>>() {
+            @Override
+            public CriteriaQuery<PortletTypeImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<PortletTypeImpl> criteriaQuery = cb.createQuery(PortletTypeImpl.class);
+                criteriaQuery.from(PortletTypeImpl.class);
+                return criteriaQuery;
+            }
+        });
         
-        return criteriaQuery;
-    }
-
-    protected CriteriaQuery<PortletTypeImpl> buildFindTypeByNameQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<PortletTypeImpl> criteriaQuery = cb.createQuery(PortletTypeImpl.class);
-        final Root<PortletTypeImpl> typeRoot = criteriaQuery.from(PortletTypeImpl.class);
-        criteriaQuery.select(typeRoot);
-        criteriaQuery.where(
-            cb.equal(typeRoot.get(PortletTypeImpl_.name), this.nameParameter)
-        );
         
-        return criteriaQuery;
+        this.findTypeByNameQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<PortletTypeImpl>>() {
+            @Override
+            public CriteriaQuery<PortletTypeImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<PortletTypeImpl> criteriaQuery = cb.createQuery(PortletTypeImpl.class);
+                final Root<PortletTypeImpl> typeRoot = criteriaQuery.from(PortletTypeImpl.class);
+                criteriaQuery.select(typeRoot);
+                criteriaQuery.where(
+                    cb.equal(typeRoot.get(PortletTypeImpl_.name), nameParameter)
+                );
+                
+                return criteriaQuery;
+            }
+        });
     }
     
     
@@ -144,7 +145,7 @@ public class JpaPortletTypeDao extends BaseJpaDao implements IPortletTypeDao {
 	 */
     @Override
 	public IPortletType getPortletType(String name) {
-        final TypedQuery<PortletTypeImpl> query = this.createQuery(this.findTypeByNameQuery, FIND_PORTLET_TYPE_BY_NAME_CACHE_REGION);
+        final TypedQuery<PortletTypeImpl> query = this.createCachedQuery(this.findTypeByNameQuery);
         query.setParameter(this.nameParameter, name);
         
         final List<PortletTypeImpl> channelTypes = query.getResultList();
@@ -157,7 +158,7 @@ public class JpaPortletTypeDao extends BaseJpaDao implements IPortletTypeDao {
 	 */
     @Override
 	public List<IPortletType> getPortletTypes() {
-        final TypedQuery<PortletTypeImpl> query = this.createQuery(this.findAllTypesQuery, FIND_ALL_PORTLET_TYPE_CACHE_REGION);
+        final TypedQuery<PortletTypeImpl> query = this.createCachedQuery(this.findAllTypesQuery);
         final List<PortletTypeImpl> portletTypes = query.getResultList();
 		return new ArrayList<IPortletType>(portletTypes);
 	}

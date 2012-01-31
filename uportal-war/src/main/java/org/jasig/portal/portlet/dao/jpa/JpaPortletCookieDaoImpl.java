@@ -49,6 +49,8 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Function;
+
 /**
  * JPA implementation of {@link IPortletCookieDao}.
  * 
@@ -58,13 +60,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository("portletCookieDao")
 @Qualifier("persistence")
 public class JpaPortletCookieDaoImpl extends BaseJpaDao implements IPortletCookieDao {
-    private static final String FIND_COOKIE_BY_VALUE_CACHE_REGION = PortalCookieImpl.class.getName() + ".query.FIND_COOKIE_BY_VALUE";
-    
 	private final SecureRandom secureRandom = new SecureRandom();
 	private final Log log = LogFactory.getLog(this.getClass());
 
+	private String deletePortalCookieQueryString;
+	private String deletePortletCookieQueryString;
 	private CriteriaQuery<PortalCookieImpl> findPortalCookieByValueQuery;
-	private CriteriaQuery<PortalCookieImpl> findExpiredPortalCookieQuery;
+	private CriteriaQuery<PortletCookieImpl> findExpiredByParentPortletCookiesQuery;
     private ParameterExpression<String> valueParameter;
     private ParameterExpression<Date> nowParameter;
     private EntityManager entityManager;
@@ -80,36 +82,45 @@ public class JpaPortletCookieDaoImpl extends BaseJpaDao implements IPortletCooki
     }
 
     @Override
-    protected void buildCriteriaQueries(CriteriaBuilder cb) {
-        this.valueParameter = cb.parameter(String.class, "value");
-        this.nowParameter = cb.parameter(Date.class, "now");
+    public void afterPropertiesSet() throws Exception {
+        this.valueParameter = this.createParameterExpression(String.class, "value");
+        this.nowParameter = this.createParameterExpression(Date.class, "now");
         
-        this.findPortalCookieByValueQuery = this.buildFindPortalCookieByValueQuery(cb);
-        this.findExpiredPortalCookieQuery = this.buildFindExpiredPortalCookieQuery(cb);
-    }
-    
-    protected CriteriaQuery<PortalCookieImpl> buildFindPortalCookieByValueQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<PortalCookieImpl> criteriaQuery = cb.createQuery(PortalCookieImpl.class);
-        final Root<PortalCookieImpl> typeRoot = criteriaQuery.from(PortalCookieImpl.class);
-        criteriaQuery.select(typeRoot);
-        typeRoot.fetch(PortalCookieImpl_.portletCookies, JoinType.LEFT);
-        criteriaQuery.where(
-            cb.equal(typeRoot.get(PortalCookieImpl_.value), this.valueParameter)
-        );
+        this.deletePortalCookieQueryString = 
+                "DELETE FROM " + PortalCookieImpl.class.getName() + " e " +
+                "WHERE e." + PortalCookieImpl_.expires.getName() + " <= :" + this.nowParameter.getName();
         
-        return criteriaQuery;
-    }
-    
-    protected CriteriaQuery<PortalCookieImpl> buildFindExpiredPortalCookieQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<PortalCookieImpl> criteriaQuery = cb.createQuery(PortalCookieImpl.class);
-        final Root<PortalCookieImpl> typeRoot = criteriaQuery.from(PortalCookieImpl.class);
-        criteriaQuery.select(typeRoot);
-        typeRoot.fetch(PortalCookieImpl_.portletCookies, JoinType.LEFT);
-        criteriaQuery.where(
-            cb.lessThanOrEqualTo(typeRoot.get(PortalCookieImpl_.expires), this.nowParameter)
-        );
+        this.deletePortletCookieQueryString = 
+                "DELETE FROM " + PortletCookieImpl.class.getName() + " e " +
+                "WHERE e." + PortletCookieImpl_.expires.getName() + " <= :" + this.nowParameter.getName();
         
-        return criteriaQuery;
+        this.findPortalCookieByValueQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<PortalCookieImpl>>() {
+            @Override
+            public CriteriaQuery<PortalCookieImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<PortalCookieImpl> criteriaQuery = cb.createQuery(PortalCookieImpl.class);
+                final Root<PortalCookieImpl> typeRoot = criteriaQuery.from(PortalCookieImpl.class);
+                criteriaQuery.select(typeRoot);
+                typeRoot.fetch(PortalCookieImpl_.portletCookies, JoinType.LEFT);
+                criteriaQuery.where(
+                    cb.equal(typeRoot.get(PortalCookieImpl_.value), valueParameter)
+                );
+                
+                return criteriaQuery;
+            }
+        });
+        
+        
+        this.findExpiredByParentPortletCookiesQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<PortletCookieImpl>>() {
+            @Override
+            public CriteriaQuery<PortletCookieImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<PortletCookieImpl> criteriaQuery = cb.createQuery(PortletCookieImpl.class);
+                final Root<PortletCookieImpl> typeRoot = criteriaQuery.from(PortletCookieImpl.class);
+                criteriaQuery.select(typeRoot);
+                criteriaQuery.where(cb.lessThanOrEqualTo(typeRoot.get(PortletCookieImpl_.portalCookie).get(PortalCookieImpl_.expires), nowParameter));
+                
+                return criteriaQuery;
+            }
+        });
     }
 	
 	/**
@@ -149,7 +160,7 @@ public class JpaPortletCookieDaoImpl extends BaseJpaDao implements IPortletCooki
 	 */
 	@Override
 	public IPortalCookie getPortalCookie(String portalCookieValue) {
-	    final TypedQuery<PortalCookieImpl> query = this.createQuery(this.findPortalCookieByValueQuery, FIND_COOKIE_BY_VALUE_CACHE_REGION);
+	    final TypedQuery<PortalCookieImpl> query = this.createCachedQuery(this.findPortalCookieByValueQuery);
 	    
 		query.setParameter(this.valueParameter, portalCookieValue);
         
@@ -174,28 +185,37 @@ public class JpaPortletCookieDaoImpl extends BaseJpaDao implements IPortletCooki
 	@Transactional
 	public void purgeExpiredCookies() {
 		final Date now = new Date();
+		
+		log.debug("begin portlet cookie expiration");
+		
+        final Query deletePortletCookieQuery = this.entityManager.createQuery(this.deletePortletCookieQueryString);
+        deletePortletCookieQuery.setParameter(this.nowParameter.getName(), now);
+        final int deletedPortletCookies = deletePortletCookieQuery.executeUpdate();
+        
+        if(log.isDebugEnabled()) {
+            log.debug("finished purging " + deletedPortletCookies + " directly expired portlet cookies");
+        }
+        
+        final TypedQuery<PortletCookieImpl> expiredByParentCookiesQuery = this.createQuery(findExpiredByParentPortletCookiesQuery);
+        expiredByParentCookiesQuery.setParameter(this.nowParameter.getName(), now);
+        final List<PortletCookieImpl> indirectlyExpiredCookies = expiredByParentCookiesQuery.getResultList();
+        for (final PortletCookieImpl portletCookieImpl : indirectlyExpiredCookies) {
+            this.entityManager.remove(portletCookieImpl);
+        }
+        
+        if(log.isDebugEnabled()) {
+            log.debug("finished purging " + indirectlyExpiredCookies.size() + " indirectly expired portlet cookies");
+        }
 
 		log.debug("begin portal cookie expiration");
-		//TODO Figure out a JPQL DELETE statement to do the purging instead of having to load every expird portal cookie from the DB first
-//		final Query deletePortalCookies = this.entityManager.createNamedQuery(PortalCookieImpl.UP_PORTAL_COOKIES__DELETE_EXPIRED);
-
-		final TypedQuery<PortalCookieImpl> deletePortalCookies = this.entityManager.createQuery(this.findExpiredPortalCookieQuery);
-		deletePortalCookies.setParameter(this.nowParameter, now);
 		
-		final List<PortalCookieImpl> resultList = deletePortalCookies.getResultList();
-		for (final PortalCookieImpl portalCookie : resultList) {
-		    this.entityManager.remove(portalCookie);
-		}
-		if(log.isDebugEnabled()) {
-			log.debug("finished purging " + resultList.size() + " portal cookies, begin portlet cookie expiration");
-		}
-        final Query deletePortletCookies = this.entityManager.createNamedQuery(PortletCookieImpl.UP_PORTLET_COOKIES__DELETE_EXPIRED);
-        deletePortletCookies.setParameter("expirationDate", now);
+		final Query deletePortalCookieQuery = this.entityManager.createQuery(this.deletePortalCookieQueryString);
+        deletePortalCookieQuery.setParameter(this.nowParameter.getName(), now);
+        final int deletedPortalCookies = deletePortalCookieQuery.executeUpdate();
         
-        final int portletCookiesDeleted = deletePortletCookies.executeUpdate();
-        if(log.isDebugEnabled()) {
-        	log.debug("finished purging " + portletCookiesDeleted + " portlet cookies");
-        }
+		if(log.isDebugEnabled()) {
+			log.debug("finished purging " + deletedPortalCookies + " portal cookies, begin portlet cookie expiration");
+		}
 	}
 
 	/*
@@ -227,7 +247,7 @@ public class JpaPortletCookieDaoImpl extends BaseJpaDao implements IPortletCooki
         }
         
         if (!found) {
-            IPortletCookie newPortletCookie = new PortletCookieImpl(cookie);
+            IPortletCookie newPortletCookie = new PortletCookieImpl(portalCookie, cookie);
             portletCookies.add(newPortletCookie);
         }
         

@@ -80,6 +80,11 @@
             <groupId>commons-dbcp</groupId>
             <artifactId>commons-dbcp</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>commons-httpclient</groupId>
@@ -129,6 +134,11 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
         </dependency>
 
         <dependency>
@@ -213,13 +223,33 @@
 
         <dependency>
             <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-ehcache</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.hibernate.javax.persistence</groupId>
+            <artifactId>hibernate-jpa-2.0-api</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.jasig.cas3.extensions</groupId>
             <artifactId>clearpass-integration-uportal</artifactId>
             <scope>runtime</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.jasig.resourceserver</groupId>
+            <artifactId>resource-server-api</artifactId>
         </dependency>
         
         <dependency>
@@ -236,7 +266,22 @@
             <groupId>org.jasypt</groupId> 
             <artifactId>jasypt</artifactId>  
         </dependency> 
-
+        
+        <dependency>
+            <groupId>org.jadira.usertype</groupId>
+            <artifactId>usertype.core</artifactId>
+        </dependency> 
+        
+        <dependency>
+            <groupId>org.jadira.usertype</groupId>
+            <artifactId>usertype.spi</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jcl</artifactId>
@@ -270,6 +315,11 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-expression</artifactId>
         </dependency>
 
         <dependency>
@@ -309,12 +359,22 @@
         
         <dependency>
             <groupId>org.springframework.ldap</groupId>
+            <artifactId>spring-ldap-core</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.springframework.ldap</groupId>
             <artifactId>spring-ldap-core-tiger</artifactId>
         </dependency>
         
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-config</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
         </dependency>
         
         <dependency>
@@ -331,7 +391,6 @@
             <groupId>org.springframework.webflow</groupId>
             <artifactId>spring-webflow</artifactId>
         </dependency>
-        
 
         <dependency>
             <groupId>taglibs</groupId>
@@ -409,6 +468,12 @@
         
         
         <!-- ===== Runtime Dependencies ======================================= -->
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        
         <dependency>
             <groupId>org.fusesource.jansi</groupId>
             <artifactId>jansi</artifactId>
@@ -516,6 +581,7 @@
                     <bindingDirectory>src/main/binding</bindingDirectory>
                     <schemaDirectory>src/main/resources/xsd</schemaDirectory>
                     <schemaIncludes>
+                        <include>io/event-aggregation/*.xsd</include>
                         <include>io/portlet-definition/*.xsd</include>
                         <include>io/portlet-type/*.xsd</include>
                         <include>io/stylesheet-descriptor/*.xsd</include>
@@ -596,17 +662,6 @@
                 </executions>
             </plugin>
 
-            <plugin>
-                <artifactId>maven-source-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
             <!-- Surefire Plugin: Exec Tests ===================================== -->
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -691,6 +746,23 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jasig.maven</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <configuration>
+                    <defaultMergePolicy>MERGE</defaultMergePolicy>
+                    <reportPlugins combine.children="append">
+                        <plugin>
+                            <groupId>org.codehaus.mojo</groupId>
+                            <artifactId>findbugs-maven-plugin</artifactId>
+                            <version>2.4.0</version>
+                            <configuration>
+                                <excludeFilterFile>${basedir}/FindBugsExcludes.xml</excludeFilterFile>
+                            </configuration>
+                        </plugin>
+                    </reportPlugins>
+                </configuration>
             </plugin>
         </plugins>
         <pluginManagement>

@@ -38,7 +38,7 @@ public interface IPortletExecutionWorker<V> extends IPortletExecutionContext {
     /**
      * Wait for the worker to start.
      * @param timeout The maximum time in ms to wait for the worker to start
-     * @return The time in ms that the worker actually started
+     * @return The time in ms that the worker actually started, 0 if it has not started
      */
     public long waitForStart(long timeout) throws InterruptedException;
 

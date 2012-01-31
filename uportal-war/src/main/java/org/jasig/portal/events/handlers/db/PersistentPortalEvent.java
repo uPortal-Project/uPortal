@@ -20,7 +20,6 @@
 package org.jasig.portal.events.handlers.db;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,10 +32,10 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.events.PortalEvent;
+import org.joda.time.DateTime;
 
 /**
  * Persistent wrapper for storing portal events
@@ -57,7 +56,6 @@ import org.jasig.portal.events.PortalEvent;
         pkColumnValue="UP_RAW_EVENTS_PROP",
         allocationSize=1000
     )
-@Immutable
 public class PersistentPortalEvent implements Serializable {
     private static final long serialVersionUID = 1L;
    
@@ -68,29 +66,33 @@ public class PersistentPortalEvent implements Serializable {
     private final long id;
     
     @Index(name = "IDX_UP_RAW_EVENTS_TIMESTAMP")
-    @Column(name="TIMESTAMP", nullable=false)
+    @Column(name="TIMESTAMP", nullable=false, updatable=false)
+    @Type(type = "dateTime")
     @SuppressWarnings("unused")
-    private final Date timestamp;
+    private final DateTime timestamp;
     
-    @Column(name="SERVER_ID", length=200, nullable=false)
+    @Column(name="SERVER_ID", length=200, nullable=false, updatable=false)
     @SuppressWarnings("unused")
     private final String serverId;
     
-    @Column(name="SESSION_ID", length=500, nullable=false)
+    @Column(name="SESSION_ID", length=500, nullable=false, updatable=false)
     @SuppressWarnings("unused")
     private final String eventSessionId;
     
-    @Column(name="USER_NAME", length=35, nullable=false)
+    @Column(name="USER_NAME", length=35, nullable=false, updatable=false)
     @SuppressWarnings("unused")
     private final String userName;
     
-    @Column(name="EVENT_TYPE", length=200, nullable=false)
+    @Column(name="EVENT_TYPE", length=200, nullable=false, updatable=false)
     @Type(type="class")
     private final Class<PortalEvent> eventType;
     
-    @Column(name = "EVENT_DATA", nullable=false)
+    @Column(name = "EVENT_DATA", nullable=false, updatable=false)
     @Lob
     private final String eventData; 
+    
+    @Column(name = "AGGREGATED") 
+    private Boolean aggregated = false;
     
     /**
      * no-arg needed by hibernate
@@ -110,7 +112,7 @@ public class PersistentPortalEvent implements Serializable {
     PersistentPortalEvent(PortalEvent portalEvent, String eventData) {
         this.id = -1;
         this.eventData = eventData;
-        this.timestamp = portalEvent.getTimestampAsDate();
+        this.timestamp = new DateTime(portalEvent.getTimestamp());
         this.serverId = portalEvent.getServerId();
         this.eventSessionId = portalEvent.getEventSessionId();
         this.userName = portalEvent.getUserName();
@@ -126,6 +128,19 @@ public class PersistentPortalEvent implements Serializable {
      */
     public String getEventData() {
         return this.eventData;
+    }
+    
+    public boolean isAggregated() {
+        Boolean a = this.aggregated;
+        if (a == null) {
+            a = false;
+            this.aggregated = a;
+        }
+        return a;
+    }
+
+    void setAggregated(boolean aggregated) {
+        this.aggregated = aggregated;
     }
 
     /* (non-Javadoc)

@@ -33,7 +33,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class PortletLinkRequestPropertiesManager extends BaseRequestPropertiesManager {
     
-    protected final String LINK_PROPERTY = "externalPortletLink";
+    protected static final String LINK_PROPERTY = "externalPortletLink";
 
     @Override
     public void setResponseProperty(HttpServletRequest portletRequest, IPortletWindow portletWindow, String property, String value) {
