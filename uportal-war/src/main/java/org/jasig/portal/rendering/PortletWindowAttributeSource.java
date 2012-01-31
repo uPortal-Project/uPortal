@@ -37,10 +37,18 @@ import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 
+import org.apache.pluto.container.om.portlet.PortletDefinition;
+import org.apache.pluto.container.om.portlet.Supports;
 import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.portlet.PortletUtils;
+import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.om.IPortletDefinitionId;
+import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +67,7 @@ public class PortletWindowAttributeSource implements AttributeSource, BeanNameAw
     private final XMLEventFactory xmlEventFactory = XMLEventFactory.newFactory();
     private String name;
     private IPortletWindowRegistry portletWindowRegistry;
+    private IPortletDefinitionRegistry portletDefinitionRegistry;
 
     @Autowired
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
@@ -109,7 +118,29 @@ public class PortletWindowAttributeSource implements AttributeSource, BeanNameAw
         final Attribute portletModeAttribute = xmlEventFactory.createAttribute("portletMode", portletMode.toString());
         attributes.add(portletModeAttribute);
         
+        if (supportsDashboard(portletWindow)) {
+            final Attribute dashboardAttribute = xmlEventFactory.createAttribute("supportsDashboard", Boolean.TRUE.toString());
+            attributes.add(dashboardAttribute);
+        }
+        
         return attributes.iterator();
+    }
+
+    protected boolean supportsDashboard(final IPortletWindow portletWindow) {
+        final IPortletEntity portletEntity = portletWindow.getPortletEntity();
+        final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
+        final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();
+        final PortletDefinition portletDescriptor = this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId);
+        
+        for (final Supports supports : portletDescriptor.getSupports()) {
+            for (String state : supports.getWindowStates()) {
+                if (PortletUtils.getWindowState(state).equals(IPortletRenderer.DETACHED)) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
     }
 
     @Override

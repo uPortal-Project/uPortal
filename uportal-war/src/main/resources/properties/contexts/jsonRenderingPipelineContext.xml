@@ -42,9 +42,17 @@
         <property name="logFullDocument" value="true" />
     </bean>
     
+    <!-- portlet window attribute incorporation -->
+    <bean id="portletWindowAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
+        <property name="wrappedComponent" ref="jsonPreStructureTransformLogger" />
+        <property name="attributeSource">
+            <bean class="org.jasig.portal.rendering.PortletWindowAttributeSource" />
+        </property>
+    </bean>
+    
     <!-- structure transformation -->
     <bean id="jsonStructureTransformComponent" class="org.jasig.portal.rendering.xslt.XSLTComponent">
-        <property name="wrappedComponent" ref="jsonPreStructureTransformLogger" />
+        <property name="wrappedComponent" ref="portletWindowAttributeIncorporationComponent" />
         <property name="transformerSource">
             <bean class="org.jasig.portal.json.rendering.JsonStructureTransformerSource"/>
         </property>

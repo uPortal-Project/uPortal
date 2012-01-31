@@ -19,7 +19,6 @@
 
 package org.jasig.portal.portlet;
 
-import java.util.Locale;
 import java.util.Map;
 
 import javax.portlet.PortletMode;
@@ -27,7 +26,7 @@ import javax.portlet.WindowState;
 
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSortedMap;
 
 /**
  * Utilities for portlets
@@ -37,20 +36,23 @@ import com.google.common.collect.ImmutableMap;
  */
 public final class PortletUtils {
     private static final Map<String, PortletMode> PORTLET_MODES = 
-            ImmutableMap.of(
-                    PortletMode.VIEW.toString(), PortletMode.VIEW,
-                    PortletMode.EDIT.toString(), PortletMode.EDIT,
-                    PortletMode.HELP.toString(), PortletMode.HELP,
-                    IPortletRenderer.ABOUT.toString(), IPortletRenderer.ABOUT,
-                    IPortletRenderer.CONFIG.toString(), IPortletRenderer.CONFIG);
+            ImmutableSortedMap.<String, PortletMode>orderedBy(String.CASE_INSENSITIVE_ORDER)
+                .put(PortletMode.VIEW.toString(), PortletMode.VIEW)
+                .put(PortletMode.EDIT.toString(), PortletMode.EDIT)
+                .put(PortletMode.HELP.toString(), PortletMode.HELP)
+                .put(IPortletRenderer.ABOUT.toString(), IPortletRenderer.ABOUT)
+                .put(IPortletRenderer.CONFIG.toString(), IPortletRenderer.CONFIG)
+                .build();
     
-    private static final Map<String, WindowState> WINDOW_STATES = 
-            ImmutableMap.of(
-                    WindowState.NORMAL.toString(), WindowState.NORMAL,
-                    WindowState.MAXIMIZED.toString(), WindowState.MAXIMIZED,
-                    WindowState.MINIMIZED.toString(), WindowState.MINIMIZED,
-                    IPortletRenderer.DETACHED.toString(), IPortletRenderer.DETACHED,
-                    IPortletRenderer.EXCLUSIVE.toString(), IPortletRenderer.EXCLUSIVE);
+    private static final Map<String, WindowState> WINDOW_STATES =
+            ImmutableSortedMap.<String, WindowState>orderedBy(String.CASE_INSENSITIVE_ORDER)
+                .put(WindowState.NORMAL.toString(), WindowState.NORMAL)
+                .put(WindowState.MAXIMIZED.toString(), WindowState.MAXIMIZED)
+                .put(WindowState.MINIMIZED.toString(), WindowState.MINIMIZED)
+                .put(IPortletRenderer.DASHBOARD.toString(), IPortletRenderer.DASHBOARD)
+                .put(IPortletRenderer.DETACHED.toString(), IPortletRenderer.DETACHED)
+                .put(IPortletRenderer.EXCLUSIVE.toString(), IPortletRenderer.EXCLUSIVE)
+                .build();
                     
     private PortletUtils() {
     }
@@ -62,9 +64,6 @@ public final class PortletUtils {
         if (mode == null) {
             return null;
         }
-        
-        //Same thing new PortletMode(String) does internally 
-        mode = mode.toLowerCase(Locale.ENGLISH);
         
         final PortletMode portletMode = PORTLET_MODES.get(mode);
         if (portletMode != null) {
@@ -82,9 +81,6 @@ public final class PortletUtils {
             return null;
         }
         
-        //Same thing new WindowState(String) does internally 
-        state = state.toLowerCase(Locale.ENGLISH);
-
         final WindowState windowState = WINDOW_STATES.get(state);
         if (windowState != null) {
             return windowState;
