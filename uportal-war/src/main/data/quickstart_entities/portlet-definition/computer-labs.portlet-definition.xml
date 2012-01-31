@@ -40,6 +40,6 @@
     <group>Everyone</group>
     <parameter>
         <name>mobileIconUrl</name>
-        <value>/media/skins/icons/mobile/computer-labs.png</value>
+        <value>/media/skins/icons/mobile/computer-lab.png</value>
     </parameter>
 </portlet-definition>
