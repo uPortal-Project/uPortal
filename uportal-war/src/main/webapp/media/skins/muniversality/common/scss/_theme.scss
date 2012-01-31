@@ -81,11 +81,26 @@
 		
 		@include button();
 		
+		.ui-li {
+			@include gradient(#fcfcfc, #ededed);
+		}
+		
 		.ui-li-divider {
 			border-color	: $c1dark;
+			border-top		: 1px solid $c1light;
 			background		: $c1;
 			color			: $white;
-			@include gradient($c1light, $c1dark);
+			@include gradient($c1dark, $c1light);
+			-moz-box-shadow: 0 0 5px #999;
+			-webkit-box-shadow: 0 0 5px #999;
+			box-shadow: 0 0 5px #999;
+			z-index: 1;
+			
+			.ui-grid-a {
+				.ui-block-b {
+					text-align: right;
+				}
+			}
 		}
 		
 		.utilities {
@@ -102,6 +117,29 @@
 				@include gradient($c1, $c1dark);
 				@include rounded(5px);*/
 			}
+		}
+	}
+	/* icons */
+	.ui-icon-map {
+		background-image: url(images/icons/location-18x18.png);
+	}
+	
+	.ui-icon-phone {
+		background-image: url(images/icons/phone-18x18.png);
+	}
+}
+
+/* retina icons */
+@media only screen and (-webkit-min-device-pixel-ratio: 2) {
+	.up {
+		.ui-icon-map {
+			background-image: url(images/icons/location-36x36.png);
+			background-size: 18px 18px;
+		}
+	
+		.ui-icon-phone {
+			background-image: url(images/icons/phone-36x36.png);
+			background-size: 18px 18px;
 		}
 	}
 }
