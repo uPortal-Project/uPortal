@@ -259,13 +259,13 @@
                         <xsl:choose>
                             <xsl:when test="@activeTab='true' and $CONTEXT='header'">Click to edit tab name</xsl:when>
                             <xsl:when test="@activeTab='true' and $CONTEXT='sidebar'">Click to edit tab name</xsl:when>
-                            <xsl:otherwise><xsl:value-of select="@name"/></xsl:otherwise>
+                            <xsl:otherwise></xsl:otherwise>
                         </xsl:choose>
                     </xsl:when>
-                    <xsl:otherwise><xsl:value-of select="@name"/></xsl:otherwise>
+                    <xsl:otherwise></xsl:otherwise>
                 </xsl:choose>
             </xsl:when>
-            <xsl:otherwise><xsl:value-of select="@name"/></xsl:otherwise>
+            <xsl:otherwise></xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
     
@@ -429,7 +429,7 @@
                         </xsl:with-param>
                     </xsl:call-template>
                   </xsl:variable>
-                  <a href="{$portletSubNavLink}" title="{@title}" class="portal-subnav-link">  <!-- Navigation item link. -->
+                  <a href="{$portletSubNavLink}" title="{@description}" class="portal-subnav-link">  <!-- Navigation item link. -->
                       <span class="portal-subnav-label"><xsl:value-of select="@title"/></span>
                   </a>
                 </li>
@@ -458,7 +458,7 @@
                         </xsl:with-param>
                     </xsl:call-template>
                   </xsl:variable>
-                  <a href="{$portletSubNavLink}" title="{@title}" class="portal-subnav-link">  <!-- Navigation item link. -->
+                  <a href="{$portletSubNavLink}" title="{@description}" class="portal-subnav-link">  <!-- Navigation item link. -->
                     <span class="portal-subnav-label"><xsl:value-of select="@title"/></span>
                   </a>
                 </li>

@@ -196,7 +196,7 @@
           </xsl:otherwise>
         </xsl:choose>
         <xsl:for-each select="./descendant::channel">
-          <tabChannel name="{@name}" title="{@title}" ID="{@ID}" fname="{@fname}">
+          <tabChannel name="{@name}" title="{@title}" ID="{@ID}" fname="{@fname}" description="{@description}">
             <xsl:choose>
               <xsl:when test="parameter[@name='PORTLET.quicklink']">
                 <xsl:attribute name="quicklink">
