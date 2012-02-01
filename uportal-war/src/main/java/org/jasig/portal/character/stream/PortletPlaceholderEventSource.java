@@ -69,7 +69,11 @@ public abstract class PortletPlaceholderEventSource extends BasePlaceholderEvent
     @Override
     public final List<CharacterEvent> getCharacterEvents(HttpServletRequest request, XMLEventReader eventReader, StartElement event) throws XMLStreamException {
         final Tuple<IPortletWindow, StartElement> portletWindowAndElement = this.portletWindowRegistry.getPortletWindow(request, event);
-        //TODO what if portletWindowAndElement is null?
+        if (portletWindowAndElement == null) {
+            this.logger.warn("Could not find IPortletWindow for StartElement " + event + ". No PortletPlaceholderEvent will be generated. " + event.getLocation());
+            return null;
+        }
+
         final IPortletWindowId portletWindowId = portletWindowAndElement.first.getPortletWindowId();
         return this.getCharacterEvents(portletWindowId, eventReader, event);
     }

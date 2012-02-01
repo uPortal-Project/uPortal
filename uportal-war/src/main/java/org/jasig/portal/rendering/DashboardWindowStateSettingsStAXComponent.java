@@ -45,12 +45,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Enforces minimized/detached window states for portlets when rendering a mobile view
+ * Enforces a specific WindowState based on the "dashboardForcedWindowState" {@link IStylesheetDescriptor} parameter. For renderings
+ * where a specific portlet is not specified and the stylesheet descriptor specifies a dashboardForcedWindowState then all portlets
+ * in the pipeline will have their window state set to the specified value.
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class MobileWindowStateSettingsStAXComponent extends StAXPipelineComponentWrapper {
+public class DashboardWindowStateSettingsStAXComponent extends StAXPipelineComponentWrapper {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private IUrlSyntaxProvider urlSyntaxProvider;
@@ -91,7 +93,7 @@ public class MobileWindowStateSettingsStAXComponent extends StAXPipelineComponen
         
         final IStylesheetDescriptor stylesheetDescriptor = stylesheetAttributeSource.getStylesheetDescriptor(request);
         
-        final IStylesheetParameterDescriptor defaultWindowStateParam = stylesheetDescriptor.getStylesheetParameterDescriptor("defaultWindowState");
+        final IStylesheetParameterDescriptor defaultWindowStateParam = stylesheetDescriptor.getStylesheetParameterDescriptor("dashboardForcedWindowState");
         
         final XMLEventReader filteredEventReader;
         if (defaultWindowStateParam != null) {

@@ -25,12 +25,6 @@
     <uri>classpath:/layout/structure/mobile-column/mobile-column.xsl</uri>
     <url-syntax-helper>MobileUrlNodeSyntaxHelper</url-syntax-helper>
     <stylesheet-parameter>
-        <name>defaultWindowState</name>
-        <default-value>MINIMIZED</default-value>
-        <scope>REQUEST</scope>
-        <description>Overloading the use of the stylesheet parameters to denote the default window state</description>
-    </stylesheet-parameter>
-    <stylesheet-parameter>
         <name>userLayoutRoot</name>
         <scope>REQUEST</scope>
         <description>The id of the focused layout element</description>

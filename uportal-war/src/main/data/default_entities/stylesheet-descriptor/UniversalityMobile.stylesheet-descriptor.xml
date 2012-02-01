@@ -29,4 +29,10 @@
         <scope>PERSISTENT</scope>
         <description>Skin name</description>
     </stylesheet-parameter>
+    <stylesheet-parameter>
+        <name>dashboardForcedWindowState</name>
+        <default-value>MINIMIZED</default-value>
+        <scope>REQUEST</scope>
+        <description>Overloading the use of the stylesheet parameters to denote the forced window state when rendering the dashboard view</description>
+    </stylesheet-parameter>
 </stylesheet-descriptor>

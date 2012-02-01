@@ -43,14 +43,14 @@
         <property name="logFullDocument" value="true" />
     </bean>
     
-    <bean id="mobileWindowStateSettingsStAXComponent" class="org.jasig.portal.rendering.MobileWindowStateSettingsStAXComponent">
+    <bean id="dashboardWindowStateSettingsStAXComponent" class="org.jasig.portal.rendering.DashboardWindowStateSettingsStAXComponent">
         <property name="wrappedComponent" ref="postUserLayoutStoreLogger" />
-        <property name="stylesheetAttributeSource" ref="structureAttributeSource" />
+        <property name="stylesheetAttributeSource" ref="themeAttributeSource" />
     </bean>
     
     <!-- portlet window attribute incorporation -->
     <bean id="portletWindowAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
-        <property name="wrappedComponent" ref="mobileWindowStateSettingsStAXComponent" />
+        <property name="wrappedComponent" ref="dashboardWindowStateSettingsStAXComponent" />
         <property name="attributeSource">
             <bean class="org.jasig.portal.rendering.PortletWindowAttributeSource" />
         </property>
@@ -115,10 +115,9 @@
     <!-- theme attribute incorporation -->
     <bean id="themeAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
         <property name="wrappedComponent" ref="portletRenderingInitiationComponent" />
-        <property name="attributeSource">
-            <bean class="org.jasig.portal.rendering.ThemeAttributeSource" />
-        </property>
+        <property name="attributeSource" ref="themeAttributeSource" />
     </bean>
+    <bean id="themeAttributeSource" class="org.jasig.portal.rendering.ThemeAttributeSource" />
 
     <bean id="preThemeTransformLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
         <property name="wrappedComponent" ref="themeAttributeIncorporationComponent" />

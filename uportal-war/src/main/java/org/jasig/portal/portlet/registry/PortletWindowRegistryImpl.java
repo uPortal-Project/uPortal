@@ -537,8 +537,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         
         //If the window and entity states are different
         if (windowState != entityWindowState && !windowState.equals(entityWindowState)) {
-            final IStylesheetDescriptor structureStylesheetDescriptor = this.getStructureStylesheetDescriptor(request);
-            final WindowState defaultWindowState = this.getDefaultWindowState(structureStylesheetDescriptor);
+            final WindowState defaultWindowState = this.getDefaultWindowState(themeStylesheetDescriptor);
             
             //If a window state is set and is one of the persistent states set it on the entity
             if (!defaultWindowState.equals(windowState) && persistentWindowStates.contains(windowState)) {
@@ -753,7 +752,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     }
 
     protected WindowState getDefaultWindowState(final IStylesheetDescriptor stylesheetDescriptor) {
-        final IStylesheetParameterDescriptor defaultWindowStateParam = stylesheetDescriptor.getStylesheetParameterDescriptor("defaultWindowState");
+        final IStylesheetParameterDescriptor defaultWindowStateParam = stylesheetDescriptor.getStylesheetParameterDescriptor("dashboardForcedWindowState");
         
         if (defaultWindowStateParam != null) {
             return PortletUtils.getWindowState(defaultWindowStateParam.getDefaultValue());
@@ -769,15 +768,6 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         final int themeStylesheetId = userProfile.getThemeStylesheetId();
         
         return stylesheetDescriptorDao.getStylesheetDescriptor(themeStylesheetId);
-    }
-
-    protected IStylesheetDescriptor getStructureStylesheetDescriptor(HttpServletRequest request) {
-        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
-        final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
-        final IUserProfile userProfile = preferencesManager.getUserProfile();
-        final int structureStylesheetId = userProfile.getStructureStylesheetId();
-        
-        return stylesheetDescriptorDao.getStylesheetDescriptor(structureStylesheetId);
     }
     
     /**
