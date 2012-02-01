@@ -185,4 +185,12 @@
 			@include color-box($cal9);
 		}
 	}
+
+	.no-ui-li-count {
+		padding-right: 0.7em;
+	}
+
+	.unavailable {
+		opacity: 0.5;
+	}
 }

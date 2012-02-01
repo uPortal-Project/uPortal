@@ -174,6 +174,8 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
 
     @Test
     public void populateDefaultDateDimensions() {
+        final DateTime now = new DateTime(1325881376117l);
+        
         this.execute(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
@@ -201,7 +203,7 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
             }
         });
 
-        when(portalEventDao.getOldestPortalEventTimestamp()).thenReturn(new DateTime().minusYears(1));
+        when(portalEventDao.getOldestPortalEventTimestamp()).thenReturn(now.minusYears(1));
 
         this.executeInTransaction(new CallableWithoutResult() {
             @Override
@@ -222,7 +224,7 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
             }
         });
 
-        when(portalEventDao.getNewestPortalEventTimestamp()).thenReturn(new DateTime().plusYears(1));
+        when(portalEventDao.getNewestPortalEventTimestamp()).thenReturn(now.plusYears(1));
 
         this.executeInTransaction(new CallableWithoutResult() {
             @Override
