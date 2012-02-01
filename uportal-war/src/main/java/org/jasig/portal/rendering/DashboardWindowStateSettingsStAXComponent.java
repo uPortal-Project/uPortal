@@ -21,6 +21,7 @@ package org.jasig.portal.rendering;
 
 import java.util.Map;
 
+import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
@@ -29,10 +30,13 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.om.IStylesheetDescriptor;
+import org.jasig.portal.layout.om.IStylesheetParameterDescriptor;
+import org.jasig.portal.portlet.PortletUtils;
 import org.jasig.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
-import org.jasig.portal.portlet.rendering.IPortletExecutionManager;
+import org.jasig.portal.url.IPortalRequestInfo;
+import org.jasig.portal.url.IUrlSyntaxProvider;
 import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.jasig.portal.xml.stream.FilteringXMLEventReader;
@@ -41,27 +45,32 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Initiates portlet rendering based each encountered {@link IUserLayoutManager#CHANNEL_HEADER} and
- * {@link IUserLayoutManager#CHANNEL} element in the event stream
+ * Enforces a specific WindowState based on the "dashboardForcedWindowState" {@link IStylesheetDescriptor} parameter. For renderings
+ * where a specific portlet is not specified and the stylesheet descriptor specifies a dashboardForcedWindowState then all portlets
+ * in the pipeline will have their window state set to the specified value.
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class PortletRenderingInitiationStAXComponent extends StAXPipelineComponentWrapper {
+public class DashboardWindowStateSettingsStAXComponent extends StAXPipelineComponentWrapper {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
-    
-    
-    private IPortletExecutionManager portletExecutionManager;
+
+    private IUrlSyntaxProvider urlSyntaxProvider;
     private IPortletWindowRegistry portletWindowRegistry;
-    
-    @Autowired
-    public void setPortletExecutionManager(IPortletExecutionManager portletExecutionManager) {
-        this.portletExecutionManager = portletExecutionManager;
-    }
-    
+    private StylesheetAttributeSource stylesheetAttributeSource;
+
     @Autowired
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         this.portletWindowRegistry = portletWindowRegistry;
+    }
+
+    @Autowired
+    public void setUrlSyntaxProvider(IUrlSyntaxProvider urlSyntaxProvider) {
+        this.urlSyntaxProvider = urlSyntaxProvider;
+    }
+
+    public void setStylesheetAttributeSource(StylesheetAttributeSource stylesheetAttributeSource) {
+        this.stylesheetAttributeSource = stylesheetAttributeSource;
     }
 
     /* (non-Javadoc)
@@ -72,7 +81,7 @@ public class PortletRenderingInitiationStAXComponent extends StAXPipelineCompone
         //Initiating rendering of portlets will change the stream at all
         return this.wrappedComponent.getCacheKey(request, response);
     }
-
+    
     /* (non-Javadoc)
      * @see org.jasig.portal.rendering.PipelineComponent#getEventReader(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
@@ -81,20 +90,41 @@ public class PortletRenderingInitiationStAXComponent extends StAXPipelineCompone
         final PipelineEventReader<XMLEventReader, XMLEvent> pipelineEventReader = this.wrappedComponent.getEventReader(request, response);
 
         final XMLEventReader eventReader = pipelineEventReader.getEventReader();
-        final PortletRenderingXMLEventReader filteredEventReader = new PortletRenderingXMLEventReader(request, response, eventReader);
+        
+        final IStylesheetDescriptor stylesheetDescriptor = stylesheetAttributeSource.getStylesheetDescriptor(request);
+        
+        final IStylesheetParameterDescriptor defaultWindowStateParam = stylesheetDescriptor.getStylesheetParameterDescriptor("dashboardForcedWindowState");
+        
+        final XMLEventReader filteredEventReader;
+        if (defaultWindowStateParam != null) {
+            final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
+            
+            if (portalRequestInfo.getTargetedPortletWindowId() == null) {
+                final WindowState windowState = PortletUtils.getWindowState(defaultWindowStateParam.getDefaultValue());
+                filteredEventReader = new PortletMinimizingXMLEventReader(request, eventReader, windowState);
+            }
+            else {
+                //single portlet targeted, no minimization needed
+                filteredEventReader = eventReader;
+            }
+        }
+        else {
+            //Not mobile, don't bother filtering
+            filteredEventReader = eventReader;
+        }
         
         final Map<String, String> outputProperties = pipelineEventReader.getOutputProperties();
         return new PipelineEventReaderImpl<XMLEventReader, XMLEvent>(filteredEventReader, outputProperties);
     }
 
-    private class PortletRenderingXMLEventReader extends FilteringXMLEventReader {
+    private class PortletMinimizingXMLEventReader extends FilteringXMLEventReader {
         private final HttpServletRequest request;
-        private final HttpServletResponse response;
+        private final WindowState state;
         
-        public PortletRenderingXMLEventReader(HttpServletRequest request, HttpServletResponse response, XMLEventReader reader) {
+        public PortletMinimizingXMLEventReader(HttpServletRequest request, XMLEventReader reader, WindowState state) {
             super(reader);
             this.request = request;
-            this.response = response;
+            this.state = state;
         }
 
         @Override
@@ -104,7 +134,7 @@ public class PortletRenderingInitiationStAXComponent extends StAXPipelineCompone
                 
                 final QName name = startElement.getName();
                 final String localName = name.getLocalPart();
-                if (IUserLayoutManager.CHANNEL.equals(localName)) {
+                if (IUserLayoutManager.CHANNEL.equals(localName) || IUserLayoutManager.CHANNEL_HEADER.equals(localName)) {
                     final Tuple<IPortletWindow, StartElement> portletWindowAndElement = portletWindowRegistry.getPortletWindow(request, startElement);
 					if (portletWindowAndElement == null) {
 						logger.warn("No portlet window found for: "  + localName);
@@ -112,38 +142,15 @@ public class PortletRenderingInitiationStAXComponent extends StAXPipelineCompone
 					}
 					
 					final IPortletWindow portletWindow = portletWindowAndElement.first;
-                    final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
-
-                    if (!portletExecutionManager.isPortletRenderRequested(portletWindowId, this.request, this.response)) {
-                        portletExecutionManager.startPortletRender(portletWindowId, this.request, this.response);
-                        logger.debug("Initiated portlet markup rendering for: {}", portletWindow);
-                    }
-                    else {
-                        logger.debug("Portlet render already requested for: {}", portletWindow);
-                    }
-                    
-                    return portletWindowAndElement.second;
-                }
-                
-                if(IUserLayoutManager.CHANNEL_HEADER.equals(localName)) {
-                    final Tuple<IPortletWindow, StartElement> portletWindowAndElement = portletWindowRegistry.getPortletWindow(request, startElement);
-					if (portletWindowAndElement == null) {
-						logger.warn("No portlet window found for: " + localName);
-						return null;
+					
+					//Set the portlet's state, skip if the state is already correct
+					if (!state.equals(portletWindow.getWindowState())) {
+    					portletWindow.setWindowState(state);
+    					
+    					portletWindowRegistry.storePortletWindow(request, portletWindow);
 					}
-
-					final IPortletWindow portletWindow = portletWindowAndElement.first;
-                    final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
-
-                    if (!portletExecutionManager.isPortletRenderHeaderRequested(portletWindowId, this.request, this.response)) {
-                        portletExecutionManager.startPortletHeaderRender(portletWindowId, this.request, this.response);
-                        logger.debug("Initiated portlet head rendering for: {}", portletWindow);
-                    }
-                    else {
-                        logger.debug("Portlet header render already requested for: {}", portletWindow);
-                    }
-                     
-                    return portletWindowAndElement.second;
+					
+					return portletWindowAndElement.second;
                 }
             } 
             

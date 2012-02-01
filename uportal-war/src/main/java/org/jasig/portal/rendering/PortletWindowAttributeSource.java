@@ -41,6 +41,7 @@ import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,20 +82,14 @@ public class PortletWindowAttributeSource implements AttributeSource, BeanNameAw
             return null;
         }
         
-        //Grab the element's ID
-        final Attribute idAttribute = event.getAttributeByName(IUserLayoutManager.ID_ATTR_NAME);
-        if (idAttribute == null) {
-            this.logger.warn("StartElement " + IUserLayoutManager.CHANNEL + " does not have an " + IUserLayoutManager.ID_ATTR_NAME + " attribute, it will be ignored. From event: " + event);
+        final Tuple<IPortletWindow, StartElement> portletWindowAndElement = this.portletWindowRegistry.getPortletWindow(request, event);
+        if (portletWindowAndElement == null) {
+            this.logger.warn("No IPortletWindow could be found or created for element: " + event);
             return null;
-        }
+        }        
         
         //Lookup the portlet window for the layout node
-        final String layoutNodeId = idAttribute.getValue();
-        final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, layoutNodeId);
-        if (portletWindow == null) {
-            this.logger.warn("No IPortletWindow could be found or created for layout node id " + layoutNodeId + ". From element: " + event);
-            return null;
-        }
+        final IPortletWindow portletWindow = portletWindowAndElement.first;
         
         //Create the attributes
         final Collection<Attribute> attributes = new LinkedList<Attribute>();

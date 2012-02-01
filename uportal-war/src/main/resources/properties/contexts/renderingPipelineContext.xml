@@ -43,13 +43,25 @@
         <property name="logFullDocument" value="true" />
     </bean>
     
-    <!-- structure attribute incorporation -->
-    <bean id="structureAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
+    <bean id="dashboardWindowStateSettingsStAXComponent" class="org.jasig.portal.rendering.DashboardWindowStateSettingsStAXComponent">
         <property name="wrappedComponent" ref="postUserLayoutStoreLogger" />
+        <property name="stylesheetAttributeSource" ref="themeAttributeSource" />
+    </bean>
+    
+    <!-- portlet window attribute incorporation -->
+    <bean id="portletWindowAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
+        <property name="wrappedComponent" ref="dashboardWindowStateSettingsStAXComponent" />
         <property name="attributeSource">
-            <bean class="org.jasig.portal.rendering.StructureAttributeSource" />
+            <bean class="org.jasig.portal.rendering.PortletWindowAttributeSource" />
         </property>
     </bean>
+    
+    <!-- structure attribute incorporation -->
+    <bean id="structureAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
+        <property name="wrappedComponent" ref="portletWindowAttributeIncorporationComponent" />
+        <property name="attributeSource" ref="structureAttributeSource" />
+    </bean>
+    <bean id="structureAttributeSource" class="org.jasig.portal.rendering.StructureAttributeSource" />
     
     <bean id="preStructureTransformLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
         <property name="wrappedComponent" ref="structureAttributeIncorporationComponent" />
@@ -103,21 +115,12 @@
     <!-- theme attribute incorporation -->
     <bean id="themeAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
         <property name="wrappedComponent" ref="portletRenderingInitiationComponent" />
-        <property name="attributeSource">
-            <bean class="org.jasig.portal.rendering.ThemeAttributeSource" />
-        </property>
+        <property name="attributeSource" ref="themeAttributeSource" />
     </bean>
-    
-    <!-- portlet window attribute incorporation -->
-    <bean id="portletWindowAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
-        <property name="wrappedComponent" ref="themeAttributeIncorporationComponent" />
-        <property name="attributeSource">
-            <bean class="org.jasig.portal.rendering.PortletWindowAttributeSource" />
-        </property>
-    </bean>
+    <bean id="themeAttributeSource" class="org.jasig.portal.rendering.ThemeAttributeSource" />
 
     <bean id="preThemeTransformLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
-        <property name="wrappedComponent" ref="portletWindowAttributeIncorporationComponent" />
+        <property name="wrappedComponent" ref="themeAttributeIncorporationComponent" />
         <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.PRE_THEME" />
         <property name="logEvents" value="false" />
         <property name="logFullDocument" value="true" />

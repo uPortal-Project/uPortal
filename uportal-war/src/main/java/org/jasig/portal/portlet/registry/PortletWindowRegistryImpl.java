@@ -19,6 +19,7 @@
 
 package org.jasig.portal.portlet.registry;
 
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -26,6 +27,12 @@ import java.util.regex.Pattern;
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.xml.namespace.NamespaceContext;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLEventFactory;
+import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.Namespace;
+import javax.xml.stream.events.StartElement;
 
 import org.apache.commons.lang.Validate;
 import org.apache.pluto.container.PortletWindow;
@@ -37,6 +44,7 @@ import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.layout.om.IStylesheetParameterDescriptor;
+import org.jasig.portal.portlet.PortletUtils;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
@@ -44,9 +52,13 @@ import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IPortalRequestUtils;
+import org.jasig.portal.url.IUrlSyntaxProvider;
+import org.jasig.portal.url.UrlState;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
+import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.utils.web.PortalWebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +66,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.WebUtils;
 
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Sets;
 
 /**
@@ -65,6 +78,8 @@ import com.google.common.collect.Sets;
  */
 @Service
 public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
+    public static final QName PORTLET_WINDOW_ID_ATTR_NAME = new QName("portletWindowId");
+    
     static final char ID_PART_SEPERATOR = '.';
     static final Pattern ID_PART_SEPERATOR_PATTERN = Pattern.compile(Pattern.quote(String.valueOf(ID_PART_SEPERATOR)));
     
@@ -73,6 +88,8 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     static final String PORTLET_WINDOW_ATTRIBUTE = PortletWindowRegistryImpl.class.getName() + ".PORTLET_WINDOW.thread-";
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    private final XMLEventFactory xmlEventFactory = XMLEventFactory.newInstance();
     
     private Set<WindowState> persistentWindowStates = Sets.newHashSet(WindowState.MINIMIZED);
     private IPortletEntityRegistry portletEntityRegistry;
@@ -80,6 +97,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     private IStylesheetDescriptorDao stylesheetDescriptorDao;
     private IUserInstanceManager userInstanceManager;
     private IPortalRequestUtils portalRequestUtils;
+    private IUrlSyntaxProvider urlSyntaxProvider;
     
     
     /**
@@ -89,7 +107,11 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     public void setPersistentWindowStates(Set<WindowState> persistentWindowStates) {
         this.persistentWindowStates = persistentWindowStates;
     }
-
+    
+    @Autowired
+    public void setUrlSyntaxProvider(IUrlSyntaxProvider urlSyntaxProvider) {
+        this.urlSyntaxProvider = urlSyntaxProvider;
+    }
     @Autowired
     public void setStylesheetDescriptorDao(IStylesheetDescriptorDao stylesheetDescriptorDao) {
         this.stylesheetDescriptorDao = stylesheetDescriptorDao;
@@ -346,6 +368,60 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
             
         return portletWindows;
     }
+    
+    @Override
+    public Tuple<IPortletWindow, StartElement> getPortletWindow(HttpServletRequest request, StartElement element) {
+        //Check if the layout node explicitly specifies the window id
+        final Attribute windowIdAttribute = element.getAttributeByName(PORTLET_WINDOW_ID_ATTR_NAME);
+        if (windowIdAttribute != null) {
+            final String windowIdStr = windowIdAttribute.getValue();
+            final IPortletWindowId portletWindowId = this.getPortletWindowId(request, windowIdStr);
+            final IPortletWindow portletWindow = this.getPortletWindow(request, portletWindowId);
+            return new Tuple<IPortletWindow, StartElement>(portletWindow, element);
+        }
+
+        //No explicit window id, look it up based on the layout node id
+        final Attribute nodeIdAttribute = element.getAttributeByName(IUserLayoutManager.ID_ATTR_NAME);
+        final String layoutNodeId = nodeIdAttribute.getValue();
+
+        IPortletWindow portletWindow = this.getOrCreateDefaultPortletWindowByLayoutNodeId(request, layoutNodeId);
+        if (portletWindow == null) {
+            //No window for the layout node, return null
+            return null;
+        }
+
+        final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
+        if (portalRequestInfo.getUrlState() == UrlState.DETACHED) {
+            //Handle detached portlets explicitly
+            //TODO Can we ever have non-targeted portlets render in a detached request? If so should they all be stateless windows anyways? 
+            final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
+            portletWindow = this.getOrCreateStatelessPortletWindow(request, portletWindowId);
+        }
+        
+        element = this.addPortletWindowId(element, portletWindow.getPortletWindowId());
+        
+        return new Tuple<IPortletWindow, StartElement>(portletWindow, element);
+    }
+    
+    protected StartElement addPortletWindowId(StartElement element, IPortletWindowId portletWindowId) {
+        final Attribute windowIdAttribute = xmlEventFactory.createAttribute(PORTLET_WINDOW_ID_ATTR_NAME, portletWindowId.getStringId());
+        
+        //Clone the start element to add the new attribute
+        final QName name = element.getName();
+        final String prefix = name.getPrefix();
+        final String namespaceURI = name.getNamespaceURI();
+        final String localPart = name.getLocalPart();
+        @SuppressWarnings("unchecked")
+        final Iterator<Attribute> attributes = element.getAttributes();
+        @SuppressWarnings("unchecked")
+        final Iterator<Namespace> namespaces = element.getNamespaces();
+        final NamespaceContext namespaceContext = element.getNamespaceContext();
+        
+        //Create a new iterator of the existing attributes + the new window id attribute
+        final Iterator<Attribute> newAttributes = Iterators.concat(attributes, Iterators.forArray(windowIdAttribute));
+        
+        return xmlEventFactory.createStartElement(prefix, namespaceURI, localPart, newAttributes, namespaces, namespaceContext);
+    }
 
     /**
      * @param request
@@ -452,23 +528,24 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
             return;
         }
         
-        final IStylesheetDescriptor stylesheetDescriptor = this.getStylesheetDescriptor(request);
+        final IStylesheetDescriptor themeStylesheetDescriptor = this.getThemeStylesheetDescriptor(request);
         
         final WindowState windowState = portletWindow.getWindowState();
         
         final IPortletEntity portletEntity = portletWindow.getPortletEntity();
-        final WindowState entityWindowState = portletEntity.getWindowState(stylesheetDescriptor);
+        final WindowState entityWindowState = portletEntity.getWindowState(themeStylesheetDescriptor);
         
         //If the window and entity states are different
         if (windowState != entityWindowState && !windowState.equals(entityWindowState)) {
-            final boolean minimizeByDefault = this.getMinimizeByDefault(stylesheetDescriptor);
+            final WindowState defaultWindowState = this.getDefaultWindowState(themeStylesheetDescriptor);
+            
             //If a window state is set and is one of the persistent states set it on the entity
-            if (persistentWindowStates.contains(windowState) && (!WindowState.MINIMIZED.equals(windowState) || (WindowState.MINIMIZED.equals(windowState) && !minimizeByDefault))) {
-                portletEntity.setWindowState(stylesheetDescriptor, windowState);
+            if (!defaultWindowState.equals(windowState) && persistentWindowStates.contains(windowState)) {
+                portletEntity.setWindowState(themeStylesheetDescriptor, windowState);
             }
             //If not remove the state from the entity
             else if (entityWindowState != null) {
-                portletEntity.setWindowState(stylesheetDescriptor, null);
+                portletEntity.setWindowState(themeStylesheetDescriptor, null);
             }
             
             //Persist the modified entity
@@ -659,56 +736,38 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
      * {@link WindowState} and {@link javax.portlet.PortletMode}
      */
     protected void initializePortletWindowData(HttpServletRequest request, PortletWindowData portletWindowData) {
-        final IStylesheetDescriptor stylesheetDescriptor = getStylesheetDescriptor(request);
-        final boolean minimizePortletDefault = getMinimizeByDefault(stylesheetDescriptor);
-        
-        // TODO: figure out how to make this work without accidentally persisting the default minimized state
-        if (minimizePortletDefault) {
-            portletWindowData.setWindowState(WindowState.MINIMIZED);
+        final IStylesheetDescriptor stylesheetDescriptor = getThemeStylesheetDescriptor(request);
+        final IPortletEntityId portletEntityId = portletWindowData.getPortletEntityId();
+        final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(request, portletEntityId);
+        final WindowState entityWindowState = portletEntity.getWindowState(stylesheetDescriptor);
+        if (persistentWindowStates.contains(entityWindowState)) {
+            portletWindowData.setWindowState(entityWindowState);
         }
-        else {
-            final IPortletEntityId portletEntityId = portletWindowData.getPortletEntityId();
-            final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(request, portletEntityId);
-            final WindowState entityWindowState = portletEntity.getWindowState(stylesheetDescriptor);
-            if (persistentWindowStates.contains(entityWindowState)) {
-                portletWindowData.setWindowState(entityWindowState);
-            }
-            else if (entityWindowState != null) {
-                //Set of persistent window states must have changed, nuke the old value
-                this.logger.warn("PortletEntity.windowState=" + entityWindowState + " but that state is not in the set of persistent WindowStates. PortletEntity.windowState will be set to null");
-                portletEntity.setWindowState(stylesheetDescriptor, null);
-                this.portletEntityRegistry.storePortletEntity(request, portletEntity);
-            }
+        else if (entityWindowState != null) {
+            //Set of persistent window states must have changed, nuke the old value
+            this.logger.warn("PortletEntity.windowState=" + entityWindowState + " but that state is not in the set of persistent WindowStates. PortletEntity.windowState will be set to null");
+            portletEntity.setWindowState(stylesheetDescriptor, null);
+            this.portletEntityRegistry.storePortletEntity(request, portletEntity);
         }
     }
 
-    /**
-     * @param stylesheetDescriptor
-     * @return
-     */
-    protected boolean getMinimizeByDefault(final IStylesheetDescriptor stylesheetDescriptor) {
-        final IStylesheetParameterDescriptor minimizePortletsDefaultParam = stylesheetDescriptor.getStylesheetParameterDescriptor("minimizePortletsDefault");
+    protected WindowState getDefaultWindowState(final IStylesheetDescriptor stylesheetDescriptor) {
+        final IStylesheetParameterDescriptor defaultWindowStateParam = stylesheetDescriptor.getStylesheetParameterDescriptor("dashboardForcedWindowState");
         
-        if (minimizePortletsDefaultParam != null) {
-            final String defaultValue = minimizePortletsDefaultParam.getDefaultValue();
-            return Boolean.parseBoolean(defaultValue);
+        if (defaultWindowStateParam != null) {
+            return PortletUtils.getWindowState(defaultWindowStateParam.getDefaultValue());
         }
         
-        return false;
+        return WindowState.NORMAL;
     }
 
-    /**
-     * @param request
-     * @return
-     */
-    protected IStylesheetDescriptor getStylesheetDescriptor(HttpServletRequest request) {
+    protected IStylesheetDescriptor getThemeStylesheetDescriptor(HttpServletRequest request) {
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserProfile userProfile = preferencesManager.getUserProfile();
         final int themeStylesheetId = userProfile.getThemeStylesheetId();
         
-        final IStylesheetDescriptor stylesheetDescriptor = stylesheetDescriptorDao.getStylesheetDescriptor(themeStylesheetId);
-        return stylesheetDescriptor;
+        return stylesheetDescriptorDao.getStylesheetDescriptor(themeStylesheetId);
     }
     
     /**

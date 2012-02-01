@@ -27,13 +27,13 @@
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
+    
     <!-- structure attribute incorporation -->
     <bean id="jsonStructureAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
         <property name="wrappedComponent" ref="postUserLayoutStoreLogger" />
-        <property name="attributeSource">
-            <bean class="org.jasig.portal.json.rendering.JsonStructureAttributeSource" />
-        </property>
+        <property name="attributeSource" ref="jsonStructureAttributeSource" />
     </bean>
+    <bean id="jsonStructureAttributeSource" class="org.jasig.portal.json.rendering.JsonStructureAttributeSource" />
     
     <bean id="jsonPreStructureTransformLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
         <property name="wrappedComponent" ref="jsonStructureAttributeIncorporationComponent" />
@@ -78,29 +78,33 @@
         <property name="cache" ref="org.jasig.portal.rendering.STRUCTURE_TRANSFORM" />
     </bean>
     
+    <bean id="jsonDashboardWindowStateSettingsStAXComponent" class="org.jasig.portal.rendering.DashboardWindowStateSettingsStAXComponent">
+        <property name="wrappedComponent" ref="jsonStructureCachingComponent" />
+        <property name="stylesheetAttributeSource" ref="jsonThemeAttributeSource" />
+    </bean>
+    
+    <!-- portlet window attribute incorporation -->
+    <bean id="jsonPortletWindowAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
+        <property name="wrappedComponent" ref="jsonDashboardWindowStateSettingsStAXComponent" />
+        <property name="attributeSource">
+            <bean class="org.jasig.portal.rendering.PortletWindowAttributeSource" />
+        </property>
+    </bean>
+    
     <!-- portlet rendering initiation -->
     <bean id="jsonPortletRenderingInitiationComponent" class="org.jasig.portal.rendering.PortletRenderingInitiationStAXComponent">
-        <property name="wrappedComponent" ref="jsonStructureCachingComponent" />
+        <property name="wrappedComponent" ref="jsonPortletWindowAttributeIncorporationComponent" />
     </bean>
     
     <!-- theme attribute incorporation -->
     <bean id="jsonThemeAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
         <property name="wrappedComponent" ref="jsonPortletRenderingInitiationComponent" />
-        <property name="attributeSource">
-            <bean class="org.jasig.portal.json.rendering.JsonThemeAttributeSource" />
-        </property>
+        <property name="attributeSource" ref="jsonThemeAttributeSource" />
     </bean>
-    
-    <!-- portlet window attribute incorporation -->
-    <bean id="jsonPortletWindowAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
-        <property name="wrappedComponent" ref="jsonThemeAttributeIncorporationComponent" />
-        <property name="attributeSource">
-            <bean class="org.jasig.portal.rendering.PortletWindowAttributeSource" />
-        </property>
-    </bean>
+    <bean id="jsonThemeAttributeSource" class="org.jasig.portal.json.rendering.JsonThemeAttributeSource" />
 
     <bean id="jsonPreThemeTransformLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
-        <property name="wrappedComponent" ref="jsonPortletWindowAttributeIncorporationComponent" />
+        <property name="wrappedComponent" ref="jsonThemeAttributeIncorporationComponent" />
         <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.PRE_THEME" />
         <property name="logEvents" value="false" />
         <property name="logFullDocument" value="true" />
@@ -109,8 +113,8 @@
     <!-- theme transformation -->
     <bean id="jsonThemeTransformComponent" class="org.jasig.portal.rendering.xslt.XSLTComponent">
         <property name="wrappedComponent" ref="jsonPreThemeTransformLogger" />
-        <property name="transformerSource">
-            <bean class="org.jasig.portal.json.rendering.JsonThemeTransformerSource"/>
+        <property name="transformerSource"> 
+            <bean class="org.jasig.portal.json.rendering.JsonThemeTransformerSource" />
         </property>
         <property name="xsltParameterSource">
             <bean class="org.jasig.portal.rendering.xslt.MergingTransformerConfigurationSource">

@@ -24,15 +24,15 @@
     <description>Renders DLMTabsColumns as xhtml for a mobile device</description>
     <uri>classpath:/layout/theme/muniversality/muniversality.xsl</uri>
     <stylesheet-parameter>
-        <name>minimizePortletsDefault</name>
-        <default-value>true</default-value>
-        <scope>REQUEST</scope>
-        <description>Overloading the use of the stylesheet parameters to denote that portlets should render minimized by default for this stylesheet</description>
-    </stylesheet-parameter>
-    <stylesheet-parameter>
         <name>skin</name>
         <default-value>iphone</default-value>
         <scope>PERSISTENT</scope>
         <description>Skin name</description>
+    </stylesheet-parameter>
+    <stylesheet-parameter>
+        <name>dashboardForcedWindowState</name>
+        <default-value>MINIMIZED</default-value>
+        <scope>REQUEST</scope>
+        <description>Overloading the use of the stylesheet parameters to denote the forced window state when rendering the dashboard view</description>
     </stylesheet-parameter>
 </stylesheet-descriptor>
