@@ -19,12 +19,11 @@
 
 package org.jasig.portal.rendering;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -38,6 +37,7 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import org.jasig.portal.character.stream.CharacterEventReader;
@@ -54,6 +54,7 @@ import org.jasig.portal.character.stream.events.PortletHelpPlaceholderEvent;
 import org.jasig.portal.character.stream.events.PortletTitlePlaceholderEvent;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.jasig.portal.xml.XmlUtilities;
 import org.junit.Test;
@@ -83,6 +84,7 @@ public class StAXSerializingComponentTest {
         staxSerializingComponent.setXmlUtilities(xmlUtilities);
 
         final IPortletWindow portletWindow = mock(IPortletWindow.class);
+        when(portletWindowRegistry.getPortletWindow(Matchers.eq(request), Matchers.any(StartElement.class))).thenReturn(new Tuple<IPortletWindow, StartElement>(portletWindow, null));
         when(portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(Matchers.eq(request), Matchers.anyString())).thenReturn(portletWindow);
         
         final PortletContentPlaceholderEventSource contentPlaceholderEventSource = new PortletContentPlaceholderEventSource();

@@ -35,7 +35,7 @@ import org.jasig.portal.user.IUserInstance;
  */
 public class ThemeAttributeSource extends StylesheetAttributeSource {
     @Override
-    protected IStylesheetDescriptor getStylesheetDescriptor(HttpServletRequest request) {
+    public IStylesheetDescriptor getStylesheetDescriptor(HttpServletRequest request) {
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserProfile userProfile = preferencesManager.getUserProfile();
@@ -45,7 +45,7 @@ public class ThemeAttributeSource extends StylesheetAttributeSource {
     }
     
     @Override
-    protected IStylesheetUserPreferences getStylesheetUserPreferences(HttpServletRequest request) {
+    public IStylesheetUserPreferences getStylesheetUserPreferences(HttpServletRequest request) {
         return this.stylesheetUserPreferencesService.getThemeStylesheetUserPreferences(request);
     }
 }

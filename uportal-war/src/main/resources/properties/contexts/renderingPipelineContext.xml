@@ -43,9 +43,14 @@
         <property name="logFullDocument" value="true" />
     </bean>
     
+    <bean id="mobileWindowStateSettingsStAXComponent" class="org.jasig.portal.rendering.MobileWindowStateSettingsStAXComponent">
+        <property name="wrappedComponent" ref="postUserLayoutStoreLogger" />
+        <property name="stylesheetAttributeSource" ref="structureAttributeSource" />
+    </bean>
+    
     <!-- portlet window attribute incorporation -->
     <bean id="portletWindowAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
-        <property name="wrappedComponent" ref="postUserLayoutStoreLogger" />
+        <property name="wrappedComponent" ref="mobileWindowStateSettingsStAXComponent" />
         <property name="attributeSource">
             <bean class="org.jasig.portal.rendering.PortletWindowAttributeSource" />
         </property>
@@ -54,10 +59,9 @@
     <!-- structure attribute incorporation -->
     <bean id="structureAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
         <property name="wrappedComponent" ref="portletWindowAttributeIncorporationComponent" />
-        <property name="attributeSource">
-            <bean class="org.jasig.portal.rendering.StructureAttributeSource" />
-        </property>
+        <property name="attributeSource" ref="structureAttributeSource" />
     </bean>
+    <bean id="structureAttributeSource" class="org.jasig.portal.rendering.StructureAttributeSource" />
     
     <bean id="preStructureTransformLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
         <property name="wrappedComponent" ref="structureAttributeIncorporationComponent" />

@@ -22,6 +22,7 @@ package org.jasig.portal.portlet.registry;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.stream.events.StartElement;
 
 import org.apache.pluto.container.PortletWindow;
 import org.jasig.portal.layout.IUserLayoutManager;
@@ -29,6 +30,7 @@ import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.utils.Tuple;
 
 /**
  * Provides methods for creating and accessing {@link IPortletWindow} and related objects.
@@ -141,6 +143,14 @@ public interface IPortletWindowRegistry {
      * @return The set of windows that have been created from the specified entity
      */
     public Set<IPortletWindow> getAllPortletWindowsForEntity(HttpServletRequest request, IPortletEntityId portletEntityId);
+    
+    /**
+     * Get the portlet window object for the rendering pipeline start element and return a replacement start element
+     * that contains the portlet window id
+     * 
+     * @return The found portlet window and a StartElement to replace the parameter which will contain the resolved portlet window id
+     */
+    public Tuple<IPortletWindow, StartElement> getPortletWindow(HttpServletRequest request, StartElement element);
     
     /**
      * Store changes made to the portlet window

@@ -30,6 +30,7 @@ import static org.junit.Assert.assertEquals;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.OutputKeys;
 
@@ -43,11 +44,13 @@ import org.jasig.portal.url.IPortalUrlProvider;
 import org.jasig.portal.url.IPortletUrlBuilder;
 import org.jasig.portal.url.UrlType;
 import org.jasig.portal.user.IUserInstanceManager;
+import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.jasig.portal.xml.stream.XMLStreamConstantsUtils;
 import org.jasig.resourceserver.utils.aggr.ResourcesElementsProvider;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -143,6 +146,7 @@ public class RenderingPipelineIntegrationTest {
         
 
         final IPortletWindow portletWindow = mock(IPortletWindow.class);
+        when(portletWindowRegistry.getPortletWindow(any(HttpServletRequest.class), any(StartElement.class))).thenReturn(new Tuple<IPortletWindow, StartElement>(portletWindow, null));
         when(portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(any(HttpServletRequest.class), any(String.class))).thenReturn(portletWindow);
         when(portletWindow.getPortletWindowId()).thenReturn(new MockPortletWindowId("1"));
         
