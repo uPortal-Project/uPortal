@@ -390,6 +390,11 @@
             <groupId>org.springframework.webflow</groupId>
             <artifactId>spring-webflow</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>org.springmodules</groupId>
+            <artifactId>spring-modules-cache</artifactId>
+        </dependency>    
 
         <dependency>
             <groupId>taglibs</groupId>
