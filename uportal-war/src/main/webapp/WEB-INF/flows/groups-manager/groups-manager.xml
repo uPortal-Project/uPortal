@@ -55,6 +55,7 @@
         <output name="selectedGroups" value="flashScope.selectedGroups"/>
         
         <transition on="back" to="selectGroupType"/>
+        <transition on="cancel" to="finishGroupEdit"/>
         <transition on="finish" to="edit-group">
             <set name="flowScope.groupForm"
                 value="groupAdministrationHelper.getGroupForm(selectedGroups.get(0).getId())"/>
