@@ -63,8 +63,13 @@
                     <input class="button primary" type="submit" class="button" name="_eventId_search" value="${searchButtonText}" />
                     
                     <c:if test="${showCancelButton == 'true'}">
-                        <spring:message var="cancelButtonText" code="cancel" />
-                        <input class="button" type="submit" class="button" name="_eventId_cancel" value="${cancelButtonText}" />
+                        <portlet:renderURL var="cancelUrl">
+                            <portlet:param name="execution" value="${flowExecutionKey}"/>
+                            <portlet:param name="_eventId" value="cancel"/>
+                        </portlet:renderURL>
+                        <a class="button" class="button" href="${ cancelUrl }">
+                            <spring:message code="cancel" />
+                        </a>
                     </c:if>
                 </div>
                 
