@@ -29,6 +29,6 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0"
     xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-type https://source.jasig.org/schemas/uportal/io/portlet-type/portlet-type-4.0.xsd">
     <name>Portlet</name>
-    <description>Adapter for JSR-168 Portlets</description>
+    <description>Adapter for JSR-168 and JSR-286 Portlets</description>
     <uri>/org/jasig/portal/portlets/GenericPortlet.cpd.xml</uri>
 </portlet-type>
