@@ -149,19 +149,24 @@
                     }
                 });
     
-                $.get(
-                    "<c:url value="/api/people.json"/>", 
-                    data, 
-                    function(data) {
-                        var tree = getResultsTree(data.people);
-                        if (!templates) {
-                            templates = fluid.selfRender($("#${n}searchResults"), tree, { cutpoints: cutpoints });
-                            $("#${n}searchResults").show();
-                        } else {
-                            fluid.reRender(templates, $("#${n}searchResults"), tree, { cutpoints: cutpoints });
+                if (data.searchTerms.length > 0) {
+                    $.get(
+                        "<c:url value="/api/people.json"/>", 
+                        data, 
+                        function(data) {
+                            var tree = getResultsTree(data.people);
+                            if (!templates) {
+                                templates = fluid.selfRender($("#${n}searchResults"), tree, { cutpoints: cutpoints });
+                                $("#${n}searchResults").show();
+                            } else {
+                                fluid.reRender(templates, $("#${n}searchResults"), tree, { cutpoints: cutpoints });
+                            }
                         }
-                    }
-                );
+                    );
+                } else if (templates) {
+                    var tree = { children: [] };
+                    fluid.reRender(templates, $("#${n}searchResults"), tree, { cutpoints: cutpoints });
+                }
                 return false;
             }); 
         });
