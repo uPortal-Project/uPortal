@@ -364,7 +364,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     @Override
     public org.dom4j.Element exportLayout(IPerson person, IUserProfile profile) {
         org.dom4j.Element layout = getExportLayoutDom(person, profile);
-        
+
         final int userId = person.getID();
         final String userName = person.getUserName();
         final Set<IPortletEntity> portletEntities = this.portletEntityDao.getPortletEntitiesForUser(userId);
@@ -1022,14 +1022,11 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         Validate.notNull(layoutOwnerUsername, "Argument 'layoutOwnerUsername' cannot be null.");
         Validate.notNull(dlmNoderef, "Argument 'dlmNoderef' cannot be null.");
         
-
-        
         final Matcher dlmNodeMatcher = DLM_NODE_PATTERN.matcher(dlmNoderef);
         if (dlmNodeMatcher.matches()) {
             final String userId = dlmNodeMatcher.group(1);
             final String nodeId = dlmNodeMatcher.group(2);
-            
-            
+
             final Tuple<String, DistributedUserLayout> userLayoutInfo = getUserLayout(Integer.valueOf(userId));
             
             if (userLayoutInfo.second == null) {
@@ -1039,11 +1036,17 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                                 
             final Document fragmentLayout = userLayoutInfo.second.getLayout();
             final Node targetElement = this.xPathOperations.evaluate("//*[@ID = $nodeId]", Collections.singletonMap("nodeId", nodeId), fragmentLayout, XPathConstants.NODE);
-            
+
             final String[] rslt = new String[3];
             rslt[0] = userLayoutInfo.first;
             rslt[1] = this.xmlUtilities.getUniqueXPath(targetElement);
-            rslt[2] = targetElement.getAttributes().getNamedItem("fname").getTextContent();
+            // Pathref objects that refer to portlets are expected to include 
+            // the fname as the 3rd element; other pathref objects should leave 
+            // that element blank.
+            Node fnameAttr = targetElement.getAttributes().getNamedItem("fname");
+            if (fnameAttr != null) {
+                rslt[2] = fnameAttr.getTextContent();
+            }
             
             return rslt;
         }
