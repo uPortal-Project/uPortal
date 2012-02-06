@@ -24,6 +24,7 @@ This project includes:
  Creative Commons Attribution 3.0 License
  http://www.famfamfam.com/lab/icons/silk/
 
+  A Hibernate Core Module under GNU Lesser General Public License
   Antlr 3 Runtime under BSD License
   AntLR Parser Generator under BSD License
   ANTLR StringTemplate 4.0.2 under BSD licence
@@ -61,6 +62,7 @@ This project includes:
   commons-beanutils under Apache License, Version 2.0
   Data Mapper for Jackson under The Apache Software License, Version 2.0
   dom4j under BSD License
+  Dough Lea's util.concurrent package under Public domain, Sun Microsoystems
   EasyMock under Apache 2
   Ehcache Core under The Apache Software License, Version 2.0
   Ehcache Spring Annotations - Core under Apache 2
@@ -74,11 +76,9 @@ This project includes:
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
   Hamcrest Core under BSD style
   Hibernate Commons Annotations under GNU LESSER GENERAL PUBLIC LICENSE
-  Hibernate Core under GNU Lesser General Public License
-  Hibernate Entity Manager under GNU Lesser General Public License
   Hibernate JPA 2 Metamodel Generator under Apache License, Version 2.0
-  HSQLDB Database under HSQLDB License, a BSD open source license
   HttpClient under Apache License
+  HyperSQL Database under HSQLDB License, a BSD open source license
   Jackson under The Apache Software License, Version 2.0
   jansi under The Apache Software License, Version 2.0
   Jasig CAS Client for Java - Core under Apache License Version 2.0
@@ -88,11 +88,14 @@ This project includes:
   JavaBeans(TM) Activation Framework under COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
   JavaMail API (compat) under CDDL or GPLv2+CE
   JavaServer Pages(TM) API v2.1.1 under CDDL + GPLv2 with classpath exception
-  Javassist under LGPL 2.1
+  Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0
   JAXB2 Basics - Runtime under BSD-Style License
   jaxen under Apache style license
+  JBoss Logging 3 under GNU Lesser General Public License, version 2.1
   jdom under Apache style license
   JLine under BSD
+  Joda money under Apache 2
+  Joda time under Apache 2
   JPA 2.0 API under Sun Binary Code License
   json-lib under The Apache Software License, Version 2.0
   Json-lib4Spring under The Apache Software License, Version 2.0
@@ -103,6 +106,7 @@ This project includes:
   MXP1: Xml Pull Parser 3rd Edition (XPP3) under Indiana University Extreme! Lab Software License, vesion 1.1.1 or Public Domain
   Neko HTML under The Apache Software License, Version 2.0
   Objenesis under Apache 2
+  oro under Apache License, Version 2.0
   Person Directory API under The BSD License
   Person Directory Implementations under The BSD License
   Quartz Enterprise Job Scheduler under Apache 2.0
@@ -128,21 +132,27 @@ This project includes:
   spring-core under Apache License, Version 2.0
   spring-expression under Apache License, Version 2.0
   spring-jdbc under Apache License, Version 2.0
+  spring-modules-cache under Apache License, Version 2.0
   spring-orm under Apache License, Version 2.0
   spring-oxm under Apache License, Version 2.0
+  spring-security-config under The Apache Software License, Version 2.0
+  spring-security-core under The Apache Software License, Version 2.0
+  spring-security-crypto under The Apache Software License, Version 2.0
+  spring-security-web under The Apache Software License, Version 2.0
   spring-test under Apache License, Version 2.0
   spring-tx under Apache License, Version 2.0
   spring-web under Apache License, Version 2.0
   spring-webmvc under Apache License, Version 2.0
   spring-webmvc-portlet under Apache License, Version 2.0
   standard under Apache License, Version 2.0
-  StAX API under The Apache Software License, Version 2.0
   Stax2 API under The BSD License
   StaxMate under BSD
-  Streaming API for XML under GNU General Public Library or COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
+  Transaction 1.1 API under lgpl
   uPortal Parent under Apache License Version 2.0
   uPortal Search API under Apache License Version 2.0
   uPortal WAR under Apache License Version 2.0
+  Usertype Core (supporting Joda Time and Joda Money with Hibernate) under Apache 2
+  Usertype SPI Classes for Hibernate under Apache 2
   Woodstox under The Apache Software License, Version 2.0
   Xml Compatibility extensions for Jackson under The Apache Software License, Version 2.0 or GNU Lesser General Public License (LGPL), Version 2.1
   XML Pull Parsing API under Public Domain
