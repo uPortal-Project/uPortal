@@ -35,16 +35,13 @@
     <xs:element name="event-aggregation">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="io:basePortalDataType">
+                <xs:extension base="io:basePortalDataType40">
                     <xs:sequence>
                         <xs:element name="aggregated-group-config" type="externalAggregatedGroupConfig" minOccurs="0" maxOccurs="unbounded"/>
                         <xs:element name="aggregated-interval-config" type="externalAggregatedIntervalConfig" minOccurs="0" maxOccurs="unbounded"/>
                         <xs:element name="quarter-details" type="externalQuarterDetail" minOccurs="0" maxOccurs="4"/>
                         <xs:element name="term-details" type="externalTermDetail" minOccurs="0" maxOccurs="unbounded"/>
                     </xs:sequence>
-                    
-                    <xs:attribute name="version" type="io:version40Type" use="required"/>
-                    
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>

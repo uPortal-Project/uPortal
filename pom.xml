@@ -4,13 +4,13 @@
     <parent>
         <groupId>org.jasig.parent</groupId>
         <artifactId>jasig-parent</artifactId>
-        <version>32</version>
+        <version>33</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jasig.portal</groupId>
     <artifactId>uportal-parent</artifactId>
-    <version>4.0.3-SNAPSHOT</version>
+    <version>4.0.4-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>uPortal Parent</name>
@@ -103,16 +103,15 @@
         <filters.file>filters/${env}.properties</filters.file>
     
         <!-- WAR Dependency Version Properties -->
-        <BookmarksPortlet.version>1.0.10</BookmarksPortlet.version>
-        <cas-server.version>3.4.8</cas-server.version>
-        <cas-clearpass.version>1.0.7.GA</cas-clearpass.version>
+        <BookmarksPortlet.version>1.0.11</BookmarksPortlet.version>
+        <cas-server.version>3.4.11</cas-server.version>
         <cas-proxy-test-portlet.version>1.0.0-RC3</cas-proxy-test-portlet.version>
         <email-preview.version>1.1.1</email-preview.version>
-        <FunctionalTestsPortlet.version>1.1.0-RC1</FunctionalTestsPortlet.version>
+        <FunctionalTestsPortlet.version>1.1.0</FunctionalTestsPortlet.version>
         <jasig-widget-portlets.version>1.0.1</jasig-widget-portlets.version>
         <NewsReaderPortlet.version>3.0.0</NewsReaderPortlet.version>
         <SimpleContentPortlet.version>1.0.2</SimpleContentPortlet.version>
-        <WeatherPortlet.version>1.0.8</WeatherPortlet.version>
+        <WeatherPortlet.version>1.0.9</WeatherPortlet.version>
         <WebProxyPortlet.version>1.1.6</WebProxyPortlet.version>
 
         <!-- Project Dependency Version Properties -->
@@ -121,6 +120,7 @@
         <ant.version>1.8.2</ant.version>
         <aspectjrt.version>1.6.12</aspectjrt.version>
         <aspectjweaver.version>1.6.12</aspectjweaver.version>
+        <cas-clearpass.version>1.0.8.GA</cas-clearpass.version>
         <casclient.version>3.2.1</casclient.version>
         <ccpp.version>1.0</ccpp.version>
         <cernunnos.version>1.2.1</cernunnos.version>
@@ -129,7 +129,7 @@
         <commons-codec.version>1.6</commons-codec.version>
         <commons-collections.version>3.2.1</commons-collections.version>
         <commons-dbcp.version>1.4</commons-dbcp.version>
-        <commons-fileupload.version>1.2.1</commons-fileupload.version>
+        <commons-fileupload.version>1.2.2</commons-fileupload.version>
         <commons-httpclient.version>3.1</commons-httpclient.version>
         <commons-io.version>2.1</commons-io.version>
         <commons-lang.version>2.6</commons-lang.version>
@@ -139,7 +139,7 @@
         <dom4j.version>1.6.1</dom4j.version>
         <easymock.version>3.1</easymock.version>
         <ejb3-persistence.version>1.0.1.GA</ejb3-persistence.version>
-        <ehcache.version>2.5.0</ehcache.version>
+        <ehcache.version>2.5.1</ehcache.version>
         <ehcache-spring-annotations.version>1.2.0</ehcache-spring-annotations.version>
         <ehcache-web.version>2.0.4</ehcache-web.version>
         <guava.version>10.0.1</guava.version>
@@ -148,7 +148,7 @@
         <hibernate.version>4.0.1.Final</hibernate.version>
         <hibernate-jpamodelgen.version>1.1.1.Final</hibernate-jpamodelgen.version>
         <hibernate-jpa-api.version>1.0.1.Final</hibernate-jpa-api.version>
-        <hsqldb.version>2.2.7</hsqldb.version>
+        <hsqldb.version>2.2.8</hsqldb.version>
         <jackson.version>1.9.4</jackson.version>
         <jansi.version>1.7</jansi.version>
         <javassist.version>3.15.0-GA</javassist.version> 
@@ -1067,11 +1067,11 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-deploy-plugin</artifactId>
-                    <version>2.6</version>
+                    <version>2.7</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-ear-plugin</artifactId>
-                    <version>2.6</version>
+                    <version>2.7</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-enforcer-plugin</artifactId>
@@ -1084,6 +1084,14 @@
                 <plugin>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>2.3.1</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.2.1</version>
+                    <configuration>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                        <localCheckout>true</localCheckout>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <artifactId>maven-resources-plugin</artifactId>
@@ -1136,11 +1144,57 @@
                     <groupId>org.apache.portals.pluto</groupId>
                     <artifactId>maven-pluto-plugin</artifactId>
                     <version>${pluto.version}</version>
+                </plugin>  
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>1.7</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jasig.portal</groupId>
                     <artifactId>maven-uportal-plugin</artifactId>
                     <version>1.0.0-M3</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jvnet.jaxb2.maven2</groupId>
+                    <artifactId>maven-jaxb2-plugin</artifactId>
+                    <version>0.8.1</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>generate</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <specVersion>2.1</specVersion>
+                        <bindingDirectory>src/main/binding</bindingDirectory>
+                        <schemaDirectory>src/main/resources/xsd</schemaDirectory>
+                        <episode>true</episode>
+                        <useDependenciesAsEpisodes>true</useDependenciesAsEpisodes>
+                        <extension>true</extension>
+                        <args>
+                            <arg>-XtoString</arg>
+                            <arg>-Xequals</arg>
+                            <arg>-XhashCode</arg>
+                            <arg>-Xdefault-value</arg>
+                            <arg>-no-header</arg>
+                            <arg>-readOnly</arg>
+                            <arg>-mark-generated</arg>
+                        </args>
+                        <plugins>
+                            <plugin>
+                                <groupId>org.jvnet.jaxb2_commons</groupId>
+                                <artifactId>jaxb2-basics</artifactId>
+                                <version>${jaxb2basics.version}</version>
+                            </plugin>
+                            <plugin>
+                                <groupId>org.jvnet.jaxb2_commons</groupId>
+                                <artifactId>jaxb2-default-value</artifactId>
+                                <version>1.1</version>
+                            </plugin>
+                        </plugins>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
