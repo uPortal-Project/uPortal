@@ -1167,8 +1167,11 @@
                         </execution>
                     </executions>
                     <configuration>
+                        <specVersion>2.1</specVersion>
                         <bindingDirectory>src/main/binding</bindingDirectory>
                         <schemaDirectory>src/main/resources/xsd</schemaDirectory>
+                        <episode>true</episode>
+                        <useDependenciesAsEpisodes>true</useDependenciesAsEpisodes>
                         <extension>true</extension>
                         <args>
                             <arg>-XtoString</arg>
@@ -1192,13 +1195,6 @@
                             </plugin>
                         </plugins>
                     </configuration>
-                    <dependencies>
-                        <dependency>
-                            <groupId>com.sun.xml.bind</groupId>
-                            <artifactId>jaxb-xjc</artifactId>
-                            <version>2.2.5-b10</version>
-                        </dependency>
-                    </dependencies>
                 </plugin>
             </plugins>
         </pluginManagement>

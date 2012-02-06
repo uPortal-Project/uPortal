@@ -34,14 +34,12 @@
     <xs:element name="portlet-type">
         <xs:complexType>
         	<xs:complexContent>
-                <xs:extension base="io:basePortalDataType">
+                <xs:extension base="io:basePortalDataType40">
                     <xs:sequence>
         				<xs:element name="name" type="xs:string"/>
         				<xs:element name="description" type="xs:string" minOccurs="0"/>
         				<xs:element name="uri" type="xs:string"/>
         			</xs:sequence>
-        			
-        			<xs:attribute name="version" type="io:version40Type" use="required"/>
         		</xs:extension>
         	</xs:complexContent>
         </xs:complexType>

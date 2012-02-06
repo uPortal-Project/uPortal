@@ -51,7 +51,7 @@
     
     <xs:complexType name="userType">
         <xs:complexContent>
-            <xs:extension base="io:basePortalDataType">
+            <xs:extension base="io:basePortalDataType40">
                 <xs:sequence>
                     <xs:element name="default-user" type="xs:string" minOccurs="0"/>
                     <xs:element name="password" type="xs:string" minOccurs="0"/>
@@ -59,7 +59,6 @@
                     <xs:element name="attribute" type="attribute" minOccurs="0" maxOccurs="unbounded"/>
                 </xs:sequence>
                 
-                <xs:attribute name="version" type="io:version40Type" use="required"/>
                 <xs:attribute name="username" type="xs:string" use="required"/>
             </xs:extension>
         </xs:complexContent>

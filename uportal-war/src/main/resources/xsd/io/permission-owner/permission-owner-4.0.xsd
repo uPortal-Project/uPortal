@@ -35,7 +35,7 @@
     <xs:element name="permission-owner">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="io:basePortalDataType">
+                <xs:extension base="io:basePortalDataType40">
                     <xs:sequence>
                         <xs:element name="name" type="xs:string"/>
                         <xs:element name="fname" type="up:fname-type"/>
@@ -43,9 +43,6 @@
                         
                         <xs:element name="activity" type="externalActivity" minOccurs="0" maxOccurs="unbounded"/>
                     </xs:sequence>
-                    
-                    <xs:attribute name="version" type="io:version40Type" use="required"/>
-                    
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>
