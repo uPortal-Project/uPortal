@@ -19,6 +19,7 @@
 
 package org.jasig.portal.layout.dlm;
 
+import java.io.IOException;
 import java.io.StringWriter;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -1007,6 +1008,22 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
     }
 
+    /**
+     * A DLM pathref is a combination of elements that uniquely identify a 
+     * layout structure within a specific DLM fragment layout.  These elements 
+     * are:
+     * <ul>
+     *   <li>username of the fragment owner (e.g. 'admin-lo')</li>
+     *   <li>XPath that uniquely identifies a layout node (e.g. '/layout/folder/folder[3]')</li>
+     *   <li><strong>SOMETIMES</strong> a portlet fname (layout nodes referring to portlets only)</li>
+     * </ul>
+     * 
+     * @param layoutOwnerUsername
+     * @param layoutOwnerUserId
+     * @param dlmNoderef
+     * @param layout
+     * @return
+     */
     private final String[] getDlmPathref(String layoutOwnerUsername, int layoutOwnerUserId, String dlmNoderef,
             org.dom4j.Element layout) {
         
