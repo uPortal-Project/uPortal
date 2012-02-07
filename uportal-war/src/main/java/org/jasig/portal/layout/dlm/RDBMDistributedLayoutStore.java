@@ -1009,9 +1009,10 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     }
 
     /**
-     * A DLM pathref is a combination of elements that uniquely identify a 
-     * layout structure within a specific DLM fragment layout.  These elements 
-     * are:
+     * A DLM pathref is a <strong>uPortal external</strong> unique identifier 
+     * for a layout node within a specific DLM fragment layout.  Pathrefs are 
+     * used to represent these relationships in external XML data files.  They 
+     * contain either 2 or 3 elements:
      * <ul>
      *   <li>username of the fragment owner (e.g. 'admin-lo')</li>
      *   <li>XPath that uniquely identifies a layout node (e.g. '/layout/folder/folder[3]')</li>
@@ -1110,6 +1111,20 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     }
 
     private static final Pattern DLM_PATH_REF_DELIM = Pattern.compile("\\:");
+
+    /**
+     * A dlm noderef is a <strong>uPortal internal</strong> unique identifier 
+     * for a layout node within a specific DLM fragment layout.  Nodereafs are 
+     * used to represent these relationships internally, in the uPortal database 
+     * and the running JVM.  They always contain 3 elements:
+     * <ul>
+     *   <li>userId of the fragment owner (e.g. 'u13')</li>
+     *   <li>layoutId of the fragment layout (currently this will always be 'l1')</li>
+     *   <li>structureId of the node within the fragment layout (e.g. 's2' but the preceeding character is not always an 's')</li>
+     * </ul>
+     * 
+     * Example noderef:  u13l1s2
+     */
     private final String getDlmNoderef(String layoutOwner, String pathref, String fname, boolean isStructRef,
             org.dom4j.Element layoutElement) {
 
