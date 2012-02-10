@@ -28,18 +28,24 @@
     version="1.0">
     
     <xs:complexType name="basePortalDataType" abstract="true">
-    </xs:complexType>
-    
-    <xs:simpleType name="version40Type">
         <xs:annotation>
             <xs:documentation>
-                Version of the portal data file. A new version type should be added in this file for each minor release
-                of uPortal.
+                Base type for all data descriptor files. 
             </xs:documentation>
         </xs:annotation>
-        <xs:restriction base="xs:token">
-            <xs:enumeration value="4.0"/>
-        </xs:restriction>
-    </xs:simpleType>
+    </xs:complexType>
     
+    <xs:complexType name="basePortalDataType40" abstract="true">
+        <xs:annotation>
+            <xs:documentation>
+                Base type for all 4.0 version data descriptor files. A copy of this type should be
+                created for each minor release of uPortal with the version field appropriately incremented. 
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="basePortalDataType">
+                <xs:attribute name="version" type="xs:string" use="required" fixed="4.0" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
 </xs:schema>

@@ -63,8 +63,13 @@
                     <input class="button primary" type="submit" class="button" name="_eventId_search" value="${searchButtonText}" />
                     
                     <c:if test="${showCancelButton == 'true'}">
-                        <spring:message var="cancelButtonText" code="cancel" />
-                        <input class="button" type="submit" class="button" name="_eventId_cancel" value="${cancelButtonText}" />
+                        <portlet:renderURL var="cancelUrl">
+                            <portlet:param name="execution" value="${flowExecutionKey}"/>
+                            <portlet:param name="_eventId" value="cancel"/>
+                        </portlet:renderURL>
+                        <a class="button" class="button" href="${ cancelUrl }">
+                            <spring:message code="cancel" />
+                        </a>
                     </c:if>
                 </div>
                 
@@ -144,19 +149,24 @@
                     }
                 });
     
-                $.get(
-                    "<c:url value="/api/people.json"/>", 
-                    data, 
-                    function(data) {
-                        var tree = getResultsTree(data.people);
-                        if (!templates) {
-                            templates = fluid.selfRender($("#${n}searchResults"), tree, { cutpoints: cutpoints });
-                            $("#${n}searchResults").show();
-                        } else {
-                            fluid.reRender(templates, $("#${n}searchResults"), tree, { cutpoints: cutpoints });
+                if (data.searchTerms.length > 0) {
+                    $.get(
+                        "<c:url value="/api/people.json"/>", 
+                        data, 
+                        function(data) {
+                            var tree = getResultsTree(data.people);
+                            if (!templates) {
+                                templates = fluid.selfRender($("#${n}searchResults"), tree, { cutpoints: cutpoints });
+                                $("#${n}searchResults").show();
+                            } else {
+                                fluid.reRender(templates, $("#${n}searchResults"), tree, { cutpoints: cutpoints });
+                            }
                         }
-                    }
-                );
+                    );
+                } else if (templates) {
+                    var tree = { children: [] };
+                    fluid.reRender(templates, $("#${n}searchResults"), tree, { cutpoints: cutpoints });
+                }
                 return false;
             }); 
         });
