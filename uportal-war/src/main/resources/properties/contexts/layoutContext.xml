@@ -27,9 +27,19 @@
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
-    <bean id="dlmConfigurationLoader" class="org.jasig.portal.layout.dlm.LegacyConfigurationLoader">
-        <property name="configurationFile" value="classpath:/properties/dlm.xml" />
+    <bean id="dlmConfigurationLoader" class="org.jasig.portal.layout.dlm.RDBMConfigurationLoader">
+        <property name="fragmentDao" ref="fragmentDefinitionDao" />
     </bean>
+
+    <!-- 
+     | Use the following (instead of the version above) to revert to non-database 
+     | fragment definitions (defined in dlm.xml).  In that case, create a 
+     | dlm.xml file in the properties/ directory and add your fragments there. 
+     | See below for example dlm.xml format.
+     +-->
+    <!--bean id="dlmConfigurationLoader" class="org.jasig.portal.layout.dlm.LegacyConfigurationLoader">
+        <property name="configurationFile" value="classpath:/properties/dlm.xml" />
+    </bean> -->
     
     <bean id="userLayoutManagerFactory" class="org.jasig.portal.layout.UserLayoutManagerFactory"/>
     
@@ -40,5 +50,15 @@
         <constructor-arg value="" />
         <constructor-arg value="" />
     </bean>
+    
+    <!-- ** EXAMPLE dlm.xml FILE FORMAT **
+    
+        <managedLayoutFragments xmlns:dlm="http://org.jasig.portal.layout.dlm.config">
+        
+            [Define your fragments here...]
+        
+        </managedLayoutFragments>    
+    
+     -->
     
 </beans>
