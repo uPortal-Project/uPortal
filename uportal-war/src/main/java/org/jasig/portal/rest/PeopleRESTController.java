@@ -88,15 +88,15 @@ public class PeopleRESTController {
     public ModelAndView getPerson(@PathVariable String username,
             HttpServletRequest request, HttpServletResponse response) {
 
-        final IPerson person = personManager.getPerson((HttpServletRequest) request);
-        if (person == null) {
+        final IPerson searcher = personManager.getPerson((HttpServletRequest) request);
+        if (searcher == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return null;
         }
 
-        lookupHelper.findPerson(person, username);
+        final IPersonAttributes person = lookupHelper.findPerson(searcher, username);
 
-        ModelAndView mv = new ModelAndView();
+        final ModelAndView mv = new ModelAndView();
         mv.addObject("person", person);
         mv.setViewName("json");
         
