@@ -134,7 +134,9 @@
                         <xsl:otherwise>
                             <navigation>
                                 <xsl:for-each select="child::folder[@type!='footer' and @type!='header']">
-                                    <xsl:apply-templates select=".//channel"/>
+                                    <tab ID="{@ID}" name="{@name}">
+                                        <xsl:apply-templates select=".//channel"/>
+                                    </tab>
                                 </xsl:for-each>
                             </navigation>
                         </xsl:otherwise>

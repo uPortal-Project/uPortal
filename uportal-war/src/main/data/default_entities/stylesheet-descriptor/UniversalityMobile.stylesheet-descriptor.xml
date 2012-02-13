@@ -30,6 +30,12 @@
         <description>Skin name</description>
     </stylesheet-parameter>
     <stylesheet-parameter>
+        <name>view</name>
+        <default-value>list</default-value>
+        <scope>PERSISTENT</scope>
+        <description>Home screen view type</description>
+    </stylesheet-parameter>
+    <stylesheet-parameter>
         <name>dashboardForcedWindowState</name>
         <default-value>MINIMIZED</default-value>
         <scope>REQUEST</scope>
