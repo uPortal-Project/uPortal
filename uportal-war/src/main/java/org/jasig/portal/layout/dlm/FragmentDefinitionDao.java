@@ -41,7 +41,9 @@ import com.google.common.base.Function;
 public class FragmentDefinitionDao extends BaseJpaDao implements IFragmentDefinitionDao {
     private CriteriaQuery<FragmentDefinition> findAllFragmentsQuery;
     private CriteriaQuery<FragmentDefinition> findFragmentByNameQuery;
+    private CriteriaQuery<FragmentDefinition> findFragmentByOwnerQuery;
     private ParameterExpression<String> nameParameter;
+    private ParameterExpression<String> ownerParameter;
     private EntityManager entityManager;
 
     @PersistenceContext(unitName = "uPortalPersistence")
@@ -57,6 +59,7 @@ public class FragmentDefinitionDao extends BaseJpaDao implements IFragmentDefini
     @Override
     public void afterPropertiesSet() throws Exception {
         this.nameParameter = this.createParameterExpression(String.class, "name");
+        this.ownerParameter = this.createParameterExpression(String.class, "ownerId");
         
         this.findAllFragmentsQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<FragmentDefinition>>() {
             @Override
@@ -75,6 +78,20 @@ public class FragmentDefinitionDao extends BaseJpaDao implements IFragmentDefini
                 criteriaQuery.select(fragDefRoot);
                 criteriaQuery.where(
                     cb.equal(fragDefRoot.get(FragmentDefinition_.name), nameParameter)
+                );
+                
+                return criteriaQuery;
+            }
+        });
+
+        this.findFragmentByOwnerQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<FragmentDefinition>>() {
+            @Override
+            public CriteriaQuery<FragmentDefinition> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<FragmentDefinition> criteriaQuery = cb.createQuery(FragmentDefinition.class);
+                final Root<FragmentDefinition> fragDefRoot = criteriaQuery.from(FragmentDefinition.class);
+                criteriaQuery.select(fragDefRoot);
+                criteriaQuery.where(
+                    cb.equal(fragDefRoot.get(FragmentDefinition_.ownerID), ownerParameter)
                 );
                 
                 return criteriaQuery;
@@ -99,6 +116,16 @@ public class FragmentDefinitionDao extends BaseJpaDao implements IFragmentDefini
         final FragmentDefinition rslt = DataAccessUtils.uniqueResult(list);
         return rslt;
         
+    }
+
+    @Override
+    public FragmentDefinition getFragmentDefinitionByOwner(String ownerId) {
+        final TypedQuery<FragmentDefinition> query = this.createCachedQuery(this.findFragmentByOwnerQuery);
+        query.setParameter(this.ownerParameter, ownerId);
+        
+        final List<FragmentDefinition> list = query.getResultList();
+        final FragmentDefinition rslt = DataAccessUtils.uniqueResult(list);
+        return rslt;
     }
 
     @Override

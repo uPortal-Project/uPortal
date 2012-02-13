@@ -45,6 +45,15 @@ public interface IFragmentDefinitionDao {
     FragmentDefinition getFragmentDefinition(String name);
     
     /**
+     * Obtains the {@link FragmentDefinition} object belonging to the specified 
+     * owner.
+     * 
+     * @param OWNERiD The username of the fragment 
+     * @return The fragment with the corresponding name, or <code>null</code>
+     */
+    FragmentDefinition getFragmentDefinitionByOwner(String ownerId);
+
+    /**
      * Updates the specified {@link FragmentDefinition} within the data source.
      * 
      * @param fd A fragment definition that has been modified
