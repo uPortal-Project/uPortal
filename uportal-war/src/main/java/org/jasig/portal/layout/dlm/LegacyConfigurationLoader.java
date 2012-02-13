@@ -44,6 +44,7 @@ import org.xml.sax.SAXException;
  * always done:  load {@link FragmentDefinition} objects from dlm.xml.
  * 
  * @author awills
+ * @deprecated
  */
 public class LegacyConfigurationLoader implements ConfigurationLoader {
     private Resource configurationFile;
@@ -63,6 +64,7 @@ public class LegacyConfigurationLoader implements ConfigurationLoader {
     
     private List<FragmentDefinition> fragments = null;
     private Map<String, FragmentDefinition> fragmentsByName = null;
+    private Map<String, FragmentDefinition> fragmentsByOwnerId = null;
     
     /**
      * @param configurationFile The dlm.xml file to load configuration from
@@ -103,8 +105,6 @@ public class LegacyConfigurationLoader implements ConfigurationLoader {
             throw new IllegalArgumentException("Could parse dlm configuration resource "+ this.configurationFile, e);
         }
         
-//        final NodeList propertyNodes = doc.getElementsByTagName( "dlm:property" );
-        
         final NodeList fragmentNodes = doc.getElementsByTagName( "dlm:fragment" );
         final List<FragmentDefinition> localFragments = this.getFragments(fragmentNodes);
         if (localFragments != null) {
@@ -124,14 +124,18 @@ public class LegacyConfigurationLoader implements ConfigurationLoader {
                     bfr.toString() + " }" );
             }
             
-            //Store the fragments in a map by owner id for easy access
+            //Store the fragments in a map by name & owner for easy access
             final Map<String, FragmentDefinition> fragmentsByName = new LinkedHashMap<String, FragmentDefinition>();
             for (final FragmentDefinition fragmentDefinition : localFragments) {
                 fragmentsByName.put(fragmentDefinition.getName(), fragmentDefinition);
             }
+            final Map<String, FragmentDefinition> fragmentsByOwnerId = new LinkedHashMap<String, FragmentDefinition>();
+            for (final FragmentDefinition fragmentDefinition : localFragments) {
+                fragmentsByOwnerId.put(fragmentDefinition.getOwnerId(), fragmentDefinition);
+            }
             
             this.fragments = Collections.unmodifiableList(localFragments);
-            this.fragmentsByName = Collections.unmodifiableMap(fragmentsByName);
+            this.fragmentsByName = Collections.unmodifiableMap(fragmentsByOwnerId);
         }
     }
     
@@ -151,12 +155,17 @@ public class LegacyConfigurationLoader implements ConfigurationLoader {
         return this.fragmentsByName.get(name);
     }
 
+    @Override
+    public FragmentDefinition getFragmentByOwnerId(String ownerId) {
+        return this.fragmentsByOwnerId.get(ownerId);
+    }
+
     protected List<FragmentDefinition> getFragments( NodeList frags )
     {
         if ( frags == null || frags.getLength() == 0 ) {
             return null;
         }
-
+        
         final int fragmentCount = frags.getLength();
         this.fragments = new ArrayList<FragmentDefinition>(fragmentCount);
         for( int i=0; i<fragmentCount; i++ )
@@ -166,6 +175,7 @@ public class LegacyConfigurationLoader implements ConfigurationLoader {
             {
                 FragmentDefinition fragment = new FragmentDefinition( fragmentElement );
                 fragment.setIndex(i);
+
                 this.fragments.add(fragment);
 
                 if (logger.isInfoEnabled()) {
@@ -214,4 +224,5 @@ public class LegacyConfigurationLoader implements ConfigurationLoader {
             }
         }
     }
+
 }

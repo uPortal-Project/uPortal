@@ -56,6 +56,11 @@ public class RDBMConfigurationLoader implements ConfigurationLoader {
     public FragmentDefinition getFragmentByName(String name) {
         return this.fragmentDao.getFragmentDefinition(name);
     }
+
+    @Override
+    public FragmentDefinition getFragmentByOwnerId(String ownerId) {
+        return this.fragmentDao.getFragmentDefinitionByOwner(ownerId);
+    }
     
     
 }
