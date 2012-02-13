@@ -31,7 +31,7 @@
     </stylesheet-parameter>
     <stylesheet-parameter>
         <name>view</name>
-        <default-value>list</default-value>
+        <default-value>grid</default-value>
         <scope>PERSISTENT</scope>
         <description>Home screen view type</description>
     </stylesheet-parameter>
