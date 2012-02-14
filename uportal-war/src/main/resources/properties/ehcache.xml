@@ -463,6 +463,9 @@
     <cache name="org.jasig.portal.layout.dlm.providers.GuestUserEvaluatorFactory"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.layout.dlm.providers.ProfileEvaluator"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.jasig.portal.layout.dlm.providers.SubscribedTabEvaluator"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />

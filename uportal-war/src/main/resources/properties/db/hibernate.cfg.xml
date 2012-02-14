@@ -52,6 +52,7 @@
         <mapping class="org.jasig.portal.layout.dlm.providers.AllUsersEvaluatorFactory" />
         <mapping class="org.jasig.portal.layout.dlm.providers.AttributeEvaluator" />
         <mapping class="org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluator" />
+        <mapping class="org.jasig.portal.layout.dlm.providers.ProfileEvaluator" />
         <mapping class="org.jasig.portal.layout.dlm.providers.SubscribedTabEvaluator" />
         <mapping class="org.jasig.portal.layout.dlm.providers.GuestUserEvaluatorFactory" />
         <mapping class="org.jasig.portal.layout.dlm.providers.EvaluatorGroup" />
