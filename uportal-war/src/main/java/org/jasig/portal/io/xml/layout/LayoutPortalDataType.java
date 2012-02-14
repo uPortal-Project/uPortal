@@ -129,8 +129,17 @@ public class LayoutPortalDataType extends AbstractPortalDataType {
     @SuppressWarnings("deprecation")
     @Override
     protected PortalDataKey postProcessSinglePortalDataKey(String systemId, PortalDataKey portalDataKey, XMLEventReader reader) {
-        //If the filename ends in .fragment-layout switch over to the FragmentLayoutPortalDataType data types 
-        if (systemId.endsWith(".fragment-layout")) {
+
+        /* Fragment layouts are differentiated _only_ by file extension;  these 
+         * layouts must be imported BEFORE non-fragment layouts (i.e. layouts of 
+         * regular users)
+         */  
+        if (systemId.endsWith(".fragment-layout.xml") || systemId.endsWith(".fragment-layout") /* legacy file extension */) {
+            /* NOTE: In the future we could consider handling this case 
+             * similarly to how "default" users are handled (below):  by reading 
+             * the username attribute and checking it against the list of known 
+             * fragment layout owners.
+             */
             return convertToFragmentKey(portalDataKey);
         }
         
