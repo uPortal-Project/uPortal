@@ -20,10 +20,10 @@
 
 -->
 <fragment-definition xmlns:dlm="http://org.jasig.portal.layout.dlm.config" script="classpath://org/jasig/portal/io/import-fragment-definition_v3-1.crn">
-  <dlm:fragment name="All" ownerID="all-lo" precedence="80">
-    <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory">
+  <dlm:fragment name="Mobile" ownerID="mobile-lo" precedence="10">
+    <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.ProfileEvaluatorFactory">
       <paren mode="OR">     
-        <attribute mode="deepMemberOf" name="Everyone"/>
+        <profile value="mobileDefault"/>
       </paren>
     </dlm:audience>
   </dlm:fragment>

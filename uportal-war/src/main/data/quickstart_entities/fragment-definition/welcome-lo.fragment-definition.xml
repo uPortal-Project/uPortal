@@ -20,14 +20,14 @@
 
 -->
 <fragment-definition xmlns:dlm="http://org.jasig.portal.layout.dlm.config" script="classpath://org/jasig/portal/io/import-fragment-definition_v3-1.crn">
-  <dlm:fragment name="Welcome" ownerID="welcome-lo" precedence="80">
-    <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.PersonEvaluatorFactory">
+  <dlm:fragment name="Welcome" ownerID="welcome-lo" precedence="90">
+    <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory">
     <paren mode="AND">
       <paren mode="NOT">
-        <attribute name="username" mode="equals" value="guest"/>
+        <attribute mode="memberOf" name="Portal Administrators"/>
       </paren>
       <paren mode="NOT">
-        <attribute name="username" mode="equals" value="admin"/>
+        <attribute mode="memberOf" name="Portal Developers"/>
       </paren>
       </paren>
     </dlm:audience>
