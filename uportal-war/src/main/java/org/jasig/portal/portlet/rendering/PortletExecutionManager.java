@@ -700,10 +700,10 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
             }
         }
         catch (Exception e) {
-            logger.warn("unable to get portlet new item count for portletWindowId " + portletWindowId);
+            logger.warn("unable to get portlet link count for portletWindowId " + portletWindowId);
         }
         
-        return null;
+        return defaultPortletUrl;
     }
     
     protected long getPortletActionTimeout(IPortletWindowId portletWindowId, HttpServletRequest request) {
