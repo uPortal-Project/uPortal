@@ -181,7 +181,7 @@
     <layout><json/>{
         "user": "<xsl:value-of select="$USER_ID"/>",
         "locale": "<xsl:value-of select="$USER_LANG"/>", 
-        "layout": [
+        "layout":
             { "folders": [
             <xsl:for-each select="//navigation/tab">
                 { "id": "<xsl:value-of select="@ID"/>", "title": "<xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/>",
@@ -216,7 +216,6 @@
                     }<xsl:if test="position() != last()">,</xsl:if>
                 </xsl:for-each>]}<xsl:if test="position() != last()">,</xsl:if>
             </xsl:for-each>]}
-        ] 
     }<json/></layout>
 </xsl:template>
 <!-- ========================================================================= -->
