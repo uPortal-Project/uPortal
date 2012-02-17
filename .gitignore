@@ -4,3 +4,5 @@
 /target
 /build.properties
 /data
+/.ant-targets-build.xml
+*.sass-cache

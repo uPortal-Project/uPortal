@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.groups.IEntityGroup;
@@ -47,16 +46,14 @@ import org.jasig.portal.permission.target.IPermissionTarget;
 import org.jasig.portal.permission.target.IPermissionTargetProvider;
 import org.jasig.portal.permission.target.IPermissionTargetProviderRegistry;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
-import org.jasig.portal.portlets.permissionsadmin.IPermissionAdministrationHelper;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionStore;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.provider.AuthorizationImpl;
 import org.jasig.portal.services.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -75,13 +72,6 @@ import org.springframework.web.servlet.ModelAndView;
 public class PermissionsRESTController {
     
     protected final Log log = LogFactory.getLog(getClass());
-
-    private IPersonManager personManager;
-    
-    @Autowired
-    public void setPersonManager(IPersonManager personManager) {
-        this.personManager = personManager;
-    }
 
     private IPermissionOwnerDao permissionOwnerDao;
     
@@ -111,32 +101,20 @@ public class PermissionsRESTController {
         this.groupListHelper = groupListHelper;
     }
     
-    private IPermissionAdministrationHelper permissionAdministrationHelper;
-    
-    @Autowired
-    public void setPermissionAdministrationHelper(IPermissionAdministrationHelper permissionAdministrationHelper) {
-        this.permissionAdministrationHelper = permissionAdministrationHelper;
-    }
-
     /**
      * Provide a JSON view of all known permission owners registered with uPortal.
      * 
      * @param req
      * @param response
      * @return
-     * @throws Exception
+     * @throws Exception 
      */
+    @PreAuthorize("hasPermission('string', 'ALL', new org.jasig.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
     @RequestMapping(value="/permissions/owners.json", method = RequestMethod.GET)
     public ModelAndView getOwners(
             HttpServletRequest req, HttpServletResponse response)
             throws Exception {
         
-        // ensure the current user is authorized to see permission owners
-        if (!this.isAuthorized(req)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return null;
-        }
-
         // get a list of all currently defined permission owners
         List<IPermissionOwner> owners = permissionOwnerDao.getAllPermissionOwners();
         
@@ -157,18 +135,13 @@ public class PermissionsRESTController {
      * @return
      * @throws Exception
      */
+    @PreAuthorize("hasPermission('string', 'ALL', new org.jasig.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
     @RequestMapping(value="/permissions/owners/{owner}.json", method = RequestMethod.GET)
     public ModelAndView getOwners(
             @PathVariable("owner") String ownerParam,
             HttpServletRequest req, HttpServletResponse response)
             throws Exception {
         
-        // ensure the current user is authorized to see permission owners
-        if (!this.isAuthorized(req)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return null;
-        }
-
         IPermissionOwner owner = null;
         
         if (StringUtils.isNumeric(ownerParam)) {
@@ -205,17 +178,12 @@ public class PermissionsRESTController {
      * @return
      * @throws Exception
      */
+    @PreAuthorize("hasPermission('string', 'ALL', new org.jasig.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
     @RequestMapping(value="/permissions/activities.json", method = RequestMethod.GET)
     public ModelAndView getActivities(
             @RequestParam(value="q", required=false) String query,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        
-        // ensure the current user is authorized to see permission owners
-        if (!this.isAuthorized(request)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return null;
-        }
         
         if (StringUtils.isNotBlank(query)) {
             query = query.toLowerCase();
@@ -250,18 +218,13 @@ public class PermissionsRESTController {
      * @return
      * @throws Exception
      */
+    @PreAuthorize("hasPermission('string', 'ALL', new org.jasig.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
     @RequestMapping(value="/permissions/{activity}/targets.json", method = RequestMethod.GET)
     public ModelAndView getTargets(@PathVariable("activity") Long activityId,
             @RequestParam("q") String query,
             HttpServletRequest req, HttpServletResponse response)
             throws Exception {
         
-        // ensure the current user is authorized to see permission owners
-        if (!this.isAuthorized(req)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return null;
-        }
-
         IPermissionActivity activity = permissionOwnerDao.getPermissionActivity(activityId);
         IPermissionTargetProvider provider = targetProviderRegistry.getTargetProvider(activity.getTargetProviderKey());
         
@@ -283,14 +246,9 @@ public class PermissionsRESTController {
         return mv;
     }
     
+    @PreAuthorize("hasPermission('string', 'ALL', new org.jasig.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
     @RequestMapping("/assignments/principal/{principal}.json")
     public ModelAndView getAssignmentsForPrincipal(@PathVariable("principal") String principal, @RequestParam(value="includeInherited", required = false) boolean includeInherited, HttpServletRequest request, HttpServletResponse response) {
-        
-        // ensure the current user is authorized to see permission owners
-        if (!this.isAuthorized(request)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return null;
-        }
         
         Set<UniquePermission> directAssignments = new HashSet<UniquePermission>();
         
@@ -340,14 +298,9 @@ public class PermissionsRESTController {
         return mv;
     }
     
+    @PreAuthorize("hasPermission('string', 'ALL', new org.jasig.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
     @RequestMapping("/assignments/target/{target}.json")
     public ModelAndView getAssignmentsOnTarget(@PathVariable("target") String target, @RequestParam(value="includeInherited", required = false) boolean includeInherited, HttpServletRequest request, HttpServletResponse response) {
-        
-        // ensure the current user is authorized to see permission owners
-        if (!this.isAuthorized(request)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return null;
-        }
         
         Set<UniquePermission> directAssignments = new HashSet<UniquePermission>();
         
@@ -413,12 +366,6 @@ public class PermissionsRESTController {
         mv.setViewName("json");
         
         return mv;
-    }
-    
-    protected boolean isAuthorized(HttpServletRequest request) {
-
-        final IPerson person = personManager.getPerson((HttpServletRequest) request);
-        return (person != null && permissionAdministrationHelper.canViewPermission(person, null));
     }
     
     protected JsonPermission getPermissionForPrincipal(UniquePermission permission, JsonEntityBean entity) {
@@ -494,7 +441,7 @@ public class PermissionsRESTController {
         return perm;
     }
     
-    protected class UniquePermission {
+    protected static final class UniquePermission {
         
         private final String owner;
         private final String activity;
@@ -523,28 +470,48 @@ public class PermissionsRESTController {
         public boolean isInherited() {
             return inherited;
         }
-        
+
         @Override
-        public boolean equals(Object obj) {
-            
-            if ( !(obj instanceof JsonPermission )) {
-                return false;
-            }
-            
-            UniquePermission permission = (UniquePermission) obj;
-            if (this == permission) {
-                return true;
-            }
-            
-            return new EqualsBuilder()
-                .append(this.owner, permission.owner)
-                .append(this.activity, permission.activity)
-                .append(this.identifier, permission.identifier)
-                .isEquals();
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((this.activity == null) ? 0 : this.activity.hashCode());
+            result = prime * result + ((this.identifier == null) ? 0 : this.identifier.hashCode());
+            result = prime * result + (this.inherited ? 1231 : 1237);
+            result = prime * result + ((this.owner == null) ? 0 : this.owner.hashCode());
+            return result;
         }
 
-
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            UniquePermission other = (UniquePermission) obj;
+            if (this.activity == null) {
+                if (other.activity != null)
+                    return false;
+            }
+            else if (!this.activity.equals(other.activity))
+                return false;
+            if (this.identifier == null) {
+                if (other.identifier != null)
+                    return false;
+            }
+            else if (!this.identifier.equals(other.identifier))
+                return false;
+            if (this.inherited != other.inherited)
+                return false;
+            if (this.owner == null) {
+                if (other.owner != null)
+                    return false;
+            }
+            else if (!this.owner.equals(other.owner))
+                return false;
+            return true;
+        }
     }
-    
-
 }

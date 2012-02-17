@@ -33,7 +33,7 @@ import org.jasig.portal.EntityIdentifier;
 public final class SystemPerson implements IPerson {
     private static final long serialVersionUID = 1L;
     
-    public static IPerson INSTANCE = new SystemPerson();
+    public static final IPerson INSTANCE = new SystemPerson();
 
     /* (non-Javadoc)
      * @see java.security.Principal#getName()

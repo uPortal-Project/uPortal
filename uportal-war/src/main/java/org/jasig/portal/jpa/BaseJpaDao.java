@@ -19,21 +19,21 @@
 
 package org.jasig.portal.jpa;
 
-import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.metamodel.Attribute;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Root;
 
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.NaturalIdentifier;
-import org.hibernate.criterion.Restrictions;
-import org.jasig.portal.utils.PrimitiveUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+
+import com.google.common.base.Function;
 
 /**
  * Base class for JPA DAOs in the portal that contains common functions
@@ -42,89 +42,87 @@ import org.springframework.beans.factory.InitializingBean;
  * @version $Revision$
  */
 public abstract class BaseJpaDao implements InitializingBean {
+    private static final String QUERY_SUFFIX = ".Query";
+    
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    
     protected abstract EntityManager getEntityManager();
     
     @Override
-    public final void afterPropertiesSet() throws Exception {
-        final CriteriaBuilder criteriaBuilder = this.getCriteriaBuilder();
-        this.buildCriteriaQueries(criteriaBuilder);
+    public void afterPropertiesSet() throws Exception {
     }
 
     /**
      * Subclasses can implement this method to generate {@link CriteriaQuery} objects.
      * Called by {@link #afterPropertiesSet()}
      */
-    protected void buildCriteriaQueries(CriteriaBuilder criteriaBuilder) {
+    protected void buildParameterExpressions(CriteriaBuilder criteriaBuilder) {
     }
-
-
+    
+    protected <T> ParameterExpression<T> createParameterExpression(Class<T> paramClass) {
+        final EntityManager entityManager = this.getEntityManager();
+        final EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
+        final CriteriaBuilder criteriaBuilder = entityManagerFactory.getCriteriaBuilder();
+        
+        return criteriaBuilder.parameter(paramClass);
+    }
+    
+    protected <T> ParameterExpression<T> createParameterExpression(Class<T> paramClass, String name) {
+        final EntityManager entityManager = this.getEntityManager();
+        final EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
+        final CriteriaBuilder criteriaBuilder = entityManagerFactory.getCriteriaBuilder();
+        
+        return criteriaBuilder.parameter(paramClass, name);
+    }
+    
+    protected <T> CriteriaQuery<T> createCriteriaQuery(Function<CriteriaBuilder, CriteriaQuery<T>> builder) {
+        final EntityManager entityManager = this.getEntityManager();
+        final EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
+        final CriteriaBuilder criteriaBuilder = entityManagerFactory.getCriteriaBuilder();
+        
+        final CriteriaQuery<T> criteriaQuery = builder.apply(criteriaBuilder);
+        entityManager.createQuery(criteriaQuery); //pre-compile critera query to avoid race conditions when setting aliases
+        return criteriaQuery;
+    }
+    
     /**
-     * @return Get the {@link CriteriaBuilder} to use to generate {@link CriteriaQuery}
+     * Common logic for creating and configuring JPA queries
+     * 
+     * @param criteriaQuery The criteria to create the query from
      */
-    protected final CriteriaBuilder getCriteriaBuilder() {
-        final EntityManagerFactory entityManagerFactory = this.getEntityManager().getEntityManagerFactory();
-        return entityManagerFactory.getCriteriaBuilder();
+    protected final <T> TypedQuery<T> createQuery(CriteriaQuery<T> criteriaQuery) {
+        return this.getEntityManager().createQuery(criteriaQuery);
     }
 
     /**
      * Common logic for creating and configuring JPA queries
+     * 
      * @param criteriaQuery The criteria to create the query from
-     * @param cacheRegion The hibernate query cache region to use for the query
+     * @param queryName A name for the query, used with the query root class name to generate the cache region name. For example
+     *                  a query with root class "org.jasig.portal.events.aggr.session.EventSessionImpl" and queryName "FIND_BY_EVENT_SESSION_ID"
+     *                  will result in a region named "org.jasig.portal.events.aggr.session.EventSessionImpl.query.FIND_BY_EVENT_SESSION_ID"
      */
-    protected final <T> TypedQuery<T> createQuery(CriteriaQuery<T> criteriaQuery, String cacheRegion) {
+    protected final <T> TypedQuery<T> createCachedQuery(CriteriaQuery<T> criteriaQuery) {
         final TypedQuery<T> query = this.getEntityManager().createQuery(criteriaQuery);
+        final String cacheRegion = getCacheRegionName(criteriaQuery);
         query.setHint("org.hibernate.cacheable", true);
         query.setHint("org.hibernate.cacheRegion", cacheRegion);
         return query;
     }
-    
-    protected final <T> T executeNaturalIdQuery(Class<T> type, Map<? extends Attribute<T, ?>, ?> params, String cacheRegion) {
-        final Session session = getEntityManager().unwrap(Session.class);
-        
-        final NaturalIdentifier naturalIdRestriction = Restrictions.naturalId();
-        for (Map.Entry<? extends Attribute<T, ?>, ?> paramEntry : params.entrySet()) {
-            final Attribute<T, ?> attribute = paramEntry.getKey();
-            final Class<?> paramType = attribute.getJavaType();
-            final Object value = paramEntry.getValue();
-            naturalIdRestriction.set(attribute.getName(), paramType.cast(value));
-        }
-        
-        final Criteria criteria = session.createCriteria(type);
-        criteria.add(naturalIdRestriction)
-            .setCacheable(true)
-            .setCacheRegion(cacheRegion);
-        
-        return type.cast(criteria.uniqueResult()); 
-    }
-    
-    public final <T> NaturalIdQueryBuilder<T> createNaturalIdQuery(Class<T> entityType, String cacheRegion) {
-        final Session session = getEntityManager().unwrap(Session.class);
-        return new NaturalIdQueryBuilder<T>(session, entityType, cacheRegion);
-    }
 
-    public static class NaturalIdQueryBuilder<T> {
-        private final Class<T> entityType;
-        private final Criteria criteria;
-        private final NaturalIdentifier naturalIdRestriction;
+    /**
+     * Creates the cache region name for the criteria query
+     * 
+     * @param criteriaQuery The criteria to create the cache name for
+     */
+    protected <T> String getCacheRegionName(CriteriaQuery<T> criteriaQuery) {
+        final Set<Root<?>> roots = criteriaQuery.getRoots();
+        final Class<?> cacheRegionType = roots.iterator().next().getJavaType();
+        final String cacheRegion = cacheRegionType.getName() + QUERY_SUFFIX;
         
-        private NaturalIdQueryBuilder(Session session, Class<T> entityType, String cacheRegion) {
-            this.entityType = entityType;
-            this.criteria = session.createCriteria(this.entityType);
-            this.criteria.setCacheable(true);
-            this.criteria.setCacheRegion(cacheRegion);
-            
-            this.naturalIdRestriction = Restrictions.naturalId();
+        if (roots.size() > 1) {
+            logger.warn("Query " + criteriaQuery + " in " + this.getClass() + " has " + roots.size() + " roots. The first will be used to generated the cache region name: " + cacheRegion);
         }
-        
-        public <V> NaturalIdQueryBuilder<T> setNaturalIdParam(Attribute<T, V> attribute, V value) {
-            final Class<V> valueType = PrimitiveUtils.toReferenceClass(attribute.getJavaType());
-            this.naturalIdRestriction.set(attribute.getName(), valueType.cast(value));
-            return this;
-        }
-        
-        public T execute() {
-            this.criteria.add(this.naturalIdRestriction);
-            return this.entityType.cast(criteria.uniqueResult());
-        }
+        return cacheRegion;
     }
 }

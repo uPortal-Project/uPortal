@@ -20,8 +20,14 @@
 package org.jasig.portal.spring;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+
+import java.util.Collections;
+import java.util.Set;
 
 import org.springframework.beans.factory.config.AbstractFactoryBean;
+
+import com.google.common.collect.MapMaker;
 
 /**
  * Factory for creating Mockito objects as beans.
@@ -30,6 +36,12 @@ import org.springframework.beans.factory.config.AbstractFactoryBean;
  * @version $Revision$
  */
 public class MockitoFactoryBean<T> extends AbstractFactoryBean<T> {
+    private static final Set<Object> MOCK_CACHE = Collections.newSetFromMap(new MapMaker().weakKeys().<Object, Boolean>makeMap());
+    
+    public static void resetAllMocks() {
+        reset(MOCK_CACHE.toArray());
+    }
+    
     private final Class<? extends T> type;
 
     public MockitoFactoryBean(Class<? extends T> type) {
@@ -43,6 +55,8 @@ public class MockitoFactoryBean<T> extends AbstractFactoryBean<T> {
 
     @Override
     protected T createInstance() throws Exception {
-        return mock(this.type);
+        final T mock = mock(this.type);
+        MOCK_CACHE.add(mock);
+        return mock;
     }
 }

@@ -70,9 +70,9 @@ class LocalizedPortletDefinition implements Serializable {
             this.title = definition.getTitle(locale);
             this.description = definition.getDescription(locale);
         } else {
-            this.name = definition.getName(locale);
-            this.title = definition.getTitle(locale);
-            this.description = definition.getDescription(locale);
+            this.name = definition.getName();
+            this.title = definition.getTitle();
+            this.description = definition.getDescription();
         }
     }
     

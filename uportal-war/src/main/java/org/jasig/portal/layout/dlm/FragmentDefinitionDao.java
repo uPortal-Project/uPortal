@@ -35,14 +35,15 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Function;
+
 @Repository
 public class FragmentDefinitionDao extends BaseJpaDao implements IFragmentDefinitionDao {
-    private static final String GET_ALL_FRAGMENTS_CACHE_REGION = FragmentDefinition.class.getName() + ".query.GET_ALL_FRAGMENTS";
-    private static final String FIND_FRAGMENT_BY_NAME_CACHE_REGION = FragmentDefinition.class.getName() + ".query.FIND_FRAGMENT_BY_NAME";
-
     private CriteriaQuery<FragmentDefinition> findAllFragmentsQuery;
     private CriteriaQuery<FragmentDefinition> findFragmentByNameQuery;
+    private CriteriaQuery<FragmentDefinition> findFragmentByOwnerQuery;
     private ParameterExpression<String> nameParameter;
+    private ParameterExpression<String> ownerParameter;
     private EntityManager entityManager;
 
     @PersistenceContext(unitName = "uPortalPersistence")
@@ -56,35 +57,51 @@ public class FragmentDefinitionDao extends BaseJpaDao implements IFragmentDefini
     }
 
     @Override
-    protected void buildCriteriaQueries(CriteriaBuilder cb) {
-        this.nameParameter = cb.parameter(String.class, "name");
+    public void afterPropertiesSet() throws Exception {
+        this.nameParameter = this.createParameterExpression(String.class, "name");
+        this.ownerParameter = this.createParameterExpression(String.class, "ownerId");
         
-        this.findAllFragmentsQuery = this.buildFindAllFragmentsQuery(cb);
-        this.findFragmentByNameQuery = this.buildFindFragmentByNameQuery(cb);
+        this.findAllFragmentsQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<FragmentDefinition>>() {
+            @Override
+            public CriteriaQuery<FragmentDefinition> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<FragmentDefinition> criteriaQuery = cb.createQuery(FragmentDefinition.class);
+                criteriaQuery.from(FragmentDefinition.class);
+                return criteriaQuery;
+            }
+        });
+        
+        this.findFragmentByNameQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<FragmentDefinition>>() {
+            @Override
+            public CriteriaQuery<FragmentDefinition> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<FragmentDefinition> criteriaQuery = cb.createQuery(FragmentDefinition.class);
+                final Root<FragmentDefinition> fragDefRoot = criteriaQuery.from(FragmentDefinition.class);
+                criteriaQuery.select(fragDefRoot);
+                criteriaQuery.where(
+                    cb.equal(fragDefRoot.get(FragmentDefinition_.name), nameParameter)
+                );
+                
+                return criteriaQuery;
+            }
+        });
+
+        this.findFragmentByOwnerQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<FragmentDefinition>>() {
+            @Override
+            public CriteriaQuery<FragmentDefinition> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<FragmentDefinition> criteriaQuery = cb.createQuery(FragmentDefinition.class);
+                final Root<FragmentDefinition> fragDefRoot = criteriaQuery.from(FragmentDefinition.class);
+                criteriaQuery.select(fragDefRoot);
+                criteriaQuery.where(
+                    cb.equal(fragDefRoot.get(FragmentDefinition_.ownerID), ownerParameter)
+                );
+                
+                return criteriaQuery;
+            }
+        });
     }
 
-    protected CriteriaQuery<FragmentDefinition> buildFindAllFragmentsQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<FragmentDefinition> criteriaQuery = cb.createQuery(FragmentDefinition.class);
-        final Root<FragmentDefinition> fragDefRoot = criteriaQuery.from(FragmentDefinition.class);
-        criteriaQuery.select(fragDefRoot);
-        
-        return criteriaQuery;
-    }
-
-    protected CriteriaQuery<FragmentDefinition> buildFindFragmentByNameQuery(final CriteriaBuilder cb) {
-        final CriteriaQuery<FragmentDefinition> criteriaQuery = cb.createQuery(FragmentDefinition.class);
-        final Root<FragmentDefinition> fragDefRoot = criteriaQuery.from(FragmentDefinition.class);
-        criteriaQuery.select(fragDefRoot);
-        criteriaQuery.where(
-            cb.equal(fragDefRoot.get(FragmentDefinition_.name), this.nameParameter)
-        );
-        
-        return criteriaQuery;
-    }
-    
     @Override
     public List<FragmentDefinition> getAllFragments() {
-        final TypedQuery<FragmentDefinition> query = this.createQuery(this.findAllFragmentsQuery, GET_ALL_FRAGMENTS_CACHE_REGION);
+        final TypedQuery<FragmentDefinition> query = this.createCachedQuery(this.findAllFragmentsQuery);
         final List<FragmentDefinition> rslt = query.getResultList();
         return rslt;
         
@@ -92,14 +109,23 @@ public class FragmentDefinitionDao extends BaseJpaDao implements IFragmentDefini
 
     @Override
     public FragmentDefinition getFragmentDefinition(String name) {
-        final TypedQuery<FragmentDefinition> query = this.createQuery(this.findFragmentByNameQuery, FIND_FRAGMENT_BY_NAME_CACHE_REGION);
+        final TypedQuery<FragmentDefinition> query = this.createCachedQuery(this.findFragmentByNameQuery);
         query.setParameter(this.nameParameter, name);
-        query.setMaxResults(1);
         
         final List<FragmentDefinition> list = query.getResultList();
         final FragmentDefinition rslt = DataAccessUtils.uniqueResult(list);
         return rslt;
         
+    }
+
+    @Override
+    public FragmentDefinition getFragmentDefinitionByOwner(String ownerId) {
+        final TypedQuery<FragmentDefinition> query = this.createCachedQuery(this.findFragmentByOwnerQuery);
+        query.setParameter(this.ownerParameter, ownerId);
+        
+        final List<FragmentDefinition> list = query.getResultList();
+        final FragmentDefinition rslt = DataAccessUtils.uniqueResult(list);
+        return rslt;
     }
 
     @Override

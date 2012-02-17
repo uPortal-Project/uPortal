@@ -77,7 +77,7 @@ public class EventProviderImpl implements EventProvider {
             
 
             if (value == null) {
-                return new EventImpl(qname, value);
+                return new EventImpl(qname);
             }
             
             try {

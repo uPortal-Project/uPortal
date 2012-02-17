@@ -23,7 +23,7 @@
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns="http://www.springframework.org/schema/beans" 
        xsi:schemaLocation="
-           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
     <!-- Ref to the mbean server -->
     <bean id="mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean">
@@ -38,6 +38,9 @@
         <property name="beans">
             <map>
                 <entry key="uPortal:section=Framework,name=Statistics" value-ref="portalFrameworkMBean" />
+                <entry key="uPortal:section=Framework,name=uPortalTaskExecutor" value-ref="uPortalTaskExecutor" />
+                <entry key="uPortal:section=Framework,name=uPortalTaskScheduler" value-ref="uPortalTaskScheduler" />
+                <entry key="uPortal:section=Framework,name=uPortalLockExecutor" value-ref="uPortalLockExecutor" />
                 <entry key="uPortal:section=Framework,name=PortletThreadPool" value-ref="portletThreadPool" />
                 <entry key="uPortal:section=Persistence,name=HibernateStatistics" value-ref="hibernateStatisticsMBean"/>
                 <entry key="uPortal:section=Persistence,name=RawEventsHibernateStatistics" value-ref="rawEventsHibernateStatisticsMBean"/>

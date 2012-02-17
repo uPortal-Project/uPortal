@@ -25,8 +25,11 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.jasig.portal.i18n.dao.IMessageDao;
-import org.jasig.portal.portlet.dao.jpa.BaseJpaDaoTest;
+import org.jasig.portal.test.BaseJpaDaoTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,14 +37,18 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:jpaMultilingualMessageDaoTestContext.xml")
+@ContextConfiguration(locations = {"classpath:jpaPortalTestApplicationContext.xml"})
 public class JpaMultilingualMessageDaoTest extends BaseJpaDaoTest {
     
+    @Autowired
     private IMessageDao messageDao;
     
-    @Autowired
-    public void setMessageDao(IMessageDao messageDao) {
-        this.messageDao = messageDao;
+    @PersistenceContext(unitName = "uPortalPersistence")
+    private EntityManager entityManager;
+    
+    @Override
+    protected EntityManager getEntityManager() {
+        return this.entityManager;
     }
     
     @Test

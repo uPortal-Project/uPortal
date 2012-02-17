@@ -22,6 +22,8 @@ package org.jasig.portal.utils.cache;
 import java.io.Serializable;
 import java.util.Map;
 
+import net.sf.ehcache.Ehcache;
+
 /**
  * Interface for a cache factory that returns a cache that externally acts like a map.
  * Underlying caches don't have to be a map, but they must be wrapped in the map interface
@@ -29,6 +31,7 @@ import java.util.Map;
  *
  * @author Scott Battaglia
  * @version $Revision$ $Date$
+ * @deprecated Inject the {@link Ehcache} instances directly into spring managed beans using @Qualifier to specify the cache name
  */
 public interface CacheFactory {
 

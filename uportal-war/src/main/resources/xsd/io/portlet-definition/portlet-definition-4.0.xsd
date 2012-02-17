@@ -35,7 +35,7 @@
     <xs:element name="portlet-definition">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="io:basePortalDataType">
+                <xs:extension base="io:basePortalDataType40">
                     <xs:sequence>
                         <xs:element name="title" type="xs:string"/>
                         <xs:element name="name" type="xs:string"/>
@@ -57,9 +57,6 @@
                         <xs:element name="portlet-preference" type="externalPortletPreference" minOccurs="0"
                             maxOccurs="unbounded"/>
                     </xs:sequence>
-                    
-                    <xs:attribute name="version" type="io:version40Type" use="required"/>
-                    
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>

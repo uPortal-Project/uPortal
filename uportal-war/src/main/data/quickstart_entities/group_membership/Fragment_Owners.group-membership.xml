@@ -27,6 +27,7 @@
   <children>
     <literal>academics-lo</literal>
     <literal>admin-lo</literal>
+    <literal>all-lo</literal>
     <literal>campus-lo</literal>
     <literal>developer-lo</literal>
     <literal>faculty-lo</literal>

@@ -20,27 +20,32 @@
 package org.jasig.portal.concurrency.locking;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
-import org.jasig.portal.portlet.dao.jpa.BaseJpaDaoTest;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.jasig.portal.IPortalInfoProvider;
+import org.jasig.portal.concurrency.CallableWithoutResult;
+import org.jasig.portal.test.BaseJpaDaoTest;
 import org.jasig.portal.test.ThreadGroupRunner;
 import org.jasig.portal.utils.threading.ThrowingRunnable;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * @author Eric Dalquist
@@ -51,55 +56,40 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class JpaClusterLockDaoTest extends BaseJpaDaoTest {
     @Autowired
     private IClusterLockDao clusterLockDao;
-    private TransactionTemplate transactionTemplate;
-    
     @Autowired
-    public void setPlatformTransactionManager(PlatformTransactionManager platformTransactionManager) {
-        this.transactionTemplate = new TransactionTemplate(platformTransactionManager);
-        this.transactionTemplate.afterPropertiesSet();
+    private IPortalInfoProvider portalInfoProvider;
+
+    @PersistenceContext(unitName = "uPortalPersistence")
+    private EntityManager entityManager;
+    
+    @Override
+    protected EntityManager getEntityManager() {
+        return this.entityManager;
     }
     
     @Test
     public void testConcurrentCreation() throws InterruptedException  {
+        reset(portalInfoProvider);
+        when(portalInfoProvider.getServerName()).thenReturn("ServerA");
+        
         final ThreadGroupRunner threadGroupRunner = new ThreadGroupRunner("JpaClusterLockDaoTest-", true);
         
-        final AtomicInteger diveCounter = new AtomicInteger(); 
-        
-        threadGroupRunner.addTask(10, new ThrowingRunnable() {
+        threadGroupRunner.addTask(3, new ThrowingRunnable() {
             @Override
             public void runWithException() throws Throwable {
-                execute(new Callable<Object>() {
+                executeInTransaction(new CallableWithoutResult() {
                     @Override
-                    public Object call() throws Exception {
-                        return transactionTemplate.execute(new TransactionCallback<Object>() {
-                            @Override
-                            public Object doInTransaction(TransactionStatus status) {
-                                try {
-                                    final String mutexName = "testConcurrentCreation";
-                                    
-                                    threadGroupRunner.tick(1);
-                                    ClusterMutex mutex = clusterLockDao.getClusterMutex(mutexName);
-                                    assertNull(mutex);
-                                    
-                                    threadGroupRunner.tick(2);
-                                    try {
-                                        clusterLockDao.createClusterMutex(mutexName);
-                                    }
-                                    catch (DataIntegrityViolationException e) {
-                                        diveCounter.incrementAndGet();
-                                    }
-                                    
-                                    threadGroupRunner.tick(3);
-                                    mutex = clusterLockDao.getClusterMutex(mutexName);
-                                    assertNotNull(mutex);
-                                    
-                                    return null;
-                                }
-                                catch (InterruptedException e) {
-                                    throw new RuntimeException(e);
-                                }
-                            }
-                        });
+                    protected void callWithoutResult() {
+                        try {
+                            final String mutexName = "testConcurrentCreation";
+                            
+                            threadGroupRunner.tick(1);
+                            ClusterMutex mutex = clusterLockDao.getClusterMutex(mutexName);
+                            assertNotNull(mutex);
+                        }
+                        catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 });
             }
@@ -107,30 +97,20 @@ public class JpaClusterLockDaoTest extends BaseJpaDaoTest {
         
         threadGroupRunner.start();
         threadGroupRunner.join();
-        
-        assertEquals(9, diveCounter.intValue());
     }
     
-    /**
-     * Can only be enabled if testing against Oracle or Postgres due to DB limitations
-     */
     @Test
-    @Ignore
     public void testConcurrentLocking() throws InterruptedException  {
+        reset(portalInfoProvider);
+        when(portalInfoProvider.getServerName()).thenReturn("ServerA");
+
         final String mutexName = "testConcurrentLocking";
 
-        execute(new Callable<Object>() {
+        execute(new CallableWithoutResult() {
             @Override
-            public Object call() throws Exception {
-                ClusterMutex mutex = clusterLockDao.getClusterMutex(mutexName);
-                assertNull(mutex);
-                
-                clusterLockDao.createClusterMutex(mutexName);
-                
-                mutex = clusterLockDao.getClusterMutex(mutexName);
+            protected void callWithoutResult() {
+                final ClusterMutex mutex = clusterLockDao.getClusterMutex(mutexName);
                 assertNotNull(mutex);
-                
-                return null;
             }
         });
         
@@ -142,36 +122,24 @@ public class JpaClusterLockDaoTest extends BaseJpaDaoTest {
         threadGroupRunner.addTask(3, new ThrowingRunnable() {
             @Override
             public void runWithException() throws Throwable {
-                execute(new Callable<Object>() {
+                executeInTransaction(new CallableWithoutResult() {
                     @Override
-                    public Object call() throws Exception {
-                        return transactionTemplate.execute(new TransactionCallback<Object>() {
-                            @Override
-                            public Object doInTransaction(TransactionStatus status) {
-                                try {
-                                    threadGroupRunner.tick(1);
-                                    final ClusterMutex mutex = clusterLockDao.getClusterMutex(mutexName);
-                                    assertNotNull(mutex);
-                                    
-                                    threadGroupRunner.tick(2);
-                                    try {
-                                        final boolean locked = clusterLockDao.tryLock(mutex, 0, TimeUnit.MILLISECONDS);
-                                        if (locked) {
-                                            lockCounter.incrementAndGet();
-                                        }
-                                    }
-                                    finally {
-                                        threadGroupRunner.tick(3);
-                                    }
+                    protected void callWithoutResult() {
+                        try {
+                            threadGroupRunner.tick(1);
+                            try {
+                                final boolean locked = clusterLockDao.getLock(mutexName);
+                                if (locked) {
+                                    lockCounter.incrementAndGet();
                                 }
-                                catch (InterruptedException e) {
-                                    throw new RuntimeException(e);
-                                }
-                                
-                                return null;
                             }
-                            
-                        });
+                            finally {
+                                threadGroupRunner.tick(3);
+                            }
+                        }
+                        catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 });
             }
@@ -181,5 +149,311 @@ public class JpaClusterLockDaoTest extends BaseJpaDaoTest {
         threadGroupRunner.join();
         
         assertEquals(1, lockCounter.intValue());
+        
+        ClusterMutex mutex = clusterLockDao.getClusterMutex(mutexName);
+        assertTrue(mutex.isLocked());
+        
+        clusterLockDao.releaseLock(mutexName);
+        
+        mutex = clusterLockDao.getClusterMutex(mutexName);
+        assertFalse(mutex.isLocked());
+    }
+    
+
+    @Test
+    public void testConcurrentCreateLocking() throws InterruptedException  {
+        reset(portalInfoProvider);
+        when(portalInfoProvider.getServerName()).thenReturn("ServerA");
+
+        final String mutexName = "testConcurrentLocking";
+        final ThreadGroupRunner threadGroupRunner = new ThreadGroupRunner("JpaClusterLockDaoTest-", true);
+        
+        final AtomicInteger lockCounter = new AtomicInteger(); 
+        
+        threadGroupRunner.addTask(3, new ThrowingRunnable() {
+            @Override
+            public void runWithException() throws Throwable {
+                executeInTransaction(new CallableWithoutResult() {
+                    @Override
+                    protected void callWithoutResult() {
+                        try {
+                            threadGroupRunner.tick(1);
+                            try {
+                                final boolean locked = clusterLockDao.getLock(mutexName);
+                                if (locked) {
+                                    lockCounter.incrementAndGet();
+                                }
+                            }
+                            finally {
+                                threadGroupRunner.tick(3);
+                            }
+                        }
+                        catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
+            }
+        });
+        
+        threadGroupRunner.start();
+        threadGroupRunner.join();
+        
+        assertEquals(1, lockCounter.intValue());
+        
+        ClusterMutex mutex = clusterLockDao.getClusterMutex(mutexName);
+        assertTrue(mutex.isLocked());
+        
+        clusterLockDao.releaseLock(mutexName);
+        
+        mutex = clusterLockDao.getClusterMutex(mutexName);
+        assertFalse(mutex.isLocked());
+    }
+    
+    @Test
+    public void testNotAbandoned() throws Exception  {
+        //Used to make a 'mutable string'
+        final AtomicReference<String> currentServer = new AtomicReference<String>("ServerA");
+        final String mutexName = "testNotAbandoned";
+        
+        reset(portalInfoProvider);
+        when(portalInfoProvider.getServerName()).thenAnswer(new Answer<String>() {
+            @Override
+            public String answer(InvocationOnMock invocation) throws Throwable {
+                return currentServer.get();
+            }
+        });
+
+        //get/create the mutex
+        execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                final ClusterMutex mutex = clusterLockDao.getClusterMutex(mutexName);
+                assertNotNull(mutex);
+            }
+        });
+        
+        //lock serverA
+        currentServer.set("ServerA");
+        execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                final boolean locked = clusterLockDao.getLock(mutexName);
+                assertTrue(locked);
+            }
+        }); 
+        
+        //test context configures a 100ms abandoned lock timeout
+        for (int i = 0; i < 5; i++) {
+            TimeUnit.MILLISECONDS.sleep(10);
+            //try lock ServerB
+            currentServer.set("ServerB");
+            execute(new CallableWithoutResult() {
+                @Override
+                protected void callWithoutResult() {
+                    final boolean locked = clusterLockDao.getLock(mutexName);
+                    assertFalse(locked);
+                }
+            });
+            TimeUnit.MILLISECONDS.sleep(10);
+            //ServerA update ping
+            currentServer.set("ServerA");
+            execute(new CallableWithoutResult() {
+                @Override
+                protected void callWithoutResult() {
+                    clusterLockDao.updateLock(mutexName);
+                }
+            });
+        }
+
+        currentServer.set("ServerA");
+        
+        ClusterMutex mutex = clusterLockDao.getClusterMutex(mutexName);
+        assertTrue(mutex.isLocked());
+        
+        clusterLockDao.releaseLock(mutexName);
+        
+        mutex = clusterLockDao.getClusterMutex(mutexName);
+        assertFalse(mutex.isLocked());
+    }
+    
+    @Test
+    public void testAbandoned() throws Exception  {
+        //Used to make a 'mutable string'
+        final AtomicReference<String> currentServer = new AtomicReference<String>("ServerA");
+        final String mutexName = "testNotAbandoned";
+        
+        reset(portalInfoProvider);
+        when(portalInfoProvider.getServerName()).thenAnswer(new Answer<String>() {
+            @Override
+            public String answer(InvocationOnMock invocation) throws Throwable {
+                return currentServer.get();
+            }
+        });
+
+        //get/create the mutex
+        execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                final ClusterMutex mutex = clusterLockDao.getClusterMutex(mutexName);
+                assertNotNull(mutex);
+            }
+        });
+        
+        //lock serverA
+        currentServer.set("ServerA");
+        execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                final boolean locked = clusterLockDao.getLock(mutexName);
+                assertTrue(locked);
+            }
+        }); 
+        
+        final AtomicInteger lockFailCount = new AtomicInteger(0);
+        final AtomicBoolean serverBLocked = new AtomicBoolean(false);
+        
+        //test context configures a 100ms abandoned lock timeout
+        for (int i = 0; i < 5 && !serverBLocked.get(); i++) {
+            TimeUnit.MILLISECONDS.sleep(50);
+            //try lock ServerB
+            currentServer.set("ServerB");
+            execute(new CallableWithoutResult() {
+                @Override
+                protected void callWithoutResult() {
+                    final boolean locked = clusterLockDao.getLock(mutexName);
+                    if (!locked) {
+                        lockFailCount.incrementAndGet();
+                    }
+                    else {
+                        serverBLocked.set(true);
+                    }
+                }
+            });
+        }
+        
+        assertTrue(serverBLocked.get());
+        assertEquals(2, lockFailCount.get());
+
+        currentServer.set("ServerB");
+        
+        ClusterMutex mutex = clusterLockDao.getClusterMutex(mutexName);
+        assertTrue(mutex.isLocked());
+        
+        clusterLockDao.releaseLock(mutexName);
+        
+        mutex = clusterLockDao.getClusterMutex(mutexName);
+        assertFalse(mutex.isLocked());
+    }
+    
+    @Test(expected=IllegalMonitorStateException.class)
+    public void testUnlockedUpdate() throws Exception  {
+        //Used to make a 'mutable string'
+        final AtomicReference<String> currentServer = new AtomicReference<String>("ServerA");
+        final String mutexName = "testUnlockedUpdate";
+        
+        reset(portalInfoProvider);
+        when(portalInfoProvider.getServerName()).thenAnswer(new Answer<String>() {
+            @Override
+            public String answer(InvocationOnMock invocation) throws Throwable {
+                return currentServer.get();
+            }
+        });
+
+        //get/create the mutex
+        execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                clusterLockDao.updateLock(mutexName);
+            }
+        });
+    }
+    
+    @Test(expected=IllegalMonitorStateException.class)
+    public void testUnlockedRelease() throws Exception  {
+        //Used to make a 'mutable string'
+        final AtomicReference<String> currentServer = new AtomicReference<String>("ServerA");
+        final String mutexName = "testUnlockedRelease";
+        
+        reset(portalInfoProvider);
+        when(portalInfoProvider.getServerName()).thenAnswer(new Answer<String>() {
+            @Override
+            public String answer(InvocationOnMock invocation) throws Throwable {
+                return currentServer.get();
+            }
+        });
+
+        //get/create the mutex
+        execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                clusterLockDao.releaseLock(mutexName);
+            }
+        });
+    }
+    
+    @Test(expected=IllegalMonitorStateException.class)
+    public void testWrongServerUpdate() throws Exception  {
+        //Used to make a 'mutable string'
+        final AtomicReference<String> currentServer = new AtomicReference<String>("ServerA");
+        final String mutexName = "testUnlockedUpdate";
+        
+        reset(portalInfoProvider);
+        when(portalInfoProvider.getServerName()).thenAnswer(new Answer<String>() {
+            @Override
+            public String answer(InvocationOnMock invocation) throws Throwable {
+                return currentServer.get();
+            }
+        });
+
+        //get/create the mutex
+        execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                clusterLockDao.getLock(mutexName);
+            }
+        });
+
+        currentServer.set("ServerB");
+        //get/create the mutex
+        execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                clusterLockDao.updateLock(mutexName);
+            }
+        });
+    }
+    
+    @Test(expected=IllegalMonitorStateException.class)
+    public void testWrongServerRelease() throws Exception  {
+        //Used to make a 'mutable string'
+        final AtomicReference<String> currentServer = new AtomicReference<String>("ServerA");
+        final String mutexName = "testUnlockedRelease";
+        
+        reset(portalInfoProvider);
+        when(portalInfoProvider.getServerName()).thenAnswer(new Answer<String>() {
+            @Override
+            public String answer(InvocationOnMock invocation) throws Throwable {
+                return currentServer.get();
+            }
+        });
+
+        //get/create the mutex
+        execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                clusterLockDao.getLock(mutexName);
+            }
+        });
+
+        currentServer.set("ServerB");
+
+        //get/create the mutex
+        execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                clusterLockDao.releaseLock(mutexName);
+            }
+        });
     }
 }

@@ -25,9 +25,9 @@
        xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="
-           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
-           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
 
     <bean id="rawEventsEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="cacheManager">
         <qualifier value="rawEvents"/>
@@ -49,25 +49,35 @@
         <property name="persistenceUnitName" value="uPortalAggrEventsPersistence" />
         <property name="jpaProperties">
             <props>
-                <prop key="hibernate.cache.region.factory_class">net.sf.ehcache.hibernate.SingletonEhCacheRegionFactory</prop>
+                <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory</prop>
                 <prop key="net.sf.ehcache.configurationResourceName">/properties/ehcache.xml</prop>
             </props>
         </property>
     </bean>
 
     <bean id="aggrEventsTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <qualifier value="AggrEventsDB"/>
+        <qualifier value="aggrEvents"/>
         <property name="entityManagerFactory" ref="aggrEventsEntityManagerFactory" />
+    </bean>
+    <bean id="aggrTransactionOperations" class="org.springframework.transaction.support.TransactionTemplate">
+        <qualifier value="aggrEvents"/>
+        <property name="transactionManager" ref="aggrEventsTransactionManager" />
     </bean>
 
     <!-- ********** Database Utilities ********** -->
     
-    <bean name="rawEventsDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport">
+    <bean name="rawEventsDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport" lazy-init="true">
+        <property name="hibernateToolConfigurationSource" ref="rawEventsDbHibernateToolConfigurationSource" />
+    </bean>
+    <bean id="rawEventsDbHibernateToolConfigurationSource" class="org.jasig.portal.tools.dbloader.HibernateToolConfigurationSourceImpl" lazy-init="true">
         <property name="dataSource" ref="RawEventsDB" />
         <property name="persistenceUnitName" value="uPortalRawEventsPersistence" />
     </bean>
     
-    <bean name="aggrEventsDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport">
+    <bean name="aggrEventsDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport" lazy-init="true">
+        <property name="hibernateToolConfigurationSource" ref="aggrEventsDbHibernateToolConfigurationSource" />
+    </bean>
+    <bean id="aggrEventsDbHibernateToolConfigurationSource" class="org.jasig.portal.tools.dbloader.HibernateToolConfigurationSourceImpl" lazy-init="true">
         <property name="dataSource" ref="AggrEventsDB" />
         <property name="persistenceUnitName" value="uPortalAggrEventsPersistence" />
     </bean>

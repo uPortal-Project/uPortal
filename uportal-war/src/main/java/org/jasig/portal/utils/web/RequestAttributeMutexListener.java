@@ -42,6 +42,7 @@ public class RequestAttributeMutexListener implements ServletRequestListener {
     /* (non-Javadoc)
      * @see javax.servlet.ServletRequestListener#requestInitialized(javax.servlet.ServletRequestEvent)
      */
+    @Override
     public void requestInitialized(ServletRequestEvent sre) {
         sre.getServletRequest().setAttribute(PortalWebUtils.REQUEST_MUTEX_ATTRIBUTE, new SerializableObject());
     }
@@ -49,6 +50,7 @@ public class RequestAttributeMutexListener implements ServletRequestListener {
     /* (non-Javadoc)
      * @see javax.servlet.ServletRequestListener#requestDestroyed(javax.servlet.ServletRequestEvent)
      */
+    @Override
     public void requestDestroyed(ServletRequestEvent sre) {
         sre.getServletRequest().removeAttribute(PortalWebUtils.REQUEST_MUTEX_ATTRIBUTE);
     }

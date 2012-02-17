@@ -98,7 +98,7 @@ public class CachingResourceLoaderImpl implements CachingResourceLoader {
         final Element element = this.entryFactory.getWithData(this.resourceCache, resource, arguments);
 
         CachedResource<T> cachedResource = (CachedResource<T>)element.getObjectValue();
-        if (cachedResource != null && this.logger.isTraceEnabled()) {
+        if (this.logger.isTraceEnabled()) {
             this.logger.trace("Found " + cachedResource + " in cache");
         }
         

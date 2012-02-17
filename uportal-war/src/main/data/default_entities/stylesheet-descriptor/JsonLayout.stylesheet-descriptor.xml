@@ -24,9 +24,9 @@
     <description>Renders the user layout as JSON</description>
     <uri>classpath:/layout/theme/json/json.xsl</uri>
     <stylesheet-parameter>
-        <name>minimizePortletsDefault</name>
-        <default-value>true</default-value>
+        <name>dashboardForcedWindowState</name>
+        <default-value>MINIMIZED</default-value>
         <scope>REQUEST</scope>
-        <description>Overloading the use of the stylesheet parameters to denote that portlets should render minimized by default for this stylesheet</description>
+        <description>Overloading the use of the stylesheet parameters to denote the forced window state when rendering the dashboard view</description>
     </stylesheet-parameter>
 </stylesheet-descriptor>

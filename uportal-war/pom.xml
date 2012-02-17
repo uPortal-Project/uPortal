@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jasig.portal</groupId>
         <artifactId>uportal-parent</artifactId>
-        <version>4.0.3-SNAPSHOT</version>
+        <version>4.0.4-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -79,6 +79,11 @@
             <groupId>commons-dbcp</groupId>
             <artifactId>commons-dbcp</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>commons-httpclient</groupId>
@@ -128,6 +133,11 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
         </dependency>
 
         <dependency>
@@ -212,13 +222,33 @@
 
         <dependency>
             <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-ehcache</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.hibernate.javax.persistence</groupId>
+            <artifactId>hibernate-jpa-2.0-api</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.jasig.cas3.extensions</groupId>
             <artifactId>clearpass-integration-uportal</artifactId>
             <scope>runtime</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.jasig.resourceserver</groupId>
+            <artifactId>resource-server-api</artifactId>
         </dependency>
         
         <dependency>
@@ -235,7 +265,22 @@
             <groupId>org.jasypt</groupId> 
             <artifactId>jasypt</artifactId>  
         </dependency> 
-
+        
+        <dependency>
+            <groupId>org.jadira.usertype</groupId>
+            <artifactId>usertype.core</artifactId>
+        </dependency> 
+        
+        <dependency>
+            <groupId>org.jadira.usertype</groupId>
+            <artifactId>usertype.spi</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jcl</artifactId>
@@ -269,6 +314,11 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-expression</artifactId>
         </dependency>
 
         <dependency>
@@ -308,7 +358,27 @@
         
         <dependency>
             <groupId>org.springframework.ldap</groupId>
+            <artifactId>spring-ldap-core</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.springframework.ldap</groupId>
             <artifactId>spring-ldap-core-tiger</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
         </dependency>
         
         <dependency>
@@ -321,6 +391,10 @@
             <artifactId>spring-webflow</artifactId>
         </dependency>
         
+        <dependency>
+            <groupId>org.springmodules</groupId>
+            <artifactId>spring-modules-cache</artifactId>
+        </dependency>    
 
         <dependency>
             <groupId>taglibs</groupId>
@@ -398,6 +472,12 @@
         
         
         <!-- ===== Runtime Dependencies ======================================= -->
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        
         <dependency>
             <groupId>org.fusesource.jansi</groupId>
             <artifactId>jansi</artifactId>
@@ -491,20 +571,9 @@
             <plugin>
                 <groupId>org.jvnet.jaxb2.maven2</groupId>
                 <artifactId>maven-jaxb2-plugin</artifactId>
-                <version>0.7.4</version>
-                <executions>
-                    <execution>
-                        <id>generate-xjc-sources</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
                 <configuration>
-                    <bindingDirectory>src/main/binding</bindingDirectory>
-                    <schemaDirectory>src/main/resources/xsd</schemaDirectory>
                     <schemaIncludes>
+                        <include>io/event-aggregation/*.xsd</include>
                         <include>io/portlet-definition/*.xsd</include>
                         <include>io/portlet-type/*.xsd</include>
                         <include>io/stylesheet-descriptor/*.xsd</include>
@@ -512,30 +581,7 @@
                         <include>io/permission-owner/*.xsd</include>
                         <include>portlet-publishing/*.xsd</include>
                     </schemaIncludes>
-                    <extension>true</extension>
-                    <args>
-                        <arg>-XtoString</arg>
-                        <arg>-Xequals</arg>
-                        <arg>-XhashCode</arg>
-                        <arg>-no-header</arg>
-                        <arg>-readOnly</arg>
-                        <arg>-mark-generated</arg>
-                    </args>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.jvnet.jaxb2_commons</groupId>
-                            <artifactId>jaxb2-basics</artifactId>
-                            <version>${jaxb2basics.version}</version>
-                        </plugin>
-                    </plugins>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.sun.xml.bind</groupId>
-                        <artifactId>jaxb-xjc</artifactId>
-                        <version>2.2.1</version>
-                    </dependency>
-                </dependencies>
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -568,7 +614,6 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.5</version>
                 <executions>
                     <execution>
                         <id>add-source</id>
@@ -585,17 +630,6 @@
                 </executions>
             </plugin>
 
-            <plugin>
-                <artifactId>maven-source-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
             <!-- Surefire Plugin: Exec Tests ===================================== -->
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -680,6 +714,23 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jasig.maven</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <configuration>
+                    <defaultMergePolicy>MERGE</defaultMergePolicy>
+                    <reportPlugins combine.children="append">
+                        <plugin>
+                            <groupId>org.codehaus.mojo</groupId>
+                            <artifactId>findbugs-maven-plugin</artifactId>
+                            <version>2.4.0</version>
+                            <configuration>
+                                <excludeFilterFile>${basedir}/FindBugsExcludes.xml</excludeFilterFile>
+                            </configuration>
+                        </plugin>
+                    </reportPlugins>
+                </configuration>
             </plugin>
         </plugins>
         <pluginManagement>

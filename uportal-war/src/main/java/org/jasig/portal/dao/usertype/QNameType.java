@@ -21,18 +21,12 @@ package org.jasig.portal.dao.usertype;
 
 import javax.xml.namespace.QName;
 
-import org.hibernate.type.descriptor.sql.VarcharTypeDescriptor;
+import org.jadira.usertype.spi.shared.AbstractSingleColumnUserType;
 
 /**
- * Uses a regular expression to validate strings coming to/from the database.
- * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class QNameType extends BaseUserType<QName> {
+public class QNameType extends AbstractSingleColumnUserType<QName, String, QNameColumnMapper> {
     private static final long serialVersionUID = 1L;
-    
-    public QNameType() {
-        super(VarcharTypeDescriptor.INSTANCE, QNameTypeDescriptor.INSTANCE);
-    }
 }

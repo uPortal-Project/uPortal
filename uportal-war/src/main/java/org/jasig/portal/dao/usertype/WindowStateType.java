@@ -21,7 +21,7 @@ package org.jasig.portal.dao.usertype;
 
 import javax.portlet.WindowState;
 
-import org.hibernate.type.descriptor.sql.VarcharTypeDescriptor;
+import org.jadira.usertype.spi.shared.AbstractSingleColumnUserType;
 
 /**
  * Uses a regular expression to validate strings coming to/from the database.
@@ -29,10 +29,6 @@ import org.hibernate.type.descriptor.sql.VarcharTypeDescriptor;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class WindowStateType extends BaseUserType<WindowState> {
+public class WindowStateType extends AbstractSingleColumnUserType<WindowState, String, WindowStateColumnMapper> {
     private static final long serialVersionUID = 1L;
-    
-    public WindowStateType() {
-        super(VarcharTypeDescriptor.INSTANCE, WindowStateTypeDescriptor.INSTANCE);
-    }
 }

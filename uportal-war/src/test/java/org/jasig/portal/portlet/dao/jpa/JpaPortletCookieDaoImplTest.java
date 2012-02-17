@@ -25,10 +25,13 @@ import static org.junit.Assert.assertNull;
 
 import java.util.concurrent.Callable;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.Cookie;
 
 import org.jasig.portal.portlet.dao.IPortletCookieDao;
 import org.jasig.portal.portlet.om.IPortalCookie;
+import org.jasig.portal.test.BaseJpaDaoTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,16 +45,19 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @version $Id$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:jpaPortletCookieDaoTestContext.xml")
+@ContextConfiguration(locations = "classpath:jpaPortalTestApplicationContext.xml")
 public class JpaPortletCookieDaoImplTest extends BaseJpaDaoTest {
 	
+    @Autowired
 	private IPortletCookieDao portletCookieDao;
 
-	@Autowired
-	public void setPortletCookieDao(IPortletCookieDao portletCookieDao) {
-		this.portletCookieDao = portletCookieDao;
-	}
-
+    @PersistenceContext(unitName = "uPortalPersistence")
+    private EntityManager entityManager;
+    
+    @Override
+    protected EntityManager getEntityManager() {
+        return this.entityManager;
+    }
 
 	/**
 	 * 

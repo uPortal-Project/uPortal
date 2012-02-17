@@ -37,7 +37,6 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
@@ -181,16 +180,15 @@ class PermissionOwnerImpl implements IPermissionOwner, Serializable {
         }
 
         IPermissionOwner owner = (IPermissionOwner) obj;
-        return this.fname.equals(owner);
+        return this.fname.equals(owner.getFname());
     }
 
-    /**
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(464270933, -1074792143).append(this.fname)
-                .toHashCode();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.fname == null) ? 0 : this.fname.hashCode());
+        return result;
     }
 
     @Override

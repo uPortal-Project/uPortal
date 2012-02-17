@@ -44,6 +44,7 @@ public class ArrayEnumerator<T> implements Enumeration<T> {
     /* (non-Javadoc)
      * @see java.util.Enumeration#hasMoreElements()
      */
+    @Override
     public boolean hasMoreElements() {
         return this.index < this.array.length;
     }
@@ -51,6 +52,7 @@ public class ArrayEnumerator<T> implements Enumeration<T> {
     /* (non-Javadoc)
      * @see java.util.Enumeration#nextElement()
      */
+    @Override
     public T nextElement() {
         if (!this.hasMoreElements()) {
             throw new NoSuchElementException();

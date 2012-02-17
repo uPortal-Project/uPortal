@@ -28,7 +28,8 @@ import org.danann.cernunnos.SimpleFormula;
 import org.danann.cernunnos.SimpleReagent;
 import org.danann.cernunnos.TaskRequest;
 import org.danann.cernunnos.TaskResponse;
-import org.jasig.portal.services.SequenceGenerator;
+import org.jasig.portal.spring.locator.CounterStoreLocator;
+import org.jasig.portal.utils.ICounterStore;
 
 /**
  * @author Eric Dalquist
@@ -62,9 +63,9 @@ public class SequenceGeneratorPhrase implements Phrase {
     public Object evaluate(TaskRequest req, TaskResponse res) {
         final String seqName = (String)this.seqNamePhrase.evaluate(req, res);
         
-        final SequenceGenerator sequenceGenerator = SequenceGenerator.instance();
+        final ICounterStore counterStore = CounterStoreLocator.getCounterStore();
         try {
-            return sequenceGenerator.getNextInt(seqName);
+            return counterStore.getNextId(seqName);
         }
         catch (Exception e) {
             throw new RuntimeException("Failed to retrieve next sequence in for sequance '" + seqName + "'", e);

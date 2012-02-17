@@ -42,6 +42,15 @@
         
         <mapping resource="properties/db/global.hbm.xml"/>
         
-        <mapping class="org.jasig.portal.events.aggr.EventAggregatorStatusImpl"/>
+        <mapping class="org.jasig.portal.events.aggr.dao.jpa.EventAggregatorStatusImpl"/>
+        <mapping class="org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl"/>
+        <mapping class="org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl"/>
+        <mapping class="org.jasig.portal.events.aggr.dao.jpa.AggregatedGroupConfigImpl"/>
+        <mapping class="org.jasig.portal.events.aggr.dao.jpa.AggregatedIntervalConfigImpl"/>
+        <mapping class="org.jasig.portal.events.aggr.dao.jpa.QuarterDetailImpl"/>
+        <mapping class="org.jasig.portal.events.aggr.dao.jpa.AcademicTermDetailImpl"/>
+        <mapping class="org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl"/>
+        <mapping class="org.jasig.portal.events.aggr.session.EventSessionImpl"/>
+        <mapping class="org.jasig.portal.events.aggr.login.LoginAggregationImpl"/>
     </session-factory>
 </hibernate-configuration>

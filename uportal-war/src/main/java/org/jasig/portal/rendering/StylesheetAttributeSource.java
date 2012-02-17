@@ -112,7 +112,7 @@ public abstract class StylesheetAttributeSource implements AttributeSource, Bean
         return new CacheKey(this.name, (Serializable)preferencesLayoutAttributes);
     }
 
-    protected abstract IStylesheetDescriptor getStylesheetDescriptor(HttpServletRequest request);
+    public abstract IStylesheetDescriptor getStylesheetDescriptor(HttpServletRequest request);
     
-    protected abstract IStylesheetUserPreferences getStylesheetUserPreferences(HttpServletRequest request);
+    public abstract IStylesheetUserPreferences getStylesheetUserPreferences(HttpServletRequest request);
 }

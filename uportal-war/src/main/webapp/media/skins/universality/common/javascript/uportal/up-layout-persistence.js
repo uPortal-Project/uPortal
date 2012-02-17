@@ -57,6 +57,9 @@ var up = up || {};
         selectors: {
             errorMessage: ".layout-persistence-error-message"
         },
+        messages: {
+            error: "Error persisting layout change"
+        },
         events: {
             onSuccess: null,
             onError: null
@@ -65,7 +68,7 @@ var up = up || {};
             onSuccess: null,
             onError: function(that, request, text, error) {
                 if (console) console.log(request, text, error);
-                that.locate("errorMessage").text("Error persisting layout change");
+                that.locate("errorMessage").text(that.options.messages.error);
             }
         }
     });

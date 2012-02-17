@@ -29,12 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
 import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
-import org.jasig.portal.security.IAuthorizationPrincipal;
-import org.jasig.portal.security.IAuthorizationService;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IPersonManager;
-import org.jasig.portal.security.provider.AuthorizationImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -50,13 +46,6 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 public class PrincipalsRESTController {
-
-    private IPersonManager personManager;
-    
-    @Autowired
-    public void setPersonManager(IPersonManager personManager) {
-        this.personManager = personManager;
-    }
 
     private IGroupListHelper listHelper;
     
@@ -75,31 +64,12 @@ public class PrincipalsRESTController {
      * @return
      * @throws Exception
      */
+    @PreAuthorize("hasPermission('string', 'REST', new org.jasig.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
     @RequestMapping(value="/permissions/principals.json", method = RequestMethod.GET)
     public ModelAndView getPrincipals(
             @RequestParam(value="q") String query,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-
-        /*
-         * Temporary authorization code requests a non-existant permission.  This
-         * code will pass for superusers but will deny all other users access
-         * to the REST service.
-         */
-        
-        final IPerson person = personManager.getPerson((HttpServletRequest) request);
-        if (person == null) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return null;
-        }
-
-        IAuthorizationService authServ = AuthorizationImpl.singleton();
-        IAuthorizationPrincipal principal = authServ.newPrincipal(
-                (String) person.getAttribute(IPerson.USERNAME), IPerson.class);
-        if(!principal.hasPermission("UP_PERMISSION", "VIEW_PERMISSIONS", "REST")) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return null;
-        }
 
         /*
          *  Add groups and people matching the search query to the JSON model

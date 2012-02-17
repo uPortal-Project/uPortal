@@ -19,11 +19,9 @@
 
 package org.jasig.portal.events.handlers.db;
 
-import java.util.Date;
-
+import org.jasig.portal.concurrency.FunctionWithoutResult;
 import org.jasig.portal.events.PortalEvent;
-
-import com.google.common.base.Function;
+import org.joda.time.DateTime;
 
 /**
  * Persists, retrieves and deletes portal events from a persistent store 
@@ -37,14 +35,44 @@ public interface IPortalEventDao {
     void storePortalEvents(Iterable<PortalEvent> portalEvents);
     
     /**
+     * Gets all persisted events in the time range. To deal with memory and data access issues the results are not
+     * returned but passed in order to the provided {@link FunctionWithoutResult} handler.
+     * 
      * @param startTime The inclusive start time to get events for
      * @param endTime The exclusive end time to get events for
+     * @param maxEvents The maximum number events to retrieve. -1 means no limit
      * @param handler Function which will be called for each event.
      */
-    void getPortalEvents(Date startTime, Date endTime, Function<PortalEvent, Object> handler);
+    void getPortalEvents(DateTime startTime, DateTime endTime, int maxEvents, FunctionWithoutResult<PortalEvent> handler);
+    /**
+     * @see #getPortalEvents(DateTime, DateTime, int, FunctionWithoutResult)
+     */
+    void getPortalEvents(DateTime startTime, DateTime endTime, FunctionWithoutResult<PortalEvent> handler);
+    
+    /**
+     * Gets all un-aggregated persisted events in the time range. After the handler is called on each event
+     * it is marked as aggregated. To deal with memory and data access issues the results are not
+     * returned but passed in order to the provided {@link FunctionWithoutResult} handler.
+     * 
+     * @param startTime The inclusive start time to get events for
+     * @param endTime The exclusive end time to get events for
+     * @param maxEvents The maximum number events to retrieve. -1 means no limit
+     * @param handler Function which will be called for each event.
+     */
+    void aggregatePortalEvents(DateTime startTime, DateTime endTime, int maxEvents, FunctionWithoutResult<PortalEvent> handler);
+    
+    /**
+     * @return The timestamp of the oldest event in the persitent store
+     */
+    DateTime getOldestPortalEventTimestamp();
+    
+    /**
+     * @return The timestamp of the most recent event in the persitent store
+     */
+    DateTime getNewestPortalEventTimestamp();
     
     /**
      * Delete events with timestamps from before the specified date (exclusive)
      */
-    int deletePortalEventsBefore(Date endTime);
+    int deletePortalEventsBefore(DateTime endTime);
 }

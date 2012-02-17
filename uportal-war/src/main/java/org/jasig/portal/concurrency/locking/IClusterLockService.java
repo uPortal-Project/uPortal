@@ -19,8 +19,6 @@
 
 package org.jasig.portal.concurrency.locking;
 
-import java.util.concurrent.TimeUnit;
-
 import com.google.common.base.Function;
 
 /**
@@ -30,58 +28,18 @@ import com.google.common.base.Function;
  * @version $Revision$
  */
 public interface IClusterLockService {
-    public static class TryLockFunctionResult<T> {
-        private static final TryLockFunctionResult<?> NOT_EXECUTED_INSTANCE = new TryLockFunctionResult<Object>();
-        
-        @SuppressWarnings("unchecked")
-        static <T> TryLockFunctionResult<T> getNotExecutedInstance() {
-            return (TryLockFunctionResult<T>)NOT_EXECUTED_INSTANCE;
-        }
-        
-        private final boolean executed;
-        private final T result;
-
-        private TryLockFunctionResult() {
-            this.executed = false;
-            this.result = null;
-        }
-        TryLockFunctionResult(T result) {
-            this.executed = true;
-            this.result = result;
-        }
+    public interface TryLockFunctionResult<T> {
 
         /**
          * @return True if the function was executed, false if not
          */
-        public boolean isExecuted() {
-            return executed;
-        }
-
+        boolean isExecuted();
+        
         /**
          * @return The function result, if {@link #isExecuted()} returns false this method should be ignored
          */
-        public T getResult() {
-            return result;
-        }
-
-        /* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
-        @Override
-        public String toString() {
-            return "LockFunctionResult [executed=" + executed + ", result=" + result + "]";
-        }
+        T getResult();
     }
-    
-    /**
-     * Execute the specified function within the named mutex. If the mutex is currently owned by another thread or
-     * server the method will block until the mutex is released or the calling thread is interrupted. 
-     * 
-     * @param mutexName Name of the lock (case sensitive)
-     * @param lockFunction The fuction to call within the lock context, the parameter to the function is the lock name
-     * @return The value returned by the lockFunction
-     */
-    <T> T doInLock(String mutexName, Function<String, T> lockFunction);
     
     /**
      * Execute the specified function within the named mutex. If the mutex is currently owned by another thread or
@@ -91,19 +49,7 @@ public interface IClusterLockService {
      * @param lockFunction The fuction to call within the lock context, the parameter to the function is the lock name
      * @return The value returned by the lockFunction
      */
-    <T> TryLockFunctionResult<T> doInTryLock(String mutexName, Function<String, T> lockFunction);
-    
-    /**
-     * Execute the specified function within the named mutex. If the mutex is currently owned by another thread or
-     * server the method will block until the mutex is released or the calling thread is interrupted. 
-     * 
-     * @param mutexName Name of the lock (case sensitive)
-     * @param time the maximum time to wait for the lock
-     * @param unit the time unit of the {@code time} argument
-     * @param lockFunction The fuction to call within the lock context, the parameter to the function is the lock name
-     * @return The value returned by the lockFunction
-     */
-    <T> TryLockFunctionResult<T> doInTryLock(String mutexName, long time, TimeUnit unit, Function<String, T> lockFunction);
+    <T> TryLockFunctionResult<T> doInTryLock(String mutexName, Function<String, T> lockFunction) throws InterruptedException;
     
     /**
      * Check if the current thread already owns the specified lock

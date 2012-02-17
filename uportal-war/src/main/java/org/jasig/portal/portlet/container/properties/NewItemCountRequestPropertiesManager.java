@@ -34,7 +34,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class NewItemCountRequestPropertiesManager extends BaseRequestPropertiesManager {
     
-    protected final String NEW_ITEM_COUNT_PROPERTY = "newItemCount";
+    protected static final String NEW_ITEM_COUNT_PROPERTY = "newItemCount";
 
     @Override
     public void setResponseProperty(HttpServletRequest portletRequest, IPortletWindow portletWindow, String property, String value) {

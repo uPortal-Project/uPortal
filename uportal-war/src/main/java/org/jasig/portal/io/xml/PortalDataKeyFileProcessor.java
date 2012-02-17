@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -31,8 +32,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
-
-import net.sf.ehcache.store.chm.ConcurrentHashMap;
 
 import org.apache.commons.io.IOUtils;
 import org.codehaus.stax2.XMLInputFactory2;

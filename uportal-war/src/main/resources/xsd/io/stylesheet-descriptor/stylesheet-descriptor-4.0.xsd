@@ -33,7 +33,7 @@
     <xs:element name="stylesheet-descriptor">
         <xs:complexType>
             <xs:complexContent>
-                <xs:extension base="io:basePortalDataType">
+                <xs:extension base="io:basePortalDataType40">
                     <xs:sequence>
                         <xs:element name="name" type="up:fname-type"/>
                         <xs:element name="description" type="xs:string" minOccurs="0"/>
@@ -46,8 +46,6 @@
                         <xs:element name="layout-attribute" type="externalLayoutAttributeDescriptor" minOccurs="0"
                             maxOccurs="unbounded"/>
                     </xs:sequence>
-                    
-                    <xs:attribute name="version" type="io:version40Type" use="required"/>
                 </xs:extension>
             </xs:complexContent>
         </xs:complexType>

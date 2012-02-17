@@ -23,13 +23,13 @@
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns="http://www.springframework.org/schema/beans" 
        xsi:schemaLocation="
-           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
     <!--
      | DataSource objects used by the portal should be configured 
      +-->
 
-    <bean id="PortalDb" class="org.apache.commons.dbcp.BasicDataSource">
+    <bean id="PortalDb" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <qualifier value="PortalDb"/>
         <property name="driverClassName" value="${hibernate.connection.driver_class}" />
         <property name="url" value="${hibernate.connection.url}" />
@@ -56,6 +56,7 @@
      | DataSource as unique.
      +-->
     <bean id="RawEventsDB" class="org.jasig.portal.utils.DataSourceWrapper">
+        <qualifier value="RawEventsDB" />
         <constructor-arg ref="PortalDb" />
     </bean>
     
@@ -64,6 +65,7 @@
      | DataSource as unique.
      +-->
     <bean id="AggrEventsDB" class="org.jasig.portal.utils.DataSourceWrapper">
+        <qualifier value="AggrEventsDB" />
         <constructor-arg ref="PortalDb" />
     </bean>
 </beans>

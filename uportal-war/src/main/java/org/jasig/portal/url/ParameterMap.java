@@ -19,7 +19,9 @@
 
 package org.jasig.portal.url;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -64,7 +66,7 @@ public class ParameterMap extends LinkedHashMap<String, String[]> {
             final String[] values = parameterEntry.getValue();
             
             if (values == null) {
-                this.put(name, null);
+                this.put(name, new String[0]);
             }
             else {
                 final String[] newValues = Arrays.copyOf(values, values.length);
@@ -83,7 +85,7 @@ public class ParameterMap extends LinkedHashMap<String, String[]> {
         for (final Map.Entry<String, String[]> parameterEntry : parameterMap.entrySet()) {
             final String[] values = parameterEntry.getValue();
             if (values == null) {
-                newMap.put(parameterEntry.getKey(), null);
+                newMap.put(parameterEntry.getKey(), new ArrayList<String>());
             }
             else {
                 newMap.put(parameterEntry.getKey(), Arrays.asList(values));
@@ -99,7 +101,7 @@ public class ParameterMap extends LinkedHashMap<String, String[]> {
         for (final Map.Entry<String, List<String>> parameterEntry : parameterMap.entrySet()) {
             final List<String> values = parameterEntry.getValue();
             if (values == null) {
-                newMap.put(parameterEntry.getKey(), null); 
+                newMap.put(parameterEntry.getKey(), new String[0]); 
             }
             else {
                 newMap.put(parameterEntry.getKey(), values.toArray(new String[values.size()]));   
@@ -115,7 +117,7 @@ public class ParameterMap extends LinkedHashMap<String, String[]> {
         for (final Map.Entry<String, List<String>> parameterEntry : parameterMap.entrySet()) {
             final List<String> values = parameterEntry.getValue();
             if (values == null) {
-                builder.put(parameterEntry.getKey(), null); 
+                builder.put(parameterEntry.getKey(), Collections.<String>emptyList()); 
             }
             else {
                 builder.put(parameterEntry.getKey(), ImmutableList.copyOf(values));   
@@ -131,7 +133,7 @@ public class ParameterMap extends LinkedHashMap<String, String[]> {
         for (final Map.Entry<String, String[]> parameterEntry : parameterMap.entrySet()) {
             final String[] values = parameterEntry.getValue();
             if (values == null) {
-                builder.put(parameterEntry.getKey(), null);
+                builder.put(parameterEntry.getKey(), Collections.<String>emptyList());
             }
             else {
                 builder.put(parameterEntry.getKey(), ImmutableList.copyOf(values));
@@ -145,7 +147,7 @@ public class ParameterMap extends LinkedHashMap<String, String[]> {
         for (final Map.Entry<String, String[]> parameterEntry : src.entrySet()) {
             final String[] values = parameterEntry.getValue();
             if (values == null) {
-                dest.put(parameterEntry.getKey(), null);
+                dest.put(parameterEntry.getKey(), new ArrayList<String>());
             }
             else {
                 dest.put(parameterEntry.getKey(), Arrays.asList(values));
@@ -157,7 +159,7 @@ public class ParameterMap extends LinkedHashMap<String, String[]> {
         for (final Map.Entry<String, List<String>> parameterEntry : src.entrySet()) {
             final List<String> values = parameterEntry.getValue();
             if (values == null) {
-                dest.put(parameterEntry.getKey(), null);
+                dest.put(parameterEntry.getKey(), new String[0]);
             }
             else {
                 dest.put(parameterEntry.getKey(), values.toArray(new String[values.size()]));

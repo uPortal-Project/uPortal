@@ -20,13 +20,14 @@
 package org.jasig.portal.layout.dlm;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.regex.Pattern;
 
 import net.sf.ehcache.Ehcache;
-import net.sf.ehcache.store.chm.ConcurrentHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,12 +35,14 @@ import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.UserProfile;
+import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.dao.IStylesheetUserPreferencesDao;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.PersonImpl;
 import org.jasig.portal.utils.ConcurrentMapUtils;
+import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.utils.threading.ReadResult;
 import org.jasig.portal.utils.threading.ReadWriteCallback;
 import org.jasig.portal.utils.threading.ReadWriteLockTemplate;
@@ -134,7 +137,9 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
         else
         {
             for (final FragmentDefinition fragmentDefinition : fragments) {
-                activateFragment(fragmentDefinition);
+                for (Locale locale : LocaleManager.getPortalLocales()) {
+                    activateFragment(fragmentDefinition, locale);
+                }
             }
         }
         
@@ -146,7 +151,7 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
         return true;
     }
     
-    private UserView activateFragment(FragmentDefinition fd) {
+    private UserView activateFragment(FragmentDefinition fd, Locale locale) {
         
         // Assertions.
         if (fd == null) {
@@ -164,15 +169,14 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
         else
         {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("\n\n------ activating " + fd + " - " +
-                        fd.getName() );
+                LOG.debug("\n\n------ activating " + fd + " - " + fd.getName() + " (locale = " + locale.toString() + ")");
             }
 
             try
             {
                 IPerson owner = bindToOwner(fd);
                 UserView view = new UserView(owner.getID());
-                loadLayout( view, fd, owner );
+                loadLayout( view, fd, owner, locale );
                 
                 // if owner just created we need to push the layout into
                 // the db so that our fragment template user is used and
@@ -185,11 +189,9 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
                 }
                 loadPreferences( view, fd);
                 fragmentizeLayout( view, fd);
-                fragmentizeTSUP( view, fd);
-                fragmentizeSSUP( view, fd);
-                this.setUserView(fd.getOwnerId(), view);
+                this.setUserView(fd.getOwnerId(), locale, view);
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("\n\n------ done activating " + fd.getName() );
+                    LOG.debug("\n\n------ done activating " + fd.getName() + " (locale = " + locale.toString() + ")" );
                 }
                 
                 return view;
@@ -210,7 +212,7 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
         return null;
     }
     
-    public UserView getUserView(final FragmentDefinition fd) {
+    public UserView getUserView(final FragmentDefinition fd, final Locale locale) {
         
         // Assertions...
         if (fd == null) {
@@ -225,7 +227,7 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
         final UserView rslt = 
             ReadWriteLockTemplate.doWithLock(userViewLock, new ReadWriteCallback<UserView>() {
                 public ReadResult<UserView> doInReadLock() {
-                    final net.sf.ehcache.Element element = userViews.get(ownerId);
+                    final net.sf.ehcache.Element element = getUserView(ownerId, locale);
                     final UserView userView = element != null ? (UserView)element.getObjectValue() : null;
                     if (userView == null) {
                         return new ReadResult<UserView>(true);
@@ -235,7 +237,7 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
                 }
     
                 public UserView doInWriteLock(ReadResult<UserView> readResult) {
-                    final UserView userView = activateFragment(fd);
+                    final UserView userView = activateFragment(fd, locale);
                     
                     if (userView == null) {
                         // This is worrysome...
@@ -260,7 +262,7 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
         return ConcurrentMapUtils.putIfAbsent(userViewLocks, ownerId, new ReentrantReadWriteLock(true));
     }
     
-    public void setUserView(String ownerId, UserView v) {
+    public void setUserView(String ownerId, Locale locale, UserView v) {
         
         // Assertions.
         if (ownerId == null) {
@@ -276,11 +278,11 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
             LOG.debug("Setting UserView instance for user:  " + ownerId);
         }
         
-        userViews.put(new net.sf.ehcache.Element(ownerId, v));
+        userViews.put(new net.sf.ehcache.Element(new Tuple<String, String>(ownerId, locale.toString()), v));
         
     }
     
-    public boolean hasUserView(FragmentDefinition fd) {
+    public boolean hasUserView(FragmentDefinition fd, Locale locale) {
 
         // Assertions...
         if (fd == null) {
@@ -288,7 +290,7 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
             throw new IllegalArgumentException(msg);
         }
 
-        return userViews.get(fd.getOwnerId()) != null;
+        return getUserView(fd.getOwnerId(), locale) != null;
 
     }
     
@@ -390,7 +392,7 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
     }
     private void loadLayout( UserView view,
                              FragmentDefinition fragment,
-                             IPerson owner )
+                             IPerson owner, Locale locale )
     {
         // if fragment not bound to user can't return any layouts.
         if ( view.getUserId() == -1 )
@@ -411,6 +413,7 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
         {
             // fix hard coded 1 later for multiple profiles
             IUserProfile profile = userLayoutStore.getUserProfileByFname(owner, "default");
+            profile.setLocaleManager(new LocaleManager(owner, new Locale[] { locale }));
             
             // see if we have structure & theme stylesheets for this user yet.
             // If not then fall back on system's selected stylesheets.
@@ -451,94 +454,7 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
         IPerson p = new PersonImpl();
         p.setID( view.getUserId() );
         p.setAttribute( "username", fragment.getOwnerId() );
-//      Don't think any stylesheet preferences work needs to be done here anymore
-//        try
-//        {
-//            view.structUserPrefs = userLayoutStore.getDistributedSSUP(p, view.profileId,
-//                    view.structureStylesheetId);
-//            view.themeUserPrefs = userLayoutStore.getDistributedTSUP(p, view.profileId,
-//                    view.themeStylesheetId);
-//        }
-//        catch( Exception e )
-//        {
-//            throw new RuntimeException(
-//                  "Anomaly occurred while loading structure or theme " +
-//                    "stylesheet user preferences for fragment '" +
-//                  fragment.getName() +
-//                  "'. The fragment will not be " +
-//                  "available for inclusion into user layouts.", e );
-//        }
     }
-
-    /**
-     * Changes channel and folder ids on the structure stylesheet user
-     * preference object to
-     * the globally safe version containing user id and layout id from which
-     * they came. This is done prior to these preferences being available for
-     * incorporation into a regular user's preferences from an incorporated
-     * layout. 
-     */
-    void fragmentizeSSUP( UserView view,
-                          FragmentDefinition fragment )
-    {
-        Element root = view.layout.getDocumentElement();
-        String labelBase = root.getAttribute( Constants.ATT_ID );
-//        fragmentizeIds( labelBase, view.structUserPrefs, FOLDERS );
-//        fragmentizeIds( labelBase, view.structUserPrefs, CHANNELS );
-    }
-
-    /**
-     * Changes channel ids on the theme stylesheet user preference object to
-     * the globally safe version containing user id and layout id from which
-     * they came. This is done prior to these preferences being available for
-     * incorporation into a regular user's preferences from an incorporated
-     * layout. 
-     */
-    void fragmentizeTSUP( UserView view,
-                          FragmentDefinition fragment )
-    {
-        Element root = view.layout.getDocumentElement();
-        String labelBase = root.getAttribute( Constants.ATT_ID );
-//        fragmentizeIds( labelBase, view.themeUserPrefs, CHANNELS );
-    }
-
-    //EricD 3/14 - commented out in conversion to new format of IStylesheetUserPreferences as node ID conversion requirements are not clear
-    //This may be needed in the future.
-//    /**
-//     * Changes user preference ids of folders or channels from the uPortal
-//     * default of sXX for
-//     * folders and nXX for channels to a globally safe value containing the
-//     * user id and layout id from which the node came.
-//     */
-//    private void fragmentizeIds( String labelBase,
-//                                 DistributedUserPreferences up,
-//                                 int which )
-//    {
-//        Enumeration elements = null;
-//        if ( which == CHANNELS )
-//            elements = up.getChannels();
-//        else
-//            elements = up.getFolders();
-//        
-//        // grab the list of elements that have user changed attributes
-//        Vector list = new Vector();
-//        while( elements.hasMoreElements() )
-//            list.add( elements.nextElement() );
-//        elements = list.elements();
-//        
-//        // now change their id's to the globally unique values
-//        while( elements.hasMoreElements() )
-//        {
-//            String id = (String) elements.nextElement();
-//            if ( ! id.startsWith( Constants.FRAGMENT_ID_USER_PREFIX ) ) // already converted don't change
-//            {
-//                if ( which == CHANNELS )
-//                    up.changeChannelId( id, labelBase + id );
-//                else
-//                    up.changeFolderId( id, labelBase + id );
-//            }
-//        }
-//    }
 
     /**
      * Removes unwanted and hidden folders, then changes all node ids to their 
@@ -637,5 +553,32 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
                 }
             }
         }
+    }
+    
+    private net.sf.ehcache.Element getUserView(String ownerId, Locale locale) {
+        return userViews.get(new Tuple<String, String>(ownerId, locale.toString()));
+    }
+    
+    public void clearChacheForOwner(final String ownerId) {
+        final ReadWriteLock userViewLock = getUserViewLock(ownerId);
+        ReadWriteLockTemplate.doWithLock(userViewLock, new ReadWriteCallback<UserView>() {
+            @Override
+            public ReadResult<UserView> doInReadLock() {
+                // continue with write lock
+                return new ReadResult<UserView>(true);
+            }
+
+            @Override
+            public UserView doInWriteLock(ReadResult<UserView> readResult) {
+                List<?> keys = userViews.getKeys();
+                for (Object key : keys) {
+                    Tuple<?, ?> tuple = (Tuple<?, ?>) key;
+                    if (ownerId.equals(tuple.first)) {
+                        userViews.remove(key);
+                    }
+                }
+                return null;
+            }
+        });
     }
 }

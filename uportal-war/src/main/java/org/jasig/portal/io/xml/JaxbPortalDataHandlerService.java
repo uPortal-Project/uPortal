@@ -63,6 +63,7 @@ import org.apache.tools.ant.DirectoryScanner;
 import org.jasig.portal.utils.AntPatternFileFilter;
 import org.jasig.portal.utils.ConcurrentDirectoryScanner;
 import org.jasig.portal.utils.ResourceUtils;
+import org.jasig.portal.utils.SafeFilenameUtils;
 import org.jasig.portal.xml.StaxUtils;
 import org.jasig.portal.xml.XmlUtilities;
 import org.jasig.portal.xml.stream.BufferedXMLEventReader;
@@ -642,7 +643,10 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         
         final File exportTempFile;
         try {
-            exportTempFile = File.createTempFile(StringUtils.rightPad(dataId, 2, '-') + "-",  "." + typeId, directory);
+            exportTempFile = File.createTempFile(
+                    SafeFilenameUtils.makeSafeFilename(StringUtils.rightPad(dataId, 2, '-') + "-"), 
+                    SafeFilenameUtils.makeSafeFilename("." + typeId), 
+                    directory);
         }
         catch (IOException e) {
             throw new RuntimeException("Could not create temp file to export " + typeId + " " + dataId, e);
@@ -871,7 +875,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         }
     }
     
-    private final class ErrorReportingCallable<T> implements Callable<T> {
+    private static final class ErrorReportingCallable<T> implements Callable<T> {
         private final Queue<? extends FutureHolder<?>> futures;
         private final AtomicBoolean failed;
         private final Callable<T> delegate;

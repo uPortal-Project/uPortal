@@ -21,11 +21,9 @@ package org.jasig.portal.spring.beans.factory;
 
 import java.util.List;
 
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.Assert;
 
 /**
@@ -36,80 +34,77 @@ import org.springframework.util.Assert;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class MediatingFactoryBean extends AbstractFactoryBean implements ApplicationContextAware {
-    private ApplicationContext applicationContext;
+public class MediatingFactoryBean<T> extends AbstractFactoryBean<T> implements BeanFactoryAware {
     private List<String> delegateBeanNames;
-    private Class<?> type = null;
-    
+    private Class<T> type = null;
+
     /**
      * @return the delegateBeanNames
      */
     public List<String> getDelegateBeanNames() {
         return this.delegateBeanNames;
     }
+
     /**
      * @param delegateBeanNames the delegateBeanNames to set
      */
     public void setDelegateBeanNames(List<String> delegateBeanNames) {
         this.delegateBeanNames = delegateBeanNames;
     }
-    
+
     /**
      * @return the type
      */
-    public Class<?> getType() {
+    public Class<T> getType() {
         return this.type;
     }
+
     /**
      * @param type the type to set
      */
-    public void setType(Class<?> type) {
+    public void setType(Class<T> type) {
         this.type = type;
     }
-    
-    
+
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.config.AbstractFactoryBean#afterPropertiesSet()
      */
     @Override
     public void afterPropertiesSet() throws Exception {
         Assert.notEmpty(this.delegateBeanNames, "delegateBeanNames list cannot be empty");
-        
+
         super.afterPropertiesSet();
-    }
-    
-    /* (non-Javadoc)
-     * @see org.springframework.context.ApplicationContextAware#setApplicationContext(org.springframework.context.ApplicationContext)
-     */
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
     }
 
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.config.AbstractFactoryBean#createInstance()
      */
     @Override
-    protected Object createInstance() throws Exception {
+    protected T createInstance() throws Exception {
         for (final String beanName : this.delegateBeanNames) {
             try {
-                final Object bean;
+                final T bean;
                 if (this.type == null) {
-                    bean = this.applicationContext.getBean(beanName);
+                    bean = (T) this.getBeanFactory().getBean(beanName);
                 }
                 else {
-                    bean = this.applicationContext.getBean(beanName, this.type);
+                    bean = this.getBeanFactory().getBean(beanName, this.type);
                 }
-                
+
                 if (this.logger.isInfoEnabled()) {
                     this.logger.info("Loaded bean for name " + beanName);
                 }
-                
+
                 return bean;
             }
-            catch (Exception e) {
-                final String msg = "Failed to load bean '" + beanName + "' from ApplicationContext" + (this.type != null ? " expecting type: " + this.type : "") + 
-                    ". Will try to load the next bean in the list instead. Error message from the attempt to load this bean ('" + beanName + "'): ";
-                
+            catch (final Exception e) {
+                final String msg = "Failed to load bean '"
+                        + beanName
+                        + "' from ApplicationContext"
+                        + (this.type != null ? " expecting type: " + this.type : "")
+                        + ". Will try to load the next bean in the list instead. Error message from the attempt to load this bean ('"
+                        + beanName + "'): ";
+
                 if (this.logger.isDebugEnabled()) {
                     this.logger.debug(msg, e);
                 }
@@ -118,8 +113,9 @@ public class MediatingFactoryBean extends AbstractFactoryBean implements Applica
                 }
             }
         }
-        
-        throw new BeanCreationException("None of the configured bean names could be loaded. BeanNames: " + this.delegateBeanNames);
+
+        throw new BeanCreationException("None of the configured bean names could be loaded. BeanNames: "
+                + this.delegateBeanNames);
     }
 
     /* (non-Javadoc)

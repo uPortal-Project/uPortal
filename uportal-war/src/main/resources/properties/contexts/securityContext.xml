@@ -22,9 +22,34 @@
 
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns="http://www.springframework.org/schema/beans" 
+       xmlns:security="http://www.springframework.org/schema/security"
        xsi:schemaLocation="
-           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+           http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+           
+   <security:global-method-security />
 
+    <!-- Spring Security pre-authentication -->
+    <security:http auto-config='true'>
+        <security:custom-filter position="PRE_AUTH_FILTER" ref="portalPreAuthenticationFilter" />
+        <security:intercept-url pattern="**" />
+    </security:http>
+
+    <bean id="portalPreAuthenticationFilter"
+        class="org.jasig.portal.spring.security.preauth.PortalPreAuthenticatedProcessingFilter">
+        <property name="authenticationManager" ref="authenticationManager" />
+    </bean>
+  
+    <bean id="preAuthProvider"
+        class="org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider">
+        <property name="preAuthenticatedUserDetailsService" ref="portalPreAuthenticatedUserDetailsService"/>
+    </bean>
+    
+    <security:authentication-manager alias="authenticationManager">
+        <security:authentication-provider ref="preAuthProvider"/>
+    </security:authentication-manager>
+
+    <!--  String encryption service -->
     <bean id="stringEncryptionService" class="org.jasig.portal.security.JasyptPBEStringEncryptionServiceImpl">
         <property name="stringEncryptor">
             <bean class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">

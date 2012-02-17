@@ -62,7 +62,7 @@ public class ImmutableUserLayoutXMLEventReader extends FilteringXMLEventReader {
         return event;
     }
 
-    private final class ImmutableStartElementWrapper extends StartElementWrapper {
+    private static final class ImmutableStartElementWrapper extends StartElementWrapper {
         public ImmutableStartElementWrapper(StartElement startElement) {
             super(startElement);
         }

@@ -25,22 +25,17 @@
        xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="
-           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
-           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
         
-    <bean id="counterStore" class="org.jasig.portal.utils.PooledCounterStore">
-        <property name="dataSource" ref="PortalDb" />
-        <property name="transactionManager" ref="transactionManager" />
-    </bean>
-
     <bean id="permissionStore" class="org.jasig.portal.security.provider.RDBMPermissionImpl"/>
 
     <!-- ********** JPA Beans ********** -->
     
     <aop:config>
         <aop:pointcut id="daoExecution" 
-            expression="execution(* org.jasig.portal.*.dao.*.*(..))"/>
+            expression="within(@org.springframework.stereotype.Repository *) &amp;&amp; execution(* org.jasig.portal..*.*(..))"/>
             
         <aop:aspect ref="threadContextClassLoaderAspect">
             <!-- 
@@ -83,7 +78,7 @@
         <property name="persistenceUnitName" value="uPortalPersistence" />
         <property name="jpaProperties">
             <props>
-                <prop key="hibernate.cache.region.factory_class">net.sf.ehcache.hibernate.SingletonEhCacheRegionFactory</prop>
+                <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory</prop>
                 <prop key="net.sf.ehcache.configurationResourceName">/properties/ehcache.xml</prop>
             </props>
         </property>
@@ -98,8 +93,16 @@
     </bean>
 
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <property name="entityManagerFactory" ref="entityManagerFactory" />
         <qualifier value="PortalDb"/>
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+    <bean id="transactionOperations" class="org.springframework.transaction.support.TransactionTemplate">
+        <qualifier value="PortalDb"/>
+        <property name="transactionManager" ref="transactionManager" />
+    </bean>
+    <bean id="jdbcOperations" class="org.springframework.jdbc.core.JdbcTemplate">
+        <qualifier value="PortalDb"/>
+        <property name="dataSource" ref="PortalDb" />
     </bean>
     
     
@@ -108,7 +111,13 @@
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
     
     <!-- ********** Database Utilities ********** -->
-    <bean name="portalDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport">
+    <bean id="dbLoader" class="org.jasig.portal.tools.dbloader.HibernateDbLoader" lazy-init="true">
+        <property name="hibernateToolConfigurationSource" ref="portalDbHibernateToolConfigurationSource" />
+    </bean>
+    <bean name="portalDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport" lazy-init="true">
+        <property name="hibernateToolConfigurationSource" ref="portalDbHibernateToolConfigurationSource" />
+    </bean>
+    <bean id="portalDbHibernateToolConfigurationSource" class="org.jasig.portal.tools.dbloader.HibernateToolConfigurationSourceImpl" lazy-init="true">
         <property name="dataSource" ref="PortalDb" />
         <property name="persistenceUnitName" value="uPortalPersistence" />
     </bean>

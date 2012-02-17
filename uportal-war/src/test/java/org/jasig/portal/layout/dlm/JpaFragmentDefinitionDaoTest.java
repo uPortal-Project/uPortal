@@ -30,7 +30,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import org.jasig.portal.portlet.dao.jpa.BaseJpaDaoTest;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.jasig.portal.test.BaseJpaDaoTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,15 +44,19 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author awills
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:jpaFragmentDefinitionDaoTestContext.xml")
+@ContextConfiguration(locations = "classpath:jpaPortalTestApplicationContext.xml")
 public class JpaFragmentDefinitionDaoTest extends BaseJpaDaoTest {
+    @Autowired
     private IFragmentDefinitionDao dao;
 
-    @Autowired
-    public void setFragmentDefinitionDao(final IFragmentDefinitionDao dao) {
-        this.dao = dao;
+    @PersistenceContext(unitName = "uPortalPersistence")
+    private EntityManager entityManager;
+    
+    @Override
+    protected EntityManager getEntityManager() {
+        return this.entityManager;
     }
-         
+    
     @Test
     public void testNoopOperations() throws Exception {
         this.execute(new Callable<Object>() {

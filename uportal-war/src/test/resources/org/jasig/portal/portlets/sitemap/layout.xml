@@ -1,0 +1,1187 @@
+<?xml version='1.0'?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<?xml-stylesheet type="text/xsl" href="../../../../../../../main/resources/org/jasig/portal/portlets/sitemap/sitemap1.xsl" ?>
+<layout xmlns:dlm="http://www.uportal.org/layout/dlm" >
+  <folder ID="ft1" type="regular" hidden="true" unremovable="true" immutable="true" name="Transient Folder" width="100%" tabGroup="DEFAULT_TABGROUP"/>
+  <folder ID="s1" hidden="false" immutable="false" locale="lv_LV" name="Root folder" type="root" unremovable="true" width="100%" tabGroup="DEFAULT_TABGROUP">
+    <folder ID="u201l1s22" dlm:fragment="0" dlm:precedence="190.0" hidden="false" immutable="true" locale="lv_LV" name="Header folder" type="header" unremovable="true" width="100%" tabGroup="DEFAULT_TABGROUP"/>
+    <folder ID="u201l1s4" dlm:fragment="0" dlm:precedence="190.0" hidden="false" immutable="false" locale="lv_LV" name="Footer folder" type="footer" unremovable="false" width="100%" tabGroup="DEFAULT_TABGROUP"/>
+    <folder ID="u201l1s5" dlm:addChildAllowed="false" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="190.0" hidden="false" immutable="false" locale="lv_LV" name="RBS" type="regular" unremovable="false" width="100%" tabGroup="Start">
+      <folder ID="u201l1s6" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="190.0" hidden="false" immutable="false" locale="lv_LV" name="Column 1" type="regular" unremovable="false" width="25%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u201l1n10" chanID="64" description="Rīgas Biznesa skolas ieteiktās saites." dlm:deleteAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="190.0" fname="rtu-rbs-bookmarks" hidden="false" immutable="false" locale="lv_LV" name="RBS studiju asistents" timeout="5000" title="RBS studiju asistents" typeID="1" unremovable="false">
+          <parameter name="alternate" value="false"/>
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+        <channel ID="u201l1n31" chanID="48" description="Saraksts ar priekšmetiem, kuros Jūs esat kā dalībnieks." dlm:deleteAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="190.0" fname="rtu-moodle-courses" hidden="false" immutable="false" locale="lv_LV" name="E-studiju priekšmeti" timeout="5000" title="E-studiju priekšmeti" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+      <folder ID="u201l1s8" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="190.0" hidden="false" immutable="false" locale="lv_LV" name="Column 2" type="regular" unremovable="false" width="50%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u201l1n24" chanID="83" description="Rīgas biznesa skolas jaunumi." dlm:deleteAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="190.0" fname="jps-rbs-news" hidden="false" immutable="false" locale="lv_LV" name="RBS jaunumi" timeout="5000" title="RBS jaunumi" typeID="1" unremovable="false">
+          <parameter name="alternate" value="false"/>
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="hashelp" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="locale" value="false"/>
+          <parameter name="hasabout" value="false"/>
+          <parameter name="secure" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hasedit" value="false"/>
+        </channel>
+      </folder>
+      <folder ID="u201l1s40" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="190.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="25%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u201l1n35" chanID="105" description="" dlm:deleteAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="190.0" fname="rtu-rbs-logo" hidden="false" immutable="false" locale="lv_LV" name="RBS logo " timeout="5000" title="RBS logo " typeID="5" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+        <channel ID="u201l1n27" chanID="84" description="Rīgas Biznesa skolas dokumenti" dlm:deleteAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="190.0" fname="jps-rbs-inf-doc" hidden="false" immutable="false" locale="lv_LV" name="RBS dokumenti" timeout="5000" title="RBS dokumenti" typeID="1" unremovable="false">
+          <parameter name="alternate" value="false"/>
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="hashelp" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="locale" value="false"/>
+          <parameter name="hasabout" value="false"/>
+          <parameter name="secure" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hasedit" value="false"/>
+        </channel>
+      </folder>
+    </folder>
+    <folder ID="u202l1s22" dlm:fragment="0" dlm:precedence="170.0" hidden="false" immutable="true" locale="lv_LV" name="Header folder" type="header" unremovable="true" width="100%" tabGroup="DEFAULT_TABGROUP"/>
+    <folder ID="u202l1s4" dlm:fragment="0" dlm:precedence="170.0" hidden="false" immutable="false" locale="lv_LV" name="Footer folder" type="footer" unremovable="false" width="100%" tabGroup="DEFAULT_TABGROUP"/>
+    <folder ID="u202l1s5" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="170.0" hidden="false" immutable="false" locale="lv_LV" name="FSD" type="regular" unremovable="false" width="100%" tabGroup="Start">
+      <folder ID="u202l1s6" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="170.0" hidden="false" immutable="false" locale="lv_LV" name="Column 1" type="regular" unremovable="false" width="25%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u202l1n10" chanID="61" description="" dlm:deleteAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="170.0" fname="rtu-fsd-bookmarks" hidden="false" immutable="false" locale="lv_LV" name="ĀSD saites" timeout="5000" title="ĀSD saites" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+        <channel ID="u202l1n20" chanID="48" description="Saraksts ar priekšmetiem, kuros Jūs esat kā dalībnieks." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="170.0" fname="rtu-moodle-courses" hidden="false" immutable="false" locale="lv_LV" name="E-studiju priekšmeti" timeout="5000" title="E-studiju priekšmeti" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+      <folder ID="u202l1s8" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="170.0" hidden="false" immutable="false" locale="lv_LV" name="Column 2" type="regular" unremovable="false" width="50%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u202l1n16" chanID="87" description="Jaunākā informācija no Ārzemju studentu departamenta." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="170.0" fname="jps-fsd-news" hidden="false" immutable="false" locale="lv_LV" name="ĀSD jaunumi" timeout="5000" title="ĀSD jaunumi" typeID="1" unremovable="false">
+          <parameter name="alternate" value="false"/>
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="hashelp" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="locale" value="false"/>
+          <parameter name="hasabout" value="false"/>
+          <parameter name="secure" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hasedit" value="false"/>
+        </channel>
+      </folder>
+      <folder ID="u202l1s25" dlm:fragment="0" dlm:precedence="170.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="25%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u202l1n13" chanID="86" description="Ārzemju studentu departamenta piedāvātie dokumenti." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="170.0" fname="jps-fsd-documents" hidden="false" immutable="false" locale="lv_LV" name="ĀSD dokumenti" timeout="5000" title="ĀSD dokumenti" typeID="1" unremovable="false">
+          <parameter name="alternate" value="false"/>
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="hashelp" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="locale" value="false"/>
+          <parameter name="hasabout" value="false"/>
+          <parameter name="secure" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hasedit" value="false"/>
+        </channel>
+      </folder>
+    </folder>
+    <folder ID="u101l1s22" dlm:fragment="0" dlm:precedence="150.0" hidden="false" immutable="true" locale="lv_LV" name="Header folder" type="header" unremovable="true" width="100%" tabGroup="DEFAULT_TABGROUP">
+      <channel ID="u101l1n1111" chanID="60" description="Aktīvās nedēļas informācija - pašreizējā mācību vai sesijas nedēļa." dlm:fragment="0" dlm:precedence="150.0" fname="rtu-rps-week-info" hidden="false" immutable="false" locale="lv_LV" name="Nedēļas informācija" timeout="5000" title="Nedēļas informācija" typeID="1" unremovable="false">
+        <parameter name="disableDynamicTitle" value="true"/>
+        <parameter name="alternate" value="false"/>
+        <parameter name="showChrome" value="true"/>
+        <parameter name="hasHelp" value="false"/>
+        <parameter name="blockImpersonation" value="false"/>
+        <parameter name="hideFromMobile" value="false"/>
+        <parameter name="highlight" value="false"/>
+        <parameter name="editable" value="false"/>
+        <parameter name="hasAbout" value="false"/>
+      </channel>
+      <channel ID="u101l1n1112" chanID="25" description="Ļauj mainīt izvēlēto portāla valodu." dlm:fragment="0" dlm:precedence="150.0" fname="user-locales-selector" hidden="false" immutable="false" locale="lv_LV" name="Valodas izvēle" timeout="30000" title="Valodas izvēle" typeID="1" unremovable="false">
+        <parameter name="iconUrl" value="/ResourceServingWebapp/rs/tango/0.8.90/32x32/apps/preferences-desktop-locale.png"/>
+      </channel>
+    </folder>
+    <folder ID="u101l1s4" dlm:fragment="0" dlm:precedence="150.0" hidden="false" immutable="false" locale="lv_LV" name="Footer folder" type="footer" unremovable="false" width="100%" tabGroup="DEFAULT_TABGROUP"/>
+    <folder ID="u101l1s5" dlm:addChildAllowed="false" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="150.0" hidden="false" immutable="false" locale="lv_LV" name="Aktualitātes" type="regular" unremovable="false" width="100%" tabGroup="Start">
+      <folder ID="u101l1s6" dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="150.0" hidden="false" immutable="false" locale="lv_LV" name="Column 1" type="regular" unremovable="false" width="25%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u101l1n126" chanID="72" description="RTU ieteiktās saites." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="150.0" fname="rtu-bookmarks" hidden="false" immutable="false" locale="lv_LV" name="Saites" timeout="5000" title="Saites" typeID="1" unremovable="false">
+          <parameter name="alternate" value="false"/>
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+        <channel ID="u101l1n342" chanID="42" description="Kalendārs ar tuvākajiem notikumiem un pasākumiem." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="150.0" fname="rtu-notikumi" hidden="false" immutable="false" locale="lv_LV" name="Notikumi" timeout="5000" title="Notikumi" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="false"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="hashelp" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="locale" value="false"/>
+          <parameter name="hasabout" value="false"/>
+          <parameter name="secure" value="false"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hasedit" value="true"/>
+          <parameter name="editable" value="true"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+        <channel ID="u101l1n108" chanID="71" description="Saraksts ar kolēģu dzimšanas dienām." dlm:fragment="0" dlm:precedence="150.0" fname="rtu-birthdays" hidden="false" immutable="false" locale="lv_LV" name="Dzimšanas dienas" timeout="5000" title="Dzimšanas dienas" typeID="1" unremovable="false">
+          <parameter name="alternate" value="false"/>
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="true"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+        <channel ID="u101l1n155" chanID="91" description="Apsveikuma raksti nozīmīgākajās dzimšanas dienās." dlm:fragment="0" dlm:precedence="150.0" fname="jps-apsveikumi" hidden="false" immutable="false" locale="lv_LV" name="Apsveikumi" timeout="5000" title="Apsveikumi" typeID="1" unremovable="false">
+          <parameter name="alternate" value="false"/>
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="hashelp" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="locale" value="false"/>
+          <parameter name="hasabout" value="false"/>
+          <parameter name="secure" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hasedit" value="false"/>
+        </channel>
+      </folder>
+      <folder ID="u101l1s8" dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="150.0" hidden="false" immutable="false" locale="lv_LV" name="Column 2" type="regular" unremovable="false" width="50%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u101l1n96" chanID="38" description="RTU darbinieku kontaktinformācijas meklēšana." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="150.0" fname="rtu-kontakti" hidden="false" immutable="false" locale="lv_LV" name="Kontaktinformācijas meklētājs" timeout="5000" title="Kontaktinformācijas meklētājs" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+        <channel ID="u101l1n99" chanID="41" description="Jaunākā informācija par RTU sadzīves, kultūras, sporta un citām tēmām." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="150.0" fname="rtu-jaunumi" hidden="false" immutable="false" locale="lv_LV" name="Jaunumi" timeout="5000" title="Jaunumi" typeID="1" unremovable="false">
+          <parameter name="alternate" value="false"/>
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+          <parameter name="editable" value="true"/>
+        </channel>
+      </folder>
+      <folder ID="u101l1s177" dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="150.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="25%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u101l1n386" chanID="130" description="Augstas prioritātes ziņas, ar kurām būtu obligāti jāiepazīstas" dlm:deleteAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="150.0" fname="rtu-jps-important" hidden="false" immutable="false" locale="lv_LV" name="Administratīvas ziņas" timeout="5000" title="Administratīvas ziņas" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="hashelp" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="locale" value="false"/>
+          <parameter name="hasabout" value="false"/>
+          <parameter name="secure" value="false"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hasedit" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+        <channel ID="u101l1n487" chanID="103" description="Kultūras jaunumi" dlm:fragment="0" dlm:precedence="150.0" fname="jps-kultura" hidden="false" immutable="false" locale="lv_LV" name="Kultūra" timeout="5000" title="Kultūra" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="hashelp" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="locale" value="false"/>
+          <parameter name="secure" value="false"/>
+          <parameter name="hasabout" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hasedit" value="false"/>
+        </channel>
+        <channel ID="u101l1n318" chanID="121" description="RTU sporta jaunumi." dlm:fragment="0" dlm:precedence="150.0" fname="jps-sports" hidden="false" immutable="false" locale="lv_LV" name="Sports" timeout="5000" title="Sports" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="hashelp" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="locale" value="false"/>
+          <parameter name="secure" value="false"/>
+          <parameter name="hasabout" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hasedit" value="false"/>
+        </channel>
+        <channel ID="u101l1n329" chanID="93" description="RTU studentu parlamenta jaunumi" dlm:fragment="0" dlm:precedence="150.0" fname="jps-rtusp-news" hidden="false" immutable="false" locale="lv_LV" name="Studentu parlamenta ziņas" timeout="3000" title="Studentu parlamenta ziņas" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="hashelp" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="locale" value="false"/>
+          <parameter name="secure" value="false"/>
+          <parameter name="hasabout" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hasedit" value="false"/>
+        </channel>
+      </folder>
+    </folder>
+    <folder ID="u101l1s153" dlm:addChildAllowed="false" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="150.0" hidden="false" immutable="false" locale="lv_LV" name="Forums" type="regular" unremovable="false" width="100%" tabGroup="Start">
+      <folder ID="u101l1s159" dlm:addChildAllowed="false" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="150.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="100%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u101l1n171" chanID="31" description="RTU forumu saraksts un aktualitātes." dlm:deleteAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="150.0" fname="rtu-forum" hidden="false" immutable="false" locale="lv_LV" name="Forums" timeout="5000" title="Forums" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+    </folder>
+    <folder ID="u101l1s68" dlm:addChildAllowed="false" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="150.0" hidden="false" immutable="false" locale="lv_LV" name="Normatīvie dokumenti" type="regular" unremovable="false" width="100%" tabGroup="Start">
+      <folder ID="u101l1s75" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:precedence="150.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="100%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u101l1n87" chanID="27" description="Senāta, rektora, prorektoru un citu izdevēju dokumenti." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="150.0" fname="rtu-nas-viewer" hidden="false" immutable="false" locale="lv_LV" name="RTU normatīvo aktu sistēma" timeout="5000" title="RTU normatīvo aktu sistēma" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+    </folder>
+    <folder ID="u101l1s187" dlm:addChildAllowed="false" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="150.0" hidden="false" immutable="false" locale="lv_LV" name="Ziņu arhīvs" type="regular" unremovable="false" width="100%" tabGroup="Start">
+      <folder ID="u101l1s194" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="150.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="100%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u101l1n201" chanID="151" description="Ziņu meklēšana arhīvā un ne tikai" dlm:fragment="0" dlm:precedence="150.0" fname="rtu-jps-arhivs" hidden="false" immutable="false" locale="lv_LV" name="Ziņu arhīvs" timeout="5000" title="Ziņu arhīvs" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+          <parameter name="editable" value="true"/>
+        </channel>
+      </folder>
+    </folder>
+    <folder ID="u108l1s222" dlm:fragment="0" dlm:precedence="130.0" hidden="false" immutable="true" locale="lv_LV" name="Header folder" type="header" unremovable="true" width="100%" tabGroup="DEFAULT_TABGROUP"/>
+    <folder ID="u108l1s4" dlm:fragment="0" dlm:precedence="130.0" hidden="false" immutable="false" locale="lv_LV" name="Footer folder" type="footer" unremovable="false" width="100%" tabGroup="DEFAULT_TABGROUP"/>
+    <folder ID="u108l1s5" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="130.0" hidden="false" immutable="false" locale="lv_LV" name="Studijas" type="regular" unremovable="false" width="100%" tabGroup="For Students">
+      <folder ID="u108l1s6" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:precedence="130.0" hidden="false" immutable="false" locale="lv_LV" name="Column 1" type="regular" unremovable="false" width="33%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u108l1n138" chanID="48" description="Saraksts ar priekšmetiem, kuros Jūs esat kā dalībnieks." dlm:deleteAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="130.0" fname="rtu-moodle-courses" hidden="false" immutable="false" locale="lv_LV" name="E-studiju priekšmeti" timeout="5000" title="E-studiju priekšmeti" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+      <folder ID="u108l1s8" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="130.0" hidden="false" immutable="false" locale="lv_LV" name="Column 2" type="regular" unremovable="false" width="34%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u108l1n86" chanID="58" description="Sesijas (eksāmenu) grafiks studentiem. Pieejama arī drukas versija PDF formātā." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="130.0" fname="rtu-rps-student-session-timetable" hidden="false" immutable="false" locale="lv_LV" name="Sesijas grafiks" timeout="5000" title="Sesijas grafiks" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+        <channel ID="u108l1n89" chanID="59" description="Nodarbību grafiks studentiem. Pieejams arī PDF formātā izdrukai." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="130.0" fname="rtu-rps-student-lectures-timetable" hidden="false" immutable="false" locale="lv_LV" name="Studenta nodarbību grafiks" timeout="5000" title="Studenta nodarbību grafiks" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+      <folder ID="u108l1s154" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="130.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="33%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u108l1n142" chanID="43" description="Privātie ziņojumi no Moodle e-studiju vides." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="130.0" fname="rtu-moodle-messages" hidden="false" immutable="false" locale="lv_LV" name="E-studijas: ziņojumi" timeout="5000" title="E-studijas: ziņojumi" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+    </folder>
+    <folder ID="u108l1s22" dlm:addChildAllowed="false" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="130.0" hidden="false" immutable="false" locale="lv_LV" name="Informācija" type="regular" unremovable="false" width="100%" tabGroup="For Students">
+      <folder ID="u108l1s27" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="130.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="100%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u108l1n151" chanID="82" description="Studijām, sekmju, rīkojumu un cita informācija no studiju vadības sistēmas." dlm:deleteAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="130.0" fname="rtu-eusso-studijas-info" hidden="false" immutable="false" locale="lv_LV" name="Studiju informācija" timeout="5000" title="Studiju informācija" typeID="1" unremovable="false">
+          <parameter name="alternate" value="false"/>
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+    </folder>
+    <folder ID="u108l1s34" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="130.0" hidden="false" immutable="false" locale="lv_LV" name="Karjera" type="regular" unremovable="false" width="100%" tabGroup="For Students">
+      <folder ID="u108l1s40" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:precedence="130.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="25%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u108l1n117" chanID="92" description="Aktuālās ziņas no RTU Karjeras centra." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="130.0" fname="jps-karjera" hidden="false" immutable="false" locale="lv_LV" name="Jaunumi no Karjeras centra" timeout="5000" title="Jaunumi no Karjeras centra" typeID="1" unremovable="false">
+          <parameter name="alternate" value="false"/>
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="hashelp" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasabout" value="false"/>
+          <parameter name="secure" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hasedit" value="false"/>
+        </channel>
+      </folder>
+      <folder ID="u108l1s43" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:precedence="130.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="50%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u108l1n59" chanID="26" description="Apkopoti darba sludinājumi no Prakse.lv un CV.lv portāliem. Iespēja filtrēt pēc nozares un vēlamās slodzes." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="130.0" fname="rtu-career" hidden="false" immutable="false" locale="lv_LV" name="Darba un prakses piedavājumi" timeout="5000" title="Darba un prakses piedavājumi" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="true"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+      <folder ID="u108l1s176" dlm:fragment="0" dlm:precedence="130.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="25%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u108l1n172" chanID="146" description="Izveido un saglabā Europass formāta CV." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="130.0" fname="rtu-career-europass" hidden="false" immutable="false" locale="lv_LV" name="Europass CV" timeout="5000" title="Europass CV" typeID="1" unremovable="false">
+          <parameter name="alternate" value="false"/>
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="true"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+        <channel ID="u108l1n191" chanID="155" description="RTU Karjeras centra kontaktinformācija." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="130.0" fname="rtu-cms-karjera-kontakti" hidden="false" immutable="false" locale="lv_LV" name="Karjeras centra kontakti" timeout="5000" title="Karjeras centra kontakti" typeID="4" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+    </folder>
+    <folder ID="u108l1s47" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="130.0" hidden="false" immutable="false" locale="lv_LV" name="Studentu parlaments" type="regular" unremovable="false" width="100%" tabGroup="For Students">
+      <folder ID="u108l1s54" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:precedence="130.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="25%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u108l1n92" chanID="65" description="Studentu parlamenta ieteiktās saites uz dažādiem resursiem." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="130.0" fname="rtu-sp-bookmarks" hidden="false" immutable="false" locale="lv_LV" name="Studentu parlamenta saites" timeout="5000" title="Studentu parlamenta saites" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+      <folder ID="u108l1s57" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:precedence="130.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="50%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u108l1n203" chanID="166" description="" dlm:fragment="0" dlm:precedence="130.0" fname="rtusp3" hidden="false" immutable="false" locale="lv_LV" name="RTU SP members" timeout="5000" title="RTU SP members" typeID="2" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+          <parameter name="editable" value="false"/>
+        </channel>
+        <channel ID="u108l1n124" chanID="93" description="RTU studentu parlamenta jaunumi" dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="130.0" fname="jps-rtusp-news" hidden="false" immutable="false" locale="lv_LV" name="Studentu parlamenta ziņas" timeout="3000" title="Studentu parlamenta ziņas" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="hashelp" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="locale" value="false"/>
+          <parameter name="secure" value="false"/>
+          <parameter name="hasabout" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hasedit" value="false"/>
+        </channel>
+      </folder>
+      <folder ID="u108l1s170" dlm:fragment="0" dlm:precedence="130.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="25%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u108l1n127" chanID="94" description="RTU studenta parlamenta piedāvātie normatīvie dokumenti, veidlapas, utt." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="130.0" fname="jps-rtusp-documents" hidden="false" immutable="false" locale="lv_LV" name="SP normatīvie dokumenti" timeout="3000" title="SP normatīvie dokumenti" typeID="1" unremovable="false">
+          <parameter name="alternate" value="false"/>
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="hashelp" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasabout" value="false"/>
+          <parameter name="secure" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hasedit" value="false"/>
+        </channel>
+        <channel ID="u108l1n131" chanID="78" description="RTU studentu parlamenta biedru kontaktinformācija." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="130.0" fname="jps-rtusp-contacts" hidden="false" immutable="false" locale="lv_LV" name="SP kontakti" timeout="3000" title="SP kontakti" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="hashelp" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasabout" value="false"/>
+          <parameter name="secure" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hasedit" value="false"/>
+        </channel>
+      </folder>
+    </folder>
+    <folder ID="u504l1s22" dlm:fragment="0" dlm:precedence="125.0" hidden="false" immutable="true" locale="lv_LV" name="Header folder" type="header" unremovable="true" width="100%" tabGroup="DEFAULT_TABGROUP"/>
+    <folder ID="u504l1s4" dlm:fragment="0" dlm:precedence="125.0" hidden="false" immutable="false" locale="lv_LV" name="Footer folder" type="footer" unremovable="false" width="100%" tabGroup="DEFAULT_TABGROUP"/>
+    <folder ID="u504l1s5" dlm:addChildAllowed="false" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="125.0" hidden="false" immutable="false" locale="lv_LV" name="Sagatavošanās CE" type="regular" unremovable="false" width="100%" tabGroup="For Schoolars">
+      <folder ID="u504l1s6" dlm:fragment="0" dlm:precedence="125.0" hidden="false" immutable="false" locale="lv_LV" name="Column 1" type="regular" unremovable="false" width="50%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u504l1n71" chanID="117" description="Pieteikšanās uz sagatavošanās kursiem iestājeksāmeniem." dlm:fragment="0" dlm:precedence="125.0" fname="rtu-prepcourses-schoolars-preliminaries" hidden="false" immutable="false" locale="lv_LV" name="Pieteikšanās sagatavošanās kursiem" timeout="5000" title="Pieteikšanās sagatavošanās kursiem" typeID="1" unremovable="false">
+          <parameter name="alternate" value="false"/>
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+      <folder ID="u504l1s8" dlm:fragment="0" dlm:precedence="125.0" hidden="false" immutable="false" locale="lv_LV" name="Column 2" type="regular" unremovable="false" width="50%" tabGroup="DEFAULT_TABGROUP"/>
+    </folder>
+    <folder ID="u504l1s29" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="125.0" hidden="false" immutable="false" locale="lv_LV" name="Studijas RTU" type="regular" unremovable="false" width="100%" tabGroup="For Schoolars">
+      <folder ID="u504l1s35" dlm:fragment="0" dlm:precedence="125.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="50%" tabGroup="DEFAULT_TABGROUP"/>
+      <folder ID="u504l1s38" dlm:fragment="0" dlm:precedence="125.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="50%" tabGroup="DEFAULT_TABGROUP"/>
+    </folder>
+    <folder ID="u504l1s42" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="125.0" hidden="false" immutable="false" locale="lv_LV" name="Studentu sadzīve" type="regular" unremovable="false" width="100%" tabGroup="For Schoolars">
+      <folder ID="u504l1s49" dlm:fragment="0" dlm:precedence="125.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="50%" tabGroup="DEFAULT_TABGROUP"/>
+      <folder ID="u504l1s52" dlm:fragment="0" dlm:precedence="125.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="50%" tabGroup="DEFAULT_TABGROUP"/>
+    </folder>
+    <folder ID="u504l1s56" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="125.0" hidden="false" immutable="false" locale="lv_LV" name="Studentu parlaments" type="regular" unremovable="false" width="100%" tabGroup="For Schoolars">
+      <folder ID="u504l1s64" dlm:fragment="0" dlm:precedence="125.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="50%" tabGroup="DEFAULT_TABGROUP"/>
+      <folder ID="u504l1s67" dlm:fragment="0" dlm:precedence="125.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="50%" tabGroup="DEFAULT_TABGROUP"/>
+    </folder>
+    <folder ID="u102l1s3" dlm:fragment="0" dlm:precedence="110.0" hidden="false" immutable="true" locale="lv_LV" name="Header folder" type="header" unremovable="true" width="100%" tabGroup="DEFAULT_TABGROUP"/>
+    <folder ID="u102l1s4" dlm:fragment="0" dlm:precedence="110.0" hidden="false" immutable="false" locale="lv_LV" name="Footer folder" type="footer" unremovable="false" width="100%" tabGroup="DEFAULT_TABGROUP"/>
+    <folder ID="u102l1s22" dlm:addChildAllowed="false" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="110.0" hidden="false" immutable="false" locale="lv_LV" name="E-studijas" type="regular" unremovable="false" width="100%" tabGroup="For Teachers">
+      <folder ID="u102l1s27" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="110.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="50%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u102l1n90" chanID="48" description="Saraksts ar priekšmetiem, kuros Jūs esat kā dalībnieks." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="110.0" fname="rtu-moodle-courses" hidden="false" immutable="false" locale="lv_LV" name="E-studiju priekšmeti" timeout="5000" title="E-studiju priekšmeti" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+        <channel ID="u102l1n62" chanID="43" description="Privātie ziņojumi no Moodle e-studiju vides." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="110.0" fname="rtu-moodle-messages" hidden="false" immutable="false" locale="lv_LV" name="E-studijas: ziņojumi" timeout="5000" title="E-studijas: ziņojumi" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+      <folder ID="u102l1s30" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="110.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="50%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u102l1n75" chanID="57" description="Nodarbību saraksts mācībspēkiem no resursu plānošanas sistēmas. Pieejams arī izdrukai PDF formātā." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="110.0" fname="rtu-teacher-timetable" hidden="false" immutable="false" locale="lv_LV" name="Mācībspēka nodarbību grafiks" timeout="5000" title="Mācībspēka nodarbību grafiks" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+        <channel ID="u102l1n79" chanID="56" description="Sesijas grafiks mācībspēkiem no resursu plānošanas sistēmas." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="110.0" fname="rtu-teacher-session" hidden="false" immutable="false" locale="lv_LV" name="Mācībspēka sesijas grafiks" timeout="5000" title="Mācībspēka sesijas grafiks" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+        <channel ID="u102l1n93" chanID="81" description="Eksāmena, studiju darbu un citu atzīmju ievade." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="110.0" fname="rtu-eusso-studijas-atzimes" hidden="false" immutable="false" locale="lv_LV" name="Atzīmju ievade" timeout="10000" title="Atzīmju ievade" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+    </folder>
+    <folder ID="u102l1s5" dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="110.0" hidden="false" immutable="false" locale="lv_LV" name="Informācija" type="regular" unremovable="false" width="100%" tabGroup="For Teachers">
+      <folder ID="u102l1s6" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="110.0" hidden="false" immutable="false" locale="lv_LV" name="Column 1" type="regular" unremovable="false" width="33%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u102l1n109" chanID="104" description="Jaunumi mācībspēkiem no studiju daļas." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="110.0" fname="jps-teacher" hidden="false" immutable="false" locale="lv_LV" name="Jaunumi mācībspēkiem" timeout="5000" title="Jaunumi mācībspēkiem" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="hashelp" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="locale" value="false"/>
+          <parameter name="hasabout" value="false"/>
+          <parameter name="secure" value="false"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hasedit" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+        <channel ID="u102l1n102" chanID="45" description="Nelieli, bet noderīgi padomi par to, kā lietot Moodle e-studiju vidi." dlm:fragment="0" dlm:precedence="110.0" fname="rtu-moodle-tips" hidden="false" immutable="false" locale="lv_LV" name="E-studiju padomi" timeout="5000" title="E-studiju padomi" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="true"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+      <folder ID="u102l1s8" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="110.0" hidden="false" immutable="false" locale="lv_LV" name="Column 2" type="regular" unremovable="false" width="34%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u102l1n105" chanID="47" description="Saraksts ar IT lietotāju atbalsta centra organizētajām apmācībām par Moodle e-studiju platformu." dlm:deleteAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="110.0" fname="rtu-moodle-trainings" hidden="false" immutable="false" locale="lv_LV" name="E-studiju lietotāju apmācības" timeout="5000" title="E-studiju lietotāju apmācības" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="true"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+      <folder ID="u102l1s137" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="110.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="33%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u102l1n112" chanID="44" description="E-studiju priekšmeta izveidošana savai struktūrvienībai, darba grupai vai kādam citam mērķim." dlm:deleteAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="110.0" fname="rtu-moodle-create-course" hidden="false" immutable="false" locale="lv_LV" name="E-studijas: priekšmeta izveidošana" timeout="5000" title="E-studijas: priekšmeta izveidošana" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+    </folder>
+    <folder ID="u102l1s47" dlm:addChildAllowed="false" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:precedence="110.0" hidden="false" immutable="false" locale="lv_LV" name="Karjera" type="regular" unremovable="false" width="100%" tabGroup="For Teachers">
+      <folder ID="u102l1s54" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="110.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="25%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u102l1n106" chanID="92" description="Aktuālās ziņas no RTU Karjeras centra." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="110.0" fname="jps-karjera" hidden="false" immutable="false" locale="lv_LV" name="Jaunumi no Karjeras centra" timeout="5000" title="Jaunumi no Karjeras centra" typeID="1" unremovable="false">
+          <parameter name="alternate" value="false"/>
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="hashelp" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasabout" value="false"/>
+          <parameter name="secure" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hasedit" value="false"/>
+        </channel>
+      </folder>
+      <folder ID="u102l1s57" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:precedence="110.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="50%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u102l1n59" chanID="26" description="Apkopoti darba sludinājumi no Prakse.lv un CV.lv portāliem. Iespēja filtrēt pēc nozares un vēlamās slodzes." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="110.0" fname="rtu-career" hidden="false" immutable="false" locale="lv_LV" name="Darba un prakses piedavājumi" timeout="5000" title="Darba un prakses piedavājumi" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="true"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+      <folder ID="u102l1s61" dlm:fragment="0" dlm:precedence="110.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="25%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u102l1n163" chanID="146" description="Izveido un saglabā Europass formāta CV." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="110.0" fname="rtu-career-europass" hidden="false" immutable="false" locale="lv_LV" name="Europass CV" timeout="5000" title="Europass CV" typeID="1" unremovable="false">
+          <parameter name="alternate" value="false"/>
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="true"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+        <channel ID="u102l1n175" chanID="155" description="RTU Karjeras centra kontaktinformācija." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="110.0" fname="rtu-cms-karjera-kontakti" hidden="false" immutable="false" locale="lv_LV" name="Karjeras centra kontakti" timeout="5000" title="Karjeras centra kontakti" typeID="4" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+    </folder>
+    <folder ID="u106l1s3" dlm:fragment="0" dlm:precedence="90.0" hidden="false" immutable="true" locale="lv_LV" name="Header folder" type="header" unremovable="true" width="100%" tabGroup="DEFAULT_TABGROUP"/>
+    <folder ID="u106l1s4" dlm:fragment="0" dlm:precedence="90.0" hidden="false" immutable="false" locale="lv_LV" name="Footer folder" type="footer" unremovable="false" width="100%" tabGroup="DEFAULT_TABGROUP"/>
+    <folder ID="u106l1s5" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="90.0" hidden="false" immutable="false" locale="lv_LV" name="Anketēšana" type="regular" unremovable="false" width="100%" tabGroup="For Teachers">
+      <folder ID="u106l1s6" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:precedence="90.0" hidden="false" immutable="false" locale="lv_LV" name="Column 1" type="regular" unremovable="false" width="40%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u106l1n20" chanID="101" description="Paplašināta informācija par anketēšanas rezultātiem, kas pieejami atbildīgajiem pasniedzējiem." dlm:fragment="0" dlm:precedence="90.0" fname="rtu-survey-responsible-results" hidden="false" immutable="false" locale="lv_LV" name="Anketēšanas rezultāti atbildīgajiem mācībspēkiem" timeout="5000" title="Anketēšanas rezultāti atbildīgajiem mācībspēkiem" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+        <channel ID="u106l1n14" chanID="95" description="Absolventu anketēšanas rezultātu apkopojums" dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="90.0" fname="rtu-survey-curriculum-result" hidden="false" immutable="false" locale="lv_LV" name="Absolventu anketēšanas rezultāti" timeout="5000" title="Absolventu anketēšanas rezultāti" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+      <folder ID="u106l1s10" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:precedence="90.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="60%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u106l1n17" chanID="96" description="Studentu anketēšanas rezultātu apkopojums pasniedzējiem." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="90.0" fname="rtu-survey-employee-result" hidden="false" immutable="false" locale="lv_LV" name="Anketēšanas rezultāti mācībspēkiem" timeout="5000" title="Anketēšanas rezultāti mācībspēkiem" typeID="1" unremovable="false">
+          <parameter name="alternate" value="false"/>
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+    </folder>
+    <folder ID="u107l1s22" dlm:fragment="0" dlm:precedence="70.0" hidden="false" immutable="true" locale="lv_LV" name="Header folder" type="header" unremovable="true" width="100%" tabGroup="DEFAULT_TABGROUP"/>
+    <folder ID="u107l1s4" dlm:fragment="0" dlm:precedence="70.0" hidden="false" immutable="false" locale="lv_LV" name="Footer folder" type="footer" unremovable="false" width="100%" tabGroup="DEFAULT_TABGROUP"/>
+    <folder ID="u107l1s5" dlm:addChildAllowed="false" dlm:deleteAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="70.0" hidden="false" immutable="false" locale="lv_LV" name="Priekšmetu reģistrs" type="regular" unremovable="false" width="100%" tabGroup="For Teachers">
+      <folder ID="u107l1s6" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:precedence="70.0" hidden="false" immutable="false" locale="lv_LV" name="Column 1" type="regular" unremovable="false" width="100%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u107l1n21" chanID="113" description="Studiju sistēmas priekšmetu reģistrs." dlm:deleteAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="70.0" fname="rtu-eusso-studijas-registrs" hidden="false" immutable="false" locale="lv_LV" name="Priekšmetu reģistrs" timeout="5000" title="Priekšmetu reģistrs" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+    </folder>
+    <folder ID="u103l1s3" dlm:fragment="0" dlm:precedence="50.0" hidden="false" immutable="true" locale="lv_LV" name="Header folder" type="header" unremovable="true" width="100%" tabGroup="DEFAULT_TABGROUP"/>
+    <folder ID="u103l1s4" dlm:fragment="0" dlm:precedence="50.0" hidden="false" immutable="false" locale="lv_LV" name="Footer folder" type="footer" unremovable="false" width="100%" tabGroup="DEFAULT_TABGROUP"/>
+    <folder ID="u103l1s5" dlm:addChildAllowed="false" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="50.0" hidden="false" immutable="false" locale="lv_LV" name="Informācija" type="regular" unremovable="false" width="100%" tabGroup="Work">
+      <folder ID="u103l1s6" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="50.0" hidden="false" immutable="false" locale="lv_LV" name="Column 1" type="regular" unremovable="false" width="60%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u103l1n32" chanID="37" description="Informācija no RTU personālvadības sistēmas par algu, līgumiem un citiem datiem." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="50.0" fname="rtu-kadri" hidden="false" immutable="false" locale="lv_LV" name="Darbinieka informācija" timeout="5000" title="Darbinieka informācija" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="true"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+      <folder ID="u103l1s8" dlm:editAllowed="false" dlm:fragment="0" dlm:precedence="50.0" hidden="false" immutable="false" locale="lv_LV" name="Column 2" type="regular" unremovable="false" width="40%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u103l1n52" chanID="102" description="&quot;Uz papīra&quot;, &quot;Uz rokas&quot; saņemamās algas u dažādu nodokļu aprēķināšana" dlm:fragment="0" dlm:precedence="50.0" fname="rtu-algu-kalkulators" hidden="false" immutable="false" locale="lv_LV" name="Algu kalkulators" timeout="5000" title="Algu kalkulators" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+    </folder>
+    <folder ID="u103l1s22" dlm:addChildAllowed="false" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="50.0" hidden="false" immutable="false" locale="lv_LV" name="Projekti" type="regular" unremovable="false" width="100%" tabGroup="Work">
+      <folder ID="u103l1s27" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="50.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="33%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u103l1n56" chanID="63" description="Saites uz veidlapām un citiem resursiem, kas saistīti ar projektu pārvaldību." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="50.0" fname="rtu-pvs-bookmarks" hidden="false" immutable="false" locale="lv_LV" name="PVS informācija" timeout="5000" title="PVS informācija" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+        <channel ID="u103l1n64" chanID="114" description="Ķīpsalas kompleksa projekts - jaunumi, materiāli, utt." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="50.0" fname="rtu-jps-kipsala" hidden="false" immutable="false" locale="lv_LV" name="Ķīpsalas komplekss" timeout="5000" title="Ķīpsalas komplekss" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="hashelp" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="locale" value="false"/>
+          <parameter name="hasabout" value="false"/>
+          <parameter name="secure" value="false"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hasedit" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+      <folder ID="u103l1s30" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="50.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="34%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u103l1n41" chanID="53" description="Sistēmas un lietotāju ziņojumi no projektu vadības sistēmas, kā arī kontrolējamās aktivitātes un projekti." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="50.0" fname="rtu-pvs-pvs" hidden="false" immutable="false" locale="lv_LV" name="Projektu vadības sistēma" timeout="5000" title="Projektu vadības sistēma" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+      <folder ID="u103l1s119" dlm:fragment="0" dlm:precedence="50.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="33%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u103l1n35" chanID="51" description="Pēdējie apstiprinātie projekti no projektu vadības sistēmas." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="50.0" fname="rtu-pvs-approved" hidden="false" immutable="false" locale="lv_LV" name="Jaunākie apstiprinātie projekti" timeout="5000" title="Jaunākie apstiprinātie projekti" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+        <channel ID="u103l1n38" chanID="52" description="Jaunākie izsludinātie konkursi projektu vadības sistēmā." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="50.0" fname="rtu-pvs-konkursi" hidden="false" immutable="false" locale="lv_LV" name="Projektu konkursi" timeout="5000" title="Projektu konkursi" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+        <channel ID="u103l1n45" chanID="54" description="" dlm:fragment="0" dlm:precedence="50.0" fname="rtu-pvs-last-added" hidden="false" immutable="false" locale="lv_LV" name="Jaunākie 25 ievadītie projekti" timeout="5000" title="Jaunākie 25 ievadītie projekti" typeID="1" unremovable="false">
+          <parameter name="alternate" value="false"/>
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+    </folder>
+    <folder ID="u103l1s62" dlm:addChildAllowed="false" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="50.0" hidden="false" immutable="false" locale="lv_LV" name="Veidlapas" type="regular" unremovable="false" width="100%" tabGroup="Work">
+      <folder ID="u103l1s68" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="50.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="100%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u103l1n75" chanID="106" description="Komandējumu, līgumu un citas RTU veidlapas" dlm:deleteAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="50.0" fname="rtu-jps-veidlapas" hidden="false" immutable="false" locale="lv_LV" name="Veidlapas" timeout="5000" title="Veidlapas" typeID="1" unremovable="false">
+          <parameter name="alternate" value="false"/>
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="hashelp" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="locale" value="false"/>
+          <parameter name="hasabout" value="false"/>
+          <parameter name="secure" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hasedit" value="false"/>
+        </channel>
+      </folder>
+    </folder>
+    <folder ID="u104l1s22" dlm:fragment="0" dlm:precedence="30.0" hidden="false" immutable="true" locale="lv_LV" name="Header folder" type="header" unremovable="true" width="100%" tabGroup="DEFAULT_TABGROUP"/>
+    <folder ID="u104l1s4" dlm:fragment="0" dlm:precedence="30.0" hidden="false" immutable="false" locale="lv_LV" name="Footer folder" type="footer" unremovable="false" width="100%" tabGroup="DEFAULT_TABGROUP"/>
+    <folder ID="u104l1s5" dlm:addChildAllowed="false" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="30.0" hidden="false" immutable="false" locale="lv_LV" name="ZDAS" type="regular" unremovable="false" width="100%" tabGroup="Science">
+      <folder ID="u104l1s6" dlm:fragment="0" dlm:precedence="30.0" hidden="false" immutable="false" locale="lv_LV" name="Column 1" type="regular" unremovable="false" width="100%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u104l1n13" chanID="66" description="Sistēma publikāciju, patentu un ekspertu reģistrēšanai un meklēšanai." dlm:deleteAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="30.0" fname="rtu-zdas" hidden="false" immutable="false" locale="lv_LV" name="Zinātniskās darbības atbalsta sistēma" timeout="60000" title="Zinātniskās darbības atbalsta sistēma" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+    </folder>
+    <folder ID="u105l1s22" dlm:fragment="0" dlm:precedence="10.0" hidden="false" immutable="true" locale="lv_LV" name="Header folder" type="header" unremovable="true" width="100%" tabGroup="DEFAULT_TABGROUP"/>
+    <folder ID="u105l1s4" dlm:fragment="0" dlm:precedence="10.0" hidden="false" immutable="false" locale="lv_LV" name="Footer folder" type="footer" unremovable="false" width="100%" tabGroup="DEFAULT_TABGROUP"/>
+    <folder ID="u105l1s5" dlm:addChildAllowed="false" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="10.0" hidden="false" immutable="false" locale="lv_LV" name="Aktualitātes" type="regular" unremovable="false" width="100%" tabGroup="Library">
+      <folder ID="u105l1s6" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:precedence="10.0" hidden="false" immutable="false" locale="lv_LV" name="Column 1" type="regular" unremovable="false" width="25%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u105l1n15" chanID="115" description="Jaunumi un informācija par bibliotēku." dlm:deleteAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="10.0" fname="jps-library" hidden="false" immutable="false" locale="lv_LV" name="Bibliotēkas jaunumi" timeout="5000" title="Bibliotēkas jaunumi" typeID="1" unremovable="false">
+          <parameter name="alternate" value="false"/>
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="hashelp" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="locale" value="false"/>
+          <parameter name="hasabout" value="false"/>
+          <parameter name="secure" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hasedit" value="false"/>
+        </channel>
+      </folder>
+      <folder ID="u105l1s28" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:precedence="10.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="50%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u105l1n114" chanID="152" description="Grāmatu rezervēšana un izsniegumu stāvoklis no grāmatu kopkataloga." dlm:deleteAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="10.0" fname="rtu-aleph" hidden="false" immutable="false" locale="lv_LV" name="Manas grāmatas" timeout="600000" title="Manas grāmatas" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+      <folder ID="u105l1s43" dlm:fragment="0" dlm:precedence="10.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="25%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u105l1n10" chanID="62" description="RTU Zinātniskās bibliotēkas ieteiktās saites." dlm:deleteAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="10.0" fname="rtu-library-bookmarks" hidden="false" immutable="false" locale="lv_LV" name="Bibliotēkas saites" timeout="5000" title="Bibliotēkas saites" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+    </folder>
+    <folder ID="u105l1s79" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="10.0" hidden="false" immutable="false" locale="lv_LV" name="E-resursi" type="regular" unremovable="false" width="100%" tabGroup="Library">
+      <folder ID="u105l1s84" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="10.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="60%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u105l1n111" chanID="116" description="Saites uz RTU abonētajām datu bāzēm." dlm:deleteAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="10.0" fname="rtu-jps-library-resursi" hidden="false" immutable="false" locale="lv_LV" name="Elektroniskie resursi" timeout="5000" title="Elektroniskie resursi" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="hashelp" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="locale" value="false"/>
+          <parameter name="hasabout" value="false"/>
+          <parameter name="secure" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hasedit" value="false"/>
+        </channel>
+      </folder>
+      <folder ID="u105l1s87" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="10.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="40%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u105l1n117" chanID="153" description="Bibliotēkas piedāvātie resursi, kuri ir pieejami uz laiku izmēģināšanai." dlm:deleteAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="10.0" fname="rtu-jps-izmeginajuma-db" hidden="false" immutable="false" locale="lv_LV" name="Izmēģinājuma datubāzes" timeout="5000" title="Izmēģinājuma datubāzes" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+          <parameter name="editable" value="true"/>
+        </channel>
+        <channel ID="u105l1n120" chanID="154" description="Dažādi tiešā veidā ar jūsu nozari nesaistīti resursi." dlm:deleteAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="10.0" fname="rtu-jps-parejie-resursi" hidden="false" immutable="false" locale="lv_LV" name="Pārējie resursi" timeout="5000" title="Pārējie resursi" typeID="1" unremovable="false">
+          <parameter name="alternate" value="false"/>
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+          <parameter name="editable" value="true"/>
+        </channel>
+      </folder>
+    </folder>
+    <folder ID="u4l1s3" dlm:fragment="0" dlm:precedence="8.0" hidden="false" immutable="true" locale="lv_LV" name="Header folder" type="header" unremovable="true" width="100%" tabGroup="DEFAULT_TABGROUP"/>
+    <folder ID="u4l1s6" dlm:fragment="0" dlm:precedence="8.0" hidden="false" immutable="false" locale="lv_LV" name="Footer folder" type="footer" unremovable="false" width="100%" tabGroup="DEFAULT_TABGROUP"/>
+    <folder ID="u4l1s7" dlm:fragment="0" dlm:precedence="8.0" hidden="false" immutable="false" locale="lv_LV" name="Admin Tools" type="regular" unremovable="false" width="100%" tabGroup="Administration">
+      <folder ID="u4l1s8" dlm:fragment="0" dlm:precedence="8.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="50%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u4l1n9" chanID="16" description="Useful administrative links for managing portal entities and impersonating users" dlm:fragment="0" dlm:precedence="8.0" fname="portal-administration" hidden="false" immutable="false" locale="lv_LV" name="Portal Administration" timeout="50000" title="Portal Administration" typeID="1" unremovable="false">
+          <parameter name="iconUrl" value="/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/preferences-system.png"/>
+        </channel>
+      </folder>
+      <folder ID="u4l1s10" dlm:fragment="0" dlm:precedence="8.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="50%" tabGroup="DEFAULT_TABGROUP"/>
+    </folder>
+    <folder ID="u651l1s22" dlm:fragment="0" dlm:precedence="-3.0" hidden="false" immutable="true" locale="lv_LV" name="Header folder" type="header" unremovable="true" width="100%" tabGroup="DEFAULT_TABGROUP"/>
+    <folder ID="u651l1s4" dlm:fragment="0" dlm:precedence="-3.0" hidden="false" immutable="false" locale="lv_LV" name="Footer folder" type="footer" unremovable="false" width="100%" tabGroup="DEFAULT_TABGROUP"/>
+    <folder ID="u651l1s5" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="-3.0" hidden="false" immutable="false" locale="lv_LV" name="Lietotāju atbalsta centrs" type="regular" unremovable="false" width="100%" tabGroup="Help">
+      <folder ID="u651l1s6" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:precedence="-3.0" hidden="false" immutable="false" locale="lv_LV" name="Column 1" type="regular" unremovable="false" width="33%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u651l1n125" chanID="141" description="Aktualitātes no IT lietotāju atbalsta centra." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="-3.0" fname="jps-itlac-news" hidden="false" immutable="false" locale="lv_LV" name="LAC jaunumi un paziņojumi" timeout="5000" title="LAC jaunumi un paziņojumi" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="hashelp" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="locale" value="false"/>
+          <parameter name="secure" value="false"/>
+          <parameter name="hasabout" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hasedit" value="false"/>
+        </channel>
+      </folder>
+      <folder ID="u651l1s8" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:precedence="-3.0" hidden="false" immutable="false" locale="lv_LV" name="Column 2" type="regular" unremovable="false" width="34%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u651l1n120" chanID="36" description="Apskati savu pieteikumu statusu, kā arī sniedz savus ieteikumus IT lietotāju atbalsta centram." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="-3.0" fname="rtu-helpdesk" hidden="false" immutable="false" locale="lv_LV" name="IT lietotāju atbalsta centrs" timeout="5000" title="IT lietotāju atbalsta centrs" typeID="1" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+      <folder ID="u651l1s131" dlm:fragment="0" dlm:precedence="-3.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="33%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u651l1n128" chanID="142" description="Aktuālākā informācija un jaunumi no IT Lietotāju atbalsta centra" dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="-3.0" fname="rtu-cms-lac-kontakti" hidden="false" immutable="false" locale="lv_LV" name="LAC kontakti" timeout="5000" title="LAC kontakti" typeID="2" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+          <parameter name="editable" value="false"/>
+        </channel>
+      </folder>
+    </folder>
+    <folder ID="u651l1s83" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="-3.0" hidden="false" immutable="false" locale="lv_LV" name="Atbalsta materiāli" type="regular" unremovable="false" width="100%" tabGroup="Help">
+      <folder ID="u651l1s88" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:precedence="-3.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="33%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u651l1n111" chanID="126" description="Pamācība par to, kā nokonfigurēt WiFi darbam RTU tīklā." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="-3.0" fname="rtu-cms-wifi" hidden="false" immutable="false" locale="lv_LV" name="WiFi" timeout="5000" title="WiFi" typeID="2" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+          <parameter name="editable" value="false"/>
+        </channel>
+      </folder>
+      <folder ID="u651l1s91" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:precedence="-3.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="34%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u651l1n119" chanID="143" description="Apraksts, kā sakonfigurēt internetu RTU Studentu dienesta viescnīcās" dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="-3.0" fname="rtu-cms-internets" hidden="false" immutable="false" locale="lv_LV" name="Internets dienesta viesnīcās" timeout="5000" title="Internets dienesta viesnīcās" typeID="2" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+          <parameter name="editable" value="false"/>
+        </channel>
+        <channel ID="u651l1n231" chanID="144" description="Saites uz dažādiem atbalsta materiāliem." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="-3.0" fname="rtu-cms-citi-atb-materiali" hidden="false" immutable="false" locale="lv_LV" name="Citi atbalsta materiāli" timeout="5000" title="Citi atbalsta materiāli" typeID="2" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+          <parameter name="editable" value="false"/>
+        </channel>
+      </folder>
+      <folder ID="u651l1s147" dlm:fragment="0" dlm:precedence="-3.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="33%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u651l1n114" chanID="139" description="Apraksts un pamācības par RTU piedāvātajiem e-pasta pakalpojumiem." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="-3.0" fname="rtu-cms-email2" hidden="false" immutable="false" locale="lv_LV" name="E-pasta palīdzība" timeout="5000" title="E-pasta palīdzība" typeID="2" unremovable="false">
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="alternate" value="false"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+          <parameter name="editable" value="false"/>
+        </channel>
+      </folder>
+    </folder>
+    <folder ID="u651l1s95" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="-3.0" hidden="false" immutable="false" locale="lv_LV" name="Pakalpojumi" type="regular" unremovable="false" width="100%" tabGroup="Help">
+      <folder ID="u651l1s101" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:precedence="-3.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="100%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u651l1n117" chanID="140" description="Lietotāju atbalsta centra piedāvāto pakalpojumu saraksts." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="-3.0" fname="rtu-cms-lac-pakalpojumi" hidden="false" immutable="false" locale="lv_LV" name="Pakalpojumu saraksts" timeout="5000" title="Pakalpojumu saraksts" typeID="4" unremovable="false">
+          <parameter name="alternate" value="false"/>
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+    </folder>
+    <folder ID="u651l1s183" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="-3.0" hidden="false" immutable="false" locale="lv_LV" name="Profils" type="regular" unremovable="false" width="100%" tabGroup="Help">
+      <folder ID="u651l1s190" dlm:fragment="0" dlm:precedence="-3.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="33%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u651l1n197" chanID="74" description="Karšu centra foto attēlošana un maiņa." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="-3.0" fname="rtu-vivs-foto" hidden="false" immutable="false" locale="lv_LV" name="Foto" timeout="5000" title="Foto" typeID="1" unremovable="false">
+          <parameter name="alternate" value="false"/>
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+        <channel ID="u651l1n200" chanID="75" description="Iestatījumi par to, kādos veidos ļaut RTU jums sūtīt informāciju." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="-3.0" fname="rtu-vivs-preferences" hidden="false" immutable="false" locale="lv_LV" name="Apziņošanas iestatījumi" timeout="5000" title="Apziņošanas iestatījumi" typeID="1" unremovable="false">
+          <parameter name="alternate" value="false"/>
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+      <folder ID="u651l1s193" dlm:fragment="0" dlm:precedence="-3.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="34%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u651l1n210" chanID="77" description="Nomainīt savu ORTUS paroli" dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="-3.0" fname="rtu-vivs-password-change" hidden="false" immutable="false" locale="lv_LV" name="Paroles maiņa" timeout="5000" title="Paroles maiņa" typeID="1" unremovable="false">
+          <parameter name="alternate" value="false"/>
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+        <channel ID="u651l1n207" chanID="76" description="RTU kontaktinformācijas maiņa vienotās identitātes sistēmā." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="-3.0" fname="rtu-vivs-kontakti-preferences" hidden="false" immutable="false" locale="lv_LV" name="Kontaktinformācijas maiņa" timeout="5000" title="Kontaktinformācijas maiņa" typeID="1" unremovable="false">
+          <parameter name="alternate" value="false"/>
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+        <channel ID="u651l1n214" chanID="73" description="E-pasta iestatījumi - pārsūtīšanas adreses un automātiskā atbilde." dlm:deleteAllowed="false" dlm:fragment="0" dlm:precedence="-3.0" fname="rtu-vivs-email-settings" hidden="false" immutable="false" locale="lv_LV" name="E-pasta uzstādījumi" timeout="5000" title="E-pasta uzstādījumi" typeID="1" unremovable="false">
+          <parameter name="alternate" value="false"/>
+          <parameter name="disableDynamicTitle" value="true"/>
+          <parameter name="showChrome" value="true"/>
+          <parameter name="hasHelp" value="false"/>
+          <parameter name="blockImpersonation" value="false"/>
+          <parameter name="hideFromMobile" value="false"/>
+          <parameter name="highlight" value="false"/>
+          <parameter name="editable" value="false"/>
+          <parameter name="hasAbout" value="false"/>
+        </channel>
+      </folder>
+      <folder ID="u651l1s223" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="-3.0" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="33%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="u651l1n228" chanID="18" description="Dod iespēju restaurēt izkārtojumu uz oriģinālo." dlm:deleteAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="-3.0" fname="reset-my-layout" hidden="false" immutable="false" locale="lv_LV" name="Restaurēt izkārtojumu" timeout="50000" title="Restaurēt izkārtojumu" typeID="1" unremovable="false">
+          <parameter name="iconUrl" value="/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/applications-system.png"/>
+        </channel>
+      </folder>
+    </folder>
+    <folder ID="s2" hidden="false" immutable="true" locale="lv_LV" name="Header folder" type="header" unremovable="true" width="100%" tabGroup="DEFAULT_TABGROUP"/>
+    <folder ID="s3" hidden="false" immutable="false" locale="lv_LV" name="Footer folder" type="footer" unremovable="false" width="100%" tabGroup="DEFAULT_TABGROUP"/>
+    <folder ID="s957" hidden="false" immutable="false" locale="lv_LV" name="Atribūti" type="regular" unremovable="false" width="100%" tabGroup="Administration">
+      <folder ID="s990" hidden="false" immutable="false" locale="lv_LV" name="Column" type="regular" unremovable="false" width="100%" tabGroup="DEFAULT_TABGROUP">
+        <channel ID="n997" chanID="1" description="Lietotāja atribūtu maiņas portlets." fname="AttributeSwapper" hidden="false" immutable="false" locale="lv_LV" name="Atribūtu maiņa" timeout="600000" title="Atribūtu maiņa" typeID="1" unremovable="false">
+          <parameter name="iconUrl" value="/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/applications-system.png"/>
+        </channel>
+      </folder>
+    </folder>
+  </folder>
+</layout>
+

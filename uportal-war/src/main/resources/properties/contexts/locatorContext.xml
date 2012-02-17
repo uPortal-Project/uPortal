@@ -23,13 +23,17 @@
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns="http://www.springframework.org/schema/beans" 
        xsi:schemaLocation="
-           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd"
        default-autowire="constructor">
     
     <!-- 
      | The beans below are deprecated and should NEVER be referenced by other beans.
      | They exist to support legacy code that is not managed by spring
      +-->
+    
+    <bean id="org.jasig.portal.spring.locator.ApplicationContextLocator"
+            class="org.jasig.portal.spring.locator.ApplicationContextLocator">
+    </bean>
     
     <bean id="org.jasig.portal.spring.locator.UserLayoutStoreLocator"
             class="org.jasig.portal.spring.locator.UserLayoutStoreLocator">

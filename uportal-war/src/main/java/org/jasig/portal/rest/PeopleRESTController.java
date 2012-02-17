@@ -33,6 +33,7 @@ import org.jasig.portal.security.IPersonManager;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -78,6 +79,25 @@ public class PeopleRESTController {
 
         ModelAndView mv = new ModelAndView();
         mv.addObject("people", people);
+        mv.setViewName("json");
+        
+        return mv;
+    }
+
+    @RequestMapping(value="/people/{username}.json", method = RequestMethod.GET)
+    public ModelAndView getPerson(@PathVariable String username,
+            HttpServletRequest request, HttpServletResponse response) {
+
+        final IPerson searcher = personManager.getPerson((HttpServletRequest) request);
+        if (searcher == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return null;
+        }
+
+        final IPersonAttributes person = lookupHelper.findPerson(searcher, username);
+
+        final ModelAndView mv = new ModelAndView();
+        mv.addObject("person", person);
         mv.setViewName("json");
         
         return mv;

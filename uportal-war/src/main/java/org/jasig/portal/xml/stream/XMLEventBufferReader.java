@@ -76,7 +76,10 @@ public class XMLEventBufferReader implements XMLEventReader {
     @Override
     public String getElementText() throws XMLStreamException {
         XMLEvent event = this.previousEvent;
-        if (event == null || !event.isStartElement()) {
+        if (event == null) {
+            throw new XMLStreamException("Must be on START_ELEMENT to read next text, element was null");
+        }
+        if (!event.isStartElement()) {
             throw new XMLStreamException("Must be on START_ELEMENT to read next text", event.getLocation());
         }
         

@@ -24,16 +24,22 @@
     xmlns:util="http://www.springframework.org/schema/util"
     xmlns:tx="http://www.springframework.org/schema/tx"
     xmlns:aop="http://www.springframework.org/schema/aop"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-                        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
-                        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
-                        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+                        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+                        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+                        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
                         
-    <bean id="rdbmPropertiesPlacholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="location" value="classpath:/dataSource.properties" />
+    <import resource="classpath:commonTestContext.xml"/>
+    
+    <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list merge="true">
+                <value>classpath:/dataSource.properties</value>
+            </list>
+        </property>
     </bean>
 
-    <bean id="PortalDb" class="org.apache.commons.dbcp.BasicDataSource">
+    <bean id="TestDb" abstract="true" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="${hibernate.connection.driver_class}" />
         <property name="url" value="${hibernate.connection.url}" />
         <property name="username" value="${hibernate.connection.username}" />
@@ -48,10 +54,9 @@
         <property name="poolPreparedStatements" value="false" />
     </bean>
     
-    <bean id="factoryBean" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="">
-        <property name="dataSource" ref="PortalDb" />
+    <bean id="factoryBean" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="" autowire="byType">
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
-        <property name="persistenceUnitName" value="uPortalPersistence" />
+        <property name="persistenceUnitName" value="${persistenceUnitName}" />
         <property name="jpaProperties">
             <props>
                 <prop key="hibernate.cache.use_query_cache">false</prop>
@@ -73,16 +78,11 @@
         <property name="entityManagerFactory" ref="factoryBean" />
     </bean>
 
-    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <qualifier value="PortalDb" />
-        <property name="entityManagerFactory" ref="factoryBean" />
-    </bean>
-    
     <tx:annotation-driven transaction-manager="transactionManager" />
     
     <aop:config>
         <aop:pointcut id="daoExecution" 
-            expression="execution(* org.jasig.portal.*.dao.*.*(..))"/>
+            expression="within(@org.springframework.stereotype.Repository *) &amp;&amp; execution(* org.jasig.portal..*.*(..))"/>
             
         <aop:aspect ref="sqlNextExceptionLoggerAspect">
             <aop:after-throwing pointcut-ref="daoExecution" method="logBatchUpdateExceptions" throwing="t"/>
@@ -92,8 +92,6 @@
     <bean id="sqlNextExceptionLoggerAspect" class="org.jasig.portal.portlet.dao.jpa.SQLNextExceptionLoggerAspect" />
     
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" lazy-init="false" />
-    
-    <bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor" lazy-init="false" />
 </beans>
 
 

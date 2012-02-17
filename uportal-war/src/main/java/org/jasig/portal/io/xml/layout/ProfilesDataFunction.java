@@ -42,7 +42,7 @@ import com.google.common.base.Function;
  */
 public class ProfilesDataFunction implements Function<IPortalDataType, Iterable<? extends IPortalData>> {
     private JdbcOperations jdbcOperations;
-    private final String query =
+    private static final String QUERY =
         "SELECT upup.profile_fname, upu.user_name " +
         "FROM up_user_profile upup " +
         "LEFT JOIN up_user upu ON upu.user_id = upup.user_id";
@@ -56,7 +56,7 @@ public class ProfilesDataFunction implements Function<IPortalDataType, Iterable<
 
     @Override
     public Iterable<? extends IPortalData> apply(IPortalDataType input) {
-        return this.jdbcOperations.query(this.query, new RowMapper<IPortalData>() {
+        return this.jdbcOperations.query(QUERY, new RowMapper<IPortalData>() {
             @Override
             public IPortalData mapRow(ResultSet rs, int rowNum) throws SQLException {
                 final StringBuilder key = new StringBuilder();

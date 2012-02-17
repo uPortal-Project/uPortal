@@ -42,7 +42,7 @@ import com.google.common.base.Function;
  */
 public class PermissionSetsDataFunction implements Function<IPortalDataType, Iterable<? extends IPortalData>> {
     private JdbcOperations jdbcOperations;
-    private final String query =
+    private static final String QUERY =
         "SELECT DISTINCT UPP.OWNER, UPET.ENTITY_TYPE_NAME, UPP.PRINCIPAL_KEY, UPP.ACTIVITY, UPP.PRINCIPAL_TYPE\n" + 
         "FROM UP_PERMISSION UPP\n" + 
         "  LEFT JOIN UP_ENTITY_TYPE UPET ON UPP.PRINCIPAL_TYPE = UPET.ENTITY_TYPE_ID\n" + 
@@ -58,7 +58,7 @@ public class PermissionSetsDataFunction implements Function<IPortalDataType, Ite
 
     @Override
     public Iterable<? extends IPortalData> apply(IPortalDataType input) {
-        return this.jdbcOperations.query(this.query, new RowMapper<IPortalData>() {
+        return this.jdbcOperations.query(QUERY, new RowMapper<IPortalData>() {
             @Override
             public IPortalData mapRow(ResultSet rs, int rowNum) throws SQLException {
                 final StringBuilder key = new StringBuilder();

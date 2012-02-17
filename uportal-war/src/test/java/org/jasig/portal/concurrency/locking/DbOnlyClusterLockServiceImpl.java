@@ -28,11 +28,8 @@ import java.util.concurrent.locks.ReentrantLock;
  * @version $Revision$
  */
 public class DbOnlyClusterLockServiceImpl extends ClusterLockServiceImpl {
-    /* (non-Javadoc)
-     * @see org.jasig.portal.concurrency.locking.ClusterLockServiceImpl#getLocalLock(java.lang.String)
-     */
     @Override
-    ReentrantLock getLocalLock(String mutexName) {
+    protected ReentrantLock getLocalLock(String mutexName) {
         //Returning a new lock every time results in no local locking
         return new ReentrantLock();
     }

@@ -21,7 +21,7 @@
 -->
 
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd" updateCheck="false">
+    xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd" updateCheck="false" name="uPortal.portletCacheControlTestManager">
 
     <!--
      | Please see http://ehcache.sourceforge.net/documentation/configuration.html for detailed information on

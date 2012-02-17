@@ -152,7 +152,7 @@ public class UserImporterExporter extends
 	    		defaultUserId, nextStructId, username);
 	    
 	    if (rowsUpdated != 1) {
-	        final int userId = this.counterStore.getIncrementIntegerId("UP_USER");
+	        final int userId = this.counterStore.getNextId("UP_USER");
 	        
 	        this.jdbcOperations.update(
 	                "INSERT INTO UP_USER(USER_ID, USER_DFLT_USR_ID, USER_DFLT_LAY_ID, NEXT_STRUCT_ID, USER_NAME) \n" + 

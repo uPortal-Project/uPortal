@@ -234,7 +234,13 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
     
     @Override
     public boolean removeAttribute(String name) {
-        return attributes.remove(name);
+        for (final Iterator<LocalAccountPersonAttributeImpl> itr = attributes.iterator(); itr.hasNext(); ) {
+            if (itr.next().getName().equals(name)) {
+                itr.remove();
+                return true;
+            }
+        }
+        return false;
     }
     
     @Override

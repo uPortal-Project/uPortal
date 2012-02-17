@@ -36,41 +36,44 @@ public class SQLNextExceptionLoggerAspect implements Ordered {
     protected final Log logger = LogFactory.getLog(this.getClass());
 
     private int order = 0;
-    
+
     /* (non-Javadoc)
      * @see org.springframework.core.Ordered#getOrder()
      */
+    @Override
     public int getOrder() {
         return this.order;
     }
+
     /**
      * @param order the order to set
      */
     public void setOrder(int order) {
         this.order = order;
     }
-    
+
     public void logBatchUpdateExceptions(Throwable t) {
-        while (t != null && !(t instanceof SQLException)) {
+        while (!(t instanceof SQLException)) {
             t = t.getCause();
-        }
-        
-        if (t instanceof SQLException) {
-            SQLException sqle = (SQLException)t;
-            
-            //If the SQLException is the root chain the results of getNextException as initCauses
-            if (sqle.getCause() == null) {
-                SQLException nextException;
-                while ((nextException = sqle.getNextException()) != null) {
-                    sqle.initCause(nextException);
-                    sqle = nextException;
-                }
+            if (t == null) {
+                return;
             }
-            //The SQLException already has a cause so log the results of all getNextException calls
-            else {
-                while ((sqle = sqle.getNextException()) != null) {
-                    this.logger.error("Logging getNextException for root SQLException: " + t, sqle);
-                }
+        }
+
+        SQLException sqle = (SQLException) t;
+
+        //If the SQLException is the root chain the results of getNextException as initCauses
+        if (sqle.getCause() == null) {
+            SQLException nextException;
+            while ((nextException = sqle.getNextException()) != null) {
+                sqle.initCause(nextException);
+                sqle = nextException;
+            }
+        }
+        //The SQLException already has a cause so log the results of all getNextException calls
+        else {
+            while ((sqle = sqle.getNextException()) != null) {
+                this.logger.error("Logging getNextException for root SQLException: " + t, sqle);
             }
         }
     }
