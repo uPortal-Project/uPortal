@@ -68,12 +68,12 @@ import com.google.common.collect.Sets;
 @SequenceGenerator(
         name="UP_EVENT_SESSION_GEN",
         sequenceName="UP_EVENT_SESSION_SEQ",
-        allocationSize=1
+        allocationSize=100
     )
 @TableGenerator(
         name="UP_EVENT_SESSION_GEN",
         pkColumnValue="UP_EVENT_SESSION_PROP",
-        allocationSize=1
+        allocationSize=100
     )
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
