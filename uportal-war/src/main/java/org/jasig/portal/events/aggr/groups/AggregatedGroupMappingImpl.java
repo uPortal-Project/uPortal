@@ -45,12 +45,12 @@ import org.hibernate.annotations.NaturalId;
 @SequenceGenerator(
         name="UP_AGGREGATE_GROUP_MAPPING_GEN",
         sequenceName="UP_AGGREGATE_GROUP_MAPPING_SEQ",
-        allocationSize=1
+        allocationSize=10
     )
 @TableGenerator(
         name="UP_AGGREGATE_GROUP_MAPPING_GEN",
         pkColumnValue="UP_AGGREGATE_GROUP_MAPPING_PROP",
-        allocationSize=1
+        allocationSize=10
     )
 @Immutable
 @Cacheable

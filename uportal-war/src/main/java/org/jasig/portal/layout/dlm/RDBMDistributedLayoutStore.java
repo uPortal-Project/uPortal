@@ -19,7 +19,6 @@
 
 package org.jasig.portal.layout.dlm;
 
-import java.io.IOException;
 import java.io.StringWriter;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -36,7 +35,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.xpath.XPath;
@@ -46,7 +44,6 @@ import javax.xml.xpath.XPathFactory;
 
 import net.sf.ehcache.Ehcache;
 
-import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.io.DOMReader;
@@ -59,7 +56,6 @@ import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.RDBMServices;
-import org.jasig.portal.UserProfile;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.io.xml.IPortalDataHandlerService;
 import org.jasig.portal.layout.LayoutStructure;
@@ -85,7 +81,6 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.BrokenSecurityContext;
 import org.jasig.portal.security.provider.PersonImpl;
 import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.xml.XmlUtilities;
 import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.jasig.portal.xml.xpath.XPathOperations;
@@ -116,9 +111,6 @@ import org.w3c.dom.NodeList;
 public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     public static final String RCS_ID = "@(#) $Header$";
     private static final Log LOG = LogFactory.getLog(RDBMDistributedLayoutStore.class);
-
-    private final static Pattern USER_NODE_PATTERN = Pattern.compile("\\A([a-zA-Z]\\d*)\\z");
-    private final static Pattern DLM_NODE_PATTERN = Pattern.compile("u(\\d+)l\\d+([ns]\\d+)");
     
     private static final Pattern VALID_PATHREF_PATTERN = Pattern.compile(".+\\:/.+");
     private static final String BAD_PATHREF_MESSAGE = "## DLM: ORPHANED DATA ##";
@@ -144,6 +136,9 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     private IPortletEntityRegistry portletEntityRegistry;
     private IPortletEntityDao portletEntityDao;
     private IPortalDataHandlerService portalDataHandlerService;
+    
+    @Autowired
+    private NodeReferenceFactory nodeReferenceFactory;
 
     @Autowired
 	public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
@@ -381,8 +376,8 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             //Only bother with entities that have preferences
             if (!preferencesList.isEmpty()) {
                 final String layoutNodeId = portletEntity.getLayoutNodeId();
-                final String[] dlmPathref = this.getDlmPathref(userName, userId, layoutNodeId, layout);
-                if (dlmPathref == null || dlmPathref.length != 3 || dlmPathref[0] == null || dlmPathref[1] == null || dlmPathref[2] == null) {
+                final Pathref dlmPathref = nodeReferenceFactory.getPathrefFromNoderef(userName, layoutNodeId, layout);
+                if (dlmPathref == null) {
                     log.warn(portletEntity + " in user " + userName + "'s layout has no corresponding layout or portlet information and will be ignored");
                     continue;
                 }
@@ -398,8 +393,8 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                     }
                     
                     final org.dom4j.Element preferenceEntry = preferencesElement.addElement("entry");
-                    preferenceEntry.addAttribute("entity", dlmPathref[0] + ":" + dlmPathref[1]);
-                    preferenceEntry.addAttribute("channel", dlmPathref[2]);
+                    preferenceEntry.addAttribute("entity", dlmPathref.toString());
+                    preferenceEntry.addAttribute("channel", dlmPathref.getPortletFname());
                     preferenceEntry.addAttribute("name", portletPreference.getName());
                     
                     for (final String value : portletPreference.getValues()) {
@@ -512,13 +507,13 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         for (final Iterator<org.dom4j.Attribute> origins = (Iterator<org.dom4j.Attribute>) layoutDoc
                 .selectNodes("//@dlm:origin").iterator(); origins.hasNext();) {
             final org.dom4j.Attribute org = origins.next();
-            final String[] pathTokens = this.getDlmPathref((String) person.getAttribute(IPerson.USERNAME),
-                    person.getID(),
+            final Pathref dlmPathref = this.nodeReferenceFactory.getPathrefFromNoderef(
+                    (String) person.getAttribute(IPerson.USERNAME),
                     org.getValue(),
                     layoutDoc.getRootElement());
-            if (pathTokens != null) {
+            if (dlmPathref != null) {
                 // Change the value only if we have a valid pathref...
-                org.setValue(pathTokens[0] + ":" + pathTokens[1]);
+                org.setValue(dlmPathref.toString());
             }
             else {
                 if (this.log.isWarnEnabled()) {
@@ -531,13 +526,13 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         for (final Iterator<org.dom4j.Attribute> it = (Iterator<org.dom4j.Attribute>) layoutDoc
                 .selectNodes("//@dlm:target").iterator(); it.hasNext();) {
             final org.dom4j.Attribute target = it.next();
-            final String[] pathTokens = this.getDlmPathref((String) person.getAttribute(IPerson.USERNAME),
-                    person.getID(),
+            final Pathref dlmPathref = this.nodeReferenceFactory.getPathrefFromNoderef(
+                    (String) person.getAttribute(IPerson.USERNAME),
                     target.getValue(),
                     layoutDoc.getRootElement());
-            if (pathTokens != null) {
+            if (dlmPathref != null) {
                 // Change the value only if we have a valid pathref...
-                target.setValue(pathTokens[0] + ":" + pathTokens[1]);
+                target.setValue(dlmPathref.toString());
             }
             else {
                 if (this.log.isWarnEnabled()) {
@@ -556,16 +551,16 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 // don't send a false WARNING.
                 continue;
             }
-            final String[] pathTokens = this.getDlmPathref((String) person.getAttribute(IPerson.USERNAME),
-                    person.getID(),
+            final Pathref dlmPathref = this.nodeReferenceFactory.getPathrefFromNoderef(
+                    (String) person.getAttribute(IPerson.USERNAME),
                     n.getValue(),
                     layoutDoc.getRootElement());
-            if (pathTokens != null) {
+            if (dlmPathref != null) {
                 // Change the value only if we have a valid pathref...
-                n.setValue(pathTokens[0] + ":" + pathTokens[1]);
+                n.setValue(dlmPathref.toString());
                 // These *may* have fnames...
-                if (pathTokens[2] != null && pathTokens[2].trim().length() != 0) {
-                    n.getParent().addAttribute("fname", pathTokens[2]);
+                if (dlmPathref.getPortletFname() != null) {
+                    n.getParent().addAttribute("fname", dlmPathref.getPortletFname());
                 }
             }
             else {
@@ -743,12 +738,12 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         for (final Iterator<org.dom4j.Attribute> itr = (Iterator<org.dom4j.Attribute>) layout
                 .selectNodes("//@dlm:origin").iterator(); itr.hasNext();) {
             final org.dom4j.Attribute a = itr.next();
-            final String noderef = this.getDlmNoderef(ownerUsername, a.getValue(), null, true, layout);
-            if (noderef != null) {
+            final Noderef dlmNoderef = nodeReferenceFactory.getNoderefFromPathref(ownerUsername, a.getValue(), null, true, layout);
+            if (dlmNoderef != null) {
                 // Change the value only if we have a valid pathref...
-                a.setValue(noderef);
+                a.setValue(dlmNoderef.toString());
                 // For dlm:origin only, also use the noderef as the ID attribute...
-                a.getParent().addAttribute("ID", noderef);
+                a.getParent().addAttribute("ID", dlmNoderef.toString());
             } else {
                 // At least insure the value is between 1 and 35 characters
                 a.setValue(BAD_PATHREF_MESSAGE);
@@ -757,9 +752,9 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         for (final Iterator<org.dom4j.Attribute> itr = (Iterator<org.dom4j.Attribute>) layout
                 .selectNodes("//@dlm:target").iterator(); itr.hasNext();) {
             final org.dom4j.Attribute a = itr.next();
-            final String noderef = this.getDlmNoderef(ownerUsername, a.getValue(), null, true, layout);
+            final Noderef dlmNoderef = nodeReferenceFactory.getNoderefFromPathref(ownerUsername, a.getValue(), null, true, layout);
             // Put in the correct value, or at least insure the value is between 1 and 35 characters
-            a.setValue(noderef != null ? noderef : BAD_PATHREF_MESSAGE);
+            a.setValue(dlmNoderef != null ? dlmNoderef.toString() : BAD_PATHREF_MESSAGE);
         }
         for (final Iterator<org.dom4j.Attribute> names = (Iterator<org.dom4j.Attribute>) layout
                 .selectNodes("//dlm:*/@name").iterator(); names.hasNext();) {
@@ -775,17 +770,17 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 continue;
             }
             final org.dom4j.Attribute fname = a.getParent().attribute("fname");
-            String noderef = null;
+            Noderef dlmNoderef = null;
             if (fname != null) {
-                noderef = this.getDlmNoderef(ownerUsername, value, fname.getValue(), false, layout);
+                dlmNoderef = nodeReferenceFactory.getNoderefFromPathref(ownerUsername, value, fname.getValue(), false, layout);
                 // Remove the fname attribute now that we're done w/ it...
                 fname.getParent().remove(fname);
             }
             else {
-                noderef = this.getDlmNoderef(ownerUsername, value, null, true, layout);
+                dlmNoderef = nodeReferenceFactory.getNoderefFromPathref(ownerUsername, value, null, true, layout);
             }
             // Put in the correct value, or at least insure the value is between 1 and 35 characters
-            a.setValue(noderef != null ? noderef : BAD_PATHREF_MESSAGE);
+            a.setValue(dlmNoderef != null ? dlmNoderef.toString() : BAD_PATHREF_MESSAGE);
         }
 
         // (3) Restore chanID attributes on <channel> elements...
@@ -867,10 +862,10 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 final String fname = entry.attributeValue("channel");
                 final String prefName = entry.attributeValue("name");
                 
-                final String dlmNoderef = this.getDlmNoderef(person.getUserName(), dlmPathRef, fname, false, layout);
+                final Noderef dlmNoderef = nodeReferenceFactory.getNoderefFromPathref(person.getUserName(), dlmPathRef, fname, false, layout);
                 
                 if (dlmNoderef != null && !"".equals(dlmNoderef) && fname != null && !"null".equals(fname)) {
-                	final IPortletEntity portletEntity = this.getPortletEntity(fname, dlmNoderef, ownerUserId);
+                	final IPortletEntity portletEntity = this.getPortletEntity(fname, dlmNoderef.toString(), ownerUserId);
                 	final List<IPortletPreference> portletPreferences = portletEntity.getPortletPreferences();
                 	
                 	final List<org.dom4j.Element> valueElements = entry.selectNodes("value");
@@ -1015,234 +1010,6 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
         return idAfterThisOne;
 
-    }
-
-    /**
-     * A DLM pathref is a <strong>uPortal external</strong> unique identifier 
-     * for a layout node within a specific DLM fragment layout.  Pathrefs are 
-     * used to represent these relationships in external XML data files.  They 
-     * contain either 2 or 3 elements:
-     * <ul>
-     *   <li>username of the fragment owner (e.g. 'admin-lo')</li>
-     *   <li>XPath that uniquely identifies a layout node (e.g. '/layout/folder/folder[3]')</li>
-     *   <li><strong>SOMETIMES</strong> a portlet fname (layout nodes referring to portlets only)</li>
-     * </ul>
-     * 
-     * @param layoutOwnerUsername
-     * @param layoutOwnerUserId
-     * @param dlmNoderef
-     * @param layout
-     * @return
-     */
-    private final String[] getDlmPathref(String layoutOwnerUsername, int layoutOwnerUserId, String dlmNoderef,
-            org.dom4j.Element layout) {
-        
-        /*
-         * need to remove "org.dom4j.Element layout" as a paramter and make this method public and
-         * on the interface so that external code can call it.
-         * 
-         * OR
-         * 
-         * move the preferences export into exportLayout
-         */
-
-        Validate.notNull(layoutOwnerUsername, "Argument 'layoutOwnerUsername' cannot be null.");
-        Validate.notNull(dlmNoderef, "Argument 'dlmNoderef' cannot be null.");
-        
-        if (log.isTraceEnabled()) {
-            StringBuilder msg = new StringBuilder();
-            msg.append("getDlmPathref: [layoutOwnerUsername='").append(layoutOwnerUsername)
-                        .append("', layoutOwnerUserId='").append(layoutOwnerUserId)
-                        .append("', dlmNoderef='").append(dlmNoderef).append("']");
-            log.trace(msg.toString());
-        }
-
-        final Matcher dlmNodeMatcher = DLM_NODE_PATTERN.matcher(dlmNoderef);
-        if (dlmNodeMatcher.matches()) {
-            final String userId = dlmNodeMatcher.group(1);
-            final String nodeId = dlmNodeMatcher.group(2);
-
-            final Tuple<String, DistributedUserLayout> userLayoutInfo = getUserLayout(Integer.valueOf(userId));
-            
-            if (userLayoutInfo.second == null) {
-                this.log.warn("no layout for fragment user '" + userLayoutInfo.first + "' Specified dlmNoderef " + dlmNoderef + " cannot be resolved.");
-                return null;
-            }
-                                
-            final Document fragmentLayout = userLayoutInfo.second.getLayout();
-            final Node targetElement = this.xPathOperations.evaluate("//*[@ID = $nodeId]", Collections.singletonMap("nodeId", nodeId), fragmentLayout, XPathConstants.NODE);
-
-            final String[] rslt = new String[3];
-            rslt[0] = userLayoutInfo.first;
-            rslt[1] = this.xmlUtilities.getUniqueXPath(targetElement);
-            // Pathref objects that refer to portlets are expected to include 
-            // the fname as the 3rd element; other pathref objects should leave 
-            // that element blank.
-            Node fnameAttr = targetElement.getAttributes().getNamedItem("fname");
-            if (fnameAttr != null) {
-                rslt[2] = fnameAttr.getTextContent();
-            }
-            
-            return rslt;
-        }
-
-        final Matcher userNodeMatcher = USER_NODE_PATTERN.matcher(dlmNoderef);
-        if (userNodeMatcher.find()) {
-            // We need a pathref based on the new style of layout b/c on 
-            // import this users own layout will not be in the database 
-            // when the path is computed back to an Id...
-            final String structId = userNodeMatcher.group(1);
-            final org.dom4j.Node target = layout.selectSingleNode("//*[@ID = '" + structId + "']");
-            if (target == null) {
-                this.log.warn("no match found on layout for user '" + layoutOwnerUsername + "' for the specified dlmNoderef:  " + dlmNoderef);
-                return null;
-            }
-            
-            final String[]  rslt = new String[3];
-            rslt[0] = layoutOwnerUsername;
-            rslt[1] = target.getUniquePath();
-            if (target.getName().equals("channel")) {
-                rslt[2] = target.valueOf("@fname");
-            }
-                
-            return rslt;
-        }
-        
-        
-        return null;
-        
-    }
-
-    /**
-     * Provides a {@link Tuple} containing the &quot;fragmentized&quot; version 
-     * of a DLM fragment owner's layout, together with the username.  This 
-     * version of the layout consistent with what DLM uses internally for 
-     * fragments, and is created by FragmentActivator.fragmentizeLayout.  It's 
-     * important that the version returned by this method matches what DLM uses 
-     * internally because it will be used to establish relationships between 
-     * fragment layout nodes and user customizations of DLM fragments.
-     * 
-     * @param userId
-     * @return
-     */
-    private Tuple<String, DistributedUserLayout> getUserLayout(int userId) {
-        final String userName = userIdentityStore.getPortalUserName(userId);
-        
-        final PersonImpl person = new PersonImpl();
-        person.setUserName(userName);
-        person.setID(userId);
-        person.setSecurityContext(new BrokenSecurityContext());
-
-        final UserProfile profile = this.getUserProfileByFname(person, UserProfile.DEFAULT_PROFILE_FNAME);
-        final DistributedUserLayout userLayout = this.getUserLayout(person, profile);
-
-        return new Tuple<String, DistributedUserLayout>(userName, userLayout);
-    }
-
-    private static final Pattern DLM_PATH_REF_DELIM = Pattern.compile("\\:");
-
-    /**
-     * A dlm noderef is a <strong>uPortal internal</strong> unique identifier 
-     * for a layout node within a specific DLM fragment layout.  Nodereafs are 
-     * used to represent these relationships internally, in the uPortal database 
-     * and the running JVM.  They always contain 3 elements:
-     * <ul>
-     *   <li>userId of the fragment owner (e.g. 'u13')</li>
-     *   <li>layoutId of the fragment layout (currently this will always be 'l1')</li>
-     *   <li>structureId of the node within the fragment layout (e.g. 's2' but the preceeding character is not always an 's')</li>
-     * </ul>
-     * 
-     * Example noderef:  u13l1s2
-     * 
-     * <strong>This method returns <code>null</code> if the pathref cannot be 
-     * resolved to a node on the specified layout.</strong>  It is the 
-     * responsibility of calling code to handle this case appropriately.
-     * 
-     * @return A valid noderef, or <code>null</code> if the pathref cannot be 
-     * matched to a node on the layout named in the pathref 
-     */
-    private final String getDlmNoderef(String layoutOwner, String pathref, String fname, boolean isStructRef,
-            org.dom4j.Element layoutElement) {
-
-        Validate.notNull(layoutOwner, "Argument 'layoutOwner' cannot be null.");
-        Validate.notNull(pathref, "Argument 'pathref' cannot be null.");
-
-        if (log.isTraceEnabled()) {
-            StringBuilder msg = new StringBuilder();
-            msg.append("getDlmNoderef: [layoutOwner='").append(layoutOwner)
-                            .append("', pathref='").append(pathref)
-                            .append("', fname='").append(fname)
-                            .append("', isStructRef='").append(isStructRef)
-                            .append("']");
-            log.trace(msg.toString());
-            log.trace("getDlmNoderef: user layout document follows...\n"+layoutElement.asXML());
-        }
-        
-        final String[] pathTokens = DLM_PATH_REF_DELIM.split(pathref);
-        if (pathTokens.length <= 1) {
-            this.log.warn("Invalid DLM PathRef, no delimiter: " + pathref);
-            return null;
-        }
-        
-        if (pathTokens[0].equals(layoutOwner)) {
-            // This an internal reference (our own layout);  we have to 
-            // use the layoutExment (instead of load-limited-layout) b/c 
-            // our layout may not be in the db...
-            final org.dom4j.Element target = (org.dom4j.Element) layoutElement.selectSingleNode(pathTokens[1]);
-            if (target != null) {
-                return target.valueOf("@ID");
-            }
-
-            this.log.warn("Unable to resolve pathref '" + pathref + "' for layoutOwner '" + layoutOwner + "'");
-            return null;
-        }
-        
-        final String layoutOwnerName = pathTokens[0];
-        final String layoutPath = pathTokens[1];
-        
-        final Integer layoutOwnerUserId = this.userIdentityStore.getPortalUserId(layoutOwnerName);
-        if (layoutOwnerUserId == null) {
-        	this.log.warn("Unable to resolve pathref '" + pathref + "' for layoutOwner '" + layoutOwner + "', no userId found for userName: " + layoutOwnerName);
-            return null;
-        }
-        
-        final Tuple<String, DistributedUserLayout> userLayoutInfo = getUserLayout(layoutOwnerUserId);
-        final Document userLayout = userLayoutInfo.second.getLayout();
-        
-		final Node targetNode = this.xPathOperations.evaluate(layoutPath, userLayout, XPathConstants.NODE);
-        if (targetNode == null) {
-            this.log.warn("No layout node found for pathref: " + pathref);
-            return null;
-        }
-        
-        final NamedNodeMap attributes = targetNode.getAttributes();
-        if (fname != null) {
-            final Node fnameAttr = attributes.getNamedItem("fname");
-            if (fnameAttr == null) {
-                this.log.warn("Layout node for pathref does not have fname attribute: " + pathref);
-                return null;
-            }
-            
-            final String nodeFname = fnameAttr.getTextContent();
-            if (!fname.equals(nodeFname)) {
-                this.log.warn("fname '" + nodeFname + "' on layout node not match specified fname '" + fname + "' for pathref: " + pathref);
-                return null;
-            }
-        }
-        
-        final Node structIdAttr = attributes.getNamedItem("struct-id");
-        if (structIdAttr != null) {
-	        final String structId = structIdAttr.getTextContent();
-	
-	        if (isStructRef) {
-	            return "u" + layoutOwnerUserId + "l1s" + structId;
-	        }
-	        
-	        return "u" + layoutOwnerUserId + "l1n" + structId;
-        }
-
-        final Node idAttr = attributes.getNamedItem("ID");
-        return "u" + layoutOwnerUserId + "l1" + idAttr.getTextContent();
     }
 
     /**
