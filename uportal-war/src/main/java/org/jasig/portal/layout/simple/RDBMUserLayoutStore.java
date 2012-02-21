@@ -1667,7 +1667,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                 	  // using the fname calculated above, attempt to get the 
                 	  // layout id of the default user profile for this fname
                 	  query = "SELECT LAYOUT_ID FROM UP_USER_PROFILE LEFT JOIN " +
-                	  		"UP_USER ON UP_USER_PROFILE.USER_ID=UP_USER.USER_DFLT_LAY_ID " +
+                	  		"UP_USER ON UP_USER_PROFILE.USER_ID=UP_USER.USER_DFLT_USR_ID " +
                 	  		"WHERE UP_USER.USER_ID=? AND UP_USER_PROFILE.PROFILE_FNAME=?";
                 	  pstmt = con.prepareStatement(query);
                 	  pstmt.setInt(1, u);
