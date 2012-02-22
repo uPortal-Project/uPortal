@@ -468,6 +468,7 @@ mathematical calculations. */
 }
 .up.dashboard-list .dashboard .portal-nav .ui-listview li.ui-li-divider {
   border: none;
+  box-shadow: none;
   background-image: -moz-linear-gradient(top, #4682b4, #294d6b);
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #4682b4), color-stop(1, #294d6b));
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#4682b4', EndColorStr='#294d6b')";
