@@ -212,6 +212,12 @@
         up.fluid = fluid;
         fluid = null;
         fluid_1_4 = null;
+        
+        <xsl:if test="$VIEW != 'grid'">
+            up.jQuery(document).ready(function() {
+                up.jQuery('ul[data-role=listview].up-portal-nav').jqmAccordion();
+            });
+        </xsl:if>
     </script>    
 </xsl:template>
 <!-- ========================================================================= -->
