@@ -394,24 +394,36 @@ a:hover {
 /* 
  * Styles specific to navigation.
  */
+/* Color Palette
+--------------------------------------*/
+/* RGBA values include transparency and are easier than hexidecimal to use in 
+mathematical calculations. */
+/* Grayscale */
+/* Background color */
+/* Primary color, c1 */
+/* Secondary color, c2 */
+/* Tertiary color, c3 */
+/* Highlight color, c4 */
+/* Secondary Highlight color, c5 */
+/* Calendar colors */
 /* Portlet Navigation */
-.up .portal-nav {
+.up.dashboard-grid .portal-nav {
   /* Main menu grid of apps and web views. */
   width: 300px;
   margin: 0 auto;
   text-align: center;
   zoom: 1;
 }
-.up .portal-nav:before, .up .portal-nav:after {
+.up.dashboard-grid .portal-nav:before, .up.dashboard-grid .portal-nav:after {
   content: "\0020";
   display: block;
   height: 0;
   overflow: hidden;
 }
-.up .portal-nav:after {
+.up.dashboard-grid .portal-nav:after {
   clear: both;
 }
-.up .portal-nav .portlet {
+.up.dashboard-grid .portal-nav .portlet {
   /* Menu grid items. */
   display: block;
   float: left;
@@ -422,19 +434,44 @@ a:hover {
   position: relative;
   /* To contain new item badges. */
 }
-.up .portal-nav .portlet .icon, .up .portal-nav .portlet .title {
+.up.dashboard-grid .portal-nav .portlet .icon, .up.dashboard-grid .portal-nav .portlet .title {
   display: block;
   text-align: center;
 }
-.up .portal-nav .portlet .icon {
+.up.dashboard-grid .portal-nav .portlet .icon {
   height: 72px;
   width: 72px;
   margin-bottom: 3px;
 }
-.up .portal-nav .portlet .badge {
+.up.dashboard-grid .portal-nav .portlet .badge {
   position: absolute;
   top: 0em;
   right: 0em;
+}
+.up.dashboard-list .dashboard {
+  background-image: none;
+  background: white;
+}
+.up.dashboard-list .dashboard .portal-nav .ui-listview li {
+  border: none;
+  border-top: 1px solid #dcdcdc;
+}
+.up.dashboard-list .dashboard .portal-nav .ui-listview li:first {
+  border: none;
+}
+.up.dashboard-list .dashboard .portal-nav .ui-listview li .ui-btn-text a {
+  color: #5c5c5c;
+  text-shadow: none;
+}
+.up.dashboard-list .dashboard .portal-nav .ui-listview li .ui-btn-inner {
+  border: none;
+}
+.up.dashboard-list .dashboard .portal-nav .ui-listview li.ui-li-divider {
+  border: none;
+  box-shadow: none;
+  background-image: -moz-linear-gradient(top, #4682b4, #294d6b);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #4682b4), color-stop(1, #294d6b));
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#4682b4', EndColorStr='#294d6b')";
 }
 
 /*====================================*/

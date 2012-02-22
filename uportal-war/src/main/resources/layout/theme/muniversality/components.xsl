@@ -148,8 +148,8 @@
 </xsl:template>
 
 <xsl:template name="mobile.navigation.list">
-    <div class="portal-nav">
-        <ul data-role="listview">
+    <div class="portal-nav portlet-content">
+        <ul data-role="listview" class="up-portal-nav">
             <xsl:for-each select="//navigation/tab">
             <li data-role="list-divider"><xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/></li>
                 <xsl:for-each select="channel">
@@ -173,9 +173,7 @@
                                 <xsl:otherwise><xsl:value-of select="$CONTEXT_PATH"/>/media/skins/icons/mobile/default.png</xsl:otherwise>
                             </xsl:choose>
                         </xsl:variable>
-                        <xsl:variable name="newItemCountClasses">
-                            ul-li-count new-item up-new-item-count-{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}
-                        </xsl:variable>
+                        <xsl:variable name="newItemCountClasses">ui-li-count badge new-item up-new-item-count-{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}</xsl:variable>
                         <a href="{$portletUrl}" title="To view {@name}">
                             <img class="portlet-icon" src="{$iconUrl}" alt="{@name}"/>
                             <h3><xsl:value-of select="@name" /></h3>

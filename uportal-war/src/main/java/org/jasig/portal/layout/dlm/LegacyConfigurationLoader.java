@@ -135,7 +135,8 @@ public class LegacyConfigurationLoader implements ConfigurationLoader {
             }
             
             this.fragments = Collections.unmodifiableList(localFragments);
-            this.fragmentsByName = Collections.unmodifiableMap(fragmentsByOwnerId);
+            this.fragmentsByName = Collections.unmodifiableMap(fragmentsByName);
+            this.fragmentsByOwnerId = Collections.unmodifiableMap(fragmentsByOwnerId);
         }
     }
     
