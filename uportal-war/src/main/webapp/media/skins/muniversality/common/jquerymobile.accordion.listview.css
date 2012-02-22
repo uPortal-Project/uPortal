@@ -1,0 +1,7 @@
+.up .up-portal-nav > .ui-li {
+	display: none;
+}
+
+.up .up-portal-nav .ui-li-divider {
+	display: block;
+}

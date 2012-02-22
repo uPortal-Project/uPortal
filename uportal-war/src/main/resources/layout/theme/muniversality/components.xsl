@@ -149,7 +149,7 @@
 
 <xsl:template name="mobile.navigation.list">
     <div class="portal-nav">
-        <ul data-role="listview">
+        <ul data-role="listview" class="up-portal-nav">
             <xsl:for-each select="//navigation/tab">
             <li data-role="list-divider"><xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/></li>
                 <xsl:for-each select="channel">
