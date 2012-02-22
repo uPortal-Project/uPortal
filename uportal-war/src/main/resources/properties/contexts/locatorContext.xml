@@ -31,6 +31,10 @@
      | They exist to support legacy code that is not managed by spring
      +-->
     
+    <bean id="org.jasig.portal.spring.locator.ApplicationContextLocator"
+            class="org.jasig.portal.spring.locator.ApplicationContextLocator">
+    </bean>
+    
     <bean id="org.jasig.portal.spring.locator.UserLayoutStoreLocator"
             class="org.jasig.portal.spring.locator.UserLayoutStoreLocator">
         <constructor-arg index="0" ref="userLayoutStore" />

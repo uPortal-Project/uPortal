@@ -35,6 +35,7 @@ import org.jasig.portal.layout.om.IStylesheetParameterDescriptor;
 import org.jasig.portal.portlet.PortletUtils;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IUrlSyntaxProvider;
 import org.jasig.portal.utils.Tuple;
@@ -47,12 +48,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Enforces a specific WindowState based on the "dashboardForcedWindowState" {@link IStylesheetDescriptor} parameter. For renderings
  * where a specific portlet is not specified and the stylesheet descriptor specifies a dashboardForcedWindowState then all portlets
- * in the pipeline will have their window state set to the specified value.
+ * in the pipeline will have their window state set to the specified value. If the IStylesheetDescriptor is not specified a check is
+ * made to ensure the window states are not {@link WindowState#MAXIMIZED}, {@link IPortletRenderer#DETACHED}, or 
+ * {@link IPortletRenderer#EXCLUSIVE} 
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class DashboardWindowStateSettingsStAXComponent extends StAXPipelineComponentWrapper {
+public class WindowStateSettingsStAXComponent extends StAXPipelineComponentWrapper {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private IUrlSyntaxProvider urlSyntaxProvider;
@@ -93,19 +96,19 @@ public class DashboardWindowStateSettingsStAXComponent extends StAXPipelineCompo
         
         final IStylesheetDescriptor stylesheetDescriptor = stylesheetAttributeSource.getStylesheetDescriptor(request);
         
-        final IStylesheetParameterDescriptor defaultWindowStateParam = stylesheetDescriptor.getStylesheetParameterDescriptor("dashboardForcedWindowState");
+        final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
         
         final XMLEventReader filteredEventReader;
-        if (defaultWindowStateParam != null) {
-            final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
-            
-            if (portalRequestInfo.getTargetedPortletWindowId() == null) {
+        if (portalRequestInfo.getTargetedPortletWindowId() == null) {
+            final IStylesheetParameterDescriptor defaultWindowStateParam = stylesheetDescriptor.getStylesheetParameterDescriptor("dashboardForcedWindowState");
+            if (defaultWindowStateParam != null) {
+                //Set all window states to the specified default
                 final WindowState windowState = PortletUtils.getWindowState(defaultWindowStateParam.getDefaultValue());
-                filteredEventReader = new PortletMinimizingXMLEventReader(request, eventReader, windowState);
+                filteredEventReader = new SinglePortletWindowStateSettingXMLEventReader(request, eventReader, windowState);
             }
             else {
-                //single portlet targeted, no minimization needed
-                filteredEventReader = eventReader;
+                //Make sure there aren't any portlets in a "targeted" window state
+                filteredEventReader = new NonTargetedPortletWindowStateSettingXMLEventReader(request, eventReader);
             }
         }
         else {
@@ -117,44 +120,82 @@ public class DashboardWindowStateSettingsStAXComponent extends StAXPipelineCompo
         return new PipelineEventReaderImpl<XMLEventReader, XMLEvent>(filteredEventReader, outputProperties);
     }
 
-    private class PortletMinimizingXMLEventReader extends FilteringXMLEventReader {
+    private abstract class PortletWindowStateSettingXMLEventReader extends FilteringXMLEventReader {
         private final HttpServletRequest request;
-        private final WindowState state;
         
-        public PortletMinimizingXMLEventReader(HttpServletRequest request, XMLEventReader reader, WindowState state) {
+        public PortletWindowStateSettingXMLEventReader(HttpServletRequest request, XMLEventReader reader) {
             super(reader);
             this.request = request;
-            this.state = state;
         }
 
         @Override
-        protected XMLEvent filterEvent(XMLEvent event, boolean peek) {
-        	if (event.isStartElement()) {
+        protected final XMLEvent filterEvent(XMLEvent event, boolean peek) {
+            if (event.isStartElement()) {
                 final StartElement startElement = event.asStartElement();
                 
                 final QName name = startElement.getName();
                 final String localName = name.getLocalPart();
                 if (IUserLayoutManager.CHANNEL.equals(localName) || IUserLayoutManager.CHANNEL_HEADER.equals(localName)) {
                     final Tuple<IPortletWindow, StartElement> portletWindowAndElement = portletWindowRegistry.getPortletWindow(request, startElement);
-					if (portletWindowAndElement == null) {
-						logger.warn("No portlet window found for: "  + localName);
-						return null;
-					}
-					
-					final IPortletWindow portletWindow = portletWindowAndElement.first;
-					
-					//Set the portlet's state, skip if the state is already correct
-					if (!state.equals(portletWindow.getWindowState())) {
-    					portletWindow.setWindowState(state);
-    					
-    					portletWindowRegistry.storePortletWindow(request, portletWindow);
-					}
-					
-					return portletWindowAndElement.second;
+                    if (portletWindowAndElement == null) {
+                        logger.warn("No portlet window found for: {}", localName);
+                        return event;
+                    }
+                    
+                    final IPortletWindow portletWindow = portletWindowAndElement.first;
+                    
+                    final WindowState windowState = getWindowState(portletWindow);
+                    
+                    //Set the portlet's state, skip if the state is already correct
+                    final WindowState currentWindowState = portletWindow.getWindowState();
+                    if (!windowState.equals(currentWindowState)) {
+                        portletWindow.setWindowState(windowState);
+                        
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("Changing WindowState from {} to {} for {}", new Object[] {
+                                    currentWindowState, windowState, portletWindow });
+                        }
+                        
+                        portletWindowRegistry.storePortletWindow(request, portletWindow);
+                    }
+                    
+                    return portletWindowAndElement.second;
                 }
             } 
             
             return event;
+        }
+
+        protected abstract WindowState getWindowState(IPortletWindow portletWindow);
+    }
+
+    private class SinglePortletWindowStateSettingXMLEventReader extends PortletWindowStateSettingXMLEventReader {
+        private final WindowState state;
+        
+        public SinglePortletWindowStateSettingXMLEventReader(HttpServletRequest request, XMLEventReader reader, WindowState state) {
+            super(request, reader);
+            this.state = state;
+        }
+
+        @Override
+        protected WindowState getWindowState(IPortletWindow portletWindow) {
+            return state;
+        }
+    }
+
+    private class NonTargetedPortletWindowStateSettingXMLEventReader extends PortletWindowStateSettingXMLEventReader {
+        
+        public NonTargetedPortletWindowStateSettingXMLEventReader(HttpServletRequest request, XMLEventReader reader) {
+            super(request, reader);
+        }
+
+        @Override
+        protected WindowState getWindowState(IPortletWindow portletWindow) {
+            final WindowState windowState = portletWindow.getWindowState();
+            if (windowState != null && PortletUtils.isTargetedWindowState(windowState)) {
+                return WindowState.NORMAL;
+            }
+            return windowState;
         }
     }
 }
