@@ -38,8 +38,8 @@
         <structure-attribute>
           <name>width</name>
           <value>50%</value>
-          <channel fname="dining" unremovable="false" hidden="false" immutable="false"/>
         </structure-attribute>
+        <channel fname="dining" unremovable="false" hidden="false" immutable="false"/>
       </folder>
     </folder>
   </folder>

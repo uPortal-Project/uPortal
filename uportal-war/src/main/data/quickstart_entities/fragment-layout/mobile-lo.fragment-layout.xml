@@ -25,7 +25,7 @@
       <channel fname="fragment-admin-exit" unremovable="false" hidden="false" immutable="false"/>
     </folder>
     <folder hidden="false" immutable="false" name="Footer folder" type="footer" unremovable="false"/>
-    <folder hidden="false" immutable="false" name="Mobile" type="regular" unremovable="false">
+    <folder hidden="false" immutable="false" name="Search" type="regular" unremovable="false">
       <folder hidden="false" immutable="false" name="Column 1" type="regular" unremovable="false">
         <structure-attribute>
           <name>width</name>

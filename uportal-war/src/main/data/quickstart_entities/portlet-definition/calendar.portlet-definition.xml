@@ -44,4 +44,8 @@
          <name>days</name>
          <value>1</value>
      </portlet-preference>
+     <portlet-preference>
+         <name>usePortalJsLibs</name>
+         <value>true</value>
+     </portlet-preference>
 </portlet-definition>

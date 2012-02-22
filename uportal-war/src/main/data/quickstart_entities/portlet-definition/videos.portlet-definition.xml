@@ -27,7 +27,7 @@
     <title>Videos</title>
     <name>Videos</name>
     <fname>videos</fname>
-    <desc>Recent uploads from uPortal's YouTube channel, featuring community demonstrations.</desc>
+    <desc>Recent uploads from the university YouTube channel.</desc>
     <type>Portlet</type>
     <timeout>60000</timeout>
     <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">

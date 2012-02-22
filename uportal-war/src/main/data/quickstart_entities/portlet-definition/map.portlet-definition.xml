@@ -46,4 +46,8 @@
         <name>mobileIconUrl</name>
         <value>/media/skins/icons/mobile/map.png</value>
     </parameter>
+     <portlet-preference>
+         <name>usePortalJsLibs</name>
+         <value>true</value>
+     </portlet-preference>
 </portlet-definition>

@@ -51,4 +51,8 @@
       <name>maxStories</name>
       <value>10</value>
     </portlet-preference>
+     <portlet-preference>
+         <name>usePortalJsLibs</name>
+         <value>true</value>
+     </portlet-preference>
 </portlet-definition>

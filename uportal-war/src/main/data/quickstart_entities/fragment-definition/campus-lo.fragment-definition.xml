@@ -25,6 +25,7 @@
       <paren mode="OR">     
         <attribute mode="memberOf" name="Students"/>
         <attribute mode="memberOf" name="Faculty"/>
+        <attribute mode="memberOf" name="Guests"/>
       </paren>
     </dlm:audience>
   </dlm:fragment>

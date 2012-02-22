@@ -104,7 +104,7 @@
     
         <!-- WAR Dependency Version Properties -->
         <BookmarksPortlet.version>1.0.11</BookmarksPortlet.version>
-        <CalendarPortlet.version>2.0.1-SNAPSHOT</CalendarPortlet.version>
+        <CalendarPortlet.version>2.1.0-SNAPSHOT</CalendarPortlet.version>
         <CampusLifePortlets.version>1.0.0-SNAPSHOT</CampusLifePortlets.version>
         <CoursesPortlet.version>1.0.0-M2-SNAPSHOT</CoursesPortlet.version>
         <cas-server.version>3.4.11</cas-server.version>

@@ -29,7 +29,7 @@
   <title>Computer Labs</title>
   <name>Computer Labs</name>
   <fname>computer-labs</fname>
-  <desc>Computer Labs Portlet</desc>
+  <desc>Computer lab locations and real-time availability</desc>
   <type>Portlet</type>
   <timeout>60000</timeout>
   <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
