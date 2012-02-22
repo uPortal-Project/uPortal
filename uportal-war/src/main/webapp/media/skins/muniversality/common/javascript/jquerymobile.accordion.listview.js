@@ -20,5 +20,5 @@
 			$this.nextUntil('.ui-li-divider').slideDown(300);
 		});
 	};
-})( up.jQuery );
+})( jQuery );
 
