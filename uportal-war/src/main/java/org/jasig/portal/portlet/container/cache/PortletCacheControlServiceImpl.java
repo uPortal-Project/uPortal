@@ -80,7 +80,7 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
     private Ehcache publicScopePortletResourceOutputCache;
     
     // default to 100 KB
-    private int cacheSizeThreshold = 102400;
+    private int cacheSizeThreshold = 204800;
     /**
 	 * @param privateScopePortletRenderOutputCache the privateScopePortletRenderOutputCache to set
 	 */
