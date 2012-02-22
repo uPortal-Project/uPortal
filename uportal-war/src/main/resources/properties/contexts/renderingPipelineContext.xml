@@ -43,7 +43,7 @@
         <property name="logFullDocument" value="true" />
     </bean>
     
-    <bean id="dashboardWindowStateSettingsStAXComponent" class="org.jasig.portal.rendering.DashboardWindowStateSettingsStAXComponent">
+    <bean id="dashboardWindowStateSettingsStAXComponent" class="org.jasig.portal.rendering.WindowStateSettingsStAXComponent">
         <property name="wrappedComponent" ref="postUserLayoutStoreLogger" />
         <property name="stylesheetAttributeSource" ref="themeAttributeSource" />
     </bean>
