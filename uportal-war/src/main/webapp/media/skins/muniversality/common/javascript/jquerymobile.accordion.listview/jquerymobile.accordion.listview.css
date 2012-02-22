@@ -1,0 +1,7 @@
+.up .ui-listview > .ui-li {
+	display: none;
+}
+
+.up .ui-listview .ui-li-divider {
+	display: block;
+}
