@@ -76,6 +76,7 @@
 
 						&.ui-li-divider {
 							border: none;
+							box-shadow: none;
 							@include gradient($c1, $c1darker);
 						}
 					}
