@@ -325,6 +325,18 @@
                             </xsl:when>
                             <xsl:otherwise>
                                 <xsl:call-template name="mobile.navigation.list" />
+                                <xsl:variable name="isAccordion">true</xsl:variable>
+                                <xsl:if test="$isAccordion = 'true'">
+                                    <link rel="stylesheet" href="{$ABSOLUTE_MEDIA_PATH}/common/javascript/jquerymobile.accordion.listview/jquerymobile.accordion.listview.css" />
+                                    <script src="{$ABSOLUTE_MEDIA_PATH}/common/javascript/jquerymobile.accordion.listview/jquerymobile.accordion.listview.js"></script>
+                                    <script>
+                                        (function($) {
+                                            $(document).ready(function() {
+                                                $('ul[data-role=listview]').jqmAccordion();
+                                            });
+                                        })( up.jQuery );
+                                    </script>
+                                </xsl:if>
                             </xsl:otherwise>
                         </xsl:choose>
                         <xsl:call-template name="logo" />
