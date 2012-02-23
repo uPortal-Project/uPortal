@@ -109,7 +109,7 @@ public final class PortalDataKeyFileProcessor implements Function<Resource, Obje
             final StartElement rootElement = StaxUtils.getRootElement(xmlEventReader);
             portalDataKey = new PortalDataKey(rootElement);
         }
-        catch (XMLStreamException e) {
+        catch (Exception e) {
             if (this.options != null && !this.options.isIngoreNonDataFiles()) {
                 throw new RuntimeException("Failed to parse: " + input, e);
             }

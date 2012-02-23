@@ -38,19 +38,100 @@ public interface IPortalDataHandlerService {
     /**
      * Options that control behavior of batch import operations
      */
-    public interface BatchImportOptions {
+    public class BatchImportOptions extends BatchOptions {
+        private boolean recursive = true;
+        private boolean ignoreNonDataFiles = true;
+        
+        
+        public BatchImportOptions setRecursive(boolean recursive) {
+            this.recursive = recursive;
+            return this;
+        }
+        public BatchImportOptions setIgnoreNonDataFiles(boolean ignoreNonDataFiles) {
+            this.ignoreNonDataFiles = ignoreNonDataFiles;
+            return this;
+        }
+        
+        @Override
+        public BatchImportOptions setFailOnError(boolean failOnError) {
+            super.setFailOnError(failOnError);
+            return this;
+        }
+        @Override
+        public BatchImportOptions setLogDirectoryParent(File logDirectoryParent) {
+            super.setLogDirectoryParent(logDirectoryParent);
+            return this;
+        }
+        @Override
+        public BatchImportOptions setLogDirectoryParent(String logDirectoryParent) {
+            super.setLogDirectoryParent(logDirectoryParent);
+            return this;
+        }
         /**
          * @return defaults to true
          */
-        public boolean isRecursive();
+        public final boolean isRecursive() {
+            return this.recursive;
+        }
         /**
          * @return defaults to true
          */
-        public boolean isFailOnError();
+        public final boolean isIngoreNonDataFiles() {
+            return this.ignoreNonDataFiles;
+        }
+    }
+    /**
+     * Options that control behavior of batch export operations
+     */
+    public class BatchExportOptions extends BatchOptions {
+        @Override
+        public BatchExportOptions setFailOnError(boolean failOnError) {
+            super.setFailOnError(failOnError);
+            return this;
+        }
+        @Override
+        public BatchExportOptions setLogDirectoryParent(File logDirectoryParent) {
+            super.setLogDirectoryParent(logDirectoryParent);
+            return this;
+        }
+        @Override
+        public BatchExportOptions setLogDirectoryParent(String logDirectoryParent) {
+            super.setLogDirectoryParent(logDirectoryParent);
+            return this;
+        }
+    }
+    /**
+     * Options that control behavior of batch operations
+     */
+    public class BatchOptions {
+        private boolean failOnError = true;
+        private File logDirectoryParent = null;
+        
+        public BatchOptions setFailOnError(boolean failOnError) {
+            this.failOnError = failOnError;
+            return this;
+        }
+        public BatchOptions setLogDirectoryParent(File logDirectoryParent) {
+            this.logDirectoryParent = logDirectoryParent;
+            return this;
+        }
+        public BatchOptions setLogDirectoryParent(String logDirectoryParent) {
+            this.logDirectoryParent = new File(logDirectoryParent);
+            return this;
+        }
+
         /**
          * @return defaults to true
          */
-        public boolean isIngoreNonDataFiles();
+        public final boolean isFailOnError() {
+            return failOnError;
+        }
+        /**
+         * @return The directory to log the export to, if null a temp directory is used. 
+         */
+        public final File getLogDirectoryParent() {
+            return logDirectoryParent;
+        }
     }
     
     /**
@@ -117,15 +198,17 @@ public interface IPortalDataHandlerService {
      * 
      * @param typeIds TypeIds from {@link #getExportPortalDataTypes()} to export all data for
      * @param directory Directory to save exported data to
+     * @param options Optional set of options to better control the export
      */
-    public void exportAllDataOfType(Set<String> typeIds, File directory);
+    public void exportAllDataOfType(Set<String> typeIds, File directory, BatchExportOptions options);
     
     /**
      * Export all portal data for all data type and save it to the specified directory
      * 
      * @param directory Directory to save exported data to
+     * @param options Optional set of options to better control the export
      */
-    public void exportAllData(File directory);
+    public void exportAllData(File directory, BatchExportOptions options);
 
     /**
      * Delete the portal data for the specified type and id.

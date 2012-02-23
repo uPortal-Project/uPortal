@@ -19,10 +19,13 @@
 
 package org.jasig.portal.io.xml;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,10 +42,12 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -60,6 +65,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.DirectoryScanner;
+import org.jasig.portal.concurrency.CallableWithoutResult;
 import org.jasig.portal.utils.AntPatternFileFilter;
 import org.jasig.portal.utils.ConcurrentDirectoryScanner;
 import org.jasig.portal.utils.ResourceUtils;
@@ -81,23 +87,24 @@ import org.springframework.oxm.XmlMappingException;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.io.Files;
 
 /**
  * Pulls together {@link IPortalDataType}, {@link IDataUpgrader}, and {@link IDataImporter}
  * implementations to handle data upgrade, import, export and removal operations.
- * 
- * TODO better error handling, try to figure out what went wrong and provide a solution in the exception message
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
 @Service("portalDataHandlerService")
 public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, ResourceLoaderAware {
-
+    
 	/**
 	 * Tracks the base import directory to allow for easier to read logging when importing 
 	 */
 	private static final ThreadLocal<String> IMPORT_BASE_DIR = new ThreadLocal<String>();
+	
+	private static final String REPORT_FORMAT = "%s,%s,%.2fms\n";
     
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
@@ -327,6 +334,21 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         else {
             fileFilter = new AntPatternFileFilter(true, false, this.dataFileIncludes, this.dataFileExcludes);
         }
+
+        
+        //Determine the parent directory to log to
+        final File logDirectory = determineLogDirectory(options, "import");
+
+        //Setup reporting file
+        final File importReport = new File(logDirectory, "data-import.txt");
+        final PrintWriter reportWriter;
+        try {
+            reportWriter = new PrintWriter(new BufferedWriter(new FileWriter(importReport)));
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Failed to create FileWriter for: " + importReport, e);
+        }
+        
         
         //Convert directory to URI String to provide better logging output
     	final URI directoryUri = directory.toURI();
@@ -339,9 +361,9 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
 			this.directoryScanner.scanDirectoryNoResults(directory, fileFilter, fileProcessor);
 	        final long resourceCount = fileProcessor.getResourceCount();
 			logger.info("Found {} files to Import from: {}", resourceCount, directory);
-	        
+
+			//See if the import should fail on error
 	        final boolean failOnError = options != null ? options.isFailOnError() : true;
-	        final AtomicBoolean failed = new AtomicBoolean(false);
 	        
 	        //Map of files to import, grouped by type
 	        final ConcurrentMap<PortalDataKey, Queue<Resource>> dataToImport = fileProcessor.getDataToImport();
@@ -353,64 +375,88 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
 	                continue;
 	            }
 	
-	            final Queue<ImportFuture<?>> importFutures = new ConcurrentLinkedQueue<ImportFuture<?>>();
+	            final Queue<ImportFuture<?>> importFutures = new LinkedList<ImportFuture<?>>();
+	            final List<FutureHolder<?>> failedFutures = new LinkedList<FutureHolder<?>>();
 	            
 	            final int fileCount = files.size();
 	            logger.info("Importing {} files of type {}", fileCount, portalDataKey);
-	            
+                reportWriter.println(portalDataKey + "," + fileCount);
 	            
 	            for (final Resource file : files) {
 	                //Check for completed futures on every iteration, needed to fail as fast as possible on an import exception
-	                waitForFutures(importFutures, failed, failOnError, false);
+	                final List<FutureHolder<?>> newFailed = waitForFutures(importFutures, reportWriter, logDirectory, false);
+	                failedFutures.addAll(newFailed);
+	                
+	                final AtomicLong importTime = new AtomicLong(-1);
 	                
 	                //Create import task
-	                Callable<Object> task = new Callable<Object>() {
-	                    @Override
-	                    public Object call() {
+	                Callable<Object> task = new CallableWithoutResult() {
+                        @Override
+                        protected void callWithoutResult() {
 	                    	IMPORT_BASE_DIR.set(directoryUriStr);
+	                    	importTime.set(System.nanoTime());
 	                        try {
 	                        	importData(file, portalDataKey);
 	                        }
 	                        finally {
+	                            importTime.set(System.nanoTime() - importTime.get());
 	                        	IMPORT_BASE_DIR.remove();
 	                        }
-	                        return null;
 	                    }
 	                };
-	                
-	                //If fail on error wrap in exception handling task
-	                if (failOnError) {
-	                    task = new ErrorReportingCallable<Object>(importFutures, failed, task);
-	                }
-	                
-	                //If an exception has been reported stop immediately
-	                if (failOnError && failed.get()) {
-	                    break;
-	                }
 	                
 	                //Submit the import task
 	                final Future<?> importFuture = this.importExportThreadPool.submit(task);
 	                
-	                //Set a reference to the new future in the callable, needed for error handling
-	                if (task instanceof ErrorReportingCallable) {
-	                    ((ErrorReportingCallable)task).setSelf(importFuture);
-	                }
-	                
 	                //Add the future for tracking
-	                importFutures.offer(new ImportFuture(importFuture, file));
+	                importFutures.offer(new ImportFuture(importFuture, file, portalDataKey, importTime));
 	            }
 	            
 	            //Wait for all of the imports on of this type to complete
-	            waitForFutures(importFutures, failed, failOnError, true);
+	            final List<FutureHolder<?>> newFailed = waitForFutures(importFutures, reportWriter, logDirectory, true);
+                failedFutures.addAll(newFailed);
+                
+                if (failOnError && !failedFutures.isEmpty()) {
+                    throw new RuntimeException(failedFutures.size() + " " + portalDataKey + " entities failed to import.\n\n" +
+                    		"\tPer entity exception logs and a full report can be found in " + logDirectory + "\n");
+                }
+                
+                reportWriter.flush();
 	        }
 	        
 	        if (!dataToImport.isEmpty()) {
 	            throw new IllegalStateException("The following PortalDataKeys are not listed in the dataTypeImportOrder List: " + dataToImport.keySet());
 	        }
+	        
+	        logger.info("For a detailed report on the data import see " + importReport);
+        }
+        catch (InterruptedException e) {
+            throw new RuntimeException("Interrupted while waiting for entities to import", e);
         }
         finally {
+            IOUtils.closeQuietly(reportWriter);
         	IMPORT_BASE_DIR.remove();
         }
+    }
+
+    /**
+     * Determine directory to log import/export reports to
+     */
+    private File determineLogDirectory(final BatchOptions options, String operation) {
+        File logDirectoryParent = options != null ? options.getLogDirectoryParent() : null;
+        if (logDirectoryParent == null) {
+            logDirectoryParent = Files.createTempDir();
+        }
+        File logDirectory = new File(logDirectoryParent, "data-" + operation + "-reports");
+        try {
+            logDirectory = logDirectory.getCanonicalFile();
+            FileUtils.deleteDirectory(logDirectory);
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Failed to clean data-" + operation + " log directory: " + logDirectory, e);
+        }
+        logDirectory.mkdirs();
+        return logDirectory;
     }
 
     /* (non-Javadoc)
@@ -682,76 +728,85 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
     }
 
     @Override
-    public void exportAllDataOfType(Set<String> typeIds, File directory) {
+    public void exportAllDataOfType(Set<String> typeIds, File directory, BatchExportOptions options) {
         final Queue<ExportFuture<?>> exportFutures = new ConcurrentLinkedQueue<ExportFuture<?>>();
-        final boolean failOnError = true; //options != null ? options.isFailOnError() : true;
+        final boolean failOnError = options != null ? options.isFailOnError() : true;
         
-        final AtomicBoolean failed = new AtomicBoolean(false);
+        //Determine the parent directory to log to
+        final File logDirectory = determineLogDirectory(options, "export");
+
+        //Setup reporting file
+        final File exportReport = new File(logDirectory, "data-export.txt");
+        final PrintWriter reportWriter;
+        try {
+            reportWriter = new PrintWriter(new BufferedWriter(new FileWriter(exportReport)));
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Failed to create FileWriter for: " + exportReport, e);
+        }
+        
         try {
 	        for (final String typeId : typeIds) {
+	            final List<FutureHolder<?>> failedFutures = new LinkedList<FutureHolder<?>>();
+	            
 	            final File typeDir = new File(directory, typeId);
 	            logger.info("Adding all data of type {} to export queue: {}", typeId, typeDir);
+	            
+	            reportWriter.println(typeId + "," + typeDir);
 	            
 	            final Iterable<? extends IPortalData> dataForType = this.getPortalData(typeId);
 	            for (final IPortalData data : dataForType) {
 	                final String dataId = data.getDataId();
 	
 	                //Check for completed futures on every iteration, needed to fail as fast as possible on an import exception
-	                waitForFutures(exportFutures, failed, failOnError, false);
+	                final List<FutureHolder<?>> newFailed = waitForFutures(exportFutures, reportWriter, logDirectory, false);
+	                failedFutures.addAll(newFailed);
+	                
+	                final AtomicLong exportTime = new AtomicLong(-1);
 	                
 	                //Create export task
-	                Callable<Object> task = new Callable<Object>() {
-	                    @Override
-	                    public Object call() throws Exception {
-	                        exportData(typeId, dataId, typeDir);
-	                        return null;
+	                Callable<Object> task = new CallableWithoutResult() {
+                        @Override
+                        protected void callWithoutResult() {
+                            exportTime.set(System.nanoTime());
+                            try {
+                                exportData(typeId, dataId, typeDir);
+                            }
+                            finally {
+                                exportTime.set(System.nanoTime() - exportTime.get());
+                            }
 	                    }
 	                };
-	                
-	                //If failing on error add exception handling wrapper
-	                if (failOnError) {
-	                    task = new ErrorReportingCallable<Object>(exportFutures, failed, task);
-	                }
-	                
-	                //If an exception has been reported stop immediately
-	                if (failOnError && failed.get()) {
-	                    break;
-	                }
 	                
 	                //Submit the export task
 	                final Future<?> exportFuture = this.importExportThreadPool.submit(task);
 	                
-	                //Set a reference to the new future in the callable, needed for error handling
-	                if (task instanceof ErrorReportingCallable) {
-	                    ((ErrorReportingCallable)task).setSelf(exportFuture);
-	                }
-	                
 	                //Add the future for tracking
-	                final ExportFuture futureHolder = new ExportFuture(exportFuture, typeId, dataId);
+	                final ExportFuture futureHolder = new ExportFuture(exportFuture, typeId, dataId, exportTime);
 	                exportFutures.offer(futureHolder);
 	            }
 	            
-	            //If an exception has been reported stop immediately
-	            if (failOnError && failed.get()) {
-	                break;
-	            }
+	            final List<FutureHolder<?>> newFailed = waitForFutures(exportFutures, reportWriter, logDirectory, true);
+                failedFutures.addAll(newFailed);
+                
+                reportWriter.flush();
+                
+                if (failOnError && !failedFutures.isEmpty()) {
+                    throw new RuntimeException(failedFutures.size() + " " + typeId + " entities failed to export.\n" +
+                            "\tPer entity exception logs and a full report can be found in " + logDirectory);
+                }
 	        }
         }
-        catch (RuntimeException e) {
-        	if (!failed.getAndSet(true)) {
-        		throw new RuntimeException("Halted due to failures", e);
-        	}
-
-        	throw e;
+        catch (InterruptedException e) {
+            throw new RuntimeException("Interrupted while waiting for entities to export", e);
         }
         finally {
-	        //Wait for all futures to complete
-	        waitForFutures(exportFutures, failed, failOnError, true);
+            IOUtils.closeQuietly(reportWriter);
         }
     }
 
     @Override
-    public void exportAllData(File directory) {
+    public void exportAllData(File directory, BatchExportOptions options) {
     	final Set<IPortalDataType> portalDataTypes;
     	if (this.exportAllPortalDataTypes != null) {
     		portalDataTypes = this.exportAllPortalDataTypes;
@@ -764,7 +819,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
 		for (final IPortalDataType portalDataType : portalDataTypes) {
             typeIds.add(portalDataType.getTypeId());
         }
-        this.exportAllDataOfType(typeIds, directory);
+        this.exportAllDataOfType(typeIds, directory, options);
     }
 
     protected IDataExporter<Object> getPortalDataExporter(String typeId) {
@@ -797,35 +852,33 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
      * the failures. All completed futures are removed from the queue.
      * 
      * @param futures Queued futures to check for completeness
-     * @param failOnError If true and any {@link Future#get()} throws an exception all Futures in the Queue will be canceled and an exception will be thrown.
      * @param wait If true it will wait for all futures to complete, if false only check for completed futures
+     * @return a list of futures that either threw exceptions or timed out
      */
-    protected void waitForFutures(
-            final Queue<? extends FutureHolder<?>> futures, final AtomicBoolean failed,
-            final boolean failOnError, final boolean wait) {
+    protected List<FutureHolder<?>> waitForFutures(
+            final Queue<? extends FutureHolder<?>> futures,
+            final PrintWriter reportWriter, final File reportDirectory, 
+            final boolean wait) throws InterruptedException {
         
-        List<FutureHolder<?>> failedFutures = null;
+        final List<FutureHolder<?>> failedFutures = new LinkedList<FutureHolder<?>>();
         
         for (Iterator<? extends FutureHolder<?>> futuresItr = futures.iterator(); futuresItr.hasNext();) {
             final FutureHolder<?> futureHolder = futuresItr.next();
              
             //If waiting, or if not waiting but the future is already done do the get
             final Future<?> future = futureHolder.getFuture();
-            if (wait || failedFutures != null || (!wait && future.isDone())) {
+            if (wait || (!wait && future.isDone())) {
                 try {
                     //Don't bother doing a get() on canceled futures
                     if (!future.isCancelled()) {
-                        //If there has been an exception and the future isn't done try canceling it
-                        if (failed.get() && !future.isDone()) {
-                            future.cancel(true);
-                        }
-                        
                         if (this.maxWait > 0) {
                             future.get(this.maxWait, this.maxWaitTimeUnit);
                         }
                         else {
                             future.get();
                         }
+                        
+                        reportWriter.printf(REPORT_FORMAT, "SUCCESS", futureHolder.getDescription(), futureHolder.getExecutionTimeMillis());
                     }
                     
                     futuresItr.remove();
@@ -833,113 +886,104 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
                 catch (CancellationException e) {
                     //Ignore cancellation exceptions
                 }
-                catch (Exception e) {
-                    futuresItr.remove();
+                catch (ExecutionException e) {
+                    logger.error("Failed: " + futureHolder);
                     
-                    if (failOnError) {
-                        //If this is the first exception reset the iterator to the start of the futures list
-                        if (failedFutures == null) {
-                            //Reset the iterator since we now need to wait for ALL futures to complete
-                            futuresItr = futures.iterator();
-                            
-                            //Create List used to track failed imports
-                            failedFutures = new LinkedList<FutureHolder<?>>();
+                    futureHolder.setError(e);
+                    failedFutures.add(futureHolder);
+                    reportWriter.printf(REPORT_FORMAT, "FAIL", futureHolder.getDescription(), futureHolder.getExecutionTimeMillis());
+
+                    try {
+                        final String dataReportName = SafeFilenameUtils.makeSafeFilename(futureHolder.getDataType() + "_" + futureHolder.getDataName() + ".txt");
+                        final File dataReportFile = new File(reportDirectory, dataReportName);
+                        final PrintWriter dataReportWriter = new PrintWriter(new BufferedWriter(new FileWriter(dataReportFile)));
+                        try {
+                            dataReportWriter.println("FAIL: " + futureHolder.getDataType() + " - " + futureHolder.getDataName());
+                            dataReportWriter.println("--------------------------------------------------------------------------------");
+                            e.getCause().printStackTrace(dataReportWriter);
                         }
-                        
-                        //Add resource to the list of failed tasks 
-                        failedFutures.add(futureHolder);
-                        
-                        //Log the import error
-                        this.logger.error("Exception while " + futureHolder, e);
-                    }
-                    else {
-                        if (this.logger.isDebugEnabled()) {
-                            this.logger.warn("Exception while '" + futureHolder + "', file will be ignored" , e);
-                        }
-                        else {
-                            this.logger.warn("Exception while '{}', file will be ignored: {}", futureHolder, e.getCause().getMessage());
+                        finally {
+                            IOUtils.closeQuietly(dataReportWriter);
                         }
                     }
+                    catch (Exception re) {
+                        logger.warn("Failed to write error report for failed " + futureHolder + ", logging root failure here", e.getCause());
+                    }
+                }
+                catch (TimeoutException e) {
+                    logger.warn("Failed: " + futureHolder);
+                    
+                    futureHolder.setError(e);
+                    failedFutures.add(futureHolder);
+                    future.cancel(true);
+                    reportWriter.printf(REPORT_FORMAT, "TIMEOUT", futureHolder.getDescription(), futureHolder.getExecutionTimeMillis());
                 }
             }
         }
         
-        //If any of the Futures threw an exception report details and fail
-        if (failedFutures != null) {
-            final StringBuilder msg = new StringBuilder("Halted due to ").append(failedFutures.size()).append(" failures, see previous exceptions for causes.\n");
-            for (final FutureHolder<?> failedResource : failedFutures) {
-                msg.append("\t").append(failedResource.getDescription()).append("\n");
-            }
-             
-            throw new RuntimeException(msg.toString());
-        }
-    }
-    
-    private static final class ErrorReportingCallable<T> implements Callable<T> {
-        private final Queue<? extends FutureHolder<?>> futures;
-        private final AtomicBoolean failed;
-        private final Callable<T> delegate;
-        private volatile Future<T> self;
-
-        public ErrorReportingCallable(Queue<? extends FutureHolder<?>> futures, AtomicBoolean failed, Callable<T> delegate) {
-            this.futures = futures;
-            this.failed = failed;
-            this.delegate = delegate;
-        }
-
-        /**
-         * The future that is running this Callable
-         */
-        public void setSelf(Future<T> self) {
-            this.self = self;
-        }
-
-        @Override
-        public T call() throws Exception {
-            try {
-                return this.delegate.call();
-            }
-            catch (Exception e) {
-                if (!this.failed.getAndSet(true)) {
-                    //If this is the first failure immediately cancel all futures (except self)
-                    for (final FutureHolder<?> futureHolder : this.futures) {
-                        final Future<?> future = futureHolder.getFuture();
-                        if (future != self && !future.isDone()) {
-                            future.cancel(true);
-                        }
-                    }
-                }
-                
-                throw e;
-            }
-        }
+        return failedFutures;
     }
     
     private static abstract class FutureHolder<T> {
         private final Future<T> future;
+        private final AtomicLong time;
+        private Exception error;
 
-        public FutureHolder(Future<T> future) {
+        public FutureHolder(Future<T> future, AtomicLong time) {
             this.future = future;
+            this.time = time;
         }
 
         public Future<T> getFuture() {
             return this.future;
         }
         
+        public double getExecutionTimeMillis() {
+            final long t = time.get();
+            if (!future.isDone()) {
+                return System.nanoTime() - t;
+            }
+            return t / 1000000.0;
+        }
+        
+        public Exception getError() {
+            return error;
+        }
+
+        public void setError(Exception error) {
+            this.error = error;
+        }
+
         public abstract String getDescription();
+        
+        public abstract String getDataType();
+        
+        public abstract String getDataName();
     }
     
     private static class ImportFuture<T> extends FutureHolder<T> {
         private final Resource resource;
+        private final PortalDataKey dataKey;
 
-        public ImportFuture(Future<T> future, Resource resource) {
-            super(future);
+        public ImportFuture(Future<T> future, Resource resource, PortalDataKey dataKey, AtomicLong importTime) {
+            super(future, importTime);
             this.resource = resource;
+            this.dataKey = dataKey;
         }
 
         @Override
         public String getDescription() {
             return this.resource.getDescription();
+        }
+        
+        @Override
+        public String getDataType() {
+            return dataKey.getName().getLocalPart();
+        }
+
+        @Override
+        public String getDataName() {
+            return this.resource.getFilename();
         }
 
         @Override
@@ -952,8 +996,8 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         private final String typeId;
         private final String dataId;
 
-        public ExportFuture(Future<T> future, String typeId, String dataId) {
-            super(future);
+        public ExportFuture(Future<T> future, String typeId, String dataId, AtomicLong exportTime) {
+            super(future, exportTime);
             this.typeId = typeId;
             this.dataId = dataId;
         }
@@ -961,6 +1005,16 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         @Override
         public String getDescription() {
             return "type=" + this.typeId + ", dataId=" + this.dataId;
+        }
+        
+        @Override
+        public String getDataType() {
+            return this.typeId;
+        }
+
+        @Override
+        public String getDataName() {
+            return this.dataId;
         }
 
         @Override

@@ -27,203 +27,203 @@
  +-->
 <project name="uPortal" default="help" basedir="." xmlns:up="urn:up-util-ant" xmlns:artifact="urn:maven-artifact-ant">
 
-    <!--
+	<!--
      | Determine if a named environment has been specified in the command.  
      | Examples:  dev, test, prod, local, etc.
      +-->
-    <condition property="environment.token" value="${env}">
-        <isset property="env" />
-    </condition>
-    <property name="environment.token" value="local" />
+	<condition property="environment.token" value="${env}">
+		<isset property="env" />
+	</condition>
+	<property name="environment.token" value="local" />
 
-    <fail message="filters/${environment.token}.properties does not exist, please copy local.properties and fill in your settings.">
-        <condition>
-            <not>
-                <available file="${basedir}/filters/${environment.token}.properties" />
-            </not>
-        </condition>
-    </fail>
+	<fail message="filters/${environment.token}.properties does not exist, please copy local.properties and fill in your settings.">
+		<condition>
+			<not>
+				<available file="${basedir}/filters/${environment.token}.properties" />
+			</not>
+		</condition>
+	</fail>
 
-    <!--
+	<!--
      | Load the build properties before the next fail tests since they check properties provided
      | by the file.
      +-->
-    <property environment="env" />
-    <property file="${basedir}/filters/${environment.token}.properties" />
-    <property file="${basedir}/build.properties" />
+	<property environment="env" />
+	<property file="${basedir}/filters/${environment.token}.properties" />
+	<property file="${basedir}/build.properties" />
+	<property name="targetdir" value="${basedir}/target"/>
 
-    <!--
+	<!--
      | Setup temp directories
      +-->
-    <property name="jasig.tmpdir" value="${java.io.tmpdir}/jasig" />
-    <mkdir dir="${jasig.tmpdir}" />
-    <chmod type="dir" dir="${jasig.tmpdir}" perm="ugo+rxws" />
+	<property name="jasig.tmpdir" value="${targetdir}/tmp" />
+	<mkdir dir="${jasig.tmpdir}" />
 
-    <tempfile property="parentPomInstallMarker.file" destdir="${jasig.tmpdir}" prefix="uportal-parent.pom-" suffix="-marker" deleteonexit="true"/>
+	<tempfile property="parentPomInstallMarker.file" destdir="${jasig.tmpdir}" prefix="uportal-parent.pom-" suffix="-marker" deleteonexit="true" />
 
-    <!-- PortalShell Script File for run -->
-    <tempfile property="portal-shell-script" destdir="${jasig.tmpdir}" prefix="upshell_" suffix=".groovy" deleteonexit="true"/>
+	<!-- PortalShell Script File for run -->
+	<tempfile property="portal-shell-script" destdir="${jasig.tmpdir}" prefix="upshell_" suffix=".groovy" deleteonexit="true" />
 
-    <!--
+	<!--
      | Define maven.home and maven.settings variables if they are not set
      +-->
-    <condition property="maven.home" value="${env.M2_HOME}">
-        <and>
-            <not>
-                <isset property="maven.home"/>
-            </not>
-            <available file="${env.M2_HOME}"/>
-        </and>
-    </condition>
-    <fail message="maven.home=${maven.home} does not exist.${line.separator}Either set maven.home in build.properties or set the M2_HOME environment variable.">
-        <condition>
-            <not>
-                <available file="${maven.home}" />
-            </not>
-        </condition>
-    </fail>
+	<condition property="maven.home" value="${env.M2_HOME}">
+		<and>
+			<not>
+				<isset property="maven.home" />
+			</not>
+			<available file="${env.M2_HOME}" />
+		</and>
+	</condition>
+	<fail message="maven.home=${maven.home} does not exist.${line.separator}Either set maven.home in build.properties or set the M2_HOME environment variable.">
+		<condition>
+			<not>
+				<available file="${maven.home}" />
+			</not>
+		</condition>
+	</fail>
 
-    <condition property="maven.settings" value="${user.home}/.ant/settings.xml">
-        <and>
-            <not>
-                <isset property="maven.settings"/>
-            </not>
-            <available file="${user.home}/.ant/settings.xml"/>
-        </and>
-    </condition>
-    <condition property="maven.settings" value="${user.home}/.m2/settings.xml">
-        <and>
-            <not>
-                <isset property="maven.settings"/>
-            </not>
-            <available file="${user.home}/.m2/settings.xml"/>
-        </and>
-    </condition>
-    <condition property="maven.settings" value="${maven.home}/conf/settings.xml">
-        <and>
-            <not>
-                <isset property="maven.settings"/>
-            </not>
-            <available file="${maven.home}/conf/settings.xml"/>
-        </and>
-    </condition>
-    <fail message="maven.settings=${maven.settings} does not exist.${line.separator}Either set maven.settings in build.properties or ensure one of the following files exist:${line.separator}    - ${user.home}/.ant/settings.xml${line.separator}    - ${user.home}/.m2/settings.xml${line.separator}    - ${maven.home}/conf/settings.xml">
-        <condition>
-            <not>
-                <available file="${maven.settings}" />
-            </not>
-        </condition>
-    </fail>
+	<condition property="maven.settings" value="${user.home}/.ant/settings.xml">
+		<and>
+			<not>
+				<isset property="maven.settings" />
+			</not>
+			<available file="${user.home}/.ant/settings.xml" />
+		</and>
+	</condition>
+	<condition property="maven.settings" value="${user.home}/.m2/settings.xml">
+		<and>
+			<not>
+				<isset property="maven.settings" />
+			</not>
+			<available file="${user.home}/.m2/settings.xml" />
+		</and>
+	</condition>
+	<condition property="maven.settings" value="${maven.home}/conf/settings.xml">
+		<and>
+			<not>
+				<isset property="maven.settings" />
+			</not>
+			<available file="${maven.home}/conf/settings.xml" />
+		</and>
+	</condition>
+	<fail message="maven.settings=${maven.settings} does not exist.${line.separator}Either set maven.settings in build.properties or ensure one of the following files exist:${line.separator}    - ${user.home}/.ant/settings.xml${line.separator}    - ${user.home}/.m2/settings.xml${line.separator}    - ${maven.home}/conf/settings.xml">
+		<condition>
+			<not>
+				<available file="${maven.settings}" />
+			</not>
+		</condition>
+	</fail>
 
-    <!--
+	<!--
      | Properties that describe the maven project
      +-->
-    <property name="bootstrap.dir" value="${basedir}/bootstrap" />
-    <property name="uportal-search-api.dir" value="${basedir}/uportal-search-api" />
-    <property name="uportal-war.dir" value="${basedir}/uportal-war" />
-    <property name="uportal-portlets-overlay.dir" value="${basedir}/uportal-portlets-overlay" />
-    <property name="uportal-ear.dir" value="${basedir}/uportal-ear" />
+	<property name="bootstrap.dir" value="${basedir}/bootstrap" />
+	<property name="uportal-search-api.dir" value="${basedir}/uportal-search-api" />
+	<property name="uportal-war.dir" value="${basedir}/uportal-war" />
+	<property name="uportal-portlets-overlay.dir" value="${basedir}/uportal-portlets-overlay" />
+	<property name="uportal-ear.dir" value="${basedir}/uportal-ear" />
 
-    <import file="${bootstrap.dir}/build_includes.xml" />
+	<import file="${bootstrap.dir}/build_includes.xml" />
 
 
-    <!-- ============================== Public Targets ============================== -->
+	<!-- ============================== Public Targets ============================== -->
 
-    <target name="help" description="Prints information about using this ant build file.">
-        <loadfile property="helpMessage" srcFile="docs/antHelp.txt" />
-        <echo message="${helpMessage}" />
-    </target>
+	<target name="help" description="Prints information about using this ant build file.">
+		<loadfile property="helpMessage" srcFile="docs/antHelp.txt" />
+		<echo message="${helpMessage}" />
+	</target>
 
-    <target name="initportal" depends="prodPrompt" description="Runs all the targets necessary to deploy the portal and prepare the portal database">
-        <echo message="Initializing uPortal" />
-        <antcall target="deploy-ear">
-            <param name="removeExisting" value="true" />
-        </antcall>
-        <antcall target="initdb" />
-        <echo message="Finished initializing uPortal" />
-    </target>
+	<target name="initportal" depends="prodPrompt" description="Runs all the targets necessary to deploy the portal and prepare the portal database">
+		<echo message="Initializing uPortal" />
+		<antcall target="deploy-ear">
+			<param name="removeExisting" value="true" />
+		</antcall>
+		<antcall target="initdb" />
+		<echo message="Finished initializing uPortal" />
+	</target>
 
-    <target name="initdb" depends="prodPrompt" description="Drops all tables, then runs all the targets necessary prepare the portal database">
-        <echo message="Initializing database" />
-        <up-shell-batch>
-            <antcall target="db" />
-            <antcall target="db-hibernate" />
-            <antcall target="db-import" />
-        </up-shell-batch>
-        <echo message="Finished initializing database" />
-    </target>
+	<target name="initdb" depends="prodPrompt" description="Drops all tables, then runs all the targets necessary prepare the portal database">
+		<echo message="Initializing database" />
+		<up-shell-batch>
+			<antcall target="db" />
+			<antcall target="db-hibernate" />
+			<antcall target="db-import" />
+		</up-shell-batch>
+		<echo message="Finished initializing database" />
+	</target>
 
-    <target name="db-ddl" depends="prodPrompt" description="Create a SQL script of commands to drop and create the uPortal database">
-    	<fail unless="ddlFile">
+	<target name="db-ddl" depends="prodPrompt" description="Create a SQL script of commands to drop and create the uPortal database">
+		<fail unless="ddlFile">
             You must specify a 'ddlFile' parameter (-DddlFile={uPortal.ddl})
         </fail>
 
-    	<tempfile property="db-ddl-file" destdir="${basedir}/target" prefix="db-ddl." suffix=".sql"/>
-		<tempfile property="db-hibernate-portal-ddl-file" destdir="${basedir}/target" prefix="db-hibernate-portal-ddl." suffix=".sql"/>
-        <tempfile property="db-hibernate-aggr-events-ddl-file" destdir="${basedir}/target" prefix="db-hibernate-aggr-events-ddl." suffix=".sql"/>
-        <tempfile property="db-hibernate-raw-events-ddl-file" destdir="${basedir}/target" prefix="db-hibernate-raw-events-ddl." suffix=".sql"/>
+		<tempfile property="db-ddl-file" destdir="${targetdir}" prefix="db-ddl." suffix=".sql" />
+		<tempfile property="db-hibernate-portal-ddl-file" destdir="${targetdir}" prefix="db-hibernate-portal-ddl." suffix=".sql" />
+		<tempfile property="db-hibernate-aggr-events-ddl-file" destdir="${targetdir}" prefix="db-hibernate-aggr-events-ddl." suffix=".sql" />
+		<tempfile property="db-hibernate-raw-events-ddl-file" destdir="${targetdir}" prefix="db-hibernate-raw-events-ddl." suffix=".sql" />
 
-        <echo message="Creating database DDL and writing to ${ddlFile}" />
-    	<up-shell-batch>
-    	    <mkdir dir="${basedir}/target" />
-            <antcall target="db">
-                <param name="scriptfile" value="${db-ddl-file}" />
-        	</antcall>
-    		
-            <antcall target="db-hibernate-portal">
-    			<param name="export" value="false" />
-                <param name="outputFile" value="${db-hibernate-portal-ddl-file}" />
-            </antcall>
-            
-            <antcall target="db-hibernate-raw-events">
-                <param name="export" value="false" />
-                <param name="outputFile" value="${db-hibernate-raw-events-ddl-file}" />
-            </antcall>
-                    
-            <antcall target="db-hibernate-aggr-events">
-                <param name="export" value="false" />
-                <param name="outputFile" value="${db-hibernate-aggr-events-ddl-file}" />
-            </antcall>
-        </up-shell-batch>
-        
-        <concat destfile="${ddlFile}" fixlastline="yes">
-            <fileset file="${db-ddl-file}" />
-            <fileset file="${db-hibernate-portal-ddl-file}" />
-            <fileset file="${db-hibernate-raw-events-ddl-file}" />
-            <fileset file="${db-hibernate-aggr-events-ddl-file}" />
-        </concat>
-    	
-        <echo message="Finished creating database DDL: ${ddlFile}" />
-    </target>
+		<echo message="Creating database DDL and writing to ${ddlFile}" />
+		<up-shell-batch>
+			<mkdir dir="${targetdir}" />
+			<antcall target="db">
+				<param name="scriptfile" value="${db-ddl-file}" />
+			</antcall>
 
-    <target name="db-hibernate" depends="prodPrompt" description="Drops then creates Hibernate managed tables">
-        <up-shell-batch>
-            <antcall target="db-hibernate-portal" />
-            <antcall target="db-hibernate-raw-events" />
-        	<antcall target="db-hibernate-aggr-events" />
-        </up-shell-batch>
-    </target>
+			<antcall target="db-hibernate-portal">
+				<param name="export" value="false" />
+				<param name="outputFile" value="${db-hibernate-portal-ddl-file}" />
+			</antcall>
 
-    <target name="db-hibernate-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for both the portal and event schemas">
-        <up-shell-batch>
-            <antcall target="db-hibernate-portal-update" />
-        	<antcall target="db-hibernate-raw-events-update" />
-            <antcall target="db-hibernate-aggr-events-update" />
-        </up-shell-batch>
-    </target>
+			<antcall target="db-hibernate-raw-events">
+				<param name="export" value="false" />
+				<param name="outputFile" value="${db-hibernate-raw-events-ddl-file}" />
+			</antcall>
 
-    <target name="db-hibernate-portal" depends="prodPrompt" description="Drops then creates Hibernate managed tables for the portal">
-        <property name="schemaExportBean" value="portalDbHibernateExport" />
-        <property name="export" value="true" />
-        <property name="drop" value="true" />
-        <property name="create" value="true" />
-        <property name="outputFile" value="null" />
-        <property name="haltOnError" value="true" />
+			<antcall target="db-hibernate-aggr-events">
+				<param name="export" value="false" />
+				<param name="outputFile" value="${db-hibernate-aggr-events-ddl-file}" />
+			</antcall>
+		</up-shell-batch>
 
-        <groovy-safe-path property="outputFileEscaped" input="${outputFile}"/>
+		<concat destfile="${ddlFile}" fixlastline="yes">
+			<fileset file="${db-ddl-file}" />
+			<fileset file="${db-hibernate-portal-ddl-file}" />
+			<fileset file="${db-hibernate-raw-events-ddl-file}" />
+			<fileset file="${db-hibernate-aggr-events-ddl-file}" />
+		</concat>
 
-        <echo>Creating HBM2DDL Script</echo>
-        <echo file="${portal-shell-script}" append="true">
+		<echo message="Finished creating database DDL: ${ddlFile}" />
+	</target>
+
+	<target name="db-hibernate" depends="prodPrompt" description="Drops then creates Hibernate managed tables">
+		<up-shell-batch>
+			<antcall target="db-hibernate-portal" />
+			<antcall target="db-hibernate-raw-events" />
+			<antcall target="db-hibernate-aggr-events" />
+		</up-shell-batch>
+	</target>
+
+	<target name="db-hibernate-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for both the portal and event schemas">
+		<up-shell-batch>
+			<antcall target="db-hibernate-portal-update" />
+			<antcall target="db-hibernate-raw-events-update" />
+			<antcall target="db-hibernate-aggr-events-update" />
+		</up-shell-batch>
+	</target>
+
+	<target name="db-hibernate-portal" depends="prodPrompt" description="Drops then creates Hibernate managed tables for the portal">
+		<property name="schemaExportBean" value="portalDbHibernateExport" />
+		<property name="export" value="true" />
+		<property name="drop" value="true" />
+		<property name="create" value="true" />
+		<property name="outputFile" value="null" />
+		<property name="haltOnError" value="true" />
+
+		<groovy-safe-path property="outputFileEscaped" input="${outputFile}" />
+
+		<echo>Creating HBM2DDL Script</echo>
+		<echo file="${portal-shell-script}" append="true">
 //HBM2DDL Script
 try {
 	schemaExportBean = '${schemaExportBean}';
@@ -244,21 +244,21 @@ catch (Exception e) {
 }
         </echo>
 
-        <antcall target="up-shell">
-            <param name="script" value="${portal-shell-script}"/>
-        </antcall>
-    </target>
-	
-    <target name="db-hibernate-portal-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for the portal schema">
-        <property name="schemaExportBean" value="portalDbHibernateExport" />
-        <property name="export" value="true" />
-        <property name="outputFile" value="null" />
-        <property name="haltOnError" value="true" />
+		<antcall target="up-shell">
+			<param name="script" value="${portal-shell-script}" />
+		</antcall>
+	</target>
 
-        <groovy-safe-path property="outputFileEscaped" input="${outputFile}" />
+	<target name="db-hibernate-portal-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for the portal schema">
+		<property name="schemaExportBean" value="portalDbHibernateExport" />
+		<property name="export" value="true" />
+		<property name="outputFile" value="null" />
+		<property name="haltOnError" value="true" />
 
-        <echo>Creating HBM2DDL Update Script</echo>
-        <echo file="${portal-shell-script}" append="true">
+		<groovy-safe-path property="outputFileEscaped" input="${outputFile}" />
+
+		<echo>Creating HBM2DDL Update Script</echo>
+		<echo file="${portal-shell-script}" append="true">
 //HBM2DDL Update Script
 try {
     schemaExportBean = '${schemaExportBean}';
@@ -277,69 +277,69 @@ catch (Exception e) {
 }
         </echo>
 
-        <antcall target="up-shell">
-            <param name="script" value="${portal-shell-script}" />
-        </antcall>
-    </target>
+		<antcall target="up-shell">
+			<param name="script" value="${portal-shell-script}" />
+		</antcall>
+	</target>
 
-    <target name="db-hibernate-stats" depends="prodPrompt">
-        <echo level="warning">DEPRECATED: Use db-hibernate-raw-events and db-hibernate-aggr-events instead</echo>
-        <up-shell-batch>
-            <antcall target="db-hibernate-raw-events" />
-            <antcall target="db-hibernate-aggr-events" />
-        </up-shell-batch>
-    </target>
-	
-    <target name="db-hibernate-stats-update" depends="prodPrompt">
-    	<echo level="warning">DEPRECATED: Use db-hibernate-raw-events-update and db-hibernate-aggr-events-update instead</echo>
-        <up-shell-batch>
-            <antcall target="db-hibernate-raw-events-update" />
-            <antcall target="db-hibernate-aggr-events-update" />
-        </up-shell-batch>
-    </target>
+	<target name="db-hibernate-stats" depends="prodPrompt">
+		<echo level="warning">DEPRECATED: Use db-hibernate-raw-events and db-hibernate-aggr-events instead</echo>
+		<up-shell-batch>
+			<antcall target="db-hibernate-raw-events" />
+			<antcall target="db-hibernate-aggr-events" />
+		</up-shell-batch>
+	</target>
 
-    <target name="db-hibernate-raw-events" depends="prodPrompt" description="Drops then creates Hibernate managed tables used for raw portal event storage">
-        <antcall target="db-hibernate-portal">
-            <param name="schemaExportBean" value="rawEventsDbHibernateExport" />
-            <param name="haltOnError" value="false" />
-        </antcall>
-    </target>
-    
-    <target name="db-hibernate-raw-events-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for raw portal event storage">
-        <antcall target="db-hibernate-portal-update">
-            <param name="schemaExportBean" value="rawEventsDbHibernateExport" />
-            <param name="haltOnError" value="false" />
-        </antcall>
-    </target>
-            	
-    <target name="db-hibernate-aggr-events" depends="prodPrompt" description="Drops then creates Hibernate managed tables used for aggregate portal event storage">
-        <antcall target="db-hibernate-portal">
-            <param name="schemaExportBean" value="aggrEventsDbHibernateExport" />
-            <param name="haltOnError" value="false" />
-        </antcall>
-    </target>
-    
-    <target name="db-hibernate-aggr-events-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for aggregate portal event storage">
-        <antcall target="db-hibernate-portal-update">
-            <param name="schemaExportBean" value="aggrEventsDbHibernateExport" />
-            <param name="haltOnError" value="false" />
-        </antcall>
-    </target>
+	<target name="db-hibernate-stats-update" depends="prodPrompt">
+		<echo level="warning">DEPRECATED: Use db-hibernate-raw-events-update and db-hibernate-aggr-events-update instead</echo>
+		<up-shell-batch>
+			<antcall target="db-hibernate-raw-events-update" />
+			<antcall target="db-hibernate-aggr-events-update" />
+		</up-shell-batch>
+	</target>
 
-    <target name="db" depends="prodPrompt" description="Loads legacy database tables and data. See: initdb">
-        <property name="tablefile" value="/properties/db/tables.xml" />
-        <property name="datafile" value="/properties/db/data.xml" />
-        <property name="scriptfile" value="null" />
-        <property name="droptables" value="true" />
-        <property name="createtables" value="true" />
-        <property name="populatetables" value="true" />
+	<target name="db-hibernate-raw-events" depends="prodPrompt" description="Drops then creates Hibernate managed tables used for raw portal event storage">
+		<antcall target="db-hibernate-portal">
+			<param name="schemaExportBean" value="rawEventsDbHibernateExport" />
+			<param name="haltOnError" value="false" />
+		</antcall>
+	</target>
 
-        <groovy-safe-path property="tablefileEscaped" input="${tablefile}"/>
-        <groovy-safe-path property="datafileEscaped" input="${datafile}"/>
-        <groovy-safe-path property="scriptfileEscaped" input="${scriptfile}"/>
+	<target name="db-hibernate-raw-events-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for raw portal event storage">
+		<antcall target="db-hibernate-portal-update">
+			<param name="schemaExportBean" value="rawEventsDbHibernateExport" />
+			<param name="haltOnError" value="false" />
+		</antcall>
+	</target>
 
-        <echo>Creating DBLoader Script</echo>
-        <echo file="${portal-shell-script}" append="true">
+	<target name="db-hibernate-aggr-events" depends="prodPrompt" description="Drops then creates Hibernate managed tables used for aggregate portal event storage">
+		<antcall target="db-hibernate-portal">
+			<param name="schemaExportBean" value="aggrEventsDbHibernateExport" />
+			<param name="haltOnError" value="false" />
+		</antcall>
+	</target>
+
+	<target name="db-hibernate-aggr-events-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for aggregate portal event storage">
+		<antcall target="db-hibernate-portal-update">
+			<param name="schemaExportBean" value="aggrEventsDbHibernateExport" />
+			<param name="haltOnError" value="false" />
+		</antcall>
+	</target>
+
+	<target name="db" depends="prodPrompt" description="Loads legacy database tables and data. See: initdb">
+		<property name="tablefile" value="/properties/db/tables.xml" />
+		<property name="datafile" value="/properties/db/data.xml" />
+		<property name="scriptfile" value="null" />
+		<property name="droptables" value="true" />
+		<property name="createtables" value="true" />
+		<property name="populatetables" value="true" />
+
+		<groovy-safe-path property="tablefileEscaped" input="${tablefile}" />
+		<groovy-safe-path property="datafileEscaped" input="${datafile}" />
+		<groovy-safe-path property="scriptfileEscaped" input="${scriptfile}" />
+
+		<echo>Creating DBLoader Script</echo>
+		<echo file="${portal-shell-script}" append="true">
 try {
     //DbLoader Script
     logger.info('');
@@ -369,143 +369,143 @@ catch (Exception e) {
 }
         </echo>
 
-        <antcall target="up-shell">
-            <param name="script" value="${portal-shell-script}"/>
-        </antcall>
-    </target>
+		<antcall target="up-shell">
+			<param name="script" value="${portal-shell-script}" />
+		</antcall>
+	</target>
 
-    <target name="db-import-required" depends="prodPrompt" description="Imports the required data files to the database">
-        <up-shell-batch>
-            <antcall target="data-import">
-                <param name="dir" value="${basedir}/uportal-war/src/main/data/required_entities" />
-            </antcall>
-        </up-shell-batch>
-    </target>
-
-    <target name="db-import-default" depends="prodPrompt" description="Imports the default data files to the database">
-        <!-- Use build.properties to override the entities.location setting -->
-        <property name="default_entities.location" value="uportal-war/src/main/data/default_entities" />
-
-        <up-shell-batch>
-            <antcall target="data-import">
-                <param name="dir" value="${basedir}/${default_entities.location}" />
-            </antcall>
-        </up-shell-batch>
-    </target>
-
-    <target name="db-import-quickstart" depends="prodPrompt" description="Imports the quickstart data files to the database">
-        <!-- Use build.properties to override the entities.location setting -->
-        <property name="quickstart_entities.location" value="uportal-war/src/main/data/quickstart_entities" />
-
-        <up-shell-batch>
-            <antcall target="data-import">
-                <param name="dir" value="${basedir}/${quickstart_entities.location}" />
-            </antcall>
-        </up-shell-batch>
-    </target>
-
-    <target name="db-import" depends="prodPrompt" description="Imports the default XML files to the database">
-    	<up-shell-batch>
-            <antcall target="db-import-required"/>
-    		
-    		<if>
-    		    <not>
-    			    <isset property="noDefaultData"/>
-		    	</not>
-		    	<then>
-    			   <antcall target="db-import-default"/>
-	    		</then>
-			</if>
-            
-            <if>
-                <not>
-                    <isset property="noQuickstartData"/>
-                </not>
-                <then>
-                   <antcall target="db-import-quickstart"/>
-                </then>
-            </if>
+	<target name="db-import-required" depends="prodPrompt" description="Imports the required data files to the database">
+		<up-shell-batch>
+			<antcall target="data-import">
+				<param name="dir" value="${basedir}/uportal-war/src/main/data/required_entities" />
+			</antcall>
 		</up-shell-batch>
-    </target>
+	</target>
 
-    <target name="dbtest" description="Displays information about the database defined in rdbm.properties">
-        <uportal-war-macro>
-            <echo message="Invoking DbTest" />
-            <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.tools.DbTest">
-                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+	<target name="db-import-default" depends="prodPrompt" description="Imports the default data files to the database">
+		<!-- Use build.properties to override the entities.location setting -->
+		<property name="default_entities.location" value="uportal-war/src/main/data/default_entities" />
 
-                <classpath refid="uportal-war-full.classpath" />
-            </java>
-        </uportal-war-macro>
-    </target>
+		<up-shell-batch>
+			<antcall target="data-import">
+				<param name="dir" value="${basedir}/${default_entities.location}" />
+			</antcall>
+		</up-shell-batch>
+	</target>
 
-    <target name="regchantype" depends="prodPrompt" description="Registers a new channel type">
-        <uportal-war-macro>
-            <property name="class" value=" " />
-            <property name="name" value=" " />
-            <property name="description" value=" " />
-            <property name="uri" value=" " />
+	<target name="db-import-quickstart" depends="prodPrompt" description="Imports the quickstart data files to the database">
+		<!-- Use build.properties to override the entities.location setting -->
+		<property name="quickstart_entities.location" value="uportal-war/src/main/data/quickstart_entities" />
 
-            <echo message="Invoking RegisterChannelType" />
-            <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterChannelType">
-                <classpath refid="uportal-war-full.classpath" />
+		<up-shell-batch>
+			<antcall target="data-import">
+				<param name="dir" value="${basedir}/${quickstart_entities.location}" />
+			</antcall>
+		</up-shell-batch>
+	</target>
 
-                <arg value="${class}" />
-                <arg value="${name}" />
-                <arg value="${description}" />
-                <arg value="${uri}" />
-            </java>
-        </uportal-war-macro>
-    </target>
+	<target name="db-import" depends="prodPrompt" description="Imports the default XML files to the database">
+		<up-shell-batch>
+			<antcall target="db-import-required" />
 
-    <target name="up-shell" description="Run a uPortal Groovy Shell. Interactive or scripted using -Dscript=">
-        <if>
-            <not>
-                <istrue value="${skip-up-shell-execution}"/>
-            </not>
-            <then>
-                <uportal-war-macro>
-                    <if>
-                        <and>
-                            <isset property="script" />
-                        </and>
-                        <then>
-                            <trycatch>
-                                 <try>
-                                    <!-- Invoke import/export tool -->
-                                    <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.shell.PortalShell">
-                                        <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
-                                        <classpath refid="uportal-war-full.classpath" />
-                                        <arg value="-s" />
-                                        <arg value="${script}" />
-                                    </java>
-                                </try>
-                                <finally>   
-                                    <tempfile property="executed-portal-shell-script" destdir="${basedir}/target" prefix="upshell_" suffix=".groovy"/>
-                                	<copy file="${script}" tofile="${executed-portal-shell-script}" />
-                                </finally>
-                            </trycatch> 
-                        </then>
-                        <else>
-                            <echo>No Script</echo>
+			<if>
+				<not>
+					<isset property="noDefaultData" />
+				</not>
+				<then>
+					<antcall target="db-import-default" />
+				</then>
+			</if>
 
-                            <!-- Invoke import/export tool -->
-                            <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.shell.PortalShell">
-                                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
-                                <classpath refid="uportal-war-full.classpath" />
-                            </java>
-                        </else>
-                    </if>
+			<if>
+				<not>
+					<isset property="noQuickstartData" />
+				</not>
+				<then>
+					<antcall target="db-import-quickstart" />
+				</then>
+			</if>
+		</up-shell-batch>
+	</target>
 
-                </uportal-war-macro>
-            </then>
-        </if>
-    </target>
+	<target name="dbtest" description="Displays information about the database defined in rdbm.properties">
+		<uportal-war-macro>
+			<echo message="Invoking DbTest" />
+			<java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.tools.DbTest">
+				<sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
 
-    <target name="data-list" description="Lists portal data types and portal data for a type. Use the -Dtype parameter to specify a specific type">
-        <property name="type" value="null" />
+				<classpath refid="uportal-war-full.classpath" />
+			</java>
+		</uportal-war-macro>
+	</target>
 
-        <echo file="${portal-shell-script}" append="true">
+	<target name="regchantype" depends="prodPrompt" description="Registers a new channel type">
+		<uportal-war-macro>
+			<property name="class" value=" " />
+			<property name="name" value=" " />
+			<property name="description" value=" " />
+			<property name="uri" value=" " />
+
+			<echo message="Invoking RegisterChannelType" />
+			<java dir="${basedir}" classname="org.jasig.portal.tools.RegisterChannelType">
+				<classpath refid="uportal-war-full.classpath" />
+
+				<arg value="${class}" />
+				<arg value="${name}" />
+				<arg value="${description}" />
+				<arg value="${uri}" />
+			</java>
+		</uportal-war-macro>
+	</target>
+
+	<target name="up-shell" description="Run a uPortal Groovy Shell. Interactive or scripted using -Dscript=">
+		<if>
+			<not>
+				<istrue value="${skip-up-shell-execution}" />
+			</not>
+			<then>
+				<uportal-war-macro>
+					<if>
+						<and>
+							<isset property="script" />
+						</and>
+						<then>
+							<trycatch>
+								<try>
+									<!-- Invoke import/export tool -->
+									<java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.shell.PortalShell">
+										<sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+										<classpath refid="uportal-war-full.classpath" />
+										<arg value="-s" />
+										<arg value="${script}" />
+									</java>
+								</try>
+								<finally>
+									<tempfile property="executed-portal-shell-script" destdir="${targetdir}" prefix="upshell_" suffix=".groovy" />
+									<copy file="${script}" tofile="${executed-portal-shell-script}" />
+								</finally>
+							</trycatch>
+						</then>
+						<else>
+							<echo>No Script</echo>
+
+							<!-- Invoke import/export tool -->
+							<java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.shell.PortalShell">
+								<sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+								<classpath refid="uportal-war-full.classpath" />
+							</java>
+						</else>
+					</if>
+
+				</uportal-war-macro>
+			</then>
+		</if>
+	</target>
+
+	<target name="data-list" description="Lists portal data types and portal data for a type. Use the -Dtype parameter to specify a specific type">
+		<property name="type" value="null" />
+
+		<echo file="${portal-shell-script}" append="true">
 try {
 	type = '${type}';
         	
@@ -541,81 +541,101 @@ catch (Exception e) {
 }
         </echo>
 
-        <antcall target="up-shell">
-            <param name="script" value="${portal-shell-script}"/>
-        </antcall>
-    </target>
+		<antcall target="up-shell">
+			<param name="script" value="${portal-shell-script}" />
+		</antcall>
+	</target>
 
-    <target name="data-export" description="Exports the specified entity or entities to XML on the file system">
-        <fail unless="dir">
+	<target name="data-export" description="Exports the specified entity or entities to XML on the file system">
+		<fail unless="dir">
             You must specify a 'dir' parameter (-Ddir={some/directory})
         </fail>
 
-        <property name="type" value="null" />
-        <property name="sysid" value="null" />
+		<property name="type" value="null" />
+		<property name="sysid" value="null" />
 
-        <groovy-safe-path property="dirFullEscaped" input="${dir}"/>
+		<groovy-safe-path property="dirFullEscaped" input="${dir}" />
+        <groovy-safe-path property="targetDirEscaped" input="${targetdir}" />
 
-        <echo>Creating Data Export Script</echo>
-        <echo file="${portal-shell-script}" append="true">
-try {
-    //Data Export Script
-    logger.info('');
-    logger.info('');
-    dataDir = /${dirFullEscaped}/;
-	type = '${type}';
-	sysid = '${sysid}';
+		<echo>Creating Data Export Script</echo>
+		<echo file="${portal-shell-script}" append="true">
+//Data Export Script
+logger.info('');
+logger.info('');
+dataDir = /${dirFullEscaped}/;
+logDir = /${targetDirEscaped}/;
+type = '${type}';
+sysid = '${sysid}';
 
-    if (type != 'null' &amp;&amp; sysid != 'null') { 
+if (type != 'null' &amp;&amp; sysid != 'null') { 
+    try {
         logger.info('Exporting Data ' + sysid + ' of type ' + type + ' to: ' + dataDir);
         portalDataHandlerService.exportData(type, sysid, new File(dataDir));
-    }
-    else if (type != 'null') { 
+	}
+	catch (Exception e) {
+	    throw new RuntimeException("data-export to " + dataDir + " of " + type + " " + sysid + " failed", e);
+	}
+}
+else if (type != 'null') { 
+    try {
         logger.info('Exporting All Data of type ' + type + ' to: ' + dataDir);
-        portalDataHandlerService.exportAllDataOfType([type] as Set, new File(dataDir));
+        portalDataHandlerService.exportAllDataOfType(
+			[type] as Set, 
+			new File(dataDir), 
+            new org.jasig.portal.io.xml.IPortalDataHandlerService.BatchExportOptions().setLogDirectoryParent(logDir));
     }
-    else { 
-        logger.info('Exporting All Data to: ' + dataDir);
-        portalDataHandlerService.exportAllData(new File(dataDir));
+    catch (Exception e) {
+        throw new RuntimeException("data-export to " + dataDir + " of " + type + " failed", e);
     }
 }
-catch (Exception e) {
-    throw new RuntimeException("data-export for " + dataDir + " and " + sysid + " failed", e);
+else { 
+    try {
+        logger.info('Exporting All Data to: ' + dataDir);
+        portalDataHandlerService.exportAllData(
+    		new File(dataDir), 
+            new org.jasig.portal.io.xml.IPortalDataHandlerService.BatchExportOptions().setLogDirectoryParent(logDir));
+    }
+    catch (Exception e) {
+        throw new RuntimeException("data-export to " + dataDir + " failed", e);
+    }
 }
         </echo>
 
-        <antcall target="up-shell">
-            <param name="script" value="${portal-shell-script}"/>
-        </antcall>
-    </target>
+		<antcall target="up-shell">
+			<param name="script" value="${portal-shell-script}" />
+		</antcall>
+	</target>
 
-    <target name="data-import" depends="prodPrompt" description="Imports the specified XML file or files">
-    	<if>
-    		<not>
-    			<or>
-    			    <isset property="dir"/>
-    				<isset property="file"/>
-    			</or>
+	<target name="data-import" depends="prodPrompt" description="Imports the specified XML file or files">
+		<if>
+			<not>
+				<or>
+					<isset property="dir" />
+					<isset property="file" />
+				</or>
 			</not>
 			<then>
 				<fail>Either '-Ddir' or '-Dfile' must be specified for data import</fail>
 			</then>
-    	</if>
-        
+		</if>
 
-        <property name="pattern" value="null" />
-    	<property name="file" value="null" />
-    	<property name="dir" value="null" />
 
-        <groovy-safe-path property="dirFullEscaped" input="${dir}"/>
-    	<groovy-safe-path property="fileFullEscaped" input="${file}"/>
+		<property name="pattern" value="null" />
+		<property name="file" value="null" />
+		<property name="dir" value="null" />
 
-        <echo>Creating Data Import Script</echo>
-        <echo file="${portal-shell-script}" append="true">
+		<groovy-safe-path property="dirFullEscaped" input="${dir}" />
+        <groovy-safe-path property="fileFullEscaped" input="${file}" />
+		<groovy-safe-path property="targetDirEscaped" input="${targetdir}" />
+		
+
+		<echo>Creating Data Import Script</echo>
+		<echo file="${portal-shell-script}" append="true">
 //Data Import Script
 logger.info('');
 logger.info('');
 dataDir = /${dirFullEscaped}/;
+logDir = /${targetDirEscaped}/;
 if (dataDir == 'null') {
     file = /${fileFullEscaped}/;
     logger.info('Importing Data from: ' + file);
@@ -630,35 +650,45 @@ else {
     pattern = /${pattern}/;
     logger.info('Importing Data from: ' + dataDir);
     try {
+        portalDataHandlerService.importData(
+            new File(dataDir), 
+            pattern == 'null' ? null : pattern, 
+            new org.jasig.portal.io.xml.IPortalDataHandlerService.BatchImportOptions().setLogDirectoryParent(logDir));
+
         portalDataHandlerService.importData(new File(dataDir), pattern == 'null' ? null : pattern, null);
     }
     catch (Exception e) {
-        throw new RuntimeException("data-import for " + dataDir + " and " + pattern + " failed", e);
+	    if (pattern != null) {
+		    throw new RuntimeException("data-import from " + dataDir + " matching " + pattern + " failed", e);
+		}
+		else {
+            throw new RuntimeException("data-import from " + dataDir + " failed", e);
+        }
     }
 }        </echo>
 
-        <antcall target="up-shell">
-            <param name="script" value="${portal-shell-script}"/>
-        </antcall>
-    </target>
+		<antcall target="up-shell">
+			<param name="script" value="${portal-shell-script}" />
+		</antcall>
+	</target>
 
-    <target name="data-delete" depends="prodPrompt" description="Deletes the specified entity">
-        <if>
-            <not>
-                <and>
-                    <isset property="type"/>
-                    <isset property="sysid"/>
-                </and>
-            </not>
-            <then>
-                <fail>Both '-Dtype' and '-Dsysid' must be specified for data delete. Use 'ant data-list' to determine available data types</fail>
-            </then>
-        </if>
+	<target name="data-delete" depends="prodPrompt" description="Deletes the specified entity">
+		<if>
+			<not>
+				<and>
+					<isset property="type" />
+					<isset property="sysid" />
+				</and>
+			</not>
+			<then>
+				<fail>Both '-Dtype' and '-Dsysid' must be specified for data delete. Use 'ant data-list' to determine available data types</fail>
+			</then>
+		</if>
 
-        <groovy-safe-path property="dirFullEscaped" input="${dir}"/>
+		<groovy-safe-path property="dirFullEscaped" input="${dir}" />
 
-        <echo>Creating Data Delete Script</echo>
-        <echo file="${portal-shell-script}" append="true">
+		<echo>Creating Data Delete Script</echo>
+		<echo file="${portal-shell-script}" append="true">
 try {
     //Data Delete Script
     logger.info('');
@@ -674,149 +704,149 @@ catch (Exception e) {
 }
         </echo>
 
-        <antcall target="up-shell">
-            <param name="script" value="${portal-shell-script}"/>
-        </antcall>
-    </target>
+		<antcall target="up-shell">
+			<param name="script" value="${portal-shell-script}" />
+		</antcall>
+	</target>
 
-    <target name="clean-shared" depends="checkForTomcat" description="Removes ALL shared libraries from the servlet container.">
-        <mkdir dir="${server.base}/shared/lib"/>
-        <delete>
-            <fileset dir="${server.base}/shared/lib">
-                <include name="*"/>
-            </fileset>
-        </delete>
-    </target>
+	<target name="clean-shared" depends="checkForTomcat" description="Removes ALL shared libraries from the servlet container.">
+		<mkdir dir="${server.base}/shared/lib" />
+		<delete>
+			<fileset dir="${server.base}/shared/lib">
+				<include name="*" />
+			</fileset>
+		</delete>
+	</target>
 
-    <target name="clean-tomcat" depends="checkForTomcat" description="Removes the deployed uPortal from the servlet container">
-        <uportal-parent-macro>
-            <!-- Clean out uPortal from Tomcat -->
-            <artifact:pom file="${uportal-war.dir}/pom.xml" id="uportal-war.pom" settingsFile="${maven.settings}" inheritAllProperties="false" />
-            <property name="destDir" value="${server.base}/webapps/${uportal-war.pom.build.finalName}" />
-            <echo>Deleting '${destDir}'</echo>
-            <delete dir="${destDir}" />
-        </uportal-parent-macro>
-    </target>
+	<target name="clean-tomcat" depends="checkForTomcat" description="Removes the deployed uPortal from the servlet container">
+		<uportal-parent-macro>
+			<!-- Clean out uPortal from Tomcat -->
+			<artifact:pom file="${uportal-war.dir}/pom.xml" id="uportal-war.pom" settingsFile="${maven.settings}" inheritAllProperties="false" />
+			<property name="destDir" value="${server.base}/webapps/${uportal-war.pom.build.finalName}" />
+			<echo>Deleting '${destDir}'</echo>
+			<delete dir="${destDir}" />
+		</uportal-parent-macro>
+	</target>
 
-    <target name="clean" description="Runs 'mvn clean'">
-        <!-- Execute the mvn clean lifecycle -->
-        <antcall target="mvn">
-            <param name="pomDir" value="${basedir}" />
-            <param name="goal" value="clean" />
-        </antcall>
-    </target>
+	<target name="clean" description="Runs 'mvn clean'">
+		<!-- Execute the mvn clean lifecycle -->
+		<antcall target="mvn">
+			<param name="pomDir" value="${basedir}" />
+			<param name="goal" value="clean" />
+		</antcall>
+	</target>
 
-    <target name="deploy-ear" depends="checkForTomcat" description="Deploy uPortal and dependent libraries and portlets to the servlet container">
-        <uportal-ear-macro>
-            <echo message="   extractWars=${extractWars}" />
-            <echo message="removeExisting=${removeExisting}" />
-            <echo message="   cleanShared=${cleanShared}" />
+	<target name="deploy-ear" depends="checkForTomcat" description="Deploy uPortal and dependent libraries and portlets to the servlet container">
+		<uportal-ear-macro>
+			<echo message="   extractWars=${extractWars}" />
+			<echo message="removeExisting=${removeExisting}" />
+			<echo message="   cleanShared=${cleanShared}" />
 
-            <if>
-                <equals arg1="${cleanShared}" arg2="true" />
-                <then>
-                    <antcall target="clean-shared" />
-                </then>
-            </if>
+			<if>
+				<equals arg1="${cleanShared}" arg2="true" />
+				<then>
+					<antcall target="clean-shared" />
+				</then>
+			</if>
 
-            <artifact:dependencies pathid="uportal-ant" settingsFile="${maven.settings}">
-                <pom file="${bootstrap.dir}/uportal-ant-tasks/pom.xml" />
-            </artifact:dependencies>
+			<artifact:dependencies pathid="uportal-ant" settingsFile="${maven.settings}">
+				<pom file="${bootstrap.dir}/uportal-ant-tasks/pom.xml" />
+			</artifact:dependencies>
 
-            <typedef resource="org/jasig/portal/ant/antlib.xml" uri="urn:up-util-ant">
-                <classpath>
-                    <path refid="uportal-ant" />
-                </classpath>
-            </typedef>
+			<typedef resource="org/jasig/portal/ant/antlib.xml" uri="urn:up-util-ant">
+				<classpath>
+					<path refid="uportal-ant" />
+				</classpath>
+			</typedef>
 
-            <mkdir dir="${server.base}/shared/lib"/>
-            <up:tomcatEarDeploy ear="${uportal-ear.artifact}" catalinaBase="${server.base}" webAppsDir="${server.webapps}" extractWars="${extractWars}" removeExistingDirectories="${removeExisting}" />
-        </uportal-ear-macro>
-    </target>
+			<mkdir dir="${server.base}/shared/lib" />
+			<up:tomcatEarDeploy ear="${uportal-ear.artifact}" catalinaBase="${server.base}" webAppsDir="${server.webapps}" extractWars="${extractWars}" removeExistingDirectories="${removeExisting}" />
+		</uportal-ear-macro>
+	</target>
 
-    <target name="deploy-war" depends="checkForTomcat" description="Deploy the uPortal web application to the servlet container">
-        <uportal-war-macro>
-            <antcall target="fastWarDeploy">
-                <param name="warPath" value="${uportal-war.artifact}"/>
-            </antcall>
-        </uportal-war-macro>
-    </target>
+	<target name="deploy-war" depends="checkForTomcat" description="Deploy the uPortal web application to the servlet container">
+		<uportal-war-macro>
+			<antcall target="fastWarDeploy">
+				<param name="warPath" value="${uportal-war.artifact}" />
+			</antcall>
+		</uportal-war-macro>
+	</target>
 
-    <target name="deployPortletApp" depends="checkForTomcat" description="Deploys a portlet application">
-        <!-- Check arguments -->
-        <fail message="'-DportletApp=[WAR File]' must be specified">
-            <condition>
-                <not>
-                    <isset property="portletApp" />
-                </not>
-            </condition>
-        </fail>
+	<target name="deployPortletApp" depends="checkForTomcat" description="Deploys a portlet application">
+		<!-- Check arguments -->
+		<fail message="'-DportletApp=[WAR File]' must be specified">
+			<condition>
+				<not>
+					<isset property="portletApp" />
+				</not>
+			</condition>
+		</fail>
 
-        <if>
-            <available file="${user.dir}/${portletApp}" />
-            <then>
-                <property name="portletAppPath" location="${user.dir}/${portletApp}"/>
-            </then>
-            <else>
-                <property name="portletAppPath" location="${portletApp}"/>
-            </else>
-        </if>
-        <fail message="portletApp '${portletAppPath}' does not exist">
-            <condition>
-                <not>
-                    <available file="${portletAppPath}" />
-                </not>
-            </condition>
-        </fail>
-
-
-        <basename property="war.filename" file="${portletAppPath}" />
-
-        <uportal-parent-macro>
-            <artifact:dependencies pathid="pluto-ant" settingsFile="${maven.settings}">
-                <artifact:pom file="${bootstrap.dir}/pluto-assembler/pom.xml" settingsFile="${maven.settings}" inheritAllProperties="false" />
-            </artifact:dependencies>
-
-            <taskdef classname="org.apache.pluto.ant.AssembleTask" name="assemblePortlet">
-                <classpath>
-                    <path refid="pluto-ant" />
-                </classpath>
-            </taskdef>
-        </uportal-parent-macro>
-
-        <assemblePortlet destdir="${jasig.tmpdir}" war="${portletAppPath}" />
-
-        <antcall target="fastWarDeploy">
-            <param name="warPath" value="${jasig.tmpdir}/${war.filename}"/>
-        </antcall>
-
-        <delete file="${jasig.tmpdir}/${war.filename}" />
-    </target>
+		<if>
+			<available file="${user.dir}/${portletApp}" />
+			<then>
+				<property name="portletAppPath" location="${user.dir}/${portletApp}" />
+			</then>
+			<else>
+				<property name="portletAppPath" location="${portletApp}" />
+			</else>
+		</if>
+		<fail message="portletApp '${portletAppPath}' does not exist">
+			<condition>
+				<not>
+					<available file="${portletAppPath}" />
+				</not>
+			</condition>
+		</fail>
 
 
-    <target name="md5passwd" depends="prodPrompt" description="Creates a user in the UP_PERSON_DIR table">
-        <fail unless="username">
+		<basename property="war.filename" file="${portletAppPath}" />
+
+		<uportal-parent-macro>
+			<artifact:dependencies pathid="pluto-ant" settingsFile="${maven.settings}">
+				<artifact:pom file="${bootstrap.dir}/pluto-assembler/pom.xml" settingsFile="${maven.settings}" inheritAllProperties="false" />
+			</artifact:dependencies>
+
+			<taskdef classname="org.apache.pluto.ant.AssembleTask" name="assemblePortlet">
+				<classpath>
+					<path refid="pluto-ant" />
+				</classpath>
+			</taskdef>
+		</uportal-parent-macro>
+
+		<assemblePortlet destdir="${jasig.tmpdir}" war="${portletAppPath}" />
+
+		<antcall target="fastWarDeploy">
+			<param name="warPath" value="${jasig.tmpdir}/${war.filename}" />
+		</antcall>
+
+		<delete file="${jasig.tmpdir}/${war.filename}" />
+	</target>
+
+
+	<target name="md5passwd" depends="prodPrompt" description="Creates a user in the UP_PERSON_DIR table">
+		<fail unless="username">
             You must specify a 'username' parameter (-Dusername={juser})
         </fail>
-    	
-        <uportal-war-macro>
-            <echo message="Invoking creating/updating password for: ${username}" />
-            <java dir="${basedir}" classname="org.jasig.portal.security.Md5Passwd">
-                <classpath refid="uportal-war-full.classpath" />
 
-                <arg value="-c" />
-                <arg value="${username}" />
-            </java>
-        </uportal-war-macro>
-    </target>
+		<uportal-war-macro>
+			<echo message="Invoking creating/updating password for: ${username}" />
+			<java dir="${basedir}" classname="org.jasig.portal.security.Md5Passwd">
+				<classpath refid="uportal-war-full.classpath" />
 
-    <target name="deluser" depends="prodPrompt" description="Delete traces of a user from the portal database">
-        <fail unless="user">
+				<arg value="-c" />
+				<arg value="${username}" />
+			</java>
+		</uportal-war-macro>
+	</target>
+
+	<target name="deluser" depends="prodPrompt" description="Delete traces of a user from the portal database">
+		<fail unless="user">
             You must specify a 'user' parameter (-Duser={jdoe})
         </fail>
 
-        <echo>Deleting user ${user}</echo>
-        <echo file="${portal-shell-script}" append="true">
+		<echo>Deleting user ${user}</echo>
+		<echo file="${portal-shell-script}" append="true">
 try {
     //Delete USer Script
     logger.info('');
@@ -829,448 +859,438 @@ catch (Exception e) {
 }
         </echo>
 
-        <antcall target="up-shell">
-            <param name="script" value="${portal-shell-script}"/>
-        </antcall>
-    </target>
+		<antcall target="up-shell">
+			<param name="script" value="${portal-shell-script}" />
+		</antcall>
+	</target>
 
-    <target name="addstylesheet" depends="prodPrompt" description="Registers a new theme or structure">
-        <uportal-war-macro>
-            <property name="stylesheetType" value=" " />
-            <property name="stylesheetUri" value=" " />
-            <property name="descriptionUri" value=" " />
+	<target name="addstylesheet" depends="prodPrompt" description="Registers a new theme or structure">
+		<uportal-war-macro>
+			<property name="stylesheetType" value=" " />
+			<property name="stylesheetUri" value=" " />
+			<property name="descriptionUri" value=" " />
 
-            <echo message="Invoking RegisterStylesheet (add)" />
-            <java dir="${basedir}" fork="true" classname="org.jasig.portal.tools.RegisterStylesheet">
-                <classpath refid="uportal-war-full.classpath" />
+			<echo message="Invoking RegisterStylesheet (add)" />
+			<java dir="${basedir}" fork="true" classname="org.jasig.portal.tools.RegisterStylesheet">
+				<classpath refid="uportal-war-full.classpath" />
 
-                <arg value="${stylesheetType}" />
-                <arg value="${stylesheetUri}" />
-                <arg value="${descriptionUri}" />
-            </java>
-        </uportal-war-macro>
-    </target>
+				<arg value="${stylesheetType}" />
+				<arg value="${stylesheetUri}" />
+				<arg value="${descriptionUri}" />
+			</java>
+		</uportal-war-macro>
+	</target>
 
-    <target name="modstylesheet" depends="prodPrompt" description="Modifies an existing theme or structure">
-        <uportal-war-macro>
-            <property name="stylesheetType" value=" " />
-            <property name="stylesheetUri" value=" " />
-            <property name="descriptionUri" value=" " />
-            <property name="stylesheetId" value=" " />
+	<target name="modstylesheet" depends="prodPrompt" description="Modifies an existing theme or structure">
+		<uportal-war-macro>
+			<property name="stylesheetType" value=" " />
+			<property name="stylesheetUri" value=" " />
+			<property name="descriptionUri" value=" " />
+			<property name="stylesheetId" value=" " />
 
-            <echo message="Invoking RegisterStylesheet (modify)" />
-            <java dir="${basedir}" fork="true" classname="org.jasig.portal.tools.RegisterStylesheet">
-                <classpath refid="uportal-war-full.classpath" />
+			<echo message="Invoking RegisterStylesheet (modify)" />
+			<java dir="${basedir}" fork="true" classname="org.jasig.portal.tools.RegisterStylesheet">
+				<classpath refid="uportal-war-full.classpath" />
 
-                <arg value="${stylesheetType}" />
-                <arg value="-u" />
-                <arg value="${stylesheetUri}" />
-                <arg value="${descriptionUri}" />
-                <arg value="${stylesheetId}" />
-            </java>
-        </uportal-war-macro>
-    </target>
+				<arg value="${stylesheetType}" />
+				<arg value="-u" />
+				<arg value="${stylesheetUri}" />
+				<arg value="${descriptionUri}" />
+				<arg value="${stylesheetId}" />
+			</java>
+		</uportal-war-macro>
+	</target>
 
-    <target name="delstylesheet" depends="prodPrompt" description="Deletes an existing theme or structure">
-        <uportal-war-macro>
-            <property name="stylesheetType" value=" " />
-            <property name="stylesheetId" value=" " />
+	<target name="delstylesheet" depends="prodPrompt" description="Deletes an existing theme or structure">
+		<uportal-war-macro>
+			<property name="stylesheetType" value=" " />
+			<property name="stylesheetId" value=" " />
 
-            <echo message="Invoking RegisterStylesheet (delete)" />
-            <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterStylesheet">
-                <classpath refid="uportal-war-full.classpath" />
+			<echo message="Invoking RegisterStylesheet (delete)" />
+			<java dir="${basedir}" classname="org.jasig.portal.tools.RegisterStylesheet">
+				<classpath refid="uportal-war-full.classpath" />
 
-                <arg value="${stylesheetType}" />
-                <arg value="-d" />
-                <arg value="${stylesheetId}" />
-            </java>
-        </uportal-war-macro>
-    </target>
+				<arg value="${stylesheetType}" />
+				<arg value="-d" />
+				<arg value="${stylesheetId}" />
+			</java>
+		</uportal-war-macro>
+	</target>
 
-    <target name="hsql" description="Start a HSQLDB instance consistent with the default RDBMS requirements of uPortal">
-        <property name="spawn" value="false" />
+	<target name="hsql" description="Start a HSQLDB instance consistent with the default RDBMS requirements of uPortal">
+		<property name="spawn" value="false" />
 
-        <condition property="failonerror" value="false">
-            <equals arg1="${spawn}" arg2="true" />
-        </condition>
-        <property name="failonerror" value="true" />
+		<condition property="failonerror" value="false">
+			<equals arg1="${spawn}" arg2="true" />
+		</condition>
+		<property name="failonerror" value="true" />
 
-        <uportal-parent-macro>
-            <artifact:dependencies pathid="hsql.classpath" settingsFile="${maven.settings}">
-                <artifact:pom file="${bootstrap.dir}/hsqldb/pom.xml" settingsFile="${maven.settings}" inheritAllProperties="false" />
-            </artifact:dependencies>
+		<uportal-parent-macro>
+			<artifact:dependencies pathid="hsql.classpath" settingsFile="${maven.settings}">
+				<artifact:pom file="${bootstrap.dir}/hsqldb/pom.xml" settingsFile="${maven.settings}" inheritAllProperties="false" />
+			</artifact:dependencies>
 
-            <property name="database" value="file:${basedir}/data/uPortal" />
-            <property name="port" value="${environment.build.hsql.port}" />
+			<property name="database" value="file:${basedir}/data/uPortal" />
+			<property name="port" value="${environment.build.hsql.port}" />
 
-            <echo message="Starting HSQL on ${port}" />
-            <echo message="Using: ${database}" />
-            <java fork="true" spawn="${spawn}"  maxmemory="32M" dir="${basedir}" classname="org.hsqldb.Server" failonerror="${failonerror}">
-                <classpath refid="hsql.classpath" />
+			<echo message="Starting HSQL on ${port}" />
+			<echo message="Using: ${database}" />
+			<java fork="true" spawn="${spawn}" maxmemory="32M" dir="${basedir}" classname="org.hsqldb.Server" failonerror="${failonerror}">
+				<classpath refid="hsql.classpath" />
 
-                <arg value="--database.0" />
-                <arg value="${database}" />
-                <arg value="--dbname.0" />
-                <arg value="uPortal" />
-                <arg value="--address" />
-                <arg value="localhost" />
-                <arg value="--port" />
-                <arg value="${port}" />
-            </java>
-        </uportal-parent-macro>
-    </target>
+				<arg value="--database.0" />
+				<arg value="${database}" />
+				<arg value="--dbname.0" />
+				<arg value="uPortal" />
+				<arg value="--address" />
+				<arg value="localhost" />
+				<arg value="--port" />
+				<arg value="${port}" />
+			</java>
+		</uportal-parent-macro>
+	</target>
 
-    <target name="hsql-shutdown" description="Compacts then cleanly shuts down hsql, useful if the 'hsql' task was run with '-Dspawn=true'">
-        <uportal-parent-macro>
-            <artifact:dependencies pathid="hsql.classpath" settingsFile="${maven.settings}">
-                <artifact:pom file="${bootstrap.dir}/hsqldb/pom.xml" settingsFile="${maven.settings}" inheritAllProperties="false" />
-            </artifact:dependencies>
+	<target name="hsql-shutdown" description="Compacts then cleanly shuts down hsql, useful if the 'hsql' task was run with '-Dspawn=true'">
+		<uportal-parent-macro>
+			<artifact:dependencies pathid="hsql.classpath" settingsFile="${maven.settings}">
+				<artifact:pom file="${bootstrap.dir}/hsqldb/pom.xml" settingsFile="${maven.settings}" inheritAllProperties="false" />
+			</artifact:dependencies>
 
-            <copy file="${bootstrap.dir}/hsqldb.sqltool.rc.sample" tofile="${bootstrap.dir}/hsqldb.sqltool.rc" overwrite="true">
-                <filterset>
-                    <filter token="environment.build.hibernate.connection.url" value="${environment.build.hibernate.connection.url}" />
-                </filterset>
-            </copy>
+			<copy file="${bootstrap.dir}/hsqldb.sqltool.rc.sample" tofile="${bootstrap.dir}/hsqldb.sqltool.rc" overwrite="true">
+				<filterset>
+					<filter token="environment.build.hibernate.connection.url" value="${environment.build.hibernate.connection.url}" />
+				</filterset>
+			</copy>
 
-            <echo message="Stopping HSQL" />
-            <trycatch reference="hsql-shutdown.exceptionId">
-                <try>
-                    <java fork="true" maxmemory="8M" dir="${basedir}" classname="org.hsqldb.cmdline.SqlTool" timeout="5000" errorproperty="hsql-shutdown.err.out" failonerror="true">
-                        <classpath refid="hsql.classpath" />
+			<echo message="Stopping HSQL" />
+			<trycatch reference="hsql-shutdown.exceptionId">
+				<try>
+					<java fork="true" maxmemory="8M" dir="${basedir}" classname="org.hsqldb.cmdline.SqlTool" timeout="5000" errorproperty="hsql-shutdown.err.out" failonerror="true">
+						<classpath refid="hsql.classpath" />
 
-                        <arg value="--rcFile" />
-                        <arg value="${bootstrap.dir}/hsqldb.sqltool.rc" />
-                        <arg value="--sql" />
-                        <arg value="shutdown compact;" />
-                        <arg value="uPortalDb" />
-                    </java>
-                </try>
-                <catch>
-                    <if>
-                        <contains string="${hsql-shutdown.err.out}" substring="java.net.ConnectException" />
-                        <then>
-                            <echo>HSQL is not running</echo>
-                        </then>
-                        <else>
-                            <echo>${hsql-shutdown.err.out}</echo>
-                            <throw refid="hsql-shutdown.exceptionId" />
-                        </else>
-                    </if>
-                </catch>
-            </trycatch>
-        </uportal-parent-macro>
-    </target>
+						<arg value="--rcFile" />
+						<arg value="${bootstrap.dir}/hsqldb.sqltool.rc" />
+						<arg value="--sql" />
+						<arg value="shutdown compact;" />
+						<arg value="uPortalDb" />
+					</java>
+				</try>
+				<catch>
+					<if>
+						<contains string="${hsql-shutdown.err.out}" substring="java.net.ConnectException" />
+						<then>
+							<echo>HSQL is not running</echo>
+						</then>
+						<else>
+							<echo>${hsql-shutdown.err.out}</echo>
+							<throw refid="hsql-shutdown.exceptionId" />
+						</else>
+					</if>
+				</catch>
+			</trycatch>
+		</uportal-parent-macro>
+	</target>
 
-    <!-- ============================== Utility Targets ============================== -->
-	
+	<!-- ============================== Utility Targets ============================== -->
+
 	<target name="sync-schemas">
-        <fail unless="schemaDir">
+		<fail unless="schemaDir">
 You must specify a 'schemaDir' parameter (-DschemaDir={/path/to/jasig/schemas/uportal/})
 NOTE THE TRAILING SLASH IS IMPORTANT
         </fail>
-            	
+
 		<exec executable="rsync">
-			<arg value="-avC"/>
-			<arg value="${basedir}/uportal-war/src/main/resources/xsd/"/>
-			<arg value="${schemaDir}"/>
+			<arg value="-avC" />
+			<arg value="${basedir}/uportal-war/src/main/resources/xsd/" />
+			<arg value="${schemaDir}" />
 		</exec>
 	</target>
-	
-    <!--
+
+	<!--
      | Runs up-shell passing in the default shell script filename as the targeted script
      +-->
-    <target name="up-shell-default">
-        <if>
-            <not>
-                <istrue value="${skip-up-shell-execution}"/>
-            </not>
-            <then>
-                <antcall target="up-shell">
-                    <param name="script" value="${portal-shell-script}"/>
-                </antcall>
-            </then>
-        </if>
-    </target>
+	<target name="up-shell-default">
+		<if>
+			<not>
+				<istrue value="${skip-up-shell-execution}" />
+			</not>
+			<then>
+				<antcall target="up-shell">
+					<param name="script" value="${portal-shell-script}" />
+				</antcall>
+			</then>
+		</if>
+	</target>
 
-    <!--
+	<!--
      | Utility to deploy a WAR to the servlet container. The delete and the replacement happen
      | as close together as possible.
      +-->
-    <target name="fastWarDeploy">
-        <fail message="'-DwarPath=[WAR File]' must be specified">
-            <condition>
-                <not>
-                    <isset property="warPath" />
-                </not>
-            </condition>
-        </fail>
+	<target name="fastWarDeploy">
+		<fail message="'-DwarPath=[WAR File]' must be specified">
+			<condition>
+				<not>
+					<isset property="warPath" />
+				</not>
+			</condition>
+		</fail>
 
-        <basename property="war.contextname" file="${warPath}" suffix=".war" />
-        <property name="war.dest" value="${server.webapps}/${war.contextname}" />
+		<basename property="war.contextname" file="${warPath}" suffix=".war" />
+		<property name="war.dest" value="${server.webapps}/${war.contextname}" />
 
-        <echo message="   extractWars=${extractWars}" />
-        <echo message="removeExisting=${removeExisting}" />
+		<echo message="   extractWars=${extractWars}" />
+		<echo message="removeExisting=${removeExisting}" />
 
-        <if>
-            <os family="windows" />
-            <then>
-                <if>
-                    <istrue value="${removeExisting}" />
-                    <then>
-                        <delete dir="${war.dest}" failonerror="false" />
-                        <delete file="${war.dest}.war" failonerror="false" />
-                    </then>
-                </if>
+		<if>
+			<os family="windows" />
+			<then>
+				<if>
+					<istrue value="${removeExisting}" />
+					<then>
+						<delete dir="${war.dest}" failonerror="false" />
+						<delete file="${war.dest}.war" failonerror="false" />
+					</then>
+				</if>
 
-                <if>
-                    <istrue value="${extractWars}" />
-                    <then>
-                        <mkdir dir="${war.dest}" />
-                        <unwar dest="${war.dest}" src="${warPath}" overwrite="true" />
-                    </then>
-                    <else>
-                        <copy file="${warPath}" todir="${server.webapps}" />
-                    </else>
-                </if>
-            </then>
-            <else>
-                <if>
-                    <istrue value="${extractWars}" />
-                    <then>
-                        <property name="tempWarDir" value="${jasig.tmpdir}/${war.contextname}" />
+				<if>
+					<istrue value="${extractWars}" />
+					<then>
+						<mkdir dir="${war.dest}" />
+						<unwar dest="${war.dest}" src="${warPath}" overwrite="true" />
+					</then>
+					<else>
+						<copy file="${warPath}" todir="${server.webapps}" />
+					</else>
+				</if>
+			</then>
+			<else>
+				<if>
+					<istrue value="${extractWars}" />
+					<then>
+						<property name="tempWarDir" value="${jasig.tmpdir}/${war.contextname}" />
 
-                        <delete dir="${tempWarDir}" />
-                        <mkdir dir="${tempWarDir}" />
-                        <unwar dest="${tempWarDir}" src="${warPath}" overwrite="true" />
+						<delete dir="${tempWarDir}" />
+						<mkdir dir="${tempWarDir}" />
+						<unwar dest="${tempWarDir}" src="${warPath}" overwrite="true" />
 
-                        <if>
-                            <istrue value="${removeExisting}" />
-                            <then>
-                                <delete dir="${war.dest}" />
-                                <delete file="${war.dest}.war" />
-                            </then>
-                        </if>
+						<if>
+							<istrue value="${removeExisting}" />
+							<then>
+								<delete dir="${war.dest}" />
+								<delete file="${war.dest}.war" />
+							</then>
+						</if>
 
-                        <echo message="Moving ${tempWarDir} to ${server.webapps}" />
-                        <move todir="${server.webapps}" file="${tempWarDir}" />
-                    </then>
-                    <else>
-                        <if>
-                            <istrue value="${removeExisting}" />
-                            <then>
-                                <delete dir="${war.dest}" />
-                                <delete file="${war.dest}.war" />
-                            </then>
-                        </if>
+						<echo message="Moving ${tempWarDir} to ${server.webapps}" />
+						<move todir="${server.webapps}" file="${tempWarDir}" />
+					</then>
+					<else>
+						<if>
+							<istrue value="${removeExisting}" />
+							<then>
+								<delete dir="${war.dest}" />
+								<delete file="${war.dest}.war" />
+							</then>
+						</if>
 
-                        <copy file="${warPath}" todir="${server.webapps}" />
-                    </else>
-                </if>
-            </else>
-        </if>
-    </target>
+						<copy file="${warPath}" todir="${server.webapps}" />
+					</else>
+				</if>
+			</else>
+		</if>
+	</target>
 
-    <target name="prodPrompt">
-        <if>
-            <and>
-                <istrue value="${prodPrompt}" />
-                <not>
-                    <isset property="continueWithProdTarget" />
-                </not>
-            </and>
-            <then>
-                <echo>WARNING: This task may change or destroy data and should be run with care in production environments.</echo>
-                <input message="Do you want to continue: " validargs="y,n" addproperty="continueWithProdTarget"/>
-                <condition property="do.abort">
-                    <equals arg1="n" arg2="${continueWithProdTarget}"/>
-                </condition>
-                <fail if="do.abort">Task aborted by user.</fail>
-            </then>
-        </if>
-    </target>
+	<target name="prodPrompt">
+		<if>
+			<and>
+				<istrue value="${prodPrompt}" />
+				<not>
+					<isset property="continueWithProdTarget" />
+				</not>
+			</and>
+			<then>
+				<echo>WARNING: This task may change or destroy data and should be run with care in production environments.</echo>
+				<input message="Do you want to continue: " validargs="y,n" addproperty="continueWithProdTarget" />
+				<condition property="do.abort">
+					<equals arg1="n" arg2="${continueWithProdTarget}" />
+				</condition>
+				<fail if="do.abort">Task aborted by user.</fail>
+			</then>
+		</if>
+	</target>
 
-    <target name="checkForTomcat">
-        <fail message="server.base build property must be set.">
-            <condition>
-                <not>
-                    <isset property="server.base" />
-                </not>
-            </condition>
-        </fail>
-        <fail message="The server.base build property refers to a non-existant location '${server.base}'">
-            <condition>
-                <not>
-                    <available file="${server.base}" type="dir" />
-                </not>
-            </condition>
-        </fail>
-    </target>
+	<target name="checkForTomcat">
+		<fail message="server.base build property must be set.">
+			<condition>
+				<not>
+					<isset property="server.base" />
+				</not>
+			</condition>
+		</fail>
+		<fail message="The server.base build property refers to a non-existant location '${server.base}'">
+			<condition>
+				<not>
+					<available file="${server.base}" type="dir" />
+				</not>
+			</condition>
+		</fail>
+	</target>
 
-    <!-- ============================== Deprecated Targets ============================== -->
-    <target name="all">
-        <echo>The "all" Ant task is no longer supported. Run 'mvn clean compile' for the same result.</echo>
-        <fail message="The 'all' Ant task is no longer supported. Run 'mvn clean compile' for the same result.">
-        </fail>
-    </target>
-    <target name="compile">
-        <echo>The "compile" Ant task is no longer supported. Run 'mvn compile' for the same result.</echo>
-        <fail message="The 'compile' Ant task is no longer supported. Run 'mvn compile' for the same result.">
-        </fail>
-    </target>
-    <target name="compiletests">
-        <echo>The "compiletests" Ant task is no longer supported. Run 'mvn test-compile' for the same result.</echo>
-        <fail message="The 'compiletests' Ant task is no longer supported. Run 'mvn test-compile' for the same result.">
-        </fail>
-    </target>
-    <target name="deploy">
-        <echo>The "deploy" Ant task is no longer supported. Run 'ant deploy-war' for the same result.</echo>
-        <fail message="The 'deploy' Ant task is no longer supported. Run 'ant deploy-war' for the same result.">
-        </fail>
-    </target>
-    <target name="dist">
-        <echo>The "dist" Ant task is no longer supported. Run 'mvn package site' for a similar result.</echo>
-        <fail message="The 'dist' Ant task is no longer supported. Run 'mvn package site' for the same result.">
-        </fail>
-    </target>
-    <target name="javadoc">
-        <echo>The "javadoc" Ant task is no longer supported. Run 'mvn javadoc:javadoc' for the same result.</echo>
-        <fail message="The 'javadoc' Ant task is no longer supported. Run 'mvn javadoc:javadoc' for the same result.">
-        </fail>
-    </target>
-    <target name="runtests">
-        <echo>The "runtests" Ant task is no longer supported. Run 'mvn test' for the same result.</echo>
-        <fail message="The 'runtests' Ant task is no longer supported. Run 'mvn test' for the same result.">
-        </fail>
-    </target>
-    <target name="pubchan">
-        <echo>The "pubchan" Ant task is no longer supported. Use 'ant data-import' to publish channel entity XML files.</echo>
-        <fail message="The 'pubchan' Ant task is no longer supported. Run 'ant data-import' for the same result.">
-        </fail>
-    </target>
-    <target name="crn-export">
-        <echo>The "crn-export" Ant task is no longer supported. Use 'ant data-export' to export portal data.</echo>
-        <fail message="The 'crn-export' Ant task is no longer supported. Use 'ant data-export' to export portal data.">
-        </fail>
-    </target>
-    <target name="crn-import">
-        <echo>The "crn-import" Ant task is no longer supported. Use 'ant data-import' to import portal data.
+	<!-- ============================== Deprecated Targets ============================== -->
+	<target name="all">
+		<echo>The "all" Ant task is no longer supported. Run 'mvn clean compile' for the same result.</echo>
+		<fail message="The 'all' Ant task is no longer supported. Run 'mvn clean compile' for the same result.">
+		</fail>
+	</target>
+	<target name="compile">
+		<echo>The "compile" Ant task is no longer supported. Run 'mvn compile' for the same result.</echo>
+		<fail message="The 'compile' Ant task is no longer supported. Run 'mvn compile' for the same result.">
+		</fail>
+	</target>
+	<target name="compiletests">
+		<echo>The "compiletests" Ant task is no longer supported. Run 'mvn test-compile' for the same result.</echo>
+		<fail message="The 'compiletests' Ant task is no longer supported. Run 'mvn test-compile' for the same result.">
+		</fail>
+	</target>
+	<target name="deploy">
+		<echo>The "deploy" Ant task is no longer supported. Run 'ant deploy-war' for the same result.</echo>
+		<fail message="The 'deploy' Ant task is no longer supported. Run 'ant deploy-war' for the same result.">
+		</fail>
+	</target>
+	<target name="dist">
+		<echo>The "dist" Ant task is no longer supported. Run 'mvn package site' for a similar result.</echo>
+		<fail message="The 'dist' Ant task is no longer supported. Run 'mvn package site' for the same result.">
+		</fail>
+	</target>
+	<target name="javadoc">
+		<echo>The "javadoc" Ant task is no longer supported. Run 'mvn javadoc:javadoc' for the same result.</echo>
+		<fail message="The 'javadoc' Ant task is no longer supported. Run 'mvn javadoc:javadoc' for the same result.">
+		</fail>
+	</target>
+	<target name="runtests">
+		<echo>The "runtests" Ant task is no longer supported. Run 'mvn test' for the same result.</echo>
+		<fail message="The 'runtests' Ant task is no longer supported. Run 'mvn test' for the same result.">
+		</fail>
+	</target>
+	<target name="pubchan">
+		<echo>The "pubchan" Ant task is no longer supported. Use 'ant data-import' to publish channel entity XML files.</echo>
+		<fail message="The 'pubchan' Ant task is no longer supported. Run 'ant data-import' for the same result.">
+		</fail>
+	</target>
+	<target name="crn-export">
+		<echo>The "crn-export" Ant task is no longer supported. Use 'ant data-export' to export portal data.</echo>
+		<fail message="The 'crn-export' Ant task is no longer supported. Use 'ant data-export' to export portal data.">
+		</fail>
+	</target>
+	<target name="crn-import">
+		<echo>The "crn-import" Ant task is no longer supported. Use 'ant data-import' to import portal data.
 IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a Ant Pattern instead.</echo>
-        <fail message="The 'crn-import' Ant task is no longer supported. Use 'ant data-import' to import portal data.">
-        </fail>
-    </target>
-    <target name="crn-delete">
-        <echo>The "crn-delete" Ant task is no longer supported. Use 'ant data-delete' to delete portal data.</echo>
-        <fail message="The 'crn-delete' Ant task is no longer supported. Use 'ant data-delete' to delete portal data.">
-        </fail>
-    </target>
-    <target name="crn-make-data-xml">
-        <echo>The "crn-make-data-xml" Ant task is no longer supported. Use 'ant data-export' to export portal data.</echo>
-        <fail message="The 'crn-make-data-xml' Ant task is no longer supported. Use 'ant data-export' to export portal data.">
-        </fail>
-    </target>
-    <target name="i18n-db">
-        <echo>The "i18n-db" Ant task is no longer supported. Use "ant data-import" to import portal data.</echo>
-        <fail message="The 'i18n-db' Ant task is no longer supported. Use 'ant data-import' to import portal data.">
-        </fail>
-    </target>
+		<fail message="The 'crn-import' Ant task is no longer supported. Use 'ant data-import' to import portal data.">
+		</fail>
+	</target>
+	<target name="crn-delete">
+		<echo>The "crn-delete" Ant task is no longer supported. Use 'ant data-delete' to delete portal data.</echo>
+		<fail message="The 'crn-delete' Ant task is no longer supported. Use 'ant data-delete' to delete portal data.">
+		</fail>
+	</target>
+	<target name="crn-make-data-xml">
+		<echo>The "crn-make-data-xml" Ant task is no longer supported. Use 'ant data-export' to export portal data.</echo>
+		<fail message="The 'crn-make-data-xml' Ant task is no longer supported. Use 'ant data-export' to export portal data.">
+		</fail>
+	</target>
+	<target name="i18n-db">
+		<echo>The "i18n-db" Ant task is no longer supported. Use "ant data-import" to import portal data.</echo>
+		<fail message="The 'i18n-db' Ant task is no longer supported. Use 'ant data-import' to import portal data.">
+		</fail>
+	</target>
 
 
-    <!-- ============================== Maven Support Macros ============================== -->
+	<!-- ============================== Maven Support Macros ============================== -->
 
-    <macrodef name="groovy-safe-path">
-        <attribute name="property" />
-        <attribute name="input" />
+	<macrodef name="groovy-safe-path">
+		<attribute name="property" />
+		<attribute name="input" />
 
-        <sequential>
-            <local name="@{property}WinEscaped"/>
+		<sequential>
+			<local name="@{property}WinEscaped" />
 
-            <propertyregex property="@{property}WinEscaped"
-                          input="@{input}"
-                          defaultValue="@{input}"
-                          regexp="\\"
-                          replace="/"
-                          global="true" />
+			<propertyregex property="@{property}WinEscaped" input="@{input}" defaultValue="@{input}" regexp="\\" replace="/" global="true" />
 
-            <propertyregex property="@{property}"
-                          input="${@{property}WinEscaped}"
-                          defaultValue="${@{property}WinEscaped}"
-                          regexp="/"
-                          replace="\\\\/"
-                          global="true" />
-        </sequential>
-    </macrodef>
+			<propertyregex property="@{property}" input="${@{property}WinEscaped}" defaultValue="${@{property}WinEscaped}" regexp="/" replace="\\\\/" global="true" />
+		</sequential>
+	</macrodef>
 
-    <macrodef name="up-shell-batch">
-        <element name="sub-tasks" optional="false" implicit="true" />
+	<macrodef name="up-shell-batch">
+		<element name="sub-tasks" optional="false" implicit="true" />
 
-        <sequential>
-            <!-- if skip-up-shell-execution isn't set default it to false -->
-            <if>
-                <not>
-                    <isset property="skip-up-shell-execution"/>
-                </not>
-                <then>
-                    <var name="skip-up-shell-execution" value="false"/>
-                </then>
-            </if>
+		<sequential>
+			<!-- if skip-up-shell-execution isn't set default it to false -->
+			<if>
+				<not>
+					<isset property="skip-up-shell-execution" />
+				</not>
+				<then>
+					<var name="skip-up-shell-execution" value="false" />
+				</then>
+			</if>
 
-            <!-- Track the current skip-up-shell-execution locally for this macro and set the skip-up-shell-execution to true -->
-            <local name="batch-skip-up-shell-execution"/>
-            <property name="batch-skip-up-shell-execution" value="${skip-up-shell-execution}"/>
-            <var name="skip-up-shell-execution" value="true"/>
+			<!-- Track the current skip-up-shell-execution locally for this macro and set the skip-up-shell-execution to true -->
+			<local name="batch-skip-up-shell-execution" />
+			<property name="batch-skip-up-shell-execution" value="${skip-up-shell-execution}" />
+			<var name="skip-up-shell-execution" value="true" />
 
-            <!-- run subtasks -->
-            <sub-tasks />
+			<!-- run subtasks -->
+			<sub-tasks />
 
-            <!-- copy the original skip-up-shell-execution value back into the variable -->
-            <var name="skip-up-shell-execution" value="${batch-skip-up-shell-execution}"/>
+			<!-- copy the original skip-up-shell-execution value back into the variable -->
+			<var name="skip-up-shell-execution" value="${batch-skip-up-shell-execution}" />
 
-            <!-- If not skipping run up-default-shell -->
-            <if>
-                <not>
-                    <istrue value="${skip-up-shell-execution}"/>
-                </not>
-                <then>
-                    <antcall target="up-shell-default" />
-                </then>
-            </if>
-        </sequential>
-    </macrodef>
+			<!-- If not skipping run up-default-shell -->
+			<if>
+				<not>
+					<istrue value="${skip-up-shell-execution}" />
+				</not>
+				<then>
+					<antcall target="up-shell-default" />
+				</then>
+			</if>
+		</sequential>
+	</macrodef>
 
 
-    <!--
+	<!--
      | Macro that simply calls the install-root-pom target using an 'ant' task instead of the
      | 'antcall' task to ensure the Maven tasks aren't tainted by a failed loading of the parent
      | pom.
      +-->
-    <macrodef name="uportal-parent-macro">
-        <element name="sub-tasks" optional="false" implicit="true" />
-        <sequential>
-            <!--
+	<macrodef name="uportal-parent-macro">
+		<element name="sub-tasks" optional="false" implicit="true" />
+		<sequential>
+			<!--
              | Called via the <ant> task so the install happens in a different classloader. This
              | is required so an initial install which is missing jasig-parent doesn't cause problems
              | later due to the failed load of jasig-parent being cached.  
              +-->
-            <if>
-                <not>
-                    <available file="${parentPomInstallMarker.file}" />
-                </not>
-                <then>
-                    <ant antfile="${basedir}/build.xml" target="install-parent-pom" />
-                    <touch file="${parentPomInstallMarker.file}" />
-                </then>
-            </if>
+			<if>
+				<not>
+					<available file="${parentPomInstallMarker.file}" />
+				</not>
+				<then>
+					<ant antfile="${basedir}/build.xml" target="install-parent-pom" />
+					<touch file="${parentPomInstallMarker.file}" />
+				</then>
+			</if>
 
-            <sub-tasks />
-        </sequential>
-    </macrodef>
+			<sub-tasks />
+		</sequential>
+	</macrodef>
 
-    <target name="install-parent-pom">
-        <artifact:pom file="${basedir}/pom.xml" id="uportal-parent.pom" settingsFile="${maven.settings}" inheritAllProperties="false" />
-        <artifact:install file="${basedir}/pom.xml" pomrefid="uportal-parent.pom" settingsFile="${maven.settings}" />
-    </target>
+	<target name="install-parent-pom">
+		<artifact:pom file="${basedir}/pom.xml" id="uportal-parent.pom" settingsFile="${maven.settings}" inheritAllProperties="false" />
+		<artifact:install file="${basedir}/pom.xml" pomrefid="uportal-parent.pom" settingsFile="${maven.settings}" />
+	</target>
 
-    <!--
+	<!--
      | Macro for tasks involving a maven project. The macro loads the pom, creates a classpath,
      | ensures the project artifact is up-to-date, and runs the <sub-tasks> element. If the
      | artifact is not up-to-date the <pre-package> element can be used to add behavior before
@@ -1281,93 +1301,93 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
      | property     - @{project-name}.artifact  - The full path to the final artifact
      | path         - @{project-name}.classpath - The projects classpath not including the artifact
      +-->
-    <macrodef name="maven-artifact-macro">
-        <attribute name="project-name" />
-        <attribute name="project-path" />
-        <attribute name="checkFilesId" default="null" />
+	<macrodef name="maven-artifact-macro">
+		<attribute name="project-name" />
+		<attribute name="project-path" />
+		<attribute name="checkFilesId" default="null" />
 
-        <element name="sub-tasks" optional="true" implicit="true" />
+		<element name="sub-tasks" optional="true" implicit="true" />
 
-        <sequential>
-            <!--
+		<sequential>
+			<!--
              | Load the pom & classpath
              +-->
-            <artifact:pom file="@{project-path}/pom.xml" id="@{project-name}.pom" settingsFile="${maven.settings}" inheritAllProperties="false" />
-            <artifact:dependencies pathid="@{project-name}.classpath" settingsFile="${maven.settings}">
-                <artifact:pom refid="@{project-name}.pom" settingsFile="${maven.settings}" inheritAllProperties="false" />
-            </artifact:dependencies>
+			<artifact:pom file="@{project-path}/pom.xml" id="@{project-name}.pom" settingsFile="${maven.settings}" inheritAllProperties="false" />
+			<artifact:dependencies pathid="@{project-name}.classpath" settingsFile="${maven.settings}">
+				<artifact:pom refid="@{project-name}.pom" settingsFile="${maven.settings}" inheritAllProperties="false" />
+			</artifact:dependencies>
 
-            <!--
+			<!--
              | Define the location of the resulting artifact
              +-->
-            <property name="@{project-name}.artifact" value="${@{project-name}.pom.build.directory}/${@{project-name}.pom.build.finalName}.${@{project-name}.pom.packaging}" />
+			<property name="@{project-name}.artifact" value="${@{project-name}.pom.build.directory}/${@{project-name}.pom.build.finalName}.${@{project-name}.pom.packaging}" />
 
-            <!--
+			<!--
              | Parse out the target directory without the preceding project path
              +-->
-            <length property="@{project-name}.path.length" string="@{project-path}/" />
-            <propertyregex property="@{project-name}.build.directory" input="${@{project-name}.pom.build.directory}" regexp=".{${@{project-name}.path.length}}(.*)" select="\1" />
+			<length property="@{project-name}.path.length" string="@{project-path}/" />
+			<propertyregex property="@{project-name}.build.directory" input="${@{project-name}.pom.build.directory}" regexp=".{${@{project-name}.path.length}}(.*)" select="\1" />
 
-            <!--
+			<!--
              | Do uptodate checking for project files and dependencies
              +-->
-            <uptodate property="@{project-name}.projectFilesUTD" targetfile="${@{project-name}.artifact}">
-                <srcfiles dir="@{project-path}" defaultexcludes="true">
-                    <exclude name="${@{project-name}.build.directory}/" />
-                	<exclude name="src/main/data/" />
-                </srcfiles>
-            </uptodate>
-            <if>
-                <not>
-                    <equals arg1="@{checkFilesId}" arg2="null" />
-                </not>
-                <then>
-                    <uptodate property="@{project-name}.dependenciesUTD" targetfile="${@{project-name}.artifact}">
-                        <srcfiles refid="@{checkFilesId}" />
-                    </uptodate>
-                </then>
-                <else>
-                    <property name="@{project-name}.dependenciesUTD" value="true" />
-                </else>
-            </if>
+			<uptodate property="@{project-name}.projectFilesUTD" targetfile="${@{project-name}.artifact}">
+				<srcfiles dir="@{project-path}" defaultexcludes="true">
+					<exclude name="${@{project-name}.build.directory}/" />
+					<exclude name="src/main/data/" />
+				</srcfiles>
+			</uptodate>
+			<if>
+				<not>
+					<equals arg1="@{checkFilesId}" arg2="null" />
+				</not>
+				<then>
+					<uptodate property="@{project-name}.dependenciesUTD" targetfile="${@{project-name}.artifact}">
+						<srcfiles refid="@{checkFilesId}" />
+					</uptodate>
+				</then>
+				<else>
+					<property name="@{project-name}.dependenciesUTD" value="true" />
+				</else>
+			</if>
 
-            <!--
+			<!--
              | Call 'mvn install' if files in the project are not up-to-date
              +-->
-            <if>
-                <not>
-                    <and>
-                        <equals arg1="${@{project-name}.projectFilesUTD}" arg2="true" />
-                        <equals arg1="${@{project-name}.dependenciesUTD}" arg2="true" />
-                    </and>
-                </not>
-                <then>
-                    <echo message="Artifact '${@{project-name}.artifact}' is not available or out-of-date, calling 'mvn install'" />
+			<if>
+				<not>
+					<and>
+						<equals arg1="${@{project-name}.projectFilesUTD}" arg2="true" />
+						<equals arg1="${@{project-name}.dependenciesUTD}" arg2="true" />
+					</and>
+				</not>
+				<then>
+					<echo message="Artifact '${@{project-name}.artifact}' is not available or out-of-date, calling 'mvn install'" />
 
-                    <!--
+					<!--
                      | Force the target artifact to be re-built by deleting it.
                      +-->
-                    <delete file="${@{project-name}.artifact}" />
+					<delete file="${@{project-name}.artifact}" />
 
-                    <antcall target="mvn">
-                        <param name="pomDir" value="@{project-path}" />
-                        <param name="goal" value="install" />
-                    </antcall>
-                </then>
-                <else>
-                    <echo message="Artifact '${@{project-name}.artifact}' is up-to-date" />
-                    <artifact:install file="${@{project-name}.artifact}" pomrefid="@{project-name}.pom" settingsFile="${maven.settings}" />
-                </else>
-            </if>
+					<antcall target="mvn">
+						<param name="pomDir" value="@{project-path}" />
+						<param name="goal" value="install" />
+					</antcall>
+				</then>
+				<else>
+					<echo message="Artifact '${@{project-name}.artifact}' is up-to-date" />
+					<artifact:install file="${@{project-name}.artifact}" pomrefid="@{project-name}.pom" settingsFile="${maven.settings}" />
+				</else>
+			</if>
 
-            <!--
+			<!--
              | Execute the sub-tasks
              +-->
-            <sub-tasks />
-        </sequential>
-    </macrodef>
+			<sub-tasks />
+		</sequential>
+	</macrodef>
 
-    <!--
+	<!--
      | Provides a wrapper for tasks that need a classpath that includes all of the uPortal WAR
      | dependencies. The task also ensures the uportal-search-api WAR exists and is up to date.
      |
@@ -1377,24 +1397,24 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
      | property     - uportal-search-api.artifact                  - The full path to the uportal-search-api WAR
      | path         - uportal-search-api.classpath                 - The uportal-search-api classpath not including the uportal-search-api WAR
      +-->
-    <macrodef name="uportal-search-api-macro">
-        <element name="search-api-sub-tasks" optional="false" implicit="true" />
+	<macrodef name="uportal-search-api-macro">
+		<element name="search-api-sub-tasks" optional="false" implicit="true" />
 
-        <sequential>
-            <uportal-parent-macro>
-                <fileset id="uportal-parent.pom.fsid" file="${basedir}/pom.xml" />
+		<sequential>
+			<uportal-parent-macro>
+				<fileset id="uportal-parent.pom.fsid" file="${basedir}/pom.xml" />
 
-                <maven-artifact-macro project-name="uportal-search-api" project-path="${uportal-search-api.dir}" checkfilesid="uportal-parent.pom.fsid">
-                    <!--
+				<maven-artifact-macro project-name="uportal-search-api" project-path="${uportal-search-api.dir}" checkfilesid="uportal-parent.pom.fsid">
+					<!--
                      | Execute the search-api-sub-tasks
                      +-->
-                    <search-api-sub-tasks />
-                </maven-artifact-macro>
-            </uportal-parent-macro>
-        </sequential>
-    </macrodef>
+					<search-api-sub-tasks />
+				</maven-artifact-macro>
+			</uportal-parent-macro>
+		</sequential>
+	</macrodef>
 
-    <!--
+	<!--
      | Provides a wrapper for tasks that need a classpath that includes all of the uPortal WAR
      | dependencies. The task also ensures the uportal-war WAR exists and is up to date.
      |
@@ -1404,62 +1424,62 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
      | property     - uportal-war.artifact                  - The full path to the uportal-war WAR
      | path         - uportal-war.classpath                 - The uportal-war classpath not including the uportal-war WAR
      +-->
-    <macrodef name="uportal-war-macro">
-        <element name="war-sub-tasks" optional="false" implicit="true" />
+	<macrodef name="uportal-war-macro">
+		<element name="war-sub-tasks" optional="false" implicit="true" />
 
-        <sequential>
-            <uportal-search-api-macro>
-                <fileset id="uportal-parent.pom.fsid" file="${basedir}/pom.xml" />
+		<sequential>
+			<uportal-search-api-macro>
+				<fileset id="uportal-parent.pom.fsid" file="${basedir}/pom.xml" />
 
-                <maven-artifact-macro project-name="uportal-war" project-path="${uportal-war.dir}" checkfilesid="uportal-parent.pom.fsid">
-                    <artifact:dependencies pathid="uportal-war-classes.classpath" settingsFile="${maven.settings}">
-                        <artifact:dependency groupId="${uportal-war.pom.groupId}" artifactId="${uportal-war.pom.artifactId}" version="${uportal-war.pom.version}" classifier="classes" scope="provided" />
-                    </artifact:dependencies>
+				<maven-artifact-macro project-name="uportal-war" project-path="${uportal-war.dir}" checkfilesid="uportal-parent.pom.fsid">
+					<artifact:dependencies pathid="uportal-war-classes.classpath" settingsFile="${maven.settings}">
+						<artifact:dependency groupId="${uportal-war.pom.groupId}" artifactId="${uportal-war.pom.artifactId}" version="${uportal-war.pom.version}" classifier="classes" scope="provided" />
+					</artifact:dependencies>
 
-                    <!--
+					<!--
                      | Include the uportal-war-classes JAR in the final classpath
                      +-->
-                    <path id="uportal-war-full.classpath">
-                        <path refid="uportal-war-classes.classpath" />
-                        <path refid="uportal-war.classpath" />
-                    </path>
+					<path id="uportal-war-full.classpath">
+						<path refid="uportal-war-classes.classpath" />
+						<path refid="uportal-war.classpath" />
+					</path>
 
-                    <!--
+					<!--
                      | Execute the war-sub-tasks
                      +-->
-                    <war-sub-tasks />
-                </maven-artifact-macro>
-            </uportal-search-api-macro>
-        </sequential>
-    </macrodef>
+					<war-sub-tasks />
+				</maven-artifact-macro>
+			</uportal-search-api-macro>
+		</sequential>
+	</macrodef>
 
-    <!--
+	<!--
      | Provides a wrapper for tasks that depend on the portlet overlays being installed and up-to-date.
      |
      | No properties are set for the overlay-sub-tasks element.
      +-->
-    <macrodef name="uportal-portlets-overlay-macro">
-        <element name="overlay-sub-tasks" optional="false" implicit="true" />
+	<macrodef name="uportal-portlets-overlay-macro">
+		<element name="overlay-sub-tasks" optional="false" implicit="true" />
 
-        <sequential>
-            <uportal-parent-macro>
-                <!--
+		<sequential>
+			<uportal-parent-macro>
+				<!--
                  | Install the overlay module and all child modules
                  +-->
-                <antcall target="mvn">
-                    <param name="pomDir" value="${uportal-portlets-overlay.dir}" />
-                    <param name="goal" value="install" />
-                </antcall>
+				<antcall target="mvn">
+					<param name="pomDir" value="${uportal-portlets-overlay.dir}" />
+					<param name="goal" value="install" />
+				</antcall>
 
-                <!--
+				<!--
                  | Execute the overlay-sub-tasks
                  +-->
-                <overlay-sub-tasks />
-            </uportal-parent-macro>
-        </sequential>
-    </macrodef>
+				<overlay-sub-tasks />
+			</uportal-parent-macro>
+		</sequential>
+	</macrodef>
 
-    <!--
+	<!--
      | Provides a wrapper for tasks that need a classpath that includes all of the uPortal EAR
      | dependencies. The task also ensures the uportal-ear EAR exists and is up to date.
      |
@@ -1469,77 +1489,77 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
      | property     - uportal-ear.artifact          - The full path to the uportal-ear EAR
      | path         - uportal-ear.classpath         - The uportal-ear classpath not including the uportal-ear EAR
      +-->
-    <macrodef name="uportal-ear-macro">
-        <element name="ear-sub-tasks" optional="false" implicit="true" />
+	<macrodef name="uportal-ear-macro">
+		<element name="ear-sub-tasks" optional="false" implicit="true" />
 
-        <sequential>
-            <uportal-war-macro>
-                <uportal-portlets-overlay-macro>
-                    <fileset id="uportal-war-artifacts" file="${uportal-war.artifact}" />
+		<sequential>
+			<uportal-war-macro>
+				<uportal-portlets-overlay-macro>
+					<fileset id="uportal-war-artifacts" file="${uportal-war.artifact}" />
 
-                    <maven-artifact-macro project-name="uportal-ear" project-path="${uportal-ear.dir}" checkfilesid="uportal-war-artifacts">
-                        <!--
+					<maven-artifact-macro project-name="uportal-ear" project-path="${uportal-ear.dir}" checkfilesid="uportal-war-artifacts">
+						<!--
                          | Execute the ear-sub-tasks
                          +-->
-                        <ear-sub-tasks />
-                    </maven-artifact-macro>
-                </uportal-portlets-overlay-macro>
-            </uportal-war-macro>
-        </sequential>
-    </macrodef>
+						<ear-sub-tasks />
+					</maven-artifact-macro>
+				</uportal-portlets-overlay-macro>
+			</uportal-war-macro>
+		</sequential>
+	</macrodef>
 
-    <!--
+	<!--
      | Utility target for executing a maven with some number (up to 10) of goals. The
      | target should automaticly work on all OSs as long as 'mvn' is on the path.
      +-->
-    <target name="mvn">
-        <property name="goal" value="-Djasig.ignore" />
-        <property name="goal1" value="-Djasig.ignore" />
-        <property name="goal2" value="-Djasig.ignore" />
-        <property name="goal3" value="-Djasig.ignore" />
-        <property name="goal4" value="-Djasig.ignore" />
-        <property name="goal5" value="-Djasig.ignore" />
-        <property name="goal6" value="-Djasig.ignore" />
-        <property name="goal7" value="-Djasig.ignore" />
-        <property name="goal8" value="-Djasig.ignore" />
-        <property name="goal9" value="-Djasig.ignore" />
+	<target name="mvn">
+		<property name="goal" value="-Djasig.ignore" />
+		<property name="goal1" value="-Djasig.ignore" />
+		<property name="goal2" value="-Djasig.ignore" />
+		<property name="goal3" value="-Djasig.ignore" />
+		<property name="goal4" value="-Djasig.ignore" />
+		<property name="goal5" value="-Djasig.ignore" />
+		<property name="goal6" value="-Djasig.ignore" />
+		<property name="goal7" value="-Djasig.ignore" />
+		<property name="goal8" value="-Djasig.ignore" />
+		<property name="goal9" value="-Djasig.ignore" />
 
-        <condition property="test.skip" value="-Dmaven.test.skip=true">
-            <isset property="maven.test.skip"/>
-        </condition>
-        <property name="test.skip" value="-Dmaven.test.skip=false" />
+		<condition property="test.skip" value="-Dmaven.test.skip=true">
+			<isset property="maven.test.skip" />
+		</condition>
+		<property name="test.skip" value="-Dmaven.test.skip=false" />
 
-        <condition property="offline" value="-o">
-            <isset property="maven.offline"/>
-        </condition>
-        <property name="offline" value="-Djasig.ignore" />
+		<condition property="offline" value="-o">
+			<isset property="maven.offline" />
+		</condition>
+		<property name="offline" value="-Djasig.ignore" />
 
-        <condition property="env.arg" value="-Denv=${env}">
-            <isset property="env" />
-        </condition>
-        <property name="env.arg" value="-Djasig.ignore" />
+		<condition property="env.arg" value="-Denv=${env}">
+			<isset property="env" />
+		</condition>
+		<property name="env.arg" value="-Djasig.ignore" />
 
-        <condition property="filters.arg" value="-Dfilters.file=${filters.file}">
-            <isset property="filters.file" />
-        </condition>
-        <property name="filters.arg" value="-Djasig.ignore" />
+		<condition property="filters.arg" value="-Dfilters.file=${filters.file}">
+			<isset property="filters.file" />
+		</condition>
+		<property name="filters.arg" value="-Djasig.ignore" />
 
-        <artifact:mvn pom="${pomDir}/pom.xml" failonerror="true" fork="true" mavenHome="${maven.home}" maxmemory="512m">
-            <arg value="-s${maven.settings}" />
-            <arg value="${test.skip}" />
-            <arg value="${offline}" />
-            <arg value="${env.arg}" />
-            <arg value="${filters.arg}" />
-            <arg value="${goal}" />
-            <arg value="${goal1}" />
-            <arg value="${goal2}" />
-            <arg value="${goal3}" />
-            <arg value="${goal4}" />
-            <arg value="${goal5}" />
-            <arg value="${goal6}" />
-            <arg value="${goal7}" />
-            <arg value="${goal8}" />
-            <arg value="${goal9}" />
-        </artifact:mvn>
-    </target>
+		<artifact:mvn pom="${pomDir}/pom.xml" failonerror="true" fork="true" mavenHome="${maven.home}" maxmemory="512m">
+			<arg value="-s${maven.settings}" />
+			<arg value="${test.skip}" />
+			<arg value="${offline}" />
+			<arg value="${env.arg}" />
+			<arg value="${filters.arg}" />
+			<arg value="${goal}" />
+			<arg value="${goal1}" />
+			<arg value="${goal2}" />
+			<arg value="${goal3}" />
+			<arg value="${goal4}" />
+			<arg value="${goal5}" />
+			<arg value="${goal6}" />
+			<arg value="${goal7}" />
+			<arg value="${goal8}" />
+			<arg value="${goal9}" />
+		</artifact:mvn>
+	</target>
 </project>
