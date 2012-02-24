@@ -928,22 +928,23 @@ catch (Exception e) {
 				<artifact:pom file="${bootstrap.dir}/hsqldb/pom.xml" settingsFile="${maven.settings}" inheritAllProperties="false" />
 			</artifact:dependencies>
 
-			<property name="database" value="file:${basedir}/data/uPortal" />
+			<property name="database" value="file:${basedir}/data/uPortal;hsqldb.tx=mvcc" />
 			<property name="port" value="${environment.build.hsql.port}" />
 
 			<echo message="Starting HSQL on ${port}" />
 			<echo message="Using: ${database}" />
-			<java fork="true" spawn="${spawn}" maxmemory="32M" dir="${basedir}" classname="org.hsqldb.Server" failonerror="${failonerror}">
+			<java fork="true" spawn="${spawn}" maxmemory="32M" dir="${basedir}" classname="org.hsqldb.server.Server" failonerror="${failonerror}">
 				<classpath refid="hsql.classpath" />
 
-				<arg value="--database.0" />
-				<arg value="${database}" />
-				<arg value="--dbname.0" />
-				<arg value="uPortal" />
-				<arg value="--address" />
-				<arg value="localhost" />
-				<arg value="--port" />
-				<arg value="${port}" />
+                <arg value="--database.0" />
+                <arg value="${database}" />
+                <arg value="--dbname.0" />
+                <arg value="uPortal" />
+                <arg value="--address" />
+                <arg value="localhost" />
+                <arg value="--port" />
+                <arg value="${port}" />
+                	
 			</java>
 		</uportal-parent-macro>
 	</target>
