@@ -46,5 +46,49 @@
       <value>TestPortlet1</value>  
       <description/>  
       <ovrd>N</ovrd> 
-    </parameter></parameters><portletPreferences><portletPreference><name>TestName4</name><read-only>true</read-only><values><value>TestValue4</value></values></portletPreference></portletPreferences>
+    </parameter></parameters><portletPreferences><portletPreference><name>cdata</name><read-only>true</read-only><values><value>
+
+  &lt;div&gt;To preview My UW-Madison, use one of these example accounts:&lt;/div&gt;
+  &lt;table&gt;
+    &lt;tbody&gt;
+      &lt;tr&gt;
+        &lt;td&gt;
+          &lt;form action="/portal/Login" method="post"&gt;
+            &lt;input value="admin" name="userName" type="hidden"/&gt;
+            &lt;input value="admin" name="password" type="hidden"/&gt;
+            &lt;input value="Login as a 'admin'" name="Login" class="uportal-button" type="submit"/&gt;
+          &lt;/form&gt;
+        &lt;/td&gt;
+       &lt;/tr&gt;
+       &lt;tr&gt;
+        &lt;td&gt;
+          &lt;form action="/portal/Login" method="post"&gt;
+            &lt;input value="staff" name="userName" type="hidden"/&gt;
+            &lt;input value="staff" name="password" type="hidden"/&gt;
+            &lt;input value="Login as an 'staff'" name="Login" class="uportal-button" type="submit"/&gt;
+          &lt;/form&gt;
+        &lt;/td&gt;
+      &lt;/tr&gt;
+       &lt;tr&gt;
+        &lt;td&gt;
+          &lt;form action="/portal/Login" method="post"&gt;
+            &lt;input value="student" name="userName" type="hidden"/&gt;
+            &lt;input value="student" name="password" type="hidden"/&gt;
+            &lt;input value="Login as an 'student'" name="Login" class="uportal-button" type="submit"/&gt;
+          &lt;/form&gt;
+        &lt;/td&gt;
+      &lt;/tr&gt;
+       &lt;tr&gt;
+        &lt;td&gt;
+          &lt;form action="/portal/Login" method="post"&gt;
+            &lt;input value="faculty" name="userName" type="hidden"/&gt;
+            &lt;input value="faculty" name="password" type="hidden"/&gt;
+            &lt;input value="Login as an 'faculty'" name="Login" class="uportal-button" type="submit"/&gt;
+          &lt;/form&gt;
+        &lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/tbody&gt;
+  &lt;/table&gt;
+
+      </value></values></portletPreference><portletPreference><name>TestName4</name><read-only>true</read-only><values><value>TestValue4</value></values></portletPreference></portletPreferences>
 </channel-definition>
