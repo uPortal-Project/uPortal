@@ -189,7 +189,13 @@ public final class ConcurrentDirectoryScanner implements DirectoryScanner {
             if (future.second.isDone()) {
                 futureItr.remove();
                 
-                processResult(results, future);
+                try {
+                    processResult(results, future);
+                }
+                catch (InterruptedException e) {
+                    Thread.interrupted();
+                    return;
+                }
             }
         }
     }
@@ -197,11 +203,17 @@ public final class ConcurrentDirectoryScanner implements DirectoryScanner {
     protected <T> void waitForFutures(final Queue<Tuple<File, Future<T>>> futures, final ConcurrentMap<File, T> results) {
         while (!futures.isEmpty()) {
             final Tuple<File, Future<T>> future = futures.poll();
-            processResult(results, future);
+            try {
+                processResult(results, future);
+            }
+            catch (InterruptedException e) {
+                Thread.interrupted();
+                return;
+            }
         }
     }
 
-    protected <T> void processResult(final ConcurrentMap<File, T> results, final Tuple<File, Future<T>> future) {
+    protected <T> void processResult(final ConcurrentMap<File, T> results, final Tuple<File, Future<T>> future) throws InterruptedException {
         final T result;
         try {
             if (maxWait < 0) {
@@ -213,11 +225,8 @@ public final class ConcurrentDirectoryScanner implements DirectoryScanner {
             
             logger.debug("processing complete: {}", future.first);
         }
-        catch (InterruptedException e) {
-            throw new RuntimeException("Timeout waiting for file: " + future.first, e);
-        }
         catch (ExecutionException e) {
-            throw new RuntimeException("Exception processing for file: " + future.first, e);
+            throw new RuntimeException("Exception processing for file: " + future.first, e.getCause());
         }
         catch (TimeoutException e) {
             throw new RuntimeException("Timeout waiting for file: " + future.first, e);
