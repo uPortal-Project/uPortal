@@ -72,6 +72,7 @@ import org.jasig.portal.utils.ResourceUtils;
 import org.jasig.portal.utils.SafeFilenameUtils;
 import org.jasig.portal.xml.StaxUtils;
 import org.jasig.portal.xml.XmlUtilities;
+import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.jasig.portal.xml.stream.BufferedXMLEventReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -586,7 +587,14 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
                 //If the upgrader didn't handle the import as well wrap the result DOM in a new Source and start the import process over again
                 final org.w3c.dom.Node node = result.getNode();
                 final PortalDataKey upgradedPortalDataKey = new PortalDataKey(node);
-                this.logger.info("Upgraded: {} to {}", getPartialSystemId(systemId), upgradedPortalDataKey);
+                if (this.logger.isTraceEnabled()) {
+                    //TODO buffer events from staxSource and print as XML 
+                    this.logger.trace("Upgraded: " + getPartialSystemId(systemId) + " to " + upgradedPortalDataKey + "\n" +
+                    		"\nResult XML: \n" + XmlUtilitiesImpl.toString(node));
+                }
+                else {
+                    this.logger.info("Upgraded: {} to {}", getPartialSystemId(systemId), upgradedPortalDataKey);
+                }
                 final DOMSource upgradedSource = new DOMSource(node, systemId);
                 this.importData(upgradedSource, upgradedPortalDataKey);
             }
