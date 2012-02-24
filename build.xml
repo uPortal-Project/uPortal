@@ -654,8 +654,6 @@ else {
             new File(dataDir), 
             pattern == 'null' ? null : pattern, 
             new org.jasig.portal.io.xml.IPortalDataHandlerService.BatchImportOptions().setLogDirectoryParent(logDir));
-
-        portalDataHandlerService.importData(new File(dataDir), pattern == 'null' ? null : pattern, null);
     }
     catch (Exception e) {
 	    if (pattern != null) {
