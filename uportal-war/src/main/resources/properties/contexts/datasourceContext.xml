@@ -29,7 +29,7 @@
      | DataSource objects used by the portal should be configured 
      +-->
 
-    <bean id="PortalDb" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+    <bean id="PortalDb" class="org.jasig.portal.utils.LoggingBasicDataSource" destroy-method="close">
         <qualifier value="PortalDb"/>
         <property name="driverClassName" value="${hibernate.connection.driver_class}" />
         <property name="url" value="${hibernate.connection.url}" />
@@ -55,7 +55,7 @@
      | DataSource used to store raw portal event data, wrapper is used instead of alias so that Spring treats each
      | DataSource as unique.
      +-->
-    <bean id="RawEventsDB" class="org.jasig.portal.utils.DataSourceWrapper">
+    <bean id="RawEventsDB" class="org.springframework.jdbc.datasource.DelegatingDataSource">
         <qualifier value="RawEventsDB" />
         <constructor-arg ref="PortalDb" />
     </bean>
@@ -64,7 +64,7 @@
      | DataSource used to store aggregated portal event data, wrapper is used instead of alias so that Spring treats each
      | DataSource as unique.
      +-->
-    <bean id="AggrEventsDB" class="org.jasig.portal.utils.DataSourceWrapper">
+    <bean id="AggrEventsDB" class="org.springframework.jdbc.datasource.DelegatingDataSource">
         <qualifier value="AggrEventsDB" />
         <constructor-arg ref="PortalDb" />
     </bean>

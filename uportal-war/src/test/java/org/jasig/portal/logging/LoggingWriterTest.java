@@ -22,7 +22,7 @@ package org.jasig.portal.logging;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-import java.util.Formatter;
+import java.io.PrintWriter;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -32,25 +32,28 @@ import org.slf4j.Logger;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class AppendableLoggerTest {
+public class LoggingWriterTest {
     @Test
     public void testAppendableLogger() {
         final Logger logger = Mockito.mock(Logger.class);
         
-        final Formatter f = new Formatter(new AppendableLogger(logger, LogLevel.INFO));
+        final PrintWriter loggingWriter = new PrintWriter(new LoggingWriter(logger, LogLevel.INFO));
+        loggingWriter.print("test");
+        verifyNoMoreInteractions(logger);
 
-        f.format("%9s | %16s | %16s%n", "Data Type", "Export Supported", "Import Supported");
-        verify(logger).info("Data Type | Export Supported | Import Supported");
+        loggingWriter.println("end");
+        verify(logger).info("testend");
         
-        f.format("%9s | %16s | %16s%n", "portlet-type", true, true);
-        verify(logger).info("portlet-type |             true |             true");
-
-        f.format("%9s | %16s | %16s%n", "portlet-definition", true, false);
-        verify(logger).info("portlet-definition |             true |            false");
-
-        f.format("%9s | %16s | %16s%n", "layout", true, false);
-        verify(logger).info("   layout |             true |            false");
+        loggingWriter.print("hanging");
+        verifyNoMoreInteractions(logger);
+        
+        loggingWriter.flush();
+        verifyNoMoreInteractions(logger);
+        
+        loggingWriter.close();
+        verify(logger).info("hanging");
         
         verifyNoMoreInteractions(logger);
     }
+
 }
