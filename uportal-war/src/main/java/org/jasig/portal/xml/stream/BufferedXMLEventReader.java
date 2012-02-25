@@ -19,7 +19,9 @@
 
 package org.jasig.portal.xml.stream;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
 
 import javax.xml.stream.XMLEventReader;
@@ -51,6 +53,13 @@ public class BufferedXMLEventReader extends BaseXMLEventReader {
     public BufferedXMLEventReader(XMLEventReader reader, int eventLimit) {
         super(reader);
         this.eventLimit = eventLimit;
+    }
+    
+    /**
+     * @return A copy of the current buffer
+     */
+    public List<XMLEvent> getBuffer() {
+        return new ArrayList<XMLEvent>(this.eventBuffer);
     }
 
     /* (non-Javadoc)

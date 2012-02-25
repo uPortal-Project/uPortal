@@ -86,6 +86,7 @@ import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.XmlMappingException;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Node;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Files;
@@ -572,25 +573,27 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         final IDataUpgrader dataUpgrader = this.portalDataUpgraders.get(portalDataKey);
         if (dataUpgrader != null) {
             this.logger.debug("Upgrading: {}", getPartialSystemId(systemId));
-            
-            final StAXSource staxSource;
+
+            //Convert the StAX stream to a DOM node, due to poor JDK support for StAX with XSLT
+            final Node sourceNode;
             try {
-                staxSource = new StAXSource(xmlEventReader);
+                sourceNode = xmlUtilities.convertToDom(xmlEventReader);
             }
             catch (XMLStreamException e) {
                 throw new RuntimeException("Failed to create StAXSource from original XML reader", e);
             }
+            final DOMSource source = new DOMSource(sourceNode);
             
             final DOMResult result = new DOMResult();
-            final boolean doImport = dataUpgrader.upgradeData(staxSource, result);
+            final boolean doImport = dataUpgrader.upgradeData(source, result);
             if (doImport) {
                 //If the upgrader didn't handle the import as well wrap the result DOM in a new Source and start the import process over again
                 final org.w3c.dom.Node node = result.getNode();
                 final PortalDataKey upgradedPortalDataKey = new PortalDataKey(node);
                 if (this.logger.isTraceEnabled()) {
-                    //TODO buffer events from staxSource and print as XML 
-                    this.logger.trace("Upgraded: " + getPartialSystemId(systemId) + " to " + upgradedPortalDataKey + "\n" +
-                    		"\nResult XML: \n" + XmlUtilitiesImpl.toString(node));
+                    this.logger.trace("Upgraded: " + getPartialSystemId(systemId) + " to " + upgradedPortalDataKey +
+                            "\n\nSource XML: \n" + XmlUtilitiesImpl.toString(source.getNode()) + 
+                    		"\n\nResult XML: \n" + XmlUtilitiesImpl.toString(node));
                 }
                 else {
                     this.logger.info("Upgraded: {} to {}", getPartialSystemId(systemId), upgradedPortalDataKey);

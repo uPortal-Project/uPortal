@@ -19,22 +19,22 @@
 
 package org.jasig.portal.io.xml;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.io.StringWriter;
 
 import javax.xml.XMLConstants;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -43,9 +43,11 @@ import javax.xml.validation.Validator;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.jasig.portal.xml.XmlUtilities;
+import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.springframework.core.io.Resource;
 import org.springframework.oxm.support.SaxResourceUtils;
 import org.springframework.util.Assert;
+import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -68,11 +70,13 @@ public abstract class BaseXsltDataUpgraderTest {
             final Resource inputResource, final Resource expectedResultResource,
             final Resource xsdResource) throws Exception {
 
-        final TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        final Templates templates = transformerFactory.newTemplates(new StreamSource(xslResource.getInputStream()));
-
-        final XmlUtilities xmlUtilities = mock(XmlUtilities.class);
-        when(xmlUtilities.getTemplates(xslResource)).thenReturn(templates);
+        final XmlUtilities xmlUtilities = new XmlUtilitiesImpl() {
+            @Override
+            public Templates getTemplates(Resource stylesheet) throws TransformerConfigurationException, IOException {
+                final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+                return transformerFactory.newTemplates(new StreamSource(stylesheet.getInputStream()));
+            }
+        };
         
         final XsltDataUpgrader xsltDataUpgrader = new XsltDataUpgrader();
         xsltDataUpgrader.setPortalDataKey(dataKey);
@@ -80,11 +84,18 @@ public abstract class BaseXsltDataUpgraderTest {
         xsltDataUpgrader.setXmlUtilities(xmlUtilities);
         xsltDataUpgrader.afterPropertiesSet();
         
-        final StringWriter result = new StringWriter();
-        xsltDataUpgrader.upgradeData(new StreamSource(inputResource.getInputStream()), new StreamResult(result));
+        
+        //Create XmlEventReader (what the JaxbPortalDataHandlerService has)
+        final XMLInputFactory xmlInputFactory = xmlUtilities.getXmlInputFactory();
+        final XMLEventReader xmlEventReader = xmlInputFactory.createXMLEventReader(inputResource.getInputStream());
+        final Node sourceNode = xmlUtilities.convertToDom(xmlEventReader);
+        final DOMSource source = new DOMSource(sourceNode);
+        
+        final DOMResult result = new DOMResult();
+        xsltDataUpgrader.upgradeData(source, result);
 
         //XSD Validation
-        final String resultString = result.toString();
+        final String resultString = XmlUtilitiesImpl.toString(result.getNode());
         if (xsdResource != null) {
             final Schema schema = this.loadSchema(new Resource[] { xsdResource }, XMLConstants.W3C_XML_SCHEMA_NS_URI);
             final Validator validator = schema.newValidator();
