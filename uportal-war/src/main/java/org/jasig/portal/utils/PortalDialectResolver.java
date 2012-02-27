@@ -24,6 +24,7 @@ import java.sql.SQLException;
 
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.MySQL5InnoDBDialect;
+import org.hibernate.dialect.SQLServer2005Dialect;
 import org.hibernate.service.jdbc.dialect.internal.AbstractDialectResolver;
 
 /**
@@ -44,6 +45,11 @@ public class PortalDialectResolver extends AbstractDialectResolver {
         
         if ("PostgreSQL".equals(databaseName) && 8 == databaseMajorVersion && databaseMinorVersion <= 1) {
             return new PostgreSQL81Dialect();
+        }
+        
+        // This is due to a jTDS not supporting SQL Server 2008+, hence does not support some new types like TIME.
+        if ("Microsoft SQL Server".equals(databaseName) && databaseMajorVersion > 9) {
+            return new SQLServer2005Dialect();
         }
 
         return null;
