@@ -111,6 +111,6 @@ public class LayoutCachingService implements ApplicationListener<PortalEvent>, I
         this.layoutCache.remove(cacheKey);
     }
     protected Serializable getCacheKey(IPerson owner, IUserProfile profile) {
-        return new Tuple<String, Integer>(owner.getUserName(), profile.getLayoutId());
+        return new Tuple<String, Integer>(owner.getUserName(), profile.getProfileId());
     }
 }
