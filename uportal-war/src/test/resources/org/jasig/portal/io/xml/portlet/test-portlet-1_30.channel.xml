@@ -57,5 +57,55 @@
       <description/>  
       <ovrd>N</ovrd> 
     </parameter>
+    <parameter> 
+      <name>PORTLET.cdata</name>  
+      <value>
+<![CDATA[
+  <div>To preview My UW-Madison, use one of these example accounts:</div>
+  <table>
+    <tbody>
+      <tr>
+        <td>
+          <form action="/portal/Login" method="post">
+            <input value="admin" name="userName" type="hidden"/>
+            <input value="admin" name="password" type="hidden"/>
+            <input value="Login as a 'admin'" name="Login" class="uportal-button" type="submit"/>
+          </form>
+        </td>
+       </tr>
+       <tr>
+        <td>
+          <form action="/portal/Login" method="post">
+            <input value="staff" name="userName" type="hidden"/>
+            <input value="staff" name="password" type="hidden"/>
+            <input value="Login as an 'staff'" name="Login" class="uportal-button" type="submit"/>
+          </form>
+        </td>
+      </tr>
+       <tr>
+        <td>
+          <form action="/portal/Login" method="post">
+            <input value="student" name="userName" type="hidden"/>
+            <input value="student" name="password" type="hidden"/>
+            <input value="Login as an 'student'" name="Login" class="uportal-button" type="submit"/>
+          </form>
+        </td>
+      </tr>
+       <tr>
+        <td>
+          <form action="/portal/Login" method="post">
+            <input value="faculty" name="userName" type="hidden"/>
+            <input value="faculty" name="password" type="hidden"/>
+            <input value="Login as an 'faculty'" name="Login" class="uportal-button" type="submit"/>
+          </form>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+]]>
+      </value>  
+      <description/>  
+      <ovrd>N</ovrd> 
+    </parameter>
   </parameters>
 </channel-definition>

@@ -20,9 +20,11 @@
 package org.jasig.portal.logging;
 
 import java.io.IOException;
+import java.io.Writer;
 
 import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 
 /**
@@ -33,69 +35,23 @@ import org.slf4j.Marker;
  * @version $Revision$
  */
 public class AppendableLogger implements Appendable, Logger {
-    public enum Level {
-        TRACE {
-            @Override
-            public void log(Logger logger, String msg) {
-                logger.trace(msg);
-            }
-        },
-        DEBUG {
-            @Override
-            public void log(Logger logger, String msg) {
-                logger.debug(msg);
-            }
-        },
-        INFO {
-            @Override
-            public void log(Logger logger, String msg) {
-                logger.info(msg);
-            }
-        },
-        WARN {
-            @Override
-            public void log(Logger logger, String msg) {
-                logger.warn(msg);
-            }
-        },
-        ERROR {
-            @Override
-            public void log(Logger logger, String msg) {
-                logger.error(msg);
-            }
-        };
 
-        public abstract void log(Logger logger, String msg);
-    }
-
-    private static final String NEWLINE = System.getProperty("line.separator");
-    private final StringBuffer builder = new StringBuffer();
+    private final Writer loggingWriter;
     private final Logger logger;
-    private final Level appendLevel;
-
-    public AppendableLogger(Logger logger, Level appendLevel) {
-        Validate.notNull(logger);
-        Validate.notNull(appendLevel);
-
-        this.logger = logger;
-        this.appendLevel = appendLevel;
+    
+    public AppendableLogger(String loggerName, LogLevel appendLevel) {
+        this(LoggerFactory.getLogger(loggerName), appendLevel);
     }
     
-    private void logIfNeeded() {
-        while (true) {
-            final int newlineIndex = builder.indexOf(NEWLINE);
-            if (newlineIndex < 0) {
-                return;
-            }
-            if (newlineIndex == 0) {
-                builder.delete(0, NEWLINE.length());
-                this.appendLevel.log(this.logger, "");
-            }
-            
-            final String msg = builder.substring(0, newlineIndex);
-            builder.delete(0, newlineIndex + NEWLINE.length());
-            this.appendLevel.log(this.logger, msg);
-        }
+    public AppendableLogger(Class<?> clazz, LogLevel appendLevel) {
+        this(LoggerFactory.getLogger(clazz), appendLevel);
+    }
+
+    public AppendableLogger(Logger logger, LogLevel appendLevel) {
+        Validate.notNull(logger);
+
+        this.logger = logger;
+        this.loggingWriter = new LoggingWriter(logger, appendLevel);
     }
 
     /* (non-Javadoc)
@@ -103,8 +59,7 @@ public class AppendableLogger implements Appendable, Logger {
      */
     @Override
     public Appendable append(CharSequence csq) throws IOException {
-        builder.append(csq);
-        logIfNeeded();
+        this.loggingWriter.append(csq);
         return this;
     }
 
@@ -113,8 +68,7 @@ public class AppendableLogger implements Appendable, Logger {
      */
     @Override
     public Appendable append(CharSequence csq, int start, int end) throws IOException {
-        builder.append(csq, start, end);
-        logIfNeeded();
+        this.loggingWriter.append(csq, start, end);
         return this;
     }
 
@@ -123,8 +77,7 @@ public class AppendableLogger implements Appendable, Logger {
      */
     @Override
     public Appendable append(char c) throws IOException {
-        builder.append(c);
-        logIfNeeded();
+        this.loggingWriter.append(c);
         return this;
     }
 

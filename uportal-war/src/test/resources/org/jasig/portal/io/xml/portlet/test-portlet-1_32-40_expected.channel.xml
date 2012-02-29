@@ -20,19 +20,19 @@
 
 -->
 <portlet-definition xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd" version="4.0">
-<ns22:title xmlns:ns22="https://source.jasig.org/schemas/uportal/io/portlet-definition">Test Portlet 1</ns22:title>
-<ns23:name xmlns:ns23="https://source.jasig.org/schemas/uportal/io/portlet-definition">Test Portlet 1</ns23:name>
-<ns24:fname xmlns:ns24="https://source.jasig.org/schemas/uportal/io/portlet-definition">test-portlet-1</ns24:fname>
-<ns25:desc xmlns:ns25="https://source.jasig.org/schemas/uportal/io/portlet-definition">Test portlet 1 from Apache Pluto</ns25:desc>
-<ns26:type xmlns:ns26="https://source.jasig.org/schemas/uportal/io/portlet-definition">Portlet</ns26:type>
-<ns27:timeout xmlns:ns27="https://source.jasig.org/schemas/uportal/io/portlet-definition">600000</ns27:timeout>
+<ns21:title xmlns:ns21="https://source.jasig.org/schemas/uportal/io/portlet-definition">Test Portlet 1</ns21:title>
+<ns22:name xmlns:ns22="https://source.jasig.org/schemas/uportal/io/portlet-definition">Test Portlet 1</ns22:name>
+<ns23:fname xmlns:ns23="https://source.jasig.org/schemas/uportal/io/portlet-definition">test-portlet-1</ns23:fname>
+<ns24:desc xmlns:ns24="https://source.jasig.org/schemas/uportal/io/portlet-definition">Test portlet 1 from Apache Pluto</ns24:desc>
+<type>Portlet</type>
+<ns25:timeout xmlns:ns25="https://source.jasig.org/schemas/uportal/io/portlet-definition">600000</ns25:timeout>
 <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
 <up:webAppName>/pluto-testsuite</up:webAppName>
 <up:portletName>TestPortlet1</up:portletName>
 </portlet-descriptor>
-    <ns28:category xmlns:ns28="https://source.jasig.org/schemas/uportal/io/portlet-definition">Development</ns28:category>
+    <ns26:category xmlns:ns26="https://source.jasig.org/schemas/uportal/io/portlet-definition">Development</ns26:category>
   
-    <ns29:group xmlns:ns29="https://source.jasig.org/schemas/uportal/io/portlet-definition">Everyone</ns29:group>
+    <ns27:group xmlns:ns27="https://source.jasig.org/schemas/uportal/io/portlet-definition">Everyone</ns27:group>
   
     
     
@@ -57,10 +57,61 @@
 <value>false</value>
 </parameter>
     <portlet-preference> 
-      <ns30:name xmlns:ns30="https://source.jasig.org/schemas/uportal/io/portlet-definition">TestName4</ns30:name>  
+      <ns28:name xmlns:ns28="https://source.jasig.org/schemas/uportal/io/portlet-definition">TestName4</ns28:name>  
       <readOnly>true</readOnly>  
       
-        <ns31:value xmlns:ns31="https://source.jasig.org/schemas/uportal/io/portlet-definition">TestValue4</ns31:value>
+        <ns29:value xmlns:ns29="https://source.jasig.org/schemas/uportal/io/portlet-definition">TestValue4</ns29:value>
+       
+    </portlet-preference>
+    <portlet-preference> 
+      <ns30:name xmlns:ns30="https://source.jasig.org/schemas/uportal/io/portlet-definition">cdata</ns30:name>  
+      <readOnly>true</readOnly>  
+      
+        <ns31:value xmlns:ns31="https://source.jasig.org/schemas/uportal/io/portlet-definition">
+
+  &lt;div&gt;To preview My UW-Madison, use one of these example accounts:&lt;/div&gt;
+  &lt;table&gt;
+    &lt;tbody&gt;
+      &lt;tr&gt;
+        &lt;td&gt;
+          &lt;form action="/portal/Login" method="post"&gt;
+            &lt;input value="admin" name="userName" type="hidden"/&gt;
+            &lt;input value="admin" name="password" type="hidden"/&gt;
+            &lt;input value="Login as a 'admin'" name="Login" class="uportal-button" type="submit"/&gt;
+          &lt;/form&gt;
+        &lt;/td&gt;
+       &lt;/tr&gt;
+       &lt;tr&gt;
+        &lt;td&gt;
+          &lt;form action="/portal/Login" method="post"&gt;
+            &lt;input value="staff" name="userName" type="hidden"/&gt;
+            &lt;input value="staff" name="password" type="hidden"/&gt;
+            &lt;input value="Login as an 'staff'" name="Login" class="uportal-button" type="submit"/&gt;
+          &lt;/form&gt;
+        &lt;/td&gt;
+      &lt;/tr&gt;
+       &lt;tr&gt;
+        &lt;td&gt;
+          &lt;form action="/portal/Login" method="post"&gt;
+            &lt;input value="student" name="userName" type="hidden"/&gt;
+            &lt;input value="student" name="password" type="hidden"/&gt;
+            &lt;input value="Login as an 'student'" name="Login" class="uportal-button" type="submit"/&gt;
+          &lt;/form&gt;
+        &lt;/td&gt;
+      &lt;/tr&gt;
+       &lt;tr&gt;
+        &lt;td&gt;
+          &lt;form action="/portal/Login" method="post"&gt;
+            &lt;input value="faculty" name="userName" type="hidden"/&gt;
+            &lt;input value="faculty" name="password" type="hidden"/&gt;
+            &lt;input value="Login as an 'faculty'" name="Login" class="uportal-button" type="submit"/&gt;
+          &lt;/form&gt;
+        &lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/tbody&gt;
+  &lt;/table&gt;
+
+        </ns31:value>
        
     </portlet-preference>
   </portlet-definition>

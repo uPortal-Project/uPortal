@@ -26,7 +26,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.jasig.portal.logging.AppendableLogger;
-import org.jasig.portal.logging.AppendableLogger.Level;
+import org.jasig.portal.logging.LogLevel;
 import org.jasig.portal.utils.TableFormatter;
 import org.jasig.portal.utils.TableFormatter.TableEntry;
 import org.slf4j.Logger;
@@ -45,7 +45,7 @@ public final class PortalDataHandlerServiceUtils {
     }
     
     public static void format(IPortalDataHandlerService dataHandlerService, Logger l) {
-        final Formatter f = new Formatter(new AppendableLogger(l, Level.INFO));
+        final Formatter f = new Formatter(new AppendableLogger(l, LogLevel.INFO));
         
         final Map<String, Set<Operations>> portalDataTypes = new TreeMap<String, Set<Operations>>();
         

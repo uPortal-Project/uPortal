@@ -16,10 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-.up .up-portal-nav > .ui-li {
-	display: none;
-}
 
-.up .up-portal-nav .ui-li-divider {
-	display: block;
+package org.jasig.portal.utils;
+
+import java.io.PrintWriter;
+
+import org.apache.commons.dbcp.BasicDataSource;
+import org.jasig.portal.logging.LogLevel;
+import org.jasig.portal.logging.LoggingWriter;
+
+/**
+ * Extension of BasicDataSource that sets logWriter to a SLF4J logging writer
+ * 
+ * @author Eric Dalquist
+ * @version $Revision$
+ */
+public class LoggingBasicDataSource extends BasicDataSource {
+    public LoggingBasicDataSource() {
+        this(LogLevel.INFO);
+    }
+    
+    public LoggingBasicDataSource(LogLevel logLevel) {
+        this.logWriter = new PrintWriter(new LoggingWriter(BasicDataSource.class, logLevel));
+    }
 }
