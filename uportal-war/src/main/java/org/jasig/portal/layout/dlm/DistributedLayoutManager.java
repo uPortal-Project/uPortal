@@ -95,6 +95,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
     private IUserLayoutStore distributedLayoutStore;
     private XPathOperations xpathOperations;
     private IPortalEventFactory portalEventFactory;
+    private IAuthorizationService authorizationService;
     
     protected final IPerson owner;
     protected final IUserProfile profile;
@@ -105,7 +106,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
      */
     static final String FOLDER_LABEL_POLICY = "FolderLabelPolicy";
     
-    protected static Random rnd=new Random();
+    protected final static Random rnd=new Random();
     protected String cacheKey="initialKey";
     protected String rootNodeId = null;
 
@@ -137,6 +138,11 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
         this.profile = profile;
     }
     
+    @Autowired
+    public void setAuthorizationService(IAuthorizationService authorizationService) {
+        this.authorizationService = authorizationService;
+    }
+
     @Autowired
     public void setXpathOperations(XPathOperations xpathOperations) {
         this.xpathOperations = xpathOperations;
@@ -229,8 +235,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
             // DistributedLayoutManager shall gracefully remove channels 
             // that the user isn't authorized to render from folders of type 
             // 'header' and 'footer'.
-            IAuthorizationService authServ = AuthorizationImpl.singleton();
-            IAuthorizationPrincipal principal = authServ.newPrincipal(owner.getUserName(), IPerson.class);
+            IAuthorizationPrincipal principal = authorizationService.newPrincipal(owner.getUserName(), IPerson.class);
             NodeList nodes = userLayoutDocument.getElementsByTagName("folder");
             for (int i=0; i < nodes.getLength(); i++) {
           	  Element fd = (Element) nodes.item(i);

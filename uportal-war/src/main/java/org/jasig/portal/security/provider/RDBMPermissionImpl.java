@@ -23,7 +23,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -37,6 +36,7 @@ import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.RDBMServices;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionStore;
+import org.springframework.stereotype.Repository;
 
 /**
  * Reference implementation of IPermissionStore.  Performs CRUD operations
@@ -44,14 +44,10 @@ import org.jasig.portal.security.IPermissionStore;
  * @author Dan Ellentuck (de3@columbia.edu)
  * @version $Revision$
  */
+@Repository
 public class RDBMPermissionImpl implements IPermissionStore {
 
     private static final Log log = LogFactory.getLog(RDBMPermissionImpl.class);
-
-    private static RDBMPermissionImpl singleton;
-
-    // Prior to jdk 1.4, java.sql.Timestamp.getTime() truncated milliseconds.
-    private static boolean timestampHasMillis;
 
     // sql Strings:
     private static String PERMISSION_TABLE = "UP_PERMISSION";
@@ -123,16 +119,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
         }
 
     }
-    
-/**
- * RDBMReferencePermission constructor comment.
- */
-public RDBMPermissionImpl() {
-    super();
-    Date testDate = new Date();
-    Timestamp testTimestamp = new Timestamp(testDate.getTime());
-    timestampHasMillis = (testDate.getTime() == testTimestamp.getTime());
-}
+
 /**
  * Add the IPermissions to the store.
  * @param perms org.jasig.portal.security.IPermission[]
@@ -862,15 +849,6 @@ throws AuthorizationException
 
 }
 /**
- * @return org.jasig.portal.security.provider.RDBMPermissionImpl
- */
-public static synchronized RDBMPermissionImpl singleton()
-{
-    if ( singleton == null )
-        { singleton = new RDBMPermissionImpl(); }
-    return singleton;
-}
-/**
  * Update the IPermissions in the store.
  * @param perms org.jasig.portal.security.IPermission[]
  * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
@@ -924,9 +902,6 @@ public void update(IPermission perm) throws AuthorizationException
  */
 private static long getTimestampMillis(Timestamp ts)
 {
-    if ( timestampHasMillis )
-        { return ts.getTime(); }
-    else
-        { return (ts.getTime() + ts.getNanos() / 1000000); }
+    return ts.getTime();
 }
 }

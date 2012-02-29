@@ -93,6 +93,13 @@ public class PermissionAssignmentMapController extends AbstractPermissionsContro
         this.permissionStore = permissionStore;
     }
     
+    private IAuthorizationService authorizationService;
+    
+    @Autowired
+    public void setAuthorizationService(IAuthorizationService authorizationService) {
+        this.authorizationService = authorizationService;
+    }
+
     @RequestMapping(value="/updatePermission", method = RequestMethod.GET)
     public ModelAndView updatePermission(
             @RequestParam("principal") String principal,
@@ -115,11 +122,10 @@ public class PermissionAssignmentMapController extends AbstractPermissionsContro
 
         if (bean != null) {
             
-            IAuthorizationService authService = AuthorizationImpl.singleton();
             IAuthorizationPrincipal p = groupListHelper.getPrincipalForEntity(bean);
             
             IPermission[] directPermissions = permissionStore.select(owner, p.getPrincipalString(), activity, target, null);
-            authService.removePermissions(directPermissions);
+            this.authorizationService.removePermissions(directPermissions);
             
             assignment = assignment.toUpperCase();
             if (assignment.equals(Assignment.Type.GRANT.toString()) || assignment.equals(Assignment.Type.DENY.toString())) {
@@ -128,7 +134,7 @@ public class PermissionAssignmentMapController extends AbstractPermissionsContro
                 permission.setPrincipal(bean.getPrincipalString());
                 permission.setTarget(target);
                 permission.setType(assignment);
-                authService.addPermissions(new IPermission[]{ permission });
+                this.authorizationService.addPermissions(new IPermission[]{ permission });
             }
             
         } else {

@@ -34,6 +34,7 @@ import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionManager;
 import org.jasig.portal.security.IUpdatingPermissionManager;
 import org.jasig.portal.security.PortalSecurityException;
+import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
 
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
@@ -45,7 +46,13 @@ public class AuthorizationService
     
     private static final Log log = LogFactory.getLog(AuthorizationService.class);
     
-  private static AuthorizationService m_instance;
+    private final static SingletonDoubleCheckedCreator<AuthorizationService> authorizationServiceInstance = new SingletonDoubleCheckedCreator<AuthorizationService>() {
+        @Override
+        protected AuthorizationService createSingleton(Object... args) {
+            return new AuthorizationService();
+        }
+    };
+    
   protected IAuthorizationService m_authorization = null;
   protected static String s_factoryName = null;
   protected static IAuthorizationServiceFactory m_Factory = null;
@@ -108,11 +115,9 @@ public class AuthorizationService
   /**
    * @return Authorization
    */
-  public final static synchronized AuthorizationService instance() throws AuthorizationException
+  public final static AuthorizationService instance() throws AuthorizationException
   {
-          if ( m_instance == null )
-                  { m_instance = new AuthorizationService(); }
-          return m_instance;
+      return authorizationServiceInstance.get();
   }
 
   /**

@@ -38,6 +38,7 @@
         <property name="beans">
             <map>
                 <entry key="uPortal:section=Framework,name=Statistics" value-ref="portalFrameworkMBean" />
+                <entry key="uPortal:section=Framework,name=RequestCacheStatistics" value-ref="requestCacheAspect" />
                 <entry key="uPortal:section=Framework,name=uPortalTaskExecutor" value-ref="uPortalTaskExecutor" />
                 <entry key="uPortal:section=Framework,name=uPortalTaskScheduler" value-ref="uPortalTaskScheduler" />
                 <entry key="uPortal:section=Framework,name=uPortalLockExecutor" value-ref="uPortalLockExecutor" />
