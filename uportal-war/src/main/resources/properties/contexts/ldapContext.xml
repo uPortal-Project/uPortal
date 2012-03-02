@@ -44,7 +44,7 @@
         <property name="contextSource">
             <bean id="legacyLdapContext" class="org.springframework.ldap.core.support.LdapContextSource">    
                 <property name="url" value="ldap://ldap.myuniv.edu:389"/>
-                <property name="userName" value="cn=AuthUser, ou=People, dc=myuniv, dc=edu"/>
+                <property name="userDn" value="cn=AuthUser, ou=People, dc=myuniv, dc=edu"/>
                 <property name="password" value="foobar"/>
                 <property name="pooled" value="false"/>
             </bean>
@@ -63,7 +63,7 @@
     <bean id="defaultLdapContext" class="org.springframework.ldap.core.support.LdapContextSource">
         <property name="url" value="ldap://ldap.myuniv.edu:389"/>
         <property name="base" value="ou=People, dc=myuniv, dc=edu"/>
-        <property name="userName" value="cn=AuthUser, ou=People, dc=myuniv, dc=edu"/>
+        <property name="userDn" value="cn=AuthUser, ou=People, dc=myuniv, dc=edu"/>
         <property name="password" value="foobar"/>
         <property name="pooled" value="false"/>
     </bean>
