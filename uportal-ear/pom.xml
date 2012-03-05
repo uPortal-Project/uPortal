@@ -88,6 +88,13 @@
 
         <dependency>
             <groupId>org.jasig.portal.portlets-overlay</groupId>
+            <artifactId>NotificationPortlet</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.portal.portlets-overlay</groupId>
             <artifactId>SimpleContentPortlet</artifactId>
             <version>${project.version}</version>
             <type>war</type>
@@ -199,6 +206,18 @@
                         </webModule>
                         <webModule>
                             <groupId>org.jasig.portal.portlets-overlay</groupId>
+                            <artifactId>NewsReaderPortlet</artifactId>
+                            <bundleFileName>NewsReaderPortlet.war</bundleFileName>
+                            <contextRoot>/NewsReaderPortlet</contextRoot>
+                        </webModule>
+                        <webModule>
+                            <groupId>org.jasig.portal.portlets-overlay</groupId>
+                            <artifactId>NotificationPortlet</artifactId>
+                            <bundleFileName>NotificationPortlet.war</bundleFileName>
+                            <contextRoot>/NotificationPortlet</contextRoot>
+                        </webModule>
+                        <webModule>
+                            <groupId>org.jasig.portal.portlets-overlay</groupId>
                             <artifactId>pluto-testsuite</artifactId>
                             <bundleFileName>pluto-testsuite.war</bundleFileName>
                             <contextRoot>/pluto-testsuite</contextRoot>
@@ -208,12 +227,6 @@
                             <artifactId>resource-server-webapp</artifactId>
                             <bundleFileName>ResourceServingWebapp.war</bundleFileName>
                             <contextRoot>/ResourceServingWebapp</contextRoot>
-                        </webModule>
-                        <webModule>
-                            <groupId>org.jasig.portal.portlets-overlay</groupId>
-                            <artifactId>NewsReaderPortlet</artifactId>
-                            <bundleFileName>NewsReaderPortlet.war</bundleFileName>
-                            <contextRoot>/NewsReaderPortlet</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.jasig.portal.portlets-overlay</groupId>

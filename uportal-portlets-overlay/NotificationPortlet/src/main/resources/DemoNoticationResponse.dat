@@ -1,0 +1,412 @@
+{
+    "errors": [
+        {
+            "error": "Connection Timeout",
+            "source": "Demo Service"
+        }
+     ],
+ "categories":  [
+    {
+   "entries":    [
+        {
+     "body": "Yes, even your bike must be registered and a fee is associated with the registration. To avoid jail time, please register your bike before the end of the week.",
+     "dismissed": false,
+     "dueDate":      {
+      "date": 9,
+      "day": 2,
+      "hours": 11,
+      "minutes": 57,
+      "month": 7,
+      "seconds": 28,
+      "time": 1312916248695,
+      "timezoneOffset": 420,
+      "year": 111
+     },
+     "endDate":      {
+      "date": 9,
+      "day": 2,
+      "hours": 11,
+      "minutes": 57,
+      "month": 7,
+      "seconds": 28,
+      "time": 1312916248695,
+      "timezoneOffset": 420,
+      "year": 111
+     },
+     "imageUrl": "http://library.university/parking.png",
+     "link": "http://library.university/parking",
+     "priority": 3,
+     "startDate":      {
+      "date": 4,
+      "day": 4,
+      "hours": 11,
+      "minutes": 57,
+      "month": 7,
+      "seconds": 28,
+      "time": 1312484248695,
+      "timezoneOffset": 420,
+      "year": 111
+     },
+     "summary": "You were issued a ticket for not registering your bike",
+     "title": "Bike License Ticket Was Issued",
+     "source": "Demo Service"
+    },
+        {
+     "body": "The parking ticket issued two weeks ago has not been paid. To avoid jail time, please pay the fee before the end of the week.",
+     "dismissed": false,
+     "dueDate":      {
+      "date": 9,
+      "day": 2,
+      "hours": 11,
+      "minutes": 57,
+      "month": 7,
+      "seconds": 28,
+      "time": 1312916248695,
+      "timezoneOffset": 420,
+      "year": 111
+     },
+     "endDate":      {
+      "date": 9,
+      "day": 2,
+      "hours": 11,
+      "minutes": 57,
+      "month": 7,
+      "seconds": 28,
+      "time": 1312916248695,
+      "timezoneOffset": 420,
+      "year": 111
+     },
+     "imageUrl": "http://library.university/parking.png",
+     "link": "http://library.university/parking",
+     "priority": 3,
+     "startDate":      {
+      "date": 4,
+      "day": 4,
+      "hours": 11,
+      "minutes": 57,
+      "month": 7,
+      "seconds": 28,
+      "time": 1312484248695,
+      "timezoneOffset": 420,
+      "year": 111
+     },
+     "summary": "The parking ticket issued two weeks ago has not been paid",
+     "title": "Past Due Parking Ticket",
+     "source": "Demo Service"
+    }
+   ],
+   "title": "Parking"
+  },
+    {
+   "entries":    [
+        {
+     "body": "Principles of Electromagnetics is past due and must be returned today to avoid a late fee.",
+     "dismissed": false,
+     "dueDate":      {
+      "date": 9,
+      "day": 2,
+      "hours": 11,
+      "minutes": 57,
+      "month": 7,
+      "seconds": 28,
+      "time": 1312916248695,
+      "timezoneOffset": 420,
+      "year": 111
+     },
+     "endDate":      {
+      "date": 9,
+      "day": 2,
+      "hours": 11,
+      "minutes": 57,
+      "month": 7,
+      "seconds": 28,
+      "time": 1312916248695,
+      "timezoneOffset": 420,
+      "year": 111
+     },
+     "imageUrl": "http://library.university/bookdue.png",
+     "link": "http://library.university/bookdue",
+     "priority": 3,
+     "startDate":      {
+      "date": 4,
+      "day": 4,
+      "hours": 11,
+      "minutes": 57,
+      "month": 7,
+      "seconds": 28,
+      "time": 1312484248695,
+      "timezoneOffset": 420,
+      "year": 111
+     },
+     "summary": "Principles of Electromagnetics is overdue",
+     "title": "Past Due Book",
+     "source": "Demo Service"
+    },
+        {
+     "body": "Introduction to Basket Weaving is past due and must be returned today to avoid a late fee.",
+     "dismissed": false,
+     "dueDate":      {
+      "date": 9,
+      "day": 2,
+      "hours": 11,
+      "minutes": 57,
+      "month": 7,
+      "seconds": 28,
+      "time": 1312916248695,
+      "timezoneOffset": 420,
+      "year": 111
+     },
+     "endDate":      {
+      "date": 9,
+      "day": 2,
+      "hours": 11,
+      "minutes": 57,
+      "month": 7,
+      "seconds": 28,
+      "time": 1312916248695,
+      "timezoneOffset": 420,
+      "year": 111
+     },
+     "imageUrl": "http://library.university/bookdue.png",
+     "link": "http://library.university/bookdue",
+     "priority": 3,
+     "startDate":      {
+      "date": 4,
+      "day": 4,
+      "hours": 11,
+      "minutes": 57,
+      "month": 7,
+      "seconds": 28,
+      "time": 1312484248695,
+      "timezoneOffset": 420,
+      "year": 111
+     },
+     "summary": "Introduction to Basket Weaving is overdue",
+     "title": "Past Due Book",
+     "source": "Demo Service"
+    },
+        {
+     "body": "You reserved Fundamentals of Marble Stacking, it is now available but you must check it out in the next three days.",
+     "dismissed": false,
+     "dueDate":      {
+      "date": 9,
+      "day": 2,
+      "hours": 11,
+      "minutes": 57,
+      "month": 7,
+      "seconds": 28,
+      "time": 1312916248695,
+      "timezoneOffset": 420,
+      "year": 111
+     },
+     "endDate":      {
+      "date": 9,
+      "day": 2,
+      "hours": 11,
+      "minutes": 57,
+      "month": 7,
+      "seconds": 28,
+      "time": 1312916248695,
+      "timezoneOffset": 420,
+      "year": 111
+     },
+     "imageUrl": "http://library.university/bookavailable.png",
+     "link": "http://library.university/bookavailable",
+     "priority": 3,
+     "startDate":      {
+      "date": 4,
+      "day": 4,
+      "hours": 11,
+      "minutes": 57,
+      "month": 7,
+      "seconds": 28,
+      "time": 1312484248695,
+      "timezoneOffset": 420,
+      "year": 111
+     },
+     "summary": "Fundamentals of Marble Stacking is now available for check out",
+     "title": "Book now available",
+     "source": "Demo Service"
+    }
+   ],
+   "title": "Library"
+  },
+    {
+   "entries":    [
+        {
+     "body": "After three months of hard work in this class, its time to put all you've learned into your final Hello World project. Please have this ready Tuesday.",
+     "dismissed": false,
+     "dueDate":      {
+      "date": 9,
+      "day": 2,
+      "hours": 11,
+      "minutes": 57,
+      "month": 7,
+      "seconds": 28,
+      "time": 1312916248695,
+      "timezoneOffset": 420,
+      "year": 111
+     },
+     "endDate":      {
+      "date": 9,
+      "day": 2,
+      "hours": 11,
+      "minutes": 57,
+      "month": 7,
+      "seconds": 28,
+      "time": 1312916248695,
+      "timezoneOffset": 420,
+      "year": 111
+     },
+     "imageUrl": "http://library.university/assignments.png",
+     "link": "http://library.university/assignments",
+     "priority": 3,
+     "startDate":      {
+      "date": 4,
+      "day": 4,
+      "hours": 11,
+      "minutes": 57,
+      "month": 7,
+      "seconds": 28,
+      "time": 1312484248695,
+      "timezoneOffset": 420,
+      "year": 111
+     },
+     "summary": "The Hello World assignment is due Tuesday",
+     "title": "Advanced Computer Engineering 524",
+     "source": "Demo Service"
+    },
+        {
+     "body": "We are coming to the end of another productive class. Please hand in your completed baskets Monday.",
+     "dismissed": false,
+     "dueDate":      {
+      "date": 9,
+      "day": 2,
+      "hours": 11,
+      "minutes": 57,
+      "month": 7,
+      "seconds": 28,
+      "time": 1312916248695,
+      "timezoneOffset": 420,
+      "year": 111
+     },
+     "endDate":      {
+      "date": 9,
+      "day": 2,
+      "hours": 11,
+      "minutes": 57,
+      "month": 7,
+      "seconds": 28,
+      "time": 1312916248695,
+      "timezoneOffset": 420,
+      "year": 111
+     },
+     "imageUrl": "http://library.university/assignments.png",
+     "link": "http://library.university/assignments",
+     "priority": 3,
+     "startDate":      {
+      "date": 4,
+      "day": 4,
+      "hours": 11,
+      "minutes": 57,
+      "month": 7,
+      "seconds": 28,
+      "time": 1312484248695,
+      "timezoneOffset": 420,
+      "year": 111
+     },
+     "summary": "All baskets must be completed and turned in next Monday",
+     "title": "Basket Weaving 303",
+     "source": "Demo Service"
+    },
+        {
+     "body": "You must write a 100 word summary of War and Peace. This is due on Friday.",
+     "dismissed": false,
+     "dueDate":      {
+      "date": 9,
+      "day": 2,
+      "hours": 11,
+      "minutes": 57,
+      "month": 7,
+      "seconds": 28,
+      "time": 1312916248695,
+      "timezoneOffset": 420,
+      "year": 111
+     },
+     "endDate":      {
+      "date": 9,
+      "day": 2,
+      "hours": 11,
+      "minutes": 57,
+      "month": 7,
+      "seconds": 28,
+      "time": 1312916248695,
+      "timezoneOffset": 420,
+      "year": 111
+     },
+     "imageUrl": "http://library.university/assignments.png",
+     "link": "http://library.university/assignments",
+     "priority": 3,
+     "startDate":      {
+      "date": 4,
+      "day": 4,
+      "hours": 11,
+      "minutes": 57,
+      "month": 7,
+      "seconds": 28,
+      "time": 1312484248695,
+      "timezoneOffset": 420,
+      "year": 111
+     },
+     "summary": "Summarize War And Peace for class on Friday",
+     "title": "English 101",
+     "source": "Demo Service"
+    },
+        {
+     "body": "Chapters 1 - 3 are due tomorrow. There will be a test on these chapters at the end of the week.",
+     "dismissed": false,
+     "dueDate":      {
+      "date": 9,
+      "day": 2,
+      "hours": 11,
+      "minutes": 57,
+      "month": 7,
+      "seconds": 28,
+      "time": 1312916248695,
+      "timezoneOffset": 420,
+      "year": 111
+     },
+     "endDate":      {
+      "date": 9,
+      "day": 2,
+      "hours": 11,
+      "minutes": 57,
+      "month": 7,
+      "seconds": 28,
+      "time": 1312916248695,
+      "timezoneOffset": 420,
+      "year": 111
+     },
+     "imageUrl": "http://library.university/assignments.png",
+     "link": "http://library.university/assignments",
+     "priority": 3,
+     "startDate":      {
+      "date": 4,
+      "day": 4,
+      "hours": 11,
+      "minutes": 57,
+      "month": 7,
+      "seconds": 28,
+      "time": 1312484248695,
+      "timezoneOffset": 420,
+      "year": 111
+     },
+     "summary": "Chapters 1 - 3 are due tomorrow",
+     "title": "Math 101",
+     "source": "Demo Service"
+    }
+   ],
+   "title": "Assignments"
+  }
+ ]
+}
