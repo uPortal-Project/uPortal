@@ -34,38 +34,67 @@
             xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd"
             version="4.0">
 
-            <xsl:apply-templates select="title|name|fname|desc|type|timeout"/>
-
-            <!-- Only add portlet-descriptor if there is enough data. No descriptor means it isn't a portlet and XSD validation should fail -->
             <xsl:choose>
-                <xsl:when test="parameters/parameter[name = 'portletName']/value">
-                    <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
-                        <xsl:choose>
-                            <xsl:when test="parameters/parameter[name = 'portletApplicationId']">
-                                <up:webAppName>
-                                    <xsl:value-of select="parameters/parameter[name = 'portletApplicationId']/value"/>
-                                </up:webAppName>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <up:isFramework>true</up:isFramework>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                        <up:portletName>
-                            <xsl:value-of select="parameters/parameter[name = 'portletName']/value"/>
-                        </up:portletName>
-                    </portlet-descriptor>
-                </xsl:when>
-                <xsl:otherwise>
+            	<!-- Upgrade a CInlineFrame channel to an IFrame portlet -->
+                <xsl:when test="class = 'org.jasig.portal.channels.CInlineFrame'">
+                	<xsl:apply-templates select="title|name|fname|desc"/>
+                	<!-- Matches the Inline_Frame.portlet-type.xml name -->
+                	<type>Inline Frame</type>
+                	<xsl:apply-templates select="timeout"/>
                     <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
                         <up:isFramework>true</up:isFramework>
-                        <up:portletName>UPGRADED_CHANNEL_IS_NOT_A_PORTLET</up:portletName>
+                        <up:portletName>IFrame</up:portletName>
                     </portlet-descriptor>
+            
+		            <xsl:apply-templates select="categories|groups|users"/>
+		            <xsl:apply-templates select="parameters/parameter[name != 'url' and name != 'height' and name != 'name']"/>
+		            <xsl:apply-templates select="hasedit|hashelp|hasabout|secure|locale"/>
+                    
+					<xsl:for-each select="parameters/parameter[name = 'url' or name = 'height' or name = 'name']">
+	                    <portlet-preference>
+	                        <name><xsl:value-of select="name"/></name>
+                        	<value><xsl:value-of select="value"/></value>
+	                    </portlet-preference>
+					</xsl:for-each>
+		            <xsl:apply-templates select="portletPreference"/>
+                </xsl:when>
+                
+                <!-- Not converting a known IChannel type to a portlet, use the generic rules -->                
+                <xsl:otherwise>
+            		<xsl:apply-templates select="title|name|fname|desc|timeout|type"/>
+
+		            <!-- Only add portlet-descriptor if there is enough data. No descriptor means it isn't a portlet and XSD validation should fail -->
+		            <xsl:choose>
+		                <xsl:when test="parameters/parameter[name = 'portletName']/value">
+		                    <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
+		                        <xsl:choose>
+		                            <xsl:when test="parameters/parameter[name = 'portletApplicationId']">
+		                                <up:webAppName>
+		                                    <xsl:value-of select="parameters/parameter[name = 'portletApplicationId']/value"/>
+		                                </up:webAppName>
+		                            </xsl:when>
+		                            <xsl:otherwise>
+		                                <up:isFramework>true</up:isFramework>
+		                            </xsl:otherwise>
+		                        </xsl:choose>
+		                        <up:portletName>
+		                            <xsl:value-of select="parameters/parameter[name = 'portletName']/value"/>
+		                        </up:portletName>
+		                    </portlet-descriptor>
+		                </xsl:when>
+		                <xsl:otherwise>
+		                    <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
+		                        <up:isFramework>true</up:isFramework>
+		                        <up:portletName>UPGRADED_CHANNEL_IS_NOT_A_PORTLET</up:portletName>
+		                    </portlet-descriptor>
+		                </xsl:otherwise>
+		            </xsl:choose>
+            
+		            <xsl:apply-templates select="categories|groups|users|parameters"/>
+		            <xsl:apply-templates select="hasedit|hashelp|hasabout|secure|locale"/>
+		            <xsl:apply-templates select="portletPreferences"/>
                 </xsl:otherwise>
             </xsl:choose>
-
-            <xsl:apply-templates select="categories|groups|users|parameters"/>
-            <xsl:apply-templates select="hasedit|hashelp|hasabout|secure|locale"/>
-            <xsl:apply-templates select="portletPreferences"/>
         </portlet-definition>
     </xsl:template>
     

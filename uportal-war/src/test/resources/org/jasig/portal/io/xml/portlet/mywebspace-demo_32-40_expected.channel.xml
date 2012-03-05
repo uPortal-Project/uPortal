@@ -1,0 +1,65 @@
+<portlet-definition
+	xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0"
+	xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd">
+	<ns53:title
+		xmlns:ns53="https://source.jasig.org/schemas/uportal/io/portlet-definition">My WebSpace</ns53:title>
+	<ns54:name
+		xmlns:ns54="https://source.jasig.org/schemas/uportal/io/portlet-definition">My WebSpace - Demo</ns54:name>
+	<ns55:fname
+		xmlns:ns55="https://source.jasig.org/schemas/uportal/io/portlet-definition">mywebspace-demo</ns55:fname>
+	<ns56:desc
+		xmlns:ns56="https://source.jasig.org/schemas/uportal/io/portlet-definition">Access to your My WebSpace account</ns56:desc>
+	<type>Inline Frame</type>
+	<ns57:timeout
+		xmlns:ns57="https://source.jasig.org/schemas/uportal/io/portlet-definition">5000</ns57:timeout>
+	<portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
+		<up:isFramework>true</up:isFramework>
+		<up:portletName>IFrame</up:portletName>
+	</portlet-descriptor>
+	<ns58:category
+		xmlns:ns58="https://source.jasig.org/schemas/uportal/io/portlet-definition">Home</ns58:category>
+
+	<ns59:group
+		xmlns:ns59="https://source.jasig.org/schemas/uportal/io/portlet-definition">Fragment Owners</ns59:group>
+	<ns60:group
+		xmlns:ns60="https://source.jasig.org/schemas/uportal/io/portlet-definition">Users - MyWebSpace</ns60:group>
+	<ns61:parameter
+		xmlns:ns61="https://source.jasig.org/schemas/uportal/io/portlet-definition">
+		<ns62:name
+			xmlns:ns62="https://source.jasig.org/schemas/uportal/io/portlet-definition">disableDynamicTitle</ns62:name>
+		<ns63:value
+			xmlns:ns63="https://source.jasig.org/schemas/uportal/io/portlet-definition">true</ns63:value>
+		<ns64:description
+			xmlns:ns64="https://source.jasig.org/schemas/uportal/io/portlet-definition" />
+
+	</ns61:parameter>
+	<parameter>
+		<name>hasedit</name>
+		<value>false</value>
+	</parameter>
+	<parameter>
+		<name>hashelp</name>
+		<value>false</value>
+	</parameter>
+	<parameter>
+		<name>hasabout</name>
+		<value>false</value>
+	</parameter>
+	<parameter>
+		<name>secure</name>
+		<value>false</value>
+	</parameter>
+	<parameter>
+		<name>locale</name>
+		<value>false</value>
+	</parameter>
+	<portlet-preference>
+		<name>height</name>
+		<value>140</value>
+	</portlet-preference>
+	<portlet-preference>
+		<name>url</name>
+		<value>/static/demo/MyWebSpace/index.html</value>
+	</portlet-preference>
+</portlet-definition>
