@@ -797,15 +797,19 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             final String fname = c.valueOf("@fname");
             final IPortletDefinition cd = this.portletDefinitionRegistry.getPortletDefinitionByFname(fname);
             if (cd == null) {
+                final String msg = "No published portlet for fname=" + fname + " referenced by node " + c.valueOf("@ID") + " layout for " + ownerUsername;
                 if (errorOnMissingPortlet) {
-                    throw new IllegalArgumentException("No published channel for fname=" + fname
-                            + " referenced by layout for " + ownerUsername);
+                    throw new IllegalArgumentException(msg);
                 }
                 else {
-                    log.warn("");
+                    log.warn(msg);
+                    //Remove the bad channel node
+                    c.getParent().remove(c);
                 }
             }
-            c.addAttribute("chanID", String.valueOf(cd.getPortletDefinitionId().getStringId()));
+            else {
+                c.addAttribute("chanID", String.valueOf(cd.getPortletDefinitionId().getStringId()));
+            }
         }
 
         // (2) Restore locale info...
