@@ -150,8 +150,8 @@ up.jQuery(function() {
                     
                     $("#${n}search .search-back-div").show();
                     $("#${n}search .search-back-link").unbind("click").click(showResults);
+                    return false;
                 });
-                return false;
             });
         </c:if>
         
