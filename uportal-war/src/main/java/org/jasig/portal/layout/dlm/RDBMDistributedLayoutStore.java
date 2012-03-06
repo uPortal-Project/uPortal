@@ -797,7 +797,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             final String fname = c.valueOf("@fname");
             final IPortletDefinition cd = this.portletDefinitionRegistry.getPortletDefinitionByFname(fname);
             if (cd == null) {
-                final String msg = "No published portlet for fname=" + fname + " referenced by node " + c.valueOf("@ID") + " layout for " + ownerUsername;
+                final String msg = "No portlet with fname=" + fname + " exists referenced by node " + c.valueOf("@ID") + " from layout for " + ownerUsername;
                 if (errorOnMissingPortlet) {
                     throw new IllegalArgumentException(msg);
                 }
