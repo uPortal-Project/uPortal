@@ -242,6 +242,12 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
                 if (portletEntity == null) {
                     portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(request, userInstance, layoutNodeId);
                     
+                    // if portlet entity registry returned null, then portlet has been deleted - remove it (see UP-3378)
+                    if (portletEntity == null) {
+                    	layoutNodeIdItr.remove();
+                    	continue;
+                    }
+                    
                     final IPortletDefinitionId portletDefinitionId = portletEntity.getPortletDefinitionId();
                     final PortletDefinition portletDescriptor = this.portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId);
                     if (portletDescriptor == null) {

@@ -132,4 +132,41 @@ public class PortletDataUpgradeTest extends BaseXsltDataUpgraderTest {
                 new ClassPathResource("/org/jasig/portal/io/xml/portlet/IdentitySwapper_32-40_expected.channel.xml"),
                 new ClassPathResource("/xsd/io/portlet-definition/portlet-definition-4.0.xsd"));
     }
+
+    @Test
+    public void testUpgradeCInlineFrame26to30() throws Exception {
+        testXsltUpgrade(
+                new ClassPathResource("/org/jasig/portal/io/xml/portlet/upgradeChannel_26.xsl"), 
+                PortletPortalDataType.IMPORT_26_DATA_KEY, 
+                new ClassPathResource("/org/jasig/portal/io/xml/portlet/mywebspace-demo_26.channel.xml"), 
+                new ClassPathResource("/org/jasig/portal/io/xml/portlet/mywebspace-demo_26-30_expected.channel.xml"));
+    }
+
+    @Test
+    public void testUpgradeCInlineFrame30to31() throws Exception {
+        testXsltUpgrade(
+                new ClassPathResource("/org/jasig/portal/io/xml/portlet/upgradeChannel_30.xsl"), 
+                PortletPortalDataType.IMPORT_30_DATA_KEY, 
+                new ClassPathResource("/org/jasig/portal/io/xml/portlet/mywebspace-demo_26-30_expected.channel.xml"), 
+                new ClassPathResource("/org/jasig/portal/io/xml/portlet/mywebspace-demo_30-31_expected.channel.xml"));
+    }
+
+    @Test
+    public void testUpgradeCInlineFrame31to32() throws Exception {
+        testXsltUpgrade(
+                new ClassPathResource("/org/jasig/portal/io/xml/portlet/upgradeChannel_31.xsl"), 
+                PortletPortalDataType.IMPORT_31_DATA_KEY, 
+                new ClassPathResource("/org/jasig/portal/io/xml/portlet/mywebspace-demo_30-31_expected.channel.xml"), 
+                new ClassPathResource("/org/jasig/portal/io/xml/portlet/mywebspace-demo_31-32_expected.channel.xml"));
+    }
+
+    @Test
+    public void testUpgradeCInlineFrame32to40() throws Exception {
+        testXsltUpgrade(
+                new ClassPathResource("/org/jasig/portal/io/xml/portlet/upgradeChannel_32.xsl"), 
+                PortletPortalDataType.IMPORT_31_DATA_KEY, 
+                new ClassPathResource("/org/jasig/portal/io/xml/portlet/mywebspace-demo_31-32_expected.channel.xml"), 
+                new ClassPathResource("/org/jasig/portal/io/xml/portlet/mywebspace-demo_32-40_expected.channel.xml"),
+                new ClassPathResource("/xsd/io/portlet-definition/portlet-definition-4.0.xsd"));
+    }
 }

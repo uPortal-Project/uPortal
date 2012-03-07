@@ -137,7 +137,7 @@
 
     <portlet>
         <portlet-name>IFrame</portlet-name>
-        <display-name xml:lang="en">Image</display-name>
+        <display-name xml:lang="en">IFrame</display-name>
         <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
         <init-param>
             <name>contextConfigLocation</name>

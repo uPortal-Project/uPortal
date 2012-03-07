@@ -52,7 +52,7 @@
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>classpath:/properties/contexts/*.xml</param-value>
+        <param-value>classpath:/properties/contexts/*.xml,classpath:/properties/contextOverrides/*.xml</param-value>
     </context-param>
    
     <!--
@@ -203,11 +203,31 @@
         <filter-name>createPortletCookieFilter</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
+    
+    <!-- Useful for testing/debugging remote_user based authn 
+    <filter>
+        <filter-name>RemoteUserSettingFilter</filter-name>
+        <filter-class>org.jasig.portal.spring.security.RemoteUserSettingFilter</filter-class>
+        <init-param>
+            <param-name>remoteUserFile</param-name>
+            <param-value>/home/edalquist/tmp/remoteUser</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>RemoteUserSettingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+     -->
 
     <!-- MUST BE THE FIRST FILTER -->
     <filter-mapping>
         <filter-name>OpenEntityManagerInViewFilter</filter-name>
         <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
+    <filter-mapping>
+        <filter-name>requestAttributeSourceFilter</filter-name>
+        <url-pattern>/Login</url-pattern>
     </filter-mapping>
     
     <filter-mapping>
@@ -247,11 +267,6 @@
         <filter-name>RequestContextFilter</filter-name>
         <servlet-name>*</servlet-name>
         <url-pattern>*</url-pattern>
-    </filter-mapping>
-    
-    <filter-mapping>
-        <filter-name>requestAttributeSourceFilter</filter-name>
-        <url-pattern>/Login</url-pattern>
     </filter-mapping>
 
     <!-- Temporarily commenting out this filter for development purposes -->

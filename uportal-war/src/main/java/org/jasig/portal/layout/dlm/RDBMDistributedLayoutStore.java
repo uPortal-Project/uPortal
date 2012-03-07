@@ -86,6 +86,7 @@ import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.jasig.portal.xml.xpath.XPathOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.transaction.annotation.Transactional;
@@ -122,6 +123,8 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     private FragmentActivator fragmentActivator;
 
     private Ehcache fragmentNodeInfoCache;
+    
+    private boolean errorOnMissingPortlet = true;
 
     static final String TEMPLATE_USER_NAME = "org.jasig.portal.services.Authentication.defaultTemplateUserName";
 
@@ -182,6 +185,10 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         this.fragmentNodeInfoCache = fragmentNodeInfoCache;
     }
 
+    @Value("${org.jasig.portal.io.layout.errorOnMissingPortlet}")
+    public void setErrorOnMissingPortlet(boolean errorOnMissingPortlet) {
+        this.errorOnMissingPortlet = errorOnMissingPortlet;
+    }
 
     /**
      * Method for acquiring copies of fragment layouts to assist in debugging.
@@ -790,10 +797,19 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             final String fname = c.valueOf("@fname");
             final IPortletDefinition cd = this.portletDefinitionRegistry.getPortletDefinitionByFname(fname);
             if (cd == null) {
-                throw new IllegalArgumentException("No published channel for fname=" + fname
-                        + " referenced by layout for " + ownerUsername);
+                final String msg = "No portlet with fname=" + fname + " exists referenced by node " + c.valueOf("@ID") + " from layout for " + ownerUsername;
+                if (errorOnMissingPortlet) {
+                    throw new IllegalArgumentException(msg);
+                }
+                else {
+                    log.warn(msg);
+                    //Remove the bad channel node
+                    c.getParent().remove(c);
+                }
             }
-            c.addAttribute("chanID", String.valueOf(cd.getPortletDefinitionId().getStringId()));
+            else {
+                c.addAttribute("chanID", String.valueOf(cd.getPortletDefinitionId().getStringId()));
+            }
         }
 
         // (2) Restore locale info...
