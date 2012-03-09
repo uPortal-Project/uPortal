@@ -108,7 +108,7 @@
         <cas-proxy-test-portlet.version>1.0.0-RC3</cas-proxy-test-portlet.version>
         <email-preview.version>1.1.1</email-preview.version>
         <FunctionalTestsPortlet.version>1.1.0</FunctionalTestsPortlet.version>
-        <jasig-widget-portlets.version>1.0.1</jasig-widget-portlets.version>
+        <jasig-widget-portlets.version>1.0.2</jasig-widget-portlets.version>
         <NewsReaderPortlet.version>3.0.0</NewsReaderPortlet.version>
         <NotificationPortlet.version>1.0.0</NotificationPortlet.version>
         <SimpleContentPortlet.version>1.0.2</SimpleContentPortlet.version>
