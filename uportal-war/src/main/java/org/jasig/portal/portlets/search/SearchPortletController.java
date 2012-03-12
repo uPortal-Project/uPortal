@@ -60,6 +60,7 @@ import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.EventMapping;
 
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.MapMaker;
 
 /**
@@ -135,7 +136,7 @@ public class SearchPortletController {
         synchronized (org.springframework.web.portlet.util.PortletUtils.getSessionMutex(session)) {
             searchResultsCache = (Map<String, PortalSearchResults>)session.getAttribute(SEARCH_RESULTS_CACHE_NAME);
             if (searchResultsCache == null) {
-                searchResultsCache = new MapMaker().maximumSize(50).makeMap();
+                searchResultsCache = CacheBuilder.newBuilder().maximumSize(50).<String, PortalSearchResults>build().asMap(); 
                 session.setAttribute(SEARCH_RESULTS_CACHE_NAME, searchResultsCache);
             }
         }
