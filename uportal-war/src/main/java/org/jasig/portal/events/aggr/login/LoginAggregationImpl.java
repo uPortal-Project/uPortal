@@ -93,7 +93,7 @@ public class LoginAggregationImpl implements LoginAggregation, Serializable {
     
     @NaturalId
     @Enumerated(EnumType.STRING)
-    @Column(name = "INTERVAL", nullable = false)
+    @Column(name = "AGGR_INTERVAL", nullable = false)
     private final AggregationInterval interval;
     
     @NaturalId
