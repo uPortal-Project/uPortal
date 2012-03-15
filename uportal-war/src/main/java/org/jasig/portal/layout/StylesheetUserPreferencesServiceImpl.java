@@ -676,13 +676,28 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         }
 
 
+        
+        //Load the default value
+        String defaultValue = null;
+        final IStylesheetUserPreferences distributedStylesheetUserPreferences = this.getDistributedStylesheetUserPreferences(request, prefScope);
+        if (distributedStylesheetUserPreferences != null) {
+            defaultValue = distributedStylesheetUserPreferences.getLayoutAttribute(nodeId, name);
+            
+            if (this.compareValues(defaultValue, layoutAttributeDescriptor.getDefaultValue())) {
+                //DLM attribute value matches the stylesheet descriptor default, remove the DLM value
+                distributedStylesheetUserPreferences.removeLayoutAttribute(nodeId, name);
+                defaultValue = null;
+            }
+        }
+        
         final String value;
         final Scope scope = layoutAttributeDescriptor.getScope();
         switch (scope) {
             case PERSISTENT: {
                 final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
                 if (stylesheetUserPreferences == null) {
-                    return null;
+                    value = null;
+                    break;
                 }
                 
                 value = stylesheetUserPreferences.getLayoutAttribute(nodeId, name);
@@ -691,7 +706,8 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
             default: {
                 final Map<String, String> nodeAttributes = this.getDataValue(request, stylesheetPreferencesKey, scope, LAYOUT_ATTRIBUTES_KEY, nodeId);
                 if (nodeAttributes == null) {
-                    return null; 
+                    value = null;
+                    break; 
                 }
                 
                 value = nodeAttributes.get(name);
@@ -700,23 +716,13 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         }
         
         if (value == null) {
-            //Check in the DLM stylesheet user prefs for a default value
-            final IStylesheetUserPreferences distributedStylesheetUserPreferences = this.getDistributedStylesheetUserPreferences(request, prefScope);
-            if (distributedStylesheetUserPreferences != null) {
-                final String dValue = distributedStylesheetUserPreferences.getLayoutAttribute(nodeId, name);
-                if (dValue != null && this.compareValues(dValue, layoutAttributeDescriptor.getDefaultValue())) {
-                    distributedStylesheetUserPreferences.removeLayoutAttribute(nodeId, name);
-                    return null;
-                }
-                
-                return value;
-            }
-            
-            return null;
+            return defaultValue;
         }
         
-        //If the value is equal to the default value remove the property and return null
-        if (this.compareValues(value, layoutAttributeDescriptor.getDefaultValue())) {
+        if (this.compareValues(value, layoutAttributeDescriptor.getDefaultValue()) || //Value is equal to stylesheet descriptor default
+            (defaultValue != null && this.compareValues(value, defaultValue))) { //Value is equal to DLM stylesheet preferences default
+            
+            //Remove the user's customized value
             this.removeLayoutAttribute(request, prefScope, nodeId, name);
             return null;
         }
@@ -736,7 +742,17 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         }
         
         if (this.compareValues(value, layoutAttributeDescriptor.getDefaultValue())) {
+            //Value matches the default value, remove the attribute
             return this.removeLayoutAttribute(request, prefScope, nodeId, name);
+        }
+        
+        final IStylesheetUserPreferences distributedStylesheetUserPreferences = this.getDistributedStylesheetUserPreferences(request, prefScope);
+        if (distributedStylesheetUserPreferences != null) {
+            final String defaultValue = distributedStylesheetUserPreferences.getLayoutAttribute(nodeId, name);
+            if (this.compareValues(value, defaultValue)) {
+                //Value matches the DLM preferences value, remove the value
+                return this.removeLayoutAttribute(request, prefScope, nodeId, name);
+            }
         }
         
         final Scope scope = this.getWriteScope(request, prefScope, stylesheetPreferencesKey, layoutAttributeDescriptor);
@@ -830,20 +846,6 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         }
         
         return null;
-    }
-    
-    @Override
-    public Iterable<String> getAllLayoutAttributeNames(HttpServletRequest request, PreferencesScope prefScope) {
-        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
-        final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
-        final Collection<ILayoutAttributeDescriptor> layoutAttributeDescriptors = stylesheetDescriptor.getLayoutAttributeDescriptors();
-        
-        return Collections2.transform(layoutAttributeDescriptors, new Function<ILayoutAttributeDescriptor, String>() {
-            @Override
-            public String apply(ILayoutAttributeDescriptor input) {
-                return input.getName();
-            }
-        });
     }
 
     @Override

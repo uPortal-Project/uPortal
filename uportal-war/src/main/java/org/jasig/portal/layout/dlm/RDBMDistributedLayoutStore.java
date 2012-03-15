@@ -279,8 +279,8 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
             //Copy all of the fragment preferences into the distributed preferences
             final Map<String, Map<String, String>> allLayoutAttributes = fragmentStylesheetUserPreferences
-                    .populateAllLayoutAttributes(new LinkedHashMap<String, Map<String,String>>());
-            
+                    .populateAllLayoutAttributes(new LinkedHashMap<String, Map<String, String>>());
+
             for (final Map.Entry<String, Map<String, String>> layoutNodeAttributesEntry : allLayoutAttributes
                     .entrySet()) {
                 String nodeId = layoutNodeAttributesEntry.getKey();

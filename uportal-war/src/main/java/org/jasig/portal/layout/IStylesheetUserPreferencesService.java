@@ -214,14 +214,6 @@ public interface IStylesheetUserPreferencesService {
      */
     public String removeLayoutAttribute(HttpServletRequest request, PreferencesScope prefScope, String nodeId, String name);
     
-    /**
-     * @return An iterable of all layout attribute names
-     * @param request The current request
-     * @param prefScope The stylesheet preferences scope
-     * @param userProfile The user profile to modify the preferences for
-     * @see Map#keySet()
-     */
-    public Iterable<String> getAllLayoutAttributeNames(HttpServletRequest request, PreferencesScope prefScope);
     
     /**
      * @return An iterable of all layout nodeIds
