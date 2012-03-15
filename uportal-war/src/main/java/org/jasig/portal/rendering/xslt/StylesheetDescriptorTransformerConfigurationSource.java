@@ -25,13 +25,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.layout.IStylesheetUserPreferencesService;
-import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
+import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.layout.om.IStylesheetParameterDescriptor;
-import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -40,20 +40,20 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public abstract class StylesheetDescriptorTransformerConfigurationSource extends TransformerConfigurationSourceAdapter {
+public abstract class StylesheetDescriptorTransformerConfigurationSource extends TransformerConfigurationSourceAdapter implements BeanNameAware {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     protected IStylesheetUserPreferencesService stylesheetUserPreferencesService;
-    private IStylesheetDescriptorDao stylesheetDescriptorDao;
-
-    @Autowired
-    public void setStylesheetDescriptorDao(IStylesheetDescriptorDao stylesheetDescriptorDao) {
-        this.stylesheetDescriptorDao = stylesheetDescriptorDao;
-    }
-
+    private String beanName;
+    
     @Autowired
     public void setStylesheetUserPreferencesService(IStylesheetUserPreferencesService stylesheetUserPreferencesService) {
         this.stylesheetUserPreferencesService = stylesheetUserPreferencesService;
+    }
+    
+    @Override
+    public void setBeanName(String name) {
+        this.beanName = name;
     }
 
     @Override
@@ -61,13 +61,12 @@ public abstract class StylesheetDescriptorTransformerConfigurationSource extends
         final LinkedHashMap<String, Object> transformerParameters = this.getParameters(request, response);
         return new CacheKey(this.getName(), transformerParameters);
     }
-
+    
     @Override
     public final LinkedHashMap<String, Object> getParameters(HttpServletRequest request, HttpServletResponse response) {
-        final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request);
+        final PreferencesScope preferencesScope = this.getStylesheetPreferencesScope(request);
         
-        final long stylesheetDescriptorId = stylesheetUserPreferences.getStylesheetDescriptorId();
-        final IStylesheetDescriptor stylesheetDescriptor = this.stylesheetDescriptorDao.getStylesheetDescriptor(stylesheetDescriptorId);
+        final IStylesheetDescriptor stylesheetDescriptor = this.stylesheetUserPreferencesService.getStylesheetDescriptor(request, preferencesScope);
         
         //Build map of stylesheet descriptor parameters
         final LinkedHashMap<String, Object> parameters = new LinkedHashMap<String, Object>();
@@ -82,8 +81,10 @@ public abstract class StylesheetDescriptorTransformerConfigurationSource extends
         return parameters;
     }
 
-    protected abstract String getName();
+    protected String getName() {
+        return this.beanName;
+    }
     
-    protected abstract IStylesheetUserPreferences getStylesheetUserPreferences(HttpServletRequest request);
+    protected abstract PreferencesScope getStylesheetPreferencesScope(HttpServletRequest request);
     
 }

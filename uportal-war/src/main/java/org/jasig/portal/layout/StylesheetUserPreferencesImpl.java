@@ -20,9 +20,9 @@
 package org.jasig.portal.layout;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,13 +40,17 @@ public class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences
     private static final long serialVersionUID = 1L;
     
     private final long stylesheetDescriptorId;
+    private final int userId;
+    private final int profileId;
     private final ConcurrentMap<String, String> outputProperties = new ConcurrentHashMap<String, String>();
     private final ConcurrentMap<String, String> parameters = new ConcurrentHashMap<String, String>();
     //NodeId -> Name -> Value
     private final ConcurrentMap<String, ConcurrentMap<String, String>> layoutAttributes = new ConcurrentHashMap<String, ConcurrentMap<String,String>>();
     
-    public StylesheetUserPreferencesImpl(long stylesheetDescriptorId) {
+    public StylesheetUserPreferencesImpl(long stylesheetDescriptorId, int userId, int profileId) {
         this.stylesheetDescriptorId = stylesheetDescriptorId;
+        this.userId = userId;
+        this.profileId = profileId;
     }
 
     @Override
@@ -58,71 +62,37 @@ public class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences
     public long getStylesheetDescriptorId() {
         return this.stylesheetDescriptorId;
     }
-    
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetUserPreferences#setStylesheetUserPreferences(org.jasig.portal.layout.om.IStylesheetUserPreferences)
-     */
+
     @Override
-    public void setStylesheetUserPreferences(IStylesheetUserPreferences source) {
-        final Properties properties = source.getOutputProperties();
-        if (!this.outputProperties.equals(properties)) {
-            this.outputProperties.clear();
-        }
-        //Really wish putAll worked for Properties
-        for (final Entry<Object, Object> entry : properties.entrySet()) {
-            this.outputProperties.put((String)entry.getKey(), (String)entry.getValue());
-        }
-
-        final Map<String, String> parameters = source.getStylesheetParameters();
-        if (!this.parameters.equals(parameters)) {
-            this.parameters.clear();
-        }
-        this.parameters.putAll(parameters);
-
-        synchronized (this.layoutAttributes) {
-            final Map<String, Map<String, String>> attributes = source.getAllLayoutAttributes();
-            if (!this.layoutAttributes.equals(attributes)) {
-                this.layoutAttributes.clear();
-            }
-            
-            if (!this.layoutAttributes.equals(attributes)) {
-                this.layoutAttributes.clear();
-            }
-        }
+    public int getUserId() {
+        return this.userId;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetUserPreferences#getOutputProperty(java.lang.String)
-     */
+    @Override
+    public int getProfileId() {
+        return this.profileId;
+    }
+
     @Override
     public String getOutputProperty(String name) {
         return this.outputProperties.get(name);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetUserPreferences#setOutputProperty(java.lang.String, java.lang.String)
-     */
     @Override
     public String setOutputProperty(String name, String value) {
         return this.outputProperties.put(name, value);
     }
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetUserPreferences#removeOutputProperty(java.lang.String)
-     */
     @Override
     public String removeOutputProperty(String name) {
         return this.outputProperties.remove(name);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetUserPreferences#getOutputProperties()
-     */
+    
     @Override
-    public Properties getOutputProperties() {
-        final Properties props = new Properties();
-        props.putAll(this.outputProperties);
-        return props;
+    public Properties populateOutputProperties(Properties properties) {
+        properties.putAll(this.outputProperties);
+        return properties;
     }
     
     @Override
@@ -135,28 +105,22 @@ public class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences
         return this.parameters.get(name);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetUserPreferences#setStylesheetParameter(java.lang.String, java.lang.String)
-     */
     @Override
     public String setStylesheetParameter(String name, String value) {
         return this.parameters.put(name, value);
     }
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetUserPreferences#removeStylesheetParameter(java.lang.String)
-     */
     @Override
     public String removeStylesheetParameter(String name) {
         return this.parameters.remove(name);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetUserPreferences#getStylesheetParameters()
-     */
     @Override
-    public Map<String, String> getStylesheetParameters() {
-        return Collections.unmodifiableMap(this.parameters);
+    public Map<String, String> populateStylesheetParameters(
+            Map<String, String> stylesheetParameters) {
+        
+        stylesheetParameters.putAll(this.parameters);
+        return stylesheetParameters;
     }
     
     @Override
@@ -174,9 +138,6 @@ public class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences
         return nodeAttributes.get(name);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetUserPreferences#setLayoutAttribute(java.lang.String, java.lang.String, java.lang.String)
-     */
     @Override
     public String setLayoutAttribute(String nodeId, String name, String value) {
         ConcurrentMap<String, String> nodeAttributes;
@@ -204,33 +165,42 @@ public class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences
         return nodeAttributes.remove(name);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetUserPreferences#getLayoutAttributes(java.lang.String)
-     */
     @Override
-    public Map<String, String> getLayoutAttributes(String nodeId) {
+    public Map<String, String> populateLayoutAttributes(String nodeId,
+            Map<String, String> layoutAttributes) {
+        
         final Map<String, String> nodeAttributes = this.layoutAttributes.get(nodeId);
-        if (nodeAttributes == null) {
-            return Collections.emptyMap();
+        if (nodeAttributes != null) {
+            layoutAttributes.putAll(nodeAttributes);
         }
         
-        return Collections.unmodifiableMap(nodeAttributes);
+        return layoutAttributes;
     }
-    
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetUserPreferences#getAllLayoutAttributes()
-     */
+
     @Override
-    public Map<String, Map<String, String>> getAllLayoutAttributes() {
-        final Map<String, Map<String, String>> layoutAttributesClone = new TreeMap<String, Map<String,String>>();
+    public Map<String, Map<String, String>> populateAllLayoutAttributes(
+            Map<String, Map<String, String>> allLayoutAttributes) {
         
         for (final Map.Entry<String, ConcurrentMap<String, String>> layoutNodeAttribute : this.layoutAttributes.entrySet()) {
             final String nodeId = layoutNodeAttribute.getKey();
-            final Map<String, String> attributes = layoutNodeAttribute.getValue();
-            layoutAttributesClone.put(nodeId, Collections.unmodifiableMap(new TreeMap<String, String>(attributes)));
+            final Map<String, String> nodeAttributes = layoutNodeAttribute.getValue();
+            
+            Map<String, String> existingNodeAttributes = allLayoutAttributes.get(nodeId);
+            if (existingNodeAttributes == null) {
+                existingNodeAttributes = new TreeMap<String, String>(nodeAttributes);
+                allLayoutAttributes.put(nodeId, existingNodeAttributes);
+            }
+            else {
+                existingNodeAttributes.putAll(nodeAttributes);
+            }
         }
         
-        return Collections.unmodifiableMap(layoutAttributesClone);
+        return allLayoutAttributes;
+    }
+
+    @Override
+    public Collection<String> getAllLayoutAttributeNodeIds() {
+        return Collections.unmodifiableSet(this.layoutAttributes.keySet());
     }
     
     @Override

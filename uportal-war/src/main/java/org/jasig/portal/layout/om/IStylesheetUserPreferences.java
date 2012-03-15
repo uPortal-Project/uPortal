@@ -19,6 +19,7 @@
 
 package org.jasig.portal.layout.om;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
 
@@ -36,16 +37,12 @@ public interface IStylesheetUserPreferences {
      * Unique identifier of these preferences
      */
     public long getId();
-    
-    /**
-     * Get the id of the stylesheet descriptor these preferences are for
-     */
+
     public long getStylesheetDescriptorId();
-    
-    /**
-     * Replace all existing stylesheet preference data with the passed data.
-     */
-    public void setStylesheetUserPreferences(IStylesheetUserPreferences stylesheetUserPreferences);
+
+    public int getUserId();
+
+    public int getProfileId();
     
     /**
      * Get an output property
@@ -67,12 +64,9 @@ public interface IStylesheetUserPreferences {
     public String removeOutputProperty(String name);
     
     /**
-     * Get a read-only map of all configured output properties. This map may not be live and may simply be a
-     * snapshot of of the state of the output properties when called.
-     * Note that due to the thread-safety requirements this method may be expensive to call, while clients should not cache the
-     * result it should be called as little as possible.
+     * Add all output properties to the provided Properties object
      */
-    public Properties getOutputProperties();
+    public Properties populateOutputProperties(Properties properties);
     
     /**
      * @see Properties#clear();
@@ -100,12 +94,9 @@ public interface IStylesheetUserPreferences {
     public String removeStylesheetParameter(String name);
     
     /**
-     * Get a read-only map of all configured parameters. This map may not be live and may simply be a
-     * snapshot of of the state of the stylesheet parameters when called.
-     * Note that due to the thread-safety requirements this method may be expensive to call, while clients should not cache the
-     * result it should be called as little as possible.
+     * Add all stylesheet parameters to the provided Map
      */
-    public Map<String, String> getStylesheetParameters();
+    public Map<String, String> populateStylesheetParameters(Map<String, String> stylesheetParameters);
     
     /**
      * @see Map#clear();
@@ -134,20 +125,20 @@ public interface IStylesheetUserPreferences {
     public String removeLayoutAttribute(String nodeId, String name);
     
     /**
-     * Get a read-only map of all layout attributes for the specified layout node. This map may not be live and may simply be a
-     * snapshot of of the state of the layout attributes when called.
-     * Note that due to the thread-safety requirements this method may be expensive to call, while clients should not cache the
-     * result it should be called as little as possible.
+     * Add all layout attributes for the specified nodeId to the provided Map
      */
-    public Map<String, String> getLayoutAttributes(String nodeId);
+    public Map<String, String> populateLayoutAttributes(String nodeId, Map<String, String> layoutAttributes);
     
     /**
-     * Get a read-only map of all layout attributes for all nodes. This map may not be live and may simply be a
-     * snapshot of of the state of the layout attributes when called.
-     * Note that due to the thread-safety requirements this method may be expensive to call, while clients should not cache the
-     * result it should be called as little as possible.
+     * Add all layout attributes for all nodeIds to the provided Map
      */
-    public Map<String, Map<String, String>> getAllLayoutAttributes();
+    public Map<String, Map<String, String>> populateAllLayoutAttributes(Map<String, Map<String, String>> allLayoutAttributes);
+  
+    
+    /**
+     * @return Read-only view of all layout nodeIds stored in these preferences
+     */
+    public Collection<String> getAllLayoutAttributeNodeIds();
     
     /**
      * @see Map#clear();

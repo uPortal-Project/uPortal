@@ -19,20 +19,26 @@
 
 package org.jasig.portal.layout;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.IUserProfile;
-import org.jasig.portal.concurrency.caching.RequestCache;
 import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
 import org.jasig.portal.layout.dao.IStylesheetUserPreferencesDao;
+import org.jasig.portal.layout.om.ILayoutAttributeDescriptor;
+import org.jasig.portal.layout.om.IOutputPropertyDescriptor;
 import org.jasig.portal.layout.om.IStylesheetData;
 import org.jasig.portal.layout.om.IStylesheetData.Scope;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
+import org.jasig.portal.layout.om.IStylesheetParameterDescriptor;
 import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.user.IUserInstance;
@@ -42,6 +48,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.WebUtils;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 
 /**
  * Handles retrieving and storing the various scopes of stylesheet user preference data.
@@ -51,7 +62,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPreferencesService {
-    private static final String STYLESHEET_USER_PREFERENCES_KEY = StylesheetUserPreferencesServiceImpl.class.getName() + ".STYLESHEET_USER_PREFERENCES";
+    private static final String OUTPUT_PROPERTIES_KEY = StylesheetUserPreferencesServiceImpl.class.getName() + ".OUTPUT_PROPERTIES";
+    private static final String STYLESHEET_PARAMETERS_KEY = StylesheetUserPreferencesServiceImpl.class.getName() + ".STYLESHEET_PARAMETERS";
+    private static final String LAYOUT_ATTRIBUTES_KEY = StylesheetUserPreferencesServiceImpl.class.getName() + ".LAYOUT_ATTRIBUTES";
     
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
@@ -73,178 +86,1058 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
     public void setStylesheetUserPreferencesDao(IStylesheetUserPreferencesDao stylesheetUserPreferencesDao) {
         this.stylesheetUserPreferencesDao = stylesheetUserPreferencesDao;
     }
-
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.IStylesheetUserPreferencesService#getThemeStylesheetUserPreferences(javax.servlet.http.HttpServletRequest)
-     */
-    @RequestCache
-    @Override
-    public IStylesheetUserPreferences getThemeStylesheetUserPreferences(HttpServletRequest request) {
-        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
-        final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
-        final IPerson person = userInstance.getPerson();
-        final IUserProfile userProfile = preferencesManager.getUserProfile();
-        final int themeStylesheetId = userProfile.getThemeStylesheetId();
+    
+    
+    protected static final class StylesheetPreferencesKey {
+        private final IPerson person;
+        private final IUserProfile userProfile;
+        private final IStylesheetDescriptor stylesheetDescriptor;
+        private final String str;
         
-        final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
-        final IUserLayout userLayout = userLayoutManager.getUserLayout();
-        final IStylesheetUserPreferences distributedThemeStylesheetUserPreferences = userLayout.getDistributedThemeStylesheetUserPreferences();
-
-        return createCompositeStylesheetUserPreferences(request, person, themeStylesheetId, distributedThemeStylesheetUserPreferences);
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.IStylesheetUserPreferencesService#getStructureStylesheetUserPreferences(javax.servlet.http.HttpServletRequest)
-     */
-    @RequestCache
-    @Override
-    public IStylesheetUserPreferences getStructureStylesheetUserPreferences(HttpServletRequest request) {
-        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
-        final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
-        final IPerson person = userInstance.getPerson();
-        final IUserProfile userProfile = preferencesManager.getUserProfile();
-        final int structureStylesheetId = userProfile.getStructureStylesheetId();
-        
-        final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
-        final IUserLayout userLayout = userLayoutManager.getUserLayout();
-        final IStylesheetUserPreferences distributedStructureStylesheetUserPreferences = userLayout.getDistributedStructureStylesheetUserPreferences();
-        
-        return createCompositeStylesheetUserPreferences(request, person, structureStylesheetId, distributedStructureStylesheetUserPreferences);
-    }
-
-    protected IStylesheetUserPreferences createCompositeStylesheetUserPreferences(
-            HttpServletRequest request,
-            IPerson person,
-            int stylesheetId,
-            IStylesheetUserPreferences distributedStylesheetUserPreferences) {
-        
-        final IStylesheetDescriptor stylesheetDescriptor = this.stylesheetDescriptorDao.getStylesheetDescriptor(stylesheetId);
-        if (stylesheetDescriptor == null) {
-            throw new IllegalArgumentException("Could not find IStylesheetDescriptor for id: " + stylesheetId);
-        }
-        
-        final Map<Scope, IStylesheetUserPreferences> stylesheetUserPreferences = new LinkedHashMap<IStylesheetData.Scope, IStylesheetUserPreferences>();
-        
-        //Load persistent preferences
-        final IStylesheetUserPreferences persistentPreferences = this.getPersistentStylesheetUserPreferences(request, stylesheetDescriptor, false);
-        if (persistentPreferences != null) {
-            stylesheetUserPreferences.put(Scope.PERSISTENT, persistentPreferences);
-        }
-        
-        //Load session preferences
-        final IStylesheetUserPreferences sessionPreferences = this.getSessionStylesheetUserPreferences(request, stylesheetId, false);
-        if (sessionPreferences != null) {
-            stylesheetUserPreferences.put(Scope.SESSION, sessionPreferences);
-        }
-        
-        //Load request preferences
-        final IStylesheetUserPreferences requestPreferences = this.getRequestStylesheetUserPreferences(request, stylesheetId, false);
-        if (requestPreferences != null) {
-            stylesheetUserPreferences.put(Scope.REQUEST, requestPreferences);
-        }
-        
-        final boolean readOnlyPersistent = person.isGuest();
-        return new CompositeStylesheetUserPreferences(stylesheetDescriptor, stylesheetUserPreferences, distributedStylesheetUserPreferences, readOnlyPersistent);
-    }
-
-    @Override
-    public void updateStylesheetUserPreferences(HttpServletRequest request, IStylesheetUserPreferences stylesheetUserPreferences) {
-        if (!(stylesheetUserPreferences instanceof CompositeStylesheetUserPreferences)) {
-            throw new IllegalArgumentException("The IStylesheetUserPreferences is not the same as returned by getStructureStylesheetUserPreferences or getThemeStylesheetUserPreferences");
-        }
-        
-        final CompositeStylesheetUserPreferences compositeStylesheetUserPreferences = (CompositeStylesheetUserPreferences)stylesheetUserPreferences;
-        final IStylesheetDescriptor stylesheetDescriptor = compositeStylesheetUserPreferences.getStylesheetDescriptor();
-        
-        final Map<Scope, IStylesheetUserPreferences> componentPreferences = compositeStylesheetUserPreferences.getComponentPreferences();
-        
-        final IStylesheetUserPreferences requestComponentPreferences = componentPreferences.get(Scope.REQUEST);
-        if (requestComponentPreferences != null) {
-            final IStylesheetUserPreferences requestPreferences = this.getRequestStylesheetUserPreferences(request, stylesheetDescriptor.getId(), true);
-            if (requestComponentPreferences != requestPreferences) {
-                //Assume that the requestPreferences are new since it is a different object
-                requestPreferences.setStylesheetUserPreferences(requestComponentPreferences);
-            }
-        }
-        
-        final IStylesheetUserPreferences sessionComponentPreferences = componentPreferences.get(Scope.SESSION);
-        if (sessionComponentPreferences != null) {
-            final IStylesheetUserPreferences sessionPreferences = this.getSessionStylesheetUserPreferences(request, stylesheetDescriptor.getId(), true);
-            if (sessionComponentPreferences != sessionPreferences) {
-                //Assume that the sessionPreferences are new since it is a different object
-                sessionPreferences.setStylesheetUserPreferences(sessionComponentPreferences);
-            }
-        }
-        
-        final IStylesheetUserPreferences persistentComponentPreferences = componentPreferences.get(Scope.PERSISTENT);
-        if (persistentComponentPreferences != null) {
-            final IStylesheetUserPreferences persistentPreferences = this.getPersistentStylesheetUserPreferences(request, stylesheetDescriptor, true);
-            if (persistentComponentPreferences != persistentPreferences) {
-                persistentPreferences.setStylesheetUserPreferences(persistentComponentPreferences);
-            }
+        private StylesheetPreferencesKey(IPerson person, IUserProfile userProfile,
+                IStylesheetDescriptor stylesheetDescriptor) {
+            this.person = person;
+            this.userProfile = userProfile;
+            this.stylesheetDescriptor = stylesheetDescriptor;
             
-            this.stylesheetUserPreferencesDao.storeStylesheetUserPreferences(persistentPreferences);
+            this.str = "[" + stylesheetDescriptor.getId() + "," + person.getUserName() + "," + userProfile.getProfileId() + "]";
+        }
+
+        public String toString() {
+            return this.str;
+        }
+    }
+
+    protected final StylesheetPreferencesKey getStylesheetPreferencesKey(HttpServletRequest request, PreferencesScope prefScope) {
+        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+        
+        final IPerson person = userInstance.getPerson();
+
+        final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
+        final IUserProfile userProfile = preferencesManager.getUserProfile();
+        
+        final int stylesheetId = prefScope.getStylesheetId(userProfile);
+        final IStylesheetDescriptor stylesheetDescriptor = this.stylesheetDescriptorDao.getStylesheetDescriptor(stylesheetId);
+        
+        return new StylesheetPreferencesKey(person, userProfile, stylesheetDescriptor);
+    }
+    
+    protected final IStylesheetUserPreferences getDistributedStylesheetUserPreferences(HttpServletRequest request, PreferencesScope prefScope) {
+        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+        final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
+        final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
+        final IUserLayout userLayout = userLayoutManager.getUserLayout();
+        
+        return prefScope.getDistributedIStylesheetUserPreferences(userLayout);
+    }
+    
+    protected final Scope getWriteScope(HttpServletRequest request, PreferencesScope prefScope, StylesheetPreferencesKey stylesheetPreferencesKey, IStylesheetData descriptor) {
+        final Scope scope = descriptor.getScope();
+        final boolean persistentScopeReadOnly = this.isPersistentScopeReadOnly(request, prefScope, stylesheetPreferencesKey);
+        if (persistentScopeReadOnly && Scope.PERSISTENT == scope) {
+            return Scope.SESSION;
+        }
+        return scope;
+    }
+    
+    protected boolean isPersistentScopeReadOnly(HttpServletRequest request, PreferencesScope prefScope, StylesheetPreferencesKey stylesheetPreferencesKey) {
+        return stylesheetPreferencesKey.person.isGuest();
+    }
+    
+    protected final boolean compareValues(String value, String defaultValue) {
+        return value == defaultValue || (value != null && value.equals(defaultValue));
+    }
+    
+    protected final <T> T getDataValue(HttpServletRequest request, StylesheetPreferencesKey stylesheetPreferencesKey, Scope scope, String mapKey, String name) {
+        switch (scope) {
+            case SESSION: {
+                final HttpSession session = request.getSession(false);
+                if (session == null) {
+                    return null;
+                }
+                
+                final Map<String, T> outputProperties = PortalWebUtils.getMapSessionAttribute(session, mapKey + stylesheetPreferencesKey.toString(), false);
+                if (outputProperties == null) {
+                    return null;
+                }
+
+                return outputProperties.get(name);
+            }
+            case REQUEST: {
+                final Map<String, T> outputProperties = PortalWebUtils.getMapRequestAttribute(request, mapKey + stylesheetPreferencesKey.toString(), false);
+                if (outputProperties == null) {
+                    return null;
+                }
+                
+                return outputProperties.get(name);
+            }
+            default: {
+                return null;
+            }
         }
     }
     
-    protected IStylesheetUserPreferences getPersistentStylesheetUserPreferences(HttpServletRequest request, IStylesheetDescriptor stylesheetDescriptor, boolean create) {
-        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
-        final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
-        
-        final IPerson person = userInstance.getPerson();
-        if (person.isGuest()) {
-            //Guests never have persistent preferences
-            return this.getSessionStylesheetUserPreferences(request, stylesheetDescriptor.getId(), false);
+    protected final <T> T putDataValue(HttpServletRequest request, StylesheetPreferencesKey stylesheetPreferencesKey, Scope scope, String mapKey, String name, T value) {
+        switch (scope) {
+            case SESSION: {
+                final HttpSession session = request.getSession();
+                final Map<String, T> outputProperties = PortalWebUtils.getMapSessionAttribute(session, mapKey + stylesheetPreferencesKey.toString());
+
+                return outputProperties.put(name, value);
+            }
+            case REQUEST: {
+                final Map<String, T> outputProperties = PortalWebUtils.getMapRequestAttribute(request, mapKey + stylesheetPreferencesKey.toString());
+                
+                return outputProperties.put(name, value);
+            }
+            default: {
+                return null;
+            }
         }
-            
+    }
+    
+    protected final <T> T removeDataValue(HttpServletRequest request, StylesheetPreferencesKey stylesheetPreferencesKey, Scope scope, String mapKey, String name) {
+        switch (scope) {
+            case SESSION: {
+                final HttpSession session = request.getSession(false);
+                if (session == null) {
+                    return null;
+                }
+                
+                final Map<String, T> outputProperties = PortalWebUtils.getMapSessionAttribute(session, mapKey + stylesheetPreferencesKey.toString(), false);
+                if (outputProperties == null) {
+                    return null;
+                }
+
+                return outputProperties.remove(name);
+            }
+            case REQUEST: {
+                final Map<String, T> outputProperties = PortalWebUtils.getMapRequestAttribute(request, mapKey + stylesheetPreferencesKey.toString(), false);
+                if (outputProperties == null) {
+                    return null;
+                }
+                
+                return outputProperties.remove(name);
+            }
+            default: {
+                return null;
+            }
+        }
+    }
+    
+    @Override
+    public IStylesheetDescriptor getStylesheetDescriptor(HttpServletRequest request, PreferencesScope prefScope) {
+        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+        
+        final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserProfile userProfile = preferencesManager.getUserProfile();
         
-        final IStylesheetUserPreferences persistentPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, person, userProfile);
-        if (persistentPreferences != null) {
-            return persistentPreferences;
+        final int stylesheetId = prefScope.getStylesheetId(userProfile);
+        return this.stylesheetDescriptorDao.getStylesheetDescriptor(stylesheetId);
+    }
+
+    @Override
+    public String getOutputProperty(HttpServletRequest request, PreferencesScope prefScope, String name) {
+        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
+        final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
+        final IOutputPropertyDescriptor outputPropertyDescriptor = stylesheetDescriptor.getOutputPropertyDescriptor(name);
+        if (outputPropertyDescriptor == null) {
+            logger.warn("Attempted to get output property {} but no such output property is defined in stylesheet descriptor {}. null will be returned", new Object[] {name, stylesheetDescriptor.getName()});
+            return null;
+        }
+
+
+        final String value;
+        final Scope scope = outputPropertyDescriptor.getScope();
+        switch (scope) {
+            case PERSISTENT: {
+                final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+                if (stylesheetUserPreferences == null) {
+                    return null;
+                }
+                
+                value = stylesheetUserPreferences.getOutputProperty(name);
+                break;
+            }
+            default: {
+                value = this.getDataValue(request, stylesheetPreferencesKey, scope, OUTPUT_PROPERTIES_KEY, name);
+                break;
+            }
         }
         
-        if (!create) {
+        if (value == null) {
             return null;
         }
         
-        return this.stylesheetUserPreferencesDao.createStylesheetUserPreferences(stylesheetDescriptor, person, userProfile);
-    }
-    
-    protected IStylesheetUserPreferences getRequestStylesheetUserPreferences(HttpServletRequest request, long stylesheetDescriptorId, boolean create) {
-        final Map<Long, IStylesheetUserPreferences> preferencesMap = PortalWebUtils.getMapRequestAttribute(request, STYLESHEET_USER_PREFERENCES_KEY, create);
+        //If the value is equal to the default value remove the property and return null
+        if (this.compareValues(value, outputPropertyDescriptor.getDefaultValue())) {
+            this.removeOutputProperty(request, prefScope, name);
+            return null;
+        }
         
-        return getStylesheetUserPreferences(preferencesMap, stylesheetDescriptorId, create);
+        return value;
     }
-    
-    protected IStylesheetUserPreferences getSessionStylesheetUserPreferences(HttpServletRequest request, long stylesheetDescriptorId, boolean create) {
+
+    @Transactional
+    @Override
+    public String setOutputProperty(HttpServletRequest request, PreferencesScope prefScope, String name, String value) {
+        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
+        final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
+        final IOutputPropertyDescriptor outputPropertyDescriptor = stylesheetDescriptor.getOutputPropertyDescriptor(name);
+        if (outputPropertyDescriptor == null) {
+            logger.warn("Attempted to set output property {}={} but no such output property is defined in stylesheet descriptor {}. It will be ignored", new Object[] {name, value, stylesheetDescriptor.getName()});
+            return null;
+        }
+        
+        if (this.compareValues(value, outputPropertyDescriptor.getDefaultValue())) {
+            return this.removeOutputProperty(request, prefScope, name);
+        }
+        
+        final Scope scope = this.getWriteScope(request, prefScope, stylesheetPreferencesKey, outputPropertyDescriptor);
+        switch (scope) {
+            case PERSISTENT: {
+                IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+                if (stylesheetUserPreferences == null) {
+                    stylesheetUserPreferences = this.stylesheetUserPreferencesDao.createStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+                }
+                
+                final String oldValue = stylesheetUserPreferences.setOutputProperty(name, value);
+                this.stylesheetUserPreferencesDao.storeStylesheetUserPreferences(stylesheetUserPreferences);
+                return oldValue;
+            }
+            default: {
+                return this.putDataValue(request, stylesheetPreferencesKey, scope, OUTPUT_PROPERTIES_KEY, name, value);
+            }
+        }
+    }
+
+    @Transactional
+    @Override
+    public String removeOutputProperty(HttpServletRequest request, PreferencesScope prefScope, String name) {
+        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
+        final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
+        final IOutputPropertyDescriptor outputPropertyDescriptor = stylesheetDescriptor.getOutputPropertyDescriptor(name);
+        if (outputPropertyDescriptor == null) {
+            logger.warn("Attempted to remove output property {} but no such output property is defined in stylesheet descriptor {}. It will be ignored", new Object[] {name, stylesheetDescriptor.getName()});
+            return null;
+        }
+        
+        final Scope scope = this.getWriteScope(request, prefScope, stylesheetPreferencesKey, outputPropertyDescriptor);
+        switch (scope) {
+            case PERSISTENT: {
+                final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+                if (stylesheetUserPreferences == null) {
+                    return null;
+                }
+                
+                final String oldValue = stylesheetUserPreferences.removeOutputProperty(name);
+                this.stylesheetUserPreferencesDao.storeStylesheetUserPreferences(stylesheetUserPreferences);
+                return oldValue;
+            }
+            default: {
+                return removeDataValue(request, stylesheetPreferencesKey, scope, OUTPUT_PROPERTIES_KEY, name);
+            }
+        }
+    }
+
+    @Override
+    public Iterable<String> getOutputPropertyNames(HttpServletRequest request, PreferencesScope prefScope) {
+        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
+        final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
+        final Collection<IOutputPropertyDescriptor> outputPropertyDescriptors = stylesheetDescriptor.getOutputPropertyDescriptors();
+        
+        return Collections2.transform(outputPropertyDescriptors, new Function<IOutputPropertyDescriptor, String>() {
+            @Override
+            public String apply(IOutputPropertyDescriptor input) {
+                return input.getName();
+            }
+        });
+    }
+
+    @Override
+    public Properties populateOutputProperties(HttpServletRequest request, PreferencesScope prefScope, Properties properties) {
+        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
+        final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
+        
+        //Get the scoped sources once
+        final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+        
+        final Map<String, String> sessionOutputProperties;
         final HttpSession session = request.getSession(false);
         if (session == null) {
-            throw new IllegalStateException("An existing HttpSession is required");
+            sessionOutputProperties = null;
         }
-
-        final Map<Long, IStylesheetUserPreferences> preferencesMap = PortalWebUtils.getMapSessionAttribute(session, STYLESHEET_USER_PREFERENCES_KEY, create);
+        else {
+            sessionOutputProperties = PortalWebUtils.getMapSessionAttribute(session, OUTPUT_PROPERTIES_KEY + stylesheetPreferencesKey.toString(), false);
+        }
         
-        return getStylesheetUserPreferences(preferencesMap, stylesheetDescriptorId, create);
+        final Map<String, String> requestOutputProperties = PortalWebUtils.getMapRequestAttribute(request, OUTPUT_PROPERTIES_KEY + stylesheetPreferencesKey.toString(), false);
+        
+        //Try getting each output property to populate the Properties
+        for (final IOutputPropertyDescriptor outputPropertyDescriptor : stylesheetDescriptor.getOutputPropertyDescriptors()) {
+            final String name = outputPropertyDescriptor.getName();
+
+            final String value;
+            final Scope scope = outputPropertyDescriptor.getScope();
+            switch (scope) {
+                case PERSISTENT: {
+                    if (stylesheetUserPreferences == null) {
+                        value = null;
+                        break;
+                    }
+                    
+                    value = stylesheetUserPreferences.getOutputProperty(name);
+                    break;
+                }
+                case SESSION: {
+                    if (sessionOutputProperties == null) {
+                        value = null;
+                        break;
+                    }
+
+                    value = sessionOutputProperties.get(name);
+                    break;
+                }
+                case REQUEST: {
+                    if (requestOutputProperties == null) {
+                        value = null;
+                        break;
+                    }
+                    
+                    value = requestOutputProperties.get(name);
+                    break;
+                }
+                default: {
+                    value = null;
+                    break;
+                }
+            }
+            
+            //Don't add unset properties
+            if (value == null) {
+                continue;
+            }
+            
+            //If the value is equal to the default value remove the property and return null
+            if (this.compareValues(value, outputPropertyDescriptor.getDefaultValue())) {
+                this.removeOutputProperty(request, prefScope, name);
+                continue;
+            }
+            
+            properties.setProperty(name, value);
+        }
+        
+        return properties;
     }
 
-    protected IStylesheetUserPreferences getStylesheetUserPreferences(Map<Long, IStylesheetUserPreferences> preferencesMap, long stylesheetDescriptorId, boolean create) {
-        //Should never be null if create is true
-        if (preferencesMap == null) {
-            return null;
-        }
+    @Transactional
+    @Override
+    public void clearOutputProperties(HttpServletRequest request, PreferencesScope prefScope) {
+        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
+        final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
         
-        IStylesheetUserPreferences stylesheetUserPreferences = preferencesMap.get(stylesheetDescriptorId);
+        final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
         if (stylesheetUserPreferences != null) {
-            return stylesheetUserPreferences;
+            stylesheetUserPreferences.clearOutputProperties();
+            this.stylesheetUserPreferencesDao.storeStylesheetUserPreferences(stylesheetUserPreferences);
         }
-        if (!create) {
+        
+        final HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.removeAttribute(OUTPUT_PROPERTIES_KEY + stylesheetPreferencesKey.toString());
+        }
+        
+        request.removeAttribute(OUTPUT_PROPERTIES_KEY + stylesheetPreferencesKey.toString());
+    }
+    
+
+    
+
+    @Override
+    public String getStylesheetParameter(HttpServletRequest request, PreferencesScope prefScope, String name) {
+        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
+        final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
+        final IStylesheetParameterDescriptor stylesheetParameterDescriptor = stylesheetDescriptor.getStylesheetParameterDescriptor(name);
+        if (stylesheetParameterDescriptor == null) {
+            logger.warn("Attempted to get stylesheet parameter {} but no such stylesheet parameter is defined in stylesheet descriptor {}. null will be returned", new Object[] {name, stylesheetDescriptor.getName()});
+            return null;
+        }
+
+
+        final String value;
+        final Scope scope = stylesheetParameterDescriptor.getScope();
+        switch (scope) {
+            case PERSISTENT: {
+                final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+                if (stylesheetUserPreferences == null) {
+                    return null;
+                }
+                
+                value = stylesheetUserPreferences.getStylesheetParameter(name);
+                break;
+            }
+            default: {
+                value = this.getDataValue(request, stylesheetPreferencesKey, scope, STYLESHEET_PARAMETERS_KEY, name);
+                break;
+            }
+        }
+        
+        if (value == null) {
             return null;
         }
         
-        stylesheetUserPreferences = new StylesheetUserPreferencesImpl(stylesheetDescriptorId);
-        preferencesMap.put(stylesheetDescriptorId, stylesheetUserPreferences);
-        return stylesheetUserPreferences;
+        //If the value is equal to the default value remove the property and return null
+        if (this.compareValues(value, stylesheetParameterDescriptor.getDefaultValue())) {
+            this.removeStylesheetParameter(request, prefScope, name);
+            return null;
+        }
+        
+        return value;
+    }
+
+    @Transactional
+    @Override
+    public String setStylesheetParameter(HttpServletRequest request, PreferencesScope prefScope, String name, String value) {
+        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
+        final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
+        final IStylesheetParameterDescriptor stylesheetParameterDescriptor = stylesheetDescriptor.getStylesheetParameterDescriptor(name);
+        if (stylesheetParameterDescriptor == null) {
+            logger.warn("Attempted to set stylesheet parameter {}={} but no such stylesheet parameter is defined in stylesheet descriptor {}. It will be ignored", new Object[] {name, value, stylesheetDescriptor.getName()});
+            return null;
+        }
+        
+        if (this.compareValues(value, stylesheetParameterDescriptor.getDefaultValue())) {
+            return this.removeStylesheetParameter(request, prefScope, name);
+        }
+        
+        final Scope scope = this.getWriteScope(request, prefScope, stylesheetPreferencesKey, stylesheetParameterDescriptor);
+        switch (scope) {
+            case PERSISTENT: {
+                IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+                if (stylesheetUserPreferences == null) {
+                    stylesheetUserPreferences = this.stylesheetUserPreferencesDao.createStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+                }
+                
+                final String oldValue = stylesheetUserPreferences.setStylesheetParameter(name, value);
+                this.stylesheetUserPreferencesDao.storeStylesheetUserPreferences(stylesheetUserPreferences);
+                return oldValue;
+            }
+            default: {
+                return this.putDataValue(request, stylesheetPreferencesKey, scope, STYLESHEET_PARAMETERS_KEY, name, value);
+            }
+        }
+    }
+
+    @Transactional
+    @Override
+    public String removeStylesheetParameter(HttpServletRequest request, PreferencesScope prefScope, String name) {
+        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
+        final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
+        final IStylesheetParameterDescriptor stylesheetParameterDescriptor = stylesheetDescriptor.getStylesheetParameterDescriptor(name);
+        if (stylesheetParameterDescriptor == null) {
+            logger.warn("Attempted to remove stylesheet parameter {} but no such stylesheet parameter is defined in stylesheet descriptor {}. It will be ignored", new Object[] {name, stylesheetDescriptor.getName()});
+            return null;
+        }
+        
+        final Scope scope = this.getWriteScope(request, prefScope, stylesheetPreferencesKey, stylesheetParameterDescriptor);
+        switch (scope) {
+            case PERSISTENT: {
+                final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+                if (stylesheetUserPreferences == null) {
+                    return null;
+                }
+                
+                final String oldValue = stylesheetUserPreferences.removeStylesheetParameter(name);
+                this.stylesheetUserPreferencesDao.storeStylesheetUserPreferences(stylesheetUserPreferences);
+                return oldValue;
+            }
+            default: {
+                return removeDataValue(request, stylesheetPreferencesKey, scope, STYLESHEET_PARAMETERS_KEY, name);
+            }
+        }
+    }
+
+    @Override
+    public Iterable<String> getStylesheetParameterNames(HttpServletRequest request, PreferencesScope prefScope) {
+        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
+        final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
+        final Collection<IStylesheetParameterDescriptor> stylesheetParameterDescriptors = stylesheetDescriptor.getStylesheetParameterDescriptors();
+        
+        return Collections2.transform(stylesheetParameterDescriptors, new Function<IStylesheetParameterDescriptor, String>() {
+            @Override
+            public String apply(IStylesheetParameterDescriptor input) {
+                return input.getName();
+            }
+        });
+    }
+
+    @Override
+    public Map<String, String> populateStylesheetParameters(HttpServletRequest request, PreferencesScope prefScope, Map<String, String> stylesheetParameters) {
+        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
+        final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
+        
+        //Get the scoped sources once
+        final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+        final Map<String, String> sessionStylesheetParameters;
+        final HttpSession session = request.getSession(false);
+        if (session == null) {
+            sessionStylesheetParameters = null;
+        }
+        else {
+            sessionStylesheetParameters = PortalWebUtils.getMapSessionAttribute(session, STYLESHEET_PARAMETERS_KEY + stylesheetPreferencesKey.toString(), false);
+        }
+        final Map<String, String> requestStylesheetParameters = PortalWebUtils.getMapRequestAttribute(request, STYLESHEET_PARAMETERS_KEY + stylesheetPreferencesKey.toString(), false);
+        
+        //Try getting each stylesheet parameter to populate the Map
+        for (final IStylesheetParameterDescriptor stylesheetParameterDescriptor : stylesheetDescriptor.getStylesheetParameterDescriptors()) {
+            final String name = stylesheetParameterDescriptor.getName();
+
+            final String value;
+            final Scope scope = stylesheetParameterDescriptor.getScope();
+            switch (scope) {
+                case PERSISTENT: {
+                    if (stylesheetUserPreferences == null) {
+                        value = null;
+                        break;
+                    }
+                    
+                    value = stylesheetUserPreferences.getStylesheetParameter(name);
+                    break;
+                }
+                case SESSION: {
+                    if (sessionStylesheetParameters == null) {
+                        value = null;
+                        break;
+                    }
+
+                    value = sessionStylesheetParameters.get(name);
+                    break;
+                }
+                case REQUEST: {
+                    if (requestStylesheetParameters == null) {
+                        value = null;
+                        break;
+                    }
+                    
+                    value = requestStylesheetParameters.get(name);
+                    break;
+                }
+                default: {
+                    value = null;
+                    break;
+                }
+            }
+            
+            //Don't add unset properties
+            if (value == null) {
+                continue;
+            }
+            
+            //If the value is equal to the default value remove the property and return null
+            if (this.compareValues(value, stylesheetParameterDescriptor.getDefaultValue())) {
+                this.removeStylesheetParameter(request, prefScope, name);
+                continue;
+            }
+            
+            stylesheetParameters.put(name, value);
+        }
+        
+        return stylesheetParameters;
+    }
+
+    @Transactional
+    @Override
+    public void clearStylesheetParameters(HttpServletRequest request, PreferencesScope prefScope) {
+        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
+        final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
+        
+        final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+        if (stylesheetUserPreferences != null) {
+            stylesheetUserPreferences.clearStylesheetParameters();
+            this.stylesheetUserPreferencesDao.storeStylesheetUserPreferences(stylesheetUserPreferences);
+        }
+        
+        final HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.removeAttribute(STYLESHEET_PARAMETERS_KEY + stylesheetPreferencesKey.toString());
+        }
+        
+        request.removeAttribute(STYLESHEET_PARAMETERS_KEY + stylesheetPreferencesKey.toString());
+    }
+
+    @Override
+    public String getLayoutAttribute(HttpServletRequest request, PreferencesScope prefScope, String nodeId, String name) {
+        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
+        final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
+        final ILayoutAttributeDescriptor layoutAttributeDescriptor = stylesheetDescriptor.getLayoutAttributeDescriptor(name);
+        if (layoutAttributeDescriptor == null) {
+            logger.warn("Attempted to get layout attribute {} for ID=\"{}\" but no such stylesheet parameter is defined in stylesheet descriptor {}. Null will be returned", new Object[] {name, nodeId, stylesheetDescriptor.getName()});
+            return null;
+        }
+
+
+        final String value;
+        final Scope scope = layoutAttributeDescriptor.getScope();
+        switch (scope) {
+            case PERSISTENT: {
+                final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+                if (stylesheetUserPreferences == null) {
+                    return null;
+                }
+                
+                value = stylesheetUserPreferences.getLayoutAttribute(nodeId, name);
+                break;
+            }
+            default: {
+                final Map<String, String> nodeAttributes = this.getDataValue(request, stylesheetPreferencesKey, scope, LAYOUT_ATTRIBUTES_KEY, nodeId);
+                if (nodeAttributes == null) {
+                    return null; 
+                }
+                
+                value = nodeAttributes.get(name);
+                break;
+            }
+        }
+        
+        if (value == null) {
+            //Check in the DLM stylesheet user prefs for a default value
+            final IStylesheetUserPreferences distributedStylesheetUserPreferences = this.getDistributedStylesheetUserPreferences(request, prefScope);
+            if (distributedStylesheetUserPreferences != null) {
+                final String dValue = distributedStylesheetUserPreferences.getLayoutAttribute(nodeId, name);
+                if (dValue != null && this.compareValues(dValue, layoutAttributeDescriptor.getDefaultValue())) {
+                    distributedStylesheetUserPreferences.removeLayoutAttribute(nodeId, name);
+                    return null;
+                }
+                
+                return value;
+            }
+            
+            return null;
+        }
+        
+        //If the value is equal to the default value remove the property and return null
+        if (this.compareValues(value, layoutAttributeDescriptor.getDefaultValue())) {
+            this.removeLayoutAttribute(request, prefScope, nodeId, name);
+            return null;
+        }
+        
+        return value;
+    }
+    
+    @Transactional
+    @Override
+    public String setLayoutAttribute(HttpServletRequest request, PreferencesScope prefScope, String nodeId, String name, String value) {
+        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
+        final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
+        final ILayoutAttributeDescriptor layoutAttributeDescriptor = stylesheetDescriptor.getLayoutAttributeDescriptor(name);
+        if (layoutAttributeDescriptor == null) {
+            logger.warn("Attempted to set layout attribute {}={} on node with ID=\"{}\" but no such stylesheet parameter is defined in stylesheet descriptor {}. It will be ignored.", new Object[] {name, value, nodeId, stylesheetDescriptor.getName()});
+            return null;
+        }
+        
+        if (this.compareValues(value, layoutAttributeDescriptor.getDefaultValue())) {
+            return this.removeLayoutAttribute(request, prefScope, nodeId, name);
+        }
+        
+        final Scope scope = this.getWriteScope(request, prefScope, stylesheetPreferencesKey, layoutAttributeDescriptor);
+        switch (scope) {
+            case PERSISTENT: {
+                IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+                if (stylesheetUserPreferences == null) {
+                    stylesheetUserPreferences = this.stylesheetUserPreferencesDao.createStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+                }
+                
+                final String oldValue = stylesheetUserPreferences.setLayoutAttribute(nodeId, name, value);
+                this.stylesheetUserPreferencesDao.storeStylesheetUserPreferences(stylesheetUserPreferences);
+                return oldValue;
+            }
+            default: {
+                
+                //Determine the mutex to use for accessing the nodeAttributes map
+                final Object mutex;
+                switch (scope) {
+                    case REQUEST: {
+                        mutex = PortalWebUtils.getRequestAttributeMutex(request);
+                        break;
+                    }
+                    case SESSION: {
+                        final HttpSession session = request.getSession();
+                        mutex = WebUtils.getSessionMutex(session);
+                        break;
+                    }
+                    default: {
+                        mutex = new Object();
+                        break;
+                    }
+                }
+                
+                //Get/Create the nodeAttributes map
+                Map<String, String> nodeAttributes;
+                synchronized (mutex) {
+                    nodeAttributes = this.getDataValue(request, stylesheetPreferencesKey, scope, LAYOUT_ATTRIBUTES_KEY, nodeId);
+                    if (nodeAttributes == null) {
+                        nodeAttributes = new ConcurrentHashMap<String, String>();
+                        this.putDataValue(request, stylesheetPreferencesKey, scope, LAYOUT_ATTRIBUTES_KEY, nodeId, nodeAttributes);
+                    }
+                }
+                
+                return nodeAttributes.put(name, value);
+            }
+        }
+    }
+
+    @Transactional
+    @Override
+    public String removeLayoutAttribute(HttpServletRequest request, PreferencesScope prefScope, String nodeId, String name) {
+        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
+        final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
+        final ILayoutAttributeDescriptor layoutAttributeDescriptor = stylesheetDescriptor.getLayoutAttributeDescriptor(name);
+        if (layoutAttributeDescriptor == null) {
+            logger.warn("Attempted to remove layout attribute {} for ID=\"{}\" but no such stylesheet parameter is defined in stylesheet descriptor {}. It will be ignored.", new Object[] {name, nodeId, stylesheetDescriptor.getName()});
+            return null;
+        }
+        
+        final Scope scope = this.getWriteScope(request, prefScope, stylesheetPreferencesKey, layoutAttributeDescriptor);
+        switch (scope) {
+            case PERSISTENT: {
+                final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+                if (stylesheetUserPreferences == null) {
+                    break;
+                }
+                
+                final String oldValue = stylesheetUserPreferences.removeLayoutAttribute(nodeId, name);
+                if (oldValue != null) {
+                    this.stylesheetUserPreferencesDao.storeStylesheetUserPreferences(stylesheetUserPreferences);
+                    return oldValue;
+                }
+            }
+            default: {
+                final Map<String, String> nodeAttributes = this.getDataValue(request, stylesheetPreferencesKey, scope, LAYOUT_ATTRIBUTES_KEY, nodeId);
+                if (nodeAttributes == null) {
+                    break;
+                }
+                
+                final String oldValue = nodeAttributes.remove(name);
+                if (oldValue != null) {
+                    return oldValue;
+                }
+            }
+        }
+        
+        final IStylesheetUserPreferences distributedStylesheetUserPreferences = this.getDistributedStylesheetUserPreferences(request, prefScope);
+        if (distributedStylesheetUserPreferences != null) {
+            return distributedStylesheetUserPreferences.removeLayoutAttribute(nodeId, name);
+        }
+        
+        return null;
+    }
+    
+    @Override
+    public Iterable<String> getAllLayoutAttributeNames(HttpServletRequest request, PreferencesScope prefScope) {
+        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
+        final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
+        final Collection<ILayoutAttributeDescriptor> layoutAttributeDescriptors = stylesheetDescriptor.getLayoutAttributeDescriptors();
+        
+        return Collections2.transform(layoutAttributeDescriptors, new Function<ILayoutAttributeDescriptor, String>() {
+            @Override
+            public String apply(ILayoutAttributeDescriptor input) {
+                return input.getName();
+            }
+        });
+    }
+
+    @Override
+    public Iterable<String> getLayoutAttributeNodeIds(HttpServletRequest request, PreferencesScope prefScope) {
+        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
+        final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
+        
+        final LinkedHashSet<String> allNodeIds = new LinkedHashSet<String>();
+        
+        final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+        if (stylesheetUserPreferences != null) {
+            allNodeIds.addAll(stylesheetUserPreferences.getAllLayoutAttributeNodeIds());
+        }
+        
+        final HttpSession session = request.getSession(false);
+        if (session != null) {
+            final Map<String, Map<String, String>> sessionLayoutAttributes = PortalWebUtils.getMapSessionAttribute(session, LAYOUT_ATTRIBUTES_KEY + stylesheetPreferencesKey.toString(), false);
+            if (sessionLayoutAttributes != null) {
+                allNodeIds.addAll(sessionLayoutAttributes.keySet());
+            }
+            
+        }
+
+        final Map<String, Map<String, String>> requestLayoutAttributes = PortalWebUtils.getMapRequestAttribute(request, LAYOUT_ATTRIBUTES_KEY + stylesheetPreferencesKey.toString(), false);
+        if (requestLayoutAttributes != null) {
+            allNodeIds.addAll(requestLayoutAttributes.keySet());
+        }
+        
+        final IStylesheetUserPreferences distributedStylesheetUserPreferences = this.getDistributedStylesheetUserPreferences(request, prefScope);
+        if (distributedStylesheetUserPreferences != null) {
+            allNodeIds.addAll(distributedStylesheetUserPreferences.getAllLayoutAttributeNodeIds());
+        }
+        
+        return allNodeIds;
+    }
+
+    @Override
+    public Map<String, String> populateLayoutAttributes(HttpServletRequest request,
+            PreferencesScope prefScope, String nodeId, Map<String, String> layoutAttributes) {
+        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
+        final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
+        
+        //Get the scoped sources once
+        final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+        final Map<String, Map<String, String>> sessionLayoutAttributes;
+        final HttpSession session = request.getSession(false);
+        if (session == null) {
+            sessionLayoutAttributes = null;
+        }
+        else {
+            sessionLayoutAttributes = PortalWebUtils.getMapSessionAttribute(session, LAYOUT_ATTRIBUTES_KEY + stylesheetPreferencesKey.toString(), false);
+        }
+        final Map<String, Map<String, String>> requestLayoutAttributes = PortalWebUtils.getMapRequestAttribute(request, LAYOUT_ATTRIBUTES_KEY + stylesheetPreferencesKey.toString(), false);
+        
+        final IStylesheetUserPreferences distributedStylesheetUserPreferences = this.getDistributedStylesheetUserPreferences(request, prefScope);
+        if (distributedStylesheetUserPreferences != null) {
+            distributedStylesheetUserPreferences.populateLayoutAttributes(nodeId, layoutAttributes);
+        }
+        
+        //Try getting each layout attribute to populate the Map
+        for (final ILayoutAttributeDescriptor layoutAttributeDescriptor : stylesheetDescriptor.getLayoutAttributeDescriptors()) {
+            final String name = layoutAttributeDescriptor.getName();
+
+            String value;
+            final Scope scope = layoutAttributeDescriptor.getScope();
+            switch (scope) {
+                case PERSISTENT: {
+                    if (stylesheetUserPreferences == null) {
+                        value = null;
+                        break;
+                    }
+                    
+                    value = stylesheetUserPreferences.getLayoutAttribute(nodeId, name);
+                    break;
+                }
+                case SESSION: {
+                    if (sessionLayoutAttributes == null) {
+                        value = null;
+                        break;
+                    }
+
+                    final Map<String, String> nodeAttributes = sessionLayoutAttributes.get(nodeId);
+                    if (nodeAttributes == null) {
+                        value = null;
+                        break;
+                    }
+                    
+                    value = nodeAttributes.get(name);
+                    break;
+                }
+                case REQUEST: {
+                    if (requestLayoutAttributes == null) {
+                        value = null;
+                        break;
+                    }
+                    
+                    final Map<String, String> nodeAttributes = requestLayoutAttributes.get(nodeId);
+                    if (nodeAttributes == null) {
+                        value = null;
+                        break;
+                    }
+                    
+                    value = nodeAttributes.get(name);
+                    break;
+                }
+                default: {
+                    value = null;
+                    break;
+                }
+            }
+            
+            //Don't add unset properties
+            if (value == null) {
+                continue;
+            }
+            
+            //If the value is equal to the default value remove the property and return null
+            if (this.compareValues(value, layoutAttributeDescriptor.getDefaultValue())) {
+                this.removeLayoutAttribute(request, prefScope, nodeId, name);
+                continue;
+            }
+            
+            layoutAttributes.put(name, value);
+        }
+        
+        return layoutAttributes;
+    }
+
+    @Override
+    public Map<String, Map<String, String>> populateAllLayoutAttributes(HttpServletRequest request,
+            PreferencesScope prefScope, Map<String, Map<String, String>> allLayoutAttributes) {
+
+        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
+        final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
+        
+        //Get the scoped sources once
+        final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+        
+        final Map<String, Map<String, String>> sessionLayoutAttributes;
+        final HttpSession session = request.getSession(false);
+        if (session == null) {
+            sessionLayoutAttributes = null;
+        }
+        else {
+            sessionLayoutAttributes = PortalWebUtils.getMapSessionAttribute(session, LAYOUT_ATTRIBUTES_KEY + stylesheetPreferencesKey.toString(), false);
+        }
+        
+        final Map<String, Map<String, String>> requestLayoutAttributes = PortalWebUtils.getMapRequestAttribute(request, LAYOUT_ATTRIBUTES_KEY + stylesheetPreferencesKey.toString(), false);
+        
+        final IStylesheetUserPreferences distributedStylesheetUserPreferences = this.getDistributedStylesheetUserPreferences(request, prefScope);
+        if (distributedStylesheetUserPreferences != null) {
+            distributedStylesheetUserPreferences.populateAllLayoutAttributes(allLayoutAttributes);
+        }
+        
+        //Try getting each layout attribute to populate the Map
+        for (final ILayoutAttributeDescriptor layoutAttributeDescriptor : stylesheetDescriptor.getLayoutAttributeDescriptors()) {
+            final String name = layoutAttributeDescriptor.getName();
+            
+            final Scope scope = layoutAttributeDescriptor.getScope();
+            switch (scope) {
+                case PERSISTENT: {
+                    if (stylesheetUserPreferences == null) {
+                        break;
+                    }
+                    
+                    for (final String nodeId : stylesheetUserPreferences.getAllLayoutAttributeNodeIds()) {
+                        final String value = stylesheetUserPreferences.getLayoutAttribute(nodeId, name);
+                        if (value == null) {
+                            continue;
+                        }
+                        
+                        if (this.compareValues(value, layoutAttributeDescriptor.getDefaultValue())) {
+                            this.removeLayoutAttribute(request, prefScope, nodeId, name);
+                            continue;
+                        }
+                        
+                        Map<String, String> nodeAttributes = allLayoutAttributes.get(nodeId);
+                        if (nodeAttributes == null) {
+                            nodeAttributes = new LinkedHashMap<String, String>();
+                            allLayoutAttributes.put(nodeId, nodeAttributes);
+                        }
+                        
+                        nodeAttributes.put(name, value);
+                    }
+                    
+                    break;
+                }
+                case SESSION: {
+                    if (sessionLayoutAttributes == null) {
+                        break;
+                    }
+                    
+                    addNodeAttributes(request,
+                            prefScope,
+                            allLayoutAttributes,
+                            sessionLayoutAttributes,
+                            layoutAttributeDescriptor,
+                            name);
+                    
+                    break;
+                }
+                case REQUEST: {
+                    if (requestLayoutAttributes == null) {
+                        break;
+                    }
+                    
+                    addNodeAttributes(request,
+                            prefScope,
+                            allLayoutAttributes,
+                            requestLayoutAttributes,
+                            layoutAttributeDescriptor,
+                            name);
+                    break;
+                }
+                default: {
+                    break;
+                }
+            }
+        }
+        
+        return allLayoutAttributes;
+    }
+
+    private void addNodeAttributes(HttpServletRequest request, PreferencesScope prefScope,
+            Map<String, Map<String, String>> allLayoutAttributes,
+            Map<String, Map<String, String>> attributesToAdd, ILayoutAttributeDescriptor layoutAttributeDescriptor,
+            String name) {
+        
+        for (final Map.Entry<String, Map<String, String>> nodeIdAttributeEntry : attributesToAdd.entrySet()) {
+            final String nodeId = nodeIdAttributeEntry.getKey();
+            final String value = nodeIdAttributeEntry.getValue().get(name);
+            if (value == null) {
+                continue;
+            }
+            
+            if (this.compareValues(value, layoutAttributeDescriptor.getDefaultValue())) {
+                this.removeLayoutAttribute(request, prefScope, nodeId, name);
+                continue;
+            }
+            
+            Map<String, String> nodeAttributes = allLayoutAttributes.get(nodeId);
+            if (nodeAttributes == null) {
+                nodeAttributes = new LinkedHashMap<String, String>();
+                allLayoutAttributes.put(nodeId, nodeAttributes);
+            }
+            
+            nodeAttributes.put(name, value);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void clearLayoutAttributes(HttpServletRequest request, PreferencesScope prefScope, String nodeId) {
+        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
+        final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
+        
+        final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+        if (stylesheetUserPreferences != null) {
+            stylesheetUserPreferences.clearLayoutAttributes(nodeId);
+            this.stylesheetUserPreferencesDao.storeStylesheetUserPreferences(stylesheetUserPreferences);
+        }
+        
+        final HttpSession session = request.getSession(false);
+        if (session != null) {
+            final Map<String, Map<String, String>> sessionLayoutAttributes = PortalWebUtils.getMapSessionAttribute(session, LAYOUT_ATTRIBUTES_KEY + stylesheetPreferencesKey.toString(), false);
+            if (sessionLayoutAttributes != null) {
+                sessionLayoutAttributes.remove(nodeId);
+            }
+            
+        }
+
+        final Map<String, Map<String, String>> requestLayoutAttributes = PortalWebUtils.getMapRequestAttribute(request, LAYOUT_ATTRIBUTES_KEY + stylesheetPreferencesKey.toString(), false);
+        if (requestLayoutAttributes != null) {
+            requestLayoutAttributes.remove(nodeId);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void clearAllLayoutAttributes(HttpServletRequest request, PreferencesScope prefScope) {
+        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
+        final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
+        
+        final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+        if (stylesheetUserPreferences != null) {
+            stylesheetUserPreferences.clearAllLayoutAttributes();
+            this.stylesheetUserPreferencesDao.storeStylesheetUserPreferences(stylesheetUserPreferences);
+        }
+        
+        final HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.removeAttribute(LAYOUT_ATTRIBUTES_KEY + stylesheetPreferencesKey.toString());
+        }
+        
+        request.removeAttribute(LAYOUT_ATTRIBUTES_KEY + stylesheetPreferencesKey.toString());
     }
 }

@@ -22,8 +22,8 @@ package org.jasig.portal.json.rendering;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
-import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.rendering.StylesheetAttributeSource;
 
 /**
@@ -37,9 +37,9 @@ public class JsonStructureAttributeSource extends StylesheetAttributeSource {
     public IStylesheetDescriptor getStylesheetDescriptor(HttpServletRequest request) {
         return this.stylesheetDescriptorDao.getStylesheetDescriptorByName("DLMMobileColumns");
     }
-    
+
     @Override
-    public IStylesheetUserPreferences getStylesheetUserPreferences(HttpServletRequest request) {
-        return this.stylesheetUserPreferencesService.getStructureStylesheetUserPreferences(request);
+    public PreferencesScope getStylesheetPreferencesScope(HttpServletRequest request) {
+        return PreferencesScope.STRUCTURE;
     }
 }

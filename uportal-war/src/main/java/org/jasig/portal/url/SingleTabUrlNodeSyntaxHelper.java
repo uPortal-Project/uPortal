@@ -31,11 +31,13 @@ import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.concurrency.caching.RequestCache;
 import org.jasig.portal.layout.IStylesheetUserPreferencesService;
+import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.PortletTabIdResolver;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
-import org.jasig.portal.layout.om.IStylesheetUserPreferences;
+import org.jasig.portal.layout.om.IStylesheetDescriptor;
+import org.jasig.portal.layout.om.IStylesheetParameterDescriptor;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
@@ -154,8 +156,18 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
      * Get the index of the default tab for the user
      */
     protected String getDefaultTabIndex(HttpServletRequest httpServletRequest) {
-        final IStylesheetUserPreferences structureStylesheetUserPreferences = this.stylesheetUserPreferencesService.getStructureStylesheetUserPreferences(httpServletRequest);
-        return structureStylesheetUserPreferences.getStylesheetParameter(defaultTabParameter);
+        final String stylesheetParameter = this.stylesheetUserPreferencesService.getStylesheetParameter(httpServletRequest, PreferencesScope.STRUCTURE, this.defaultTabParameter);
+        if (stylesheetParameter != null) {
+            return stylesheetParameter;
+        }
+        
+        final IStylesheetDescriptor stylesheetDescriptor = this.stylesheetUserPreferencesService.getStylesheetDescriptor(httpServletRequest, PreferencesScope.STRUCTURE);
+        final IStylesheetParameterDescriptor stylesheetParameterDescriptor = stylesheetDescriptor.getStylesheetParameterDescriptor(this.defaultTabParameter);
+        if (stylesheetParameterDescriptor != null) {
+            return stylesheetParameterDescriptor.getDefaultValue();
+        }
+        
+        return null;
     }
 
     /* (non-Javadoc)

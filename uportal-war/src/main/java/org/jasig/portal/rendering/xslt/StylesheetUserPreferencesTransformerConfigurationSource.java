@@ -27,10 +27,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.layout.IStylesheetUserPreferencesService;
-import org.jasig.portal.layout.om.IStylesheetUserPreferences;
+import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -39,14 +40,20 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public abstract class StylesheetUserPreferencesTransformerConfigurationSource extends TransformerConfigurationSourceAdapter {
+public abstract class StylesheetUserPreferencesTransformerConfigurationSource extends TransformerConfigurationSourceAdapter implements BeanNameAware {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     protected IStylesheetUserPreferencesService stylesheetUserPreferencesService;
+    private String beanName;
 
     @Autowired
     public void setStylesheetUserPreferencesService(IStylesheetUserPreferencesService stylesheetUserPreferencesService) {
         this.stylesheetUserPreferencesService = stylesheetUserPreferencesService;
+    }
+    
+    @Override
+    public void setBeanName(String name) {
+        this.beanName = name;
     }
 
     /* (non-Javadoc)
@@ -64,25 +71,27 @@ public abstract class StylesheetUserPreferencesTransformerConfigurationSource ex
      */
     @Override
     public final LinkedHashMap<String, Object> getParameters(HttpServletRequest request, HttpServletResponse response) {
-        final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request);
+        final PreferencesScope stylesheetPreferencesScope = this.getStylesheetPreferencesScope(request);
         
-        final Map<String, String> stylesheetParameters = stylesheetUserPreferences.getStylesheetParameters();
+        final Map<String, String> stylesheetParameters = this.stylesheetUserPreferencesService.populateStylesheetParameters(request, stylesheetPreferencesScope, new LinkedHashMap<String, String>());
         
         return new LinkedHashMap<String, Object>(stylesheetParameters);
     }
     
     @Override
     public Properties getOutputProperties(HttpServletRequest request, HttpServletResponse response) {
-        final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request);
-        final Properties outputProperties = stylesheetUserPreferences.getOutputProperties();
+        final PreferencesScope stylesheetPreferencesScope = this.getStylesheetPreferencesScope(request);
         
-        this.logger.debug("Setting output parameters: {}", outputProperties);
+        final Properties outputProperties = new Properties();
+        this.stylesheetUserPreferencesService.populateOutputProperties(request, stylesheetPreferencesScope, outputProperties);
         
         return outputProperties;
     }
 
-    protected abstract String getName();
+    protected String getName() {
+        return this.beanName;
+    }
     
-    protected abstract IStylesheetUserPreferences getStylesheetUserPreferences(HttpServletRequest request);
+    protected abstract PreferencesScope getStylesheetPreferencesScope(HttpServletRequest request);
     
 }

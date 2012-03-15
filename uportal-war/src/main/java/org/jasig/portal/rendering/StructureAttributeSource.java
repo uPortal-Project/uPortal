@@ -22,11 +22,7 @@ package org.jasig.portal.rendering;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.IUserPreferencesManager;
-import org.jasig.portal.IUserProfile;
-import org.jasig.portal.layout.om.IStylesheetDescriptor;
-import org.jasig.portal.layout.om.IStylesheetUserPreferences;
-import org.jasig.portal.user.IUserInstance;
+import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
 
 /**
  * Returns structure stylesheet descriptor and preferences data
@@ -36,17 +32,7 @@ import org.jasig.portal.user.IUserInstance;
  */
 public class StructureAttributeSource extends StylesheetAttributeSource {
     @Override
-    public IStylesheetDescriptor getStylesheetDescriptor(HttpServletRequest request) {
-        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
-        final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
-        final IUserProfile userProfile = preferencesManager.getUserProfile();
-        final int structureStylesheetId = userProfile.getStructureStylesheetId();
-        
-        return this.stylesheetDescriptorDao.getStylesheetDescriptor(structureStylesheetId);
-    }
-    
-    @Override
-    public IStylesheetUserPreferences getStylesheetUserPreferences(HttpServletRequest request) {
-        return this.stylesheetUserPreferencesService.getStructureStylesheetUserPreferences(request);
+    public PreferencesScope getStylesheetPreferencesScope(HttpServletRequest request) {
+        return PreferencesScope.STRUCTURE;
     }
 }

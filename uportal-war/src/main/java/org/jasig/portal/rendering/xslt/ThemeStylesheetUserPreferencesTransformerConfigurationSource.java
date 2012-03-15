@@ -22,6 +22,7 @@ package org.jasig.portal.rendering.xslt;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.layout.IStylesheetUserPreferencesService;
+import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
 import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 
 /**
@@ -34,12 +35,8 @@ import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 public class ThemeStylesheetUserPreferencesTransformerConfigurationSource extends StylesheetUserPreferencesTransformerConfigurationSource {
     
     @Override
-    protected String getName() {
-        return this.getClass().getSimpleName();
+    protected PreferencesScope getStylesheetPreferencesScope(HttpServletRequest request) {
+        return PreferencesScope.THEME;
     }
-    
-    @Override
-    protected IStylesheetUserPreferences getStylesheetUserPreferences(HttpServletRequest request) {
-        return this.stylesheetUserPreferencesService.getThemeStylesheetUserPreferences(request);
-    }
+
 }

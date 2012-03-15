@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -248,7 +249,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 .getStylesheetUserPreferences(stylesheetDescriptor, person, profile);
 
         final IStylesheetUserPreferences distributedStylesheetUserPreferences = new StylesheetUserPreferencesImpl(
-                stylesheetDescriptorId);
+                stylesheetDescriptorId, person.getID(), profile.getProfileId());
 
         final FragmentActivator fragmentActivator = this.getFragmentActivator();
 
@@ -278,7 +279,8 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
             //Copy all of the fragment preferences into the distributed preferences
             final Map<String, Map<String, String>> allLayoutAttributes = fragmentStylesheetUserPreferences
-                    .getAllLayoutAttributes();
+                    .populateAllLayoutAttributes(new LinkedHashMap<String, Map<String,String>>());
+            
             for (final Map.Entry<String, Map<String, String>> layoutNodeAttributesEntry : allLayoutAttributes
                     .entrySet()) {
                 String nodeId = layoutNodeAttributesEntry.getKey();
@@ -639,7 +641,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 .getStylesheetUserPreferences(structureStylesheetDescriptor, person, profile);
 
         if (ssup != null) {
-            final Map<String, Map<String, String>> allLayoutAttributes = ssup.getAllLayoutAttributes();
+            final Map<String, Map<String, String>> allLayoutAttributes = ssup.populateAllLayoutAttributes(new LinkedHashMap<String, Map<String,String>>());
             for (final Entry<String, Map<String, String>> nodeEntry : allLayoutAttributes.entrySet()) {
                 final String nodeId = nodeEntry.getKey();
                 final Map<String, String> attributes = nodeEntry.getValue();
