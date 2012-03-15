@@ -27,6 +27,7 @@ import javax.servlet.http.HttpSession;
 
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.IUserProfile;
+import org.jasig.portal.concurrency.caching.RequestCache;
 import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
 import org.jasig.portal.layout.dao.IStylesheetUserPreferencesDao;
 import org.jasig.portal.layout.om.IStylesheetData;
@@ -77,6 +78,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
     /* (non-Javadoc)
      * @see org.jasig.portal.layout.IStylesheetUserPreferencesService#getThemeStylesheetUserPreferences(javax.servlet.http.HttpServletRequest)
      */
+    @RequestCache
     @Override
     public IStylesheetUserPreferences getThemeStylesheetUserPreferences(HttpServletRequest request) {
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
@@ -95,6 +97,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
     /* (non-Javadoc)
      * @see org.jasig.portal.layout.IStylesheetUserPreferencesService#getStructureStylesheetUserPreferences(javax.servlet.http.HttpServletRequest)
      */
+    @RequestCache
     @Override
     public IStylesheetUserPreferences getStructureStylesheetUserPreferences(HttpServletRequest request) {
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
