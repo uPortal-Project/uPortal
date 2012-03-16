@@ -169,6 +169,7 @@
                                     </entry>
                                     <entry key="EXTERNAL_LOGIN_URL" value="${org.jasig.portal.channels.CLogin.CasLoginUrl}" />
                                     <entry key="useTabGroups" value="${org.jasig.portal.layout.useTabGroups}"/>
+                                    <entry key="UP_VERSION" value="${org.jasig.portal.version}"/>
                                 </map>
                             </property>
                             <property name="parameterExpressions">
@@ -178,6 +179,7 @@
                                     <entry key="AUTHENTICATED" value="!person.guest" />
                                     <entry key="userName" value="person.fullName" />
                                     <entry key="USER_ID" value="person.userName" />
+                                    <entry key="SERVER_NAME" value="@portalInfoProvider.serverName" />
                                 </map>
                             </property>
                             <property name="cacheKeyExcludedParameters">
