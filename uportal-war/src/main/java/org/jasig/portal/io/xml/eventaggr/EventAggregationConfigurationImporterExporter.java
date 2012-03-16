@@ -28,10 +28,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-
 import org.jasig.portal.events.aggr.AcademicTermDetail;
 import org.jasig.portal.events.aggr.AggregatedGroupConfig;
 import org.jasig.portal.events.aggr.AggregatedIntervalConfig;
@@ -301,8 +297,8 @@ public class EventAggregationConfigurationImporterExporter extends
         for (final AcademicTermDetail academicTermDetail : this.aggregationManagementDao.getAcademicTermDetails()) {
             final ExternalTermDetail externalTermDetail = new ExternalTermDetail();
             externalTermDetail.setName(academicTermDetail.getTermName());
-            externalTermDetail.setStart(convert(academicTermDetail.getStart()));
-            externalTermDetail.setEnd(convert(academicTermDetail.getEnd()));
+            externalTermDetail.setStart(academicTermDetail.getStart().toGregorianCalendar());
+            externalTermDetail.setEnd(academicTermDetail.getEnd().toGregorianCalendar());
             externalTermDetails.add(externalTermDetail);
         }
         
@@ -330,22 +326,6 @@ public class EventAggregationConfigurationImporterExporter extends
         return externalAggregatedGroupMapping;
     }
     
-    public static XMLGregorianCalendar convert(DateMidnight dateMidnight) {
-        final DatatypeFactory datatypeFactory;
-        try {
-            datatypeFactory = DatatypeFactory.newInstance();
-        }
-        catch (DatatypeConfigurationException e) {
-            throw new RuntimeException(e);
-        }
-        
-        final XMLGregorianCalendar xmlGregorianCalendar = datatypeFactory.newXMLGregorianCalendar();
-        xmlGregorianCalendar.setDay(dateMidnight.getDayOfMonth());
-        xmlGregorianCalendar.setMonth(dateMidnight.getMonthOfYear());
-        xmlGregorianCalendar.setYear(dateMidnight.getYear());
-        return xmlGregorianCalendar;
-}
-
 
 	@Override
     public String getFileName(ExternalEventAggregationConfiguration data) {
