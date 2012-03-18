@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.jasig.portal.security.mvc.LoginController;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 /**
@@ -36,9 +37,9 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 public class RequireSessionInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        if (request.isRequestedSessionIdValid()) {
-            final HttpSession session = request.getSession(false);
-            if (session != null) {
+        final HttpSession session = request.getSession(false);
+        if (session != null) {
+            if (!session.isNew()) {
                 return true;
             }
         }
@@ -47,7 +48,7 @@ public class RequireSessionInterceptor extends HandlerInterceptorAdapter {
         final StringBuilder loginRedirect = new StringBuilder();
         
         loginRedirect.append(request.getContextPath());
-        loginRedirect.append("/Login?refUrl=");
+        loginRedirect.append("/Login?" + LoginController.REFERER_URL_PARAM + "=");
         
         final String requestEncoding = request.getCharacterEncoding();
         loginRedirect.append(URLEncoder.encode(request.getRequestURI(), requestEncoding));

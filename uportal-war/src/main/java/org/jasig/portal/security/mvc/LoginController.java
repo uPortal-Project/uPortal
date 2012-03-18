@@ -50,6 +50,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/Login")
 public class LoginController {
+    public static final String REFERER_URL_PARAM = "refUrl";
     
     public static final String SWAP_TARGET_UID = LoginController.class.getName() + ".SWAP_TARGET_UID";
     public static final String SWAP_ORIGINAL_UID = LoginController.class.getName() + ".SWAP_ORIGINAL_UID";
@@ -92,7 +93,7 @@ public class LoginController {
         // create the redirect URL, adding fname and args parameters if necessary
         String redirectTarget = null;
 
-        final String refUrl = request.getParameter("refUrl");
+        final String refUrl = request.getParameter(REFERER_URL_PARAM);
         if (refUrl != null) {
             if (refUrl.startsWith("/")) {
                 redirectTarget = refUrl;
