@@ -140,6 +140,11 @@
                         <bean class="org.jasig.portal.rendering.xslt.ThemeStylesheetDescriptorTransformerConfigurationSource" />
                         <!-- Uncomment and configure to map a user attribute value to various skin names
                         <bean class="org.jasig.portal.rendering.xslt.UserAttributeSkinMappingTransformerConfigurationSource">
+                            <property name="stylesheetDescriptorNames">
+                                <set>
+                                    <value>DLMXHTML</value>
+                                </set>
+                            </property>
                             <property name="skinAttributeName" value="serverName" />
                             <property name="attributeToSkinMap">
                                 <map>
@@ -150,6 +155,11 @@
                         -->
                         <!-- Uncomment and configure to map user group membership to various skin names
                         <bean class="org.jasig.portal.rendering.xslt.UserGroupSkinMappingTransformerConfigurationSource">
+                            <property name="stylesheetDescriptorNames">
+                                <set>
+                                    <value>DLMXHTML</value>
+                                </set>
+                            </property>
                             <property name="groupToSkinMap">
                                 <map>
                                     <entry key="pags.studends" value="students" />
