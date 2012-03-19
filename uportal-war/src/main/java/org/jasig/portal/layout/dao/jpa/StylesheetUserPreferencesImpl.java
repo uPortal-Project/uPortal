@@ -47,6 +47,7 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 
+import org.apache.commons.lang.Validate;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
@@ -186,16 +187,23 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     
     @Override
     public String getOutputProperty(String name) {
+        Validate.notEmpty(name, "name cannot be null");
+        
         return this.outputProperties.get(name);
     }
 
     @Override
     public String setOutputProperty(String name, String value) {
+        Validate.notEmpty(name, "name cannot be null");
+        Validate.notEmpty(value, "value cannot be null");
+        
         return this.outputProperties.put(name, value);
     }
 
     @Override
     public String removeOutputProperty(String name) {
+        Validate.notEmpty(name, "name cannot be null");
+        
         return this.outputProperties.remove(name);
     }
 
@@ -213,16 +221,23 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
 
     @Override
     public String getStylesheetParameter(String name) {
+        Validate.notEmpty(name, "name cannot be null");
+        
         return this.parameters.get(name);
     }
 
     @Override
     public String setStylesheetParameter(String name, String value) {
+        Validate.notEmpty(name, "name cannot be null");
+        Validate.notEmpty(value, "value cannot be null");
+        
         return this.parameters.put(name, value);
     }
 
     @Override
     public String removeStylesheetParameter(String name) {
+        Validate.notEmpty(name, "name cannot be null");
+        
         return this.parameters.remove(name);
     }
 
@@ -256,6 +271,9 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
 
     @Override
     public String getLayoutAttribute(String nodeId, String name) {
+        Validate.notEmpty(nodeId, "nodeId cannot be null");
+        Validate.notEmpty(name, "name cannot be null");
+        
         final LayoutNodeAttributesImpl layoutAttribute = getLayoutNodeAttributes(nodeId, true);
         final Map<String, String> attributes = layoutAttribute.getAttributes();
         return attributes.get(name);
@@ -266,6 +284,10 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
      */
     @Override
     public String setLayoutAttribute(String nodeId, String name, String value) {
+        Validate.notEmpty(nodeId, "nodeId cannot be null");
+        Validate.notEmpty(name, "name cannot be null");
+        Validate.notEmpty(value, "value cannot be null");
+        
         final LayoutNodeAttributesImpl layoutAttribute = getLayoutNodeAttributes(nodeId, true);
         final Map<String, String> attributes = layoutAttribute.getAttributes();
         return attributes.put(name, value);
@@ -276,6 +298,9 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
      */
     @Override
     public String removeLayoutAttribute(String nodeId, String name) {
+        Validate.notEmpty(nodeId, "nodeId cannot be null");
+        Validate.notEmpty(name, "name cannot be null");
+        
         final LayoutNodeAttributesImpl layoutAttribute = getLayoutNodeAttributes(nodeId, false);
         if (layoutAttribute == null) {
             return null;
@@ -287,6 +312,7 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     @Override
     public Map<String, String> populateLayoutAttributes(String nodeId,
             Map<String, String> layoutAttributes) {
+        Validate.notEmpty(nodeId, "nodeId cannot be null");
         
         final LayoutNodeAttributesImpl nodeAttributes = this.layoutAttributes.get(nodeId);
         if (nodeAttributes != null) {
@@ -324,6 +350,8 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
 
     @Override
     public void clearLayoutAttributes(String nodeId) {
+        Validate.notEmpty(nodeId, "nodeId cannot be null");
+        
         this.layoutAttributes.remove(nodeId);
     }
 

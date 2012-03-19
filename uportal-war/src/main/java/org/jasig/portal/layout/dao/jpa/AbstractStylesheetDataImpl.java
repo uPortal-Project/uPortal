@@ -59,6 +59,9 @@ abstract class AbstractStylesheetDataImpl implements IStylesheetData {
     }
     
     public AbstractStylesheetDataImpl(String name, Scope scope) {
+        Validate.notEmpty(name, "name cannot be null");
+        Validate.notEmpty(scope, "scope cannot be null");
+        
         this.entityVersion = -1;
         this.name = name;
         this.scope = scope;
@@ -93,7 +96,7 @@ abstract class AbstractStylesheetDataImpl implements IStylesheetData {
      */
     @Override
     public void setScope(Scope scope) {
-        Validate.notNull(scope);
+        Validate.notEmpty(scope);
         this.scope = scope;
     }
 

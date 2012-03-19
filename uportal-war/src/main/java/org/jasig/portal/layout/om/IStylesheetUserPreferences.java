@@ -46,12 +46,19 @@ public interface IStylesheetUserPreferences {
     
     /**
      * Get an output property
+     * 
+     * @param name output property name, cannot be null
+     * 
      * @see Map#get(Object)
      */
     public String getOutputProperty(String name);
     
     /**
      * Set an output property
+     * 
+     * @param name output property name, cannot be null
+     * @param value output property value, cannot be null
+     * 
      * @see Transformer#setOutputProperty(String, String)
      * @see Map#put(Object, Object)
      */
@@ -59,6 +66,9 @@ public interface IStylesheetUserPreferences {
     
     /**
      * Remove an output property
+     * 
+     * @param name output property name, cannot be null
+     * 
      * @see Map#remove(Object)
      */
     public String removeOutputProperty(String name);
@@ -76,12 +86,19 @@ public interface IStylesheetUserPreferences {
 
     /**
      * Get a stylesheet parameter
+     * 
+     * @param name xslt parameter name, cannot be null
+     * 
      * @see Map#get(Object)
      */
     public String getStylesheetParameter(String name);
     
     /**
      * Set a transformer parameter
+     * 
+     * @param name xslt parameter name, cannot be null
+     * @param name xslt parameter value, cannot be null
+     * 
      * @see Transformer#setParameter(String, Object)
      * @see Map#put(Object, Object)
      */
@@ -89,6 +106,9 @@ public interface IStylesheetUserPreferences {
     
     /**
      * Remove a transformer parameter
+     * 
+     * @param name xslt parameter name, cannot be null
+     * 
      * @see Map#remove(Object)
      */
     public String removeStylesheetParameter(String name);
@@ -106,6 +126,10 @@ public interface IStylesheetUserPreferences {
     
     /**
      * Get a layout attribute
+     * 
+     * @param nodeId The layout node id to get the attribute for, cannot be null
+     * @param name node attribute name, cannot be null
+     * 
      * @see Map#get(Object)
      */
     public String getLayoutAttribute(String nodeId, String name);
@@ -113,19 +137,24 @@ public interface IStylesheetUserPreferences {
     /**
      * Set an attribute to add to a layout folder
      *  
-     * @param nodeId The layout node id to apply the attribute to
+     * @param nodeId The layout node id to apply the attribute to, cannot be null
+     * @param name node attribute name, cannot be null
+     * @param value node attribute name, cannot be null
      * @see Map#put(Object, Object)
      */
     public String setLayoutAttribute(String nodeId, String name, String value);
     
     /**
-     * @param nodeId The layout node id to remove the attribute from
+     * @param nodeId The layout node id to remove the attribute from, cannot be null
+     * @param name node attribute name, cannot be null
      * @see Map#remove(Object)
      */
     public String removeLayoutAttribute(String nodeId, String name);
     
     /**
      * Add all layout attributes for the specified nodeId to the provided Map
+     * 
+     * @param nodeId The layout node id to get attributes for, cannot be null
      */
     public Map<String, String> populateLayoutAttributes(String nodeId, Map<String, String> layoutAttributes);
     

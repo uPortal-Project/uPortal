@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.transform.Transformer;
 
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
@@ -75,8 +74,8 @@ public interface IStylesheetUserPreferencesService {
      * Get an output property
      * @param request The current request
      * @param prefScope The stylesheet preferences scope
-     * @param userProfile The user profile to modify the preferences for
-     * @see Map#get(Object)
+     * 
+     * @see IStylesheetUserPreferences#getOutputProperty(String)
      */
     public String getOutputProperty(HttpServletRequest request, PreferencesScope prefScope, String name);
     
@@ -84,9 +83,8 @@ public interface IStylesheetUserPreferencesService {
      * Set an output property
      * @param request The current request
      * @param prefScope The stylesheet preferences scope
-     * @param userProfile The user profile to modify the preferences for
-     * @see Transformer#setOutputProperty(String, String)
-     * @see Map#put(Object, Object)
+     * 
+     * @see IStylesheetUserPreferences#setOutputProperty(String, String)
      */
     public String setOutputProperty(HttpServletRequest request, PreferencesScope prefScope, String name, String value);
     
@@ -94,36 +92,26 @@ public interface IStylesheetUserPreferencesService {
      * Remove an output property
      * @param request The current request
      * @param prefScope The stylesheet preferences scope
-     * @param userProfile The user profile to modify the preferences for
-     * @see Map#remove(Object)
+     * 
+     * @see IStylesheetUserPreferences#removeOutputProperty(String)
      */
     public String removeOutputProperty(HttpServletRequest request, PreferencesScope prefScope, String name);
-    
-    /**
-     * @return An iterable of all property names
-     * @param request The current request
-     * @param prefScope The stylesheet preferences scope
-     * @param userProfile The user profile to modify the preferences for
-     * @see Map#keySet()
-     */
-    public Iterable<String> getOutputPropertyNames(HttpServletRequest request, PreferencesScope prefScope);
     
     /**
      * Add all output properties to the provided Properties object
      * 
      * @param request The current request
      * @param prefScope The stylesheet preferences scope
-     * @param userProfile The user profile to modify the preferences for
-     * @param properties The properties object to populate
-     * @return The properties object that was passed in
+     * 
+     * @see IStylesheetUserPreferences#populateOutputProperties(Properties)
      */
     public Properties populateOutputProperties(HttpServletRequest request, PreferencesScope prefScope, Properties properties);
     
     /**
      * @param request The current request
      * @param prefScope The stylesheet preferences scope
-     * @param userProfile The user profile to modify the preferences for
-     * @see Properties#clear();
+     * 
+     * @see IStylesheetUserPreferences#clearOutputProperties()
      */
     public void clearOutputProperties(HttpServletRequest request, PreferencesScope prefScope);
     
@@ -132,8 +120,8 @@ public interface IStylesheetUserPreferencesService {
      * Get a stylesheet parameter
      * @param request The current request
      * @param prefScope The stylesheet preferences scope
-     * @param userProfile The user profile to modify the preferences for
-     * @see Map#get(Object)
+     * 
+     * @see IStylesheetUserPreferences#getStylesheetParameter(String)
      */
     public String getStylesheetParameter(HttpServletRequest request, PreferencesScope prefScope, String name);
     
@@ -141,9 +129,8 @@ public interface IStylesheetUserPreferencesService {
      * Set a transformer parameter
      * @param request The current request
      * @param prefScope The stylesheet preferences scope
-     * @param userProfile The user profile to modify the preferences for
-     * @see Transformer#setParameter(String, Object)
-     * @see Map#put(Object, Object)
+     * 
+     * @see IStylesheetUserPreferences#setStylesheetParameter(String, String)
      */
     public String setStylesheetParameter(HttpServletRequest request, PreferencesScope prefScope, String name, String value);
     
@@ -151,8 +138,8 @@ public interface IStylesheetUserPreferencesService {
      * Remove a transformer parameter
      * @param request The current request
      * @param prefScope The stylesheet preferences scope
-     * @param userProfile The user profile to modify the preferences for
-     * @see Map#remove(Object)
+     * 
+     * @see IStylesheetUserPreferences#removeStylesheetParameter(String)
      */
     public String removeStylesheetParameter(HttpServletRequest request, PreferencesScope prefScope, String name);
     
@@ -160,8 +147,8 @@ public interface IStylesheetUserPreferencesService {
      * @return An iterable of all property names
      * @param request The current request
      * @param prefScope The stylesheet preferences scope
-     * @param userProfile The user profile to modify the preferences for
-     * @see Map#keySet()
+     * 
+     * @see IStylesheetUserPreferences#getStylesheetParameter(String)
      */
     public Iterable<String> getStylesheetParameterNames(HttpServletRequest request, PreferencesScope prefScope);
     
@@ -170,17 +157,16 @@ public interface IStylesheetUserPreferencesService {
      * 
      * @param request The current request
      * @param prefScope The stylesheet preferences scope
-     * @param userProfile The user profile to modify the preferences for
-     * @param stylesheetParameters The map to populate
-     * @return The modified map
+     * 
+     * @see IStylesheetUserPreferences#populateStylesheetParameters(Map)
      */
     public Map<String, String> populateStylesheetParameters(HttpServletRequest request, PreferencesScope prefScope, Map<String, String> stylesheetParameters);
     
     /**
      * @param request The current request
      * @param prefScope The stylesheet preferences scope
-     * @param userProfile The user profile to modify the preferences for
-     * @see Map#clear();
+     * 
+     * @see IStylesheetUserPreferences#clearStylesheetParameters()
      */
     public void clearStylesheetParameters(HttpServletRequest request, PreferencesScope prefScope);
 
@@ -189,8 +175,8 @@ public interface IStylesheetUserPreferencesService {
      * Get a layout attribute
      * @param request The current request
      * @param prefScope The stylesheet preferences scope
-     * @param userProfile The user profile to modify the preferences for
-     * @see Map#get(Object)
+     * 
+     * @see IStylesheetUserPreferences#getLayoutAttribute(String, String)
      */
     public String getLayoutAttribute(HttpServletRequest request, PreferencesScope prefScope, String nodeId, String name);
     
@@ -199,18 +185,16 @@ public interface IStylesheetUserPreferencesService {
      *  
      * @param request The current request
      * @param prefScope The stylesheet preferences scope
-     * @param userProfile The user profile to modify the preferences for
-     * @param nodeId The layout node id to apply the attribute to
-     * @see Map#put(Object, Object)
+     * 
+     * @see IStylesheetUserPreferences#setLayoutAttribute(String, String, String)
      */
     public String setLayoutAttribute(HttpServletRequest request, PreferencesScope prefScope, String nodeId, String name, String value);
     
     /**
      * @param request The current request
      * @param prefScope The stylesheet preferences scope
-     * @param userProfile The user profile to modify the preferences for
-     * @param nodeId The layout node id to remove the attribute from
-     * @see Map#remove(Object)
+     * 
+     * @see IStylesheetUserPreferences#removeLayoutAttribute(String, String)
      */
     public String removeLayoutAttribute(HttpServletRequest request, PreferencesScope prefScope, String nodeId, String name);
     
@@ -219,8 +203,6 @@ public interface IStylesheetUserPreferencesService {
      * @return An iterable of all layout nodeIds
      * @param request The current request
      * @param prefScope The stylesheet preferences scope
-     * @param userProfile The user profile to modify the preferences for
-     * @see Map#keySet()
      */
     public Iterable<String> getLayoutAttributeNodeIds(HttpServletRequest request, PreferencesScope prefScope);
     
@@ -229,9 +211,8 @@ public interface IStylesheetUserPreferencesService {
      * 
      * @param request The current request
      * @param prefScope The stylesheet preferences scope
-     * @param userProfile The user profile to modify the preferences for
-     * @param stylesheetParameters The map to populate
-     * @return the modified map
+     * 
+     * @see IStylesheetUserPreferences#populateLayoutAttributes(String, Map)
      */
     public Map<String, String> populateLayoutAttributes(HttpServletRequest request, PreferencesScope prefScope, String nodeId, Map<String, String> layoutAttributes);
     
@@ -240,17 +221,16 @@ public interface IStylesheetUserPreferencesService {
      * 
      * @param request The current request
      * @param prefScope The stylesheet preferences scope
-     * @param userProfile The user profile to modify the preferences for
-     * @param stylesheetParameters The map to populate
-     * @return the modified map
+     * 
+     * @see IStylesheetUserPreferences#populateAllLayoutAttributes(Map)
      */
     public Map<String, Map<String, String>> populateAllLayoutAttributes(HttpServletRequest request, PreferencesScope prefScope, Map<String, Map<String, String>> allLayoutAttributes);
     
     /**
      * @param request The current request
      * @param prefScope The stylesheet preferences scope
-     * @param userProfile The user profile to modify the preferences for
-     * @see Map#clear();
+     * 
+     * @see IStylesheetUserPreferences#clearLayoutAttributes(String)
      */
     public void clearLayoutAttributes(HttpServletRequest request, PreferencesScope prefScope, String nodeId);
 
@@ -258,7 +238,8 @@ public interface IStylesheetUserPreferencesService {
     /**
      * @param request The current request
      * @param prefScope The stylesheet preferences scope
-     * @see Map#clear();
+     * 
+     * @see IStylesheetUserPreferences#clearAllLayoutAttributes()
      */
     public void clearAllLayoutAttributes(HttpServletRequest request, PreferencesScope prefScope);
 

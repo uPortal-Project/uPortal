@@ -45,6 +45,7 @@ import javax.xml.xpath.XPathFactory;
 
 import net.sf.ehcache.Ehcache;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.io.DOMReader;
@@ -952,9 +953,21 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             for (final org.dom4j.Element structureAttribute : structureAttributes) {
                 final org.dom4j.Element layoutElement = structureAttribute.getParent();
                 final String nodeId = layoutElement.valueOf("@ID");
+                if (StringUtils.isEmpty(nodeId)) {
+                    log.warn("@ID is empty for layout element, the attribute will be ignored: " + structureAttribute.asXML());
+                }
 
                 final String name = structureAttribute.valueOf("name");
+                if (StringUtils.isEmpty(nodeId)) {
+                    log.warn("name is empty for layout element, the attribute will be ignored: " + structureAttribute.asXML());
+                    continue;
+                }
+                
                 final String value = structureAttribute.valueOf("value");
+                if (StringUtils.isEmpty(nodeId)) {
+                    log.warn("value is empty for layout element, the attribute will be ignored: " + structureAttribute.asXML());
+                    continue;
+                }
 
                 ssup.setLayoutAttribute(nodeId, name, value);
 

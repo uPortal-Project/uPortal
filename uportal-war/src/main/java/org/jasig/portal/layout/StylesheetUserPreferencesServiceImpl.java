@@ -341,20 +341,6 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
     }
 
     @Override
-    public Iterable<String> getOutputPropertyNames(HttpServletRequest request, PreferencesScope prefScope) {
-        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
-        final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
-        final Collection<IOutputPropertyDescriptor> outputPropertyDescriptors = stylesheetDescriptor.getOutputPropertyDescriptors();
-        
-        return Collections2.transform(outputPropertyDescriptors, new Function<IOutputPropertyDescriptor, String>() {
-            @Override
-            public String apply(IOutputPropertyDescriptor input) {
-                return input.getName();
-            }
-        });
-    }
-
-    @Override
     public Properties populateOutputProperties(HttpServletRequest request, PreferencesScope prefScope, Properties properties) {
         final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
         final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
