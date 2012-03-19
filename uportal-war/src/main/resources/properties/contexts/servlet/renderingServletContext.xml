@@ -30,7 +30,6 @@
 	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
         <property name="interceptors">
             <list>
-                <bean class="org.jasig.portal.url.RequireSessionInterceptor" />
                 <bean class="org.jasig.portal.url.GuestSessionExpirationInterceptor">
                     <!-- 
                     <property name="unauthenticatedUserSessionTimeout" value="${org.jasig.portal.PortalSessionManager.unauthenticatedUserSessionTimeout}" />
