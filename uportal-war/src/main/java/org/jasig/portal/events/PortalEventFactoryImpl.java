@@ -73,7 +73,7 @@ import com.google.common.collect.ImmutableMap.Builder;
  * @author Eric Dalquist
  * @version $Revision$
  */
-@Service
+@Service("portalEventFactory")
 public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationEventPublisherAware {
     private static final String EVENT_SESSION_MUTEX = PortalEventFactoryImpl.class.getName() + ".EVENT_SESSION_MUTEX";
     private static final String EVENT_SESSION_ID_ATTR = PortalEventFactoryImpl.class.getName() + ".EVENT_SESSION_ID_ATTR";
@@ -432,7 +432,8 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
         return this.personManager.getPerson(request);
     }
 
-    protected String getPortalEventSessionId(HttpServletRequest request, IPerson person) {
+    @Override
+    public String getPortalEventSessionId(HttpServletRequest request, IPerson person) {
         if (request == null) {
             try {
                 request = this.portalRequestUtils.getCurrentPortalRequest();

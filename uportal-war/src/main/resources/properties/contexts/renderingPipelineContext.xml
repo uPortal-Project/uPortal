@@ -180,6 +180,7 @@
                                     <entry key="userName" value="person.fullName" />
                                     <entry key="USER_ID" value="person.userName" />
                                     <entry key="SERVER_NAME" value="@portalInfoProvider.serverName" />
+                                    <entry key="STATS_SESSION_ID" value="@portalEventFactory.getPortalEventSessionId(request.nativeRequest, person)" />
                                 </map>
                             </property>
                             <property name="cacheKeyExcludedParameters">
