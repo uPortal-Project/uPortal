@@ -161,21 +161,21 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     </tr>
                   </thead>
                   <tbody>
-                    <c:forEach items="${ step.preferences }" var="parameter">
-                        <c:set var="paramPath" value="portletPreferences['${ parameter.name }'].value"/>
-                        <c:set var="overrideParamPath" value="portletPreferenceReadOnly['${ parameter.name }'].value"/>
+                    <c:forEach items="${ step.preferences }" var="preference">
+                        <c:set var="paramPath" value="portletPreferences['${ preference.name }'].value"/>
+                        <c:set var="overrideParamPath" value="portletPreferenceReadOnly['${ preference.name }'].value"/>
                         <c:choose>
-                          <c:when test="${ parameter.preferenceInput.value.display == 'HIDDEN' }">
-                            <c:set var="values" value="${ portlet.portletPreferences[parameter.name].value }"/>
+                          <c:when test="${ preference.preferenceInput.value.display == 'HIDDEN' }">
+                            <c:set var="values" value="${ portlet.portletPreferences[preference.name].value }"/>
                             <input type="hidden" name="${ fn:escapeXml(paramPath )}" value="${ fn:escapeXml(fn:length(values) > 0 ? values[0] : '' )}"/>
                           </c:when>
                           <c:otherwise>
                             <tr>
-                              <td class="preference-name"><span class="uportal-label"><spring:message code="${ parameter.label }" text="${ parameter.label }"/>:</span></td>
+                              <td class="preference-name"><span class="uportal-label"><spring:message code="${ preference.label }" text="${ preference.label }"/>:</span></td>
                               <td>
-                                    <editPortlet:preferenceInput input="${ parameter.preferenceInput.value }" 
-                                      path="${ paramPath }" name="${ parameter.name }" 
-                                      values="${ portlet.portletPreferences[parameter.name].value }"/>
+                                    <editPortlet:preferenceInput input="${ preference.preferenceInput.value }" 
+                                      path="${ paramPath }" name="${ preference.name }" 
+                                      values="${ portlet.portletPreferences[preference.name].value }"/>
                               </td>
                               <td>
                               <form:checkbox path="${overrideParamPath}" value="true"/>
@@ -188,6 +188,51 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 </table>
               </div>   
             </c:if>
+
+        <c:if test="${ not empty step.arbitraryPreferences }">
+            <div class="preference-options-section">
+              <table>
+                <thead>
+                  <tr>
+                      <th><spring:message code="parameter"/></th>
+                      <th><spring:message code="value"/></th>
+                      <th><spring:message code="user.editable"/></th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <c:forEach items="${ arbitraryPreferenceNames }" var="name">
+                    <c:set var="paramPath" value="portletPreferences['${ name }'].value"/>
+                    <c:set var="overrideParamPath" value="portletPreferenceReadOnly['${ name }'].value"/>
+                      <tr>
+                        <td class="preference-name">${ fn:escapeXml(name) }</td>
+                        <td>
+                            <c:forEach items="${ portlet.portletPreferences[name].value }" var="val">
+                             <div>
+                                 <input name="portletPreferences['${fn:escapeXml(name)}'].value" value="${ fn:escapeXml(val) }" />
+                                 <a class="delete-parameter-value-link" href="javascript:;">Remove</a>
+                                </div>
+                            </c:forEach>
+                            <a class="add-parameter-value-link" href="javascript:;" paramName="${fn:escapeXml(name)}">Add value</a>
+                        </td>
+                        <td>
+                            <form:checkbox path="${overrideParamPath}" value="true"/>
+                        </td>
+                        <td><a class="delete-parameter-link" href="javascript:;"><spring:message code="setParameters.deleteButton"/></a></td>
+                      </tr>
+                  </c:forEach>
+                </tbody>
+              </table> 
+                <p><a class="add-parameter-link" href="javascript:;"><spring:message code="add.preference"/></a></p>
+              </div>
+          </c:if>
+
+
+
+    
+       
+
+
           </c:if> <!-- End Portlet Preferences -->
                 
         </div> <!-- end: content -->
@@ -211,24 +256,20 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     </div>
     
     </form:form> <!-- End Form -->
-
-    <div style="display:none">
-        <c:forEach items="${ cpd.steps }" var="step" varStatus="status">
-            <c:if test="${ not empty step.arbitraryPreferences }">
-                <div id="${n}addParameterDialog-${status.index}-prefs" class="parameter-adding-dialog jqueryui" title="<spring:message code="add.preference"/>">
-                    <form action="javascript:;">
-                        <p><spring:message code="preference.name"/>: <input name="name"/></p>
-                        <input type="submit" value="<spring:message code="add"/>"/>
-                    </form>
+           <div style="display:none"> 
+               <div id="${n}addParameterDialog" class="parameter-adding-dialog jqueryui" title="<spring:message code="add.preference"/>">
+                    <div>
+                        <form id="${n}addParameterForm" action="javascript:;">
+                            <p><spring:message code="preference.name"/>: <input name="name"/></p>
+                            <input type="submit" value="<spring:message code="add"/>"/>
+                        </form>
+                    </div>
                 </div>
-            </c:if>
-        </c:forEach>
-    </div>
-    
+           </div>
   </div> <!-- end: portlet-content -->
   
 </div> <!-- end: portlet -->
-
+<script src="media/skins/universality/common/javascript/uportal/up-parameter-editor.js" language="JavaScript" type="text/javascript"></script>
 <script type="text/javascript">
 	up.jQuery(function() {
 			var $ = up.jQuery;
@@ -251,9 +292,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                   $("div.preference-options-section").each(function(){
                       up.ParameterEditor(this, {
                             parameterBindName: 'portletPreferences',
-                            auxiliaryBindName: 'portletPreferencesOverrides',
+                            auxiliaryBindName: 'portletPreferenceReadOnly',
                             useAuxiliaryCheckbox: true,
-                            dialog: $("#${n}addParameterDialog-" + $(this).attr("dialog")),
+                            dialog: $("#${n}addParameterDialog"),
+                            form: $("#${n}addParameterForm"),
                             multivalued: true,
                             messages: {
                               remove: '<spring:message code="remove"/>',
