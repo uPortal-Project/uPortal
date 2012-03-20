@@ -127,6 +127,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     private Ehcache fragmentNodeInfoCache;
     
     private boolean errorOnMissingPortlet = true;
+    private boolean errorOnMissingUser = true;
 
     static final String TEMPLATE_USER_NAME = "org.jasig.portal.services.Authentication.defaultTemplateUserName";
 
@@ -190,6 +191,11 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     @Value("${org.jasig.portal.io.layout.errorOnMissingPortlet}")
     public void setErrorOnMissingPortlet(boolean errorOnMissingPortlet) {
         this.errorOnMissingPortlet = errorOnMissingPortlet;
+    }
+
+    @Value("${org.jasig.portal.io.layout.errorOnMissingUser}")
+    public void setErrorOnMissingUser(boolean errorOnMissingUser) {
+        this.errorOnMissingUser = errorOnMissingUser;
     }
 
     /**
@@ -709,23 +715,23 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         }
        
 
-        IPerson person = null;
-        IUserProfile profile = null;
+        final IPerson person = new PersonImpl();
+        person.setUserName(ownerUsername);
+
+        final int ownerId;
         try {
-            person = new PersonImpl();
-            person.setUserName(ownerUsername);
-            final int ownerId = this.userIdentityStore.getPortalUID(person);
-            if (ownerId == -1) {
-                final String msg = "No userId for username=" + ownerUsername;
-                throw new RuntimeException(msg);
-            }
-            person.setID(ownerId);
+            ownerId = this.userIdentityStore.getPortalUID(person, !this.errorOnMissingUser);
         }
         catch (final Throwable t) {
-            throw new RuntimeException("Unrecognized user " + person.getUserName()
-                    + "; you must import users before their layouts.", t);
+            throw new RuntimeException("Unrecognized user " + person.getUserName() + "; you must import users before their layouts.", t);
         }
+        
+        if (ownerId == -1) {
+            throw new RuntimeException("Unrecognized user " + person.getUserName() + "; you must import users before their layouts.");
+        }
+        person.setID(ownerId);
 
+        IUserProfile profile = null;
         try {
 	        person.setSecurityContext(new BrokenSecurityContext());
 	        profile = this.getUserProfileByFname(person, "default");
