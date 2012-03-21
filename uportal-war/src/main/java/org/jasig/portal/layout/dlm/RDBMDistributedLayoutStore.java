@@ -48,6 +48,7 @@ import net.sf.ehcache.Ehcache;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.dom4j.Namespace;
 import org.dom4j.io.DOMReader;
 import org.dom4j.io.DOMWriter;
 import org.dom4j.io.DocumentSource;
@@ -692,6 +693,10 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 //    	}catch (Exception e) {
 //    		e.printStackTrace();
 //    	}
+        
+        if (layout.getNamespaceForPrefix("dlm") == null) {
+            layout.add(new Namespace("dlm", "http://www.uportal.org/layout/dlm"));
+        }
         
         //Get a ref to the prefs element and then remove it from the layout
         final org.dom4j.Node preferencesElement = layout.selectSingleNode("preferences");
