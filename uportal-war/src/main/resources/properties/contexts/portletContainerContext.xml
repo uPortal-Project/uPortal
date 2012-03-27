@@ -46,6 +46,7 @@
         <ref bean="RequestContextThreadLocalPortletExecutionInterceptor"/>
         <ref bean="TrackingThreadLocalPortletExecutionInterceptor"/>
         <ref bean="ThreadNamingPortletExecutionInterceptorAdaptor"/>
+        <ref bean="portletExecutionManager"/>
     </util:list>
     
     <bean id="JpaPortletExecutionInterceptor" class="org.jasig.portal.portlet.rendering.worker.JpaPortletExecutionInterceptor">
