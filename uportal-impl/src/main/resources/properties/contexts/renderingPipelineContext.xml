@@ -39,11 +39,11 @@
     
     <bean id="renderingThreadPoolMonitor" class="org.jasig.portal.ThreadPoolStatistics">
         <!-- 
-         | Change the following to a positive integer to prevent the rendering 
-         | thread pool from allocating more threads to portlets that are known 
-         | to be leaking them. 
+         | Specify a positive integer to limit the rendering thread pool from 
+         | allocating more than this number of threads to portlets that are 
+         | known to be leaking them.  Specify zero (0) to disable this limit.
          +-->
-        <property name="numberPermittedErrantByFname" value="0"/>
+        <property name="numberPermittedErrantByFname" value="10"/>
     </bean>
 
 </beans>
