@@ -267,7 +267,6 @@
     <filter-mapping>
         <filter-name>urlCanonicalizingFilter</filter-name>
         <servlet-name>RenderingDispatcherServlet</servlet-name>
-        <servlet-name>JsonRenderingDispatcherServlet</servlet-name>
     </filter-mapping>
     
     <!-- Temporarily commenting out this filter for development purposes -->
