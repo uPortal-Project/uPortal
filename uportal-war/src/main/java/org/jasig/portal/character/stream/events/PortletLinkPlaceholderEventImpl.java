@@ -63,7 +63,7 @@ public class PortletLinkPlaceholderEventImpl extends PortletPlaceholderEventImpl
             return true;
         if (obj == null)
             return false;
-        if (PortletNewItemCountPlaceholderEvent.class.isAssignableFrom(obj.getClass()))
+        if (!PortletNewItemCountPlaceholderEvent.class.isAssignableFrom(obj.getClass()))
             return false;
         PortletLinkPlaceholderEvent other = (PortletLinkPlaceholderEvent) obj;
         if (this.getEventType() == null) {

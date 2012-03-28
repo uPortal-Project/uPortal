@@ -57,7 +57,7 @@ public class PortletContentPlaceholderEventImpl extends PortletPlaceholderEventI
             return true;
         if (obj == null)
             return false;
-        if (PortletContentPlaceholderEvent.class.isAssignableFrom(obj.getClass()))
+        if (!PortletContentPlaceholderEvent.class.isAssignableFrom(obj.getClass()))
             return false;
         PortletContentPlaceholderEvent other = (PortletContentPlaceholderEvent) obj;
         if (this.getEventType() == null) {

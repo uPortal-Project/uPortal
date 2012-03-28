@@ -55,7 +55,7 @@ public class PortletNewItemCountPlaceholderEventImpl extends PortletPlaceholderE
             return true;
         if (obj == null)
             return false;
-        if (PortletNewItemCountPlaceholderEvent.class.isAssignableFrom(obj.getClass()))
+        if (!PortletNewItemCountPlaceholderEvent.class.isAssignableFrom(obj.getClass()))
             return false;
         PortletNewItemCountPlaceholderEvent other = (PortletNewItemCountPlaceholderEvent) obj;
         if (this.getEventType() == null) {

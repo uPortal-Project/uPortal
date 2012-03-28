@@ -163,7 +163,7 @@ public class PortletDefinitionParameterImpl implements IPortletDefinitionParamet
             return true;
         if (obj == null)
             return false;
-        if (IPortletDefinitionParameter.class.isAssignableFrom(obj.getClass()))
+        if (!IPortletDefinitionParameter.class.isAssignableFrom(obj.getClass()))
             return false;
         IPortletDefinitionParameter other = (IPortletDefinitionParameter) obj;
         if (this.name == null) {
