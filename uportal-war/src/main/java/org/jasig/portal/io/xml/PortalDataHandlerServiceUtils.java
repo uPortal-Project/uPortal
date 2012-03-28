@@ -71,6 +71,30 @@ public final class PortalDataHandlerServiceUtils {
         
         tableFormatter.format(f);
     }
+    
+    public static void format(Iterable<? extends IPortalData> data, Logger l) {
+        final Formatter f = new Formatter(new AppendableLogger(l, LogLevel.INFO));
+        
+        final TableFormatter tableFormatter = new TableFormatter(
+                new TableEntry<String>("sysid", "-", "s"),
+                new TableEntry<String>("Description", "-", "s"));
+        
+        for (final IPortalData it : data) {
+            final String dataId = it.getDataId();
+            
+            String dataTitle = it.getDataTitle();
+            if (dataTitle == null || dataTitle.equals(dataId)) {
+                dataTitle = "";
+            }
+
+            tableFormatter.addRow(
+                    new TableEntry<String>(dataId, "-", "s"),
+                    new TableEntry<String>(dataTitle, "-", "s"));
+        }
+        
+        tableFormatter.format(f);
+        
+    }
 
     /**
      * @param portalDataTypes

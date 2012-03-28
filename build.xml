@@ -217,31 +217,21 @@
 		<property name="export" value="true" />
 		<property name="drop" value="true" />
 		<property name="create" value="true" />
-		<property name="outputFile" value="null" />
+		<property name="outputFile" value=" " />
 		<property name="haltOnError" value="true" />
 
 		<groovy-safe-path property="outputFileEscaped" input="${outputFile}" />
 
 		<echo>Creating HBM2DDL Script</echo>
 		<echo file="${portal-shell-script}" append="true">
-//HBM2DDL Script
-try {
-	schemaExportBean = '${schemaExportBean}';
-    logger.info('');
-    logger.info('');
-    logger.info('HBM2DDL: ' + schemaExportBean);
-
-	export = '${export}'.toBoolean();
-	create = '${create}'.toBoolean();
-	drop = '${drop}'.toBoolean();
-	outputFile = /${outputFileEscaped}/;
-	haltOnError = '${haltOnError}'.toBoolean();
-        	
-    ${schemaExportBean}.hbm2ddl(export, create, drop, outputFile == 'null' ? null : outputFile , haltOnError);
-}
-catch (Exception e) {
-    throw new RuntimeException("db-hibernate for ' + schemaExportBean + ' failed", e);
-}
+			//hibernateCreate(String target, String schemaExportBeanName, boolean export, boolean create, boolean drop, String outputFile, boolean haltOnError)
+            portalShellBuildHelper.hibernateCreate("db-hibernate",
+                '${schemaExportBean}',
+                Boolean.parseBoolean('${export}'),
+    			Boolean.parseBoolean('${create}'),
+    			Boolean.parseBoolean('${drop}'),
+                /${outputFileEscaped}/,
+			    Boolean.parseBoolean('${haltOnError}'));
         </echo>
 
 		<antcall target="up-shell">
@@ -252,29 +242,21 @@ catch (Exception e) {
 	<target name="db-hibernate-portal-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for the portal schema">
 		<property name="schemaExportBean" value="portalDbHibernateExport" />
 		<property name="export" value="true" />
-		<property name="outputFile" value="null" />
+		<property name="outputFile" value=" " />
 		<property name="haltOnError" value="true" />
 
 		<groovy-safe-path property="outputFileEscaped" input="${outputFile}" />
 
 		<echo>Creating HBM2DDL Update Script</echo>
 		<echo file="${portal-shell-script}" append="true">
-//HBM2DDL Update Script
-try {
-    schemaExportBean = '${schemaExportBean}';
-    logger.info('');
-    logger.info('');
-    logger.info('HBM2DDL Schema Update: ' + schemaExportBean);
-
-    export = '${export}'.toBoolean();
-    outputFile = /${outputFileEscaped}/;
-    haltOnError = '${haltOnError}'.toBoolean();
-            
-    ${schemaExportBean}.update(export, outputFile == 'null' ? null : outputFile , haltOnError);
-}
-catch (Exception e) {
-    throw new RuntimeException("db-hibernate-update for ' + schemaExportBean + ' failed", e);
-}
+			//hibernateUpdate(String target, String schemaExportBeanName, boolean export, String outputFile, boolean haltOnError)
+            portalShellBuildHelper.hibernateUpdate("db-hibernate-update",
+                '${schemaExportBean}',
+    			Boolean.parseBoolean('${export}'),
+    			Boolean.parseBoolean('${create}'),
+			    Boolean.parseBoolean('${drop}'),
+                /${outputFileEscaped}/,
+			    Boolean.parseBoolean('${haltOnError}'));
         </echo>
 
 		<antcall target="up-shell">
@@ -329,7 +311,7 @@ catch (Exception e) {
 	<target name="db" depends="prodPrompt" description="Loads legacy database tables and data. See: initdb">
 		<property name="tablefile" value="/properties/db/tables.xml" />
 		<property name="datafile" value="/properties/db/data.xml" />
-		<property name="scriptfile" value="null" />
+		<property name="scriptfile" value=" " />
 		<property name="droptables" value="true" />
 		<property name="createtables" value="true" />
 		<property name="populatetables" value="true" />
@@ -340,33 +322,14 @@ catch (Exception e) {
 
 		<echo>Creating DBLoader Script</echo>
 		<echo file="${portal-shell-script}" append="true">
-try {
-    //DbLoader Script
-    logger.info('');
-    logger.info('');
-
-	tablesFile = /${tablefileEscaped}/;
-	dataFile = /${datafileEscaped}/;
-	scriptFile = /${scriptfileEscaped}/;
-	droptables = '${droptables}'.toBoolean();
-	createtables = '${createtables}'.toBoolean();
-	populatetables = '${populatetables}'.toBoolean();
-
-    dbLoaderConfig = new org.jasig.portal.tools.dbloader.DbLoaderConfigBuilder();
-    dbLoaderConfig.setTablesFile(tablesFile);
-    dbLoaderConfig.setDataFile(dataFile);
-    if (scriptFile != 'null') {
-        dbLoaderConfig.setScriptFile(scriptFile);
-    }
-    dbLoaderConfig.setDropTables(droptables);
-    dbLoaderConfig.setCreateTables(createtables);
-    dbLoaderConfig.setPopulateTables(populatetables);
-    logger.info('Running DbLoader with: ' + dbLoaderConfig);
-    dbLoader.process(dbLoaderConfig);
-}
-catch (Exception e) {
-    throw new RuntimeException("db for ${tablefile} and ${datafile} failed", e);
-}
+			//db(String target, String tablesFile, String dataFile, String scriptFile, boolean dropTables, boolean createTables, boolean populateTables)
+            portalShellBuildHelper.db("db",
+                /${tablefileEscaped}/,
+                /${datafileEscaped}/,
+                /${scriptfileEscaped}/,
+    			Boolean.parseBoolean('${droptables}'),
+    			Boolean.parseBoolean('${createtables}'),
+    			Boolean.parseBoolean('${populatetables}'));
         </echo>
 
 		<antcall target="up-shell">
@@ -470,26 +433,19 @@ catch (Exception e) {
 							<isset property="script" />
 						</and>
 						<then>
-							<trycatch>
-								<try>
-									<!-- Invoke import/export tool -->
-									<java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.shell.PortalShell">
-										<sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
-										<classpath refid="uportal-war-full.classpath" />
-										<arg value="-s" />
-										<arg value="${script}" />
-									</java>
-								</try>
-								<finally>
-									<tempfile property="executed-portal-shell-script" destdir="${targetdir}" prefix="upshell_" suffix=".groovy" />
-									<copy file="${script}" tofile="${executed-portal-shell-script}" />
-								</finally>
-							</trycatch>
+							<tempfile property="executed-portal-shell-script" destdir="${targetdir}" prefix="upshell_" suffix=".groovy" />
+							<copy file="${script}" tofile="${executed-portal-shell-script}" />
+
+							<java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.shell.PortalShell">
+								<sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+								<classpath refid="uportal-war-full.classpath" />
+								<arg value="-s" />
+								<arg value="${script}" />
+							</java>
 						</then>
 						<else>
-							<echo>No Script</echo>
+							<echo>Interactive Mode</echo>
 
-							<!-- Invoke import/export tool -->
 							<java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.shell.PortalShell">
 								<sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
 								<classpath refid="uportal-war-full.classpath" />
@@ -503,42 +459,11 @@ catch (Exception e) {
 	</target>
 
 	<target name="data-list" description="Lists portal data types and portal data for a type. Use the -Dtype parameter to specify a specific type">
-		<property name="type" value="null" />
+		<property name="type" value=" " />
 
 		<echo file="${portal-shell-script}" append="true">
-try {
-	type = '${type}';
-        	
-    if (type == 'null') {
-        dhs = portalDataHandlerService;
-        //List Data Types Script
-        logger.info('');
-        logger.info('');
-        logger.info('Export and Delete Support by Data Type');
-    	org.jasig.portal.io.xml.PortalDataHandlerServiceUtils.format(dhs, logger);
-        logger.info('Add -Dtype=dataType To get a list of data keys for the type');
-    }
-    else {
-        //List Data Script
-        data = portalDataHandlerService.getPortalData(type);
-        logger.info('');
-        logger.info('');
-        logger.info('All ' + type + ' data');
-        data.each() {
-            dataId = it.getDataId();
-            dataTitle = it.getDataTitle();
-            if (dataTitle != null &amp;&amp; dataId != dataTitle) {
-                logger.info('    ' + it.getDataId() + " - " + it.getDataTitle());
-            }
-            else {
-                logger.info('    ' + it.getDataId());
-            }  
-        };
-    }
-}
-catch (Exception e) {
-    throw new RuntimeException("data-list failed", e);
-}
+			//dataList(String target, String type)
+            portalShellBuildHelper.dataList("data-list", '${type}');
         </echo>
 
 		<antcall target="up-shell">
@@ -551,54 +476,20 @@ catch (Exception e) {
             You must specify a 'dir' parameter (-Ddir={some/directory})
         </fail>
 
-		<property name="type" value="null" />
-		<property name="sysid" value="null" />
+		<property name="type" value=" " />
+		<property name="sysid" value=" " />
 
 		<groovy-safe-path property="dirFullEscaped" input="${dir}" />
-        <groovy-safe-path property="targetDirEscaped" input="${targetdir}" />
+		<groovy-safe-path property="targetDirEscaped" input="${targetdir}" />
 
 		<echo>Creating Data Export Script</echo>
 		<echo file="${portal-shell-script}" append="true">
-//Data Export Script
-logger.info('');
-logger.info('');
-dataDir = /${dirFullEscaped}/;
-logDir = /${targetDirEscaped}/;
-type = '${type}';
-sysid = '${sysid}';
-
-if (type != 'null' &amp;&amp; sysid != 'null') { 
-    try {
-        logger.info('Exporting Data ' + sysid + ' of type ' + type + ' to: ' + dataDir);
-        portalDataHandlerService.exportData(type, sysid, new File(dataDir));
-	}
-	catch (Exception e) {
-	    throw new RuntimeException("data-export to " + dataDir + " of " + type + " " + sysid + " failed", e);
-	}
-}
-else if (type != 'null') { 
-    try {
-        logger.info('Exporting All Data of type ' + type + ' to: ' + dataDir);
-        portalDataHandlerService.exportAllDataOfType(
-			[type] as Set, 
-			new File(dataDir), 
-            new org.jasig.portal.io.xml.IPortalDataHandlerService.BatchExportOptions().setLogDirectoryParent(logDir));
-    }
-    catch (Exception e) {
-        throw new RuntimeException("data-export to " + dataDir + " of " + type + " failed", e);
-    }
-}
-else { 
-    try {
-        logger.info('Exporting All Data to: ' + dataDir);
-        portalDataHandlerService.exportAllData(
-    		new File(dataDir), 
-            new org.jasig.portal.io.xml.IPortalDataHandlerService.BatchExportOptions().setLogDirectoryParent(logDir));
-    }
-    catch (Exception e) {
-        throw new RuntimeException("data-export to " + dataDir + " failed", e);
-    }
-}
+			//dataExport(String target, String dataDir, String type, String sysid, String logDir)
+            portalShellBuildHelper.dataExport("data-export", 
+    			/${dirFullEscaped}/,
+    			'${type}',
+    			'${sysid}',
+		        /${targetDirEscaped}/);
         </echo>
 
 		<antcall target="up-shell">
@@ -620,50 +511,24 @@ else {
 		</if>
 
 
-		<property name="pattern" value="null" />
-		<property name="file" value="null" />
-		<property name="dir" value="null" />
+		<property name="pattern" value=" " />
+		<property name="file" value=" " />
+		<property name="dir" value=" " />
 
 		<groovy-safe-path property="dirFullEscaped" input="${dir}" />
-        <groovy-safe-path property="fileFullEscaped" input="${file}" />
+		<groovy-safe-path property="fileFullEscaped" input="${file}" />
 		<groovy-safe-path property="targetDirEscaped" input="${targetdir}" />
-		
+
 
 		<echo>Creating Data Import Script</echo>
 		<echo file="${portal-shell-script}" append="true">
-//Data Import Script
-logger.info('');
-logger.info('');
-dataDir = /${dirFullEscaped}/;
-logDir = /${targetDirEscaped}/;
-if (dataDir == 'null') {
-    file = /${fileFullEscaped}/;
-    logger.info('Importing Data from: ' + file);
-	try {
-        portalDataHandlerService.importData(new org.springframework.core.io.FileSystemResource(file));
-	}
-	catch (Exception e) {
-	    throw new RuntimeException("data-import for " + file + " failed", e);
-	}
-}
-else {
-    pattern = /${pattern}/;
-    logger.info('Importing Data from: ' + dataDir);
-    try {
-        portalDataHandlerService.importData(
-            new File(dataDir), 
-            pattern == 'null' ? null : pattern, 
-            new org.jasig.portal.io.xml.IPortalDataHandlerService.BatchImportOptions().setLogDirectoryParent(logDir));
-    }
-    catch (Exception e) {
-	    if (pattern != null) {
-		    throw new RuntimeException("data-import from " + dataDir + " matching " + pattern + " failed", e);
-		}
-		else {
-            throw new RuntimeException("data-import from " + dataDir + " failed", e);
-        }
-    }
-}        </echo>
+            //dataImport(String target, String dataDir, String pattern, String file, String logDir)
+            portalShellBuildHelper.dataImport("data-import", 
+                /${dirFullEscaped}/,
+    			/${pattern}/,
+    			/${fileFullEscaped}/,
+                /${targetDirEscaped}/);
+		</echo>
 
 		<antcall target="up-shell">
 			<param name="script" value="${portal-shell-script}" />
@@ -687,19 +552,10 @@ else {
 
 		<echo>Creating Data Delete Script</echo>
 		<echo file="${portal-shell-script}" append="true">
-try {
-    //Data Delete Script
-    logger.info('');
-    logger.info('');
-    type = '${type}';
-    sysid = '${sysid}';
-
-    logger.info('Deleting Data ' + sysid + ' of type ' + type);
-    portalDataHandlerService.deleteData(type, sysid);
-}
-catch (Exception e) {
-    throw new RuntimeException("data-delete for " + type + " and " + sysid + " failed", e);
-}
+            //dataDelete(String target, String type, String sysid)
+            portalShellBuildHelper.dataDelete("data-delete", 
+    			'${type}',
+    			'${sysid}');
         </echo>
 
 		<antcall target="up-shell">
@@ -845,16 +701,8 @@ catch (Exception e) {
 
 		<echo>Deleting user ${user}</echo>
 		<echo file="${portal-shell-script}" append="true">
-try {
-    //Delete USer Script
-    logger.info('');
-    logger.info('');
-    user = '${user}';
-    userIdentityStore.removePortalUID(user);
-}
-catch (Exception e) {
-    throw new RuntimeException("deluser for " + user + " failed", e);
-}
+			//deleteUser(String target, String user)
+            portalShellBuildHelper.deleteUser("deluser", '${user}');
         </echo>
 
 		<antcall target="up-shell">
@@ -936,15 +784,15 @@ catch (Exception e) {
 			<java fork="true" spawn="${spawn}" maxmemory="32M" dir="${basedir}" classname="org.hsqldb.server.Server" failonerror="${failonerror}">
 				<classpath refid="hsql.classpath" />
 
-                <arg value="--database.0" />
-                <arg value="${database}" />
-                <arg value="--dbname.0" />
-                <arg value="uPortal" />
-                <arg value="--address" />
-                <arg value="localhost" />
-                <arg value="--port" />
-                <arg value="${port}" />
-                	
+				<arg value="--database.0" />
+				<arg value="${database}" />
+				<arg value="--dbname.0" />
+				<arg value="uPortal" />
+				<arg value="--address" />
+				<arg value="localhost" />
+				<arg value="--port" />
+				<arg value="${port}" />
+
 			</java>
 		</uportal-parent-macro>
 	</target>
