@@ -43,10 +43,10 @@
     </action-state>
     
     <end-state id="cancel">
-        <output name="person" value="localAccountDao.getPerson(person.username)"/>
+        <output name="person" value="personLookupHelper.findPerson(portalWebFlowUtils.getCurrentPerson(externalContext), person.username)"/>
     </end-state>
     <end-state id="finish">
-        <output name="person" value="localAccountDao.getPerson(person.username)"/>
+        <output name="person" value="personLookupHelper.findPerson(portalWebFlowUtils.getCurrentPerson(externalContext), person.username)"/>
     </end-state>
     
 </flow>
