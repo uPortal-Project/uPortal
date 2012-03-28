@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.portlet.rendering.worker.HungWorkerAnalyzer;
 
 /**
  * Provides easy API for executing methods on portlets. Takes care of all of the uPortal specific setup and tear down around portlet calls.
@@ -131,4 +132,6 @@ public interface IPortletRenderer {
      * @param httpServletResponse The portal's response (nothing will be written to the response)
      */
     public void doReset(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse);
+    
+    public HungWorkerAnalyzer getHungWorkerAnalyzer();
 }
