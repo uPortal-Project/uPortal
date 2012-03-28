@@ -195,8 +195,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           <input class="button primary" type="submit" value="<spring:message code="review"/>" name="_eventId_review"/>
         </c:when>
         <c:otherwise>
+          <input class="button primary" type="submit" value="<spring:message code="continue"/>" name="_eventId_next"/>
           <input class="button" type="submit" value="<spring:message code="back"/>" name="_eventId_back"/>
-          <input class="button primary" type="submit" value="<spring:message code="next"/>" name="_eventId_next"/>
         </c:otherwise>
       </c:choose>
       <input class="button" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
