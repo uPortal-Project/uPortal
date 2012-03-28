@@ -179,6 +179,23 @@
     <cache name="org.jasig.portal.portlets.portletadmin.PortletAdministrationHelper.CPD_CACHE"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
+    <!-- 
+     | Caches EntityType data
+     | - 1 x Entity type
+     | - replicated by invalidation
+     +-->
+    <cache name="org.jasig.portal.EntityTypes.CLASS_BY_ID"
+        eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.EntityTypes.ID_BY_CLASS"
+        eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.EntityTypes.ALL"
+        eternal="false" maxElementsInMemory="1" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
+        
     
     <!-- ******************** Per-Datasource Person Directory Caches ******************** -->
     <!-- 

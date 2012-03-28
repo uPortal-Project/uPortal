@@ -104,4 +104,9 @@
         <constructor-arg ref="authorizationService" />
     </bean>
     
+    <bean id="org.jasig.portal.spring.locator.EntityTypesLocator"
+        class="org.jasig.portal.spring.locator.EntityTypesLocator">
+        <constructor-arg ref="entityTypes" />
+    </bean>
+    
 </beans>

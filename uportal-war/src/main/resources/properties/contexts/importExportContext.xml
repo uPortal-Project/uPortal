@@ -473,22 +473,12 @@
             </util:map>
         </property>
     </bean>
-    
+
     <bean id="import-entity-type_v2-6" class="org.danann.cernunnos.runtime.PojoTask">
         <property name="location" value="classpath://org/jasig/portal/io/import-entity-type_v2-6.crn" />
         <property name="requestAttributes">
             <util:map>
-                <entry key="entityTypesSingleton">
-                    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-                        <property name="targetClass" value="org.jasig.portal.EntityTypes" />
-                        <property name="targetMethod" value="singleton" />
-                        <property name="arguments">
-                            <list>
-                                <ref bean="PortalDb" />
-                            </list>
-                        </property>
-                    </bean>
-                </entry>
+                <entry key="entityTypesSingleton" value-ref="entityTypes" />
             </util:map>
         </property>
     </bean>
@@ -497,17 +487,7 @@
         <property name="location" value="classpath://org/jasig/portal/io/import-entity-type_v3-2.crn"/>
         <property name="requestAttributes">
             <util:map>
-                <entry key="entityTypesSingleton">
-                    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-                        <property name="targetClass" value="org.jasig.portal.EntityTypes" />
-                        <property name="targetMethod" value="singleton" />
-                        <property name="arguments">
-                            <list>
-                                <ref bean="PortalDb" />
-                            </list>
-                        </property>
-                    </bean>
-                </entry>
+                <entry key="entityTypesSingleton" value-ref="entityTypes" />
             </util:map>
         </property>
     </bean>
