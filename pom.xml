@@ -270,6 +270,14 @@
                         <groupId>org.springframework.ldap</groupId>
                         <artifactId>spring-ldap</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <artifactId>groovy-engine</artifactId>
+                        <groupId>javax.script</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>script-api</artifactId>
+                        <groupId>javax.script</groupId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
