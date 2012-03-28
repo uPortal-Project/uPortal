@@ -167,7 +167,7 @@
      | Legacy Import classes for portal entities
      +-->
     <bean id="layout32Importer" class="org.jasig.portal.io.xml.layout.LayoutImporter">
-        <property name="threadSafe" value="false"/>
+        <property name="threadSafe" value="true"/>
         <property name="dataKeys">
             <set>
                 <util:constant static-field="org.jasig.portal.io.xml.layout.LayoutPortalDataType.IMPORT_32_DATA_KEY"/>

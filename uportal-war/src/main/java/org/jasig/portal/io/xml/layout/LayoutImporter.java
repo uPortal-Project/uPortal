@@ -20,10 +20,15 @@
 package org.jasig.portal.io.xml.layout;
 
 import org.dom4j.Element;
+import org.jasig.portal.UserProfile;
 import org.jasig.portal.io.xml.crn.AbstractDom4jImporter;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.utils.Tuple;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.w3c.dom.Document;
+
+import com.google.common.cache.CacheBuilder;
 
 /**
  * Imports a layout
@@ -31,12 +36,18 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class LayoutImporter extends AbstractDom4jImporter {
+public class LayoutImporter extends AbstractDom4jImporter implements InitializingBean {
     private IUserLayoutStore userLayoutStore;
     
     @Autowired
     public void setUserLayoutStore(IUserLayoutStore userLayoutStore) {
         this.userLayoutStore = userLayoutStore;
+    }
+    
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        this.userLayoutStore.setProfileImportExportCache(CacheBuilder.newBuilder().maximumSize(1000).<Tuple<String, String>, UserProfile>build());
+        this.userLayoutStore.setLayoutImportExportCache(CacheBuilder.newBuilder().maximumSize(1000).<Tuple<String, String>, Document>build());
     }
 
     @Override

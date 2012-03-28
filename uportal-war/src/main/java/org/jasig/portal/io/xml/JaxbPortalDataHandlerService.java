@@ -68,6 +68,7 @@ import org.apache.tools.ant.DirectoryScanner;
 import org.jasig.portal.concurrency.CallableWithoutResult;
 import org.jasig.portal.utils.AntPatternFileFilter;
 import org.jasig.portal.utils.ConcurrentDirectoryScanner;
+import org.jasig.portal.utils.PeriodicFlushingBufferedWriter;
 import org.jasig.portal.utils.ResourceUtils;
 import org.jasig.portal.utils.SafeFilenameUtils;
 import org.jasig.portal.xml.StaxUtils;
@@ -345,7 +346,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         final File importReport = new File(logDirectory, "data-import.txt");
         final PrintWriter reportWriter;
         try {
-            reportWriter = new PrintWriter(new BufferedWriter(new FileWriter(importReport)));
+            reportWriter = new PrintWriter(new PeriodicFlushingBufferedWriter(500, new FileWriter(importReport)));
         }
         catch (IOException e) {
             throw new RuntimeException("Failed to create FileWriter for: " + importReport, e);

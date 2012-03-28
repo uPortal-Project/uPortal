@@ -84,6 +84,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.BrokenSecurityContext;
 import org.jasig.portal.security.provider.PersonImpl;
 import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.xml.XmlUtilities;
 import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.jasig.portal.xml.xpath.XPathOperations;
@@ -99,6 +100,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import com.google.common.cache.Cache;
 
 /**
  * This class extends RDBMUserLayoutStore and implements instantiating and
@@ -134,8 +137,18 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
     // Used in Import/Export operations
     private final org.dom4j.DocumentFactory fac = new org.dom4j.DocumentFactory();
-    private final DOMReader reader = new DOMReader();
-    private final DOMWriter writer = new DOMWriter();
+    private final ThreadLocal<DOMReader> reader = new ThreadLocal<DOMReader>() {
+        @Override
+        protected DOMReader initialValue() {
+            return new DOMReader();
+        }
+    };
+    private final ThreadLocal<DOMWriter> writer = new ThreadLocal<DOMWriter>() {
+        @Override
+        protected DOMWriter initialValue() {
+            return new DOMWriter();
+        }
+    };
     private IUserIdentityStore userIdentityStore;
     private IStylesheetUserPreferencesDao stylesheetUserPreferencesDao;
     private XPathOperations xPathOperations;
@@ -439,7 +452,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         try {
             final Document layoutDom = this._safeGetUserLayout(person, profile);
             person.setAttribute(Constants.PLF, layoutDom);
-            layoutDoc = this.reader.read(layoutDom);
+            layoutDoc = this.reader.get().read(layoutDom);
         }
         catch (final Throwable t) {
             final String msg = "Unable to obtain layout & profile for user '" + person.getUserName() + "', profileId "
@@ -852,7 +865,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             final org.dom4j.Element copy = layout.createCopy();
             final org.dom4j.Document doc = this.fac.createDocument(copy);
             doc.normalize();
-            layoutDom = this.writer.write(doc);
+            layoutDom = this.writer.get().write(doc);
             person.setAttribute(Constants.PLF, layoutDom);
 
         }
@@ -1054,6 +1067,11 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
     }
 
+    private Cache<Tuple<String, String>, Document> layoutCache;
+    public void setLayoutImportExportCache(Cache<Tuple<String, String>, Document> layoutCache) {
+        this.layoutCache = layoutCache;
+    }
+
     /**
      * Handles locking and identifying proper root and namespaces that used to
      * take place in super class.
@@ -1066,9 +1084,25 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     private Document _safeGetUserLayout(IPerson person, IUserProfile profile)
 
     {
-        final Document layoutDoc = super.getPersonalUserLayout(person, profile);
-        final Element layout = layoutDoc.getDocumentElement();
+        Document layoutDoc;
+        Tuple<String, String> key = null;
+            
+        if (this.layoutCache != null) {
+            key = new Tuple<String, String>(person.getUserName(), profile.getProfileFname());
+            layoutDoc = this.layoutCache.getIfPresent(key);
+            if (layoutDoc != null) {
+                return (Document)layoutDoc.cloneNode(true);
+            }
+        }
+        
+        layoutDoc = super.getPersonalUserLayout(person, profile);
+        Element layout = layoutDoc.getDocumentElement();
         layout.setAttribute(Constants.NS_DECL, Constants.NS_URI);
+        
+        if (this.layoutCache != null && key != null) {
+            this.layoutCache.put(key, (Document)layoutDoc.cloneNode(true));
+        }
+        
         return layoutDoc;
     }
 
@@ -1242,18 +1276,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     */
     private FragmentDefinition getOwnedFragment(IPerson person) {
         final String userName = person.getUserName();
-
-        final FragmentActivator activator = this.getFragmentActivator();
-
-        final List<FragmentDefinition> definitions = this.configurationLoader.getFragments();
-        if (definitions != null) {
-            for (final FragmentDefinition fragmentDefinition : definitions) {
-                if (userName.equals(fragmentDefinition.getOwnerId())) {
-                    return fragmentDefinition;
-                }
-            }
-        }
-        return null;
+        return  this.configurationLoader.getFragmentByOwnerId(userName);
     }
 
     /**

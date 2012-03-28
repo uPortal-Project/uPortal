@@ -79,6 +79,8 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.google.common.cache.Cache;
+
 /**
  * SQL implementation for the 2.x relational database model.
  *
@@ -988,11 +990,28 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
         }
     });
   }
+  
+  private Cache<Tuple<String, String>, UserProfile> profileCache;
+  /**
+   * Cache used during import/export operations
+   */
+  public void setProfileImportExportCache(Cache<Tuple<String, String>, UserProfile> profileCache) {
+      this.profileCache = profileCache;
+  }
 
   public UserProfile getUserProfileByFname (final IPerson person, final String profileFname) {
+      Tuple<String, String> key = null;
+      if (this.profileCache != null) {
+          key = new Tuple<String, String>(person.getUserName(), profileFname);
+          final UserProfile profile = this.profileCache.getIfPresent(key);
+          if (profile != null) {
+              return profile;
+          }
+      }
+      
 	log.debug("Getting profile " + profileFname + " for user " + person.getID());
     final int userId = person.getID();
-    return jdbcOperations.execute(new ConnectionCallback<UserProfile>() {
+    final UserProfile userProfile = jdbcOperations.execute(new ConnectionCallback<UserProfile>() {
         @Override
         public UserProfile doInConnection(Connection con) throws SQLException, DataAccessException {
 
@@ -1081,6 +1100,10 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
       
         }
     });
+    if (this.profileCache != null && key != null) { 
+        this.profileCache.put(key, userProfile);
+    }
+    return userProfile;
   }
 
   public Hashtable getUserProfileList (final IPerson person) {
