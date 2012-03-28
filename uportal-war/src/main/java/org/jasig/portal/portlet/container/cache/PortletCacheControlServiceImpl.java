@@ -52,6 +52,7 @@ import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.utils.web.PortalWebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
@@ -120,6 +121,7 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
 	/**
 	 * @param cacheSizeThreshold the cacheSizeThreshold to set
 	 */
+    @Value("${org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.cacheSizeThreshold:102400}")
 	public void setCacheSizeThreshold(int cacheSizeThreshold) {
 		this.cacheSizeThreshold = cacheSizeThreshold;
 	}
