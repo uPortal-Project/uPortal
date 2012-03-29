@@ -22,12 +22,14 @@ package org.jasig.portal.portlets.search;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.Event;
 import javax.portlet.EventRequest;
+import javax.portlet.EventResponse;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
 import javax.servlet.http.HttpServletRequest;
@@ -60,8 +62,8 @@ import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.EventMapping;
 
+import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.MapMaker;
 
 /**
  * SearchPortletController produces both a search form and results for configured
@@ -103,7 +105,7 @@ public class SearchPortletController {
 
     private IPortalRequestUtils portalRequestUtils;
 
-    @Autowired(required = true)
+    @Autowired
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         Validate.notNull(portalRequestUtils);
         this.portalRequestUtils = portalRequestUtils;
@@ -114,29 +116,22 @@ public class SearchPortletController {
             ActionRequest request, ActionResponse response) {
 
         // construct a new search query object from the string query
-        SearchRequest queryObj = new SearchRequest();
-        String queryId = RandomStringUtils.randomAlphanumeric(32);
+        final SearchRequest queryObj = new SearchRequest();
+        final String queryId = RandomStringUtils.randomAlphanumeric(32);
         queryObj.setQueryId(queryId);
         queryObj.setSearchTerms(query);
         
-        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getPortletHttpRequest(request);
-        final IPortletWindowId portletWindowId = this.portletWindowRegistry.getPortletWindowId(httpServletRequest, request.getWindowID());
-
-        // add search results from each portal search service to a new portal
-        // search results object
-        PortalSearchResults results = new PortalSearchResults();
-        for (IPortalSearchService searchService : searchServices) {
-            SearchResults serviceResults = searchService.getSearchResults(request, queryObj);
-            addSearchResults(serviceResults, results, httpServletRequest, portletWindowId);
-        }
+        // Create the session-shared results object
+        final PortalSearchResults results = new PortalSearchResults();
         
         // place the portal search results object in the session using the queryId to namespace it
-        PortletSession session = request.getPortletSession();
-        Map<String, PortalSearchResults> searchResultsCache;
+        final PortletSession session = request.getPortletSession();
+        
+        Cache<String, PortalSearchResults> searchResultsCache;
         synchronized (org.springframework.web.portlet.util.PortletUtils.getSessionMutex(session)) {
-            searchResultsCache = (Map<String, PortalSearchResults>)session.getAttribute(SEARCH_RESULTS_CACHE_NAME);
+            searchResultsCache = (Cache<String, PortalSearchResults>)session.getAttribute(SEARCH_RESULTS_CACHE_NAME);
             if (searchResultsCache == null) {
-                searchResultsCache = CacheBuilder.newBuilder().maximumSize(50).<String, PortalSearchResults>build().asMap(); 
+                searchResultsCache = CacheBuilder.newBuilder().maximumSize(20).expireAfterAccess(5, TimeUnit.MINUTES).<String, PortalSearchResults>build(); 
                 session.setAttribute(SEARCH_RESULTS_CACHE_NAME, searchResultsCache);
             }
         }
@@ -146,26 +141,53 @@ public class SearchPortletController {
         response.setEvent(SearchConstants.SEARCH_REQUEST_QNAME, queryObj);
         response.setRenderParameter("queryId", queryId);
     }
+
     
+    /**
+     * Performs a search of the explicitly configured {@link IPortalSearchService}s. This
+     * is done as an event handler so that it can run concurrently with the other portlets
+     * handling the search request
+     */
+    @EventMapping(SearchConstants.SEARCH_REQUEST_QNAME_STRING)
+    public void handleSearchRequest(EventRequest request, EventResponse response) {
+        final Event event = request.getEvent();
+        final SearchRequest searchQuery = (SearchRequest)event.getValue();
+        
+        //Create the results
+        final SearchResults results = new SearchResults();
+        results.setQueryId(searchQuery.getQueryId());
+        results.setWindowId(request.getWindowID());
+        final List<SearchResult> searchResultList = results.getSearchResult();
+        
+        //Run the search for each service appending the results
+        for (IPortalSearchService searchService : searchServices) {
+            try {
+                final SearchResults serviceResults = searchService.getSearchResults(request, searchQuery);
+                searchResultList.addAll(serviceResults.getSearchResult());
+            }
+            catch (Exception e) {
+                //TODO
+            }
+        }
+        
+        //Respond with a results event if results were found
+        if (!searchResultList.isEmpty()) {
+            response.setEvent(SearchConstants.SEARCH_RESULTS_QNAME, results);
+        }
+    }
+    
+    /**
+     * Handles all the SearchResults events coming back from portlets
+     */
     @EventMapping(SearchConstants.SEARCH_RESULTS_QNAME_STRING)
     public void handleSearchResult(EventRequest request) {
-        
-        // get the portlet search results from the event
-        Event event = request.getEvent();
-        SearchResults portletSearchResults = (SearchResults) event.getValue();
+        final Event event = request.getEvent();
+        final SearchResults portletSearchResults = (SearchResults) event.getValue();
 
         // get the existing portal search result from the session and append
         // the results for this event
-        String queryId = portletSearchResults.getQueryId();
-        
-        PortletSession session = request.getPortletSession();
-        final Map<String, PortalSearchResults> searchResultsCache = (Map<String, PortalSearchResults>)session.getAttribute(SEARCH_RESULTS_CACHE_NAME);
-        if (searchResultsCache == null) {
-            this.logger.warn("No searchResultsCache Map in the session, ignoring search results: " + event);
-            return;
-        }
-        
-        final PortalSearchResults results = searchResultsCache.get(queryId);
+        final String queryId = portletSearchResults.getQueryId();
+        final PortalSearchResults results = this.getPortalSearchResults(request, queryId);
         if (results == null) {
             this.logger.warn("No PortalSearchResults found for queryId " + queryId + ", ignoring search results: " + event);
             return;
@@ -175,24 +197,77 @@ public class SearchPortletController {
         final HttpServletRequest httpServletRequest = this.portalRequestUtils.getPortletHttpRequest(request);
         final IPortletWindowId portletWindowId = this.portletWindowRegistry.getPortletWindowId(httpServletRequest, windowId);
         
-        addSearchResults(portletSearchResults, results, httpServletRequest, portletWindowId);
+        //Add the other portlet's results to the main search results object
+        this.addSearchResults(portletSearchResults, results, httpServletRequest, portletWindowId);
+    }
+    
+    /**
+     * Display a search form and show the results of a search query, if supplied.
+     * 
+     * @param request   portlet request
+     * @param query     optional search query string
+     * @return
+     */
+    @RequestMapping
+    public ModelAndView getSearchResults(PortletRequest request,
+            @RequestParam(value = "query", required = false) String query,
+            @RequestParam(value = "queryId", required = false) String queryId
+            ) {
+        
+        final Map<String,Object> model = new HashMap<String, Object>();
+        model.put("query", query);
+
+        if (queryId != null) {
+            final PortalSearchResults results = this.getPortalSearchResults(request, queryId);
+            model.put("results", results);
+        }
+
+        final boolean isMobile = isMobile(request);
+        String viewName = isMobile ? "/jsp/Search/mobileSearch" : "/jsp/Search/search";
+        
+        return new ModelAndView(viewName, model);
     }
 
+    /**
+     * Get the {@link PortalSearchResults} for the specified query id from the session. If there are no results null
+     * is returned. 
+     */
+    private PortalSearchResults getPortalSearchResults(PortletRequest request, String queryId) {
+        final PortletSession session = request.getPortletSession();
+        @SuppressWarnings("unchecked")
+        final Cache<String, PortalSearchResults> searchResultsCache = (Cache<String, PortalSearchResults>)session.getAttribute(SEARCH_RESULTS_CACHE_NAME);
+        if (searchResultsCache == null) {
+            return null;
+        }
+        
+        return searchResultsCache.getIfPresent(queryId);
+    }
+
+    
+    /**
+     * @param portletSearchResults Results from a portlet
+     * @param results Results collating object
+     * @param httpServletRequest current request
+     * @param portletWindowId Id of the portlet window that provided the results
+     */
     private void addSearchResults(SearchResults portletSearchResults, PortalSearchResults results,
             final HttpServletRequest httpServletRequest, final IPortletWindowId portletWindowId) {
+
         for (SearchResult result : portletSearchResults.getSearchResult()) {
-            final String resultUrl = getResultUrl(httpServletRequest, result, portletWindowId);
+            final String resultUrl = this.getResultUrl(httpServletRequest, result, portletWindowId);
             this.logger.debug("Created {} with from {}", resultUrl, result.getTitle());
-            results.addPortletSearchResults(resultUrl, result); 
+            results.addPortletSearchResults(resultUrl, result);
         }
     }
     
+    /**
+     * Determine the url for the search result 
+     */
     protected String getResultUrl(HttpServletRequest httpServletRequest, SearchResult result, IPortletWindowId portletWindowId) {
         final String externalUrl = result.getExternalUrl();
         if (externalUrl != null) {
             return externalUrl;
         }
-        
         
         UrlType urlType = UrlType.RENDER;
 
@@ -239,79 +314,9 @@ public class SearchPortletController {
         
         return portalUrlBuilder.getUrlString();
     }
-
-
-    /**
-     * Display a search form and show the results of a search query, if supplied.
-     * 
-     * @param request   portlet request
-     * @param query     optional search query string
-     * @return
-     */
-    @RequestMapping
-    public ModelAndView getSearchResults(PortletRequest request,
-            @RequestParam(value = "query", required = false) String query,
-            @RequestParam(value = "queryId", required = false) String queryId
-            ) {
-        
-        final Map<String,Object> model = new HashMap<String, Object>();
-        model.put("query", query);
-
-        if (queryId != null) {
-	        PortletSession session = request.getPortletSession();
-	        final Map<String, PortalSearchResults> searchResultsCache = (Map<String, PortalSearchResults>)session.getAttribute(SEARCH_RESULTS_CACHE_NAME);
-	        if (searchResultsCache != null) {
-	            final PortalSearchResults results = searchResultsCache.get(queryId);
-	            model.put("results", results);
-	        }
-        }
-
-        final boolean isMobile = isMobile(request);
-        String viewName = isMobile ? "/jsp/Search/mobileSearch" : "/jsp/Search/search";
-        
-        return new ModelAndView(viewName, model);
-    }
  
     public boolean isMobile(PortletRequest request) {
         String themeName = request.getProperty(ThemeNameRequestPropertiesManager.THEME_NAME_PROPERTY);
         return "UniversalityMobile".equals(themeName);
     }
-    
-    public static final class SearchResultWrapper {
-        private final String portletUrl;
-        private final String externalUrl;
-        private final String title;
-        private final String summary;
-        private final List<String> types;
-
-        public SearchResultWrapper(SearchResult result, String url) {
-            this.title = result.getTitle();
-            this.summary = result.getSummary();
-            this.externalUrl = result.getExternalUrl();
-            this.portletUrl = url;
-            this.types = result.getType();
-        }
-
-        public String getPortletUrl() {
-            return portletUrl;
-        }
-
-        public String getExternalUrl() {
-            return externalUrl;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public String getSummary() {
-            return summary;
-        }
-
-        public List<String> getTypes() {
-            return types;
-        }
-        
-    }
-    
 }

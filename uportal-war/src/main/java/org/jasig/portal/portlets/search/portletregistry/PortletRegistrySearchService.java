@@ -49,22 +49,22 @@ public class PortletRegistrySearchService implements IPortalSearchService {
     private IPortletWindowRegistry portletWindowRegistry;
     private IPortalRequestUtils portalRequestUtils;
 
-    @Autowired(required = true)
+    @Autowired
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
 
-    @Autowired(required = true)
+    @Autowired
     public void setPortalUrlProvider(IPortalUrlProvider urlProvider) {
         this.portalUrlProvider = urlProvider;
     }
 
-    @Autowired(required = true)
+    @Autowired
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         this.portletWindowRegistry = portletWindowRegistry;
     }
 
-    @Autowired(required = true)
+    @Autowired
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         this.portalRequestUtils = portalRequestUtils;
     }

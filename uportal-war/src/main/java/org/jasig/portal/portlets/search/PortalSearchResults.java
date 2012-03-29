@@ -18,38 +18,50 @@
  */
 package org.jasig.portal.portlets.search;
 
+import java.io.Serializable;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.jasig.portal.search.SearchResult;
 
-public class PortalSearchResults {
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+
+/**
+ * Used to collate search results for the SearchPortletController
+ * 
+ * @author Eric Dalquist
+ * @version $Revision$
+ */
+public class PortalSearchResults implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private static final List<String> DEFAULT_TYPES = Arrays.asList("Default");
-    private final Map<String, Map<String, SearchResult>> results;
+    
+    //Map of <result type, <url, result>>
+    private final LoadingCache<String, ConcurrentMap<String, SearchResult>> results;
     
     public PortalSearchResults() {
-        this.results = new LinkedHashMap<String, Map<String, SearchResult>>();
+        this.results = CacheBuilder.newBuilder().<String, ConcurrentMap<String, SearchResult>>build(new CacheLoader<String, ConcurrentMap<String, SearchResult>>() {
+            @Override
+            public ConcurrentMap<String, SearchResult> load(String key) throws Exception {
+                return new ConcurrentHashMap<String, SearchResult>();
+            }
+        });
     }
     
-    public Map<String, Map<String, SearchResult>> getResults() {
-        return this.results;
+    public ConcurrentMap<String, ConcurrentMap<String, SearchResult>> getResults() {
+        return this.results.asMap();
     }
     
-    public synchronized void addPortletSearchResults(String url, SearchResult result) {
+    public void addPortletSearchResults(String url, SearchResult result) {
         final List<String> types = this.getTypes(result);
         for (final String type : types) {
-            
-            final Map<String, SearchResult> typeResults;
-            if (!results.containsKey(type)) {
-                typeResults = new LinkedHashMap<String, SearchResult>();
-                results.put(type, typeResults);
-            }
-            else {
-                typeResults = results.get(type);
-            }
-        
+            final Map<String, SearchResult> typeResults = this.results.getUnchecked(type);
             typeResults.put(url, result);
         }
     }

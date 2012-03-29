@@ -38,6 +38,7 @@
     
     <util:list id="searchServices">
         <bean class="org.jasig.portal.portlets.search.portletregistry.PortletRegistrySearchService"/>
+        <bean class="org.jasig.portal.portlets.search.google.GoogleSearchController"></bean>
         <!--bean class="org.jasig.portal.portlets.search.gsa.GsaSearchService"
             p:baseUrl="http://search.school.edu" p:site="Site"/-->
     </util:list>
