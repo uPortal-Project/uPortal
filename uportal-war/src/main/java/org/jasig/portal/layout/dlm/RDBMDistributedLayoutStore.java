@@ -54,6 +54,7 @@ import org.dom4j.io.DOMWriter;
 import org.dom4j.io.DocumentSource;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
+import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.IUserProfile;
@@ -736,16 +737,22 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         final IPerson person = new PersonImpl();
         person.setUserName(ownerUsername);
 
-        final int ownerId;
+        int ownerId;
         try {
-            ownerId = this.userIdentityStore.getPortalUID(person, !this.errorOnMissingUser);
+            //Can't just pass true for create here, if the user actually exists the create flag also updates the user data
+            ownerId = this.userIdentityStore.getPortalUID(person);
         }
-        catch (final Throwable t) {
-            throw new RuntimeException("Unrecognized user " + person.getUserName() + "; you must import users before their layouts.", t);
+        catch (final AuthorizationException t) {
+            if (this.errorOnMissingUser) {
+                throw new RuntimeException("Unrecognized user " + person.getUserName() + "; you must import users before their layouts or set org.jasig.portal.io.layout.errorOnMissingUser to false.", t);
+            }
+            
+            //Create the missing user
+            ownerId = this.userIdentityStore.getPortalUID(person, true);
         }
         
         if (ownerId == -1) {
-            throw new RuntimeException("Unrecognized user " + person.getUserName() + "; you must import users before their layouts.");
+            throw new RuntimeException("Unrecognized user " + person.getUserName() + "; you must import users before their layouts or set org.jasig.portal.io.layout.errorOnMissingUser to false.");
         }
         person.setID(ownerId);
 
