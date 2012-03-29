@@ -6,3 +6,7 @@
 /data
 /.ant-targets-build.xml
 *.sass-cache
+/filters/local.properties
+/uportal-war/src/main/resources/properties/security.properties
+/uportal-war/src/main/resources/properties/groups/*.xml
+/uportal-war/src/main/resources/properties/groups/*.properties
