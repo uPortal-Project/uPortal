@@ -1,0 +1,5 @@
+
+<subscribed-fragments script="classpath://org/jasig/portal/io/import-subscribed-fragment_v3-2.crn" username="admin">
+  <subscribed-fragment fragment-owner="mum-lo-campus-apps"/>
+  <subscribed-fragment fragment-owner="mum-lo-cg"/>
+</subscribed-fragments>

@@ -80,6 +80,14 @@
             <jaxb:package name="org.jasig.portal.io.xml.eventaggr" />
         </jaxb:schemaBindings>
     </jaxb:bindings>
+    <jaxb:bindings schemaLocation="../resources/xsd/io/subscribed-fragment/subscribed-fragment-4.0.xsd">
+        <jaxb:bindings node="//xs:element[@name='subscribed-fragments']">
+            <jaxb:class name="ExternalSubscribedFragments"/>
+        </jaxb:bindings>
+        <jaxb:schemaBindings>
+            <jaxb:package name="org.jasig.portal.io.xml.subscribedfragment" />
+        </jaxb:schemaBindings>
+    </jaxb:bindings>
     
     <jaxb:bindings schemaLocation="../resources/xsd/portlet-publishing/portlet-publishing-definition-4.0.xsd">
         <jaxb:bindings node="//xs:element[@name='step']">

@@ -52,6 +52,7 @@ import com.google.common.base.Function;
 public class JpaUserFragmentSubscriptionDaoImpl extends BaseJpaDao implements IUserFragmentSubscriptionDao {
     private CriteriaQuery<UserFragmentSubscriptionImpl> findUserFragmentInfoByPersonQuery;
     private CriteriaQuery<UserFragmentSubscriptionImpl> findUserFragmentInfoByPersonAndOwnerQuery;
+    private CriteriaQuery<String> findUsersWithActiveSubscriptionsQuery;
 
     private ParameterExpression<Integer> userIdParameter;
     private ParameterExpression<String> fragmentOwnerParameter;
@@ -94,6 +95,18 @@ public class JpaUserFragmentSubscriptionDaoImpl extends BaseJpaDao implements IU
                 criteriaQuery.select(root);
                 criteriaQuery.where(cb.and(cb.equal(root.get(UserFragmentSubscriptionImpl_.userId), userIdParameter),
                         cb.equal(root.get(UserFragmentSubscriptionImpl_.fragmentOwner), fragmentOwnerParameter)));
+                
+                return criteriaQuery;
+            }
+        });
+        
+        this.findUsersWithActiveSubscriptionsQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<String>>() {
+            @Override
+            public CriteriaQuery<String> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<String> criteriaQuery = cb.createQuery(String.class);
+                final Root<UserFragmentSubscriptionImpl> root = criteriaQuery.from(UserFragmentSubscriptionImpl.class);
+                criteriaQuery.select(root.get(UserFragmentSubscriptionImpl_.createdBy));
+                criteriaQuery.where(cb.equal(root.get(UserFragmentSubscriptionImpl_.active), true));
                 
                 return criteriaQuery;
             }
@@ -155,4 +168,9 @@ public class JpaUserFragmentSubscriptionDaoImpl extends BaseJpaDao implements IU
 
     }
 
+    @Override
+    public List<String> getAllUsersWithActiveSubscriptions() {
+        final TypedQuery<String> query = createCachedQuery(this.findUsersWithActiveSubscriptionsQuery);
+        return query.getResultList();
+    }
 }
