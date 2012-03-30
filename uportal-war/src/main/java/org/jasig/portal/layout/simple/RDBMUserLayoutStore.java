@@ -991,19 +991,28 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
     });
   }
   
-  private Cache<Tuple<String, String>, UserProfile> profileCache;
+  private final ThreadLocal<Cache<Tuple<String, String>, UserProfile>> profileCacheHolder = new ThreadLocal<Cache<Tuple<String,String>,UserProfile>>();
   /**
    * Cache used during import/export operations
    */
   public void setProfileImportExportCache(Cache<Tuple<String, String>, UserProfile> profileCache) {
-      this.profileCache = profileCache;
+      if (profileCache == null) {
+          this.profileCacheHolder.remove();
+      }
+      else {
+          this.profileCacheHolder.set(profileCache);
+      }
+  }
+  private Cache<Tuple<String, String>, UserProfile> getProfileImportExportCache() {
+      return this.profileCacheHolder.get();
   }
 
   public UserProfile getUserProfileByFname (final IPerson person, final String profileFname) {
       Tuple<String, String> key = null;
-      if (this.profileCache != null) {
+      final Cache<Tuple<String, String>, UserProfile> profileCache = getProfileImportExportCache();
+      if (profileCache != null) {
           key = new Tuple<String, String>(person.getUserName(), profileFname);
-          final UserProfile profile = this.profileCache.getIfPresent(key);
+          final UserProfile profile = profileCache.getIfPresent(key);
           if (profile != null) {
               return profile;
           }
@@ -1100,8 +1109,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
       
         }
     });
-    if (this.profileCache != null && key != null) { 
-        this.profileCache.put(key, userProfile);
+    if (profileCache != null && key != null) { 
+        profileCache.put(key, userProfile);
     }
     return userProfile;
   }

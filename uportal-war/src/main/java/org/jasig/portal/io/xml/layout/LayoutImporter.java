@@ -28,6 +28,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
 
+import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
 /**
@@ -36,7 +37,9 @@ import com.google.common.cache.CacheBuilder;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class LayoutImporter extends AbstractDom4jImporter implements InitializingBean {
+public class LayoutImporter extends AbstractDom4jImporter {
+    private final Cache<Tuple<String, String>, UserProfile> layoutCache = CacheBuilder.newBuilder().maximumSize(1000).<Tuple<String, String>, UserProfile>build();
+    private final Cache<Tuple<String, String>, Document> profileCache = CacheBuilder.newBuilder().maximumSize(1000).<Tuple<String, String>, Document>build();
     private IUserLayoutStore userLayoutStore;
     
     @Autowired
@@ -45,13 +48,16 @@ public class LayoutImporter extends AbstractDom4jImporter implements Initializin
     }
     
     @Override
-    public void afterPropertiesSet() throws Exception {
-        this.userLayoutStore.setProfileImportExportCache(CacheBuilder.newBuilder().maximumSize(1000).<Tuple<String, String>, UserProfile>build());
-        this.userLayoutStore.setLayoutImportExportCache(CacheBuilder.newBuilder().maximumSize(1000).<Tuple<String, String>, Document>build());
-    }
-
-    @Override
     protected void importDataElement(Tuple<String, Element> data) {
-        userLayoutStore.importLayout(data.second);
+        try {
+            this.userLayoutStore.setProfileImportExportCache(layoutCache);
+            this.userLayoutStore.setLayoutImportExportCache(profileCache);
+            
+            userLayoutStore.importLayout(data.second);
+        }
+        finally {
+            this.userLayoutStore.setProfileImportExportCache(null);
+            this.userLayoutStore.setLayoutImportExportCache(null);
+        }
     }
 }
