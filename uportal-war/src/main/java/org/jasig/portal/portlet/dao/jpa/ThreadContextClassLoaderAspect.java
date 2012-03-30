@@ -33,6 +33,13 @@ import org.springframework.core.Ordered;
  */
 @Aspect
 public class ThreadContextClassLoaderAspect implements Ordered {
+    private static final ClassLoader PORTAL_CLASS_LOADER = ThreadContextClassLoaderAspect.class.getClassLoader();
+    private static final ThreadLocal<ClassLoader> PREVIOUS_CLASS_LOADER = new ThreadLocal<ClassLoader>();
+    
+    public static ClassLoader getPreviousClassLoader() {
+        return PREVIOUS_CLASS_LOADER.get();
+    }
+    
     /* (non-Javadoc)
      * @see org.springframework.core.Ordered#getOrder()
      */
@@ -49,14 +56,15 @@ public class ThreadContextClassLoaderAspect implements Ordered {
     public Object doThreadContextClassLoaderUpdate(ProceedingJoinPoint pjp) throws Throwable {
         final Thread currentThread = Thread.currentThread();
         final ClassLoader previousClassLoader = currentThread.getContextClassLoader();
+        PREVIOUS_CLASS_LOADER.set(previousClassLoader);
 
         try {
-            //This class's classloader should always be the portal's classloader
-            currentThread.setContextClassLoader(this.getClass().getClassLoader());
+            currentThread.setContextClassLoader(PORTAL_CLASS_LOADER);
             return pjp.proceed();
         }
         finally {
             currentThread.setContextClassLoader(previousClassLoader);
+            PREVIOUS_CLASS_LOADER.remove();
         }
     }
 }

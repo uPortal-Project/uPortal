@@ -48,6 +48,7 @@ import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.apache.pluto.driver.container.DriverPortletConfigImpl;
 import org.apache.pluto.driver.container.DriverPortletContextImpl;
+import org.jasig.portal.portlet.dao.jpa.ThreadContextClassLoaderAspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -146,7 +147,14 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
                         + portletContext.getApplicationName());
             }
 
-            classLoaders.put(portletApp.getName(), Thread.currentThread().getContextClassLoader());
+            //TODO have the portlet servlet provide the portlet's classloader as parameter to this method
+            //This approach is needed as all pluto callbacks in uPortal have an aspect that switches the thread classloader back
+            //to uPortal's classloader.
+            ClassLoader classLoader = ThreadContextClassLoaderAspect.getPreviousClassLoader();
+            if (classLoader == null) {
+                classLoader = Thread.currentThread().getContextClassLoader();
+            }
+            classLoaders.put(portletApp.getName(), classLoader);
             for (PortletDefinition portlet : portletApp.getPortlets()) {
                 String appName = portletContext.getApplicationName();
                 if (appName == null) {
