@@ -155,6 +155,9 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider {
     @Override
     public IPortalUrlBuilder getPortalUrlBuilderByPortletFName(HttpServletRequest request, String portletFName, UrlType urlType) {
         final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByFname(request, portletFName);
+        if (portletWindow == null) {
+            throw new IllegalArgumentException("Could not find PortletWindow for fname=" + portletFName + " to create IPortalUrlBuilder");
+        }
         return this.getPortalUrlBuilderByPortletWindow(request, portletWindow, urlType);
     }
 
