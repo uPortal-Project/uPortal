@@ -25,7 +25,7 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
+<div class="fl-widget portlet search-portlet" role="section">
 
   <!-- Portlet Titlebar 
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
@@ -53,15 +53,15 @@
                     <div id="${n}searchResults">
                         <ul>
                             <li><a href="#${n}_portal"><span><spring:message code="portal.results"/></span></a></li>
-                            <li><a href="#${n}_uwPeople"><span><spring:message code="uwPeople.results"/></span></a></li>
-                            <li><a href="#${n}_uwGoogle"><span><spring:message code="uwGoogle.results"/></span></a></li>
+                            <li><a href="#${n}_uwPerson"><span><spring:message code="uwPerson.results"/></span></a></li>
+                            <li><a href="#${n}_googleAjax"><span><spring:message code="googleAjax.results"/></span></a></li>
                         </ul>
                         
                         <div id="${n}_portal">
                             <div class="search-results">
                                 <c:forEach items="${ results.results }" var="type">
-                                    <!-- Display all non uwPeople/uwGoogle results -->
-                                    <c:if test="${ type.key != 'uwPeople' and type.key != 'uwPeopleError' and type.key != 'uwGoogle' }">
+                                    <!-- Display all non uwPerson/googleAjax results -->
+                                    <c:if test="${ type.key != 'uwPerson' and type.key != 'uwPersonError' and type.key != 'googleAjax' }">
                                         <c:forEach items="${ type.value }" var="result">
                                             <div class="portlet-match search-result">
                                                 <div class="portlet_title result_title"><a class="portlet-match-link" href="${result.key}">${ result.value.title }</a></div>
@@ -73,19 +73,24 @@
                             </div>
                         </div>
                         
-                        <div id="${n}_uwPeople" class="uwPeople">
+                        <div id="${n}_uwPerson" class="uwPerson">
                           <div class="search-results">
-                            <c:forEach items="${ results['uwPeople'].value }" var="result">
+                            <c:forEach items="${ results.results['uwPersonError'] }" var="result">
+                              <div class="error-match">
+                                <div class="error-msg">${ result.value.title }</div>
+                              </div>
+                            </c:forEach>
+                            <c:forEach items="${ results.results['uwPerson'] }" var="result">
                                 <c:set var="summaryParts" value="${fn:split(result.value.summary, '|')}"/>
                                 
                                 <div class="person-match search-result">
                                   <div class="person_name result_title">${ result.value.title }</div>
-                                  <c:if test="${summaryParts[0] not empty}">
+                                  <c:if test="${not empty summaryParts[0]}">
                                     <div class="person_email">
                                       <a class="person_email-link" href="mailto:${summaryParts[0]}">${summaryParts[0]}</a>
                                     </div>
                                   </c:if>
-                                  <c:if test="${fn:length(summaryParts) gt 1 and summaryParts[1] not empty}">
+                                  <c:if test="${fn:length(summaryParts) gt 1 and not empty summaryParts[1]}">
                                     <div class="person_phone">${summaryParts[1]}</div>
                                     <div class="person_more">
                                       <a class="person_more-link" href="${result.key}">More &raquo;</a>
@@ -93,18 +98,12 @@
                                   </c:if>
                                 </div>
                             </c:forEach>
-                            <c:forEach items="${ results['uwPeopleError'].value }" var="result">
-                              <div class="error-match">
-                                <div class="error-msg">${ result.value.title }</div>
-                              </div>
-                            </c:forEach>
                           </div>
                         </div>
                         
-                        
-                        <div id="${n}_uwGoogle" class="uwGoogle">
+                        <div id="${n}_googleAjax" class="googleAjax">
                           <div class="search-results">
-                            <c:forEach items="${ results['uwGoogle'].value }" var="result">
+                            <c:forEach items="${ results.results['googleAjax'] }" var="result">
                               <div class="campus-search-result search-result">
                                 <div>
                                   <a class="result_link" href="${result.key}"><span class="result_title">${ result.value.title }</span></a>
@@ -117,6 +116,17 @@
                     </div>
                 </div>
             </div>
+
+<script type="text/javascript">
+up.jQuery(function () {
+  var $ = up.jQuery;
+  var fluid = up.fluid;
+  
+  up.jQuery(document).ready(function () {
+    up.jQuery("#${n}searchResults").tabs();
+  });
+});
+</script>
         </c:if>
 
       </div>  

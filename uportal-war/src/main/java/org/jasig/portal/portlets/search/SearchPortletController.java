@@ -22,6 +22,7 @@ package org.jasig.portal.portlets.search;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
@@ -75,10 +76,7 @@ import com.google.common.cache.CacheBuilder;
 @Controller
 @RequestMapping("VIEW")
 public class SearchPortletController {
-    /**
-     * 
-     */
-    private static final String SEARCH_RESULTS_CACHE_NAME = "searchResultsCache";
+    private static final String SEARCH_RESULTS_CACHE_NAME = SearchPortletController.class.getName() + ".searchResultsCache";
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());    
     
@@ -87,6 +85,11 @@ public class SearchPortletController {
     @Resource(name="searchServices")
     public void setPortalSearchServices(List<IPortalSearchService> searchServices) {
         this.searchServices = searchServices;
+    }
+    
+    @Resource(name="searchTabs")
+    public void setSearchTabs(Map<String, Object> searchTabMappings) {
+        
     }
 
     private IPortalUrlProvider portalUrlProvider;
@@ -140,6 +143,7 @@ public class SearchPortletController {
         // send a search query event
         response.setEvent(SearchConstants.SEARCH_REQUEST_QNAME, queryObj);
         response.setRenderParameter("queryId", queryId);
+        response.setRenderParameter("query", query);
     }
 
     
@@ -166,7 +170,7 @@ public class SearchPortletController {
                 searchResultList.addAll(serviceResults.getSearchResult());
             }
             catch (Exception e) {
-                //TODO
+                logger.warn(searchService.getClass() + " threw an exception when searching, it will be ignored. " + searchQuery, e);
             }
         }
         

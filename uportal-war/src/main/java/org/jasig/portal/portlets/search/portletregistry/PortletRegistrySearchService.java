@@ -23,7 +23,6 @@ import java.util.List;
 import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.Validate;
 import org.jasig.portal.portlet.PortletUtils;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletWindow;
@@ -40,7 +39,6 @@ import org.jasig.portal.url.IPortalUrlProvider;
 import org.jasig.portal.url.IPortletUrlBuilder;
 import org.jasig.portal.url.UrlType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Required;
 
 public class PortletRegistrySearchService implements IPortalSearchService {
 
@@ -103,16 +101,10 @@ public class PortletRegistrySearchService implements IPortalSearchService {
     }
     
     protected boolean matches(String query, IPortletDefinition portlet) {
-        if (portlet.getTitle().contains(query)) {
-            return true;
-        } else if (portlet.getTitle().contains(query)) {
-            return true;
-        } else if (portlet.getDescription() != null && portlet.getDescription().contains(query)) {
-            return true;
-        } else if (portlet.getFName().contains(query)) {
-            return true;
-        }
-        return false;
+        return portlet.getTitle().contains(query) ||
+                portlet.getName().contains(query) ||
+                (portlet.getDescription() != null && portlet.getDescription().contains(query)) ||
+                portlet.getFName().contains(query);
     }
 
 }

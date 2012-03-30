@@ -485,11 +485,17 @@
         </portlet-info>
         
         <supported-processing-event>
+            <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchRequest</qname>
+        </supported-processing-event>
+        <supported-processing-event>
             <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchResults</qname>
         </supported-processing-event>
         
         <supported-publishing-event>
             <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchRequest</qname>
+        </supported-publishing-event>
+        <supported-publishing-event>
+            <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchResults</qname>
         </supported-publishing-event>
     </portlet>
     

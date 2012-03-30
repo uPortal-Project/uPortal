@@ -35,10 +35,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestOperations;
 
 /**
+ * Service for searching using the Google Custom-Search API:
+ *      https://developers.google.com/custom-search/v1/overview
+ * 
  * @author Eric Dalquist
  * @version $Revision: 1.1 $
  */
-public class GoogleSearchController implements IPortalSearchService {
+public class GoogleCustomSearchService implements IPortalSearchService {
     public static final String QUERY_PARAM = "q";
     public static final String VERSION_PARAM = "v";
     public static final String USER_IP_PARAM = "userip";
@@ -47,7 +50,7 @@ public class GoogleSearchController implements IPortalSearchService {
     public static final String CUSTOM_SEARCH_PARAM = "cx";
     public static final String VERSION = "1.0"; 
     
-    private String baseSearchUrl = "http://ajax.googleapis.com/ajax/services/search/web?" + 
+    private static final String BASE_SEARCH_URL = "http://ajax.googleapis.com/ajax/services/search/web?" + 
             QUERY_PARAM         + "={" + QUERY_PARAM + "}&" +
             VERSION_PARAM       + "={" + VERSION_PARAM + "}&" +
             USER_IP_PARAM       + "={" + USER_IP_PARAM + "}&" +
@@ -56,10 +59,22 @@ public class GoogleSearchController implements IPortalSearchService {
     
     private String resultSize = "large";
     private String customSearchId;
-    private String resultType = "uwGoogle";
+    private String resultType = "googleCustom";
     
     private RestOperations restOperations;
     
+    public void setResultSize(String resultSize) {
+        this.resultSize = resultSize;
+    }
+
+    public void setCustomSearchId(String customSearchId) {
+        this.customSearchId = customSearchId;
+    }
+
+    public void setResultType(String resultType) {
+        this.resultType = resultType;
+    }
+
     @Autowired
     public void setRestOperations(RestOperations restOperations) {
         this.restOperations = restOperations;
@@ -76,7 +91,7 @@ public class GoogleSearchController implements IPortalSearchService {
         parameters.put(USER_IP_PARAM, request.getProperty("REMOTE_ADDR"));
         parameters.put(START_PARAM, query.getStartIndex());
 
-        final JsonNode googleResponse = this.restOperations.getForObject(this.baseSearchUrl, JsonNode.class, parameters);
+        final JsonNode googleResponse = this.restOperations.getForObject(BASE_SEARCH_URL, JsonNode.class, parameters);
         
         final SearchResults searchResults = new SearchResults();
         searchResults.setQueryId(query.getQueryId());
