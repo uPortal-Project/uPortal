@@ -19,17 +19,21 @@
 package org.jasig.portal.portlets.search;
 
 import java.io.Serializable;
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
 import org.jasig.portal.search.SearchResult;
+import org.jasig.portal.utils.Tuple;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Used to collate search results for the SearchPortletController
@@ -40,38 +44,61 @@ import com.google.common.cache.LoadingCache;
 public class PortalSearchResults implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private static final List<String> DEFAULT_TYPES = Arrays.asList("Default");
+    private final Set<String> defaultTab;
+    //Map of <result type, Set<result tabs>>
+    private final Map<String, Set<String>> resultTypeMappings;
     
-    //Map of <result type, <url, result>>
-    private final LoadingCache<String, ConcurrentMap<String, SearchResult>> results;
+    //Map of <tab-key, List<result, url>>
+    private final LoadingCache<String, List<Tuple<SearchResult, String>>> results;
     
-    public PortalSearchResults() {
-        this.results = CacheBuilder.newBuilder().<String, ConcurrentMap<String, SearchResult>>build(new CacheLoader<String, ConcurrentMap<String, SearchResult>>() {
+    public PortalSearchResults(String defaultTab, Map<String, Set<String>> resultTypeMappings) {
+        this.defaultTab = ImmutableSet.of(defaultTab);
+        this.resultTypeMappings = resultTypeMappings;
+        
+        this.results = CacheBuilder.newBuilder().<String, List<Tuple<SearchResult, String>>>build(new CacheLoader<String, List<Tuple<SearchResult, String>>>() {
             @Override
-            public ConcurrentMap<String, SearchResult> load(String key) throws Exception {
-                return new ConcurrentHashMap<String, SearchResult>();
+            public List<Tuple<SearchResult, String>> load(String key) throws Exception {
+                return Collections.synchronizedList(new LinkedList<Tuple<SearchResult,String>>());
             }
         });
     }
     
-    public ConcurrentMap<String, ConcurrentMap<String, SearchResult>> getResults() {
+    /**
+     * @return Map of tabKey -> Tuple<result, url>
+     */
+    public ConcurrentMap<String, List<Tuple<SearchResult, String>>> getResults() {
         return this.results.asMap();
     }
     
     public void addPortletSearchResults(String url, SearchResult result) {
-        final List<String> types = this.getTypes(result);
-        for (final String type : types) {
-            final Map<String, SearchResult> typeResults = this.results.getUnchecked(type);
-            typeResults.put(url, result);
+        final Set<String> tabs = this.getTabs(result);
+        for (final String tab : tabs) {
+            final List<Tuple<SearchResult, String>> typeResults = this.results.getUnchecked(tab);
+            typeResults.add(new Tuple<SearchResult, String>(result, url));
         }
     }
     
-    protected List<String> getTypes(SearchResult result) {
-        final List<String> type = result.getType();
-        if (type != null && !type.isEmpty()) {
-            return type;
+    protected Set<String> getTabs(SearchResult result) {
+        final List<String> types = result.getType();
+        
+        //Result set no type, use the default tab
+        if (types == null || types.isEmpty()) {
+            return this.defaultTab;
         }
         
-        return DEFAULT_TYPES;
+        final Set<String> tabs = new HashSet<String>();
+        
+        //For each type the search result declares lookup the tab(s) mapped to that type
+        for (final String type : types) {
+            final Set<String> mappedTabs = this.resultTypeMappings.get(type);
+            if (mappedTabs != null) {
+                tabs.addAll(mappedTabs);
+            }
+            else {
+                tabs.addAll(this.defaultTab);
+            }
+        }
+        
+        return tabs;
     }
 }

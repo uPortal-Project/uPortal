@@ -19,10 +19,16 @@
 
 package org.jasig.portal.portlets.search;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
@@ -53,6 +59,7 @@ import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;
 import org.jasig.portal.url.IPortletUrlBuilder;
 import org.jasig.portal.url.UrlType;
+import org.jasig.portal.utils.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +72,9 @@ import org.springframework.web.portlet.bind.annotation.EventMapping;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * SearchPortletController produces both a search form and results for configured
@@ -82,14 +92,54 @@ public class SearchPortletController {
     
     private List<IPortalSearchService> searchServices;
     
+    // Map from result-type -> Set<tab-key>
+    private Map<String, Set<String>> resultTypeMappings = Collections.emptyMap();
+    private List<String> tabKeys = Collections.emptyList();
+    private String defaultTabKey = "portal.results";
+    
     @Resource(name="searchServices")
     public void setPortalSearchServices(List<IPortalSearchService> searchServices) {
         this.searchServices = searchServices;
     }
     
+    /**
+     * Set the mappings from TabKey to ResultType. The map keys must be strings but the values
+     * can be either String or Collection<String>
+     */
+    @SuppressWarnings("unchecked")
     @Resource(name="searchTabs")
+    //Map of tab-key to string or collection<string> of search result types
     public void setSearchTabs(Map<String, Object> searchTabMappings) {
+        final Map<String, Set<String>> resultTypeMappingsBuilder = new LinkedHashMap<String, Set<String>>();
+        final List<String> tabKeysBuilder = new ArrayList<String>(searchTabMappings.size());
         
+        for (final Map.Entry<String, Object> tabMapping : searchTabMappings.entrySet()) {
+            final String tabKey = tabMapping.getKey();
+            tabKeysBuilder.add(tabKey);
+            
+            final Object resultTypes = tabMapping.getValue();
+            if (resultTypes instanceof Collection) {
+                for (final String resultType : (Collection<String>)resultTypes) {
+                    addTabKey(resultTypeMappingsBuilder, tabKey, resultType);
+                }
+            }
+            else {
+                final String resultType = (String)resultTypes;
+                addTabKey(resultTypeMappingsBuilder, tabKey, resultType);
+            }
+        }
+        
+        this.resultTypeMappings = resultTypeMappingsBuilder;
+        this.tabKeys = tabKeysBuilder;
+    }
+
+    protected void addTabKey(final Map<String, Set<String>> resultTypeMappingsBuilder, final String tabKey, final String resultType) {
+        Set<String> tabKeys = resultTypeMappingsBuilder.get(resultType);
+        if (tabKeys == null) {
+            tabKeys = new LinkedHashSet<String>();
+            resultTypeMappingsBuilder.put(resultType, tabKeys);
+        }
+        tabKeys.add(tabKey);
     }
 
     private IPortalUrlProvider portalUrlProvider;
@@ -125,7 +175,7 @@ public class SearchPortletController {
         queryObj.setSearchTerms(query);
         
         // Create the session-shared results object
-        final PortalSearchResults results = new PortalSearchResults();
+        final PortalSearchResults results = new PortalSearchResults(defaultTabKey, resultTypeMappings);
         
         // place the portal search results object in the session using the queryId to namespace it
         final PortletSession session = request.getPortletSession();
@@ -222,8 +272,11 @@ public class SearchPortletController {
         model.put("query", query);
 
         if (queryId != null) {
-            final PortalSearchResults results = this.getPortalSearchResults(request, queryId);
+            final PortalSearchResults portalSearchResults = this.getPortalSearchResults(request, queryId);
+            final ConcurrentMap<String, List<Tuple<SearchResult, String>>> results = portalSearchResults.getResults();
             model.put("results", results);
+            model.put("defaultTabKey", this.defaultTabKey);
+            model.put("tabKeys", this.tabKeys);
         }
 
         final boolean isMobile = isMobile(request);
