@@ -1686,7 +1686,17 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         int nextStructId = 0;
         int childStructId = 0;
         int chanId = -1;
+        IPortletDefinition portletDef = null;
         final boolean isChannel = node.getNodeName().equals("channel");
+        
+        if (isChannel) {
+            chanId = Integer.parseInt(node.getAttributes().getNamedItem("chanID").getNodeValue());
+            portletDef = this.portletDefinitionRegistry.getPortletDefinition(String.valueOf(chanId));
+            if (portletDef == null) {
+                //Portlet doesn't exist any more, drop the layout node
+                return 0;
+            }
+        }
 
         if (node.hasChildNodes()) {
             childStructId = this.saveStructure(node.getFirstChild(), structStmt, parmStmt);
@@ -1707,7 +1717,6 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
         }
         if (isChannel) {
-            chanId = Integer.parseInt(node.getAttributes().getNamedItem("chanID").getNodeValue());
             structStmt.setInt(5, chanId);
             structStmt.setNull(6, java.sql.Types.VARCHAR);
         }
@@ -1746,8 +1755,6 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         }
         final NodeList parameters = node.getChildNodes();
         if (parameters != null && isChannel) {
-            final IPortletDefinition channelDef = this.portletDefinitionRegistry.getPortletDefinition(String
-                    .valueOf(chanId));
             for (int i = 0; i < parameters.getLength(); i++) {
                 if (parameters.item(i).getNodeName().equals("parameter")) {
                     final Element parmElement = (Element) parameters.item(i);
@@ -1762,7 +1769,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                     }
                     else {
                         // override only for adhoc or if diff from chan def
-                        final IPortletDefinitionParameter cp = channelDef.getParameter(parmName);
+                        final IPortletDefinitionParameter cp = portletDef.getParameter(parmName);
                         if (cp == null || !cp.getValue().equals(parmValue)) {
                             parmStmt.clearParameters();
                             parmStmt.setInt(1, saveStructId);
