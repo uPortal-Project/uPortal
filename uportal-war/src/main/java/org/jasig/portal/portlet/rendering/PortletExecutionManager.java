@@ -47,6 +47,7 @@ import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.portlet.rendering.worker.HungWorkerAnalyzer;
 import org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker;
 import org.jasig.portal.portlet.rendering.worker.IPortletFailureExecutionWorker;
 import org.jasig.portal.portlet.rendering.worker.IPortletRenderExecutionWorker;
@@ -76,7 +77,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
     private static final long DEBUG_TIMEOUT = TimeUnit.HOURS.toMillis(1);
     private static final String PORTLET_HEADER_RENDERING_MAP = PortletExecutionManager.class.getName() + ".PORTLET_HEADER_RENDERING_MAP";
 	private static final String PORTLET_RENDERING_MAP = PortletExecutionManager.class.getName() + ".PORTLET_RENDERING_MAP";
-    
+
     protected static final String SESSION_ATTRIBUTE__PORTLET_FAILURE_CAUSE_MAP = PortletExecutionManager.class.getName() + ".PORTLET_FAILURE_CAUSE_MAP";
     
     /**
@@ -98,6 +99,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
     private IPortletWindowRegistry portletWindowRegistry;
     private IPortletEventCoordinationService eventCoordinationService;
     private IPortletWorkerFactory portletWorkerFactory;
+    private HungWorkerAnalyzer hungWorkerAnalyzer;
     
     /**
      * @param maxEventIterations The maximum number of iterations to spend dispatching events. Defaults to 100
@@ -105,7 +107,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
     public void setMaxEventIterations(int maxEventIterations) {
         this.maxEventIterations = maxEventIterations;
     }
-    
+
     @Value("${org.jasig.portal.portlet.ignoreTimeout}")
     public void setIgnoreTimeouts(boolean ignoreTimeouts) {
         this.ignoreTimeouts = ignoreTimeouts;
@@ -131,6 +133,12 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
     }
+    
+    @Autowired
+    public void setHungWorkerAnalyzer(HungWorkerAnalyzer hungWorkerAnalyzer) {
+        this.hungWorkerAnalyzer = hungWorkerAnalyzer;
+    }
+    
     
         /* (non-Javadoc)
      * @see org.springframework.web.servlet.handler.HandlerInterceptorAdapter#afterCompletion(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.Object, java.lang.Exception)
@@ -210,6 +218,11 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         }
         
     }
+    
+    @Scheduled(fixedDelay=10000)  // Every ten seconds
+    public void analyzeHungWorkers() {
+        hungWorkerAnalyzer.analyze(hungWorkers);
+    }    
 
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#doPortletAction(org.jasig.portal.portlet.om.IPortletEntityId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
@@ -877,4 +890,5 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         }
         
     }
+    
 }
