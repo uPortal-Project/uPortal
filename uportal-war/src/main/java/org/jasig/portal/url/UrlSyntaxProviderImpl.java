@@ -93,6 +93,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             "/render.userLayoutRootNode.uP",
             "/tag.idempotent.render.userLayoutRootNode.uP");
     static final String LEGACY_PARAM_PORTLET_FNAME = "uP_fname";
+    static final String LEGACY_PARAM_PORTLET_REQUEST_TYPE = "pltc_type";
     static final String LEGACY_PARAM_PORTLET_STATE = "pltc_state";
     static final String LEGACY_PARAM_PORTLET_MODE = "pltc_mode";
     static final String LEGACY_PARAM_PORTLET_PARAM_PREFX = "pltp_";
@@ -575,6 +576,12 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
 
                 final PortletRequestInfoImpl portletRequestInfo = portalRequestInfo.getPortletRequestInfo(portletWindowId);
                 
+                //Check the portlet request type
+                final String[] type = parameterMap.remove(LEGACY_PARAM_PORTLET_REQUEST_TYPE);
+                if (type != null && type.length > 0 && "ACTION".equals(type[0])) {
+                    portalRequestInfo.setUrlType(UrlType.ACTION);
+                }
+                
                 //Set the window state
                 final String[] state = parameterMap.remove(LEGACY_PARAM_PORTLET_STATE);
                 if (state != null && state.length > 0) {
@@ -601,6 +608,10 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                         portletParameters.put(name, Arrays.asList(parameterEntry.getValue()));
                     }
                 }
+                
+                //Set the url state based on the window state
+                final UrlState urlState = this.determineUrlState(portletWindow, portletRequestInfo.getWindowState());
+                portalRequestInfo.setUrlState(urlState);
             }
             else {
                 logger.debug("Could not find portlet for legacy fname fname parameter {}", fname[0]);
@@ -875,7 +886,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             final IPortletUrlBuilder targetedPortletUrlBuilder = portletUrlBuilders.get(targetedPortletWindowId);
             
             //Resource requests will never have a requested window state
-            urlState = this.determineUrlState(urlType, portletWindow, targetedPortletUrlBuilder);
+            urlState = this.determineUrlState(portletWindow, targetedPortletUrlBuilder);
             
             final String targetedPortletString = urlNodeSyntaxHelper.getFolderNameForPortlet(request, targetedPortletWindowId);
             
@@ -1010,7 +1021,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
     /**
      * Determine the {@link UrlState} to use for the targeted portlet window
      */
-    protected UrlState determineUrlState(final UrlType urlType, final IPortletWindow portletWindow, final IPortletUrlBuilder targetedPortletUrlBuilder) {
+    protected UrlState determineUrlState(final IPortletWindow portletWindow, final IPortletUrlBuilder targetedPortletUrlBuilder) {
         final WindowState requestedWindowState;
         if (targetedPortletUrlBuilder == null) {
             requestedWindowState = null;
@@ -1019,6 +1030,13 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             requestedWindowState = targetedPortletUrlBuilder.getWindowState();
         }
         
+        return determineUrlState(portletWindow, requestedWindowState);
+    }
+
+    /**
+     * Determine the {@link UrlState} to use for the targeted portlet window
+     */
+    protected UrlState determineUrlState(final IPortletWindow portletWindow, final WindowState requestedWindowState) {
         //Determine the UrlState based on the WindowState of the targeted portlet 
         final WindowState currentWindowState = portletWindow.getWindowState();
         final WindowState urlWindowState = requestedWindowState != null ? requestedWindowState : currentWindowState;

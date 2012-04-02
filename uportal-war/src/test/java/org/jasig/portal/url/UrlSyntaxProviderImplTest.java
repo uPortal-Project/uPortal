@@ -708,8 +708,8 @@ public class UrlSyntaxProviderImplTest {
         assertNotNull(portalRequestInfo);
         assertNull(portalRequestInfo.getTargetedLayoutNodeId());
         assertEquals(portletWindowId1, portalRequestInfo.getTargetedPortletWindowId());
-//        assertEquals(UrlState.DETACHED, portalRequestInfo.getUrlState());
-//        assertEquals(UrlType.ACTION, portalRequestInfo.getUrlType());
+        assertEquals(UrlState.DETACHED, portalRequestInfo.getUrlState());
+        assertEquals(UrlType.ACTION, portalRequestInfo.getUrlType());
         
         final Map<IPortletWindowId, ? extends IPortletRequestInfo> portletRequestInfoMap = portalRequestInfo.getPortletRequestInfoMap();
         assertNotNull(portletRequestInfoMap);
@@ -751,8 +751,8 @@ public class UrlSyntaxProviderImplTest {
         assertNotNull(portalRequestInfo);
         assertEquals("n12", portalRequestInfo.getTargetedLayoutNodeId());
         assertNull(portalRequestInfo.getTargetedPortletWindowId());
-//        assertEquals(UrlState.DETACHED, portalRequestInfo.getUrlState());
-//        assertEquals(UrlType.ACTION, portalRequestInfo.getUrlType());
+        assertEquals(UrlState.NORMAL, portalRequestInfo.getUrlState());
+        assertEquals(UrlType.RENDER, portalRequestInfo.getUrlType());
         
         final Map<IPortletWindowId, ? extends IPortletRequestInfo> portletRequestInfoMap = portalRequestInfo.getPortletRequestInfoMap();
         assertNotNull(portletRequestInfoMap);
