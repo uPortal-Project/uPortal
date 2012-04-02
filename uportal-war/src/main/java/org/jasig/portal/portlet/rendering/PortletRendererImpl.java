@@ -64,6 +64,7 @@ import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.portlet.rendering.worker.HungWorkerAnalyzer;
 import org.jasig.portal.portlet.session.PortletSessionAdministrativeRequestListener;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
@@ -102,6 +103,7 @@ public class PortletRendererImpl implements IPortletRenderer {
     private IPortletCacheControlService portletCacheControlService;
     private IPortalEventFactory portalEventFactory;
     private IUrlSyntaxProvider urlSyntaxProvider;
+    private HungWorkerAnalyzer hungWorkerAnalyzer;
 
     @Autowired
     public void setUrlSyntaxProvider(IUrlSyntaxProvider urlSyntaxProvider) {
@@ -135,6 +137,10 @@ public class PortletRendererImpl implements IPortletRenderer {
 			IPortletCacheControlService portletCacheControlService) {
 		this.portletCacheControlService = portletCacheControlService;
 	}
+    @Autowired
+    public void setHungWorkerAnalyzer(HungWorkerAnalyzer hungWorkerAnalyzer) {
+        this.hungWorkerAnalyzer = hungWorkerAnalyzer;
+    }
 	
 	
 	/**
@@ -297,6 +303,11 @@ public class PortletRendererImpl implements IPortletRenderer {
         	}
         }
     	return result;
+    }
+    
+    @Override
+    public HungWorkerAnalyzer getHungWorkerAnalyzer() {
+        return hungWorkerAnalyzer;
     }
     
     /**

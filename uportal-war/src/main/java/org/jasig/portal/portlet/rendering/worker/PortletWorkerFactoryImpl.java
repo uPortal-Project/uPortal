@@ -99,15 +99,15 @@ public class PortletWorkerFactoryImpl implements IPortletWorkerFactory {
      */
     @Override
     public IPortletActionExecutionWorker createActionWorker(HttpServletRequest request, HttpServletResponse response, IPortletWindowId portletWindowId) {
-        final String portletFname = this.getPortletFname(request, portletWindowId);
-        return new PortletActionExecutionWorker(portletThreadPool, executionInterceptors, portletRenderer, request, response, portletWindowId, portletFname);
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
+        return new PortletActionExecutionWorker(portletThreadPool, executionInterceptors, portletRenderer, request, response, portletWindow);
     }
     
 
     @Override
     public IPortletEventExecutionWorker createEventWorker(HttpServletRequest request, HttpServletResponse response, IPortletWindowId portletWindowId, Event event) {
-        final String portletFname = this.getPortletFname(request, portletWindowId);
-        return new PortletEventExecutionWorker(portletThreadPool, executionInterceptors, portletRenderer, request, response, portletWindowId, portletFname, event);
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
+        return new PortletEventExecutionWorker(portletThreadPool, executionInterceptors, portletRenderer, request, response, portletWindow, event);
     }
 
 
@@ -119,20 +119,20 @@ public class PortletWorkerFactoryImpl implements IPortletWorkerFactory {
 	public IPortletRenderExecutionWorker createRenderHeaderWorker(
 			HttpServletRequest request, HttpServletResponse response,
 			IPortletWindowId portletWindowId) {
-	    final String portletFname = this.getPortletFname(request, portletWindowId);
-		return new PortletRenderHeaderExecutionWorker(portletThreadPool,executionInterceptors, portletRenderer, request, response, portletWindowId, portletFname);
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
+		return new PortletRenderHeaderExecutionWorker(portletThreadPool,executionInterceptors, portletRenderer, request, response, portletWindow);
 	}
 
 	@Override
     public IPortletRenderExecutionWorker createRenderWorker(HttpServletRequest request, HttpServletResponse response, IPortletWindowId portletWindowId) {
-	    final String portletFname = this.getPortletFname(request, portletWindowId);
-        return new PortletRenderExecutionWorker(portletThreadPool, executionInterceptors, portletRenderer, request, response, portletWindowId, portletFname);
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
+        return new PortletRenderExecutionWorker(portletThreadPool, executionInterceptors, portletRenderer, request, response, portletWindow);
     }
 
     @Override
     public IPortletResourceExecutionWorker createResourceWorker(HttpServletRequest request, HttpServletResponse response, IPortletWindowId portletWindowId) {
-        final String portletFname = this.getPortletFname(request, portletWindowId);
-        return new PortletResourceExecutionWorker(portletThreadPool, executionInterceptors, portletRenderer, request, response, portletWindowId, portletFname);
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
+        return new PortletResourceExecutionWorker(portletThreadPool, executionInterceptors, portletRenderer, request, response, portletWindow);
     }
     
     @Override

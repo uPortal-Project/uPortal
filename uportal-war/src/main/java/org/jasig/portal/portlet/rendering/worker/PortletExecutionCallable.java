@@ -106,6 +106,11 @@ final class PortletExecutionCallable<V> extends FutureTask<V> implements Callabl
         return this.portletExecutionContext.getDuration();
     }
 
+    @Override
+    public long getApplicableTimeout() {
+        return this.portletExecutionContext.getApplicableTimeout();
+    }
+
     /* (non-Javadoc)
      * @see java.util.concurrent.Callable#call()
      */
@@ -113,4 +118,5 @@ final class PortletExecutionCallable<V> extends FutureTask<V> implements Callabl
     public V call() throws Exception {
         return this.callable.call();
     }
+
 }
