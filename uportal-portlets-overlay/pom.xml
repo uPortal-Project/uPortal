@@ -17,8 +17,8 @@
 
     <modules>
         <module>BookmarksPortlet</module>
-        <module>cas</module>
-        <module>cas-proxy-test-portlet</module>
+       <!-- <module>cas</module>
+        <module>cas-proxy-test-portlet</module>-->
         <module>email-preview</module>
         <module>FunctionalTestsPortlet</module>
         <module>jasig-widget-portlets</module>
