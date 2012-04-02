@@ -21,23 +21,22 @@ package org.jasig.portal.rendering.xslt;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.jasig.portal.layout.IStylesheetUserPreferencesService;
+import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
 import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 
 /**
- * Returns {@link StructureStylesheetUserPreferences}
+ * Returns theme {@link IStylesheetUserPreferences}
  * 
  * @author Eric Dalquist
  * @version $Revision$
+ * @see IStylesheetUserPreferencesService#getThemeStylesheetUserPreferences(HttpServletRequest)
  */
-public class ThemeTransformerConfigurationSource extends PreferencesTransformerConfigurationSource {
+public class ThemeStylesheetUserPreferencesTransformerConfigurationSource extends StylesheetUserPreferencesTransformerConfigurationSource {
     
     @Override
-    protected String getName() {
-        return "ThemeTransformerConfigurationSource";
+    protected PreferencesScope getStylesheetPreferencesScope(HttpServletRequest request) {
+        return PreferencesScope.THEME;
     }
-    
-    @Override
-    protected IStylesheetUserPreferences getStylesheetUserPreferences(HttpServletRequest request) {
-        return this.stylesheetUserPreferencesService.getThemeStylesheetUserPreferences(request);
-    }
+
 }

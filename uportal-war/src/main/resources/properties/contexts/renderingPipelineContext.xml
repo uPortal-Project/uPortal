@@ -80,7 +80,8 @@
             <bean class="org.jasig.portal.rendering.xslt.MergingTransformerConfigurationSource">
                 <property name="sources">
                     <list>
-                        <bean class="org.jasig.portal.rendering.xslt.StructureTransformerConfigurationSource" />
+                        <bean class="org.jasig.portal.rendering.xslt.StructureStylesheetDescriptorTransformerConfigurationSource"/>
+                        <bean class="org.jasig.portal.rendering.xslt.StructureStylesheetUserPreferencesTransformerConfigurationSource"/>
                         <bean class="org.jasig.portal.rendering.xslt.StaticTransformerConfigurationSource">
                             <property name="parameters">
                                 <map>
@@ -136,8 +137,29 @@
             <bean class="org.jasig.portal.rendering.xslt.MergingTransformerConfigurationSource">
                 <property name="sources">
                     <list>
-                        <bean class="org.jasig.portal.rendering.xslt.ThemeTransformerConfigurationSource" />
-                        <!-- TODO move most of these parameters into their own little configuration source beans so they can provide good input to the cache key -->
+                        <bean class="org.jasig.portal.rendering.xslt.ThemeStylesheetDescriptorTransformerConfigurationSource" />
+                        <!-- Uncomment and configure to map a user attribute value to various skin names
+                        <bean class="org.jasig.portal.rendering.xslt.UserAttributeSkinMappingTransformerConfigurationSource">
+                            <property name="skinAttributeName" value="serverName" />
+                            <property name="attributeToSkinMap">
+                                <map>
+                                    <entry key=".*\.example\.com" value="example.com" />
+                                </map>
+                            </property>
+                        </bean>
+                        -->
+                        <!-- Uncomment and configure to map user group membership to various skin names
+                        <bean class="org.jasig.portal.rendering.xslt.UserGroupSkinMappingTransformerConfigurationSource">
+                            <property name="groupToSkinMap">
+                                <map>
+                                    <entry key="pags.studends" value="students" />
+                                    <entry key="pags.staff" value="staff" />
+                                    <entry key="pags.faculty" value="staff" />
+                                </map>
+                            </property>
+                        </bean>
+                        -->
+                        <bean class="org.jasig.portal.rendering.xslt.ThemeStylesheetUserPreferencesTransformerConfigurationSource" />
                         <bean class="org.jasig.portal.rendering.xslt.StaticTransformerConfigurationSource">
                             <property name="parameters">
                                 <map>

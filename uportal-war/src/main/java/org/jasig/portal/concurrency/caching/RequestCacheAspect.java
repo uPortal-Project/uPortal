@@ -49,17 +49,19 @@ import org.springframework.web.context.request.RequestAttributes;
  * @version $Revision$
  */
 @Aspect
-@Component
+@Component("requestCacheAspect")
 public class RequestCacheAspect {
     private static final String CACHE_MAP = RequestCacheAspect.class.getName() + ".CACHE_MAP";
     private static final Object NULL_PLACEHOLDER = new Object();
     
-    protected final AtomicLong hitTime = new AtomicLong();
-    protected final AtomicInteger hitCount = new AtomicInteger();
-    protected final AtomicLong missTime = new AtomicLong();
-    protected final AtomicInteger missCount = new AtomicInteger();
-    
     protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    private volatile boolean logTimes = false;
+    private final AtomicLong hitTime = new AtomicLong();
+    private final AtomicLong missTime = new AtomicLong();
+    private final AtomicInteger hitCount = new AtomicInteger();
+    private final AtomicInteger missCount = new AtomicInteger();
+    
     private IPortalRequestUtils portalRequestUtils;
 
     @Autowired
@@ -153,18 +155,44 @@ public class RequestCacheAspect {
             throw t;
         }
     }
+    
+    public final boolean isLogTimes() {
+        return logTimes || logger.isTraceEnabled();
+    }
+
+    public final void setLogTimes(boolean logTimes) {
+        this.logTimes = logTimes;
+    }
+
+    public final long getHitTimeAvg() {
+        final int hits = this.getHitCount();
+        return this.hitTime.get() / (hits == 0 ? 1 : hits);
+    }
+
+    public final long getMissTimeAvg() {
+        final int misses = this.getMissCount();
+        return this.missTime.get() / (misses == 0 ? 1 : misses);
+    }
+
+    public final int getHitCount() {
+        return hitCount.get();
+    }
+
+    public final int getMissCount() {
+        return missCount.get();
+    }
 
     private void logMiss(final long start) {
-        if (this.logger.isTraceEnabled()) {
+        this.missCount.incrementAndGet();
+        if (this.isLogTimes()) {
             this.missTime.addAndGet(TimeUnit.NANOSECONDS.toMicros(System.nanoTime() - start));
-            this.missCount.incrementAndGet();
         }
     }
 
     private void logHit(final long start) {
-        if (this.logger.isTraceEnabled()) {
+        this.hitCount.incrementAndGet();
+        if (this.isLogTimes()) {
             this.hitTime.addAndGet(TimeUnit.NANOSECONDS.toMicros(System.nanoTime() - start));
-            this.hitCount.incrementAndGet();
         }
     }
 

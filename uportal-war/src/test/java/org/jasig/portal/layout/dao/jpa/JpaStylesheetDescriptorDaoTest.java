@@ -28,6 +28,8 @@ import static org.junit.Assert.assertNotSame;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Properties;
 import java.util.concurrent.Callable;
 
 import javax.persistence.EntityManager;
@@ -234,9 +236,9 @@ public class JpaStylesheetDescriptorDaoTest extends BaseJpaDaoTest {
                 final IStylesheetUserPreferences stylesheetUserPreferences = stylesheetUserPreferencesDao.getStylesheetUserPreferences(supId);
                 
                 assertNotNull(stylesheetUserPreferences);
-                assertEquals(Collections.singletonMap("activeTab", "1"), stylesheetUserPreferences.getStylesheetParameters());
-                assertEquals(Collections.singletonMap("media", "xhtml"), stylesheetUserPreferences.getOutputProperties());
-                assertEquals(Collections.singletonMap("deletable", "false"), stylesheetUserPreferences.getLayoutAttributes("u1l1n1"));
+                assertEquals(Collections.singletonMap("activeTab", "1"), stylesheetUserPreferences.populateStylesheetParameters(new LinkedHashMap<String, String>()));
+                assertEquals(Collections.singletonMap("media", "xhtml"), stylesheetUserPreferences.populateOutputProperties(new Properties()));
+                assertEquals(Collections.singletonMap("deletable", "false"), stylesheetUserPreferences.populateLayoutAttributes("u1l1n1", new LinkedHashMap<String, String>()));
                 
                 return null;
             }
@@ -250,9 +252,9 @@ public class JpaStylesheetDescriptorDaoTest extends BaseJpaDaoTest {
                 final IStylesheetUserPreferences stylesheetUserPreferences = stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, person, userProfile);
                 
                 assertNotNull(stylesheetUserPreferences);
-                assertEquals(Collections.singletonMap("activeTab", "1"), stylesheetUserPreferences.getStylesheetParameters());
-                assertEquals(Collections.singletonMap("media", "xhtml"), stylesheetUserPreferences.getOutputProperties());
-                assertEquals(Collections.singletonMap("deletable", "false"), stylesheetUserPreferences.getLayoutAttributes("u1l1n1"));
+                assertEquals(Collections.singletonMap("activeTab", "1"), stylesheetUserPreferences.populateStylesheetParameters(new LinkedHashMap<String, String>()));
+                assertEquals(Collections.singletonMap("media", "xhtml"), stylesheetUserPreferences.populateOutputProperties(new Properties()));
+                assertEquals(Collections.singletonMap("deletable", "false"), stylesheetUserPreferences.populateLayoutAttributes("u1l1n1", new LinkedHashMap<String, String>()));
                 
                 stylesheetUserPreferencesDao.deleteStylesheetUserPreferences(stylesheetUserPreferences);
                 

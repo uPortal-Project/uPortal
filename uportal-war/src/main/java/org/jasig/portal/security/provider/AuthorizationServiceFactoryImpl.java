@@ -23,6 +23,7 @@ package org.jasig.portal.security.provider;
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IAuthorizationServiceFactory;
+import org.jasig.portal.spring.locator.AuthorizationServiceLocator;
 
 /**
  * <p>The factory class for the uPortal reference 
@@ -30,12 +31,13 @@ import org.jasig.portal.security.IAuthorizationServiceFactory;
  *
  * @author Dan Ellentuck
  * @version $Revision$
+ * @deprecated
  */
-public class AuthorizationServiceFactoryImpl 
-    implements IAuthorizationServiceFactory {
+@Deprecated
+public class AuthorizationServiceFactoryImpl implements IAuthorizationServiceFactory {
     
-  public IAuthorizationService getAuthorization() 
-      throws AuthorizationException {
-    return AuthorizationImpl.singleton();
-  }
+    @Override
+    public IAuthorizationService getAuthorization() throws AuthorizationException {
+        return AuthorizationServiceLocator.getAuthorizationService();
+    }
 }

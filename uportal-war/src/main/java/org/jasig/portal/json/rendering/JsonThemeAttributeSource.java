@@ -20,8 +20,8 @@ package org.jasig.portal.json.rendering;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
-import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.rendering.StylesheetAttributeSource;
 
 public class JsonThemeAttributeSource extends StylesheetAttributeSource {
@@ -30,10 +30,10 @@ public class JsonThemeAttributeSource extends StylesheetAttributeSource {
     public IStylesheetDescriptor getStylesheetDescriptor(HttpServletRequest request) {
         return this.stylesheetDescriptorDao.getStylesheetDescriptorByName("JsonLayout");
     }
-    
+
     @Override
-    public IStylesheetUserPreferences getStylesheetUserPreferences(HttpServletRequest request) {
-        return this.stylesheetUserPreferencesService.getThemeStylesheetUserPreferences(request);
+    public PreferencesScope getStylesheetPreferencesScope(HttpServletRequest request) {
+        return PreferencesScope.THEME;
     }
 }
 

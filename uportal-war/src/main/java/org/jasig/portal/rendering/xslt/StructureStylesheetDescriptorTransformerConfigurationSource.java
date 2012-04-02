@@ -16,28 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.rendering.xslt;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.layout.om.IStylesheetUserPreferences;
+import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
 
-/**
- * Returns {@link StructureStylesheetUserPreferences}
- * 
- * @author Eric Dalquist
- * @version $Revision$
- */
-public class StructureTransformerConfigurationSource extends PreferencesTransformerConfigurationSource {
-    
+public class StructureStylesheetDescriptorTransformerConfigurationSource extends
+        StylesheetDescriptorTransformerConfigurationSource {
+
     @Override
-    protected String getName() {
-        return "StructureTransformerConfigurationSource";
+    protected PreferencesScope getStylesheetPreferencesScope(HttpServletRequest request) {
+        return PreferencesScope.STRUCTURE;
     }
-    
-    @Override
-    protected IStylesheetUserPreferences getStylesheetUserPreferences(HttpServletRequest request) {
-        return this.stylesheetUserPreferencesService.getStructureStylesheetUserPreferences(request);
-    }
+
 }

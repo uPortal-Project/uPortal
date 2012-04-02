@@ -36,6 +36,7 @@ import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionPolicy;
 import org.jasig.portal.services.GroupService;
+import org.springframework.stereotype.Service;
 
 /**
  * If there exists a GRANT explicitly for the Principal for the Activity under consideration,
@@ -64,6 +65,7 @@ import org.jasig.portal.services.GroupService;
  *  Principal -- Some other group -- Bigger other group (GRANT) -- Huge group
  *  Results in GRANT because there is an unblocked path to a GRANT.
  */
+@Service("anyUnblockedGrantPermissionPolicy")
 public class AnyUnblockedGrantPermissionPolicy
     implements IPermissionPolicy {
 

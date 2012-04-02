@@ -29,6 +29,7 @@
            
     <bean id="minimizedStateHandlerInterceptor" class="org.jasig.portal.portlets.MinimizedStateHandlerInterceptor" />           
 
+    <bean id="requireValidSessionFilter" class="org.jasig.portal.url.RequireValidSessionFilter" />
     <bean id="urlCanonicalizingFilter" class="org.jasig.portal.url.UrlCanonicalizingFilter" />
     <bean id="createPortletCookieFilter" class="org.jasig.portal.utils.web.CreatePortletCookieFilter"/>
     <bean id="multipartResolver"

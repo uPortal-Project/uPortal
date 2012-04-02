@@ -52,6 +52,7 @@ public class FragmentAdministrationHelper {
 	private static final String UP_USERS = "UP_USERS";
 	private static final String IMPERSONATE = "IMPERSONATE";
 	private ConfigurationLoader configurationLoader;
+	private IAuthorizationService authorizationService;
 	
 	/**
 	 * @param legacyConfigurationLoader the legacyConfigurationLoader to set
@@ -62,14 +63,19 @@ public class FragmentAdministrationHelper {
 		this.configurationLoader = configurationLoader;
 	}
 
-	/**
+	@Autowired
+	public void setAuthorizationService(IAuthorizationService authorizationService) {
+        this.authorizationService = authorizationService;
+    }
+
+
+    /**
 	 * 
 	 * @param remoteUser
 	 * @return
 	 */
 	public Map<String, String> getAuthorizedDlmFragments(String remoteUser) {
 		List<FragmentDefinition> fragments = this.configurationLoader.getFragments();
-		IAuthorizationService authorizationService = AuthorizationImpl.singleton();
 		IAuthorizationPrincipal principal = authorizationService.newPrincipal(remoteUser, IPerson.class);
 		Map<String, String> results = new TreeMap<String, String>();
 		for(FragmentDefinition frag: fragments) {
@@ -87,7 +93,6 @@ public class FragmentAdministrationHelper {
 	 * @return "yes" for success, "no" otherwise
 	 */
 	public String swapToFragmentOwner(final String remoteUser, final String targetFragmentOwner, RequestContext requestContext) {
-		IAuthorizationService authorizationService = AuthorizationImpl.singleton();
 		IAuthorizationPrincipal principal = authorizationService.newPrincipal(remoteUser, IPerson.class);
 		if(principal.hasPermission(UP_USERS, IMPERSONATE, targetFragmentOwner)) {
 			PortletRequest portletRequest = (PortletRequest) requestContext.getExternalContext().getNativeRequest();

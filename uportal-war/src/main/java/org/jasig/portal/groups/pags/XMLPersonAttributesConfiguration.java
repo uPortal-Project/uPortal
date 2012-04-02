@@ -118,8 +118,8 @@ public class XMLPersonAttributesConfiguration
                            IPersonTester testerInst = initializeTester(tester, attribute, value);
                            tg.addTest(testerInst);
                         }
-                        groupDef.addTestGroup(tg);
                     }
+		    groupDef.addTestGroup(tg);
                   }
                }
             } else if (tagName.equals("members")) {

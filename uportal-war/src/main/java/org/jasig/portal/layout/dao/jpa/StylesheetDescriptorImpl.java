@@ -233,6 +233,8 @@ public class StylesheetDescriptorImpl implements IStylesheetDescriptor {
 
     @Override
     public IOutputPropertyDescriptor getOutputPropertyDescriptor(String name) {
+        Validate.notEmpty(name, "name cannot be null");
+        
         return this.outputProperties.get(name);
     }
 
@@ -243,6 +245,8 @@ public class StylesheetDescriptorImpl implements IStylesheetDescriptor {
 
     @Override
     public IOutputPropertyDescriptor removeOutputPropertyDescriptor(String name) {
+        Validate.notEmpty(name, "name cannot be null");
+        
         return this.outputProperties.remove(name);
     }
 
@@ -258,6 +262,8 @@ public class StylesheetDescriptorImpl implements IStylesheetDescriptor {
 
     @Override
     public IStylesheetParameterDescriptor getStylesheetParameterDescriptor(String name) {
+        Validate.notEmpty(name, "name cannot be null");
+        
         return this.stylesheetParameters.get(name);
     }
 
@@ -269,6 +275,8 @@ public class StylesheetDescriptorImpl implements IStylesheetDescriptor {
 
     @Override
     public IStylesheetParameterDescriptor removeStylesheetParameterDescriptor(String name) {
+        Validate.notEmpty(name, "name cannot be null");
+        
         return this.stylesheetParameters.remove(name);
     }
 
@@ -284,6 +292,8 @@ public class StylesheetDescriptorImpl implements IStylesheetDescriptor {
 
     @Override
     public ILayoutAttributeDescriptor getLayoutAttributeDescriptor(String name) {
+        Validate.notEmpty(name, "name cannot be null");
+        
         return this.layoutAttributes.get(name);
     }
 

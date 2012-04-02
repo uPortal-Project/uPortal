@@ -123,27 +123,27 @@ This project includes:
   Spring LDAP Core under Apache License, Version 2.0
   Spring LDAP Java 5 support under Apache License, Version 2.0
   Spring Web Flow under Apache License, Version 2.0
-  spring-aop under Apache License, Version 2.0
-  spring-asm under Apache License, Version 2.0
-  spring-aspects under Apache License, Version 2.0
-  spring-beans under Apache License, Version 2.0
-  spring-context under Apache License, Version 2.0
-  spring-context-support under Apache License, Version 2.0
-  spring-core under Apache License, Version 2.0
-  spring-expression under Apache License, Version 2.0
-  spring-jdbc under Apache License, Version 2.0
+  spring-aop under The Apache Software License, Version 2.0
+  spring-asm under The Apache Software License, Version 2.0
+  spring-aspects under The Apache Software License, Version 2.0
+  spring-beans under The Apache Software License, Version 2.0
+  spring-context under The Apache Software License, Version 2.0
+  spring-context-support under The Apache Software License, Version 2.0
+  spring-core under The Apache Software License, Version 2.0
+  spring-expression under The Apache Software License, Version 2.0
+  spring-jdbc under The Apache Software License, Version 2.0
   spring-modules-cache under Apache License, Version 2.0
-  spring-orm under Apache License, Version 2.0
-  spring-oxm under Apache License, Version 2.0
+  spring-orm under The Apache Software License, Version 2.0
+  spring-oxm under The Apache Software License, Version 2.0
   spring-security-config under The Apache Software License, Version 2.0
   spring-security-core under The Apache Software License, Version 2.0
   spring-security-crypto under The Apache Software License, Version 2.0
   spring-security-web under The Apache Software License, Version 2.0
-  spring-test under Apache License, Version 2.0
-  spring-tx under Apache License, Version 2.0
-  spring-web under Apache License, Version 2.0
-  spring-webmvc under Apache License, Version 2.0
-  spring-webmvc-portlet under Apache License, Version 2.0
+  spring-test under The Apache Software License, Version 2.0
+  spring-tx under The Apache Software License, Version 2.0
+  spring-web under The Apache Software License, Version 2.0
+  spring-webmvc under The Apache Software License, Version 2.0
+  spring-webmvc-portlet under The Apache Software License, Version 2.0
   standard under Apache License, Version 2.0
   Stax2 API under The BSD License
   StaxMate under BSD

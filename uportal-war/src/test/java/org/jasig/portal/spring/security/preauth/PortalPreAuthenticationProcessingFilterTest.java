@@ -36,15 +36,16 @@ import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.spring.security.PortalPersonUserDetails;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public class PortalPreAuthenticationProcessingFilterTest {
-
-    PortalPreAuthenticatedProcessingFilter filter = new PortalPreAuthenticatedProcessingFilter();
+    @InjectMocks PortalPreAuthenticatedProcessingFilter filter;
 
     @Mock FilterChain filterChain;
     @Mock HttpServletRequest request;
@@ -55,13 +56,16 @@ public class PortalPreAuthenticationProcessingFilterTest {
     @Mock ISecurityContext context;
     @Mock Authentication auth;
     @Mock SecurityContext initialContext;
+    @Mock AuthenticationManager authenticationManager;
     
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        filter.setPersonManager(personManager);
+        filter.setAuthenticationService(new org.jasig.portal.services.Authentication());
+        filter.afterPropertiesSet();
        
         when(request.getSession(false)).thenReturn(session);
+        when(request.getSession(true)).thenReturn(session);
         when(personManager.getPerson(request)).thenReturn(person);
         when(person.getName()).thenReturn("testuser");
         when(person.isGuest()).thenReturn(false);

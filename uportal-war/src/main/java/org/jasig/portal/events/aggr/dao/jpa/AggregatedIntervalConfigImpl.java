@@ -72,7 +72,7 @@ public class AggregatedIntervalConfigImpl extends BaseAggregatedDimensionConfigI
     @JoinTable(name="UP_EVENT_AGGR_CONF_INTRVL_INC", joinColumns = @JoinColumn(name = "UP_EVENT_AGGR_CONF_INTRVL_ID"))
     @Fetch(FetchMode.JOIN)
     @Enumerated(EnumType.STRING)
-    @Column(name="INTERVAL")
+    @Column(name="AGGR_INTERVAL")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private final Set<AggregationInterval> includedIntervals;
     
@@ -80,7 +80,7 @@ public class AggregatedIntervalConfigImpl extends BaseAggregatedDimensionConfigI
     @JoinTable(name="UP_EVENT_AGGR_CONF_INTRVL_EXC", joinColumns = @JoinColumn(name = "UP_EVENT_AGGR_CONF_INTRVL_ID"))
     @Fetch(FetchMode.JOIN)
     @Enumerated(EnumType.STRING)
-    @Column(name="INTERVAL")
+    @Column(name="AGGR_INTERVAL")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private final Set<AggregationInterval> excludedIntervals;
 

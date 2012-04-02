@@ -177,8 +177,8 @@ up.jQuery(function() {
     var $ = up.jQuery;
 
     var pager;
-    var targetUrl = "<c:url value="/api/assignments/target/2.${ person.name }.json?includeInherited=true"/>";
-    var principalUrl = "<c:url value="/api/assignments/principal/2.${ person.name }.json?includeInherited=true"/>";
+    var targetUrl = "<c:url value="/api/assignments/target/${ personEntity.principalString }.json?includeInherited=true"/>";
+    var principalUrl = "<c:url value="/api/assignments/principal/${ personEntity.principalString }.json?includeInherited=true"/>";
     var editUrl = "${editUrl}";
     var deleteUrl = "${deleteUrl}";
 

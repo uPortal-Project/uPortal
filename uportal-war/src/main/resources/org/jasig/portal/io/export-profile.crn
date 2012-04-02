@@ -71,7 +71,7 @@
                                                 <attribute key="themeStylesheetPrefs">${groovy(stylesheetUserPreferencesDao.getStylesheetUserPreferences(themeStylesheetDesc, USER_ID, PROFILE_ID))}</attribute>
                                                 <subtasks>
                                                     <if test="${groovy(structureStylesheetPrefs != null)}">
-                                                        <for-each attribute-name="paramEntry" items="${groovy(structureStylesheetPrefs.getStylesheetParameters().entrySet())}">
+                                                        <for-each attribute-name="paramEntry" items="${groovy(structureStylesheetPrefs.populateStylesheetParameters(new java.util.LinkedHashMap()).entrySet())}">
                                                             <append-node parent="${singleNode(structure)}">
                                                                 <parameter>
                                                                     <name>${groovy(paramEntry.getKey())}</name>
@@ -81,7 +81,7 @@
                                                         </for-each>
                                                     </if>
                                                     <if test="${groovy(themeStylesheetPrefs != null)}">
-                                                        <for-each attribute-name="paramEntry" items="${groovy(themeStylesheetPrefs.getStylesheetParameters().entrySet())}">
+                                                        <for-each attribute-name="paramEntry" items="${groovy(themeStylesheetPrefs.populateStylesheetParameters(new java.util.LinkedHashMap()).entrySet())}">
                                                             <append-node parent="${singleNode(theme)}">
                                                                 <parameter>
                                                                     <name>${groovy(paramEntry.getKey())}</name>

@@ -1,0 +1,53 @@
+{
+    "errors": [],
+ "categories":  [
+    {
+   "entries":    [
+        {
+     "body": "The room you requested is now available.",
+     "dismissed": false,
+     "dueDate":      {
+      "date": 9,
+      "day": 2,
+      "hours": 11,
+      "minutes": 57,
+      "month": 7,
+      "seconds": 28,
+      "time": 1312916248695,
+      "timezoneOffset": 420,
+      "year": 111
+     },
+     "endDate":      {
+      "date": 9,
+      "day": 2,
+      "hours": 11,
+      "minutes": 57,
+      "month": 7,
+      "seconds": 28,
+      "time": 1312916248695,
+      "timezoneOffset": 420,
+      "year": 111
+     },
+     "imageUrl": "http://library.university/studentlife.png",
+     "link": "http://library.university/studentlife",
+     "priority": 3,
+     "startDate":      {
+      "date": 4,
+      "day": 4,
+      "hours": 11,
+      "minutes": 57,
+      "month": 7,
+      "seconds": 28,
+      "time": 1312484248695,
+      "timezoneOffset": 420,
+      "year": 111
+     },
+     "summary": "The requested room is available",
+     "title": "Room Available",
+     "source": "Demo Service"
+    }
+   ],
+   "title": "Student Life"
+  }
+ ]
+}

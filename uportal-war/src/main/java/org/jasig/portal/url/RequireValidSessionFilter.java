@@ -19,13 +19,17 @@
 
 package org.jasig.portal.url;
 
+import java.io.IOException;
 import java.net.URLEncoder;
 
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.jasig.portal.security.mvc.LoginController;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
  * Redirects the user to the Login servlet if they don't already have a session.
@@ -33,21 +37,28 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class RequireSessionInterceptor extends HandlerInterceptorAdapter {
+public class RequireValidSessionFilter extends OncePerRequestFilter {
+    
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        if (request.isRequestedSessionIdValid()) {
-            final HttpSession session = request.getSession(false);
-            if (session != null) {
-                return true;
-            }
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        final HttpSession session = request.getSession(false);
+        if (session != null && !session.isNew()) {
+            //Session exists and is not new, don't bother filtering
+            return true;
         }
         
-        //Session is null, redirect to Login servlet
+        return false;
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+        //Assume shouldNotFilter was called first and returned false, session is invalid and user needs login
+        
         final StringBuilder loginRedirect = new StringBuilder();
         
         loginRedirect.append(request.getContextPath());
-        loginRedirect.append("/Login?refUrl=");
+        loginRedirect.append("/Login?" + LoginController.REFERER_URL_PARAM + "=");
         
         final String requestEncoding = request.getCharacterEncoding();
         loginRedirect.append(URLEncoder.encode(request.getRequestURI(), requestEncoding));
@@ -60,7 +71,5 @@ public class RequireSessionInterceptor extends HandlerInterceptorAdapter {
         
         final String encodedRedirectURL = response.encodeRedirectURL(loginRedirect.toString());
         response.sendRedirect(encodedRedirectURL);
-        
-        return false;
     }
 }

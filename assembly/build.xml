@@ -115,12 +115,6 @@
             <then>
                 <antcall target="qs-package">
                     <param name="qs-file-ext" value="" />
-                    <param name="exclude-svn" value="true" />
-                </antcall>
-        
-                <antcall target="qs-package">
-                    <param name="qs-file-ext" value="-dev" />
-                    <param name="exclude-svn" value="false" />
                 </antcall>
             </then>
         </if>
@@ -170,13 +164,13 @@
         
         <!-- tar.gz distribution -->
         <tar destfile="${quickstart.file.tar.gz}" longfile="gnu" compression="gzip">
-            <tarfileset prefix="${quickstart.name}" dir="${quickstart.dir}" defaultexcludes="${exclude-svn}">
+            <tarfileset prefix="${quickstart.name}" dir="${quickstart.dir}">
                 <exclude name="**/*.sh" />
                 <exclude name="${dl.ant.finalName}/bin/*" />
                 <exclude name="${dl.maven.finalName}/bin/*" />
                 <exclude name="${dl.tomcat.finalName}/bin/*" />
             </tarfileset>
-            <tarfileset prefix="${quickstart.name}" dir="${quickstart.dir}" defaultexcludes="${exclude-svn}" mode="755">
+            <tarfileset prefix="${quickstart.name}" dir="${quickstart.dir}" mode="755">
                 <include name="**/*.sh" />
                 <include name="${dl.ant.finalName}/bin/*" />
                 <include name="${dl.maven.finalName}/bin/*" />
