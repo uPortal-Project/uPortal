@@ -36,6 +36,9 @@ import javax.portlet.PortletMode;
 import javax.portlet.ResourceURL;
 import javax.portlet.WindowState;
 
+import org.jasig.portal.IUserPreferencesManager;
+import org.jasig.portal.layout.IUserLayout;
+import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
@@ -43,14 +46,19 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
+import org.jasig.portal.user.IUserInstance;
+import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.utils.Tuple;
+import org.jasig.portal.xml.xpath.XPathOperations;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
@@ -69,6 +77,12 @@ public class UrlSyntaxProviderImplTest {
     @Mock private IPortalUrlProvider portalUrlProvider;
     @Mock private IPortletEntityRegistry portletEntityRegistry;
     @Mock private IPortletWindowRegistry portletWindowRegistry;
+    @Mock private XPathOperations xpathOperations;
+    @Mock private IUserInstanceManager userInstanceManager;
+    @Mock private IUserInstance userInstance;
+    @Mock private IUserPreferencesManager userPreferencesManager;
+    @Mock private IUserLayoutManager userLayoutManager;
+    @Mock private IUserLayout userLayout;
     @Mock private IPortletEntity portletEntity1;
     @Mock private IPortletEntity portletEntity2;
     @Mock private IPortletWindow portletWindow1;
@@ -482,7 +496,7 @@ public class UrlSyntaxProviderImplTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/uPortal");
         request.setRequestURI("/p/portlet-admin.ctf3/max/resource.uP");
-        request.setQueryString("??pCa=30_dlg-16-ctf3-5_5&pCd_30_dlg-16-ctf3-5_5=16_ctf3_5&pCr_30_dlg-16-ctf3-5_5=preview&pP_execution=e2s3&pP__eventId=configModeAction");
+        request.setQueryString("?pCa=30_dlg-16-ctf3-5_5&pCd_30_dlg-16-ctf3-5_5=16_ctf3_5&pCr_30_dlg-16-ctf3-5_5=preview&pP_execution=e2s3&pP__eventId=configModeAction");
         request.addParameter("pCa", "30_dlg-16-ctf3-5_5");
         request.addParameter("pCd_30_dlg-16-ctf3-5_5", "16_ctf3_5");
         request.addParameter("pCr_30_dlg-16-ctf3-5_5", "preview");
@@ -667,5 +681,81 @@ public class UrlSyntaxProviderImplTest {
         assertNotNull(portletParameterInfo);
         assertEquals("pw1_foo", portletParameterInfo.first);
         assertNull(portletParameterInfo.second);
+    }
+    
+    
+    @Test
+    public void testLegacyPortletUrlParsing() throws Exception {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setContextPath("/uPortal");
+        request.setRequestURI("/render.userLayoutRootNode.uP");
+        request.setQueryString("?uP_fname=CourseGuide-Browse-Courses&pltc_type=ACTION&pltc_state=detached&pltc_mode=view&pltp_action=advancedSearch&pltp_subjectChoice=512");
+        request.addParameter("uP_fname", "CourseGuide-Browse-Courses");
+        request.addParameter("pltc_type", "ACTION");
+        request.addParameter("pltc_state", "detached");
+        request.addParameter("pltc_mode", "view");
+        request.addParameter("pltp_action", "advancedSearch");
+        request.addParameter("pltp_subjectChoice", "512");
+        
+        final MockPortletWindowId portletWindowId1 = new MockPortletWindowId("16_ctf3_5");
+        
+        when(this.portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
+        when(this.portletWindowRegistry.getOrCreateDefaultPortletWindowByFname(request, "CourseGuide-Browse-Courses")).thenReturn(this.portletWindow1);
+        when(this.portletWindow1.getPortletWindowId()).thenReturn(portletWindowId1);
+        
+        final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
+        
+        assertNotNull(portalRequestInfo);
+        assertNull(portalRequestInfo.getTargetedLayoutNodeId());
+        assertEquals(portletWindowId1, portalRequestInfo.getTargetedPortletWindowId());
+//        assertEquals(UrlState.DETACHED, portalRequestInfo.getUrlState());
+//        assertEquals(UrlType.ACTION, portalRequestInfo.getUrlType());
+        
+        final Map<IPortletWindowId, ? extends IPortletRequestInfo> portletRequestInfoMap = portalRequestInfo.getPortletRequestInfoMap();
+        assertNotNull(portletRequestInfoMap);
+        assertEquals(1, portletRequestInfoMap.size());
+        
+        final IPortletRequestInfo portletRequestInfo = portletRequestInfoMap.get(portletWindowId1);
+        assertNotNull(portletRequestInfo);
+        assertEquals(portletWindowId1, portletRequestInfo.getPortletWindowId());
+        assertEquals(ImmutableMap.of("action", Arrays.asList("advancedSearch"), "subjectChoice", Arrays.asList("512")), portletRequestInfo.getPortletParameters());
+        assertEquals(IPortletRenderer.DETACHED, portletRequestInfo.getWindowState());
+        assertEquals(PortletMode.VIEW, portletRequestInfo.getPortletMode());
+        assertNull(portletRequestInfo.getDelegateParentWindowId());
+    }
+    
+    @Test
+    public void testLegacyTargetedTabParsing() throws Exception {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setContextPath("/uPortal");
+        request.setRequestURI("/render.userLayoutRootNode.uP");
+        request.setQueryString("?root=uP_root&uP_sparam=activeTab&activeTab=1");
+        request.addParameter("root", "uP_root");
+        request.addParameter("uP_sparam", "activeTab");
+        request.addParameter("activeTab", "1");
+        
+        when(this.portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
+        when(this.xpathOperations.doWithExpression(
+                Mockito.eq("/layout/folder/folder[@type='regular' and @hidden='false'][position() = $activeTabId]/@ID"),
+                Mockito.eq(Collections.singletonMap("activeTabId", "1")),
+                Mockito.<Function>anyObject()))
+                .thenReturn("n12");
+        
+        when(this.userInstanceManager.getUserInstance(request)).thenReturn(userInstance);
+        when(userInstance.getPreferencesManager()).thenReturn(userPreferencesManager);
+        when(userPreferencesManager.getUserLayoutManager()).thenReturn(userLayoutManager);
+        when(userLayoutManager.getUserLayout()).thenReturn(userLayout);
+        
+        final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
+        
+        assertNotNull(portalRequestInfo);
+        assertEquals("n12", portalRequestInfo.getTargetedLayoutNodeId());
+        assertNull(portalRequestInfo.getTargetedPortletWindowId());
+//        assertEquals(UrlState.DETACHED, portalRequestInfo.getUrlState());
+//        assertEquals(UrlType.ACTION, portalRequestInfo.getUrlType());
+        
+        final Map<IPortletWindowId, ? extends IPortletRequestInfo> portletRequestInfoMap = portalRequestInfo.getPortletRequestInfoMap();
+        assertNotNull(portletRequestInfoMap);
+        assertEquals(0, portletRequestInfoMap.size());
     }
 }

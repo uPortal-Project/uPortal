@@ -22,6 +22,7 @@ package org.jasig.portal.url;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -36,23 +37,32 @@ import java.util.regex.Pattern;
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.xpath.XPathExpression;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.IUserPreferencesManager;
+import org.jasig.portal.layout.IUserLayout;
+import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.portlet.PortletUtils;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
+import org.jasig.portal.user.IUserInstance;
+import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.utils.web.PortalWebUtils;
+import org.jasig.portal.xml.xpath.XPathOperations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UrlPathHelper;
 
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
@@ -79,6 +89,18 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
     static final String PARAM_PORTLET_MODE                   = PORTLET_CONTROL_PREFIX + "m";
     static final String PARAM_COPY_PARAMETERS                = PORTLET_CONTROL_PREFIX + "p";
     
+    static final Set<String> LEGACY_URL_PATHS = ImmutableSet.of(
+            "/render.userLayoutRootNode.uP",
+            "/tag.idempotent.render.userLayoutRootNode.uP");
+    static final String LEGACY_PARAM_PORTLET_FNAME = "uP_fname";
+    static final String LEGACY_PARAM_PORTLET_STATE = "pltc_state";
+    static final String LEGACY_PARAM_PORTLET_MODE = "pltc_mode";
+    static final String LEGACY_PARAM_PORTLET_PARAM_PREFX = "pltp_";
+    static final String LEGACY_PARAM_LAYOUT_ROOT = "root";
+    static final String LEGACY_PARAM_LAYOUT_ROOT_VALUE = "uP_root";
+    static final String LEGACY_PARAM_LAYOUT_STRUCT_PARAM = "uP_sparam";
+    static final String LEGACY_PARAM_LAYOUT_TAB_ID = "activeTab";
+    
     static final String SLASH = "/";
     static final String PORTLET_PATH_PREFIX = "p";
     static final String FOLDER_PATH_PREFIX = "f";
@@ -100,7 +122,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
         COMPLETE;
     }
     
-    protected final Log logger = LogFactory.getLog(this.getClass());
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     /**
      * WindowStates that are communicated as part of the path
@@ -114,6 +136,18 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
     private IPortalRequestUtils portalRequestUtils;
     private IUrlNodeSyntaxHelperRegistry urlNodeSyntaxHelperRegistry;
     private IPortalUrlProvider portalUrlProvider;
+    private IUserInstanceManager userInstanceManager;
+    private XPathOperations xpathOperations;
+
+    @Autowired
+    public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
+        this.userInstanceManager = userInstanceManager;
+    }
+
+    @Autowired
+    public void setXpathOperations(XPathOperations xpathOperations) {
+        this.xpathOperations = xpathOperations;
+    }
 
     @Autowired
     public void setPortalUrlProvider(IPortalUrlProvider portalUrlProvider) {
@@ -176,17 +210,21 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
         
         
         try {
+            //Clone the parameter map so data can be removed from it as it is parsed to help determine what to do with non-namespaced parameters
+            @SuppressWarnings("unchecked")
+            final Map<String, String[]> parameterMap = new ParameterMap(request.getParameterMap());
+            
+            final String requestPath = this.urlPathHelper.getPathWithinApplication(request);
+            if (LEGACY_URL_PATHS.contains(requestPath)) {
+                return parseLegacyPortalUrl(request, parameterMap);
+            }
+            
             final IUrlNodeSyntaxHelper urlNodeSyntaxHelper = this.urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request);
             
             final PortalRequestInfoImpl portalRequestInfo = new PortalRequestInfoImpl();
             IPortletWindowId targetedPortletWindowId = null;
             PortletRequestInfoImpl targetedPortletRequestInfo = null;
             
-            //Clone the parameter map so data can be removed from it as it is parsed to help determine what to do with non-namespaced parameters
-            @SuppressWarnings("unchecked")
-            final Map<String, String[]> parameterMap = new ParameterMap(request.getParameterMap());
-            
-            final String requestPath = this.urlPathHelper.getPathWithinApplication(request);
             final String[] requestPathParts = SLASH_PATTERN.split(requestPath);
             
             UrlState requestedUrlState = null;
@@ -521,6 +559,99 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
         finally {
             request.removeAttribute(PORTAL_REQUEST_PARSING_IN_PROGRESS_ATTR);
         }
+    }
+    
+    protected IPortalRequestInfo parseLegacyPortalUrl(HttpServletRequest request, Map<String, String[]> parameterMap) {
+        final PortalRequestInfoImpl portalRequestInfo = new PortalRequestInfoImpl();
+        
+        final String[] fname = parameterMap.remove(LEGACY_PARAM_PORTLET_FNAME);
+        if (fname != null && fname.length > 0) {
+            final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByFname(request, fname[0]);
+            if (portletWindow != null) {
+                logger.debug("Legacy fname parameter {} resolved to {}", fname[0], portletWindow);
+                
+                final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
+                portalRequestInfo.setTargetedPortletWindowId(portletWindowId);
+
+                final PortletRequestInfoImpl portletRequestInfo = portalRequestInfo.getPortletRequestInfo(portletWindowId);
+                
+                //Set the window state
+                final String[] state = parameterMap.remove(LEGACY_PARAM_PORTLET_STATE);
+                if (state != null && state.length > 0) {
+                    final WindowState windowState = PortletUtils.getWindowState(state[0]);
+                    portletRequestInfo.setWindowState(windowState);
+                }
+                
+                //Set the portlet mode
+                final String[] mode = parameterMap.remove(LEGACY_PARAM_PORTLET_MODE);
+                if (mode != null && mode.length > 0) {
+                    final PortletMode portletMode = PortletUtils.getPortletMode(mode[0]);
+                    portletRequestInfo.setPortletMode(portletMode);
+                }
+                
+                //Set the parameters
+                final Map<String, List<String>> portletParameters = portletRequestInfo.getPortletParameters();
+                for (final Map.Entry<String, String[]> parameterEntry : parameterMap.entrySet()) {
+                    final String prefixedName = parameterEntry.getKey();
+                    
+                    //If the parameter starts with the portlet param prefix
+                    if (prefixedName.startsWith(LEGACY_PARAM_PORTLET_PARAM_PREFX)) {
+                        final String name = prefixedName.substring(LEGACY_PARAM_PORTLET_PARAM_PREFX.length()); 
+                        
+                        portletParameters.put(name, Arrays.asList(parameterEntry.getValue()));
+                    }
+                }
+            }
+            else {
+                logger.debug("Could not find portlet for legacy fname fname parameter {}", fname[0]);
+            }
+        }
+        
+        //Check root=uP_root
+        final String[] root = parameterMap.remove(LEGACY_PARAM_LAYOUT_ROOT);
+        if (root != null && root.length > 0) {
+            if (LEGACY_PARAM_LAYOUT_ROOT_VALUE.equals(root[0])) {
+                
+                //Check uP_sparam=activeTab
+                final String[] structParam = parameterMap.remove(LEGACY_PARAM_LAYOUT_STRUCT_PARAM);
+                if (structParam != null && structParam.length > 0) {
+                    if (LEGACY_PARAM_LAYOUT_TAB_ID.equals(structParam[0])) {
+                        
+                        //Get the active tab id
+                        final String[] activeTabId = parameterMap.remove(LEGACY_PARAM_LAYOUT_TAB_ID);
+                        if (activeTabId != null && activeTabId.length > 0) {
+                            //Get the user's layout and do xpath for tab at index=activeTabId[0]
+                            final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+                            final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
+                            final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
+                            final IUserLayout userLayout = userLayoutManager.getUserLayout();
+                            
+                            final String nodeId = this.xpathOperations.doWithExpression(
+                                    "/layout/folder/folder[@type='regular' and @hidden='false'][position() = $activeTabId]/@ID", 
+                                    Collections.singletonMap("activeTabId", activeTabId[0]), 
+                                    new Function<XPathExpression, String>() {
+                                        @Override
+                                        public String apply(XPathExpression xPathExpression) {
+                                            return userLayout.findNodeId(xPathExpression);
+                                        }
+                                    });
+
+                            //Found nodeId for activeTabId
+                            if (nodeId != null) {
+                                logger.debug("Found layout node {} for legacy activeTabId parameter {}", nodeId, activeTabId[0]);
+                                portalRequestInfo.setTargetedLayoutNodeId(nodeId);
+                            }
+                            else {
+                                logger.debug("No layoout node found for legacy activeTabId parameter {}", activeTabId[0]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        
+        return portalRequestInfo;
     }
 
     /**
