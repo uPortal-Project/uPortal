@@ -31,6 +31,7 @@ import org.apache.pluto.container.driver.PortalDriverContainerServices;
 import org.apache.pluto.container.driver.PortletRegistryService;
 import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
+import org.jasig.portal.concurrency.caching.RequestCache;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
@@ -105,6 +106,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
     }
     
     @Override
+    @RequestCache
     public IPortletDefinition getPortletDefinition(String portletDefinitionIdString) {
         Validate.notNull(portletDefinitionIdString, "portletDefinitionId can not be null");
         
@@ -112,6 +114,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
 	}
     
     @Override
+    @RequestCache
     public IPortletDefinition getPortletDefinitionByFname(String fname) {
         Validate.notNull(fname, "portletFname can not be null");
         
@@ -119,6 +122,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
 	}
     
     @Override
+    @RequestCache
     public IPortletDefinition getPortletDefinitionByName(String name) {
         Validate.notNull(name, "portletFname can not be null");
         
