@@ -106,15 +106,6 @@
     <cache name="org.jasig.portal.security.provider.AuthorizationImpl.PRINCIPAL_HAS_PERMISSION"
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU" statistics="true" />
-        
-    <!-- 
-     | Caches parsed composite group name strings (ex: "pags.root" to "pags" & "root")
-     | - 1 x group
-     | - not replicated - doesn't represent an updatable data store
-     +-->
-    <cache name="org.jasig.portal.groups.CompositeEntityIdentifier.NAME_PARSE_CACHE"
-        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     
     <!-- 
