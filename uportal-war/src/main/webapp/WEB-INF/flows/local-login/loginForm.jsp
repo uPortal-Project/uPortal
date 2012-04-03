@@ -58,7 +58,7 @@
         <form action="${ loginUrl }" method="POST">
 
             <label for="${n}userName"><spring:message code="username"/></label>
-            <input id="${n}userName" name="userName" value="${ attemptedUsername }"/>
+            <input type="text" id="${n}userName" name="userName" value="${ attemptedUsername }"/>
             
             <label for="${n}password"><spring:message code="password"/></label>
             <input type="password" id="${n}password" name="password"/>
