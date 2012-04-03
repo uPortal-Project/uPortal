@@ -251,7 +251,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         final Scope scope = outputPropertyDescriptor.getScope();
         switch (scope) {
             case PERSISTENT: {
-                final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+                final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
                 if (stylesheetUserPreferences == null) {
                     return null;
                 }
@@ -296,9 +296,10 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         final Scope scope = this.getWriteScope(request, prefScope, stylesheetPreferencesKey, outputPropertyDescriptor);
         switch (scope) {
             case PERSISTENT: {
-                IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+                IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
                 if (stylesheetUserPreferences == null) {
                     stylesheetUserPreferences = this.stylesheetUserPreferencesDao.createStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+                    this.clearStylesheetUserPreferencesCache(request, stylesheetPreferencesKey);
                 }
                 
                 final String oldValue = stylesheetUserPreferences.setOutputProperty(name, value);
@@ -325,13 +326,14 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         final Scope scope = this.getWriteScope(request, prefScope, stylesheetPreferencesKey, outputPropertyDescriptor);
         switch (scope) {
             case PERSISTENT: {
-                final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+                final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
                 if (stylesheetUserPreferences == null) {
                     return null;
                 }
                 
                 final String oldValue = stylesheetUserPreferences.removeOutputProperty(name);
                 this.stylesheetUserPreferencesDao.storeStylesheetUserPreferences(stylesheetUserPreferences);
+                this.clearStylesheetUserPreferencesCache(request, stylesheetPreferencesKey);
                 return oldValue;
             }
             default: {
@@ -346,7 +348,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
         
         //Get the scoped sources once
-        final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+        final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
         
         final Map<String, String> sessionOutputProperties;
         final HttpSession session = request.getSession(false);
@@ -422,7 +424,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
         final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
         
-        final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+        final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
         if (stylesheetUserPreferences != null) {
             stylesheetUserPreferences.clearOutputProperties();
             this.stylesheetUserPreferencesDao.storeStylesheetUserPreferences(stylesheetUserPreferences);
@@ -454,7 +456,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         final Scope scope = stylesheetParameterDescriptor.getScope();
         switch (scope) {
             case PERSISTENT: {
-                final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+                final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
                 if (stylesheetUserPreferences == null) {
                     return null;
                 }
@@ -499,9 +501,10 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         final Scope scope = this.getWriteScope(request, prefScope, stylesheetPreferencesKey, stylesheetParameterDescriptor);
         switch (scope) {
             case PERSISTENT: {
-                IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+                IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
                 if (stylesheetUserPreferences == null) {
                     stylesheetUserPreferences = this.stylesheetUserPreferencesDao.createStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+                    this.clearStylesheetUserPreferencesCache(request, stylesheetPreferencesKey);
                 }
                 
                 final String oldValue = stylesheetUserPreferences.setStylesheetParameter(name, value);
@@ -528,7 +531,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         final Scope scope = this.getWriteScope(request, prefScope, stylesheetPreferencesKey, stylesheetParameterDescriptor);
         switch (scope) {
             case PERSISTENT: {
-                final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+                final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
                 if (stylesheetUserPreferences == null) {
                     return null;
                 }
@@ -563,7 +566,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
         
         //Get the scoped sources once
-        final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+        final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
         final Map<String, String> sessionStylesheetParameters;
         final HttpSession session = request.getSession(false);
         if (session == null) {
@@ -637,7 +640,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
         final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
         
-        final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+        final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
         if (stylesheetUserPreferences != null) {
             stylesheetUserPreferences.clearStylesheetParameters();
             this.stylesheetUserPreferencesDao.storeStylesheetUserPreferences(stylesheetUserPreferences);
@@ -680,7 +683,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         final Scope scope = layoutAttributeDescriptor.getScope();
         switch (scope) {
             case PERSISTENT: {
-                final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+                final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
                 if (stylesheetUserPreferences == null) {
                     value = null;
                     break;
@@ -716,6 +719,44 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         return value;
     }
     
+    private static final String NO_PERSISTENT_IStylesheetUserPreferences = StylesheetUserPreferencesServiceImpl.class.getName() + ".NO_PERSISTENT_IStylesheetUserPreferences";
+
+    private String getCacheKey(StylesheetPreferencesKey stylesheetPreferencesKey) {
+        return NO_PERSISTENT_IStylesheetUserPreferences + "." + stylesheetPreferencesKey.toString();
+    }
+    
+    private IStylesheetUserPreferences getStylesheetUserPreferences(HttpServletRequest request, StylesheetPreferencesKey stylesheetPreferencesKey) {
+        final String key = getCacheKey(stylesheetPreferencesKey);
+        
+        if (request.getAttribute(key) != null) {
+            return null;
+        }
+        
+        final HttpSession session = request.getSession();
+        if (session.getAttribute(key) != null) {
+            request.setAttribute(key, Boolean.TRUE);
+            return null;
+        }
+        
+        final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetPreferencesKey.stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+        
+        if (stylesheetUserPreferences == null) {
+            session.setAttribute(key, Boolean.TRUE);
+            request.setAttribute(key, Boolean.TRUE);
+        }
+
+        return stylesheetUserPreferences;
+    }
+    
+    private void clearStylesheetUserPreferencesCache(HttpServletRequest request, StylesheetPreferencesKey stylesheetPreferencesKey) {
+        final String key = getCacheKey(stylesheetPreferencesKey);
+        
+        request.removeAttribute(key);
+
+        final HttpSession session = request.getSession();
+        session.removeAttribute(key);
+    }
+    
     @Transactional
     @Override
     public String setLayoutAttribute(HttpServletRequest request, PreferencesScope prefScope, String nodeId, String name, String value) {
@@ -744,9 +785,10 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         final Scope scope = this.getWriteScope(request, prefScope, stylesheetPreferencesKey, layoutAttributeDescriptor);
         switch (scope) {
             case PERSISTENT: {
-                IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+                IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
                 if (stylesheetUserPreferences == null) {
                     stylesheetUserPreferences = this.stylesheetUserPreferencesDao.createStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+                    this.clearStylesheetUserPreferencesCache(request, stylesheetPreferencesKey);
                 }
                 
                 final String oldValue = stylesheetUserPreferences.setLayoutAttribute(nodeId, name, value);
@@ -802,7 +844,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         final Scope scope = this.getWriteScope(request, prefScope, stylesheetPreferencesKey, layoutAttributeDescriptor);
         switch (scope) {
             case PERSISTENT: {
-                final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+                final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
                 if (stylesheetUserPreferences == null) {
                     break;
                 }
@@ -841,7 +883,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         
         final LinkedHashSet<String> allNodeIds = new LinkedHashSet<String>();
         
-        final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+        final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
         if (stylesheetUserPreferences != null) {
             allNodeIds.addAll(stylesheetUserPreferences.getAllLayoutAttributeNodeIds());
         }
@@ -875,7 +917,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
         
         //Get the scoped sources once
-        final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+        final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
         final Map<String, Map<String, String>> sessionLayoutAttributes;
         final HttpSession session = request.getSession(false);
         if (session == null) {
@@ -968,7 +1010,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
         
         //Get the scoped sources once
-        final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+        final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
         
         final Map<String, Map<String, String>> sessionLayoutAttributes;
         final HttpSession session = request.getSession(false);
@@ -1088,7 +1130,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
         final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
         
-        final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+        final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
         if (stylesheetUserPreferences != null) {
             stylesheetUserPreferences.clearLayoutAttributes(nodeId);
             this.stylesheetUserPreferencesDao.storeStylesheetUserPreferences(stylesheetUserPreferences);
@@ -1115,7 +1157,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
         final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
         
-        final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, stylesheetPreferencesKey.person, stylesheetPreferencesKey.userProfile);
+        final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
         if (stylesheetUserPreferences != null) {
             stylesheetUserPreferences.clearAllLayoutAttributes();
             this.stylesheetUserPreferencesDao.storeStylesheetUserPreferences(stylesheetUserPreferences);
