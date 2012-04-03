@@ -20,6 +20,7 @@
 package org.jasig.portal.utils.cache;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -33,12 +34,18 @@ public class CacheKey implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private final String source;
-    private final Serializable key;
+    private final Serializable[] key;
     private final int hashCode;
 
     public CacheKey(String source, Serializable key) {
         this.source = source;
-        this.key = key;
+        if (key instanceof Collection) {
+            final Collection<Serializable> keyCollection = (Collection)key;
+            this.key = keyCollection.toArray(new Serializable[keyCollection.size()]);
+        }
+        else {
+            this.key = new Serializable[] { key };
+        }
         this.hashCode = this.internalHashCode();
     }
     
@@ -51,11 +58,7 @@ public class CacheKey implements Serializable {
             this.key = null;
         }
         else {
-            final ArrayList<Serializable> keyList = new ArrayList<Serializable>(keyParts.length);
-            for (final Serializable keyPart : keyParts) {
-                keyList.add(keyPart);
-            }
-            this.key = keyList;
+            this.key = keyParts.clone();
         }
         this.hashCode = this.internalHashCode();
     }
