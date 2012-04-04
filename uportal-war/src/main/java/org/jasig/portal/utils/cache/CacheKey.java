@@ -95,6 +95,12 @@ public final class CacheKey implements Serializable {
             }
             return this;
         }
+        
+        public int size() {
+            final int listLength = this.keyList != null ? this.keyList.size() : 0;
+            final int mapLength = this.keyMap != null ? this.keyMap.size() : 0;
+            return listLength + mapLength;
+        }
 
         public CacheKey build() {
             final int listLength = this.keyList != null ? this.keyList.size() : 0;
@@ -215,7 +221,7 @@ public final class CacheKey implements Serializable {
         int d = DEPTH.get();
         DEPTH.set(d + 1);
         final String indent = StringUtils.leftPad("", DEPTH.get(), '\t');
-        final String s = indent + "CacheKey [" +  this.source + "\n\t" + indent + this.key + "\n" + indent  + "]";
+        final String s = indent + "CacheKey [" +  this.source + "\n\t" + indent + Arrays.deepToString(this.key) + "\n" + indent  + "]";
         DEPTH.set(d);
         return s;
     }
