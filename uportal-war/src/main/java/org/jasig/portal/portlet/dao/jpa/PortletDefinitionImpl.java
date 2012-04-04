@@ -192,7 +192,9 @@ class PortletDefinitionImpl implements IPortletDefinition {
     @PostUpdate
     @PostRemove
     private void init() {
-        this.portletDefinitionId = new PortletDefinitionIdImpl(this.internalPortletDefinitionId);
+        if (this.portletDefinitionId == null || this.portletDefinitionId.getLongId() != this.internalPortletDefinitionId) {
+            this.portletDefinitionId = PortletDefinitionIdImpl.create(this.internalPortletDefinitionId);
+        }
     }
     
     

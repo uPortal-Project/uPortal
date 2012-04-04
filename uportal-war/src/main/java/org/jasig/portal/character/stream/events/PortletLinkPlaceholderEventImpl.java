@@ -24,10 +24,11 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
  * @author Jen Bourey, jennifer.bourey@gmail.com
  * @version $Revision$
  */
-public class PortletLinkPlaceholderEventImpl extends PortletPlaceholderEventImpl implements PortletLinkPlaceholderEvent {
+public final class PortletLinkPlaceholderEventImpl extends PortletPlaceholderEventImpl implements PortletLinkPlaceholderEvent {
     private static final long serialVersionUID = 1L;
 
     private final String defaultPortletUrl;
+    private int hash = 0;
     
     public PortletLinkPlaceholderEventImpl(IPortletWindowId portletWindowId, String defaultPortletUrl) {
         super(portletWindowId);
@@ -49,6 +50,15 @@ public class PortletLinkPlaceholderEventImpl extends PortletPlaceholderEventImpl
 
     @Override
     public int hashCode() {
+        int h = hash;
+        if (h == 0) {
+            h = internalHashCode();
+            hash = h;
+        }
+        return h;
+    }
+    
+    private int internalHashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((this.getPortletWindowId() == null) ? 0 : this.getPortletWindowId().hashCode());
@@ -84,7 +94,7 @@ public class PortletLinkPlaceholderEventImpl extends PortletPlaceholderEventImpl
     @Override
     public String toString() {
         return "PortletLinkPlaceholderEvent [" +
-                "eventType=" + this.getEventType() + ", " +
-                "portletWindowId=" + this.getPortletWindowId() + "]";
+                "portletWindowId=" + this.getPortletWindowId() + ", " +
+                "defaultPortletUrl=" + this.getDefaultPortletUrl() + "]";
     }
 }

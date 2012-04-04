@@ -25,8 +25,10 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
  * @author Jen Bourey
  * @version $Revision$
  */
-public class PortletNewItemCountPlaceholderEventImpl extends PortletPlaceholderEventImpl implements PortletNewItemCountPlaceholderEvent {
+public final class PortletNewItemCountPlaceholderEventImpl extends PortletPlaceholderEventImpl implements PortletNewItemCountPlaceholderEvent {
     private static final long serialVersionUID = 1L;
+    
+    private int hash = 0;
 
     public PortletNewItemCountPlaceholderEventImpl(IPortletWindowId portletWindowId) {
         super(portletWindowId);
@@ -42,6 +44,15 @@ public class PortletNewItemCountPlaceholderEventImpl extends PortletPlaceholderE
 
     @Override
     public int hashCode() {
+        int h = hash;
+        if (h == 0) {
+            h = internalHashCode();
+            hash = h;
+        }
+        return h;
+    }
+    
+    private int internalHashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((this.getPortletWindowId() == null) ? 0 : this.getPortletWindowId().hashCode());
@@ -76,7 +87,6 @@ public class PortletNewItemCountPlaceholderEventImpl extends PortletPlaceholderE
     @Override
     public String toString() {
         return "PortletNewItemCountPlaceholderEvent [" +
-                "eventType=" + this.getEventType() + ", " +
                 "portletWindowId=" + this.getPortletWindowId() + "]";
     }
 }

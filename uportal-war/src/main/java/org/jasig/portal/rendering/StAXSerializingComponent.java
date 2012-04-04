@@ -59,7 +59,8 @@ public class StAXSerializingComponent implements CharacterPipelineComponent {
     
     private StAXPipelineComponent wrappedComponent;
     private Map<String, CharacterEventSource> chunkingElements;
-    private Map<Pattern, CharacterEventSource> chunkingPatterns;
+    private Map<Pattern, CharacterEventSource> chunkingPatternEventSources;
+    private Pattern[] chunkingPatterns;
 
     @Autowired
     public void setXmlUtilities(XmlUtilities xmlUtilities) {
@@ -75,16 +76,17 @@ public class StAXSerializingComponent implements CharacterPipelineComponent {
     }
 
     public void setChunkingPatterns(Map<String, CharacterEventSource> chunkingPatterns) {
-        final Map<Pattern, CharacterEventSource> compiledChunkingPatterns = new LinkedHashMap<Pattern, CharacterEventSource>();
+        final Map<Pattern, CharacterEventSource> compiledChunkingPatternEventSources = new LinkedHashMap<Pattern, CharacterEventSource>();
         
         for (final Map.Entry<String, CharacterEventSource> chunkingPatternEntry : chunkingPatterns.entrySet()) {
             final String key = chunkingPatternEntry.getKey();
             final Pattern pattern = Pattern.compile(key);
             final CharacterEventSource value = chunkingPatternEntry.getValue();
-            compiledChunkingPatterns.put(pattern, value);
+            compiledChunkingPatternEventSources.put(pattern, value);
         }
         
-        this.chunkingPatterns = compiledChunkingPatterns;
+        this.chunkingPatternEventSources = compiledChunkingPatternEventSources;
+        this.chunkingPatterns = this.chunkingPatternEventSources.keySet().toArray(new Pattern[this.chunkingPatternEventSources.size()]);
     }
 
     @Override
@@ -106,7 +108,7 @@ public class StAXSerializingComponent implements CharacterPipelineComponent {
         //Add the chunking wrapper to the XMLEventReader
         final XMLEventReader xmlEventReader = eventReader.getEventReader();
         final ChunkingEventReader chunkingEventReader = new ChunkingEventReader(request,
-                this.chunkingElements, this.chunkingPatterns, 
+                this.chunkingElements, this.chunkingPatternEventSources, this.chunkingPatterns,
                 xmlEventReader, xmlEventWriter, writer);
         
         try {

@@ -2145,11 +2145,19 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     }
 
     private static final class MissingPortletDefinitionId implements IPortletDefinitionId {
+        private static final long serialVersionUID = 1L;
+        
+        private final long id = -1;
+        private final String strId = Long.toString(id);
 
         public String getStringId() {
-            return "-1";
+            return strId;
         }
 
+        @Override
+        public long getLongId() {
+            return id;
+        }
     }
 
     private static final class MissingPortletType implements IPortletType {

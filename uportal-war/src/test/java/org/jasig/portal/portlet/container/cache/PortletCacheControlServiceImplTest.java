@@ -96,7 +96,7 @@ public class PortletCacheControlServiceImplTest {
 		MockHttpServletRequest httpRequest = new MockHttpServletRequest();
 		MockPortletWindowId portletWindowId = new MockPortletWindowId("123");
 		MockPortletEntityId portletEntityId = new MockPortletEntityId("456");
-		MockPortletDefinitionId portletDefinitionId = new MockPortletDefinitionId("789");
+		MockPortletDefinitionId portletDefinitionId = new MockPortletDefinitionId(789);
 		
 		PortletDefinition portletDefinition = mock(PortletDefinition.class);
 		when(portletDefinition.getCacheScope()).thenReturn(null);
@@ -140,7 +140,7 @@ public class PortletCacheControlServiceImplTest {
 		
 		MockPortletWindowId portletWindowId = new MockPortletWindowId("123");
 		MockPortletEntityId portletEntityId = new MockPortletEntityId("456");
-		MockPortletDefinitionId portletDefinitionId = new MockPortletDefinitionId("789");
+		MockPortletDefinitionId portletDefinitionId = new MockPortletDefinitionId(789);
 		
 		PortletDefinition portletDefinition = mock(PortletDefinition.class);
 		// use private cache
@@ -190,7 +190,7 @@ public class PortletCacheControlServiceImplTest {
 		MockHttpServletRequest httpRequest = new MockHttpServletRequest();
 		MockPortletWindowId portletWindowId = new MockPortletWindowId("123");
 		MockPortletEntityId portletEntityId = new MockPortletEntityId("456");
-		MockPortletDefinitionId portletDefinitionId = new MockPortletDefinitionId("789");
+		MockPortletDefinitionId portletDefinitionId = new MockPortletDefinitionId(789);
 		
 		PortletDefinition portletDefinition = mock(PortletDefinition.class);
 		when(portletDefinition.getCacheScope()).thenReturn("private");
@@ -226,7 +226,7 @@ public class PortletCacheControlServiceImplTest {
 		MockHttpServletRequest httpRequest = new MockHttpServletRequest();
 		MockPortletWindowId portletWindowId = new MockPortletWindowId("123");
 		MockPortletEntityId portletEntityId = new MockPortletEntityId("456");
-		MockPortletDefinitionId portletDefinitionId = new MockPortletDefinitionId("789");
+		MockPortletDefinitionId portletDefinitionId = new MockPortletDefinitionId(789);
 		
 		PortletDefinition portletDefinition = mock(PortletDefinition.class);
 		when(portletDefinition.getCacheScope()).thenReturn(MimeResponse.PUBLIC_SCOPE);

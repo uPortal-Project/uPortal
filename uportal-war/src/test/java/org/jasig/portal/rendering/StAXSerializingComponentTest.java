@@ -19,13 +19,12 @@
 
 package org.jasig.portal.rendering;
 
+import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -40,44 +39,53 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
+import net.sf.ehcache.Ehcache;
+
 import org.jasig.portal.character.stream.CharacterEventReader;
 import org.jasig.portal.character.stream.CharacterEventSource;
 import org.jasig.portal.character.stream.PortletContentPlaceholderEventSource;
 import org.jasig.portal.character.stream.PortletHeaderPlaceholderEventSource;
 import org.jasig.portal.character.stream.PortletHelpPlaceholderEventSource;
 import org.jasig.portal.character.stream.PortletTitlePlaceholderEventSource;
-import org.jasig.portal.character.stream.events.CharacterDataEvent;
+import org.jasig.portal.character.stream.events.CharacterDataEventImpl;
 import org.jasig.portal.character.stream.events.CharacterEvent;
-import org.jasig.portal.character.stream.events.PortletContentPlaceholderEvent;
-import org.jasig.portal.character.stream.events.PortletHeaderPlaceholderEvent;
-import org.jasig.portal.character.stream.events.PortletHelpPlaceholderEvent;
-import org.jasig.portal.character.stream.events.PortletTitlePlaceholderEvent;
+import org.jasig.portal.character.stream.events.PortletContentPlaceholderEventImpl;
+import org.jasig.portal.character.stream.events.PortletHeaderPlaceholderEventImpl;
+import org.jasig.portal.character.stream.events.PortletHelpPlaceholderEventImpl;
+import org.jasig.portal.character.stream.events.PortletTitlePlaceholderEventImpl;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.jasig.portal.xml.XmlUtilities;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Matchers;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
+@RunWith(MockitoJUnitRunner.class)
 public class StAXSerializingComponentTest {
+    @InjectMocks private StAXSerializingComponent staxSerializingComponent = new StAXSerializingComponent();
+    @Mock private XmlUtilities xmlUtilities;
+    @Mock private Ehcache stringCache;
 
     @Test
     public void testSerializing() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
-        final XmlUtilities xmlUtilities = mock(XmlUtilities.class);
         final IPortletWindowRegistry portletWindowRegistry = mock(IPortletWindowRegistry.class);
         
         when(xmlUtilities.getHtmlOutputFactory()).thenReturn(XMLOutputFactory.newFactory());
-        
-        final StAXSerializingComponent staxSerializingComponent = new StAXSerializingComponent();
         
         //Setup a simple pass-through parent
         staxSerializingComponent.setWrappedComponent(new SimpleStAXSource());
@@ -114,75 +122,140 @@ public class StAXSerializingComponentTest {
         final PipelineEventReader<CharacterEventReader, CharacterEvent> eventReader = staxSerializingComponent.getEventReader(request, response);
         
         //Expected events structure, leaving the data out to make it at least a little simpler
-        final List<Class<? extends CharacterEvent>> whenedEvents = new ArrayList<Class<? extends CharacterEvent>>();
-        whenedEvents.add(CharacterDataEvent.class);
-        whenedEvents.add(PortletHeaderPlaceholderEvent.class);
-        whenedEvents.add(CharacterDataEvent.class);
-        whenedEvents.add(PortletHeaderPlaceholderEvent.class);
-        whenedEvents.add(CharacterDataEvent.class);
-        whenedEvents.add(PortletHeaderPlaceholderEvent.class);
-        whenedEvents.add(CharacterDataEvent.class);
-        whenedEvents.add(PortletHeaderPlaceholderEvent.class);
-        whenedEvents.add(CharacterDataEvent.class);
-        whenedEvents.add(PortletHeaderPlaceholderEvent.class);
-        whenedEvents.add(CharacterDataEvent.class);
-        whenedEvents.add(PortletHeaderPlaceholderEvent.class);
-        whenedEvents.add(CharacterDataEvent.class);
-        whenedEvents.add(PortletHeaderPlaceholderEvent.class);
-        whenedEvents.add(CharacterDataEvent.class);
-        whenedEvents.add(PortletHeaderPlaceholderEvent.class);
-        whenedEvents.add(CharacterDataEvent.class);
-        whenedEvents.add(PortletContentPlaceholderEvent.class);
-        whenedEvents.add(CharacterDataEvent.class);
-        whenedEvents.add(PortletContentPlaceholderEvent.class);
-        whenedEvents.add(CharacterDataEvent.class);
-        whenedEvents.add(PortletContentPlaceholderEvent.class);
-        whenedEvents.add(CharacterDataEvent.class);
-        whenedEvents.add(PortletContentPlaceholderEvent.class);
-        whenedEvents.add(CharacterDataEvent.class);
-        whenedEvents.add(PortletContentPlaceholderEvent.class);
-        whenedEvents.add(CharacterDataEvent.class);
-        whenedEvents.add(PortletContentPlaceholderEvent.class);
-        whenedEvents.add(CharacterDataEvent.class);
-        whenedEvents.add(PortletContentPlaceholderEvent.class);
-        whenedEvents.add(CharacterDataEvent.class);
-        whenedEvents.add(PortletContentPlaceholderEvent.class);
-        whenedEvents.add(CharacterDataEvent.class);
-        whenedEvents.add(PortletTitlePlaceholderEvent.class);
-        whenedEvents.add(CharacterDataEvent.class);
-        whenedEvents.add(PortletTitlePlaceholderEvent.class);
-        whenedEvents.add(CharacterDataEvent.class);
-        whenedEvents.add(PortletHelpPlaceholderEvent.class);
-        whenedEvents.add(CharacterDataEvent.class);
-        whenedEvents.add(PortletTitlePlaceholderEvent.class);
-        whenedEvents.add(CharacterDataEvent.class);
-        whenedEvents.add(PortletContentPlaceholderEvent.class);
-        whenedEvents.add(CharacterDataEvent.class);
-        whenedEvents.add(PortletContentPlaceholderEvent.class);
-        whenedEvents.add(CharacterDataEvent.class);
-        whenedEvents.add(PortletContentPlaceholderEvent.class);
-        whenedEvents.add(CharacterDataEvent.class);
-        whenedEvents.add(PortletContentPlaceholderEvent.class);
-        whenedEvents.add(CharacterDataEvent.class);
+        final List<? extends CharacterEvent> expectedEvents = this.getExpectedEvents();
 
         
         final Iterator<CharacterEvent> eventItr = eventReader.iterator();
-        final Iterator<Class<? extends CharacterEvent>> whenedEventTypeItr = whenedEvents.iterator();
+        final Iterator<? extends CharacterEvent> expectedEventsItr = expectedEvents.iterator();
         
         int eventCount = 0;
-        while (whenedEventTypeItr.hasNext()) {
+        while (expectedEventsItr.hasNext()) {
             eventCount++;
-            assertTrue("The number of events returned by the eventReader less than the whened event count of: " + whenedEvents.size() + " was: " + eventCount, eventItr.hasNext());
+            assertTrue("The number of events returned by the eventReader less than the expected event count of: " + expectedEvents.size() + " was: " + eventCount, eventItr.hasNext());
             
-            final Class<? extends CharacterEvent> whenedEventType = whenedEventTypeItr.next();
+            final CharacterEvent expectedEvent = expectedEventsItr.next();
             final CharacterEvent event = eventItr.next();
-            assertNotNull("Event number " + eventCount + " is null", event);
-            
-            final Class<? extends CharacterEvent> eventType = event.getClass();
-            assertTrue("Event " + eventType.getName() + " at index " + eventCount + " is not assignable to whened event type: " + whenedEventType.getName(), whenedEventType.isAssignableFrom(eventType));
+            assertEquals("Events at index " + eventCount + " do not match\n" + expectedEvent + "\n" + event, expectedEvent, event);
         }
         
-        assertFalse("The number of events returned by the eventReader is more than the whened event count of: " + whenedEvents.size(), eventItr.hasNext());
+        assertFalse("The number of events returned by the eventReader is more than the expected event count of: " + expectedEvents.size(), eventItr.hasNext());
+    }
+    
+    private List<? extends CharacterEvent> getExpectedEvents() {
+        return ImmutableList.<CharacterEvent>builder()
+                .add(CharacterDataEventImpl.create("<!--\n" + 
+                		"\n" + 
+                		"    Licensed to Jasig under one or more contributor license\n" + 
+                		"    agreements. See the NOTICE file distributed with this work\n" + 
+                		"    for additional information regarding copyright ownership.\n" + 
+                		"    Jasig licenses this file to you under the Apache License,\n" + 
+                		"    Version 2.0 (the \"License\"); you may not use this file\n" + 
+                		"    except in compliance with the License. You may obtain a\n" + 
+                		"    copy of the License at:\n" + 
+                		"\n" + 
+                		"    http://www.apache.org/licenses/LICENSE-2.0\n" + 
+                		"\n" + 
+                		"    Unless required by applicable law or agreed to in writing,\n" + 
+                		"    software distributed under the License is distributed on\n" + 
+                		"    an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY\n" + 
+                		"    KIND, either express or implied. See the License for the\n" + 
+                		"    specific language governing permissions and limitations\n" + 
+                		"    under the License.\n" + 
+                		"\n" + 
+                		"--><layout>\n" + 
+                		"    <folder>\n" + 
+                		"        "))
+        		.add(new PortletHeaderPlaceholderEventImpl(null))
+        		.add(CharacterDataEventImpl.create("\n" + 
+        				"        "))
+                .add(new PortletHeaderPlaceholderEventImpl(null))
+                .add(CharacterDataEventImpl.create("\n" + 
+                        "        "))
+                .add(new PortletHeaderPlaceholderEventImpl(null))
+                .add(CharacterDataEventImpl.create("\n" + 
+                        "        "))
+                .add(new PortletHeaderPlaceholderEventImpl(null))
+                .add(CharacterDataEventImpl.create("\n" + 
+                        "        "))
+                .add(new PortletHeaderPlaceholderEventImpl(null))
+                .add(CharacterDataEventImpl.create("\n" + 
+                        "        "))
+                .add(new PortletHeaderPlaceholderEventImpl(null))
+                .add(CharacterDataEventImpl.create("\n" + 
+                        "        "))
+                .add(new PortletHeaderPlaceholderEventImpl(null))
+                .add(CharacterDataEventImpl.create("\n" + 
+                        "        "))
+                .add(new PortletHeaderPlaceholderEventImpl(null))
+                .add(CharacterDataEventImpl.create("\n" + 
+                		"    </folder>\n" + 
+                		"    <folder ID=\"0\" type=\"root\">\n" + 
+                		"        <folder ID=\"a\" type=\"header\">\n" + 
+                		"            "))
+                .add(new PortletContentPlaceholderEventImpl(null))
+                .add(CharacterDataEventImpl.create("\n" + 
+                		"            "))
+                .add(new PortletContentPlaceholderEventImpl(null))
+                .add(CharacterDataEventImpl.create("\n" + 
+                		"        </folder>\n" + 
+                		"        <folder ID=\"1\" fname=\"my-tab\" type=\"tab\">\n" + 
+                		"            <name xml:lang=\"en\">My Tab</name>\n" + 
+                		"            <folder ID=\"2\" type=\"column\">\n" + 
+                		"                "))
+                .add(new PortletContentPlaceholderEventImpl(null))
+                .add(CharacterDataEventImpl.create("\n" + 
+                		"                "))
+                .add(new PortletContentPlaceholderEventImpl(null))
+                .add(CharacterDataEventImpl.create("\n" + 
+                		"                "))
+                .add(new PortletContentPlaceholderEventImpl(null))
+                .add(CharacterDataEventImpl.create("\n" + 
+                		"            </folder>\n" + 
+                		"            <folder ID=\"6\" type=\"column\">\n" + 
+                		"                "))
+                .add(new PortletContentPlaceholderEventImpl(null))
+                .add(CharacterDataEventImpl.create("\n" + 
+                		"                "))
+                .add(new PortletContentPlaceholderEventImpl(null))
+                .add(CharacterDataEventImpl.create("\n" + 
+                        "                "))
+                .add(new PortletContentPlaceholderEventImpl(null))
+                .add(CharacterDataEventImpl.create("\n" + 
+                		"            </folder>\n" + 
+                		"        </folder>\n" + 
+                		"        <folder ID=\"11\" fname=\"my-classes\" type=\"tab\">\n" + 
+                		"            <name xml:lang=\"en\">My Classes "))
+                .add(new PortletTitlePlaceholderEventImpl(null))
+                .add(CharacterDataEventImpl.create("</name>\n" + 
+                		"            <name xml:lang=\"de\">My Classes "))
+                .add(new PortletTitlePlaceholderEventImpl(null))
+                .add(CharacterDataEventImpl.create("</name>\n" + 
+                		"            <link href=\""))
+                .add(new PortletHelpPlaceholderEventImpl(null))
+                .add(CharacterDataEventImpl.create("\">Help Link</link>\n" + 
+                		"            <name xml:lang=\"ja\">My Classes "))
+                .add(new PortletTitlePlaceholderEventImpl(null))
+                .add(CharacterDataEventImpl.create("</name>\n" + 
+                		"            <folder ID=\"12\" type=\"column\">\n" + 
+                		"                "))
+                .add(new PortletContentPlaceholderEventImpl(null))
+                .add(CharacterDataEventImpl.create("\n" + 
+                		"                "))
+                .add(new PortletContentPlaceholderEventImpl(null))
+                .add(CharacterDataEventImpl.create("\n" + 
+                		"            </folder>\n" + 
+                		"            <folder ID=\"16\" type=\"column\">\n" + 
+                		"                "))
+                .add(new PortletContentPlaceholderEventImpl(null))
+                .add(CharacterDataEventImpl.create("\n" + 
+                		"                "))
+                .add(new PortletContentPlaceholderEventImpl(null))
+                .add(CharacterDataEventImpl.create("\n" + 
+                		"            </folder>\n" + 
+                		"        </folder>\n" + 
+                		"    </folder>\n" + 
+                		"</layout>"))
+                .build();
     }
     
     private static final class SimpleStAXSource implements StAXPipelineComponent {

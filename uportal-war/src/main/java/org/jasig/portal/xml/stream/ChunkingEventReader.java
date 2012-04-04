@@ -22,7 +22,6 @@ package org.jasig.portal.xml.stream;
 import java.io.StringWriter;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.regex.MatchResult;
@@ -39,10 +38,8 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import org.jasig.portal.character.stream.CharacterEventSource;
-import org.jasig.portal.character.stream.events.CharacterDataEvent;
 import org.jasig.portal.character.stream.events.CharacterDataEventImpl;
 import org.jasig.portal.character.stream.events.CharacterEvent;
-import org.jasig.portal.character.stream.events.CharacterEventTypes;
 
 /**
  * Used with code that serializes StAX events into a string. Watches for specific XML tags in a StAX
@@ -58,13 +55,11 @@ public class ChunkingEventReader extends BaseXMLEventReader {
 
     private final HttpServletRequest request;
     private final Map<String, CharacterEventSource> chunkingElements;
-    private final Map<Pattern, CharacterEventSource> chunkingPatterns;
+    private final Map<Pattern, CharacterEventSource> chunkingPatternEventSources;
+    private final Pattern[] chunkingPatterns;
     private final XMLEventWriter xmlEventWriter;
     private final StringWriter writer;
     private boolean removeXmlDeclaration = true;
-    
-    //Declare this at the class level to reduce excess object creation
-    private final StringBuffer characterChunkingBuffer = new StringBuffer();
     
     //to handle peek() calls
     private XMLEvent peekedEvent = null;
@@ -74,13 +69,15 @@ public class ChunkingEventReader extends BaseXMLEventReader {
 
     public ChunkingEventReader(HttpServletRequest request,
             Map<String, CharacterEventSource> chunkingElements,
-            Map<Pattern, CharacterEventSource> chunkingPatterns, 
+            Map<Pattern, CharacterEventSource> chunkingPatternEventSources, 
+            Pattern[] chunkingPatterns,
             XMLEventReader xmlEventReader, XMLEventWriter xmlEventWriter,
             StringWriter writer) {
         super(xmlEventReader);
 
         this.request = request;
         this.chunkingElements = chunkingElements;
+        this.chunkingPatternEventSources = chunkingPatternEventSources;
         this.chunkingPatterns = chunkingPatterns;
         this.xmlEventWriter = xmlEventWriter;
         this.writer = writer;
@@ -167,10 +164,7 @@ public class ChunkingEventReader extends BaseXMLEventReader {
             
             //Get the generated events for the element
             final XMLEventReader parent = this.getParent();
-            final List<CharacterEvent> generatedCharacterEvents = characterEventSource.getCharacterEvents(this.request, parent, startElement);
-            if (generatedCharacterEvents != null) {
-                this.characterEvents.addAll(generatedCharacterEvents);
-            }
+            characterEventSource.generateCharacterEvents(this.request, parent, startElement, this.characterEvents);
             
             //Read the next event off the reader
             final XMLEvent nextEvent = parent.nextEvent();
@@ -191,12 +185,7 @@ public class ChunkingEventReader extends BaseXMLEventReader {
         this.xmlEventWriter.flush();
         
         //Add character chunk to events
-        final String chunk = this.writer.toString();
-        
-        final List<CharacterEvent> characterEvents = this.chunkString(chunk);
-        
-        //Add all the characterEvents
-        this.characterEvents.addAll(characterEvents);
+        this.chunkString(this.characterEvents, this.writer.toString(), 0);
         
         this.clearWriter();
     }
@@ -213,53 +202,45 @@ public class ChunkingEventReader extends BaseXMLEventReader {
      * Breaks up the String into a List of CharacterEvents based on the configured Map of Patterns to 
      * CharacterEventSources
      */
-    protected List<CharacterEvent> chunkString(final String chunk) {
-        final List<CharacterEvent> characterEvents = new LinkedList<CharacterEvent>();
-        characterEvents.add(new CharacterDataEventImpl(chunk));
-
+    protected void chunkString(final List<CharacterEvent> characterEvents, final CharSequence buffer, int patternIndex) {
         //Iterate over the chunking patterns
-        for (final Map.Entry<Pattern, CharacterEventSource> chunkingPatternEntry : this.chunkingPatterns.entrySet()) {
-            final Pattern pattern = chunkingPatternEntry.getKey();
+        for (; patternIndex < this.chunkingPatterns.length; patternIndex++) {
+            final Pattern pattern = this.chunkingPatterns[patternIndex];
 
-            //Iterate over the events that have been chunked so far
-            for (final ListIterator<CharacterEvent> characterDataEventItr = characterEvents.listIterator(); characterDataEventItr.hasNext(); ) {
-                final CharacterEvent characterDataEvent = characterDataEventItr.next();
-                
-                //If it is a character event it may need further chunking
-                if (CharacterEventTypes.CHARACTER == characterDataEvent.getEventType()) {
-                    final String data = ((CharacterDataEvent)characterDataEvent).getData();
+            final Matcher matcher = pattern.matcher(buffer);
+            if (matcher.find()) {
+                final CharacterEventSource eventSource = this.chunkingPatternEventSources.get(pattern);
+                int prevMatchEnd = 0;
+
+                do {
+                    //Add all of the text up to the match as a new chunk, use subSequence to avoid extra string alloc
+                    this.chunkString(characterEvents,
+                            buffer.subSequence(prevMatchEnd, matcher.start()),
+                            patternIndex + 1);
+
+                    //Get the generated CharacterEvents for the match
+                    final MatchResult matchResult = matcher.toMatchResult();
+                    eventSource.generateCharacterEvents(this.request, matchResult, characterEvents);
                     
-                    final Matcher matcher = pattern.matcher(data);
-                    if (matcher.find()) {
-                        //Found a match, replacing the CharacterDataEvent that was found
-                        characterDataEventItr.remove();
+                    prevMatchEnd = matcher.end();
+                } while (matcher.find());
 
-                        do {
-                            //Add all of the text up to the match as a new chunk
-                            characterChunkingBuffer.delete(0, characterChunkingBuffer.length());
-                            matcher.appendReplacement(characterChunkingBuffer, "");
-                            characterDataEventItr.add(new CharacterDataEventImpl(characterChunkingBuffer.toString()));
-
-                            //Get the generated CharacterEvents for the match
-                            final CharacterEventSource eventSource = chunkingPatternEntry.getValue();
-                            final MatchResult matchResult = matcher.toMatchResult();
-                            final List<CharacterEvent> generatedCharacterEvents = eventSource.getCharacterEvents(this.request, matchResult);
-                            
-                            //Add the generated CharacterEvents to the list
-                            for (final CharacterEvent generatedCharacterEvent : generatedCharacterEvents) {
-                                characterDataEventItr.add(generatedCharacterEvent);
-                            }
-                        } while (matcher.find());
-                            
-                        //Add any remaining text from the original CharacterDataEvent
-                        characterChunkingBuffer.delete(0, characterChunkingBuffer.length());
-                        matcher.appendTail(characterChunkingBuffer);
-                        characterDataEventItr.add(new CharacterDataEventImpl(characterChunkingBuffer.toString()));
-                    }
+                //Add any remaining text from the original CharacterDataEvent
+                if (prevMatchEnd < buffer.length()) {
+                    this.chunkString(characterEvents,
+                            buffer.subSequence(prevMatchEnd, buffer.length()),
+                            patternIndex + 1);
                 }
+
+                return;
             }
         }
-        return characterEvents;
+
+        //Buffer didn't match anything, just append the string data
+        
+        //de-duplication of the event string data
+        final String eventString = buffer.toString();
+        characterEvents.add(CharacterDataEventImpl.create(eventString));
     }
 
     @Override

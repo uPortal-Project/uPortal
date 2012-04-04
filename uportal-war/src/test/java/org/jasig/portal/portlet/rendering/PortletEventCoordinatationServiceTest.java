@@ -66,7 +66,7 @@ public class PortletEventCoordinatationServiceTest {
         //org.jasig.portal.search.SearchQuery
         
         final Event event = mock(Event.class);
-        final MockPortletDefinitionId portletDefinitionId = new MockPortletDefinitionId("pd1");
+        final MockPortletDefinitionId portletDefinitionId = new MockPortletDefinitionId(1);
         final PortletApplicationDefinition portletApplicationDefinition = mock(PortletApplicationDefinition.class);
         final PortletDefinition portletDefinition = mock(PortletDefinition.class);
         final EventDefinitionReference searchRequestEventDefinitionReference = mock(EventDefinitionReference.class);

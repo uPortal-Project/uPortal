@@ -43,11 +43,11 @@ public class JsonWrapperFilteringCharacterEventReaderTest {
     @Test
     public void testFilteringEvents() {
         final CharacterEventReader baseEventReader = new CharacterEventBufferReader(Arrays.asList(
-                new CharacterDataEventImpl("<layout>"), 
-                new JsonLayoutPlaceholderEventImpl(),
-                new CharacterDataEventImpl("{'yay':json}"),
-                new JsonLayoutPlaceholderEventImpl(),
-                new CharacterDataEventImpl("</layout>")).listIterator());
+                CharacterDataEventImpl.create("<layout>"), 
+                JsonLayoutPlaceholderEventImpl.INSTANCE,
+                CharacterDataEventImpl.create("{'yay':json}"),
+                JsonLayoutPlaceholderEventImpl.INSTANCE,
+                CharacterDataEventImpl.create("</layout>")).listIterator());
         
         final JsonWrapperFilteringCharacterEventReader jsonWrapperFilteringCharacterEventReader = new JsonWrapperFilteringCharacterEventReader(baseEventReader);
         
