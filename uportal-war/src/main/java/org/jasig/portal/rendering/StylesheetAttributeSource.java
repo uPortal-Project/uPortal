@@ -21,9 +21,7 @@ package org.jasig.portal.rendering;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -119,12 +117,12 @@ public abstract class StylesheetAttributeSource implements AttributeSource, Bean
     public final CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
         final PreferencesScope stylesheetPreferencesScope = this.getStylesheetPreferencesScope(request);
         
-        final CacheKeyBuilder cacheKeyBuilder = CacheKey.builder(this.name);
+        final CacheKeyBuilder<String, String> cacheKeyBuilder = CacheKey.builder(this.name);
         
-        final Map<String, Map<String, String>> allLayoutAttributes = this.stylesheetUserPreferencesService.populateAllLayoutAttributes(request, stylesheetPreferencesScope, new LinkedHashMap<String, Map<String, String>>());
-        
-        for (final Map.Entry<String, Map<String, String>> ae : allLayoutAttributes.entrySet()) {
-            
+        final Iterable<String> layoutAttributeNodeIds = this.stylesheetUserPreferencesService.getAllLayoutAttributeNodeIds(request, stylesheetPreferencesScope);
+        for (final String nodeId : layoutAttributeNodeIds) {
+            cacheKeyBuilder.add(nodeId);
+            this.stylesheetUserPreferencesService.populateLayoutAttributes(request, stylesheetPreferencesScope, nodeId, cacheKeyBuilder);
         }
         
         return cacheKeyBuilder.build();

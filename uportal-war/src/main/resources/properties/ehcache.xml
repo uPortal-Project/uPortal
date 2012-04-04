@@ -295,7 +295,7 @@
 
     <cache name="org.jasig.portal.utils.cache.ConfigurablePageCachingFilter.PAGE_CACHE"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="900" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     <!-- XSLT caches -->
     <!-- 
@@ -304,7 +304,7 @@
      +-->
     <cache name="org.jasig.portal.utils.cache.resource.CachingResourceLoader"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="900" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!-- 
      | Caches compiled SpEL Expression objects
@@ -313,7 +313,7 @@
      +-->
     <cache name="SpELExpressionCache"
         eternal="false" maxElementsInMemory="5000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="900" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!-- 
      | Caches post-layout pipeline events

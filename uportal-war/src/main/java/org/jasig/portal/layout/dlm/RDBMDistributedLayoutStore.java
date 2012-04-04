@@ -24,11 +24,11 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -85,6 +85,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.BrokenSecurityContext;
 import org.jasig.portal.security.provider.PersonImpl;
 import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.MapPopulator;
 import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.xml.XmlUtilities;
 import org.jasig.portal.xml.XmlUtilitiesImpl;
@@ -300,18 +301,15 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             boolean modified = false;
 
             //Copy all of the fragment preferences into the distributed preferences
-            final Map<String, Map<String, String>> allLayoutAttributes = fragmentStylesheetUserPreferences
-                    .populateAllLayoutAttributes(new LinkedHashMap<String, Map<String, String>>());
-
-            for (final Map.Entry<String, Map<String, String>> layoutNodeAttributesEntry : allLayoutAttributes
-                    .entrySet()) {
-                String nodeId = layoutNodeAttributesEntry.getKey();
-
+            final Collection<String> allLayoutAttributeNodeIds = fragmentStylesheetUserPreferences.getAllLayoutAttributeNodeIds();
+            for (String nodeId : allLayoutAttributeNodeIds) {
                 if (!nodeId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX)) {
                     nodeId = labelBase + nodeId;
                 }
 
-                final Map<String, String> layoutAttributes = layoutNodeAttributesEntry.getValue();
+                final MapPopulator<String, String> layoutAttributesPopulator = new MapPopulator<String, String>();
+                fragmentStylesheetUserPreferences.populateLayoutAttributes(nodeId, layoutAttributesPopulator);
+                final Map<String, String> layoutAttributes = layoutAttributesPopulator.getMap();
                 for (final Map.Entry<String, String> layoutAttributesEntry : layoutAttributes.entrySet()) {
                     final String name = layoutAttributesEntry.getKey();
                     final String value = layoutAttributesEntry.getValue();
@@ -663,18 +661,21 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 .getStylesheetUserPreferences(structureStylesheetDescriptor, person, profile);
 
         if (ssup != null) {
-            final Map<String, Map<String, String>> allLayoutAttributes = ssup.populateAllLayoutAttributes(new LinkedHashMap<String, Map<String,String>>());
-            for (final Entry<String, Map<String, String>> nodeEntry : allLayoutAttributes.entrySet()) {
-                final String nodeId = nodeEntry.getKey();
-                final Map<String, String> attributes = nodeEntry.getValue();
+            final Collection<String> allLayoutAttributeNodeIds = ssup.getAllLayoutAttributeNodeIds();
+            for (final String nodeId : allLayoutAttributeNodeIds) {
+                
+                final MapPopulator<String, String> layoutAttributesPopulator = new MapPopulator<String, String>();
+                ssup.populateLayoutAttributes(nodeId, layoutAttributesPopulator);
+                final Map<String, String> layoutAttributes = layoutAttributesPopulator.getMap();
+                
 
                 final org.dom4j.Element element = layoutDoc.elementByID(nodeId);
                 if (element == null) {
-                    this.log.warn("No node with id '" + nodeId + "' found in layout for: " + person.getUserName() + ". Stylesheet user preference layout attributes will be ignored: " + attributes);
+                    this.log.warn("No node with id '" + nodeId + "' found in layout for: " + person.getUserName() + ". Stylesheet user preference layout attributes will be ignored: " + layoutAttributes);
                     continue;
                 }
 
-                for (final Entry<String, String> attributeEntry : attributes.entrySet()) {
+                for (final Entry<String, String> attributeEntry : layoutAttributes.entrySet()) {
                     final String name = attributeEntry.getKey();
                     final String value = attributeEntry.getValue();
 

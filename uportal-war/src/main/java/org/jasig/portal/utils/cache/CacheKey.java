@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.jasig.portal.utils.Populator;
 
 /**
  * @author Eric Dalquist
@@ -36,7 +37,7 @@ import org.apache.commons.lang.StringUtils;
 public final class CacheKey implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    public static final class CacheKeyBuilder {
+    public static final class CacheKeyBuilder<K extends Serializable, V extends Serializable> implements Populator<K, V> {
         private final String source;
         private ArrayList<Serializable> keyList;
         private Map<Serializable, Serializable> keyMap; 
@@ -45,14 +46,14 @@ public final class CacheKey implements Serializable {
             this.source = source;
         }
         
-        public CacheKeyBuilder add(Serializable v) {
+        public CacheKeyBuilder<K, V> add(Serializable v) {
             checkKeyList();
             
             this.keyList.add(v);
             return this;
         }
         
-        public CacheKeyBuilder addAll(Serializable... vs) {
+        public CacheKeyBuilder<K, V> addAll(Serializable... vs) {
             checkKeyList();
             
             for (final Serializable v : vs) {
@@ -61,7 +62,7 @@ public final class CacheKey implements Serializable {
             return this;
         }
         
-        public CacheKeyBuilder addAll(Collection<Serializable> vs) {
+        public CacheKeyBuilder<K, V> addAll(Collection<Serializable> vs) {
             checkKeyList();
             
             for (final Serializable v : vs) {
@@ -70,14 +71,14 @@ public final class CacheKey implements Serializable {
             return this;
         }
         
-        public CacheKeyBuilder put(Serializable k, Serializable v) {
+        public CacheKeyBuilder<K, V> put(K k, V v) {
             checkKeyMap();
             
             this.keyMap.put(k, v);
             return this;
         }
         
-        public CacheKeyBuilder putAll(Properties p) {
+        public CacheKeyBuilder<K, V> putAll(Properties p) {
             checkKeyMap();
             
             for (final Map.Entry<Object, Object> ve : p.entrySet()) {
@@ -86,10 +87,10 @@ public final class CacheKey implements Serializable {
             return this;
         }
         
-        public CacheKeyBuilder putAll(Map<? extends Serializable, ? extends Serializable> vm) {
+        public CacheKeyBuilder<K, V> putAll(Map<? extends K, ? extends V> vm) {
             checkKeyMap();
             
-            for (final Map.Entry<? extends Serializable, ? extends Serializable> ve : vm.entrySet()) {
+            for (final Map.Entry<? extends K, ? extends V> ve : vm.entrySet()) {
                 this.keyMap.put(ve.getKey(), ve.getValue());
             }
             return this;
@@ -128,8 +129,8 @@ public final class CacheKey implements Serializable {
         }
     }
     
-    public static CacheKeyBuilder builder(String source) {
-        return new CacheKeyBuilder(source);
+    public static <K extends Serializable, V extends Serializable> CacheKeyBuilder<K, V> builder(String source) {
+        return new CacheKeyBuilder<K, V>(source);
     }
     
     public static CacheKey build(String source, Serializable... key) {

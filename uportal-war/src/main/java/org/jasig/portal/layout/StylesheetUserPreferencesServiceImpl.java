@@ -20,10 +20,8 @@
 package org.jasig.portal.layout;
 
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,6 +41,7 @@ import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
+import org.jasig.portal.utils.Populator;
 import org.jasig.portal.utils.web.PortalWebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -341,9 +340,10 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
             }
         }
     }
-
+    
     @Override
-    public Properties populateOutputProperties(HttpServletRequest request, PreferencesScope prefScope, Properties properties) {
+    public <P extends Populator<String, String>> P populateOutputProperties(HttpServletRequest request,
+            PreferencesScope prefScope, P properties) {
         final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
         final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
         
@@ -412,7 +412,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
                 continue;
             }
             
-            properties.setProperty(name, value);
+            properties.put(name, value);
         }
         
         return properties;
@@ -422,7 +422,6 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
     @Override
     public void clearOutputProperties(HttpServletRequest request, PreferencesScope prefScope) {
         final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
-        final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
         
         final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
         if (stylesheetUserPreferences != null) {
@@ -561,7 +560,8 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
     }
 
     @Override
-    public Map<String, String> populateStylesheetParameters(HttpServletRequest request, PreferencesScope prefScope, Map<String, String> stylesheetParameters) {
+    public <P extends Populator<String, String>> P populateStylesheetParameters(HttpServletRequest request,
+            PreferencesScope prefScope, P stylesheetParameters) {
         final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
         final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
         
@@ -638,7 +638,6 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
     @Override
     public void clearStylesheetParameters(HttpServletRequest request, PreferencesScope prefScope) {
         final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
-        final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
         
         final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
         if (stylesheetUserPreferences != null) {
@@ -877,9 +876,8 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
     }
 
     @Override
-    public Iterable<String> getLayoutAttributeNodeIds(HttpServletRequest request, PreferencesScope prefScope) {
+    public Iterable<String> getAllLayoutAttributeNodeIds(HttpServletRequest request, PreferencesScope prefScope) {
         final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
-        final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
         
         final LinkedHashSet<String> allNodeIds = new LinkedHashSet<String>();
         
@@ -909,10 +907,10 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         
         return allNodeIds;
     }
-
+    
     @Override
-    public Map<String, String> populateLayoutAttributes(HttpServletRequest request,
-            PreferencesScope prefScope, String nodeId, Map<String, String> layoutAttributes) {
+    public <P extends Populator<String, String>> P populateLayoutAttributes(HttpServletRequest request,
+            PreferencesScope prefScope, String nodeId, P layoutAttributes) {
         final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
         final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
         
@@ -1002,133 +1000,10 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         return layoutAttributes;
     }
 
-    @Override
-    public Map<String, Map<String, String>> populateAllLayoutAttributes(HttpServletRequest request,
-            PreferencesScope prefScope, Map<String, Map<String, String>> allLayoutAttributes) {
-
-        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
-        final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
-        
-        //Get the scoped sources once
-        final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
-        
-        final Map<String, Map<String, String>> sessionLayoutAttributes;
-        final HttpSession session = request.getSession(false);
-        if (session == null) {
-            sessionLayoutAttributes = null;
-        }
-        else {
-            sessionLayoutAttributes = PortalWebUtils.getMapSessionAttribute(session, LAYOUT_ATTRIBUTES_KEY + stylesheetPreferencesKey.toString(), false);
-        }
-        
-        final Map<String, Map<String, String>> requestLayoutAttributes = PortalWebUtils.getMapRequestAttribute(request, LAYOUT_ATTRIBUTES_KEY + stylesheetPreferencesKey.toString(), false);
-        
-        final IStylesheetUserPreferences distributedStylesheetUserPreferences = this.getDistributedStylesheetUserPreferences(request, prefScope);
-        if (distributedStylesheetUserPreferences != null) {
-            distributedStylesheetUserPreferences.populateAllLayoutAttributes(allLayoutAttributes);
-        }
-        
-        //Try getting each layout attribute to populate the Map
-        for (final ILayoutAttributeDescriptor layoutAttributeDescriptor : stylesheetDescriptor.getLayoutAttributeDescriptors()) {
-            final String name = layoutAttributeDescriptor.getName();
-            
-            final Scope scope = layoutAttributeDescriptor.getScope();
-            switch (scope) {
-                case PERSISTENT: {
-                    if (stylesheetUserPreferences == null) {
-                        break;
-                    }
-                    
-                    for (final String nodeId : stylesheetUserPreferences.getAllLayoutAttributeNodeIds()) {
-                        final String value = stylesheetUserPreferences.getLayoutAttribute(nodeId, name);
-                        if (value == null) {
-                            continue;
-                        }
-                        
-                        if (this.compareValues(value, layoutAttributeDescriptor.getDefaultValue())) {
-                            this.removeLayoutAttribute(request, prefScope, nodeId, name);
-                            continue;
-                        }
-                        
-                        Map<String, String> nodeAttributes = allLayoutAttributes.get(nodeId);
-                        if (nodeAttributes == null) {
-                            nodeAttributes = new LinkedHashMap<String, String>();
-                            allLayoutAttributes.put(nodeId, nodeAttributes);
-                        }
-                        
-                        nodeAttributes.put(name, value);
-                    }
-                    
-                    break;
-                }
-                case SESSION: {
-                    if (sessionLayoutAttributes == null) {
-                        break;
-                    }
-                    
-                    addNodeAttributes(request,
-                            prefScope,
-                            allLayoutAttributes,
-                            sessionLayoutAttributes,
-                            layoutAttributeDescriptor,
-                            name);
-                    
-                    break;
-                }
-                case REQUEST: {
-                    if (requestLayoutAttributes == null) {
-                        break;
-                    }
-                    
-                    addNodeAttributes(request,
-                            prefScope,
-                            allLayoutAttributes,
-                            requestLayoutAttributes,
-                            layoutAttributeDescriptor,
-                            name);
-                    break;
-                }
-                default: {
-                    break;
-                }
-            }
-        }
-        
-        return allLayoutAttributes;
-    }
-
-    private void addNodeAttributes(HttpServletRequest request, PreferencesScope prefScope,
-            Map<String, Map<String, String>> allLayoutAttributes,
-            Map<String, Map<String, String>> attributesToAdd, ILayoutAttributeDescriptor layoutAttributeDescriptor,
-            String name) {
-        
-        for (final Map.Entry<String, Map<String, String>> nodeIdAttributeEntry : attributesToAdd.entrySet()) {
-            final String nodeId = nodeIdAttributeEntry.getKey();
-            final String value = nodeIdAttributeEntry.getValue().get(name);
-            if (value == null) {
-                continue;
-            }
-            
-            if (this.compareValues(value, layoutAttributeDescriptor.getDefaultValue())) {
-                this.removeLayoutAttribute(request, prefScope, nodeId, name);
-                continue;
-            }
-            
-            Map<String, String> nodeAttributes = allLayoutAttributes.get(nodeId);
-            if (nodeAttributes == null) {
-                nodeAttributes = new LinkedHashMap<String, String>();
-                allLayoutAttributes.put(nodeId, nodeAttributes);
-            }
-            
-            nodeAttributes.put(name, value);
-        }
-    }
-
     @Transactional
     @Override
     public void clearLayoutAttributes(HttpServletRequest request, PreferencesScope prefScope, String nodeId) {
         final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
-        final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
         
         final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
         if (stylesheetUserPreferences != null) {
@@ -1155,7 +1030,6 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
     @Override
     public void clearAllLayoutAttributes(HttpServletRequest request, PreferencesScope prefScope) {
         final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
-        final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
         
         final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
         if (stylesheetUserPreferences != null) {

@@ -24,8 +24,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Properties;
-import java.util.TreeMap;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -56,6 +54,7 @@ import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.layout.om.IStylesheetUserPreferences;
+import org.jasig.portal.utils.Populator;
 
 /**
  * JPA implementation of stylesheet user preferences data
@@ -209,7 +208,7 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
 
     
     @Override
-    public Properties populateOutputProperties(Properties properties) {
+    public <P extends Populator<String, String>> P populateOutputProperties(P properties) {
         properties.putAll(this.outputProperties);
         return properties;
     }
@@ -242,8 +241,7 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     }
 
     @Override
-    public Map<String, String> populateStylesheetParameters(
-            Map<String, String> stylesheetParameters) {
+    public <P extends Populator<String, String>> P populateStylesheetParameters(P stylesheetParameters) {
         stylesheetParameters.putAll(this.parameters);
         return stylesheetParameters;
     }
@@ -310,8 +308,7 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     }
     
     @Override
-    public Map<String, String> populateLayoutAttributes(String nodeId,
-            Map<String, String> layoutAttributes) {
+    public <P extends Populator<String, String>> P populateLayoutAttributes(String nodeId, P layoutAttributes) {
         Validate.notEmpty(nodeId, "nodeId cannot be null");
         
         final LayoutNodeAttributesImpl nodeAttributes = this.layoutAttributes.get(nodeId);
@@ -320,27 +317,6 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
         }
         
         return layoutAttributes;
-    }
-
-    @Override
-    public Map<String, Map<String, String>> populateAllLayoutAttributes(
-            Map<String, Map<String, String>> allLayoutAttributes) {
-        
-        for (final Map.Entry<String, LayoutNodeAttributesImpl> layoutNodeAttribute : this.layoutAttributes.entrySet()) {
-            final String nodeId = layoutNodeAttribute.getKey();
-            final LayoutNodeAttributesImpl nodeAttributes = layoutNodeAttribute.getValue();
-            
-            Map<String, String> existingNodeAttributes = allLayoutAttributes.get(nodeId);
-            if (existingNodeAttributes == null) {
-                existingNodeAttributes = new TreeMap<String, String>(nodeAttributes.getAttributes());
-                allLayoutAttributes.put(nodeId, existingNodeAttributes);
-            }
-            else {
-                existingNodeAttributes.putAll(nodeAttributes.getAttributes());
-            }
-        }
-        
-        return allLayoutAttributes;
     }
     
     @Override

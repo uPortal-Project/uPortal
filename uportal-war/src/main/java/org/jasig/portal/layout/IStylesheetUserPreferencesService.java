@@ -19,14 +19,13 @@
 
 package org.jasig.portal.layout;
 
-import java.util.Map;
-import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.layout.om.IStylesheetUserPreferences;
+import org.jasig.portal.utils.Populator;
 
 /**
  * Provides access to stylesheet user preference data. This is how any runtime code that needs access to theme or structure
@@ -103,7 +102,7 @@ public interface IStylesheetUserPreferencesService {
      * @param request The current request
      * @param prefScope The stylesheet preferences scope
      * 
-     * @see IStylesheetUserPreferences#populateOutputProperties(Properties)
+     * @see IStylesheetUserPreferences#populateOutputProperties(Populator)
      */
     public <P extends Populator<String, String>> P populateOutputProperties(HttpServletRequest request, PreferencesScope prefScope, P properties);
     
@@ -158,9 +157,9 @@ public interface IStylesheetUserPreferencesService {
      * @param request The current request
      * @param prefScope The stylesheet preferences scope
      * 
-     * @see IStylesheetUserPreferences#populateStylesheetParameters(Map)
+     * @see IStylesheetUserPreferences#populateStylesheetParameters(Populator)
      */
-    public Map<String, String> populateStylesheetParameters(HttpServletRequest request, PreferencesScope prefScope, Map<String, String> stylesheetParameters);
+    public <P extends Populator<String, String>> P populateStylesheetParameters(HttpServletRequest request, PreferencesScope prefScope, P stylesheetParameters);
     
     /**
      * @param request The current request
@@ -203,8 +202,9 @@ public interface IStylesheetUserPreferencesService {
      * @return An iterable of all layout nodeIds
      * @param request The current request
      * @param prefScope The stylesheet preferences scope
+     * @see IStylesheetUserPreferences#getAllLayoutAttributeNodeIds()
      */
-    public Iterable<String> getLayoutAttributeNodeIds(HttpServletRequest request, PreferencesScope prefScope);
+    public Iterable<String> getAllLayoutAttributeNodeIds(HttpServletRequest request, PreferencesScope prefScope);
     
     /**
      * Add all layout attributes for the specified nodeId to the provided Map
@@ -212,19 +212,9 @@ public interface IStylesheetUserPreferencesService {
      * @param request The current request
      * @param prefScope The stylesheet preferences scope
      * 
-     * @see IStylesheetUserPreferences#populateLayoutAttributes(String, Map)
+     * @see IStylesheetUserPreferences#populateLayoutAttributes(String, Populator)
      */
-    public Map<String, String> populateLayoutAttributes(HttpServletRequest request, PreferencesScope prefScope, String nodeId, Populator<String, String> layoutAttributes);
-    
-    /**
-     * Add all layout attributes for all nodeIds to the provided Map
-     * 
-     * @param request The current request
-     * @param prefScope The stylesheet preferences scope
-     * 
-     * @see IStylesheetUserPreferences#populateAllLayoutAttributes(Map)
-     */
-    public Map<String, Map<String, String>> populateAllLayoutAttributes(HttpServletRequest request, PreferencesScope prefScope, Populator<String, Map<String, String>> allLayoutAttributes);
+    public <P extends Populator<String, String>> P populateLayoutAttributes(HttpServletRequest request, PreferencesScope prefScope, String nodeId, P layoutAttributes);
     
     /**
      * @param request The current request
@@ -242,21 +232,4 @@ public interface IStylesheetUserPreferencesService {
      * @see IStylesheetUserPreferences#clearAllLayoutAttributes()
      */
     public void clearAllLayoutAttributes(HttpServletRequest request, PreferencesScope prefScope);
-
-    public static interface Populator<K, V> {
-        void put(K k, V v);
-    }
-    
-    public static class MapPopulator<K, V> implements Populator<K, V> {
-        private final Map<K, V> map;
-
-        public MapPopulator(Map<K, V> map) {
-            this.map = map;
-        }
-
-        @Override
-        public void put(K k, V v) {
-            this.map.put(k, v);
-        }
-    }
 }

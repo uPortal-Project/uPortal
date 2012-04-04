@@ -28,6 +28,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.layout.IStylesheetUserPreferencesService;
 import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
+import org.jasig.portal.utils.MapPopulator;
+import org.jasig.portal.utils.PropertiesPopulator;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.jasig.portal.utils.cache.CacheKey.CacheKeyBuilder;
 import org.slf4j.Logger;
@@ -62,36 +64,38 @@ public abstract class StylesheetUserPreferencesTransformerConfigurationSource ex
      */
     @Override
     public final CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
-        final CacheKeyBuilder cacheKeyBuilder = CacheKey.builder(getName());
+        final CacheKeyBuilder<String, String> cacheKeyBuilder = CacheKey.builder(getName());
         
         final PreferencesScope stylesheetPreferencesScope = this.getStylesheetPreferencesScope(request);
 
-        final Map<String, String> stylesheetParameters = this.stylesheetUserPreferencesService.populateStylesheetParameters(request, stylesheetPreferencesScope, new LinkedHashMap<String, String>());
-        cacheKeyBuilder.putAll(stylesheetParameters);
+        this.stylesheetUserPreferencesService.populateStylesheetParameters(request, stylesheetPreferencesScope, cacheKeyBuilder);
         
-        final Properties outputProperties = this.stylesheetUserPreferencesService.populateOutputProperties(request, stylesheetPreferencesScope, new Properties());
-        cacheKeyBuilder.putAll(outputProperties);
+        this.stylesheetUserPreferencesService.populateOutputProperties(request, stylesheetPreferencesScope, cacheKeyBuilder);
         
         return cacheKeyBuilder.build();
     }
 
+    
     /* (non-Javadoc)
      * @see org.jasig.portal.rendering.xslt.TransformerConfigurationSource#getTransformerParameters(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
-    public final LinkedHashMap<String, Object> getParameters(HttpServletRequest request, HttpServletResponse response) {
+    public final Map<String, Object> getParameters(HttpServletRequest request, HttpServletResponse response) {
         final PreferencesScope stylesheetPreferencesScope = this.getStylesheetPreferencesScope(request);
         
-        final Map<String, String> stylesheetParameters = this.stylesheetUserPreferencesService.populateStylesheetParameters(request, stylesheetPreferencesScope, new LinkedHashMap<String, String>());
+        final LinkedHashMap<String, Object> stylesheetParameters = new LinkedHashMap<String, Object>();
         
-        return new LinkedHashMap<String, Object>(stylesheetParameters);
+        this.stylesheetUserPreferencesService.populateStylesheetParameters(request, stylesheetPreferencesScope, new MapPopulator<String, String>(stylesheetParameters));
+
+        return stylesheetParameters;
     }
     
     @Override
     public Properties getOutputProperties(HttpServletRequest request, HttpServletResponse response) {
         final PreferencesScope stylesheetPreferencesScope = this.getStylesheetPreferencesScope(request);
         
-        return this.stylesheetUserPreferencesService.populateOutputProperties(request, stylesheetPreferencesScope, new Properties());
+        final PropertiesPopulator outputProperties = this.stylesheetUserPreferencesService.populateOutputProperties(request, stylesheetPreferencesScope, new PropertiesPopulator());
+        return outputProperties.getProperties();
     }
 
     protected String getName() {
