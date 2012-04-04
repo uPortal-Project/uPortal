@@ -20,6 +20,7 @@
 package org.jasig.portal.rendering.xslt;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,6 +30,7 @@ import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScop
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.layout.om.IStylesheetParameterDescriptor;
 import org.jasig.portal.utils.cache.CacheKey;
+import org.jasig.portal.utils.cache.CacheKey.CacheKeyBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanNameAware;
@@ -58,12 +60,26 @@ public abstract class StylesheetDescriptorTransformerConfigurationSource extends
 
     @Override
     public final CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
-        final LinkedHashMap<String, Object> transformerParameters = this.getParameters(request, response);
-        return new CacheKey(this.getName(), transformerParameters);
+        final CacheKeyBuilder cacheKeyBuilder = CacheKey.builder(this.getName());
+        
+        final PreferencesScope preferencesScope = this.getStylesheetPreferencesScope(request);
+        
+        final IStylesheetDescriptor stylesheetDescriptor = this.stylesheetUserPreferencesService.getStylesheetDescriptor(request, preferencesScope);
+        
+        //Build key from stylesheet descriptor parameters
+        for (final IStylesheetParameterDescriptor stylesheetParameterDescriptor : stylesheetDescriptor.getStylesheetParameterDescriptors()) {
+            final String defaultValue = stylesheetParameterDescriptor.getDefaultValue();
+            if (defaultValue != null) {
+                final String name = stylesheetParameterDescriptor.getName();
+                cacheKeyBuilder.put(name, defaultValue);
+            }
+        }
+        
+        return cacheKeyBuilder.build();
     }
     
     @Override
-    public final LinkedHashMap<String, Object> getParameters(HttpServletRequest request, HttpServletResponse response) {
+    public final Map<String, Object> getParameters(HttpServletRequest request, HttpServletResponse response) {
         final PreferencesScope preferencesScope = this.getStylesheetPreferencesScope(request);
         
         final IStylesheetDescriptor stylesheetDescriptor = this.stylesheetUserPreferencesService.getStylesheetDescriptor(request, preferencesScope);

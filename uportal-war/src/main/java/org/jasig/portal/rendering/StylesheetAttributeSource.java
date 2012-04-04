@@ -45,6 +45,7 @@ import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.utils.cache.CacheKey;
+import org.jasig.portal.utils.cache.CacheKey.CacheKeyBuilder;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -118,10 +119,15 @@ public abstract class StylesheetAttributeSource implements AttributeSource, Bean
     public final CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
         final PreferencesScope stylesheetPreferencesScope = this.getStylesheetPreferencesScope(request);
         
-        final LinkedHashMap<String, Map<String, String>> allLayoutAttributes = new LinkedHashMap<String, Map<String, String>>();
-        this.stylesheetUserPreferencesService.populateAllLayoutAttributes(request, stylesheetPreferencesScope, allLayoutAttributes);
+        final CacheKeyBuilder cacheKeyBuilder = CacheKey.builder(this.name);
         
-        return new CacheKey(this.name, allLayoutAttributes);
+        final Map<String, Map<String, String>> allLayoutAttributes = this.stylesheetUserPreferencesService.populateAllLayoutAttributes(request, stylesheetPreferencesScope, new LinkedHashMap<String, Map<String, String>>());
+        
+        for (final Map.Entry<String, Map<String, String>> ae : allLayoutAttributes.entrySet()) {
+            
+        }
+        
+        return cacheKeyBuilder.build();
     }
 
     public IStylesheetDescriptor getStylesheetDescriptor(HttpServletRequest request) {

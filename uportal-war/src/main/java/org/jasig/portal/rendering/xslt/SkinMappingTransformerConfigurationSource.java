@@ -107,7 +107,7 @@ public abstract class SkinMappingTransformerConfigurationSource extends Transfor
     @Override
     public final CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
         final String skinName = this.getSkinNameInternal(request);
-        return new CacheKey(this.getClass().getName(), skinName);
+        return CacheKey.build(this.getClass().getName(), skinName);
     }
     
     private String getSkinNameInternal(HttpServletRequest request) {

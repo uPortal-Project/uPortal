@@ -91,7 +91,7 @@ public abstract class BaseTransformerSource implements TransformerSource, Resour
             throw new RuntimeException("Failed to load stylesheet: " + stylesheetResource, e);
         }
         
-        return new CacheKey(stylesheetResource.getDescription(), stylesheetCacheKey);
+        return CacheKey.build(stylesheetResource.getDescription(), stylesheetCacheKey);
     }
 
     /* (non-Javadoc)

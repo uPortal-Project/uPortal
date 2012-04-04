@@ -105,7 +105,7 @@ public interface IStylesheetUserPreferencesService {
      * 
      * @see IStylesheetUserPreferences#populateOutputProperties(Properties)
      */
-    public Properties populateOutputProperties(HttpServletRequest request, PreferencesScope prefScope, Properties properties);
+    public <P extends Populator<String, String>> P populateOutputProperties(HttpServletRequest request, PreferencesScope prefScope, P properties);
     
     /**
      * @param request The current request
@@ -214,7 +214,7 @@ public interface IStylesheetUserPreferencesService {
      * 
      * @see IStylesheetUserPreferences#populateLayoutAttributes(String, Map)
      */
-    public Map<String, String> populateLayoutAttributes(HttpServletRequest request, PreferencesScope prefScope, String nodeId, Map<String, String> layoutAttributes);
+    public Map<String, String> populateLayoutAttributes(HttpServletRequest request, PreferencesScope prefScope, String nodeId, Populator<String, String> layoutAttributes);
     
     /**
      * Add all layout attributes for all nodeIds to the provided Map
@@ -224,7 +224,7 @@ public interface IStylesheetUserPreferencesService {
      * 
      * @see IStylesheetUserPreferences#populateAllLayoutAttributes(Map)
      */
-    public Map<String, Map<String, String>> populateAllLayoutAttributes(HttpServletRequest request, PreferencesScope prefScope, Map<String, Map<String, String>> allLayoutAttributes);
+    public Map<String, Map<String, String>> populateAllLayoutAttributes(HttpServletRequest request, PreferencesScope prefScope, Populator<String, Map<String, String>> allLayoutAttributes);
     
     /**
      * @param request The current request
@@ -243,4 +243,20 @@ public interface IStylesheetUserPreferencesService {
      */
     public void clearAllLayoutAttributes(HttpServletRequest request, PreferencesScope prefScope);
 
+    public static interface Populator<K, V> {
+        void put(K k, V v);
+    }
+    
+    public static class MapPopulator<K, V> implements Populator<K, V> {
+        private final Map<K, V> map;
+
+        public MapPopulator(Map<K, V> map) {
+            this.map = map;
+        }
+
+        @Override
+        public void put(K k, V v) {
+            this.map.put(k, v);
+        }
+    }
 }

@@ -444,7 +444,7 @@ throws AuthorizationException
     @RequestCache
     public boolean doesPrincipalHavePermission(IAuthorizationPrincipal principal, String owner, String activity,
             String target, IPermissionPolicy policy) throws AuthorizationException {
-        final CacheKey key = new CacheKey("AuthorizationImpl", policy.getClass(), principal.getKey(),
+        final CacheKey key = CacheKey.build(AuthorizationImpl.class.getName(), policy.getClass(), principal.getKey(),
                 principal.getType(), owner, activity, target);
 
         final Element element = this.doesPrincipalHavePermissionCache.get(key);

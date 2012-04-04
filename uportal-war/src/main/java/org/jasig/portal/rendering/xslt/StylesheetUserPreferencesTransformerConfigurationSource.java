@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.jasig.portal.layout.IStylesheetUserPreferencesService;
 import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
 import org.jasig.portal.utils.cache.CacheKey;
+import org.jasig.portal.utils.cache.CacheKey.CacheKeyBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanNameAware;
@@ -61,9 +62,17 @@ public abstract class StylesheetUserPreferencesTransformerConfigurationSource ex
      */
     @Override
     public final CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
-        final LinkedHashMap<String, Object> transformerParameters = this.getParameters(request, response);
-        final Properties outputProperties = this.getOutputProperties(request, response);
-        return new CacheKey(this.getName(), transformerParameters, outputProperties);
+        final CacheKeyBuilder cacheKeyBuilder = CacheKey.builder(getName());
+        
+        final PreferencesScope stylesheetPreferencesScope = this.getStylesheetPreferencesScope(request);
+
+        final Map<String, String> stylesheetParameters = this.stylesheetUserPreferencesService.populateStylesheetParameters(request, stylesheetPreferencesScope, new LinkedHashMap<String, String>());
+        cacheKeyBuilder.putAll(stylesheetParameters);
+        
+        final Properties outputProperties = this.stylesheetUserPreferencesService.populateOutputProperties(request, stylesheetPreferencesScope, new Properties());
+        cacheKeyBuilder.putAll(outputProperties);
+        
+        return cacheKeyBuilder.build();
     }
 
     /* (non-Javadoc)
@@ -82,10 +91,7 @@ public abstract class StylesheetUserPreferencesTransformerConfigurationSource ex
     public Properties getOutputProperties(HttpServletRequest request, HttpServletResponse response) {
         final PreferencesScope stylesheetPreferencesScope = this.getStylesheetPreferencesScope(request);
         
-        final Properties outputProperties = new Properties();
-        this.stylesheetUserPreferencesService.populateOutputProperties(request, stylesheetPreferencesScope, outputProperties);
-        
-        return outputProperties;
+        return this.stylesheetUserPreferencesService.populateOutputProperties(request, stylesheetPreferencesScope, new Properties());
     }
 
     protected String getName() {
