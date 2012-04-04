@@ -302,27 +302,31 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
             //Copy all of the fragment preferences into the distributed preferences
             final Collection<String> allLayoutAttributeNodeIds = fragmentStylesheetUserPreferences.getAllLayoutAttributeNodeIds();
-            for (String nodeId : allLayoutAttributeNodeIds) {
-                if (!nodeId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX)) {
-                    nodeId = labelBase + nodeId;
+            for (final String fragmentNodeId : allLayoutAttributeNodeIds) {
+                final String userNodeId;
+                if (!fragmentNodeId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX)) {
+                    userNodeId = labelBase + fragmentNodeId;
+                }
+                else {
+                    userNodeId = fragmentNodeId;
                 }
 
                 final MapPopulator<String, String> layoutAttributesPopulator = new MapPopulator<String, String>();
-                fragmentStylesheetUserPreferences.populateLayoutAttributes(nodeId, layoutAttributesPopulator);
+                fragmentStylesheetUserPreferences.populateLayoutAttributes(fragmentNodeId, layoutAttributesPopulator);
                 final Map<String, String> layoutAttributes = layoutAttributesPopulator.getMap();
                 for (final Map.Entry<String, String> layoutAttributesEntry : layoutAttributes.entrySet()) {
                     final String name = layoutAttributesEntry.getKey();
                     final String value = layoutAttributesEntry.getValue();
 
                     //Fragmentize the nodeId here
-                    distributedStylesheetUserPreferences.setLayoutAttribute(nodeId, name, value);
+                    distributedStylesheetUserPreferences.setLayoutAttribute(userNodeId, name, value);
 
                     //Clean out user preferences data that matches data from the fragment.
                     if (stylesheetUserPreferences != null) {
-                        final String userValue = stylesheetUserPreferences.getLayoutAttribute(nodeId, name);
+                        final String userValue = stylesheetUserPreferences.getLayoutAttribute(userNodeId, name);
                         if (userValue != null && userValue.equals(value)) {
-                            stylesheetUserPreferences.removeLayoutAttribute(nodeId, name);
-                            EditManager.removePreferenceDirective(person, nodeId, name);
+                            stylesheetUserPreferences.removeLayoutAttribute(userNodeId, name);
+                            EditManager.removePreferenceDirective(person, userNodeId, name);
                             modified = true;
                         }
                     }
