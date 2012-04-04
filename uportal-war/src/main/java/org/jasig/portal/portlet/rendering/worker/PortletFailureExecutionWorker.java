@@ -46,6 +46,8 @@ import org.jasig.portal.utils.web.PortletHttpServletRequestWrapper;
  */
 final class PortletFailureExecutionWorker implements IPortletFailureExecutionWorker {
     
+    private static final int SIGNAL_THE_OPERATION_DOES_NOT_TIMEOUT = -1;
+    
     protected final Log logger = LogFactory.getLog(this.getClass());
     
     private final Map<String, Object> executionAttributes = new ConcurrentHashMap<String, Object>();
@@ -250,5 +252,10 @@ final class PortletFailureExecutionWorker implements IPortletFailureExecutionWor
     @Override
     public long getDuration() {
         return this.completed - this.submitted;
+    }
+
+    @Override
+    public long getApplicableTimeout() {
+        return SIGNAL_THE_OPERATION_DOES_NOT_TIMEOUT;
     }
 }

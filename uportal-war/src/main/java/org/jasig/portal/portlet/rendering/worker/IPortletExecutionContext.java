@@ -63,9 +63,14 @@ public interface IPortletExecutionContext {
     public IPortletWindowId getPortletWindowId();
     
     /**
-     * @return The fname of for the portlet window (from {@link IPortletDefinition#getFName()}
+     * @return The fname of the portlet window (from {@link IPortletDefinition#getFName()})
      */
     public String getPortletFname();
+    
+    /**
+     * @return The timeout setting in milliseconds for the operation in process, or -1 for no timeout.
+     */
+    public long getApplicableTimeout();
     
     /**
      * @return true If the worker has been submitted

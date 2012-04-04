@@ -19,6 +19,6 @@
 
 -->
 
-<Context crossContext="true" disableURLRewriting="true" reloadable="false">
+<Context crossContext="true" useHttpOnly="true" disableURLRewriting="true" reloadable="false">
     <Manager pathname="" className="org.apache.catalina.session.StandardManager"/>
 </Context>
