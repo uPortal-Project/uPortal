@@ -165,7 +165,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
 					Iterator<IGroupMember> members = (Iterator<IGroupMember>) entity.getMembers();
 					jsonBean = populateChildren(jsonBean, members);
 				}
-                if (EntityEnum.GROUP.equals(jsonBean.getEntityType()) || EntityEnum.PERSON.equals(jsonBean.getEntityType())) {
+                if (jsonBean.getEntityType().isGroup() || EntityEnum.PERSON.equals(jsonBean.getEntityType())) {
                     IAuthorizationPrincipal principal = getPrincipalForEntity(jsonBean);
                     jsonBean.setPrincipalString(principal.getPrincipalString());
                 }

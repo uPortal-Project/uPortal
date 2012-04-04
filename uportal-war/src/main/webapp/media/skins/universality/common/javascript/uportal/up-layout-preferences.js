@@ -202,6 +202,8 @@ var uportal = uportal || {};
                     $(column).addClass(newclasses);
                 });
                 
+                $('#portalPageBodyColumns').attr("class", "columns-" + newcolumns.length);
+                
                 that.components.portletReorderer.refresh();
             }
         );

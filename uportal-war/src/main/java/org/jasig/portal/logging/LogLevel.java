@@ -17,27 +17,47 @@
  * under the License.
  */
 
-package org.jasig.portal.rendering.xslt;
+package org.jasig.portal.logging;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.jasig.portal.layout.om.IStylesheetUserPreferences;
+import org.slf4j.Logger;
 
 /**
- * Returns {@link StructureStylesheetUserPreferences}
+ * LogLevel
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class ThemeTransformerConfigurationSource extends PreferencesTransformerConfigurationSource {
-    
-    @Override
-    protected String getName() {
-        return "ThemeTransformerConfigurationSource";
-    }
-    
-    @Override
-    protected IStylesheetUserPreferences getStylesheetUserPreferences(HttpServletRequest request) {
-        return this.stylesheetUserPreferencesService.getThemeStylesheetUserPreferences(request);
-    }
+public enum LogLevel {
+    TRACE {
+        @Override
+        public void log(Logger logger, String msg) {
+            logger.trace(msg);
+        }
+    },
+    DEBUG {
+        @Override
+        public void log(Logger logger, String msg) {
+            logger.debug(msg);
+        }
+    },
+    INFO {
+        @Override
+        public void log(Logger logger, String msg) {
+            logger.info(msg);
+        }
+    },
+    WARN {
+        @Override
+        public void log(Logger logger, String msg) {
+            logger.warn(msg);
+        }
+    },
+    ERROR {
+        @Override
+        public void log(Logger logger, String msg) {
+            logger.error(msg);
+        }
+    };
+
+    public abstract void log(Logger logger, String msg);
 }

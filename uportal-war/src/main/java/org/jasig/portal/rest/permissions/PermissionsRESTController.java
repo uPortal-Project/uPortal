@@ -101,6 +101,13 @@ public class PermissionsRESTController {
         this.groupListHelper = groupListHelper;
     }
     
+    private IAuthorizationService authorizationService;
+
+    @Autowired
+    public void setAuthorizationService(IAuthorizationService authorizationService) {
+        this.authorizationService = authorizationService;
+    }
+
     /**
      * Provide a JSON view of all known permission owners registered with uPortal.
      * 
@@ -252,9 +259,8 @@ public class PermissionsRESTController {
         
         Set<UniquePermission> directAssignments = new HashSet<UniquePermission>();
         
-        IAuthorizationService authService = AuthorizationImpl.singleton();
         JsonEntityBean entity = groupListHelper.getEntityForPrincipal(principal);
-        IAuthorizationPrincipal p = authService.newPrincipal(entity.getId(), entity.getEntityType().getClazz());
+        IAuthorizationPrincipal p = this.authorizationService.newPrincipal(entity.getId(), entity.getEntityType().getClazz());
         
         // first get the permissions explicitly set for this principal
         IPermission[] directPermissions = permissionStore.select(null, p.getPrincipalString(), null, null, null);
@@ -268,7 +274,7 @@ public class PermissionsRESTController {
             for (Iterator<IEntityGroup> iter = member.getAllContainingGroups(); iter.hasNext();) {
                 IEntityGroup parent = iter.next();
 
-                IAuthorizationPrincipal parentPrincipal = authService.newPrincipal(parent);
+                IAuthorizationPrincipal parentPrincipal = this.authorizationService.newPrincipal(parent);
                 IPermission[] parentPermissions = permissionStore.select(null, parentPrincipal.getPrincipalString(), null, null, null);
                 for (IPermission permission : parentPermissions) {
                     inheritedAssignments.add(new UniquePermission(permission.getOwner(), permission.getActivity(), permission.getTarget(), true));
@@ -310,9 +316,8 @@ public class PermissionsRESTController {
             directAssignments.add(new UniquePermission(permission.getOwner(), permission.getActivity(), permission.getPrincipal(), false));
         }
 
-        IAuthorizationService authService = AuthorizationImpl.singleton();
         JsonEntityBean entity = groupListHelper.getEntityForPrincipal(target);
-        IAuthorizationPrincipal p = authService.newPrincipal(entity.getId(), entity.getEntityType().getClazz());
+        IAuthorizationPrincipal p = this.authorizationService.newPrincipal(entity.getId(), entity.getEntityType().getClazz());
         
         Set<UniquePermission> inheritedAssignments = new HashSet<UniquePermission>();
         if (includeInherited) {
@@ -320,7 +325,7 @@ public class PermissionsRESTController {
             for (Iterator<IEntityGroup> iter = member.getAllContainingGroups(); iter.hasNext();) {
                 IEntityGroup parent = iter.next();
 
-                IAuthorizationPrincipal parentPrincipal = authService.newPrincipal(parent);
+                IAuthorizationPrincipal parentPrincipal = this.authorizationService.newPrincipal(parent);
                 IPermission[] parentPermissions = permissionStore.select(null, null, null, parentPrincipal.getKey(), null);
                 for (IPermission permission : parentPermissions) {
                     inheritedAssignments.add(new UniquePermission(permission.getOwner(), permission.getActivity(), permission.getPrincipal(), true));
@@ -339,7 +344,7 @@ public class PermissionsRESTController {
             } else {
                 clazz = entityType.getClazz();
             }
-            IAuthorizationPrincipal principal = authService.newPrincipal(e.getId(), clazz);
+            IAuthorizationPrincipal principal = this.authorizationService.newPrincipal(e.getId(), clazz);
             if (principal.hasPermission(permission.getOwner(), permission.getActivity(), p.getKey())) {
                 permissions.add(getPermissionOnTarget(permission, entity));
             }
@@ -354,7 +359,7 @@ public class PermissionsRESTController {
             } else {
                 clazz = entityType.getClazz();
             }
-            IAuthorizationPrincipal principal = authService.newPrincipal(e.getId(), clazz);
+            IAuthorizationPrincipal principal = this.authorizationService.newPrincipal(e.getId(), clazz);
             if (principal.hasPermission(permission.getOwner(), permission.getActivity(), p.getKey())) {
                 permissions.add(getPermissionOnTarget(permission, entity));
             }

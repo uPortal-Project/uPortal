@@ -37,6 +37,7 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 
+import org.apache.commons.lang.Validate;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
@@ -95,12 +96,14 @@ class LayoutNodeAttributesImpl {
     }
     
     public LayoutNodeAttributesImpl(String nodeId) {
+        Validate.notEmpty(nodeId, "nodeId cannot be null");
         this.id = -1;
         this.entityVersion = -1;
         this.nodeId = nodeId;
     }
     
     public LayoutNodeAttributesImpl(String nodeId, Map<String, String> attributes) {
+        Validate.notEmpty(nodeId, "nodeId cannot be null");
         this.id = -1;
         this.entityVersion = -1;
         this.nodeId = nodeId;

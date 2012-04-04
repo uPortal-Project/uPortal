@@ -28,7 +28,6 @@ import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.ISecurityContext;
-import org.jasig.portal.security.provider.AuthorizationImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractPermissionsController {
@@ -41,7 +40,13 @@ public abstract class AbstractPermissionsController {
     
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPersonManager personManager;
+    private IAuthorizationService authorizationService;
     
+    @Autowired
+    public void setAuthorizationService(IAuthorizationService authorizationService) {
+        this.authorizationService = authorizationService;
+    }
+
     @Autowired
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
@@ -72,8 +77,7 @@ public abstract class AbstractPermissionsController {
             if (securityContext != null && securityContext.isAuthenticated()) {
                
                 // STEP (3):  Does this user have SUBSCRIBE permission for permissionsAdminChannel?
-                IAuthorizationService authServ = AuthorizationImpl.singleton();
-                IAuthorizationPrincipal principal = authServ.newPrincipal((String) person.getAttribute(IPerson.USERNAME), IPerson.class);
+                IAuthorizationPrincipal principal = authorizationService.newPrincipal((String) person.getAttribute(IPerson.USERNAME), IPerson.class);
                 
                 final IPortletDefinition permissionsAdminPortlet = portletDefinitionRegistry.getPortletDefinitionByFname(PERMISSIONS_ADMIN_PORTLET_FNAME);
                 if (permissionsAdminPortlet == null) {
@@ -81,7 +85,7 @@ public abstract class AbstractPermissionsController {
                 }
                 
                 final String portletId = permissionsAdminPortlet.getPortletDefinitionId().getStringId();
-                if (authServ.canPrincipalSubscribe(principal, portletId)) {
+                if (authorizationService.canPrincipalSubscribe(principal, portletId)) {
                     return true;
                 }
 

@@ -21,11 +21,7 @@ package org.jasig.portal.rendering;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.IUserPreferencesManager;
-import org.jasig.portal.IUserProfile;
-import org.jasig.portal.layout.om.IStylesheetDescriptor;
-import org.jasig.portal.layout.om.IStylesheetUserPreferences;
-import org.jasig.portal.user.IUserInstance;
+import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
 
 /**
  * Handles converting the data stored in {@link ThemeStylesheetUserPreferences} into additional attributes
@@ -35,18 +31,8 @@ import org.jasig.portal.user.IUserInstance;
  */
 public class ThemeAttributeSource extends StylesheetAttributeSource {
     @Override
-    public IStylesheetDescriptor getStylesheetDescriptor(HttpServletRequest request) {
-        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
-        final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
-        final IUserProfile userProfile = preferencesManager.getUserProfile();
-        final int themeStylesheetId = userProfile.getThemeStylesheetId();
-        
-        return this.stylesheetDescriptorDao.getStylesheetDescriptor(themeStylesheetId);
-    }
-    
-    @Override
-    public IStylesheetUserPreferences getStylesheetUserPreferences(HttpServletRequest request) {
-        return this.stylesheetUserPreferencesService.getThemeStylesheetUserPreferences(request);
+    public PreferencesScope getStylesheetPreferencesScope(HttpServletRequest request) {
+        return PreferencesScope.THEME;
     }
 }
 

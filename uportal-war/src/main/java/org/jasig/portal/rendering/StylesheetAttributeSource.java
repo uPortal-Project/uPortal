@@ -19,9 +19,9 @@
 
 package org.jasig.portal.rendering;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
@@ -33,12 +33,16 @@ import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 
+import org.jasig.portal.IUserPreferencesManager;
+import org.jasig.portal.IUserProfile;
 import org.jasig.portal.layout.IStylesheetUserPreferencesService;
+import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
 import org.jasig.portal.layout.om.ILayoutAttributeDescriptor;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.layout.om.IStylesheetUserPreferences;
+import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.springframework.beans.factory.BeanNameAware;
@@ -80,7 +84,8 @@ public abstract class StylesheetAttributeSource implements AttributeSource, Bean
     @Override
     public final Iterator<Attribute> getAdditionalAttributes(HttpServletRequest request, HttpServletResponse response, StartElement event) {
         final IStylesheetDescriptor stylesheetDescriptor = this.getStylesheetDescriptor(request);
-        final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request);
+        
+        final PreferencesScope stylesheetPreferencesScope = this.getStylesheetPreferencesScope(request);
         
         final Collection<Attribute> attributes = new LinkedList<Attribute>();
         
@@ -92,8 +97,13 @@ public abstract class StylesheetAttributeSource implements AttributeSource, Bean
                 final Attribute subscribeIdAttr = event.getAttributeByName(IUserLayoutManager.ID_ATTR_NAME);
                 final String subscribeId = subscribeIdAttr.getValue();
                 final String name = layoutAttributeDescriptor.getName();
+                
 
-                final String value = stylesheetUserPreferences.getLayoutAttribute(subscribeId, name);
+                String value = this.stylesheetUserPreferencesService.getLayoutAttribute(request, stylesheetPreferencesScope, subscribeId, name);
+                if (value == null) {
+                    value = layoutAttributeDescriptor.getDefaultValue();
+                }
+                
                 if (value != null) {
                     final Attribute attribute = xmlEventFactory.createAttribute(name, value);
                     attributes.add(attribute);
@@ -106,13 +116,24 @@ public abstract class StylesheetAttributeSource implements AttributeSource, Bean
 
     @Override
     public final CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
-        final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request);
-        final Map<String, Map<String, String>> preferencesLayoutAttributes = stylesheetUserPreferences.getAllLayoutAttributes();
+        final PreferencesScope stylesheetPreferencesScope = this.getStylesheetPreferencesScope(request);
         
-        return new CacheKey(this.name, (Serializable)preferencesLayoutAttributes);
+        final LinkedHashMap<String, Map<String, String>> allLayoutAttributes = new LinkedHashMap<String, Map<String, String>>();
+        this.stylesheetUserPreferencesService.populateAllLayoutAttributes(request, stylesheetPreferencesScope, allLayoutAttributes);
+        
+        return new CacheKey(this.name, allLayoutAttributes);
     }
 
-    public abstract IStylesheetDescriptor getStylesheetDescriptor(HttpServletRequest request);
+    public IStylesheetDescriptor getStylesheetDescriptor(HttpServletRequest request) {
+        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+        final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
+        final IUserProfile userProfile = preferencesManager.getUserProfile();
+        
+        final PreferencesScope stylesheetPreferencesScope = this.getStylesheetPreferencesScope(request);
+        final int stylesheetId = stylesheetPreferencesScope.getStylesheetId(userProfile);
+        
+        return this.stylesheetDescriptorDao.getStylesheetDescriptor(stylesheetId);
+    }
     
-    public abstract IStylesheetUserPreferences getStylesheetUserPreferences(HttpServletRequest request);
+    public abstract PreferencesScope getStylesheetPreferencesScope(HttpServletRequest request);
 }

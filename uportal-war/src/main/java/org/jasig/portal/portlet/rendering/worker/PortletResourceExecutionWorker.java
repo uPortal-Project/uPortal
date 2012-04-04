@@ -25,16 +25,19 @@ import java.util.concurrent.ExecutorService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
 
 class PortletResourceExecutionWorker extends PortletExecutionWorker<Long> implements IPortletResourceExecutionWorker {
 
     public PortletResourceExecutionWorker(
             ExecutorService executorService, List<IPortletExecutionInterceptor> interceptors, IPortletRenderer portletRenderer, 
-            HttpServletRequest request, HttpServletResponse response, IPortletWindowId portletWindowId, String portletFname) {
+            HttpServletRequest request, HttpServletResponse response, IPortletWindow portletWindow) {
         
-        super(executorService, interceptors, portletRenderer, request, response, portletWindowId, portletFname);
+        super(executorService, interceptors, portletRenderer, request, response, portletWindow, 
+                portletWindow.getPortletEntity().getPortletDefinition().getResourceTimeout() != null
+                        ? portletWindow.getPortletEntity().getPortletDefinition().getResourceTimeout()
+                        : portletWindow.getPortletEntity().getPortletDefinition().getTimeout());
     }
 
     @Override

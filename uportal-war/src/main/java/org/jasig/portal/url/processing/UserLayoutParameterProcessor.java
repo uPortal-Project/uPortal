@@ -28,10 +28,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.layout.IStylesheetUserPreferencesService;
+import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
-import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
@@ -92,16 +92,15 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
         final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
 
         
-        final IStylesheetUserPreferences structureStylesheetUserPreferences = this.stylesheetUserPreferencesService.getStructureStylesheetUserPreferences(request);
         final String tabId = portalRequestInfo.getTargetedLayoutNodeId();
         if (tabId != null) {
-            structureStylesheetUserPreferences.setStylesheetParameter("focusedTabID", tabId);
+            this.stylesheetUserPreferencesService.setStylesheetParameter(request, PreferencesScope.STRUCTURE, "focusedTabID", tabId);
         }
 
         final UrlState urlState = portalRequestInfo.getUrlState();
         switch (urlState) {
             case DETACHED:
-                structureStylesheetUserPreferences.setStylesheetParameter("detached", Boolean.TRUE.toString());
+                this.stylesheetUserPreferencesService.setStylesheetParameter(request, PreferencesScope.STRUCTURE, "detached", Boolean.TRUE.toString());
             case MAX: {
                 final IPortletRequestInfo portletRequestInfo = portalRequestInfo.getTargetedPortletRequestInfo();
                 
@@ -112,8 +111,7 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
                     
                     final String channelSubscribeId = portletEntity.getLayoutNodeId();
                     
-                    structureStylesheetUserPreferences.setStylesheetParameter("userLayoutRoot", channelSubscribeId);
-                    this.stylesheetUserPreferencesService.updateStylesheetUserPreferences(request, structureStylesheetUserPreferences);
+                    this.stylesheetUserPreferencesService.setStylesheetParameter(request, PreferencesScope.STRUCTURE, "userLayoutRoot", channelSubscribeId);
                     
                     if (userLayoutManager instanceof TransientUserLayoutManagerWrapper) {
                         // get wrapper implementation for focusing
@@ -129,15 +127,11 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
                 
             case NORMAL:
             default: {
-                structureStylesheetUserPreferences.setStylesheetParameter("userLayoutRoot", IUserLayout.ROOT_NODE_NAME);
-                this.stylesheetUserPreferencesService.updateStylesheetUserPreferences(request, structureStylesheetUserPreferences);
+                this.stylesheetUserPreferencesService.setStylesheetParameter(request, PreferencesScope.STRUCTURE, "userLayoutRoot", IUserLayout.ROOT_NODE_NAME);
                 break;
             }
         }
         
-        //TODO after portlet processing is complete set minimized theme flags by subscribeId
-        //TODO how are we going to track portlet minimization, what will the authoritative source of that info be? PortletWindow objects?
-
         return true;
     }
     

@@ -28,6 +28,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -37,12 +38,14 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.transform.Templates;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamSource;
 
 import org.jasig.portal.io.xml.user.ExternalUser;
 import org.jasig.portal.io.xml.user.UserPortalDataType;
 import org.jasig.portal.xml.XmlUtilities;
+import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -53,6 +56,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
@@ -66,12 +70,22 @@ import com.google.common.collect.ImmutableSet;
 @RunWith(MockitoJUnitRunner.class)
 public class JaxbPortalDataHandlerServiceTest {
     @InjectMocks private JaxbPortalDataHandlerService dataImportExportService = new JaxbPortalDataHandlerService();
-    @Mock private XmlUtilities xmlUtilities;
+    private XmlUtilities xmlUtilities;
     @Mock private ResourceLoader resourceLoader;
     private ExecutorService threadPoolExecutor;
     
     @Before
     public void setup() throws Exception {
+        xmlUtilities = new XmlUtilitiesImpl() {
+            @Override
+            public Templates getTemplates(Resource stylesheet) throws TransformerConfigurationException, IOException {
+                final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+                return transformerFactory.newTemplates(new StreamSource(stylesheet.getInputStream()));
+            }
+        };
+        
+        dataImportExportService.setXmlUtilities(xmlUtilities);
+        
         final ThreadPoolExecutorFactoryBean threadPoolExecutorFactoryBean = new ThreadPoolExecutorFactoryBean();
         threadPoolExecutorFactoryBean.setCorePoolSize(0);
         threadPoolExecutorFactoryBean.setMaxPoolSize(20);
@@ -149,8 +163,6 @@ public class JaxbPortalDataHandlerServiceTest {
         final ClassPathResource importDataResource = new ClassPathResource("/org/jasig/portal/io/xml/user/test_3-2.user.xml");
         when(resourceLoader.getResource("classpath:/org/jasig/portal/io/xml/user/test_3-2.user.xml")).thenReturn(importDataResource);
         
-        when(xmlUtilities.getXmlInputFactory()).thenReturn(XMLInputFactory.newFactory());
-        
         final ClassPathResource xslResource = new ClassPathResource("/org/jasig/portal/io/xml/user/upgrade-user_3-2.xsl");
         final IDataUpgrader xsltDataUpgrader = createXsltDataUpgrader(xslResource, UserPortalDataType.IMPORT_32_DATA_KEY);
         dataImportExportService.setDataUpgraders(Arrays.asList(xsltDataUpgrader));
@@ -180,11 +192,6 @@ public class JaxbPortalDataHandlerServiceTest {
     }
 
     protected IDataUpgrader createXsltDataUpgrader(final ClassPathResource xslResource, final PortalDataKey dataKey) throws Exception {
-        final TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        final Templates templates = transformerFactory.newTemplates(new StreamSource(xslResource.getInputStream()));
-
-        when(xmlUtilities.getTemplates(xslResource)).thenReturn(templates);
-        
         final XsltDataUpgrader xsltDataUpgrader = new XsltDataUpgrader();
         xsltDataUpgrader.setPortalDataKey(dataKey);
         xsltDataUpgrader.setXslResource(xslResource);

@@ -64,6 +64,10 @@
     </view-state>
 
     <view-state id="viewPermissions">
+        <on-entry>
+            <set name="flashScope.personEntity" 
+                value="groupListHelper.getEntity('person', person.name, false)"/>
+        </on-entry>
         <transition on="viewUserDetails" to="viewUserDetails"/>
         <transition on="editPermission" to="edit-permission"/>
     </view-state>

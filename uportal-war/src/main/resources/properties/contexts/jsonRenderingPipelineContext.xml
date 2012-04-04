@@ -52,7 +52,8 @@
             <bean class="org.jasig.portal.rendering.xslt.MergingTransformerConfigurationSource">
                 <property name="sources">
                     <list>
-                        <bean class="org.jasig.portal.rendering.xslt.StructureTransformerConfigurationSource" />
+                        <bean class="org.jasig.portal.rendering.xslt.StructureStylesheetDescriptorTransformerConfigurationSource"/>
+                        <bean class="org.jasig.portal.rendering.xslt.StructureStylesheetUserPreferencesTransformerConfigurationSource"/>
                         <bean class="org.jasig.portal.rendering.xslt.StaticTransformerConfigurationSource">
                             <property name="parameters">
                                 <map>
@@ -120,8 +121,8 @@
             <bean class="org.jasig.portal.rendering.xslt.MergingTransformerConfigurationSource">
                 <property name="sources">
                     <list>
-                        <bean class="org.jasig.portal.rendering.xslt.ThemeTransformerConfigurationSource" />
-                        <!-- TODO move most of these parameters into their own little configuration source beans so they can provide good input to the cache key -->
+                        <bean class="org.jasig.portal.rendering.xslt.ThemeStylesheetDescriptorTransformerConfigurationSource" />
+                        <bean class="org.jasig.portal.rendering.xslt.ThemeStylesheetUserPreferencesTransformerConfigurationSource" />
                         <bean class="org.jasig.portal.rendering.xslt.StaticTransformerConfigurationSource">
                             <property name="parameters">
                                 <map>

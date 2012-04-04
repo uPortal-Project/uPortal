@@ -26,6 +26,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.utils.cache.CacheKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base TransformerConfigurationSource that returns nothing for all methods
@@ -34,7 +36,8 @@ import org.jasig.portal.utils.cache.CacheKey;
  * @version $Revision$
  */
 public class TransformerConfigurationSourceAdapter implements TransformerConfigurationSource {
-
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    
     /* (non-Javadoc)
      * @see org.jasig.portal.rendering.xslt.TransformerConfigurationSource#getParameters(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */

@@ -24,15 +24,20 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+
+import net.sf.ehcache.Ehcache;
+import net.sf.ehcache.Element;
+import net.sf.ehcache.constructs.blocking.CacheEntryFactory;
+import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.concurrency.CachingException;
+import org.jasig.portal.concurrency.caching.RequestCache;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
@@ -40,7 +45,6 @@ import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlet.om.PortletLifecycleState;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
-import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IPermission;
@@ -52,10 +56,14 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IUpdatingPermissionManager;
 import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.GroupService;
-import org.jasig.portal.spring.locator.CacheFactoryLocator;
 import org.jasig.portal.spring.locator.PortletCategoryRegistryLocator;
-import org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator;
+import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.utils.cache.CacheFactory;
+import org.jasig.portal.utils.cache.CacheKey;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
@@ -63,6 +71,7 @@ import org.jasig.portal.utils.cache.CacheFactory;
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  */
+@Service("authorizationService")
 public class AuthorizationImpl implements IAuthorizationService {
 
     /** Instance of log in order to log events. */
@@ -71,9 +80,6 @@ public class AuthorizationImpl implements IAuthorizationService {
     /** Constant representing the separator used in the principal key. */
     private static final String PRINCIPAL_SEPARATOR = ".";
 
-    /** The static instance of the AuthorizationImpl for purposes of creating a AuthorizationImpl singleton. */
-    private static final IAuthorizationService singleton;
-
     /** Instance of the Permission Store for storing permission information. */
     private IPermissionStore permissionStore;
 
@@ -81,33 +87,59 @@ public class AuthorizationImpl implements IAuthorizationService {
     private IPermissionPolicy defaultPermissionPolicy;
     
     /** Spring-configured portlet definition registry instance */
-    protected final IPortletDefinitionRegistry portletDefinitionRegistry;
+    private IPortletDefinitionRegistry portletDefinitionRegistry;
 
     /** The cache to hold the list of principals. */
-    private Map<String, IAuthorizationPrincipal> principalCache = CacheFactoryLocator.getCacheFactory().getCache(CacheFactory.PRINCIPAL_CACHE);
+    private Ehcache principalCache;
 
     /** The cache to hold the list of principals. */
-    private Map<String, Set<String>> entityParentsCache = CacheFactoryLocator.getCacheFactory().getCache(CacheFactory.ENTITY_PARENTS_CACHE);
+    private Ehcache entityParentsCache;
+
+    /** The cache to hold permission resolution. */
+    private Ehcache doesPrincipalHavePermissionCache;
 
     /** The class representing the permission set type. */
-    private Class PERMISSION_SET_TYPE;
+    private static final Class<IPermissionSet> PERMISSION_SET_TYPE = IPermissionSet.class;
 
     /** variable to determine if we should cache permissions or not. */
-    private boolean cachePermissions;
+    private boolean cachePermissions = true;
     
-    static {
-        singleton = new AuthorizationImpl();
+    
+    @Autowired
+    public void setDefaultPermissionPolicy(IPermissionPolicy newDefaultPermissionPolicy) {
+        this.defaultPermissionPolicy = newDefaultPermissionPolicy;
     }
-
-  /**
-   *
-   */
-    protected AuthorizationImpl ()
-    {
-        super();
-        initialize();
-        this.portletDefinitionRegistry = PortletDefinitionRegistryLocator.getPortletDefinitionRegistry();
+    @Autowired
+    public void setPermissionStore(IPermissionStore permissionStore) {
+        this.permissionStore = permissionStore;
     }
+    @Value("${org.jasig.portal.security.IAuthorizationService.cachePermissions}")
+    public void setCachePermissions(boolean cachePermissions) {
+        this.cachePermissions = cachePermissions;
+    }
+    @Autowired
+    public void setPrincipalCache(@Qualifier(CacheFactory.PRINCIPAL_CACHE)  Ehcache principalCache) {
+        this.principalCache = new SelfPopulatingCache(principalCache, new CacheEntryFactory() {
+            @Override
+            public Object createEntry(Object key) throws Exception {
+                final Tuple<String, Class> principalKey = (Tuple<String, Class>)key;
+                return primNewPrincipal(principalKey.first, principalKey.second);
+            }
+        });
+    }
+    @Autowired
+    public void setEntityParentsCache(@Qualifier(CacheFactory.ENTITY_PARENTS_CACHE)  Ehcache entityParentsCache) {
+        this.entityParentsCache = entityParentsCache;
+    }
+    @Autowired
+    public void setDoesPrincipalHavePermissionCache(@Qualifier("org.jasig.portal.security.provider.AuthorizationImpl.PRINCIPAL_HAS_PERMISSION") Ehcache doesPrincipalHavePermissionCache) {
+        this.doesPrincipalHavePermissionCache = doesPrincipalHavePermissionCache;
+    }
+    @Autowired
+    public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
+        this.portletDefinitionRegistry = portletDefinitionRegistry;
+    }
+    
 /**
  * Adds <code>IPermissions</code> to the back end store.
  * @param permissions IPermission[]
@@ -175,6 +207,7 @@ protected void cacheUpdate(IPermissionSet ps) throws AuthorizationException
 }
 
 @Override
+@RequestCache
 public boolean canPrincipalConfigure(IAuthorizationPrincipal principal, String portletDefinitionId) throws AuthorizationException {
     String owner = IPermission.PORTAL_PUBLISH;
     String target = IPermission.PORTLET_PREFIX + portletDefinitionId;
@@ -196,6 +229,7 @@ public boolean canPrincipalConfigure(IAuthorizationPrincipal principal, String p
  * @param channelPublishId int
  * @exception AuthorizationException indicates authorization information could not be retrieved.
  */
+@RequestCache
 public boolean canPrincipalManage(IAuthorizationPrincipal principal, String portletDefinitionId)
 throws AuthorizationException
 {
@@ -259,6 +293,7 @@ throws AuthorizationException
  * @param principal IAuthorizationPrincipal
  * @return boolean
  */
+@RequestCache
 public boolean canPrincipalManage(IAuthorizationPrincipal principal, PortletLifecycleState state, String categoryId) throws AuthorizationException
 {
 //    return doesPrincipalHavePermission
@@ -312,6 +347,7 @@ public boolean canPrincipalManage(IAuthorizationPrincipal principal, PortletLife
  * @param channelPublishId int
  * @exception AuthorizationException indicates authorization information could not be retrieved.
  */
+@RequestCache
 public boolean canPrincipalRender(IAuthorizationPrincipal principal, String portletDefinitionId)
 throws AuthorizationException
 {
@@ -328,6 +364,7 @@ throws AuthorizationException
  * @param channelPublishId int
  * @exception AuthorizationException indicates authorization information could not be retrieved.
  */
+@RequestCache
 public boolean canPrincipalSubscribe(IAuthorizationPrincipal principal, String portletDefinitionId)
 {
     String owner = IPermission.PORTAL_SUBSCRIBE;
@@ -379,6 +416,7 @@ public boolean canPrincipalSubscribe(IAuthorizationPrincipal principal, String p
  * @exception AuthorizationException indicates authorization information could not
  * be retrieved.
  */
+@RequestCache
 public boolean doesPrincipalHavePermission(
     IAuthorizationPrincipal principal,
     String owner,
@@ -402,17 +440,28 @@ throws AuthorizationException
  * @exception AuthorizationException indicates authorization information could not
  * be retrieved.
  */
-public boolean doesPrincipalHavePermission(
-    IAuthorizationPrincipal principal,
-    String owner,
-    String activity,
-    String target,
-    IPermissionPolicy policy)
-throws AuthorizationException
-{
-    return policy.doesPrincipalHavePermission(this, principal, owner,
-            activity, target);
-}
+    @Override
+    @RequestCache
+    public boolean doesPrincipalHavePermission(IAuthorizationPrincipal principal, String owner, String activity,
+            String target, IPermissionPolicy policy) throws AuthorizationException {
+        final CacheKey key = new CacheKey("AuthorizationImpl", policy.getClass(), principal.getKey(),
+                principal.getType(), owner, activity, target);
+
+        final Element element = this.doesPrincipalHavePermissionCache.get(key);
+        if (element != null) {
+            return (Boolean) element.getValue();
+        }
+
+        final boolean doesPrincipalHavePermission = policy.doesPrincipalHavePermission(this,
+                principal,
+                owner,
+                activity,
+                target);
+        
+        this.doesPrincipalHavePermissionCache.put(new Element(key, doesPrincipalHavePermission));
+
+        return doesPrincipalHavePermission;
+    }
 
 /**
  * Returns the <code>IPermissions</code> owner has granted this <code>Principal</code> for
@@ -430,6 +479,7 @@ throws AuthorizationException
  * @exception AuthorizationException indicates authorization information could not
  * be retrieved.
  */
+@RequestCache
 public IPermission[] getAllPermissionsForPrincipal
     (IAuthorizationPrincipal principal,
     String owner,
@@ -594,6 +644,7 @@ throws AuthorizationException
  * @exception AuthorizationException indicates authorization information could not
  * be retrieved.
  */
+@RequestCache
 public IPermission[] getPermissionsForPrincipal
     (IAuthorizationPrincipal principal,
     String owner,
@@ -698,62 +749,6 @@ throws AuthorizationException
     return primRetrievePermissions(owner, pString, activity, target);
 }
 
-    private void initialize() throws IllegalArgumentException {
-        final boolean DEFAULT_CACHE_PERMISSIONS = false;
-
-         String factoryName = PropertiesManager.getProperty(
-             "org.jasig.portal.security.IPermissionStore.implementation", null);
-         String policyName = PropertiesManager
-             .getProperty(
-                 "org.jasig.portal.security.IPermissionPolicy.defaultImplementation",
-                 null);
-         this.cachePermissions = PropertiesManager.getPropertyAsBoolean(
-             "org.jasig.portal.security.IAuthorizationService.cachePermissions",
-             DEFAULT_CACHE_PERMISSIONS);
-
-         if (factoryName == null) {
-             final String eMsg = "AuthorizationImpl.initialize(): No entry for org.jasig.portal.security.IPermissionStore.implementation portal.properties.";
-             log.error(eMsg);
-             throw new IllegalArgumentException(eMsg);
-         }
-
-         if (policyName == null) {
-             final String eMsg = "AuthorizationImpl.initialize(): No entry for org.jasig.portal.security.IPermissionPolicy.defaultImplementation portal.properties.";
-             log.error(eMsg);
-             throw new IllegalArgumentException(eMsg);
-         }
-
-         try {
-             this.permissionStore = (IPermissionStore)Class.forName(factoryName)
-                 .newInstance();
-         }
-         catch (Exception e) {
-             final String eMsg = "AuthorizationImpl.initialize(): Problem creating permission store... ";
-             log.error(eMsg, e);
-             throw new IllegalArgumentException(eMsg);
-         }
-
-         try {
-             this.defaultPermissionPolicy = (IPermissionPolicy)Class.forName(
-                 policyName).newInstance();
-         }
-         catch (Exception e) {
-             final String eMsg = "AuthorizationImpl.initialize(): Problem creating default permission policy... ";
-             log.error(eMsg, e);
-             throw new IllegalArgumentException(eMsg);
-         }
-
-         try {
-             this.PERMISSION_SET_TYPE = Class
-                 .forName("org.jasig.portal.security.IPermissionSet");
-         }
-         catch (ClassNotFoundException cnfe) {
-             final String eMsg = "AuthorizationImpl.initialize(): Problem initializing service. ";
-             log.error(eMsg, cnfe);
-             throw new IllegalArgumentException(eMsg);
-         }
-     }
-
 
 /**
  * Factory method for an <code>IPermission</code>.
@@ -802,20 +797,10 @@ public IPermissionManager newPermissionManager(String owner)
  * @param type java.lang.Class
  */
 public IAuthorizationPrincipal newPrincipal(String key, Class type) {
-    final String principalKey = getPrincipalString(type, key);
-
-    IAuthorizationPrincipal principal = null;
-
-    synchronized (this.principalCache) {
-        principal = this.principalCache.get(principalKey);
-        
-        if (principal == null) {
-            principal = primNewPrincipal(key, type);
-            this.principalCache.put(principalKey, principal);
-        }
-    }
-
-    return principal;
+    final Tuple<String, Class> principalKey = new Tuple<String, Class>(key, type);
+    final Element element = this.principalCache.get(principalKey);
+    //principalCache is self populating, it can never return a null entry
+    return (IAuthorizationPrincipal)element.getObjectValue();
 }
 
 /**
@@ -910,10 +895,11 @@ throws AuthorizationException
 	
 	if (target != null) {
 		
-        containingGroups = (Set<String>) this.entityParentsCache.get(target);
-
-        if (containingGroups == null) {
-
+        final Element element = this.entityParentsCache.get(target);
+        if (element != null) {
+            containingGroups = (Set<String>) element.getObjectValue();
+        }
+        else {
         	containingGroups = new HashSet<String>();
         	IGroupMember targetEntity = GroupService.findGroup(target);
     		if (targetEntity == null) {
@@ -930,7 +916,7 @@ throws AuthorizationException
     			}
     		}
     		
-    		this.entityParentsCache.put(target, containingGroups);
+    		this.entityParentsCache.put(new Element(target, containingGroups));
         	
         }
 
@@ -1028,21 +1014,6 @@ throws AuthorizationException
         if ( this.cachePermissions )
             { removeFromPermissionsCache(permissions); }
     }
-}
-
-/**
- * @param newDefaultPermissionPolicy org.jasig.portal.security.IPermissionPolicy
- */
-protected void setDefaultPermissionPolicy(IPermissionPolicy newDefaultPermissionPolicy) {
-    this.defaultPermissionPolicy = newDefaultPermissionPolicy;
-}
-
-/**
- * @return org.jasig.portal.security.provider.IAuthorizationService
- */
-public static IAuthorizationService singleton()
-{
-    return singleton;
 }
 
 /**

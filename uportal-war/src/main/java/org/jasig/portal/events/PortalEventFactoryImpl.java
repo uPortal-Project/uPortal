@@ -488,8 +488,28 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
      */
     protected String createSessionId(IPerson person) {
         final byte[] tokenData = new byte[8];
+        final StringBuilder sessionId = new StringBuilder();
+
+        //Add the base64 encoded timestamp
+        final long now = System.currentTimeMillis();
+        tokenData[0] = (byte)(now >>> 56);
+        tokenData[1] = (byte)(now >>> 48);
+        tokenData[2] = (byte)(now >>> 40);
+        tokenData[3] = (byte)(now >>> 32);
+        tokenData[4] = (byte)(now >>> 24);
+        tokenData[5] = (byte)(now >>> 16);
+        tokenData[6] = (byte)(now >>>  8);
+        tokenData[7] = (byte)(now >>>  0);
+        sessionId.append(Base64.encodeBase64URLSafeString(tokenData));
+        
+        //Add the username
+        sessionId.append("_").append(person.getUserName()).append("_");
+        
+        //Add 8 bytes of random data to help avoid collisions
         this.sessionIdTokenGenerator.nextBytes(tokenData);
-        return System.currentTimeMillis() + "_" + person.getUserName() + "_" + Base64.encodeBase64URLSafeString(tokenData);
+        sessionId.append(Base64.encodeBase64URLSafeString(tokenData));
+        
+        return sessionId.toString();
     }
     
     protected Set<String> getGroupsForUser(IPerson person) {

@@ -17,27 +17,26 @@
  * under the License.
  */
 
-package org.jasig.portal.rendering.xslt;
+package org.jasig.portal.utils;
 
-import javax.servlet.http.HttpServletRequest;
+import java.io.PrintWriter;
 
-import org.jasig.portal.layout.om.IStylesheetUserPreferences;
+import org.apache.commons.dbcp.BasicDataSource;
+import org.jasig.portal.logging.LogLevel;
+import org.jasig.portal.logging.LoggingWriter;
 
 /**
- * Returns {@link StructureStylesheetUserPreferences}
+ * Extension of BasicDataSource that sets logWriter to a SLF4J logging writer
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class StructureTransformerConfigurationSource extends PreferencesTransformerConfigurationSource {
-    
-    @Override
-    protected String getName() {
-        return "StructureTransformerConfigurationSource";
+public class LoggingBasicDataSource extends BasicDataSource {
+    public LoggingBasicDataSource() {
+        this(LogLevel.INFO);
     }
     
-    @Override
-    protected IStylesheetUserPreferences getStylesheetUserPreferences(HttpServletRequest request) {
-        return this.stylesheetUserPreferencesService.getStructureStylesheetUserPreferences(request);
+    public LoggingBasicDataSource(LogLevel logLevel) {
+        this.logWriter = new PrintWriter(new LoggingWriter(BasicDataSource.class, logLevel));
     }
 }

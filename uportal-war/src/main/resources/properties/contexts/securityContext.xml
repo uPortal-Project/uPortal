@@ -33,7 +33,10 @@
     <security:http auto-config='true'>
         <security:custom-filter position="PRE_AUTH_FILTER" ref="portalPreAuthenticationFilter" />
         <security:intercept-url pattern="**" />
+        <security:session-management session-authentication-strategy-ref="sessionAuthenticationStrategy" />
     </security:http>
+    
+    <bean id="sessionAuthenticationStrategy" class="org.springframework.security.web.authentication.session.NullAuthenticatedSessionStrategy" />
 
     <bean id="portalPreAuthenticationFilter"
         class="org.jasig.portal.spring.security.preauth.PortalPreAuthenticatedProcessingFilter">

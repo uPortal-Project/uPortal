@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,8 +45,10 @@ import javax.xml.xpath.XPathFactory;
 
 import net.sf.ehcache.Ehcache;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.dom4j.Namespace;
 import org.dom4j.io.DOMReader;
 import org.dom4j.io.DOMWriter;
 import org.dom4j.io.DocumentSource;
@@ -86,6 +89,7 @@ import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.jasig.portal.xml.xpath.XPathOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.transaction.annotation.Transactional;
@@ -122,6 +126,9 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     private FragmentActivator fragmentActivator;
 
     private Ehcache fragmentNodeInfoCache;
+    
+    private boolean errorOnMissingPortlet = true;
+    private boolean errorOnMissingUser = true;
 
     static final String TEMPLATE_USER_NAME = "org.jasig.portal.services.Authentication.defaultTemplateUserName";
 
@@ -182,6 +189,15 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         this.fragmentNodeInfoCache = fragmentNodeInfoCache;
     }
 
+    @Value("${org.jasig.portal.io.layout.errorOnMissingPortlet}")
+    public void setErrorOnMissingPortlet(boolean errorOnMissingPortlet) {
+        this.errorOnMissingPortlet = errorOnMissingPortlet;
+    }
+
+    @Value("${org.jasig.portal.io.layout.errorOnMissingUser}")
+    public void setErrorOnMissingUser(boolean errorOnMissingUser) {
+        this.errorOnMissingUser = errorOnMissingUser;
+    }
 
     /**
      * Method for acquiring copies of fragment layouts to assist in debugging.
@@ -241,7 +257,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 .getStylesheetUserPreferences(stylesheetDescriptor, person, profile);
 
         final IStylesheetUserPreferences distributedStylesheetUserPreferences = new StylesheetUserPreferencesImpl(
-                stylesheetDescriptorId);
+                stylesheetDescriptorId, person.getID(), profile.getProfileId());
 
         final FragmentActivator fragmentActivator = this.getFragmentActivator();
 
@@ -271,7 +287,8 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
             //Copy all of the fragment preferences into the distributed preferences
             final Map<String, Map<String, String>> allLayoutAttributes = fragmentStylesheetUserPreferences
-                    .getAllLayoutAttributes();
+                    .populateAllLayoutAttributes(new LinkedHashMap<String, Map<String, String>>());
+
             for (final Map.Entry<String, Map<String, String>> layoutNodeAttributesEntry : allLayoutAttributes
                     .entrySet()) {
                 String nodeId = layoutNodeAttributesEntry.getKey();
@@ -632,7 +649,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 .getStylesheetUserPreferences(structureStylesheetDescriptor, person, profile);
 
         if (ssup != null) {
-            final Map<String, Map<String, String>> allLayoutAttributes = ssup.getAllLayoutAttributes();
+            final Map<String, Map<String, String>> allLayoutAttributes = ssup.populateAllLayoutAttributes(new LinkedHashMap<String, Map<String,String>>());
             for (final Entry<String, Map<String, String>> nodeEntry : allLayoutAttributes.entrySet()) {
                 final String nodeId = nodeEntry.getKey();
                 final Map<String, String> attributes = nodeEntry.getValue();
@@ -677,6 +694,10 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 //    		e.printStackTrace();
 //    	}
         
+        if (layout.getNamespaceForPrefix("dlm") == null) {
+            layout.add(new Namespace("dlm", "http://www.uportal.org/layout/dlm"));
+        }
+        
         //Get a ref to the prefs element and then remove it from the layout
         final org.dom4j.Node preferencesElement = layout.selectSingleNode("preferences");
         if (preferencesElement != null) {
@@ -699,23 +720,23 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         }
        
 
-        IPerson person = null;
-        IUserProfile profile = null;
+        final IPerson person = new PersonImpl();
+        person.setUserName(ownerUsername);
+
+        final int ownerId;
         try {
-            person = new PersonImpl();
-            person.setUserName(ownerUsername);
-            final int ownerId = this.userIdentityStore.getPortalUID(person);
-            if (ownerId == -1) {
-                final String msg = "No userId for username=" + ownerUsername;
-                throw new RuntimeException(msg);
-            }
-            person.setID(ownerId);
+            ownerId = this.userIdentityStore.getPortalUID(person, !this.errorOnMissingUser);
         }
         catch (final Throwable t) {
-            throw new RuntimeException("Unrecognized user " + person.getUserName()
-                    + "; you must import users before their layouts.", t);
+            throw new RuntimeException("Unrecognized user " + person.getUserName() + "; you must import users before their layouts.", t);
         }
+        
+        if (ownerId == -1) {
+            throw new RuntimeException("Unrecognized user " + person.getUserName() + "; you must import users before their layouts.");
+        }
+        person.setID(ownerId);
 
+        IUserProfile profile = null;
         try {
 	        person.setSecurityContext(new BrokenSecurityContext());
 	        profile = this.getUserProfileByFname(person, "default");
@@ -790,10 +811,19 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             final String fname = c.valueOf("@fname");
             final IPortletDefinition cd = this.portletDefinitionRegistry.getPortletDefinitionByFname(fname);
             if (cd == null) {
-                throw new IllegalArgumentException("No published channel for fname=" + fname
-                        + " referenced by layout for " + ownerUsername);
+                final String msg = "No portlet with fname=" + fname + " exists referenced by node " + c.valueOf("@ID") + " from layout for " + ownerUsername;
+                if (errorOnMissingPortlet) {
+                    throw new IllegalArgumentException(msg);
+                }
+                else {
+                    log.warn(msg);
+                    //Remove the bad channel node
+                    c.getParent().remove(c);
+                }
             }
-            c.addAttribute("chanID", String.valueOf(cd.getPortletDefinitionId().getStringId()));
+            else {
+                c.addAttribute("chanID", String.valueOf(cd.getPortletDefinitionId().getStringId()));
+            }
         }
 
         // (2) Restore locale info...
@@ -934,9 +964,21 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             for (final org.dom4j.Element structureAttribute : structureAttributes) {
                 final org.dom4j.Element layoutElement = structureAttribute.getParent();
                 final String nodeId = layoutElement.valueOf("@ID");
+                if (StringUtils.isEmpty(nodeId)) {
+                    log.warn("@ID is empty for layout element, the attribute will be ignored: " + structureAttribute.asXML());
+                }
 
                 final String name = structureAttribute.valueOf("name");
+                if (StringUtils.isEmpty(nodeId)) {
+                    log.warn("name is empty for layout element, the attribute will be ignored: " + structureAttribute.asXML());
+                    continue;
+                }
+                
                 final String value = structureAttribute.valueOf("value");
+                if (StringUtils.isEmpty(nodeId)) {
+                    log.warn("value is empty for layout element, the attribute will be ignored: " + structureAttribute.asXML());
+                    continue;
+                }
 
                 ssup.setLayoutAttribute(nodeId, name, value);
 

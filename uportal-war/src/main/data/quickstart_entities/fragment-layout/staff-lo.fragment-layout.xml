@@ -39,6 +39,7 @@
           <name>width</name>
           <value>40%</value>
         </structure-attribute>
+        <channel fname="notification-demo" unremovable="false" hidden="false" immutable="false" ID="n11"/>
         <channel fname="whos-online" unremovable="false" hidden="false" immutable="false" ID="n10"/>
       </folder>
     </folder>

@@ -99,4 +99,9 @@
         class="org.jasig.portal.spring.locator.ReferenceEntitySearcherLocator">
     </bean>
     
+    <bean id="org.jasig.portal.spring.locator.AuthorizationServiceLocator"
+        class="org.jasig.portal.spring.locator.AuthorizationServiceLocator">
+        <constructor-arg ref="authorizationService" />
+    </bean>
+    
 </beans>

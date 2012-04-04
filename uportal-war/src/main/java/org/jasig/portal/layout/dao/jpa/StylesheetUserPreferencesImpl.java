@@ -19,11 +19,11 @@
 
 package org.jasig.portal.layout.dao.jpa;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.TreeMap;
 
@@ -47,6 +47,7 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 
+import org.apache.commons.lang.Validate;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
@@ -168,82 +169,49 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     public long getId() {
         return this.id;
     }
-    
+
     @Override
     public long getStylesheetDescriptorId() {
         return this.stylesheetDescriptor.getId();
     }
-    
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetUserPreferences#setStylesheetUserPreferences(org.jasig.portal.layout.om.IStylesheetUserPreferences)
-     */
+
     @Override
-    public void setStylesheetUserPreferences(IStylesheetUserPreferences source) {
-        final Properties properties = source.getOutputProperties();
-            if (!this.outputProperties.equals(properties)) {
-                this.outputProperties.clear();
-            }
-            //Really wish putAll worked for Properties
-            for (final Entry<Object, Object> entry : properties.entrySet()) {
-                this.outputProperties.put((String)entry.getKey(), (String)entry.getValue());
-            }
-        
-        final Map<String, String> parameters = source.getStylesheetParameters();
-        if (!this.parameters.equals(parameters)) {
-            this.parameters.clear();
-        }
-        this.parameters.putAll(parameters);
-
-        final Map<String, Map<String, String>> attributes = source.getAllLayoutAttributes();
-        this.layoutAttributes.clear();
-        
-        for (final Map.Entry<String, Map<String, String>> attributeEntry : attributes.entrySet()) {
-            final String nodeId = attributeEntry.getKey();
-            this.layoutAttributes.put(nodeId, new LayoutNodeAttributesImpl(nodeId, attributeEntry.getValue()));
-        }
-    }
-
-    public IStylesheetDescriptor getStylesheetDescriptor() {
-        return this.stylesheetDescriptor;
-    }
-
     public int getUserId() {
         return this.userId;
     }
 
+    @Override
     public int getProfileId() {
         return this.profileId;
     }
     
     @Override
     public String getOutputProperty(String name) {
+        Validate.notEmpty(name, "name cannot be null");
+        
         return this.outputProperties.get(name);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetUserPreferences#setOutputProperty(java.lang.String, java.lang.String)
-     */
     @Override
     public String setOutputProperty(String name, String value) {
+        Validate.notEmpty(name, "name cannot be null");
+        Validate.notEmpty(value, "value cannot be null");
+        
         return this.outputProperties.put(name, value);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetUserPreferences#removeOutputProperty(java.lang.String)
-     */
     @Override
     public String removeOutputProperty(String name) {
+        Validate.notEmpty(name, "name cannot be null");
+        
         return this.outputProperties.remove(name);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetUserPreferences#getOutputProperties()
-     */
+    
     @Override
-    public Properties getOutputProperties() {
-        final Properties props = new Properties();
-        props.putAll(this.outputProperties);
-        return props;
+    public Properties populateOutputProperties(Properties properties) {
+        properties.putAll(this.outputProperties);
+        return properties;
     }
     
     @Override
@@ -253,32 +221,31 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
 
     @Override
     public String getStylesheetParameter(String name) {
+        Validate.notEmpty(name, "name cannot be null");
+        
         return this.parameters.get(name);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetUserPreferences#setStylesheetParameter(java.lang.String, java.lang.String)
-     */
     @Override
     public String setStylesheetParameter(String name, String value) {
+        Validate.notEmpty(name, "name cannot be null");
+        Validate.notEmpty(value, "value cannot be null");
+        
         return this.parameters.put(name, value);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetUserPreferences#removeStylesheetParameter(java.lang.String)
-     */
     @Override
     public String removeStylesheetParameter(String name) {
+        Validate.notEmpty(name, "name cannot be null");
+        
         return this.parameters.remove(name);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetUserPreferences#getStylesheetParameters()
-     */
     @Override
-    public Map<String, String> getStylesheetParameters() {
-        //Have to clone the underlying Map here so that we can guarantee thread safety
-        return Collections.unmodifiableMap(new LinkedHashMap<String, String>(this.parameters));
+    public Map<String, String> populateStylesheetParameters(
+            Map<String, String> stylesheetParameters) {
+        stylesheetParameters.putAll(this.parameters);
+        return stylesheetParameters;
     }
     
     @Override
@@ -304,6 +271,9 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
 
     @Override
     public String getLayoutAttribute(String nodeId, String name) {
+        Validate.notEmpty(nodeId, "nodeId cannot be null");
+        Validate.notEmpty(name, "name cannot be null");
+        
         final LayoutNodeAttributesImpl layoutAttribute = getLayoutNodeAttributes(nodeId, true);
         final Map<String, String> attributes = layoutAttribute.getAttributes();
         return attributes.get(name);
@@ -314,6 +284,10 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
      */
     @Override
     public String setLayoutAttribute(String nodeId, String name, String value) {
+        Validate.notEmpty(nodeId, "nodeId cannot be null");
+        Validate.notEmpty(name, "name cannot be null");
+        Validate.notEmpty(value, "value cannot be null");
+        
         final LayoutNodeAttributesImpl layoutAttribute = getLayoutNodeAttributes(nodeId, true);
         final Map<String, String> attributes = layoutAttribute.getAttributes();
         return attributes.put(name, value);
@@ -324,6 +298,9 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
      */
     @Override
     public String removeLayoutAttribute(String nodeId, String name) {
+        Validate.notEmpty(nodeId, "nodeId cannot be null");
+        Validate.notEmpty(name, "name cannot be null");
+        
         final LayoutNodeAttributesImpl layoutAttribute = getLayoutNodeAttributes(nodeId, false);
         if (layoutAttribute == null) {
             return null;
@@ -331,35 +308,50 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
         final Map<String, String> attributes = layoutAttribute.getAttributes();
         return attributes.remove(name);
     }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetUserPreferences#getLayoutAttributes(java.lang.String)
-     */
-    @Override
-    public Map<String, String> getLayoutAttributes(String nodeId) {
-        final LayoutNodeAttributesImpl layoutAttribute = getLayoutNodeAttributes(nodeId, false);
-        if (layoutAttribute == null) {
-            return Collections.emptyMap();
-        }
-        final Map<String, String> attributes = layoutAttribute.getAttributes();
-        return Collections.unmodifiableMap(new LinkedHashMap<String, String>(attributes));
-    }
     
     @Override
-    public Map<String, Map<String, String>> getAllLayoutAttributes() {
-        final Map<String, Map<String, String>> layoutAttributesClone = new TreeMap<String, Map<String,String>>();
-
-        for (final Map.Entry<String, LayoutNodeAttributesImpl> layoutNodeAttribute : this.layoutAttributes.entrySet()) {
-            final String nodeId = layoutNodeAttribute.getKey();
-            final LayoutNodeAttributesImpl attributes = layoutNodeAttribute.getValue();
-            layoutAttributesClone.put(nodeId, Collections.unmodifiableMap(new TreeMap<String, String>(attributes.getAttributes())));
+    public Map<String, String> populateLayoutAttributes(String nodeId,
+            Map<String, String> layoutAttributes) {
+        Validate.notEmpty(nodeId, "nodeId cannot be null");
+        
+        final LayoutNodeAttributesImpl nodeAttributes = this.layoutAttributes.get(nodeId);
+        if (nodeAttributes != null) {
+            layoutAttributes.putAll(nodeAttributes.getAttributes());
         }
         
-        return Collections.unmodifiableMap(layoutAttributesClone);
+        return layoutAttributes;
+    }
+
+    @Override
+    public Map<String, Map<String, String>> populateAllLayoutAttributes(
+            Map<String, Map<String, String>> allLayoutAttributes) {
+        
+        for (final Map.Entry<String, LayoutNodeAttributesImpl> layoutNodeAttribute : this.layoutAttributes.entrySet()) {
+            final String nodeId = layoutNodeAttribute.getKey();
+            final LayoutNodeAttributesImpl nodeAttributes = layoutNodeAttribute.getValue();
+            
+            Map<String, String> existingNodeAttributes = allLayoutAttributes.get(nodeId);
+            if (existingNodeAttributes == null) {
+                existingNodeAttributes = new TreeMap<String, String>(nodeAttributes.getAttributes());
+                allLayoutAttributes.put(nodeId, existingNodeAttributes);
+            }
+            else {
+                existingNodeAttributes.putAll(nodeAttributes.getAttributes());
+            }
+        }
+        
+        return allLayoutAttributes;
     }
     
     @Override
+    public Collection<String> getAllLayoutAttributeNodeIds() {
+        return Collections.unmodifiableSet(this.layoutAttributes.keySet());
+    }
+
+    @Override
     public void clearLayoutAttributes(String nodeId) {
+        Validate.notEmpty(nodeId, "nodeId cannot be null");
+        
         this.layoutAttributes.remove(nodeId);
     }
 
