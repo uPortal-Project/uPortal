@@ -27,17 +27,16 @@
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
    
-    <bean id="portletThreadPool" class="org.jasig.portal.utils.threading.QoSThreadPoolExecutorFactoryBean">
+    <bean id="portletThreadPool" class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean">
         <property name="corePoolSize" value="${org.jasig.portal.portlet.worker.threadPool.initialThreads}" />
         <property name="maxPoolSize" value="${org.jasig.portal.portlet.worker.threadPool.maxThreads}" />
-        <property name="queueCapacity" value="${org.jasig.portal.portlet.worker.threadPool.queueSize}" />
+        <property name="queueCapacity" value="0" />
         <property name="threadGroupName" value="uPortal-PortletExecutionThreadGroup" />
         <property name="threadNamePrefix" value="uPortal-PortletExecutor-" />
         <property name="threadPriority" value="${org.jasig.portal.portlet.worker.threadPool.threadPriority}" />
         <property name="keepAliveSeconds" value="${org.jasig.portal.portlet.worker.threadPool.keepAliveSeconds}" />
         <property name="daemon" value="true" />
         <property name="allowCoreThreadTimeOut" value="true" />
-        <property name="qualityOfServiceQueueType" value="org.jasig.portal.portlet.rendering.worker.PortletWorkerExecutionQueue" />
     </bean>
     
     <util:list id="portletExecutionInterceptors" value-type="org.jasig.portal.portlet.rendering.worker.IPortletExecutionInterceptor">

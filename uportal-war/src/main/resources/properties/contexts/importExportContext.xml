@@ -117,7 +117,7 @@
     <!-- 
      | Thread pool used for bulk import/export operations
      +-->
-    <bean id="importExportThreadPool" class="org.jasig.portal.utils.threading.DynamicThreadPoolExecutorFactoryBean">
+    <bean id="importExportThreadPool" class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean">
         <property name="corePoolSize" value="${org.jasig.portal.io.threadPool.initialThreads}" />
         <property name="maxPoolSize" value="${org.jasig.portal.io.threadPool.maxThreads}" />
         <property name="queueCapacity" value="${org.jasig.portal.io.threadPool.queueSize}" />

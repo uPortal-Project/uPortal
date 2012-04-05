@@ -28,10 +28,10 @@
     
     <task:annotation-driven executor="uPortalTaskExecutor" scheduler="uPortalTaskScheduler"/>
     
-    <bean id="uPortalTaskExecutor" class="org.jasig.portal.utils.threading.DynamicThreadPoolExecutorFactoryBean">
+    <bean id="uPortalTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean">
         <property name="corePoolSize" value="${org.jasig.portal.task.exec.threadPool.initialThreads}" />
         <property name="maxPoolSize" value="${org.jasig.portal.task.exec.threadPool.maxThreads}" />
-        <property name="queueCapacity" value="${org.jasig.portal.task.exec.threadPool.queueSize}" />
+        <property name="queueCapacity" value="0" />
         <property name="threadGroupName" value="uPortal-TaskExecutorThreadGroup" />
         <property name="threadNamePrefix" value="uPortal-TaskExecutor-" />
         <property name="threadPriority" value="${org.jasig.portal.task.exec.threadPool.threadPriority}" />
