@@ -224,6 +224,8 @@ public class RequestCacheAspect {
     }
     
     private static class ExceptionHolder implements Serializable {
+        private static final long serialVersionUID = 1L;
+        
         private final Throwable t;
         
         public ExceptionHolder(Throwable t) {

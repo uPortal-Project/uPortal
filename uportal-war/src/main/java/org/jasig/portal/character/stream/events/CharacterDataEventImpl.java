@@ -19,11 +19,12 @@
 
 package org.jasig.portal.character.stream.events;
 
-import java.util.concurrent.ConcurrentMap;
-
 import org.springframework.util.Assert;
 
+import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 /**
  * @author Eric Dalquist
@@ -38,25 +39,31 @@ public final class CharacterDataEventImpl implements CharacterDataEvent {
     public static final CharacterDataEvent EMPTY_CHARACTER_DATA = new CharacterDataEventImpl("");
     
     //Since the cache using weak refs for the events it should never be a cause for object retention therefor no max-size is needed
-    private static final ConcurrentMap<String, CharacterDataEvent> WEAK_EVENT_CACHE = CacheBuilder.newBuilder().weakValues().<String, CharacterDataEvent>build().asMap();
+    private static final LoadingCache<String, CharacterDataEvent> WEAK_EVENT_CACHE = CacheBuilder.newBuilder()
+            .weakValues()
+            .build(new CacheLoader<String, CharacterDataEvent>() {
+                @Override
+                public CharacterDataEvent load(String data) throws Exception {
+                    return new CharacterDataEventImpl(data);
+                }
+            });
     
     public static CharacterDataEvent create(String data) {
         if (data.length() == 0) {
             return EMPTY_CHARACTER_DATA;
         }
         
-        CharacterDataEvent event = WEAK_EVENT_CACHE.get(data);
+        CharacterDataEvent event = WEAK_EVENT_CACHE.getIfPresent(data);
         if (event == null) {
             //Make sure the String reference is using a minimal char[]
             data = new String(data);
-            event = new CharacterDataEventImpl(data);
-            final CharacterDataEvent existingEvent = WEAK_EVENT_CACHE.putIfAbsent(data, event);
-            if (existingEvent != null) {
-                event = existingEvent;
-            }
+            event = WEAK_EVENT_CACHE.getUnchecked(data);
         }
         return event;
-        
+    }
+    
+    static Cache<String, CharacterDataEvent> getEventCache() {
+        return WEAK_EVENT_CACHE;
     }
     
     private final String data;
