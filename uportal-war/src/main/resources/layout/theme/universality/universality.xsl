@@ -868,6 +868,11 @@
   -->
   <xsl:template name="footer.block">
 
+    <!-- Uncomment the following (and remove this message) than the style work on UP-3361 is in...
+    <div id="portalPageFooterNav">
+        <xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'footerNav']/parent::*"/>
+    </div> -->
+
     <xsl:if test="$INSTITUTION='uportal' or $INSTITUTION='coal' or $INSTITUTION='ivy' or $INSTITUTION='hc'">
       <!-- Footer Links -->
       <div id="portalPageFooterLinks">
