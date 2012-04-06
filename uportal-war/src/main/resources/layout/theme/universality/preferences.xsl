@@ -361,6 +361,7 @@
 -->
     <xsl:template name="gallery">
     	<xsl:if test="$AUTHENTICATED = 'true'">
+        <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
         <div class="up-gallery">
             <h2 class="handle">
                 <a><span class="handle-arrow-up"><xsl:value-of select="upMsg:getMessage('customize', $USER_LANG)"/></span></a>
@@ -396,6 +397,7 @@
                 <div id="galleryLoader" class="gallery-loader"><span><xsl:value-of select="upMsg:getMessage('loading', $USER_LANG)"/></span></div>
             </div>
         </div>
+        <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
         </xsl:if>
     </xsl:template>
 
