@@ -117,6 +117,15 @@
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true" />
         
+    <!-- 
+     | Caches exceptions from loading fragment layout
+     | - 1 x fragment layout that fails to load
+     | - not replicated
+     +-->
+    <cache name="org.jasig.portal.layout.dlm.FragmentActivator.userViewErrors"
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="30" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
      <!-- 
      | Caches node descriptor objects for fragment layouts
      | - 1 x fragment layout node

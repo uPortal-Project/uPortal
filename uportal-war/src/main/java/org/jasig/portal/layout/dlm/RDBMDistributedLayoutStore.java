@@ -1219,11 +1219,9 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
         root.setAttribute(Constants.ATT_ID, Constants.FRAGMENT_ID_USER_PREFIX + userView.getUserId()
                 + Constants.FRAGMENT_ID_LAYOUT_PREFIX + "1");
-        final UserView view = new UserView(userView.getUserId(), profile, layout);
         try {
             activator.clearChacheForOwner(fragment.getOwnerId());
-            activator.fragmentizeLayout(view, fragment);
-            activator.setUserView(fragment.getOwnerId(), locale, view);
+            activator.getUserView(fragment, locale);
         }
         catch (final Exception e) {
             LOG.error("An exception occurred attempting to update a layout.", e);
