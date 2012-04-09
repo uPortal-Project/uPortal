@@ -527,12 +527,19 @@ public class PortletRendererImpl implements IPortletRenderer {
         	boolean shouldCache = this.portletCacheControlService.shouldOutputBeCached(cacheControl);
         	// put the captured content in the cache
         	if(shouldCache && !responseWrapper.isThresholdExceeded()) {
-        		this.portletCacheControlService.cachePortletResourceOutput(portletWindowId, httpServletRequest, responseWrapper.getCachedPortletData(), cacheControl);
+        		CachedPortletData justCachedPortletData = responseWrapper.getCachedPortletData();
+        		if(justCachedPortletData == null) {
+        			// we were told to cache, but we can't either due to a bad statusCode or content exceeding cache size threshold
+        			// TODO should this log all the way at WARN? it probably should, since the portlet or portal is improprerly configured
+        			logger.warn("PortletRendererImpl#doServeResource was told to cache output for " + portletWindow + ", however the CachedPortletData returned from the response was null. This means either a bad status code was set by the portlet, or the portlet's output exceeds the cache threshold.");
+        		} else {
+        			this.portletCacheControlService.cachePortletResourceOutput(portletWindowId, httpServletRequest, responseWrapper.getCachedPortletData(), cacheControl);
         		
-        		String etag = cacheControl.getETag();
-                if (etag != null) {
-                    httpServletResponse.setHeader("ETag", etag);
-                }
+        			String etag = cacheControl.getETag();
+        			if (etag != null) {
+        				httpServletResponse.setHeader("ETag", etag);
+        			}
+        		}
 
         	}
 		}
