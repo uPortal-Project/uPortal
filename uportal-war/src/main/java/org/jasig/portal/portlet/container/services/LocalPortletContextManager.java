@@ -20,13 +20,13 @@
 package org.jasig.portal.portlet.container.services;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -71,25 +71,25 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
      * The PortletContext cache map: key is servlet context, and value is the
      * associated portlet context.
      */
-    private Map<String, DriverPortletContext> portletContexts = new HashMap<String, DriverPortletContext>();
+    private Map<String, DriverPortletContext> portletContexts = new ConcurrentHashMap<String, DriverPortletContext>();
 
     /**
      * The PortletContext cache map: key is servlet context, and value is the
      * associated portlet context.
      */
-    private final Map<String, DriverPortletConfig> portletConfigs = new HashMap<String, DriverPortletConfig>();
+    private final Map<String, DriverPortletConfig> portletConfigs = new ConcurrentHashMap<String, DriverPortletConfig>();
 
     /**
      * The registered listeners that should be notified upon
      * registry events.
      */
-    private final List<PortletRegistryListener> registryListeners = new ArrayList<PortletRegistryListener>();
+    private final List<PortletRegistryListener> registryListeners = new CopyOnWriteArrayList<PortletRegistryListener>();
 
     /**
      * The classloader for the portal, key is portletWindow and value is the classloader.
      * TODO this looks like a horrible memory leak
      */
-    private final Map<String, ClassLoader> classLoaders = new HashMap<String, ClassLoader>();
+    private final Map<String, ClassLoader> classLoaders = new ConcurrentHashMap<String, ClassLoader>();
 
     /**
      * Cache of descriptors.  WeakHashMap is used so that
@@ -125,7 +125,7 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
      * @throws PortletContainerException
      */
     @Override
-    public String register(ServletConfig config) throws PortletContainerException {
+    public synchronized String register(ServletConfig config) throws PortletContainerException {
         ServletContext servletContext = config.getServletContext();
         String contextPath = servletContext.getContextPath();
         if (!portletContexts.containsKey(contextPath)) {
@@ -173,7 +173,7 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
     }
 
     @Override
-    public void unregister(DriverPortletContext context) {
+    public synchronized void unregister(DriverPortletContext context) {
         portletContexts.remove(context.getApplicationName());
         classLoaders.remove(context.getApplicationName());
         Iterator<String> configs = portletConfigs.keySet().iterator();
@@ -284,7 +284,7 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
      * @return The portlet application deployment descriptor.
      * @throws PortletContainerException if the descriptor can not be found or parsed
      */
-    public PortletApplicationDefinition getPortletAppDD(ServletContext servletContext, String name, String contextPath)
+    public synchronized PortletApplicationDefinition getPortletAppDD(ServletContext servletContext, String name, String contextPath)
             throws PortletContainerException {
         PortletApplicationDefinition portletApp = this.portletAppDefinitionCache.get(servletContext);
         if (portletApp == null) {
