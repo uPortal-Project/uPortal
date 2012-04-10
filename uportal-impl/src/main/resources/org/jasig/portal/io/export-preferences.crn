@@ -26,7 +26,7 @@
                 <with-attribute key="PORTLET_DATA" value="${crn(lookup-dlm-noderef.crn)}">
                     <choose>
                         <when test="${groovy(PORTLET_DATA == null || PORTLET_DATA.length != 3 || PORTLET_DATA[0] == null || PORTLET_DATA[1] == null || PORTLET_DATA[2] == null)}">
-                            <echo-ln>WARNING: Portlet Entity for channel subscribe id ${groovy(portletEntity.getChannelSubscribeId())} in user ${USER_NAME}'s layout has no corresponding layout or channel information and will be ignored</echo-ln>
+                            <log logger-name="org.jasig.portal.io.export-preferences" level="warn">Portlet Entity for channel subscribe id ${groovy(portletEntity.getChannelSubscribeId())} in user ${USER_NAME}'s layout has no corresponding layout or channel information and will be ignored</log>
                         </when>
                         <otherwise>
                             <for-each items="${groovy(portletEntity.getPortletPreferences().getPortletPreferences())}" attribute-name="portletPreference">

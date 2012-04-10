@@ -98,7 +98,7 @@
                                 </otherwise>
                             </choose>
                             <with-attribute key="LAYOUT_USER_NAME" value="${jexl(NODEREF_DATA[0])}">
-                                <cache key="LAYOUT_NODE_INFO" cache-key="${groovy('LAYOUT_USER_NAME.' + LAYOUT_USER_NAME + ',DLM_NODEREF.' + DLM_NODEREF)}">
+                                <cache key="LAYOUT_NODE_INFO" cache-key="${groovy('LAYOUT_USER_NAME.' + LAYOUT_USER_NAME + ',DLM_NODEREF.' + DLM_NODEREF)}" thread-safe="true">
                                     <factory>
                                         <with>
                                             <attribute key="LAYOUT_STRUCT_ID">${jexl(NODEREF_DATA[1])}</attribute>

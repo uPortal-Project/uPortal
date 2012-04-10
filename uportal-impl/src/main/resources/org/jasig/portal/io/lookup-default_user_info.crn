@@ -26,7 +26,7 @@
  | Returns a two element String array, the first element is the USER_ID and the second
  | is the NEXT_STRUCT_ID of the default user
  +-->
-<cache key="DEFAULT_USER_INFO" cache-key="${groovy('DEFAULT_USER_INFO.' + DEFAULT_USER_NAME)}">
+<cache key="DEFAULT_USER_INFO" cache-key="${groovy('DEFAULT_USER_INFO.' + DEFAULT_USER_NAME)}" thread-safe="true">
     <factory>
         <choose>
             <when test="${jexl(DEFAULT_USER_NAME == null)}">

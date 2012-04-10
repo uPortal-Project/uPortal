@@ -18,7 +18,8 @@
     under the License.
 
 -->
-
+<handle-error>
+    <try>
 <invoke-method class="org.jasig.portal.spring.PortalApplicationContextLocator" method="getApplicationContext" attribute-name="PORTAL_CONTEXT">
     <subtasks>
         <invoke-method object="${PORTAL_CONTEXT}" method="getBean" attribute-name="SqlAttributes.DATA_SOURCE">
@@ -127,3 +128,12 @@
         </invoke-method>
     </subtasks>
 </invoke-method>
+    </try>
+    <finally>
+        <groovy>
+            <script>
+                org.jasig.portal.spring.PortalApplicationContextLocator.shutdown();
+            </script>
+        </groovy>
+    </finally>
+</handle-error>

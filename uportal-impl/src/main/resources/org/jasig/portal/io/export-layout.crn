@@ -32,6 +32,7 @@
     <attribute key="USER_ID">${crn(lookup-user_id.crn)}</attribute>
     <attribute key="Attributes.NODE">${newDoc(layout)}</attribute><!-- In case there's none in the DB... -->
     <subtasks>
+        <log logger-name="org.jasig.portal.io.export-layout" level="info">Exporting Layout:     USER_ID=${USER_ID} USER_NAME=${USER_NAME}</log>
         <groovy>
             <script>
                 import org.jasig.portal.UserProfile;
@@ -63,11 +64,11 @@
                     </if>
                     <choose>
                         <when test="${jexl(Attributes.NODE.elements().size() ne 0)}">
-                            <echo-ln>Export Layout: USER_ID=${USER_ID} USER_NAME=${USER_NAME}</echo-ln>
+                            <log logger-name="org.jasig.portal.io.export-layout" level="info">Exported Layout:      USER_ID=${USER_ID} USER_NAME=${USER_NAME}</log>
                             <return value="${Attributes.NODE}"/>
                         </when>
                         <otherwise>
-                            <echo-ln>Export Layout: Nothing to export for USER_ID=${USER_ID} USER_NAME=${USER_NAME}</echo-ln>
+                            <log logger-name="org.jasig.portal.io.export-layout" level="info">Not Exporting Layout: Nothing to export for USER_ID=${USER_ID} USER_NAME=${USER_NAME}</log>
                         </otherwise>
                     </choose>
                 </with-attribute>

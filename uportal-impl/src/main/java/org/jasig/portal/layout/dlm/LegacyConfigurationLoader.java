@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
@@ -39,6 +40,8 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Implementation of {@link ConfigurationLoader} that behaves exactly as DLM has 
@@ -63,6 +66,7 @@ public class LegacyConfigurationLoader implements ConfigurationLoader {
     };
     
     private List<FragmentDefinition> fragments = null;
+    private Map<String, FragmentDefinition> fragmentsByOwner = null;
     private Properties properties = null;
     
     /**
@@ -124,6 +128,11 @@ public class LegacyConfigurationLoader implements ConfigurationLoader {
                 logger.debug("Fragments Sorted by Precedence and then index {\n" +
                     bfr.toString() + " }" );
             }
+            final com.google.common.collect.ImmutableMap.Builder<String, FragmentDefinition> fragmentsByOwnerBuilder = ImmutableMap.builder();
+            for (final FragmentDefinition fragmentDefinition : localFragments) {
+                fragmentsByOwnerBuilder.put(fragmentDefinition.getOwnerId(), fragmentDefinition);
+            }
+            this.fragmentsByOwner = fragmentsByOwnerBuilder.build();
             this.fragments = Collections.unmodifiableList(localFragments);
         }
     }
@@ -134,6 +143,12 @@ public class LegacyConfigurationLoader implements ConfigurationLoader {
     public List<FragmentDefinition> getFragments() {
         this.loadedFlag.get();
         return this.fragments;
+    }
+    
+    @Override
+    public FragmentDefinition getFragment(String ownerName) {
+        this.loadedFlag.get();
+        return this.fragmentsByOwner.get(ownerName);
     }
 
     /* (non-Javadoc)
@@ -230,7 +245,7 @@ public class LegacyConfigurationLoader implements ConfigurationLoader {
                     logger.debug(msg + XML.serializeNode(fragmentElement), e );
                 }
                 else {
-                    logger.warn(msg + " Enable DEBUG logging for stack trace.\n\tCaused By: " + e.getMessage() + XML.serializeNode(fragmentElement));
+                    logger.warn(msg + " Enable DEBUG logging for stack trace.\n\tCaused By: " + e.getMessage() + "\n" + XML.serializeNode(fragmentElement));
                 }
             }
         }   

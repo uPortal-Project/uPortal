@@ -20,8 +20,13 @@
 package org.jasig.portal.layout.dlm;
 
 import org.danann.cernunnos.Task;
+import org.jasig.portal.UserProfile;
+import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
 import org.springframework.beans.factory.annotation.Required;
+import org.w3c.dom.Document;
+
+import com.google.common.collect.MapMaker;
 
 public class LayoutStoreProvider {
 
@@ -35,6 +40,9 @@ public class LayoutStoreProvider {
                 rslt = new RDBMDistributedLayoutStore();
                 rslt.setLookupNoderefTask(lookupNoderefTask);
                 rslt.setLookupPathrefTask(lookupPathrefTask);
+                rslt.setLayoutExportCache(new MapMaker().maximumSize(1000).softValues().<Tuple<String, String>, Document>makeMap());
+                rslt.setProfileExportCache(new MapMaker().maximumSize(1000).softValues().<Tuple<String, String>, UserProfile>makeMap());
+                rslt.setLayoutIdExportCache(new MapMaker().maximumSize(1000).softValues().<Tuple<Integer, Integer>, Integer>makeMap());
             } catch (Throwable t) {
                 String msg = "Failed to instantiate RDBMDistributedLayoutStore.";
                 throw new RuntimeException(msg, t);

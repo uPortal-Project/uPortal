@@ -25,7 +25,7 @@
  |
  | Returns the ID of the specified entity, null if no entity with that name is found
  +-->
-<cache key="ENTITY_TYPE_ID" cache-key="${groovy('ENTITY_TYPE_NAME.' + ENTITY_TYPE_NAME)}">
+<cache key="ENTITY_TYPE_ID" cache-key="${groovy('ENTITY_TYPE_NAME.' + ENTITY_TYPE_NAME)}" thread-safe="true">
     <factory>
         <sql-query>
             <sql>

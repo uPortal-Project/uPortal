@@ -25,7 +25,7 @@
  |
  | Returns the ID of the structure stylesheet, null if no structure stylesheet with that name is found
  +-->
-<cache key="STRUCTURE_STYLESHEET_ID" cache-key="STRUCTURE_STYLESHEET_ID.${STRUCTURE_STYLESHEET_NAME}">
+<cache key="STRUCTURE_STYLESHEET_ID" cache-key="STRUCTURE_STYLESHEET_ID.${STRUCTURE_STYLESHEET_NAME}" thread-safe="true">
     <factory>
         <sql-query>
             <sql>

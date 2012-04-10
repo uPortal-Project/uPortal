@@ -26,7 +26,7 @@
  | Returns the default structure name if force is true or the passed STRUCTURE_STYLESHEET_NAME is null
  +-->
 <with-attribute key="STRUCTURE_STYLESHEET_NAME" value="${crn(determine-ss_struct_name.crn)}">
-    <cache key="STRUCTURE_STYLESHEET_ID" cache-key="${jexl('STRUCTURE_STYLESHEET_ID.' + STRUCTURE_STYLESHEET_NAME)}">
+    <cache key="STRUCTURE_STYLESHEET_ID" cache-key="${jexl('STRUCTURE_STYLESHEET_ID.' + STRUCTURE_STYLESHEET_NAME)}" thread-safe="true">
         <factory>
             <sql-query>
                 <sql>

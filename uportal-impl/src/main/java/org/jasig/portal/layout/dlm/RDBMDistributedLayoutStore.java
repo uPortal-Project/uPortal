@@ -26,17 +26,18 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -85,9 +86,15 @@ import org.jasig.portal.spring.locator.CacheFactoryLocator;
 import org.jasig.portal.spring.locator.ConfigurationLoaderLocator;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.SmartCache;
+import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.utils.XML;
 import org.jasig.portal.utils.cache.CacheFactory;
 import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
+import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowCallbackHandler;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -95,6 +102,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * This class extends RDBMUserLayoutStore and implements instantiating and
@@ -121,6 +130,8 @@ public class RDBMDistributedLayoutStore
     private ConfigurationLoader configurationLoader;
     private final Map<String, FragmentNodeInfo> fragmentInfoCache;
     private LayoutDecorator decorator = null;
+    private JdbcOperations jdbcOperations;
+    private NamedParameterJdbcOperations namedParameterJdbcOperations;
 
     // fragmentActivator
     private final SingletonDoubleCheckedCreator<FragmentActivator> fragmentActivatorCreator = new SingletonDoubleCheckedCreator<FragmentActivator>() {
@@ -151,8 +162,18 @@ public class RDBMDistributedLayoutStore
     
     // Used in Import/Export operations
     private final org.dom4j.DocumentFactory fac = new org.dom4j.DocumentFactory();
-    private final DOMReader reader = new DOMReader();
-    private final DOMWriter writer = new DOMWriter();
+    private final ThreadLocal<DOMReader> reader = new ThreadLocal<DOMReader>() {
+        @Override
+        protected DOMReader initialValue() {
+            return new DOMReader();
+        }
+    };
+    private final ThreadLocal<DOMWriter> writer = new ThreadLocal<DOMWriter>() {
+        @Override
+        protected DOMWriter initialValue() {
+            return new DOMWriter();
+        }
+    };
     private Task lookupNoderefTask;
     private Task lookupPathrefTask;
     private final IUserIdentityStore identityStore = new RDBMUserIdentityStore();
@@ -182,7 +203,12 @@ public class RDBMDistributedLayoutStore
         final List<FragmentDefinition> definitions = configurationLoader.getFragments();
         for (final FragmentDefinition fragmentDefinition : definitions) {
             Document layout = DocumentFactory.getNewDocument();
-            Node copy = layout.importNode(activator.getUserView(fragmentDefinition)
+            final UserView userView = activator.getUserView(fragmentDefinition);
+            if (userView == null) {
+                log.warn("No UserView found for FragmentDefinition " + fragmentDefinition.getName() + ", it will be skipped.");
+                continue;
+            }
+            Node copy = layout.importNode(userView
                         .layout.getDocumentElement(), true);
             layout.appendChild(copy);
             layouts.put(fragmentDefinition.getOwnerId(), layout);
@@ -218,7 +244,10 @@ public class RDBMDistributedLayoutStore
                         + configurationLoader.getProperty(DECORATOR_PROPERTY)
                         + "' specified in dlm.xml. It will not be used.", e);
         }
-
+        
+        namedParameterJdbcOperations = new NamedParameterJdbcTemplate(this.dataSource);
+        jdbcOperations = new JdbcTemplate(this.dataSource);
+        ((JdbcTemplate) jdbcOperations).afterPropertiesSet();
     }
     
     private FragmentActivator getFragmentActivator() {
@@ -421,15 +450,78 @@ public class RDBMDistributedLayoutStore
     }
     
     private boolean layoutExistsForUser(IPerson person) {
-        
         // Assertions.
         if (person == null) {
-            String msg = "Argument 'person' cannot be null.";
-            throw new IllegalArgumentException(msg);
+            return false;
+        }
+
+        final List<Integer> ignoredNodeIds = new LinkedList<Integer>();
+        final List<Integer> newNodeIds = new LinkedList<Integer>();
+        
+        //Get header/footer child/next nodes
+        namedParameterJdbcOperations.query(
+                "SELECT STRUCT_ID, CHLD_STRUCT_ID, NEXT_STRUCT_ID FROM up_layout_struct WHERE user_id = :userId AND STRUCT_ID in (" +
+                "    SELECT CHLD_STRUCT_ID FROM up_layout_struct WHERE user_id = :userId AND type IN ('header', 'footer') and CHLD_STRUCT_ID > 0" +
+                ")", 
+                ImmutableMap.of("userId", person.getID()),
+                new RowCallbackHandler() {
+                    public void processRow(ResultSet rs) throws SQLException {
+                        for (int i = 1; i <= 3; i++) {
+                            final int nodeId = rs.getInt(i);
+                            if (nodeId != 0) {
+                                ignoredNodeIds.add(nodeId);
+                                
+                                //column 1 is the header/footer struct_id, no need to query on it again
+                                if (i != 1) {
+                                    newNodeIds.add(nodeId);
+                                }
+                            }
+                        }
+                    }
+                });
+        
+        //For each header/footer child/next node get its child/next nodes
+        if (!newNodeIds.isEmpty()) {
+            final List<Integer> queryNodeIds = new ArrayList<Integer>(newNodeIds);
+            newNodeIds.clear();
+            
+            namedParameterJdbcOperations.query(
+                    "SELECT CHLD_STRUCT_ID, NEXT_STRUCT_ID FROM up_layout_struct WHERE user_id = :userId AND STRUCT_ID " + 
+                    (queryNodeIds.size() == 1 ? "=" : "in") + " ", 
+                    ImmutableMap.of(
+                            "userId", person.getID(), 
+                            "nodeIds", queryNodeIds),
+                    new RowCallbackHandler() {
+                        public void processRow(ResultSet rs) throws SQLException {
+                            for (int i = 1; i <= 2; i++) {
+                                final int nodeId = rs.getInt(i);
+                                if (nodeId != 0) {
+                                    newNodeIds.add(nodeId);
+                                }
+                            }
+                        }
+                    });
+            
+            ignoredNodeIds.addAll(newNodeIds);
+        }
+            
+        final int struct_count;
+        if (ignoredNodeIds.isEmpty()) {
+            struct_count = namedParameterJdbcOperations.queryForInt(
+                    "SELECT COUNT(*) FROM up_layout_struct WHERE user_id = :userId AND (type is null or type not IN ('root', 'header', 'footer'))", 
+                    ImmutableMap.of(
+                            "userId", person.getID()));
+        }
+        else {
+            struct_count = namedParameterJdbcOperations.queryForInt(
+                    "SELECT COUNT(*) FROM up_layout_struct WHERE user_id = :userId AND STRUCT_ID " +
+                            (ignoredNodeIds.size() == 1 ? "<>" : "not in") 
+                    + ":nodeIds AND (type is null or type not IN ('root', 'header', 'footer'))", 
+                    ImmutableMap.of(
+                            "userId", person.getID(), 
+                            "nodeIds", ignoredNodeIds));
         }
         
-        final SimpleJdbcTemplate jdbcTemplate = new SimpleJdbcTemplate(RDBMServices.getDataSource());
-        final int struct_count = jdbcTemplate.queryForInt("SELECT COUNT(*) FROM up_layout_struct WHERE user_id = ?", person.getID());
         return struct_count == 0 ? false : true;
         
     }
@@ -446,7 +538,7 @@ public class RDBMDistributedLayoutStore
         try {
             Document layoutDom = _safeGetUserLayout(person, profile);
             person.setAttribute(Constants.PLF, layoutDom);
-            layoutDoc = reader.read(layoutDom);
+            layoutDoc = reader.get().read(layoutDom);
             up = this.getUserPreferences(person, profile);
         } catch (Throwable t) {
             String msg = "Unable to obtain layout & profile for user '" 
@@ -714,7 +806,7 @@ public class RDBMDistributedLayoutStore
         
         // (6) Add database Ids & (5) Add dlm:plfID ...
         int nextId = 1;
-        for (Iterator<org.dom4j.Element> it = (Iterator<org.dom4j.Element>) layout.selectNodes("folder | dlm:*").iterator(); it.hasNext();) {
+        for (Iterator<org.dom4j.Element> it = (Iterator<org.dom4j.Element>) layout.selectNodes("folder | dlm:* | channel").iterator(); it.hasNext();) {
             nextId = addIdAttributesIfNecessary(it.next(), nextId);
         }
         // Now update UP_USER...
@@ -878,7 +970,7 @@ public class RDBMDistributedLayoutStore
             org.dom4j.Element copy = layout.createCopy();
             org.dom4j.Document doc = fac.createDocument(copy);
             doc.normalize();
-            layoutDom = writer.write(doc);
+            layoutDom = writer.get().write(doc);
             person.setAttribute(Constants.PLF, layoutDom);
 
             if (saSet) {
@@ -895,7 +987,7 @@ public class RDBMDistributedLayoutStore
         
         // Finally store the layout...
         try {
-            this.setUserLayout(person, profile, layoutDom, true, false);
+            this.setUserLayout(person, profile, layoutDom, true, true);
         } catch (Throwable t) {
             String msg = "Unable to persist layout for user:  " + ownerUsername;
             throw new RuntimeException(msg, t);
@@ -907,7 +999,8 @@ public class RDBMDistributedLayoutStore
     private final int addIdAttributesIfNecessary(org.dom4j.Element e, int nextId) {
         
         int idAfterThisOne = nextId;  // default...
-        if (e.selectSingleNode("@ID | @dlm:plfID") == null) {
+        final org.dom4j.Node idAttribute = e.selectSingleNode("@ID | @dlm:plfID");
+        if (idAttribute == null) {
             if (log.isDebugEnabled()) {
                 log.debug("No ID or dlm:plfID attribute for the following node "
                 		    + "(one will be generated and added):  element" 
@@ -940,6 +1033,15 @@ public class RDBMDistributedLayoutStore
             }
 
             ++idAfterThisOne;
+        }
+        else {
+            final String id = idAttribute.getText();
+            try {
+                idAfterThisOne = Integer.parseInt(id.substring(1)) + 1;
+            }
+            catch (NumberFormatException nfe) {
+                log.warn("Could not parse int value from id: " + id + " The next layout id will be: " + idAfterThisOne, nfe);
+            }
         }
 
         // Now check children...
@@ -1081,6 +1183,11 @@ public class RDBMDistributedLayoutStore
 
     }
 
+    private Map<Tuple<String, String>, Document> layoutCache;
+    public void setLayoutExportCache(Map<Tuple<String, String>, Document> layoutCache) {
+        this.layoutCache = layoutCache;
+    }
+
     /**
      * Handles locking and identifying proper root and namespaces that used to
      * take place in super class.
@@ -1093,9 +1200,25 @@ public class RDBMDistributedLayoutStore
     private Document _safeGetUserLayout(IPerson person, UserProfile profile)
             throws Exception
     {
-        Document layoutDoc = super.getUserLayout(person, profile);
+        Document layoutDoc;
+        Tuple<String, String> key = null;
+            
+        if (this.layoutCache != null) {
+            key = new Tuple<String, String>(person.getUserName(), profile.getProfileFname());
+            layoutDoc = this.layoutCache.get(key);
+            if (layoutDoc != null) {
+                return XML.cloneDocument(layoutDoc);
+            }
+        }
+        
+        layoutDoc = super.getUserLayout(person, profile);
         Element layout = layoutDoc.getDocumentElement();
         layout.setAttribute(Constants.NS_DECL, Constants.NS_URI);
+        
+        if (this.layoutCache != null && key != null) {
+            this.layoutCache.put(key, XML.cloneDocument(layoutDoc));
+        }
+        
         return layoutDoc;
     }
 
@@ -1199,6 +1322,9 @@ public class RDBMDistributedLayoutStore
         // Fix later to handle multiple profiles
         Element root = layout.getDocumentElement();
         final UserView userView = activator.getUserView(fragment);
+        if (userView == null) {
+            throw new IllegalStateException("No UserView found for fragment: " + fragment.getName());
+        }
         root.setAttribute( Constants.ATT_ID,
                            Constants.FRAGMENT_ID_USER_PREFIX +
                            userView.getUserId() +
@@ -1296,24 +1422,7 @@ public class RDBMDistributedLayoutStore
     */
     private FragmentDefinition getOwnedFragment( IPerson person )
     {
-        int userId = person.getID();
-
-        FragmentActivator activator = this.getFragmentActivator();
-
-        final List<FragmentDefinition> definitions = configurationLoader.getFragments();
-        if ( definitions != null )
-        {
-            for (final FragmentDefinition fragmentDefinition : definitions) {
-                final UserView userView = activator.getUserView(fragmentDefinition);
-                if (userView != null) {
-                    int fdId = userView.getUserId();
-                    if ( fdId == userId ) {
-                        return fragmentDefinition;
-                    }
-                }
-            }
-        }
-        return null;
+        return configurationLoader.getFragment(person.getUserName());
     }
 
     /**

@@ -21,7 +21,7 @@
 
 <!-- Select export operation based on the specified ${ENTITY_TYPE} -->
 <choose>
-
+    
     <!-- layout -->
     <when test="${jexl(ENTITY_TYPE.equalsIgnoreCase('layout'))}">
         <sql-query>

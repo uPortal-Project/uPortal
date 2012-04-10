@@ -1590,17 +1590,17 @@ IFolderLocalNameResolver
                             Constants.ROOT_FOLDER_ID))
             {
                 LOG.error("Unable to locate root node in layout of "
-                        + owner.getAttribute(IPerson.USERNAME) 
+                        + owner.getUserName() 
                         + ". Resetting corrupted layout: " 
                         + XML.serializeNode(layout));
-                resetLayout((String) null);
+                resetLayout((String)null);
                 rootNode = RootLocator.getRootElement(getUserLayoutDOM());
                 if (rootNode == null
                         || !rootNode.getAttribute(Constants.ATT_TYPE).equals(
                                 Constants.ROOT_FOLDER_ID))
                 {
                     throw new PortalException("Corrupted layout detected for " 
-                            + owner.getAttribute(IPerson.USERNAME) 
+                            + owner.getUserName() 
                             + " and resetting layout failed.");
                 }
             }
@@ -1669,11 +1669,7 @@ IFolderLocalNameResolver
         if (resetCurrentUserLayout || 
                 (! resetCurrentUserLayout && AdminEvaluator.isAdmin(owner)))
         {
-            if (LOG.isDebugEnabled())
-            {
-                LOG.debug("Reset layout requested for user with id " + loginId
-                                + ".");
-            }
+            LOG.warn("Reset layout requested for user with id " + loginId + ".");
             int portalID = IPerson.UNDEFINED_ID;
             IPerson person = null;
             

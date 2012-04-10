@@ -40,6 +40,11 @@
             <groupId>com.googlecode.cernunnos</groupId>
             <artifactId>cernunnos</artifactId>
         </dependency>
+        
+          <dependency>
+              <groupId>com.google.guava</groupId>
+              <artifactId>guava</artifactId>
+          </dependency>
 
         <dependency> 
             <groupId>com.ibm.icu</groupId> 

@@ -24,7 +24,7 @@
  |
  | Returns a Document that is the limitied-layout of the user
  +-->
-<cache key="Attributes.NODE" cache-key="${groovy('LOADED-LAYOUT.' + LAYOUT_USER_NAME)}">
+<cache key="Attributes.NODE" cache-key="${groovy('LOADED-LAYOUT.' + LAYOUT_USER_NAME)}" thread-safe="true">
     <factory>
         <!-- 
          | We have to 'cover' the existing USER_NAME with the 

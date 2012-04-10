@@ -27,6 +27,7 @@ import java.util.List;
  * @since uPortal 2.5
  */
 public interface ConfigurationLoader {
+    public FragmentDefinition getFragment(String ownerName);
     
     /**
      * @return The available fragment definitions

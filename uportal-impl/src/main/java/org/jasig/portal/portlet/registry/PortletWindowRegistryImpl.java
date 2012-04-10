@@ -202,6 +202,10 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
             
             final IPortletEntityRegistry portletEntityRegistry = this.getPortletEntityRegistry();
             final IPortletEntity portletEntity = portletEntityRegistry.getPortletEntity(portletEntityIdString);
+            if (portletEntity == null) {
+                logger.warn("No IPortletEntity could be found for ID '" + portletEntityIdString + "' from transient window: " + portletWindowId);
+                return null;
+            }
             
             return this.getTransientPortletWindow(request, portletWindowIdString, portletEntity.getPortletEntityId());
         }

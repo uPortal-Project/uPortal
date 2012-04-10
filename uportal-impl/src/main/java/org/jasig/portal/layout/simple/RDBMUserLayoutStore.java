@@ -69,6 +69,7 @@ import org.jasig.portal.utils.CounterStoreFactory;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ICounterStore;
 import org.jasig.portal.utils.ResourceLoader;
+import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.w3c.dom.Document;
@@ -86,7 +87,7 @@ import org.xml.sax.InputSource;
  * Simple Layout Manager implementation.
  *
  * @author George Lindholm
- * @version $Revision$ $Date$
+ * @version $Revision: 21145 $ $Date: 2010-07-19 15:19:16 -0500 (Mon, 19 Jul 2010) $
  */
 public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
 
@@ -98,7 +99,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
   protected static final String channelPrefix = "n";
   protected static final String folderPrefix = "s";
     
-  private final DataSource dataSource;
+  protected final DataSource dataSource;
   private final IDatabaseMetadata databaseMetadata;
   protected final IChannelRegistryStore channelRegistryStore;
   protected final ICounterStore counterStore;
@@ -1796,7 +1797,21 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
     }
   }
 
+  private Map<Tuple<String, String>, UserProfile> profileCache;
+  public void setProfileExportCache(Map<Tuple<String, String>, UserProfile> profileCache) {
+      this.profileCache = profileCache;
+  }
+
   public UserProfile getUserProfileByFname (IPerson person, String profileFname) throws Exception {
+    Tuple<String, String> key = null;
+    if (this.profileCache != null) {
+        key = new Tuple<String, String>(person.getUserName(), profileFname);
+        final UserProfile profile = this.profileCache.get(key);
+        if (profile != null) {
+            return profile;
+        }
+    }
+      
 	log.debug("Getting profile " + profileFname + " for user " + person.getID());
     int userId = person.getID();
     Connection con = RDBMServices.getConnection();
@@ -1843,6 +1858,9 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
             }
             UserProfile userProfile = new UserProfile(profileId, profileFname, profileName, profileDesc, layoutId, structSsId, themeSsId);
             userProfile.setLocaleManager(new LocaleManager(person));
+            if (this.profileCache != null && key != null) { 
+                this.profileCache.put(key, userProfile);
+            }
             return userProfile;
           }
           else {
@@ -1862,7 +1880,11 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
         			if(templateProfile != null) {
         			    final UserProfile newUserProfile = new UserProfile(templateProfile);
         			    newUserProfile.setLayoutId(0);
-        				return addUserProfile(person,newUserProfile);
+        				final UserProfile userProfile = addUserProfile(person,newUserProfile);
+        				if (this.profileCache != null && key != null) { 
+        	                this.profileCache.put(key, userProfile);
+        	            }
+                        return userProfile;
         			} else {
                         throw new Exception("Unable to find template profile for " + userId + " and profile " + profileFname);
         			}
@@ -2934,6 +2956,11 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
     this.setStructureStylesheetUserPreferences(person, profile.getProfileId(), up.getStructureStylesheetUserPreferences());
     this.setThemeStylesheetUserPreferences(person, profile.getProfileId(), up.getThemeStylesheetUserPreferences());
   }
+  
+  private Map<Tuple<Integer, Integer>, Integer> layoutIdCache;
+  public void setLayoutIdExportCache(Map<Tuple<Integer, Integer>, Integer> layoutIdCache) {
+      this.layoutIdCache = layoutIdCache;
+  }
 
   /**
    * Returns the current layout ID for the user and profile. If the profile doesn't exist or the
@@ -2945,6 +2972,16 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
    * @throws SQLException
    */
   protected int getLayoutID(int userId, int profileId) throws SQLException {
+      Tuple<Integer, Integer> key = null;
+      
+      if (this.layoutIdCache != null) {
+          key = new Tuple<Integer, Integer>(userId, profileId);
+          final Integer layoutId = this.layoutIdCache.get(key);
+          if (layoutId != null) {
+              return layoutId;
+          }
+      }
+      
       String query =
           "SELECT LAYOUT_ID " +
           "FROM UP_USER_PROFILE " +
@@ -3041,6 +3078,9 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore {
           RDBMServices.releaseConnection(con);
       }
 
+      if (this.layoutIdCache != null && key != null) {
+          this.layoutIdCache.put(key, layoutId);
+      }
       return layoutId;
   }
 

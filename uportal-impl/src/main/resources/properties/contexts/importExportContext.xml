@@ -352,6 +352,7 @@
         </property>
         <property name="requestAttributes">
             <util:map>
+                <entry key="Attributes.CACHE" value-ref="crnCache" />
                 <entry key="SqlAttributes.DATA_SOURCE">
                     <ref bean="PortalDb" />
                 </entry>
@@ -374,6 +375,7 @@
         </property>
         <property name="requestAttributes">
             <util:map>
+                <entry key="Attributes.CACHE" value-ref="crnCache" />
                 <entry key="SqlAttributes.DATA_SOURCE">
                     <ref bean="PortalDb"/>
                 </entry>
@@ -390,6 +392,7 @@
         </property>
         <property name="requestAttributes">
             <util:map>
+                <entry key="Attributes.CACHE" value-ref="crnCache" />
                 <entry key="SqlAttributes.DATA_SOURCE">
                     <ref bean="PortalDb"/>
                 </entry>
@@ -406,6 +409,7 @@
         </property>
         <property name="requestAttributes">
             <util:map>
+                <entry key="Attributes.CACHE" value-ref="crnCache" />
                 <entry key="SqlAttributes.DATA_SOURCE">
                     <ref bean="PortalDb"/>
                 </entry>
@@ -422,6 +426,7 @@
         </property>
         <property name="requestAttributes">
             <util:map>
+                <entry key="Attributes.CACHE" value-ref="crnCache" />
                 <entry key="SqlAttributes.DATA_SOURCE">
                     <ref bean="PortalDb"/>
                 </entry>
@@ -444,6 +449,7 @@
         </property>
         <property name="requestAttributes">
             <util:map>
+                <entry key="Attributes.CACHE" value-ref="crnCache" />
                 <entry key="SqlAttributes.DATA_SOURCE">
                     <ref bean="PortalDb"/>
                 </entry>
@@ -460,6 +466,7 @@
         </property>
         <property name="requestAttributes">
             <util:map>
+                <entry key="Attributes.CACHE" value-ref="crnCache" />
                 <entry key="channelRegistryStore">
                     <ref bean="channelRegistryStore"/>
                 </entry>
@@ -479,6 +486,7 @@
         </property>
         <property name="requestAttributes">
             <util:map>
+                <entry key="Attributes.CACHE" value-ref="crnCache" />
                 <entry key="SqlAttributes.DATA_SOURCE">
                     <ref bean="PortalDb"/>
                 </entry>
@@ -495,6 +503,7 @@
         </property>
         <property name="requestAttributes">
             <util:map>
+                <entry key="Attributes.CACHE" value-ref="crnCache" />
                 <entry key="SqlAttributes.DATA_SOURCE">
                     <ref bean="PortalDb"/>
                 </entry>
@@ -531,6 +540,7 @@
         </property>
         <property name="requestAttributes">
             <util:map>
+                <entry key="Attributes.CACHE" value-ref="crnCache" />
                 <entry key="layoutStoreProvider">
                     <ref bean="layoutStoreProvider"/>
                 </entry>
@@ -544,12 +554,7 @@
         </property>
         <property name="requestAttributes">
             <util:map>
-                <entry key="Attributes.CACHE">
-                    <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
-                        <property name="cacheFactory" ref="cacheFactory" />
-                        <property name="cacheName" value="org.jasig.portal.layout.dlm.NODEREF_CACHE" />
-                    </bean>
-                </entry>
+                <entry key="Attributes.CACHE" value-ref="crnCache" />
                 <entry key="Attributes.CACHE_MODEL">
                     <value>ALL</value>
                 </entry>
@@ -569,12 +574,7 @@
         </property>
         <property name="requestAttributes">
             <util:map>
-                <entry key="Attributes.CACHE">
-                    <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
-                        <property name="cacheFactory" ref="cacheFactory" />
-                        <property name="cacheName" value="org.jasig.portal.layout.dlm.NODEREF_CACHE" />
-                    </bean>
-                </entry>
+                <entry key="Attributes.CACHE" value-ref="crnCache" />
                 <entry key="Attributes.CACHE_MODEL">
                     <value>ALL</value>
                 </entry>
@@ -604,4 +604,7 @@
         <property name="portletEntityRegistry" ref="portletEntityRegistry" />
     </bean>
 
+    <bean id="crnCache" class="org.jasig.portal.io.LoggingLRUMap">
+        <constructor-arg value="100000" />
+    </bean>
 </beans>

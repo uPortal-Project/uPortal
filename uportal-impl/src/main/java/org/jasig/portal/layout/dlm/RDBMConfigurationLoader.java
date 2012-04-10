@@ -42,7 +42,13 @@ public class RDBMConfigurationLoader extends LegacyConfigurationLoader {
     public void setFragmentDao(IFragmentDefinitionDao fragmentDao) {
         this.fragmentDao = fragmentDao;
     }
+    
 
+    @Override
+    public FragmentDefinition getFragment(String ownerName) {
+        return this.fragmentDao.getFragmentDefinition(ownerName);
+    }
+    
     /* (non-Javadoc)
      * @see org.jasig.portal.layout.dlm.LegacyConfigurationLoader#getFragments()
      */

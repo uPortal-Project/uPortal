@@ -24,7 +24,7 @@
  |
  | Returns a Document that is the limitied-layout of the user
  +-->
-<cache key="Attributes.NODE" cache-key="${groovy('LIMITED-LAYOUT.' + LAYOUT_USER_NAME)}">
+<cache key="Attributes.NODE" cache-key="${groovy('LIMITED-LAYOUT.' + LAYOUT_USER_NAME)}" thread-safe="true">
     <factory> 
         <with-attribute key="Attributes.NODE" value="${newDoc(structures)}">
             <append-node>
