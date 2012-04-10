@@ -868,10 +868,10 @@
   -->
   <xsl:template name="footer.block">
 
-    <!-- uncomment to enable site map 
+    <!-- Site Map -->
     <div id="portalPageFooterNav">
         <xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'footerNav']/parent::*"/>
-    </div> -->
+    </div> 
 
     <xsl:if test="$INSTITUTION='uportal' or $INSTITUTION='coal' or $INSTITUTION='ivy' or $INSTITUTION='hc'">
 			<div id="portalPageFooterContent">
