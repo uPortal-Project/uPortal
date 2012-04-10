@@ -868,58 +868,59 @@
   -->
   <xsl:template name="footer.block">
 
-    <!-- Uncomment the following (and remove this message) than the style work on UP-3361 is in...
+    <!-- Site Map -->
     <div id="portalPageFooterNav">
         <xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'footerNav']/parent::*"/>
-    </div> -->
+    </div> 
 
     <xsl:if test="$INSTITUTION='uportal' or $INSTITUTION='coal' or $INSTITUTION='ivy' or $INSTITUTION='hc'">
+			<div id="portalPageFooterContent">
       <!-- Footer Links -->
-      <div id="portalPageFooterLinks">
-        <a href="http://www.jasig.org/" target="_blank" title="{upMsg:getMessage('go.to.jasig.site', $USER_LANG)}">
-          <xsl:value-of select="upMsg:getMessage('jasig.org', $USER_LANG)"/>
-          <!--<xsl:value-of select="jasig.org"/>-->
-        </a>
-        <xsl:call-template name="portal.pipe"/>
-        <a href="http://www.jasig.org/uportal" target="_blank" title="{upMsg:getMessage('go.to.uportal.site', $USER_LANG)}">
-          <xsl:value-of select="upMsg:getMessage('uportal.org', $USER_LANG)"/>
-          <!--<xsl:value-of select="uportal.org"/>-->
-        </a>
-        <xsl:call-template name="portal.pipe"/>
-        <a href="http://www.jasig.org/uportal/download" target="_blank" title="{upMsg:getMessage('go.to.uportal.download.site', $USER_LANG)}">
-          <xsl:value-of select="upMsg:getMessage('download.uportal', $USER_LANG)"/>
-        </a>
-        <xsl:call-template name="portal.pipe"/>
-        <a href="http://www.jasig.org/uportal/community" target="_blank" title="{upMsg:getMessage('go.to.uportal.community.page', $USER_LANG)}">
-          <xsl:value-of select="upMsg:getMessage('uportal.community', $USER_LANG)"/>
-        </a>
-        <xsl:call-template name="portal.pipe"/>
-        <a href="http://www.jasig.org/uportal/privacy" target="_blank" title="{upMsg:getMessage('view.uportal.privacy.policy', $USER_LANG)}">
-          <xsl:value-of select="upMsg:getMessage('privacy.policy', $USER_LANG)"/>
-        </a>
-        <xsl:call-template name="portal.pipe"/>
-        <a href="http://www.jasig.org/uportal/accessibility" target="_blank" title="{upMsg:getMessage('view.uportal.accessibility.information', $USER_LANG)}">
-          <xsl:value-of select="upMsg:getMessage('uportal.accessibility', $USER_LANG)"/>
-        </a>
-      </div>
+      	<div id="portalPageFooterLinks">
+	        <a href="http://www.jasig.org/" target="_blank" title="{upMsg:getMessage('go.to.jasig.site', $USER_LANG)}">
+	          <xsl:value-of select="upMsg:getMessage('jasig.org', $USER_LANG)"/>
+	          <!--<xsl:value-of select="jasig.org"/>-->
+	        </a>
+	        <xsl:call-template name="portal.pipe"/>
+	        <a href="http://www.jasig.org/uportal" target="_blank" title="{upMsg:getMessage('go.to.uportal.site', $USER_LANG)}">
+	          <xsl:value-of select="upMsg:getMessage('uportal.org', $USER_LANG)"/>
+	          <!--<xsl:value-of select="uportal.org"/>-->
+	        </a>
+	        <xsl:call-template name="portal.pipe"/>
+	        <a href="http://www.jasig.org/uportal/download" target="_blank" title="{upMsg:getMessage('go.to.uportal.download.site', $USER_LANG)}">
+	          <xsl:value-of select="upMsg:getMessage('download.uportal', $USER_LANG)"/>
+	        </a>
+	        <xsl:call-template name="portal.pipe"/>
+	        <a href="http://www.jasig.org/uportal/community" target="_blank" title="{upMsg:getMessage('go.to.uportal.community.page', $USER_LANG)}">
+	          <xsl:value-of select="upMsg:getMessage('uportal.community', $USER_LANG)"/>
+	        </a>
+	        <xsl:call-template name="portal.pipe"/>
+	        <a href="http://www.jasig.org/uportal/privacy" target="_blank" title="{upMsg:getMessage('view.uportal.privacy.policy', $USER_LANG)}">
+	          <xsl:value-of select="upMsg:getMessage('privacy.policy', $USER_LANG)"/>
+	        </a>
+	        <xsl:call-template name="portal.pipe"/>
+	        <a href="http://www.jasig.org/uportal/accessibility" target="_blank" title="{upMsg:getMessage('view.uportal.accessibility.information', $USER_LANG)}">
+	          <xsl:value-of select="upMsg:getMessage('uportal.accessibility', $USER_LANG)"/>
+	        </a>
+	      </div>
       
-      <!-- uPortal Product Version -->
-      <div id="portalProductAndVersion">
-        <p><a href="http://www.jasig.org/uportal" title="Powered by ${UP_VERSION}" target="_blank">Powered by <xsl:value-of select="$UP_VERSION"/></a>, an open-source project by <a href="http://www.jasig.org" title="Jasig.org - Open for Higher Education">Jasig</a></p>
-        <!-- It's a good idea to leave this in the markup, that way anyone who may be supporting your portal can get to this information quickly by simply using a browser.  If you don't want the statement to visibly render in the page, use CSS to make it invisible. -->
-      </div>
+	      <!-- uPortal Product Version -->
+	      <div id="portalProductAndVersion">
+	        <p><a href="http://www.jasig.org/uportal" title="Powered by ${UP_VERSION}" target="_blank">Powered by <xsl:value-of select="$UP_VERSION"/></a>, an open-source project by <a href="http://www.jasig.org" title="Jasig.org - Open for Higher Education">Jasig</a></p>
+	        <!-- It's a good idea to leave this in the markup, that way anyone who may be supporting your portal can get to this information quickly by simply using a browser.  If you don't want the statement to visibly render in the page, use CSS to make it invisible. -->
+	      </div>
       
-      <!-- Copyright -->
-      <div id="portalCopyright">
-        <p><a href="http://www.jasig.org/uportal/about/license" title="uPortal" target="_blank">uPortal</a> is licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0" title="Apache License, Version 2.0" target="_blank">Apache License, Version 2.0</a> as approved by the Open Source Initiative (OSI), an <a href="http://www.opensource.org/docs/osd" title="OSI-certified" target="_blank">OSI-certified</a> ("open") and <a href="http://www.gnu.org/licenses/license-list.html" title="Gnu/FSF-recognized" target="_blank">Gnu/FSF-recognized</a> ("free") license.</p>
-      </div>
+	      <!-- Copyright -->
+	      <div id="portalCopyright">
+	        <p><a href="http://www.jasig.org/uportal/about/license" title="uPortal" target="_blank">uPortal</a> is licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0" title="Apache License, Version 2.0" target="_blank">Apache License, Version 2.0</a> as approved by the Open Source Initiative (OSI), an <a href="http://www.opensource.org/docs/osd" title="OSI-certified" target="_blank">OSI-certified</a> ("open") and <a href="http://www.gnu.org/licenses/license-list.html" title="Gnu/FSF-recognized" target="_blank">Gnu/FSF-recognized</a> ("free") license.</p>
+	      </div>
       
-      <!-- Icon Set Attribution -->
-      <div id="silkIconsAttribution">
-        <p><a href="http://www.famfamfam.com/lab/icons/silk/" title="Silk icon set 1.3" target="_blank">Silk icon set 1.3</a> courtesy of Mark James.</p>
-        <!-- Silk icon set 1.3 by Mark James [ http://www.famfamfam.com/lab/icons/silk/ ], which is licensed under a Creative Commons Attribution 2.5 License. [ http://creativecommons.org/licenses/by/2.5/ ].  This icon set is free for use under the CCA 2.5 license, so long as there is a link back to the author's site.  If the Silk icons are used, this reference must be present in the markup, though not necessarily visible in the rendered page.  If you don't want the statement to visibly render in the page, use CSS to make it invisible. -->
-      </div>
-    	
+	      <!-- Icon Set Attribution -->
+	      <div id="silkIconsAttribution">
+	        <p><a href="http://www.famfamfam.com/lab/icons/silk/" title="Silk icon set 1.3" target="_blank">Silk icon set 1.3</a> courtesy of Mark James.</p>
+	        <!-- Silk icon set 1.3 by Mark James [ http://www.famfamfam.com/lab/icons/silk/ ], which is licensed under a Creative Commons Attribution 2.5 License. [ http://creativecommons.org/licenses/by/2.5/ ].  This icon set is free for use under the CCA 2.5 license, so long as there is a link back to the author's site.  If the Silk icons are used, this reference must be present in the markup, though not necessarily visible in the rendered page.  If you don't want the statement to visibly render in the page, use CSS to make it invisible. -->
+	      </div>
+    	</div>
     </xsl:if>
     
   </xsl:template>
