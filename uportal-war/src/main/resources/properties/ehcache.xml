@@ -104,7 +104,7 @@
      | - not replicated - doesn't represent an updatable data store
      +-->
     <cache name="org.jasig.portal.security.provider.AuthorizationImpl.PRINCIPAL_HAS_PERMISSION"
-        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
+        eternal="false" maxElementsInMemory="50000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     
@@ -330,7 +330,7 @@
      | - not replicated
      +-->
     <cache name="org.jasig.portal.rendering.STRUCTURE_TRANSFORM"
-        eternal="false" maxElementsInMemory="200" overflowToDisk="false" diskPersistent="false" 
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!-- 
@@ -448,7 +448,7 @@
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.jasig.portal.layout.dao.jpa.LayoutNodeAttributesImpl.attributes"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.jasig.portal.layout.dao.jpa.LayoutAttributeDescriptorImpl"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
@@ -570,7 +570,7 @@
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionParameterImpl"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
     
     <!-- 
