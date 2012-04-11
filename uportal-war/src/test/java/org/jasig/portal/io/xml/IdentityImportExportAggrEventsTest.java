@@ -19,16 +19,16 @@
 
 package org.jasig.portal.io.xml;
 
-import java.util.TimeZone;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.jasig.portal.events.aggr.groups.AggregatedGroupLookupDao;
 import org.jasig.portal.io.xml.eventaggr.ExternalEventAggregationConfiguration;
 import org.jasig.portal.spring.MockitoFactoryBean;
-import org.junit.After;
+import org.jasig.portal.test.TimeZoneTestUtils;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +45,19 @@ import com.google.common.base.Function;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/org/jasig/portal/io/xml/importExportAggrEventTestContext.xml")
 public class IdentityImportExportAggrEventsTest extends AbstractIdentityImportExportTest {
+    private static final TimeZoneTestUtils TIME_ZONE_TEST_UTILS = new TimeZoneTestUtils();
+    
+    @BeforeClass
+    public static void setupTZ() {
+        TIME_ZONE_TEST_UTILS.beforeTest();
+    }
+    
+    @AfterClass
+    public static void cleanupTZ() {
+        TIME_ZONE_TEST_UTILS.afterTest();
+    }
+
+    
     @javax.annotation.Resource(name="eventAggregationConfigurationImporterExporter")
     private IDataImporter<ExternalEventAggregationConfiguration> eventAggregationConfigurationImporter;
     @javax.annotation.Resource(name="eventAggregationConfigurationImporterExporter")
@@ -52,7 +65,6 @@ public class IdentityImportExportAggrEventsTest extends AbstractIdentityImportEx
     
     @Autowired
     private AggregatedGroupLookupDao aggregatedGroupLookupDao;
-    private TimeZone defaultTimeZone;
     
     @PersistenceContext(unitName = "uPortalAggrEventsPersistence")
     private EntityManager entityManager;
@@ -65,16 +77,6 @@ public class IdentityImportExportAggrEventsTest extends AbstractIdentityImportEx
     @Before
     public void setup() {
         MockitoFactoryBean.resetAllMocks();
-        
-        defaultTimeZone = TimeZone.getDefault();
-        TimeZone.setDefault(TimeZone.getTimeZone("EST"));
-    }
-    
-    @After
-    public void cleanup() {
-        if (defaultTimeZone != null) {
-            TimeZone.setDefault(defaultTimeZone);
-        }
     }
 
     

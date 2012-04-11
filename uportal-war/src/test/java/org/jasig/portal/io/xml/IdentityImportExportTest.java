@@ -20,10 +20,7 @@
 package org.jasig.portal.io.xml;
 
 import static org.mockito.Matchers.anyString;
-
 import static org.mockito.Mockito.when;
-
-import java.util.TimeZone;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -32,10 +29,13 @@ import javax.sql.DataSource;
 import org.jasig.portal.io.xml.permission.ExternalPermissionOwner;
 import org.jasig.portal.io.xml.ssd.ExternalStylesheetDescriptor;
 import org.jasig.portal.io.xml.user.UserType;
+import org.jasig.portal.test.TimeZoneTestUtils;
 import org.jasig.portal.utils.ICounterStore;
 import org.jasig.portal.utils.Tuple;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.invocation.InvocationOnMock;
@@ -58,6 +58,19 @@ import com.google.common.base.Function;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/org/jasig/portal/io/xml/importExportTestContext.xml")
 public class IdentityImportExportTest extends AbstractIdentityImportExportTest {
+    private static final TimeZoneTestUtils TIME_ZONE_TEST_UTILS = new TimeZoneTestUtils();
+    
+    @BeforeClass
+    public static void setupTZ() {
+        TIME_ZONE_TEST_UTILS.beforeTest();
+    }
+    
+    @AfterClass
+    public static void cleanupTZ() {
+        TIME_ZONE_TEST_UTILS.afterTest();
+    }
+    
+    
     @Autowired private DataSource dataSource;
     
     @javax.annotation.Resource(name="stylesheetDescriptorImporterExporter")
@@ -83,7 +96,6 @@ public class IdentityImportExportTest extends AbstractIdentityImportExportTest {
     @Autowired private ICounterStore counterStore;
     private SimpleJdbcTemplate simpleJdbcTemplate;
     private int counter = 0;
-    private TimeZone defaultTimeZone;
     
     @PersistenceContext(unitName = "uPortalPersistence")
     private EntityManager entityManager;
@@ -103,9 +115,6 @@ public class IdentityImportExportTest extends AbstractIdentityImportExportTest {
     @Before
     public void setup() {
         simpleJdbcTemplate = null;
-        
-        defaultTimeZone = TimeZone.getDefault();
-        TimeZone.setDefault(TimeZone.getTimeZone("EST"));
         
         counter = 0;
         when(counterStore.getNextId(anyString())).thenAnswer(new Answer<Integer>() {
@@ -147,10 +156,6 @@ public class IdentityImportExportTest extends AbstractIdentityImportExportTest {
     
     @After
     public void cleanup() {
-        if (defaultTimeZone != null) {
-            TimeZone.setDefault(defaultTimeZone);
-        }
-        
         runSql("DROP TABLE UP_USER"); 
         runSql("DROP TABLE UP_LAYOUT_STRUCT");
     }
