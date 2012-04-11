@@ -27,7 +27,34 @@ public class SearchPortletConfigurationForm {
 
     private boolean directoryEnabled;
     private boolean portletRegistryEnabled;
-
+	
+	private boolean throttlingEnabled;
+	private int throttleMaxSearches,throttleTimePeriod;
+	
+	public boolean isThrottlingEnabled() {
+		return throttlingEnabled;
+	}
+	
+	public int getThrottleMaxSearches() {
+		return throttleMaxSearches;
+	}
+	
+	public int getThrottleTimePeriod() {
+		return throttleTimePeriod;
+	}
+	
+	public void setThrottlingEnabled(boolean throttlingEnabled) {
+		this.throttlingEnabled = throttlingEnabled;
+	}
+	
+	public void setThrottleMaxSearches(int throttleMaxSearches) {
+		this.throttleMaxSearches = throttleMaxSearches;
+	}
+	
+	public void setThrottleTimePeriod(int throttleTimePeriod) {
+		this.throttleTimePeriod = throttleTimePeriod;
+	}
+	
     public boolean isGsaEnabled() {
         return gsaEnabled;
     }

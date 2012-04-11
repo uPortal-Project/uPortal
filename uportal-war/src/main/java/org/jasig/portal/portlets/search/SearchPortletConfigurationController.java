@@ -57,6 +57,9 @@ public class SearchPortletConfigurationController {
             prefs.setValue("gsaSite", form.getGsaSite());
             prefs.setValue("directoryEnabled", String.valueOf(form.isDirectoryEnabled()));
             prefs.setValue("portletRegistryEnabled", String.valueOf(form.isPortletRegistryEnabled()));
+			prefs.setValue("throttlingEnabled", String.valueOf(form.isThrottlingEnabled()));
+			prefs.setValue("throttleMaxSearches",String.valueOf(form.getThrottleMaxSearches()));		
+			prefs.setValue("throttleTimePeriod",String.valueOf(form.getThrottleTimePeriod()));
             prefs.store();
             
         } catch (ValidatorException e) {
@@ -81,7 +84,9 @@ public class SearchPortletConfigurationController {
         form.setGsaSite(prefs.getValue("gsaSite", ""));
         form.setDirectoryEnabled(Boolean.valueOf(prefs.getValue("directoryEnabled", "false")));
         form.setPortletRegistryEnabled(Boolean.valueOf(prefs.getValue("portletRegistryEnabled", "false")));
-        
+		form.setThrottlingEnabled(Boolean.valueOf(prefs.getValue("throttlingEnabled","true")));
+		form.setThrottleMaxSearches(Integer.valueOf(prefs.getValue("throttleMaxSearches","3")));
+		form.setThrottleTimePeriod(Integer.valueOf(prefs.getValue("throttleTimePeriod","30")));        
         return form;
     }
     
