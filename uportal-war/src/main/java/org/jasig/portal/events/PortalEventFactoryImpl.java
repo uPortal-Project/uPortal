@@ -19,7 +19,6 @@
 
 package org.jasig.portal.events;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -36,7 +35,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.xml.namespace.QName;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.IPortalInfoProvider;
 import org.jasig.portal.events.PortalEvent.PortalEventBuilder;
@@ -50,6 +48,7 @@ import org.jasig.portal.services.GroupService;
 import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.utils.IncludeExcludeUtils;
+import org.jasig.portal.utils.RandomTokenGenerator;
 import org.jasig.portal.utils.SerializableObject;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
@@ -80,7 +79,6 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
     
     protected final ConditionalExceptionLogger logger = new ConditionalExceptionLoggerImpl(LoggerFactory.getLogger(getClass()));
     
-    private final SecureRandom sessionIdTokenGenerator = new SecureRandom();
     private final AtomicReference<String> systemSessionId = new AtomicReference<String>();
     
     private int maxParameters = 50;
@@ -488,29 +486,7 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
      * Creates an event session id for the person 
      */
     protected String createSessionId(IPerson person) {
-        final byte[] tokenData = new byte[8];
-        final StringBuilder sessionId = new StringBuilder();
-
-        //Add the base64 encoded timestamp
-        final long now = System.currentTimeMillis();
-        tokenData[0] = (byte)(now >>> 56);
-        tokenData[1] = (byte)(now >>> 48);
-        tokenData[2] = (byte)(now >>> 40);
-        tokenData[3] = (byte)(now >>> 32);
-        tokenData[4] = (byte)(now >>> 24);
-        tokenData[5] = (byte)(now >>> 16);
-        tokenData[6] = (byte)(now >>>  8);
-        tokenData[7] = (byte)(now >>>  0);
-        sessionId.append(Base64.encodeBase64URLSafeString(tokenData));
-        
-        //Add the username
-        sessionId.append("_").append(person.getUserName()).append("_");
-        
-        //Add 8 bytes of random data to help avoid collisions
-        this.sessionIdTokenGenerator.nextBytes(tokenData);
-        sessionId.append(Base64.encodeBase64URLSafeString(tokenData));
-        
-        return sessionId.toString();
+        return RandomTokenGenerator.INSTANCE.generateRandomToken(8);
     }
     
     protected Set<String> getGroupsForUser(IPerson person) {

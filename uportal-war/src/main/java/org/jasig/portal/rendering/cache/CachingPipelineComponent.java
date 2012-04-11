@@ -102,6 +102,7 @@ public abstract class CachingPipelineComponent<R, E> extends PipelineComponentWr
             //Copy the events from the reader into a buffer to be cached
             final List<E> eventCache = new LinkedList<E>();
             for (final E event : pipelineEventReader) {
+                //TODO add de-duplication logic here
                 eventCache.add(event);
             }
 
