@@ -6,3 +6,4 @@
 /data
 /.ant-targets-build.xml
 *.sass-cache
+/uportal-impl
