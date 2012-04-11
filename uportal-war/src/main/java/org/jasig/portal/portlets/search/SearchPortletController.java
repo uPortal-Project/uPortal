@@ -22,6 +22,7 @@ package org.jasig.portal.portlets.search;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 import javax.portlet.ActionRequest;
@@ -50,6 +51,8 @@ import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;
 import org.jasig.portal.url.IPortletUrlBuilder;
 import org.jasig.portal.url.UrlType;
+import org.jasig.portal.user.IUserInstance;
+import org.jasig.portal.user.IUserInstanceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,8 +80,21 @@ public class SearchPortletController {
      * 
      */
     private static final String SEARCH_RESULTS_CACHE_NAME = "searchResultsCache";
+	private static final String SEARCH_THROTTLE_CACHE_NAME = "searchThrottleCache";
+	private static final int SEARCH_THROTTLE_MAX_SIZE = 500;
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());    
+    protected final Logger logger = LoggerFactory.getLogger(getClass());  
+
+	private IUserInstanceManager userInstanceManager;
+
+	/**
+	 * @param userInstanceManager the userInstanceManager to set
+	 */
+	@Autowired
+	public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
+		this.userInstanceManager = userInstanceManager;
+	}
+	
     
     private List<IPortalSearchService> searchServices;
     
@@ -121,7 +137,54 @@ public class SearchPortletController {
         
         final HttpServletRequest httpServletRequest = this.portalRequestUtils.getPortletHttpRequest(request);
         final IPortletWindowId portletWindowId = this.portletWindowRegistry.getPortletWindowId(httpServletRequest, request.getWindowID());
-
+	
+		// get the configuration from preferences
+		SearchPortletConfigurationController search_config_controller = new SearchPortletConfigurationController();
+		SearchPortletConfigurationForm search_config_form = search_config_controller.getForm(request);
+		
+		PortletSession session = request.getPortletSession();
+		
+		if(search_config_form.isThrottlingEnabled())
+		{
+			Map<String, Integer> searchThrottleCache;
+			// create the throttling cache if it's not already there
+			synchronized (org.springframework.web.portlet.util.PortletUtils.getSessionMutex(session)) {				
+				searchThrottleCache = (Map<String, Integer>)session.getAttribute(SEARCH_THROTTLE_CACHE_NAME);
+				if(searchThrottleCache == null) {
+					searchThrottleCache = CacheBuilder.newBuilder().maximumSize(SEARCH_THROTTLE_MAX_SIZE).
+										  expireAfterWrite(search_config_form.getThrottleTimePeriod(),TimeUnit.SECONDS).<String, Integer>build().asMap();
+					session.setAttribute(SEARCH_THROTTLE_CACHE_NAME, searchThrottleCache);
+				}
+			}
+			// we have way to many search simultaneous search requests if this happens
+			if(searchThrottleCache.size() > SEARCH_THROTTLE_MAX_SIZE)
+			{
+				// TODO: return friendly error message when too many search requests happen
+				logger.warn("Too many simultaneous searches. Search request ignored.");
+				return;
+			}
+			else {
+				IUserInstance userInstance = this.userInstanceManager.getUserInstance(httpServletRequest);
+				Integer user_search_times = searchThrottleCache.get(userInstance.getPerson().getUserName());
+				if(user_search_times!=null)	{
+					user_search_times++;
+					searchThrottleCache.put(userInstance.getPerson().getUserName(),user_search_times);
+				}
+				else {
+					searchThrottleCache.put(userInstance.getPerson().getUserName(),1);
+					user_search_times = 1;
+				}
+				
+				if(user_search_times > search_config_form.getThrottleMaxSearches()) {
+					// TODO: return friendly error message when too many search requests for this username happens
+					logger.warn("User executed too many search requests:"+userInstance.getPerson().getUserName());
+					return;
+				}
+			}
+			
+		}
+		
+		
         // add search results from each portal search service to a new portal
         // search results object
         PortalSearchResults results = new PortalSearchResults();
@@ -130,8 +193,7 @@ public class SearchPortletController {
             addSearchResults(serviceResults, results, httpServletRequest, portletWindowId);
         }
         
-        // place the portal search results object in the session using the queryId to namespace it
-        PortletSession session = request.getPortletSession();
+        // place the portal search results object in the session using the queryId to namespace it        
         Map<String, PortalSearchResults> searchResultsCache;
         synchronized (org.springframework.web.portlet.util.PortletUtils.getSessionMutex(session)) {
             searchResultsCache = (Map<String, PortalSearchResults>)session.getAttribute(SEARCH_RESULTS_CACHE_NAME);
