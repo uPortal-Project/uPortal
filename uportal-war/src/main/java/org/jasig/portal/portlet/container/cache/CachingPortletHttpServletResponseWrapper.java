@@ -194,6 +194,14 @@ public class CachingPortletHttpServletResponseWrapper extends PortletHttpServlet
                 (this.cachingWriter != null && this.cachingWriter.isLimitExceeded());
     }
     
+    /**
+     * This method returns the {@link CachedPortletData} if available.
+     * It may return null if a bad statusCode was set, or if the length of the stream exceeds
+     * the cache configuration's max threshold.
+     * 
+     * @see LimitedBufferOutputStream#getCapturedContent()
+     * @return the {@link CachedPortletData} for this response, or null if caching could not be completed.
+     */
     public CachedPortletData getCachedPortletData() {
         if (this.badStatusCode) {
             return null;
@@ -201,7 +209,12 @@ public class CachingPortletHttpServletResponseWrapper extends PortletHttpServlet
         
         if (this.cachingOutputStream != null) {
             final byte[] capturedContent = this.cachingOutputStream.getCapturedContent();
-            this.cachedPortletData.setByteData(capturedContent);
+            if(capturedContent == null) {
+            	// threshold was exceeded!
+            	return null;
+            } else {
+            	this.cachedPortletData.setByteData(capturedContent);
+            }
         }
         
         if (this.cachingWriter != null) {
