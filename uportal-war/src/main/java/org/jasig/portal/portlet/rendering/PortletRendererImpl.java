@@ -483,81 +483,105 @@ public class PortletRendererImpl implements IPortletRenderer {
 			IPortletWindowId portletWindowId,
 			HttpServletRequest httpServletRequest,
 			HttpServletResponse httpServletResponse) {
+		final long start = System.currentTimeMillis();
+		boolean servedFromCache = false;
 		final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
 		CachedPortletData cachedPortletData = this.portletCacheControlService.getCachedPortletResourceOutput(portletWindowId, httpServletRequest);
-    	if(cachedPortletData != null && !cachedPortletData.isExpired()) {
-    		if(logger.isDebugEnabled()) {
-    			logger.debug("cached content available and not expired for portletWindowId " + portletWindowId );
-    		}
-    		return doServeResourceCachedOutput(portletWindowId, httpServletRequest, httpServletResponse, cachedPortletData, portletWindow);
-    	}
-		
-    	// cached data is either null or expired
-    	// have to invoke PortletContainer#doServeResource
-        CacheControl cacheControl = this.portletCacheControlService.getPortletResourceCacheControl(portletWindowId, httpServletRequest, httpServletResponse);
-        // construct stream to capture output
-       
-	    final long start = System.currentTimeMillis();
-		try {
-			//Setup the request and response
-	        httpServletRequest = this.setupPortletRequest(httpServletRequest);
-	        // use overloaded setup to override the outputstream
-	        CachingPortletHttpServletResponseWrapper responseWrapper = this.setupCachingPortletResponse(httpServletResponse, this.portletCacheControlService.getCacheSizeThreshold());
-			this.portletContainer.doServeResource(portletWindow.getPlutoPortletWindow(), httpServletRequest, responseWrapper);
-			// check cacheControl AFTER portlet serveResource to see if the portlet said "useCachedContent"
-			boolean useCachedContent = cacheControl.useCachedContent();
-			if(useCachedContent && cachedPortletData == null) {
-				throw new PortletDispatchException("The portlet window '"+ portletWindow + "' indicated via CacheControl#useCachedContent that the portal should render cached content, however there is no cached content to return. This is a portlet bug.", portletWindow);
+		if(cachedPortletData != null && !cachedPortletData.isExpired()) {
+			if(logger.isDebugEnabled()) {
+				logger.debug("cached content available and not expired for portletWindowId " + portletWindowId );
 			}
-	       
-	        // we actually don't care if the content is expired at this point, the two prior fields will tell us if the portlet wants us to replay cached content
-	        if(useCachedContent) {
-	        	// the portlet could theoretically set an etag but write to the response erroneously
-	        	// check that the response hasn't already been written/committed
-	        	if(responseWrapper.isCommitted()) {
-	        		throw new PortletDispatchException("The portlet window '"+ portletWindow + "' indicated it wanted the portlet container to send the cached content, however the portlet wrote content anyways. This is a bug in the portlet; if it sets an etag on the response and sets useCachedContent to true it should not commit the response.", portletWindow);
-	        	}
-	        	if(logger.isDebugEnabled()) {
-	        		logger.debug("expired cached content deemed still valid by portletWindowId " + portletWindowId + ", updated expiration time");
-	        	}
-	        	cachedPortletData.updateExpirationTime(cacheControl.getExpirationTime());
-	        	return doServeResourceCachedOutput(portletWindowId, httpServletRequest, responseWrapper, cachedPortletData, portletWindow);
-	        }
-	        
-        	boolean shouldCache = this.portletCacheControlService.shouldOutputBeCached(cacheControl);
-        	// put the captured content in the cache
-        	if(shouldCache && !responseWrapper.isThresholdExceeded()) {
-        		CachedPortletData justCachedPortletData = responseWrapper.getCachedPortletData();
-        		if(justCachedPortletData == null) {
-        			// we were told to cache, but we can't either due to a bad statusCode or content exceeding cache size threshold
-        			// TODO should this log all the way at WARN? it probably should, since the portlet or portal is improprerly configured
-        			logger.warn("PortletRendererImpl#doServeResource was told to cache output for " + portletWindow + ", however the CachedPortletData returned from the response was null. This means either a bad status code was set by the portlet, or the portlet's output exceeds the cache threshold.");
-        		} else {
-        			this.portletCacheControlService.cachePortletResourceOutput(portletWindowId, httpServletRequest, responseWrapper.getCachedPortletData(), cacheControl);
-        		
-        			String etag = cacheControl.getETag();
-        			if (etag != null) {
-        				httpServletResponse.setHeader("ETag", etag);
-        			}
-        		}
-
-        	}
+			doServeResourceCachedOutput(portletWindowId, httpServletRequest, httpServletResponse, cachedPortletData, portletWindow);
+			servedFromCache = true;
+		} else {
+			try {
+				servedFromCache = doServeResourceInternal(portletWindowId, portletWindow, cachedPortletData, httpServletRequest, httpServletResponse);
+			} catch (PortletException pe) {
+				throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing serveResource.", portletWindow, pe);
+			} catch (PortletContainerException pce) {
+				throw new PortletDispatchException("The portlet container threw an exception while executing serveResource on portlet window '" + portletWindow + "'.", portletWindow, pce);
+			}
+			catch (IOException ioe) {
+				throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing serveResource.", portletWindow, ioe);
+			}	
 		}
-		catch (PortletException pe) {
-            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing serveResource.", portletWindow, pe);
-        }
-        catch (PortletContainerException pce) {
-            throw new PortletDispatchException("The portlet container threw an exception while executing serveResource on portlet window '" + portletWindow + "'.", portletWindow, pce);
-        }
-        catch (IOException ioe) {
-            throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing serveResource.", portletWindow, ioe);
-        }
+
 		final long executionTime = System.currentTimeMillis() - start;
-		
-		publishResourceExecutionEvent(httpServletRequest, portletWindow, executionTime, false);
-        
-        return executionTime;
+		publishResourceExecutionEvent(httpServletRequest, portletWindow, executionTime, servedFromCache); 
+		return executionTime;
 	}
+	/**
+	 * Invoke {@link PortletContainer#doServeResource(PortletWindow, HttpServletRequest, HttpServletResponse)}.
+	 * May invoke {@link #doServeResourceCachedOutput(IPortletWindowId, HttpServletRequest, HttpServletResponse, CachedPortletData, IPortletWindow)}
+	 * if the portlet indicates to do so (and we can fulfill the request).
+	 * 
+	 * @param portletWindow
+	 * @param cachedPortletData
+	 * @param httpServletRequest
+	 * @param httpServletResponse
+	 * @return true if the response served cached content
+	 * @throws IOException
+	 * @throws PortletException
+	 * @throws PortletContainerException
+	 */
+	protected boolean doServeResourceInternal(IPortletWindowId portletWindowId, IPortletWindow portletWindow, CachedPortletData cachedPortletData,
+			HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException, PortletException, PortletContainerException {
+		CacheControl cacheControl = this.portletCacheControlService.getPortletResourceCacheControl(portletWindowId, httpServletRequest, httpServletResponse);
+
+		httpServletRequest = this.setupPortletRequest(httpServletRequest);
+		CachingPortletHttpServletResponseWrapper responseWrapper = this.setupCachingPortletResponse(httpServletResponse, this.portletCacheControlService.getCacheSizeThreshold());
+		this.portletContainer.doServeResource(portletWindow.getPlutoPortletWindow(), httpServletRequest, responseWrapper);
+		// check cacheControl AFTER portlet serveResource to see if the portlet said "useCachedContent"
+		boolean useCachedContent = cacheControl.useCachedContent();
+		if(useCachedContent && cachedPortletData == null) {
+			throw new PortletDispatchException("The portlet window '"+ portletWindow + "' indicated via CacheControl#useCachedContent that the portal should render cached content, however there is no cached content to return. This is a portlet bug.", portletWindow);
+		}
+
+		if(useCachedContent) {
+			if(responseWrapper.isCommitted()) {
+				throw new PortletDispatchException("The portlet window '"+ portletWindow + "' indicated it wanted the portlet container to send the cached content, however the portlet wrote content anyways. This is a bug in the portlet; if it sets an etag on the response and sets useCachedContent to true it should not commit the response.", portletWindow);
+			}
+			if(logger.isDebugEnabled()) {
+				logger.debug("expired cached content deemed still valid by portletWindowId " + portletWindowId + ", updated expiration time");
+			}
+			cachedPortletData.updateExpirationTime(cacheControl.getExpirationTime());
+			doServeResourceCachedOutput(portletWindowId, httpServletRequest, responseWrapper, cachedPortletData, portletWindow);
+			return true;
+		}
+
+		cacheOutputIfNecessary(cacheControl, responseWrapper, portletWindowId, portletWindow, httpServletRequest);
+		
+		return false;
+	}
+	
+	/**
+	 * Invoke {@link IPortletCacheControlService#cachePortletResourceOutput(IPortletWindowId, HttpServletRequest, CachedPortletData, CacheControl)} if
+	 * appropriate.
+	 * 
+	 * @param cacheControl
+	 * @param responseWrapper
+	 * @param portletWindowId
+	 * @param portletWindow
+	 * @param httpServletRequest
+	 */
+	protected void cacheOutputIfNecessary(CacheControl cacheControl, CachingPortletHttpServletResponseWrapper responseWrapper,
+			IPortletWindowId portletWindowId, IPortletWindow portletWindow, HttpServletRequest httpServletRequest) {
+		boolean shouldCache = this.portletCacheControlService.shouldOutputBeCached(cacheControl);
+		if(shouldCache && !responseWrapper.isThresholdExceeded()) {
+			CachedPortletData justCachedPortletData = responseWrapper.getCachedPortletData();
+			if(justCachedPortletData == null) {
+				// we were told to cache, but we can't either due to a bad statusCode or content exceeding cache size threshold
+				logger.warn("PortletRendererImpl#doServeResource was told to cache output for " + portletWindow + ", however the CachedPortletData returned from the response was null. This means either a bad status code was set by the portlet, or the portlet's output exceeds the cache threshold.");
+			} else {
+				this.portletCacheControlService.cachePortletResourceOutput(portletWindowId, httpServletRequest, responseWrapper.getCachedPortletData(), cacheControl);
+				String etag = cacheControl.getETag();
+				if (etag != null) {
+					responseWrapper.setHeader("ETag", etag);
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Helper method to invoke {@link IPortalEventFactory#publishPortletResourceExecutionEvent(HttpServletRequest, Object, String, long, Map, String, boolean)}.
 	 * 
@@ -597,9 +621,7 @@ public class PortletRendererImpl implements IPortletRenderer {
 	 * @param portletWindow
 	 * @return the milliseconds 
 	 */
-	protected long doServeResourceCachedOutput(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, CachedPortletData cachedPortletData, IPortletWindow portletWindow) {
-		long start = System.currentTimeMillis();
-		
+	protected void doServeResourceCachedOutput(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, CachedPortletData cachedPortletData, IPortletWindow portletWindow) {	
 		//If there is an etag and it matches the IF_NONE_MATCH header return a 304
 		final String etag = cachedPortletData.getEtag();
 		if(StringUtils.isNotBlank(etag)) {
@@ -610,9 +632,7 @@ public class PortletRendererImpl implements IPortletRenderer {
 					logger.debug("returning 304 for portletWindowId " + portletWindowId + ", ifNoneMatch header=" + ifNoneMatch + ", " + cachedPortletData.getEtag() + ", cachedPortletData#expired=" + cachedPortletData.isExpired());
 				}
 				httpServletResponse.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-				final long executionTime = System.currentTimeMillis() - start;
-				publishResourceExecutionEvent(httpServletRequest, portletWindow, executionTime, true);
-				return executionTime;
+				return;
 			}
 		}
 		
@@ -625,9 +645,7 @@ public class PortletRendererImpl implements IPortletRenderer {
 					logger.debug("returning 304 for portletWindowId " + portletWindowId + ", ifModifiedSince header=" + ifModifiedSince);
 				}
 				httpServletResponse.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-				final long executionTime = System.currentTimeMillis() - start;
-				publishResourceExecutionEvent(httpServletRequest, portletWindow, executionTime, true);
-				return executionTime;
+				return;
 			}
 		}
 		
@@ -712,13 +730,6 @@ public class PortletRendererImpl implements IPortletRenderer {
                 } 
             }
 		}
-    		
-		
-		final long executionTime = System.currentTimeMillis() - start;
-        
-		publishResourceExecutionEvent(httpServletRequest, portletWindow, executionTime, true);
-        
-        return executionTime;
 	}
 	
 	/*
