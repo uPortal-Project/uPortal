@@ -63,6 +63,7 @@ import org.jasig.portal.utils.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -72,9 +73,6 @@ import org.springframework.web.portlet.bind.annotation.EventMapping;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * SearchPortletController produces both a search form and results for configured
@@ -87,22 +85,43 @@ import com.google.common.collect.ImmutableMap;
 @RequestMapping("VIEW")
 public class SearchPortletController {
     private static final String SEARCH_RESULTS_CACHE_NAME = SearchPortletController.class.getName() + ".searchResultsCache";
+    private static final String SEARCH_COUNTER_NAME = SearchPortletController.class.getName() + ".searchCounter";
     private static final String SEARCH_HANDLED_CACHE_NAME = SearchPortletController.class.getName() + ".searchHandledCache";
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());    
     
+    private IPortalUrlProvider portalUrlProvider;
+    private IPortletWindowRegistry portletWindowRegistry;
+    private IPortalRequestUtils portalRequestUtils;
     private List<IPortalSearchService> searchServices;
     
     // Map from result-type -> Set<tab-key>
     private Map<String, Set<String>> resultTypeMappings = Collections.emptyMap();
     private List<String> tabKeys = Collections.emptyList();
     private String defaultTabKey = "portal.results";
+    private int maximumSearchesPerMinute = 18;
     
     @Resource(name="searchServices")
     public void setPortalSearchServices(List<IPortalSearchService> searchServices) {
         this.searchServices = searchServices;
     }
     
+    /**
+     * The messages property key to use for the default results tab
+     */
+    @Value("${org.jasig.portal.portlets.searchSearchPortletController.defaultTabKey:portal.results}")
+    public void setDefaultTabKey(String defaultTabKey) {
+        this.defaultTabKey = defaultTabKey;
+    }
+
+    /**
+     * Set the maximum number of a user can execute per minute
+     */
+    @Value("${org.jasig.portal.portlets.searchSearchPortletController.maximumSearchesPerMinute:18}")
+    public void setMaximumSearchesPerMinute(int maximumSearchesPerMinute) {
+        this.maximumSearchesPerMinute = maximumSearchesPerMinute;
+    }
+
     /**
      * Set the mappings from TabKey to ResultType. The map keys must be strings but the values
      * can be either String or Collection<String>
@@ -133,7 +152,6 @@ public class SearchPortletController {
         this.resultTypeMappings = resultTypeMappingsBuilder;
         this.tabKeys = tabKeysBuilder;
     }
-
     protected void addTabKey(final Map<String, Set<String>> resultTypeMappingsBuilder, final String tabKey, final String resultType) {
         Set<String> tabKeys = resultTypeMappingsBuilder.get(resultType);
         if (tabKeys == null) {
@@ -143,21 +161,15 @@ public class SearchPortletController {
         tabKeys.add(tabKey);
     }
 
-    private IPortalUrlProvider portalUrlProvider;
-
     @Autowired
     public void setPortalUrlProvider(IPortalUrlProvider urlProvider) {
         this.portalUrlProvider = urlProvider;
     }
-
-    private IPortletWindowRegistry portletWindowRegistry;
     
     @Autowired
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         this.portletWindowRegistry = portletWindowRegistry;
     }
-
-    private IPortalRequestUtils portalRequestUtils;
 
     @Autowired
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
@@ -168,10 +180,35 @@ public class SearchPortletController {
     @ActionMapping
     public void performSearch(@RequestParam(value = "query") String query, 
             ActionRequest request, ActionResponse response) {
+        final PortletSession session = request.getPortletSession();
+        
+        final String queryId = RandomStringUtils.randomAlphanumeric(32);
+        
+        Cache<String, Boolean> searchCounterCache;
+        synchronized (org.springframework.web.portlet.util.PortletUtils.getSessionMutex(session)) {
+            searchCounterCache = (Cache<String, Boolean>)session.getAttribute(SEARCH_COUNTER_NAME);
+            if (searchCounterCache == null) {
+                searchCounterCache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES).<String, Boolean>build(); 
+                session.setAttribute(SEARCH_COUNTER_NAME, searchCounterCache);
+            }
+        }
+        
+        //Store the query id to track number of searches/minute
+        searchCounterCache.put(queryId, Boolean.TRUE);
+        if (searchCounterCache.size() > this.maximumSearchesPerMinute) {
+            //Make sure old data is expired
+            searchCounterCache.cleanUp();
+            
+            //Too many searches in the last minute, fail the search
+            if (searchCounterCache.size() > this.maximumSearchesPerMinute) {
+                response.setRenderParameter("hitMaxQueries", Boolean.TRUE.toString());
+                response.setRenderParameter("query", query);
+                return;
+            }
+        }
 
         // construct a new search query object from the string query
         final SearchRequest queryObj = new SearchRequest();
-        final String queryId = RandomStringUtils.randomAlphanumeric(32);
         queryObj.setQueryId(queryId);
         queryObj.setSearchTerms(query);
         
@@ -179,8 +216,6 @@ public class SearchPortletController {
         final PortalSearchResults results = new PortalSearchResults(defaultTabKey, resultTypeMappings);
         
         // place the portal search results object in the session using the queryId to namespace it
-        final PortletSession session = request.getPortletSession();
-        
         Cache<String, PortalSearchResults> searchResultsCache;
         synchronized (org.springframework.web.portlet.util.PortletUtils.getSessionMutex(session)) {
             searchResultsCache = (Cache<String, PortalSearchResults>)session.getAttribute(SEARCH_RESULTS_CACHE_NAME);
@@ -274,34 +309,57 @@ public class SearchPortletController {
     }
     
     /**
-     * Display a search form and show the results of a search query, if supplied.
-     * 
-     * @param request   portlet request
-     * @param query     optional search query string
-     * @return
+     * Display a search form
      */
     @RequestMapping
-    public ModelAndView getSearchResults(PortletRequest request,
-            @RequestParam(value = "query", required = false) String query,
-            @RequestParam(value = "queryId", required = false) String queryId
+    public String showSearchForm(PortletRequest request) {
+        final boolean isMobile = isMobile(request);
+        return isMobile ? "/jsp/Search/mobileSearch" : "/jsp/Search/search";
+    }
+    
+    /**
+     * Display search results
+     */
+    @RequestMapping(params = { "query", "queryId" })
+    public ModelAndView showSearchResults(PortletRequest request,
+            @RequestParam(value = "query") String query,
+            @RequestParam(value = "queryId") String queryId
             ) {
         
         final Map<String,Object> model = new HashMap<String, Object>();
         model.put("query", query);
 
-        if (queryId != null) {
-            final PortalSearchResults portalSearchResults = this.getPortalSearchResults(request, queryId);
-            final ConcurrentMap<String, List<Tuple<SearchResult, String>>> results = portalSearchResults.getResults();
-            model.put("results", results);
-            model.put("defaultTabKey", this.defaultTabKey);
-            model.put("tabKeys", this.tabKeys);
-        }
+        final PortalSearchResults portalSearchResults = this.getPortalSearchResults(request, queryId);
+        final ConcurrentMap<String, List<Tuple<SearchResult, String>>> results = portalSearchResults.getResults();
+        model.put("results", results);
+        model.put("defaultTabKey", this.defaultTabKey);
+        model.put("tabKeys", this.tabKeys);
 
         final boolean isMobile = isMobile(request);
         String viewName = isMobile ? "/jsp/Search/mobileSearch" : "/jsp/Search/search";
         
         return new ModelAndView(viewName, model);
     }
+    
+    /**
+     * Display search results
+     */
+    @RequestMapping(params = { "query", "hitMaxQueries" })
+    public ModelAndView showSearchError(PortletRequest request,
+            @RequestParam(value = "query") String query,
+            @RequestParam(value = "hitMaxQueries") boolean hitMaxQueries
+            ) {
+        
+        final Map<String,Object> model = new HashMap<String, Object>();
+        model.put("query", query);
+        model.put("hitMaxQueries", hitMaxQueries);
+
+        final boolean isMobile = isMobile(request);
+        String viewName = isMobile ? "/jsp/Search/mobileSearch" : "/jsp/Search/search";
+        
+        return new ModelAndView(viewName, model);
+    }
+    
 
     /**
      * Get the {@link PortalSearchResults} for the specified query id from the session. If there are no results null

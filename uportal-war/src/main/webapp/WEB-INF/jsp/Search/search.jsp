@@ -44,6 +44,12 @@
         <form action="${ formUrl }" method="POST">
             <input name="query" value="${ fn:escapeXml(query )}"/> <input type="submit" value="Search"/>
         </form>
+        
+        <c:if test="${hitMaxQueries}">
+            <div>
+                <spring:message code="search.rate.limit.reached"/>
+            </div>
+        </c:if>
 
         <c:if test="${not empty results}">
 
