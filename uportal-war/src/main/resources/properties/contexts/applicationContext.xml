@@ -32,9 +32,24 @@
     <context:annotation-config/>
     <context:component-scan base-package="org.jasig.portal">
         <context:exclude-filter type="regex" expression="org\.jasig\.portal\.portlets\."/>
+        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.security\.mvc\."/>
+        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.json\.rendering\."/>
+        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.layout\.dlm\.remoting\."/>
+        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.security\.remoting\."/>
+        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.rest\."/>
+        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.redirect\."/>
+        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.rendering\."/>
     </context:component-scan>
     
-    <context:property-placeholder location="classpath:/properties/rdbm.properties,classpath:/properties/portal.properties,classpath:/properties/security.properties"/>
+    <bean id="primaryPropertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+              <value>classpath:/properties/rdbm.properties</value>
+              <value>classpath:/properties/security.properties</value>
+              <value>classpath:/properties/portal.properties</value>
+            </list>
+        </property>
+    </bean>
     
     <bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor" lazy-init="false" />
     

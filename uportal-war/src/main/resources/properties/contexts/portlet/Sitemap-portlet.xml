@@ -29,7 +29,8 @@
     
     <context:annotation-config/>
     <context:component-scan base-package="org.jasig.portal.portlets.sitemap"/>
-    <context:property-placeholder location="classpath:/properties/portal.properties"/>
+    
+    <bean parent="primaryPropertyPlaceholderConfigurer" />
     
     <bean id="portletModeHandlerMapping"
         class="org.springframework.web.portlet.handler.PortletModeHandlerMapping">
