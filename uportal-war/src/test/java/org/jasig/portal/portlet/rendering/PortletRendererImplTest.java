@@ -26,6 +26,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collections;
@@ -47,6 +48,7 @@ import org.jasig.portal.api.portlet.PortletDelegationLocator;
 import org.jasig.portal.events.IPortalEventFactory;
 import org.jasig.portal.portlet.container.CacheControlImpl;
 import org.jasig.portal.portlet.container.cache.CachedPortletData;
+import org.jasig.portal.portlet.container.cache.CachingPortletHttpServletResponseWrapper;
 import org.jasig.portal.portlet.container.cache.IPortletCacheControlService;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
@@ -397,7 +399,6 @@ public class PortletRendererImplTest {
 	 * @throws IOException
 	 * @throws PortletContainerException
 	 */
-	@SuppressWarnings("unchecked")
 	@Test
 	public void doServeResourceCapture() throws PortletException, IOException, PortletContainerException {
 		MockHttpServletRequest request = new MockHttpServletRequest();
@@ -421,6 +422,74 @@ public class PortletRendererImplTest {
 	}
 	
 	/**
+	 * Set a bad status code and verify {@link PortletRendererImpl#cacheOutputIfNecessary(CacheControl, CachingPortletHttpServletResponseWrapper, IPortletWindowId, IPortletWindow, HttpServletRequest)}
+	 * does not invoke {@link IPortletCacheControlService#cachePortletResourceOutput(IPortletWindowId, HttpServletRequest, CachedPortletData, CacheControl)}.
+	 * 
+	 * @throws PortletException
+	 * @throws IOException
+	 * @throws PortletContainerException
+	 */
+	@Test
+	public void testCacheOutputIfNecessaryBadStatus() throws PortletException, IOException, PortletContainerException {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		MockHttpServletResponse response = new MockHttpServletResponse();
+
+		CacheControlImpl cacheControl = new CacheControlImpl();
+		cacheControl.setUseCachedContent(false);
+		cacheControl.setExpirationTime(300);
+			
+		setupPortletExecutionMocks(request);
+
+		when(portletCacheControlService.shouldOutputBeCached(cacheControl)).thenReturn(true);
+		
+		
+		CachingPortletHttpServletResponseWrapper responseWrapper = new CachingPortletHttpServletResponseWrapper(response, 100);
+		PrintWriter writer = responseWrapper.getWriter();
+		for(int i = 0; i <= 10; i++) {
+			writer.print('a');
+		}
+		responseWrapper.setStatus(999);
+		Assert.assertFalse(responseWrapper.isThresholdExceeded());
+		portletRenderer.cacheOutputIfNecessary(cacheControl, responseWrapper, portletWindowId, portletWindow, request);
+			
+		// cachePortletResourceOutput MUST not be triggered since a bad status code was set
+		verify(portletCacheControlService, times(0)).cachePortletResourceOutput(isA(IPortletWindowId.class), isA(HttpServletRequest.class), isA(CachedPortletData.class), isA(CacheControl.class));
+	}
+	
+	/**
+	 * Exceed the cache output threshold and verify {@link PortletRendererImpl#cacheOutputIfNecessary(CacheControl, CachingPortletHttpServletResponseWrapper, IPortletWindowId, IPortletWindow, HttpServletRequest)}
+	 * does not invoke {@link IPortletCacheControlService#cachePortletResourceOutput(IPortletWindowId, HttpServletRequest, CachedPortletData, CacheControl)}.
+	 * 
+	 * @throws PortletException
+	 * @throws IOException
+	 * @throws PortletContainerException
+	 */
+	@Test
+	public void testCacheOutputIfNecessaryThresholdExceeded() throws PortletException, IOException, PortletContainerException {	
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		MockHttpServletResponse response = new MockHttpServletResponse();
+
+		CacheControlImpl cacheControl = new CacheControlImpl();
+		cacheControl.setUseCachedContent(false);
+		cacheControl.setExpirationTime(300);
+			
+		setupPortletExecutionMocks(request);
+
+		when(portletCacheControlService.shouldOutputBeCached(cacheControl)).thenReturn(true);
+		
+		CachingPortletHttpServletResponseWrapper responseWrapper = new CachingPortletHttpServletResponseWrapper(response, 100);
+		PrintWriter writer = responseWrapper.getWriter();
+		for(int i = 0; i <= 101; i++) {
+			writer.print('a');
+		}
+		Assert.assertTrue(responseWrapper.isThresholdExceeded());
+		portletRenderer.cacheOutputIfNecessary(cacheControl, responseWrapper, portletWindowId, portletWindow, request);
+			
+		// cachePortletResourceOutput MUST not be triggered since the threshold was exceeded
+		verify(portletCacheControlService, times(0)).cachePortletResourceOutput(isA(IPortletWindowId.class), isA(HttpServletRequest.class), isA(CachedPortletData.class), isA(CacheControl.class));
+	}
+	
+	/**
 	 * No cached data exists, but mock a {@link CacheControl} with a negative value for expirationtime.
 	 * Will trigger the portletContainer#doServeResource, 
 	 * capture the output, and give to the portlet cachecontrol service.
@@ -431,7 +500,6 @@ public class PortletRendererImplTest {
 	 * @throws IOException
 	 * @throws PortletContainerException
 	 */
-	@SuppressWarnings("unchecked")
 	@Test
 	public void doServeResourceMarkupCaptureNegativeExpirationTime() throws PortletException, IOException, PortletContainerException {
 		MockHttpServletRequest request = new MockHttpServletRequest();
