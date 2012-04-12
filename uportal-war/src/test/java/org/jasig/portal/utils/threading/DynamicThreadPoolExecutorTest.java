@@ -12,6 +12,7 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -20,6 +21,7 @@ import org.junit.Test;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@Ignore
 public class DynamicThreadPoolExecutorTest {
     
     @Test
