@@ -53,15 +53,6 @@
                 <entry key="uPortal:section=DataSource,name=PortalDB" value-ref="PortalDb"/>
                 <entry key="uPortal:section=DataSource,name=RawEventsDB" value-ref="RawEventsDB"/>
                 <entry key="uPortal:section=DataSource,name=AggrEventsDB" value-ref="AggrEventsDB"/>
-                <entry key="uPortal:section=DataSource,name=CourseGuide" value-ref="CourseGuide"/>
-                <entry key="uPortal:section=DataSource,name=ResourceBridge" value-ref="ResourceBridge"/>
-                <entry key="uPortal:section=DataSource,name=ResourceBridgeNg" value-ref="ResourceBridgeNg"/>
-                <entry key="uPortal:section=DataSource,name=DataWarehouse" value-ref="DataWarehouse"/>
-                <entry key="uPortal:section=DataSource,name=ISIS" value-ref="ISIS"/>
-                <entry key="uPortal:section=DataSource,name=JoinIn" value-ref="JoinIn"/>
-                <entry key="uPortal:section=DataSource,name=SharedWebHosting" value-ref="SharedWebHosting"/>
-                <entry key="uPortal:section=DataSource,name=WebHosting" value-ref="WebHosting"/>
-                <entry key="uPortal:section=DataSource,name=AdvisorNotesDataSource" value-ref="AdvisorNotesDataSource"/>
             </map>
         </property>
     </bean>
@@ -72,15 +63,6 @@
                 <prop key="uPortal:section=DataSource,name=PortalDB">getConnection,getLogWriter,setLogWriter</prop>
                 <prop key="uPortal:section=DataSource,name=RawEventsDB">getConnection,getLogWriter,setLogWriter</prop>
                 <prop key="uPortal:section=DataSource,name=AggrEventsDB">getConnection,getLogWriter,setLogWriter</prop>
-                <prop key="uPortal:section=DataSource,name=CourseGuide">getConnection,getLogWriter,setLogWriter</prop>
-                <prop key="uPortal:section=DataSource,name=ResourceBridge">getConnection,getLogWriter,setLogWriter</prop>
-                <prop key="uPortal:section=DataSource,name=ResourceBridgeNg">getConnection,getLogWriter,setLogWriter</prop>
-                <prop key="uPortal:section=DataSource,name=DataWarehouse">getConnection,getLogWriter,setLogWriter</prop>
-                <prop key="uPortal:section=DataSource,name=ISIS">getConnection,getLogWriter,setLogWriter</prop>
-                <prop key="uPortal:section=DataSource,name=JoinIn">getConnection,getLogWriter,setLogWriter</prop>
-                <prop key="uPortal:section=DataSource,name=SharedWebHosting">getConnection,getLogWriter,setLogWriter</prop>
-                <prop key="uPortal:section=DataSource,name=WebHosting">getConnection,getLogWriter,setLogWriter</prop>
-                <prop key="uPortal:section=DataSource,name=AdvisorNotesDataSource">getConnection,getLogWriter,setLogWriter</prop>
             </props>
         </property>
     </bean>
