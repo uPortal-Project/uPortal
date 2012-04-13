@@ -2,3 +2,7 @@
 /.project
 /.classpath
 /target
+/email-preview
+/NewsReaderPortlet
+/NotificationPortlet
+/SimpleContentPortlet
