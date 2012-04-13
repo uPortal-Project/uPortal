@@ -349,7 +349,7 @@ public class PortletRendererImplTest {
 		
 		// doAction will trigger purge
 		portletRenderer.doAction(portletWindowId, request, response);
-		verify(portletCacheControlService, times(1)).purgeCachedPortletData(portletWindowId, request, cacheControl);
+		verify(portletCacheControlService, times(1)).purgeCachedPortletData(portletWindowId, request);
 		verify(portletContainer, times(1)).doAction(isA(PortletWindow.class), isA(PortletHttpServletRequestWrapper.class), isA(PortletHttpServletResponseWrapper.class));
 		
 		portletRenderer.doRenderMarkup(portletWindowId, request, response, writer);

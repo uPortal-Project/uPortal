@@ -120,5 +120,5 @@ public interface IPortletCacheControlService {
 	 * @return true if the element was found in the cache and removed, false if otherwise
 	 */
 	boolean purgeCachedPortletData(IPortletWindowId portletWindowId,
-			HttpServletRequest httpRequest, CacheControl cacheControl);
+			HttpServletRequest httpRequest);
 }

@@ -153,8 +153,7 @@ public class PortletRendererImpl implements IPortletRenderer {
      */
     @Override
     public long doAction(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-    	CacheControl cacheControl = this.portletCacheControlService.getPortletRenderCacheControl(portletWindowId, httpServletRequest);
-    	this.portletCacheControlService.purgeCachedPortletData(portletWindowId, httpServletRequest, cacheControl);
+    	this.portletCacheControlService.purgeCachedPortletData(portletWindowId, httpServletRequest);
     	
     	final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
         
@@ -225,8 +224,7 @@ public class PortletRendererImpl implements IPortletRenderer {
     @Override
     public long doEvent(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse, Event event) {
-    	CacheControl cacheControl = this.portletCacheControlService.getPortletRenderCacheControl(portletWindowId, httpServletRequest);
-    	this.portletCacheControlService.purgeCachedPortletData(portletWindowId, httpServletRequest, cacheControl);
+    	this.portletCacheControlService.purgeCachedPortletData(portletWindowId, httpServletRequest);
     	
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
         

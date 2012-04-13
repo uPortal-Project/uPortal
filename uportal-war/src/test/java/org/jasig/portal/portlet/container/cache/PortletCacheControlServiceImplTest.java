@@ -28,6 +28,8 @@ import java.io.Serializable;
 
 import javax.portlet.CacheControl;
 import javax.portlet.MimeResponse;
+import javax.portlet.PortletMode;
+import javax.portlet.WindowState;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -113,6 +115,8 @@ public class PortletCacheControlServiceImplTest {
 		
 		when(portletWindowRegistry.getPortletWindow(httpRequest, portletWindowId)).thenReturn(portletWindow);
 		when(portletWindow.getPortletEntityId()).thenReturn(portletEntityId);
+		when(portletWindow.getWindowState()).thenReturn(WindowState.NORMAL);
+		when(portletWindow.getPortletMode()).thenReturn(PortletMode.VIEW);
 		when(portletEntity.getPortletDefinitionId()).thenReturn(portletDefinitionId);
 		
 		final IPortletEntityRegistry portletEntityRegistry = mock(IPortletEntityRegistry.class);
@@ -160,7 +164,9 @@ public class PortletCacheControlServiceImplTest {
 		when(portletWindowRegistry.getPortletWindow(httpRequest, portletWindowId)).thenReturn(portletWindow);
 		when(portletWindowRegistry.getPortletWindow(nextHttpRequest, portletWindowId)).thenReturn(portletWindow);
 		when(portletWindow.getPortletEntityId()).thenReturn(portletEntityId);
-		when(portletEntity.getPortletDefinitionId()).thenReturn(portletDefinitionId);
+        when(portletWindow.getWindowState()).thenReturn(WindowState.NORMAL);
+        when(portletWindow.getPortletMode()).thenReturn(PortletMode.VIEW);
+        when(portletEntity.getPortletDefinitionId()).thenReturn(portletDefinitionId);
 		
 		final IPortletEntityRegistry portletEntityRegistry = mock(IPortletEntityRegistry.class);
 		when(portletEntityRegistry.getPortletEntity(httpRequest, portletEntityId)).thenReturn(portletEntity);
@@ -206,6 +212,8 @@ public class PortletCacheControlServiceImplTest {
 		
 		when(portletWindowRegistry.getPortletWindow(httpRequest, portletWindowId)).thenReturn(portletWindow);
 		when(portletWindow.getPortletEntityId()).thenReturn(portletEntityId);
+        when(portletWindow.getWindowState()).thenReturn(WindowState.NORMAL);
+        when(portletWindow.getPortletMode()).thenReturn(PortletMode.VIEW);
 		when(portletEntity.getPortletDefinitionId()).thenReturn(portletDefinitionId);
 		
 		final IPortletEntityRegistry portletEntityRegistry = mock(IPortletEntityRegistry.class);
@@ -242,6 +250,8 @@ public class PortletCacheControlServiceImplTest {
 		
 		when(portletWindowRegistry.getPortletWindow(httpRequest, portletWindowId)).thenReturn(portletWindow);
 		when(portletWindow.getPortletEntityId()).thenReturn(portletEntityId);
+        when(portletWindow.getWindowState()).thenReturn(WindowState.NORMAL);
+        when(portletWindow.getPortletMode()).thenReturn(PortletMode.VIEW);
 		when(portletEntity.getPortletDefinitionId()).thenReturn(portletDefinitionId);
 		
 		final IPortletEntityRegistry portletEntityRegistry = mock(IPortletEntityRegistry.class);

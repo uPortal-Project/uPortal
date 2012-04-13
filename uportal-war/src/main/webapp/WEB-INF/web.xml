@@ -88,7 +88,7 @@
      | Passes Session init/destroy events to the WebApplicationContext
      +-->
     <listener>
-        <listener-class>org.jasig.portal.spring.web.context.support.ApplicationContextDelagatingSessionListener</listener-class>
+        <listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
     </listener>
     
     <!-- 
