@@ -55,8 +55,10 @@ This project includes:
   Ehcache Web Filters under The Apache Software License, Version 2.0
   Enterprise JavaBeans (EJB) 3.0 under Common Development and Distribution License (CDDL) v1.0
   ezmorph under The Apache Software License, Version 2.0
+  FindBugs-jsr305 under The Apache Software License, Version 2.0
   Groovy under Apache License, Version 2.0
   groovy-engine under BSD License
+  Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
   Hibernate under GNU LESSER GENERAL PUBLIC LICENSE
   Hibernate Annotations under GNU LESSER GENERAL PUBLIC LICENSE
   Hibernate Commons - Annotations under GNU LESSER GENERAL PUBLIC LICENSE
@@ -129,7 +131,7 @@ This project includes:
   Streaming API for XML under GNU General Public Library or COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
   TagSoup under Apache License 2.0
   tyrex under BSD Style License
-  uPortal under Apache License Version 2.0
+  uPortal Parent under Apache License Version 2.0
   uPortal Source under Apache License Version 2.0
   uPortal WAR under Apache License Version 2.0
   Xalan Java under The Apache Software License, Version 2.0
