@@ -850,6 +850,7 @@
                         <exclude>LICENSE</exclude>
                         <exclude>jquery.css</exclude>
                         <exclude>data/*</exclude>
+                        <exclude>docs/licenses/**</exclude>
                         <exclude>**/fluid/fluid.*.css</exclude>
                         <exclude>**/*.channel</exclude>
                         <exclude>**/*.channel-type</exclude>
