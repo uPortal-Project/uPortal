@@ -29,7 +29,7 @@
     <property name="download.dir" value="${target.dir}/downloads" />
 
     <artifact:pom file="${uportal.source.dir}/pom.xml" id="uportal-parent.pom" />
-    <property name="uportal.name" value="${uportal-parent.pom.name}" />
+    <property name="uportal.name" value="uPortal" />
     <property name="uportal.version" value="${uportal-parent.pom.version}" />
     <property name="uportal.finalName" value="${uportal.name}-${uportal.version}" />
 
@@ -50,8 +50,7 @@
     
     <target name="all" description="Generates all assemblies by running clean, source, and quickstart">
         <antcall target="clean" />
-        <antcall target="source" />
-        <antcall target="quickstart" />
+        <antcall target="prepare-deploy" />
     </target>
 
     <target name="clean" depends="prepare" description="Remove files used in packaging and generated packages and runs 'mvn clean' on the uPortal project.">
@@ -116,12 +115,6 @@
             <then>
                 <antcall target="qs-package">
                     <param name="qs-file-ext" value="" />
-                    <param name="exclude-svn" value="true" />
-                </antcall>
-        
-                <antcall target="qs-package">
-                    <param name="qs-file-ext" value="-dev" />
-                    <param name="exclude-svn" value="false" />
                 </antcall>
             </then>
         </if>
@@ -146,13 +139,13 @@
         
         <!-- tar.gz distribution -->
         <tar destfile="${quickstart.file.tar.gz}" longfile="gnu" compression="gzip">
-            <tarfileset prefix="${quickstart.name}" dir="${quickstart.dir}" defaultexcludes="${exclude-svn}">
+            <tarfileset prefix="${quickstart.name}" dir="${quickstart.dir}">
                 <exclude name="**/*.sh" />
                 <exclude name="${dl.ant.finalName}/bin/*" />
                 <exclude name="${dl.maven.finalName}/bin/*" />
                 <exclude name="${dl.tomcat.finalName}/bin/*" />
             </tarfileset>
-            <tarfileset prefix="${quickstart.name}" dir="${quickstart.dir}" defaultexcludes="${exclude-svn}" mode="755">
+            <tarfileset prefix="${quickstart.name}" dir="${quickstart.dir}" mode="755">
                 <include name="**/*.sh" />
                 <include name="${dl.ant.finalName}/bin/*" />
                 <include name="${dl.maven.finalName}/bin/*" />
