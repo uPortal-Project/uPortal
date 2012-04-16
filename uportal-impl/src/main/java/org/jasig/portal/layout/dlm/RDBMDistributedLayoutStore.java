@@ -487,7 +487,7 @@ public class RDBMDistributedLayoutStore
             
             namedParameterJdbcOperations.query(
                     "SELECT CHLD_STRUCT_ID, NEXT_STRUCT_ID FROM up_layout_struct WHERE user_id = :userId AND STRUCT_ID " + 
-                    (queryNodeIds.size() == 1 ? "=" : "in") + " ", 
+                    (queryNodeIds.size() == 1 ? "=" : "in") + ":nodeIds ", 
                     ImmutableMap.of(
                             "userId", person.getID(), 
                             "nodeIds", queryNodeIds),
@@ -515,8 +515,8 @@ public class RDBMDistributedLayoutStore
         else {
             struct_count = namedParameterJdbcOperations.queryForInt(
                     "SELECT COUNT(*) FROM up_layout_struct WHERE user_id = :userId AND STRUCT_ID " +
-                            (ignoredNodeIds.size() == 1 ? "<>" : "not in") 
-                    + ":nodeIds AND (type is null or type not IN ('root', 'header', 'footer'))", 
+                            (ignoredNodeIds.size() == 1 ? "<>" : "not in ") 
+                    + "(:nodeIds) AND (type is null or type not IN ('root', 'header', 'footer'))", 
                     ImmutableMap.of(
                             "userId", person.getID(), 
                             "nodeIds", ignoredNodeIds));
