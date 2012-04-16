@@ -68,6 +68,7 @@ import org.apache.tools.ant.DirectoryScanner;
 import org.jasig.portal.concurrency.CallableWithoutResult;
 import org.jasig.portal.utils.AntPatternFileFilter;
 import org.jasig.portal.utils.ConcurrentDirectoryScanner;
+import org.jasig.portal.utils.PeriodicFlushingBufferedWriter;
 import org.jasig.portal.utils.ResourceUtils;
 import org.jasig.portal.utils.SafeFilenameUtils;
 import org.jasig.portal.xml.StaxUtils;
@@ -345,7 +346,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         final File importReport = new File(logDirectory, "data-import.txt");
         final PrintWriter reportWriter;
         try {
-            reportWriter = new PrintWriter(new BufferedWriter(new FileWriter(importReport)));
+            reportWriter = new PrintWriter(new PeriodicFlushingBufferedWriter(500, new FileWriter(importReport)));
         }
         catch (IOException e) {
             throw new RuntimeException("Failed to create FileWriter for: " + importReport, e);
@@ -384,7 +385,9 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
 	            logger.info("Importing {} files of type {}", fileCount, portalDataKey);
                 reportWriter.println(portalDataKey + "," + fileCount);
 	            
-	            for (final Resource file : files) {
+                while (!files.isEmpty()) {
+                    final Resource file = files.poll();
+                    
 	                //Check for completed futures on every iteration, needed to fail as fast as possible on an import exception
 	                final List<FutureHolder<?>> newFailed = waitForFutures(importFutures, reportWriter, logDirectory, false);
 	                failedFutures.addAll(newFailed);
@@ -392,7 +395,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
 	                final AtomicLong importTime = new AtomicLong(-1);
 	                
 	                //Create import task
-	                Callable<Object> task = new CallableWithoutResult() {
+	                final Callable<Object> task = new CallableWithoutResult() {
                         @Override
                         protected void callWithoutResult() {
 	                    	IMPORT_BASE_DIR.set(directoryUriStr);
@@ -879,6 +882,8 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
             //If waiting, or if not waiting but the future is already done do the get
             final Future<?> future = futureHolder.getFuture();
             if (wait || (!wait && future.isDone())) {
+                futuresItr.remove();
+                
                 try {
                     //Don't bother doing a get() on canceled futures
                     if (!future.isCancelled()) {
@@ -891,8 +896,6 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
                         
                         reportWriter.printf(REPORT_FORMAT, "SUCCESS", futureHolder.getDescription(), futureHolder.getExecutionTimeMillis());
                     }
-                    
-                    futuresItr.remove();
                 }
                 catch (CancellationException e) {
                     //Ignore cancellation exceptions

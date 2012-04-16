@@ -60,7 +60,7 @@
   -->
   <xsl:template match="navigation">
   	<xsl:param name="CONTEXT"/>  <!-- Catches the context parameter to know how to render the navigation. -->
-    
+    <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
     <xsl:choose>
     	<xsl:when test="$CONTEXT = 'header'">  <!-- When the context is 'header' render the main navigation as tabs. -->
       	
@@ -157,7 +157,7 @@
       
       </xsl:otherwise>
     </xsl:choose>
-              
+    <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->   
   </xsl:template>
   <!-- ========================================== -->
   

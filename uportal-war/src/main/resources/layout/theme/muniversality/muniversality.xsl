@@ -155,7 +155,7 @@
 </xsl:variable>
 <xsl:variable name="FOCUSED_CLASS">
     <xsl:choose>
-        <xsl:when test="//content/focused">focused</xsl:when>
+        <xsl:when test="//content/focused">focused <xsl:value-of select="//content/focused/channel/@fname"/></xsl:when>
         <xsl:otherwise>dashboard</xsl:otherwise>
     </xsl:choose>
 </xsl:variable>

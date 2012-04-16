@@ -64,7 +64,7 @@ public class FragmentDefinition extends EvaluatorGroup
 
     private static final Log LOG = LogFactory.getLog(FragmentDefinition.class);
 
-    @Column(name = "FRAGMENT_NAME", unique = true)
+    @Column(name = "FRAGMENT_NAME")
     private final String name;
 
     @Column(name = "OWNER_ID")

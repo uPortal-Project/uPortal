@@ -1340,8 +1340,8 @@ private IEntityGroup primFind(String groupID, boolean lockable) throws GroupsExc
     }
     catch (Exception e)
     {
-        log.error( "RDBMEntityGroupStore.find(): " + e);
-        throw new GroupsException("Error retrieving " + groupID + ": " + e);
+        log.error( "RDBMEntityGroupStore.find(): ", e);
+        throw new GroupsException("Error retrieving " + groupID + ": ", e);
     }
     finally
         { RDBMServices.releaseConnection(conn); }

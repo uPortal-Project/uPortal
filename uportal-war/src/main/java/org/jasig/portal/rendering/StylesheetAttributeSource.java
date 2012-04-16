@@ -21,9 +21,7 @@ package org.jasig.portal.rendering;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,6 +43,7 @@ import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.utils.cache.CacheKey;
+import org.jasig.portal.utils.cache.CacheKey.CacheKeyBuilder;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -118,10 +117,15 @@ public abstract class StylesheetAttributeSource implements AttributeSource, Bean
     public final CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
         final PreferencesScope stylesheetPreferencesScope = this.getStylesheetPreferencesScope(request);
         
-        final LinkedHashMap<String, Map<String, String>> allLayoutAttributes = new LinkedHashMap<String, Map<String, String>>();
-        this.stylesheetUserPreferencesService.populateAllLayoutAttributes(request, stylesheetPreferencesScope, allLayoutAttributes);
+        final CacheKeyBuilder<String, String> cacheKeyBuilder = CacheKey.builder(this.name);
         
-        return new CacheKey(this.name, allLayoutAttributes);
+        final Iterable<String> layoutAttributeNodeIds = this.stylesheetUserPreferencesService.getAllLayoutAttributeNodeIds(request, stylesheetPreferencesScope);
+        for (final String nodeId : layoutAttributeNodeIds) {
+            cacheKeyBuilder.add(nodeId);
+            this.stylesheetUserPreferencesService.populateLayoutAttributes(request, stylesheetPreferencesScope, nodeId, cacheKeyBuilder);
+        }
+        
+        return cacheKeyBuilder.build();
     }
 
     public IStylesheetDescriptor getStylesheetDescriptor(HttpServletRequest request) {

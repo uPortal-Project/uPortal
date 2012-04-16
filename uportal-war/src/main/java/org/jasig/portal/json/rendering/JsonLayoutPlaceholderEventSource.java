@@ -18,8 +18,7 @@
  */
 package org.jasig.portal.json.rendering;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Collection;
 import java.util.regex.MatchResult;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,14 +29,16 @@ import org.jasig.portal.character.stream.events.CharacterEvent;
 
 
 public class JsonLayoutPlaceholderEventSource extends BasePlaceholderEventSource {
-
+    
     @Override
-    protected List<CharacterEvent> getCharacterEvents(HttpServletRequest servletRequest, StartElement event) {
-        return Collections.<CharacterEvent>singletonList(new JsonLayoutPlaceholderEventImpl());
+    protected void generateCharacterEvents(HttpServletRequest servletRequest, StartElement event,
+            Collection<CharacterEvent> eventBuffer) {
+        eventBuffer.add(JsonLayoutPlaceholderEventImpl.INSTANCE);
     }
 
     @Override
-    public List<CharacterEvent> getCharacterEvents(HttpServletRequest servletRequest, MatchResult matchResult) {
-        return Collections.<CharacterEvent>singletonList(new JsonLayoutPlaceholderEventImpl());
+    public void generateCharacterEvents(HttpServletRequest servletRequest, MatchResult matchResult,
+            Collection<CharacterEvent> eventBuffer) {
+        eventBuffer.add(JsonLayoutPlaceholderEventImpl.INSTANCE);
     }
 }

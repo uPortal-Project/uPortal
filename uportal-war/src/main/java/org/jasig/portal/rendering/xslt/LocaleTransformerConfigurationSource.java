@@ -84,7 +84,7 @@ public class LocaleTransformerConfigurationSource extends TransformerConfigurati
         if (locales != null && locales.length > 0 && locales[0] != null) {
             final String locale = locales[0].toString();
             final String xslLocale = locale.replace('_', '-');
-            return new CacheKey("LocaleTransformerConfigurationSource", xslLocale);
+            return CacheKey.build(this.getClass().getName(), xslLocale);
         }
         
         return null;

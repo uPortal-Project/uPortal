@@ -143,7 +143,7 @@
         </dependency>
         
         <dependency>
-            <groupId>org.jasig.service</groupId>
+            <groupId>org.jasig.service.persondir</groupId>
             <artifactId>person-directory-api</artifactId>
             <scope>compile</scope>
         </dependency>

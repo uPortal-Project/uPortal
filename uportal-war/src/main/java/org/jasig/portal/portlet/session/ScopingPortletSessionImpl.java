@@ -61,4 +61,31 @@ public class ScopingPortletSessionImpl extends PortletSessionImpl {
         // Application-scoped attribute names are not in portlet scope.
         return false;
     }
+
+    @Override
+    public void setAttribute(String name, Object value) {
+        checkForExceptionAttribute(name, value);
+        super.setAttribute(name, value);
+    }
+
+    @Override
+    public void setAttribute(String name, Object value, int scope) {
+        checkForExceptionAttribute(name, value);
+        super.setAttribute(name, value, scope);
+    }
+
+    private void checkForExceptionAttribute(String name, Object value) throws Error {
+        // Work Around for https://jira.springsource.org/browse/SPR-9287
+        if ("org.springframework.web.portlet.DispatcherPortlet.ACTION_EXCEPTION".equals(name)) {
+            if (value instanceof RuntimeException) {
+                throw (RuntimeException)value;
+            }
+            if (value instanceof Error) {
+                throw (Error)value;
+            }
+            if (value instanceof Throwable) {
+                throw new RuntimeException((Throwable)value);
+            }
+        }
+    }
 }

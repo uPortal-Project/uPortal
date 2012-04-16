@@ -36,6 +36,8 @@ import org.jasig.portal.url.IPortalRequestInfo;
  */
 public interface IPortalEventFactory {
     
+    public String getPortalEventSessionId(HttpServletRequest request, IPerson person);
+    
     //********** Login/Logout Events **********//
     
     public void publishLoginEvent(HttpServletRequest request, Object source, IPerson person);

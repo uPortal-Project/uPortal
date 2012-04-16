@@ -23,13 +23,12 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Properties;
-import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.layout.om.IStylesheetUserPreferences;
+import org.jasig.portal.utils.Populator;
 
 /**
  * Stylesheet user preferences setup for memory or serialized storage. All APIs and returned objects are thread safe.
@@ -96,9 +95,8 @@ public class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences
         return this.outputProperties.remove(name);
     }
 
-    
     @Override
-    public Properties populateOutputProperties(Properties properties) {
+    public <P extends Populator<String, String>> P populateOutputProperties(P properties) {
         properties.putAll(this.outputProperties);
         return properties;
     }
@@ -129,11 +127,9 @@ public class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences
         
         return this.parameters.remove(name);
     }
-
+    
     @Override
-    public Map<String, String> populateStylesheetParameters(
-            Map<String, String> stylesheetParameters) {
-        
+    public <P extends Populator<String, String>> P populateStylesheetParameters(P stylesheetParameters) {
         stylesheetParameters.putAll(this.parameters);
         return stylesheetParameters;
     }
@@ -191,10 +187,8 @@ public class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences
     }
 
     @Override
-    public Map<String, String> populateLayoutAttributes(String nodeId,
-            Map<String, String> layoutAttributes) {
+    public <P extends Populator<String, String>> P populateLayoutAttributes(String nodeId, P layoutAttributes) {
         Validate.notEmpty(nodeId, "nodeId cannot be null");
-        
         
         final Map<String, String> nodeAttributes = this.layoutAttributes.get(nodeId);
         if (nodeAttributes != null) {
@@ -203,28 +197,7 @@ public class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences
         
         return layoutAttributes;
     }
-
-    @Override
-    public Map<String, Map<String, String>> populateAllLayoutAttributes(
-            Map<String, Map<String, String>> allLayoutAttributes) {
-        
-        for (final Map.Entry<String, ConcurrentMap<String, String>> layoutNodeAttribute : this.layoutAttributes.entrySet()) {
-            final String nodeId = layoutNodeAttribute.getKey();
-            final Map<String, String> nodeAttributes = layoutNodeAttribute.getValue();
-            
-            Map<String, String> existingNodeAttributes = allLayoutAttributes.get(nodeId);
-            if (existingNodeAttributes == null) {
-                existingNodeAttributes = new TreeMap<String, String>(nodeAttributes);
-                allLayoutAttributes.put(nodeId, existingNodeAttributes);
-            }
-            else {
-                existingNodeAttributes.putAll(nodeAttributes);
-            }
-        }
-        
-        return allLayoutAttributes;
-    }
-
+    
     @Override
     public Collection<String> getAllLayoutAttributeNodeIds() {
         return Collections.unmodifiableSet(this.layoutAttributes.keySet());

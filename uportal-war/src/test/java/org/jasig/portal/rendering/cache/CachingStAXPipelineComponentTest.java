@@ -56,7 +56,7 @@ public class CachingStAXPipelineComponentTest {
     public void testCacheMiss() {
         final MockHttpServletRequest mockReq = new MockHttpServletRequest();
         final MockHttpServletResponse mockRes = new MockHttpServletResponse();
-        final CacheKey cacheKey = new CacheKey("testCacheKey");
+        final CacheKey cacheKey = CacheKey.build("testCacheKey");
         final List<XMLEvent> eventBuffer = Collections.emptyList();
         final PipelineEventReader<XMLEventReader, XMLEvent> eventReader = new PipelineEventReaderImpl<XMLEventReader, XMLEvent>(new XMLEventBufferReader(eventBuffer.listIterator()));
         
@@ -91,7 +91,7 @@ public class CachingStAXPipelineComponentTest {
     public void testCacheHit() {
         final MockHttpServletRequest mockReq = new MockHttpServletRequest();
         final MockHttpServletResponse mockRes = new MockHttpServletResponse();
-        final CacheKey cacheKey = new CacheKey("testCacheKey");
+        final CacheKey cacheKey = CacheKey.build("testCacheKey");
         final CachedEventReader<XMLEvent> eventReader = new CachedEventReader<XMLEvent>(Collections.EMPTY_LIST, Collections.EMPTY_MAP);
         final Element cacheElement = new Element(cacheKey, eventReader);
         

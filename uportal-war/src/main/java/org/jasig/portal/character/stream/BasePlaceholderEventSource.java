@@ -19,9 +19,9 @@
 
 package org.jasig.portal.character.stream;
 
+import java.util.Collection;
 import java.util.Deque;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.regex.MatchResult;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,18 +43,19 @@ import org.jasig.portal.character.stream.events.CharacterEvent;
 public abstract class BasePlaceholderEventSource implements CharacterEventSource {
     
     @Override
-    public List<CharacterEvent> getCharacterEvents(HttpServletRequest servletRequest, XMLEventReader eventReader, StartElement event) throws XMLStreamException {
-        final List<CharacterEvent> characterEvents = this.getCharacterEvents(servletRequest, event);
+    public void generateCharacterEvents(HttpServletRequest servletRequest, XMLEventReader eventReader,
+            StartElement event, Collection<CharacterEvent> eventBuffer) throws XMLStreamException {
+        this.generateCharacterEvents(servletRequest, event, eventBuffer);
         this.readToEndElement(eventReader, event);
-        return characterEvents;
     }
     
-    protected List<CharacterEvent> getCharacterEvents(HttpServletRequest servletRequest, StartElement event) {
+    protected void generateCharacterEvents(HttpServletRequest servletRequest, StartElement event, Collection<CharacterEvent> eventBuffer) {
         throw new UnsupportedOperationException("Super class must implement this method");
     }
-
+    
     @Override
-    public List<CharacterEvent> getCharacterEvents(HttpServletRequest servletRequest, MatchResult matchResult) {
+    public void generateCharacterEvents(HttpServletRequest servletRequest, MatchResult matchResult,
+            Collection<CharacterEvent> eventBuffer) {
         throw new UnsupportedOperationException("Super class must implement this method");
     }
 

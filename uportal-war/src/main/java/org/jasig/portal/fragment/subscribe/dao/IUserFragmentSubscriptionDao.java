@@ -86,5 +86,8 @@ public interface IUserFragmentSubscriptionDao {
      */
     public void deleteUserFragmentInfo(IUserFragmentSubscription userFragmentSubscription);
 
-
+    /**
+     * @return A list of all of the usernames who have active tab subscriptions
+     */
+    public List<String> getAllUsersWithActiveSubscriptions();
 }

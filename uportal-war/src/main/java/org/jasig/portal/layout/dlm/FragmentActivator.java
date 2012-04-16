@@ -19,15 +19,15 @@
 
 package org.jasig.portal.layout.dlm;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Pattern;
 
 import net.sf.ehcache.Ehcache;
+import net.sf.ehcache.constructs.blocking.CacheEntryFactory;
+import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,16 +37,10 @@ import org.jasig.portal.IUserProfile;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.IUserLayoutStore;
-import org.jasig.portal.layout.dao.IStylesheetUserPreferencesDao;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.PersonImpl;
-import org.jasig.portal.utils.ConcurrentMapUtils;
 import org.jasig.portal.utils.Tuple;
-import org.jasig.portal.utils.threading.ReadResult;
-import org.jasig.portal.utils.threading.ReadWriteCallback;
-import org.jasig.portal.utils.threading.ReadWriteLockTemplate;
-import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -55,34 +49,66 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+
 /**
  * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
 @Service
-public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
+public class FragmentActivator
 {
+    private static final String NEWLY_CREATED_ATTR = "newlyCreated";
     public static final String RCS_ID = "@(#) $Header$";
     private static final Log LOG = LogFactory.getLog(FragmentActivator.class);
 
-    private final ConcurrentMap<String, ReadWriteLock> userViewLocks = new ConcurrentHashMap<String, ReadWriteLock>();
-    
+    private final LoadingCache<String, List<Locale>> fragmentOwnerLocales = CacheBuilder.newBuilder()
+            .<String, List<Locale>>build(new CacheLoader<String, List<Locale>>() {
+                @Override
+                public List<Locale> load(String key) throws Exception {
+                    return new CopyOnWriteArrayList<Locale>();
+                }
+            });
+
     private Ehcache userViews;
+    private Ehcache userViewErrors;
     private IUserIdentityStore identityStore;
     private IUserLayoutStore userLayoutStore;
-    private IStylesheetUserPreferencesDao stylesheetUserPreferencesDao;
     private ConfigurationLoader configurationLoader;
 
-    private static final int CHANNELS = 0;
-    private static final int FOLDERS = 1;
-    
     private static final String PROPERTY_ALLOW_EXPANDED_CONTENT = "org.jasig.portal.layout.dlm.allowExpandedContent";
     private static final Pattern STANDARD_PATTERN = Pattern.compile("\\A[Rr][Ee][Gg][Uu][Ll][Aa][Rr]\\z");
     private static final Pattern EXPANDED_PATTERN = Pattern.compile(".*");
+    
+    @Autowired
+    public void setUserViewErrors(@Qualifier("org.jasig.portal.layout.dlm.FragmentActivator.userViewErrors") Ehcache userViewErrors) {
+        this.userViewErrors = userViewErrors;
+    }
 
     @Autowired
     public void setUserViews(@Qualifier("org.jasig.portal.layout.dlm.FragmentActivator.userViews") Ehcache userViews) {
-        this.userViews = userViews;
+        this.userViews = new SelfPopulatingCache(userViews, new CacheEntryFactory() {
+            @Override
+            public Object createEntry(Object key) throws Exception {
+                final UserViewKey userViewKey = (UserViewKey)key;
+                
+                //Check if there was an exception the last time a load attempt was made and re-throw
+                final net.sf.ehcache.Element exceptionElement = userViewErrors.get(userViewKey);
+                if (exceptionElement != null) {
+                    throw (Exception)exceptionElement.getObjectValue();
+                }
+                
+                try {
+                    return activateFragment(userViewKey);
+                }
+                catch (Exception e) {
+                    userViewErrors.put(new net.sf.ehcache.Element(userViewKey, e));
+                    throw e;
+                }
+            }
+        });
     }
 
     @Autowired
@@ -99,187 +125,121 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
     public void setUserLayoutStore(IUserLayoutStore userLayoutStore) {
         this.userLayoutStore = userLayoutStore;
     }
+    
+    private static class UserViewKey implements Serializable {
+        private static final long serialVersionUID = 1L;
+        private final String ownerId;
+        private final Locale locale;
+        private final int hashCode; 
+        
+        public UserViewKey(String ownerId, Locale locale) {
+            this.ownerId = ownerId;
+            this.locale = locale;
+            this.hashCode = internalHashCode();
+        }
+        
+        public String getOwnerId() {
+            return ownerId;
+        }
+        public Locale getLocale() {
+            return locale;
+        }
 
-    @Autowired
-    public void setStylesheetUserPreferencesDao(IStylesheetUserPreferencesDao stylesheetUserPreferencesDao) {
-        this.stylesheetUserPreferencesDao = stylesheetUserPreferencesDao;
+        @Override
+        public int hashCode() {
+            return this.hashCode;
+        }
+
+        public int internalHashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((ownerId == null) ? 0 : ownerId.hashCode());
+            result = prime * result + ((locale == null) ? 0 : locale.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            UserViewKey other = (UserViewKey) obj;
+            if (ownerId == null) {
+                if (other.ownerId != null)
+                    return false;
+            }
+            else if (!ownerId.equals(other.ownerId))
+                return false;
+            if (locale == null) {
+                if (other.locale != null)
+                    return false;
+            }
+            else if (!locale.equals(other.locale))
+                return false;
+            return true;
+        }
+
+        @Override
+        public String toString() {
+            return "UserViewKey [ownerId=" + ownerId + ", locale=" + locale + "]";
+        }
     }
     
-
-    /**
-     * Activation will only be run once and will return immediately for every call once activation
-     * is complete.
-     */
-    void activateFragments() {
-        this.get();
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator#createSingleton(java.lang.Object[])
-     */
-    @Override
-    protected Boolean createSingleton(Object... args) {
-        final List<FragmentDefinition> fragments = this.configurationLoader.getFragments();
+    private UserView activateFragment(final UserViewKey userViewKey) {
+        final String ownerId = userViewKey.getOwnerId();
+        final FragmentDefinition fd = configurationLoader.getFragmentByOwnerId(ownerId);
         
+        final Locale locale = userViewKey.getLocale();
+        
+        fragmentOwnerLocales.getUnchecked(ownerId).add(locale);
+        
+        if (fd.isNoAudienceIncluded()) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Skipping activation of FragmentDefinition " + fd.getName() + ", no evaluators found. " + fd);
+            }
+
+            return null;
+        }
+
         if (LOG.isDebugEnabled()) {
-            LOG.debug("\n\n------ Distributed Layout ------\n" +
-              "fragment definitions loaded = " +
-              ( fragments == null ? 0 : fragments.size() ) +
-              "\n\n------ Beginning Activation ------\n" );
-        }
-        
-        if ( fragments == null )
-        {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("\n\nNo Fragments to Activate." );
-            }
-        }
-        else
-        {
-            for (final FragmentDefinition fragmentDefinition : fragments) {
-                for (Locale locale : LocaleManager.getPortalLocales()) {
-                    activateFragment(fragmentDefinition, locale);
-                }
-            }
-        }
-        
-        // now let other threads in to get their layouts.
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("\n\n------ done with Activation ------\n" );
-        }
-        
-        return true;
-    }
-    
-    private UserView activateFragment(FragmentDefinition fd, Locale locale) {
-        
-        // Assertions.
-        if (fd == null) {
-            String msg = "Argument 'fd' [FragmentDefinition] cannot be null.";
-            throw new IllegalArgumentException(msg);
+            LOG.debug("Activating FragmentDefinition " + fd.getName() + " with locale " + locale);
         }
 
-        if (fd.isNoAudienceIncluded())
-        {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("\n\n------ skipping " + fd + " - " +
-                        fd.getName() + ", no evaluators found" );
+        IPerson owner = bindToOwner(fd);
+        UserView view = new UserView(owner.getID());
+        loadLayout(view, fd, owner, locale);
+
+        // if owner just created we need to push the layout into
+        // the db so that our fragment template user is used and
+        // not the default template user as determined by
+        // the user identity store.
+        if (owner.getAttribute(NEWLY_CREATED_ATTR) != null) {
+            owner.setAttribute(Constants.PLF, view.layout);
+            try {
+                saveLayout(view, owner);
+            }
+            catch (Exception e) {
+                throw new RuntimeException("Failed to save layout for newly created fragment owner "
+                        + owner.getUserName(), e);
             }
         }
-        else
-        {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("\n\n------ activating " + fd + " - " + fd.getName() + " (locale = " + locale.toString() + ")");
-            }
 
-            try
-            {
-                IPerson owner = bindToOwner(fd);
-                UserView view = new UserView(owner.getID());
-                loadLayout( view, fd, owner, locale );
-                
-                // if owner just created we need to push the layout into
-                // the db so that our fragment template user is used and
-                // not the default template user as determined by
-                // the user identity store.
-                if (owner.getAttribute("newlyCreated") != null)
-                {
-                    owner.setAttribute( Constants.PLF, view.layout );
-                    saveLayout( view, owner );
-                }
-                loadPreferences( view, fd);
-                fragmentizeLayout( view, fd);
-                this.setUserView(fd.getOwnerId(), locale, view);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("\n\n------ done activating " + fd.getName() + " (locale = " + locale.toString() + ")" );
-                }
-                
-                return view;
-            }
-            catch( Exception e )
-            {
-                final String msg = "Problem activating DLM fragment '" + fd.getName() + "' no content for this fragment will be included in user layouts.";
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(msg, e);
-                }
-                else {
-                    LOG.warn(msg + " Enable DEBUG logging for the full stack trace.");
-                }
-            }
-            
+        loadPreferences(view, fd);
+        fragmentizeLayout(view, fd);
+        
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Activated FragmentDefinition " + fd.getName() + " with locale " + locale);
         }
-
-        return null;
+        return view;
     }
     
     public UserView getUserView(final FragmentDefinition fd, final Locale locale) {
-        
-        // Assertions...
-        if (fd == null) {
-            String msg  = "Argument 'fd' [FragmentDefinition] cannot be null.";
-            throw new IllegalArgumentException(msg);
-        }
-        
-        // Activate the fragment just-in-time if it's new using some locking to make sure the same
-        // fragment isn't being loaded by multiple concurrent threads
-        final String ownerId = fd.getOwnerId();
-        final ReadWriteLock userViewLock = getUserViewLock(ownerId);
-        final UserView rslt = 
-            ReadWriteLockTemplate.doWithLock(userViewLock, new ReadWriteCallback<UserView>() {
-                public ReadResult<UserView> doInReadLock() {
-                    final net.sf.ehcache.Element element = getUserView(ownerId, locale);
-                    final UserView userView = element != null ? (UserView)element.getObjectValue() : null;
-                    if (userView == null) {
-                        return new ReadResult<UserView>(true);
-                    }
-                    
-                    return new ReadResult<UserView>(false, userView);
-                }
-    
-                public UserView doInWriteLock(ReadResult<UserView> readResult) {
-                    final UserView userView = activateFragment(fd, locale);
-                    
-                    if (userView == null) {
-                        // This is worrysome...
-                        LOG.warn("No UserView object could be activated for owner '" + ownerId 
-                                                    + "' -- null will be returned");
-                    }
-                    
-                    return userView;
-                }
-            });
-            
-        return rslt;
-        
-    }
-
-    protected ReadWriteLock getUserViewLock(final String ownerId) {
-        final ReadWriteLock userViewLock = userViewLocks.get(ownerId);
-        if (userViewLock != null) {
-            return userViewLock;
-        }
-        
-        return ConcurrentMapUtils.putIfAbsent(userViewLocks, ownerId, new ReentrantReadWriteLock(true));
-    }
-    
-    public void setUserView(String ownerId, Locale locale, UserView v) {
-        
-        // Assertions.
-        if (ownerId == null) {
-            String msg = "Argument 'ownerId' cannot be null.";
-            throw new IllegalArgumentException(msg);
-        }
-        if (v == null) {
-            String msg = "Argument 'v' [UserView] cannot be null.";
-            throw new IllegalArgumentException(msg);
-        }
-        
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Setting UserView instance for user:  " + ownerId);
-        }
-        
-        userViews.put(new net.sf.ehcache.Element(new Tuple<String, String>(ownerId, locale.toString()), v));
-        
+        final UserViewKey userViewKey = new UserViewKey(fd.getOwnerId(), locale);
+        final net.sf.ehcache.Element userViewElement = this.userViews.get(userViewKey);
+        return (UserView)userViewElement.getObjectValue();
     }
     
     public boolean hasUserView(FragmentDefinition fd, Locale locale) {
@@ -329,7 +289,7 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
         if (userID == -1)
         {
             userID = createOwner( owner, fragment );
-            owner.setAttribute("newlyCreated", "" + (userID != -1));
+            owner.setAttribute(NEWLY_CREATED_ATTR, "" + (userID != -1));
         }
 
         owner.setID(userID);
@@ -367,14 +327,16 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
             }
         }
 
-            if (LOG.isDebugEnabled())
-                LOG.debug("\n\nOwner '" + fragment.getOwnerId() +
-                "' of fragment '" + fragment.getName() +
-                "' not found. Creating as copy of '" +
-                defaultUser + "'\n" );
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("\n\nOwner '" + fragment.getOwnerId() +
+            "' of fragment '" + fragment.getName() +
+            "' not found. Creating as copy of '" +
+            defaultUser + "'\n" );
+        }
 
-        if ( defaultUser != null )
+        if ( defaultUser != null ) {
             owner.setAttribute( "uPortalTemplateUserName", defaultUser );
+        }
         
         try
         {
@@ -460,7 +422,7 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
      * Removes unwanted and hidden folders, then changes all node ids to their 
      * globally safe incorporated version.
      */
-    void fragmentizeLayout( UserView view,
+    private void fragmentizeLayout( UserView view,
                             FragmentDefinition fragment )
     {
         // if fragment not bound to user or layout empty due to error, return
@@ -560,25 +522,15 @@ public class FragmentActivator extends SingletonDoubleCheckedCreator<Boolean>
     }
     
     public void clearChacheForOwner(final String ownerId) {
-        final ReadWriteLock userViewLock = getUserViewLock(ownerId);
-        ReadWriteLockTemplate.doWithLock(userViewLock, new ReadWriteCallback<UserView>() {
-            @Override
-            public ReadResult<UserView> doInReadLock() {
-                // continue with write lock
-                return new ReadResult<UserView>(true);
-            }
-
-            @Override
-            public UserView doInWriteLock(ReadResult<UserView> readResult) {
-                List<?> keys = userViews.getKeys();
-                for (Object key : keys) {
-                    Tuple<?, ?> tuple = (Tuple<?, ?>) key;
-                    if (ownerId.equals(tuple.first)) {
-                        userViews.remove(key);
-                    }
-                }
-                return null;
-            }
-        });
+        final List<Locale> locales = fragmentOwnerLocales.getIfPresent(ownerId);
+        if (locales == null) {
+            //Nothing to purge
+            return;
+        }
+        
+        for (final Locale locale : locales) {
+            final UserViewKey userViewKey = new UserViewKey(ownerId, locale);
+            userViews.remove(userViewKey);
+        }
     }
 }

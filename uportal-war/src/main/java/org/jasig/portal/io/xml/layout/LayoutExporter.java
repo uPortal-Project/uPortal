@@ -27,13 +27,21 @@ import org.jasig.portal.io.xml.crn.AbstractDom4jExporter;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.security.provider.BrokenSecurityContext;
 import org.jasig.portal.security.provider.PersonImpl;
+import org.jasig.portal.utils.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.w3c.dom.Document;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
 public class LayoutExporter extends AbstractDom4jExporter  {
+    private final Cache<Tuple<String, String>, UserProfile> layoutCache = CacheBuilder.newBuilder().maximumSize(1000).<Tuple<String, String>, UserProfile>build();
+    private final Cache<Tuple<String, String>, Document> profileCache = CacheBuilder.newBuilder().maximumSize(1000).<Tuple<String, String>, Document>build();
+    
     private IUserLayoutStore userLayoutStore;
     private IUserIdentityStore userIdentityStore;
     
@@ -63,11 +71,21 @@ public class LayoutExporter extends AbstractDom4jExporter  {
         person.setUserName(userName);
         person.setID(userId);
         person.setSecurityContext(new BrokenSecurityContext());
-
-        final IUserProfile userProfile = userLayoutStore.getUserProfileByFname(person, UserProfile.DEFAULT_PROFILE_FNAME);
-        final Element layoutElement = userLayoutStore.exportLayout(person, userProfile);
         
-        return layoutElement;
+
+        try {
+            this.userLayoutStore.setProfileImportExportCache(layoutCache);
+            this.userLayoutStore.setLayoutImportExportCache(profileCache);
+
+            final IUserProfile userProfile = userLayoutStore.getUserProfileByFname(person, UserProfile.DEFAULT_PROFILE_FNAME);
+            final Element layoutElement = userLayoutStore.exportLayout(person, userProfile);
+            
+            return layoutElement;
+        }
+        finally {
+            this.userLayoutStore.setProfileImportExportCache(null);
+            this.userLayoutStore.setLayoutImportExportCache(null);
+        }
     }
     
 }

@@ -18,48 +18,87 @@
  */
 package org.jasig.portal.portlets.search;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
 
 import org.jasig.portal.search.SearchResult;
+import org.jasig.portal.utils.Tuple;
 
-public class PortalSearchResults {
-    private static final List<String> DEFAULT_TYPES = Arrays.asList("Default");
-    private final Map<String, Map<String, SearchResult>> results;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableSet;
+
+/**
+ * Used to collate search results for the SearchPortletController
+ * 
+ * @author Eric Dalquist
+ * @version $Revision$
+ */
+public class PortalSearchResults implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private final Set<String> defaultTab;
+    //Map of <result type, Set<result tabs>>
+    private final Map<String, Set<String>> resultTypeMappings;
     
-    public PortalSearchResults() {
-        this.results = new LinkedHashMap<String, Map<String, SearchResult>>();
+    //Map of <tab-key, List<result, url>>
+    private final LoadingCache<String, List<Tuple<SearchResult, String>>> results;
+    
+    public PortalSearchResults(String defaultTab, Map<String, Set<String>> resultTypeMappings) {
+        this.defaultTab = ImmutableSet.of(defaultTab);
+        this.resultTypeMappings = resultTypeMappings;
+        
+        this.results = CacheBuilder.newBuilder().<String, List<Tuple<SearchResult, String>>>build(new CacheLoader<String, List<Tuple<SearchResult, String>>>() {
+            @Override
+            public List<Tuple<SearchResult, String>> load(String key) throws Exception {
+                return Collections.synchronizedList(new LinkedList<Tuple<SearchResult,String>>());
+            }
+        });
     }
     
-    public Map<String, Map<String, SearchResult>> getResults() {
-        return this.results;
+    /**
+     * @return Map of tabKey -> Tuple<result, url>
+     */
+    public ConcurrentMap<String, List<Tuple<SearchResult, String>>> getResults() {
+        return this.results.asMap();
     }
     
-    public synchronized void addPortletSearchResults(String url, SearchResult result) {
-        final List<String> types = this.getTypes(result);
+    public void addPortletSearchResults(String url, SearchResult result) {
+        final Set<String> tabs = this.getTabs(result);
+        for (final String tab : tabs) {
+            final List<Tuple<SearchResult, String>> typeResults = this.results.getUnchecked(tab);
+            typeResults.add(new Tuple<SearchResult, String>(result, url));
+        }
+    }
+    
+    protected Set<String> getTabs(SearchResult result) {
+        final List<String> types = result.getType();
+        
+        //Result set no type, use the default tab
+        if (types == null || types.isEmpty()) {
+            return this.defaultTab;
+        }
+        
+        final Set<String> tabs = new HashSet<String>();
+        
+        //For each type the search result declares lookup the tab(s) mapped to that type
         for (final String type : types) {
-            
-            final Map<String, SearchResult> typeResults;
-            if (!results.containsKey(type)) {
-                typeResults = new LinkedHashMap<String, SearchResult>();
-                results.put(type, typeResults);
+            final Set<String> mappedTabs = this.resultTypeMappings.get(type);
+            if (mappedTabs != null) {
+                tabs.addAll(mappedTabs);
             }
             else {
-                typeResults = results.get(type);
+                tabs.addAll(this.defaultTab);
             }
-        
-            typeResults.put(url, result);
-        }
-    }
-    
-    protected List<String> getTypes(SearchResult result) {
-        final List<String> type = result.getType();
-        if (type != null && !type.isEmpty()) {
-            return type;
         }
         
-        return DEFAULT_TYPES;
+        return tabs;
     }
 }

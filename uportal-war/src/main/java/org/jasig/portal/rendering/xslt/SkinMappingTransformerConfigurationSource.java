@@ -21,11 +21,15 @@ package org.jasig.portal.rendering.xslt;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.jasig.portal.layout.IStylesheetUserPreferencesService;
+import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
+import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.jasig.resourceserver.aggr.om.Included;
 import org.jasig.resourceserver.utils.aggr.ResourcesElementsProvider;
@@ -33,6 +37,7 @@ import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Maps a user attribute to a skin. The user's attribute named by {@link #setSkinAttributeName(String)} is used to
@@ -43,9 +48,11 @@ import com.google.common.collect.ImmutableMap;
  * @version $Revision$
  */
 public abstract class SkinMappingTransformerConfigurationSource extends TransformerConfigurationSourceAdapter implements BeanNameAware {
-    private String skinNameAttribute;
+    private IStylesheetUserPreferencesService stylesheetUserPreferencesService;
     private ResourcesElementsProvider resourcesElementsProvider;
+    private String skinNameAttribute;
     private String skinParameterName = "skin";
+    private Set<String> stylesheetDescriptorNames;
     private boolean cacheSkinResolution = true;
 
     /**
@@ -60,12 +67,25 @@ public abstract class SkinMappingTransformerConfigurationSource extends Transfor
         this.resourcesElementsProvider = resourcesElementsProvider;
     }
 
+    @Autowired
+    public void setStylesheetUserPreferencesService(IStylesheetUserPreferencesService stylesheetUserPreferencesService) {
+        this.stylesheetUserPreferencesService = stylesheetUserPreferencesService;
+    }
+
     /**
      * If true the result of {@link #getSkinName(HttpServletRequest)} will be cached in the user's session and
      * re-used. If false {@link #getSkinName(HttpServletRequest)} will be called on every execution.
      */
     public void setCacheSkinResolution(boolean cacheSkinResolution) {
         this.cacheSkinResolution = cacheSkinResolution;
+    }
+    
+    /**
+     * Set of theme stylesheet descriptor names that the skin-default should be set for. If not set
+     * the skin-default will be set for all stylesheets
+     */
+    public void setStylesheetDescriptorNames(Set<String> stylesheetDescriptorNames) {
+        this.stylesheetDescriptorNames = ImmutableSet.copyOf(stylesheetDescriptorNames);
     }
     
 
@@ -87,23 +107,44 @@ public abstract class SkinMappingTransformerConfigurationSource extends Transfor
     @Override
     public final CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
         final String skinName = this.getSkinNameInternal(request);
-        return new CacheKey(this.getClass().getName(), skinName);
+        return CacheKey.build(this.getClass().getName(), skinName);
     }
     
     private String getSkinNameInternal(HttpServletRequest request) {
         if (!this.cacheSkinResolution || Included.PLAIN == this.resourcesElementsProvider.getDefaultIncludedType()) {
+            if (!this.shouldOverrideSkin(request)) {
+                return null;
+            }
+            
             return this.getSkinName(request);
         }
         
         final HttpSession session = request.getSession();
         SkinNameHolder skinNameHolder = (SkinNameHolder)session.getAttribute(skinNameAttribute);
         if (skinNameHolder == null) {
-            final String skinName = this.getSkinName(request);
+            final String skinName;
+            if (this.shouldOverrideSkin(request)) {
+                skinName = this.getSkinName(request);
+            }
+            else {
+                skinName = null;
+            }
+                
             skinNameHolder = new SkinNameHolder(skinName);
             session.setAttribute(skinNameAttribute, skinNameHolder);
         }
         
         return skinNameHolder.skinName;
+    }
+    
+
+    protected boolean shouldOverrideSkin(HttpServletRequest request) {
+        if (this.stylesheetDescriptorNames == null || this.stylesheetDescriptorNames.isEmpty()) {
+            return true;
+        }
+        
+        final IStylesheetDescriptor stylesheetDescriptor = stylesheetUserPreferencesService.getStylesheetDescriptor(request, PreferencesScope.THEME);
+        return this.stylesheetDescriptorNames.contains(stylesheetDescriptor.getName());
     }
     
     /**

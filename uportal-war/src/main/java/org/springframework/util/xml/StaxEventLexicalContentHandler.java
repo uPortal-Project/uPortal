@@ -19,6 +19,7 @@
 
 package org.springframework.util.xml;
 
+import javax.xml.stream.Location;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Characters;
@@ -29,6 +30,7 @@ import javax.xml.stream.events.XMLEvent;
 import javax.xml.stream.util.XMLEventConsumer;
 
 import org.springframework.util.Assert;
+import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.LexicalHandler;
 
@@ -37,7 +39,6 @@ import org.xml.sax.ext.LexicalHandler;
  * @version $Revision$
  */
 public class StaxEventLexicalContentHandler extends StaxEventContentHandler implements LexicalHandler {
-    
     public static final String EMPTY_SYSTEM_IDENTIFIER = "EMPTY";
     
     private final XMLEventFactory eventFactory;
@@ -56,6 +57,16 @@ public class StaxEventLexicalContentHandler extends StaxEventContentHandler impl
 
     public StaxEventLexicalContentHandler(XMLEventConsumer consumer) {
         this(consumer, XMLEventFactory.newInstance());
+    }
+    
+    /**
+     * Essentially the same logic as the parent but uses a static Location impl to avoid
+     * this$0 reference holding on to StaxEventLexicalContentHandler instances 
+     */
+    public void setDocumentLocator(final Locator locator) {
+        if (locator != null) {
+            eventFactory.setLocation(new LocatorLocation(locator));
+        }
     }
 
     /* (non-Javadoc)
@@ -180,5 +191,33 @@ public class StaxEventLexicalContentHandler extends StaxEventContentHandler impl
 
     private void consumeEvent(XMLEvent event) throws XMLStreamException {
         eventConsumer.add(event);
+    }
+    
+    private static final class LocatorLocation implements Location {
+        private final Locator locator;
+
+        private LocatorLocation(Locator locator) {
+            this.locator = locator;
+        }
+
+        public int getLineNumber() {
+            return locator.getLineNumber();
+        }
+
+        public int getColumnNumber() {
+            return locator.getColumnNumber();
+        }
+
+        public int getCharacterOffset() {
+            return -1;
+        }
+
+        public String getPublicId() {
+            return locator.getPublicId();
+        }
+
+        public String getSystemId() {
+            return locator.getSystemId();
+        }
     }
 }

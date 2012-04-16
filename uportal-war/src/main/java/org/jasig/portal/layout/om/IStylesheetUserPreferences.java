@@ -21,9 +21,10 @@ package org.jasig.portal.layout.om;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.xml.transform.Transformer;
+
+import org.jasig.portal.utils.Populator;
 
 /**
  * Tracks customizations made by the users to the XSL transformer and layout attributes.
@@ -76,7 +77,7 @@ public interface IStylesheetUserPreferences {
     /**
      * Add all output properties to the provided Properties object
      */
-    public Properties populateOutputProperties(Properties properties);
+    public <P extends Populator<String, String>> P populateOutputProperties(P properties);
     
     /**
      * @see Properties#clear();
@@ -116,7 +117,7 @@ public interface IStylesheetUserPreferences {
     /**
      * Add all stylesheet parameters to the provided Map
      */
-    public Map<String, String> populateStylesheetParameters(Map<String, String> stylesheetParameters);
+    public <P extends Populator<String, String>> P populateStylesheetParameters(P stylesheetParameters);
     
     /**
      * @see Map#clear();
@@ -156,13 +157,7 @@ public interface IStylesheetUserPreferences {
      * 
      * @param nodeId The layout node id to get attributes for, cannot be null
      */
-    public Map<String, String> populateLayoutAttributes(String nodeId, Map<String, String> layoutAttributes);
-    
-    /**
-     * Add all layout attributes for all nodeIds to the provided Map
-     */
-    public Map<String, Map<String, String>> populateAllLayoutAttributes(Map<String, Map<String, String>> allLayoutAttributes);
-  
+    public <P extends Populator<String, String>> P populateLayoutAttributes(String nodeId, P layoutAttributes);
     
     /**
      * @return Read-only view of all layout nodeIds stored in these preferences

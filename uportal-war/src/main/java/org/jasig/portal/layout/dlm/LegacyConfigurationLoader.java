@@ -158,6 +158,7 @@ public class LegacyConfigurationLoader implements ConfigurationLoader {
 
     @Override
     public FragmentDefinition getFragmentByOwnerId(String ownerId) {
+        this.loadedFlag.get();
         return this.fragmentsByOwnerId.get(ownerId);
     }
 

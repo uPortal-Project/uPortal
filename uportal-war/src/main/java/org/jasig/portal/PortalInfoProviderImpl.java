@@ -39,7 +39,7 @@ import org.springframework.stereotype.Service;
  * @author Eric Dalquist
  * @version $Revision$
  */
-@Service
+@Service("portalInfoProvider")
 public class PortalInfoProviderImpl implements IPortalInfoProvider {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     

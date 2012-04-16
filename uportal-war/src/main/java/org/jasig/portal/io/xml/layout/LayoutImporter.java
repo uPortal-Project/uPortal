@@ -20,10 +20,16 @@
 package org.jasig.portal.io.xml.layout;
 
 import org.dom4j.Element;
+import org.jasig.portal.UserProfile;
 import org.jasig.portal.io.xml.crn.AbstractDom4jImporter;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.utils.Tuple;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.w3c.dom.Document;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 /**
  * Imports a layout
@@ -32,15 +38,26 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @version $Revision$
  */
 public class LayoutImporter extends AbstractDom4jImporter {
+    private final Cache<Tuple<String, String>, UserProfile> layoutCache = CacheBuilder.newBuilder().maximumSize(1000).<Tuple<String, String>, UserProfile>build();
+    private final Cache<Tuple<String, String>, Document> profileCache = CacheBuilder.newBuilder().maximumSize(1000).<Tuple<String, String>, Document>build();
     private IUserLayoutStore userLayoutStore;
     
     @Autowired
     public void setUserLayoutStore(IUserLayoutStore userLayoutStore) {
         this.userLayoutStore = userLayoutStore;
     }
-
+    
     @Override
     protected void importDataElement(Tuple<String, Element> data) {
-        userLayoutStore.importLayout(data.second);
+        try {
+            this.userLayoutStore.setProfileImportExportCache(layoutCache);
+            this.userLayoutStore.setLayoutImportExportCache(profileCache);
+            
+            userLayoutStore.importLayout(data.second);
+        }
+        finally {
+            this.userLayoutStore.setProfileImportExportCache(null);
+            this.userLayoutStore.setLayoutImportExportCache(null);
+        }
     }
 }

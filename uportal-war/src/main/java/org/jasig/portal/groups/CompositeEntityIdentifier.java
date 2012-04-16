@@ -31,8 +31,10 @@ import javax.naming.Name;
 import javax.naming.NameParser;
 import javax.naming.NamingException;
 
-import org.jasig.portal.spring.locator.CacheFactoryLocator;
-import org.jasig.portal.utils.cache.CacheFactory;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+
 /**
  * A composite key and type that uniquely identify a portal entity.  The composite
  * key contains a service name, which may be compound, and a native key, which is
@@ -46,6 +48,23 @@ implements IGroupConstants
 {
     // static vars:
     protected static final String separator;
+    private static final LoadingCache<String, Name> NAME_PARSE_CACHE = CacheBuilder.newBuilder().maximumSize(1000).build(new CacheLoader<String, Name>() {
+        @Override
+        public Name load(String s) throws Exception {
+            int start = 0;
+            int separatorLength = separator.length();
+            int end = s.indexOf(separator, start);
+            List<String> list = new ArrayList<String>(4);
+            while (end != -1)
+            {
+                list.add(s.substring(start,end));
+                start = end + separatorLength;
+                end = s.indexOf(separator, start);
+            }
+            list.add(s.substring(start));
+            return new CompositeEntityIdentifier.NameImpl(list);
+        }
+    });
     
     static {
         String sep;
@@ -195,18 +214,10 @@ public String toString() {
  */
 public Name parseCompoundKey(String key) throws NamingException
 {
-    final CacheFactory cacheFactory = CacheFactoryLocator.getCacheFactory();
-    final Map<Serializable, Name> nameCache = cacheFactory.getCache(CacheFactory.NAME_CACHE);
-    Name n = nameCache.get(key);
-    if ( n == null )
-    { 
-        n = getParser().parse(key);
-        nameCache.put(key,n); 
-    }
-    return n;
+    return NAME_PARSE_CACHE.getUnchecked(key);
 }
 
-private class NameImpl implements Name
+private static final class NameImpl implements Name
 {
     List<String> components;
     public NameImpl() {
@@ -371,7 +382,7 @@ private class NameImpl implements Name
     }
     
 }
-private class NameImplEnumerator implements Enumeration<String> {
+private static final class NameImplEnumerator implements Enumeration<String> {
     List<String> list;
     int count;
     int limit;

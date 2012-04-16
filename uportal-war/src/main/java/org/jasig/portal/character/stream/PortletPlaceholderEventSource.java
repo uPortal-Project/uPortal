@@ -19,7 +19,7 @@
 
 package org.jasig.portal.character.stream;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.regex.MatchResult;
 
 import javax.servlet.http.HttpServletRequest;
@@ -62,20 +62,17 @@ public abstract class PortletPlaceholderEventSource extends BasePlaceholderEvent
         this.portletWindowRegistry = portletWindowRegistry;
     }
 
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.character.stream.CharacterEventSource#getCharacterEvents(javax.xml.stream.XMLEventReader, javax.xml.stream.events.StartElement)
-     */
     @Override
-    public final List<CharacterEvent> getCharacterEvents(HttpServletRequest request, XMLEventReader eventReader, StartElement event) throws XMLStreamException {
-        final Tuple<IPortletWindow, StartElement> portletWindowAndElement = this.portletWindowRegistry.getPortletWindow(request, event);
+    public void generateCharacterEvents(HttpServletRequest servletRequest, XMLEventReader eventReader,
+            StartElement event, Collection<CharacterEvent> eventBuffer) throws XMLStreamException {
+        final Tuple<IPortletWindow, StartElement> portletWindowAndElement = this.portletWindowRegistry.getPortletWindow(servletRequest, event);
         if (portletWindowAndElement == null) {
             this.logger.warn("Could not find IPortletWindow for StartElement " + event + ". No PortletPlaceholderEvent will be generated. " + event.getLocation());
-            return null;
+            return;
         }
 
         final IPortletWindowId portletWindowId = portletWindowAndElement.first.getPortletWindowId();
-        return this.getCharacterEvents(portletWindowId, eventReader, event);
+        this.generateCharacterEvents(portletWindowId, eventReader, event, eventBuffer);
     }
     
     /**
@@ -85,43 +82,41 @@ public abstract class PortletPlaceholderEventSource extends BasePlaceholderEvent
      * 
      * Default impl simply calls {@link #getCharacterEvents(IPortletWindowId, MatchResult)} then {@link #readToEndElement(XMLEventReader, StartElement)}
      */
-    protected List<CharacterEvent> getCharacterEvents(IPortletWindowId portletWindowId, XMLEventReader eventReader, StartElement event) throws XMLStreamException {
-        final List<CharacterEvent> characterEvents = this.getCharacterEvents(portletWindowId, event);
+    protected void generateCharacterEvents(IPortletWindowId portletWindowId, XMLEventReader eventReader, StartElement event, Collection<CharacterEvent> eventBuffer) throws XMLStreamException {
+        this.generateCharacterEvents(portletWindowId, event, eventBuffer);
         this.readToEndElement(eventReader, event);
-        return characterEvents;
     }
     
     /**
      * Implement to generate CharacterEvents based on a {@link StartElement} match. If not implemented throws 
      * UnsupportedOperationException
      */
-    @SuppressWarnings("unused")
-    protected List<CharacterEvent> getCharacterEvents(IPortletWindowId portletWindowId, StartElement event) throws XMLStreamException {
+    protected void generateCharacterEvents(IPortletWindowId portletWindowId, StartElement event, Collection<CharacterEvent> eventBuffer) throws XMLStreamException {
         throw new UnsupportedOperationException();
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.character.stream.CharacterEventSource#getCharacterEvents(java.util.regex.MatchResult)
-     */
+    
     @Override
-    public final List<CharacterEvent> getCharacterEvents(HttpServletRequest request, MatchResult matchResult) {
+    public void generateCharacterEvents(HttpServletRequest servletRequest, MatchResult matchResult,
+            Collection<CharacterEvent> eventBuffer) {
         final String subscribeId = matchResult.group(this.portletIdGroup);
         if (subscribeId == null) {
             this.logger.warn("MatchResult returned null for group " + this.portletIdGroup + ". No PortletPlaceholderEvent will be generated. " + matchResult);
-            return null;
+            return;
         }
         
-        final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, subscribeId);
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(servletRequest, subscribeId);
         final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
         
-        return this.getCharacterEvents(portletWindowId, matchResult);
+        this.generateCharacterEvents(portletWindowId, matchResult, eventBuffer);
     }
     
     /**
      * Implement to generate CharacterEvents based on a regular expression match. If not implemented throws 
      * UnsupportedOperationException
      */
-    protected List<CharacterEvent> getCharacterEvents(IPortletWindowId portletWindowId, MatchResult matchResult) {
+    protected void generateCharacterEvents(IPortletWindowId portletWindowId, MatchResult matchResult,
+            Collection<CharacterEvent> eventBuffer) {
         throw new UnsupportedOperationException();
     }
 }
