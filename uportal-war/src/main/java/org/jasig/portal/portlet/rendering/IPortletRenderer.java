@@ -22,6 +22,7 @@ package org.jasig.portal.portlet.rendering;
 import java.io.PrintWriter;
 import java.io.Writer;
 
+import javax.portlet.CacheControl;
 import javax.portlet.Event;
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
@@ -76,6 +77,12 @@ public interface IPortletRenderer {
 	 * Attribute that the renderer stores a {@link PrintWriter} that should be used when the portlet writes out content.
 	 */
 	public static final String ATTRIBUTE__PORTLET_PRINT_WRITER = RENDERER_ATTRIBUTE_PREFIX + ".PORTLET_PRINT_WRITER";
+	
+	/**
+     * Attribute that the renderer stores a {@link CacheControl} that should be used when the portlet writes out content.
+     */
+    public static final String ATTRIBUTE__PORTLET_CACHE_CONTROL = RENDERER_ATTRIBUTE_PREFIX + ".CACHE_CONTROL";
+    
 	
 	/**
      * Executes an action in a portlet, handles all the request and response setup and teardown

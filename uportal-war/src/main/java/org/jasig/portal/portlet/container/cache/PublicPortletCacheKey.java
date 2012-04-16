@@ -31,8 +31,9 @@ import org.jasig.portal.portlet.om.IPortletWindow;
 class PublicPortletCacheKey implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    final IPortletDefinitionId portletDefinitionId;
+    private final IPortletDefinitionId portletDefinitionId;
     private final Map<String, String[]> parameters;
+    private final boolean renderHeader;
     private final String resourceId;
     private final Locale locale;
     private final String windowState;
@@ -40,21 +41,63 @@ class PublicPortletCacheKey implements Serializable {
     
     private final int hash;
 
-    public PublicPortletCacheKey(IPortletDefinitionId portletDefinitionId, IPortletWindow portletWindow,
+    public static PublicPortletCacheKey createPublicPortletRenderCacheKey(IPortletDefinitionId portletDefinitionId, IPortletWindow portletWindow,
             Locale locale) {
-        this(portletDefinitionId, portletWindow, null, locale);
+        return new PublicPortletCacheKey(portletDefinitionId, portletWindow, false, null, locale);
+    }
+
+    public static PublicPortletCacheKey createPublicPortletRenderHeaderCacheKey(IPortletDefinitionId portletDefinitionId, IPortletWindow portletWindow,
+            Locale locale) {
+        return new PublicPortletCacheKey(portletDefinitionId, portletWindow, true, null, locale);
+    }
+
+    public static PublicPortletCacheKey createPublicPortletResourceCacheKey(IPortletDefinitionId portletDefinitionId, IPortletWindow portletWindow,
+            String resourceId, Locale locale) {
+        if (resourceId == null) {
+            resourceId = "";
+        }
+        return new PublicPortletCacheKey(portletDefinitionId, portletWindow, false, resourceId, locale);
     }
     
-    public PublicPortletCacheKey(IPortletDefinitionId portletDefinitionId, IPortletWindow portletWindow,
-            String resourceId, Locale locale) {
+    private PublicPortletCacheKey(IPortletDefinitionId portletDefinitionId, IPortletWindow portletWindow,
+            boolean renderHeader, String resourceId, Locale locale) {
         this.portletDefinitionId = portletDefinitionId;
         this.parameters = portletWindow.getRenderParameters();
+        this.renderHeader = renderHeader;
         this.resourceId = resourceId;
         this.windowState = portletWindow.getWindowState().toString();
         this.portletMode = portletWindow.getPortletMode().toString();
         this.locale = locale;
         
         this.hash = internalHashCode();
+    }
+    
+    public IPortletDefinitionId getPortletDefinitionId() {
+        return portletDefinitionId;
+    }
+
+    public Map<String, String[]> getParameters() {
+        return parameters;
+    }
+
+    public boolean isRenderHeader() {
+        return renderHeader;
+    }
+
+    public String getResourceId() {
+        return resourceId;
+    }
+
+    public Locale getLocale() {
+        return locale;
+    }
+
+    public String getWindowState() {
+        return windowState;
+    }
+
+    public String getPortletMode() {
+        return portletMode;
     }
 
     @Override
@@ -69,6 +112,7 @@ class PublicPortletCacheKey implements Serializable {
         result = prime * result + ((parameters == null) ? 0 : parameters.hashCode());
         result = prime * result + ((portletDefinitionId == null) ? 0 : portletDefinitionId.hashCode());
         result = prime * result + ((portletMode == null) ? 0 : portletMode.hashCode());
+        result = prime * result + (renderHeader ? 1231 : 1237);
         result = prime * result + ((resourceId == null) ? 0 : resourceId.hashCode());
         result = prime * result + ((windowState == null) ? 0 : windowState.hashCode());
         return result;
@@ -107,6 +151,8 @@ class PublicPortletCacheKey implements Serializable {
         }
         else if (!portletMode.equals(other.portletMode))
             return false;
+        if (renderHeader != other.renderHeader)
+            return false;
         if (resourceId == null) {
             if (other.resourceId != null)
                 return false;
@@ -124,8 +170,18 @@ class PublicPortletCacheKey implements Serializable {
 
     @Override
     public String toString() {
-        return "PublicPortletCacheKey [portletDefinitionId=" + portletDefinitionId + ", parameters=" + parameters
-                + ", resourceId=" + resourceId + ", locale=" + locale + ", windowState=" + windowState
-                + ", portletMode=" + portletMode + "]";
+        if (renderHeader) {
+            return "PublicPortletRenderHeaderCacheKey [portletDefinitionId=" + portletDefinitionId + ", parameters=" + parameters
+                    + ", locale=" + locale + ", windowState=" + windowState + ", portletMode=" + portletMode + ", hash=" + hash + "]";
+        }
+        if (resourceId != null) {
+            return "PublicPortletResourceCacheKey [portletDefinitionId=" + portletDefinitionId + ", parameters=" + parameters
+                    + ", resourceId=" + resourceId + ", locale=" + locale + ", windowState=" + windowState + ", portletMode="
+                    + portletMode + ", hash=" + hash + "]";
+        }
+        return "PublicPortletRenderCacheKey [portletDefinitionId=" + portletDefinitionId + ", parameters=" + parameters
+                + ", locale=" + locale + ", windowState=" + windowState + ", portletMode=" + portletMode + ", hash=" + hash + "]";
     }
+    
+    
 }

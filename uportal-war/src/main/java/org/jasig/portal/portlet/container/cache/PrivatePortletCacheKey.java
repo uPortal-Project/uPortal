@@ -29,8 +29,8 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
 class PrivatePortletCacheKey implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    final String sessionId;
-    final IPortletWindowId portletWindowId;
+    private final String sessionId;
+    private final IPortletWindowId portletWindowId;
     private final IPortletEntityId portletEntityId;
     private final PublicPortletCacheKey publicPortletCacheKey;
     
@@ -44,6 +44,22 @@ class PrivatePortletCacheKey implements Serializable {
         this.publicPortletCacheKey = publicPortletCacheKey;
         
         this.hash = internalHashCode();
+    }
+    
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public IPortletWindowId getPortletWindowId() {
+        return portletWindowId;
+    }
+
+    public IPortletEntityId getPortletEntityId() {
+        return portletEntityId;
+    }
+
+    public PublicPortletCacheKey getPublicPortletCacheKey() {
+        return publicPortletCacheKey;
     }
 
     @Override
@@ -99,7 +115,15 @@ class PrivatePortletCacheKey implements Serializable {
 
     @Override
     public String toString() {
-        return "PrivatePortletCacheKey [sessionId=" + sessionId + ", portletWindowId=" + portletWindowId
+        if (this.publicPortletCacheKey.isRenderHeader()) {
+            return "PrivatePortletRenderHeaderCacheKey [sessionId=" + sessionId + ", portletWindowId=" + portletWindowId
+                    + ", portletEntityId=" + portletEntityId + ", " + publicPortletCacheKey + "]";
+        }
+        if (this.publicPortletCacheKey.getResourceId() != null) {
+            return "PrivatePortletResourceCacheKey [sessionId=" + sessionId + ", portletWindowId=" + portletWindowId
+                    + ", portletEntityId=" + portletEntityId + ", " + publicPortletCacheKey + "]";
+        }
+        return "PrivatePortletRenderCacheKey [sessionId=" + sessionId + ", portletWindowId=" + portletWindowId
                 + ", portletEntityId=" + portletEntityId + ", " + publicPortletCacheKey + "]";
     }
 }

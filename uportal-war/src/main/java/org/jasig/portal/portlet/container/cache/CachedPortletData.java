@@ -23,15 +23,15 @@ package org.jasig.portal.portlet.container.cache;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.portlet.CacheControl;
 
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Java bean to represent the data cached for a portlet request via 
@@ -44,7 +44,7 @@ public class CachedPortletData implements Serializable {
 	private static final long serialVersionUID = 5509299103587289000L;
 
 	private String etag;
-	private Date timeStored;
+	private long timeStored;
 	private int expirationTimeSeconds;
 	private int cacheConfigurationMaxTTL;
 	
@@ -70,18 +70,18 @@ public class CachedPortletData implements Serializable {
 	 * @param etag
 	 */
 	public void setEtag(String etag) {
-		this.etag = etag;
+		this.etag = StringUtils.trimToNull(etag);
 	}
 	/**
 	 * @return the timeStored
 	 */
-	public Date getTimeStored() {
+	public long getTimeStored() {
 		return timeStored;
 	}
 	/**
 	 * @param timeStored the timeStored to set
 	 */
-	public void setTimeStored(Date timeStored) {
+	public void setTimeStored(long timeStored) {
 		this.timeStored = timeStored;
 	}
 	
@@ -226,7 +226,7 @@ public class CachedPortletData implements Serializable {
 	 */
 	public synchronized void updateExpirationTime(int requestedExpirationTimeSeconds) { 
 		this.expirationTimeSeconds = Math.min(requestedExpirationTimeSeconds, getCacheConfigurationMaxTTL());
-		this.timeStored = new Date();
+		this.timeStored = System.currentTimeMillis();
 	}
 	/**
 	 * 
@@ -240,69 +240,104 @@ public class CachedPortletData implements Serializable {
 			// always expired
 			return true;
 		} else {
-			Date now = new Date();
-			Date referencePoint = DateUtils.addSeconds(now, -expirationTimeSeconds);
-			
-			return timeStored.before(referencePoint);
+			final long referencePoint = (System.currentTimeMillis() - TimeUnit.SECONDS.toMillis(expirationTimeSeconds));
+			return timeStored < referencePoint;
 		}
 	}
+
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + Arrays.hashCode(byteData);
-		result = prime * result
-				+ ((contentType == null) ? 0 : contentType.hashCode());
-		result = prime * result + ((etag == null) ? 0 : etag.hashCode());
-		result = prime * result + expirationTimeSeconds;
-		result = prime * result + ((headers == null) ? 0 : headers.hashCode());
-		result = prime * result
-				+ ((stringData == null) ? 0 : stringData.hashCode());
-		result = prime * result
-				+ ((timeStored == null) ? 0 : timeStored.hashCode());
-		return result;
-	}
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		CachedPortletData other = (CachedPortletData) obj;
-		if (!Arrays.equals(byteData, other.byteData))
-			return false;
-		if (contentType == null) {
-			if (other.contentType != null)
-				return false;
-		} else if (!contentType.equals(other.contentType))
-			return false;
-		if (etag == null) {
-			if (other.etag != null)
-				return false;
-		} else if (!etag.equals(other.etag))
-			return false;
-		if (expirationTimeSeconds != other.expirationTimeSeconds)
-			return false;
-		if (headers == null) {
-			if (other.headers != null)
-				return false;
-		} else if (!headers.equals(other.headers))
-			return false;
-		if (stringData == null) {
-			if (other.stringData != null)
-				return false;
-		} else if (!stringData.equals(other.stringData))
-			return false;
-		if (timeStored == null) {
-			if (other.timeStored != null)
-				return false;
-		} else if (!timeStored.equals(other.timeStored))
-			return false;
-		return true;
-	}
-	@Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(byteData);
+        result = prime * result + cacheConfigurationMaxTTL;
+        result = prime * result + ((charset == null) ? 0 : charset.hashCode());
+        result = prime * result + ((contentLength == null) ? 0 : contentLength.hashCode());
+        result = prime * result + ((contentType == null) ? 0 : contentType.hashCode());
+        result = prime * result + ((etag == null) ? 0 : etag.hashCode());
+        result = prime * result + expirationTimeSeconds;
+        result = prime * result + ((headers == null) ? 0 : headers.hashCode());
+        result = prime * result + ((locale == null) ? 0 : locale.hashCode());
+        result = prime * result + ((status == null) ? 0 : status.hashCode());
+        result = prime * result + ((statusMessage == null) ? 0 : statusMessage.hashCode());
+        result = prime * result + ((stringData == null) ? 0 : stringData.hashCode());
+        result = prime * result + (int) (timeStored ^ (timeStored >>> 32));
+        return result;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CachedPortletData other = (CachedPortletData) obj;
+        if (!Arrays.equals(byteData, other.byteData))
+            return false;
+        if (cacheConfigurationMaxTTL != other.cacheConfigurationMaxTTL)
+            return false;
+        if (charset == null) {
+            if (other.charset != null)
+                return false;
+        }
+        else if (!charset.equals(other.charset))
+            return false;
+        if (contentLength == null) {
+            if (other.contentLength != null)
+                return false;
+        }
+        else if (!contentLength.equals(other.contentLength))
+            return false;
+        if (contentType == null) {
+            if (other.contentType != null)
+                return false;
+        }
+        else if (!contentType.equals(other.contentType))
+            return false;
+        if (etag == null) {
+            if (other.etag != null)
+                return false;
+        }
+        else if (!etag.equals(other.etag))
+            return false;
+        if (expirationTimeSeconds != other.expirationTimeSeconds)
+            return false;
+        if (headers == null) {
+            if (other.headers != null)
+                return false;
+        }
+        else if (!headers.equals(other.headers))
+            return false;
+        if (locale == null) {
+            if (other.locale != null)
+                return false;
+        }
+        else if (!locale.equals(other.locale))
+            return false;
+        if (status == null) {
+            if (other.status != null)
+                return false;
+        }
+        else if (!status.equals(other.status))
+            return false;
+        if (statusMessage == null) {
+            if (other.statusMessage != null)
+                return false;
+        }
+        else if (!statusMessage.equals(other.statusMessage))
+            return false;
+        if (stringData == null) {
+            if (other.stringData != null)
+                return false;
+        }
+        else if (!stringData.equals(other.stringData))
+            return false;
+        if (timeStored != other.timeStored)
+            return false;
+        return true;
+    }
+    @Override
 	public String toString() {
 		return "CachedPortletData [etag=" + etag + ", timeStored=" + timeStored
 				+ ", expirationTimeSeconds=" + expirationTimeSeconds

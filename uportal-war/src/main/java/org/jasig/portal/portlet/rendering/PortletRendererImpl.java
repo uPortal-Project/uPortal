@@ -52,6 +52,7 @@ import org.jasig.portal.api.portlet.PortletDelegationLocator;
 import org.jasig.portal.events.IPortalEventFactory;
 import org.jasig.portal.portlet.OutputCapturingHttpServletResponseWrapper;
 import org.jasig.portal.portlet.PortletDispatchException;
+import org.jasig.portal.portlet.container.cache.CacheState;
 import org.jasig.portal.portlet.container.cache.CachedPortletData;
 import org.jasig.portal.portlet.container.cache.CachingPortletHttpServletResponseWrapper;
 import org.jasig.portal.portlet.container.cache.IPortletCacheControlService;
@@ -424,14 +425,23 @@ public class PortletRendererImpl implements IPortletRenderer {
 	public PortletRenderResult doRenderHeader(IPortletWindowId portletWindowId,
 			HttpServletRequest httpServletRequest,
 			HttpServletResponse httpServletResponse, Writer writer) {
+	    
+	    final CacheState cacheState = this.portletCacheControlService.getPortletRenderHeaderState(httpServletRequest, portletWindowId);
+	    
+	    if (cacheState.isUseCachedData()) {
+	        //TODO replay cached data
+	        return null;
+	    }
+	    
 		final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
-        
+		
         //Setup the request and response
         httpServletRequest = this.setupPortletRequest(httpServletRequest);
         httpServletResponse = this.setupPortletResponse(httpServletResponse);
 
         //Set the writer to capture the response
         httpServletRequest.setAttribute(ATTRIBUTE__PORTLET_PRINT_WRITER, new PrintWriter(writer));
+        httpServletRequest.setAttribute(ATTRIBUTE__PORTLET_CACHE_CONTROL, cacheState.getCacheControl());
 
         //Execute the action, 
         if (this.logger.isDebugEnabled()) {

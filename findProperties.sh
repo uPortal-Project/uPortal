@@ -17,4 +17,5 @@
 # under the License.
 #
 
-find uportal-war/src/ \( -name '*.java' -or -name '*.xml' \) | xargs grep -oh ${[^}]*} | sort -u
+find uportal-war/src/ -name '*.xml' | xargs grep -oh \${[^}]*} | sort -u
+find uportal-war/src/ -name '*.java' | xargs grep -oh "@Value( *\"\${[^}]*}\" *)" | grep -oh \${[^}]*} | sort -u
