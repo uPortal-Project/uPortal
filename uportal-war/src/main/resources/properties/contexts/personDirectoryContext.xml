@@ -223,7 +223,7 @@
 		<property name="cacheKeyGenerator" ref="userAttributeCacheKeyGenerator" /> 
 		<property name="cachedPersonAttributesDao" ref="uPortalJdbcAttributeSource"/>
 	</bean> 
-	<bean id="userAttributeCacheKeyGenerator" class="org.jasig.services.persondir.support.AttributeBasedCacheKeyGenerator">
+	<bean id="userAttributeCacheKeyGenerator" class="org.jasig.portal.utils.cache.PersonDirectoryCacheKeyGenerator">
 		<property name="useAllAttributes" value="true" /> 
 		<property name="ignoreEmptyAttributes" value="true" /> 
 	</bean> 

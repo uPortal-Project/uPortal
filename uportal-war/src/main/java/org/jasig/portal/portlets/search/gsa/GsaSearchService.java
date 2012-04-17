@@ -58,6 +58,12 @@ public class GsaSearchService implements IPortalSearchService {
         this.gsaSite = gsaSite;
     }
     
+    private String resultType = "googleAppliance";
+    
+    public void setResultType(String resultType) {
+        this.resultType = resultType;
+    }
+
     @Override
     public SearchResults getSearchResults(PortletRequest request,
             SearchRequest query) {
@@ -81,7 +87,7 @@ public class GsaSearchService implements IPortalSearchService {
             result.setTitle(gsaResult.getTitle());
             result.setExternalUrl(gsaResult.getLink());
             result.setSummary(gsaResult.getSnippet());
-            result.getType().add("Campus Web");
+            result.getType().add(this.resultType);
             results.getSearchResult().add(result);
         }
         return results;

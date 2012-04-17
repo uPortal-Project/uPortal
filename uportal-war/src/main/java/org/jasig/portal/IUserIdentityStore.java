@@ -33,7 +33,7 @@ public interface IUserIdentityStore {
    * @return uPortalUID number
    * @throws Exception exception if an error occurs.
    */
-  public int getPortalUID(IPerson person) throws Exception;
+  public int getPortalUID(IPerson person) throws AuthorizationException;
 
   /**
    * Returns a unique uPortal key for a user.  A boolean flag

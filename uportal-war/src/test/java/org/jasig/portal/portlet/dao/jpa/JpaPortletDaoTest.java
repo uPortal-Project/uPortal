@@ -97,14 +97,14 @@ public class JpaPortletDaoTest extends BaseJpaDaoTest {
         execute(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
-                final IPortletDefinitionId portletDefinitionId = new PortletDefinitionIdImpl(1);
+                final IPortletDefinitionId portletDefinitionId = PortletDefinitionIdImpl.create(1);
                 final IPortletDefinition nullPortDef1 = jpaPortletDefinitionDao.getPortletDefinition(portletDefinitionId);
                 assertNull(nullPortDef1);
                 
                 final IPortletEntity nullPortEnt1 = jpaPortletEntityDao.getPortletEntity("chanSub1", 1);
                 assertNull(nullPortEnt1);
                 
-                final Set<IPortletEntity> portEnts = jpaPortletEntityDao.getPortletEntities(new PortletDefinitionIdImpl(1));
+                final Set<IPortletEntity> portEnts = jpaPortletEntityDao.getPortletEntities(PortletDefinitionIdImpl.create(1));
                 assertEquals(Collections.emptySet(), portEnts);
             }
         });

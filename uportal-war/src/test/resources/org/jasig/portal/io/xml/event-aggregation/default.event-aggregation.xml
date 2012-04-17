@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<event-aggregation version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/event-aggregation https://source.jasig.org/schemas/uportal/io/event-aggregation/event-aggregation-4.0.xsd" xmlns:ns2="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns="https://source.jasig.org/schemas/uportal/io/event-aggregation" xmlns:ns4="https://source.jasig.org/schemas/uportal/io/user" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns5="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns7="https://source.jasig.org/schemas/uportal" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <aggregated-group-config>
+        <aggregator-type>org.jasig.portal.events.aggr.IPortalEventAggregator</aggregator-type>
+    </aggregated-group-config>
+    <aggregated-interval-config>
+        <aggregator-type>org.jasig.portal.events.aggr.IPortalEventAggregator</aggregator-type>
+        <exclude>MINUTE</exclude>
+    </aggregated-interval-config>
+    <quarter-details>
+        <id>0</id>
+        <start>--01-01</start>
+        <end>--04-01</end>
+    </quarter-details>
+    <quarter-details>
+        <id>1</id>
+        <start>--04-01</start>
+        <end>--07-01</end>
+    </quarter-details>
+    <quarter-details>
+        <id>2</id>
+        <start>--07-01</start>
+        <end>--10-01</end>
+    </quarter-details>
+    <quarter-details>
+        <id>3</id>
+        <start>--10-01</start>
+        <end>--01-01</end>
+    </quarter-details>
+    <term-details>
+        <name>Spring 2005-2006</name>
+        <start>2006-03-25Z</start>
+        <end>2006-05-14Z</end>
+    </term-details>
+    <term-details>
+        <name>Summer 2006</name>
+        <start>2006-05-14Z</start>
+        <end>2006-08-27Z</end>
+    </term-details>
+    <term-details>
+        <name>Fall 2006-2007</name>
+        <start>2006-08-27Z</start>
+        <end>2006-12-24Z</end>
+    </term-details>
+    <term-details>
+        <name>Spring 2006-2007</name>
+        <start>2006-12-24Z</start>
+        <end>2007-05-20Z</end>
+    </term-details>
+    <term-details>
+        <name>Summer 2007</name>
+        <start>2007-05-20Z</start>
+        <end>2007-08-26Z</end>
+    </term-details>
+    <term-details>
+        <name>Fall 2007-2008</name>
+        <start>2007-08-26Z</start>
+        <end>2007-12-23Z</end>
+    </term-details>
+    <term-details>
+        <name>Spring 2007-2008</name>
+        <start>2007-12-23Z</start>
+        <end>2008-05-18Z</end>
+    </term-details>
+    <term-details>
+        <name>Summer 2008</name>
+        <start>2008-05-18Z</start>
+        <end>2008-08-24Z</end>
+    </term-details>
+    <term-details>
+        <name>Fall 2008-2009</name>
+        <start>2008-08-24Z</start>
+        <end>2008-12-21Z</end>
+    </term-details>
+    <term-details>
+        <name>Spring 2008-2009</name>
+        <start>2008-12-21Z</start>
+        <end>2009-05-17Z</end>
+    </term-details>
+    <term-details>
+        <name>Summer 2009</name>
+        <start>2009-05-17Z</start>
+        <end>2009-08-23Z</end>
+    </term-details>
+    <term-details>
+        <name>Fall 2009-2010</name>
+        <start>2009-08-23Z</start>
+        <end>2009-12-24Z</end>
+    </term-details>
+    <term-details>
+        <name>Spring 2009-2010</name>
+        <start>2009-12-24Z</start>
+        <end>2010-05-16Z</end>
+    </term-details>
+    <term-details>
+        <name>Summer 2010</name>
+        <start>2010-05-16Z</start>
+        <end>2010-08-22Z</end>
+    </term-details>
+    <term-details>
+        <name>Fall 2010-2011</name>
+        <start>2010-08-22Z</start>
+        <end>2010-12-23Z</end>
+    </term-details>
+    <term-details>
+        <name>Winter 2010-2011</name>
+        <start>2010-12-23Z</start>
+        <end>2010-12-24Z</end>
+    </term-details>
+    <term-details>
+        <name>Spring 2010-2011</name>
+        <start>2010-12-24Z</start>
+        <end>2011-05-15Z</end>
+    </term-details>
+    <term-details>
+        <name>Summer 2011</name>
+        <start>2011-05-15Z</start>
+        <end>2011-08-28Z</end>
+    </term-details>
+    <term-details>
+        <name>Fall 2011-2012</name>
+        <start>2011-08-28Z</start>
+        <end>2011-12-23Z</end>
+    </term-details>
+    <term-details>
+        <name>Winter 2011-2012</name>
+        <start>2011-12-23Z</start>
+        <end>2012-02-12Z</end>
+    </term-details>
+    <term-details>
+        <name>Spring 2011-2012</name>
+        <start>2012-02-12Z</start>
+        <end>2012-05-20Z</end>
+    </term-details>
+    <term-details>
+        <name>Summer 2012</name>
+        <start>2012-05-20Z</start>
+        <end>2012-08-26Z</end>
+    </term-details>
+    <term-details>
+        <name>Fall 2012-2013</name>
+        <start>2012-08-26Z</start>
+        <end>2012-12-23Z</end>
+    </term-details>
+    <term-details>
+        <name>Spring 2012-2013</name>
+        <start>2012-12-23Z</start>
+        <end>2013-05-19Z</end>
+    </term-details>
+    <term-details>
+        <name>Summer 2013</name>
+        <start>2013-05-19Z</start>
+        <end>2013-08-25Z</end>
+    </term-details>
+    <term-details>
+        <name>Fall 2013-2014</name>
+        <start>2013-08-25Z</start>
+        <end>2013-12-22Z</end>
+    </term-details>
+    <term-details>
+        <name>Spring 2013-2014</name>
+        <start>2013-12-22Z</start>
+        <end>2014-05-18Z</end>
+    </term-details>
+    <term-details>
+        <name>Summer 2014</name>
+        <start>2014-05-18Z</start>
+        <end>2014-08-24Z</end>
+    </term-details>
+    <term-details>
+        <name>Fall 2014-2015</name>
+        <start>2014-08-24Z</start>
+        <end>2014-12-21Z</end>
+    </term-details>
+    <term-details>
+        <name>Spring 2014-2015</name>
+        <start>2014-12-21Z</start>
+        <end>2015-05-17Z</end>
+    </term-details>
+    <term-details>
+        <name>Summer 2015</name>
+        <start>2015-05-17Z</start>
+        <end>2015-08-23Z</end>
+    </term-details>
+    <term-details>
+        <name>Fall 2015-2016</name>
+        <start>2015-08-23Z</start>
+        <end>2015-12-24Z</end>
+    </term-details>
+    <term-details>
+        <name>Spring 2015-2016</name>
+        <start>2015-12-24Z</start>
+        <end>2015-12-31Z</end>
+    </term-details>
+</event-aggregation>

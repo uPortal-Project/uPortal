@@ -29,13 +29,17 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
+
 /**
+ * NOT CURRENTLY FUNCTIONAL
+ * 
  * Creates a {@link ThreadPoolExecutor} that uses a {@link QualityOfServiceBlockingQueue} as its queue.
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class QoSThreadPoolExecutorFactoryBean extends DynamicThreadPoolExecutorFactoryBean {
+public class QoSThreadPoolExecutorFactoryBean extends ThreadPoolExecutorFactoryBean {
     private static final long serialVersionUID = 1L;
     
     private Class<? extends QualityOfServiceBlockingQueue<?, Runnable>> qualityOfServiceQueueType;
@@ -67,14 +71,14 @@ public class QoSThreadPoolExecutorFactoryBean extends DynamicThreadPoolExecutorF
         super.afterPropertiesSet();
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.utils.threading.DynamicThreadPoolExecutorFactoryBean#createThreadPoolExecutor(int, int, int, java.util.concurrent.ThreadFactory, java.util.concurrent.RejectedExecutionHandler, java.util.concurrent.BlockingQueue)
-     */
-    @Override
-    protected ThreadPoolExecutor createThreadPoolExecutor(int corePoolSize, int maxPoolSize, int keepAliveSeconds,
-            ThreadFactory threadFactory, RejectedExecutionHandler rejectedExecutionHandler, BlockingQueue<Runnable> queue) {
-        return new QualityOfServiceThreadPoolExecutor(corePoolSize, maxPoolSize, keepAliveSeconds, TimeUnit.SECONDS, queue, threadFactory, rejectedExecutionHandler);
-    }
+//    /* (non-Javadoc)
+//     * @see org.jasig.portal.utils.threading.DynamicThreadPoolExecutorFactoryBean#createThreadPoolExecutor(int, int, int, java.util.concurrent.ThreadFactory, java.util.concurrent.RejectedExecutionHandler, java.util.concurrent.BlockingQueue)
+//     */
+//    @Override
+//    protected ThreadPoolExecutor createThreadPoolExecutor(int corePoolSize, int maxPoolSize, int keepAliveSeconds,
+//            ThreadFactory threadFactory, RejectedExecutionHandler rejectedExecutionHandler, BlockingQueue<Runnable> queue) {
+//        return new QualityOfServiceThreadPoolExecutor(corePoolSize, maxPoolSize, keepAliveSeconds, TimeUnit.SECONDS, queue, threadFactory, rejectedExecutionHandler);
+//    }
 
     /* (non-Javadoc)
      * @see org.jasig.portal.utils.threading.DynamicThreadPoolExecutorFactoryBean#createQueue(int)

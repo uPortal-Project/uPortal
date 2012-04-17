@@ -48,7 +48,7 @@
     xmlns:upMsg="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanMessageHelper"
     xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
     xsi:schemaLocation="
-            https://source.jasig.org/schemas/uportal/layout/portal-url ../../../xsd/layout/portal-url-4.0.xsd"
+            https://source.jasig.org/schemas/uportal/layout/portal-url https://source.jasig.org/schemas/uportal/layout/portal-url-4.0.xsd"
     exclude-result-prefixes="url upAuth upGroup upMsg" 
     version="1.0">
     
@@ -98,6 +98,7 @@
           <!-- ****** PORTAL PAGE BAR TITLE BLOCK ****** -->
         </xsl:otherwise>
       </xsl:choose>
+      <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
       <div id="portalPageBarLinks">
       	<ul class="utilities">
 	      	<xsl:choose>
@@ -114,6 +115,7 @@
 	        </xsl:choose>
         </ul>
       </div>
+      <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
     </div>
   </xsl:template>
   <!-- =============================================== -->
@@ -358,6 +360,7 @@
   <xsl:template name="welcome">  
     <xsl:if test="$AUTHENTICATED='true'"> <!-- Welcome only displays if the user is logged in. -->
       <div id="portalWelcome">
+        <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
         <xsl:choose>
           <xsl:when test="$userImpersonating = 'true'">
             <xsl:value-of select="upMsg:getMessage('you.are.idswapped.as', $USER_LANG)"/>
@@ -367,6 +370,7 @@
           </xsl:otherwise>
         </xsl:choose>
         &#160;<span class="user-name"><xsl:value-of select="$USER_NAME"/></span>
+        <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
       </div>
     </xsl:if>
   </xsl:template>

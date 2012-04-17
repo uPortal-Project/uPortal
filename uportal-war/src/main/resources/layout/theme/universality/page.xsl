@@ -86,6 +86,7 @@
     <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
       <head>
         <title>
+          <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
           <xsl:choose>
             <xsl:when test="//focused">
             	<xsl:value-of select="upMsg:getMessage('portal.name', $USER_LANG)" />: {up-portlet-title(<xsl:value-of select="//focused/channel/@ID" />)}
@@ -94,7 +95,9 @@
                 <xsl:value-of select="upMsg:getMessage('portal.name', $USER_LANG)" />: <xsl:value-of select="/layout/navigation/tab[@activeTab='true']/@name"/>
             </xsl:otherwise>
           </xsl:choose>
+          <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
         </title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <xsl:if test="/layout_fragment">
         	<meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT" />
@@ -116,6 +119,7 @@
             fluid = null;
             fluid_1_4 = null;
         </script>
+        <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
         <xsl:for-each select="/layout/header/channel-header">
         	 <xsl:copy-of select="."/>
         </xsl:for-each>
@@ -241,6 +245,7 @@
       
         <!-- ****** BODY LAYOUT ****** -->
         <div id="portalPageBodyLayout">
+          <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
         	<xsl:attribute name="class"> <!-- Write appropriate FSS class based on use of sidebar and number of columns to produce column layout. -->
           	<xsl:choose>
             	<xsl:when test="$AUTHENTICATED='true'"> <!-- Logged in -->
@@ -387,6 +392,7 @@
             </xsl:otherwise>
           </xsl:choose>
 
+          <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
       	</div> <!-- End portalPageBodyLayout -->
         
     	</div> <!-- End portalPageBodyInner -->

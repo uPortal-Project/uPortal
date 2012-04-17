@@ -34,9 +34,14 @@ import org.jasig.portal.layout.dlm.DistributedUserLayout;
 import org.jasig.portal.layout.dlm.FragmentChannelInfo;
 import org.jasig.portal.layout.dlm.FragmentNodeInfo;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.utils.Tuple;
 import org.w3c.dom.Document;
 
+import com.google.common.cache.Cache;
+
 public interface IUserLayoutStore {
+    
+    public void setLayoutImportExportCache(Cache<Tuple<String, String>, Document> layoutCache);
 
     /**
      * Retrieve a user layout document.
@@ -124,6 +129,11 @@ public interface IUserLayoutStore {
      * @param profileFname profile functional name
      */
     public IUserProfile getUserProfileByFname (IPerson person,String profileFname);
+    
+    /**
+     * Cache used during import/export operations
+     */
+    public void setProfileImportExportCache(Cache<Tuple<String, String>, UserProfile> profileCache);
 
     /** retreive a list of profiles associated with a user
      *

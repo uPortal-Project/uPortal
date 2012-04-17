@@ -30,33 +30,33 @@ import org.jasig.portal.portlet.om.IPortletDefinitionId;
 public class MockPortletDefinitionId implements IPortletDefinitionId {
     private static final long serialVersionUID = 1L;
     
-    private String portletDefinitionId;
+    private Long portletDefinitionId;
     
     public MockPortletDefinitionId() {
-        this.portletDefinitionId = null;
+        this.portletDefinitionId = -1l;
     }
     
-    public MockPortletDefinitionId(String portletDefinitionId) {
+    public MockPortletDefinitionId(long portletDefinitionId) {
         this.portletDefinitionId = portletDefinitionId;
+    }
+    
+    @Override
+    public long getLongId() {
+        return portletDefinitionId;
     }
 
     /* (non-Javadoc)
      * @see org.apache.pluto.PortletDefinitionID#getStringId()
      */
     public String getStringId() {
-        return this.portletDefinitionId;
+        return this.portletDefinitionId.toString();
     }
-    /**
-     * @return the portletDefinitionId
-     */
-    public String getPortletDefinitionId() {
+
+    public Long getPortletDefinitionId() {
         return portletDefinitionId;
     }
 
-    /**
-     * @param portletDefinitionId the portletDefinitionId to set
-     */
-    public void setPortletDefinitionId(String portletDefinitionId) {
+    public void setPortletDefinitionId(Long portletDefinitionId) {
         this.portletDefinitionId = portletDefinitionId;
     }
 

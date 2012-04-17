@@ -38,15 +38,21 @@
         <property name="beans">
             <map>
                 <entry key="uPortal:section=Framework,name=Statistics" value-ref="portalFrameworkMBean" />
-                <entry key="uPortal:section=Framework,name=RequestCacheStatistics" value-ref="requestCacheAspect" />
                 <entry key="uPortal:section=Framework,name=uPortalTaskExecutor" value-ref="uPortalTaskExecutor" />
                 <entry key="uPortal:section=Framework,name=uPortalTaskScheduler" value-ref="uPortalTaskScheduler" />
                 <entry key="uPortal:section=Framework,name=uPortalLockExecutor" value-ref="uPortalLockExecutor" />
                 <entry key="uPortal:section=Framework,name=PortletThreadPool" value-ref="portletThreadPool" />
-                <entry key="uPortal:section=Persistence,name=HibernateStatistics" value-ref="hibernateStatisticsMBean"/>
-                <entry key="uPortal:section=Persistence,name=RawEventsHibernateStatistics" value-ref="rawEventsHibernateStatisticsMBean"/>
-                <entry key="uPortal:section=Persistence,name=AggrEventsHibernateStatistics" value-ref="aggrEventsHibernateStatisticsMBean"/>
-                <entry key="uPortal:section=Persistence,name=PortalDB" value-ref="PortalDb"/>
+                
+                <entry key="uPortal:section=Cache,name=RequestCacheStatistics" value-ref="requestCacheAspect" />
+                <entry key="uPortal:section=Cache,name=CharacterDataEventCacheStats" value-ref="characterDataEventCacheStatsBean" />
+                
+                <entry key="uPortal:section=Hibernate,name=HibernateStatistics" value-ref="hibernateStatisticsMBean"/>
+                <entry key="uPortal:section=Hibernate,name=RawEventsHibernateStatistics" value-ref="rawEventsHibernateStatisticsMBean"/>
+                <entry key="uPortal:section=Hibernate,name=AggrEventsHibernateStatistics" value-ref="aggrEventsHibernateStatisticsMBean"/>
+                
+                <entry key="uPortal:section=DataSource,name=PortalDB" value-ref="PortalDb"/>
+                <entry key="uPortal:section=DataSource,name=RawEventsDB" value-ref="RawEventsDB"/>
+                <entry key="uPortal:section=DataSource,name=AggrEventsDB" value-ref="AggrEventsDB"/>
             </map>
         </property>
     </bean>
@@ -54,7 +60,9 @@
     <bean id="mbeanInfoAssembler" class="org.springframework.jmx.export.assembler.MethodExclusionMBeanInfoAssembler">
         <property name="ignoredMethodMappings">
             <props>
-                <prop key="uPortal:section=Persistence,name=PortalDB">getConnection,getLogWriter,setLogWriter</prop>
+                <prop key="uPortal:section=DataSource,name=PortalDB">getConnection,getLogWriter,setLogWriter</prop>
+                <prop key="uPortal:section=DataSource,name=RawEventsDB">getConnection,getLogWriter,setLogWriter</prop>
+                <prop key="uPortal:section=DataSource,name=AggrEventsDB">getConnection,getLogWriter,setLogWriter</prop>
             </props>
         </property>
     </bean>
@@ -94,6 +102,8 @@
 
     <!-- uPortal framework statistics -->
     <bean id="portalFrameworkMBean" class="org.jasig.portal.jmx.FrameworkMBeanImpl" />
+    
+    <bean id="characterDataEventCacheStatsBean" class="org.jasig.portal.character.stream.events.CharacterDataEventCacheStatsBean" />
 
     <!-- EhCache management and statistics -->
     <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">

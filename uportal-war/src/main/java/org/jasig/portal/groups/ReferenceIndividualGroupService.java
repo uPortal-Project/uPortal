@@ -239,7 +239,7 @@ public IEntityGroup findGroup(String key) throws GroupsException
 public IEntityGroup findGroup(CompositeEntityIdentifier ent) throws GroupsException
 {
     return ( cacheInUse() )
-      ? findGroupWithCache(ent.getKey())
+      ? findGroupWithCache(ent)
       : primFindGroup(ent.getLocalKey());
 }
 

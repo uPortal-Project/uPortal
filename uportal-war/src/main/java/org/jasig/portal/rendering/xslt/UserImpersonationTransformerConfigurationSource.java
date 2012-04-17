@@ -19,7 +19,6 @@
 
 package org.jasig.portal.rendering.xslt;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
@@ -52,8 +51,9 @@ public class UserImpersonationTransformerConfigurationSource implements Transfor
     
     @Override
     public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
-        final Map<String, Object> parameters = this.getParameters(request, response);
-        return new CacheKey("UserImpersonationTransformerConfigurationSource", (Serializable)parameters);
+        final boolean impersonating = this.personManager.isImpersonating(request);
+        
+        return CacheKey.build(UserImpersonationTransformerConfigurationSource.class.getName(), userImpersonatingParameter, impersonating);
     }
 
     @Override

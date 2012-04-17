@@ -22,6 +22,10 @@ package org.jasig.portal.portlet.dao.jpa;
 import org.jasig.portal.portlet.om.AbstractObjectId;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+
 /**
  * Identifies a portlet definition
  * 
@@ -30,11 +34,30 @@ import org.jasig.portal.portlet.om.IPortletDefinitionId;
  */
 class PortletDefinitionIdImpl extends AbstractObjectId implements IPortletDefinitionId {
     private static final long serialVersionUID = 1L;
+    
+    private static final LoadingCache<Long, IPortletDefinitionId> ID_CACHE = CacheBuilder.newBuilder()
+            .maximumSize(1000)
+            .softValues()
+            .build(new CacheLoader<Long, IPortletDefinitionId>() {
+                @Override
+                public IPortletDefinitionId load(Long key) throws Exception {
+                    return new PortletDefinitionIdImpl(key);
+                }
+            });
+    
+    public static IPortletDefinitionId create(long portletDefinitionId) {
+        return ID_CACHE.getUnchecked(portletDefinitionId);
+    }
 
-    /**
-     * @param objectId
-     */
-    public PortletDefinitionIdImpl(long portletDefinitionId) {
-        super(Long.toString(portletDefinitionId));
+    private final long longId;
+    
+    private PortletDefinitionIdImpl(Long portletDefinitionId) {
+        super(portletDefinitionId.toString());
+        this.longId = portletDefinitionId;
+    }
+
+    @Override
+    public long getLongId() {
+        return this.longId;
     }
 }

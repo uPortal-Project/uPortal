@@ -33,5 +33,7 @@
     <bean class="org.springframework.web.portlet.mvc.annotation.DefaultAnnotationHandlerMapping">
         <property name="interceptors"><bean class="org.jasig.portal.portlets.MinimizedStateHandlerInterceptor"/></property>
     </bean>
+    
+    <bean parent="primaryPropertyPlaceholderConfigurer" />
 
 </beans>

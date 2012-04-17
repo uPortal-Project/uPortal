@@ -346,7 +346,7 @@ public class FileSystemGroupsTest {
         con.close();
 
         // initialize EntityTypes
-        EntityTypes.singleton(this.testDataSource);
+//        EntityTypes.singleton(this.testDataSource);
 
         //  print("Leaving FileSystemGroupsTest.setUp()" + CR);
 

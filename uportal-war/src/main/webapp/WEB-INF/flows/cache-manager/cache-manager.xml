@@ -46,19 +46,17 @@
     </view-state>
     
     <view-state id="confirm-flush">
-        <transition to="finishCacheManager" on="confirm">
+        <transition to="cache-list" on="confirm">
             <evaluate expression="cacheManagementHelper.clearCache(flowScope.cacheName)"/>
         </transition>
         <transition to="cache-statistics" on="cancel"/>
     </view-state>
     
     <view-state id="confirm-flush-all">
-        <transition to="finishCacheManager" on="confirm">
+        <transition to="cache-list" on="confirm">
             <evaluate expression="cacheManagementHelper.clearAllCaches()"/>
         </transition>
         <transition to="cache-list" on="cancel"/>
     </view-state>
-    
-    <end-state id="finishCacheManager" />
     
 </flow>

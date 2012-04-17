@@ -24,11 +24,11 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -54,6 +54,7 @@ import org.dom4j.io.DOMWriter;
 import org.dom4j.io.DocumentSource;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
+import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.IUserProfile;
@@ -84,6 +85,8 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.BrokenSecurityContext;
 import org.jasig.portal.security.provider.PersonImpl;
 import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.MapPopulator;
+import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.xml.XmlUtilities;
 import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.jasig.portal.xml.xpath.XPathOperations;
@@ -99,6 +102,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import com.google.common.cache.Cache;
 
 /**
  * This class extends RDBMUserLayoutStore and implements instantiating and
@@ -134,8 +139,18 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
     // Used in Import/Export operations
     private final org.dom4j.DocumentFactory fac = new org.dom4j.DocumentFactory();
-    private final DOMReader reader = new DOMReader();
-    private final DOMWriter writer = new DOMWriter();
+    private final ThreadLocal<DOMReader> reader = new ThreadLocal<DOMReader>() {
+        @Override
+        protected DOMReader initialValue() {
+            return new DOMReader();
+        }
+    };
+    private final ThreadLocal<DOMWriter> writer = new ThreadLocal<DOMWriter>() {
+        @Override
+        protected DOMWriter initialValue() {
+            return new DOMWriter();
+        }
+    };
     private IUserIdentityStore userIdentityStore;
     private IStylesheetUserPreferencesDao stylesheetUserPreferencesDao;
     private XPathOperations xPathOperations;
@@ -286,31 +301,32 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             boolean modified = false;
 
             //Copy all of the fragment preferences into the distributed preferences
-            final Map<String, Map<String, String>> allLayoutAttributes = fragmentStylesheetUserPreferences
-                    .populateAllLayoutAttributes(new LinkedHashMap<String, Map<String, String>>());
-
-            for (final Map.Entry<String, Map<String, String>> layoutNodeAttributesEntry : allLayoutAttributes
-                    .entrySet()) {
-                String nodeId = layoutNodeAttributesEntry.getKey();
-
-                if (!nodeId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX)) {
-                    nodeId = labelBase + nodeId;
+            final Collection<String> allLayoutAttributeNodeIds = fragmentStylesheetUserPreferences.getAllLayoutAttributeNodeIds();
+            for (final String fragmentNodeId : allLayoutAttributeNodeIds) {
+                final String userNodeId;
+                if (!fragmentNodeId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX)) {
+                    userNodeId = labelBase + fragmentNodeId;
+                }
+                else {
+                    userNodeId = fragmentNodeId;
                 }
 
-                final Map<String, String> layoutAttributes = layoutNodeAttributesEntry.getValue();
+                final MapPopulator<String, String> layoutAttributesPopulator = new MapPopulator<String, String>();
+                fragmentStylesheetUserPreferences.populateLayoutAttributes(fragmentNodeId, layoutAttributesPopulator);
+                final Map<String, String> layoutAttributes = layoutAttributesPopulator.getMap();
                 for (final Map.Entry<String, String> layoutAttributesEntry : layoutAttributes.entrySet()) {
                     final String name = layoutAttributesEntry.getKey();
                     final String value = layoutAttributesEntry.getValue();
 
                     //Fragmentize the nodeId here
-                    distributedStylesheetUserPreferences.setLayoutAttribute(nodeId, name, value);
+                    distributedStylesheetUserPreferences.setLayoutAttribute(userNodeId, name, value);
 
                     //Clean out user preferences data that matches data from the fragment.
                     if (stylesheetUserPreferences != null) {
-                        final String userValue = stylesheetUserPreferences.getLayoutAttribute(nodeId, name);
+                        final String userValue = stylesheetUserPreferences.getLayoutAttribute(userNodeId, name);
                         if (userValue != null && userValue.equals(value)) {
-                            stylesheetUserPreferences.removeLayoutAttribute(nodeId, name);
-                            EditManager.removePreferenceDirective(person, nodeId, name);
+                            stylesheetUserPreferences.removeLayoutAttribute(userNodeId, name);
+                            EditManager.removePreferenceDirective(person, userNodeId, name);
                             modified = true;
                         }
                     }
@@ -439,7 +455,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         try {
             final Document layoutDom = this._safeGetUserLayout(person, profile);
             person.setAttribute(Constants.PLF, layoutDom);
-            layoutDoc = this.reader.read(layoutDom);
+            layoutDoc = this.reader.get().read(layoutDom);
         }
         catch (final Throwable t) {
             final String msg = "Unable to obtain layout & profile for user '" + person.getUserName() + "', profileId "
@@ -649,18 +665,21 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 .getStylesheetUserPreferences(structureStylesheetDescriptor, person, profile);
 
         if (ssup != null) {
-            final Map<String, Map<String, String>> allLayoutAttributes = ssup.populateAllLayoutAttributes(new LinkedHashMap<String, Map<String,String>>());
-            for (final Entry<String, Map<String, String>> nodeEntry : allLayoutAttributes.entrySet()) {
-                final String nodeId = nodeEntry.getKey();
-                final Map<String, String> attributes = nodeEntry.getValue();
+            final Collection<String> allLayoutAttributeNodeIds = ssup.getAllLayoutAttributeNodeIds();
+            for (final String nodeId : allLayoutAttributeNodeIds) {
+                
+                final MapPopulator<String, String> layoutAttributesPopulator = new MapPopulator<String, String>();
+                ssup.populateLayoutAttributes(nodeId, layoutAttributesPopulator);
+                final Map<String, String> layoutAttributes = layoutAttributesPopulator.getMap();
+                
 
                 final org.dom4j.Element element = layoutDoc.elementByID(nodeId);
                 if (element == null) {
-                    this.log.warn("No node with id '" + nodeId + "' found in layout for: " + person.getUserName() + ". Stylesheet user preference layout attributes will be ignored: " + attributes);
+                    this.log.warn("No node with id '" + nodeId + "' found in layout for: " + person.getUserName() + ". Stylesheet user preference layout attributes will be ignored: " + layoutAttributes);
                     continue;
                 }
 
-                for (final Entry<String, String> attributeEntry : attributes.entrySet()) {
+                for (final Entry<String, String> attributeEntry : layoutAttributes.entrySet()) {
                     final String name = attributeEntry.getKey();
                     final String value = attributeEntry.getValue();
 
@@ -723,16 +742,22 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         final IPerson person = new PersonImpl();
         person.setUserName(ownerUsername);
 
-        final int ownerId;
+        int ownerId;
         try {
-            ownerId = this.userIdentityStore.getPortalUID(person, !this.errorOnMissingUser);
+            //Can't just pass true for create here, if the user actually exists the create flag also updates the user data
+            ownerId = this.userIdentityStore.getPortalUID(person);
         }
-        catch (final Throwable t) {
-            throw new RuntimeException("Unrecognized user " + person.getUserName() + "; you must import users before their layouts.", t);
+        catch (final AuthorizationException t) {
+            if (this.errorOnMissingUser) {
+                throw new RuntimeException("Unrecognized user " + person.getUserName() + "; you must import users before their layouts or set org.jasig.portal.io.layout.errorOnMissingUser to false.", t);
+            }
+            
+            //Create the missing user
+            ownerId = this.userIdentityStore.getPortalUID(person, true);
         }
         
         if (ownerId == -1) {
-            throw new RuntimeException("Unrecognized user " + person.getUserName() + "; you must import users before their layouts.");
+            throw new RuntimeException("Unrecognized user " + person.getUserName() + "; you must import users before their layouts or set org.jasig.portal.io.layout.errorOnMissingUser to false.");
         }
         person.setID(ownerId);
 
@@ -852,7 +877,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             final org.dom4j.Element copy = layout.createCopy();
             final org.dom4j.Document doc = this.fac.createDocument(copy);
             doc.normalize();
-            layoutDom = this.writer.write(doc);
+            layoutDom = this.writer.get().write(doc);
             person.setAttribute(Constants.PLF, layoutDom);
 
         }
@@ -1054,6 +1079,19 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
     }
 
+    private final ThreadLocal<Cache<Tuple<String, String>, Document>> layoutCacheHolder = new ThreadLocal<Cache<Tuple<String, String>, Document>>();
+    public void setLayoutImportExportCache(Cache<Tuple<String, String>, Document> layoutCache) {
+        if (layoutCache == null) {
+            layoutCacheHolder.remove();
+        }
+        else {
+            this.layoutCacheHolder.set(layoutCache);
+        }
+    }
+    public Cache<Tuple<String, String>, Document> getLayoutImportExportCache() {
+        return layoutCacheHolder.get();
+    }
+
     /**
      * Handles locking and identifying proper root and namespaces that used to
      * take place in super class.
@@ -1066,9 +1104,26 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     private Document _safeGetUserLayout(IPerson person, IUserProfile profile)
 
     {
-        final Document layoutDoc = super.getPersonalUserLayout(person, profile);
-        final Element layout = layoutDoc.getDocumentElement();
+        Document layoutDoc;
+        Tuple<String, String> key = null;
+            
+        final Cache<Tuple<String, String>, Document> layoutCache = getLayoutImportExportCache();
+        if (layoutCache != null) {
+            key = new Tuple<String, String>(person.getUserName(), profile.getProfileFname());
+            layoutDoc = layoutCache.getIfPresent(key);
+            if (layoutDoc != null) {
+                return (Document)layoutDoc.cloneNode(true);
+            }
+        }
+        
+        layoutDoc = super.getPersonalUserLayout(person, profile);
+        Element layout = layoutDoc.getDocumentElement();
         layout.setAttribute(Constants.NS_DECL, Constants.NS_URI);
+        
+        if (layoutCache != null && key != null) {
+            layoutCache.put(key, (Document)layoutDoc.cloneNode(true));
+        }
+        
         return layoutDoc;
     }
 
@@ -1164,11 +1219,9 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
         root.setAttribute(Constants.ATT_ID, Constants.FRAGMENT_ID_USER_PREFIX + userView.getUserId()
                 + Constants.FRAGMENT_ID_LAYOUT_PREFIX + "1");
-        final UserView view = new UserView(userView.getUserId(), profile, layout);
         try {
             activator.clearChacheForOwner(fragment.getOwnerId());
-            activator.fragmentizeLayout(view, fragment);
-            activator.setUserView(fragment.getOwnerId(), locale, view);
+            activator.getUserView(fragment, locale);
         }
         catch (final Exception e) {
             LOG.error("An exception occurred attempting to update a layout.", e);
@@ -1242,18 +1295,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     */
     private FragmentDefinition getOwnedFragment(IPerson person) {
         final String userName = person.getUserName();
-
-        final FragmentActivator activator = this.getFragmentActivator();
-
-        final List<FragmentDefinition> definitions = this.configurationLoader.getFragments();
-        if (definitions != null) {
-            for (final FragmentDefinition fragmentDefinition : definitions) {
-                if (userName.equals(fragmentDefinition.getOwnerId())) {
-                    return fragmentDefinition;
-                }
-            }
-        }
-        return null;
+        return  this.configurationLoader.getFragmentByOwnerId(userName);
     }
 
     /**
@@ -1654,7 +1696,17 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         int nextStructId = 0;
         int childStructId = 0;
         int chanId = -1;
+        IPortletDefinition portletDef = null;
         final boolean isChannel = node.getNodeName().equals("channel");
+        
+        if (isChannel) {
+            chanId = Integer.parseInt(node.getAttributes().getNamedItem("chanID").getNodeValue());
+            portletDef = this.portletDefinitionRegistry.getPortletDefinition(String.valueOf(chanId));
+            if (portletDef == null) {
+                //Portlet doesn't exist any more, drop the layout node
+                return 0;
+            }
+        }
 
         if (node.hasChildNodes()) {
             childStructId = this.saveStructure(node.getFirstChild(), structStmt, parmStmt);
@@ -1675,7 +1727,6 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
         }
         if (isChannel) {
-            chanId = Integer.parseInt(node.getAttributes().getNamedItem("chanID").getNodeValue());
             structStmt.setInt(5, chanId);
             structStmt.setNull(6, java.sql.Types.VARCHAR);
         }
@@ -1714,8 +1765,6 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         }
         final NodeList parameters = node.getChildNodes();
         if (parameters != null && isChannel) {
-            final IPortletDefinition channelDef = this.portletDefinitionRegistry.getPortletDefinition(String
-                    .valueOf(chanId));
             for (int i = 0; i < parameters.getLength(); i++) {
                 if (parameters.item(i).getNodeName().equals("parameter")) {
                     final Element parmElement = (Element) parameters.item(i);
@@ -1730,7 +1779,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                     }
                     else {
                         // override only for adhoc or if diff from chan def
-                        final IPortletDefinitionParameter cp = channelDef.getParameter(parmName);
+                        final IPortletDefinitionParameter cp = portletDef.getParameter(parmName);
                         if (cp == null || !cp.getValue().equals(parmValue)) {
                             parmStmt.clearParameters();
                             parmStmt.setInt(1, saveStructId);
@@ -2094,11 +2143,19 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     }
 
     private static final class MissingPortletDefinitionId implements IPortletDefinitionId {
+        private static final long serialVersionUID = 1L;
+        
+        private final long id = -1;
+        private final String strId = Long.toString(id);
 
         public String getStringId() {
-            return "-1";
+            return strId;
         }
 
+        @Override
+        public long getLongId() {
+            return id;
+        }
     }
 
     private static final class MissingPortletType implements IPortletType {

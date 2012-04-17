@@ -19,8 +19,10 @@
 
 package org.jasig.portal.portlet.registry;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -48,10 +50,14 @@ import org.jasig.portal.portlet.dao.IPortletEntityDao;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
+import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
+import org.jasig.portal.portlet.om.IPortletDescriptorKey;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletPreference;
+import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.portlet.om.PortletLifecycleState;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;
@@ -90,6 +96,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     static final String PORTLET_ENTITY_DATA_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY_DATA";
     static final String PORTLET_ENTITY_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY.thread-";
     static final String PORTLET_ENTITY_LOCK_MAP_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY_LOCK_MAP_ATTRIBUTE";
+    static final String PORTLET_DEFINITION_LOOKUP_MAP_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_DEFINITION_LOOKUP_MAP_ATTRIBUTE";
     
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
@@ -190,7 +197,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         
         final String channelPublishId = channelNode.getChannelPublishId();
         
-        final IPortletDefinition portletDefinition = this.getPortletDefinition(userInstance, channelPublishId);
+        final IPortletDefinition portletDefinition = this.getPortletDefinition(request, userInstance, channelPublishId);
 
         if (portletDefinition != null) {
         	final IPerson person = userInstance.getPerson();
@@ -400,7 +407,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     
     protected IPortletDefinition getPortletDefinition(HttpServletRequest request, String portletDefinitionIdStr) {
     	final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
-    	return this.getPortletDefinition(userInstance, portletDefinitionIdStr);
+    	return this.getPortletDefinition(request, userInstance, portletDefinitionIdStr);
     }
     
     protected IPortletDefinition getPortletDefinition(HttpServletRequest request, IPortletDefinitionId portletDefinitionId) {
@@ -408,9 +415,29 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     	return this.getPortletDefinition(userInstance, portletDefinitionId);
     }
     
-    protected IPortletDefinition getPortletDefinition(IUserInstance userInstance, String portletDefinitionIdStr) {
-    	final IPortletDefinition portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionIdStr);
-    	return checkPortletDefinitionRenderPermissions(userInstance, portletDefinition);
+    protected IPortletDefinition getPortletDefinition(HttpServletRequest request, IUserInstance userInstance, String portletDefinitionIdStr) {
+        request = this.portalRequestUtils.getOriginalPortalRequest(request);
+        
+        final ConcurrentMap<String, IPortletDefinition> portletDefinitions = PortalWebUtils.getMapRequestAttribute(request, PORTLET_DEFINITION_LOOKUP_MAP_ATTRIBUTE);
+        
+        IPortletDefinition portletDefinition  = portletDefinitions.get(portletDefinitionIdStr);
+        if (portletDefinition == NO_PERMISSION_PORTLET_DEFINITION) {
+            return null;
+        }
+        if (portletDefinition != null) {
+            return portletDefinition;
+        }
+        
+    	portletDefinition = this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionIdStr);
+    	portletDefinition = checkPortletDefinitionRenderPermissions(userInstance, portletDefinition);
+    	if (portletDefinition == null) {
+    	    portletDefinitions.put(portletDefinitionIdStr, NO_PERMISSION_PORTLET_DEFINITION);
+    	}
+    	else {
+    	    portletDefinitions.put(portletDefinitionIdStr, portletDefinition);
+    	}
+    	
+    	return portletDefinition;
     }
     
     protected IPortletDefinition getPortletDefinition(IUserInstance userInstance, IPortletDefinitionId portletDefinitionId) {
@@ -734,4 +761,205 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         final List<IPortletPreference> preferences = portletEntity.getPortletPreferences();
         return CollectionUtils.isNotEmpty(preferences) || !portletEntity.getWindowStates().isEmpty();
     }
+    
+    private static final IPortletDefinition NO_PERMISSION_PORTLET_DEFINITION = new IPortletDefinition() {
+        @Override
+        public String getDataTitle() {
+            return null;
+        }
+        @Override
+        public String getDataId() {
+            return null;
+        }
+        @Override
+        public String getDataDescription() {
+            return null;
+        }
+        @Override
+        public void setType(IPortletType channelType) {
+        }
+        @Override
+        public void setTitle(String title) {
+        }
+        @Override
+        public void setTimeout(int timeout) {
+        }
+        @Override
+        public void setResourceTimeout(Integer resourceTimeout) {
+        }
+        @Override
+        public void setRenderTimeout(Integer renderTimeout) {
+        }
+        @Override
+        public void setPublisherId(int publisherId) {
+        }
+        @Override
+        public void setPublishDate(Date publishDate) {
+        }
+        @Override
+        public void setPortletPreferences(List<IPortletPreference> portletPreferences) {
+        }
+        @Override
+        public void setParameters(Set<IPortletDefinitionParameter> parameters) {
+        }
+        @Override
+        public void setName(String name) {
+        }
+        @Override
+        public void setFName(String fname) {
+        }
+        @Override
+        public void setExpirerId(int expirerId) {
+        }
+        @Override
+        public void setExpirationDate(Date expirationDate) {
+        }
+        @Override
+        public void setEventTimeout(Integer eventTimeout) {
+        }
+        @Override
+        public void setDescription(String descr) {
+        }
+        @Override
+        public void setApproverId(int approvalId) {
+        }
+        @Override
+        public void setApprovalDate(Date approvalDate) {
+        }
+        @Override
+        public void setActionTimeout(Integer actionTimeout) {
+        }
+        @Override
+        public void removeParameter(String name) {
+        }
+        @Override
+        public void removeParameter(IPortletDefinitionParameter parameter) {
+        }
+        @Override
+        public IPortletType getType() {
+            return null;
+        }
+        @Override
+        public String getTitle(String locale) {
+            return null;
+        }
+        @Override
+        public String getTitle() {
+            return null;
+        }
+        @Override
+        public int getTimeout() {
+            return 0;
+        }
+        @Override
+        public Integer getResourceTimeout() {
+            return null;
+        }
+        @Override
+        public Integer getRenderTimeout() {
+            return null;
+        }
+        @Override
+        public int getPublisherId() {
+            return 0;
+        }
+        @Override
+        public Date getPublishDate() {
+            return null;
+        }
+        @Override
+        public List<IPortletPreference> getPortletPreferences() {
+            return null;
+        }
+        @Override
+        public IPortletDescriptorKey getPortletDescriptorKey() {
+            return null;
+        }
+        @Override
+        public IPortletDefinitionId getPortletDefinitionId() {
+            return null;
+        }
+        @Override
+        public Map<String, IPortletDefinitionParameter> getParametersAsUnmodifiableMap() {
+            return null;
+        }
+        @Override
+        public Set<IPortletDefinitionParameter> getParameters() {
+            return null;
+        }
+        @Override
+        public IPortletDefinitionParameter getParameter(String key) {
+            return null;
+        }
+        @Override
+        public String getName(String locale) {
+            return null;
+        }
+        @Override
+        public String getName() {
+            return null;
+        }
+        @Override
+        public PortletLifecycleState getLifecycleState() {
+            return null;
+        }
+        @Override
+        public String getFName() {
+            return null;
+        }
+        @Override
+        public int getExpirerId() {
+            return 0;
+        }
+        @Override
+        public Date getExpirationDate() {
+            return null;
+        }
+        @Override
+        public Integer getEventTimeout() {
+            return null;
+        }
+        @Override
+        public EntityIdentifier getEntityIdentifier() {
+            return null;
+        }
+        @Override
+        public String getDescription(String locale) {
+            return null;
+        }
+        @Override
+        public String getDescription() {
+            return null;
+        }
+        @Override
+        public int getApproverId() {
+            return 0;
+        }
+        @Override
+        public Date getApprovalDate() {
+            return null;
+        }
+        @Override
+        public Integer getActionTimeout() {
+            return null;
+        }
+        @Override
+        public void clearParameters() {
+        }
+        @Override
+        public void addParameter(String name, String value) {
+        }
+        @Override
+        public void addParameter(IPortletDefinitionParameter parameter) {
+        }
+        @Override
+        public void addLocalizedTitle(String locale, String chanTitle) {
+        }
+        @Override
+        public void addLocalizedName(String locale, String chanName) {
+        }
+        @Override
+        public void addLocalizedDescription(String locale, String chanDesc) {
+        }
+    };
 }

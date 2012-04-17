@@ -86,7 +86,7 @@ public class StaticTransformerConfigurationSource implements TransformerConfigur
     public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
         final LinkedHashMap<String, Object> transformerParameters = this.getParameters(request, response);
         transformerParameters.keySet().removeAll(this.cacheKeyExcludedParameters);
-        return new CacheKey("StaticTransformerConfigurationSource", this.outputProperties, transformerParameters);
+        return CacheKey.build(this.getClass().getName(), this.outputProperties, transformerParameters);
     }
 
     @Override

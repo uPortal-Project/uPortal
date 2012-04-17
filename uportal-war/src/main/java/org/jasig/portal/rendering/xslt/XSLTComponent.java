@@ -186,6 +186,6 @@ public class XSLTComponent extends StAXPipelineComponentWrapper implements BeanN
             transformerConfigurationKey = null;
         }
         
-        return new CacheKey(this.beanName, parentCacheKey, transformerKey, transformerConfigurationKey);
+        return CacheKey.build(this.beanName, parentCacheKey, transformerKey, transformerConfigurationKey);
     }
 }

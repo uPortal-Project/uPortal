@@ -20,11 +20,56 @@ package org.jasig.portal.json.rendering;
 
 import org.jasig.portal.character.stream.events.CharacterEventTypes;
 
-public class JsonLayoutPlaceholderEventImpl implements JsonLayoutPlaceholderEvent {
+public final class JsonLayoutPlaceholderEventImpl implements JsonLayoutPlaceholderEvent {
+    private static final long serialVersionUID = 1L;
+    
+    public static final JsonLayoutPlaceholderEvent INSTANCE = new JsonLayoutPlaceholderEventImpl();
+    
+    private final int hash = internalHashCode();
+    
+    private JsonLayoutPlaceholderEventImpl() {
+    }
 
     @Override
     public CharacterEventTypes getEventType() {
         return CharacterEventTypes.JSON_LAYOUT;
+    }
+
+    @Override
+    public String toString() {
+        return "JsonLayoutPlaceholderEvent";
+    }
+
+    @Override
+    public int hashCode() {
+        return hash;
+    }
+    
+    private int internalHashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + getEventType().hashCode();
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof JsonLayoutPlaceholderEvent))
+            return false;
+        JsonLayoutPlaceholderEvent other = (JsonLayoutPlaceholderEvent) obj;
+        
+        if (getEventType() == null) {
+            if (other.getEventType() != null)
+                return false;
+        }
+        else if (!getEventType().equals(other.getEventType()))
+            return false;
+        
+        return true;
     }
 
 }

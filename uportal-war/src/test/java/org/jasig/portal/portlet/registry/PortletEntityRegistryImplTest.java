@@ -90,7 +90,7 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
 		}
 
 		@Override
-		protected IPortletDefinition getPortletDefinition(IUserInstance userInstance, String portletDefinitionIdStr) {
+		protected IPortletDefinition getPortletDefinition(HttpServletRequest request, IUserInstance userInstance, String portletDefinitionIdStr) {
 			//Can't unit test authZ code so this is a stand in
 			return jpaPortletDefinitionDao.getPortletDefinition(portletDefinitionIdStr);
 		}

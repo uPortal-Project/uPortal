@@ -19,13 +19,9 @@
 
 package org.jasig.portal.rendering;
 
-import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 import javax.portlet.PortletMode;
@@ -43,6 +39,7 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.utils.cache.CacheKey;
+import org.jasig.portal.utils.cache.CacheKey.CacheKeyBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanNameAware;
@@ -111,20 +108,19 @@ public class PortletWindowAttributeSource implements AttributeSource, BeanNameAw
     public final CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
         final Set<IPortletWindow> portletWindows = this.portletWindowRegistry.getAllLayoutPortletWindows(request);
 
-        final LinkedHashSet<List<Serializable>> cacheKey = new LinkedHashSet<List<Serializable>>(portletWindows.size());
+        final CacheKeyBuilder cacheKeyBuilder = CacheKey.builder(this.name);
         
         for (final IPortletWindow portletWindow : portletWindows) {
         	if(portletWindow != null) {
         		final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
         		final WindowState windowState = portletWindow.getWindowState();
         		final PortletMode portletMode = portletWindow.getPortletMode();
-        		final List<Serializable> portletWindowKey = Arrays.asList(portletWindowId, windowState.toString(), portletMode.toString());
-        		cacheKey.add(portletWindowKey);
+        		cacheKeyBuilder.addAll(portletWindowId, windowState.toString(), portletMode.toString());
         	} else {
         		this.logger.warn("portletWindowRegistry#getAllLayoutPortletWindows() returned a null portletWindow"); 
         	}
         }
         
-        return new CacheKey(this.name, cacheKey);
+        return cacheKeyBuilder.build();
     }
 }

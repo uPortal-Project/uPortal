@@ -173,6 +173,9 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
         
         // get the set of people matching the search query
         final Set<IPersonAttributes> people = this.personAttributeDao.getPeople(inUseQuery);
+        if (people == null) {
+            return Collections.emptyList();
+        }
 
         // for each returned match, check to see if the current user has 
         // permissions to view this user

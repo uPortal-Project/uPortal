@@ -134,7 +134,7 @@ public final class NodeReferenceFactory {
             return null;
         }
         
-        final Tuple<String, DistributedUserLayout> userLayoutInfo = getUserLayoutTuple(layoutOwnerUserId);
+        final Tuple<String, DistributedUserLayout> userLayoutInfo = getUserLayoutTuple(layoutOwnerName, layoutOwnerUserId);
         final Document userLayout = userLayoutInfo.second.getLayout();
         
         final Node targetNode = this.xPathOperations.evaluate(layoutPath, userLayout, XPathConstants.NODE);
@@ -205,10 +205,11 @@ public final class NodeReferenceFactory {
 
         final Matcher dlmNodeMatcher = DLM_NODE_PATTERN.matcher(dlmNoderef);
         if (dlmNodeMatcher.matches()) {
-            final String userId = dlmNodeMatcher.group(1);
+            final int userId = Integer.valueOf(dlmNodeMatcher.group(1));
             final String nodeId = dlmNodeMatcher.group(2);
 
-            final Tuple<String, DistributedUserLayout> userLayoutInfo = getUserLayoutTuple(Integer.valueOf(userId));
+            final String userName = this.userIdentityStore.getPortalUserName(userId);
+            final Tuple<String, DistributedUserLayout> userLayoutInfo = getUserLayoutTuple(userName, userId);
             
             if (userLayoutInfo.second == null) {
                 this.log.warn("no layout for fragment user '" + userLayoutInfo.first 
@@ -274,8 +275,7 @@ public final class NodeReferenceFactory {
      * @param userId
      * @return
      */
-    /* TODO:  make private */ Tuple<String, DistributedUserLayout> getUserLayoutTuple(int userId) {
-        final String userName = userIdentityStore.getPortalUserName(userId);
+    /* TODO:  make private */ Tuple<String, DistributedUserLayout> getUserLayoutTuple(String userName, int userId) {
         
         final PersonImpl person = new PersonImpl();
         person.setUserName(userName);

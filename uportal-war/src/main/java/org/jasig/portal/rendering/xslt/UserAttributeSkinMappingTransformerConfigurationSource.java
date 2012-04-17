@@ -43,6 +43,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class UserAttributeSkinMappingTransformerConfigurationSource extends SkinMappingTransformerConfigurationSource {
     private IUserInstanceManager userInstanceManager;
     private IPersonAttributeDao personAttributeDao;
+
     private String skinAttributeName = "skinOverride";
     private Map<Pattern, String> attributeToSkinMap = Collections.emptyMap();
     

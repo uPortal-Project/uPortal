@@ -40,4 +40,8 @@
         <name>iconUrl</name>
         <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/apps/preferences-system-windows.png</value>
     </parameter>
+    <parameter>
+        <name>role</name>
+        <value>footerNav</value>
+    </parameter>
 </portlet-definition>

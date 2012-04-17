@@ -68,7 +68,7 @@ public class StAXAttributeIncorporationComponent extends StAXPipelineComponentWr
     public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
         final CacheKey parentKey = this.wrappedComponent.getCacheKey(request, response);
         final CacheKey attributeKey = this.attributeSource.getCacheKey(request, response);
-        return new CacheKey(this.beanName, parentKey, attributeKey);
+        return CacheKey.build(this.beanName, parentKey, attributeKey);
     }
 
     /* (non-Javadoc)

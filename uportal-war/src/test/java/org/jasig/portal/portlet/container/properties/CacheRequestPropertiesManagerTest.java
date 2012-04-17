@@ -74,7 +74,7 @@ public class CacheRequestPropertiesManagerTest extends TestCase {
         when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
         when(portletWindow.getExpirationCache()).thenReturn(null);
         
-        final MockPortletDefinitionId portletDefinitionId = new MockPortletDefinitionId("2");
+        final MockPortletDefinitionId portletDefinitionId = new MockPortletDefinitionId(2);
         
         final IPortletDefinition portletDefinition = mock(IPortletDefinition.class);
         when(portletDefinition.getPortletDefinitionId()).thenReturn(portletDefinitionId);
@@ -110,7 +110,7 @@ public class CacheRequestPropertiesManagerTest extends TestCase {
         when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
         when(portletWindow.getExpirationCache()).thenReturn(1);
         
-        final MockPortletDefinitionId portletDefinitionId = new MockPortletDefinitionId("2");
+        final MockPortletDefinitionId portletDefinitionId = new MockPortletDefinitionId(2);
         
         final IPortletDefinition portletDefinition = mock(IPortletDefinition.class);
         when(portletDefinition.getPortletDefinitionId()).thenReturn(portletDefinitionId);
@@ -173,7 +173,7 @@ public class CacheRequestPropertiesManagerTest extends TestCase {
         
         final IPortletWindowRegistry portletWindowRegistry = mock(IPortletWindowRegistry.class);
         
-        final MockPortletDefinitionId portletDefinitionId = new MockPortletDefinitionId("2");
+        final MockPortletDefinitionId portletDefinitionId = new MockPortletDefinitionId(2);
         
         final IPortletDefinition portletDefinition = mock(IPortletDefinition.class);
         when(portletDefinition.getPortletDefinitionId()).thenReturn(portletDefinitionId);
@@ -208,7 +208,7 @@ public class CacheRequestPropertiesManagerTest extends TestCase {
         when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
         when(portletWindow.getExpirationCache()).thenReturn(null);
         
-        final MockPortletDefinitionId portletDefinitionId = new MockPortletDefinitionId("2");
+        final MockPortletDefinitionId portletDefinitionId = new MockPortletDefinitionId(2);
         
         final IPortletDefinition portletDefinition = mock(IPortletDefinition.class);
         when(portletDefinition.getPortletDefinitionId()).thenReturn(portletDefinitionId);

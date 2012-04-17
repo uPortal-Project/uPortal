@@ -258,7 +258,7 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jasig.service</groupId>
+            <groupId>org.jasig.service.persondir</groupId>
             <artifactId>person-directory-impl</artifactId>
         </dependency>
 
@@ -466,7 +466,7 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jasig.service</groupId>
+            <groupId>org.jasig.service.persondir</groupId>
             <artifactId>person-directory-api</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -580,6 +580,7 @@
                         <include>io/stylesheet-descriptor/*.xsd</include>
                         <include>io/user/*.xsd</include>
                         <include>io/permission-owner/*.xsd</include>
+                        <include>io/subscribed-fragment/*.xsd</include>
                         <include>portlet-publishing/*.xsd</include>
                     </schemaIncludes>
                 </configuration>

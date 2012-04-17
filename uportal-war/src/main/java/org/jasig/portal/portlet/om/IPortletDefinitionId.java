@@ -28,5 +28,8 @@ package org.jasig.portal.portlet.om;
  * @version $Revision$
  */
 public interface IPortletDefinitionId extends IObjectId {
-    
+    /**
+     * @return the numeric version of the id
+     */
+    long getLongId();
 }

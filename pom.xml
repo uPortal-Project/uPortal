@@ -130,7 +130,7 @@
         <cas-clearpass.version>1.0.8.GA</cas-clearpass.version>
         <casclient.version>3.2.1</casclient.version>
         <ccpp.version>1.0</ccpp.version>
-        <cernunnos.version>1.2.1</cernunnos.version>
+        <cernunnos.version>1.2.2</cernunnos.version>
         <cglib.version>2.2.2</cglib.version>
         <commons-cli.version>1.2</commons-cli.version>
         <commons-codec.version>1.6</commons-codec.version>
@@ -138,7 +138,7 @@
         <commons-dbcp.version>1.4</commons-dbcp.version>
         <commons-fileupload.version>1.2.2</commons-fileupload.version>
         <commons-httpclient.version>3.1</commons-httpclient.version>
-        <commons-io.version>2.1</commons-io.version>
+        <commons-io.version>2.2</commons-io.version>
         <commons-lang.version>2.6</commons-lang.version>
         <commons-logging.version>1.1.1</commons-logging.version>
         <commons-logging-api.version>1.1</commons-logging-api.version>
@@ -156,13 +156,13 @@
         <hibernate-jpamodelgen.version>1.2.0.Final</hibernate-jpamodelgen.version>
         <hibernate-jpa-api.version>1.0.1.Final</hibernate-jpa-api.version>
         <hsqldb.version>2.2.8</hsqldb.version>
-        <jackson.version>1.9.5</jackson.version>
+        <jackson.version>1.9.6</jackson.version>
         <jansi.version>1.8</jansi.version>
         <javassist.version>3.16.1-GA</javassist.version> 
         <jasypt.version>1.9.0</jasypt.version>
         <jaxb2basics.version>0.6.3</jaxb2basics.version>
         <jdom.version>1.0</jdom.version>
-        <jline.version>1.0</jline.version>
+        <jline.version>2.6</jline.version>
         <joda-time.version>2.1</joda-time.version>
         <json-lib-ext-spring.version>1.0.2</json-lib-ext-spring.version>
         <jsp-api.version>2.1.1</jsp-api.version>
@@ -170,13 +170,13 @@
         <jtidy.version>4aug2000r7-dev</jtidy.version>
         <junit.version>4.10</junit.version>
         <log4j.version>1.2.16</log4j.version>
-        <mail.version>1.4.4</mail.version>
+        <mail.version>1.4.5</mail.version>
         <mockito.version>1.9.0</mockito.version>
         <objenesis.version>1.2</objenesis.version>
-        <org.springframework.webflow.version>2.3.0.RELEASE</org.springframework.webflow.version>
+        <org.springframework.webflow.version>2.3.1.RELEASE</org.springframework.webflow.version>
         <oro.version>2.0.8</oro.version>
         <persistence-api.version>1.0</persistence-api.version>
-        <person-directory.version>1.5.0-RC6</person-directory.version>
+        <person-directory.version>1.5.0</person-directory.version>
         <pluto.version>2.1.0-M2</pluto.version>
         <portlet-api.version>2.0</portlet-api.version>
         <quartz.version>1.8.4</quartz.version>
@@ -275,6 +275,14 @@
                     <exclusion>
                         <groupId>org.springframework.ldap</groupId>
                         <artifactId>spring-ldap</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>groovy-engine</artifactId>
+                        <groupId>javax.script</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>script-api</artifactId>
+                        <groupId>javax.script</groupId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -669,12 +677,12 @@
                 <version>${resource-server.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jasig.service</groupId>
+                <groupId>org.jasig.service.persondir</groupId>
                 <artifactId>person-directory-api</artifactId>
                 <version>${person-directory.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jasig.service</groupId>
+                <groupId>org.jasig.service.persondir</groupId>
                 <artifactId>person-directory-impl</artifactId>
                 <version>${person-directory.version}</version>
                 <exclusions>

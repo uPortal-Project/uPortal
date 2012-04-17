@@ -270,6 +270,10 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
 	    		//subscribeId matches fname, lookup the window for the entity and return the windowId
 	    		final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
 	    		final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindow(request, portletEntityId);
+	    		if (portletWindow == null) {
+	    		    return null;
+	    		}
+
 	    		return portletWindow.getPortletWindowId();
 	    	}
         }
