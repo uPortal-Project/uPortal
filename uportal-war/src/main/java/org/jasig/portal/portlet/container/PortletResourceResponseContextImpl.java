@@ -21,13 +21,11 @@ package org.jasig.portal.portlet.container;
 
 import java.util.Locale;
 
-import javax.portlet.CacheControl;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletResourceResponseContext;
-import org.jasig.portal.portlet.container.cache.IPortletCacheControlService;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.jasig.portal.portlet.container.services.IPortletCookieService;
 import org.jasig.portal.portlet.om.IPortletWindow;
@@ -42,9 +40,9 @@ public class PortletResourceResponseContextImpl extends PortletMimeResponseConte
     public PortletResourceResponseContextImpl(PortletContainer portletContainer, IPortletWindow portletWindow,
             HttpServletRequest containerRequest, HttpServletResponse containerResponse,
             IRequestPropertiesManager requestPropertiesManager, IPortalUrlProvider portalUrlProvider,
-            IPortletCookieService portletCookieService, IPortletCacheControlService portletCacheControlService) {
+            IPortletCookieService portletCookieService) {
 
-        super(portletContainer, portletWindow, containerRequest, containerResponse, requestPropertiesManager, portalUrlProvider, portletCookieService, portletCacheControlService);
+        super(portletContainer, portletWindow, containerRequest, containerResponse, requestPropertiesManager, portalUrlProvider, portletCookieService);
         
     }
 
@@ -54,7 +52,7 @@ public class PortletResourceResponseContextImpl extends PortletMimeResponseConte
     @Override
     public void setCharacterEncoding(String charset) {
         this.checkContextStatus();
-        this.servletResponse.setCharacterEncoding(charset);
+        this.getPortletOutputHandler().setCharacterEncoding(charset);
     }
 
     /* (non-Javadoc)
@@ -63,7 +61,7 @@ public class PortletResourceResponseContextImpl extends PortletMimeResponseConte
     @Override
     public void setContentLength(int len) {
         this.checkContextStatus();
-        this.servletResponse.setContentLength(len);
+        this.getPortletOutputHandler().setContentLength(len);
     }
 
     /* (non-Javadoc)
@@ -72,16 +70,6 @@ public class PortletResourceResponseContextImpl extends PortletMimeResponseConte
     @Override
     public void setLocale(Locale locale) {
         this.checkContextStatus();
-        this.servletResponse.setLocale(locale);
-    }
-    
-    /* (non-Javadoc)
-     * @see org.apache.pluto.container.PortletMimeResponseContext#getCacheControl()
-     */
-    @Override
-    public CacheControl getCacheControl() {
-        this.checkContextStatus();
-        CacheControl cacheControl = getPortletCacheControlService().getPortletResourceCacheControl(this.portletWindow.getPortletWindowId(), this.containerRequest, this.containerResponse);    
-        return cacheControl;
+        this.getPortletOutputHandler().setLocale(locale);
     }
 }

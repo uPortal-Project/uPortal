@@ -19,8 +19,7 @@
 
 package org.jasig.portal.portlet.rendering;
 
-import java.io.PrintWriter;
-import java.io.Writer;
+import java.io.IOException;
 
 import javax.portlet.CacheControl;
 import javax.portlet.Event;
@@ -74,9 +73,9 @@ public interface IPortletRenderer {
 	public static final String ATTRIBUTE__PORTLET_LINK = RENDERER_ATTRIBUTE_PREFIX + ".PORTLET_LINK";
 
 	/**
-	 * Attribute that the renderer stores a {@link PrintWriter} that should be used when the portlet writes out content.
+	 * Attribute that the renderer stores a {@link PortletOutputHandler} that should be used when the portlet writes out content.
 	 */
-	public static final String ATTRIBUTE__PORTLET_PRINT_WRITER = RENDERER_ATTRIBUTE_PREFIX + ".PORTLET_PRINT_WRITER";
+	public static final String ATTRIBUTE__PORTLET_OUTPUT_HANDLER = RENDERER_ATTRIBUTE_PREFIX + ".PORTLET_OUTPUT_HANDLER";
 	
 	/**
      * Attribute that the renderer stores a {@link CacheControl} that should be used when the portlet writes out content.
@@ -108,9 +107,9 @@ public interface IPortletRenderer {
      * @param portletWindowId Portlet to target with the render
      * @param httpServletRequest The portal's request
      * @param httpServletResponse The portal's response (nothing will be written to the response)
-     * @param writer The writer to write the portlet's output to
+     * @param portletOutputHandler The output handler to write to
      */
-    public PortletRenderResult doRenderMarkup(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Writer writer);
+    public PortletRenderResult doRenderMarkup(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, PortletOutputHandler portletOutputHandler) throws IOException;
     
     /**
      * Executes a render for the head of a portlet, handles all the request and response setup and teardown
@@ -118,19 +117,21 @@ public interface IPortletRenderer {
      * @param portletWindowId Portlet to target with the render
      * @param httpServletRequest The portal's request
      * @param httpServletResponse The portal's response (nothing will be written to the response)
-     * @param writer The writer to write the portlet's output to
+     * @param portletOutputHandler The output handler to write to
      */
-    public PortletRenderResult doRenderHeader(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Writer writer);
+    public PortletRenderResult doRenderHeader(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, PortletOutputHandler portletOutputHandler) throws IOException;
+    
     /**
      * Executes a portlet resource request.
      * 
-     * @param portletWindowId
-     * @param httpServletRequest
-     * @param httpServletResponse
-     * @param writer
-     * @return
+     * @param portletWindowId Portlet to target with the render
+     * @param httpServletRequest The portal's request
+     * @param httpServletResponse The portal's response (nothing will be written to the response)
+     * @param portletOutputHandler The output handler to write to
+     * @return The execution time for serving the resource
      */
-    public long doServeResource(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse);
+    public long doServeResource(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, PortletOutputHandler portletOutputHandler) throws IOException;
+    
     /**
      * Resets a portlet's window data to the defaults and clears all portlet scoped session data
      * 
@@ -140,5 +141,8 @@ public interface IPortletRenderer {
      */
     public void doReset(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse);
     
+    /**
+     * @return HungWorkerAnalyzer that tracks hung portlet execution workers
+     */
     public HungWorkerAnalyzer getHungWorkerAnalyzer();
 }

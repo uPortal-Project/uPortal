@@ -277,7 +277,7 @@ public class PortletCacheControlServiceImplTest {
 		Serializable key = new Serializable() {
 			private static final long serialVersionUID = 1L;
 		};
-		CachedPortletData data = new CachedPortletData();
+		CachedPortletRenderData data = new CachedPortletRenderData();
 		
 		// cacheControl expiration time unset, fail safe to cache config value
 		Element cacheElement = cacheControlService.constructCacheElement(key, data, cacheConfig, cacheControl);

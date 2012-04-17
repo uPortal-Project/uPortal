@@ -21,14 +21,12 @@ package org.jasig.portal.portlet.container;
 
 import java.util.Collection;
 
-import javax.portlet.CacheControl;
 import javax.portlet.PortletMode;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletRenderResponseContext;
-import org.jasig.portal.portlet.container.cache.IPortletCacheControlService;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.jasig.portal.portlet.container.services.IPortletCookieService;
 import org.jasig.portal.portlet.om.IPortletWindow;
@@ -44,9 +42,9 @@ public class PortletRenderResponseContextImpl extends PortletMimeResponseContext
     public PortletRenderResponseContextImpl(PortletContainer portletContainer, IPortletWindow portletWindow,
             HttpServletRequest containerRequest, HttpServletResponse containerResponse,
             IRequestPropertiesManager requestPropertiesManager, IPortalUrlProvider portalUrlProvider,
-            IPortletCookieService portletCookieService, IPortletCacheControlService portletCacheControlService) {
+            IPortletCookieService portletCookieService) {
 
-        super(portletContainer, portletWindow, containerRequest, containerResponse, requestPropertiesManager, portalUrlProvider, portletCookieService, portletCacheControlService);
+        super(portletContainer, portletWindow, containerRequest, containerResponse, requestPropertiesManager, portalUrlProvider, portletCookieService);
 
     }
 
@@ -66,15 +64,5 @@ public class PortletRenderResponseContextImpl extends PortletMimeResponseContext
     public void setTitle(String title) {
         this.checkContextStatus();
         this.servletRequest.setAttribute(IPortletRenderer.ATTRIBUTE__PORTLET_TITLE, title);
-    }
-
-    /* (non-Javadoc)
-     * @see org.apache.pluto.container.PortletMimeResponseContext#getCacheControl()
-     */
-    @Override
-    public CacheControl getCacheControl() {
-        this.checkContextStatus();
-        CacheControl cacheControl = getPortletCacheControlService().getPortletRenderCacheControl(this.portletWindow.getPortletWindowId(), this.containerRequest);    
-        return cacheControl;
     }
 }

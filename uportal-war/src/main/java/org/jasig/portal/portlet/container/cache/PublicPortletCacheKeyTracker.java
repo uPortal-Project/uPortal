@@ -64,7 +64,7 @@ final class PublicPortletCacheKeyTracker extends CacheEventListenerAdapter {
     @Override
     public void notifyElementPut(Ehcache cache, Element element) throws CacheException {
         final PublicPortletCacheKey key = (PublicPortletCacheKey) element.getKey();
-        publicPortletCacheKeys.getUnchecked(key.portletDefinitionId).add(key);
+        publicPortletCacheKeys.getUnchecked(key.getPortletDefinitionId()).add(key);
         logger.debug("Added cache key {} to tracker", key);
     }
 
@@ -85,7 +85,7 @@ final class PublicPortletCacheKeyTracker extends CacheEventListenerAdapter {
 
     protected void removeEntry(Element element) {
         final PublicPortletCacheKey key = (PublicPortletCacheKey) element.getKey();
-        final Set<PublicPortletCacheKey> keySet = publicPortletCacheKeys.getIfPresent(key.portletDefinitionId);
+        final Set<PublicPortletCacheKey> keySet = publicPortletCacheKeys.getIfPresent(key.getPortletDefinitionId());
         if (keySet != null) {
             logger.debug("Removed cache key {} from tracker", key);
             keySet.remove(key);

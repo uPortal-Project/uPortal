@@ -29,6 +29,8 @@ import java.util.Map;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jasig.portal.portlet.rendering.PortletOutputHandler;
+import org.jasig.portal.utils.TeeWriter;
 import org.jasig.portal.utils.web.PortletHttpServletResponseWrapper;
 
 /**
@@ -38,10 +40,7 @@ import org.jasig.portal.utils.web.PortletHttpServletResponseWrapper;
  * @version $Revision$
  */
 public class CachingPortletHttpServletResponseWrapper extends PortletHttpServletResponseWrapper {
-    private final CachedPortletData cachedPortletData;
-    private final int cacheThresholdSize;
-    private LimitedBufferOutputStream cachingOutputStream;
-    private LimitedBufferStringWriter cachingWriter;
+    private final PortletOutputHandler portletOutputHandler;
     
     private boolean badStatusCode = false;
     private ServletOutputStream outputStream;
@@ -50,7 +49,7 @@ public class CachingPortletHttpServletResponseWrapper extends PortletHttpServlet
     public CachingPortletHttpServletResponseWrapper(HttpServletResponse httpServletResponse, int cacheThresholdSize) {
         super(httpServletResponse);
         
-        this.cachedPortletData = new CachedPortletData();
+        this.cachedPortletData = new CachedPortletRenderData();
         this.cacheThresholdSize = cacheThresholdSize;
     }
 
@@ -69,7 +68,7 @@ public class CachingPortletHttpServletResponseWrapper extends PortletHttpServlet
     public PrintWriter getWriter() throws IOException {
         PrintWriter pw = this.printWriter;
         if (pw == null) {
-            this.cachingWriter = new LimitedBufferStringWriter(cacheThresholdSize);
+            this.cachingWriter = new LimitingTeeWriter(cacheThresholdSize);
             pw = new PrintWriter(new TeeWriter(super.getWriter(), this.cachingWriter));
             this.printWriter = pw;
         }
@@ -195,14 +194,14 @@ public class CachingPortletHttpServletResponseWrapper extends PortletHttpServlet
     }
     
     /**
-     * This method returns the {@link CachedPortletData} if available.
+     * This method returns the {@link CachedPortletRenderData} if available.
      * It may return null if a bad statusCode was set, or if the length of the stream exceeds
      * the cache configuration's max threshold.
      * 
      * @see LimitedBufferOutputStream#getCapturedContent()
-     * @return the {@link CachedPortletData} for this response, or null if caching could not be completed.
+     * @return the {@link CachedPortletRenderData} for this response, or null if caching could not be completed.
      */
-    public CachedPortletData getCachedPortletData() {
+    public CachedPortletRenderData getCachedPortletData() {
         if (this.badStatusCode) {
             return null;
         }

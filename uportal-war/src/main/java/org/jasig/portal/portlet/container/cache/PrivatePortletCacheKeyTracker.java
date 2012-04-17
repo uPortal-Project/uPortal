@@ -110,9 +110,9 @@ final class PrivatePortletCacheKeyTracker extends CacheEventListenerAdapter {
     public void notifyElementPut(Ehcache cache, Element element) throws CacheException {
         final PrivatePortletCacheKey key = (PrivatePortletCacheKey) element.getKey();
         
-        final LoadingCache<IPortletWindowId, Set<PrivatePortletCacheKey>> privatePortletCacheKeys = privatePortletCacheKeysBySession.get(key.sessionId);
+        final LoadingCache<IPortletWindowId, Set<PrivatePortletCacheKey>> privatePortletCacheKeys = privatePortletCacheKeysBySession.get(key.getSessionId());
         if (privatePortletCacheKeys != null) {
-            privatePortletCacheKeys.getUnchecked(key.portletWindowId).add(key);
+            privatePortletCacheKeys.getUnchecked(key.getPortletWindowId()).add(key);
             logger.debug("Added cache key {} to tracker {}", key, this.sessionKey);
         }
     }
@@ -135,9 +135,9 @@ final class PrivatePortletCacheKeyTracker extends CacheEventListenerAdapter {
     protected void removeEntry(Element element) {
         final PrivatePortletCacheKey key = (PrivatePortletCacheKey) element.getKey();
         
-        final LoadingCache<IPortletWindowId, Set<PrivatePortletCacheKey>> privatePortletCacheKeys = privatePortletCacheKeysBySession.get(key.sessionId);
+        final LoadingCache<IPortletWindowId, Set<PrivatePortletCacheKey>> privatePortletCacheKeys = privatePortletCacheKeysBySession.get(key.getSessionId());
         if (privatePortletCacheKeys != null) {
-            final Set<PrivatePortletCacheKey> keySet = privatePortletCacheKeys.getIfPresent(key.portletWindowId);
+            final Set<PrivatePortletCacheKey> keySet = privatePortletCacheKeys.getIfPresent(key.getPortletWindowId());
             if (keySet != null) {
                 logger.debug("Removed cache key {} from tracker {}", key, this.sessionKey);
                 keySet.remove(key);

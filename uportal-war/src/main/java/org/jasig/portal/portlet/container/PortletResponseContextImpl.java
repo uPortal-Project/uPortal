@@ -90,6 +90,7 @@ public class PortletResponseContextImpl extends AbstractPortletContextImpl imple
      */
     @Override
     public void setProperty(String key, String value) {
+        //TODO how do these get translated to servlet response headers for resources?
         this.requestPropertiesManager.setResponseProperty(this.servletRequest, this.portletWindow, key, value);
     }
 

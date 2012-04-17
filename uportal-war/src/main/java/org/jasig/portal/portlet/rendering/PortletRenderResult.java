@@ -19,6 +19,8 @@
 
 package org.jasig.portal.portlet.rendering;
 
+import java.io.Serializable;
+
 
 /**
  * The result of rendering a portlet
@@ -26,7 +28,9 @@ package org.jasig.portal.portlet.rendering;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class PortletRenderResult {
+public class PortletRenderResult implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private final String title;
     private final long renderTime;
     private final int newItemCount;
