@@ -172,15 +172,15 @@ class PublicPortletCacheKey implements Serializable {
     public String toString() {
         if (renderHeader) {
             return "PublicPortletRenderHeaderCacheKey [portletDefinitionId=" + portletDefinitionId + ", parameters=" + parameters
-                    + ", locale=" + locale + ", windowState=" + windowState + ", portletMode=" + portletMode + ", hash=" + hash + "]";
+                    + ", locale=" + locale + ", windowState=" + windowState + ", portletMode=" + portletMode + "]";
         }
         if (resourceId != null) {
             return "PublicPortletResourceCacheKey [portletDefinitionId=" + portletDefinitionId + ", parameters=" + parameters
                     + ", resourceId=" + resourceId + ", locale=" + locale + ", windowState=" + windowState + ", portletMode="
-                    + portletMode + ", hash=" + hash + "]";
+                    + portletMode + "]";
         }
         return "PublicPortletRenderCacheKey [portletDefinitionId=" + portletDefinitionId + ", parameters=" + parameters
-                + ", locale=" + locale + ", windowState=" + windowState + ", portletMode=" + portletMode + ", hash=" + hash + "]";
+                + ", locale=" + locale + ", windowState=" + windowState + ", portletMode=" + portletMode + "]";
     }
     
     

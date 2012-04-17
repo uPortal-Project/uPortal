@@ -26,7 +26,7 @@ import javax.portlet.CacheControl;
  * Represents the cache state for a portlet
  */
 public final class CacheState<D extends CachedPortletResultHolder<T>, T extends Serializable> {
-    private CacheControl cacheControl;
+    private final CacheControl cacheControl = new CacheControlImpl();
     private D cachedPortletData;
     private boolean useCachedData = false;
     private boolean useBrowserData = false;
@@ -54,9 +54,6 @@ public final class CacheState<D extends CachedPortletResultHolder<T>, T extends 
     }
     
     
-    void setCacheControl(CacheControl cacheControl) {
-        this.cacheControl = cacheControl;
-    }
     void setCachedPortletData(D cachedPortletData) {
         this.cachedPortletData = cachedPortletData;
     }

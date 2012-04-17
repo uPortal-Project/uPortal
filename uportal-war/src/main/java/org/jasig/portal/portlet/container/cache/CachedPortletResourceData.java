@@ -108,30 +108,16 @@ public class CachedPortletResourceData<T extends Serializable> implements Cached
         //Tell the browser the ETag set by the portlet
         final String etag = this.cachedPortletData.getEtag();
         if (etag != null) {
-            portletOutputHandler.setHeader("ETag", etag);
+            PortletCachingHeaderUtils.setETag(etag, portletOutputHandler);
         } 
         
-        //Tell the browser the time the data was stored
-        final long timeStored = this.cachedPortletData.getTimeStored();
-        portletOutputHandler.setDateHeader("Last-Modified", timeStored);
-        
-        //Tell the browser the expiration time for the cached data
+        //Set the caching related headers
         final long expirationTime = this.cachedPortletData.getExpirationTime();
-        portletOutputHandler.setDateHeader("Expires", expirationTime);
+        final int maxAge = (int)TimeUnit.MILLISECONDS.toSeconds(expirationTime - System.currentTimeMillis());
+        final long timeStored = this.cachedPortletData.getTimeStored();
+        final boolean publicScope = this.cachedPortletData.isPublicScope();
         
-        //Set the cache scope of the output
-        if (this.cachedPortletData.isPublicScope()) {
-            portletOutputHandler.setHeader("CacheControl", "public");
-        }
-        else {
-            portletOutputHandler.setHeader("CacheControl", "private");
-        }
-        
-        //Set the max-age of the output
-        final long time = expirationTime - System.currentTimeMillis();
-        if (time > 0) {
-            portletOutputHandler.addHeader("CacheControl", "max-age=" + TimeUnit.MILLISECONDS.toSeconds(time));
-        }
+        PortletCachingHeaderUtils.setCachingHeaders(maxAge, publicScope, timeStored, portletOutputHandler);
         
         this.cachedPortletData.replay(portletOutputHandler);
     }

@@ -259,36 +259,53 @@
 
      
     <!-- 
-     | Caches CachedPortletData objects
-     | - 1 per user per portlet that tells the container to cache it's render content (see portlet MimeResponse#getCacheControl())
+     | Caches output from portlets rendering in the HEADER part of the render request
+     | - 1 per portlet cached header rendering see PrivatePortletCacheKey for the key definition
+     +-->   
+    <cache name="org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.privateScopePortletRenderHeaderOutputCache"
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
+    <!-- 
+     | Caches output from portlets rendering in the MARKUP part of the render request
+     | - 1 per portlet cached rendering see PrivatePortletCacheKey for the key definition
      +-->   
     <cache name="org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.privateScopePortletRenderOutputCache"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
         
     <!-- 
-     | Caches CachedPortletData objects
-     | - 1 per user per portlet that tells the container to cache it's render content in the PUBLIC_SCOPE (see portlet MimeResponse#getCacheControl())
-     +-->   
-    <cache name="org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.publicScopePortletRenderOutputCache"
-        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
-        
-    <!-- 
-     | Caches CachedPortletData objects
-     | - 1 per user per portlet that tells the container to cache it's resource content (see portlet MimeResponse#getCacheControl())
+     | Caches output from portlets serving resources
+     | - 1 per portlet cached resource response see PrivatePortletCacheKey for the key definition
      +-->   
     <cache name="org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.privateScopePortletResourceOutputCache"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
         
     <!-- 
-     | Caches CachedPortletData objects
-     | - 1 per user per portlet that tells the container to cache it's resource content in the PUBLIC_SCOPE (see portlet MimeResponse#getCacheControl())
+     | Caches PUBLIC output from portlets rendering in the HEADER part of the render request
+     | - 1 per portlet cached header rendering see PublicPortletCacheKey for the key definition
+     +-->   
+    <cache name="org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.publicScopePortletRenderHeaderOutputCache"
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
+    <!-- 
+     | Caches PUBLIC output from portlets rendering in the MARKUP part of the render request
+     | - 1 per portlet cached rendering see PublicPortletCacheKey for the key definition
+     +-->   
+    <cache name="org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.publicScopePortletRenderOutputCache"
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
+    <!-- 
+     | Caches PUBLIC output from portlets serving resources
+     | - 1 per portlet cached header response response see PublicPortletCacheKey for the key definition
      +-->   
     <cache name="org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.publicScopePortletResourceOutputCache"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
 
     <!-- 
      | Caches parsing entity id strings into entity ids

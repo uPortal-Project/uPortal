@@ -18,10 +18,9 @@
  */
 package org.jasig.portal.portlet.container.cache;
 
-import java.util.concurrent.TimeUnit;
-
 import javax.portlet.CacheControl;
 
+import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.portlet.rendering.PortletResourceOutputHandler;
 
 /**
@@ -42,19 +41,7 @@ public class HeaderSettingCacheControl implements CacheControl {
     }
     
     private void setCacheHeaders(int time, boolean publicScope) {
-        this.portletResourceOutputHandler.setDateHeader("Last-Modified", lastModified);
-        
-        if (publicScope) {
-            this.portletResourceOutputHandler.setHeader("CacheControl", "public");
-        }
-        else {
-            this.portletResourceOutputHandler.setHeader("CacheControl", "private");
-        }
-        
-        if (time > 0) {
-            this.portletResourceOutputHandler.setDateHeader("Expires", System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(time));
-            this.portletResourceOutputHandler.addHeader("CacheControl", "max-age=" + time);
-        }
+        PortletCachingHeaderUtils.setCachingHeaders(time, publicScope, lastModified, this.portletResourceOutputHandler);
     }
 
     @Override
@@ -86,8 +73,9 @@ public class HeaderSettingCacheControl implements CacheControl {
 
     @Override
     public void setETag(String token) {
+        token = StringUtils.trimToNull(token);
         this.cacheControl.setETag(token);
-        this.portletResourceOutputHandler.setHeader("ETag", token);
+        PortletCachingHeaderUtils.setETag(token, portletResourceOutputHandler);
     }
 
     @Override

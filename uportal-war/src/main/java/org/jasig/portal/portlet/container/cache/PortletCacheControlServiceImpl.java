@@ -32,7 +32,6 @@ import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
@@ -40,7 +39,6 @@ import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
-import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.rendering.PortletRenderResult;
 import org.jasig.portal.url.IPortalRequestInfo;
@@ -86,7 +84,6 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
 	private final PrivatePortletCacheKeyTracker privatePortletResourceCacheKeyTracker = new PrivatePortletCacheKeyTracker(SESSION_ATTRIBUTE__PORTLET_RESOURCE_CACHE_KEYS_MAP);
 	
 	private IPortletWindowRegistry portletWindowRegistry;
-	private IPortletEntityRegistry portletEntityRegistry;
 	private IPortletDefinitionRegistry portletDefinitionRegistry;
 	private IUrlSyntaxProvider urlSyntaxProvider;
 	
@@ -170,11 +167,6 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
 		this.portletWindowRegistry = portletWindowRegistry;
 	}
 	@Autowired
-	public void setPortletEntityRegistry(
-			IPortletEntityRegistry portletEntityRegistry) {
-		this.portletEntityRegistry = portletEntityRegistry;
-	}
-	@Autowired
 	public void setPortletDefinitionRegistry(
 			IPortletDefinitionRegistry portletDefinitionRegistry) {
 		this.portletDefinitionRegistry = portletDefinitionRegistry;
@@ -207,9 +199,7 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
         if (portletWindow == null) {
             logger.warn("portletWindowRegistry returned null for {}, returning default cacheControl and no cached portlet data", portletWindowId);
-            final CacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> cacheState = new CacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult>();
-            cacheState.setCacheControl(new CacheControlImpl());
-            return cacheState;
+            return new CacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult>();
         }
         
         //Generate the public render-header cache key
@@ -218,7 +208,12 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
         final Locale locale = RequestContextUtils.getLocale(request);
         final PublicPortletCacheKey publicCacheKey = PublicPortletCacheKey.createPublicPortletRenderHeaderCacheKey(definitionId, portletWindow, locale);
         
-        return this.getPortletState(request, portletWindow, publicCacheKey, false);
+        return this.getPortletState(request,
+                portletWindow,
+                publicCacheKey,
+                this.publicScopePortletRenderHeaderOutputCache,
+                this.privateScopePortletRenderHeaderOutputCache,
+                false);
     }
     
     @Override
@@ -228,9 +223,7 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
         if (portletWindow == null) {
             logger.warn("portletWindowRegistry returned null for {}, returning default cacheControl and no cached portlet data", portletWindowId);
-            final CacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> cacheState = new CacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult>();
-            cacheState.setCacheControl(new CacheControlImpl());
-            return cacheState;
+            return new CacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult>();
         }
         
         //Generate the public render cache key
@@ -239,7 +232,12 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
         final Locale locale = RequestContextUtils.getLocale(request);
         final PublicPortletCacheKey publicCacheKey = PublicPortletCacheKey.createPublicPortletRenderCacheKey(definitionId, portletWindow, locale);
         
-        return this.getPortletState(request, portletWindow, publicCacheKey, false);
+        return this.getPortletState(request,
+                portletWindow,
+                publicCacheKey,
+                this.publicScopePortletRenderOutputCache,
+                this.privateScopePortletRenderOutputCache,
+                false);
     }
     
     @Override
@@ -249,9 +247,7 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
         if (portletWindow == null) {
             logger.warn("portletWindowRegistry returned null for {}, returning default cacheControl and no cached portlet data", portletWindowId);
-            final CacheState<CachedPortletResourceData<Long>, Long> cacheState = new CacheState<CachedPortletResourceData<Long>, Long>();
-            cacheState.setCacheControl(new CacheControlImpl());
-            return cacheState;
+            return new CacheState<CachedPortletResourceData<Long>, Long>();
         }
         
         //Generate the public resource cache key
@@ -261,14 +257,19 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
         final Locale locale = RequestContextUtils.getLocale(request);
         final PublicPortletCacheKey publicCacheKey = PublicPortletCacheKey.createPublicPortletResourceCacheKey(definitionId, portletWindow, resourceId, locale);
         
-        return this.getPortletState(request, portletWindow, publicCacheKey, true);
+        return this.getPortletState(request,
+                portletWindow,
+                publicCacheKey,
+                this.publicScopePortletResourceOutputCache,
+                this.privateScopePortletResourceOutputCache,
+                true);
     }
     
     private <D extends CachedPortletResultHolder<T>, T extends Serializable> CacheState<D, T> getPortletState(HttpServletRequest request,
-            IPortletWindow portletWindow, PublicPortletCacheKey publicCacheKey, boolean useHttpHeaders) {
+            IPortletWindow portletWindow, PublicPortletCacheKey publicCacheKey, Ehcache publicOutputCache, Ehcache privateOutputCache, boolean useHttpHeaders) {
         
         //See if there is any cached data for the portlet header request
-        final CacheState<D, T> cacheState = this.getPortletCacheState(request, portletWindow, publicCacheKey, this.publicScopePortletRenderOutputCache, this.privateScopePortletRenderOutputCache);
+        final CacheState<D, T> cacheState = this.getPortletCacheState(request, portletWindow, publicCacheKey, publicOutputCache, privateOutputCache);
         
         final D cachedPortletData = cacheState.getCachedPortletData();
         if (cachedPortletData != null && cachedPortletData.getExpirationTime() > System.currentTimeMillis()) {
@@ -299,8 +300,7 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
         }
         
         //Build CacheControl structure
-        final CacheControlImpl cacheControl = new CacheControlImpl();
-        cacheState.setCacheControl(cacheControl);
+        final CacheControl cacheControl = cacheState.getCacheControl();
         
         //Get the portlet descriptor
         final IPortletEntity entity = portletWindow.getPortletEntity();
@@ -427,14 +427,24 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
     public void cachePortletRenderHeaderOutput(IPortletWindowId portletWindowId, HttpServletRequest httpRequest,
             CacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> cacheState, CachedPortletData<PortletRenderResult> cachedPortletData) {
 	    
-	    cachePortletOutput(portletWindowId, httpRequest, cacheState, cachedPortletData);
+        cachePortletOutput(portletWindowId,
+                httpRequest,
+                cacheState,
+                cachedPortletData,
+                this.publicScopePortletRenderHeaderOutputCache,
+                this.privateScopePortletRenderHeaderOutputCache);
     }
 
     @Override
     public void cachePortletRenderOutput(IPortletWindowId portletWindowId, HttpServletRequest httpRequest,
             CacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> cacheState, CachedPortletData<PortletRenderResult> cachedPortletData) {
 
-        cachePortletOutput(portletWindowId, httpRequest, cacheState, cachedPortletData);
+        cachePortletOutput(portletWindowId,
+                httpRequest,
+                cacheState,
+                cachedPortletData,
+                this.publicScopePortletRenderOutputCache,
+                this.privateScopePortletRenderOutputCache);
 	}
 
     
@@ -443,23 +453,28 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
             CacheState<CachedPortletResourceData<Long>, Long> cacheState,
             CachedPortletResourceData<Long> cachedPortletData) {
 	    
-	    cachePortletOutput(portletWindowId, httpRequest, cacheState, cachedPortletData);
+        cachePortletOutput(portletWindowId,
+                httpRequest,
+                cacheState,
+                cachedPortletData,
+                this.publicScopePortletResourceOutputCache,
+                this.privateScopePortletResourceOutputCache);
 	}
 
     private <D extends CachedPortletResultHolder<T>, T extends Serializable> void cachePortletOutput(IPortletWindowId portletWindowId, HttpServletRequest httpRequest,
-            CacheState<D, T> cacheState, D cachedPortletData) {
+            CacheState<D, T> cacheState, D cachedPortletData, Ehcache publicOutputCache, Ehcache privateOutputCache) {
         
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpRequest, portletWindowId);
         final CacheControl cacheControl = cacheState.getCacheControl();
         
         if (cacheControl.isPublicScope()) {
             final PublicPortletCacheKey publicCacheKey = cacheState.getPublicPortletCacheKey();
-            this.cacheElement(this.publicScopePortletRenderHeaderOutputCache, publicCacheKey, cachedPortletData, cacheControl);
+            this.cacheElement(publicOutputCache, publicCacheKey, cachedPortletData, cacheControl);
             logger.debug("Cached public data under key {} for {}", publicCacheKey, portletWindow);
         }
         else {
             final PrivatePortletCacheKey privateCacheKey = cacheState.getPrivatePortletCacheKey();
-            this.cacheElement(this.privateScopePortletRenderHeaderOutputCache, privateCacheKey, cachedPortletData, cacheControl);
+            this.cacheElement(privateOutputCache, privateCacheKey, cachedPortletData, cacheControl);
             logger.debug("Cached private data under key {} for {}", privateCacheKey, portletWindow);
         }
     }
@@ -470,7 +485,7 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
 	 */
 	protected void cacheElement(Ehcache cache, Serializable cacheKey, CachedPortletResultHolder<?> data, CacheControl cacheControl) {
 		// using validation method, ignore expirationTime and defer to cache configuration
-        if (StringUtils.isNotBlank(cacheControl.getETag())) {
+        if (cacheControl.getETag() != null) {
             final Element element = new Element(cacheKey, data);
             cache.put(element);
             return;
@@ -496,8 +511,7 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
 	public boolean purgeCachedPortletData(IPortletWindowId portletWindowId,
 			HttpServletRequest httpRequest) {
 		final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpRequest, portletWindowId);
-        final IPortletEntityId entityId = portletWindow.getPortletEntityId();
-        final IPortletEntity entity = this.portletEntityRegistry.getPortletEntity(httpRequest, entityId);
+        final IPortletEntity entity = portletWindow.getPortletEntity();
         final IPortletDefinitionId definitionId = entity.getPortletDefinitionId();
         
         logger.debug("Purging all cached data for {}", portletWindow);
