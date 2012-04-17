@@ -40,7 +40,6 @@ import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.jasig.portal.mock.portlet.om.MockPortletDefinitionId;
 import org.jasig.portal.mock.portlet.om.MockPortletEntityId;
 import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
-import org.jasig.portal.portlet.container.CacheControlImpl;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
@@ -93,6 +92,7 @@ public class PortletCacheControlServiceImplTest {
 		privateScopeResourceCache.removeAll(true);
 		publicScopeResourceCache.removeAll(true);
 	}
+	
 	@Test
 	public void testGetCacheControlDefault() {
 		MockHttpServletRequest httpRequest = new MockHttpServletRequest();

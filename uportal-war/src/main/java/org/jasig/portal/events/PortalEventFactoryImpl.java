@@ -350,22 +350,16 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
         this.applicationEventPublisher.publishEvent(portletEventExecutionEvent);
     }
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.events.IPortalEventFactory#publishPortletRenderHeaderExecutionEvent(javax.servlet.http.HttpServletRequest, java.lang.Object, java.lang.String, long, boolean)
-     */
+    
     @Override
     public void publishPortletRenderHeaderExecutionEvent(HttpServletRequest request, Object source, String fname,
-            long executionTime, Map<String, List<String>> parameters, boolean targeted) {
-
+            long executionTime, Map<String, List<String>> parameters, boolean targeted, boolean cached) {
         parameters = pruneParameters(parameters);
         final PortalEventBuilder eventBuilder = this.createPortalEventBuilder(source, request);
-        final PortletRenderHeaderExecutionEvent portletRenderHeaderExecutionEvent = new PortletRenderHeaderExecutionEvent(eventBuilder, fname, executionTime, parameters, targeted);
+        final PortletRenderHeaderExecutionEvent portletRenderHeaderExecutionEvent = new PortletRenderHeaderExecutionEvent(eventBuilder, fname, executionTime, parameters, targeted, cached);
         this.applicationEventPublisher.publishEvent(portletRenderHeaderExecutionEvent);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.events.IPortalEventFactory#publishPortletRenderExecutionEvent(javax.servlet.http.HttpServletRequest, java.lang.Object, java.lang.String, long, boolean, boolean)
-     */
     @Override
     public void publishPortletRenderExecutionEvent(HttpServletRequest request, Object source, String fname, long executionTime,
             Map<String, List<String>> parameters, boolean targeted, boolean cached) {
@@ -376,16 +370,14 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
         this.applicationEventPublisher.publishEvent(portletRenderExecutionEvent);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.events.IPortalEventFactory#publishPortletResourceExecutionEvent(javax.servlet.http.HttpServletRequest, java.lang.Object, java.lang.String, long, java.lang.String, boolean)
-     */
     @Override
     public void publishPortletResourceExecutionEvent(HttpServletRequest request, Object source, String fname, long executionTime,
-            Map<String, List<String>> parameters, String resourceId, boolean cached) {
+            Map<String, List<String>> parameters, String resourceId, boolean usedBrowserCache, boolean usedPortalCache) {
 
         parameters = pruneParameters(parameters);
         final PortalEventBuilder eventBuilder = this.createPortalEventBuilder(source, request);
-        final PortletResourceExecutionEvent portletResourceExecutionEvent = new PortletResourceExecutionEvent(eventBuilder, fname, executionTime, parameters, resourceId, cached);
+        final PortletResourceExecutionEvent portletResourceExecutionEvent = new PortletResourceExecutionEvent(
+                eventBuilder, fname, executionTime, parameters, resourceId, usedBrowserCache, usedPortalCache);
         this.applicationEventPublisher.publishEvent(portletResourceExecutionEvent);
     }
     

@@ -20,7 +20,6 @@
 package org.jasig.portal.portlet.delegation;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.util.Map;
 
 import javax.portlet.ActionRequest;
@@ -45,6 +44,8 @@ import org.jasig.portal.api.portlet.PortletDelegationDispatcher;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
+import org.jasig.portal.portlet.rendering.PortletOutputHandler;
+import org.jasig.portal.portlet.rendering.PortletResourceOutputHandler;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.url.IPortalActionUrlBuilder;
@@ -53,8 +54,9 @@ import org.jasig.portal.url.IPortalUrlProvider;
 import org.jasig.portal.url.IPortletUrlBuilder;
 
 /**
+ * Implementation of delegation dispatcher
+ * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class PortletDelegationDispatcherImpl implements PortletDelegationDispatcher {
     protected final Log logger = LogFactory.getLog(this.getClass());
@@ -89,9 +91,6 @@ public class PortletDelegationDispatcherImpl implements PortletDelegationDispatc
         this.portletDelegationManager = portletDelegationManager;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.api.portlet.PortletDelegationDispatcher#doAction(javax.portlet.ActionRequest, javax.portlet.ActionResponse)
-     */
     @Override
     public DelegationActionResponse doAction(ActionRequest actionRequest, ActionResponse actionResponse) throws IOException {
         return this.doAction(actionRequest, actionResponse, null);
@@ -144,19 +143,22 @@ public class PortletDelegationDispatcherImpl implements PortletDelegationDispatc
         return new DelegationActionResponse(this.getDelegateState(), portletMode, windowState, parameters);
     }
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.api.portlet.PortletDelegationDispatcher#doServeResource(javax.portlet.ResourceRequest, javax.portlet.ResourceResponse)
-     */
     @Override
     public DelegationResponse doServeResource(ResourceRequest resourceRequest, ResourceResponse resourceResponse) throws IOException {
-        return this.doServeResource(resourceRequest, resourceResponse, null);
+        return this.doServeResource(resourceRequest, resourceResponse, null, new ResourceResponsePortletOutputHandler(resourceResponse));
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.api.portlet.PortletDelegationDispatcher#doServeResource(javax.portlet.ResourceRequest, javax.portlet.ResourceResponse, org.jasig.portal.api.portlet.DelegationRequest)
-     */
     @Override
-    public DelegationResponse doServeResource(ResourceRequest resourceRequest, ResourceResponse resourceResponse, DelegationRequest delegationRequest) throws IOException {
+    public DelegationResponse doServeResource(ResourceRequest resourceRequest, ResourceResponse resourceResponse,
+            DelegationRequest delegationRequest) throws IOException {
+        return this.doServeResource(resourceRequest,
+                resourceResponse,
+                delegationRequest,
+                new ResourceResponsePortletOutputHandler(resourceResponse));
+    }
+
+    @Override
+    public DelegationResponse doServeResource(ResourceRequest resourceRequest, ResourceResponse resourceResponse, DelegationRequest delegationRequest, PortletResourceOutputHandler portletOutputHandler) throws IOException {
         final HttpServletRequest request = this.portalRequestUtils.getPortletHttpRequest(resourceRequest);
         final HttpServletResponse response = this.portalRequestUtils.getOriginalPortalResponse(resourceRequest);
 
@@ -170,7 +172,7 @@ public class PortletDelegationDispatcherImpl implements PortletDelegationDispatc
         
         try {
             //TODO canRender permission checks!
-            this.portletRenderer.doServeResource(this.portletWindow.getPortletWindowId(), request, response);
+            this.portletRenderer.doServeResource(this.portletWindow.getPortletWindowId(), request, response, portletOutputHandler);
         }
         catch (RuntimeException e) {
             this.logger.error("Failed to render delegate", e);
@@ -182,21 +184,23 @@ public class PortletDelegationDispatcherImpl implements PortletDelegationDispatc
 
     @Override
     public DelegationResponse doRender(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException {
-        return this.doRender(renderRequest, renderResponse, null, renderResponse.getWriter());
+        return this.doRender(renderRequest, renderResponse, null, new RenderResponsePortletOutputHandler(renderResponse));
     }
 
     @Override
-    public DelegationResponse doRender(RenderRequest renderRequest, RenderResponse renderResponse, Writer writer) throws IOException {
-        return this.doRender(renderRequest, renderResponse, null, writer);
+    public DelegationResponse doRender(RenderRequest renderRequest, RenderResponse renderResponse, PortletOutputHandler portletOutputHandler) throws IOException {
+        return this.doRender(renderRequest, renderResponse, null, portletOutputHandler);
     }
     
     @Override
     public DelegationResponse doRender(RenderRequest renderRequest, RenderResponse renderResponse, DelegationRequest delegationRequest) throws IOException {
-        return this.doRender(renderRequest, renderResponse, delegationRequest, renderResponse.getWriter());
+        return this.doRender(renderRequest, renderResponse, delegationRequest, new RenderResponsePortletOutputHandler(renderResponse));
     }
 
     @Override
-    public DelegationResponse doRender(RenderRequest renderRequest, RenderResponse renderResponse, DelegationRequest delegationRequest, Writer writer) throws IOException {
+    public DelegationResponse doRender(RenderRequest renderRequest, RenderResponse renderResponse,
+            DelegationRequest delegationRequest, PortletOutputHandler portletOutputHandler) throws IOException {
+        
         final HttpServletRequest request = this.portalRequestUtils.getPortletHttpRequest(renderRequest);
         final HttpServletResponse response = this.portalRequestUtils.getOriginalPortalResponse(renderRequest);
 
@@ -210,30 +214,24 @@ public class PortletDelegationDispatcherImpl implements PortletDelegationDispatc
         
         try {
             //TODO canRender permission checks!
-            this.portletRenderer.doRenderMarkup(this.portletWindow.getPortletWindowId(), request, response, writer);
+            this.portletRenderer.doRenderMarkup(this.portletWindow.getPortletWindowId(), request, response, portletOutputHandler);
         }
         catch (RuntimeException e) {
             this.logger.error("Failed to render delegate", e);
             throw e;
         }
         finally {
-            writer.flush();
+            portletOutputHandler.flushBuffer();
         }
         
         return new DelegationResponse(this.getDelegateState());
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.api.portlet.PortletDelegationDispatcher#getDelegateState()
-     */
     @Override
     public DelegateState getDelegateState() {
         return new DelegateState(this.portletWindow.getPortletMode(), this.portletWindow.getWindowState());
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.api.portlet.PortletDelegationDispatcher#getPortletWindowId()
-     */
     @Override
     public IPortletWindowId getPortletWindowId() {
         return this.portletWindow.getPortletWindowId();

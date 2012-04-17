@@ -1,18 +1,15 @@
-package org.jasig.portal.portlet.rendering;
+package org.jasig.portal.portlet.container.cache;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
-import java.util.Locale;
 
 import javax.portlet.CacheControl;
 
 import org.apache.commons.io.output.StringBuilderWriter;
-import org.jasig.portal.portlet.container.cache.CachedPortletData;
-import org.jasig.portal.portlet.container.cache.LimitingTeeOutputStream;
-import org.jasig.portal.portlet.container.cache.LimitingTeeWriter;
+import org.jasig.portal.portlet.rendering.PortletOutputHandler;
 
 import com.google.common.base.Function;
 
@@ -34,16 +31,13 @@ public class CachingPortletOutputHandler implements PortletOutputHandler {
     private ByteArrayOutputStream cachingOutputStream;
     
     private String contentType;
-    private String characterEncoding;
-    private Integer contentLength;
-    private Locale locale;
 
     public CachingPortletOutputHandler(PortletOutputHandler portletOutputHandler, int maximumSize) {
         this.portletOutputHandler = portletOutputHandler;
         this.maximumSize = maximumSize;
     }
     
-    public <T extends Serializable> CachedPortletData<T> getCachedPortletData(T portletResult, CacheControl cacheControl) {
+    public final <T extends Serializable> CachedPortletData<T> getCachedPortletData(T portletResult, CacheControl cacheControl) {
         if ((this.teeWriter != null && this.teeWriter.isLimitReached()) || (this.teeStream != null && this.teeStream.isLimitReached())) {
             //Hit the caching limit, nothing to return 
             return null;
@@ -54,9 +48,7 @@ public class CachingPortletOutputHandler implements PortletOutputHandler {
                 this.cachingWriter != null ? this.cachingWriter.toString() : null, 
                 this.cachingOutputStream != null ? this.cachingOutputStream.toByteArray() : null,
                 contentType, 
-                characterEncoding, 
-                contentLength, 
-                locale, 
+                cacheControl.isPublicScope(),
                 cacheControl.getETag(), 
                 cacheControl.getExpirationTime());
     }
@@ -79,18 +71,6 @@ public class CachingPortletOutputHandler implements PortletOutputHandler {
     
     public String getContentType() {
         return contentType;
-    }
-
-    public String getCharacterEncoding() {
-        return characterEncoding;
-    }
-
-    public Integer getContentLength() {
-        return contentLength;
-    }
-
-    public Locale getLocale() {
-        return locale;
     }
 
     @Override
@@ -209,23 +189,5 @@ public class CachingPortletOutputHandler implements PortletOutputHandler {
     public void setContentType(String contentType) {
         this.portletOutputHandler.setContentType(contentType);
         this.contentType = contentType;
-    }
-
-    @Override
-    public void setCharacterEncoding(String charset) {
-        this.portletOutputHandler.setCharacterEncoding(charset);
-        this.characterEncoding = charset;
-    }
-
-    @Override
-    public void setContentLength(int len) {
-        this.portletOutputHandler.setContentLength(len);
-        this.contentLength = len;
-    }
-
-    @Override
-    public void setLocale(Locale locale) {
-        this.portletOutputHandler.setLocale(locale);
-        this.locale = locale;
     }
 }

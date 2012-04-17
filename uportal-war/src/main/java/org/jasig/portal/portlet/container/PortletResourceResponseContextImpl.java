@@ -21,6 +21,7 @@ package org.jasig.portal.portlet.container;
 
 import java.util.Locale;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -29,13 +30,17 @@ import org.apache.pluto.container.PortletResourceResponseContext;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.jasig.portal.portlet.container.services.IPortletCookieService;
 import org.jasig.portal.portlet.om.IPortletWindow;
+import org.jasig.portal.portlet.rendering.PortletResourceOutputHandler;
 import org.jasig.portal.url.IPortalUrlProvider;
+import org.w3c.dom.Element;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
 public class PortletResourceResponseContextImpl extends PortletMimeResponseContextImpl implements PortletResourceResponseContext {
+    
+    private final PortletResourceOutputHandler portletResourceOutputHandler;
     
     public PortletResourceResponseContextImpl(PortletContainer portletContainer, IPortletWindow portletWindow,
             HttpServletRequest containerRequest, HttpServletResponse containerResponse,
@@ -44,6 +49,7 @@ public class PortletResourceResponseContextImpl extends PortletMimeResponseConte
 
         super(portletContainer, portletWindow, containerRequest, containerResponse, requestPropertiesManager, portalUrlProvider, portletCookieService);
         
+        this.portletResourceOutputHandler = (PortletResourceOutputHandler)this.getPortletOutputHandler();
     }
 
     /* (non-Javadoc)
@@ -52,7 +58,7 @@ public class PortletResourceResponseContextImpl extends PortletMimeResponseConte
     @Override
     public void setCharacterEncoding(String charset) {
         this.checkContextStatus();
-        this.getPortletOutputHandler().setCharacterEncoding(charset);
+        this.portletResourceOutputHandler.setCharacterEncoding(charset);
     }
 
     /* (non-Javadoc)
@@ -61,7 +67,7 @@ public class PortletResourceResponseContextImpl extends PortletMimeResponseConte
     @Override
     public void setContentLength(int len) {
         this.checkContextStatus();
-        this.getPortletOutputHandler().setContentLength(len);
+        this.portletResourceOutputHandler.setContentLength(len);
     }
 
     /* (non-Javadoc)
@@ -70,6 +76,30 @@ public class PortletResourceResponseContextImpl extends PortletMimeResponseConte
     @Override
     public void setLocale(Locale locale) {
         this.checkContextStatus();
-        this.getPortletOutputHandler().setLocale(locale);
+        this.portletResourceOutputHandler.setLocale(locale);
+    }
+
+    @Override
+    public void addProperty(Cookie cookie) {
+        // TODO Auto-generated method stub
+        super.addProperty(cookie);
+    }
+
+    @Override
+    public void addProperty(String key, Element element) {
+        // TODO Auto-generated method stub
+        super.addProperty(key, element);
+    }
+
+    @Override
+    public void addProperty(String key, String value) {
+        // TODO Auto-generated method stub
+        super.addProperty(key, value);
+    }
+
+    @Override
+    public void setProperty(String key, String value) {
+        // TODO Auto-generated method stub
+        super.setProperty(key, value);
     }
 }

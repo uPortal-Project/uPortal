@@ -35,7 +35,7 @@ import com.google.common.base.Function;
  * @author Nicholas Blair
  *
  */
-public class LimitedBufferStringWriterTest {
+public class LimitingTeeWriterTest {
 
 	@Test
 	public void testControl() throws IOException {

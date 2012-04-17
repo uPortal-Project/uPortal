@@ -3,10 +3,8 @@ package org.jasig.portal.portlet.rendering;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.Locale;
 
 import javax.portlet.MimeResponse;
-import javax.portlet.ResourceResponse;
 import javax.servlet.ServletResponse;
 
 /**
@@ -68,22 +66,4 @@ public interface PortletOutputHandler {
      * @see ServletResponse#setContentType(String)
      */
     void setContentType(String contentType);
-    
-    /**
-     * @see ResourceResponse#setCharacterEncoding(String)
-     * @see ServletResponse#setCharacterEncoding(String)
-     */
-    void setCharacterEncoding(String charset);
-    
-    /**
-     * @see ResourceResponse#setContentLength(int)
-     * @see ServletResponse#setContentLength(int)
-     */
-    void setContentLength(int len);
-    
-    /**
-     * @see ResourceResponse#setLocale(Locale)
-     * @see ServletResponse#setLocale(Locale)
-     */
-    void setLocale(Locale locale);
 }

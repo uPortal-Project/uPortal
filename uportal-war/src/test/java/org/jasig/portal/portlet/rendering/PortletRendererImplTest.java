@@ -46,7 +46,7 @@ import org.apache.pluto.container.PortletContainerException;
 import org.apache.pluto.container.PortletWindow;
 import org.jasig.portal.api.portlet.PortletDelegationLocator;
 import org.jasig.portal.events.IPortalEventFactory;
-import org.jasig.portal.portlet.container.CacheControlImpl;
+import org.jasig.portal.portlet.container.cache.CacheControlImpl;
 import org.jasig.portal.portlet.container.cache.CachedPortletData;
 import org.jasig.portal.portlet.container.cache.CachingPortletHttpServletResponseWrapper;
 import org.jasig.portal.portlet.container.cache.IPortletCacheControlService;

@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
-import java.util.Locale;
 
 import javax.portlet.CacheControl;
 
@@ -38,7 +37,7 @@ import org.jasig.portal.portlet.rendering.PortletOutputHandler;
  * @author Nicholas Blair, npblair@wisc.edu
  * @version $Id$
  */
-public class CachedPortletData<T extends Serializable> implements Serializable {
+public class CachedPortletData<T extends Serializable> implements CachedPortletResultHolder<T>, Serializable {
 	private static final long serialVersionUID = 5509299103587289000L;
 	
 	private final T portletResult;
@@ -47,17 +46,15 @@ public class CachedPortletData<T extends Serializable> implements Serializable {
 	private final byte[] cachedStreamOutput;
 
     private final String contentType;
-    private final String characterEncoding;
-    private final Integer contentLength;
-    private final Locale locale;
 
+    private final boolean publicScope;
     private final String etag;
     private final long timeStored;
     private long expirationTime;
     
     
     public CachedPortletData(T portletResult, String cachedWriterOutput, byte[] cachedStreamOutput, String contentType,
-            String characterEncoding, Integer contentLength, Locale locale, String etag, int expirationTime) {
+            boolean publicScope, String etag, int expirationTime) {
         
         if (cachedWriterOutput != null && cachedStreamOutput != null) {
             throw new IllegalArgumentException("Both cachedWriterOutput and cachedStreamOutput have been specified");
@@ -68,12 +65,8 @@ public class CachedPortletData<T extends Serializable> implements Serializable {
         this.cachedStreamOutput = cachedStreamOutput;
         
         this.contentType = contentType;
-        this.characterEncoding = characterEncoding;
-        this.contentLength = contentLength;
-        this.locale = locale;
         
-        //TODO HEADERS
-        
+        this.publicScope = publicScope;
         this.etag = etag;
         this.timeStored = System.currentTimeMillis();
         if (expirationTime == -1) {
@@ -88,17 +81,6 @@ public class CachedPortletData<T extends Serializable> implements Serializable {
         if (contentType != null) {
             portletOutputHandler.setContentType(contentType);
         }
-        if (characterEncoding != null) {
-            portletOutputHandler.setCharacterEncoding(characterEncoding);
-        }
-        if (contentLength != null) {
-            portletOutputHandler.setContentLength(contentLength);
-        }
-        if (locale != null) {
-            portletOutputHandler.setLocale(locale);
-        }
-        
-        //TODO HEADERS
         
         if (this.cachedWriterOutput != null) {
             final PrintWriter printWriter = portletOutputHandler.getPrintWriter();
@@ -133,18 +115,6 @@ public class CachedPortletData<T extends Serializable> implements Serializable {
     public String getContentType() {
         return contentType;
     }
-
-    public String getCharacterEncoding() {
-        return characterEncoding;
-    }
-
-    public int getContentLength() {
-        return contentLength;
-    }
-
-    public Locale getLocale() {
-        return locale;
-    }
     
     public String getEtag() {
         return etag;
@@ -152,5 +122,9 @@ public class CachedPortletData<T extends Serializable> implements Serializable {
 
     public long getTimeStored() {
         return timeStored;
+    }
+
+    public boolean isPublicScope() {
+        return publicScope;
     }
 }

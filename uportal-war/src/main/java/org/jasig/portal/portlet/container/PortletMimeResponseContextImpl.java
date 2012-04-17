@@ -73,7 +73,7 @@ public abstract class PortletMimeResponseContextImpl extends PortletResponseCont
         Validate.notNull(cacheControl, "No " + IPortletRenderer.ATTRIBUTE__PORTLET_OUTPUT_HANDLER + " attribute found in request");
     }
 
-    protected PortletOutputHandler getPortletOutputHandler() {
+    protected final PortletOutputHandler getPortletOutputHandler() {
         return portletOutputHandler;
     }
 

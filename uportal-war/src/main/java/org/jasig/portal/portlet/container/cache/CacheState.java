@@ -7,11 +7,11 @@ import javax.portlet.CacheControl;
 /**
  * Represents the cache state for a portlet
  */
-public final class CacheState<T extends Serializable> {
+public final class CacheState<D extends CachedPortletResultHolder<T>, T extends Serializable> {
     private CacheControl cacheControl;
-    private CachedPortletData<T> cachedPortletData;
-    private boolean useCachedData;
-    private boolean useBrowserData;
+    private D cachedPortletData;
+    private boolean useCachedData = false;
+    private boolean useBrowserData = false;
     private PublicPortletCacheKey publicPortletCacheKey;
     private PrivatePortletCacheKey privatePortletCacheKey;
     
@@ -19,7 +19,7 @@ public final class CacheState<T extends Serializable> {
     public CacheControl getCacheControl() {
         return cacheControl;
     }
-    public CachedPortletData<T> getCachedPortletData() {
+    public D getCachedPortletData() {
         return cachedPortletData;
     }
     public boolean isUseCachedData() {
@@ -39,7 +39,7 @@ public final class CacheState<T extends Serializable> {
     void setCacheControl(CacheControl cacheControl) {
         this.cacheControl = cacheControl;
     }
-    void setCachedPortletData(CachedPortletData<T> cachedPortletData) {
+    void setCachedPortletData(D cachedPortletData) {
         this.cachedPortletData = cachedPortletData;
     }
     void setUseCachedData(boolean useCachedData) {

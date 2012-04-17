@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.portlet.container;
+package org.jasig.portal.portlet.container.cache;
 
 import javax.portlet.CacheControl;
 import javax.servlet.http.HttpServletResponse;

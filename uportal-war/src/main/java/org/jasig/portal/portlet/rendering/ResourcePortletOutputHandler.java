@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
  * 
  * @author Eric Dalquist
  */
-public class ResourcePortletOutputHandler implements PortletOutputHandler {
+public class ResourcePortletOutputHandler implements PortletResourceOutputHandler {
     private final HttpServletResponse response;
     
     public ResourcePortletOutputHandler(HttpServletResponse response) {
@@ -78,5 +78,40 @@ public class ResourcePortletOutputHandler implements PortletOutputHandler {
     @Override
     public void setLocale(Locale locale) {
         this.response.setLocale(locale);
+    }
+
+    @Override
+    public void setStatus(int status) {
+        this.response.setStatus(status);
+    }
+
+    @Override
+    public void setDateHeader(String name, long date) {
+        this.response.setDateHeader(name, date);
+    }
+
+    @Override
+    public void addDateHeader(String name, long date) {
+        this.response.addDateHeader(name, date);
+    }
+
+    @Override
+    public void setHeader(String name, String value) {
+        this.response.setHeader(name, value);        
+    }
+
+    @Override
+    public void addHeader(String name, String value) {
+        this.response.addHeader(name, value);        
+    }
+
+    @Override
+    public void setIntHeader(String name, int value) {
+        this.response.setIntHeader(name, value);        
+    }
+
+    @Override
+    public void addIntHeader(String name, int value) {
+        this.response.addIntHeader(name, value);
     }
 }

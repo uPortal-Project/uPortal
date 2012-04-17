@@ -73,7 +73,7 @@ public interface IPortletRenderer {
 	public static final String ATTRIBUTE__PORTLET_LINK = RENDERER_ATTRIBUTE_PREFIX + ".PORTLET_LINK";
 
 	/**
-	 * Attribute that the renderer stores a {@link PortletOutputHandler} that should be used when the portlet writes out content.
+	 * Attribute that the renderer stores a {@link PortletOutputHandler} or {@link PortletResourceOutputHandler} that should be used when the portlet writes out content.
 	 */
 	public static final String ATTRIBUTE__PORTLET_OUTPUT_HANDLER = RENDERER_ATTRIBUTE_PREFIX + ".PORTLET_OUTPUT_HANDLER";
 	
@@ -130,7 +130,7 @@ public interface IPortletRenderer {
      * @param portletOutputHandler The output handler to write to
      * @return The execution time for serving the resource
      */
-    public long doServeResource(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, PortletOutputHandler portletOutputHandler) throws IOException;
+    public long doServeResource(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, PortletResourceOutputHandler portletOutputHandler) throws IOException;
     
     /**
      * Resets a portlet's window data to the defaults and clears all portlet scoped session data

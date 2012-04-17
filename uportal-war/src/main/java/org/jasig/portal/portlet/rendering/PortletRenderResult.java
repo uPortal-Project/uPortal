@@ -42,6 +42,13 @@ public class PortletRenderResult implements Serializable {
         this.newItemCount = newItemCount;
         this.externalLink = externalLink;
     }
+    
+    public PortletRenderResult(PortletRenderResult portletRenderResult, long renderTime) {
+        this.title = portletRenderResult.getTitle();
+        this.newItemCount = portletRenderResult.getNewItemCount();
+        this.externalLink = portletRenderResult.getExternalLink();
+        this.renderTime = renderTime;
+    }
 
     /**
      * @return The title set by the portlet, null if none was set

@@ -3,7 +3,6 @@ package org.jasig.portal.portlet.rendering;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.Locale;
 
 import org.apache.commons.io.output.StringBuilderWriter;
 import org.apache.commons.io.output.WriterOutputStream;
@@ -104,20 +103,5 @@ public class RenderPortletOutputHandler implements PortletOutputHandler {
     @Override
     public void setContentType(String contentType) {
         this.contentType = contentType;
-    }
-
-    @Override
-    public void setCharacterEncoding(String charset) {
-        //Ignore only used by resource requests
-    }
-
-    @Override
-    public void setContentLength(int len) {
-        //Ignore only used by resource requests
-    }
-
-    @Override
-    public void setLocale(Locale locale) {
-        //Ignore only used by resource requests
     }
 }

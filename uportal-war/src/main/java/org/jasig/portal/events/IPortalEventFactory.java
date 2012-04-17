@@ -88,11 +88,11 @@ public interface IPortalEventFactory {
     public void publishPortletEventExecutionEvent(HttpServletRequest request, Object source, 
             String fname, long executionTime, Map<String, List<String>> parameters, QName eventName);
     public void publishPortletRenderHeaderExecutionEvent(HttpServletRequest request, Object source, 
-            String fname, long executionTime, Map<String, List<String>> parameters, boolean targeted);
+            String fname, long executionTime, Map<String, List<String>> parameters, boolean targeted, boolean usedPortalCache);
     public void publishPortletRenderExecutionEvent(HttpServletRequest request, Object source, 
-            String fname, long executionTime, Map<String, List<String>> parameters, boolean targeted, boolean cached);
+            String fname, long executionTime, Map<String, List<String>> parameters, boolean targeted, boolean usedPortalCache);
     public void publishPortletResourceExecutionEvent(HttpServletRequest request, Object source, 
-            String fname, long executionTime, Map<String, List<String>> parameters, String resourceId, boolean cached);
+            String fname, long executionTime, Map<String, List<String>> parameters, String resourceId, boolean usedBrowserCache, boolean usedPortalCache);
     
     //********** Portal Rendering Pipeline Events **********//
     
