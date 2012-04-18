@@ -74,6 +74,7 @@
         <!-- View Parameters -->
         <input name="selectTypes" value="entityTypes"/>
         <input name="selectMultiple" value="true"/>
+        <input name="requireSelection" value="false"/>
         <input name="rootEntityId" value="rootEntity"/>
         
         <input name="showCancelButton" value="true"/>

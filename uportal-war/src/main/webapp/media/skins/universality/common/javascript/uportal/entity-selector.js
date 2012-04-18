@@ -480,7 +480,7 @@ var up = up || {};
         browseEntity(that, that.options.initialFocusedEntity);
         
         // Disable primary button.
-        if (that.options.selected.length < 1) {
+        if (that.options.selected.length < 1 && that.options.requireSelection) {
             that.locate("buttonPrimary").attr("disabled", "disabled");
         }//end:if.
 
@@ -526,6 +526,7 @@ var up = up || {};
         selected: [],
         initialFocusedEntity: 'group:local.0',
         selectMultiple: true,
+        requireSelection: true,
         selectors: {
             selectionBasket: "#selectionBasket",
             breadcrumbs: "#entityBrowsingBreadcrumbs",
