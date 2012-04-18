@@ -81,7 +81,7 @@ public interface IPortletCacheControlService {
      * if the content needs to be stored in a public or private scoped cache.
      */
     void cachePortletResourceOutput(IPortletWindowId portletWindowId, HttpServletRequest httpRequest,
-            CacheState<CachedPortletResourceData<Long>, Long> cacheState, CachedPortletResourceData<Long> cachedPortletData);
+            CacheState<CachedPortletResourceData<Long>, Long> cacheState, CachedPortletResourceData<Long> cachedPortletResourceData);
 	
 	/**
 	 * Purge any {@link CachedPortletRenderData} for the portlet.

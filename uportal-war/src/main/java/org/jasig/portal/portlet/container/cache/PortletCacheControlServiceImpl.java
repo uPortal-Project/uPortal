@@ -208,7 +208,7 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
         final Locale locale = RequestContextUtils.getLocale(request);
         final PublicPortletCacheKey publicCacheKey = PublicPortletCacheKey.createPublicPortletRenderHeaderCacheKey(definitionId, portletWindow, locale);
         
-        return this.getPortletState(request,
+        return this.<CachedPortletData<PortletRenderResult>, PortletRenderResult> getPortletState(request,
                 portletWindow,
                 publicCacheKey,
                 this.publicScopePortletRenderHeaderOutputCache,
@@ -232,7 +232,7 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
         final Locale locale = RequestContextUtils.getLocale(request);
         final PublicPortletCacheKey publicCacheKey = PublicPortletCacheKey.createPublicPortletRenderCacheKey(definitionId, portletWindow, locale);
         
-        return this.getPortletState(request,
+        return this.<CachedPortletData<PortletRenderResult>, PortletRenderResult> getPortletState(request,
                 portletWindow,
                 publicCacheKey,
                 this.publicScopePortletRenderOutputCache,
@@ -257,7 +257,7 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
         final Locale locale = RequestContextUtils.getLocale(request);
         final PublicPortletCacheKey publicCacheKey = PublicPortletCacheKey.createPublicPortletResourceCacheKey(definitionId, portletWindow, resourceId, locale);
         
-        return this.getPortletState(request,
+        return this.<CachedPortletResourceData<Long>, Long> getPortletState(request,
                 portletWindow,
                 publicCacheKey,
                 this.publicScopePortletResourceOutputCache,
@@ -269,14 +269,19 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
             IPortletWindow portletWindow, PublicPortletCacheKey publicCacheKey, Ehcache publicOutputCache, Ehcache privateOutputCache, boolean useHttpHeaders) {
         
         //See if there is any cached data for the portlet header request
-        final CacheState<D, T> cacheState = this.getPortletCacheState(request, portletWindow, publicCacheKey, publicOutputCache, privateOutputCache);
-        
+        final CacheState<D, T> cacheState = this.<D, T> getPortletCacheState(request,
+                portletWindow,
+                publicCacheKey,
+                publicOutputCache,
+                privateOutputCache);
+    
+        String etagHeader = null;
         final D cachedPortletData = cacheState.getCachedPortletData();
         if (cachedPortletData != null) {
             if (useHttpHeaders) {
                 //Browser headers being used, check ETag and Last Modified
                 
-                final String etagHeader = request.getHeader(IF_NONE_MATCH);
+                etagHeader = request.getHeader(IF_NONE_MATCH);
                 if (etagHeader != null && etagHeader.equals(cachedPortletData.getEtag())) {
                     //ETag is valid, mark the browser data as matching
                     cacheState.setBrowserDataMatches(true);
@@ -290,7 +295,8 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
                 }
             }
             
-            if (cachedPortletData.getExpirationTime() > System.currentTimeMillis()) {
+            final long expirationTime = cachedPortletData.getExpirationTime();
+            if (expirationTime == -1 || expirationTime > System.currentTimeMillis()) {
                 //Cached data exists, see if it can be used with no additional work
                 //Cached data is not expired, check if browser data should be used
                 cacheState.setUseCachedData(true);
@@ -320,14 +326,14 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
         //Set the default expiration time
         cacheControl.setExpirationTime(portletDescriptor.getExpirationCache());
         
-        // If there is cached data copy the etag
-        if (cachedPortletData != null) {
-            cacheControl.setETag(cachedPortletData.getEtag());
-        }
-        // If no cached data fall back on the request Etag 
-        else if (useHttpHeaders) {
-            final String etagHeader = request.getHeader(IF_NONE_MATCH);
+        // Use the request etag if it exists (implies useHttpHeaders==true)
+        if (etagHeader != null) {
             cacheControl.setETag(etagHeader);
+            cacheState.setBrowserSetEtag(true);
+        }
+        // No browser-set etag, use the cached etag value if there is cached data
+        else if (cachedPortletData != null) {
+            cacheControl.setETag(cachedPortletData.getEtag());
         }
         
         return cacheState;
@@ -395,7 +401,7 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
             return null;
         }
 
-        final CachedPortletData<T> cachedPortletData = (CachedPortletData<T>) publicCacheElement.getValue();
+        final CachedPortletResultHolder<T> cachedPortletData = (CachedPortletResultHolder<T>) publicCacheElement.getValue();
         if (publicCacheElement.isExpired() && cachedPortletData.getEtag() == null) {
             logger.debug("Cached output for key {} is expired", cacheKey);
             outputCache.remove(cacheKey);
@@ -403,7 +409,7 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
         }
 
         logger.debug("Returning cached output with key {} for {}", cacheKey, portletWindow);
-        return (CachedPortletData<T>) publicCacheElement.getValue();
+        return (CachedPortletResultHolder<T>) publicCacheElement.getValue();
     }    
 	
     /**
@@ -455,12 +461,12 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
 	@Override
     public void cachePortletResourceOutput(IPortletWindowId portletWindowId, HttpServletRequest httpRequest,
             CacheState<CachedPortletResourceData<Long>, Long> cacheState,
-            CachedPortletResourceData<Long> cachedPortletData) {
+            CachedPortletResourceData<Long> cachedPortletResourceData) {
 	    
         cachePortletOutput(portletWindowId,
                 httpRequest,
                 cacheState,
-                cachedPortletData,
+                cachedPortletResourceData,
                 this.publicScopePortletResourceOutputCache,
                 this.privateScopePortletResourceOutputCache);
 	}
@@ -477,7 +483,17 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
             logger.debug("Cached public data under key {} for {}", publicCacheKey, portletWindow);
         }
         else {
-            final PrivatePortletCacheKey privateCacheKey = cacheState.getPrivatePortletCacheKey();
+            PrivatePortletCacheKey privateCacheKey = cacheState.getPrivatePortletCacheKey();
+            
+            //Private key can be null if getPortletState found publicly cached data but the portlet's response is now privately scoped
+            if (privateCacheKey == null) {
+                final HttpSession session = httpRequest.getSession();
+                final String sessionId = session.getId();
+                final IPortletEntityId entityId = portletWindow.getPortletEntityId();
+                final PublicPortletCacheKey publicCacheKey = cacheState.getPublicPortletCacheKey();
+                privateCacheKey = new PrivatePortletCacheKey(sessionId, portletWindowId, entityId, publicCacheKey);
+            }
+            
             this.cacheElement(privateOutputCache, privateCacheKey, cachedPortletData, cacheControl);
             logger.debug("Cached private data under key {} for {}", privateCacheKey, portletWindow);
         }
@@ -505,9 +521,11 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
 
 		// using expiration method with a positive expiration, set that value as the element's TTL if it is lower than the configured cache TTL
 		final CacheConfiguration cacheConfiguration = cache.getCacheConfiguration();
-		final long cacheConfigTTL = cacheConfiguration.getTimeToLiveSeconds();
-		final long elementTTL = Math.min(expirationTime, cacheConfigTTL);
-		final Element element = new Element(cacheKey, data, null, null, (int)elementTTL);
+		final Element element = new Element(cacheKey, data);
+        final long cacheTTL = cacheConfiguration.getTimeToLiveSeconds();
+        if (expirationTime < cacheTTL) {
+            element.setTimeToLive(expirationTime);
+        }
 		cache.put(element);
 	}
 	

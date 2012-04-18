@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.util.concurrent.TimeUnit;
 
 import javax.portlet.CacheControl;
 
@@ -53,6 +54,9 @@ public class CachedPortletData<T extends Serializable> implements CachedPortletR
     private long expirationTime;
     
     
+    /**
+     * @param expirationTime Time in seconds the content is valid for (from now)
+     */
     public CachedPortletData(T portletResult, String cachedWriterOutput, byte[] cachedStreamOutput, String contentType,
             boolean publicScope, String etag, int expirationTime) {
         
@@ -69,12 +73,7 @@ public class CachedPortletData<T extends Serializable> implements CachedPortletR
         this.publicScope = publicScope;
         this.etag = etag;
         this.timeStored = System.currentTimeMillis();
-        if (expirationTime == -1) {
-            this.expirationTime = -1;
-        }
-        else {
-            this.expirationTime = this.timeStored + expirationTime;
-        }
+        this.updateExpirationTime(expirationTime);
     }
     
     public void replay(PortletOutputHandler portletOutputHandler) throws IOException {
@@ -92,12 +91,23 @@ public class CachedPortletData<T extends Serializable> implements CachedPortletR
         }
     }
 
+    /**
+     * The time since the epoch in milliseconds that this content expires. -1 if it never expires
+     */
     public long getExpirationTime() {
         return expirationTime;
     }
 
-    public void setExpirationTime(long expirationTime) {
-        this.expirationTime = expirationTime;
+    /**
+     * @param expirationTime Time in seconds the content is valid for (from now)
+     */
+    public void updateExpirationTime(int expirationTime) {
+        if (expirationTime == -1) {
+            this.expirationTime = -1;
+        }
+        else {
+            this.expirationTime = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(expirationTime);
+        }
     }
 
     public T getPortletResult() {

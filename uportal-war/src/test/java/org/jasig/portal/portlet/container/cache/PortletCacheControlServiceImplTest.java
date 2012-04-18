@@ -18,11 +18,14 @@
  */
 package org.jasig.portal.portlet.container.cache;
 
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import java.util.Collections;
 
 import javax.portlet.CacheControl;
 import javax.portlet.MimeResponse;
@@ -40,6 +43,8 @@ import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.rendering.PortletRenderResult;
+import org.jasig.portal.url.IPortalRequestInfo;
+import org.jasig.portal.url.IUrlSyntaxProvider;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -60,9 +65,11 @@ public class PortletCacheControlServiceImplTest {
     @InjectMocks private PortletCacheControlServiceImpl cacheControlService = new PortletCacheControlServiceImpl();
     @Mock private IPortletWindowRegistry portletWindowRegistry;
     @Mock private IPortletDefinitionRegistry portletDefinitionRegistry;
+    @Mock private IUrlSyntaxProvider urlSyntaxProvider;
     @Mock private IPortletWindow portletWindow;
     @Mock private IPortletEntity portletEntity;
     @Mock private PortletDefinition portletDescriptor;
+    @Mock private IPortalRequestInfo portalRequestInfo;
 
     
 	private CacheManager cacheManager;
@@ -172,7 +179,7 @@ public class PortletCacheControlServiceImplTest {
         
         final CachedPortletData<PortletRenderResult> cachedPortletData = new CachedPortletData<PortletRenderResult>(
                 portletResult, content, null, null, cacheControl.isPublicScope(),
-                cacheControl.getETag(), 1);
+                cacheControl.getETag(), -2);
         
         cacheControlService.cachePortletRenderOutput(portletWindowId, nextHttpRequest, cacheState, cachedPortletData);
 		
@@ -233,4 +240,97 @@ public class PortletCacheControlServiceImplTest {
         final CacheControl cacheControl = cacheState.getCacheControl();
         assertTrue(cacheControl.isPublicScope());
 	}
+    
+    @Test
+    public void testCachePrivateRenderRoundTrip() {
+        MockHttpServletRequest httpRequest = new MockHttpServletRequest();
+        MockPortletWindowId portletWindowId = new MockPortletWindowId("123");
+        MockPortletDefinitionId portletDefinitionId = new MockPortletDefinitionId(789);
+        
+        when(portletDescriptor.getCacheScope()).thenReturn(MimeResponse.PUBLIC_SCOPE);
+        
+        when(portletWindowRegistry.getPortletWindow(httpRequest, portletWindowId)).thenReturn(portletWindow);
+        when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
+        when(portletWindow.getWindowState()).thenReturn(WindowState.NORMAL);
+        when(portletWindow.getPortletMode()).thenReturn(PortletMode.VIEW);
+        when(portletEntity.getPortletDefinitionId()).thenReturn(portletDefinitionId);
+        
+        when(portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId)).thenReturn(portletDescriptor);
+
+        when(this.urlSyntaxProvider.getPortalRequestInfo(httpRequest)).thenReturn(portalRequestInfo);
+        when(portalRequestInfo.getPortletRequestInfoMap()).thenReturn(Collections.EMPTY_MAP);
+
+        //Get the initial cache state
+        final CacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> firstCacheState = cacheControlService.getPortletRenderState(httpRequest, portletWindowId);
+        
+        //Fake Render execution
+        final CacheControl cacheControl = firstCacheState.getCacheControl();
+        cacheControl.setExpirationTime(300);
+        
+        final PortletRenderResult renderResult = new PortletRenderResult("title", null, 0, 1000l);
+        final String output = "{ \"hello\": \"world\" }";
+        final CachedPortletData<PortletRenderResult> cachedPortletData = new CachedPortletData<PortletRenderResult>(
+                renderResult, output, null, null, false, cacheControl.getETag(), cacheControl.getExpirationTime());
+        firstCacheState.setCachedPortletData(cachedPortletData);
+
+        
+        assertTrue(cacheControlService.shouldOutputBeCached(cacheControl));
+        
+        //Cache the results
+        cacheControlService.cachePortletRenderOutput(portletWindowId, httpRequest, firstCacheState, cachedPortletData);
+        
+        //Check the cached results
+        final CacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> secondCacheState = cacheControlService.getPortletRenderState(httpRequest, portletWindowId);
+
+        assertNotNull(secondCacheState);
+        final CachedPortletData<PortletRenderResult> actualCachedPortletData = secondCacheState.getCachedPortletData();
+        assertNotNull(actualCachedPortletData);
+    }
+    
+    @Test
+    public void testCachePrivateResourceRoundTrip() {
+        MockHttpServletRequest httpRequest = new MockHttpServletRequest();
+        MockPortletWindowId portletWindowId = new MockPortletWindowId("123");
+        MockPortletDefinitionId portletDefinitionId = new MockPortletDefinitionId(789);
+        
+        when(portletDescriptor.getCacheScope()).thenReturn(MimeResponse.PUBLIC_SCOPE);
+        
+        when(portletWindowRegistry.getPortletWindow(httpRequest, portletWindowId)).thenReturn(portletWindow);
+        when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
+        when(portletWindow.getWindowState()).thenReturn(WindowState.NORMAL);
+        when(portletWindow.getPortletMode()).thenReturn(PortletMode.VIEW);
+        when(portletEntity.getPortletDefinitionId()).thenReturn(portletDefinitionId);
+        
+        when(portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId)).thenReturn(portletDescriptor);
+
+        when(this.urlSyntaxProvider.getPortalRequestInfo(httpRequest)).thenReturn(portalRequestInfo);
+        when(portalRequestInfo.getPortletRequestInfoMap()).thenReturn(Collections.EMPTY_MAP);
+
+        //Get the initial cache state
+        final CacheState<CachedPortletResourceData<Long>, Long> firstCacheState = cacheControlService.getPortletResourceState(httpRequest, portletWindowId);
+        
+        //Fake resource execution
+        final CacheControl cacheControl = firstCacheState.getCacheControl();
+        cacheControl.setExpirationTime(300);
+        
+        final String output = "{ \"hello\": \"world\" }";
+        final CachedPortletData<Long> cachedPortletData = new CachedPortletData<Long>(
+                1000l, output, null, "application/json", false, cacheControl.getETag(), cacheControl.getExpirationTime());
+        final CachedPortletResourceData<Long> cachedPortletResourceData = new CachedPortletResourceData<Long>(
+                cachedPortletData, Collections.EMPTY_MAP, null, null, null, null);
+        firstCacheState.setCachedPortletData(cachedPortletResourceData);
+
+        
+        assertTrue(cacheControlService.shouldOutputBeCached(cacheControl));
+        
+        //Cache the results
+        cacheControlService.cachePortletResourceOutput(portletWindowId, httpRequest, firstCacheState, cachedPortletResourceData);
+        
+        //Check the cached results
+        final CacheState<CachedPortletResourceData<Long>, Long> secondCacheState = cacheControlService.getPortletResourceState(httpRequest, portletWindowId);
+
+        assertNotNull(secondCacheState);
+        final CachedPortletResourceData<Long> actualCachedPortletData = secondCacheState.getCachedPortletData();
+        assertNotNull(actualCachedPortletData);
+    }
 }

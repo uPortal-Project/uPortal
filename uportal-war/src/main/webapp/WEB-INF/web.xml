@@ -245,6 +245,12 @@
     </filter-mapping>
     
     <filter-mapping>
+        <filter-name>requireValidSessionFilter</filter-name>
+        <servlet-name>RenderingDispatcherServlet</servlet-name>
+        <servlet-name>JsonRenderingDispatcherServlet</servlet-name>
+    </filter-mapping>
+    
+    <filter-mapping>
         <filter-name>CAS Validate Filter</filter-name>
         <url-pattern>/Login</url-pattern>
     </filter-mapping>

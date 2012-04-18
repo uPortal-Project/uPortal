@@ -55,7 +55,7 @@ public class CachingPortletOutputHandler implements PortletOutputHandler {
         this.maximumSize = maximumSize;
     }
     
-    public final <T extends Serializable> CachedPortletData<T> getCachedPortletData(T portletResult, CacheControl cacheControl) {
+    public <T extends Serializable> CachedPortletData<T> getCachedPortletData(T portletResult, CacheControl cacheControl) {
         if ((this.teeWriter != null && this.teeWriter.isLimitReached()) || (this.teeStream != null && this.teeStream.isLimitReached())) {
             //Hit the caching limit, nothing to return 
             return null;
@@ -107,7 +107,7 @@ public class CachingPortletOutputHandler implements PortletOutputHandler {
                         @Override
                         public Object apply(LimitingTeeWriter input) {
                             //Limit hit, clear the cache
-                            resetCachedWriter();
+                            clearCachedWriter();
                             return null;
                         }
                     });
@@ -135,7 +135,7 @@ public class CachingPortletOutputHandler implements PortletOutputHandler {
                         @Override
                         public Object apply(LimitingTeeOutputStream input) {
                             //Limit hit, clear the cache
-                            resetCachedStream();
+                            clearCachedStream();
                             return null;
                         }
                     });
@@ -184,6 +184,12 @@ public class CachingPortletOutputHandler implements PortletOutputHandler {
     private void resetCachedWriter() {
         if (this.cachingWriter != null) {
             this.teeWriter.resetByteCount();
+            this.clearCachedWriter();
+        }
+    }
+
+    private void clearCachedWriter() {
+        if (this.cachingWriter != null) {
             final StringBuilder builder = this.cachingWriter.getBuilder();
             if (builder.length() > 0) {
                 builder.delete(0, builder.length());
@@ -194,6 +200,12 @@ public class CachingPortletOutputHandler implements PortletOutputHandler {
     private void resetCachedStream() {
         if (this.cachingOutputStream != null) {
             this.teeStream.resetByteCount();
+            this.clearCachedStream();
+        }
+    }
+
+    private void clearCachedStream() {
+        if (this.cachingOutputStream != null) {
             this.cachingOutputStream.reset();
         }
     }

@@ -382,12 +382,12 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
     }
     
     @Override
-    public void publishPortalRenderEvent(HttpServletRequest request, Object source, String requestPathInfo, long executionTime, 
+    public void publishPortalRenderEvent(HttpServletRequest request, Object source, String requestPathInfo, long executionTimeNano, 
             IPortalRequestInfo portalRequestInfo) {
         final PortalEventBuilder eventBuilder = this.createPortalEventBuilder(source, request);
         
         final Map<String, List<String>> portalParameters = this.pruneParameters(portalRequestInfo.getPortalParameters());
-        final PortalRenderEvent portalRenderEvent = new PortalRenderEvent(eventBuilder, requestPathInfo, executionTime,
+        final PortalRenderEvent portalRenderEvent = new PortalRenderEvent(eventBuilder, requestPathInfo, executionTimeNano,
                 portalRequestInfo.getUrlState(), portalRequestInfo.getUrlType(), portalParameters,
                 portalRequestInfo.getTargetedLayoutNodeId());
         

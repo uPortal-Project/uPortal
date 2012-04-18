@@ -26,6 +26,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.portlet.CacheControl;
+import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.portlet.rendering.PortletResourceOutputHandler;
 
@@ -52,6 +53,11 @@ public class CachingPortletResourceOutputHandler extends CachingPortletOutputHan
     }
     
     public <T extends Serializable> CachedPortletResourceData<T> getCachedPortletResourceData(T portletResult, CacheControl cacheControl) {
+        if (status != null && status != HttpServletResponse.SC_OK) {
+            //Only cache OK responses
+            return null;
+        }
+        
         final CachedPortletData<T> cachedPortletData = super.getCachedPortletData(portletResult, cacheControl);
         if (cachedPortletData == null) {
             //Hit the caching limit, nothing to return 
@@ -60,7 +66,7 @@ public class CachingPortletResourceOutputHandler extends CachingPortletOutputHan
         
         return new CachedPortletResourceData<T>(cachedPortletData, headers, status, characterEncoding, contentLength, locale);
     }
-    
+
     public Map<String, List<Serializable>> getHeaders() {
         return headers;
     }
@@ -108,40 +114,40 @@ public class CachingPortletResourceOutputHandler extends CachingPortletOutputHan
     @Override
     public void setDateHeader(String name, long date) {
         this.portletResourceOutputHandler.setDateHeader(name, date);
-        this.setHeader(name, date);
+        this.setGenericHeader(name, date);
     }
 
     @Override
     public void addDateHeader(String name, long date) {
         this.portletResourceOutputHandler.addDateHeader(name, date);
-        this.addHeader(name, date);
+        this.addGenericHeader(name, date);
     }
 
     @Override
     public void setHeader(String name, String value) {
         this.portletResourceOutputHandler.setHeader(name, value);
-        this.setHeader(name, value);
+        this.setGenericHeader(name, value);
     }
 
     @Override
     public void addHeader(String name, String value) {
         this.portletResourceOutputHandler.addHeader(name, value);
-        this.addHeader(name, value);
+        this.addGenericHeader(name, value);
     }
 
     @Override
     public void setIntHeader(String name, int value) {
         this.portletResourceOutputHandler.setIntHeader(name, value);
-        this.setHeader(name, value);
+        this.setGenericHeader(name, value);
     }
 
     @Override
     public void addIntHeader(String name, int value) {
         this.portletResourceOutputHandler.addIntHeader(name, value);
-        this.addHeader(name, value);
+        this.addGenericHeader(name, value);
     }
     
-    protected final void addHeader(String name, Serializable value) {
+    protected final void addGenericHeader(String name, Serializable value) {
         List<Serializable> values = this.headers.get(name);
         if (values == null) {
             values = new LinkedList<Serializable>();
@@ -150,7 +156,7 @@ public class CachingPortletResourceOutputHandler extends CachingPortletOutputHan
         values.add(value);
     }
     
-    protected final void setHeader(String name, Serializable value) {
+    protected final void setGenericHeader(String name, Serializable value) {
         final List<Serializable> values = new LinkedList<Serializable>();
         values.add(value);
         this.headers.put(name, values);

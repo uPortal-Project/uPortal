@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.Validate;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import org.jasig.portal.dao.usertype.FunctionalNameType;
 
 /**
@@ -37,8 +39,9 @@ public abstract class PortletExecutionEvent extends PortalEvent {
     private static final long serialVersionUID = 1L;
     
     private final String fname;
-    private long executionTime = -1;
-    private final long executionTimeNano;
+    @JsonSerialize(include = Inclusion.NON_NULL)
+    private Long executionTime;
+    private long executionTimeNano;
     private final Map<String, List<String>> parameters;
 
     PortletExecutionEvent() {
@@ -62,19 +65,21 @@ public abstract class PortletExecutionEvent extends PortalEvent {
      * @return the executionTime in milliseconds
      */
     public long getExecutionTime() {
-        long e = this.executionTime;
-        if (e == -1) {
-            e = TimeUnit.NANOSECONDS.toMillis(this.executionTimeNano);
-            this.executionTime = e;
+        if (this.executionTime == null) {
+            this.executionTime = TimeUnit.NANOSECONDS.toMillis(this.executionTimeNano);
         }
         
-        return e;
+        return this.executionTime;
     }
 
     /**
      * @return the executionTime in nanoseconds
      */
     public long getExecutionTimeNano() {
+        if (this.executionTimeNano == -1 && this.executionTime != null) {
+            this.executionTimeNano = TimeUnit.MILLISECONDS.toNanos(this.executionTime);
+        }
+        
         return this.executionTimeNano;
     }
     
@@ -92,7 +97,7 @@ public abstract class PortletExecutionEvent extends PortalEvent {
     public String toString() {
         return super.toString() + 
                 ", fname=" + this.fname + 
-                ", executionTime=" + this.executionTime +
+                ", executionTimeNano=" + this.getExecutionTimeNano() +
                 ", parameters=" + this.parameters.size();
     }
 }

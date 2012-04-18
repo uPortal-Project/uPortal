@@ -21,6 +21,7 @@ package org.jasig.portal.portlet.container;
 
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -33,10 +34,12 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletRequestContext;
 import org.apache.pluto.container.driver.PortletServlet;
+import org.apache.pluto.container.impl.HttpServletPortletRequestWrapper;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.jasig.portal.portlet.container.services.IPortletCookieService;
 import org.jasig.portal.portlet.container.services.RequestAttributeService;
@@ -234,8 +237,31 @@ public class PortletRequestContextImpl extends AbstractPortletContextImpl implem
      */
 	@Override
 	public Object getAttribute(String name, ServletRequest request) {
-       // TODO what is relationship with #getAttribute(String)? 
+	    if (this.isServletContainerManagedAttribute(name)) {
+	        return request.getAttribute(name);
+	    }
         return null;
 	}
+	
+	private boolean isServletContainerManagedAttribute(String name) {
+	    return PropertyExposingHttpServletPortletRequestWrapper.getServletContainerManagedAttributes().contains(name);
+	}
+	
+	/**
+	 * Exists to expose some protected properties on HttpServletPortletRequestWrapper
+	 */
+	private static class PropertyExposingHttpServletPortletRequestWrapper extends HttpServletPortletRequestWrapper {
 
+	    public static HashSet<String> getServletContainerManagedAttributes() {
+	        return servletContainerManagedAttributes;
+	    }
+	    
+        private PropertyExposingHttpServletPortletRequestWrapper(HttpServletRequest request,
+                ServletContext servletContext, HttpSession session, PortletRequest portletRequest, boolean included,
+                boolean namedDispatch) {
+            super(request, servletContext, session, portletRequest, included, namedDispatch);
+            throw new UnsupportedOperationException(PropertyExposingHttpServletPortletRequestWrapper.class + " should never be created");
+        }
+        
+    }
 }

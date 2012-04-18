@@ -82,13 +82,13 @@ public class CachedPortletResourceData<T extends Serializable> implements Cached
             final String name = headerEntry.getKey();
             for (final Serializable value : headerEntry.getValue()) {
                 if (value instanceof Long) {
-                    portletOutputHandler.setDateHeader(name, (Long)value);
+                    portletOutputHandler.addDateHeader(name, (Long)value);
                 }
                 else if (value instanceof Long) {
-                    portletOutputHandler.setIntHeader(name, (Integer)value);
+                    portletOutputHandler.addIntHeader(name, (Integer)value);
                 }
                 else {
-                    portletOutputHandler.setHeader(name, (String)value);
+                    portletOutputHandler.addHeader(name, (String)value);
                 }
             }
         }

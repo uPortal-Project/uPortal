@@ -65,29 +65,29 @@ final class PublicPortletCacheKeyTracker extends CacheEventListenerAdapter {
     public void notifyElementPut(Ehcache cache, Element element) throws CacheException {
         final PublicPortletCacheKey key = (PublicPortletCacheKey) element.getKey();
         publicPortletCacheKeys.getUnchecked(key.getPortletDefinitionId()).add(key);
-        logger.debug("Added cache key {} to tracker", key);
+        logger.debug("Added cache key {} to tracker for {}", key, cache.getName());
     }
 
     @Override
     public void notifyElementRemoved(Ehcache cache, Element element) throws CacheException {
-        removeEntry(element);
+        removeEntry(cache, element);
     }
 
     @Override
     public void notifyElementExpired(Ehcache cache, Element element) {
-        removeEntry(element);
+        removeEntry(cache, element);
     }
 
     @Override
     public void notifyElementEvicted(Ehcache cache, Element element) {
-        removeEntry(element);
+        removeEntry(cache, element);
     }
 
-    protected void removeEntry(Element element) {
+    protected void removeEntry(Ehcache cache, Element element) {
         final PublicPortletCacheKey key = (PublicPortletCacheKey) element.getKey();
         final Set<PublicPortletCacheKey> keySet = publicPortletCacheKeys.getIfPresent(key.getPortletDefinitionId());
         if (keySet != null) {
-            logger.debug("Removed cache key {} from tracker", key);
+            logger.debug("Removed cache key {} from tracker for {}", key, cache.getName());
             keySet.remove(key);
         }
     }
@@ -96,6 +96,6 @@ final class PublicPortletCacheKeyTracker extends CacheEventListenerAdapter {
     public void notifyRemoveAll(Ehcache cache) {
         this.publicPortletCacheKeys.invalidateAll();
         
-        logger.debug("Removed all cache keys tracker");
+        logger.debug("Removed all cache keys from tracker for {}", cache.getName());
     }
 }

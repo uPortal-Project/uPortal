@@ -386,6 +386,16 @@ public class PortletRendererImpl implements IPortletRenderer {
 
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
 
+        /*
+         * If the portlet is rendering in EXCLUSIVE WindowState ignore the provided PortletOutputHandler and
+         * write directly to the response.
+         * 
+         * THIS IS VERY BAD AND SHOULD BE DEPRECATED ALONG WITH EXCLUSIVE WINDOW STATE
+         */
+        if (EXCLUSIVE.equals(portletWindow.getWindowState())) {
+            portletOutputHandler = new ResourcePortletOutputHandler(httpServletResponse);
+        }
+
         if (cacheState.isUseCachedData()) {
     		return doRenderReplayCachedContent(portletWindow, httpServletRequest, cacheState, portletOutputHandler, renderPart, 0);
     	}
@@ -435,7 +445,7 @@ public class PortletRendererImpl implements IPortletRenderer {
             }
             
             //Update the expiration time and re-store in the cache
-            cachedPortletData.setExpirationTime(cacheControl.getExpirationTime());
+            cachedPortletData.updateExpirationTime(cacheControl.getExpirationTime());
             
             renderPart.cachePortletOutput(portletCacheControlService, portletWindowId, httpServletRequest, cacheState, cachedPortletData);
             
@@ -474,6 +484,10 @@ public class PortletRendererImpl implements IPortletRenderer {
     protected PortletRenderResult doRenderReplayCachedContent(IPortletWindow portletWindow,
             HttpServletRequest httpServletRequest, CacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> cacheState,
             PortletOutputHandler portletOutputHandler, RenderPart renderPart, long baseExecutionTime) throws IOException {
+        
+        if (logger.isDebugEnabled()) {
+            logger.debug("Replaying cached content for Render " + renderPart + " request to " + portletWindow);
+        }
         
     	final long renderStartTime = System.nanoTime();
     	
@@ -572,6 +586,9 @@ public class PortletRendererImpl implements IPortletRenderer {
         httpServletRequest.setAttribute(ATTRIBUTE__PORTLET_CACHE_CONTROL, cacheControl);
         httpServletRequest.setAttribute(ATTRIBUTE__PORTLET_OUTPUT_HANDLER, cachingPortletOutputHandler);
         
+        //Add PrintWriter/ServletOutputStream wrapper
+        httpServletResponse = new ResourceHttpServletResponseWrapper(httpServletResponse, cacheControl);
+        
         if (this.logger.isDebugEnabled()) {
             this.logger.debug("Executing resource request for window '" + portletWindow + "'");
         }
@@ -595,24 +612,18 @@ public class PortletRendererImpl implements IPortletRenderer {
         final boolean useCachedContent = cacheControl.useCachedContent();
         if (useCachedContent) {
             final CachedPortletResourceData<Long> cachedPortletResourceData = cacheState.getCachedPortletData();
-            if (cachedPortletResourceData == null) {
-                throw new PortletDispatchException(
-                        "The portlet window '" + portletWindow + "' indicated via CacheControl#useCachedContent " +
-                        "that the portal should render cached content, however there is no cached content to return. " +
-                        "This is a portlet bug.",
-                        portletWindow);
+            
+            if (cachedPortletResourceData != null) {
+                //Update the expiration time and re-store in the cache
+                final CachedPortletData<Long> cachedPortletData = cachedPortletResourceData.getCachedPortletData();
+                cachedPortletData.updateExpirationTime(cacheControl.getExpirationTime());
+                this.portletCacheControlService.cachePortletResourceOutput(portletWindowId, httpServletRequest, cacheState, cachedPortletResourceData);
             }
             
-            if (cacheState.isBrowserDataMatches()) {
+            if (cacheState.isBrowserSetEtag()) {
                 //Browser-side content matches, send a 304
                 return doResourceReplayBrowserContent(portletWindow, httpServletRequest, cacheState, portletOutputHandler);
             }
-            
-            //Update the expiration time and re-store in the cache
-            final CachedPortletData<Long> cachedPortletData = cachedPortletResourceData.getCachedPortletData();
-            cachedPortletData.setExpirationTime(cacheControl.getExpirationTime());
-            
-            this.portletCacheControlService.cachePortletResourceOutput(portletWindowId, httpServletRequest, cacheState, cachedPortletResourceData);
             
             return doResourceReplayCachedContent(portletWindow, httpServletRequest, cacheState, cachingPortletOutputHandler, executionTime);
         }
@@ -642,8 +653,16 @@ public class PortletRendererImpl implements IPortletRenderer {
             CacheState<CachedPortletResourceData<Long>, Long> cacheState,
             PortletResourceOutputHandler portletOutputHandler) {
         
-        final long start = System.nanoTime();
+        if (logger.isDebugEnabled()) {
+            logger.debug("Sending 304 for resource request to " + portletWindow);
+        }
+        
+        if (portletOutputHandler.isCommitted()) {
+            throw new IllegalStateException("Attempting to send 304 but response is already committed");
+        }
 
+        final long start = System.nanoTime();
+    
         portletOutputHandler.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
         
         final CachedPortletResourceData<Long> cachedPortletResourceData = cacheState.getCachedPortletData();
@@ -667,10 +686,22 @@ public class PortletRendererImpl implements IPortletRenderer {
             HttpServletRequest httpServletRequest, CacheState<CachedPortletResourceData<Long>, Long> cacheState,
             PortletResourceOutputHandler portletOutputHandler, long baseExecutionTime) throws IOException {
         
+        if (logger.isDebugEnabled()) {
+            logger.debug("Replaying cached content for resource request to " + portletWindow);
+        }
+        
         final long renderStartTime = System.nanoTime();
         
-        final CachedPortletResourceData<Long> cachedPortletData = cacheState.getCachedPortletData();
-        cachedPortletData.replay(portletOutputHandler);
+        final CachedPortletResourceData<Long> cachedPortletResourceData = cacheState.getCachedPortletData();
+        if (cachedPortletResourceData == null) {
+            throw new PortletDispatchException(
+                    "The portlet window '" + portletWindow + "' indicated via CacheControl#useCachedContent " +
+                    "that the portal should render cached content, however there is no cached content to return. " +
+                    "This is a portlet bug.",
+                    portletWindow);
+        }
+        
+        cachedPortletResourceData.replay(portletOutputHandler);
         
         final long executionTime = baseExecutionTime + (System.nanoTime() - renderStartTime);
 
