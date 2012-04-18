@@ -28,7 +28,7 @@ import org.jasig.portal.portlet.om.IPortletWindow;
 /**
  * Key for publicly scoped portlet data
  */
-class PublicPortletCacheKey implements Serializable {
+public class PublicPortletCacheKey implements Serializable {
     private static final long serialVersionUID = 1L;
     
     private final IPortletDefinitionId portletDefinitionId;
@@ -41,17 +41,17 @@ class PublicPortletCacheKey implements Serializable {
     
     private final int hash;
 
-    public static PublicPortletCacheKey createPublicPortletRenderCacheKey(IPortletDefinitionId portletDefinitionId, IPortletWindow portletWindow,
+    static PublicPortletCacheKey createPublicPortletRenderCacheKey(IPortletDefinitionId portletDefinitionId, IPortletWindow portletWindow,
             Locale locale) {
         return new PublicPortletCacheKey(portletDefinitionId, portletWindow, false, null, locale);
     }
 
-    public static PublicPortletCacheKey createPublicPortletRenderHeaderCacheKey(IPortletDefinitionId portletDefinitionId, IPortletWindow portletWindow,
+    static PublicPortletCacheKey createPublicPortletRenderHeaderCacheKey(IPortletDefinitionId portletDefinitionId, IPortletWindow portletWindow,
             Locale locale) {
         return new PublicPortletCacheKey(portletDefinitionId, portletWindow, true, null, locale);
     }
 
-    public static PublicPortletCacheKey createPublicPortletResourceCacheKey(IPortletDefinitionId portletDefinitionId, IPortletWindow portletWindow,
+    static PublicPortletCacheKey createPublicPortletResourceCacheKey(IPortletDefinitionId portletDefinitionId, IPortletWindow portletWindow,
             String resourceId, Locale locale) {
         if (resourceId == null) {
             resourceId = "";

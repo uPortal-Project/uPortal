@@ -35,6 +35,26 @@ public final class PortletCachingHeaderUtils {
     }
     
     /**
+     * @param cachedPortletData The {@link CachedPortletData} to base the headers on
+     * @param portletResourceOutputHandler The handler to write the headers to
+     * 
+     * @see #setCachingHeaders(int, boolean, long, PortletResourceOutputHandler)
+     * @see #setETag(String, PortletResourceOutputHandler)
+     */
+    public static void setCachingHeaders(CachedPortletData<?> cachedPortletData, PortletResourceOutputHandler portletResourceOutputHandler) {
+        final long expirationTime = cachedPortletData.getExpirationTime();
+        final int maxAge = (int)TimeUnit.MILLISECONDS.toSeconds(expirationTime - System.currentTimeMillis());
+        final long timeStored = cachedPortletData.getTimeStored();
+        final boolean publicScope = cachedPortletData.isPublicScope();
+        
+        setCachingHeaders(maxAge, publicScope, timeStored, portletResourceOutputHandler);
+        final String etag = cachedPortletData.getEtag();
+        if (etag != null) {
+            setETag(etag, portletResourceOutputHandler);
+        }
+    }
+    
+    /**
      * Set the Last-Modified, CacheControl, and Expires headers based on the maxAge,
      * publicScope and lastModified.
      * 

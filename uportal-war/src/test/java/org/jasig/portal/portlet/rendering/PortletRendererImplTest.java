@@ -46,7 +46,6 @@ import org.apache.pluto.container.PortletContainerException;
 import org.apache.pluto.container.PortletWindow;
 import org.jasig.portal.api.portlet.PortletDelegationLocator;
 import org.jasig.portal.events.IPortalEventFactory;
-import org.jasig.portal.portlet.container.cache.CacheControlImpl;
 import org.jasig.portal.portlet.container.cache.CacheState;
 import org.jasig.portal.portlet.container.cache.CachedPortletData;
 import org.jasig.portal.portlet.container.cache.CachingPortletHttpServletResponseWrapper;
@@ -125,7 +124,7 @@ public class PortletRendererImplTest {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		
-		CacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> cacheState = new CacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult>();
+		TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> cacheState = new TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult>();
 		CacheControl cacheControl = cacheState.getCacheControl();
 		cacheControl.setUseCachedContent(false);
 		cacheControl.setExpirationTime(0);
@@ -160,7 +159,7 @@ public class PortletRendererImplTest {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		MockHttpServletResponse response = new MockHttpServletResponse();
         
-        CacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> cacheState = new CacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult>();
+        CacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> cacheState = new TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult>();
         CacheControl cacheControl = cacheState.getCacheControl();
         cacheControl.setUseCachedContent(false);
         cacheControl.setExpirationTime(300);
@@ -194,22 +193,22 @@ public class PortletRendererImplTest {
 	public void doRenderMarkupCaptureNegativeExpirationTime() throws PortletException, IOException, PortletContainerException {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		MockHttpServletResponse response = new MockHttpServletResponse();
-		CacheControlImpl cacheControl = new CacheControlImpl();
+		TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> cacheState = new TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult>();
+        CacheControl cacheControl = cacheState.getCacheControl();
 		cacheControl.setUseCachedContent(false);
 		cacheControl.setExpirationTime(-1);
 		
 		setupPortletExecutionMocks(request);
-		when(portletCacheControlService.getPortletRenderCacheControl(portletWindowId, request)).thenReturn(cacheControl);
-		when(portletCacheControlService.getCachedPortletRenderOutput(portletWindowId, request)).thenReturn(null);
+		when(portletCacheControlService.getPortletRenderState(request, portletWindowId)).thenReturn(cacheState);
 		when(portletCacheControlService.shouldOutputBeCached(cacheControl)).thenReturn(true);
         when(portalRequestInfo.getTargetedPortletWindowId()).thenReturn(portletWindowId);
 		
-		StringWriter writer = new StringWriter();
-		portletRenderer.doRenderMarkup(portletWindowId, request, response, writer);
+        RenderPortletOutputHandler handler = new RenderPortletOutputHandler("UTF-8");
+        portletRenderer.doRenderMarkup(portletWindowId, request, response, handler);
 		
 		verify(portletContainer, times(1)).doRender(isA(PortletWindow.class), isA(PortletHttpServletRequestWrapper.class), isA(PortletHttpServletResponseWrapper.class));
 		
-		verify(portletCacheControlService, times(1)).cachePortletRenderOutput(isA(IPortletWindowId.class), isA(HttpServletRequest.class), isA(String.class), isA(CacheControl.class));
+		verify(portletCacheControlService, times(1)).cachePortletRenderOutput(isA(IPortletWindowId.class), isA(HttpServletRequest.class), isA(CacheState.class), isA(CachedPortletData.class));
 	}
 	
 	/**
@@ -223,24 +222,24 @@ public class PortletRendererImplTest {
 	public void doRenderMarkupCachedContentExpirationMethodTest() throws PortletException, IOException, PortletContainerException {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		MockHttpServletResponse response = new MockHttpServletResponse();
-		Date now = new Date();
-		CacheControlImpl cacheControl = new CacheControlImpl();
-		cacheControl.setUseCachedContent(true);
-		cacheControl.setExpirationTime(300);
-		CachedPortletData cachedPortletData = new CachedPortletData();
-		cachedPortletData.setStringData("<p>Some content</p>");
-		cachedPortletData.setExpirationTimeSeconds(cacheControl.getExpirationTime());
-		cachedPortletData.setTimeStored(now);
+		TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> cacheState = new TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult>();
+		cacheState.setUseCachedData(true);
+        CacheControl cacheControl = cacheState.getCacheControl();
+		
+        final PortletRenderResult portletResult = new PortletRenderResult("title", null, 0, 100);
+        final String output = "<p>Some content</p>";
+        CachedPortletData<PortletRenderResult> cachedPortletData = new CachedPortletData<PortletRenderResult>(
+                portletResult, output, null, null, false, null, cacheControl.getExpirationTime());
+        cacheState.setCachedPortletData(cachedPortletData);
 		
 		setupPortletExecutionMocks(request);
 
-		when(portletCacheControlService.getPortletRenderCacheControl(portletWindowId, request)).thenReturn(cacheControl);
-		when(portletCacheControlService.getCachedPortletRenderOutput(portletWindowId, request)).thenReturn(cachedPortletData);
+		when(portletCacheControlService.getPortletRenderState(request, portletWindowId)).thenReturn(cacheState);
         when(portalRequestInfo.getTargetedPortletWindowId()).thenReturn(portletWindowId);
 
-		StringWriter writer = new StringWriter();
-		portletRenderer.doRenderMarkup(portletWindowId, request, response, writer);
-		Assert.assertEquals("<p>Some content</p>", writer.toString());
+		RenderPortletOutputHandler handler = new RenderPortletOutputHandler("UTF-8");
+        portletRenderer.doRenderMarkup(portletWindowId, request, response, handler);
+		Assert.assertEquals(output, handler.getOutput());
 		
 		// verify we enter the first branch and never execute portletContainer#doRender
 		verify(portletContainer, never()).doRender(isA(PortletWindow.class), isA(PortletHttpServletRequestWrapper.class), isA(PortletHttpServletResponseWrapper.class));
@@ -258,25 +257,26 @@ public class PortletRendererImplTest {
 	public void doRenderMarkupCachedContentValidationNotExpiredMethodTest() throws PortletException, IOException, PortletContainerException {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		MockHttpServletResponse response = new MockHttpServletResponse();
-		Date now = new Date();
-		CacheControlImpl cacheControl = new CacheControlImpl();
+		TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> cacheState = new TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult>();
+		cacheState.setUseCachedData(true);
+        CacheControl cacheControl = cacheState.getCacheControl();
 		cacheControl.setUseCachedContent(true);
 		cacheControl.setETag("123456");
 		cacheControl.setExpirationTime(300);
-		CachedPortletData cachedPortletData = new CachedPortletData();
-		cachedPortletData.setStringData("<p>Some content</p>");
-		cachedPortletData.setEtag("123456");
-		cachedPortletData.setExpirationTimeSeconds(cacheControl.getExpirationTime());
-		cachedPortletData.setTimeStored(now);
 		
+        final PortletRenderResult portletResult = new PortletRenderResult("title", null, 0, 100);
+        final String output = "<p>Some content</p>";
+        CachedPortletData<PortletRenderResult> cachedPortletData = new CachedPortletData<PortletRenderResult>(
+                portletResult, output, null, null, false, cacheControl.getETag(), cacheControl.getExpirationTime());
+        cacheState.setCachedPortletData(cachedPortletData);
+
 		setupPortletExecutionMocks(request);
-		when(portletCacheControlService.getPortletRenderCacheControl(portletWindowId, request)).thenReturn(cacheControl);
-		when(portletCacheControlService.getCachedPortletRenderOutput(portletWindowId, request)).thenReturn(cachedPortletData);
+		when(portletCacheControlService.getPortletRenderState(request, portletWindowId)).thenReturn(cacheState);
         when(portalRequestInfo.getTargetedPortletWindowId()).thenReturn(portletWindowId);
 
-		StringWriter writer = new StringWriter();
-		portletRenderer.doRenderMarkup(portletWindowId, request, response, writer);
-		Assert.assertEquals("<p>Some content</p>", writer.toString());
+        RenderPortletOutputHandler handler = new RenderPortletOutputHandler("UTF-8");
+        portletRenderer.doRenderMarkup(portletWindowId, request, response, handler);
+        Assert.assertEquals(output, handler.getOutput());
 		
 		// verify we enter the first branch and never execute portletContainer#doRender
 		verify(portletContainer, never()).doRender(isA(PortletWindow.class), isA(PortletHttpServletRequestWrapper.class), isA(PortletHttpServletResponseWrapper.class));
@@ -296,7 +296,8 @@ public class PortletRendererImplTest {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		Date now = new Date();
-		CacheControlImpl cacheControl = new CacheControlImpl();
+		TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> cacheState = new TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult>();
+        CacheControl cacheControl = cacheState.getCacheControl();
 		// by setting useCachedContent to true, we are saying even though content is expired, replay it anyways (since etag is still valid)
 		cacheControl.setUseCachedContent(true);
 		cacheControl.setETag("123456");
@@ -311,11 +312,12 @@ public class PortletRendererImplTest {
 		
 		setupPortletExecutionMocks(request);
 
-		when(portletCacheControlService.getPortletRenderCacheControl(portletWindowId, request)).thenReturn(cacheControl);
+		when(portletCacheControlService.getPortletRenderState(request, portletWindowId)).thenReturn(cacheState);
 		when(portletCacheControlService.getCachedPortletRenderOutput(portletWindowId, request)).thenReturn(cachedPortletData);
         when(portalRequestInfo.getTargetedPortletWindowId()).thenReturn(portletWindowId);
 
-		StringWriter writer = new StringWriter();
+		RenderPortletOutputHandler handler = new RenderPortletOutputHandler("UTF-8");
+        portletRenderer.doRenderMarkup(portletWindowId, request, response, handler);
 		portletRenderer.doRenderMarkup(portletWindowId, request, response, writer);
 		Assert.assertEquals("<p>Some content</p>", writer.toString());
 		// verify the expiration time has been updated
@@ -337,7 +339,8 @@ public class PortletRendererImplTest {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		Date now = new Date();
-		CacheControlImpl cacheControl = new CacheControlImpl();
+		TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> cacheState = new TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult>();
+        CacheControl cacheControl = cacheState.getCacheControl();
 		
 		cacheControl.setETag("123456");
 		cacheControl.setExpirationTime(300);
@@ -353,7 +356,8 @@ public class PortletRendererImplTest {
 		when(portletCacheControlService.getCachedPortletRenderOutput(portletWindowId, request)).thenReturn(null);
 		when(portletCacheControlService.shouldOutputBeCached(cacheControl)).thenReturn(true);
 
-		StringWriter writer = new StringWriter();
+		RenderPortletOutputHandler handler = new RenderPortletOutputHandler("UTF-8");
+        portletRenderer.doRenderMarkup(portletWindowId, request, response, handler);
 		
 		// doAction will trigger purge
 		portletRenderer.doAction(portletWindowId, request, response);
@@ -364,7 +368,7 @@ public class PortletRendererImplTest {
 		
 		verify(portletContainer, times(1)).doRender(isA(PortletWindow.class), isA(PortletHttpServletRequestWrapper.class), isA(PortletHttpServletResponseWrapper.class));
 		// verify we never enter the other branch of the "should render cached output" if statement
-		verify(portletCacheControlService, times(1)).cachePortletRenderOutput(isA(IPortletWindowId.class), isA(HttpServletRequest.class), isA(String.class), isA(CacheControl.class));
+		verify(portletCacheControlService, times(1)).cachePortletRenderOutput(isA(IPortletWindowId.class), isA(HttpServletRequest.class), isA(CacheState.class), isA(CachedPortletData.class));
 		
 	}
 	
@@ -380,7 +384,8 @@ public class PortletRendererImplTest {
 	public void testDoServeResourceNoCache() throws PortletException, IOException, PortletContainerException {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		MockHttpServletResponse response = new MockHttpServletResponse();
-		CacheControlImpl cacheControl = new CacheControlImpl();
+		TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> cacheState = new TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult>();
+        CacheControl cacheControl = cacheState.getCacheControl();
 		cacheControl.setUseCachedContent(false);
 		cacheControl.setExpirationTime(0);
 		
@@ -412,7 +417,8 @@ public class PortletRendererImplTest {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		response.setContentType("application/octet-stream");
-		CacheControlImpl cacheControl = new CacheControlImpl();
+		TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> cacheState = new TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult>();
+        CacheControl cacheControl = cacheState.getCacheControl();
 		cacheControl.setUseCachedContent(false);
 		cacheControl.setExpirationTime(300);
 		
@@ -442,7 +448,8 @@ public class PortletRendererImplTest {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		MockHttpServletResponse response = new MockHttpServletResponse();
 
-		CacheControlImpl cacheControl = new CacheControlImpl();
+		TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> cacheState = new TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult>();
+        CacheControl cacheControl = cacheState.getCacheControl();
 		cacheControl.setUseCachedContent(false);
 		cacheControl.setExpirationTime(300);
 			
@@ -477,7 +484,8 @@ public class PortletRendererImplTest {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		MockHttpServletResponse response = new MockHttpServletResponse();
 
-		CacheControlImpl cacheControl = new CacheControlImpl();
+		TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> cacheState = new TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult>();
+        CacheControl cacheControl = cacheState.getCacheControl();
 		cacheControl.setUseCachedContent(false);
 		cacheControl.setExpirationTime(300);
 			
@@ -513,7 +521,8 @@ public class PortletRendererImplTest {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		response.setContentType("application/octet-stream");
-		CacheControlImpl cacheControl = new CacheControlImpl();
+		TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> cacheState = new TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult>();
+        CacheControl cacheControl = cacheState.getCacheControl();
 		cacheControl.setUseCachedContent(false);
 		cacheControl.setExpirationTime(-1);
 		
@@ -542,7 +551,8 @@ public class PortletRendererImplTest {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		Date now = new Date();
-		CacheControlImpl cacheControl = new CacheControlImpl();
+		TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> cacheState = new TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult>();
+        CacheControl cacheControl = cacheState.getCacheControl();
 		cacheControl.setUseCachedContent(true);
 		cacheControl.setExpirationTime(300);
 		CachedPortletData cachedPortletData = new CachedPortletData();
@@ -582,7 +592,8 @@ public class PortletRendererImplTest {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		Date now = new Date();
-		CacheControlImpl cacheControl = new CacheControlImpl();
+		TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> cacheState = new TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult>();
+        CacheControl cacheControl = cacheState.getCacheControl();
 		cacheControl.setUseCachedContent(true);
 		cacheControl.setExpirationTime(300);
 		cacheControl.setETag("123456");
@@ -627,7 +638,8 @@ public class PortletRendererImplTest {
 		request.addHeader("If-None-Match", "123456");
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		Date now = new Date();
-		CacheControlImpl cacheControl = new CacheControlImpl();
+		TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> cacheState = new TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult>();
+        CacheControl cacheControl = cacheState.getCacheControl();
 		cacheControl.setUseCachedContent(true);
 		cacheControl.setExpirationTime(300);
 		cacheControl.setETag("123456");
@@ -669,7 +681,8 @@ public class PortletRendererImplTest {
 		request.addHeader("If-None-Match", "123456");
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		Date now = new Date();
-		CacheControlImpl cacheControl = new CacheControlImpl();
+		TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> cacheState = new TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult>();
+        CacheControl cacheControl = cacheState.getCacheControl();
 		cacheControl.setUseCachedContent(true);
 		cacheControl.setExpirationTime(300);
 		cacheControl.setETag("123457");
@@ -715,7 +728,8 @@ public class PortletRendererImplTest {
 		request.addHeader("If-None-Match", "123456");
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		Date now = new Date();
-		CacheControlImpl cacheControl = new CacheControlImpl();
+		TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> cacheState = new TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult>();
+        CacheControl cacheControl = cacheState.getCacheControl();
 		cacheControl.setUseCachedContent(true);
 		cacheControl.setExpirationTime(300);
 		cacheControl.setETag("123456");
@@ -755,7 +769,8 @@ public class PortletRendererImplTest {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		Date now = new Date();
-		CacheControlImpl cacheControl = new CacheControlImpl();
+		TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> cacheState = new TestingCacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult>();
+        CacheControl cacheControl = cacheState.getCacheControl();
 		cacheControl.setUseCachedContent(true);
 		cacheControl.setExpirationTime(300);
 		CachedPortletData cachedPortletData = new CachedPortletData();

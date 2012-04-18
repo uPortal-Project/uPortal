@@ -25,11 +25,12 @@ import javax.portlet.CacheControl;
 /**
  * Represents the cache state for a portlet
  */
-public final class CacheState<D extends CachedPortletResultHolder<T>, T extends Serializable> {
+public class CacheState<D extends CachedPortletResultHolder<T>, T extends Serializable> {
     private final CacheControl cacheControl = new CacheControlImpl();
     private D cachedPortletData;
     private boolean useCachedData = false;
     private boolean useBrowserData = false;
+    private boolean browserDataMatches = false;
     private PublicPortletCacheKey publicPortletCacheKey;
     private PrivatePortletCacheKey privatePortletCacheKey;
     
@@ -46,6 +47,9 @@ public final class CacheState<D extends CachedPortletResultHolder<T>, T extends 
     public boolean isUseBrowserData() {
         return useBrowserData;
     }
+    public boolean isBrowserDataMatches() {
+        return browserDataMatches;
+    }
     public PublicPortletCacheKey getPublicPortletCacheKey() {
         return publicPortletCacheKey;
     }
@@ -54,19 +58,22 @@ public final class CacheState<D extends CachedPortletResultHolder<T>, T extends 
     }
     
     
-    void setCachedPortletData(D cachedPortletData) {
+    protected void setCachedPortletData(D cachedPortletData) {
         this.cachedPortletData = cachedPortletData;
     }
-    void setUseCachedData(boolean useCachedData) {
+    protected void setUseCachedData(boolean useCachedData) {
         this.useCachedData = useCachedData;
     }
-    void setUseBrowserData(boolean useBrowserData) {
+    protected void setUseBrowserData(boolean useBrowserData) {
         this.useBrowserData = useBrowserData;
     }
-    void setPublicPortletCacheKey(PublicPortletCacheKey publicPortletCacheKey) {
+    protected void setBrowserDataMatches(boolean browserDataMatches) {
+        this.browserDataMatches = browserDataMatches;
+    }
+    protected void setPublicPortletCacheKey(PublicPortletCacheKey publicPortletCacheKey) {
         this.publicPortletCacheKey = publicPortletCacheKey;
     }
-    void setPrivatePortletCacheKey(PrivatePortletCacheKey privatePortletCacheKey) {
+    protected void setPrivatePortletCacheKey(PrivatePortletCacheKey privatePortletCacheKey) {
         this.privatePortletCacheKey = privatePortletCacheKey;
     }
 }

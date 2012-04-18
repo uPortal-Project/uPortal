@@ -26,7 +26,7 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
 /**
  * Key for privately scoped portlet data
  */
-class PrivatePortletCacheKey implements Serializable {
+public class PrivatePortletCacheKey implements Serializable {
     private static final long serialVersionUID = 1L;
     
     private final String sessionId;
@@ -36,7 +36,7 @@ class PrivatePortletCacheKey implements Serializable {
     
     private final int hash;
     
-    public PrivatePortletCacheKey(String sessionId, IPortletWindowId portletWindowId,
+    PrivatePortletCacheKey(String sessionId, IPortletWindowId portletWindowId,
             IPortletEntityId portletEntityId, PublicPortletCacheKey publicPortletCacheKey) {
         this.sessionId = sessionId;
         this.portletWindowId = portletWindowId;

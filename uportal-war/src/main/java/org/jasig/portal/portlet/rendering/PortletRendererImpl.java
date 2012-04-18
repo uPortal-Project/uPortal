@@ -55,6 +55,7 @@ import org.jasig.portal.portlet.container.cache.CachingPortletOutputHandler;
 import org.jasig.portal.portlet.container.cache.CachingPortletResourceOutputHandler;
 import org.jasig.portal.portlet.container.cache.HeaderSettingCacheControl;
 import org.jasig.portal.portlet.container.cache.IPortletCacheControlService;
+import org.jasig.portal.portlet.container.cache.PortletCachingHeaderUtils;
 import org.jasig.portal.portlet.container.services.AdministrativeRequestListenerController;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
@@ -549,13 +550,7 @@ public class PortletRendererImpl implements IPortletRenderer {
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
 
         if (cacheState.isUseBrowserData()) {
-            final long start = System.nanoTime();
-            portletOutputHandler.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-            final long executionTime = System.nanoTime() - start;
-            
-            publishResourceEvent(portletWindow, httpServletRequest, executionTime, true, false);
-            
-            return executionTime;
+            return doResourceReplayBrowserContent(portletWindow, httpServletRequest, cacheState, portletOutputHandler);
         }
         
         if (cacheState.isUseCachedData()) {
@@ -608,6 +603,11 @@ public class PortletRendererImpl implements IPortletRenderer {
                         portletWindow);
             }
             
+            if (cacheState.isBrowserDataMatches()) {
+                //Browser-side content matches, send a 304
+                return doResourceReplayBrowserContent(portletWindow, httpServletRequest, cacheState, portletOutputHandler);
+            }
+            
             //Update the expiration time and re-store in the cache
             final CachedPortletData<Long> cachedPortletData = cachedPortletResourceData.getCachedPortletData();
             cachedPortletData.setExpirationTime(cacheControl.getExpirationTime());
@@ -637,6 +637,28 @@ public class PortletRendererImpl implements IPortletRenderer {
 		
 		return executionTime;
 	}
+    
+    protected long doResourceReplayBrowserContent(IPortletWindow portletWindow, HttpServletRequest httpServletRequest,
+            CacheState<CachedPortletResourceData<Long>, Long> cacheState,
+            PortletResourceOutputHandler portletOutputHandler) {
+        
+        final long start = System.nanoTime();
+
+        portletOutputHandler.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+        
+        final CachedPortletResourceData<Long> cachedPortletResourceData = cacheState.getCachedPortletData();
+        if (cachedPortletResourceData != null) {
+            //Freshen up the various caching related headers
+            final CachedPortletData<Long> cachedPortletData = cachedPortletResourceData.getCachedPortletData();
+            PortletCachingHeaderUtils.setCachingHeaders(cachedPortletData, portletOutputHandler);
+        }
+        
+        final long executionTime = System.nanoTime() - start;
+        
+        publishResourceEvent(portletWindow, httpServletRequest, executionTime, true, false);
+        
+        return executionTime;
+    }
     
     /**
      * Replay the cached content inside the {@link CachedPortletData} as the response to a doResource.

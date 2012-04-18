@@ -272,31 +272,35 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
         final CacheState<D, T> cacheState = this.getPortletCacheState(request, portletWindow, publicCacheKey, publicOutputCache, privateOutputCache);
         
         final D cachedPortletData = cacheState.getCachedPortletData();
-        if (cachedPortletData != null && cachedPortletData.getExpirationTime() > System.currentTimeMillis()) {
-            //Cached data exists, see if it can be used with no additional work
-            //Cached data is not expired, check if browser data should be used
-            cacheState.setUseCachedData(true);
-            
+        if (cachedPortletData != null) {
             if (useHttpHeaders) {
                 //Browser headers being used, check ETag and Last Modified
                 
                 final String etagHeader = request.getHeader(IF_NONE_MATCH);
                 if (etagHeader != null && etagHeader.equals(cachedPortletData.getEtag())) {
-                    //ETag is valid, return the cached content and note that the browser data can be used
-                    cacheState.setUseBrowserData(true);
-                    return cacheState;
+                    //ETag is valid, mark the browser data as matching
+                    cacheState.setBrowserDataMatches(true);
                 }
-                
-                long ifModifiedSince = request.getDateHeader(IF_MODIFIED_SINCE);
-                if (ifModifiedSince >= 0 && cachedPortletData.getTimeStored() <= ifModifiedSince) {
-                    //Cached content hasn't been modified since header date, return the cached content and note that the browser data can be used
-                    cacheState.setUseBrowserData(true);
-                    return cacheState;
+                else {
+                    long ifModifiedSince = request.getDateHeader(IF_MODIFIED_SINCE);
+                    if (ifModifiedSince >= 0 && cachedPortletData.getTimeStored() <= ifModifiedSince) {
+                        //Cached content hasn't been modified since header date, mark the browser data as matching
+                        cacheState.setBrowserDataMatches(true);
+                    }
                 }
             }
-        
-            //No browser side data to be used, return the cached data for replay
-            return cacheState;
+            
+            if (cachedPortletData.getExpirationTime() > System.currentTimeMillis()) {
+                //Cached data exists, see if it can be used with no additional work
+                //Cached data is not expired, check if browser data should be used
+                cacheState.setUseCachedData(true);
+                
+                //Copy browser-data-matching flag to the user-browser-data flag
+                cacheState.setUseBrowserData(cacheState.isBrowserDataMatches());
+            
+                //No browser side data to be used, return the cached data for replay
+                return cacheState;
+            }
         }
         
         //Build CacheControl structure

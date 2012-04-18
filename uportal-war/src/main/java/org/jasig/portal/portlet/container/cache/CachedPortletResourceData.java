@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.TimeUnit;
 
 import javax.portlet.CacheControl;
 
@@ -105,19 +104,8 @@ public class CachedPortletResourceData<T extends Serializable> implements Cached
             portletOutputHandler.setLocale(locale);
         }
         
-        //Tell the browser the ETag set by the portlet
-        final String etag = this.cachedPortletData.getEtag();
-        if (etag != null) {
-            PortletCachingHeaderUtils.setETag(etag, portletOutputHandler);
-        } 
-        
         //Set the caching related headers
-        final long expirationTime = this.cachedPortletData.getExpirationTime();
-        final int maxAge = (int)TimeUnit.MILLISECONDS.toSeconds(expirationTime - System.currentTimeMillis());
-        final long timeStored = this.cachedPortletData.getTimeStored();
-        final boolean publicScope = this.cachedPortletData.isPublicScope();
-        
-        PortletCachingHeaderUtils.setCachingHeaders(maxAge, publicScope, timeStored, portletOutputHandler);
+        PortletCachingHeaderUtils.setCachingHeaders(cachedPortletData, portletOutputHandler);
         
         this.cachedPortletData.replay(portletOutputHandler);
     }
