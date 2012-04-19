@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
+import org.jasig.portal.portlet.rendering.ResourcePortletOutputHandler;
 
 class PortletResourceExecutionWorker extends PortletExecutionWorker<Long> implements IPortletResourceExecutionWorker {
 
@@ -50,7 +51,7 @@ class PortletResourceExecutionWorker extends PortletExecutionWorker<Long> implem
      */
     @Override
     protected Long callInternal() throws Exception {
-        return portletRenderer.doServeResource(portletWindowId, request, response);
+        return portletRenderer.doServeResource(portletWindowId, request, response, new ResourcePortletOutputHandler(response));
     }
     
 }

@@ -33,19 +33,22 @@ public final class PortletResourceExecutionEvent extends PortletExecutionEvent {
     private static final long serialVersionUID = 1L;
     
     private final String resourceId;
-    private final boolean cached;
+    private final boolean usedBrowserCache;
+    private final boolean usedPortalCache;
 
     @SuppressWarnings("unused")
     private PortletResourceExecutionEvent() {
         this.resourceId = null;
-        this.cached = false;
+        this.usedBrowserCache = false;
+        this.usedPortalCache = false;
     }
 
     PortletResourceExecutionEvent(PortalEventBuilder eventBuilder, String fname, long executionTime, Map<String, List<String>> parameters, 
-            String resourceId, boolean cached) {
+            String resourceId, boolean usedBrowserCache, boolean usedPortalCache) {
         super(eventBuilder, fname, executionTime, parameters);
         this.resourceId = resourceId;
-        this.cached = cached;
+        this.usedBrowserCache = usedBrowserCache;
+        this.usedPortalCache = usedPortalCache;
     }
 
     /**
@@ -57,12 +60,27 @@ public final class PortletResourceExecutionEvent extends PortletExecutionEvent {
     }
 
     /**
-     * @return the cached
+     * @deprecated use {@link #usedPortalCache} or {@link #usedBrowserCache}
      */
+    @Deprecated
     public boolean isCached() {
-        return this.cached;
+        return this.usedBrowserCache;
     }
     
+    /**
+     * @return true if the browser's cached content was used 
+     */
+    public boolean isUsedBrowserCache() {
+        return usedBrowserCache;
+    }
+
+    /**
+     * @return true if the portal's cached content was used
+     */
+    public boolean isUsedPortalCache() {
+        return usedPortalCache;
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
@@ -70,6 +88,7 @@ public final class PortletResourceExecutionEvent extends PortletExecutionEvent {
     public String toString() {
         return super.toString() + 
                 ", resourceId=" + this.resourceId + 
-                ", cached=" + this.cached + "]";
+                ", usedBrowserCache=" + this.usedBrowserCache + 
+                ", usedPortalCache=" + this.usedPortalCache + "]";
     }
 }

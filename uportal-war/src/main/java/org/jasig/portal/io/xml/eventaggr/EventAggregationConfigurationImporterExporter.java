@@ -186,13 +186,14 @@ public class EventAggregationConfigurationImporterExporter extends
         
         //Set quarter details if configured or set default quarters
         final List<ExternalQuarterDetail> extQuarterDetails = data.getQuarterDetails();
+        final List<QuarterDetail> quarterDetails;
         if (!extQuarterDetails.isEmpty()) {
-            final List<QuarterDetail> quarterDetails = convertQuarterDetail(extQuarterDetails);
-            this.aggregationManagementDao.setQuarterDetails(quarterDetails);
+            quarterDetails = convertQuarterDetail(extQuarterDetails);
         }
         else {
-            this.aggregationManagementDao.setQuarterDetails(EventDateTimeUtils.createStandardQuarters());
+            quarterDetails = EventDateTimeUtils.createStandardQuarters();
         }
+        this.aggregationManagementDao.setQuarterDetails(quarterDetails);
         
 
         //Purge existing term details

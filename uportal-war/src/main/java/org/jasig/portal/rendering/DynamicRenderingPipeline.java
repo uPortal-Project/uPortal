@@ -80,7 +80,7 @@ public class DynamicRenderingPipeline implements IPortalRenderingPipeline {
         res.setHeader("Cache-Control", "no-cache, max-age=0, must-revalidate");
         res.setDateHeader("Expires", 0);
         
-        final long startTime = System.currentTimeMillis();
+        final long startTime = System.nanoTime();
 
         final PipelineEventReader<CharacterEventReader, CharacterEvent> pipelineEventReader = this.pipeline.getEventReader(req, res);
         final String mediaType = getMediaType(req, res, pipelineEventReader);
@@ -102,7 +102,7 @@ public class DynamicRenderingPipeline implements IPortalRenderingPipeline {
             res.flushBuffer();
         }
         
-        final long executionTime = System.currentTimeMillis() - startTime;
+        final long executionTime = System.nanoTime() - startTime;
         final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(req);
         this.portalEventFactory.publishPortalRenderEvent(req, this, req.getPathInfo(), executionTime, portalRequestInfo);
     }

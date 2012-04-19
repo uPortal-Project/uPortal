@@ -19,16 +19,20 @@
 
 package org.jasig.portal.portlet.container.properties;
 
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
 
 import org.easymock.EasyMock;
 import org.jasig.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.url.ParameterMap;
+import org.jasig.portal.utils.MultivaluedMapPopulator;
+import org.springframework.core.Ordered;
 import org.springframework.mock.web.MockHttpServletRequest;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * @author Eric Dalquist
@@ -59,38 +63,46 @@ public class RequestPropertiesManagerBrokerTest extends TestCase {
         final IPortletWindow portletWindow = EasyMock.createMock(IPortletWindow.class);
         EasyMock.replay(portletWindow);
         
-        final IRequestPropertiesManager delegateManager1 = new MockRequestPropertiesManager();
-        final IRequestPropertiesManager delegateManager2 = new MockRequestPropertiesManager();
+        final MockRequestPropertiesManager delegateManager1 = new MockRequestPropertiesManager();
+        delegateManager1.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        final MockRequestPropertiesManager delegateManager2 = new MockRequestPropertiesManager();
+        delegateManager2.setOrder(Ordered.LOWEST_PRECEDENCE);
         
-        this.requestPropertiesManagerBroker.setPropertiesManagers(Arrays.asList(new IRequestPropertiesManager[] { delegateManager1, delegateManager2 }));
+        this.requestPropertiesManagerBroker.setPropertiesManagers(ImmutableList.of(delegateManager1, delegateManager2));
         
         
         
         this.requestPropertiesManagerBroker.addResponseProperty(request, portletWindow, "prop.A", "prop.A.1");
-        final Map<String, String[]> expected1 = Collections.singletonMap("prop.A", new String[] { "prop.A.1" });
+        final Map<String, List<String>> expected1 = Collections.singletonMap("prop.A", Collections.singletonList("prop.A.1"));
         
-        Map<String, String[]> properties = this.requestPropertiesManagerBroker.getRequestProperties(request, portletWindow);
-        validateProperties(expected1, properties);
+        MultivaluedMapPopulator<String, String> multivaluedMapPopulator = new MultivaluedMapPopulator<String, String>();
+        this.requestPropertiesManagerBroker.populateRequestProperties(request, portletWindow, multivaluedMapPopulator);
+        assertEquals(expected1, multivaluedMapPopulator.getMap());
         
-        Map<String, String[]> properties1 = delegateManager1.getRequestProperties(request, portletWindow);
-        validateProperties(expected1, properties1);
+        multivaluedMapPopulator = new MultivaluedMapPopulator<String, String>();
+        delegateManager1.populateRequestProperties(request, portletWindow, multivaluedMapPopulator);
+        assertEquals(expected1, multivaluedMapPopulator.getMap());
         
-        Map<String, String[]> properties2 = delegateManager2.getRequestProperties(request, portletWindow);
-        validateProperties(expected1, properties2);
+        multivaluedMapPopulator = new MultivaluedMapPopulator<String, String>();
+        delegateManager2.populateRequestProperties(request, portletWindow, multivaluedMapPopulator);
+        assertEquals(Collections.EMPTY_MAP, multivaluedMapPopulator.getMap());
         
         
         
         this.requestPropertiesManagerBroker.addResponseProperty(request, portletWindow, "prop.A", "prop.A.2");
-        final Map<String, String[]> expected2 = Collections.singletonMap("prop.A", new String[] { "prop.A.1", "prop.A.2" });
+        final Map<String, List<String>> expected2 = Collections.<String, List<String>>singletonMap("prop.A", ImmutableList.of("prop.A.1", "prop.A.2"));
         
-        properties = this.requestPropertiesManagerBroker.getRequestProperties(request, portletWindow);
-        validateProperties(expected2, properties);
+        multivaluedMapPopulator = new MultivaluedMapPopulator<String, String>();
+        this.requestPropertiesManagerBroker.populateRequestProperties(request, portletWindow, multivaluedMapPopulator);
+        assertEquals(expected2, multivaluedMapPopulator.getMap());
         
-        properties1 = delegateManager1.getRequestProperties(request, portletWindow);
-        validateProperties(expected2, properties1);
+        multivaluedMapPopulator = new MultivaluedMapPopulator<String, String>();
+        delegateManager1.populateRequestProperties(request, portletWindow, multivaluedMapPopulator);
+        assertEquals(expected2, multivaluedMapPopulator.getMap());
         
-        properties2 = delegateManager2.getRequestProperties(request, portletWindow);
-        validateProperties(expected2, properties2);
+        multivaluedMapPopulator = new MultivaluedMapPopulator<String, String>();
+        delegateManager2.populateRequestProperties(request, portletWindow, multivaluedMapPopulator);
+        assertEquals(Collections.EMPTY_MAP, multivaluedMapPopulator.getMap());
     }
 
     public void testSetProperties() {
@@ -99,38 +111,46 @@ public class RequestPropertiesManagerBrokerTest extends TestCase {
         final IPortletWindow portletWindow = EasyMock.createMock(IPortletWindow.class);
         EasyMock.replay(portletWindow);
         
-        final IRequestPropertiesManager delegateManager1 = new MockRequestPropertiesManager();
-        final IRequestPropertiesManager delegateManager2 = new MockRequestPropertiesManager();
+        final MockRequestPropertiesManager delegateManager1 = new MockRequestPropertiesManager();
+        delegateManager1.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        final MockRequestPropertiesManager delegateManager2 = new MockRequestPropertiesManager();
+        delegateManager2.setOrder(Ordered.LOWEST_PRECEDENCE);
         
-        this.requestPropertiesManagerBroker.setPropertiesManagers(Arrays.asList(new IRequestPropertiesManager[] { delegateManager1, delegateManager2 }));
+        this.requestPropertiesManagerBroker.setPropertiesManagers(ImmutableList.of(delegateManager1, delegateManager2));
         
         
         
         this.requestPropertiesManagerBroker.setResponseProperty(request, portletWindow, "prop.A", "prop.A.1");
-        final Map<String, String[]> expected1 = Collections.singletonMap("prop.A", new String[] { "prop.A.1" });
+        final Map<String, List<String>> expected1 = Collections.singletonMap("prop.A", Collections.singletonList("prop.A.1"));
         
-        Map<String, String[]> properties = this.requestPropertiesManagerBroker.getRequestProperties(request, portletWindow);
-        validateProperties(expected1, properties);
+        MultivaluedMapPopulator<String, String> multivaluedMapPopulator = new MultivaluedMapPopulator<String, String>();
+        this.requestPropertiesManagerBroker.populateRequestProperties(request, portletWindow, multivaluedMapPopulator);
+        assertEquals(expected1, multivaluedMapPopulator.getMap());
         
-        Map<String, String[]> properties1 = delegateManager1.getRequestProperties(request, portletWindow);
-        validateProperties(expected1, properties1);
+        multivaluedMapPopulator = new MultivaluedMapPopulator<String, String>();
+        delegateManager1.populateRequestProperties(request, portletWindow, multivaluedMapPopulator);
+        assertEquals(expected1, multivaluedMapPopulator.getMap());
         
-        Map<String, String[]> properties2 = delegateManager2.getRequestProperties(request, portletWindow);
-        validateProperties(expected1, properties2);
+        multivaluedMapPopulator = new MultivaluedMapPopulator<String, String>();
+        delegateManager2.populateRequestProperties(request, portletWindow, multivaluedMapPopulator);
+        assertEquals(Collections.EMPTY_MAP, multivaluedMapPopulator.getMap());
         
         
         
         this.requestPropertiesManagerBroker.setResponseProperty(request, portletWindow, "prop.A", "prop.A.2");
-        final Map<String, String[]> expected2 = Collections.singletonMap("prop.A", new String[] { "prop.A.2" });
+        final Map<String, List<String>> expected2 = Collections.<String, List<String>>singletonMap("prop.A", ImmutableList.of("prop.A.2"));
         
-        properties = this.requestPropertiesManagerBroker.getRequestProperties(request, portletWindow);
-        validateProperties(expected2, properties);
+        multivaluedMapPopulator = new MultivaluedMapPopulator<String, String>();
+        this.requestPropertiesManagerBroker.populateRequestProperties(request, portletWindow, multivaluedMapPopulator);
+        assertEquals(expected2, multivaluedMapPopulator.getMap());
         
-        properties1 = delegateManager1.getRequestProperties(request, portletWindow);
-        validateProperties(expected2, properties1);
+        multivaluedMapPopulator = new MultivaluedMapPopulator<String, String>();
+        delegateManager1.populateRequestProperties(request, portletWindow, multivaluedMapPopulator);
+        assertEquals(expected2, multivaluedMapPopulator.getMap());
         
-        properties2 = delegateManager2.getRequestProperties(request, portletWindow);
-        validateProperties(expected2, properties2);
+        multivaluedMapPopulator = new MultivaluedMapPopulator<String, String>();
+        delegateManager2.populateRequestProperties(request, portletWindow, multivaluedMapPopulator);
+        assertEquals(Collections.EMPTY_MAP, multivaluedMapPopulator.getMap());
     }
 
     public void testGetProperties() {
@@ -139,10 +159,12 @@ public class RequestPropertiesManagerBrokerTest extends TestCase {
         final IPortletWindow portletWindow = EasyMock.createMock(IPortletWindow.class);
         EasyMock.replay(portletWindow);
         
-        final IRequestPropertiesManager delegateManager1 = new MockRequestPropertiesManager();
-        final IRequestPropertiesManager delegateManager2 = new MockRequestPropertiesManager();
+        final MockRequestPropertiesManager delegateManager1 = new MockRequestPropertiesManager();
+        delegateManager1.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        final MockRequestPropertiesManager delegateManager2 = new MockRequestPropertiesManager();
+        delegateManager2.setOrder(Ordered.LOWEST_PRECEDENCE);
         
-        this.requestPropertiesManagerBroker.setPropertiesManagers(Arrays.asList(new IRequestPropertiesManager[] { delegateManager1, delegateManager2 }));
+        this.requestPropertiesManagerBroker.setPropertiesManagers(ImmutableList.of(delegateManager1, delegateManager2));
         
         
         
@@ -151,40 +173,28 @@ public class RequestPropertiesManagerBrokerTest extends TestCase {
         
         delegateManager2.setResponseProperty(request, portletWindow, "prop.C", "prop.C.1");
         
-        Map<String, String[]> properties = this.requestPropertiesManagerBroker.getRequestProperties(request, portletWindow);
+        MultivaluedMapPopulator<String, String> multivaluedMapPopulator = new MultivaluedMapPopulator<String, String>();
+        this.requestPropertiesManagerBroker.populateRequestProperties(request, portletWindow, multivaluedMapPopulator);
         
-        final Map<String, String[]> expected1 = new ParameterMap();
-        expected1.put("prop.A", new String[] { "prop.A.1" });
-        expected1.put("prop.B", new String[] { "prop.B.1" });
-        expected1.put("prop.C", new String[] { "prop.C.1" });
-        validateProperties(expected1, properties);
+        final Map<String, List<String>> expected1 = ImmutableMap.<String, List<String>>of(
+                "prop.A", ImmutableList.of("prop.A.1"),
+                "prop.B", ImmutableList.of("prop.B.1"),
+                "prop.C", ImmutableList.of("prop.C.1"));
+        
+        assertEquals(expected1, multivaluedMapPopulator.getMap());
         
         
         
         delegateManager2.setResponseProperty(request, portletWindow, "prop.A", "prop.A.2");
         
-        properties = this.requestPropertiesManagerBroker.getRequestProperties(request, portletWindow);
+        multivaluedMapPopulator = new MultivaluedMapPopulator<String, String>();
+        this.requestPropertiesManagerBroker.populateRequestProperties(request, portletWindow, multivaluedMapPopulator);
         
-        final Map<String, String[]> expected2 = new ParameterMap();
-        expected2.put("prop.A", new String[] { "prop.A.2" });
-        expected2.put("prop.B", new String[] { "prop.B.1" });
-        expected2.put("prop.C", new String[] { "prop.C.1" });
-        validateProperties(expected2, properties);
-    }
-
-    /**
-     * @param properties
-     */
-    private void validateProperties(Map<String, String[]> exptected, Map<String, String[]> actual) {
-        if (exptected != actual && (actual == null || !exptected.equals(actual))) {
-            assertNotNull("actual Map should not be null", actual);
-            assertEquals("actual Map is the wrong size", exptected.size(), actual.size());
-            
-            for (final Map.Entry<String, String[]> expectedEntries : exptected.entrySet()) {
-                final String key = expectedEntries.getKey();
-                
-                assertEquals(Arrays.asList(expectedEntries.getValue()), Arrays.asList(actual.get(key)));
-            }
-        }
+        final Map<String, List<String>> expected2 = ImmutableMap.<String, List<String>>of(
+                "prop.A", ImmutableList.of("prop.A.1", "prop.A.2"),
+                "prop.B", ImmutableList.of("prop.B.1"),
+                "prop.C", ImmutableList.of("prop.C.1"));
+        
+        assertEquals(expected2, multivaluedMapPopulator.getMap());
     }
 }

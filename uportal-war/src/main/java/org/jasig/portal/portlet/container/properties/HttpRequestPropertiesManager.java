@@ -19,18 +19,14 @@
 
 package org.jasig.portal.portlet.container.properties;
 
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.url.IPortalRequestUtils;
-import org.jasig.portal.url.ParameterMap;
+import org.jasig.portal.utils.Populator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.Ordered;
 import org.springframework.stereotype.Service;
 
 /**
@@ -43,56 +39,43 @@ import org.springframework.stereotype.Service;
 public class HttpRequestPropertiesManager extends BaseRequestPropertiesManager {
     private IPortalRequestUtils portalRequestUtils;
     
-    
-    /**
-     * @return the portalRequestUtils
-     */
-    public IPortalRequestUtils getPortalRequestUtils() {
-        return portalRequestUtils;
-    }
-    /**
-     * @param portalRequestUtils the portalRequestUtils to set
-     */
     @Autowired
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         this.portalRequestUtils = portalRequestUtils;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.container.services.BaseRequestPropertiesManager#getRequestProperties(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindow)
-     */
     @Override
-    public Map<String, String[]> getRequestProperties(HttpServletRequest portletRequest, IPortletWindow portletWindow) {
+    public <P extends Populator<String, String>> void populateRequestProperties(HttpServletRequest portletRequest,
+            IPortletWindow portletWindow, P propertiesPopulator) {
+
         final HttpServletRequest httpServletRequest = this.portalRequestUtils.getOriginalPortalRequest(portletRequest);
         
-        final Map<String, String[]> properties = new ParameterMap();
-
-        properties.put("REMOTE_ADDR", new String[] { httpServletRequest.getRemoteAddr() });
-        properties.put("REQUEST_METHOD", new String[] { httpServletRequest.getMethod() });
-        
-        Enumeration<String> headerNames = httpServletRequest.getHeaderNames();
-        while (headerNames.hasMoreElements()) {
-            String name = headerNames.nextElement();
-            Enumeration<String> values = httpServletRequest.getHeaders(name);
-            List<String> v = new ArrayList<String>();
-            while (values.hasMoreElements()) {
-                v.add(values.nextElement());
-            }
-            properties.put(name, v.toArray(new String[v.size()]));
+        final String remoteAddr = httpServletRequest.getRemoteAddr();
+        if (remoteAddr != null) {
+            propertiesPopulator.put("REMOTE_ADDR", remoteAddr);
         }
-
-        return properties;
+        
+        final String remoteHost = httpServletRequest.getRemoteHost();
+        if (remoteHost != null) {
+            propertiesPopulator.put("REMOTE_HOST", remoteHost);
+        }
+        
+        final String method = httpServletRequest.getMethod();
+        if (method != null) {
+            propertiesPopulator.put("REQUEST_METHOD", method);
+        }
+        
+        @SuppressWarnings("unchecked")
+        final Enumeration<String> headerNames = httpServletRequest.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            final String name = headerNames.nextElement();
+            
+            @SuppressWarnings("unchecked")
+            final Enumeration<String> values = httpServletRequest.getHeaders(name);
+            while (values.hasMoreElements()) {
+                propertiesPopulator.put(name, values.nextElement());
+            }
+            
+        }
     }
-    
-    /**
-     * Returns {@link Ordered#HIGHEST_PRECEDENCE}.
-     * 
-     * @see org.springframework.core.Ordered#getOrder()
-     */
-	@Override
-	public int getOrder() {
-		return Ordered.HIGHEST_PRECEDENCE;
-	}
-    
-    
 }

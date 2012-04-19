@@ -631,8 +631,6 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         final long timeout = getPortletRenderTimeout(portletWindowId, request);
 
 		try {
-//			final PortletRenderResult portletRenderResult = tracker.get(timeout);
-			 //TODO publish portlet render event - should actually be published from the portlet renderer impl
 			final String output = tracker.getOutput(timeout);
 			return output == null ? "" : output;
 		} catch (Exception e) {
