@@ -50,6 +50,7 @@ import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IPortletRequestInfo;
 import org.jasig.portal.url.ParameterMap;
 import org.jasig.portal.url.UrlType;
+import org.jasig.portal.utils.MultivaluedMapPopulator;
 import org.jasig.portal.utils.web.AbstractHttpServletRequestWrapper;
 import org.springframework.util.Assert;
 
@@ -210,8 +211,11 @@ public class PortletRequestContextImpl extends AbstractPortletContextImpl implem
      * @see org.apache.pluto.container.PortletRequestContext#getProperties()
      */
     @Override
-    public Map<String, String[]> getProperties() {
-        return this.requestPropertiesManager.getRequestProperties(this.servletRequest, this.portletWindow);
+    public final Map<String, String[]> getProperties() {
+        final MultivaluedMapPopulator<String, String> populator = new MultivaluedMapPopulator<String, String>();
+        this.requestPropertiesManager.populateRequestProperties(this.servletRequest, portletWindow, populator);
+        final Map<String, List<String>> map = populator.getMap();
+        return ParameterMap.convertListMap(map);
     }
 
     /* (non-Javadoc)
@@ -219,10 +223,6 @@ public class PortletRequestContextImpl extends AbstractPortletContextImpl implem
      */
     @Override
     public Map<String, String[]> getPublicParameterMap() {
-        //TODO
-//        final Map<String, List<String>> portletParameters = this.portalRequestInfo.getPublicPortletParameters();
-//        return ParameterMap.convertListMap(portletParameters);
-        
         //Only re-use render parameters on a render request
         if (this.portalRequestInfo.getUrlType() == UrlType.RENDER) {
             return this.portletWindow.getPublicRenderParameters();
@@ -262,6 +262,5 @@ public class PortletRequestContextImpl extends AbstractPortletContextImpl implem
             super(request, servletContext, session, portletRequest, included, namedDispatch);
             throw new UnsupportedOperationException(PropertyExposingHttpServletPortletRequestWrapper.class + " should never be created");
         }
-        
     }
 }

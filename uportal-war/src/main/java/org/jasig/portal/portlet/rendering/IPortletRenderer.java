@@ -24,6 +24,7 @@ import java.io.IOException;
 import javax.portlet.CacheControl;
 import javax.portlet.Event;
 import javax.portlet.PortletMode;
+import javax.portlet.PortletRequest;
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,10 +46,28 @@ public interface IPortletRenderer {
 	public static final PortletMode CONFIG = new PortletMode("CONFIG");
 	
 	/**
-	 * Name of the {@link javax.servlet.http.HttpServletRequest} attribute that the adaptor
+	 * Name of the {@link PortletRequest} attribute that the adaptor
 	 * will store a Map of user info attributes that has support for multi-valued attributes.
 	 */
 	public static final String MULTIVALUED_USERINFO_MAP_ATTRIBUTE = "org.jasig.portlet.USER_INFO_MULTIVALUED";
+	
+	/**
+	 * Name of the {@link PortletRequest} property that the portlet should use to set
+	 * a new-item-count value.
+	 */
+	public static final String NEW_ITEM_COUNT_PROPERTY = "org.jasig.portlet.NEW_ITEM_COUNT";
+
+    /**
+     * Name of the {@link PortletRequest} property that the portlet should use to set
+     * an external link
+     */
+    public static final String EXTERNAL_PORTLET_LINK_PROPERTY = "org.jasig.portlet.EXTERNAL_PORTLET_LINK";
+    
+    /**
+     * Name of the {@link PortletRequest} property that the portlet should use to get
+     * the current theme name
+     */
+    public static final String THEME_NAME_PROPERTY = "org.jasig.portlet.THEME_NAME";
 	
 	/**
 	 * {@link javax.servlet.http.HttpServletRequest} attributes specific to the

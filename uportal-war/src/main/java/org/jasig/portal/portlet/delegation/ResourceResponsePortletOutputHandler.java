@@ -19,6 +19,7 @@
 package org.jasig.portal.portlet.delegation;
 
 import java.util.Locale;
+import java.util.TimeZone;
 
 import javax.portlet.ResourceResponse;
 
@@ -31,7 +32,9 @@ import org.jasig.portal.portlet.rendering.PortletResourceOutputHandler;
  * @author Eric Dalquist
  */
 public class ResourceResponsePortletOutputHandler extends MimeResponsePortletOutputHandler implements PortletResourceOutputHandler {
-    private static final FastDateFormat HTTP_HEADER_DATE_FORMAT = FastDateFormat.getInstance("EEE, dd MMM yyyy HH:mm:ss Z", Locale.US); 
+    private static final TimeZone GMT_ZONE = TimeZone.getTimeZone("GMT");
+    private static final FastDateFormat HTTP_HEADER_DATE_FORMAT = FastDateFormat.getInstance("EEE, dd MMM yyyy HH:mm:ss Z", GMT_ZONE, Locale.US);
+    
     
     private final ResourceResponse resourceResponse;
     
