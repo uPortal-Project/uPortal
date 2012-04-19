@@ -36,6 +36,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -46,6 +47,10 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.IndexColumn;
 import org.jasig.portal.portlet.om.IPortletPreference;
+import org.jasig.portal.utils.FilteringOnAddList;
+
+import com.google.common.base.Function;
+
 
 /**
  * Internal class to the portlet entity/definition needed to have a sane DB schema and still share tables 
@@ -83,6 +88,35 @@ class PortletPreferencesImpl {
     @Fetch(FetchMode.JOIN)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<IPortletPreference> portletPreferences = new ArrayList<IPortletPreference>(0);
+    
+    @Transient
+    private final List<IPortletPreference> filteringPortletPreferences = new FilteringOnAddList<IPortletPreference>(new NewPreferencesFilter(), true) {
+        protected List<IPortletPreference> delegate() {
+            return portletPreferences;
+        }
+    };
+    
+    private class NewPreferencesFilter implements Function<IPortletPreference, IPortletPreference> {
+        @Override
+        public IPortletPreference apply(IPortletPreference newPreference) {
+            if (newPreference == null) {
+                return null;
+            }
+            
+            final String name = newPreference.getName();
+            for (final IPortletPreference oldPreference : portletPreferences) {
+                if (name.equals(oldPreference.getName())) {
+                    //Don't add the new preference, just replace the existing one when a match is found
+                    oldPreference.setValues(newPreference.getValues());
+                    oldPreference.setReadOnly(newPreference.isReadOnly());
+                    
+                    return null;
+                }
+            }
+            
+            return newPreference;
+        }
+    }
    
     public PortletPreferencesImpl() {
         this.portletPreferencesId = -1;
@@ -90,9 +124,9 @@ class PortletPreferencesImpl {
     }
     
     public List<IPortletPreference> getPortletPreferences() {
-        return this.portletPreferences;
+        return this.filteringPortletPreferences;
     }
-
+    
     public void setPortletPreferences(List<IPortletPreference> newPreferences) {
         if (this.portletPreferences == newPreferences) {
             return;

@@ -944,9 +944,6 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
             return null;
         }
         @Override
-        public void clearParameters() {
-        }
-        @Override
         public void addParameter(String name, String value) {
         }
         @Override

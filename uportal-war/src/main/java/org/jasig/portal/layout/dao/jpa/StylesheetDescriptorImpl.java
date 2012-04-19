@@ -21,6 +21,7 @@ package org.jasig.portal.layout.dao.jpa;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -228,7 +229,7 @@ public class StylesheetDescriptorImpl implements IStylesheetDescriptor {
     
     @Override
     public void setOutputPropertyDescriptors(Collection<IOutputPropertyDescriptor> outputPropertyDescriptors) {
-        setMap(this.outputProperties, outputPropertyDescriptors);
+        setMap(this.outputProperties, outputPropertyDescriptors, StylesheetDataUpdater.<IOutputPropertyDescriptor>getInstance());
     }
 
     @Override
@@ -257,7 +258,7 @@ public class StylesheetDescriptorImpl implements IStylesheetDescriptor {
 
     @Override
     public void setStylesheetParameterDescriptors(Collection<IStylesheetParameterDescriptor> stylesheetParameterDescriptors) {
-        setMap(this.stylesheetParameters, stylesheetParameterDescriptors);
+        setMap(this.stylesheetParameters, stylesheetParameterDescriptors, StylesheetDataUpdater.<IStylesheetParameterDescriptor>getInstance());
     }
 
     @Override
@@ -287,7 +288,7 @@ public class StylesheetDescriptorImpl implements IStylesheetDescriptor {
 
     @Override
     public void setLayoutAttributeDescriptors(Collection<ILayoutAttributeDescriptor> layoutAttributeDescriptors) {
-        setMap(this.layoutAttributes, layoutAttributeDescriptors);
+        setMap(this.layoutAttributes, layoutAttributeDescriptors, LAYOUT_ATTRIBUTE_DESCRIPTOR_UPDATER);
     }
 
     @Override
@@ -307,12 +308,54 @@ public class StylesheetDescriptorImpl implements IStylesheetDescriptor {
         return this.layoutAttributes.remove(name);
     }
     
-    protected <T extends IStylesheetData> void setMap(Map<String, T> dataMap, Collection<T> dataCollection) {
-        dataMap.clear();
-        for (final T data : dataCollection) {
-            dataMap.put(data.getName(), data);
+    protected <T extends IStylesheetData> void setMap(Map<String, T> dataMap, Collection<T> dataCollection, Updater<T> updater) {
+        final Set<String> oldDataKeys = new HashSet<String>(dataMap.keySet());
+        
+        for (T newData : dataCollection) {
+            final String name = newData.getName();
+            oldDataKeys.remove(name);
+
+            final T oldData = dataMap.get(name);
+            if (oldData != null) {
+                newData = updater.update(oldData, newData);
+            }
+            
+            dataMap.put(name, newData);
+        }
+        
+        //Remove all old data entries that were not updated
+        dataMap.keySet().remove(oldDataKeys);
+    }
+    
+    private interface Updater<V> {
+        public V update(V existingObject, V newObject);
+    }
+    
+    private static class StylesheetDataUpdater<V extends IStylesheetData> implements Updater<V> {
+        private static final StylesheetDataUpdater<IStylesheetData> INSTANCE = new StylesheetDataUpdater<IStylesheetData>();
+        
+        @SuppressWarnings("unchecked")
+        public static <V extends IStylesheetData> StylesheetDataUpdater<V> getInstance() {
+            return (StylesheetDataUpdater<V>) INSTANCE;
+        }
+        
+        @Override
+        public V update(V existingObject, V newObject) {
+            existingObject.setDefaultValue(newObject.getDefaultValue());
+            existingObject.setDescription(newObject.getDefaultValue());
+            existingObject.setScope(newObject.getScope());
+            
+            return existingObject;
         }
     }
+    private static final StylesheetDataUpdater<ILayoutAttributeDescriptor> LAYOUT_ATTRIBUTE_DESCRIPTOR_UPDATER = new StylesheetDataUpdater<ILayoutAttributeDescriptor>() {
+        @Override
+        public ILayoutAttributeDescriptor update(ILayoutAttributeDescriptor existingObject, ILayoutAttributeDescriptor newObject) {
+            existingObject.setTargetElementNames(newObject.getTargetElementNames());
+            
+            return super.update(existingObject, newObject);
+        }
+    };
 
     @Override
     public int hashCode() {

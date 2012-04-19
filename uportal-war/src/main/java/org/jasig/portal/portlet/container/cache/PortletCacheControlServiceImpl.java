@@ -541,38 +541,33 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
         boolean removed = false;
 
         //Remove all publicly cached render header data for the portlet
-        removed = removed
-                || this.purgePublicCache(this.publicPortletRenderHeaderCacheKeyTracker,
+        removed = this.purgePublicCache(this.publicPortletRenderHeaderCacheKeyTracker,
                         this.publicScopePortletRenderHeaderOutputCache,
-                        definitionId);
+                        definitionId) || removed;
 
         //Remove all publicly cached render data for the portlet
-        removed = removed
-                || this.purgePublicCache(this.publicPortletRenderCacheKeyTracker,
+        removed = this.purgePublicCache(this.publicPortletRenderCacheKeyTracker,
                         this.publicScopePortletRenderOutputCache,
-                        definitionId);
+                        definitionId) || removed;
 
         //Remove all publicly cached resource data for the portlet
-        removed = removed
-                || this.purgePublicCache(this.publicPortletResourceCacheKeyTracker,
+        removed = this.purgePublicCache(this.publicPortletResourceCacheKeyTracker,
                         this.publicScopePortletResourceOutputCache,
-                        definitionId);
+                        definitionId) || removed;
 
         final HttpSession session = httpRequest.getSession();
 
         //Remove all privately cached render data
-        removed = removed
-                || this.purgePrivateCache(this.privatePortletRenderHeaderCacheKeyTracker,
+        removed = this.purgePrivateCache(this.privatePortletRenderHeaderCacheKeyTracker,
                         this.privateScopePortletRenderHeaderOutputCache,
                         session,
-                        portletWindowId);
+                        portletWindowId) || removed;
 
         //Remove all privately cached render data
-        removed = removed
-                || this.purgePrivateCache(this.privatePortletRenderCacheKeyTracker,
+        removed = this.purgePrivateCache(this.privatePortletRenderCacheKeyTracker,
                         this.privateScopePortletRenderOutputCache,
                         session,
-                        portletWindowId);
+                        portletWindowId) || removed;
 
         //Remove all privately cached render data
         removed = removed
