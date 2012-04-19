@@ -25,7 +25,6 @@
   <creator>system</creator>
   <description>All students</description>
   <children>
-    <literal>aw411510</literal>
     <literal>student</literal>
     <literal>student-lo</literal>
   </children>
