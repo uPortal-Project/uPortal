@@ -17,5 +17,27 @@
 # under the License.
 #
 
-find uportal-war/src/ -name '*.xml' | xargs grep -oh \${[^}]*} | sort -u
-find uportal-war/src/ -name '*.java' | xargs grep -oh "@Value( *\"\${[^}]*}\" *)" | grep -oh \${[^}]*} | sort -u
+mkdir -p target
+
+TARGET_DIR=target
+PLACEHOLDERS_PROPS=$TARGET_DIR/placeholders.properties
+RESOLVED_PROPS=$TARGET_DIR/resolved_property_names.txt
+PORTAL_PROPS=$TARGET_DIR/portal_property_names.txt
+MISSING_PROPS=$TARGET_DIR/missing_property_names.txt
+
+## Find all spring property placeholder strings and store them in $PLACEHOLDERS_PROPS
+find uportal-war/src/main/resources -name '*.xml' | xargs grep -oh \${[^}]*} | sed 's/\${\([^:]*\):\?\([^}]*\)}/\1=\2/' > $PLACEHOLDERS_PROPS
+find uportal-war/src/main/java -name '*.java' | xargs grep -oh "@Value( *\"\${[^}]*}\" *)" | grep -oh \${[^}]*} | sed 's/\${\([^:]*\):\?\([^}]*\)}/\1=\2/' >> $PLACEHOLDERS_PROPS
+
+## Populate $PLACEHOLDERS_PROPS with just the property names 
+cat $PLACEHOLDERS_PROPS | sed 's/\([^=]*\).*/\1/' | sort -u  >  $RESOLVED_PROPS
+
+## Pull all of the property names out of portal.properties
+cat uportal-war/src/main/resources/properties/portal.properties | grep -v "^#[#| ].*" | grep -v "^#? *$" | sed 's/#\?\([^=]*\).*/\1/' | sort -u  >  $PORTAL_PROPS 
+
+## List all property names that were found in .java and .xml files but do not exist in portal.properties
+grep -Fvxf $PORTAL_PROPS $RESOLVED_PROPS > $MISSING_PROPS
+
+## List the full property string found in the source 
+grep --color=never -f $MISSING_PROPS $PLACEHOLDERS_PROPS
+
