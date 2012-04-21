@@ -84,9 +84,10 @@
         <project-site-path>/uportal/${project.version}</project-site-path>
         
         <!-- The JDBC Driver used by uPortal -->
-        <jdbc.groupId>postgresql</jdbc.groupId>
-        <jdbc.artifactId>postgresql</jdbc.artifactId>
-        <jdbc.version>8.4-702.jdbc4</jdbc.version>
+        <jdbc.groupId>org.hsqldb</jdbc.groupId>
+        <jdbc.artifactId>hsqldb</jdbc.artifactId>
+        <jdbc.version>${hsqldb.version}</jdbc.version>
+
     
         <!--
          | Environment name and filters file for environment-specific build
