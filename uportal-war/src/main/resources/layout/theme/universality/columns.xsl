@@ -48,7 +48,7 @@
     xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
     xsi:schemaLocation="
             https://source.jasig.org/schemas/uportal/layout/portal-url ../../../xsd/layout/portal-url-4.0.xsd"
-    exclude-result-prefixes="url upAuth upGroup upMsg" 
+    exclude-result-prefixes="url upAuth upGroup upMsg dlm xsi" 
     version="1.0">
 
   <!-- ========== TEMPLATE: BODY COLUMNS ========== -->
