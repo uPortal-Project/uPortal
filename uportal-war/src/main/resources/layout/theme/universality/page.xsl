@@ -498,7 +498,7 @@
    | This template outputs a script to ensure that when a sidebar is used, all columns of the content contaier are the same height (fixes collapsed content area due to floated sidebar, which sometimes has a greater height). The issue only occurs when there is a floated sidebar, so the script is set to run only when a sidebar is present.
   -->
   <xsl:template name="js.content.height">
-		<script type="text/javascript" language="javascript">
+		<script type="text/javascript">
             // Run function when document is ready (fully loaded).
             up.jQuery(document).ready(function(){
                 // set function for determining and setting height.
