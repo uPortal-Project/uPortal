@@ -95,7 +95,7 @@
             </xsl:otherwise>
           </xsl:choose>
         </title>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta charset="utf-8" />
         <xsl:if test="/layout_fragment">
         	<meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT" />
         	<meta http-equiv="pragma" content="no-cache" />
