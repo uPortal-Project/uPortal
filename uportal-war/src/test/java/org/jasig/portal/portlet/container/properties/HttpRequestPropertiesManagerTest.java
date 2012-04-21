@@ -19,8 +19,8 @@
 
 package org.jasig.portal.portlet.container.properties;
 
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
@@ -28,7 +28,10 @@ import junit.framework.TestCase;
 import org.easymock.EasyMock;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.url.IPortalRequestUtils;
+import org.jasig.portal.utils.MultivaluedMapPopulator;
 import org.springframework.mock.web.MockHttpServletRequest;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * @author Eric Dalquist
@@ -67,12 +70,19 @@ public class HttpRequestPropertiesManagerTest extends TestCase {
         
         this.httpRequestPropertiesManager.setPortalRequestUtils(portalRequestUtils);
         
-        final Map<String, String[]> properties = this.httpRequestPropertiesManager.getRequestProperties(request, portletWindow);
+        final MultivaluedMapPopulator<String, String> populator = new MultivaluedMapPopulator<String, String>();
+        this.httpRequestPropertiesManager.populateRequestProperties(request, portletWindow, populator);
+        
+        final Map<String, List<String>> properties = populator.getMap();
 
         assertNotNull("properties Map should not be null", properties);
-        assertEquals("properties Map should have 2 values", 2, properties.size());
-        assertEquals(Collections.singletonList("1.2.3.4"), Arrays.asList(properties.get("REMOTE_ADDR")));
-        assertEquals(Collections.singletonList("POST"), Arrays.asList(properties.get("REQUEST_METHOD")));
+        
+        final Map<String, List<String>> expected = ImmutableMap.of(
+                "REMOTE_ADDR", Collections.singletonList("1.2.3.4"),
+                "REQUEST_METHOD", Collections.singletonList("POST"),
+                "REMOTE_HOST", Collections.singletonList("localhost"));
+        
+        assertEquals(expected, properties);
         
         EasyMock.verify(portletWindow, portalRequestUtils);
     }

@@ -31,15 +31,18 @@ public final class PortletRenderHeaderExecutionEvent extends PortletExecutionEve
     private static final long serialVersionUID = 1L;
     
     private final boolean targeted;
+    private final boolean cached;
 
     @SuppressWarnings("unused")
     private PortletRenderHeaderExecutionEvent() {
         this.targeted = false;
+        this.cached = false;
     }
 
-    PortletRenderHeaderExecutionEvent(PortalEventBuilder eventBuilder, String fname, long executionTime, Map<String, List<String>> parameters, boolean targeted) {
+    PortletRenderHeaderExecutionEvent(PortalEventBuilder eventBuilder, String fname, long executionTime, Map<String, List<String>> parameters, boolean targeted, boolean cached) {
         super(eventBuilder, fname, executionTime, parameters);
         this.targeted = targeted;
+        this.cached = cached;
     }
 
     /**
@@ -49,6 +52,12 @@ public final class PortletRenderHeaderExecutionEvent extends PortletExecutionEve
         return this.targeted;
     }
 
+    /**
+     * @return If the rendering was from cache
+     */
+    public boolean isCached() {
+        return this.cached;
+    }
     
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
@@ -56,6 +65,7 @@ public final class PortletRenderHeaderExecutionEvent extends PortletExecutionEve
     @Override
     public String toString() {
         return super.toString() + 
-                ", targeted=" + this.targeted + "]";
+                ", targeted=" + this.targeted + 
+                ", cached=" + this.cached + "]";
     }
 }

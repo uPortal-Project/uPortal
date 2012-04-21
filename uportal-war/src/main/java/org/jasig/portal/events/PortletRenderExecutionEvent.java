@@ -31,18 +31,18 @@ public final class PortletRenderExecutionEvent extends PortletExecutionEvent {
     private static final long serialVersionUID = 1L;
     
     private final boolean targeted;
-    private final boolean cached;
+    private final boolean usedPortalCache;
 
     @SuppressWarnings("unused")
     private PortletRenderExecutionEvent() {
         this.targeted = false;
-        this.cached = false;
+        this.usedPortalCache = false;
     }
 
-    PortletRenderExecutionEvent(PortalEventBuilder eventBuilder, String fname, long executionTime, Map<String, List<String>> parameters, boolean targeted, boolean cached) {
+    PortletRenderExecutionEvent(PortalEventBuilder eventBuilder, String fname, long executionTime, Map<String, List<String>> parameters, boolean targeted, boolean usedPortalCache) {
         super(eventBuilder, fname, executionTime, parameters);
         this.targeted = targeted;
-        this.cached = cached;
+        this.usedPortalCache = usedPortalCache;
     }
 
     /**
@@ -53,12 +53,20 @@ public final class PortletRenderExecutionEvent extends PortletExecutionEvent {
     }
 
     /**
-     * @return If the rendering was from cache
+     * @deprecated use {@link #isUsedPortalCache()}
      */
+    @Deprecated
     public boolean isCached() {
-        return this.cached;
+        return this.usedPortalCache;
     }
     
+    /**
+     * @return true If the rendering was from the portal's cache
+     */
+    public boolean isUsedPortalCache() {
+        return usedPortalCache;
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
@@ -66,6 +74,6 @@ public final class PortletRenderExecutionEvent extends PortletExecutionEvent {
     public String toString() {
         return super.toString() + 
                 ", targeted=" + this.targeted + 
-                ", cached=" + this.cached + "]";
+                ", cached=" + this.usedPortalCache + "]";
     }
 }

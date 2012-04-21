@@ -163,8 +163,6 @@ public interface IPortletDefinition extends IBasicEntity, IPortalData {
 	
 	public void setExpirationDate(Date expirationDate);
 
-	public void clearParameters();
-
 	public void setParameters(Set<IPortletDefinitionParameter> parameters);
 
 	public void addLocalizedTitle(String locale, String chanTitle);

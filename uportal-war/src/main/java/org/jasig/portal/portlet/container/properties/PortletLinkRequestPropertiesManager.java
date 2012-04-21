@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
-import org.springframework.core.Ordered;
 import org.springframework.stereotype.Service;
 
 /**
@@ -33,20 +32,19 @@ import org.springframework.stereotype.Service;
 @Service
 public class PortletLinkRequestPropertiesManager extends BaseRequestPropertiesManager {
     
+    /**
+     * @deprecated use {@link IPortletRenderer#EXTERNAL_PORTLET_LINK_PROPERTY}
+     */
+    @Deprecated
     protected static final String LINK_PROPERTY = "externalPortletLink";
 
     @Override
-    public void setResponseProperty(HttpServletRequest portletRequest, IPortletWindow portletWindow, String property, String value) {
-        if (LINK_PROPERTY.equals(property)) {
-            if (StringUtils.isNotBlank(value)) {
-                portletRequest.setAttribute(IPortletRenderer.ATTRIBUTE__PORTLET_LINK, value);
-            }
+    public boolean setResponseProperty(HttpServletRequest portletRequest, IPortletWindow portletWindow, String property, String value) {
+        if ((LINK_PROPERTY.equals(property) || IPortletRenderer.EXTERNAL_PORTLET_LINK_PROPERTY.equals(property)) && StringUtils.isNotBlank(value)) {
+            portletRequest.setAttribute(IPortletRenderer.ATTRIBUTE__PORTLET_LINK, value);
+            return true;
         }
+        
+        return false;
     }
-    
-    @Override
-    public int getOrder() {
-        return Ordered.LOWEST_PRECEDENCE;
-    }
-
 }

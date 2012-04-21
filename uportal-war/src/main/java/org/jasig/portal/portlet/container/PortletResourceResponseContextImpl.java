@@ -21,67 +21,79 @@ package org.jasig.portal.portlet.container;
 
 import java.util.Locale;
 
-import javax.portlet.CacheControl;
+import javax.portlet.ResourceResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletResourceResponseContext;
-import org.jasig.portal.portlet.container.cache.IPortletCacheControlService;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.jasig.portal.portlet.container.services.IPortletCookieService;
 import org.jasig.portal.portlet.om.IPortletWindow;
+import org.jasig.portal.portlet.rendering.PortletResourceOutputHandler;
 import org.jasig.portal.url.IPortalUrlProvider;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class PortletResourceResponseContextImpl extends PortletMimeResponseContextImpl implements PortletResourceResponseContext {
-    
+public class PortletResourceResponseContextImpl extends PortletMimeResponseContextImpl implements
+        PortletResourceResponseContext {
+
+    private final PortletResourceOutputHandler portletResourceOutputHandler;
+
     public PortletResourceResponseContextImpl(PortletContainer portletContainer, IPortletWindow portletWindow,
             HttpServletRequest containerRequest, HttpServletResponse containerResponse,
             IRequestPropertiesManager requestPropertiesManager, IPortalUrlProvider portalUrlProvider,
-            IPortletCookieService portletCookieService, IPortletCacheControlService portletCacheControlService) {
+            IPortletCookieService portletCookieService) {
 
-        super(portletContainer, portletWindow, containerRequest, containerResponse, requestPropertiesManager, portalUrlProvider, portletCookieService, portletCacheControlService);
-        
+        super(portletContainer, portletWindow, containerRequest, containerResponse, requestPropertiesManager,
+                portalUrlProvider, portletCookieService);
+
+        this.portletResourceOutputHandler = (PortletResourceOutputHandler) this.getPortletOutputHandler();
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.container.PortletResourceResponseContext#setCharacterEncoding(java.lang.String)
-     */
     @Override
     public void setCharacterEncoding(String charset) {
         this.checkContextStatus();
-        this.servletResponse.setCharacterEncoding(charset);
+        this.portletResourceOutputHandler.setCharacterEncoding(charset);
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.container.PortletResourceResponseContext#setContentLength(int)
-     */
     @Override
     public void setContentLength(int len) {
         this.checkContextStatus();
-        this.servletResponse.setContentLength(len);
+        this.portletResourceOutputHandler.setContentLength(len);
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.container.PortletResourceResponseContext#setLocale(java.util.Locale)
-     */
     @Override
     public void setLocale(Locale locale) {
         this.checkContextStatus();
-        this.servletResponse.setLocale(locale);
+        this.portletResourceOutputHandler.setLocale(locale);
     }
-    
-    /* (non-Javadoc)
-     * @see org.apache.pluto.container.PortletMimeResponseContext#getCacheControl()
-     */
+
     @Override
-    public CacheControl getCacheControl() {
-        this.checkContextStatus();
-        CacheControl cacheControl = getPortletCacheControlService().getPortletResourceCacheControl(this.portletWindow.getPortletWindowId(), this.containerRequest, this.containerResponse);    
-        return cacheControl;
+    protected boolean managerSetProperty(String key, String value) {
+        final boolean handled = super.managerSetProperty(key, value);
+        if (!handled) {
+            if (ResourceResponse.HTTP_STATUS_CODE.equals(key)) {
+                this.portletResourceOutputHandler.setStatus(Integer.parseInt(value));
+                return true;
+            }
+            this.portletResourceOutputHandler.setHeader(key, value);
+        }
+        return true;
+    }
+
+    @Override
+    protected boolean managerAddProperty(String key, String value) {
+        final boolean handled = super.managerAddProperty(key, value);
+        if (!handled) {
+            if (ResourceResponse.HTTP_STATUS_CODE.equals(key)) {
+                this.portletResourceOutputHandler.setStatus(Integer.parseInt(value));
+                return true;
+            }
+            this.portletResourceOutputHandler.addHeader(key, value);
+        }
+        return true;
     }
 }

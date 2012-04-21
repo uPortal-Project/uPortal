@@ -305,6 +305,7 @@
                     selected: [<c:forEach items="${groups}" var="group" varStatus="status">'<spring:escapeBody javaScriptEscape="true">${group.entityType}:${group.id}</spring:escapeBody>'${ status.last ? '' : ',' }</c:forEach>],
                     initialFocusedEntity: '${rootEntity.entityType}:${rootEntity.id}',
                     selectMultiple: ${selectionMode},
+                    requireSelection: ${ not empty requireSelection ? requireSelection : true },
                     selectors: {
                         selectionBasket: "#${n}selectionBasket",
                         breadcrumbs: "#${n}entityBreadcrumbs",

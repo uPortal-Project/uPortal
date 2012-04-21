@@ -30,6 +30,8 @@ import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
 
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.portlet.rendering.PortletOutputHandler;
+import org.jasig.portal.portlet.rendering.PortletResourceOutputHandler;
 
 /**
  * Used to dispatch requests to a delegate portlet window. Also provides information about the
@@ -77,19 +79,28 @@ public interface PortletDelegationDispatcher {
     public DelegationResponse doServeResource(ResourceRequest resourceRequest, ResourceResponse resourceResponse) throws IOException;
 
     /**
+     * Calls @link {@link #doServeResource(ResourceRequest, ResourceResponse, DelegationRequest, PortletOutputHandler)} wrapping the
+     * {@link ResourceResponse} for the {@link PortletOutputHandler}
+     * 
+     * @see #doServeResource(ResourceRequest, ResourceResponse, DelegationRequest, PortletOutputHandler)
+     */
+    public DelegationResponse doServeResource(ResourceRequest resourceRequest, ResourceResponse resourceResponse, DelegationRequest delegationRequest) throws IOException;
+
+    /**
      * Executes a portlet resource request on the delegate window. The state, mode and parameters in the delegation request (if set) are used
      * by the delegate.
      * 
      * @param resourceRequest The current portlet's resource request
      * @param resourceResponse The current portlet's resource response
      * @param delegationRequest The state to set for the delegate and the basis for generated URLs
+     * @param portletOutputHandler The output handler to write to
      * @return The delegation response state, will indicate if the delegate sent a redirect
      */
-    public DelegationResponse doServeResource(ResourceRequest resourceRequest, ResourceResponse resourceResponse, DelegationRequest delegationRequest) throws IOException;
+    public DelegationResponse doServeResource(ResourceRequest resourceRequest, ResourceResponse resourceResponse, DelegationRequest delegationRequest, PortletResourceOutputHandler portletOutputHandler) throws IOException;
     
     /**
      * Calls {@link #doRender(RenderRequest, RenderResponse, DelegationRequest, Writer)} with no {@link DelegationRequest}
-     * data and uses {@link RenderResponse#getWriter()} for the writer.,
+     * data wrapping the {@link RenderResponse} for the {@link PortletOutputHandler}
      * 
      * @see #doRender(RenderRequest, RenderResponse, DelegationRequest, Writer)
      */
@@ -101,11 +112,11 @@ public interface PortletDelegationDispatcher {
      * 
      * @see #doRender(RenderRequest, RenderResponse, DelegationRequest, Writer)
      */
-    public DelegationResponse doRender(RenderRequest renderRequest, RenderResponse renderResponse, Writer writer) throws IOException;
+    public DelegationResponse doRender(RenderRequest renderRequest, RenderResponse renderResponse, PortletOutputHandler portletOutputHandler) throws IOException;
     
     /**
-     * Calls {@link #doRender(RenderRequest, RenderResponse, DelegationRequest, Writer)} using
-     * {@link RenderResponse#getWriter()} for the writer.,
+     * Calls {@link #doRender(RenderRequest, RenderResponse, DelegationRequest, Writer)} wrapping the
+     * {@link RenderResponse} for the {@link PortletOutputHandler}
      * 
      * @see #doRender(RenderRequest, RenderResponse, DelegationRequest, Writer)
      */
@@ -113,13 +124,13 @@ public interface PortletDelegationDispatcher {
 
     /**
      * Executes a portlet render request on the delegate window. The state, mode and parameters in the delegation request (if set) are used
-     * by the delegate. The output of the portlet's rendering is written to the provided {@link Writer}
+     * by the delegate. The output of the portlet's rendering is written to the provided {@link PortletOutputHandler}
      * 
      * @param renderRequest The current portlet's render request
      * @param renderResponse The current portlet's render response
      * @param delegationRequest The state to set for the delegate and the basis for generated URLs
-     * @param writer The Writer to send all content from the delegate portlet to
+     * @param portletOutputHandler The PortletOutputHandler to send all content from the delegate portlet to
      * @return The delegation response state, will indicate if the delegate sent a redirect
      */
-    public DelegationResponse doRender(RenderRequest renderRequest, RenderResponse renderResponse, DelegationRequest delegationRequest, Writer writer) throws IOException;
+    public DelegationResponse doRender(RenderRequest renderRequest, RenderResponse renderResponse, DelegationRequest delegationRequest, PortletOutputHandler portletOutputHandler) throws IOException;
 }

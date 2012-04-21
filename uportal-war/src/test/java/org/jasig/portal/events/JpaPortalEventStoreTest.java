@@ -255,7 +255,7 @@ public class JpaPortalEventStoreTest extends BaseJpaDaoTest {
         Thread.sleep(EVENT_DELAY);
         events.add(new PortletRenderExecutionEvent(eventBuilder, "portletA", 13, ImmutableMap.<String, List<String>>of(), true, false));
         Thread.sleep(EVENT_DELAY);
-        events.add(new PortletResourceExecutionEvent(eventBuilder, "portletA", 17, ImmutableMap.<String, List<String>>of(), "someImage.jpg", false));
+        events.add(new PortletResourceExecutionEvent(eventBuilder, "portletA", 17, ImmutableMap.<String, List<String>>of(), "someImage.jpg", false, false));
         
         Thread.sleep(EVENT_DELAY);
         events.add(new LogoutEvent(eventBuilder));

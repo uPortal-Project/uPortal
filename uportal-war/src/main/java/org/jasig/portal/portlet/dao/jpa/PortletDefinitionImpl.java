@@ -21,7 +21,7 @@ package org.jasig.portal.portlet.dao.jpa;
 
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -171,14 +171,14 @@ class PortletDefinitionImpl implements IPortletDefinition {
     @MapKey(name="name")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
-	private final Map<String, IPortletDefinitionParameter> parameters = new HashMap<String, IPortletDefinitionParameter>();
+	private Map<String, IPortletDefinitionParameter> parameters = new LinkedHashMap<String, IPortletDefinitionParameter>();
 
 	@ElementCollection(fetch = FetchType.EAGER, targetClass = PortletLocalizationData.class)
 	@JoinTable(name = "UP_PORTLET_DEF_MDATA", joinColumns = @JoinColumn(name = "PORTLET_ID"))
 	@MapKeyColumn(name = "LOCALE", length = 64, nullable = false)
 	@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 	@Fetch(FetchMode.JOIN)
-	private final Map<String, PortletLocalizationData> localizations = new HashMap<String, PortletLocalizationData>();
+	private final Map<String, PortletLocalizationData> localizations = new LinkedHashMap<String, PortletLocalizationData>();
 
 	@Embedded
 	private PortletDescriptorKeyImpl portletDescriptorKey;
@@ -424,35 +424,10 @@ class PortletDefinitionImpl implements IPortletDefinition {
 		this.expirationDate = expirationDate;
 	}
 
-	@Override
-    public Set<IPortletDefinitionParameter> getParameters() {
-		return Collections.unmodifiableSet(new LinkedHashSet<IPortletDefinitionParameter>(parameters.values()));
-	}
-
-	@Override
-    public void setParameters(Set<IPortletDefinitionParameter> parameters) {
-		this.parameters.clear();
-		for (final IPortletDefinitionParameter parameter : parameters) {
-		    this.parameters.put(parameter.getName(), parameter);
-        }
-	}
-
 
 	@Override
 	public IPortletType getType() {
 		return this.portletType;
-	}
-
-
-	@Override
-	public IPortletDefinitionParameter getParameter(String key) {
-	    return this.parameters.get(key);
-	}
-
-
-	@Override
-    public Map<String, IPortletDefinitionParameter> getParametersAsUnmodifiableMap() {
-	    return Collections.unmodifiableMap(this.parameters);
 	}
 
 	@Override
@@ -494,11 +469,6 @@ class PortletDefinitionImpl implements IPortletDefinition {
     }
 
 	@Override
-    public void clearParameters() {
-		parameters.clear();
-	}
-
-	@Override
     public void addLocalizedDescription(String locale, String chanDesc) {
 		PortletLocalizationData localeData = localizations.get(locale);
 		if (localeData == null) {
@@ -527,6 +497,65 @@ class PortletDefinitionImpl implements IPortletDefinition {
 		localeData.setTitle(chanTitle);
 		localizations.put(locale, localeData);
 	}
+	
+
+    @Override
+    public Set<IPortletDefinitionParameter> getParameters() {
+        return Collections.unmodifiableSet(new LinkedHashSet<IPortletDefinitionParameter>(parameters.values()));
+    }
+
+    @Override
+    public void setParameters(Set<IPortletDefinitionParameter> newParameters) {
+        if (this.parameters == newParameters) {
+            return;
+        }
+        
+        if (newParameters == null) {
+            this.parameters = new LinkedHashMap<String, IPortletDefinitionParameter>();
+        }
+        else if (this.parameters == null) {
+            this.parameters = new LinkedHashMap<String, IPortletDefinitionParameter>();
+            for (final IPortletDefinitionParameter parameter : newParameters) {
+                this.parameters.put(parameter.getName(), parameter);
+            }
+        }
+        else {
+            //Build map of existing parameters for tracking which parameters have been removed
+            final Map<String, IPortletDefinitionParameter> oldPreferences = new LinkedHashMap<String, IPortletDefinitionParameter>(this.parameters);
+
+            for (final IPortletDefinitionParameter parameter : newParameters) {
+                final String name = parameter.getName();
+
+                //Remove the existing parameter from the map since it is supposed to be persisted 
+                final IPortletDefinitionParameter existingParameter = oldPreferences.remove(name);
+                if (existingParameter == null) {
+                    //New parameter, add it to the list
+                    this.parameters.put(name, parameter);
+                }
+                else {
+                    //Existing parameter, update the fields
+                    existingParameter.setDescription(parameter.getDescription());
+                    existingParameter.setValue(parameter.getValue());
+                    this.parameters.put(name, existingParameter);
+                }
+            }
+
+            //Remove old parameters
+            this.parameters.keySet().removeAll(oldPreferences.keySet());
+        }
+    }
+
+
+    @Override
+    public IPortletDefinitionParameter getParameter(String key) {
+        return this.parameters.get(key);
+    }
+
+
+    @Override
+    public Map<String, IPortletDefinitionParameter> getParametersAsUnmodifiableMap() {
+        return Collections.unmodifiableMap(this.parameters);
+    }
 
 	@Override
     public void removeParameter(IPortletDefinitionParameter parameter) {
@@ -538,21 +567,35 @@ class PortletDefinitionImpl implements IPortletDefinition {
 		this.parameters.remove(name);
 	}
 
-	@Override
-    public EntityIdentifier getEntityIdentifier() {
-		return new EntityIdentifier(String.valueOf(this.portletDefinitionId.getStringId()),
-				IPortletDefinition.class);
+    @Override
+    public void addParameter(IPortletDefinitionParameter parameter) {
+        final String name = parameter.getName();
+        final IPortletDefinitionParameter existingParameter = this.parameters.get(name);
+        if (existingParameter != null) {
+            existingParameter.setDescription(parameter.getDescription());
+            existingParameter.setValue(parameter.getValue());
+        }
+        else {
+            this.parameters.put(name, parameter);
+        }
 	}
 
     @Override
-    public void addParameter(IPortletDefinitionParameter parameter) {
-        this.parameters.put(parameter.getName(), parameter);
-	}
-
-	@Override
     public void addParameter(String name, String value) {
-		addParameter(new PortletDefinitionParameterImpl(name, value));
-	}
+        final IPortletDefinitionParameter existingParameter = this.parameters.get(name);
+        if (existingParameter != null) {
+            existingParameter.setValue(value);
+        }
+        else {
+            this.parameters.put(name, new PortletDefinitionParameterImpl(name, value));
+        }
+    }
+
+    @Override
+    public EntityIdentifier getEntityIdentifier() {
+        return new EntityIdentifier(String.valueOf(this.portletDefinitionId.getStringId()),
+                IPortletDefinition.class);
+    }
 
     @Override
     public PortletLifecycleState getLifecycleState() {

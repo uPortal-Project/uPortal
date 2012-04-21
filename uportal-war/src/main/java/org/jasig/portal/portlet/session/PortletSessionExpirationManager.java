@@ -37,11 +37,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.container.driver.PortletInvocationEvent;
 import org.apache.pluto.container.driver.PortletInvocationListener;
-import org.jasig.portal.spring.web.context.support.HttpSessionDestroyedEvent;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.security.web.session.HttpSessionDestroyedEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.WebUtils;
 
@@ -56,7 +55,7 @@ import org.springframework.web.util.WebUtils;
  * @version $Revision$
  */
 @Service("portletSessionExpirationManager")
-public class PortletSessionExpirationManager implements PortletInvocationListener, ApplicationListener {
+public class PortletSessionExpirationManager implements PortletInvocationListener, ApplicationListener<HttpSessionDestroyedEvent> {
     public static final String PORTLET_SESSIONS_MAP = PortletSessionExpirationManager.class.getName() + ".PORTLET_SESSIONS";
     
     protected final Log logger = LogFactory.getLog(this.getClass());
@@ -110,27 +109,24 @@ public class PortletSessionExpirationManager implements PortletInvocationListene
     /* (non-Javadoc)
      * @see org.springframework.context.ApplicationListener#onApplicationEvent(org.springframework.context.ApplicationEvent)
      */
-    @SuppressWarnings("unchecked")
-    public void onApplicationEvent(ApplicationEvent event) {
-        if (event instanceof HttpSessionDestroyedEvent) {
-            final HttpSession session = ((HttpSessionDestroyedEvent)event).getSession();
-            final Map<String, PortletSession> portletSessions = (Map<String, PortletSession>)session.getAttribute(PORTLET_SESSIONS_MAP);
-            if (portletSessions == null) {
-                return;
+    public void onApplicationEvent(HttpSessionDestroyedEvent event) {
+        final HttpSession session = ((HttpSessionDestroyedEvent)event).getSession();
+        final Map<String, PortletSession> portletSessions = (Map<String, PortletSession>)session.getAttribute(PORTLET_SESSIONS_MAP);
+        if (portletSessions == null) {
+            return;
+        }
+        
+        for (final Map.Entry<String, PortletSession> portletSessionEntry: portletSessions.entrySet()) {
+            final String contextPath = portletSessionEntry.getKey();
+            final PortletSession portletSession = portletSessionEntry.getValue();
+            try {
+                portletSession.invalidate();
             }
-            
-            for (final Map.Entry<String, PortletSession> portletSessionEntry: portletSessions.entrySet()) {
-                final String contextPath = portletSessionEntry.getKey();
-                final PortletSession portletSession = portletSessionEntry.getValue();
-                try {
-                    portletSession.invalidate();
-                }
-                catch (IllegalStateException e) {
-                    this.logger.info("PortletSession with id '" + portletSession.getId() + "' for context '" + contextPath + "' has already been invalidated.");
-                }
-                catch (Exception e) {
-                    this.logger.warn("Failed to invalidate PortletSession with id '" + portletSession.getId() + "' for context '" + contextPath + "'", e);
-                }
+            catch (IllegalStateException e) {
+                this.logger.info("PortletSession with id '" + portletSession.getId() + "' for context '" + contextPath + "' has already been invalidated.");
+            }
+            catch (Exception e) {
+                this.logger.warn("Failed to invalidate PortletSession with id '" + portletSession.getId() + "' for context '" + contextPath + "'", e);
             }
         }
     }
