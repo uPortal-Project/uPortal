@@ -32,10 +32,11 @@ import org.jasig.portal.security.IPerson;
  * @version $Revision$
  */
 public class SessionAttributeProfileMapperImpl implements IProfileMapper {
+    public static final String DEFAULT_SESSION_ATTRIBUTE_NAME = "profileKey";
 
     private Map<String,String> mappings = Collections.<String,String>emptyMap();
     private String defaultProfileName = null;
-    private String attributeName = "profileKey";
+    private String attributeName = DEFAULT_SESSION_ATTRIBUTE_NAME;
     
     /**
      * Session profile key to database profile fname mappings.
