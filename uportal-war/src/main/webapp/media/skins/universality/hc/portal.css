@@ -218,25 +218,6 @@
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='false', EndColorStr='false')";
   background-image: linear-gradient(top, false, false);
 }
-.up .skip-link {
-  /* Skip-to navigation links. Make them visually hidden, but available to screen readers and focusable. */
-  border: 0;
-  clip: rect(0 0 0 0);
-  height: 1px;
-  margin: -1px;
-  overflow: hidden;
-  padding: 0;
-  position: absolute;
-  width: 1px;
-}
-.up .skip-link:focus, .up .skip-link:active {
-  clip: auto;
-  height: auto;
-  margin: 0;
-  overflow: visible;
-  position: static;
-  width: auto;
-}
 .up #portalPageBodyInner {
   /* Page body. */
   padding: 2.5em 25px;

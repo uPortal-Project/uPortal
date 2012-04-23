@@ -110,7 +110,6 @@
           </xsl:if>
           <!-- Tabs -->
           <div id="portalNavigationInner" class="{$CONTEXT}">
-          	<a name="mainNavigation" class="skip-link" title="Reference anchor: main nagivation"><xsl:comment>Comment to keep from collapsing</xsl:comment></a>  <!-- Skip navigation target. -->
             <ul id="portalNavigationList" class="fl-tabs flc-reorderer-column">
               <xsl:for-each select="tab">
                 <xsl:if test="$USE_TAB_GROUPS!='true' or self::node()[@tabGroup=$ACTIVE_TAB_GROUP]">
@@ -142,7 +141,6 @@
         	<div id="portalNavigationInner" class="fl-widget-inner {$CONTEXT}">
           	<div class="fl-widget-titlebar">
                 <h2>
-                    <a name="mainNavigation" class="skip-link" title="Reference anchor: main nagivation"><xsl:value-of select="upMsg:getMessage('navigation', $USER_LANG)"/></a>  <!-- Skip navigation target. -->
                     <xsl:value-of select="upMsg:getMessage('navigation', $USER_LANG)"/>
                 </h2>
                 <xsl:if test="$AUTHENTICATED='true' and $USE_ADD_TAB='true' and not(//focused)">
