@@ -245,8 +245,8 @@
       
         <!-- ****** BODY LAYOUT ****** -->
         <div id="portalPageBodyLayout">
-          <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
         	<xsl:attribute name="class"> <!-- Write appropriate FSS class based on use of sidebar and number of columns to produce column layout. -->
+            <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
           	<xsl:choose>
             	<xsl:when test="$AUTHENTICATED='true'"> <!-- Logged in -->
               	<xsl:choose>
