@@ -31,8 +31,13 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.expression.BeanFactoryResolver;
+import org.springframework.expression.BeanResolver;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
@@ -51,12 +56,12 @@ import org.springframework.web.context.request.WebRequest;
  * @version $Revision$
  */
 @Service
-public class PortalSpELServiceImpl implements IPortalSpELService {
+public class PortalSpELServiceImpl implements IPortalSpELService, BeanFactoryAware {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
     private ExpressionParser expressionParser = new SpelExpressionParser();
     private Ehcache expressionCache;
-    
+    private BeanResolver beanResolver;
     private IPortalRequestUtils portalRequestUtils;
     private IUserInstanceManager userInstanceManager;
 
@@ -79,6 +84,11 @@ public class PortalSpELServiceImpl implements IPortalSpELService {
     @Autowired
     public void setExpressionCache(@Qualifier("SpELExpressionCache") Ehcache expressionCache) {
         this.expressionCache = expressionCache;
+    }
+    
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.beanResolver = new BeanFactoryResolver(beanFactory);
     }
 
     @Override
@@ -154,7 +164,9 @@ public class PortalSpELServiceImpl implements IPortalSpELService {
         final IPerson person = userInstance.getPerson();
         
         final SpELEnvironmentRoot root = new SpELEnvironmentRoot(request, person);
-        return new StandardEvaluationContext(root);
+        final StandardEvaluationContext context = new StandardEvaluationContext(root);
+        context.setBeanResolver(this.beanResolver);
+        return context;
     }
 
     /**

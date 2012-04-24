@@ -38,6 +38,8 @@ var up = up || {};
  * 
  * portletListUrl
  *     URL of the portlet registry AJAX service
+ * allCategoriesName
+ *     Name of the pseudo "All Categories" category
  *
  */
 (function ($, fluid) {
@@ -163,6 +165,19 @@ var up = up || {};
                 $(data.registry.categories).each(function (idx, category) {
                     processCategory(that, category);
                 });
+                
+                //Deal with uncategorized channels
+                if (data.registry.channels.length > 0) {
+                    processCategory(that, {
+                        id: "uncat",
+                        name: "Uncategorized",
+                        description: "Uncategorized Channels",
+                        categories: [],
+                        channels: data.registry.channels
+                    });
+                    
+                }
+                
                 that.events.onLoad.fire();
             }, 
             dataType: "json"
@@ -267,6 +282,7 @@ var up = up || {};
     // defaults
     fluid.defaults("up.PortletRegistry", {
         portletListUrl: null,
+        allCategoriesName: "All",
         events: {
             onLoad: null
         },

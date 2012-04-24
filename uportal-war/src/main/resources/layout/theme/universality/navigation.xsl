@@ -60,7 +60,7 @@
   -->
   <xsl:template match="navigation">
   	<xsl:param name="CONTEXT"/>  <!-- Catches the context parameter to know how to render the navigation. -->
-    
+    <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
     <xsl:choose>
     	<xsl:when test="$CONTEXT = 'header'">  <!-- When the context is 'header' render the main navigation as tabs. -->
       	
@@ -111,13 +111,9 @@
           <!-- Tabs -->
           <div id="portalNavigationInner" class="{$CONTEXT}">
             <ul id="portalNavigationList" class="fl-tabs flc-reorderer-column">
-              <xsl:for-each select="tab">
-                <xsl:if test="$USE_TAB_GROUPS!='true' or self::node()[@tabGroup=$ACTIVE_TAB_GROUP]">
-                 <xsl:apply-templates select=".">
-                   <xsl:with-param name="CONTEXT" select="$CONTEXT"/>
-                 </xsl:apply-templates>
-                </xsl:if>
-              </xsl:for-each>
+             <xsl:apply-templates select="tab[$USE_TAB_GROUPS!='true' or @tabGroup=$ACTIVE_TAB_GROUP]">
+               <xsl:with-param name="CONTEXT" select="$CONTEXT"/>
+             </xsl:apply-templates>
             </ul>
             
             <xsl:if test="$USE_SUBNAVIGATION_ROW='true'">
@@ -149,13 +145,9 @@
           	</div>
             <div class="fl-widget-content">
               <ul id="portalNavigationList" class="fl-listmenu flc-reorderer-column">
-                <xsl:for-each select="tab">
-                  <xsl:if test="$USE_TAB_GROUPS!='true' or self::node()[@tabGroup=$ACTIVE_TAB_GROUP]">
-                   <xsl:apply-templates select=".">
-                     <xsl:with-param name="CONTEXT" select="$CONTEXT"/>
-                   </xsl:apply-templates>
-                  </xsl:if>
-                </xsl:for-each>
+                 <xsl:apply-templates select="tab[$USE_TAB_GROUPS!='true' or @tabGroup=$ACTIVE_TAB_GROUP]">
+                   <xsl:with-param name="CONTEXT" select="$CONTEXT"/>
+                 </xsl:apply-templates>
               </ul>
             </div>
           </div>
@@ -163,7 +155,7 @@
       
       </xsl:otherwise>
     </xsl:choose>
-              
+    <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->   
   </xsl:template>
   <!-- ========================================== -->
   
@@ -178,9 +170,9 @@
 
     <xsl:variable name="NAV_POSITION"> <!-- Determine the position of the navigation option within the whole navigation list and add css hooks for the first and last positions. -->
       <xsl:choose>
-        <xsl:when test="count(/layout/navigation/tab) = 1">single</xsl:when>
-        <xsl:when test="/layout/navigation/tab[1] = .">first</xsl:when>
-        <xsl:when test="/layout/navigation/tab[last()] = .">last</xsl:when>
+        <xsl:when test="last() = 1">single</xsl:when>
+        <xsl:when test="position() = 1">first</xsl:when>
+        <xsl:when test="position() = last()">last</xsl:when>
         <xsl:otherwise></xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
@@ -266,7 +258,6 @@
             <xsl:otherwise></xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
-    
     <li id="portalNavigation_{@ID}" class="portal-navigation {$NAV_POSITION} {$NAV_ACTIVE} {$NAV_MOVABLE} {$NAV_EDITABLE} {$NAV_DELETABLE} {$NAV_CAN_ADD_CHILDREN}"> <!-- Each navigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
       <xsl:variable name="tabLinkUrl">
           <xsl:call-template name="portalUrl">

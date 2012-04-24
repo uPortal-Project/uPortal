@@ -31,10 +31,10 @@ import org.jasig.portal.security.IPermissionPolicy;
  * @version $Revision$
  */
 public class AuthorizationPrincipalImpl implements IAuthorizationPrincipal {
-    private java.lang.String key;
-    private java.lang.Class type;
-    private org.jasig.portal.security.IAuthorizationService authorizationService;
-    private java.lang.String principalString;
+    private final String key;
+    private final Class type;
+    private IAuthorizationService authorizationService;
+    private String principalString;
 /**
  * Constructor for ReferenceAuthorizationPrincipal.
  */
@@ -92,26 +92,28 @@ public boolean canRender(String channelPublishId) throws org.jasig.portal.Author
 public boolean canSubscribe(String channelPublishId) throws org.jasig.portal.AuthorizationException {
     return getAuthorizationService().canPrincipalSubscribe(this, channelPublishId);
 }
-/**
- * Compares two objects for equality. Returns a boolean that indicates
- * whether this object is equivalent to the specified object. This method
- * is used when an object is stored in a hashtable.
- * @param obj the Object to compare with
- * @return true if these Objects are equal; false otherwise.
- * @see java.util.Hashtable
- */
-public boolean equals(Object obj) 
-{
-    if ( obj == null )
-        return false;
-    if ( obj == this )
+@Override
+public boolean equals(Object obj) {
+    if (this == obj)
         return true;
-    if ( ! ( obj instanceof IAuthorizationPrincipal))
+    if (obj == null)
         return false;
-
-    IAuthorizationPrincipal otherAP = (IAuthorizationPrincipal) obj;
-    return this.getKey().equals(otherAP.getKey()) &&
-           this.getType() == otherAP.getType();
+    if (!(obj instanceof IAuthorizationPrincipal))
+        return false;
+    IAuthorizationPrincipal other = (IAuthorizationPrincipal) obj;
+    if (key == null) {
+        if (other.getKey() != null)
+            return false;
+    }
+    else if (!key.equals(other.getKey()))
+        return false;
+    if (type == null) {
+        if (other.getType() != null)
+            return false;
+    }
+    else if (!type.equals(other.getType()))
+        return false;
+    return true;
 }
 /**
  * Returns the <code>IPermissions</code> for this <code>IAuthorizationPrincipal</code>, including
@@ -133,9 +135,9 @@ public IPermission[] getAllPermissions() throws AuthorizationException
  * for an <code>IAuthorizationPrincipal</code>.
  * 
  * @return org.jasig.portal.security.IPermission[]
- * @param owner java.lang.String
- * @param activity java.lang.String
- * @param target java.lang.String
+ * @param owner String
+ * @param activity String
+ * @param target String
  * @exception AuthorizationException indicates authorization information could not 
  * be retrieved.
  */
@@ -160,9 +162,9 @@ public java.util.Vector getAuthorizedChannels() throws org.jasig.portal.Authoriz
     return getAuthorizationService().getAuthorizedChannels(this);
 }
 /**
- * @return java.lang.String
+ * @return String
  */
-public java.lang.String getKey() {
+public String getKey() {
 	return key;
 }
 /**
@@ -183,9 +185,9 @@ public IPermission[] getPermissions() throws AuthorizationException
  * <code>IPermissions</code> for an <code>IAuthorizationPrincipal</code>.
  * 
  * @return org.jasig.portal.security.IPermission[]
- * @param owner java.lang.String
- * @param activity java.lang.String
- * @param target java.lang.String
+ * @param owner String
+ * @param activity String
+ * @param target String
  * @exception AuthorizationException indicates authorization information could not 
  * be retrieved.
  */
@@ -195,28 +197,25 @@ throws AuthorizationException
     return getAuthorizationService().getPermissionsForPrincipal(this, owner, activity, target);
 }
 /**
- * @return java.lang.String
+ * @return String
  */
 public String getPrincipalString() 
 {
     return principalString;
 }
 /**
- * @return java.lang.Class
+ * @return Class
  */
-public java.lang.Class getType() {
+public Class getType() {
     return type;
 }
-/**
- * Generates a hash code for the receiver.
- * This method is supported primarily for
- * hash tables, such as those provided in java.util.
- * @return an integer hash code for the receiver
- * @see java.util.Hashtable
- */
-public int hashCode() 
-{
-    return getKey().hashCode() + getType().hashCode();
+@Override
+public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((key == null) ? 0 : key.hashCode());
+    result = prime * result + ((type == null) ? 0 : type.hashCode());
+    return result;
 }
 /**
  * Answers if this <code>IAuthorizationPrincipal</code> has permission to perform the 
@@ -225,9 +224,9 @@ public int hashCode()
  * target is not checked.
  * 
  * @return boolean
- * @param owner java.lang.String
- * @param activity java.lang.String
- * @param target java.lang.String
+ * @param owner String
+ * @param activity String
+ * @param target String
  * @exception AuthorizationException indicates authorization information could not 
  * be retrieved.
  */
@@ -264,9 +263,9 @@ public String toString()
  * <code>activity</code> must be non-null.  
  *
  * @return boolean
- * @param owner java.lang.String
- * @param activity java.lang.String
- * @param target java.lang.String
+ * @param owner String
+ * @param activity String
+ * @param target String
  * @param policy org.jasig.portal.security.IPermissionPolicy
  * @exception AuthorizationException indicates authorization information could not
  * be retrieved.
@@ -276,4 +275,6 @@ throws AuthorizationException
 {
     return getAuthorizationService().doesPrincipalHavePermission(this, owner, activity, target, policy);
 }
+
+
 }

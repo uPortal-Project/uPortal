@@ -20,15 +20,35 @@
 package org.jasig.portal.utils.threading;
 
 public final class ReadResult<T> {
+    private static final ReadResult<Object> READ_RESULT_NO_WRITE_NULL = new ReadResult<Object>(false);
+    private static final ReadResult<Object> READ_RESULT_DO_WRITE_NULL = new ReadResult<Object>(true);
+    
+    @SuppressWarnings("unchecked")
+    public static <T> ReadResult<T> create(boolean doWriteLock) {
+        if (doWriteLock) {
+            return (ReadResult<T>)READ_RESULT_DO_WRITE_NULL;
+        }
+
+        return (ReadResult<T>)READ_RESULT_NO_WRITE_NULL;
+    }
+    
+    public static <T> ReadResult<T> create(boolean doWriteLock, T result) {
+        if (result == null) {
+            return create(doWriteLock);
+        }
+        
+        return new ReadResult<T>(doWriteLock, result);
+    }
+    
     private final boolean doWriteLock;
     private final T result;
 
-    public ReadResult(boolean doWriteLock) {
+    private ReadResult(boolean doWriteLock) {
         this.doWriteLock = doWriteLock;
         this.result = null;
     }
 
-    public ReadResult(boolean doWriteLock, T result) {
+    private ReadResult(boolean doWriteLock, T result) {
         this.doWriteLock = doWriteLock;
         this.result = result;
     }

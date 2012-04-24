@@ -85,7 +85,7 @@ class PortletDescriptorKeyImpl implements IPortletDescriptorKey, Serializable {
             return true;
         if (obj == null)
             return false;
-        if (IPortletDescriptorKey.class.isAssignableFrom(obj.getClass()))
+        if (!IPortletDescriptorKey.class.isAssignableFrom(obj.getClass()))
             return false;
         IPortletDescriptorKey other = (IPortletDescriptorKey) obj;
         if (this.frameworkPortlet != other.isFrameworkPortlet())

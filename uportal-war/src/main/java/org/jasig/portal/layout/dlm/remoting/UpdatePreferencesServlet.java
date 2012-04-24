@@ -43,6 +43,7 @@ import org.jasig.portal.UserPreferencesManager;
 import org.jasig.portal.fragment.subscribe.IUserFragmentSubscription;
 import org.jasig.portal.fragment.subscribe.dao.IUserFragmentSubscriptionDao;
 import org.jasig.portal.layout.IStylesheetUserPreferencesService;
+import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.dlm.Constants;
@@ -53,7 +54,6 @@ import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.node.UserLayoutChannelDescription;
 import org.jasig.portal.layout.node.UserLayoutFolderDescription;
-import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.security.IPerson;
@@ -429,9 +429,8 @@ public class UpdatePreferencesServlet {
 		}
 
 		int count = 0;
-		final IStylesheetUserPreferences ssup = this.stylesheetUserPreferencesService.getStructureStylesheetUserPreferences(request);
 		for (String columnId : columnList) {
-		    ssup.setLayoutAttribute(columnId, "width", widths[count] + "%");
+		    this.stylesheetUserPreferencesService.setLayoutAttribute(request, PreferencesScope.STRUCTURE, columnId, "width", widths[count] + "%");
 			try {
 				// This sets the column attribute in memory but doesn't persist it.  Comment says saves changes "prior to persisting"
 	            Element folder = ulm.getUserLayoutDOM().getElementById(columnId);
@@ -442,8 +441,6 @@ public class UpdatePreferencesServlet {
 			count++;
 		}
 		
-		this.stylesheetUserPreferencesService.updateStylesheetUserPreferences(request, ssup);
-
 		try {
 		    ulm.saveUserLayout();
 		} catch (Exception e) {
@@ -609,10 +606,8 @@ public class UpdatePreferencesServlet {
 			HttpServletResponse response) throws IOException {
 
 		String skinName = request.getParameter("skinName");
-		final IStylesheetUserPreferences themePrefs = this.stylesheetUserPreferencesService.getThemeStylesheetUserPreferences(request);
-		themePrefs.setStylesheetParameter("skin",skinName);
-		this.stylesheetUserPreferencesService.updateStylesheetUserPreferences(request, themePrefs);
-
+		this.stylesheetUserPreferencesService.setStylesheetParameter(request, PreferencesScope.THEME, "skin", skinName);
+		
 		return new ModelAndView("jsonView", Collections.EMPTY_MAP);
 	}
 
@@ -657,8 +652,6 @@ public class UpdatePreferencesServlet {
 		// get the id of the newly added tab
 		String tabId = newTab.getId();
 
-        final IStylesheetUserPreferences ssup = this.stylesheetUserPreferencesService.getStructureStylesheetUserPreferences(request);
-        
         for (String width : widths) {
 
             // create new column element
@@ -674,7 +667,7 @@ public class UpdatePreferencesServlet {
             // add the column to our layout
             ulm.addNode(newColumn, tabId, null);
             
-            ssup.setLayoutAttribute(newColumn.getId(), "width", width + "%");
+            this.stylesheetUserPreferencesService.setLayoutAttribute(request, PreferencesScope.STRUCTURE, newColumn.getId(), "width", width + "%");
             try {
                 // This sets the column attribute in memory but doesn't persist it.  Comment says saves changes "prior to persisting"
                 Element folder = ulm.getUserLayoutDOM().getElementById(newColumn.getId());
@@ -697,12 +690,10 @@ public class UpdatePreferencesServlet {
 
             if (!TAB_GROUP_DEFAULT.equals(tabGroup) && tabGroup.length() != 0) {
                 // Persists SSUP values to the database
-                ssup.setLayoutAttribute(tabId, TAB_GROUP_PARAMETER , tabGroup);
+                this.stylesheetUserPreferencesService.setLayoutAttribute(request, PreferencesScope.STRUCTURE, tabId, TAB_GROUP_PARAMETER , tabGroup);
             }
 
         }
-
-        this.stylesheetUserPreferencesService.updateStylesheetUserPreferences(request, ssup);
 
         try {
             // save the user's layout
@@ -757,9 +748,7 @@ public class UpdatePreferencesServlet {
     		}
     
     		//TODO why do we have to do this, shouldn't modifying the layout be enough to trigger a full re-render (layout's cache key changes)
-    		final IStylesheetUserPreferences ssup = this.stylesheetUserPreferencesService.getStructureStylesheetUserPreferences(request);
-    		ssup.setLayoutAttribute(tabId, "name", tabName);
-    		this.stylesheetUserPreferencesService.updateStylesheetUserPreferences(request, ssup);
+    		this.stylesheetUserPreferencesService.setLayoutAttribute(request, PreferencesScope.STRUCTURE, tabId, "name", tabName);
 		}
 
         Map<String, String> model = Collections.singletonMap("message", "saved new tab name");

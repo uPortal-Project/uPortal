@@ -25,12 +25,13 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
+<div class="fl-widget portlet search-portlet" role="section">
 
-  <!-- Portlet Titlebar -->
+  <!-- Portlet Titlebar 
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
     <h2 class="title" role="heading"><spring:message code="search"/></h2>
   </div>
+  -->
   
   <!-- Portlet Body -->
   <div class="fl-widget-content portlet-body" role="main">
@@ -43,27 +44,75 @@
         <form action="${ formUrl }" method="POST">
             <input name="query" value="${ fn:escapeXml(query )}"/> <input type="submit" value="Search"/>
         </form>
+        
+        <c:if test="${hitMaxQueries}">
+            <div>
+                <spring:message code="search.rate.limit.reached"/>
+            </div>
+        </c:if>
 
         <c:if test="${not empty results}">
 
-            <c:forEach items="${ results.results }" var="type">
-                <h2>${ type.key }</h2>
-                <ul>
-                    <c:forEach items="${ type.value }" var="result">
-                        <li>
-                            <c:choose>
-                                <c:when test="${ not empty result.key }">
-                                    <h3><a href="${ result.key }">${ result.value.title }</a></h3>
-                                </c:when>
-                                <c:otherwise>
-                                    <h3>${ result.value.title }</h3>
-                                </c:otherwise>
-                            </c:choose>
-                            <p>${ result.value.summary }</p>
-                        </li>
-                    </c:forEach>
-                </ul>
-            </c:forEach>
+            <div class="portlet-section" role="region">
+          
+                <div class="content">
+                    <div id="${n}searchResults">
+                        <ul>
+                            <li><a href="#${n}_DEFAULT_TAB"><span><spring:message code="${defaultTabKey}"/></span></a></li>
+                            <c:forEach var="tabKey" items="${tabKeys}" varStatus="loopStatus">
+                                <li><a href="#${n}_${loopStatus.index}"><span><spring:message code="${tabKey}"/></span></a></li>
+                            </c:forEach>
+                        </ul>
+                        
+                        <%--
+                         | result.first is the SearchResult object
+                         | result.second is the calculated URL
+                         +--%>
+                        
+                        <!-- Write out the default results tab -->
+                        <div id="${n}_DEFAULT_TAB">
+                          <div class="search-results">
+                            <c:forEach items="${ results[defaultTabKey] }" var="result">
+                              <div class="search-result">
+                                <div>
+                                  <a class="result_link" href="${result.second}"><span class="result_title">${ result.first.title }</span></a>
+                                </div>
+                                <div class="result_excerpt">${ result.first.summary }</div>
+                              </div>
+                            </c:forEach>
+                          </div>
+                        </div>
+                        
+                        <!-- write out each additional results tab -->
+                        <c:forEach var="tabKey" items="${tabKeys}" varStatus="loopStatus">
+                          <div id="${n}_${loopStatus.index}" class="${tabKey}">
+                            <div class="search-results">
+                              <c:forEach items="${ results[tabKey] }" var="result">
+                                <div class="search-result">
+                                  <div>
+                                    <a class="result_link" href="${result.second}"><span class="result_title">${ result.first.title }</span></a>
+                                  </div>
+                                  <div class="result_excerpt">${ result.first.summary }</div>
+                                </div>
+                              </c:forEach>
+                            </div>
+                          </div>
+                        </c:forEach>
+
+                    </div>
+                </div>
+            </div>
+
+<script type="text/javascript">
+up.jQuery(function () {
+  var $ = up.jQuery;
+  var fluid = up.fluid;
+  
+  up.jQuery(document).ready(function () {
+    up.jQuery("#${n}searchResults").tabs();
+  });
+});
+</script>
         </c:if>
 
       </div>  

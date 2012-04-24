@@ -19,9 +19,11 @@
 
 package org.jasig.portal.logging;
 
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+
 import java.util.Formatter;
 
-import org.jasig.portal.logging.AppendableLogger.Level;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
@@ -35,10 +37,20 @@ public class AppendableLoggerTest {
     public void testAppendableLogger() {
         final Logger logger = Mockito.mock(Logger.class);
         
-        final Formatter f = new Formatter(new AppendableLogger(logger, Level.INFO));
+        final Formatter f = new Formatter(new AppendableLogger(logger, LogLevel.INFO));
+
         f.format("%9s | %16s | %16s%n", "Data Type", "Export Supported", "Import Supported");
+        verify(logger).info("Data Type | Export Supported | Import Supported");
+        
         f.format("%9s | %16s | %16s%n", "portlet-type", true, true);
+        verify(logger).info("portlet-type |             true |             true");
+
         f.format("%9s | %16s | %16s%n", "portlet-definition", true, false);
+        verify(logger).info("portlet-definition |             true |            false");
+
         f.format("%9s | %16s | %16s%n", "layout", true, false);
+        verify(logger).info("   layout |             true |            false");
+        
+        verifyNoMoreInteractions(logger);
     }
 }

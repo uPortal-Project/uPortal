@@ -27,20 +27,74 @@
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
-
+           
+    <bean id="httpConnectionManager" class="org.jasig.portal.services.MultiThreadedHttpConnectionManagerFactoryBean" />
+    
+    <!-- Each client object needs its own HttpClient -->
+    <bean id="httpClient" class="org.jasig.portal.services.HttpClientFactoryBean" scope="prototype">
+        <property name="httpConnectionManager" ref="httpConnectionManager" />
+    </bean>
+    
     <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
         <property name="messageConverters">
             <util:list>
                 <bean class="org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter"/>
+                <bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+                    <property name="supportedMediaTypes">
+                        <list>
+                            <bean class="org.springframework.http.MediaType">
+                                <constructor-arg value="text" />
+                                <constructor-arg value="javascript" />
+                            </bean>
+                            <bean class="org.springframework.http.MediaType">
+                                <constructor-arg value="application" />
+                                <constructor-arg value="javascript" />
+                            </bean>
+                            <util:constant static-field="org.springframework.http.MediaType.APPLICATION_JSON"/>
+                        </list>
+                    </property>
+                </bean>
             </util:list>
+        </property>
+        <property name="requestFactory">
+            <bean class="org.springframework.http.client.CommonsClientHttpRequestFactory">
+                <property name="httpClient" ref="httpClient" />
+            </bean>
         </property>
     </bean>
     
+    
     <util:list id="searchServices">
         <bean class="org.jasig.portal.portlets.search.portletregistry.PortletRegistrySearchService"/>
-        <!--bean class="org.jasig.portal.portlets.search.gsa.GsaSearchService"
-            p:baseUrl="http://search.school.edu" p:site="Site"/-->
+        
+        <!-- Uncomment and fill in your Google Custom Search ID to use
+        <bean class="org.jasig.portal.portlets.search.google.GoogleCustomSearchService">
+            <property name="customSearchId" value="" />
+        </bean>
+         -->
+         
+        <!-- Uncomment and fill in your Google Search Appliance URL and Site to use
+        <bean class="org.jasig.portal.portlets.search.gsa.GsaSearchService">
+            <property name="baseUrl" value="http://search.example.com"/>
+            <property name="site" value="Site"/>
+        </bean>
+        -->
     </util:list>
+    
+    <!-- 
+     | Maps search resultType strings to tabs that are displayed in the results. If a resultType is not
+     | mapped below its results go in the default tab.
+     |
+     | The key is the Messages.properties key to use for the result tab name 
+     +-->
+    <util:map id="searchTabs">
+        <entry key="googleInstitution.results">
+            <list>
+                <value>googleCustom</value>
+                <value>googleAppliance</value>
+            </list>
+        </entry>
+    </util:map>
 
     <bean id="permissionTargetProviderRegistry" class="org.jasig.portal.permission.target.PermissionTargetProviderRegistryImpl">
         <property name="providers">

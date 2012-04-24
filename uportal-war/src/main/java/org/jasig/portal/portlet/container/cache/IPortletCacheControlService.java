@@ -23,102 +23,71 @@ package org.jasig.portal.portlet.container.cache;
 
 import javax.portlet.CacheControl;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.portlet.rendering.PortletRenderResult;
 
 /**
  * Interface defining mechanism for retrieving {@link CacheControl}s.
  * 
  * @author Nicholas Blair
- * @version $Id$
  */
 public interface IPortletCacheControlService {
 
 	/**
-	 * 
 	 * @return the maximum size of cached portlet output, in bytes
 	 */
 	int getCacheSizeThreshold();
-	/**
-	 * 
-	 * @param portletWindowId
-	 * @return the {@link CacheControl} for the specified window id
-	 */
-	CacheControl getPortletRenderCacheControl(IPortletWindowId portletWindowId, HttpServletRequest httpRequest);
-	
-	/**
-	 * 
-	 * @param portletWindowId
-	 * @param httpRequest
-	 * @param httpResponse
-	 * @return the {@link CacheControl} for the specifie window id
-	 */
-	CacheControl getPortletResourceCacheControl(IPortletWindowId portletWindowId, HttpServletRequest httpRequest, HttpServletResponse httpResponse);
-	/**
-	 * Get the {@link CachedPortletData} for the portlet window id and render request, if there is any.
-	 * This method internally will determine if the data is stored in a public or private scoped cache.
-	 * If their is no portlet data for the windowId and request, this method returns null.
-	 * 
-	 * @param portletWindowId
-	 * @param httpRequest
-	 * @return the {@link CachedPortletData} for this render request, or null if the portlet data was not cached
-	 */
-	CachedPortletData getCachedPortletRenderOutput(IPortletWindowId portletWindowId, HttpServletRequest httpRequest);
-	
-	/**
-	 *  Get the {@link CachedPortletData} for the portlet window id and resource request, if there is any.
-	 * This method internally will determine if the data is stored in a public or private scoped cache.
-	 * If their is no portlet data for the windowId and request, this method returns null.
-	 * 
-	 * @param portletWindowId
-	 * @param httpRequest
-	 * @return  the {@link CachedPortletData} for this resource request, or null if the portlet data was not cached
-	 */
-	CachedPortletData getCachedPortletResourceOutput(IPortletWindowId portletWindowId, HttpServletRequest httpRequest);
+
+    /**
+     * Get the resource request cache state for the specified portlet
+     */
+    CacheState<CachedPortletResourceData<Long>, Long> getPortletResourceState(HttpServletRequest request, IPortletWindowId portletWindowId);
+
+    /**
+     * Get the render-header cache state for the specified portlet
+     */
+    CacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> getPortletRenderHeaderState(HttpServletRequest request, IPortletWindowId portletWindowId);
+    
+    /**
+     * Get the render cache state for the specified portlet 
+     */
+    CacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> getPortletRenderState(HttpServletRequest request, IPortletWindowId portletWindowId);
 	
 	/**
 	 * This method checks the {@link CacheControl} to determine if the output should be captured
 	 * for caching.
 	 * 
-	 * @param portletWindowId
-	 * @param httpRequest
 	 * @return true if the {@link CacheControl} indicates the output should be cached
 	 */
 	boolean shouldOutputBeCached(CacheControl cacheControl);
 	
 	/**
-	 * Store the output of a render request in the cache for the portlet and request. This method internally will determine
+	 * Store the output of a render header request in the cache for the portlet and request. This method internally will determine
 	 * if the content needs to be stored in a public or private scoped cache.
-	 * 
-	 * @param portletWindowId
-	 * @param httpRequest
-	 * @param content
-	 * @param cacheControl
-	 */
-	void cachePortletRenderOutput(IPortletWindowId portletWindowId, HttpServletRequest httpRequest, String content, CacheControl cacheControl);
+     */
+    void cachePortletRenderHeaderOutput(IPortletWindowId portletWindowId, HttpServletRequest httpRequest,
+            CacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> cacheState, CachedPortletData<PortletRenderResult> cachedPortletData);
+    
+    /**
+     * Store the output of a render request in the cache for the portlet and request. This method internally will determine
+     * if the content needs to be stored in a public or private scoped cache.
+     */
+    void cachePortletRenderOutput(IPortletWindowId portletWindowId, HttpServletRequest httpRequest,
+            CacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> cacheState, CachedPortletData<PortletRenderResult> cachedPortletData);
+    
+    /**
+     * Store the output of a resource request in the cache for the portlet and request. This method internally will determine
+     * if the content needs to be stored in a public or private scoped cache.
+     */
+    void cachePortletResourceOutput(IPortletWindowId portletWindowId, HttpServletRequest httpRequest,
+            CacheState<CachedPortletResourceData<Long>, Long> cacheState, CachedPortletResourceData<Long> cachedPortletResourceData);
 	
 	/**
-	 * Store the output of a resource request in the cache for the portlet and request. This method internally will determine
-	 * if the content needs to be stored in a public or private scoped cache.
+	 * Purge any {@link CachedPortletRenderData} for the portlet.
 	 * 
-	 * @param portletWindowId
-	 * @param httpRequest
-	 * @param content
-	 * @param contentType
-	 * @param cacheControl
-	 */
-	void cachePortletResourceOutput(IPortletWindowId portletWindowId, HttpServletRequest httpRequest, CachedPortletData cachedPortletData, CacheControl cacheControl);
-	
-	/**
-	 * Purge any {@link CachedPortletData} for the portlet.
-	 * Generally triggered on any Action or Event Request.
-	 * 
-	 * @param portletWindowId
-	 * @param httpRequest
-	 * @param cacheControl
-	 * @return true if the element was found in the cache and removed, false if otherwise
+	 * Should be called on any Action or Event Request.
 	 */
 	boolean purgeCachedPortletData(IPortletWindowId portletWindowId,
-			HttpServletRequest httpRequest, CacheControl cacheControl);
+			HttpServletRequest httpRequest);
 }

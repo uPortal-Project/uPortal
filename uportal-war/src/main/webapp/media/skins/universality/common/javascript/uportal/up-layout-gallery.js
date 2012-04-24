@@ -138,7 +138,11 @@ var up = up || {};
             portlets = [];
             members = (overallThat.state.currentCategory && overallThat.state.currentCategory !== "") ? overallThat.registry.getMemberPortlets(overallThat.state.currentCategory, true) : overallThat.registry.getAllPortlets();
             $(members).each(function (idx, portlet) {
-                if (!overallThat.state.portletRegex || overallThat.state.portletRegex.test(portlet.title) || overallThat.state.portletRegex.test(portlet.description)) {
+                if (!overallThat.state.portletRegex || 
+                        overallThat.state.portletRegex.test(portlet.title) || 
+                        overallThat.state.portletRegex.test(portlet.name) ||
+                        overallThat.state.portletRegex.test(portlet.fname) ||
+                        overallThat.state.portletRegex.test(portlet.description)) {
                     if (!portlet.iconUrl) {
                         portlet.iconUrl = that.options.defaultIconUrl;
                     }

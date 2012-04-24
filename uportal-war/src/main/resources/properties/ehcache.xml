@@ -99,13 +99,13 @@
         timeToIdleSeconds="0" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     <!-- 
-     | Caches parsed composite group name strings (ex: "pags.root" to "pags" & "root")
-     | - 1 x group
+     | Caches principal specific permission checks
+     | 1 x principal x permission
      | - not replicated - doesn't represent an updatable data store
      +-->
-    <cache name="org.jasig.portal.groups.CompositeEntityIdentifier.NAME_PARSE_CACHE"
-        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.security.provider.AuthorizationImpl.PRINCIPAL_HAS_PERMISSION"
+        eternal="false" maxElementsInMemory="50000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     
     <!-- 
@@ -116,6 +116,15 @@
     <cache name="org.jasig.portal.layout.dlm.FragmentActivator.userViews"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
+    <!-- 
+     | Caches exceptions from loading fragment layout
+     | - 1 x fragment layout that fails to load
+     | - not replicated
+     +-->
+    <cache name="org.jasig.portal.layout.dlm.FragmentActivator.userViewErrors"
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="30" memoryStoreEvictionPolicy="LRU" statistics="true" />
         
      <!-- 
      | Caches node descriptor objects for fragment layouts
@@ -170,6 +179,23 @@
     <cache name="org.jasig.portal.portlets.portletadmin.PortletAdministrationHelper.CPD_CACHE"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
+    <!-- 
+     | Caches EntityType data
+     | - 1 x Entity type
+     | - replicated by invalidation
+     +-->
+    <cache name="org.jasig.portal.EntityTypes.CLASS_BY_ID"
+        eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.EntityTypes.ID_BY_CLASS"
+        eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.EntityTypes.ALL"
+        eternal="false" maxElementsInMemory="1" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
+        
     
     <!-- ******************** Per-Datasource Person Directory Caches ******************** -->
     <!-- 
@@ -233,36 +259,53 @@
 
      
     <!-- 
-     | Caches CachedPortletData objects
-     | - 1 per user per portlet that tells the container to cache it's render content (see portlet MimeResponse#getCacheControl())
+     | Caches output from portlets rendering in the HEADER part of the render request
+     | - 1 per portlet cached header rendering see PrivatePortletCacheKey for the key definition
+     +-->   
+    <cache name="org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.privateScopePortletRenderHeaderOutputCache"
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
+    <!-- 
+     | Caches output from portlets rendering in the MARKUP part of the render request
+     | - 1 per portlet cached rendering see PrivatePortletCacheKey for the key definition
      +-->   
     <cache name="org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.privateScopePortletRenderOutputCache"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
         
     <!-- 
-     | Caches CachedPortletData objects
-     | - 1 per user per portlet that tells the container to cache it's render content in the PUBLIC_SCOPE (see portlet MimeResponse#getCacheControl())
-     +-->   
-    <cache name="org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.publicScopePortletRenderOutputCache"
-        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
-        
-    <!-- 
-     | Caches CachedPortletData objects
-     | - 1 per user per portlet that tells the container to cache it's resource content (see portlet MimeResponse#getCacheControl())
+     | Caches output from portlets serving resources
+     | - 1 per portlet cached resource response see PrivatePortletCacheKey for the key definition
      +-->   
     <cache name="org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.privateScopePortletResourceOutputCache"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
         
     <!-- 
-     | Caches CachedPortletData objects
-     | - 1 per user per portlet that tells the container to cache it's resource content in the PUBLIC_SCOPE (see portlet MimeResponse#getCacheControl())
+     | Caches PUBLIC output from portlets rendering in the HEADER part of the render request
+     | - 1 per portlet cached header rendering see PublicPortletCacheKey for the key definition
+     +-->   
+    <cache name="org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.publicScopePortletRenderHeaderOutputCache"
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
+    <!-- 
+     | Caches PUBLIC output from portlets rendering in the MARKUP part of the render request
+     | - 1 per portlet cached rendering see PublicPortletCacheKey for the key definition
+     +-->   
+    <cache name="org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.publicScopePortletRenderOutputCache"
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
+    <!-- 
+     | Caches PUBLIC output from portlets serving resources
+     | - 1 per portlet cached header response response see PublicPortletCacheKey for the key definition
      +-->   
     <cache name="org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.publicScopePortletResourceOutputCache"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        
 
     <!-- 
      | Caches parsing entity id strings into entity ids
@@ -278,7 +321,7 @@
 
     <cache name="org.jasig.portal.utils.cache.ConfigurablePageCachingFilter.PAGE_CACHE"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="900" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     <!-- XSLT caches -->
     <!-- 
@@ -287,7 +330,7 @@
      +-->
     <cache name="org.jasig.portal.utils.cache.resource.CachingResourceLoader"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="900" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!-- 
      | Caches compiled SpEL Expression objects
@@ -296,7 +339,7 @@
      +-->
     <cache name="SpELExpressionCache"
         eternal="false" maxElementsInMemory="5000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="900" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!-- 
      | Caches post-layout pipeline events
@@ -304,8 +347,8 @@
      | - not replicated
      +-->
     <cache name="org.jasig.portal.rendering.STRUCTURE_TRANSFORM"
-        eternal="false" maxElementsInMemory="5000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!-- 
      | Caches post-layout pipeline events
@@ -314,7 +357,7 @@
      +-->
     <cache name="org.jasig.portal.rendering.THEME_TRANSFORM"
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
             
     <!-- 
      | Caches resolution of events that are supported by the portlet deployment 
@@ -422,7 +465,7 @@
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.jasig.portal.layout.dao.jpa.LayoutNodeAttributesImpl.attributes"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.jasig.portal.layout.dao.jpa.LayoutAttributeDescriptorImpl"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
@@ -461,6 +504,9 @@
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.jasig.portal.layout.dlm.providers.GuestUserEvaluatorFactory"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.layout.dlm.providers.ProfileEvaluator"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.jasig.portal.layout.dlm.providers.SubscribedTabEvaluator"
@@ -541,7 +587,7 @@
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionParameterImpl"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
     
     <!-- 

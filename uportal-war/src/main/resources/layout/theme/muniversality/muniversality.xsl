@@ -133,7 +133,9 @@
 --> 
 <xsl:param name="skin">iphone</xsl:param>
 <xsl:param name="CONTEXT_PATH">/NOT_SET</xsl:param>
+<xsl:param name="view">grid</xsl:param>
 <xsl:variable name="SKIN" select="$skin"/>
+<xsl:variable name="VIEW" select="$view"/>
 <xsl:variable name="MEDIA_PATH">media/skins/muniversality</xsl:variable>
 <xsl:variable name="ABSOLUTE_MEDIA_PATH" select="concat($CONTEXT_PATH,'/',$MEDIA_PATH)"/>
 <xsl:variable name="SKIN_RESOURCES_PATH" select="concat('/',$MEDIA_PATH,'/',$SKIN,'/skin.xml')"/>
@@ -153,7 +155,7 @@
 </xsl:variable>
 <xsl:variable name="FOCUSED_CLASS">
     <xsl:choose>
-        <xsl:when test="//content/focused">focused</xsl:when>
+        <xsl:when test="//content/focused">focused <xsl:value-of select="//content/focused/channel/@fname"/></xsl:when>
         <xsl:otherwise>dashboard</xsl:otherwise>
     </xsl:choose>
 </xsl:variable>
@@ -210,6 +212,12 @@
         up.fluid = fluid;
         fluid = null;
         fluid_1_4 = null;
+        
+        <xsl:if test="$VIEW != 'grid'">
+            up.jQuery(document).ready(function() {
+                up.jQuery('ul[data-role=listview].up-portal-nav').jqmAccordion();
+            });
+        </xsl:if>
     </script>    
 </xsl:template>
 <!-- ========================================================================= -->
@@ -301,7 +309,7 @@
 
             <xsl:call-template name="page.js" />
         </head>
-        <body class="up {$FLUID_THEME_CLASS}">
+        <body class="up {$FLUID_THEME_CLASS} dashboard-{$VIEW}">
             <div class="portal {$FOCUSED_CLASS}" data-role="page" id="page">
                 <xsl:choose>
                     <xsl:when test="//focused">
@@ -317,7 +325,14 @@
                         <xsl:call-template name="mobile.channel.content.focused" />
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:call-template name="mobile.navigation" />
+                        <xsl:choose>
+                            <xsl:when test="$VIEW = 'grid'">
+                                <xsl:call-template name="mobile.navigation.grid" />
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:call-template name="mobile.navigation.list" />
+                            </xsl:otherwise>
+                        </xsl:choose>
                         <xsl:call-template name="logo" />
                     </xsl:otherwise>
                 </xsl:choose>

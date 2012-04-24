@@ -38,6 +38,11 @@ public class DistributedUserLayout {
     private final IStylesheetUserPreferences distributedStructureStylesheetUserPreferences;
     private final IStylesheetUserPreferences distributedThemeStylesheetUserPreferences;
 
+    /**
+     * This constructor seems to be used with fragment owners.
+     * 
+     * @param layout
+     */
     public DistributedUserLayout(Document layout) {
         this.layout = layout;
         this.fragmentNames = Collections.emptySet();
@@ -45,6 +50,11 @@ public class DistributedUserLayout {
         this.distributedThemeStylesheetUserPreferences = null;
     }
 
+    /**
+     * This constructor seems to be used with non-fragment owners.
+     * 
+     * @param layout
+     */
     public DistributedUserLayout(Document layout, Set<String> fragmentNames,
             IStylesheetUserPreferences distributedStructureStylesheetUserPreferences,
             IStylesheetUserPreferences distributedThemeStylesheetUserPreferences) {

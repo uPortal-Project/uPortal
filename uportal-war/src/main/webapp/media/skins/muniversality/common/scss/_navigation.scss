@@ -4,45 +4,85 @@
 /* 
  * Styles specific to navigation.
  */
-
+@import "colors";
 
 /* Portlet Navigation */
 .up {
-	
-	.portal-nav {
-		/* Main menu grid of apps and web views. */
-		width: 300px;
-		margin: 0 auto;
-		text-align: center;
-		@include clearfix();
-		
-		.portlet {
-			/* Menu grid items. */
-			display: block;
-			float: left;
-			width: 72px;
-			height: 92px;
-			overflow: hidden;
-			margin: 10px;
-			position: relative; /* To contain new item badges. */
+	// grid based layout
+	&.dashboard-grid {
+		.portal-nav {
+			/* Main menu grid of apps and web views. */
+			width: 300px;
+			margin: 0 auto;
+			text-align: center;
+			@include clearfix();
 			
-			.icon, .title {
+			.portlet {
+				/* Menu grid items. */
 				display: block;
-				text-align: center;
-			}
-			.icon{
-				height: 72px;
+				float: left;
 				width: 72px;
-				margin-bottom: 3px;
-			}
-			.title {
+				height: 92px;
+				overflow: hidden;
+				margin: 10px;
+				position: relative; /* To contain new item badges. */
 				
-			}
-			.badge {
-				position: absolute;
-				top: 0em;
-				right: 0em;
+				.icon, .title {
+					display: block;
+					text-align: center;
+				}
+				.icon{
+					height: 72px;
+					width: 72px;
+					margin-bottom: 3px;
+				}
+				.title {
+					
+				}
+				.badge {
+					position: absolute;
+					top: 0em;
+					right: 0em;
+				}
 			}
 		}
 	}
+
+	// list based layout
+	&.dashboard-list {
+		.dashboard {
+			background-image: none;
+			background: white;
+			.portal-nav {
+				.ui-listview {
+					li {
+						// reset borders
+						border: none;
+						
+						border-top: 1px solid $graylighter;
+
+						&:first {
+							border: none;
+						}
+						.ui-btn-text {
+							a {
+								color: $graydarkest;
+								text-shadow: none;
+							}
+						}
+						.ui-btn-inner {
+							border: none;
+						}
+
+						&.ui-li-divider {
+							border: none;
+							box-shadow: none;
+							@include gradient($c1, $c1darker);
+						}
+					}
+				}
+			}
+		}
+	}
+
 }

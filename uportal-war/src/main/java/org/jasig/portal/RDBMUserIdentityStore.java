@@ -145,7 +145,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
    * @return uPortalUID number
    * @throws Exception if no user is found.
    */
-  public int getPortalUID (IPerson person) throws Exception {
+  public int getPortalUID (IPerson person) throws AuthorizationException {
     int uPortalUID=-1;
     uPortalUID=this.getPortalUID(person, false);
     return uPortalUID;
@@ -597,7 +597,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
       }
 
       // Copy template user's groups memberships
-      IGroupMember template = GroupService.getEntity(templateUser.getUserName(), Class.forName("org.jasig.portal.security.IPerson"));
+      IGroupMember template = GroupService.getEntity(templateUser.getUserName(), org.jasig.portal.security.IPerson.class);
       Iterator templateGroups = template.getContainingGroups();
       while (templateGroups.hasNext()) {
           IEntityGroup eg = (IEntityGroup)templateGroups.next();

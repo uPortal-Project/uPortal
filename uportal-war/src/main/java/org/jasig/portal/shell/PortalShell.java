@@ -47,7 +47,7 @@ import org.springframework.context.ApplicationContext;
  * @version $Revision$
  */
 public class PortalShell {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PortalShell.class);
+    static final Logger LOGGER = LoggerFactory.getLogger(PortalShell.class);
     
     protected static Options getOptions() {
         final Options options = new Options();

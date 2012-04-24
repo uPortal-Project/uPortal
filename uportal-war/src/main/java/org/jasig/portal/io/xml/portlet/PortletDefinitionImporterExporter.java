@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -40,6 +41,7 @@ import org.jasig.portal.io.xml.IPortalData;
 import org.jasig.portal.io.xml.IPortalDataType;
 import org.jasig.portal.io.xml.PortalDataKey;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
+import org.jasig.portal.portlet.dao.jpa.PortletDefinitionParameterImpl;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
@@ -232,10 +234,12 @@ public class PortletDefinitionImporterExporter
         def.setPublishDate(now);
         def.setPublisherId(systemUser.getID());     
         
-        def.clearParameters();
+        
+        final Set<IPortletDefinitionParameter> parameters = new LinkedHashSet<IPortletDefinitionParameter>();
         for (ExternalPortletParameter param : portletRep.getParameters()) {
-            def.addParameter(param.getName(), param.getValue());
+            parameters.add(new PortletDefinitionParameterImpl(param.getName(), param.getValue()));
         }
+        def.setParameters(parameters);
         
         final ArrayList<IPortletPreference> preferenceList = new ArrayList<IPortletPreference>();
         for (ExternalPortletPreference pref : portletRep.getPortletPreferences()) {

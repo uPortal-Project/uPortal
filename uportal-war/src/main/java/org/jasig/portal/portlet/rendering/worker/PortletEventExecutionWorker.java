@@ -26,7 +26,7 @@ import javax.portlet.Event;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
 
 class PortletEventExecutionWorker extends PortletExecutionWorker<Long> implements IPortletEventExecutionWorker {
@@ -34,9 +34,12 @@ class PortletEventExecutionWorker extends PortletExecutionWorker<Long> implement
     
     public PortletEventExecutionWorker(
             ExecutorService executorService, List<IPortletExecutionInterceptor> interceptors, IPortletRenderer portletRenderer, 
-            HttpServletRequest request, HttpServletResponse response, IPortletWindowId portletWindowId, String portletFname, Event event) {
+            HttpServletRequest request, HttpServletResponse response, IPortletWindow portletWindow, Event event) {
         
-        super(executorService, interceptors, portletRenderer, request, response, portletWindowId, portletFname);
+        super(executorService, interceptors, portletRenderer, request, response, portletWindow, 
+                portletWindow.getPortletEntity().getPortletDefinition().getEventTimeout() != null
+                        ? portletWindow.getPortletEntity().getPortletDefinition().getEventTimeout()
+                        : portletWindow.getPortletEntity().getPortletDefinition().getTimeout());
         this.event = event;
     }
 

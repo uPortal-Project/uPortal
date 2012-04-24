@@ -19,10 +19,12 @@
 
 package org.jasig.portal.layout.om;
 
+import java.util.Collection;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.xml.transform.Transformer;
+
+import org.jasig.portal.utils.Populator;
 
 /**
  * Tracks customizations made by the users to the XSL transformer and layout attributes.
@@ -36,25 +38,28 @@ public interface IStylesheetUserPreferences {
      * Unique identifier of these preferences
      */
     public long getId();
-    
-    /**
-     * Get the id of the stylesheet descriptor these preferences are for
-     */
+
     public long getStylesheetDescriptorId();
-    
-    /**
-     * Replace all existing stylesheet preference data with the passed data.
-     */
-    public void setStylesheetUserPreferences(IStylesheetUserPreferences stylesheetUserPreferences);
+
+    public int getUserId();
+
+    public int getProfileId();
     
     /**
      * Get an output property
+     * 
+     * @param name output property name, cannot be null
+     * 
      * @see Map#get(Object)
      */
     public String getOutputProperty(String name);
     
     /**
      * Set an output property
+     * 
+     * @param name output property name, cannot be null
+     * @param value output property value, cannot be null
+     * 
      * @see Transformer#setOutputProperty(String, String)
      * @see Map#put(Object, Object)
      */
@@ -62,17 +67,17 @@ public interface IStylesheetUserPreferences {
     
     /**
      * Remove an output property
+     * 
+     * @param name output property name, cannot be null
+     * 
      * @see Map#remove(Object)
      */
     public String removeOutputProperty(String name);
     
     /**
-     * Get a read-only map of all configured output properties. This map may not be live and may simply be a
-     * snapshot of of the state of the output properties when called.
-     * Note that due to the thread-safety requirements this method may be expensive to call, while clients should not cache the
-     * result it should be called as little as possible.
+     * Add all output properties to the provided Properties object
      */
-    public Properties getOutputProperties();
+    public <P extends Populator<String, String>> P populateOutputProperties(P properties);
     
     /**
      * @see Properties#clear();
@@ -82,12 +87,19 @@ public interface IStylesheetUserPreferences {
 
     /**
      * Get a stylesheet parameter
+     * 
+     * @param name xslt parameter name, cannot be null
+     * 
      * @see Map#get(Object)
      */
     public String getStylesheetParameter(String name);
     
     /**
      * Set a transformer parameter
+     * 
+     * @param name xslt parameter name, cannot be null
+     * @param name xslt parameter value, cannot be null
+     * 
      * @see Transformer#setParameter(String, Object)
      * @see Map#put(Object, Object)
      */
@@ -95,17 +107,17 @@ public interface IStylesheetUserPreferences {
     
     /**
      * Remove a transformer parameter
+     * 
+     * @param name xslt parameter name, cannot be null
+     * 
      * @see Map#remove(Object)
      */
     public String removeStylesheetParameter(String name);
     
     /**
-     * Get a read-only map of all configured parameters. This map may not be live and may simply be a
-     * snapshot of of the state of the stylesheet parameters when called.
-     * Note that due to the thread-safety requirements this method may be expensive to call, while clients should not cache the
-     * result it should be called as little as possible.
+     * Add all stylesheet parameters to the provided Map
      */
-    public Map<String, String> getStylesheetParameters();
+    public <P extends Populator<String, String>> P populateStylesheetParameters(P stylesheetParameters);
     
     /**
      * @see Map#clear();
@@ -115,6 +127,10 @@ public interface IStylesheetUserPreferences {
     
     /**
      * Get a layout attribute
+     * 
+     * @param nodeId The layout node id to get the attribute for, cannot be null
+     * @param name node attribute name, cannot be null
+     * 
      * @see Map#get(Object)
      */
     public String getLayoutAttribute(String nodeId, String name);
@@ -122,32 +138,31 @@ public interface IStylesheetUserPreferences {
     /**
      * Set an attribute to add to a layout folder
      *  
-     * @param nodeId The layout node id to apply the attribute to
+     * @param nodeId The layout node id to apply the attribute to, cannot be null
+     * @param name node attribute name, cannot be null
+     * @param value node attribute name, cannot be null
      * @see Map#put(Object, Object)
      */
     public String setLayoutAttribute(String nodeId, String name, String value);
     
     /**
-     * @param nodeId The layout node id to remove the attribute from
+     * @param nodeId The layout node id to remove the attribute from, cannot be null
+     * @param name node attribute name, cannot be null
      * @see Map#remove(Object)
      */
     public String removeLayoutAttribute(String nodeId, String name);
     
     /**
-     * Get a read-only map of all layout attributes for the specified layout node. This map may not be live and may simply be a
-     * snapshot of of the state of the layout attributes when called.
-     * Note that due to the thread-safety requirements this method may be expensive to call, while clients should not cache the
-     * result it should be called as little as possible.
+     * Add all layout attributes for the specified nodeId to the provided Map
+     * 
+     * @param nodeId The layout node id to get attributes for, cannot be null
      */
-    public Map<String, String> getLayoutAttributes(String nodeId);
+    public <P extends Populator<String, String>> P populateLayoutAttributes(String nodeId, P layoutAttributes);
     
     /**
-     * Get a read-only map of all layout attributes for all nodes. This map may not be live and may simply be a
-     * snapshot of of the state of the layout attributes when called.
-     * Note that due to the thread-safety requirements this method may be expensive to call, while clients should not cache the
-     * result it should be called as little as possible.
+     * @return Read-only view of all layout nodeIds stored in these preferences
      */
-    public Map<String, Map<String, String>> getAllLayoutAttributes();
+    public Collection<String> getAllLayoutAttributeNodeIds();
     
     /**
      * @see Map#clear();

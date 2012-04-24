@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.List;
 
+import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
@@ -35,12 +36,15 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.cache.resource.CachedResource;
 import org.jasig.portal.utils.cache.resource.CachingResourceLoader;
 import org.jasig.portal.utils.cache.resource.TemplatesBuilder;
+import org.jasig.portal.xml.stream.FilteringXMLEventReader;
 import org.jasig.portal.xml.stream.IndentingXMLEventWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -164,6 +168,30 @@ public class XmlUtilitiesImpl implements XmlUtilities {
         return writer.toString();
     }
     
+    @Override
+    public Node convertToDom(XMLEventReader xmlEventReader) throws XMLStreamException {
+        //Remove when woodstox 4.1.3 is released: http://jira.codehaus.org/browse/WSTX-271
+        xmlEventReader = new FilteringXMLEventReader(xmlEventReader) {
+            @Override
+            protected XMLEvent filterEvent(XMLEvent event, boolean peek) {
+                if (event.getEventType() == XMLEvent.COMMENT) {
+                    return null;
+                }
+                return event;
+            }
+        };
+        
+        //Convert the XmlEventReader into a DOM
+        final XMLOutputFactory xmlOutputFactory = this.getXmlOutputFactory();
+        final DOMResult sourceDom = new DOMResult(DocumentFactory.getThreadDocument());
+        final XMLEventWriter sourceWriter = xmlOutputFactory.createXMLEventWriter(sourceDom);
+        sourceWriter.add(xmlEventReader);
+        sourceWriter.flush();
+        sourceWriter.close();
+        
+        return sourceDom.getNode();
+    }
+
     /* 
      * Credit for this impl from: http://snippets.dzone.com/posts/show/3754
      */

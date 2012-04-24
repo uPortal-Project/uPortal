@@ -38,27 +38,58 @@
                 </c:otherwise>
             </c:choose>
         </form>
+        
+        <c:if test="${hitMaxQueries}">
+            <div>
+                <spring:message code="search.rate.limit.reached"/>
+            </div>
+        </c:if>
 
         <c:if test="${not empty results}">
+                        
+            <%--
+             | result.first is the SearchResult object
+             | result.second is the calculated URL
+             +--%>
 
             <ul data-role="listview" data-inset="true">
-                <c:forEach items="${ results.results }" var="type">
-                    <li data-role="list-divider">${ type.key }</li>
-                    <c:forEach items="${ type.value }" var="result">
-                        <li>
-                            <c:choose>
-                                <c:when test="${ not empty result.key }">
-                                    <a href="${ result.key }">
-                                        <h3>${ result.value.title }</h3>
-                                        <p>${ result.value.summary }</p>
-                                    </a>
-                                </c:when>
-                                <c:otherwise>
-                                    <h3>${ result.value.title }</h3>
-                                    <p>${ result.value.summary }</p>
-                                </c:otherwise>
-                            </c:choose>
-                        </li>
+                <!-- Write out the default results tab -->
+                <li data-role="list-divider"><spring:message code="${defaultTabKey}"/></li>
+                <c:forEach items="${ results[defaultTabKey] }" var="result">
+                  <li>
+                      <c:choose>
+                          <c:when test="${ not empty result.second }">
+                              <a href="${ result.second }">
+                                  <h3>${ result.first.title }</h3>
+                                  <p>${ result.first.summary }</p>
+                              </a>
+                          </c:when>
+                          <c:otherwise>
+                              <h3>${ result.first.title }</h3>
+                              <p>${ result.first.summary }</p>
+                          </c:otherwise>
+                      </c:choose>
+                  </li>
+                </c:forEach>
+                
+                <!-- write out each additional results tab -->
+                <c:forEach var="tabKey" items="${tabKeys}" varStatus="loopStatus">
+                    <li data-role="list-divider"><spring:message code="${tabKey}"/></li>
+                    <c:forEach items="${ results[tabKey] }" var="result">
+                      <li>
+                          <c:choose>
+                              <c:when test="${ not empty result.second }">
+                                  <a href="${ result.second }">
+                                      <h3>${ result.first.title }</h3>
+                                      <p>${ result.first.summary }</p>
+                                  </a>
+                              </c:when>
+                              <c:otherwise>
+                                  <h3>${ result.first.title }</h3>
+                                  <p>${ result.first.summary }</p>
+                              </c:otherwise>
+                          </c:choose>
+                      </li>
                     </c:forEach>
                 </c:forEach>
             </ul>

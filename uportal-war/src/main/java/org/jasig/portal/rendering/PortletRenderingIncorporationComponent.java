@@ -97,7 +97,7 @@ public class PortletRenderingIncorporationComponent extends CharacterPipelineCom
             		
             		final String output = portletExecutionManager.getPortletHeadOutput(portletWindowId, this.request, this.response);
             		
-            		return new CharacterDataEventImpl(output);
+            		return CharacterDataEventImpl.create(output);
             	}
                 case PORTLET_CONTENT: {
                     final PortletContentPlaceholderEvent contentPlaceholderEvent = (PortletContentPlaceholderEvent)event;
@@ -105,7 +105,7 @@ public class PortletRenderingIncorporationComponent extends CharacterPipelineCom
                     
                     final String output = portletExecutionManager.getPortletOutput(portletWindowId, this.request, this.response);
                     
-                    return new CharacterDataEventImpl(output);
+                    return CharacterDataEventImpl.create(output);
                 }
                 case PORTLET_TITLE: {
                     final PortletTitlePlaceholderEvent titlePlaceholderEvent = (PortletTitlePlaceholderEvent)event;
@@ -113,7 +113,7 @@ public class PortletRenderingIncorporationComponent extends CharacterPipelineCom
                     
                     final String title = portletExecutionManager.getPortletTitle(portletWindowId, this.request, this.response);
                     
-                    return new CharacterDataEventImpl(title);
+                    return CharacterDataEventImpl.create(title);
                 }
                 case PORTLET_NEW_ITEM_COUNT: {
                     final PortletNewItemCountPlaceholderEvent newItemCountPlaceholderEvent = (PortletNewItemCountPlaceholderEvent)event;
@@ -121,7 +121,7 @@ public class PortletRenderingIncorporationComponent extends CharacterPipelineCom
                     
                     final int newItemCount = portletExecutionManager.getPortletNewItemCount(portletWindowId, this.request, this.response);
                     
-                    return new CharacterDataEventImpl(String.valueOf(newItemCount));
+                    return CharacterDataEventImpl.create(String.valueOf(newItemCount));
                 }
                 case PORTLET_LINK: {
                     final PortletLinkPlaceholderEvent linkPlaceholderEvent = (PortletLinkPlaceholderEvent)event;
@@ -130,7 +130,7 @@ public class PortletRenderingIncorporationComponent extends CharacterPipelineCom
                     
                     final String link = portletExecutionManager.getPortletLink(portletWindowId, defaultPortletUrl, this.request, this.response);
                     
-                    return new CharacterDataEventImpl(link);
+                    return CharacterDataEventImpl.create(link);
                 }
             }
 

@@ -19,6 +19,7 @@
 
 package org.jasig.portal.character.stream;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
@@ -44,10 +45,10 @@ public interface CharacterEventSource {
      * {@link CharacterEvent}s based on the {@link StartElement}. The matching {@link EndElement} should be read
      * off of the {@link XMLEventReader} before returning.
      */
-    public List<CharacterEvent> getCharacterEvents(HttpServletRequest servletRequest, XMLEventReader eventReader, StartElement event) throws XMLStreamException;
+    public void generateCharacterEvents(HttpServletRequest servletRequest, XMLEventReader eventReader, StartElement event, Collection<CharacterEvent> eventBuffer) throws XMLStreamException;
     
     /**
      * The passed {@link Matcher} matches a character block. The block will be split
      */
-    public List<CharacterEvent> getCharacterEvents(HttpServletRequest servletRequest, MatchResult matchResult);
+    public void generateCharacterEvents(HttpServletRequest servletRequest, MatchResult matchResult, Collection<CharacterEvent> eventBuffer);
 }

@@ -31,19 +31,24 @@ import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.ISecurityContext;
-import org.jasig.portal.security.provider.AuthorizationImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 public class MaxInactiveInterceptor extends HandlerInterceptorAdapter {
-    private IPersonManager personManager;
     protected final Log log = LogFactory.getLog(getClass());
+    private IPersonManager personManager;
+    private IAuthorizationService authorizationService;
     
     @Autowired
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
     }
     
+    @Autowired
+    public void setAuthorizationService(IAuthorizationService authorizationService) {
+        this.authorizationService = authorizationService;
+    }
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         final HttpSession session = request.getSession(false);
@@ -60,11 +65,10 @@ public class MaxInactiveInterceptor extends HandlerInterceptorAdapter {
         final ISecurityContext securityContext = person.getSecurityContext();
         if (securityContext != null && securityContext.isAuthenticated()) {
             // We have an authenticated user... let's see if any MAX_INACTIVE settings apply...
-            IAuthorizationService authServ = AuthorizationImpl.singleton();
-            IAuthorizationPrincipal principal = authServ.newPrincipal((String) person.getAttribute(IPerson.USERNAME), IPerson.class);
+            IAuthorizationPrincipal principal = authorizationService.newPrincipal((String) person.getAttribute(IPerson.USERNAME), IPerson.class);
             Integer rulingGrant = null;
             Integer rulingDeny = null;
-            IPermission[] permissions = authServ.getAllPermissionsForPrincipal(principal, null, "MAX_INACTIVE", null);
+            IPermission[] permissions = authorizationService.getAllPermissionsForPrincipal(principal, null, "MAX_INACTIVE", null);
             for (IPermission p : permissions) {
                 // First be sure the record applies currently...
                 long now = System.currentTimeMillis();

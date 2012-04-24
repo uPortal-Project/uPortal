@@ -30,15 +30,16 @@ import javax.xml.namespace.QName;
  */
 public class EventImpl implements Event {
 
-    private QName qname;
-    private Serializable value;
+    private final QName qname;
+    private final Serializable value;
     
     public EventImpl(QName qname){
         this.qname = qname;
+        this.value = null;
     }
     
     public EventImpl(QName qname, Serializable value){
-        this(qname);
+        this.qname = qname;
         this.value = value;
     }
 

@@ -20,12 +20,14 @@
 package org.jasig.portal.portlet;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedMap;
 
 /**
@@ -53,8 +55,25 @@ public final class PortletUtils {
                 .put(IPortletRenderer.DETACHED.toString(), IPortletRenderer.DETACHED)
                 .put(IPortletRenderer.EXCLUSIVE.toString(), IPortletRenderer.EXCLUSIVE)
                 .build();
+    
+    private static final Set<WindowState> TARGETED_WINDOW_STATES =
+            ImmutableSet.<WindowState>builder()
+            .add(WindowState.MAXIMIZED)
+            .add(IPortletRenderer.DETACHED)
+            .add(IPortletRenderer.EXCLUSIVE)
+            .build();
                     
     private PortletUtils() {
+    }
+    
+    /**
+     * Checks if the specified window state is for a specifically targeted portlet
+     * 
+     * @param state The WindowState to check
+     * @return true if the window state is targeted
+     */
+    public static boolean isTargetedWindowState(WindowState state) {
+        return TARGETED_WINDOW_STATES.contains(state);
     }
     
     /**

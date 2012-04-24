@@ -19,16 +19,18 @@
 
 package org.jasig.portal.portlet.rendering;
 
-import java.io.PrintWriter;
-import java.io.Writer;
+import java.io.IOException;
 
+import javax.portlet.CacheControl;
 import javax.portlet.Event;
 import javax.portlet.PortletMode;
+import javax.portlet.PortletRequest;
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.portlet.rendering.worker.HungWorkerAnalyzer;
 
 /**
  * Provides easy API for executing methods on portlets. Takes care of all of the uPortal specific setup and tear down around portlet calls.
@@ -44,10 +46,28 @@ public interface IPortletRenderer {
 	public static final PortletMode CONFIG = new PortletMode("CONFIG");
 	
 	/**
-	 * Name of the {@link javax.servlet.http.HttpServletRequest} attribute that the adaptor
+	 * Name of the {@link PortletRequest} attribute that the adaptor
 	 * will store a Map of user info attributes that has support for multi-valued attributes.
 	 */
 	public static final String MULTIVALUED_USERINFO_MAP_ATTRIBUTE = "org.jasig.portlet.USER_INFO_MULTIVALUED";
+	
+	/**
+	 * Name of the {@link PortletRequest} property that the portlet should use to set
+	 * a new-item-count value.
+	 */
+	public static final String NEW_ITEM_COUNT_PROPERTY = "org.jasig.portlet.NEW_ITEM_COUNT";
+
+    /**
+     * Name of the {@link PortletRequest} property that the portlet should use to set
+     * an external link
+     */
+    public static final String EXTERNAL_PORTLET_LINK_PROPERTY = "org.jasig.portlet.EXTERNAL_PORTLET_LINK";
+    
+    /**
+     * Name of the {@link PortletRequest} property that the portlet should use to get
+     * the current theme name
+     */
+    public static final String THEME_NAME_PROPERTY = "org.jasig.portlet.THEME_NAME";
 	
 	/**
 	 * {@link javax.servlet.http.HttpServletRequest} attributes specific to the
@@ -72,9 +92,15 @@ public interface IPortletRenderer {
 	public static final String ATTRIBUTE__PORTLET_LINK = RENDERER_ATTRIBUTE_PREFIX + ".PORTLET_LINK";
 
 	/**
-	 * Attribute that the renderer stores a {@link PrintWriter} that should be used when the portlet writes out content.
+	 * Attribute that the renderer stores a {@link PortletOutputHandler} or {@link PortletResourceOutputHandler} that should be used when the portlet writes out content.
 	 */
-	public static final String ATTRIBUTE__PORTLET_PRINT_WRITER = RENDERER_ATTRIBUTE_PREFIX + ".PORTLET_PRINT_WRITER";
+	public static final String ATTRIBUTE__PORTLET_OUTPUT_HANDLER = RENDERER_ATTRIBUTE_PREFIX + ".PORTLET_OUTPUT_HANDLER";
+	
+	/**
+     * Attribute that the renderer stores a {@link CacheControl} that should be used when the portlet writes out content.
+     */
+    public static final String ATTRIBUTE__PORTLET_CACHE_CONTROL = RENDERER_ATTRIBUTE_PREFIX + ".CACHE_CONTROL";
+    
 	
 	/**
      * Executes an action in a portlet, handles all the request and response setup and teardown
@@ -100,9 +126,9 @@ public interface IPortletRenderer {
      * @param portletWindowId Portlet to target with the render
      * @param httpServletRequest The portal's request
      * @param httpServletResponse The portal's response (nothing will be written to the response)
-     * @param writer The writer to write the portlet's output to
+     * @param portletOutputHandler The output handler to write to
      */
-    public PortletRenderResult doRenderMarkup(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Writer writer);
+    public PortletRenderResult doRenderMarkup(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, PortletOutputHandler portletOutputHandler) throws IOException;
     
     /**
      * Executes a render for the head of a portlet, handles all the request and response setup and teardown
@@ -110,19 +136,21 @@ public interface IPortletRenderer {
      * @param portletWindowId Portlet to target with the render
      * @param httpServletRequest The portal's request
      * @param httpServletResponse The portal's response (nothing will be written to the response)
-     * @param writer The writer to write the portlet's output to
+     * @param portletOutputHandler The output handler to write to
      */
-    public PortletRenderResult doRenderHeader(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Writer writer);
+    public PortletRenderResult doRenderHeader(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, PortletOutputHandler portletOutputHandler) throws IOException;
+    
     /**
      * Executes a portlet resource request.
      * 
-     * @param portletWindowId
-     * @param httpServletRequest
-     * @param httpServletResponse
-     * @param writer
-     * @return
+     * @param portletWindowId Portlet to target with the render
+     * @param httpServletRequest The portal's request
+     * @param httpServletResponse The portal's response (nothing will be written to the response)
+     * @param portletOutputHandler The output handler to write to
+     * @return The execution time for serving the resource
      */
-    public long doServeResource(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse);
+    public long doServeResource(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, PortletResourceOutputHandler portletOutputHandler) throws IOException;
+    
     /**
      * Resets a portlet's window data to the defaults and clears all portlet scoped session data
      * 
@@ -131,4 +159,9 @@ public interface IPortletRenderer {
      * @param httpServletResponse The portal's response (nothing will be written to the response)
      */
     public void doReset(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse);
+    
+    /**
+     * @return HungWorkerAnalyzer that tracks hung portlet execution workers
+     */
+    public HungWorkerAnalyzer getHungWorkerAnalyzer();
 }

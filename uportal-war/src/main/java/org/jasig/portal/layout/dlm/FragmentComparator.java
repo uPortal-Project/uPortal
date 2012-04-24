@@ -32,10 +32,10 @@ import java.util.Comparator;
  * @since uPortal 2.5
  */
 
-public class FragmentComparator implements Comparator {
+public class FragmentComparator implements Comparator<FragmentDefinition> {
     public static final String RCS_ID = "@(#) $Header$";
 
-    public int compare(Object obj1, Object obj2) {
+    public int compare(FragmentDefinition obj1, FragmentDefinition obj2) {
         FragmentDefinition frag1 = (FragmentDefinition) obj1;
         FragmentDefinition frag2 = (FragmentDefinition) obj2;
 

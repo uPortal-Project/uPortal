@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
 
@@ -56,6 +57,7 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
     final IPortletRenderer portletRenderer;
     final IPortletWindowId portletWindowId;
     final String portletFname;
+    final long timeout;
     final HttpServletRequest request;
     final HttpServletResponse response;
     
@@ -67,18 +69,19 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
     private final AtomicInteger cancelCount = new AtomicInteger();
     private final AtomicBoolean canceled = new AtomicBoolean();
     private volatile boolean retrieved = false;
-    
+        
     public PortletExecutionWorker(
             ExecutorService executorService, List<IPortletExecutionInterceptor> interceptors, IPortletRenderer portletRenderer, 
-            HttpServletRequest request, HttpServletResponse response, IPortletWindowId portletWindowId, String portletFname) {
+            HttpServletRequest request, HttpServletResponse response, IPortletWindow portletWindow, long timeout /*IPortletWindowId portletWindowId, String portletFname*/) {
 
         this.executorService = executorService;
         this.interceptors = interceptors;
         this.portletRenderer = portletRenderer;
         this.request = new GuardingHttpServletRequest(request, canceled);
         this.response = new GuardingHttpServletResponse(response, canceled);
-        this.portletWindowId = portletWindowId;
-        this.portletFname = portletFname;
+        this.portletWindowId = portletWindow.getPortletWindowId();
+        this.portletFname = portletWindow.getPortletEntity().getPortletDefinition().getFName();
+        this.timeout = timeout;
     }
 
     @Override
@@ -107,6 +110,14 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
         return this.portletFname;
     }
 
+    /**
+     * @return The timeout setting for the operation in process
+     */
+    @Override
+    public long getApplicableTimeout() {
+        return this.timeout;
+    }
+
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker#submit()
      */
@@ -123,44 +134,65 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
             interceptor.preSubmit(request, response, this);
         }
         
-        final Callable<V> callable = new PortletExecutionCallable<V>(new Callable<V>() {
-            /* (non-Javadoc)
-             * @see java.util.concurrent.Callable#call()
-             */
-            @Override
-            public V call() throws Exception {
-                //grab the current thread
-                workerThread = Thread.currentThread();
-                
-                //signal any threads waiting for the worker to start
-                started = System.currentTimeMillis();
-                startLatch.countDown();
-                
-                try {
-                    //Run pre-execution interceptors
-                    for (final IPortletExecutionInterceptor interceptor : PortletExecutionWorker.this.interceptors) {
-                        interceptor.preExecution(request, response, PortletExecutionWorker.this);
-                    }
+        /*
+         * Time to prepare a Callable for the executorService;  choose whether 
+         * to create a normal Callable (that invokes the portlet code), or a 
+         * special (dummy) Callable that throws an Exception indicating the 
+         * portlet has too many errant worker threads in the hungWorker queue. 
+         */
+        Callable<V> callable = null;
+        if (this.portletRenderer.getHungWorkerAnalyzer().allowWorkerThreadAllocationForPortlet(portletFname)) {
+            // All is well -- proceed as usual
+            callable = new PortletExecutionCallable<V>(new Callable<V>() {
+                /* (non-Javadoc)
+                 * @see java.util.concurrent.Callable#call()
+                 */
+                @Override
+                public V call() throws Exception {
+                    //grab the current thread
+                    workerThread = Thread.currentThread();
                     
-                    final V result = callInternal();
-                    doPostExecution(null);
-                    return result;
+                    //signal any threads waiting for the worker to start
+                    started = System.currentTimeMillis();
+                    startLatch.countDown();
+                    
+                    try {
+                        //Run pre-execution interceptors
+                        for (final IPortletExecutionInterceptor interceptor : PortletExecutionWorker.this.interceptors) {
+                            interceptor.preExecution(request, response, PortletExecutionWorker.this);
+                        }
+                        
+                        final V result = callInternal();
+                        doPostExecution(null);
+                        return result;
+                    }
+                    catch (Exception e) {
+                        logger.warn("Portlet '" + portletWindowId + "' failed with an exception", e);
+                        doPostExecution(e);
+                        throw e;
+                    }
+                    finally {
+                        complete = System.currentTimeMillis();
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("Execution complete on portlet " + portletWindowId + " in " + getDuration() + "ms");
+                        }
+                        
+                        workerThread = null;
+                    }
                 }
-                catch (Exception e) {
+            }, this);
+        } else {
+            // All is NOT well -- replace the Callable with one that throws a meaningful Exception
+            callable = new PortletExecutionCallable<V>(new Callable<V>() {
+                @Override
+                public V call() throws Exception {
+                    Exception e = new RuntimeException("Portlet '" + portletFname + "' was not allocated a worker thread because it already has too many workers in a hung state.");
                     logger.warn("Portlet '" + portletWindowId + "' failed with an exception", e);
                     doPostExecution(e);
                     throw e;
                 }
-                finally {
-                    complete = System.currentTimeMillis();
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Execution complete on portlet " + portletWindowId + " in " + getDuration() + "ms");
-                    }
-                    
-                    workerThread = null;
-                }
-            }
-        }, this);
+            }, this);
+        }
         
         this.future = this.executorService.submit(callable);
     }

@@ -28,10 +28,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-
 import org.jasig.portal.events.aggr.AcademicTermDetail;
 import org.jasig.portal.events.aggr.AggregatedGroupConfig;
 import org.jasig.portal.events.aggr.AggregatedIntervalConfig;
@@ -190,13 +186,14 @@ public class EventAggregationConfigurationImporterExporter extends
         
         //Set quarter details if configured or set default quarters
         final List<ExternalQuarterDetail> extQuarterDetails = data.getQuarterDetails();
+        final List<QuarterDetail> quarterDetails;
         if (!extQuarterDetails.isEmpty()) {
-            final List<QuarterDetail> quarterDetails = convertQuarterDetail(extQuarterDetails);
-            this.aggregationManagementDao.setQuarterDetails(quarterDetails);
+            quarterDetails = convertQuarterDetail(extQuarterDetails);
         }
         else {
-            this.aggregationManagementDao.setQuarterDetails(EventDateTimeUtils.createStandardQuarters());
+            quarterDetails = EventDateTimeUtils.createStandardQuarters();
         }
+        this.aggregationManagementDao.setQuarterDetails(quarterDetails);
         
 
         //Purge existing term details
@@ -301,8 +298,8 @@ public class EventAggregationConfigurationImporterExporter extends
         for (final AcademicTermDetail academicTermDetail : this.aggregationManagementDao.getAcademicTermDetails()) {
             final ExternalTermDetail externalTermDetail = new ExternalTermDetail();
             externalTermDetail.setName(academicTermDetail.getTermName());
-            externalTermDetail.setStart(convert(academicTermDetail.getStart()));
-            externalTermDetail.setEnd(convert(academicTermDetail.getEnd()));
+            externalTermDetail.setStart(academicTermDetail.getStart().toGregorianCalendar());
+            externalTermDetail.setEnd(academicTermDetail.getEnd().toGregorianCalendar());
             externalTermDetails.add(externalTermDetail);
         }
         
@@ -330,22 +327,6 @@ public class EventAggregationConfigurationImporterExporter extends
         return externalAggregatedGroupMapping;
     }
     
-    public static XMLGregorianCalendar convert(DateMidnight dateMidnight) {
-        final DatatypeFactory datatypeFactory;
-        try {
-            datatypeFactory = DatatypeFactory.newInstance();
-        }
-        catch (DatatypeConfigurationException e) {
-            throw new RuntimeException(e);
-        }
-        
-        final XMLGregorianCalendar xmlGregorianCalendar = datatypeFactory.newXMLGregorianCalendar();
-        xmlGregorianCalendar.setDay(dateMidnight.getDayOfMonth());
-        xmlGregorianCalendar.setMonth(dateMidnight.getMonthOfYear());
-        xmlGregorianCalendar.setYear(dateMidnight.getYear());
-        return xmlGregorianCalendar;
-}
-
 
 	@Override
     public String getFileName(ExternalEventAggregationConfiguration data) {

@@ -19,7 +19,6 @@
 
 package org.jasig.portal.rendering.xslt;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.utils.cache.CacheKey;
+import org.jasig.portal.utils.cache.CacheKey.CacheKeyBuilder;
 
 /**
  * Merges the results of multiple {@link TransformerConfigurationSource}s
@@ -48,14 +48,14 @@ public class MergingTransformerConfigurationSource implements TransformerConfigu
      */
     @Override
     public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
-        final List<CacheKey> mergedKeys = new ArrayList<CacheKey>(sources.size());
+        final CacheKeyBuilder cacheKeyBuilder = CacheKey.builder(this.getClass().getName());
         
         for (final TransformerConfigurationSource source : this.sources) {
             final CacheKey key = source.getCacheKey(request, response);
-            mergedKeys.add(key);
+            cacheKeyBuilder.add(key);
         }
         
-        return new CacheKey("MergingTransformerConfigurationSource", mergedKeys);
+        return cacheKeyBuilder.build();
     }
 
     /* (non-Javadoc)

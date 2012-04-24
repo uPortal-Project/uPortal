@@ -19,7 +19,6 @@
 
 package org.jasig.portal.portlet.rendering.worker;
 
-import java.io.StringWriter;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -33,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.portlet.rendering.PortletRenderResult;
+import org.jasig.portal.portlet.rendering.RenderPortletOutputHandler;
 import org.jasig.portal.portlets.error.PortletErrorController;
 import org.jasig.portal.utils.web.PortletHttpServletRequestWrapper;
 
@@ -45,6 +45,8 @@ import org.jasig.portal.utils.web.PortletHttpServletRequestWrapper;
  * @version $Revision$
  */
 final class PortletFailureExecutionWorker implements IPortletFailureExecutionWorker {
+    
+    private static final int SIGNAL_THE_OPERATION_DOES_NOT_TIMEOUT = -1;
     
     protected final Log logger = LogFactory.getLog(this.getClass());
     
@@ -167,10 +169,12 @@ final class PortletFailureExecutionWorker implements IPortletFailureExecutionWor
 
         //Aggressive exception handling to make sure at least something is written out when an error happens.
         try {
-            final StringWriter writer = new StringWriter();
-            this.portletRenderResult = this.portletRenderer.doRenderMarkup(errorPortletWindowId, wrappedRequest, response, writer);
+            final String characterEncoding = response.getCharacterEncoding();
+            final RenderPortletOutputHandler renderPortletOutputHandler = new RenderPortletOutputHandler(characterEncoding);
+            
+            this.portletRenderResult = this.portletRenderer.doRenderMarkup(errorPortletWindowId, wrappedRequest, response, renderPortletOutputHandler);
             doPostExecution(null);
-            this.output = writer.toString();
+            this.output = renderPortletOutputHandler.getOutput();
         }
         catch (Exception e) {
             doPostExecution(e);
@@ -250,5 +254,10 @@ final class PortletFailureExecutionWorker implements IPortletFailureExecutionWor
     @Override
     public long getDuration() {
         return this.completed - this.submitted;
+    }
+
+    @Override
+    public long getApplicableTimeout() {
+        return SIGNAL_THE_OPERATION_DOES_NOT_TIMEOUT;
     }
 }

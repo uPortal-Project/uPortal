@@ -55,7 +55,7 @@ public class CachingCharacterPipelineComponentTest {
     public void testCacheMiss() {
         final MockHttpServletRequest mockReq = new MockHttpServletRequest();
         final MockHttpServletResponse mockRes = new MockHttpServletResponse();
-        final CacheKey cacheKey = new CacheKey("testCacheKey");
+        final CacheKey cacheKey = CacheKey.build("testCacheKey");
         final List<CharacterEvent> eventBuffer = Collections.emptyList();
         final PipelineEventReader<CharacterEventReader, CharacterEvent> eventReader = new PipelineEventReaderImpl<CharacterEventReader, CharacterEvent>(new CharacterEventBufferReader(eventBuffer.listIterator()));
         
@@ -90,7 +90,7 @@ public class CachingCharacterPipelineComponentTest {
     public void testCacheHit() {
         final MockHttpServletRequest mockReq = new MockHttpServletRequest();
         final MockHttpServletResponse mockRes = new MockHttpServletResponse();
-        final CacheKey cacheKey = new CacheKey("testCacheKey");
+        final CacheKey cacheKey = CacheKey.build("testCacheKey");
         final CachedEventReader<CharacterEvent> eventReader = new CachedEventReader<CharacterEvent>(Collections.EMPTY_LIST, Collections.EMPTY_MAP);
         final Element cacheElement = new Element(cacheKey, eventReader);
         

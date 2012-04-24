@@ -81,6 +81,17 @@
         <property name="portalDataType" ref="fragmentDefinitionPortalDataType"/>
         <property name="portalDataRetriever" ref="fragmentDefinitionDataFunction" />
     </bean>
+    
+    
+    <!-- 
+     |  Subscribed Fragment Beans
+     +-->
+    <bean class="org.jasig.portal.io.xml.subscribedfragment.SubscribedFragmentPortalDataType" />
+    <bean id="subscribedFragmentImporterExporter" class="org.jasig.portal.io.xml.subscribedfragment.SubscribedFragmentImporterExporter">
+        <property name="contextPath" value="org.jasig.portal.io.xml.subscribedfragment" />
+        <property name="schema" value="classpath:/xsd/io/subscribed-fragment/subscribed-fragment-4.0.xsd" />
+        <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/subscribed-fragment https://source.jasig.org/schemas/uportal/io/subscribed-fragment/subscribed-fragment-4.0.xsd" />
+    </bean>
 
     
     

@@ -29,13 +29,15 @@
   
   <!-- Modified jQuery Mobile theme for uMobile. Decided not to use the jQuery Mobile's A,B,C,D,E color scheme setup. -->
   <css>jquerymobile/jqm.theme.css</css>
-  
+
   <!-- Visual style for the mobile portal. -->
   <css>portal.css</css>
   
   <!-- Visual style for portlet content.
   <css>portlet.css</css> -->
 
+  <css>jquerymobile.accordion.listview.css</css>
+  
   <js included="plain">/ResourceServingWebapp/rs/jquery/1.6.1/jquery-1.6.1.js</js>
   <js included="aggregated">/ResourceServingWebapp/rs/jquery/1.6.1/jquery-1.6.1.min.js</js>
   
@@ -50,6 +52,7 @@
   <js included="plain">/ResourceServingWebapp/rs/jquery-mobile/1.0b1/jquery.mobile-1.0b1.js</js>
   <js included="aggregated">/ResourceServingWebapp/rs/jquery-mobile/1.0b1/jquery.mobile-1.0b1.min.js</js>
   
+  <js>../common/javascript/jquerymobile.accordion.listview.js</js>
   <js>../../universality/common/javascript/uportal/up-util.js</js>
   <js>../../universality/common/javascript/uportal/up-portlet-registry.js</js>
   <js>../../universality/common/javascript/uportal/up-entity-registry.js</js>

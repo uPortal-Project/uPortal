@@ -63,12 +63,12 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl;
 @SequenceGenerator(
         name="UP_LOGIN_EVENT_AGGREGATE_GEN",
         sequenceName="UP_LOGIN_EVENT_AGGREGATE_SEQ",
-        allocationSize=1
+        allocationSize=100
     )
 @TableGenerator(
         name="UP_LOGIN_EVENT_AGGREGATE_GEN",
         pkColumnValue="UP_LOGIN_EVENT_AGGREGATE_PROP",
-        allocationSize=1
+        allocationSize=100
     )
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -93,7 +93,7 @@ public class LoginAggregationImpl implements LoginAggregation, Serializable {
     
     @NaturalId
     @Enumerated(EnumType.STRING)
-    @Column(name = "INTERVAL", nullable = false)
+    @Column(name = "AGGR_INTERVAL", nullable = false)
     private final AggregationInterval interval;
     
     @NaturalId

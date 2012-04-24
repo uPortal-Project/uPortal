@@ -43,7 +43,7 @@
         <property name="logFullDocument" value="true" />
     </bean>
     
-    <bean id="dashboardWindowStateSettingsStAXComponent" class="org.jasig.portal.rendering.DashboardWindowStateSettingsStAXComponent">
+    <bean id="dashboardWindowStateSettingsStAXComponent" class="org.jasig.portal.rendering.WindowStateSettingsStAXComponent">
         <property name="wrappedComponent" ref="postUserLayoutStoreLogger" />
         <property name="stylesheetAttributeSource" ref="themeAttributeSource" />
     </bean>
@@ -80,7 +80,8 @@
             <bean class="org.jasig.portal.rendering.xslt.MergingTransformerConfigurationSource">
                 <property name="sources">
                     <list>
-                        <bean class="org.jasig.portal.rendering.xslt.StructureTransformerConfigurationSource" />
+                        <bean class="org.jasig.portal.rendering.xslt.StructureStylesheetDescriptorTransformerConfigurationSource"/>
+                        <bean class="org.jasig.portal.rendering.xslt.StructureStylesheetUserPreferencesTransformerConfigurationSource"/>
                         <bean class="org.jasig.portal.rendering.xslt.StaticTransformerConfigurationSource">
                             <property name="parameters">
                                 <map>
@@ -136,8 +137,39 @@
             <bean class="org.jasig.portal.rendering.xslt.MergingTransformerConfigurationSource">
                 <property name="sources">
                     <list>
-                        <bean class="org.jasig.portal.rendering.xslt.ThemeTransformerConfigurationSource" />
-                        <!-- TODO move most of these parameters into their own little configuration source beans so they can provide good input to the cache key -->
+                        <bean class="org.jasig.portal.rendering.xslt.ThemeStylesheetDescriptorTransformerConfigurationSource" />
+                        <!-- Uncomment and configure to map a user attribute value to various skin names
+                        <bean class="org.jasig.portal.rendering.xslt.UserAttributeSkinMappingTransformerConfigurationSource">
+                            <property name="stylesheetDescriptorNames">
+                                <set>
+                                    <value>DLMXHTML</value>
+                                </set>
+                            </property>
+                            <property name="skinAttributeName" value="serverName" />
+                            <property name="attributeToSkinMap">
+                                <map>
+                                    <entry key=".*\.example\.com" value="example.com" />
+                                </map>
+                            </property>
+                        </bean>
+                        -->
+                        <!-- Uncomment and configure to map user group membership to various skin names
+                        <bean class="org.jasig.portal.rendering.xslt.UserGroupSkinMappingTransformerConfigurationSource">
+                            <property name="stylesheetDescriptorNames">
+                                <set>
+                                    <value>DLMXHTML</value>
+                                </set>
+                            </property>
+                            <property name="groupToSkinMap">
+                                <map>
+                                    <entry key="pags.studends" value="students" />
+                                    <entry key="pags.staff" value="staff" />
+                                    <entry key="pags.faculty" value="staff" />
+                                </map>
+                            </property>
+                        </bean>
+                        -->
+                        <bean class="org.jasig.portal.rendering.xslt.ThemeStylesheetUserPreferencesTransformerConfigurationSource" />
                         <bean class="org.jasig.portal.rendering.xslt.StaticTransformerConfigurationSource">
                             <property name="parameters">
                                 <map>
@@ -147,6 +179,7 @@
                                     </entry>
                                     <entry key="EXTERNAL_LOGIN_URL" value="${org.jasig.portal.channels.CLogin.CasLoginUrl}" />
                                     <entry key="useTabGroups" value="${org.jasig.portal.layout.useTabGroups}"/>
+                                    <entry key="UP_VERSION" value="${org.jasig.portal.version}"/>
                                 </map>
                             </property>
                             <property name="parameterExpressions">
@@ -156,6 +189,8 @@
                                     <entry key="AUTHENTICATED" value="!person.guest" />
                                     <entry key="userName" value="person.fullName" />
                                     <entry key="USER_ID" value="person.userName" />
+                                    <entry key="SERVER_NAME" value="@portalInfoProvider.serverName" />
+                                    <entry key="STATS_SESSION_ID" value="@portalEventFactory.getPortalEventSessionId(request.nativeRequest, person)" />
                                 </map>
                             </property>
                             <property name="cacheKeyExcludedParameters">
@@ -194,6 +229,10 @@
                 <entry>
                     <key><util:constant static-field="org.jasig.portal.layout.IUserLayoutManager.CHANNEL_HEADER" /></key>
                     <bean class="org.jasig.portal.character.stream.PortletHeaderPlaceholderEventSource" />
+                </entry>
+                <entry>
+                    <key><util:constant static-field="org.jasig.portal.character.stream.events.ChunkPointPlaceholderEventSource.CHUNK_POINT" /></key>
+                    <bean class="org.jasig.portal.character.stream.events.ChunkPointPlaceholderEventSource" />
                 </entry>
             </map>
         </property>

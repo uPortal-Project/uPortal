@@ -185,7 +185,9 @@
     <bean id="xslPortalUrlProvider" class="org.jasig.portal.url.xml.XsltPortalUrlProvider" />
     
     <bean id="xalanMessageHelper" class="org.jasig.portal.security.xslt.XalanMessageHelper"/>
+    <bean id="xalanAuthorizationHelper" class="org.jasig.portal.security.xslt.XalanAuthorizationHelper" />
     <bean id="xalanLayoutElementTitleHelper" class="org.jasig.portal.security.xslt.XalanLayoutElementTitleHelper"/>
+    <bean id="xalanGroupMembershipHelper" class="org.jasig.portal.security.xslt.XalanGroupMembershipHelper"/>
     
     
     <bean id="userInstanceManager" class="org.jasig.portal.spring.MockitoFactoryBean">
@@ -211,6 +213,15 @@
     <bean id="xalanMessageHelperBean" class="org.jasig.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.jasig.portal.security.xslt.IXalanMessageHelper" />
     </bean>
+    
+    <bean id="xalanAuthorizationHelperBean" class="org.jasig.portal.spring.MockitoFactoryBean">
+        <constructor-arg value="org.jasig.portal.security.xslt.IXalanAuthorizationHelper" />
+    </bean>
+    
+    <bean id="xalanGroupMembershipHelperBean" class="org.jasig.portal.spring.MockitoFactoryBean">
+        <constructor-arg value="org.jasig.portal.security.xslt.IXalanGroupMembershipHelper" />
+    </bean>
+    
     
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="alwaysUseMessageFormat" value="true" />

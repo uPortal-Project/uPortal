@@ -1,0 +1,8 @@
+# Download all the gravatars
+./gource/grav.pl
+
+# Watch Gource visualization of code changes from the rel-3-2-0-GA tag to the uportal-4.0.0 tag with a title referencing "4.0"
+./gource/gource.sh rel-3-2-0-GA uportal-4.0.0 4.0
+
+# Create an mp4 encoded video of the example above saved to /usr/gource/uportal-4_0.mp4
+./gource/gource_encode.sh /usr/gource/uportal-4_0.mp4 rel-3-2-0-GA uportal-4.0.0 4.0

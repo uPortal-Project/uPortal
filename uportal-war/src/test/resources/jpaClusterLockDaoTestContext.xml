@@ -29,7 +29,7 @@
                         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
                         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
                         
-    <bean id="uPortalLockExecutor" class="org.jasig.portal.utils.threading.DynamicThreadPoolExecutorFactoryBean">
+    <bean id="uPortalLockExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean">
         <qualifier value="uPortalLockExecutor" />
         <property name="corePoolSize" value="2" />
         <property name="maxPoolSize" value="50" />

@@ -19,18 +19,20 @@
 
 package org.jasig.portal.portlet.container.properties;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.url.ParameterMap;
+import org.jasig.portal.utils.Populator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.OrderComparator;
 import org.springframework.stereotype.Service;
 
 
@@ -52,60 +54,44 @@ public class RequestPropertiesManagerBroker implements IRequestPropertiesManager
     protected final Log logger = LogFactory.getLog(this.getClass());
     private List<IRequestPropertiesManager> propertiesManagers = Collections.emptyList();
     
-    /**
-     * @return the propertiesManagers
-     */
-    public List<IRequestPropertiesManager> getPropertiesManagers() {
-        return propertiesManagers;
-    }
-
-    /**
-     * @param propertiesManagers the propertiesManagers to set
-     */
 	@Autowired
-    public void setPropertiesManagers(List<IRequestPropertiesManager> propertiesManagers) {
-        this.propertiesManagers = propertiesManagers;
+    public void setPropertiesManagers(Collection<? extends IRequestPropertiesManager> propertiesManagers) {
+        this.propertiesManagers = new ArrayList<IRequestPropertiesManager>(propertiesManagers);
+        Collections.sort(this.propertiesManagers, OrderComparator.INSTANCE);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.container.services.IRequestPropertiesManager#addResponseProperty(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindow, java.lang.String, java.lang.String)
-     */
-    public void addResponseProperty(HttpServletRequest request, IPortletWindow portletWindow, String property, String value) {
-        for (final IRequestPropertiesManager propertiesManager : this.propertiesManagers) {
-            propertiesManager.addResponseProperty(request, portletWindow, property, value);
-        }
-    }
+    @Override
+    public boolean setResponseProperty(HttpServletRequest portletRequest, IPortletWindow portletWindow,
+            String property, String value) {
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.container.services.IRequestPropertiesManager#setResponseProperty(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindow, java.lang.String, java.lang.String)
-     */
-    public void setResponseProperty(HttpServletRequest request, IPortletWindow portletWindow, String property, String value) {
         for (final IRequestPropertiesManager propertiesManager : this.propertiesManagers) {
-            propertiesManager.setResponseProperty(request, portletWindow, property, value);
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.container.services.IRequestPropertiesManager#getRequestProperties(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindow)
-     */
-    public Map<String, String[]> getRequestProperties(HttpServletRequest request, IPortletWindow portletWindow) {
-        final Map<String, String[]> properties = new ParameterMap();
-        
-        for (final IRequestPropertiesManager propertiesManager : this.propertiesManagers) {
-            final Map<String, String[]> newProperties = propertiesManager.getRequestProperties(request, portletWindow);
-            
-            if (this.logger.isDebugEnabled()) {
-                this.logger.debug("Retrieved properties '" + newProperties + "' from manager: " + propertiesManager);
+            if (propertiesManager.setResponseProperty(portletRequest, portletWindow, property, value)) {
+                return true;
             }
-            
-            properties.putAll(newProperties);
         }
         
-        if (this.logger.isDebugEnabled()) {
-            this.logger.debug("Returning properties '" + properties + "' for portlet " +  portletWindow + " and request " + request);
-        }
-        
-        return properties;
+        return false;
     }
-    
+
+    @Override
+    public boolean addResponseProperty(HttpServletRequest portletRequest, IPortletWindow portletWindow,
+            String property, String value) {
+
+        for (final IRequestPropertiesManager propertiesManager : this.propertiesManagers) {
+            if (propertiesManager.addResponseProperty(portletRequest, portletWindow, property, value)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    @Override
+    public <P extends Populator<String, String>> void populateRequestProperties(HttpServletRequest portletRequest,
+            IPortletWindow portletWindow, P propertiesPopulator) {
+
+        for (final IRequestPropertiesManager propertiesManager : this.propertiesManagers) {
+            propertiesManager.populateRequestProperties(portletRequest, portletWindow, propertiesPopulator);
+        }
+    }
 }

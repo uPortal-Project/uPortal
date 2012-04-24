@@ -23,8 +23,10 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
@@ -93,4 +95,9 @@ public interface XmlUtilities {
      * Get the unique XPath for the specified Node
      */
     public String getUniqueXPath(Node node);
+    
+    /**
+     * Convert the data from an {@link XMLEventReader} into a DOM node
+     */
+    public Node convertToDom(XMLEventReader xmlEventReader) throws XMLStreamException;
 }

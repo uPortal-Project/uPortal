@@ -20,6 +20,7 @@
 package org.jasig.portal.layout;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import static org.junit.Assert.assertEquals;
@@ -31,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.IUserProfile;
+import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
 import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
 import org.jasig.portal.layout.dao.IStylesheetUserPreferencesDao;
 import org.jasig.portal.layout.om.ILayoutAttributeDescriptor;
@@ -104,6 +106,8 @@ public class StylesheetUserPreferencesServiceImplTest {
         
         final IStylesheetUserPreferences persistentStylesheetUserPreferences = mock(IStylesheetUserPreferences.class);
         when(stylesheetUserPreferencesDao.createStylesheetUserPreferences(stylesheetDescriptor, person, userProfile)).thenReturn(persistentStylesheetUserPreferences);
+        when(stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, person, userProfile)).thenReturn(persistentStylesheetUserPreferences);
+        when(persistentStylesheetUserPreferences.getStylesheetParameter("skin")).thenReturn(null).thenReturn("red");
         
 
         //Create and initialize service bean
@@ -113,31 +117,28 @@ public class StylesheetUserPreferencesServiceImplTest {
         stylesheetUserPreferencesService.setStylesheetUserPreferencesDao(stylesheetUserPreferencesDao);
         
         //Run test
-        final IStylesheetUserPreferences themeStylesheetUserPreferences = stylesheetUserPreferencesService.getThemeStylesheetUserPreferences(request);
-        
         String actual;
         
-        actual = themeStylesheetUserPreferences.getLayoutAttribute("u1l1n1", "minimized");
+        actual = stylesheetUserPreferencesService.getLayoutAttribute(request, PreferencesScope.THEME, "u1l1n1", "minimized");
         assertNull(actual);
-        actual = themeStylesheetUserPreferences.setLayoutAttribute("u1l1n1", "minimized", "true");
+        actual = stylesheetUserPreferencesService.setLayoutAttribute(request, PreferencesScope.THEME, "u1l1n1", "minimized", "true");
         assertNull(actual);
-        actual = themeStylesheetUserPreferences.getLayoutAttribute("u1l1n1", "minimized");
+        actual = stylesheetUserPreferencesService.getLayoutAttribute(request, PreferencesScope.THEME, "u1l1n1", "minimized");
         assertEquals("true", actual);
         
-        actual = themeStylesheetUserPreferences.getOutputProperty("media");
+        actual = stylesheetUserPreferencesService.getOutputProperty(request, PreferencesScope.THEME, "media");
         assertNull(actual);
-        actual = themeStylesheetUserPreferences.setOutputProperty("media", "text/html");
+        actual = stylesheetUserPreferencesService.setOutputProperty(request, PreferencesScope.THEME, "media", "text/html");
         assertNull(actual);
-        actual = themeStylesheetUserPreferences.getOutputProperty("media");
+        actual = stylesheetUserPreferencesService.getOutputProperty(request, PreferencesScope.THEME, "media");
         assertEquals("text/html", actual);
         
-        actual = themeStylesheetUserPreferences.getStylesheetParameter("skin");
+        actual = stylesheetUserPreferencesService.getStylesheetParameter(request, PreferencesScope.THEME, "skin");
         assertNull(actual);
-        actual = themeStylesheetUserPreferences.setStylesheetParameter("skin", "red");
+        actual = stylesheetUserPreferencesService.setStylesheetParameter(request, PreferencesScope.THEME, "skin", "red");
+        verify(persistentStylesheetUserPreferences).setStylesheetParameter("skin", "red");
         assertNull(actual);
-        actual = themeStylesheetUserPreferences.getStylesheetParameter("skin");
+        actual = stylesheetUserPreferencesService.getStylesheetParameter(request, PreferencesScope.THEME, "skin");
         assertEquals("red", actual);
-        
-        stylesheetUserPreferencesService.updateStylesheetUserPreferences(request, themeStylesheetUserPreferences);
     }
 }

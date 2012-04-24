@@ -59,4 +59,10 @@ public class MockitoFactoryBean<T> extends AbstractFactoryBean<T> {
         MOCK_CACHE.add(mock);
         return mock;
     }
+
+    @Override
+    protected void destroyInstance(T instance) throws Exception {
+        MOCK_CACHE.remove(instance);
+    }
+    
 }

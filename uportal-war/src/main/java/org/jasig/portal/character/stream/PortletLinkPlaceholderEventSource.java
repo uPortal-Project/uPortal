@@ -18,8 +18,7 @@
  */
 package org.jasig.portal.character.stream;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 import java.util.regex.MatchResult;
 
 import org.jasig.portal.character.stream.events.CharacterEvent;
@@ -33,9 +32,10 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
 public class PortletLinkPlaceholderEventSource extends PortletPlaceholderEventSource {
     
     @Override
-    protected List<CharacterEvent> getCharacterEvents(IPortletWindowId portletWindowId, MatchResult matchResult) {
+    protected void generateCharacterEvents(IPortletWindowId portletWindowId, MatchResult matchResult,
+            Collection<CharacterEvent> eventBuffer) {
         String defaultPortletUrl = matchResult.group(2);
-        return Arrays.asList((CharacterEvent) new PortletLinkPlaceholderEventImpl(portletWindowId, defaultPortletUrl));
+        eventBuffer.add(new PortletLinkPlaceholderEventImpl(portletWindowId, defaultPortletUrl));
     }
 
 }

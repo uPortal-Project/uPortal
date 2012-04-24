@@ -52,7 +52,7 @@
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>classpath:/properties/contexts/*.xml</param-value>
+        <param-value>classpath:/properties/contexts/*.xml,classpath:/properties/contextOverrides/*.xml</param-value>
     </context-param>
    
     <!--
@@ -88,7 +88,7 @@
      | Passes Session init/destroy events to the WebApplicationContext
      +-->
     <listener>
-        <listener-class>org.jasig.portal.spring.web.context.support.ApplicationContextDelagatingSessionListener</listener-class>
+        <listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
     </listener>
     
     <!-- 
@@ -108,11 +108,6 @@
         <listener-class>org.jasig.portal.utils.web.RequestAttributeMutexListener</listener-class>
     </listener>
     
-    <filter>
-        <filter-name>RequestContextFilter</filter-name>
-        <filter-class>org.springframework.web.filter.RequestContextFilter</filter-class>
-    </filter>
-
     <filter>
         <filter-name>CAS Validate Filter</filter-name>
         <filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>
@@ -185,6 +180,16 @@
         </init-param>
     </filter>
     
+    
+    <filter>
+        <filter-name>requireValidSessionFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+        <init-param>
+            <param-name>targetFilterLifecycle</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    
     <filter>
         <filter-name>urlCanonicalizingFilter</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -203,11 +208,46 @@
         <filter-name>createPortletCookieFilter</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
+    
+    <!-- Useful for testing/debugging remote_user based authn 
+    <filter>
+        <filter-name>RemoteUserSettingFilter</filter-name>
+        <filter-class>org.jasig.portal.spring.security.RemoteUserSettingFilter</filter-class>
+        <init-param>
+            <param-name>remoteUserFile</param-name>
+            <param-value>/home/edalquist/tmp/remoteUser</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>RemoteUserSettingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+     -->
+    
+    <!-- FILTER ORDER IS VERY IMPORTANT. DO NOT CHANGE ORDER WITHOUT VERY GOOD REASON -->
+    
+    <filter-mapping>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <servlet-name>AuthenticationDispatcherServlet</servlet-name>
+        <servlet-name>RenderingDispatcherServlet</servlet-name>
+        <servlet-name>JsonRenderingDispatcherServlet</servlet-name>
+        <servlet-name>MVCDispatcherServlet</servlet-name>
+    </filter-mapping>
 
-    <!-- MUST BE THE FIRST FILTER -->
     <filter-mapping>
         <filter-name>OpenEntityManagerInViewFilter</filter-name>
         <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
+    <filter-mapping>
+        <filter-name>requestAttributeSourceFilter</filter-name>
+        <url-pattern>/Login</url-pattern>
+    </filter-mapping>
+    
+    <filter-mapping>
+        <filter-name>requireValidSessionFilter</filter-name>
+        <servlet-name>RenderingDispatcherServlet</servlet-name>
+        <servlet-name>JsonRenderingDispatcherServlet</servlet-name>
     </filter-mapping>
     
     <filter-mapping>
@@ -229,31 +269,12 @@
       <filter-name>springSecurityFilterChain</filter-name>
       <url-pattern>*</url-pattern>
     </filter-mapping>
-    
-    <filter-mapping>
-        <filter-name>CharacterEncodingFilter</filter-name>
-        <servlet-name>AuthenticationDispatcherServlet</servlet-name>
-        <servlet-name>RenderingDispatcherServlet</servlet-name>
-        <servlet-name>JsonRenderingDispatcherServlet</servlet-name>
-        <servlet-name>MVCDispatcherServlet</servlet-name>
-    </filter-mapping>
      
     <filter-mapping>
         <filter-name>urlCanonicalizingFilter</filter-name>
         <servlet-name>RenderingDispatcherServlet</servlet-name>
     </filter-mapping>
     
-    <filter-mapping>
-        <filter-name>RequestContextFilter</filter-name>
-        <servlet-name>*</servlet-name>
-        <url-pattern>*</url-pattern>
-    </filter-mapping>
-    
-    <filter-mapping>
-        <filter-name>requestAttributeSourceFilter</filter-name>
-        <url-pattern>/Login</url-pattern>
-    </filter-mapping>
-
     <!-- Temporarily commenting out this filter for development purposes -->
     <filter-mapping>
         <filter-name>pageCachingFilter</filter-name>

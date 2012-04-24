@@ -43,9 +43,10 @@
     xmlns:upGroup="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
     xmlns:upMsg="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanMessageHelper"
     xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
+    xmlns:upElemTitle="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanLayoutElementTitleHelper"
     xsi:schemaLocation="
             https://source.jasig.org/schemas/uportal/layout/portal-url ../../../xsd/layout/portal-url-4.0.xsd"
-    exclude-result-prefixes="url upAuth upGroup upMsg" 
+    exclude-result-prefixes="url upAuth upGroup upMsg upElemTitle" 
     version="1.0">
     
 <!-- ========================================================================= -->
@@ -110,9 +111,9 @@
 | list-items within an <ul> list. Only those with knowledge of xsl should configure this template. 
 | Template contents can be any valid XSL or XHTML.
 -->  
-<xsl:template name="mobile.navigation">
+<xsl:template name="mobile.navigation.grid">
     <div class="portal-nav">
-        <xsl:for-each select="//navigation/channel">
+        <xsl:for-each select="//navigation/tab/channel">
             <div class="portlet">
                 <xsl:variable name="defaultPortletUrl">
                     <xsl:call-template name="portalUrl">
@@ -143,6 +144,46 @@
                 </a>
             </div>
         </xsl:for-each>
+    </div>
+</xsl:template>
+
+<xsl:template name="mobile.navigation.list">
+    <div class="portal-nav portlet-content">
+        <ul data-role="listview" class="up-portal-nav">
+            <xsl:for-each select="//navigation/tab">
+            <li data-role="list-divider"><xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/></li>
+                <xsl:for-each select="channel">
+                    <li>
+                        <xsl:variable name="defaultPortletUrl">
+                            <xsl:call-template name="portalUrl">
+                                <xsl:with-param name="url">
+                                    <url:portal-url>
+                                        <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
+                                        <url:portlet-url state="MAXIMIZED" copyCurrentRenderParameters="true" />
+                                    </url:portal-url>
+                                </xsl:with-param>
+                            </xsl:call-template>
+                        </xsl:variable>
+                        <xsl:variable name="portletUrl">{up-portlet-link(<xsl:value-of select="@ID" />,<xsl:value-of select="$defaultPortletUrl" />)}</xsl:variable>
+                        <xsl:variable name="iconUrl">
+                            <xsl:choose>
+                                <xsl:when test="parameter[@name='mobileIconUrl'] and parameter[@name='mobileIconUrl']/@value != ''">
+                                    <xsl:value-of select="parameter[@name='mobileIconUrl']/@value"/>
+                                </xsl:when>
+                                <xsl:otherwise><xsl:value-of select="$CONTEXT_PATH"/>/media/skins/icons/mobile/default.png</xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:variable>
+                        <xsl:variable name="newItemCountClasses">ui-li-count badge new-item up-new-item-count-{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}</xsl:variable>
+                        <a href="{$portletUrl}" title="To view {@name}">
+                            <img class="portlet-icon" src="{$iconUrl}" alt="{@name}"/>
+                            <h3><xsl:value-of select="@name" /></h3>
+                            <p><xsl:value-of select="@description"/></p>
+                            <span class="{$newItemCountClasses}">{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}</span>
+                        </a>
+                    </li>
+                </xsl:for-each>
+            </xsl:for-each>
+        </ul>
     </div>
 </xsl:template>
 

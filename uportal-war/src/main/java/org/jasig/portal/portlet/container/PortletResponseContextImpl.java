@@ -19,7 +19,6 @@
 
 package org.jasig.portal.portlet.container;
 
-import javax.portlet.PortletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -60,44 +59,35 @@ public class PortletResponseContextImpl extends AbstractPortletContextImpl imple
         this.requestPropertiesManager = requestPropertiesManager;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.container.PortletResponseContext#addProperty(javax.servlet.http.Cookie)
-     */
     @Override
     public void addProperty(Cookie cookie) {
         final IPortletWindowId portletWindowId = this.portletWindow.getPortletWindowId();
         this.portletCookieService.addCookie(this.servletRequest, portletWindowId, cookie);
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.container.PortletResponseContext#addProperty(java.lang.String, org.w3c.dom.Element)
-     */
     @Override
-    public void addProperty(String key, Element element) {
-        // TODO Auto-generated method stub
+    public final void addProperty(String key, Element element) {
+        //uPortal doesn't support XML properties
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.container.PortletResponseContext#addProperty(java.lang.String, java.lang.String)
-     */
     @Override
-    public void addProperty(String key, String value) {
-        this.requestPropertiesManager.addResponseProperty(this.servletRequest, this.portletWindow, key, value);
+    public final void addProperty(String key, String value) {
+        managerAddProperty(key, value);
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.container.PortletResponseContext#setProperty(java.lang.String, java.lang.String)
-     */
     @Override
-    public void setProperty(String key, String value) {
-        this.requestPropertiesManager.setResponseProperty(this.servletRequest, this.portletWindow, key, value);
+    public final void setProperty(String key, String value) {
+        managerSetProperty(key, value);
     }
 
-    /**
-     * @see PortletResponse#createElement(String)
-     * 
-     * @see org.apache.pluto.container.PortletResponseContext#createElement(java.lang.String)
-     */
+    protected boolean managerSetProperty(String key, String value) {
+        return this.requestPropertiesManager.setResponseProperty(this.servletRequest, this.portletWindow, key, value);
+    }
+
+    protected boolean managerAddProperty(String key, String value) {
+        return this.requestPropertiesManager.addResponseProperty(this.servletRequest, this.portletWindow, key, value);
+    }
+
     @Override
     public Element createElement(String tagName) throws DOMException {
         // TODO this is terribly inefficient
@@ -113,25 +103,16 @@ public class PortletResponseContextImpl extends AbstractPortletContextImpl imple
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.container.PortletResponseContext#getResourceURLProvider()
-     */
     @Override
     public ResourceURLProvider getResourceURLProvider() {
         return new ResourceUrlProviderImpl(portletWindow, containerRequest);
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.container.PortletResponseContext#close()
-     */
     @Override
     public void close() {
         this.closed = true;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.container.PortletResponseContext#release()
-     */
     @Override
     public void release() {
         this.closed = true;

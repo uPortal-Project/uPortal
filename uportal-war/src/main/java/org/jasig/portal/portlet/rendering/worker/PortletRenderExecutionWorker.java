@@ -19,16 +19,17 @@
 
 package org.jasig.portal.portlet.rendering.worker;
 
-import java.io.StringWriter;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.portlet.rendering.PortletRenderResult;
+import org.jasig.portal.portlet.rendering.RenderPortletOutputHandler;
 
 /**
  * {@link PortletExecutionWorker} capable of rendering the body markup
@@ -43,9 +44,12 @@ class PortletRenderExecutionWorker extends PortletExecutionWorker<PortletRenderR
     
     public PortletRenderExecutionWorker(
             ExecutorService executorService, List<IPortletExecutionInterceptor> interceptors, IPortletRenderer portletRenderer, 
-            HttpServletRequest request, HttpServletResponse response, IPortletWindowId portletWindowId, String portletFname) {
+            HttpServletRequest request, HttpServletResponse response, IPortletWindow portletWindow) {
         
-        super(executorService, interceptors, portletRenderer, request, response, portletWindowId, portletFname);
+        super(executorService, interceptors, portletRenderer, request, response, portletWindow, 
+                portletWindow.getPortletEntity().getPortletDefinition().getRenderTimeout() != null
+                        ? portletWindow.getPortletEntity().getPortletDefinition().getRenderTimeout()
+                        : portletWindow.getPortletEntity().getPortletDefinition().getTimeout());
     }
 
     @Override
@@ -55,9 +59,13 @@ class PortletRenderExecutionWorker extends PortletExecutionWorker<PortletRenderR
 
     @Override
     protected PortletRenderResult callInternal() throws Exception {
-        final StringWriter writer = new StringWriter();
-        final PortletRenderResult result = portletRenderer.doRenderMarkup(portletWindowId, request, response, writer);
-        this.output = writer.toString();
+        final String characterEncoding = response.getCharacterEncoding();
+        final RenderPortletOutputHandler renderPortletOutputHandler = new RenderPortletOutputHandler(characterEncoding);
+        
+        final PortletRenderResult result = portletRenderer.doRenderMarkup(portletWindowId, request, response, renderPortletOutputHandler);
+        
+        this.output = renderPortletOutputHandler.getOutput();
+        
         return result;
     }
 

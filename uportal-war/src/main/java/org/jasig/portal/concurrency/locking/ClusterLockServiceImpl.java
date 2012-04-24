@@ -75,7 +75,7 @@ public class ClusterLockServiceImpl implements IClusterLockService {
     /**
      * Rate at which {@link IClusterLockDao#updateLock(String)} is called while a mutex is locked, defaults to 500ms
      */
-    @Value("${org.jasig.portal.concurrency.locking.ClusterLockDao.abandonedLockAge:PT0.500S}")
+    @Value("${org.jasig.portal.concurrency.locking.ClusterLockDao.updateLockRate:PT0.500S}")
     public void setUpdateLockRate(ReadableDuration updateLockRate) {
         this.updateLockRate = updateLockRate;
     }
@@ -84,7 +84,7 @@ public class ClusterLockServiceImpl implements IClusterLockService {
      * Maximum duration that a lock can be held, functionally longest duration that the lockFunction can take to execute.
      * Defaults to 15 minutes
      */
-    @Value("${org.jasig.portal.concurrency.locking.ClusterLockDao.abandonedLockAge:PT900S}")
+    @Value("${org.jasig.portal.concurrency.locking.ClusterLockDao.maximumLockDuration:PT900S}")
     public void setMaximumLockDuration(ReadableDuration maximumLockDuration) {
         this.maximumLockDuration = maximumLockDuration;
     }

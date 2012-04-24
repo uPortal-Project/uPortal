@@ -34,8 +34,13 @@ public interface ConfigurationLoader {
     public List<FragmentDefinition> getFragments();
     
     /**
-     * @return A {@link FragmentDefinition} for the specified owner.
+     * @return A {@link FragmentDefinition} for the named fragment.
      */
-    public FragmentDefinition getFragmentByName(String ownerId);
+    public FragmentDefinition getFragmentByName(String fragmentName);
     
+    /**
+     * @return A {@link FragmentDefinition} for the named fragment.
+     */
+    public FragmentDefinition getFragmentByOwnerId(String ownerId);
+
 }

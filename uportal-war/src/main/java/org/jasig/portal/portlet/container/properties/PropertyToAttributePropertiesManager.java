@@ -19,6 +19,7 @@
 
 package org.jasig.portal.portlet.container.properties;
 
+import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -33,13 +34,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.url.IPortalRequestUtils;
+import org.jasig.portal.utils.Populator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -79,13 +79,10 @@ public class PropertyToAttributePropertiesManager extends BaseRequestPropertiesM
 		this.portalRequestUtils = portalRequestUtils;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.container.properties.BaseRequestPropertiesManager#addResponseProperty(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindow, java.lang.String, java.lang.String)
-	 */
 	@Override
-	public void addResponseProperty(HttpServletRequest portletRequest, IPortletWindow portletWindow, String property, String value) {
+	public boolean addResponseProperty(HttpServletRequest portletRequest, IPortletWindow portletWindow, String property, String value) {
 		if (this.propertyToAttributeMappings.isEmpty() && this.nonNamespacedProperties.isEmpty()) {
-			return;
+			return false;
 		}
 		
 		final HttpServletRequest portalRequest = this.portalRequestUtils.getOriginalPortalRequest(portletRequest);
@@ -96,23 +93,22 @@ public class PropertyToAttributePropertiesManager extends BaseRequestPropertiesM
 		if (!(existingValue instanceof List)) {
 			this.logger.warn("Attribute {} for property {} exists but is NOT a List, it will be replaced", attributeName, property);
 			this.setResponseProperty(portletRequest, portletWindow, property, value);
-			return;
+			return true;
 		}
 		
 		logger.debug("Adding property {} as attribute {}", property, attributeName);
 		
-		final List<String> values = (List<String>)existingValue;
+		@SuppressWarnings("unchecked")
+        final List<String> values = (List<String>)existingValue;
 		values.add(value);
 		portalRequest.setAttribute(attributeName, values);
+		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.container.properties.BaseRequestPropertiesManager#setResponseProperty(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindow, java.lang.String, java.lang.String)
-	 */
 	@Override
-	public void setResponseProperty(HttpServletRequest portletRequest, IPortletWindow portletWindow, String property, String value) {
+	public boolean setResponseProperty(HttpServletRequest portletRequest, IPortletWindow portletWindow, String property, String value) {
 		if (this.propertyToAttributeMappings.isEmpty() && this.nonNamespacedProperties.isEmpty()) {
-			return;
+			return false;
 		}
 		
 		final HttpServletRequest portalRequest = this.portalRequestUtils.getOriginalPortalRequest(portletRequest);
@@ -124,6 +120,8 @@ public class PropertyToAttributePropertiesManager extends BaseRequestPropertiesM
 		final List<String> values = new LinkedList<String>();
 		values.add(value);
 		portalRequest.setAttribute(attributeName, values);
+		
+		return true;
 	}
 
 	protected String getAttributeName(IPortletWindow portletWindow, String property) {
@@ -144,20 +142,18 @@ public class PropertyToAttributePropertiesManager extends BaseRequestPropertiesM
 		return portletWindowId.getStringId() + attributeName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.container.properties.BaseRequestPropertiesManager#getRequestProperties(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindow)
-	 */
+	
 	@Override
-	public Map<String, String[]> getRequestProperties(HttpServletRequest portletRequest, IPortletWindow portletWindow) {
+    public <P extends Populator<String, String>> void populateRequestProperties(HttpServletRequest portletRequest,
+            IPortletWindow portletWindow, P propertiesPopulator) {
 		if (this.propertyToAttributeMappings.isEmpty() && this.nonNamespacedProperties.isEmpty()) {
-			return Collections.emptyMap();
+			return;
 		}
 		
 		final HttpServletRequest portalRequest = this.portalRequestUtils.getOriginalPortalRequest(portletRequest);
 		final String windowIdStr = portletWindow.getPortletWindowId().getStringId();
 		
-		final Builder<String, String[]> properties = ImmutableMap.builder();
-		for (final Enumeration<String> attributeNames = portalRequest.getAttributeNames(); attributeNames.hasMoreElements();) {
+		for (@SuppressWarnings("unchecked") final Enumeration<String> attributeNames = portalRequest.getAttributeNames(); attributeNames.hasMoreElements();) {
 			final String fullAttributeName = attributeNames.nextElement();
 			final String propertyName = getPropertyName(windowIdStr, fullAttributeName);
 			if (propertyName == null) {
@@ -167,12 +163,8 @@ public class PropertyToAttributePropertiesManager extends BaseRequestPropertiesM
 			logger.debug("Found portal request attribute {} returning as property {}", fullAttributeName, propertyName);
 
 			final Object value = portalRequest.getAttribute(fullAttributeName);
-			final String[] values = convertValue(value);
-			
-			properties.put(propertyName, values);
+			convertValue(propertyName, value, propertiesPopulator);
 		}
-		
-		return properties.build();
 	}
 
 	/**
@@ -199,21 +191,26 @@ public class PropertyToAttributePropertiesManager extends BaseRequestPropertiesM
 		return mappedPropertyName;
 	}
 	
-	protected String[] convertValue(Object value) {
+	protected <P extends Populator<String, String>> void convertValue(String name, Object value, P propertiesPopulator) {
 		if (value == null) {
-			return new String[] { null };
+			return;
 		}
-		else if (value instanceof Collection) {
-			final Collection<?> valuesCol = (Collection<?>)value;
-			final String[] values = new String[valuesCol.size()];
-			int i = 0;
-			for (final Object obj : valuesCol) {
-				values[i++] = String.valueOf(obj);
+		
+		if (value instanceof Collection) {
+			for (final Object obj : (Collection<?>)value) {
+			    propertiesPopulator.put(name, String.valueOf(obj));
 			}
-			return values;
+			return;
 		}
-		else {
-			return new String[] { String.valueOf(value) };
-		}
+		
+		if (value.getClass().isArray()) {
+		    final int len = Array.getLength(value);
+		    for (int i = 0; i < len; i++) {
+		        propertiesPopulator.put(name, String.valueOf(Array.get(value, i)));
+		    }
+            return;
+        }
+		
+		propertiesPopulator.put(name, String.valueOf(value));
 	}
 }

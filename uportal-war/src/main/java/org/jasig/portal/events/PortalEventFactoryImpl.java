@@ -19,7 +19,6 @@
 
 package org.jasig.portal.events;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -36,7 +35,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.xml.namespace.QName;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.IPortalInfoProvider;
 import org.jasig.portal.events.PortalEvent.PortalEventBuilder;
@@ -50,6 +48,7 @@ import org.jasig.portal.services.GroupService;
 import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.utils.IncludeExcludeUtils;
+import org.jasig.portal.utils.RandomTokenGenerator;
 import org.jasig.portal.utils.SerializableObject;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
@@ -73,14 +72,13 @@ import com.google.common.collect.ImmutableMap.Builder;
  * @author Eric Dalquist
  * @version $Revision$
  */
-@Service
+@Service("portalEventFactory")
 public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationEventPublisherAware {
     private static final String EVENT_SESSION_MUTEX = PortalEventFactoryImpl.class.getName() + ".EVENT_SESSION_MUTEX";
     private static final String EVENT_SESSION_ID_ATTR = PortalEventFactoryImpl.class.getName() + ".EVENT_SESSION_ID_ATTR";
     
     protected final ConditionalExceptionLogger logger = new ConditionalExceptionLoggerImpl(LoggerFactory.getLogger(getClass()));
     
-    private final SecureRandom sessionIdTokenGenerator = new SecureRandom();
     private final AtomicReference<String> systemSessionId = new AtomicReference<String>();
     
     private int maxParameters = 50;
@@ -352,22 +350,16 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
         this.applicationEventPublisher.publishEvent(portletEventExecutionEvent);
     }
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.events.IPortalEventFactory#publishPortletRenderHeaderExecutionEvent(javax.servlet.http.HttpServletRequest, java.lang.Object, java.lang.String, long, boolean)
-     */
+    
     @Override
     public void publishPortletRenderHeaderExecutionEvent(HttpServletRequest request, Object source, String fname,
-            long executionTime, Map<String, List<String>> parameters, boolean targeted) {
-
+            long executionTime, Map<String, List<String>> parameters, boolean targeted, boolean cached) {
         parameters = pruneParameters(parameters);
         final PortalEventBuilder eventBuilder = this.createPortalEventBuilder(source, request);
-        final PortletRenderHeaderExecutionEvent portletRenderHeaderExecutionEvent = new PortletRenderHeaderExecutionEvent(eventBuilder, fname, executionTime, parameters, targeted);
+        final PortletRenderHeaderExecutionEvent portletRenderHeaderExecutionEvent = new PortletRenderHeaderExecutionEvent(eventBuilder, fname, executionTime, parameters, targeted, cached);
         this.applicationEventPublisher.publishEvent(portletRenderHeaderExecutionEvent);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.events.IPortalEventFactory#publishPortletRenderExecutionEvent(javax.servlet.http.HttpServletRequest, java.lang.Object, java.lang.String, long, boolean, boolean)
-     */
     @Override
     public void publishPortletRenderExecutionEvent(HttpServletRequest request, Object source, String fname, long executionTime,
             Map<String, List<String>> parameters, boolean targeted, boolean cached) {
@@ -378,26 +370,24 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
         this.applicationEventPublisher.publishEvent(portletRenderExecutionEvent);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.events.IPortalEventFactory#publishPortletResourceExecutionEvent(javax.servlet.http.HttpServletRequest, java.lang.Object, java.lang.String, long, java.lang.String, boolean)
-     */
     @Override
     public void publishPortletResourceExecutionEvent(HttpServletRequest request, Object source, String fname, long executionTime,
-            Map<String, List<String>> parameters, String resourceId, boolean cached) {
+            Map<String, List<String>> parameters, String resourceId, boolean usedBrowserCache, boolean usedPortalCache) {
 
         parameters = pruneParameters(parameters);
         final PortalEventBuilder eventBuilder = this.createPortalEventBuilder(source, request);
-        final PortletResourceExecutionEvent portletResourceExecutionEvent = new PortletResourceExecutionEvent(eventBuilder, fname, executionTime, parameters, resourceId, cached);
+        final PortletResourceExecutionEvent portletResourceExecutionEvent = new PortletResourceExecutionEvent(
+                eventBuilder, fname, executionTime, parameters, resourceId, usedBrowserCache, usedPortalCache);
         this.applicationEventPublisher.publishEvent(portletResourceExecutionEvent);
     }
     
     @Override
-    public void publishPortalRenderEvent(HttpServletRequest request, Object source, String requestPathInfo, long executionTime, 
+    public void publishPortalRenderEvent(HttpServletRequest request, Object source, String requestPathInfo, long executionTimeNano, 
             IPortalRequestInfo portalRequestInfo) {
         final PortalEventBuilder eventBuilder = this.createPortalEventBuilder(source, request);
         
         final Map<String, List<String>> portalParameters = this.pruneParameters(portalRequestInfo.getPortalParameters());
-        final PortalRenderEvent portalRenderEvent = new PortalRenderEvent(eventBuilder, requestPathInfo, executionTime,
+        final PortalRenderEvent portalRenderEvent = new PortalRenderEvent(eventBuilder, requestPathInfo, executionTimeNano,
                 portalRequestInfo.getUrlState(), portalRequestInfo.getUrlType(), portalParameters,
                 portalRequestInfo.getTargetedLayoutNodeId());
         
@@ -432,7 +422,8 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
         return this.personManager.getPerson(request);
     }
 
-    protected String getPortalEventSessionId(HttpServletRequest request, IPerson person) {
+    @Override
+    public String getPortalEventSessionId(HttpServletRequest request, IPerson person) {
         if (request == null) {
             try {
                 request = this.portalRequestUtils.getCurrentPortalRequest();
@@ -487,9 +478,7 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
      * Creates an event session id for the person 
      */
     protected String createSessionId(IPerson person) {
-        final byte[] tokenData = new byte[8];
-        this.sessionIdTokenGenerator.nextBytes(tokenData);
-        return System.currentTimeMillis() + "_" + person.getUserName() + "_" + Base64.encodeBase64URLSafeString(tokenData);
+        return RandomTokenGenerator.INSTANCE.generateRandomToken(8);
     }
     
     protected Set<String> getGroupsForUser(IPerson person) {

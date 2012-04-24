@@ -19,12 +19,11 @@
 
 package org.jasig.portal.layout.dao.jpa;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -42,6 +41,8 @@ import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.test.BaseJpaDaoTest;
+import org.jasig.portal.utils.MapPopulator;
+import org.jasig.portal.utils.PropertiesPopulator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -234,9 +235,9 @@ public class JpaStylesheetDescriptorDaoTest extends BaseJpaDaoTest {
                 final IStylesheetUserPreferences stylesheetUserPreferences = stylesheetUserPreferencesDao.getStylesheetUserPreferences(supId);
                 
                 assertNotNull(stylesheetUserPreferences);
-                assertEquals(Collections.singletonMap("activeTab", "1"), stylesheetUserPreferences.getStylesheetParameters());
-                assertEquals(Collections.singletonMap("media", "xhtml"), stylesheetUserPreferences.getOutputProperties());
-                assertEquals(Collections.singletonMap("deletable", "false"), stylesheetUserPreferences.getLayoutAttributes("u1l1n1"));
+                assertEquals(Collections.singletonMap("activeTab", "1"), stylesheetUserPreferences.populateStylesheetParameters(new MapPopulator<String, String>()).getMap());
+                assertEquals(Collections.singletonMap("media", "xhtml"), stylesheetUserPreferences.populateOutputProperties(new PropertiesPopulator()).getProperties());
+                assertEquals(Collections.singletonMap("deletable", "false"), stylesheetUserPreferences.populateLayoutAttributes("u1l1n1", new MapPopulator<String, String>()).getMap());
                 
                 return null;
             }
@@ -250,9 +251,9 @@ public class JpaStylesheetDescriptorDaoTest extends BaseJpaDaoTest {
                 final IStylesheetUserPreferences stylesheetUserPreferences = stylesheetUserPreferencesDao.getStylesheetUserPreferences(stylesheetDescriptor, person, userProfile);
                 
                 assertNotNull(stylesheetUserPreferences);
-                assertEquals(Collections.singletonMap("activeTab", "1"), stylesheetUserPreferences.getStylesheetParameters());
-                assertEquals(Collections.singletonMap("media", "xhtml"), stylesheetUserPreferences.getOutputProperties());
-                assertEquals(Collections.singletonMap("deletable", "false"), stylesheetUserPreferences.getLayoutAttributes("u1l1n1"));
+                assertEquals(Collections.singletonMap("activeTab", "1"), stylesheetUserPreferences.populateStylesheetParameters(new MapPopulator<String, String>()).getMap());
+                assertEquals(Collections.singletonMap("media", "xhtml"), stylesheetUserPreferences.populateOutputProperties(new PropertiesPopulator()).getProperties());
+                assertEquals(Collections.singletonMap("deletable", "false"), stylesheetUserPreferences.populateLayoutAttributes("u1l1n1", new MapPopulator<String, String>()).getMap());
                 
                 stylesheetUserPreferencesDao.deleteStylesheetUserPreferences(stylesheetUserPreferences);
                 

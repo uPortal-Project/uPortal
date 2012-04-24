@@ -46,6 +46,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
 import org.jasig.portal.dao.usertype.NullSafeStringColumnMapper;
 import org.jasig.portal.portlet.om.IPortletPreference;
@@ -56,6 +57,7 @@ import org.jasig.portal.portlet.om.IPortletPreference;
  */
 @Entity
 @Table(name = "UP_PORTLET_PREF")
+@org.hibernate.annotations.Table(appliesTo = "UP_PORTLET_PREF", indexes = @Index(name = "IDX_UPP_PREFS_ID", columnNames = "PORTLET_PREFS_ID"))
 @SequenceGenerator(
         name="UP_PORTLET_PREF_GEN",
         sequenceName="UP_PORTLET_PREF_SEQ",

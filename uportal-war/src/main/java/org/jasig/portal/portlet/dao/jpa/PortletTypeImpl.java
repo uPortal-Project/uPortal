@@ -179,7 +179,7 @@ public class PortletTypeImpl implements Serializable, IPortletType {
             return true;
         if (obj == null)
             return false;
-        if (IPortletType.class.isAssignableFrom(obj.getClass()))
+        if (!IPortletType.class.isAssignableFrom(obj.getClass()))
             return false;
         IPortletType other = (IPortletType) obj;
         if (this.name == null) {

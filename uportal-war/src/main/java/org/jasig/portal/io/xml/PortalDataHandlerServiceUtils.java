@@ -26,7 +26,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.jasig.portal.logging.AppendableLogger;
-import org.jasig.portal.logging.AppendableLogger.Level;
+import org.jasig.portal.logging.LogLevel;
 import org.jasig.portal.utils.TableFormatter;
 import org.jasig.portal.utils.TableFormatter.TableEntry;
 import org.slf4j.Logger;
@@ -45,7 +45,7 @@ public final class PortalDataHandlerServiceUtils {
     }
     
     public static void format(IPortalDataHandlerService dataHandlerService, Logger l) {
-        final Formatter f = new Formatter(new AppendableLogger(l, Level.INFO));
+        final Formatter f = new Formatter(new AppendableLogger(l, LogLevel.INFO));
         
         final Map<String, Set<Operations>> portalDataTypes = new TreeMap<String, Set<Operations>>();
         
@@ -70,6 +70,30 @@ public final class PortalDataHandlerServiceUtils {
         }
         
         tableFormatter.format(f);
+    }
+    
+    public static void format(Iterable<? extends IPortalData> data, Logger l) {
+        final Formatter f = new Formatter(new AppendableLogger(l, LogLevel.INFO));
+        
+        final TableFormatter tableFormatter = new TableFormatter(
+                new TableEntry<String>("sysid", "-", "s"),
+                new TableEntry<String>("Description", "-", "s"));
+        
+        for (final IPortalData it : data) {
+            final String dataId = it.getDataId();
+            
+            String dataTitle = it.getDataTitle();
+            if (dataTitle == null || dataTitle.equals(dataId)) {
+                dataTitle = "";
+            }
+
+            tableFormatter.addRow(
+                    new TableEntry<String>(dataId, "-", "s"),
+                    new TableEntry<String>(dataTitle, "-", "s"));
+        }
+        
+        tableFormatter.format(f);
+        
     }
 
     /**
