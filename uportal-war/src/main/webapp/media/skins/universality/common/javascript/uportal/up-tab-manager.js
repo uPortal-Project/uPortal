@@ -114,7 +114,8 @@ var up = up || {};
                         that.events.onTabEdit.fire(newValue, oldValue, editNode, viewNode);
                     }
                 },
-                submitOnEnter: that.options.submitOnEnter
+                submitOnEnter: that.options.submitOnEnter,
+                useTooltip: false
             });
             
             // Mouseenter event listener. Give focus to the
