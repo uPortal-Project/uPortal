@@ -48,6 +48,25 @@ var up = up || {};
 (function ($, fluid) {
   
     /**
+     * Set up the edit container and append the edit field to the container.  If an edit container
+     * is not provided, default markup is created.
+     * 
+     * @param {Object} displayContainer The display mode container 
+     * @param {Object} editField The edit field that is to be appended to the edit container 
+     * @param {Object} editContainer The edit container markup provided by the integrator   
+     * 
+     * @return eContainer The edit container containing the edit field   
+     */
+    fluid.inlineEdit.setupEditContainer = function (displayContainer, editField, editContainer) {
+        var eContainer = $(editContainer);
+        eContainer = eContainer.length ? eContainer : $("<div class='fl-inlineEditContainer'></div>");
+        displayContainer.parent().after(eContainer);
+        eContainer.append(editField);
+        
+        return eContainer;
+    };
+  
+    /**
      * Set up the textEditButton.  Append a background image with appropriate
      * descriptive text to the button.
      * 
@@ -104,11 +123,13 @@ var up = up || {};
                         // Hide gripper & remove icon.
                         remove.hide();
                         gripper.hide();
+                        edit.hide();
                     },
                     afterFinishEdit: function (newValue, oldValue, editNode, viewNode) {
                         // Show gripper & remove icon.
                         remove.show();
                         gripper.filter(".active").show();
+                        edit.show();
                         
                         // Fire afterFinishEdit event.
                         that.events.onTabEdit.fire(newValue, oldValue, editNode, viewNode);

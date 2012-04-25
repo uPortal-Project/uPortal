@@ -462,11 +462,13 @@
 .up #portalNavigation .portal-navigation .portal-navigation-link {
   /* Anchor tag within the list item. */
   display: block;
-  padding: 8px 20px;
   color: white;
   text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.7);
   text-decoration: none;
   font-weight: bold;
+}
+.up #portalNavigation .portal-navigation .portal-navigation-link, .up #portalNavigation .portal-navigation .fl-inlineEditContainer {
+  padding: 8px 20px;
 }
 .up #portalNavigation .portal-navigation:hover, .up #portalNavigation .portal-navigation:focus {
   /* Tab hover. */
@@ -1254,38 +1256,7 @@
   color: #b1becf;
   font-size: 80%;
 }
-.up #portalPageFooter #portalPageFooterNav {
-	background: #3F5066;
-	font-size: 13px;
-}
-.up #portalPageFooter #portalPageFooterNav .fl-container-flex {
-	width: 960px;
-	margin: 0 auto;
-	padding: 2em 0 0 0;
-}
-.up #portalPageFooter #portalPageFooterNav div > a {
-	font-weight: bold;
-}
-.up #portalPageFooter #portalPageFooterNav div > a:link {
-	color: #fff;
-}
-.up #portalPageFooter #portalPageFooterNav div > a:visited {
-	color: #fff;
-}
-.up #portalPageFooter #portalPageFooterNav div > a:hover {
-	color: #699bc4;
-}
-.up #portalPageFooter #portalPageFooterNav .fl-col {
-	margin-bottom: 2em;
-}
-.up #portalPageFooter #portalPageFooterNav ul {
-	margin: 1em 0 0 1em;
-}
-.up #portalPageFooter #portalPageFooterNav ul li {
-	list-style: none;
-	line-height: 1.5em;
-}
-.up #portalPageFooter #portalPageFooterContent {
+.up #portalPageFooter #portalPageFooterInner {
   margin: 0 auto;
   padding: 25px;
   width: 620px;
@@ -1521,9 +1492,4 @@
 .up #portalPageHeader #portalPageBar #portalWelcome .user-name {
   /* Emphasize the user's name. */
   font-weight: bold;
-}
-
-/*alerts area*/
-.up #portalHeaderBlock {
-    background: #294D6B;
 }
