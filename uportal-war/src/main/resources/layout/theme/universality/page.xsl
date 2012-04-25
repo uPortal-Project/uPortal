@@ -83,7 +83,7 @@
       </xsl:choose>
     </xsl:variable>
     
-    <html>
+    <html lang="en">
       <head>
         <title>
           <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
