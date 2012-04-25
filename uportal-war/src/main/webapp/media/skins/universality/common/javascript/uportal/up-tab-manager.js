@@ -67,7 +67,7 @@ var up = up || {};
     };
   
     /**
-     * Set up the textEditButton.  Append a background image with appropriate
+     * Set up the textEditButton. Append a background image with appropriate
      * descriptive text to the button.
      * 
      * @return {jQuery} The accessible button located after the display text
@@ -75,7 +75,7 @@ var up = up || {};
     fluid.inlineEdit.setupTextEditButton = function (that) {
         var opts = that.options;
         var textEditButton = that.locate("textEditButton");
-      
+
         if (textEditButton.length === 0) {
             var markup = $("<span class='flc-inlineEdit-textEditButton'></span>");
             markup.addClass(opts.styles.textEditButton);       
@@ -90,7 +90,7 @@ var up = up || {};
             });        
           
             that.locate("text").after(markup);
-          
+
             // Refresh the textEditButton with the newly appended options
             textEditButton = that.locate("textEditButton");
         } 

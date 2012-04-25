@@ -175,7 +175,7 @@
                     </xsl:with-param>
                   </xsl:call-template>
                 </xsl:variable>
-                <a name="{@ID}" id="{@ID}" href="{$portletMaxUrl}"> <!-- Reference anchor for page focus on refresh and link to focused view of channel. -->
+                <a id="{@ID}" href="{$portletMaxUrl}"> <!-- Reference anchor for page focus on refresh and link to focused view of channel. -->
                   {up-portlet-title(<xsl:value-of select="@ID" />)}
                 </a>
               </h2>
