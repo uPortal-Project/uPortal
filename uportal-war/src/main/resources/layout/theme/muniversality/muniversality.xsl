@@ -299,7 +299,7 @@
 | Template contents can be any valid XSL or XHTML.
 -->
 <xsl:template match="/">
-    <html>
+    <html lang="{substring-before($USER_LANG,'-')}">
         <head>
             <xsl:call-template name="page.title" />
             <xsl:call-template name="page.meta" />
