@@ -2,18 +2,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>org.jasig.portal</groupId>
-        <artifactId>uportal-parent</artifactId>
-        <version>4.0.6-SNAPSHOT</version>
+        <groupId>org.jasig.ssp.platform</groupId>
+        <artifactId>platform-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jasig.portal.portlets-overlay</groupId>
-    <artifactId>uportal-portlets-overlay</artifactId>
+    <groupId>org.jasig.ssp.platform.portlets-overlay</groupId>
+    <artifactId>platform-portlets-overlay</artifactId>
     <packaging>pom</packaging>
 
-    <name>uPortal Portlets</name>
-    <description>Parent package for portlets deployed with uPortal.</description>
+    <name>SSP Platform Portlets</name>
+    <description>Parent package for portlets deployed with SSP.</description>
 
     <modules>
         <module>cas</module>

@@ -8,19 +8,19 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jasig.portal</groupId>
-    <artifactId>uportal-parent</artifactId>
-    <version>4.0.6-SNAPSHOT</version>
+    <groupId>org.jasig.ssp.platform</groupId>
+    <artifactId>platform-parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>uPortal Parent</name>
-    <description>The root project definition for the uPortal project.</description>
-    <url>${jasig-site-base}/uportal/${project.version}</url>
+    <name>SSP Platform Parent</name>
+    <description>The root project definition for the SSP Platform project.</description>
+    <url>http://www.studentsuccessplan.org/</url>
     
     <scm>
-        <connection>scm:git:git://github.com/Jasig/uPortal.git</connection>
-        <developerConnection>scm:git:git@github.com:Jasig/uPortal.git</developerConnection>
-        <url>https://github.com/Jasig/uPortal</url>
+        <connection>scm:git:git://github.com/russlittle/SSP-Platform.git</connection>
+        <developerConnection>scm:git:git@github.com:russlittle/SSP-Platform.git</developerConnection>
+        <url>https://github.com/russlittle/SSP-Platform</url>
     </scm>
 
     <issueManagement>
@@ -28,7 +28,8 @@
         <system>${jasig-issues-system}</system>
     </issueManagement>
     
-    <ciManagement>
+    <!-- CHANGE ME
+    ciManagement>
         <system>bamboo</system>
         <url>http://developer.jasig.org/bamboo/browse/UP</url>
         <notifiers>
@@ -41,7 +42,7 @@
                 <configuration><address>uportal-dev@lists.ja-sig.org</address></configuration>
             </notifier>
         </notifiers>
-    </ciManagement>
+    </ciManagement-->
 
     <repositories>
         <repository>            
@@ -79,14 +80,14 @@
 
 
     <properties>
-        <!-- The final name of the uPortal web-application -->
-        <uportal.docbase>uPortal</uportal.docbase>
-        <project-site-path>/uportal/${project.version}</project-site-path>
+        <!-- The final name of the SSP Platform web-application -->
+        <ssp.docbase>ssp-platform</ssp.docbase>
+        <!--project-site-path>/uportal/${project.version}</project-site-path-->
         
-        <!-- The JDBC Driver used by uPortal -->
-        <jdbc.groupId>org.hsqldb</jdbc.groupId>
-        <jdbc.artifactId>hsqldb</jdbc.artifactId>
-        <jdbc.version>${hsqldb.version}</jdbc.version>
+        <!-- The JDBC Driver used by SSP -->
+        <jdbc.groupId>postgresql</jdbc.groupId>
+        <jdbc.artifactId>postgresql</jdbc.artifactId>
+        <jdbc.version>${postgresql.version}</jdbc.version>
     
         <!--
          | Environment name and filters file for environment-specific build
@@ -171,6 +172,7 @@
         <oro.version>2.0.8</oro.version>
         <persistence-api.version>1.0</persistence-api.version>
         <person-directory.version>1.5.0</person-directory.version>
+        <postgresql.version>8.4-701.jdbc4</postgresql.version>
         <pluto.version>2.1.0-M2</pluto.version>
         <portlet-api.version>2.0</portlet-api.version>
         <quartz.version>1.8.4</quartz.version>
@@ -184,7 +186,6 @@
         <stax-api.version>1.0.1</stax-api.version>
         <staxmate.version>2.0.1</staxmate.version>
         <stringtemplate.version>4.0.2</stringtemplate.version>
-        <uportal-ear-deployer.version>1.0.1</uportal-ear-deployer.version>
         <usertype.version>3.0.0.CR1</usertype.version>
         <woodstox.version>4.1.2</woodstox.version>
         <xmlunit.version>1.3</xmlunit.version>
@@ -656,9 +657,9 @@
                 <version>${cas-clearpass.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jasig.portal</groupId>
-                <artifactId>uportal-ear-deployer</artifactId>
-                <version>${uportal-ear-deployer.version}</version>
+                <groupId>org.jasig.ssp.platform</groupId>
+                <artifactId>platform-ear-deployer</artifactId>
+                <version>${platform-ear-deployer.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jasig.resourceserver</groupId>
@@ -1100,7 +1101,7 @@
                     <configuration>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
                         <localCheckout>true</localCheckout>
-                        <tagNameFormat>uportal-@{project.version}</tagNameFormat>
+                        <tagNameFormat>ssp-@{project.version}</tagNameFormat>
                         <pushChanges>false</pushChanges>
                     </configuration>
                 </plugin>
@@ -1215,7 +1216,8 @@
         <!-- 
          | Used by the continuous integrations server to deploy the project site.
          +-->
-        <profile>
+        <!-- CHANGE ME
+        profile>
             <id>ci-local-site</id>
             <distributionManagement>
                 <site>
@@ -1223,12 +1225,13 @@
                     <url>${jasig-site-ci-dist-base}/uportal/${project.version}</url>
                 </site>
             </distributionManagement>
-        </profile>
+        </profile-->
         <!-- 
          | Should be activated manually by a developer that wishes to deploy a maven site for
          | the project
          +-->
-        <profile>
+        <!-- CHANGE ME
+        profile>
             <id>manual-site</id>
             <distributionManagement>
                 <site>
@@ -1236,6 +1239,6 @@
                     <url>${jasig-site-dist-base}/uportal/${project.version}</url>
                 </site>
             </distributionManagement>
-        </profile>
+        </profile-->
     </profiles>
 </project>

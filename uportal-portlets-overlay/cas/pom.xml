@@ -2,9 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>org.jasig.portal.portlets-overlay</groupId>
-        <artifactId>uportal-portlets-overlay</artifactId>
-        <version>4.0.6-SNAPSHOT</version>
+        <groupId>org.jasig.ssp.platform.portlets-overlay</groupId>
+        <artifactId>platform-portlets-overlay</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -15,13 +15,13 @@
     <description>Overlay on the CAS Server WAR.</description>
     
     <dependencyManagement>
-    	<dependencies>
-    		<dependency>
-    			<groupId>org.slf4j</groupId>
-    			<artifactId>slf4j-api</artifactId>
-    			<version>1.5.8</version>
-    		</dependency>
-    	</dependencies>
+        <dependencies>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.5.8</version>
+            </dependency>
+        </dependencies>
     </dependencyManagement>
 
     <dependencies>
@@ -37,10 +37,10 @@
             <artifactId>spring-jdbc</artifactId>
             <scope>provided</scope>
             <exclusions>
-            	<exclusion>
-            		<artifactId>commons-logging</artifactId>
-            		<groupId>commons-logging</groupId>
-            	</exclusion>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         
@@ -67,10 +67,10 @@
             <version>${cas-server.version}</version>
             <scope>provided</scope>
             <exclusions>
-            	<exclusion>
-            		<artifactId>commons-logging</artifactId>
-            		<groupId>commons-logging</groupId>
-            	</exclusion>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         
@@ -114,10 +114,10 @@
             <version>${casclient.version}</version>
             <scope>runtime</scope>
             <exclusions>
-            	<exclusion>
-            		<artifactId>commons-logging</artifactId>
-            		<groupId>commons-logging</groupId>
-            	</exclusion>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         

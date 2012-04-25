@@ -2,29 +2,29 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>org.jasig.portal</groupId>
-        <artifactId>uportal-parent</artifactId>
-        <version>4.0.6-SNAPSHOT</version>
+        <groupId>org.jasig.ssp.platform</groupId>
+        <artifactId>platform-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jasig.portal</groupId>
-    <artifactId>uportal-ear</artifactId>
+    <groupId>org.jasig.ssp.platform</groupId>
+    <artifactId>platform-ear</artifactId>
     <packaging>ear</packaging>
 
-    <name>uPortal EAR</name>
-    <description>The complete uPortal package including dependent portlets.</description>
+    <name>SSP Platform EAR</name>
+    <description>The complete SSP package including dependent portlets.</description>
 
     <dependencies>
         <dependency>
-            <groupId>org.jasig.portal</groupId>
-            <artifactId>uportal-war</artifactId>
+            <groupId>org.jasig.ssp.platform</groupId>
+            <artifactId>platform-war</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
 
         <dependency>
-            <groupId>org.jasig.portal.portlets-overlay</groupId>
+            <groupId>org.jasig.ssp.platform.portlets-overlay</groupId>
             <artifactId>cas</artifactId>
             <version>${project.version}</version>
             <type>war</type>
@@ -38,7 +38,7 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jasig.portal.portlets-overlay</groupId>
+            <groupId>org.jasig.ssp.platform.portlets-overlay</groupId>
             <artifactId>NotificationPortlet</artifactId>
             <version>${project.version}</version>
             <type>war</type>
@@ -80,7 +80,7 @@
     </dependencies>
 
     <build>
-        <finalName>${uportal.docbase}</finalName>
+        <finalName>${ssp.docbase}</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-deploy-plugin</artifactId>
@@ -93,19 +93,19 @@
                 <configuration>
                     <modules>
                         <webModule>
-                            <groupId>org.jasig.portal</groupId>
-                            <artifactId>uportal-war</artifactId>
-                            <bundleFileName>${uportal.docbase}.war</bundleFileName>
-                            <contextRoot>/${uportal.docbase}</contextRoot>
+                            <groupId>org.jasig.ssp.platform</groupId>
+                            <artifactId>platform-war</artifactId>
+                            <bundleFileName>${ssp.docbase}.war</bundleFileName>
+                            <contextRoot>/${ssp.docbase}</contextRoot>
                         </webModule>
                         <webModule>
-                            <groupId>org.jasig.portal.portlets-overlay</groupId>
+                            <groupId>org.jasig.ssp.platform.portlets-overlay</groupId>
                             <artifactId>cas</artifactId>
                             <bundleFileName>cas.war</bundleFileName>
                             <contextRoot>/cas</contextRoot>
                         </webModule>
                         <webModule>
-                            <groupId>org.jasig.portal.portlets-overlay</groupId>
+                            <groupId>org.jasig.ssp.platform.portlets-overlay</groupId>
                             <artifactId>NotificationPortlet</artifactId>
                             <bundleFileName>NotificationPortlet.war</bundleFileName>
                             <contextRoot>/NotificationPortlet</contextRoot>
