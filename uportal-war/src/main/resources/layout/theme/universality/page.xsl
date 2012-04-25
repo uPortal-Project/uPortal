@@ -98,6 +98,7 @@
           <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
         </title>
         <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <xsl:if test="/layout_fragment">
         	<meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT" />
         	<meta http-equiv="pragma" content="no-cache" />
