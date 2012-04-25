@@ -74,13 +74,15 @@
                         </div>
                         <div class="categories">
                             <h4><xsl:value-of select="upMsg:getMessage('categories', $USER_LANG)"/></h4>
-                            <ul>
                                 <div class="category-choice-container">
-                                    <li class="category-choice">
-                                        <a href="javascript:;" class="category-choice-link"><span class="category-choice-name"></span></a>
-                                    </li>
+                                    <ul>
+                                        <li class="category-choice">
+                                            <a href="javascript:;" class="category-choice-link">
+                                                <span class="category-choice-name"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
                                 </div>
-                            </ul>
                             <div class="clear-float"></div>
                         </div>
                     </div>
@@ -138,13 +140,15 @@
                         </div>
                         <div class="categories">
                             <h4><xsl:value-of select="upMsg:getMessage('categories', $USER_LANG)"/></h4>
-                            <ul>
-                                <div class="category-choice-container">
+                            <div class="category-choice-container">
+                                <ul>
                                     <li class="category-choice">
-                                        <a href="javascript:;" class="category-choice-link"><span class="category-choice-name"></span></a>
+                                        <a href="javascript:;" class="category-choice-link">
+                                            <span class="category-choice-name"></span>
+                                        </a>
                                     </li>
-                                </div>
-                            </ul>
+                                </ul>
+                            </div>
                             <div class="clear-float"></div>
                         </div>
                     </div>
