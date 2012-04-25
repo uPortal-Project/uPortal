@@ -51,16 +51,16 @@
                     <h3 class="title" role="heading"><spring:message code="password"/></h3>
                 </div>
                 <div class="content">
-                    <table>
+                    <table class="portlet-table">
                         <tbody>
 
                             <!--  Password and confirm password -->
                             <tr>
-                                <td class="attribute-name"><spring:message code="new.password"/></td>
+                                <td class="attribute-name"><strong><spring:message code="new.password"/></strong></td>
                                 <td><form:password path="password"/></td>
                             </tr>
                             <tr>
-                                <td class="attribute-name"><spring:message code="confirm.password"/></td>
+                                <td class="attribute-name"><strong><spring:message code="confirm.password"/></strong></td>
                                 <td><form:password path="confirmPassword"/></td>
                             </tr>
 
