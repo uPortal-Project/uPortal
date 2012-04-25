@@ -586,7 +586,16 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                 final String[] state = parameterMap.remove(LEGACY_PARAM_PORTLET_STATE);
                 if (state != null && state.length > 0) {
                     final WindowState windowState = PortletUtils.getWindowState(state[0]);
-                    portletRequestInfo.setWindowState(windowState);
+
+                    //If this isn't an action request only allow PATH communicated WindowStates as none of the other options make sense 
+                    if (portalRequestInfo.getUrlType() == UrlType.ACTION || PATH_WINDOW_STATES.contains(windowState)) {
+                        portletRequestInfo.setWindowState(windowState);
+                    }
+                }
+                
+                //If no window state was set assume MAXIMIZED
+                if (portletRequestInfo.getWindowState() == null) {
+                    portletRequestInfo.setWindowState(WindowState.MAXIMIZED);
                 }
                 
                 //Set the portlet mode
