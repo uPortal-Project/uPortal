@@ -1271,12 +1271,6 @@
   color: #767676;
   font-size: 80%;
 }
-.up #portalPageFooter #portalPageFooterInner {
-  margin: 0 auto;
-  padding: 25px;
-  width: 620px;
-  background: transparent url("images/portal_poweredby.png") 25px 65px no-repeat;
-}
 .up #portalPageFooter a {
   /* Generally want footer links to blend in with the footer. */
   color: #a9a9a9;
@@ -1284,6 +1278,43 @@
 }
 .up #portalPageFooter a:hover, .up #portalPageFooter a:focus {
   color: #5a5a5a;
+}
+.up #portalPageFooter #portalPageFooterContent {
+  margin: 0 auto;
+  padding: 25px;
+  width: 620px;
+  background: transparent url("images/portal_poweredby.png") 25px 65px no-repeat;
+}
+.up #portalPageFooter #portalPageFooterNav {
+  background: #1E2126;
+  font-size: 13px;
+}
+.up #portalPageFooter #portalPageFooterNav .fl-container-flex {
+  width: 960px;
+  margin: 0 auto;
+  padding: 2em 0 0 0;
+}
+.up #portalPageFooter #portalPageFooterNav div > a {
+  font-weight: bold;
+}
+.up #portalPageFooter #portalPageFooterNav div > a:link {
+  color: #fff;
+}
+.up #portalPageFooter #portalPageFooterNav div > a:visited {
+  color: #fff;
+}
+.up #portalPageFooter #portalPageFooterNav div > a:hover {
+  color: #699bc4;
+}
+.up #portalPageFooter #portalPageFooterNav .fl-col {
+  margin-bottom: 2em;
+}
+.up #portalPageFooter #portalPageFooterNav ul {
+  margin: 1em 0 0 1em;
+}
+.up #portalPageFooter #portalPageFooterNav ul li {
+  list-style: none;
+  line-height: 1.5em;
 }
 .up #portalPageFooter #portalPageFooterLinks {
   /* This list of footer links needs a little more attention than the rest of the footer stuff. */
