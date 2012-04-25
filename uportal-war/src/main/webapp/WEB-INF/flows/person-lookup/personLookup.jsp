@@ -37,20 +37,27 @@
     
     <!-- Portlet Content -->
     <div class="fl-widget-content content portlet-content" role="main">
-        
-        <div class="portlet-form">
+
+        <div class="portlet-content">
             <form id="${n}personQueryForm" action="${queryUrl}">
-                <table class="purpose-layout">
+                <table class="portlet-table">
+                    <thead>
+                      <tr>
+                          <th><spring:message code="attribute.name"/></th>
+                          <th><spring:message code="attribute.value"/></th>
+                      </tr>
+                    </thead>
                     <tbody>
                         <c:forEach var="queryAttribute" items="${queryAttributes}">
                             <tr>
-                                <td class="label">
+                                <td class="attribute-name">
                                     <label for="attributes['${queryAttribute}'].value">
-                                        <spring:message code="attribute.displayName.${queryAttribute}" text="${queryAttribute}"/> (${ fn:escapeXml(queryAttribute) })
+                                        <strong><spring:message code="attribute.displayName.${queryAttribute}" text="${queryAttribute}"/></strong>
+                                        ${ fn:escapeXml(queryAttribute) }
                                     </label>
                                 </td>
-                                <td>
-                                    <input id="attributes['${queryAttribute}'].value" name="${queryAttribute}"/>
+                                <td class="attribute-value">
+                                    <input type="text" id="attributes['${queryAttribute}'].value" name="${queryAttribute}"/>
                                 </td>
                             </tr>
                         </c:forEach>
@@ -61,21 +68,22 @@
                 <div class="buttons">
                     <spring:message var="searchButtonText" code="search" />
                     <input class="button primary" type="submit" class="button" name="_eventId_search" value="${searchButtonText}" />
-                    
-                    <c:if test="${showCancelButton == 'true'}">
-                        <portlet:renderURL var="cancelUrl">
-                            <portlet:param name="execution" value="${flowExecutionKey}"/>
-                            <portlet:param name="_eventId" value="cancel"/>
-                        </portlet:renderURL>
-                        <a class="button" class="button" href="${ cancelUrl }">
-                            <spring:message code="cancel" />
-                        </a>
-                    </c:if>
+
+                    <portlet:renderURL var="cancelUrl">
+                        <portlet:param name="execution" value="${flowExecutionKey}"/>
+                        <portlet:param name="_eventId" value="cancel"/>
+                    </portlet:renderURL>
+                    <a class="button" class="button" href="${ cancelUrl }">
+                        <spring:message code="cancel" />
+                    </a>
                 </div>
                 
             </form>
         </div>
-        <div id="${n}searchResults" style="display:none">
+        <div id="${n}searchResults" class="portlet-section" style="display:none" role="region">
+            <div class="titlebar">
+                <h3 role="heading" class="title">Search Results</h3>
+            </div>
             <ul class="person-search-results">
                 <li class="person-search-result">
                     <a class="person-link" href="">Person name 1</a>
@@ -99,7 +107,7 @@
 
         var templates;
 
-        var displayAttributes = [<c:forEach items="${displayAttributes}" var="attribute" varStatus="status">{ key: '<spring:escapeBody javaScriptEscape="true">${ attribute }</spring:escapeBody>', displayName: '<spring:message javaScriptEscape="true" code="attribute.displayName.${attribute}"/> (<spring:escapeBody javaScriptEscape="true">${attribute}</spring:escapeBody>)' }${ !status.last ? ',' : ''}</c:forEach>];
+        var displayAttributes = [<c:forEach items="${displayAttributes}" var="attribute" varStatus="status">{ key: '<spring:escapeBody javaScriptEscape="true">${ attribute }</spring:escapeBody>', displayName: '<spring:message javaScriptEscape="true" code="attribute.displayName.${attribute}"/>' }${ !status.last ? ',' : ''}</c:forEach>];
         
         var cutpoints = [
             { id: "personSearchResult:", selector: ".person-search-result" },
@@ -154,18 +162,24 @@
                         "<c:url value="/api/people.json"/>", 
                         data, 
                         function(data) {
-                            var tree = getResultsTree(data.people);
+                            var tree = getResultsTree(data.people), c;
                             if (!templates) {
                                 templates = fluid.selfRender($("#${n}searchResults"), tree, { cutpoints: cutpoints });
                                 $("#${n}searchResults").show();
                             } else {
                                 fluid.reRender(templates, $("#${n}searchResults"), tree, { cutpoints: cutpoints });
                             }
+                            c=tree.children.length;
+                            $("#${n}searchResults .titlebar .title").html( c + (c==1?" user" : " users") + " found" );
+                            $("#${n}searchResults .person-search-results")[ c == 0 ? "slideUp" : "slideDown" ]();
                         }
                     );
                 } else if (templates) {
+                    // A successful search was done, but now all search terms have been cleared
                     var tree = { children: [] };
                     fluid.reRender(templates, $("#${n}searchResults"), tree, { cutpoints: cutpoints });
+                    $("#${n}searchResults .titlebar .title").html( "0 users found" );
+                    $("#${n}searchResults .person-search-results").slideUp();
                 }
                 return false;
             }); 
