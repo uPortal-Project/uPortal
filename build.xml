@@ -358,7 +358,7 @@
 
     <target name="db-import-quickstart" depends="prodPrompt" description="Imports the quickstart data files to the database">
         <!-- Use build.properties to override the entities.location setting -->
-        <property name="quickstart_entities.location" value="uportal-war/src/main/data/quickstart_entities" />
+        <property name="quickstart_entities.location" value="uportal-war/src/main/data/ssp_entities" />
 
         <up-shell-batch>
             <antcall target="data-import">

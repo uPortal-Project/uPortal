@@ -45,6 +45,13 @@
         </dependency>
         
         <dependency>
+            <groupId>org.jasig.ssp.platform.portlets-overlay</groupId>
+            <artifactId>ssp</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+
+        <dependency>
             <groupId>javax.ccpp</groupId>
             <artifactId>ccpp</artifactId>
             <scope>compile</scope>
@@ -109,6 +116,12 @@
                             <artifactId>NotificationPortlet</artifactId>
                             <bundleFileName>NotificationPortlet.war</bundleFileName>
                             <contextRoot>/NotificationPortlet</contextRoot>
+                        </webModule>
+                        <webModule>
+                            <groupId>org.jasig.ssp.platform.portlets-overlay</groupId>
+                            <artifactId>ssp</artifactId>
+                            <bundleFileName>ssp.war</bundleFileName>
+                            <contextRoot>/ssp</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.jasig.resourceserver</groupId>

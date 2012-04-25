@@ -18,6 +18,7 @@
     <modules>
         <module>cas</module>
         <module>NotificationPortlet</module>
+        <module>ssp</module>
     </modules>
 
     <build>
