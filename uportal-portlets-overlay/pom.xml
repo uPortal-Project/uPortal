@@ -16,18 +16,8 @@
     <description>Parent package for portlets deployed with uPortal.</description>
 
     <modules>
-        <module>BookmarksPortlet</module>
         <module>cas</module>
-        <module>cas-proxy-test-portlet</module>
-        <module>email-preview</module>
-        <module>FunctionalTestsPortlet</module>
-        <module>jasig-widget-portlets</module>
-        <module>pluto-testsuite</module>
-        <module>NewsReaderPortlet</module>
         <module>NotificationPortlet</module>
-        <module>SimpleContentPortlet</module>
-        <module>WeatherPortlet</module>
-        <module>WebProxyPortlet</module>
     </modules>
 
     <build>
