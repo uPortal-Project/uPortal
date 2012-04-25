@@ -22,52 +22,10 @@
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
-        
-        <dependency>
-            <groupId>org.jasig.portal.portlets-overlay</groupId>
-            <artifactId>BookmarksPortlet</artifactId>
-            <version>${project.version}</version>
-            <type>war</type>
-        </dependency>
 
         <dependency>
             <groupId>org.jasig.portal.portlets-overlay</groupId>
             <artifactId>cas</artifactId>
-            <version>${project.version}</version>
-            <type>war</type>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jasig.portal.portlets-overlay</groupId>
-            <artifactId>cas-proxy-test-portlet</artifactId>
-            <version>${project.version}</version>
-            <type>war</type>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.jasig.portal.portlets-overlay</groupId>
-            <artifactId>email-preview</artifactId>
-            <version>${project.version}</version>
-            <type>war</type>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jasig.portal.portlets-overlay</groupId>
-            <artifactId>FunctionalTestsPortlet</artifactId>
-            <version>${project.version}</version>
-            <type>war</type>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jasig.portal.portlets-overlay</groupId>
-            <artifactId>jasig-widget-portlets</artifactId>
-            <version>${project.version}</version>
-            <type>war</type>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jasig.portal.portlets-overlay</groupId>
-            <artifactId>pluto-testsuite</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
@@ -78,38 +36,10 @@
             <version>${resource-server.version}</version>
             <type>war</type>
         </dependency>
-        
-        <dependency>
-            <groupId>org.jasig.portal.portlets-overlay</groupId>
-            <artifactId>NewsReaderPortlet</artifactId>
-            <version>${project.version}</version>
-            <type>war</type>
-        </dependency>
 
         <dependency>
             <groupId>org.jasig.portal.portlets-overlay</groupId>
             <artifactId>NotificationPortlet</artifactId>
-            <version>${project.version}</version>
-            <type>war</type>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jasig.portal.portlets-overlay</groupId>
-            <artifactId>SimpleContentPortlet</artifactId>
-            <version>${project.version}</version>
-            <type>war</type>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jasig.portal.portlets-overlay</groupId>
-            <artifactId>WeatherPortlet</artifactId>
-            <version>${project.version}</version>
-            <type>war</type>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jasig.portal.portlets-overlay</groupId>
-            <artifactId>WebProxyPortlet</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
@@ -170,45 +100,9 @@
                         </webModule>
                         <webModule>
                             <groupId>org.jasig.portal.portlets-overlay</groupId>
-                            <artifactId>BookmarksPortlet</artifactId>
-                            <bundleFileName>BookmarksPortlet.war</bundleFileName>
-                            <contextRoot>/BookmarksPortlet</contextRoot>
-                        </webModule>
-                        <webModule>
-                            <groupId>org.jasig.portal.portlets-overlay</groupId>
                             <artifactId>cas</artifactId>
                             <bundleFileName>cas.war</bundleFileName>
                             <contextRoot>/cas</contextRoot>
-                        </webModule>
-                        <webModule>
-                            <groupId>org.jasig.portal.portlets-overlay</groupId>
-                            <artifactId>cas-proxy-test-portlet</artifactId>
-                            <bundleFileName>cas-proxy-test-portlet.war</bundleFileName>
-                            <contextRoot>/cas-proxy-test-portlet</contextRoot>
-                        </webModule>
-                        <webModule>
-                            <groupId>org.jasig.portal.portlets-overlay</groupId>
-                            <artifactId>email-preview</artifactId>
-                            <bundleFileName>email-preview.war</bundleFileName>
-                            <contextRoot>/email-preview</contextRoot>
-                        </webModule>
-                        <webModule>
-                            <groupId>org.jasig.portal.portlets-overlay</groupId>
-                            <artifactId>FunctionalTestsPortlet</artifactId>
-                            <bundleFileName>FunctionalTestsPortlet.war</bundleFileName>
-                            <contextRoot>/FunctionalTestsPortlet</contextRoot>
-                        </webModule>
-                        <webModule>
-                            <groupId>org.jasig.portal.portlets-overlay</groupId>
-                            <artifactId>jasig-widget-portlets</artifactId>
-                            <bundleFileName>jasig-widget-portlets.war</bundleFileName>
-                            <contextRoot>/jasig-widget-portlets</contextRoot>
-                        </webModule>
-                        <webModule>
-                            <groupId>org.jasig.portal.portlets-overlay</groupId>
-                            <artifactId>NewsReaderPortlet</artifactId>
-                            <bundleFileName>NewsReaderPortlet.war</bundleFileName>
-                            <contextRoot>/NewsReaderPortlet</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.jasig.portal.portlets-overlay</groupId>
@@ -217,34 +111,10 @@
                             <contextRoot>/NotificationPortlet</contextRoot>
                         </webModule>
                         <webModule>
-                            <groupId>org.jasig.portal.portlets-overlay</groupId>
-                            <artifactId>pluto-testsuite</artifactId>
-                            <bundleFileName>pluto-testsuite.war</bundleFileName>
-                            <contextRoot>/pluto-testsuite</contextRoot>
-                        </webModule>
-                        <webModule>
                             <groupId>org.jasig.resourceserver</groupId>
                             <artifactId>resource-server-webapp</artifactId>
                             <bundleFileName>ResourceServingWebapp.war</bundleFileName>
                             <contextRoot>/ResourceServingWebapp</contextRoot>
-                        </webModule>
-                        <webModule>
-                            <groupId>org.jasig.portal.portlets-overlay</groupId>
-                            <artifactId>SimpleContentPortlet</artifactId>
-                            <bundleFileName>SimpleContentPortlet.war</bundleFileName>
-                            <contextRoot>/SimpleContentPortlet</contextRoot>
-                        </webModule>
-                        <webModule>
-                            <groupId>org.jasig.portal.portlets-overlay</groupId>
-                            <artifactId>WeatherPortlet</artifactId>
-                            <bundleFileName>WeatherPortlet.war</bundleFileName>
-                            <contextRoot>/WeatherPortlet</contextRoot>
-                        </webModule>
-                        <webModule>
-                            <groupId>org.jasig.portal.portlets-overlay</groupId>
-                            <artifactId>WebProxyPortlet</artifactId>
-                            <bundleFileName>WebProxyPortlet.war</bundleFileName>
-                            <contextRoot>/WebProxyPortlet</contextRoot>
                         </webModule>
                     </modules>
                 </configuration>
