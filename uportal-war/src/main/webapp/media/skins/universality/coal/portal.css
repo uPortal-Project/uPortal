@@ -220,25 +220,6 @@
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#0d0d0d', EndColorStr='#404040')";
   background-image: linear-gradient(top, #0d0d0d, #404040);
 }
-.up .skip-link {
-  /* Skip-to navigation links. Make them visually hidden, but available to screen readers and focusable. */
-  border: 0;
-  clip: rect(0 0 0 0);
-  height: 1px;
-  margin: -1px;
-  overflow: hidden;
-  padding: 0;
-  position: absolute;
-  width: 1px;
-}
-.up .skip-link:focus, .up .skip-link:active {
-  clip: auto;
-  height: auto;
-  margin: 0;
-  overflow: visible;
-  position: static;
-  width: auto;
-}
 .up #portalPageBodyInner {
   /* Page body. */
   padding: 2.5em 25px;
@@ -486,11 +467,13 @@
 .up #portalNavigation .portal-navigation .portal-navigation-link {
   /* Anchor tag within the list item. */
   display: block;
-  padding: 8px 20px;
   color: white;
   text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.7);
   text-decoration: none;
   font-weight: bold;
+}
+.up #portalNavigation .portal-navigation .portal-navigation-link, .up #portalNavigation .portal-navigation .fl-inlineEditContainer {
+  padding: 8px 20px;
 }
 .up #portalNavigation .portal-navigation:hover, .up #portalNavigation .portal-navigation:focus {
   /* Tab hover. */
@@ -1288,43 +1271,6 @@
   color: #767676;
   font-size: 80%;
 }
-.up #portalPageFooter #portalPageFooterNav {
-	background: #191919;
-	font-size: 13px;
-}
-.up #portalPageFooter #portalPageFooterNav .fl-container-flex {
-	width: 960px;
-	margin: 0 auto;
-	padding: 2em 0 0 0;
-}
-.up #portalPageFooter #portalPageFooterNav div > a {
-	font-weight: bold;
-}
-.up #portalPageFooter #portalPageFooterNav div > a:link {
-	color: #fff;
-}
-.up #portalPageFooter #portalPageFooterNav div > a:visited {
-	color: #fff;
-}
-.up #portalPageFooter #portalPageFooterNav div > a:hover {
-	color: #699bc4;
-}
-.up #portalPageFooter #portalPageFooterNav .fl-col {
-	margin-bottom: 2em;
-}
-.up #portalPageFooter #portalPageFooterNav ul {
-	margin: 1em 0 0 1em;
-}
-.up #portalPageFooter #portalPageFooterNav ul li {
-	list-style: none;
-	line-height: 1.5em;
-}
-.up #portalPageFooter #portalPageFooterContent {
-  margin: 0 auto;
-  padding: 25px;
-  width: 620px;
-  background: transparent url("images/portal_poweredby.png") 25px 65px no-repeat;
-}
 .up #portalPageFooter a {
   /* Generally want footer links to blend in with the footer. */
   color: #a9a9a9;
@@ -1332,6 +1278,43 @@
 }
 .up #portalPageFooter a:hover, .up #portalPageFooter a:focus {
   color: #5a5a5a;
+}
+.up #portalPageFooter #portalPageFooterContent {
+  margin: 0 auto;
+  padding: 25px;
+  width: 620px;
+  background: transparent url("images/portal_poweredby.png") 25px 65px no-repeat;
+}
+.up #portalPageFooter #portalPageFooterNav {
+  background: #1E2126;
+  font-size: 13px;
+}
+.up #portalPageFooter #portalPageFooterNav .fl-container-flex {
+  width: 960px;
+  margin: 0 auto;
+  padding: 2em 0 0 0;
+}
+.up #portalPageFooter #portalPageFooterNav div > a {
+  font-weight: bold;
+}
+.up #portalPageFooter #portalPageFooterNav div > a:link {
+  color: #fff;
+}
+.up #portalPageFooter #portalPageFooterNav div > a:visited {
+  color: #fff;
+}
+.up #portalPageFooter #portalPageFooterNav div > a:hover {
+  color: #699bc4;
+}
+.up #portalPageFooter #portalPageFooterNav .fl-col {
+  margin-bottom: 2em;
+}
+.up #portalPageFooter #portalPageFooterNav ul {
+  margin: 1em 0 0 1em;
+}
+.up #portalPageFooter #portalPageFooterNav ul li {
+  list-style: none;
+  line-height: 1.5em;
 }
 .up #portalPageFooter #portalPageFooterLinks {
   /* This list of footer links needs a little more attention than the rest of the footer stuff. */
@@ -1558,6 +1541,3 @@
   background-position: 20px 0;
   background-repeat: repeat-x;
 }
-
-/*alerts area*/
-// none needed currently

@@ -49,7 +49,7 @@
     xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
     xsi:schemaLocation="
             https://source.jasig.org/schemas/uportal/layout/portal-url ../../../xsd/layout/portal-url-4.0.xsd"
-    exclude-result-prefixes="url upAuth upGroup upMsg upElemTitle" 
+    exclude-result-prefixes="url upAuth upGroup upMsg upElemTitle dlm xsi" 
     version="1.0">
       
   <!-- ========== TEMPLATE: NAVIGATION ========== -->
@@ -110,7 +110,6 @@
           </xsl:if>
           <!-- Tabs -->
           <div id="portalNavigationInner" class="{$CONTEXT}">
-          	<a name="mainNavigation" class="skip-link" title="Reference anchor: main nagivation"><xsl:comment>Comment to keep from collapsing</xsl:comment></a>  <!-- Skip navigation target. -->
             <ul id="portalNavigationList" class="fl-tabs flc-reorderer-column">
              <xsl:apply-templates select="tab[$USE_TAB_GROUPS!='true' or @tabGroup=$ACTIVE_TAB_GROUP]">
                <xsl:with-param name="CONTEXT" select="$CONTEXT"/>
@@ -138,7 +137,6 @@
         	<div id="portalNavigationInner" class="fl-widget-inner {$CONTEXT}">
           	<div class="fl-widget-titlebar">
                 <h2>
-                    <a name="mainNavigation" class="skip-link" title="Reference anchor: main nagivation"><xsl:value-of select="upMsg:getMessage('navigation', $USER_LANG)"/></a>  <!-- Skip navigation target. -->
                     <xsl:value-of select="upMsg:getMessage('navigation', $USER_LANG)"/>
                 </h2>
                 <xsl:if test="$AUTHENTICATED='true' and $USE_ADD_TAB='true' and not(//focused)">
@@ -262,24 +260,30 @@
     </xsl:variable>
     <li id="portalNavigation_{@ID}" class="portal-navigation {$NAV_POSITION} {$NAV_ACTIVE} {$NAV_MOVABLE} {$NAV_EDITABLE} {$NAV_DELETABLE} {$NAV_CAN_ADD_CHILDREN}"> <!-- Each navigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
       <xsl:variable name="tabLinkUrl">
-          <xsl:call-template name="portalUrl">
-            <xsl:with-param name="url">
-              <url:portal-url>
-                  <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-              </url:portal-url>
-            </xsl:with-param>
-          </xsl:call-template>
+        <xsl:call-template name="portalUrl">
+          <xsl:with-param name="url">
+            <url:portal-url>
+                <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
+            </url:portal-url>
+          </xsl:with-param>
+        </xsl:call-template>
       </xsl:variable>
-      <a id="tabLink_{@ID}" href="{$tabLinkUrl}" title="{@name}" class="portal-navigation-link {$NAV_INLINE_EDITABLE}">  <!-- Navigation item link. -->
-        <span title="{$NAV_INLINE_EDIT_TITLE}" class="portal-navigation-label {$NAV_INLINE_EDIT_TEXT}"><xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/></span>
-      </a>
+      <a id="tabLink_{@ID}" href="{$tabLinkUrl}" title="{@name}" class="portal-navigation-link {$NAV_INLINE_EDITABLE}">  
+        <span title="{$NAV_INLINE_EDIT_TITLE}" class="portal-navigation-label {$NAV_INLINE_EDIT_TEXT}">
+          <xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/>
+        </span>
+      </a> <!-- Navigation item link. -->
       <xsl:if test="$AUTHENTICATED='true' and not($PORTAL_VIEW='focused') and not(dlm:moveAllowed='false')">
-          <a href="javascript:;" class="portal-navigation-gripper {$NAV_ACTIVE}" title="{upMsg:getMessage('move.this.tab', $USER_LANG)}"><span><xsl:value-of select="upMsg:getMessage('move', $USER_LANG)"/></span></a> <!-- Drag & drop gripper handle. -->
+        <a href="javascript:;" class="portal-navigation-gripper {$NAV_ACTIVE}" title="{upMsg:getMessage('move.this.tab', $USER_LANG)}">
+          <span><xsl:value-of select="upMsg:getMessage('move', $USER_LANG)"/></span>
+        </a> <!-- Drag & drop gripper handle. -->
       </xsl:if>
       <xsl:if test="$AUTHENTICATED='true' and @activeTab='true' and $NAV_POSITION != 'single' and not($PORTAL_VIEW='focused')">
-          <xsl:if test="not(@dlm:deleteAllowed='false')">
-            <a href="javascript:;" class="portal-navigation-delete" title="{upMsg:getMessage('remove.this.tab', $USER_LANG)}"><span><xsl:value-of select="upMsg:getMessage('remove', $USER_LANG)"/></span></a><!-- Remove tab icon. -->
-          </xsl:if>
+        <xsl:if test="not(@dlm:deleteAllowed='false')">
+          <a href="javascript:;" class="portal-navigation-delete" title="{upMsg:getMessage('remove.this.tab', $USER_LANG)}">
+            <span><xsl:value-of select="upMsg:getMessage('remove', $USER_LANG)"/></span>
+          </a><!-- Remove tab icon. -->
+        </xsl:if>
       </xsl:if>
       <xsl:if test="@activeTab='true' and $CONTEXT='sidebar'"> <!-- If navigation is being rendered in the sidebar rather than as tabs, call template for rendering active menu item's submenu. -->
         <xsl:call-template name="subnavigation">

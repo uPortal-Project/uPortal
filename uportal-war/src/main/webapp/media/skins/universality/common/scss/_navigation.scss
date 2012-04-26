@@ -37,11 +37,13 @@
 			.portal-navigation-link {
 				/* Anchor tag within the list item. */
 				display: block;
-				padding: $navTabPadding;
 				color: $navTabLink;
 				@include text-shadow($navTabTextShadow);
 				text-decoration: none;
 				font-weight: $navTabWeight;
+			}
+			.portal-navigation-link, .fl-inlineEditContainer {
+			    padding: $navTabPadding;
 			}
 		}
 		.portal-navigation:hover, .portal-navigation:focus {

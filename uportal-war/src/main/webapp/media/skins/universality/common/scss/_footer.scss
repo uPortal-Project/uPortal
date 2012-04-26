@@ -12,7 +12,16 @@
 		color: $footerText;
 		font-size: $footerFontSize;
 		
-		#portalPageFooterInner {
+		a {
+			/* Generally want footer links to blend in with the footer. */
+			color: $footerLink;
+			text-decoration: $footerLinkDecoration;
+			&:hover, &:focus {
+				color: $footerLinkHover;
+			}
+		}
+		
+		#portalPageFooterContent {
 			margin: 0 auto;
 			padding: $footerInnerPadding;
     		width: $footerInnerWidth;
@@ -21,13 +30,37 @@
     		}
 		}
 		
-		a {
-			/* Generally want footer links to blend in with the footer. */
-			color: $footerLink;
-			text-decoration: $footerLinkDecoration;
-			&:hover, &:focus {
-				color: $footerLinkHover;
-			}
+		#portalPageFooterNav {
+		    background: #1E2126;
+		    font-size: 13px;
+		    
+		    .fl-container-flex {
+		        width: 960px;
+            	margin: 0 auto;
+            	padding: 2em 0 0 0;
+		    }
+		    div > a {
+            	font-weight: bold;
+            }
+            div > a:link {
+            	color: #fff;
+            }
+            div > a:visited {
+            	color: #fff;
+            }
+            div > a:hover {
+            	color: #699bc4;
+            }
+            .fl-col {
+            	margin-bottom: 2em;
+            }
+            ul {
+            	margin: 1em 0 0 1em;
+            }
+            ul li {
+            	list-style: none;
+            	line-height: 1.5em;
+            }
 		}
 		
 		#portalPageFooterLinks {
