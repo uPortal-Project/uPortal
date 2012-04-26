@@ -37,17 +37,17 @@
         
         <output name="person" />
 
-        <transition to="personLookup" on="cancelPersonLookup" />
+        <transition to="selectUserAction" on="cancelPersonLookup" />
         <transition to="viewUserDetails" on="returnSelectedPerson" />
     </subflow-state>
 
     <!--
      | User summary and links
      +-->
-    <view-state id="viewUserDetails">
-        <on-entry>
-            <set name="flashScope.servletRequest" 
-                value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
+  <view-state id="viewUserDetails">
+    <on-entry>
+      <set name="flashScope.servletRequest"
+           value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
             <set name="flashScope.user" 
                 value="personManager.getPerson(servletRequest)"/>
             <set name="viewScope.canEdit" value="userAccountHelper.canEditUser(user, person.name)"/>

@@ -65,7 +65,7 @@
     
     <!-- Portlet Body -->
     <div class="fl-widget-content content portlet-content" role="main">
-        
+
         <!-- Portlet Section -->
         <div class="portlet-section" role="region">
             <div class="titlebar">
@@ -74,13 +74,21 @@
                     <a href="${ editDetailsUrl }"><span><spring:message code="edit.user"/></span></a>
                 </div>
             </div>
-            <div class="content">
-                <table>
+            <div class="portlet-content">
+
+                <table class="portlet-table">
+                    <thead>
+                        <tr>
+                            <th><spring:message code="attribute.name"/></th>
+                            <th><spring:message code="attribute.value"/></th>
+                        </tr>
+                    </thead>
                     <c:forEach items="${ person.attributes }" var="attribute">
                         <tr>
-                            <td>
+                            <td class="attribute-name">
                                 <c:set var="attrName" value="${ attribute.key }"/>
-                                <spring:message code="attribute.displayName.${attrName}" text="${attrName}"/> (<spring:message code="${attrName}"/>)
+                                <strong><spring:message code="attribute.displayName.${attrName}" text="${attrName}"/></strong>
+                                <spring:message code="${attrName}"/>
                             </td>
                             <td>
                                 <c:forEach items="${ attribute.value }" var="value">
