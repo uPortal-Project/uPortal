@@ -49,7 +49,7 @@
     xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
     xsi:schemaLocation="
             https://source.jasig.org/schemas/uportal/layout/portal-url https://source.jasig.org/schemas/uportal/layout/portal-url-4.0.xsd"
-    exclude-result-prefixes="url upAuth upGroup upMsg" 
+    exclude-result-prefixes="url upAuth upGroup upMsg dlm xsi" 
     version="1.0">
       
   <!-- ========== TEMPLATE: PORTLET ========== -->
@@ -175,7 +175,7 @@
                     </xsl:with-param>
                   </xsl:call-template>
                 </xsl:variable>
-                <a name="{@ID}" id="{@ID}" href="{$portletMaxUrl}"> <!-- Reference anchor for page focus on refresh and link to focused view of channel. -->
+                <a id="{@ID}" href="{$portletMaxUrl}"> <!-- Reference anchor for page focus on refresh and link to focused view of channel. -->
                   {up-portlet-title(<xsl:value-of select="@ID" />)}
                 </a>
               </h2>
