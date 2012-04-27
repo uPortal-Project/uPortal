@@ -29,6 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.apache.commons.lang.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A custom HttpServletResponse wrapper that does NOT extend {@link HttpServletResponseWrapper}
@@ -40,6 +42,8 @@ import org.apache.commons.lang.Validate;
 public abstract class AbstractHttpServletResponseWrapper implements HttpServletResponse {
     public static final String PORTAL_ATTRIBUTE_PREFIX = "org.jasig.portal.";
 
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    
     private final HttpServletResponse httpServletResponse;
 
     public AbstractHttpServletResponseWrapper(HttpServletResponse httpServletResponse) {
@@ -82,11 +86,13 @@ public abstract class AbstractHttpServletResponseWrapper implements HttpServletR
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public String encodeUrl(String url) {
         return this.httpServletResponse.encodeUrl(url);
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public String encodeRedirectUrl(String url) {
         return this.httpServletResponse.encodeRedirectUrl(url);
     }
@@ -172,6 +178,7 @@ public abstract class AbstractHttpServletResponseWrapper implements HttpServletR
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void setStatus(int sc, String sm) {
         this.httpServletResponse.setStatus(sc, sm);
     }

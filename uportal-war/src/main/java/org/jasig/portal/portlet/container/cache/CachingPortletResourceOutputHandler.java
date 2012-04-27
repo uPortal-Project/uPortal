@@ -75,14 +75,21 @@ public class CachingPortletResourceOutputHandler extends CachingPortletOutputHan
         return status;
     }
 
+    public Integer getContentLength() {
+        return contentLength;
+    }
+    
+    @Override
+    public boolean containsHeader(String name) {
+        return this.headers.containsKey(name);
+    }
+
+    @Override
     public String getCharacterEncoding() {
         return characterEncoding;
     }
 
-    public Integer getContentLength() {
-        return contentLength;
-    }
-
+    @Override
     public Locale getLocale() {
         return locale;
     }
