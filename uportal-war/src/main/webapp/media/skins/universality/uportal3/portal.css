@@ -73,12 +73,12 @@
  */
 /* Use variables to store selectors. */
 /* Apply baseline form element styling. */
-.up form input[type='text'], .up form input[type='email'], .up form input[type='tel'], .up form input[type='url'], .up form input[type='search'], .up form input[type='password'], .up form select, .up form textarea {
+.up form input[type='text'], .up form input[type='email'], .up form input[type='tel'], .up form input[type='url'], .up form input[type='search'], .up form select, .up form textarea {
   font-family: serif;
   border: 1px solid #a9a9a9;
   font-size: 14px;
 }
-.up form input[type='text'], .up form input[type='email'], .up form input[type='tel'], .up form input[type='url'], .up form input[type='search'], .up form input[type='password'], .up form textarea {
+.up form input[type='text'], .up form input[type='email'], .up form input[type='tel'], .up form input[type='url'], .up form input[type='search'], .up form textarea {
   padding: 0.2em 0.4em;
   line-height: 1.4;
   background: white;
@@ -1524,4 +1524,14 @@
   border: 2px solid #660000;
   background: #cc0000;
   color: white;
+}
+
+.up #portalContentTopBlock .up-portlet-wrapper {
+  width: 50%;
+  margin: 0 auto;
+  margin-bottom: 1em;
+  padding: 10px;
+}
+.up #portalHeaderBlock {
+  background: #294d6b;
 }
