@@ -70,12 +70,12 @@
  */
 /* Use variables to store selectors. */
 /* Apply baseline form element styling. */
-.up form input[type='text'], .up form input[type='email'], .up form input[type='tel'], .up form input[type='url'], .up form input[type='search'], .up form select, .up form textarea {
+.up form input[type='text'], .up form input[type='email'], .up form input[type='tel'], .up form input[type='url'], .up form input[type='search'], .up form input[type='password'], .up form select, .up form textarea {
   font-family: serif;
   border: 4px solid black;
   font-size: 16px;
 }
-.up form input[type='text'], .up form input[type='email'], .up form input[type='tel'], .up form input[type='url'], .up form input[type='search'], .up form textarea {
+.up form input[type='text'], .up form input[type='email'], .up form input[type='tel'], .up form input[type='url'], .up form input[type='search'], .up form input[type='password'], .up form textarea {
   padding: 0.2em 0.4em;
   line-height: 1.4;
   background: white;
@@ -90,7 +90,7 @@
   -webkit-border-radius: 0.2em;
   border-radius: 0.2em;
 }
-.up form select:focus, .up form input[type='text']:focus, .up form input[type='email']:focus, .up form input[type='tel']:focus, .up form input[type='url']:focus, .up form input[type='search']:focus, .up form select:focus, .up form textarea:focus {
+.up form select:focus, .up form input[type='text']:focus, .up form input[type='email']:focus, .up form input[type='tel']:focus, .up form input[type='url']:focus, .up form input[type='search']:focus, .up form input[type='password']:focus, .up form select:focus, .up form textarea:focus {
   -moz-box-shadow: 0px 0px 10px red;
   -webkit-box-shadow: 0px 0px 10px red;
   box-shadow: 0px 0px 10px red;
@@ -1517,13 +1517,13 @@
 .up .button, .up button, .up input[type='submit'], .up input[type='button'], .up .button:hover, .up .button:focus, .up a.button:hover, .up a.button:focus, .up button:hover, .up button:focus, .up input[type='submit']:hover, .up input[type='submit']:focus, .up input[type='button']:hover, .up input[type='button']:focus, .up .button:active, .up button:active, .up input[type='submit']:active, .up input[type='button']:active {
   text-shadow: none !important;
 }
-.up form input[type='text'], .up form input[type='email'], .up form input[type='tel'], .up form input[type='url'], .up form input[type='search'], .up form select, .up form textarea {
+.up form input[type='text'], .up form input[type='email'], .up form input[type='tel'], .up form input[type='url'], .up form input[type='search'], .up form input[type='password'], .up form select, .up form textarea {
   border-color: black;
   font-size: 18px;
   box-shadow: none;
   padding: 0.3em 12px !important;
 }
-.up form select:focus, .up form input[type='text']:focus, .up form input[type='email']:focus, .up form input[type='tel']:focus, .up form input[type='url']:focus, .up form input[type='search']:focus, .up form select:focus, .up form textarea:focus {
+.up form select:focus, .up form input[type='text']:focus, .up form input[type='email']:focus, .up form input[type='tel']:focus, .up form input[type='url']:focus, .up form input[type='search']:focus, .up form input[type='password']:focus, .up form select:focus, .up form textarea:focus {
   -moz-box-shadow: 0 0 0 red;
   -webkit-box-shadow: 0 0 0 red;
   box-shadow: 0 0 0 red;
