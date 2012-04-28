@@ -2,3 +2,18 @@
 // Skin Overrides
 //====================================
 // Put any skin-specific overrides here.
+
+.up {
+  // tips area
+  #portalContentTopBlock .up-portlet-wrapper {
+    width: 50%;
+    margin: 0 auto;
+    margin-bottom: 1em;
+    padding: 10px;
+  }
+
+  // alerts area
+  #portalHeaderBlock {
+    background: $headerBlockBackground;
+  }
+}
