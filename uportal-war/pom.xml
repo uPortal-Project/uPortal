@@ -680,6 +680,14 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.jasig.maven</groupId>
+                <artifactId>sass-maven-plugin</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+                <configuration>
+                    <baseOutputDirectory>${basedir}/src/main/webapp</baseOutputDirectory>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.jasig.resourceserver</groupId>
                 <artifactId>resource-server-plugin</artifactId>
                 <version>${resource-server.version}</version>
