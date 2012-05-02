@@ -226,7 +226,12 @@
 .portlet .portlet-section {}
 .portlet .portlet-section > .titlebar {margin-bottom:0.5em;}
 .portlet .portlet-section > .titlebar .title {border-bottom:0.1em solid #ddd;}
-.portlet .portlet-section > .titlebar .options {position:absolute; top:1em; right:0; font-size:85%;}
+.portlet .portlet-section > .titlebar .options {
+  position:absolute;
+  top:1em;
+  right:0;
+  font-size:85%;
+}
 .portlet .portlet-section > .titlebar .options a {text-decoration:none; color:#666;}
 .portlet .portlet-section > .titlebar .options a:hover,
 .portlet .portlet-section > .titlebar .options a:focus {text-decoration:none; background-color:#dfefff; color:#000;}
@@ -546,6 +551,7 @@
 .override-preference td {color:graytext; text-decoration:line-through;}
 
 /* Permissions Administration */
+.prm-mgr table{ width:100% }
 .prm-mgr table .inherited-permission {
     display: inline-block;
 	margin-left: 1em;

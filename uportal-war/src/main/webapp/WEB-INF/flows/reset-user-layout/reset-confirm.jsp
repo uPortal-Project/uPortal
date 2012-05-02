@@ -23,36 +23,47 @@
 <portlet:actionURL var="formUrl">
   <portlet:param name="execution" value="${flowExecutionKey}" />
 </portlet:actionURL>
+
+<portlet:actionURL var="userUrl">
+    <portlet:param name="execution" value="${flowExecutionKey}" />
+    <portlet:param name="_eventId" value="cancel"/>
+</portlet:actionURL>
         
 <!-- Portlet -->
 <div class="fl-widget portlet reset-layout view-result" role="section">
 
-    <!-- Portlet Titlebar -->
+    <!-- Portlet Title -->
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-    	<h2 class="title" role="heading"><spring:message code="reset.user.layout"/></h2>
-    </div>
+    	<h2 class="title" role="heading">
+            <a href="${ userUrl }">${ fn:escapeXml(person.name )}</a> >
+    	    <spring:message code="reset.user.layout"/>
+    	</h2>
+    </div> <!-- end: portlet-titlebar -->
     
     <!-- Portlet Content -->
-	<div class="fl-widget-content content portlet-content" role="main">   
-		
-        <!-- Messages -->
-        <div class="portlet-msg-alert portlet-msg alert" role="alert">
+	<div class="fl-widget-content content portlet-content" role="main">
+
+        <form action="${formUrl}" method="POST">
+
+        <!-- Portlet Section -->
+        <div class="portlet-section" role="region">
             <div class="titlebar">
-            	<h3 class="title"><spring:message code="warning"/></h3>
+                <h3 class="title" role="heading"><spring:message code="reset.user.layout"/></h3>
             </div>
             <div class="content">
-            	<p><spring:message code="resetting.user.layout.irreversible"/></p>
+                <spring:message code="resetting.user.layout.irreversible"/>
+		        <spring:message code="are.you.sure.reset.layout" arguments="${person.name}"/>
             </div>
-        </div>
+        </div><!-- end: portlet-section -->
 
-		<p><spring:message code="are.you.sure.reset.layout" arguments="${person.name}"/></p>
-        <!-- Buttons -->
-        <form action="${formUrl}" method="POST">
+        <!-- Portlet Buttons -->
         <div class="buttons">
             <input class="button primary" type="submit" value="<spring:message code="reset.layout"/>" name="_eventId_confirm"/>
-            <input class="button " type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
+            <input class="button" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
         </div>
+
         </form>
     
     </div> <!-- end: portlet-content -->
+
 </div> <!-- end:portlet -->

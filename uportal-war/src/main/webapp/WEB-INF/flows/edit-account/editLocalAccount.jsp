@@ -36,7 +36,12 @@
                     <spring:message code="create.new.user"/>
                 </c:when>
                 <c:otherwise>
-                    <spring:message code="edit.user"/>: <c:out value="${ fn:escapeXml(person.username )}"/>
+                    <portlet:actionURL var="userUrl">
+                        <portlet:param name="execution" value="${flowExecutionKey}" />
+                        <portlet:param name="_eventId" value="finish"/>
+                    </portlet:actionURL>
+                    <a href="${ userUrl }">${ fn:escapeXml(person.username )}</a> >
+                    <spring:message code="edit.user"/>
                 </c:otherwise>
             </c:choose>
         </h2>

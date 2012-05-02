@@ -25,6 +25,10 @@
 <portlet:actionURL var="submitUrl">
 	<portlet:param name="execution" value="${flowExecutionKey}" />
 </portlet:actionURL>
+<portlet:actionURL var="userUrl">
+    <portlet:param name="execution" value="${flowExecutionKey}" />
+    <portlet:param name="_eventId" value="cancel"/>
+</portlet:actionURL>
 <!-- END: VALUES BEING PASSED FROM BACKEND -->
 
 <!--
@@ -44,6 +48,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 	<!-- Portlet Title -->
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
   	<h2 class="title" role="heading">
+      <a href="${ userUrl }">${ fn:escapeXml(person.name)}</a> >
       <spring:message code="remove.user"/>
     </h2>
   </div> <!-- end: portlet-titlebar -->
