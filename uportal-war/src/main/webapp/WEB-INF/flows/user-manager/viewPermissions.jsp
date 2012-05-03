@@ -75,7 +75,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <div class="fl-widget-content portlet-content" role="main">
 
         <!-- Portlet Section -->
-        <div id="${n}permissionAddingTabs" class="portlet-section" role="region">
+        <div id="${n}permissionAddingTabs" class="portlet-section view-permissions" role="region">
             <div class="titlebar">
                 <h3 class="title" role="heading"><spring:message code="assignments"/></h3>
             </div>
@@ -97,11 +97,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                             <div class="fl-col-fixed fl-force-left view-filter">
                                 <!-- This space left blank for future filtering options... -->
                             </div>
-                            <div class="fl-col-flex view-pager flc-pager-top" style="overflow:hidden">
-                                <ul id="pager-top" class="fl-pager-ui" style="float:right;display:block;overflow:hidden">
+                            <div class="fl-col-flex view-pager flc-pager-top">
+                                <ul id="pager-top" class="fl-pager-ui">
                                     <li class="flc-pager-previous"><a href="#">&lt; <spring:message code="previous"/></a></li>
                                     <li>
-                                        <ul class="fl-pager-links flc-pager-links" style="margin:0; display:inline">
+                                        <ul class="fl-pager-links flc-pager-links">
                                             <li class="flc-pager-pageLink"><a href="javascript:;">1</a></li>
                                             <li class="flc-pager-pageLink-skip">...</li>
                                             <li class="flc-pager-pageLink"><a href="javascript:;">3</a></li>
@@ -109,7 +109,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                     </li>
                                     <li class="flc-pager-next"><a href="#"><spring:message code="next"/> &gt;</a></li>
                                 </ul>
-                                <div style="overflow:hidden;clear:right;float:right">
+                                <div>
                                     <span class="flc-pager-summary"><spring:message code="show"/></span>
                                         <span> <select class="pager-page-size flc-pager-page-size">
                                             <option value="5">5</option>

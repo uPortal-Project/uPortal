@@ -565,6 +565,12 @@
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
 }
+
+.prm-mgr .view-permissions .options .flc-pager-top{ overflow:hidden }
+.prm-mgr .view-permissions .options .flc-pager-top > ul{ float:right;display:block;overflow:hidden }
+.prm-mgr .view-permissions .options .flc-pager-top > div{ overflow:hidden;clear:right;float:right }
+.prm-mgr .view-permissions .options .flc-pager-top .flc-pager-links{ margin:0; display:inline }
+
 .prm-mgr .permission-lookup form {
 	background-image:-webkit-gradient(linear, 0% 0%, 0% 50%, from(#e2e8e7), to(#fff)); 
 	background-image:-moz-linear-gradient(0% 50% 90deg, #e2e8e7, #fff);
