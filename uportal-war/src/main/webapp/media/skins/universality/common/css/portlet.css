@@ -226,7 +226,12 @@
 .portlet .portlet-section {}
 .portlet .portlet-section > .titlebar {margin-bottom:0.5em;}
 .portlet .portlet-section > .titlebar .title {border-bottom:0.1em solid #ddd;}
-.portlet .portlet-section > .titlebar .options {position:absolute; top:1em; right:0; font-size:85%;}
+.portlet .portlet-section > .titlebar .options {
+  position:absolute;
+  top:1em;
+  right:0;
+  font-size:85%;
+}
 .portlet .portlet-section > .titlebar .options a {text-decoration:none; color:#666;}
 .portlet .portlet-section > .titlebar .options a:hover,
 .portlet .portlet-section > .titlebar .options a:focus {text-decoration:none; background-color:#dfefff; color:#000;}
@@ -546,6 +551,7 @@
 .override-preference td {color:graytext; text-decoration:line-through;}
 
 /* Permissions Administration */
+.prm-mgr table{ width:100% }
 .prm-mgr table .inherited-permission {
     display: inline-block;
 	margin-left: 1em;
@@ -559,6 +565,12 @@
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
 }
+
+.prm-mgr .view-permissions .options .flc-pager-top{ overflow:hidden }
+.prm-mgr .view-permissions .options .flc-pager-top > ul{ float:right;display:block;overflow:hidden }
+.prm-mgr .view-permissions .options .flc-pager-top > div{ overflow:hidden;clear:right;float:right }
+.prm-mgr .view-permissions .options .flc-pager-top .flc-pager-links{ margin:0; display:inline }
+
 .prm-mgr .permission-lookup form {
 	background-image:-webkit-gradient(linear, 0% 0%, 0% 50%, from(#e2e8e7), to(#fff)); 
 	background-image:-moz-linear-gradient(0% 50% 90deg, #e2e8e7, #fff);

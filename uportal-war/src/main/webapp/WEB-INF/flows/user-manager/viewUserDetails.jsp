@@ -54,10 +54,16 @@
         <h2 class="title" role="heading"><c:out value="${ fn:escapeXml(person.name )}"/></h2>
         <div class="toolbar">
             <ul>
-                <c:if test="${ canEdit }"><li><a class="button" href="${ editDetailsUrl }"><spring:message code="edit"/></a></li></c:if>
+                <c:if test="${ canEdit }">
+                    <li><a class="button" href="${ editDetailsUrl }"><spring:message code="edit"/></a></li>
+                </c:if>
                 <li><a class="button" href="${ permissionsUrl }"><spring:message code="view.permissions"/></a></li>
-                <c:if test="${ canDelete }"><li><a class="button" href="${ deleteUrl }"><spring:message code="delete"/></a></li></c:if>
-                <c:if test="${ canImpersonate }"><li><a class="button" href="${ impersonateUrl }"><spring:message code="impersonate"/></a></li></c:if>
+                <c:if test="${ canDelete }">
+                    <li><a class="button" href="${ deleteUrl }"><spring:message code="delete"/></a></li>
+                </c:if>
+                <c:if test="${ canImpersonate }">
+                    <li><a class="button" href="${ impersonateUrl }"><spring:message code="impersonate"/></a></li>
+                </c:if>
                 <li><a class="button" href="${ resetLayoutUrl }"><spring:message code="reset.user.layout"/></a></li>
             </ul>
         </div>
@@ -70,9 +76,6 @@
         <div class="portlet-section" role="region">
             <div class="titlebar">
                 <h3 class="title" role="heading"><spring:message code="attributes"/></h3>
-                <div class="options">
-                    <a href="${ editDetailsUrl }"><span><spring:message code="edit.user"/></span></a>
-                </div>
             </div>
             <div class="portlet-content">
 
