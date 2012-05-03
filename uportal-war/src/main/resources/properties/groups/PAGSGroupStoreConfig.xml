@@ -105,7 +105,7 @@
     <group-key>pags_accesstype_academic_resource_center</group-key>
     <group-name>PAGS_AccessType_Academic Resource Center</group-name>
     <group-description>Academic Resource Center</group-description>
-    <selection-test>
+    <!--selection-test>
       <test-group>
         <test>
           <attribute-name></attribute-name>
@@ -113,14 +113,14 @@
           <test-value></test-value>
         </test>
       </test-group>
-    </selection-test>
+    </selection-test-->
   </group>
   
   <group>
     <group-key>accesstype_counseling_services</group-key>
     <group-name>PAGS_AccessType_Counseling Services</group-name>
     <group-description>AccessType_Counseling Services</group-description>
-    <selection-test>
+    <!--selection-test>
       <test-group>
         <test>
           <attribute-name></attribute-name>
@@ -128,14 +128,14 @@
           <test-value></test-value>
         </test>
       </test-group>
-    </selection-test>
+    </selection-test-->
   </group>
   
   <group>
     <group-key>pags_accesstype_disability</group-key>
     <group-name>PAGS_AccessType_Disability</group-name>
     <group-description>AccessType_Disability</group-description>
-    <selection-test>
+    <!--selection-test>
       <test-group>
         <test>
           <attribute-name></attribute-name>
@@ -143,14 +143,14 @@
           <test-value></test-value>
         </test>
       </test-group>
-    </selection-test>
+    </selection-test-->
   </group>
   
   <group>
     <group-key>pags_accesstype_displaced_workers</group-key>
     <group-name>PAGS_AccessType_Displaced Workers</group-name>
     <group-description>AccessType_Displaced Workers</group-description>
-    <selection-test>
+    <!--selection-test>
       <test-group>
         <test>
           <attribute-name></attribute-name>
@@ -158,14 +158,14 @@
           <test-value></test-value>
         </test>
       </test-group>
-    </selection-test>
+    </selection-test-->
   </group>
   
   <group>
     <group-key>pags_accesstype_early_alert</group-key>
     <group-name>PAGS_AccessType_Early Alert</group-name>
     <group-description>AccessType_Early Alert</group-description>
-    <selection-test>
+    <!--selection-test>
       <test-group>
         <test>
           <attribute-name></attribute-name>
@@ -173,14 +173,14 @@
           <test-value></test-value>
         </test>
       </test-group>
-    </selection-test>
+    </selection-test-->
   </group>
   
   <group>
     <group-key>pags_accesstype_english_second_language</group-key>
     <group-name>PAGS_AccessType_English as a Second Language</group-name>
     <group-description>AccessType_English as a Second Language</group-description>
-    <selection-test>
+    <!--selection-test>
       <test-group>
         <test>
           <attribute-name></attribute-name>
@@ -188,14 +188,14 @@
           <test-value></test-value>
         </test>
       </test-group>
-    </selection-test>
+    </selection-test-->
   </group>
   
   <group>
     <group-key>pags_accesstype_fast_forward</group-key>
     <group-name>PAGS_AccessType_Fast Forward</group-name>
     <group-description>AccessType_Fast Forward</group-description>
-    <selection-test>
+    <!--selection-test>
       <test-group>
         <test>
           <attribute-name></attribute-name>
@@ -203,14 +203,14 @@
           <test-value></test-value>
         </test>
       </test-group>
-    </selection-test>
+    </selection-test-->
   </group>
   
   <group>
     <group-key>pags_accesstype_individualized_learning_plan</group-key>
     <group-name>PAGS_AccessType_Individualized Learning Plan</group-name>
     <group-description>AccessType_Individualized Learning Plan</group-description>
-    <selection-test>
+    <!--selection-test>
       <test-group>
         <test>
           <attribute-name></attribute-name>
@@ -218,14 +218,14 @@
           <test-value></test-value>
         </test>
       </test-group>
-    </selection-test>
+    </selection-test-->
   </group>
   
   <group>
     <group-key>pags_accesstype_manager</group-key>
     <group-name>PAGS_AccessType_Manager</group-name>
     <group-description>AccessType_Manager</group-description>
-    <selection-test>
+    <!--selection-test>
       <test-group>
         <test>
           <attribute-name></attribute-name>
@@ -233,14 +233,14 @@
           <test-value></test-value>
         </test>
       </test-group>
-    </selection-test>
+    </selection-test-->
   </group>
   
   <group>
     <group-key>pags_accesstype_staff</group-key>
     <group-name>PAGS_AccessType_Staff</group-name>
     <group-description>AccessType_Staff</group-description>
-    <selection-test>
+    <!--selection-test>
       <test-group>
         <test>
           <attribute-name></attribute-name>
@@ -248,14 +248,14 @@
           <test-value></test-value>
         </test>
       </test-group>
-    </selection-test>
+    </selection-test-->
   </group>
   
   <group>
     <group-key>pags_role_academic_counselor_or_advisor</group-key>
     <group-name>PAGS_Role_Academic Counselor or Advisor</group-name>
     <group-description>Role_Academic Counselor or Advisor</group-description>
-    <selection-test>
+    <!--selection-test>
       <test-group>
         <test>
           <attribute-name></attribute-name>
@@ -263,14 +263,14 @@
           <test-value></test-value>
         </test>
       </test-group>
-    </selection-test>
+    </selection-test-->
   </group>
   
   <group>
     <group-key>pags_role_counselor</group-key>
     <group-name>PAGS_Role_Counselor</group-name>
     <group-description>Role_Counselor</group-description>
-    <selection-test>
+    <!--selection-test>
       <test-group>
         <test>
           <attribute-name></attribute-name>
@@ -278,14 +278,14 @@
           <test-value></test-value>
         </test>
       </test-group>
-    </selection-test>
+    </selection-test-->
   </group>
   
   <group>
     <group-key>pags_role_faculty</group-key>
     <group-name>PAGS_Role_Faculty</group-name>
     <group-description>Role_Faculty</group-description>
-    <selection-test>
+    <!--selection-test>
       <test-group>
         <test>
           <attribute-name></attribute-name>
@@ -293,14 +293,14 @@
           <test-value></test-value>
         </test>
       </test-group>
-    </selection-test>
+    </selection-test-->
   </group>
   
   <group>
     <group-key>pags_role_developer</group-key>
     <group-name>PAGS_Role_Developer</group-name>
     <group-description>Role_Developer</group-description>
-    <selection-test>
+    <!--selection-test>
       <test-group>
         <test>
           <attribute-name></attribute-name>
@@ -308,14 +308,14 @@
           <test-value></test-value>
         </test>
       </test-group>
-    </selection-test>
+    </selection-test-->
   </group>
   
   <group>
     <group-key>pags_role_management</group-key>
     <group-name>PAGS_Role_Management</group-name>
     <group-description>Role_Management</group-description>
-    <selection-test>
+    <!--selection-test>
       <test-group>
         <test>
           <attribute-name></attribute-name>
@@ -323,14 +323,14 @@
           <test-value></test-value>
         </test>
       </test-group>
-    </selection-test>
+    </selection-test-->
   </group>
   
   <group>
     <group-key>pags_role_super_user</group-key>
     <group-name>PAGS_Role_Super User</group-name>
     <group-description>Role_Super User</group-description>
-    <selection-test>
+    <!--selection-test>
       <test-group>
         <test>
           <attribute-name></attribute-name>
@@ -338,14 +338,14 @@
           <test-value></test-value>
         </test>
       </test-group>
-    </selection-test>
+    </selection-test-->
   </group>
   
   <group>
     <group-key>pags_role_support_staff</group-key>
     <group-name>PAGS_Role_Support Staff</group-name>
     <group-description>Role_Support Staff</group-description>
-    <selection-test>
+    <!--selection-test>
       <test-group>ValueExists
         <test>
           <attribute-name></attribute-name>
@@ -353,14 +353,14 @@
           <test-value></test-value>
         </test>
       </test-group>
-    </selection-test>
+    </selection-test-->
   </group>
   
   <group>
     <group-key>pags_role_student</group-key>
     <group-name>PAGS_Role_Student</group-name>
     <group-description>Role_Student</group-description>
-    <selection-test>
+    <!--selection-test>
       <test-group>
         <test>
           <attribute-name></attribute-name>
@@ -368,14 +368,14 @@
           <test-value></test-value>
         </test>
       </test-group>
-    </selection-test>
+    </selection-test-->
   </group>
   
   <group>
     <group-key>pags_role_anonymous</group-key>
     <group-name>PAGS_Role_Anonymous - Unauthenticated User</group-name>
     <group-description>Role_Anonymous - Unauthenticated User</group-description>
-    <selection-test>
+    <!-- selection-test>
       <test-group>
         <test>
           <attribute-name></attribute-name>
@@ -383,7 +383,7 @@
           <test-value>true</test-value>
         </test>
       </test-group>
-    </selection-test>
+    </selection-test-->
   </group>
   
   
