@@ -121,7 +121,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 
                                 <p class="no-permissions-message" style="display:none"><spring:message code="no.group.permissions"/></p>
                                 
-                                <table class="portlet-table" id="${n}permissionsTable" summary="" xmlns:rsf="http://ponder.org.uk" style="width:100%; display:none;">
+                                <table class="portlet-table" id="${n}permissionsTable" summary="" xmlns:rsf="http://ponder.org.uk" style="display:none;">
                                     <thead>
                                         <tr rsf:id="header:">
                                             <c:if test="${ token == 'target' }"><th id="${n}permissionPrincipal" class="flc-pager-sort-header"><a rsf:id="permissionPrincipal" title="Click to sort" href="javascript:;"><spring:message code="principal"/></a></th></c:if>
