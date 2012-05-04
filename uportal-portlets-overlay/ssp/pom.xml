@@ -21,6 +21,12 @@
             <artifactId>ssp</artifactId>
             <version>${ssp.version}</version>
             <type>war</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.portlet</groupId>
+                    <artifactId>portlet-api</artifactId>
+                </exclusion>
+            </exclusions> 
         </dependency>
         
     </dependencies>
