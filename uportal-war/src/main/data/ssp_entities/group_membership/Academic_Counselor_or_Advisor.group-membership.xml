@@ -20,11 +20,11 @@
 
 -->
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
-  <name>Student</name>
-  <entity-type>org.jasig.portal.portlet.om.IPortletDefinition</entity-type>
+  <name>Academic Counselor or Advisor</name>
+  <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
-  <description>Student</description>
+  <description>Academic Counselor or Advisor role in SSP</description>
   <children>
-    <group>PAGS_Role_Student</group>
+    <group>PAGS_Role_Academic Counselor or Advisor</group>
   </children>
 </group>

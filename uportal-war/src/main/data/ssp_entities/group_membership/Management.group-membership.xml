@@ -20,20 +20,11 @@
 
 -->
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
-  <name>AccessType</name>
-  <entity-type>org.jasig.portal.portlet.om.IPortletDefinition</entity-type>
+  <name>Management</name>
+  <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
-  <description>AccessType</description>
+  <description>Management role in SSP</description>
   <children>
-    <group>PAGS_AccessType_Academic Resource Center</group>
-    <group>PAGS_AccessType_Counseling Services</group>
-    <group>PAGS_AccessType_Disability</group>
-    <group>PAGS_AccessType_Displaced Workers</group>
-    <group>PAGS_AccessType_Early Alert</group>
-    <group>PAGS_AccessType_English as a Second Language</group>
-    <group>PAGS_AccessType_Fast Forward</group>
-    <group>PAGS_AccessType_Individualized Learning Plan</group>
-    <group>PAGS_AccessType_Manager</group>
-    <group>PAGS_AccessType_Staff</group>
+    <group>PAGS_Role_Management</group>
   </children>
 </group>

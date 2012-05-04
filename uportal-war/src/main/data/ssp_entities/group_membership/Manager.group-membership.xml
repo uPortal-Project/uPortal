@@ -20,11 +20,11 @@
 
 -->
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
-  <name>English as a Second Language</name>
-  <entity-type>org.jasig.portal.portlet.om.IPortletDefinition</entity-type>
+  <name>Manager</name>
+  <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
-  <description>English as a Second Language</description>
+  <description>Manager access type in SSP</description>
   <children>
-    <group>PAGS_AccessType_English as a Second Language</group>
+    <group>PAGS_AccessType_Manager</group>
   </children>
 </group>

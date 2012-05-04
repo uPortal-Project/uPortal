@@ -21,9 +21,9 @@
 -->
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
   <name>Counselor</name>
-  <entity-type>org.jasig.portal.portlet.om.IPortletDefinition</entity-type>
+  <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
-  <description>Counselor</description>
+  <description>Counselor role in SSP</description>
   <children>
     <group>PAGS_Role_Counselor</group>
   </children>

@@ -20,11 +20,11 @@
 
 -->
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
-  <name>Support Staff</name>
-  <entity-type>org.jasig.portal.portlet.om.IPortletDefinition</entity-type>
+  <name>Anonymous</name>
+  <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
-  <description>Support Staff</description>
+  <description>Role representing unauthenticated users in SSP</description>
   <children>
-    <group>PAGS_Role_Support Staff</group>
+    <group>PAGS_Role_Anonymous - Unauthenticated User</group>
   </children>
 </group>

@@ -20,11 +20,11 @@
 
 -->
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
-  <name>Displaced Workers</name>
-  <entity-type>org.jasig.portal.portlet.om.IPortletDefinition</entity-type>
+  <name>Early Alert</name>
+  <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
-  <description>Displaced Workers</description>
+  <description>Early Alert access type in SSP</description>
   <children>
-    <group>PAGS_AccessType_Displaced Workers</group>
+    <group>PAGS_AccessType_Early Alert</group>
   </children>
 </group>

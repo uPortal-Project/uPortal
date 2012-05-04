@@ -27,9 +27,10 @@
   <children>
     <group>Authenticated Users</group>
     <group>PAGS Root</group>
-    <group>Faculty</group>
     <group>Guests</group>
     <group>Portal System</group>
+    <group>SSP Roles</group>
+    <group>SSP Access Types</group>
     <group>Staff</group>
     <group>Students</group>
   </children>
