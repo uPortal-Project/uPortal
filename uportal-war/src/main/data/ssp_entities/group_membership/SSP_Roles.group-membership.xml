@@ -20,11 +20,19 @@
 
 -->
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
-  <name>Academic Counselor or Advisor</name>
-  <entity-type>org.jasig.portal.portlet.om.IPortletDefinition</entity-type>
+  <name>SSP Roles</name>
+  <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
-  <description>Academic Counselor or Advisor</description>
+  <description>Container group for roles in the Student Success Plan product</description>
   <children>
-    <group>PAGS_Role_Academic Counselor or Advisor</group>
+    <group>Academic Counselor or Advisor</group>
+    <group>Anonymous</group>
+    <group>Counselor</group>
+    <group>Developer</group>
+    <group>Faculty</group>
+    <group>Management</group>
+    <group>Student</group>
+    <group>Super User</group>
+    <group>Support Staff</group>
   </children>
 </group>

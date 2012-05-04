@@ -20,11 +20,20 @@
 
 -->
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
-  <name>AccessType_Academic Resource Center</name>
-  <entity-type>org.jasig.portal.portlet.om.IPortletDefinition</entity-type>
+  <name>SSP Access Types</name>
+  <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
-  <description>Academic Resource</description>
+  <description>Container for Access Types in the Student Success Plan product</description>
   <children>
-    <group>PAGS_AccessType_Academic Resource Center</group>
+    <group>Academic Resource Center</group>
+    <group>Counseling Services</group>
+    <group>Disability</group>
+    <group>Displaced Workers</group>
+    <group>Early Alert</group>
+    <group>English as a Second Language</group>
+    <group>Fast Forward</group>
+    <group>Individualized Learning Plan</group>
+    <group>Manager</group>
+    <group>Staff</group>
   </children>
 </group>
