@@ -7,3 +7,4 @@
 /.ant-targets-build.xml
 *.sass-cache
 /uportal-impl
+uportal-portlets-overlay/ssp/target/
