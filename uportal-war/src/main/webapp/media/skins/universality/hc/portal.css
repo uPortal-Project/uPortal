@@ -548,7 +548,7 @@
 .up #portalNavigation .portal-navigation-add {
   /* Add tab link */
   top: 0;
-  padding: 0.3em 1em;
+  padding: 7px 19px;
   background-color: white;
   background-image: none;
   background-position: 5px 2px;
@@ -563,6 +563,12 @@
 .up #portalNavigation .portal-navigation-add:hover, .up #portalNavigation .portal-navigation-add:focus {
   background-color: black;
   color: white;
+}
+.up #portalNavigation li.portal-navigation-add-item {
+  float: right;
+  background: transparent none;
+  border: 0;
+  margin: 1px;
 }
 .up #portalNavigation .active .portal-navigation-gripper {
   /* Gripper for indicating drag and drop ability. */
