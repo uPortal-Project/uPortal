@@ -16,27 +16,46 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-(function($) {
-	$.fn.jqmAccordion = function(options) {
-		var settings = $.extend({
-			'categoryShown': 0
-		}, options);	
+ (function($) {
+   $.fn.jqmAccordion = function(options) {
 
-		function init() {
-			$('li[data-role=list-divider]')
-				.eq(settings.categoryShown)
-				.nextUntil('li[data-role=list-divider]')
-				.css('display', 'block');
-		}
-		init();
-		return this.delegate('.ui-li-divider', 'click', function() {
-			var $this = $(this);
-			if($this.next().is(':visible')) {
-				return;
-			}
-			$('.ui-listview > .ui-li:not(.ui-li-divider)').slideUp(150);
-			$this.nextUntil('.ui-li-divider').slideDown(300);
-		});
-	};
-})( jQuery );
+     var defaults = {
+       showTabByDefault: true,
+       tabIndexShown: 0,
+       tab: 'li[data-role=list-divider]',
+       slideUpSpeed: 150,
+       slideDownSpeed: 300,
+       closeTabs: false
+     };
+
+     var opts = $.extend(defaults, options);
+
+     if ( opts.showTabByDefault ) {
+       setTimeout(function () {
+         $(opts.tab)
+           .eq(opts.tabIndexShown)
+           .nextUntil(opts.tab)
+           .show();
+       }, 10); // wait for jquery mobile...
+     }
+
+     this.delegate(opts.tab, 'click', function() {
+       var $this     = $(this),
+           tabIsOpen = $this.next().is(':visible'),
+           otherTabs = $this.parent().children().not(opts.tab),
+           thisTab   = $this.nextUntil(opts.tab);
+
+       if ( tabIsOpen && opts.closeTabs ) {
+         thisTab.slideUp(opts.slideUpSpeed);
+       } else if ( tabIsOpen ) {
+         return; // do nothing
+       } else {
+         otherTabs.slideUp(opts.slideUpSpeed);
+         thisTab.slideDown(opts.slideDownSpeed);
+       }
+     });
+
+     return this;
+   };
+ })( jQuery );
 
