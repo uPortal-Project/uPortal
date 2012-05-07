@@ -33,13 +33,12 @@ import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletMimeResponseContext;
 import org.apache.pluto.container.PortletURLProvider;
 import org.apache.pluto.container.PortletURLProvider.TYPE;
-import org.apache.pluto.container.util.PrintWriterServletOutputStream;
-import org.jasig.portal.portlet.container.cache.IPortletCacheControlService;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.jasig.portal.portlet.container.services.IPortletCookieService;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
+import org.jasig.portal.portlet.rendering.PortletOutputHandler;
 import org.jasig.portal.portlet.url.PortletURLProviderImpl;
 import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;
@@ -53,31 +52,39 @@ import org.jasig.portal.url.UrlType;
 public abstract class PortletMimeResponseContextImpl extends PortletResponseContextImpl implements PortletMimeResponseContext {
     
     private final IPortalUrlProvider portalUrlProvider;
-    private final PrintWriter portletWriter;
-    private OutputStream writerOutputStream;
-    private IPortletCacheControlService portletCacheControlService;
+    private final PortletOutputHandler portletOutputHandler;
+    private final CacheControl cacheControl;
     
     public PortletMimeResponseContextImpl(PortletContainer portletContainer, IPortletWindow portletWindow,
             HttpServletRequest containerRequest, HttpServletResponse containerResponse,
             IRequestPropertiesManager requestPropertiesManager, IPortalUrlProvider portalUrlProvider,
-            IPortletCookieService portletCookieService, IPortletCacheControlService portletCacheControlService) {
+            IPortletCookieService portletCookieService) {
 
         super(portletContainer, portletWindow, containerRequest, containerResponse, 
                 requestPropertiesManager, portletCookieService);
         
-        Validate.notNull(portalUrlProvider, "portalUrlProvider can not be null1");
-        
-        this.portletWriter = (PrintWriter)containerRequest.getAttribute(IPortletRenderer.ATTRIBUTE__PORTLET_PRINT_WRITER);
+        Validate.notNull(portalUrlProvider, "portalUrlProvider can not be null");
         this.portalUrlProvider = portalUrlProvider;
-        this.portletCacheControlService = portletCacheControlService;
+        
+        this.portletOutputHandler = (PortletOutputHandler)containerRequest.getAttribute(IPortletRenderer.ATTRIBUTE__PORTLET_OUTPUT_HANDLER);
+        Validate.notNull(portletOutputHandler, "No " + IPortletRenderer.ATTRIBUTE__PORTLET_OUTPUT_HANDLER + " attribute found in request");
+        
+        this.cacheControl = (CacheControl)containerRequest.getAttribute(IPortletRenderer.ATTRIBUTE__PORTLET_CACHE_CONTROL);
+        Validate.notNull(cacheControl, "No " + IPortletRenderer.ATTRIBUTE__PORTLET_OUTPUT_HANDLER + " attribute found in request");
     }
 
-    /**
-	 * @return the portletCacheControlService
-	 */
-	public IPortletCacheControlService getPortletCacheControlService() {
-		return portletCacheControlService;
-	}
+    protected final PortletOutputHandler getPortletOutputHandler() {
+        return portletOutputHandler;
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.pluto.container.PortletMimeResponseContext#getCacheControl()
+     */
+    @Override
+    public CacheControl getCacheControl() {
+        this.checkContextStatus();
+        return this.cacheControl;
+    }
 
 	/* (non-Javadoc)
      * @see org.apache.pluto.container.PortletMimeResponseContext#flushBuffer()
@@ -85,13 +92,7 @@ public abstract class PortletMimeResponseContextImpl extends PortletResponseCont
     @Override
     public void flushBuffer() throws IOException {
         this.checkContextStatus();
-        
-        if (this.portletWriter != null) {
-            this.portletWriter.flush();
-        }
-        else {
-            this.servletResponse.flushBuffer();
-        }
+        this.portletOutputHandler.flushBuffer();
     }
 
     /* (non-Javadoc)
@@ -99,11 +100,7 @@ public abstract class PortletMimeResponseContextImpl extends PortletResponseCont
      */
     @Override
     public int getBufferSize() {
-        if (this.portletWriter != null) {
-            return 0;
-        }
-
-        return this.servletResponse.getBufferSize();
+        return this.portletOutputHandler.getBufferSize();
     }
 
     /* (non-Javadoc)
@@ -140,15 +137,7 @@ public abstract class PortletMimeResponseContextImpl extends PortletResponseCont
     @Override
     public OutputStream getOutputStream() throws IOException, IllegalStateException {
         this.checkContextStatus();
-        if (this.portletWriter != null) {
-            if (this.writerOutputStream == null) {
-                this.writerOutputStream = new PrintWriterServletOutputStream(this.portletWriter, getCharacterEncoding());
-            }
-            
-            return writerOutputStream;
-        }
-        
-        return this.servletResponse.getOutputStream();
+        return this.portletOutputHandler.getOutputStream();
     }
 
     /* (non-Javadoc)
@@ -169,11 +158,7 @@ public abstract class PortletMimeResponseContextImpl extends PortletResponseCont
     @Override
     public PrintWriter getWriter() throws IOException, IllegalStateException {
         this.checkContextStatus();
-        if (this.portletWriter != null) {
-            return this.portletWriter;
-        }
-
-        return this.servletResponse.getWriter();
+        return this.portletOutputHandler.getPrintWriter();
     }
 
     /* (non-Javadoc)
@@ -181,11 +166,7 @@ public abstract class PortletMimeResponseContextImpl extends PortletResponseCont
      */
     @Override
     public boolean isCommitted() {
-        if (this.portletWriter != null) {
-            return true;
-        }
-        
-        return this.servletResponse.isCommitted();
+        return this.portletOutputHandler.isCommitted();
     }
 
     /* (non-Javadoc)
@@ -194,10 +175,7 @@ public abstract class PortletMimeResponseContextImpl extends PortletResponseCont
     @Override
     public void reset() {
         this.checkContextStatus();
-        if (this.portletWriter != null) {
-            throw new IllegalStateException("Response is already committed");
-        }
-        this.servletResponse.reset();
+        this.portletOutputHandler.reset();
     }
 
     /* (non-Javadoc)
@@ -206,10 +184,7 @@ public abstract class PortletMimeResponseContextImpl extends PortletResponseCont
     @Override
     public void resetBuffer() {
         this.checkContextStatus();
-        if (this.portletWriter != null) {
-            throw new IllegalStateException("Response is already committed");
-        }
-        this.servletResponse.resetBuffer();
+        this.portletOutputHandler.resetBuffer();
     }
 
     /* (non-Javadoc)
@@ -218,9 +193,7 @@ public abstract class PortletMimeResponseContextImpl extends PortletResponseCont
     @Override
     public void setBufferSize(int size) {
         this.checkContextStatus();
-        if (this.portletWriter == null) {
-            this.servletResponse.setBufferSize(size);
-        }
+        this.portletOutputHandler.setBufferSize(size);
     }
 
     /* (non-Javadoc)
@@ -229,10 +202,7 @@ public abstract class PortletMimeResponseContextImpl extends PortletResponseCont
     @Override
     public void setContentType(String contentType) {
         this.checkContextStatus();
-        if (this.portletWriter == null) {
-            this.servletResponse.setContentType(contentType);
-        }
-        //TODO what should the portal do about the portlet contentType?
+        this.portletOutputHandler.setContentType(contentType);
     }
 
 }

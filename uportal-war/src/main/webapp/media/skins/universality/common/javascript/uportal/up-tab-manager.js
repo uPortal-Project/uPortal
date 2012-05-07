@@ -46,6 +46,56 @@
 var up = up || {};
 
 (function ($, fluid) {
+  
+    /**
+     * Set up the edit container and append the edit field to the container.  If an edit container
+     * is not provided, default markup is created.
+     * 
+     * @param {Object} displayContainer The display mode container 
+     * @param {Object} editField The edit field that is to be appended to the edit container 
+     * @param {Object} editContainer The edit container markup provided by the integrator   
+     * 
+     * @return eContainer The edit container containing the edit field   
+     */
+    fluid.inlineEdit.setupEditContainer = function (displayContainer, editField, editContainer) {
+        var eContainer = $(editContainer);
+        eContainer = eContainer.length ? eContainer : $("<div class='fl-inlineEditContainer'></div>");
+        displayContainer.parent().after(eContainer);
+        eContainer.append(editField);
+        
+        return eContainer;
+    };
+  
+    /**
+     * Set up the textEditButton. Append a background image with appropriate
+     * descriptive text to the button.
+     * 
+     * @return {jQuery} The accessible button located after the display text
+     */
+    fluid.inlineEdit.setupTextEditButton = function (that) {
+        var opts = that.options;
+        var textEditButton = that.locate("textEditButton");
+
+        if (textEditButton.length === 0) {
+            var markup = $("<span class='flc-inlineEdit-textEditButton'></span>");
+            markup.addClass(opts.styles.textEditButton);       
+          
+            /**
+             * Set text for the button and listen
+             * for modelChanged to keep it updated
+             */ 
+            fluid.inlineEdit.updateTextEditButton(markup, that.model.value || opts.defaultViewText, opts.strings.textEditButton);
+            that.events.modelChanged.addListener(function () {
+                fluid.inlineEdit.updateTextEditButton(markup, that.model.value || opts.defaultViewText, opts.strings.textEditButton);
+            });        
+          
+            that.locate("text").after(markup);
+
+            // Refresh the textEditButton with the newly appended options
+            textEditButton = that.locate("textEditButton");
+        } 
+        return textEditButton;
+    };
     
     /**
      * Private. Initializes the fluid.inlineEditor component to be used with
@@ -73,17 +123,20 @@ var up = up || {};
                         // Hide gripper & remove icon.
                         remove.hide();
                         gripper.hide();
+                        edit.hide();
                     },
                     afterFinishEdit: function (newValue, oldValue, editNode, viewNode) {
                         // Show gripper & remove icon.
                         remove.show();
                         gripper.filter(".active").show();
+                        edit.show();
                         
                         // Fire afterFinishEdit event.
                         that.events.onTabEdit.fire(newValue, oldValue, editNode, viewNode);
                     }
                 },
-                submitOnEnter: that.options.submitOnEnter
+                submitOnEnter: that.options.submitOnEnter,
+                useTooltip: false
             });
             
             // Mouseenter event listener. Give focus to the

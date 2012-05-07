@@ -20,12 +20,15 @@
 package org.jasig.portal.portlet.container.properties;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.url.ParameterMap;
+import org.jasig.portal.utils.Populator;
+import org.springframework.core.Ordered;
 
 /**
  * Manager that has a single backing Map of properties.
@@ -33,8 +36,9 @@ import org.jasig.portal.url.ParameterMap;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class MockRequestPropertiesManager implements IRequestPropertiesManager {
+public class MockRequestPropertiesManager implements IRequestPropertiesManager, Ordered {
     private Map<String, String[]> properties = new ParameterMap();
+    private int order;
     
     /**
      * @return the properties
@@ -49,27 +53,35 @@ public class MockRequestPropertiesManager implements IRequestPropertiesManager {
     public void setProperties(Map<String, String[]> properties) {
         this.properties = properties;
     }
+    
+    @Override
+    public int getOrder() {
+        return order;
+    }
+    public void setOrder(int order) {
+        this.order = order;
+    }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.container.properties.IRequestPropertiesManager#addResponseProperty(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindow, java.lang.String, java.lang.String)
-     */
-    public void addResponseProperty(HttpServletRequest request, IPortletWindow portletWindow, String property, String value) {
+    public boolean addResponseProperty(HttpServletRequest request, IPortletWindow portletWindow, String property, String value) {
         String[] values = this.properties.get(property);
         values = (String[])ArrayUtils.add(values, value);
         this.properties.put(property, values);
+        return true;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.container.properties.IRequestPropertiesManager#getRequestProperties(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindow)
-     */
-    public Map<String, String[]> getRequestProperties(HttpServletRequest request, IPortletWindow portletWindow) {
-        return this.properties;
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.container.properties.IRequestPropertiesManager#setResponseProperty(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindow, java.lang.String, java.lang.String)
-     */
-    public void setResponseProperty(HttpServletRequest request, IPortletWindow portletWindow, String property, String value) {
+    public boolean setResponseProperty(HttpServletRequest request, IPortletWindow portletWindow, String property, String value) {
         this.properties.put(property, new String[] { value });
+        return true;
+    }
+    
+    @Override
+    public <P extends Populator<String, String>> void populateRequestProperties(HttpServletRequest portletRequest,
+            IPortletWindow portletWindow, P propertiesPopulator) {
+        for (final Entry<String, String[]> propEntry : this.properties.entrySet()) {
+            final String name = propEntry.getKey();
+            for (final String value : propEntry.getValue()) {
+                propertiesPopulator.put(name, value);
+            }
+        }
     }
 }

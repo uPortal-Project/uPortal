@@ -221,17 +221,21 @@ public final class NodeReferenceFactory {
             final Document fragmentLayout = userLayoutInfo.second.getLayout();
             final Node targetElement = this.xPathOperations.evaluate("//*[@ID = $nodeId]", Collections.singletonMap("nodeId", nodeId), fragmentLayout, XPathConstants.NODE);
 
-            String xpath = this.xmlUtilities.getUniqueXPath(targetElement);
-            // Pathref objects that refer to portlets are expected to include 
-            // the fname as the 3rd element; other pathref objects should leave 
-            // that element blank.
-            String fname = null;
-            Node fnameAttr = targetElement.getAttributes().getNamedItem("fname");
-            if (fnameAttr != null) {
-                fname = fnameAttr.getTextContent();
+            // We can only proceed if there's a valid match in the document
+            if (targetElement != null) {
+                String xpath = this.xmlUtilities.getUniqueXPath(targetElement);
+                // Pathref objects that refer to portlets are expected to include 
+                // the fname as the 3rd element; other pathref objects should leave 
+                // that element blank.
+                String fname = null;
+                Node fnameAttr = targetElement.getAttributes().getNamedItem("fname");
+                if (fnameAttr != null) {
+                    fname = fnameAttr.getTextContent();
+                }
+
+                rslt = new Pathref(userLayoutInfo.first, xpath, fname);
             }
-            
-            rslt = new Pathref(userLayoutInfo.first, xpath, fname);
+
         }
 
         final Matcher userNodeMatcher = USER_NODE_PATTERN.matcher(dlmNoderef);

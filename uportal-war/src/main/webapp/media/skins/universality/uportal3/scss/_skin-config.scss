@@ -1,6 +1,8 @@
 //====================================
-// Skin Config
+// UPORTAL3 SKIN: Config
 //====================================
+// This file is written in SASS. To find out how to install SASS to generate CSS visit http://sass-lang.com
+
 // Configure these settings to make both broad and fine adjustments to the skin.
 // If there isn't a configuration here you need, make an override in "_skin-overrides.scss".
 //
@@ -90,6 +92,11 @@ $webSearchInputRoundTL			: 0.6em;
 $webSearchInputRoundTR			: 0;
 $webSearchInputRoundBR			: 0;
 $webSearchInputRoundBL			: 0.6em;
+// Tips
+
+// Emergency Alerts
+$headerBlockBackground      : $c1darker;
+
 
 //====================================
 // Navigation

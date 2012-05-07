@@ -88,7 +88,7 @@
      | Passes Session init/destroy events to the WebApplicationContext
      +-->
     <listener>
-        <listener-class>org.jasig.portal.spring.web.context.support.ApplicationContextDelagatingSessionListener</listener-class>
+        <listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
     </listener>
     
     <!-- 
@@ -242,6 +242,12 @@
     <filter-mapping>
         <filter-name>requestAttributeSourceFilter</filter-name>
         <url-pattern>/Login</url-pattern>
+    </filter-mapping>
+    
+    <filter-mapping>
+        <filter-name>requireValidSessionFilter</filter-name>
+        <servlet-name>RenderingDispatcherServlet</servlet-name>
+        <servlet-name>JsonRenderingDispatcherServlet</servlet-name>
     </filter-mapping>
     
     <filter-mapping>

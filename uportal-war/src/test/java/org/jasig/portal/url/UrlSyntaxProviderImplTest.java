@@ -725,6 +725,40 @@ public class UrlSyntaxProviderImplTest {
     }
     
     @Test
+    public void testLegacyPortletUrlParsingNoParams() throws Exception {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setContextPath("/portal");
+        request.setRequestURI("/render.userLayoutRootNode.uP");
+        request.setQueryString("?uP_fname=contact-information");
+        request.addParameter("uP_fname", "contact-information");
+        
+        final MockPortletWindowId portletWindowId1 = new MockPortletWindowId("u110l1n41");
+        
+        when(this.portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
+        when(this.portletWindowRegistry.getOrCreateDefaultPortletWindowByFname(request, "contact-information")).thenReturn(this.portletWindow1);
+        when(this.portletWindow1.getPortletWindowId()).thenReturn(portletWindowId1);
+        
+        final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
+        
+        assertNotNull(portalRequestInfo);
+        assertNull(portalRequestInfo.getTargetedLayoutNodeId());
+        assertEquals(portletWindowId1, portalRequestInfo.getTargetedPortletWindowId());
+        assertEquals(UrlState.MAX, portalRequestInfo.getUrlState());
+        assertEquals(UrlType.RENDER, portalRequestInfo.getUrlType());
+        
+        final Map<IPortletWindowId, ? extends IPortletRequestInfo> portletRequestInfoMap = portalRequestInfo.getPortletRequestInfoMap();
+        assertNotNull(portletRequestInfoMap);
+        assertEquals(1, portletRequestInfoMap.size());
+        
+        final IPortletRequestInfo portletRequestInfo = portletRequestInfoMap.get(portletWindowId1);
+        assertNotNull(portletRequestInfo);
+        assertEquals(portletWindowId1, portletRequestInfo.getPortletWindowId());
+        assertEquals(Collections.emptyMap(), portletRequestInfo.getPortletParameters());
+        assertEquals(WindowState.MAXIMIZED, portletRequestInfo.getWindowState());
+        assertNull(portletRequestInfo.getDelegateParentWindowId());
+    }
+    
+    @Test
     public void testLegacyTargetedTabParsing() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/uPortal");

@@ -16,26 +16,35 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.jasig.portal.portlet.container.cache;
 
-package org.jasig.portal.spring.web.context.support;
-
-import javax.servlet.http.HttpSession;
+import java.io.Serializable;
 
 /**
- * This is a spring application context compatible version of {@link javax.servlet.http.HttpSessionEvent} that is
- * sent to the application context when {@link javax.servlet.http.HttpSessionListener#sessionDestroyed(javax.servlet.http.HttpSessionEvent)}
- * is called.
+ * Defines a cached portlet results
  * 
  * @author Eric Dalquist
  * @version $Revision$
+ * @param <T>
  */
-public class HttpSessionDestroyedEvent extends HttpSessionEvent {
-    private static final long serialVersionUID = 1L;
-
+public interface CachedPortletResultHolder<T extends Serializable> {
     /**
-     * @see HttpSessionEvent#HttpSessionEvent(HttpSession)
+     * @return The portlet result
      */
-    public HttpSessionDestroyedEvent(HttpSession source) {
-        super(source);
-    }
+    T getPortletResult();
+    
+    /**
+     * @return The time-since-epoch timestamp when the cached data will expire
+     */
+    long getExpirationTime();
+    
+    /**
+     * @return The ETag if set by the portlet
+     */
+    String getEtag();
+    
+    /**
+     * @return The time the result was cached
+     */
+    long getTimeStored();
 }

@@ -71,7 +71,6 @@ This project includes:
   ezmorph under The Apache Software License, Version 2.0
   FindBugs-jsr305 under The Apache Software License, Version 2.0
   Groovy under Apache License, Version 2.0
-  groovy-engine under BSD License
   Grouper Client under Apache 2
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
   Hamcrest Core under BSD style
@@ -93,7 +92,7 @@ This project includes:
   jaxen under Apache style license
   JBoss Logging 3 under GNU Lesser General Public License, version 2.1
   jdom under Apache style license
-  JLine under BSD
+  JLine under The BSD License
   Joda money under Apache 2
   Joda time under Apache 2
   JPA 2.0 API under Sun Binary Code License
@@ -107,13 +106,12 @@ This project includes:
   Neko HTML under The Apache Software License, Version 2.0
   Objenesis under Apache 2
   oro under Apache License, Version 2.0
-  Person Directory API under The BSD License
-  Person Directory Implementations under The BSD License
+  Person Directory API under Apache License Version 2.0
+  Person Directory Implementations under Apache License Version 2.0
   Quartz Enterprise Job Scheduler under Apache 2.0
   Resource Server API under Apache License Version 2.0
   Resource Server Core under Apache License Version 2.0
   Resource Server Utilities under Apache License Version 2.0
-  script-api under Commons Development and Distribution License, Version 1.0
   servlet-api under Commons Development and Distribution License, Version 1.0
   SLF4J API Module under MIT License
   SLF4J JCL Binding under MIT License

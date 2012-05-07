@@ -37,6 +37,7 @@ import org.jasig.portal.api.portlet.DelegationResponse;
 import org.jasig.portal.api.portlet.PortletDelegationDispatcher;
 import org.jasig.portal.api.portlet.PortletDelegationLocator;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.portlet.rendering.PortletOutputHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +51,7 @@ public class PortletDelegationView implements View {
     /**
      * Model attribute to store the optional {@link Writer} to use when delegating a {@link RenderRequest}
      */
-    public static final String DELEGATE_RENDER_WRITER = "DELEGATE_RENDER_WRITER";
+    public static final String DELEGATE_RENDER_OUTPUT_HANDLER = "DELEGATE_RENDER_OUTPUT_HANDLER";
 
     /**
      * Model attribute to store the optional {@link DelegationRequest}
@@ -101,10 +102,10 @@ public class PortletDelegationView implements View {
         final DelegationResponse delegationResponse;
         final String phase = (String)request.getAttribute(PortletRequest.LIFECYCLE_PHASE);
         if (PortletRequest.RENDER_PHASE.equals(phase)){
-            final Writer writer = (Writer)model.get(DELEGATE_RENDER_WRITER);
-            if (writer != null) {
+            final PortletOutputHandler portletOutputHandler = (PortletOutputHandler)model.get(DELEGATE_RENDER_OUTPUT_HANDLER);
+            if (portletOutputHandler != null) {
                 this.logger.debug("Delegating RenderRequest with custom Writer and {}", delegationRequest);
-                delegationResponse = requestDispatcher.doRender((RenderRequest)portletRequest, (RenderResponse)portletResponse, delegationRequest, writer);
+                delegationResponse = requestDispatcher.doRender((RenderRequest)portletRequest, (RenderResponse)portletResponse, delegationRequest, portletOutputHandler);
             }
             else {
                 this.logger.debug("Delegating RenderRequest with default Writer and {}", delegationRequest);

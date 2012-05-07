@@ -22,8 +22,11 @@ package org.jasig.portal.events;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.Validate;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import org.jasig.portal.url.UrlState;
 import org.jasig.portal.url.UrlType;
 
@@ -41,7 +44,9 @@ public final class PortalRenderEvent extends PortalEvent {
     private final UrlType urlType;
     private final Map<String, List<String>> parameters;
     private final String targetedLayoutNodeId;
-    private final long executionTime;
+    @JsonSerialize(include = Inclusion.NON_NULL)
+    private Long executionTime;
+    private long executionTimeNano;
 
     PortalRenderEvent() {
         super();
@@ -50,10 +55,10 @@ public final class PortalRenderEvent extends PortalEvent {
         this.urlType = null;
         this.parameters = Collections.emptyMap();
         this.targetedLayoutNodeId = null;
-        this.executionTime = -1;
+        this.executionTimeNano = -1;
     }
 
-    PortalRenderEvent(PortalEventBuilder eventBuilder, String requestPathInfo, long executionTime, UrlState urlState,
+    PortalRenderEvent(PortalEventBuilder eventBuilder, String requestPathInfo, long executionTimeNano, UrlState urlState,
             UrlType urlType, Map<String, List<String>> parameters, String targetedLayoutNodeId) {
         super(eventBuilder);
         Validate.notNull(urlState, "urlType");
@@ -65,14 +70,29 @@ public final class PortalRenderEvent extends PortalEvent {
         this.urlType = urlType;
         this.parameters = parameters;
         this.targetedLayoutNodeId = targetedLayoutNodeId;
-        this.executionTime = executionTime;
+        this.executionTimeNano = executionTimeNano;
     }
 
     /**
-     * @return the executionTime
+     * @return the executionTime in milliseconds
      */
     public long getExecutionTime() {
+        if (this.executionTime == null) {
+            this.executionTime = TimeUnit.NANOSECONDS.toMillis(this.executionTimeNano);
+        }
+        
         return this.executionTime;
+    }
+
+    /**
+     * @return the executionTime in nanoseconds
+     */
+    public long getExecutionTimeNano() {
+        if (this.executionTimeNano == -1 && this.executionTime != null) {
+            this.executionTimeNano = TimeUnit.MILLISECONDS.toNanos(this.executionTime);
+        }
+        
+        return this.executionTimeNano;
     }
     
     /**
@@ -121,6 +141,6 @@ public final class PortalRenderEvent extends PortalEvent {
                 ", urlType=" + this.urlType +
                 ", parameters=" + this.parameters.size() +
                 ", targetedLayoutNodeId=" + this.targetedLayoutNodeId +
-                ", executionTime=" + this.executionTime + "]";
+                ", executionTimeNano=" + this.getExecutionTimeNano() + "]";
     }
 }

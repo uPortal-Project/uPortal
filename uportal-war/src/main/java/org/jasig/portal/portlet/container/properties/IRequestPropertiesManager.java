@@ -19,22 +19,21 @@
 
 package org.jasig.portal.portlet.container.properties;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.portlet.om.IPortletWindow;
+import org.jasig.portal.utils.Populator;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 
 /**
  * Encapsulates logic related to handling properties that can be retrieved from and
  * set on {@link javax.portlet.PortletRequest} and {@link javax.portlet.PortletResponse}
  * objects.
  * 
- * get
- * -add select servlet request properties to map
- * 
- * add/set
- * -react to setting cache timeout
+ * For the add/set methods configured property managers are called in turn until one returns
+ * true. If ordering in property handling is important the manager should either implement {@link Ordered}
+ * or be annotated with {@link Order} 
  * 
  * @author Eric Dalquist
  * @version $Revision$
@@ -50,8 +49,9 @@ public interface IRequestPropertiesManager {
      * @param portletWindow The PortletWindow representing the portlet calling setProperty
      * @param property The name of the property to set, will not be null.
      * @param value The value of the property to set, may be null.
+     * @return true if this manager handled the property, false if not
      */
-    public void setResponseProperty(HttpServletRequest portletRequest, IPortletWindow portletWindow, String property, String value);
+    public boolean setResponseProperty(HttpServletRequest portletRequest, IPortletWindow portletWindow, String property, String value);
     
     /**
      * Called when a portlet sets a property via {@link javax.portlet.PortletResponse#addProperty(String, String)}. This
@@ -62,16 +62,17 @@ public interface IRequestPropertiesManager {
      * @param portletWindow The PortletWindow representing the portlet calling addProperty
      * @param property The name of the property to add, will not be null.
      * @param value The value of the property to add, may be null.
+     * @return true if this manager handled the property, false if not
      */
-    public void addResponseProperty(HttpServletRequest portletRequest, IPortletWindow portletWindow, String property, String value);
+    public boolean addResponseProperty(HttpServletRequest portletRequest, IPortletWindow portletWindow, String property, String value);
 
     /**
      * Called when a portlet gets the request properties via {@link javax.portlet.PortletRequest#getProperties(String)},
      * {@link javax.portlet.PortletRequest#getProperty(String)}, or {@link javax.portlet.PortletRequest#getPropertyNames()}.
      * 
-     * @param portletRequest The request the call was made during
-     * @param portletWindow The PortletWindow representing the portlet requesting properties.
-     * @return A Map of properties to present to the portlet, must not be null.
+     * @param portletRequest The request the get call was made during
+     * @param portletWindow The PortletWindow representing the portlet calling addProperty
+     * @param propertiesPopulator Populator to add properties to, for multi-valued properties call {@link Populator#put(Object, Object)} multiple times
      */
-    public Map<String, String[]> getRequestProperties(HttpServletRequest portletRequest, IPortletWindow portletWindow);
+    public <P extends Populator<String, String>> void populateRequestProperties(HttpServletRequest portletRequest, IPortletWindow portletWindow, P propertiesPopulator);
 }

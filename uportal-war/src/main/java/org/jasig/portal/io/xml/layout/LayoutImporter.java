@@ -24,7 +24,6 @@ import org.jasig.portal.UserProfile;
 import org.jasig.portal.io.xml.crn.AbstractDom4jImporter;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.utils.Tuple;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
 
