@@ -278,6 +278,7 @@ table.purpose-layout td {margin:0; padding:0;}
 #portalNavigation .portal-navigation-add,
 #portalNavigation .portal-navigation-delete,
 #portalNavigation .active .portal-navigation-gripper {display: block; position: absolute; text-decoration: none; border: none;}
+#portalNavigation .portal-navigation-add{ position:static }
 #portalNavigation .portal-navigation-add:hover,
 #portalNavigation .portal-navigation-delete:hover {background-position: 0px -16px;}
 #portalNavigation .portal-navigation-delete,
