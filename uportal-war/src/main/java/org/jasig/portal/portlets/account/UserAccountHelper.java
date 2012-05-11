@@ -69,7 +69,6 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroup;
 
 @Component("userAccountHelper")
 public class UserAccountHelper {
@@ -77,7 +76,6 @@ public class UserAccountHelper {
     protected final Log log = LogFactory.getLog(getClass());
     
     private String passwordResetTemplate  = "properties/templates/passwordReset";
-    private STGroup stringTemplateGroup = new STGroup('$', '$');
     private ILocaleStore localeStore;
     private ILocalAccountDao accountDao;
     private IPortalPasswordService passwordService;
@@ -351,9 +349,8 @@ public class UserAccountHelper {
         log.debug("Sending password reset instructions to user with url " + url.toString());
 
         String emailAddress = (String) account.getAttributeValue("mail");
-        
-        final ST template = stringTemplateGroup
-            .getInstanceOf(passwordResetTemplate);
+
+        final ST template = new ST(passwordResetTemplate, '$', '$');
         template.add("displayName", account.getAttributeValue("given") + " " + account.getAttributeValue("sn"));
         template.add("url", url.toString());
 
