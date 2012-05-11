@@ -58,8 +58,10 @@ import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.utils.threading.NoopLock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionOperations;
 
 /**
  * Hooks into uPortal portlet preferences object model
@@ -78,111 +80,64 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
     private IPortletEntityRegistry portletEntityRegistry;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPortalRequestUtils portalRequestUtils;
+    private TransactionOperations transactionOperations;
     
     private boolean loadGuestPreferencesFromMemory = true;
     private boolean loadGuestPreferencesFromEntity = true;
     private boolean storeGuestPreferencesInMemory = true;
     private boolean storeGuestPreferencesInEntity = false;
     
-    /**
-     * @return the portalRequestUtils
-     */
-    public IPortalRequestUtils getPortalRequestUtils() {
-        return portalRequestUtils;
+    @Autowired
+    @Qualifier("PortalDb")
+    public void setTransactionOperations(TransactionOperations transactionOperations) {
+        this.transactionOperations = transactionOperations;
     }
-    /**
-     * @param portalRequestUtils the portalRequestUtils to set
-     */
+
     @Autowired
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         this.portalRequestUtils = portalRequestUtils;
     }
     
-    /**
-     * @return the portletWindowRegistry
-     */
-    public IPortletWindowRegistry getPortletWindowRegistry() {
-        return this.portletWindowRegistry;
-    }
-    /**
-     * @param portletWindowRegistry the portletWindowRegistry to set
-     */
     @Autowired
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         this.portletWindowRegistry = portletWindowRegistry;
     }
 
-    /**
-     * @return the portletEntityRegistry
-     */
-    public IPortletEntityRegistry getPortletEntityRegistry() {
-        return this.portletEntityRegistry;
-    }
-    /**
-     * @param portletEntityRegistry the portletEntityRegistry to set
-     */
     @Autowired
     public void setPortletEntityRegistry(IPortletEntityRegistry portletEntityRegistry) {
         this.portletEntityRegistry = portletEntityRegistry;
     }
 
-    /**
-     * @return the portletDefinitionRegistry
-     */
-    public IPortletDefinitionRegistry getPortletDefinitionRegistry() {
-        return this.portletDefinitionRegistry;
-    }
-    /**
-     * @param portletDefinitionRegistry the portletDefinitionRegistry to set
-     */
     @Autowired
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
     
-    /**
-     * @return the personManager
-     */
-    public IPersonManager getPersonManager() {
-        return personManager;
-    }
-    /**
-     * @param personManager the personManager to set
-     */
     @Autowired
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
     }
     
 	
-	public boolean isLoadGuestPreferencesFromMemory() {
-		return loadGuestPreferencesFromMemory;
-	}
 	public void setLoadGuestPreferencesFromMemory(
 			boolean loadGuestPreferencesFromMemory) {
 		this.loadGuestPreferencesFromMemory = loadGuestPreferencesFromMemory;
-	}
-	public boolean isLoadGuestPreferencesFromEntity() {
-		return loadGuestPreferencesFromEntity;
 	}
 	public void setLoadGuestPreferencesFromEntity(
 			boolean loadGuestPreferencesFromEntity) {
 		this.loadGuestPreferencesFromEntity = loadGuestPreferencesFromEntity;
 	}
-	public boolean isStoreGuestPreferencesInMemory() {
-		return storeGuestPreferencesInMemory;
-	}
 	public void setStoreGuestPreferencesInMemory(
 			boolean storeGuestPreferencesInMemory) {
 		this.storeGuestPreferencesInMemory = storeGuestPreferencesInMemory;
-	}
-	public boolean isStoreGuestPreferencesInEntity() {
-		return storeGuestPreferencesInEntity;
 	}
 	public void setStoreGuestPreferencesInEntity(
 			boolean storeGuestPreferencesInEntity) {
 		this.storeGuestPreferencesInEntity = storeGuestPreferencesInEntity;
 	}
+	
+	
+	
 	public boolean isStoreInEntity(PortletRequest portletRequest) { 
     	if (this.storeGuestPreferencesInEntity || !isGuestUser(portletRequest)) {
     		return true;
@@ -298,7 +253,6 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
      * (non-Javadoc)
      * @see org.apache.pluto.container.PortletPreferencesService#store(org.apache.pluto.container.PortletWindow, javax.portlet.PortletRequest, java.util.Map)
      */
-	@Transactional
 	@Override
     public void store(PortletWindow plutoPortletWindow, PortletRequest portletRequest, Map<String,PortletPreference> newPreferences) throws PortletContainerException {
         final HttpServletRequest httpServletRequest = this.portalRequestUtils.getPortletHttpRequest(portletRequest);
@@ -307,7 +261,9 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
         final boolean isGuest = isGuestUser(portletRequest);
         
         //If this is a guest and no prefs are being stored just return as the rest of the method is not needed for this case
-        if (isGuest && !(this.isStoreInEntity(portletRequest) || this.isStoreInMemory(portletRequest))) {
+        final boolean storeInEntity = this.isStoreInEntity(portletRequest);
+        final boolean storeInMemory = this.isStoreInMemory(portletRequest);
+        if (isGuest && !(storeInEntity || storeInMemory)) {
             return;
         }
 
@@ -324,8 +280,8 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
         final Map<String, PortletPreference> basePreferences = new HashMap<String, PortletPreference>();
         
         //Add deploy preferences
-        final List<IPortletPreference> descriptorPreferencesList = this.getDescriptorPreferences(portletDescriptor);
-        this.addPreferencesToMap(descriptorPreferencesList, basePreferences, configMode);
+        this.loadDescriptorPreferences(portletDescriptor, basePreferences);
+        //TODO disableReadOnly = configMode
   
         final Lock prefLock;
         if (configMode) {
@@ -355,8 +311,9 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
             
             //Add definition preferences if not config mode
             if (!configMode) {
-                final List<IPortletPreference> definitionPreferencesList = portletDefinition.getPortletPreferences();
-                this.addPreferencesToMap(definitionPreferencesList, basePreferences, false);
+                for (final IPortletPreference definitionPreference : portletDefinition.getPortletPreferences()) {
+                    basePreferences.put(definitionPreference.getName(), definitionPreference);
+                }
             }
 
             final List<IPortletPreference> preferencesList = new ArrayList<IPortletPreference>(newPreferences.size());
@@ -387,7 +344,7 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
                 this.portletDefinitionRegistry.updatePortletDefinition(portletDefinition);
             }
             //If not a guest or if guest prefs are shared store them on the entity
-            else if (this.isStoreInEntity(portletRequest)) {
+            else if (storeInEntity) {
                 //Update the portlet entity with the new preferences
                 portletEntity.setPortletPreferences(preferencesList);
                 this.portletEntityRegistry.storePortletEntity(httpServletRequest, portletEntity);
@@ -410,37 +367,36 @@ public class PortletPreferencesServiceImpl implements PortletPreferencesService 
      * Gets the preferences for a portlet descriptor converted to the uPortal IPortletPreference
      * interface.
      */
-    protected List<IPortletPreference> getDescriptorPreferences(PortletDefinition portletDescriptor) {
-        final List<IPortletPreference> preferences = new LinkedList<IPortletPreference>();
-        
+    protected void loadDescriptorPreferences(PortletDefinition portletDescriptor, Map<String, PortletPreference> prefsMap) {
         final Preferences descriptorPreferences = portletDescriptor.getPortletPreferences();
-        if (descriptorPreferences != null) {
-            final List<? extends Preference> descriptorPreferencesList = descriptorPreferences.getPortletPreferences();
-            for (final Preference descriptorPreference : descriptorPreferencesList) {
-                final IPortletPreference internaldescriptorPreference = new PortletPreferenceImpl(descriptorPreference);
-                preferences.add(internaldescriptorPreference);
-            }
-        }
-        
-        return preferences;
-    }
-    
-    /**
-     * Add all of the preferences in the List to the Map using the preference name as the key
-     */
-    protected void addPreferencesToMap(List<IPortletPreference> preferencesList, Map<String, PortletPreference> preferencesMap, boolean disableReadOnly) {
-        if (preferencesList == null) {
+        if (descriptorPreferences == null) {
             return;
         }
-
-        for (final IPortletPreference preference : preferencesList) {
-            final PortletPreferenceImpl clonedPreference = new PortletPreferenceImpl(preference);
-            if (disableReadOnly) {
-                clonedPreference.setReadOnly(false);
-            }
-            preferencesMap.put(preference.getName(), clonedPreference);
+        
+        //TODO at portlet app load time create read-only IPortletPreference wrappers of all descriptor prefs and cache them with the descriptor
+        final List<? extends Preference> descriptorPreferencesList = descriptorPreferences.getPortletPreferences();
+        for (final Preference descriptorPreference : descriptorPreferencesList) {
+            final IPortletPreference preferenceWrapper = new PortletPreferenceImpl(descriptorPreference);
+            prefsMap.put(preferenceWrapper.getName(), preferenceWrapper);
         }
     }
+    
+//    /**
+//     * Add all of the preferences in the List to the Map using the preference name as the key
+//     */
+//    protected void addPreferencesToMap(List<IPortletPreference> preferencesList, Map<String, PortletPreference> preferencesMap, boolean disableReadOnly) {
+//        if (preferencesList == null) {
+//            return;
+//        }
+//
+//        for (final IPortletPreference preference : preferencesList) {
+//            final PortletPreferenceImpl clonedPreference = new PortletPreferenceImpl(preference);
+//            if (disableReadOnly) {
+//                clonedPreference.setReadOnly(false);
+//            }
+//            preferencesMap.put(preference.getName(), clonedPreference);
+//        }
+//    }
     
     
     /**
