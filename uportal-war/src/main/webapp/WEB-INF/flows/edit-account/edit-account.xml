@@ -29,6 +29,7 @@
     <view-state id="editLocalAccount" model="person">
         <transition on="save" to="saveAccount"/>
         <transition on="cancel" to="cancel" bind="false"/>
+        <transition on="finish" to="finish" bind="false"/>
     </view-state>
     
     <action-state id="saveAccount">
@@ -42,9 +43,7 @@
         <transition to="finish"/>
     </action-state>
     
-    <end-state id="cancel">
-        <output name="person" value="personLookupHelper.findPerson(portalWebFlowUtils.getCurrentPerson(externalContext), person.username)"/>
-    </end-state>
+    <end-state id="cancel"/>
     <end-state id="finish">
         <output name="person" value="personLookupHelper.findPerson(portalWebFlowUtils.getCurrentPerson(externalContext), person.username)"/>
     </end-state>

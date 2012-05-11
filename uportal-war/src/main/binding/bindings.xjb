@@ -8,7 +8,7 @@
 >
 
     <jaxb:bindings>
-        <jaxb:globalBindings>
+        <jaxb:globalBindings fixedAttributeAsConstantProperty="true" enableFailFastCheck="true"  >
             <xjc:simple />
             <jaxb:serializable/>
             <jaxb:javaType name="java.util.Calendar" xmlType="xs:dateTime" parseMethod="javax.xml.bind.DatatypeConverter.parseDateTime" printMethod="javax.xml.bind.DatatypeConverter.printDateTime" />

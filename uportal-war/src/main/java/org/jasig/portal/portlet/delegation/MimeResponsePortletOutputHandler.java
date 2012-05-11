@@ -83,4 +83,9 @@ public class MimeResponsePortletOutputHandler implements PortletOutputHandler {
     public void setContentType(String contentType) {
         mimeResponse.setContentType(contentType);
     }
+
+    @Override
+    public String getContentType() {
+        return mimeResponse.getContentType();
+    }
 }

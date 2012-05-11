@@ -84,4 +84,10 @@ public interface PortletOutputHandler {
      * @see ServletResponse#setContentType(String)
      */
     void setContentType(String contentType);
+    
+    /**
+     * @see ServletResponse#getContentType()
+     * @return The content type that has been set or if nothing has been set the default content type for the response
+     */
+    String getContentType();
 }

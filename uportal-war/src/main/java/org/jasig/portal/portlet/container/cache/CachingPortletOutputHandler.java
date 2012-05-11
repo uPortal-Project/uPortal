@@ -87,6 +87,7 @@ public class CachingPortletOutputHandler implements PortletOutputHandler {
         return cachingOutputStream.toByteArray();
     }
     
+    @Override
     public String getContentType() {
         return contentType;
     }

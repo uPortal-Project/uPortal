@@ -132,7 +132,15 @@ public class JpaEventSessionDao extends BaseJpaDao implements EventSessionDao {
             groupMappings.add(groupMapping);
         }
         
-        final EventSessionImpl eventSession = new EventSessionImpl(loginEvent.getEventSessionId(), groupMappings);
+        final String eventSessionId = loginEvent.getEventSessionId();
+        EventSessionImpl eventSession = this.getEventSession(eventSessionId);
+        if (eventSession == null) {
+            eventSession = new EventSessionImpl(eventSessionId, groupMappings);
+        }
+        else {
+            logger.warn("Updating existing EventSession, either sessionIds got reused or this login event has been processed multiple times: {}", loginEvent);
+            eventSession.addGroupMappings(groupMappings);
+        }
         
         this.entityManager.persist(eventSession);
         
@@ -141,7 +149,7 @@ public class JpaEventSessionDao extends BaseJpaDao implements EventSessionDao {
 
     @Transactional("aggrEvents")
     @Override
-    public EventSession getEventSession(String eventSessionId) {
+    public EventSessionImpl getEventSession(String eventSessionId) {
         final TypedQuery<EventSessionImpl> query = this.createCachedQuery(this.findByEventSessionIdQuery);
         query.setParameter(this.eventSessionIdParameter, eventSessionId);
         

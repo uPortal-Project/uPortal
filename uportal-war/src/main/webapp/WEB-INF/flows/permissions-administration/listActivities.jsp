@@ -58,7 +58,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   
     <!-- Portlet Section -->    
 		
-        <table class="portlet-table" style="width:100%" title="${ fn:escapeXml(owner.description )}">    
+        <table class="portlet-table" title="${ fn:escapeXml(owner.description )}">
             <tr>
                 <th><spring:message code="name"/></th>
                 <th><spring:message code="systemId"/></th>

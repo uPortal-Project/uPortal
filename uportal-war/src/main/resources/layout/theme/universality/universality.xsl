@@ -67,7 +67,7 @@
     xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
     xsi:schemaLocation="
             https://source.jasig.org/schemas/uportal/layout/portal-url https://source.jasig.org/schemas/uportal/layout/portal-url-4.0.xsd"
-    exclude-result-prefixes="url upAuth upGroup upMsg" 
+    exclude-result-prefixes="url upAuth upGroup upMsg dlm xsi" 
     version="1.0">
       
   <!-- ============================= -->
@@ -522,22 +522,12 @@
   <xsl:template name="header.focused.block">
     <!-- Portal Page Bar -->
     <xsl:call-template name="portal.page.bar"/>
-    <!-- Portal Page Bar -->
     
     <!-- Skip Navigation -->
-    <div id="portalSkipNav">
-      <a href="#mainNavigation" title="{upMsg:getMessage('skip.to.page.navigation', $USER_LANG)}" id="skipToNav">
-        <xsl:value-of select="upMsg:getMessage('skip.to.page.navigation', $USER_LANG)"/>
-      </a>
-      <a href="#startContent" title="{upMsg:getMessage('skip.to.page.content', $USER_LANG)}" id="skipToContent">
-        <xsl:value-of select="upMsg:getMessage('skip.to.page.content', $USER_LANG)"/>
-      </a>
-    </div>
-    <!-- Skip Navigation -->
+    <xsl:call-template name="skip.nav"/>
     
     <!-- Logo -->
     <xsl:call-template name="logo"/>
-    <!-- Logo -->
     
     <!-- SAMPLE:
     <div id="portalHeaderFocusedBlock">
