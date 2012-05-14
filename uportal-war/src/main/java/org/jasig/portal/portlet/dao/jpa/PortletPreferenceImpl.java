@@ -36,6 +36,7 @@ import javax.persistence.Lob;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -103,6 +104,9 @@ public class PortletPreferenceImpl implements IPortletPreference, Cloneable {
     
     @Column(name = "NULL_VALUES", nullable = false)
     private boolean nullValues = true;
+    
+    @Transient
+    private transient String[] valuesArray;
     
     
     public PortletPreferenceImpl() {
@@ -179,6 +183,10 @@ public class PortletPreferenceImpl implements IPortletPreference, Cloneable {
         if (this.nullValues || this.values == null) {
             return null;
         }
+        
+        if (this.valuesArray != null) {
+            return this.valuesArray.clone();
+        }
 
         final String[] valuesArray = new String[this.values.size()];
         int index = 0;
@@ -190,6 +198,7 @@ public class PortletPreferenceImpl implements IPortletPreference, Cloneable {
                 valuesArray[index++] = value.substring(1);
             }
         }
+        this.valuesArray = valuesArray.clone();
         return valuesArray;
     }
 
@@ -214,12 +223,14 @@ public class PortletPreferenceImpl implements IPortletPreference, Cloneable {
     @Override
     public void setValues(String[] values) {
         if (values == null) {
+            this.valuesArray = null;
             this.values = null;
             this.nullValues = true;
         }
         else if (this.values == null) {
             this.values = new ArrayList<String>(Arrays.asList(values));
             this.nullValues = false;
+            this.valuesArray = values.clone();
         }
         else {
             this.nullValues = false;
@@ -232,6 +243,7 @@ public class PortletPreferenceImpl implements IPortletPreference, Cloneable {
                     this.values.add(NullSafeStringColumnMapper.NOT_NULL_PREFIX + value);
                 }
             }
+            this.valuesArray = values.clone();
         }
     }
 
