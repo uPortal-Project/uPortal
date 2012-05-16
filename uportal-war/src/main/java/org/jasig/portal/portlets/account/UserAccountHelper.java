@@ -304,7 +304,6 @@ public class UserAccountHelper {
         for (Map.Entry<String, StringListAttribute> entry : form.getAttributes().entrySet()) {
             if (entry.getValue() != null) {
                 List<String> entryValues = new ArrayList<String>();
-                System.out.println("LAN - entry " + entry.getKey() + " is = " + entryValues);
                 // goes through and only adds the entries of value
                 for (String value: entry.getValue().getValue())
                 {
