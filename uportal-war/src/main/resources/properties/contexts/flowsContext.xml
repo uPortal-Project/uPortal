@@ -90,4 +90,59 @@
         </property>
     </bean>
     
+    <!-- This creates a set list of attributes that users can have.  Required to feature multiple attribute types such as Boolean or Multi-value specific attributes.  -->
+    <util:list id="staticUserAttributeList">
+        <bean class="org.jasig.portal.portlets.account.AccountAttributeImpl">
+            <property name="name" value="givenName"/>
+            <property name="type" value="String"/>
+            <property name="searchable" value="true"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.AccountAttributeImpl">
+            <property name="name" value="sn"/>
+            <property name="type" value="String"/>
+            <property name="searchable" value="true"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.AccountAttributeImpl">
+            <property name="name" value="mail"/>
+            <property name="type" value="String"/>
+            <property name="searchable" value="true"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.AccountAttributeImpl">
+            <property name="name" value="alternateEmailAddress"/>
+            <property name="type" value="String"/>
+            <property name="searchable" value="true"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.AccountAttributeImpl">
+            <property name="name" value="telephoneNumber"/>
+            <property name="type" value="String"/>
+            <property name="searchable" value="true"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.AccountAttributeImpl">
+            <property name="name" value="title"/>
+            <property name="type" value="String"/>
+            <property name="searchable" value="true"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.AccountAttributeImpl">
+            <property name="name" value="department"/>
+            <property name="type" value="String"/>
+            <property name="searchable" value="true"/>
+        </bean>
+        
+        <!-- Examples for possible expansion -->
+        <!--bean class="org.jasig.portal.portlets.account.AccountAttributeImpl">
+            <property name="name" value="dateOfBirth"/>
+            <property name="type" value="Date"/>
+            <property name="searchable" value="true"/>
+        </bean-->
+        <!--bean class="org.jasig.portal.portlets.account.AccountAttributeImpl">
+            <property name="name" value="specialNeeds"/>
+            <property name="type" value="Boolean"/>
+            <property name="searchable" value="false"/>
+        </bean-->
+        <!--bean class="org.jasig.portal.portlets.account.AccountAttributeImpl">
+            <property name="name" value="Major"/>
+            <property name="type" value="MultiValue"/>
+            <property name="searchable" value="true"/>
+        </bean-->
+    </util:list>
 </beans>

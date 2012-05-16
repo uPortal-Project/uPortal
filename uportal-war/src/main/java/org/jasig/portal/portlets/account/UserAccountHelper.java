@@ -83,6 +83,7 @@ public class UserAccountHelper {
     private ILocalAccountDao accountDao;
     private IPortalPasswordService passwordService;
     private List<Preference> accountEditAttributes;
+    private List<IAccountAttribute> staticUserAttributeList;
     private JavaMailSenderImpl mailSender;
     private IPortalUrlProvider urlProvider;
     private MessageSource messageSource;
@@ -108,6 +109,11 @@ public class UserAccountHelper {
     @Resource(name="accountEditAttributes")
     public void setAccountEditAttributes(List<Preference> accountEditAttributes) {
         this.accountEditAttributes = accountEditAttributes;
+    }
+    
+    @Resource(name="staticUserAttributeList")
+    public void setStaticUserAttributeList(List<IAccountAttribute> staticUserAttributeList) {
+        this.staticUserAttributeList = staticUserAttributeList;
     }
     
     @Autowired
@@ -169,8 +175,11 @@ public class UserAccountHelper {
             List<Object> attrValues = person.getAttributeValues(name);
             if (attrValues != null) {
                 for (Object value : person.getAttributeValues(name)) {
-                    values.add((String) value);
+                    if (StringUtils.isNotBlank((String)value)){
+                        values.add((String) value);
+                    }
                 }
+                
             }
             form.getAttributes().put(name, new StringListAttribute(values));
         }
@@ -294,7 +303,20 @@ public class UserAccountHelper {
         Map<String, List<String>> attributes = new HashMap<String, List<String>>();        
         for (Map.Entry<String, StringListAttribute> entry : form.getAttributes().entrySet()) {
             if (entry.getValue() != null) {
-                attributes.put(entry.getKey(), entry.getValue().getValue());
+                List<String> entryValues = new ArrayList<String>();
+                // goes through and only adds the entries of value
+                for (String value: entry.getValue().getValue())
+                {
+                    if (StringUtils.isNotBlank(value))
+                    {
+                        entryValues.add(value);
+                    }
+                }
+                // if there isn't any entries, they should be removed (this should remove rows that have been updated to no attributes)
+                if (entryValues.size() > 0)
+                {
+                    attributes.put(entry.getKey(), entryValues);
+                }
             }
         }
         account.setAttributes(attributes);

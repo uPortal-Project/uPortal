@@ -48,18 +48,41 @@
                       </tr>
                     </thead>
                     <tbody>
+                        <c:forEach items="${ staticUserAttributeList }" var="listComponent">
+                             <c:if test="${ listComponent.searchable }">
+                                <tr>
+                                    <td class="label">
+                                        <label for="attributes['${listComponent.name}'].value">
+                                            <spring:message code="attribute.displayName.${listComponent.name}" text="${listComponent.name}"/> (${ fn:escapeXml(listComponent.name) })
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <input id="attributes['${listComponent.name}'].value" name="${listComponent.name}"/>
+                                    </td>
+                                </tr>
+                             </c:if>
+                        </c:forEach>
+                        
+                        <!-- defaults to the saved list, if nothing then it does it the old way based on attributes (and in a semi-random order) -->
                         <c:forEach var="queryAttribute" items="${queryAttributes}">
-                            <tr>
-                                <td class="attribute-name">
-                                    <label for="attributes['${queryAttribute}'].value">
-                                        <strong><spring:message code="attribute.displayName.${queryAttribute}" text="${queryAttribute}"/></strong>
-                                        ${ fn:escapeXml(queryAttribute) }
-                                    </label>
-                                </td>
-                                <td class="attribute-value">
-                                    <input type="text" id="attributes['${queryAttribute}'].value" name="${queryAttribute}"/>
-                                </td>
-                            </tr>
+                            <c:set var="contains" value="false" />
+                            <c:forEach items="${ staticUserAttributeList }" var="listComponent">
+                               <c:if test="${ fn:contains(listComponent.name, attribute.key) }">
+                                    <c:set var="contains" value="true" />
+                               </c:if>
+                            </c:forEach>
+                            <c:if test="${contains == 'false'}">
+                                <tr>
+                                    <td class="label">
+                                        <label for="attributes['${queryAttribute}'].value">
+                                            <spring:message code="attribute.displayName.${queryAttribute}" text="${queryAttribute}"/> (${ fn:escapeXml(queryAttribute) })
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <input id="attributes['${queryAttribute}'].value" name="${queryAttribute}"/>
+                                    </td>
+                                </tr>
+                            </c:if>
                         </c:forEach>
                     </tbody>            
                 </table>
