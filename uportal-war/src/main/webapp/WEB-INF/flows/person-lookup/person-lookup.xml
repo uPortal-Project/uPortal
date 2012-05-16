@@ -28,6 +28,7 @@
     
     <view-state id="personLookup">
         <on-entry>
+            <set name="viewScope.staticUserAttributeList" value="staticUserAttributeList"></set>
             <evaluate expression="personLookupHelper.getQueryAttributes(externalContext)" result="viewScope.queryAttributes" />
             <evaluate expression="personLookupHelper.getDisplayAttributes(externalContext)" result="viewScope.displayAttributes" />
         </on-entry>

@@ -88,6 +88,64 @@
                 </div>
             </div>
         
+            <c:if test="${not empty staticUserAttributeList}">
+                <table class="portlet-table">
+                    <thead>
+                        <tr>
+                            <th><spring:message code="attribute.name"/></th>
+                            <th><spring:message code="attribute.value"/></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach items="${ staticUserAttributeList }" var="listComponent">
+                            <tr>
+                                <td class="attribute-name">${ fn:escapeXml(listComponent.name )}</td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${ listComponent.type == 'String' }">
+                                            <c:choose>
+                                                <c:when test="${ fn:length(person.attributes[listComponent.name].value) > 0 }">
+                                                    <c:forEach var="value" items="${person.attributes[listComponent.name].value }">
+                                                    value
+                                                        <div>
+                                                             <input name="attributes['${fn:escapeXml(listComponent.name)}'].value" value="${ fn:escapeXml(value )}" />
+                                                             <a class="delete-attribute-value-link" href="javascript:;"><spring:message code="remove"/></a>
+                                                        </div>
+                                                    </c:forEach>
+                                                    <a class="add-attribute-value-link" href="javascript:;" paramName="${fn:escapeXml(name)}">
+                                                        <spring:message code="add.value"/>
+                                                    </a>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <div>
+                                                        <input name="attributes['${fn:escapeXml(listComponent.name)}'].value"/>
+                                                    </div>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </c:when> 
+                                        <c:otherwise>
+                                            <c:choose>
+                                                <c:when test="${not empty (person.attributes[listComponent.name].value)}" >
+                                                    <div>
+                                                        <input type="hidden" name="attributes['${fn:escapeXml(listComponent.name)}'].value" value="" />
+                                                        <input type="checkbox" name="attributes['${fn:escapeXml(listComponent.name)}'].value" checked value="true"/>
+                                                    </div>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <div>
+                                                        <input type="checkbox" name="attributes['${fn:escapeXml(listComponent.name)}'].value" value="true"/>
+                                                    </div>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+            </c:if>
+        
             <!-- Portlet Section -->
             <div class="portlet-section" role="region">
                 <div class="titlebar">
@@ -107,35 +165,38 @@
 
                             <!-- Print out each attribute -->
                             <c:forEach items="${ person.attributes }" var="attribute">
-                                <tr>
-
-                                    <td class="attribute-name">
-
-                                        <c:set var="attrName" value="${ attribute.key }"/>
-                                        <strong><spring:message code="attribute.displayName.${attrName}" text="${attrName}"/></strong>
-                                        ${ fn:escapeXml(attribute.key)}
-                                    </td>
-                                    <td>
-                                        <c:choose>
-                                            <c:when test="${ fn:length(attribute.value.value) > 0 }">
-                                                <c:forEach var="value" items="${ attribute.value.value }">
-                                                    <div>
-                                                         <input type="text" name="attributes['${fn:escapeXml(attribute.key)}'].value" value="${ fn:escapeXml(value )}" />
-                                                         <a class="delete-attribute-value-link" href="javascript:;"><spring:message code="remove"/></a>
-                                                    </div>
-                                                </c:forEach>
-                                                <a class="add-attribute-value-link" href="javascript:;" paramName="${fn:escapeXml(name)}">
-                                                <spring:message code="add.value"/></a>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <div>
-                                                    <input type="text" name="attributes['${fn:escapeXml(attribute.key)}'].value" value=""/>
-                                                </div>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </td>
-                                    <td><a class="delete-attribute-link" href="javascript:;"><spring:message code="remove"/></a></td>
-                                </tr>
+                                <c:set var="contains" value="false" />
+                                  <c:forEach items="${ staticUserAttributeList }" var="listComponent">
+                                    <c:if test="${ fn:contains(listComponent.name, attribute.key) }">
+                                        <c:set var="contains" value="true" />
+                                    </c:if>
+                                  </c:forEach>
+                                    <c:if test="${contains == 'false'}">
+                                        <tr>
+                                            <td class="attribute-name">${ fn:escapeXml(attribute.key )}</td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${ fn:length(attribute.value.value) > 0 }">
+                                                        <c:forEach var="value" items="${ attribute.value.value }">
+                                                            <div>
+                                                                 <input name="attributes['${fn:escapeXml(attribute.key)}'].value" value="${ fn:escapeXml(value )}" />
+                                                                 <a class="delete-attribute-value-link" href="javascript:;"><spring:message code="remove"/></a>
+                                                            </div>
+                                                        </c:forEach>
+                                                        <a class="add-attribute-value-link" href="javascript:;" paramName="${fn:escapeXml(name)}">
+                                                            <spring:message code="add.value"/>
+                                                        </a>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <div>
+                                                            <input name="attributes['${fn:escapeXml(attribute.key)}'].value" value=""/>
+                                                        </div>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td><a class="delete-attribute-link" href="javascript:;"><spring:message code="remove"/></a></td>
+                                        </tr>
+                                     </c:if>
                             </c:forEach>
 
                             <tfoot>

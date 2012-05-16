@@ -27,6 +27,9 @@
     <input name="person" required="true"/>
     
     <view-state id="editLocalAccount" model="person">
+        <on-entry>
+            <set name="viewScope.staticUserAttributeList" value="staticUserAttributeList"></set>
+        </on-entry>
         <transition on="save" to="saveAccount"/>
         <transition on="cancel" to="cancel" bind="false"/>
         <transition on="finish" to="finish" bind="false"/>
@@ -47,5 +50,4 @@
     <end-state id="finish">
         <output name="person" value="personLookupHelper.findPerson(portalWebFlowUtils.getCurrentPerson(externalContext), person.username)"/>
     </end-state>
-    
 </flow>

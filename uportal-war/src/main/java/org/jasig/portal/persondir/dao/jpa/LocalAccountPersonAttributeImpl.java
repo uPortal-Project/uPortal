@@ -72,6 +72,8 @@ class LocalAccountPersonAttributeImpl implements Serializable {
     @Column(name = "ATTR_NAME", nullable = false)
     private String name;
     
+    private String type;
+    
     @ElementCollection(fetch = FetchType.EAGER)
     @JoinTable(
         name = "UP_PERSON_ATTR_VALUES",
@@ -88,6 +90,7 @@ class LocalAccountPersonAttributeImpl implements Serializable {
     private LocalAccountPersonAttributeImpl() { 
         this.id = -1;
         this.entityVersion = -1;
+        this.type = "String";
     }
     
     public LocalAccountPersonAttributeImpl(String name, List<String> values) {
@@ -95,6 +98,7 @@ class LocalAccountPersonAttributeImpl implements Serializable {
         this.entityVersion = -1;
         this.name = name;
         this.setValues(values);
+        this.type = "String";
     }
     
     public List<String> getValues() {
@@ -160,5 +164,13 @@ class LocalAccountPersonAttributeImpl implements Serializable {
     public String toString() {
         return "LocalAccountPersonAttributeImpl [id=" + this.id + ", entityVersion=" + this.entityVersion + ", name="
                 + this.name + "]";
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getType() {
+        return type;
     }
 }
