@@ -31,6 +31,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+
+import org.stringtemplate.v4.*;
+
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -68,14 +71,14 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
-import org.stringtemplate.v4.ST;
 
 @Component("userAccountHelper")
 public class UserAccountHelper {
 
     protected final Log log = LogFactory.getLog(getClass());
     
-    private String passwordResetTemplate  = "properties/templates/passwordReset";
+    private String templateDir  = "properties/templates";
+    private String passwordResetTemplate  = "passwordReset";
     private ILocaleStore localeStore;
     private ILocalAccountDao accountDao;
     private IPortalPasswordService passwordService;
@@ -350,17 +353,19 @@ public class UserAccountHelper {
 
         String emailAddress = (String) account.getAttributeValue("mail");
 
-        final ST template = new ST(passwordResetTemplate, '$', '$');
+        final STGroup group = new STGroupDir(templateDir, '$', '$');
+        final ST template = group.getInstanceOf(passwordResetTemplate);
         template.add("displayName", account.getAttributeValue("given") + " " + account.getAttributeValue("sn"));
         template.add("url", url.toString());
 
         MimeMessage message = mailSender.createMimeMessage();
+        String body = template.render();
 
         try {
             
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setTo(emailAddress);
-            helper.setText(template.toString(), true);
+            helper.setText(body, true);
             helper.setSubject(messageSource.getMessage("reset.your.password", new Object[]{}, locale));
             helper.setFrom(portalEmailAddress, messageSource.getMessage("portal.name", new Object[]{}, locale));
 
