@@ -104,71 +104,33 @@
         <entry key="postalAddress" value="MAP"/>
     </util:map>
 
+    <!-- Form inputs for local account editing.  These fields will be filtered
+        according to user permissions. -->
     <util:list id="accountEditAttributes">
-        <bean class="org.jasig.portal.portletpublishing.xml.Preference" 
-                p:name="title" p:label="attribute.displayName.title">
-            <property name="preferenceInput">
-                <bean class="javax.xml.bind.JAXBElement">
-                    <constructor-arg value="single-text-parameter-input"/>
-                    <constructor-arg value="org.jasig.portal.portletpublishing.xml.SingleTextPreferenceInput"/>
-                    <constructor-arg>
-                        <bean class="org.jasig.portal.portletpublishing.xml.SingleTextPreferenceInput" 
-                            p:display="TEXT"/>
-                    </constructor-arg>
-                </bean>
-            </property>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleTextPreference">
+            <constructor-arg value="title"/>
+            <constructor-arg value="attribute.displayName.title"/>
         </bean>
-        <bean class="org.jasig.portal.portletpublishing.xml.Preference" 
-                p:name="department" p:label="attribute.displayName.department">
-            <property name="preferenceInput">
-                <bean class="javax.xml.bind.JAXBElement">
-                    <constructor-arg value="single-text-parameter-input"/>
-                    <constructor-arg value="org.jasig.portal.portletpublishing.xml.SingleTextPreferenceInput"/>
-                    <constructor-arg>
-                        <bean class="org.jasig.portal.portletpublishing.xml.SingleTextPreferenceInput" 
-                            p:display="TEXT"/>
-                    </constructor-arg>
-                </bean>
-            </property>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleTextPreference">
+            <constructor-arg value="department"/>
+            <constructor-arg value="attribute.displayName.department"/>
         </bean>
-        <bean class="org.jasig.portal.portletpublishing.xml.Preference" 
-                p:name="organization" p:label="attribute.displayName.organization">
-            <property name="preferenceInput">
-                <bean class="javax.xml.bind.JAXBElement">
-                    <constructor-arg value="single-text-parameter-input"/>
-                    <constructor-arg value="org.jasig.portal.portletpublishing.xml.SingleTextPreferenceInput"/>
-                    <constructor-arg>
-                        <bean class="org.jasig.portal.portletpublishing.xml.SingleTextPreferenceInput" 
-                            p:display="TEXT"/>
-                    </constructor-arg>
-                </bean>
-            </property>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleTextPreference">
+            <constructor-arg value="organization"/>
+            <constructor-arg value="attribute.displayName.organization"/>
         </bean>
-        <bean class="org.jasig.portal.portletpublishing.xml.Preference" 
-                p:name="mail" p:label="attribute.displayName.mail">
-            <property name="preferenceInput">
-                <bean class="javax.xml.bind.JAXBElement">
-                    <constructor-arg value="single-text-parameter-input"/>
-                    <constructor-arg value="org.jasig.portal.portletpublishing.xml.SingleTextPreferenceInput"/>
-                    <constructor-arg>
-                        <bean class="org.jasig.portal.portletpublishing.xml.SingleTextPreferenceInput" 
-                            p:display="TEXT"/>
-                    </constructor-arg>
-                </bean>
-            </property>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleTextPreference">
+            <constructor-arg value="mail"/>
+            <constructor-arg value="attribute.displayName.mail"/>
         </bean>
-        <bean class="org.jasig.portal.portletpublishing.xml.Preference" 
-                p:name="telephoneNumber" p:label="attribute.displayName.telephoneNumber">
-            <property name="preferenceInput">
-                <bean class="javax.xml.bind.JAXBElement">
-                    <constructor-arg value="single-text-parameter-input"/>
-                    <constructor-arg value="org.jasig.portal.portletpublishing.xml.SingleTextPreferenceInput"/>
-                    <constructor-arg>
-                        <bean class="org.jasig.portal.portletpublishing.xml.SingleTextPreferenceInput" 
-                            p:display="TEXT"/>
-                    </constructor-arg>
-                </bean>
-            </property>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleTextPreference">
+            <constructor-arg value="telephoneNumber"/>
+            <constructor-arg value="attribute.displayName.telephoneNumber"/>
         </bean>
     </util:list>
     
