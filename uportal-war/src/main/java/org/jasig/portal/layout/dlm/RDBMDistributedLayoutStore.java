@@ -2124,8 +2124,8 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         }
 
         @Override
-        public void setPortletPreferences(List<IPortletPreference> portletPreferences) {
-
+        public boolean setPortletPreferences(List<IPortletPreference> portletPreferences) {
+            return false;
         }
 
         @Override

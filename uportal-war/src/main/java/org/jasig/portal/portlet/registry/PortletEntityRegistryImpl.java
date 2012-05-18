@@ -797,7 +797,8 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         public void setPublishDate(Date publishDate) {
         }
         @Override
-        public void setPortletPreferences(List<IPortletPreference> portletPreferences) {
+        public boolean setPortletPreferences(List<IPortletPreference> portletPreferences) {
+            return false;
         }
         @Override
         public void setParameters(Set<IPortletDefinitionParameter> parameters) {

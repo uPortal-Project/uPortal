@@ -67,7 +67,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Eric Dalquist
  * @version $Revision$
  */
-@Service("portletPreferencesService")
+//@Service("portletPreferencesService")
 public class PortletPreferencesServiceImpl implements PortletPreferencesService {
     protected static final String PORTLET_PREFERENCES_MAP_ATTRIBUTE = PortletPreferencesServiceImpl.class.getName() + ".PORTLET_PREFERENCES_MAP";
     

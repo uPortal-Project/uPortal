@@ -60,7 +60,7 @@ public class PortalDriverServicesImpl implements PortalDriverServices {
     //OptionalContainerServices
     private UserInfoService userInfoService;
     private PortalAdministrationService portalAdministrationService;
-    private PortletPreferencesService portletPreferencesService;
+//    private PortletPreferencesService portletPreferencesService;
     private PortletEnvironmentService portletEnvironmentService;
     private PortletRegistryService portletRegistryService;
     private PortletContextService portletContextService;
@@ -104,10 +104,10 @@ public class PortalDriverServicesImpl implements PortalDriverServices {
         this.portalAdministrationService = portalAdministrationService;
     }
 
-    @Autowired
-    public void setPortletPreferencesService(PortletPreferencesService portletPreferencesService) {
-        this.portletPreferencesService = portletPreferencesService;
-    }
+//    @Autowired
+//    public void setPortletPreferencesService(PortletPreferencesService portletPreferencesService) {
+//        this.portletPreferencesService = portletPreferencesService;
+//    }
 
     @Autowired
     public void setPortletEnvironmentService(PortletEnvironmentService portletEnvironmentService) {
@@ -189,7 +189,8 @@ public class PortalDriverServicesImpl implements PortalDriverServices {
      */
     @Override
     public PortletPreferencesService getPortletPreferencesService() {
-        return this.portletPreferencesService;
+//        return this.portletPreferencesService;
+        throw new UnsupportedOperationException("uPortal provides custom PortletPreferences implementations which do not use the PortletPreferencesService");
     }
 
     /* (non-Javadoc)
