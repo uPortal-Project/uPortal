@@ -27,7 +27,10 @@ import javax.portlet.PortletPreferences;
 import javax.portlet.PortletSession;
 import javax.portlet.RenderRequest;
 import javax.portlet.ResourceRequest;
+import javax.portlet.filter.ActionRequestWrapper;
+import javax.portlet.filter.EventRequestWrapper;
 import javax.portlet.filter.RenderRequestWrapper;
+import javax.portlet.filter.ResourceRequestWrapper;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -38,13 +41,18 @@ import org.apache.pluto.container.PortletRequestContext;
 import org.apache.pluto.container.PortletResourceRequestContext;
 import org.apache.pluto.container.PortletResourceResponseContext;
 import org.apache.pluto.container.PortletWindow;
+import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.portlet.session.ScopingPortletSessionImpl;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.IPersonManager;
+import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -59,12 +67,19 @@ import org.springframework.transaction.support.TransactionOperations;
  */
 @Service("portletEnvironmentService")
 public class PortletEnvironmentServiceImpl extends org.apache.pluto.container.impl.PortletEnvironmentServiceImpl {
+    private IPersonManager personManager;
     private IPortletWindowRegistry portletWindowRegistry;
     private IPortletEntityRegistry portletEntityRegistry;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPortalRequestUtils portalRequestUtils;
     private TransactionOperations transactionOperations;
+    
+    private boolean storeGuestPreferencesInMemory = true;
 
+    @Autowired
+    public void setPersonManager(IPersonManager personManager) {
+        this.personManager = personManager;
+    }
     @Autowired
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         this.portletWindowRegistry = portletWindowRegistry;
@@ -82,9 +97,12 @@ public class PortletEnvironmentServiceImpl extends org.apache.pluto.container.im
 		this.portalRequestUtils = portalRequestUtils;
 	}
     @Autowired
-    @Qualifier("PortalDB")
+    @Qualifier("PortalDb")
     public void setTransactionOperations(TransactionOperations transactionOperations) {
         this.transactionOperations = transactionOperations;
+    }
+    public void setStoreGuestPreferencesInMemory(boolean storeGuestPreferencesInMemory) {
+        this.storeGuestPreferencesInMemory = storeGuestPreferencesInMemory;
     }
     
     
@@ -98,18 +116,45 @@ public class PortletEnvironmentServiceImpl extends org.apache.pluto.container.im
         
 		return new ScopingPortletSessionImpl(portletEntityId, portletContext, portletWindow, session);
 	}
+
     @Override
-    public ActionRequest createActionRequest(PortletRequestContext requestContext,
+    public ActionRequest createActionRequest(final PortletRequestContext requestContext,
             PortletActionResponseContext responseContext) {
-        // TODO Auto-generated method stub
-        return super.createActionRequest(requestContext, responseContext);
+        
+        final ActionRequest actionRequest = super.createActionRequest(requestContext, responseContext);
+        
+        return new ActionRequestWrapper(actionRequest) {
+            private PortletPreferences portletPreferences;
+            
+            @Override
+            public PortletPreferences getPreferences() {
+                if (this.portletPreferences == null) {
+                    this.portletPreferences = createPortletPreferences(requestContext, true);
+                }
+                return this.portletPreferences;
+            }
+        };
     }
+    
     @Override
-    public EventRequest createEventRequest(PortletRequestContext requestContext,
+    public EventRequest createEventRequest(final PortletRequestContext requestContext,
             PortletEventResponseContext responseContext, Event event) {
-        // TODO Auto-generated method stub
-        return super.createEventRequest(requestContext, responseContext, event);
+
+        final EventRequest eventRequest = super.createEventRequest(requestContext, responseContext, event);
+        
+        return new EventRequestWrapper(eventRequest) {
+            private PortletPreferences portletPreferences;
+            
+            @Override
+            public PortletPreferences getPreferences() {
+                if (this.portletPreferences == null) {
+                    this.portletPreferences = createPortletPreferences(requestContext, true);
+                }
+                return this.portletPreferences;
+            }
+        };
     }
+    
     @Override
     public RenderRequest createRenderRequest(final PortletRequestContext requestContext,
             PortletRenderResponseContext responseContext) {
@@ -122,21 +167,65 @@ public class PortletEnvironmentServiceImpl extends org.apache.pluto.container.im
             @Override
             public PortletPreferences getPreferences() {
                 if (this.portletPreferences == null) {
-                    final HttpServletRequest containerRequest = requestContext.getContainerRequest();
-                    final PortletWindow plutoPortletWindow = requestContext.getPortletWindow();
-                    final IPortletWindow portletWindow = portletWindowRegistry.convertPortletWindow(containerRequest, plutoPortletWindow);
-                    final IPortletEntity portletEntity = portletWindow.getPortletEntity();
-                    
-                    this.portletPreferences = new PortletPreferencesImpl(requestContext, portletEntityRegistry, portletDefinitionRegistry, transactionOperations, portletEntity, true);
+                    this.portletPreferences = createPortletPreferences(requestContext, true);
                 }
                 return this.portletPreferences;
             }
         };
     }
+    
     @Override
-    public ResourceRequest createResourceRequest(PortletResourceRequestContext requestContext,
+    public ResourceRequest createResourceRequest(final PortletResourceRequestContext requestContext,
             PortletResourceResponseContext responseContext) {
-        // TODO Auto-generated method stub
-        return super.createResourceRequest(requestContext, responseContext);
+        
+        final ResourceRequest resourceRequest = super.createResourceRequest(requestContext, responseContext);
+        
+        return new ResourceRequestWrapper(resourceRequest) {
+            private PortletPreferences portletPreferences;
+            
+            @Override
+            public PortletPreferences getPreferences() {
+                if (this.portletPreferences == null) {
+                    this.portletPreferences = createPortletPreferences(requestContext, true);
+                }
+                return this.portletPreferences;
+            }
+        };
+    }
+    
+    protected PortletPreferences createPortletPreferences(final PortletRequestContext requestContext, boolean render) {
+        final HttpServletRequest containerRequest = requestContext.getContainerRequest();
+        final PortletWindow plutoPortletWindow = requestContext.getPortletWindow();
+        final IPortletWindow portletWindow = portletWindowRegistry.convertPortletWindow(containerRequest, plutoPortletWindow);
+        final IPortletEntity portletEntity = portletWindow.getPortletEntity();
+        
+        final boolean configMode = IPortletRenderer.CONFIG.equals(portletWindow.getPortletMode());
+        if (configMode) {
+            final IPortletDefinitionId portletDefinitionId = portletEntity.getPortletDefinitionId();
+            return new PortletDefinitionPreferencesImpl(portletDefinitionRegistry, transactionOperations, portletDefinitionId, render);
+        }
+        else if (this.isStoreInMemory(containerRequest)) {
+            final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
+            return new GuestPortletEntityPreferencesImpl(requestContext, portletEntityRegistry, portletDefinitionRegistry, portletEntityId, render);
+        }
+        else {
+            final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
+            return new PortletEntityPreferencesImpl(requestContext, portletEntityRegistry, portletDefinitionRegistry, transactionOperations, portletEntityId, render);
+        }
+    }
+    
+    public boolean isStoreInMemory(HttpServletRequest containerRequest) { 
+        if (this.storeGuestPreferencesInMemory && isGuestUser(containerRequest)){
+            return true;
+        }
+
+        return false; 
+    }
+    
+    protected boolean isGuestUser(HttpServletRequest containerRequest) {
+        //Checking for isAuth instead of isGuest to allow for authenticated guest customization of prefs
+        final IPerson person = this.personManager.getPerson(containerRequest);
+        final ISecurityContext securityContext = person.getSecurityContext();
+        return !securityContext.isAuthenticated();
     }
 }

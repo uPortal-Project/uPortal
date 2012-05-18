@@ -103,8 +103,8 @@ class TransientPortletEntity implements IPortletEntity {
 	}
 
     @Override
-	public void setPortletPreferences(List<IPortletPreference> portletPreferences) {
-		delegatePortletEntity.setPortletPreferences(portletPreferences);
+	public boolean setPortletPreferences(List<IPortletPreference> portletPreferences) {
+		return delegatePortletEntity.setPortletPreferences(portletPreferences);
 	}
 
 	@Override

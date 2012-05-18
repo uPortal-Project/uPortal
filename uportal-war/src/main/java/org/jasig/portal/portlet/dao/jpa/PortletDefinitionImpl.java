@@ -270,8 +270,8 @@ class PortletDefinitionImpl implements IPortletDefinition {
 	 * @see org.jasig.portal.portlet.om.IPortletEntity#setPortletPreferences(java.util.List)
 	 */
 	@Override
-	public void setPortletPreferences(List<IPortletPreference> portletPreferences) {
-		this.portletPreferences.setPortletPreferences(portletPreferences);
+	public boolean setPortletPreferences(List<IPortletPreference> portletPreferences) {
+		return this.portletPreferences.setPortletPreferences(portletPreferences);
 	}
 
 	@Override

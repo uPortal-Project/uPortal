@@ -93,8 +93,8 @@ class PersistentPortletEntityWrapper implements IPortletEntity {
 		return this.persistentEntity.getPortletPreferences();
 	}
 	@Override
-	public void setPortletPreferences(List<IPortletPreference> portletPreferences) {
-		this.persistentEntity.setPortletPreferences(portletPreferences);
+	public boolean setPortletPreferences(List<IPortletPreference> portletPreferences) {
+		return this.persistentEntity.setPortletPreferences(portletPreferences);
 	}
 
 	@Override
