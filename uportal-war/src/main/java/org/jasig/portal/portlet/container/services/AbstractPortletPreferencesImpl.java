@@ -123,7 +123,7 @@ public abstract class AbstractPortletPreferencesImpl<C> implements PortletPrefer
     @Override
     public final boolean isReadOnly(String key) {
         final IPortletPreference portletPreference = this.getPortletPreference(key);
-        return portletPreference == null || portletPreference.isReadOnly();
+        return portletPreference != null && portletPreference.isReadOnly();
     }
 
     @Override
@@ -211,13 +211,17 @@ public abstract class AbstractPortletPreferencesImpl<C> implements PortletPrefer
 
     @Override
     public final void reset(String key) throws ReadOnlyException {
+        final Map<String, IPortletPreference> basePortletPreferences = this.getBasePortletPreferences();
+        final IPortletPreference basePreference = basePortletPreferences.get(key);
+        if (this.isReadOnly(basePreference)) {
+            throw new ReadOnlyException("Preference '" + key + "' is read only");
+        }
+        
         final Map<String, IPortletPreference> targetPortletPreferences = this.getTargetPortletPreferences();
         final IPortletPreference removed = targetPortletPreferences.remove(key);
 
         //There was a target preference with that key, update the composite preferences map
         if (removed != null) {
-            final Map<String, IPortletPreference> basePortletPreferences = this.getBasePortletPreferences();
-            final IPortletPreference basePreference = basePortletPreferences.get(key);
             final Map<String, IPortletPreference> compositePortletPreferences = this.getCompositePortletPreferences();
             if (basePreference != null) {
                 compositePortletPreferences.put(key, basePreference);

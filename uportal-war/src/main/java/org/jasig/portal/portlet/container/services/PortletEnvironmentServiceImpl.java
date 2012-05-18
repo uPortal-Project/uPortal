@@ -129,7 +129,7 @@ public class PortletEnvironmentServiceImpl extends org.apache.pluto.container.im
             @Override
             public PortletPreferences getPreferences() {
                 if (this.portletPreferences == null) {
-                    this.portletPreferences = createPortletPreferences(requestContext, true);
+                    this.portletPreferences = createPortletPreferences(requestContext, false);
                 }
                 return this.portletPreferences;
             }
@@ -148,7 +148,7 @@ public class PortletEnvironmentServiceImpl extends org.apache.pluto.container.im
             @Override
             public PortletPreferences getPreferences() {
                 if (this.portletPreferences == null) {
-                    this.portletPreferences = createPortletPreferences(requestContext, true);
+                    this.portletPreferences = createPortletPreferences(requestContext, false);
                 }
                 return this.portletPreferences;
             }
@@ -186,7 +186,7 @@ public class PortletEnvironmentServiceImpl extends org.apache.pluto.container.im
             @Override
             public PortletPreferences getPreferences() {
                 if (this.portletPreferences == null) {
-                    this.portletPreferences = createPortletPreferences(requestContext, true);
+                    this.portletPreferences = createPortletPreferences(requestContext, false);
                 }
                 return this.portletPreferences;
             }
