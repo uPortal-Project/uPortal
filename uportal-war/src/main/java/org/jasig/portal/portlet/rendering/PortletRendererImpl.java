@@ -44,6 +44,7 @@ import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.api.portlet.PortletDelegationLocator;
 import org.jasig.portal.events.IPortalEventFactory;
 import org.jasig.portal.portlet.PortletDispatchException;
+import org.jasig.portal.portlet.container.cache.CacheControlImpl;
 import org.jasig.portal.portlet.container.cache.CacheState;
 import org.jasig.portal.portlet.container.cache.CachedPortletData;
 import org.jasig.portal.portlet.container.cache.CachedPortletResourceData;
@@ -757,6 +758,12 @@ public class PortletRendererImpl implements IPortletRenderer {
 			httpServletRequest.setAttribute(AdministrativeRequestListenerController.DEFAULT_LISTENER_KEY_ATTRIBUTE, "sessionActionListener");
 			httpServletRequest.setAttribute(PortletSessionAdministrativeRequestListener.ACTION, PortletSessionAdministrativeRequestListener.SessionAction.CLEAR);
 			httpServletRequest.setAttribute(PortletSessionAdministrativeRequestListener.SCOPE, PortletSession.PORTLET_SCOPE);
+			
+			//TODO modify PortletContainer.doAdmin to create a specific "admin" req/res object and context so we don't have to fake it with a render req
+			//These are required for a render request to be created and admin requests use a render request under the hood
+			final String characterEncoding = httpServletResponse.getCharacterEncoding();
+            httpServletRequest.setAttribute(ATTRIBUTE__PORTLET_OUTPUT_HANDLER, new RenderPortletOutputHandler(characterEncoding));
+            httpServletRequest.setAttribute(ATTRIBUTE__PORTLET_CACHE_CONTROL, new CacheControlImpl());
 
 			try {
 				this.portletContainer.doAdmin(portletWindow.getPlutoPortletWindow(), httpServletRequest, httpServletResponse);
