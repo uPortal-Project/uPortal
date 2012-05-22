@@ -117,12 +117,16 @@ class SessionPortletEntityImpl implements IPortletEntity, IPortletEntityDescript
 	 * @see org.jasig.portal.portlet.om.IPortletEntity#setPortletPreferences(java.util.List)
 	 */
 	@Override
-	public void setPortletPreferences(List<IPortletPreference> portletPreferences) {
+	public boolean setPortletPreferences(List<IPortletPreference> portletPreferences) {
 		if (portletPreferences == null) {
+		    final boolean modified = !this.portletPreferences.isEmpty();
 			this.portletPreferences.clear();
+			return modified;
 		}
 		
+		final boolean modified = !this.portletPreferences.equals(portletPreferences);
 		this.portletPreferences = portletPreferences;
+		return modified;
 	}
 
 	@Override
