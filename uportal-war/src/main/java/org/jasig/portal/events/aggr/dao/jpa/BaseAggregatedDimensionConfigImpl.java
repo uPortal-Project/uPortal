@@ -22,12 +22,10 @@ package org.jasig.portal.events.aggr.dao.jpa;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.PostPersist;
 import javax.persistence.PostUpdate;
 import javax.persistence.Transient;
-import javax.persistence.Version;
 
 import org.jasig.portal.events.aggr.BaseAggregatedDimensionConfig;
 import org.jasig.portal.utils.IncludeExcludeUtils;
@@ -41,10 +39,6 @@ import org.jasig.portal.utils.IncludeExcludeUtils;
  */
 @MappedSuperclass
 public abstract class BaseAggregatedDimensionConfigImpl<D> implements BaseAggregatedDimensionConfig<D> {
-
-    @Version
-    @Column(name = "ENTITY_VERSION")
-    private final long entityVersion = -1;
     
     @Transient
     private final Map<D, Boolean> includedCache = new ConcurrentHashMap<D, Boolean>();
@@ -53,11 +47,6 @@ public abstract class BaseAggregatedDimensionConfigImpl<D> implements BaseAggreg
     @PostPersist
     protected void clearIncludedCache() {
         includedCache.clear();
-    }
-    
-    @Override
-    public long getVersion() {
-        return this.entityVersion;
     }
 
     @Override
