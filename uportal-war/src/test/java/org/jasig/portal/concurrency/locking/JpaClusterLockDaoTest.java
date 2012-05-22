@@ -245,7 +245,7 @@ public class JpaClusterLockDaoTest extends BaseJpaDaoTest {
         
         //test context configures a 100ms abandoned lock timeout
         for (int i = 0; i < 5; i++) {
-            TimeUnit.MILLISECONDS.sleep(10);
+            TimeUnit.MILLISECONDS.sleep(5);
             //try lock ServerB
             currentServer.set("ServerB");
             execute(new CallableWithoutResult() {
@@ -255,7 +255,7 @@ public class JpaClusterLockDaoTest extends BaseJpaDaoTest {
                     assertFalse(locked);
                 }
             });
-            TimeUnit.MILLISECONDS.sleep(10);
+            TimeUnit.MILLISECONDS.sleep(5);
             //ServerA update ping
             currentServer.set("ServerA");
             execute(new CallableWithoutResult() {
