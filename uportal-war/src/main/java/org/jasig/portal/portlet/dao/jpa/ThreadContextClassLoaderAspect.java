@@ -19,6 +19,9 @@
 
 package org.jasig.portal.portlet.dao.jpa;
 
+import java.util.Deque;
+import java.util.LinkedList;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.core.Ordered;
 
@@ -31,10 +34,15 @@ import org.springframework.core.Ordered;
  */
 public class ThreadContextClassLoaderAspect implements Ordered {
     private static final ClassLoader PORTAL_CLASS_LOADER = ThreadContextClassLoaderAspect.class.getClassLoader();
-    private static final ThreadLocal<ClassLoader> PREVIOUS_CLASS_LOADER = new ThreadLocal<ClassLoader>();
+    private static final ThreadLocal<Deque<ClassLoader>> PREVIOUS_CLASS_LOADER = new ThreadLocal<Deque<ClassLoader>>();
     
     public static ClassLoader getPreviousClassLoader() {
-        return PREVIOUS_CLASS_LOADER.get();
+        final Deque<ClassLoader> deque = PREVIOUS_CLASS_LOADER.get();
+        if (deque == null) {
+            return null;
+        }
+
+        return deque.peekFirst();
     }
     
     @Override
@@ -49,7 +57,13 @@ public class ThreadContextClassLoaderAspect implements Ordered {
     public Object doThreadContextClassLoaderUpdate(ProceedingJoinPoint pjp) throws Throwable {
         final Thread currentThread = Thread.currentThread();
         final ClassLoader previousClassLoader = currentThread.getContextClassLoader();
-        PREVIOUS_CLASS_LOADER.set(previousClassLoader);
+        Deque<ClassLoader> deque = PREVIOUS_CLASS_LOADER.get();
+        if (deque == null) {
+            deque = new LinkedList<ClassLoader>();
+            PREVIOUS_CLASS_LOADER.set(deque);
+        }
+        
+        deque.push(previousClassLoader);
 
         try {
             currentThread.setContextClassLoader(PORTAL_CLASS_LOADER);
@@ -57,7 +71,11 @@ public class ThreadContextClassLoaderAspect implements Ordered {
         }
         finally {
             currentThread.setContextClassLoader(previousClassLoader);
-            PREVIOUS_CLASS_LOADER.remove();
+            deque.removeFirst();
+            if (deque.isEmpty()) {
+                //clean up the threadlocal when the deque is empty
+                PREVIOUS_CLASS_LOADER.remove();
+            }
         }
     }
 }
