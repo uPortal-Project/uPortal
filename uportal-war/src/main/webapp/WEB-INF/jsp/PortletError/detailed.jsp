@@ -20,15 +20,7 @@
 --%>
 
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
-<c:set var="n"><portlet:namespace/></c:set>
-<style type="text/css">
-.stacktrace {
-width: 100%;
-height: 20em;
-overflow: auto;
-border: 1px solid gray;
-}
-</style>
+<c:set var="n"><portlet:namespace/>-${portletWindowId}-</c:set>
 <div class="fl-widget portlet error view-detailed" role="section">
 
 <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">

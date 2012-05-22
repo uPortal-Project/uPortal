@@ -628,3 +628,12 @@
 .uptrans-form-container form input[type="text"] {width: 100%;}
 .uptrans-form-container form .buttons {text-align: right;}
 .uptrans-form-container form textarea {width: 100%; height: 50px;}
+
+/** Error Portlet **/
+.portlet.error .stacktrace {
+    width: 100%;
+    height: 20em;
+    overflow: auto;
+    border: 1px solid gray;
+    display: none;
+}
