@@ -355,7 +355,7 @@ public class UserAccountHelper {
 
         final STGroup group = new STGroupDir(templateDir, '$', '$');
         final ST template = group.getInstanceOf(passwordResetTemplate);
-        template.add("displayName", account.getAttributeValue("given") + " " + account.getAttributeValue("sn"));
+        template.add("displayName", person.getAttribute("displayName"));
         template.add("url", url.toString());
 
         MimeMessage message = mailSender.createMimeMessage();
