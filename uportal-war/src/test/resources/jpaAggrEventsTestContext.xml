@@ -29,7 +29,7 @@
                         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
                         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
-    <!-- JPA Test Context for DAOs that use the uPortalAggrEventsPersistence PersistenceContext -->
+    <!-- JPA Test Context for DAOs that use the AggrEventsDB PersistenceContext -->
     
     
     <bean id="intervalHelper" class="org.jasig.portal.events.aggr.AggregationIntervalHelperImpl" />
@@ -49,17 +49,17 @@
     <bean id="localPropertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="properties">
             <props>
-                <prop key="persistenceUnitName">uPortalAggrEventsPersistence</prop>
+                <prop key="persistenceUnitName">AggrEventsDB</prop>
             </props>
         </property>
     </bean>
     <alias name="aggrEventsTransactionManager" alias="transactionManager"/>
     <bean id="aggrEventsTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <qualifier value="aggrEvents" />
+        <qualifier value="AggrEventsDB" />
         <property name="entityManagerFactory" ref="factoryBean" />
     </bean>
     <bean id="aggrTransactionOperations" class="org.springframework.transaction.support.TransactionTemplate">
-        <qualifier value="aggrEvents"/>
+        <qualifier value="AggrEventsDB"/>
         <property name="transactionManager" ref="aggrEventsTransactionManager" />
     </bean>
     <bean id="AggrEventsDB" parent="TestDb">

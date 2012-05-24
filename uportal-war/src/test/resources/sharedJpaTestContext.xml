@@ -54,7 +54,7 @@
         <property name="poolPreparedStatements" value="false" />
     </bean>
     
-    <bean id="factoryBean" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="" autowire="byType">
+    <bean id="factoryBean" class="org.jasig.portal.jpa.EventingLocalContainerEntityManagerFactoryBean" depends-on="" autowire="byType">
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="persistenceUnitName" value="${persistenceUnitName}" />
         <property name="jpaProperties">
@@ -92,6 +92,14 @@
     <bean id="sqlNextExceptionLoggerAspect" class="org.jasig.portal.portlet.dao.jpa.SQLNextExceptionLoggerAspect" />
     
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" lazy-init="false" />
+    
+    <bean class="org.jasig.portal.jpa.cache.EntityManagerCache">
+        <property name="contentCache">
+            <bean id="portalInfoProvider" class="org.jasig.portal.spring.MockitoFactoryBean">
+                <constructor-arg value="net.sf.ehcache.Ehcache" />
+            </bean>
+        </property>
+    </bean>
 </beans>
 
 

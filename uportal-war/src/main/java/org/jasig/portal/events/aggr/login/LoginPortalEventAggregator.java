@@ -19,22 +19,25 @@
 
 package org.jasig.portal.events.aggr.login;
 
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.jasig.portal.events.LoginEvent;
 import org.jasig.portal.events.PortalEvent;
-import org.jasig.portal.events.aggr.DateDimension;
-import org.jasig.portal.events.aggr.IPortalEventAggregator;
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.AggregationIntervalInfo;
+import org.jasig.portal.events.aggr.DateDimension;
+import org.jasig.portal.events.aggr.EventAggregationContext;
+import org.jasig.portal.events.aggr.IPortalEventAggregator;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.events.aggr.session.EventSession;
+import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
+import org.jasig.portal.utils.cache.CacheKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Event aggregator that uses {@link LoginAggregationPrivateDao} to aggregate login events 
@@ -43,7 +46,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @version $Revision$
  */
 @Service
-public class LoginPortalEventAggregator implements IPortalEventAggregator<LoginEvent> {
+public class LoginPortalEventAggregator extends BaseAggrEventsJpaDao implements IPortalEventAggregator<LoginEvent> {
     private LoginAggregationPrivateDao loginAggregationDao;
 
     @Override
@@ -56,9 +59,12 @@ public class LoginPortalEventAggregator implements IPortalEventAggregator<LoginE
         this.loginAggregationDao = loginAggregationDao;
     }
 
-    @Transactional("aggrEvents")
+    
+    @AggrEventsTransactional
     @Override
-    public void aggregateEvent(LoginEvent e, EventSession eventSession, Map<AggregationInterval, AggregationIntervalInfo> currentIntervals) {
+    public void aggregateEvent(LoginEvent e, EventSession eventSession,
+            EventAggregationContext eventAggregationContext,
+            Map<AggregationInterval, AggregationIntervalInfo> currentIntervals) {
         
         for (Map.Entry<AggregationInterval, AggregationIntervalInfo> intervalInfoEntry : currentIntervals.entrySet()) {
             final AggregationInterval interval = intervalInfoEntry.getKey();
@@ -67,9 +73,17 @@ public class LoginPortalEventAggregator implements IPortalEventAggregator<LoginE
             final TimeDimension timeDimension = intervalInfo.getTimeDimension();
             
             final Set<AggregatedGroupMapping> groupMappings = new LinkedHashSet<AggregatedGroupMapping>(eventSession.getGroupMappings());
+            
+            final Object key = CacheKey.build(this.getClass().getName(), dateDimension.getDate(), timeDimension.getTime(), interval);
+            Set<LoginAggregationImpl> cachedLoginAggregations = eventAggregationContext.getAttribute(key);
+            if (cachedLoginAggregations == null) {
+                //Nothing in the aggr session yet, cache the current set of aggrportalEventAggregationManager.aggregateRawEvents()egations from the DB in the aggr session
+                final Set<LoginAggregationImpl> loginAggregations = this.loginAggregationDao.getLoginAggregationsForInterval(dateDimension, timeDimension, interval);
+                cachedLoginAggregations = new HashSet<LoginAggregationImpl>(loginAggregations);
+                eventAggregationContext.setAttribute(key, cachedLoginAggregations);
+            }
         
-            final Set<LoginAggregationImpl> loginAggregations = this.loginAggregationDao.getLoginAggregationsForInterval(dateDimension, timeDimension, interval);
-            for (final LoginAggregationImpl loginAggregation : loginAggregations) {
+            for (final LoginAggregationImpl loginAggregation : cachedLoginAggregations) {
                 //Remove the aggregation from the group set to mark that it has been updated
                 groupMappings.remove(loginAggregation.getAggregatedGroup());
                 updateAggregation(e, intervalInfo, loginAggregation);
@@ -79,6 +93,7 @@ public class LoginPortalEventAggregator implements IPortalEventAggregator<LoginE
             if (!groupMappings.isEmpty()) {
                 for (final AggregatedGroupMapping aggregatedGroup : groupMappings) {
                     final LoginAggregationImpl loginAggregation = loginAggregationDao.createLoginAggregation(dateDimension, timeDimension, interval, aggregatedGroup);
+                    cachedLoginAggregations.add(loginAggregation);
                     updateAggregation(e, intervalInfo, loginAggregation);
                 }
             }
@@ -92,9 +107,11 @@ public class LoginPortalEventAggregator implements IPortalEventAggregator<LoginE
         loginAggregation.countUser(userName);
     }
 
-    @Transactional("aggrEvents")
+    @AggrEventsTransactional
     @Override
-    public void handleIntervalBoundary(AggregationInterval interval, Map<AggregationInterval, AggregationIntervalInfo> intervals) {
+    public void handleIntervalBoundary(AggregationInterval interval, EventAggregationContext eventAggregationContext,
+            Map<AggregationInterval, AggregationIntervalInfo> intervals) {
+        
         final AggregationIntervalInfo intervalInfo = intervals.get(interval);
         final DateDimension dateDimension = intervalInfo.getDateDimension();
         final TimeDimension timeDimension = intervalInfo.getTimeDimension();

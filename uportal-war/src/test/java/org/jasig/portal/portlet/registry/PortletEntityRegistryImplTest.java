@@ -26,8 +26,6 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import net.sf.ehcache.Ehcache;
@@ -47,7 +45,7 @@ import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.test.BaseJpaDaoTest;
+import org.jasig.portal.test.BasePortalJpaDaoTest;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
@@ -68,7 +66,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaPortalTestApplicationContext.xml")
-public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
+public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
     @Autowired
     private IPortletTypeDao jpaPortletTypeDao;
     @Autowired
@@ -112,14 +110,6 @@ public class PortletEntityRegistryImplTest extends BaseJpaDaoTest {
     @Mock private IUserLayoutChannelDescription node;
     @Mock private IPerson person;
     
-    @PersistenceContext(unitName = "uPortalPersistence")
-    private EntityManager entityManager;
-    
-    @Override
-    protected EntityManager getEntityManager() {
-        return this.entityManager;
-    }
-
     @Before
     public void onSetUp() throws Exception {
         MockitoAnnotations.initMocks(this);

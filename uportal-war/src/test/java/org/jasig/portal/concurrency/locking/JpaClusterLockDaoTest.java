@@ -31,12 +31,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.jasig.portal.IPortalInfoProvider;
 import org.jasig.portal.concurrency.CallableWithoutResult;
-import org.jasig.portal.test.BaseJpaDaoTest;
+import org.jasig.portal.test.BasePortalJpaDaoTest;
 import org.jasig.portal.test.ThreadGroupRunner;
 import org.jasig.portal.utils.threading.ThrowingRunnable;
 import org.junit.Test;
@@ -53,20 +50,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaClusterLockDaoTestContext.xml")
-public class JpaClusterLockDaoTest extends BaseJpaDaoTest {
+public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
     @Autowired
     private IClusterLockDao clusterLockDao;
     @Autowired
     private IPortalInfoProvider portalInfoProvider;
 
-    @PersistenceContext(unitName = "uPortalPersistence")
-    private EntityManager entityManager;
-    
-    @Override
-    protected EntityManager getEntityManager() {
-        return this.entityManager;
-    }
-    
     @Test
     public void testConcurrentCreation() throws InterruptedException  {
         reset(portalInfoProvider);
@@ -313,11 +302,11 @@ public class JpaClusterLockDaoTest extends BaseJpaDaoTest {
         final AtomicInteger lockFailCount = new AtomicInteger(0);
         final AtomicBoolean serverBLocked = new AtomicBoolean(false);
         
-        //test context configures a 100ms abandoned lock timeout
+        currentServer.set("ServerB");
+        
+        //test context configures a 100ms abandoned lock timeout, wait 110 between tests
         for (int i = 0; i < 5 && !serverBLocked.get(); i++) {
-            TimeUnit.MILLISECONDS.sleep(50);
             //try lock ServerB
-            currentServer.set("ServerB");
             execute(new CallableWithoutResult() {
                 @Override
                 protected void callWithoutResult() {
@@ -330,10 +319,12 @@ public class JpaClusterLockDaoTest extends BaseJpaDaoTest {
                     }
                 }
             });
+            
+            TimeUnit.MILLISECONDS.sleep(110);
         }
         
         assertTrue(serverBLocked.get());
-        assertEquals(2, lockFailCount.get());
+        assertEquals(1, lockFailCount.get());
 
         currentServer.set("ServerB");
         

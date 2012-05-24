@@ -27,12 +27,10 @@ import java.util.List;
 import java.util.Set;
 
 import javax.naming.CompositeName;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.jasig.portal.concurrency.CallableWithoutResult;
-import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.AggregationInterval;
+import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.dao.DateDimensionDao;
 import org.jasig.portal.events.aggr.dao.TimeDimensionDao;
@@ -40,7 +38,7 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupLookupDao;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.groups.ICompositeGroupService;
 import org.jasig.portal.groups.IEntityGroup;
-import org.jasig.portal.test.BaseJpaDaoTest;
+import org.jasig.portal.test.BaseAggrEventsJpaDaoTest;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
@@ -56,7 +54,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaAggrEventsTestContext.xml")
-public class JpaLoginAggregationDaoTest extends BaseJpaDaoTest {
+public class JpaLoginAggregationDaoTest extends BaseAggrEventsJpaDaoTest {
     @Autowired
     private AggregatedGroupLookupDao aggregatedGroupLookupDao;
     @Autowired
@@ -68,13 +66,6 @@ public class JpaLoginAggregationDaoTest extends BaseJpaDaoTest {
     @Autowired
     private ICompositeGroupService compositeGroupService;
     
-    @PersistenceContext(unitName = "uPortalAggrEventsPersistence")
-    private EntityManager entityManager;
-    
-    @Override
-    protected EntityManager getEntityManager() {
-        return this.entityManager;
-    }
     
     @Test
     public void testLoginAggregationLifecycle() throws Exception {

@@ -18,7 +18,6 @@
  */
 package org.jasig.portal.events.aggr;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -44,7 +43,7 @@ public class AggregationIntervalHelperImpl implements AggregationIntervalHelper 
     private TimeDimensionDao timeDimensionDao;
     private DateDimensionDao dateDimensionDao;
     private IEventAggregationManagementDao eventAggregationManagementDao;
-
+    
     @Autowired
     public void setEventAggregationManagementDao(IEventAggregationManagementDao eventAggregationManagementDao) {
         this.eventAggregationManagementDao = eventAggregationManagementDao;
@@ -59,7 +58,7 @@ public class AggregationIntervalHelperImpl implements AggregationIntervalHelper 
     public void setDateDimensionDao(DateDimensionDao dateDimensionDao) {
         this.dateDimensionDao = dateDimensionDao;
     }
-
+    
     /* (non-Javadoc)
      * @see org.jasig.portal.stats.IntervalHelper#getIntervalDates(org.jasig.portal.stats.Interval, java.util.Date)
      */
@@ -67,8 +66,6 @@ public class AggregationIntervalHelperImpl implements AggregationIntervalHelper 
     public AggregationIntervalInfo getIntervalInfo(AggregationInterval interval, DateTime date) {
         //Chop off everything below the minutes (seconds, millis)
         final DateTime instant = date.minuteOfHour().roundFloorCopy();
-        
-        //TODO cache this resolution ... best place would be in the current jpa session
         
         final DateTime start, end;
         switch (interval) {

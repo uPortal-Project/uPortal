@@ -24,8 +24,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CollectionJoin;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -40,12 +38,11 @@ import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl;
 import org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl_;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
-import org.jasig.portal.jpa.BaseJpaDao;
+import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
 import org.joda.time.DateMidnight;
 import org.joda.time.LocalDate;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
@@ -55,7 +52,7 @@ import com.google.common.collect.ImmutableSet;
  * @version $Revision$
  */
 @Repository
-public class JpaLoginAggregationDao extends BaseJpaDao implements LoginAggregationPrivateDao {
+public class JpaLoginAggregationDao extends BaseAggrEventsJpaDao implements LoginAggregationPrivateDao {
 
     private CriteriaQuery<LoginAggregationImpl> findLoginAggregationByDateTimeIntervalQuery;
     private CriteriaQuery<LoginAggregationImpl> findLoginAggregationByDateTimeIntervalGroupQuery;
@@ -67,18 +64,6 @@ public class JpaLoginAggregationDao extends BaseJpaDao implements LoginAggregati
     private ParameterExpression<Set> aggregatedGroupsParameter;
     private ParameterExpression<LocalDate> startDate;
     private ParameterExpression<LocalDate> endDate;
-    
-    private EntityManager entityManager;
-
-    @PersistenceContext(unitName = "uPortalAggrEventsPersistence")
-    public final void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
-
-    @Override
-    protected EntityManager getEntityManager() {
-        return this.entityManager;
-    }
     
 
     @Override
@@ -190,20 +175,20 @@ public class JpaLoginAggregationDao extends BaseJpaDao implements LoginAggregati
         return DataAccessUtils.uniqueResult(results);
     }
     
-    @Transactional("aggrEvents")
+    @AggrEventsTransactional
     @Override
     public LoginAggregationImpl createLoginAggregation(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval, AggregatedGroupMapping aggregatedGroup) {
         final LoginAggregationImpl loginAggregation = new LoginAggregationImpl(timeDimension, dateDimension, interval, aggregatedGroup);
         
-        this.entityManager.persist(loginAggregation);
+        this.getEntityManager().persist(loginAggregation);
         
         return loginAggregation;
     }
     
-    @Transactional("aggrEvents")
+    @AggrEventsTransactional
     @Override
     public void updateLoginAggregation(LoginAggregationImpl loginAggregation) {
-        this.entityManager.persist(loginAggregation);
+        this.getEntityManager().persist(loginAggregation);
     }
         
 }

@@ -35,22 +35,23 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.jasig.portal.test.BaseJpaDaoTest;
 import org.springframework.core.io.Resource;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionOperations;
 
 import com.google.common.base.Function;
 
 /**
+ * Utility for doing import/export round trip testing
+ * 
  * @author Eric Dalquist
- * @version $Revision$
  */
-public abstract class AbstractIdentityImportExportTest extends BaseJpaDaoTest {
+public final class IdentityImportExportTestUtilities {
     
-    protected final <T> void testIdentityImportExport(
+    public static <T> void testIdentityImportExport(TransactionOperations transactionOperations,
             final IDataImporter<T> dataImporter, final IDataExporter<?> dataExporter, 
             Resource resource, Function<T, String> getName) throws Exception {
         
@@ -107,7 +108,7 @@ public abstract class AbstractIdentityImportExportTest extends BaseJpaDaoTest {
         }
     }
 
-    protected String toString(Resource resource) throws IOException {
+    private static String toString(Resource resource) throws IOException {
         final InputStream inputStream = resource.getInputStream();
         try {
             return IOUtils.toString(inputStream);

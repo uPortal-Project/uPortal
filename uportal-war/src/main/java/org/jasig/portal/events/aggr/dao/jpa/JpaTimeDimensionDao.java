@@ -22,8 +22,6 @@ package org.jasig.portal.events.aggr.dao.jpa;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -32,11 +30,10 @@ import javax.persistence.criteria.Root;
 
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.dao.TimeDimensionDao;
-import org.jasig.portal.jpa.BaseJpaDao;
+import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
 import org.joda.time.LocalTime;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
 
@@ -45,23 +42,11 @@ import com.google.common.base.Function;
  * @version $Revision$
  */
 @Repository
-public class JpaTimeDimensionDao extends BaseJpaDao implements TimeDimensionDao {
+public class JpaTimeDimensionDao extends BaseAggrEventsJpaDao implements TimeDimensionDao {
     
     private CriteriaQuery<TimeDimensionImpl> findAllTimeDimensionsQuery;
     private CriteriaQuery<TimeDimensionImpl> findTimeDimensionByHourMinuteQuery;
     private ParameterExpression<LocalTime> timeParameter;
-    
-    private EntityManager entityManager;
-
-    @PersistenceContext(unitName = "uPortalAggrEventsPersistence")
-    public final void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
-
-    @Override
-    protected EntityManager getEntityManager() {
-        return this.entityManager;
-    }
     
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -96,11 +81,11 @@ public class JpaTimeDimensionDao extends BaseJpaDao implements TimeDimensionDao 
     }
     
     @Override
-    @Transactional("aggrEvents")
+    @AggrEventsTransactional
     public TimeDimension createTimeDimension(LocalTime time) {
         final TimeDimension timeDimension = new TimeDimensionImpl(time);
         
-        this.entityManager.persist(timeDimension);
+        this.getEntityManager().persist(timeDimension);
         
         return timeDimension;
     }
@@ -115,7 +100,7 @@ public class JpaTimeDimensionDao extends BaseJpaDao implements TimeDimensionDao 
     
     @Override
     public TimeDimension getTimeDimensionById(long key) {
-        final TimeDimension timeDimension = this.entityManager.find(TimeDimensionImpl.class, key);
+        final TimeDimension timeDimension = this.getEntityManager().find(TimeDimensionImpl.class, key);
         
         return timeDimension;
     }

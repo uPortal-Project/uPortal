@@ -34,6 +34,10 @@ public class Tuple<A, B> implements Serializable {
     public final B second;
     private final boolean immutable;
     private final int hash; 
+    
+    public static <A1, B1> Tuple<A1, B1> of(A1 a1, B1 b1) {
+        return new Tuple<A1, B1>(a1, b1);
+    }
 
     public Tuple(A first, B second) {
         this(first, second, false);

@@ -22,8 +22,6 @@ package org.jasig.portal.events.aggr.dao.jpa;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -33,12 +31,11 @@ import javax.persistence.criteria.Subquery;
 
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.dao.DateDimensionDao;
-import org.jasig.portal.jpa.BaseJpaDao;
+import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
 import org.joda.time.DateMidnight;
 import org.joda.time.LocalDate;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
 
@@ -47,7 +44,7 @@ import com.google.common.base.Function;
  * @version $Revision$
  */
 @Repository
-public class JpaDateDimensionDao extends BaseJpaDao implements DateDimensionDao {
+public class JpaDateDimensionDao extends BaseAggrEventsJpaDao implements DateDimensionDao {
     private CriteriaQuery<DateDimensionImpl> findAllDateDimensionsQuery;
     private CriteriaQuery<DateDimensionImpl> findAllDateDimensionsBetweenQuery;
     private CriteriaQuery<DateDimensionImpl> findDateDimensionByDateQuery;
@@ -56,17 +53,6 @@ public class JpaDateDimensionDao extends BaseJpaDao implements DateDimensionDao 
     private ParameterExpression<LocalDate> dateTimeParameter;
     private ParameterExpression<LocalDate> endDateTimeParameter;
     
-    private EntityManager entityManager;
-
-    @PersistenceContext(unitName = "uPortalAggrEventsPersistence")
-    public final void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
-
-    @Override
-    protected EntityManager getEntityManager() {
-        return this.entityManager;
-    }
     
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -173,11 +159,11 @@ public class JpaDateDimensionDao extends BaseJpaDao implements DateDimensionDao 
     }
     
     @Override
-    @Transactional("aggrEvents")
+    @AggrEventsTransactional
     public DateDimension createDateDimension(DateMidnight date, int quarter, String term) {
         final DateDimension dateDimension = new DateDimensionImpl(date, quarter, term);
         
-        this.entityManager.persist(dateDimension);
+        this.getEntityManager().persist(dateDimension);
         
         return dateDimension;
     }
@@ -202,7 +188,7 @@ public class JpaDateDimensionDao extends BaseJpaDao implements DateDimensionDao 
     
     @Override
     public DateDimension getDateDimensionById(long key) {
-        final DateDimension dateDimension = this.entityManager.find(DateDimensionImpl.class, key);
+        final DateDimension dateDimension = this.getEntityManager().find(DateDimensionImpl.class, key);
         
         return dateDimension;
     }

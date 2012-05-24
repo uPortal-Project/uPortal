@@ -21,9 +21,9 @@ package org.jasig.portal.events.aggr.session;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -104,7 +104,7 @@ public class EventSessionImpl implements EventSession, Serializable {
     
     @Transient
     private final Map<Class<? extends IPortalEventAggregator>, Tuple<AggregatedGroupConfig, EventSession>> filteredEventSessionCache 
-            = new ConcurrentHashMap<Class<? extends IPortalEventAggregator>, Tuple<AggregatedGroupConfig,EventSession>>();
+            = new HashMap<Class<? extends IPortalEventAggregator>, Tuple<AggregatedGroupConfig,EventSession>>();
     
     @SuppressWarnings("unused")
     private EventSessionImpl() {

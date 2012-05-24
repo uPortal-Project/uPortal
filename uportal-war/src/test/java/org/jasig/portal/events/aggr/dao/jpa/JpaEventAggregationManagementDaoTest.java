@@ -19,27 +19,24 @@
 
 package org.jasig.portal.events.aggr.dao.jpa;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
 
 import javax.naming.CompositeName;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.jasig.portal.concurrency.CallableWithoutResult;
 import org.jasig.portal.events.aggr.AcademicTermDetail;
 import org.jasig.portal.events.aggr.AggregatedGroupConfig;
 import org.jasig.portal.events.aggr.AggregatedIntervalConfig;
-import org.jasig.portal.events.aggr.EventDateTimeUtils;
 import org.jasig.portal.events.aggr.AggregationInterval;
+import org.jasig.portal.events.aggr.EventDateTimeUtils;
 import org.jasig.portal.events.aggr.QuarterDetail;
 import org.jasig.portal.events.aggr.dao.IEventAggregationManagementDao;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupLookupDao;
@@ -47,7 +44,7 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.events.aggr.login.LoginPortalEventAggregator;
 import org.jasig.portal.groups.ICompositeGroupService;
 import org.jasig.portal.groups.IEntityGroup;
-import org.jasig.portal.test.BaseJpaDaoTest;
+import org.jasig.portal.test.BaseAggrEventsJpaDaoTest;
 import org.joda.time.DateMidnight;
 import org.joda.time.MonthDay;
 import org.junit.Test;
@@ -60,7 +57,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaAggrEventsTestContext.xml")
-public class JpaEventAggregationManagementDaoTest extends BaseJpaDaoTest {
+public class JpaEventAggregationManagementDaoTest extends BaseAggrEventsJpaDaoTest {
 	
     @Autowired
 	private IEventAggregationManagementDao eventAggregationManagementDao;
@@ -70,14 +67,6 @@ public class JpaEventAggregationManagementDaoTest extends BaseJpaDaoTest {
     private ICompositeGroupService compositeGroupService;
     
     
-    @PersistenceContext(unitName = "uPortalAggrEventsPersistence")
-    private EntityManager entityManager;
-    
-    @Override
-    protected EntityManager getEntityManager() {
-        return this.entityManager;
-    }
-
 	@Test
 	public void testAggregatedGroupConfig() throws Exception {
         final IEntityGroup everyoneGroup = mock(IEntityGroup.class);

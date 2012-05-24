@@ -32,6 +32,9 @@ import javax.persistence.criteria.Root;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionOperations;
 
 import com.google.common.base.Function;
 
@@ -47,6 +50,8 @@ public abstract class BaseJpaDao implements InitializingBean {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
     protected abstract EntityManager getEntityManager();
+    
+    protected abstract TransactionOperations getTransactionOperations();
     
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -81,7 +86,16 @@ public abstract class BaseJpaDao implements InitializingBean {
         final CriteriaBuilder criteriaBuilder = entityManagerFactory.getCriteriaBuilder();
         
         final CriteriaQuery<T> criteriaQuery = builder.apply(criteriaBuilder);
-        entityManager.createQuery(criteriaQuery); //pre-compile critera query to avoid race conditions when setting aliases
+        
+        //Do in TX so the EM gets closed correctly
+        final TransactionOperations transactionOperations = this.getTransactionOperations();
+        transactionOperations.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                entityManager.createQuery(criteriaQuery); //pre-compile critera query to avoid race conditions when setting aliases
+            }
+        });
+        
         return criteriaQuery;
     }
     

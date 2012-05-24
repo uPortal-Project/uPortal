@@ -21,11 +21,23 @@ package org.jasig.portal.events.aggr;
 
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+import javax.persistence.FlushModeType;
+
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.aggr.session.EventSession;
 
 /**
- * Defines a class that aggregates events
+ * Defines a class that aggregates events.
+ * <br/>
+ * IMPORTANT: The AggrEventsDb EntityManager that is open during execution is running in {@link FlushModeType#COMMIT}. It is
+ * recommended that implementations make use of the {@link EventAggregationContext} to track created/modified entities during
+ * {@link #aggregateEvent(PortalEvent, EventSession, EventAggregationContext, Map)} calls and only call 
+ * {@link EntityManager#persist(Object)} during {@link #handleIntervalBoundary(AggregationInterval, EventAggregationContext, Map)}
+ * calls.
+ * <br/>
+ * An explicit {@link EntityManager#flush()} call is made after all aggregators have had
+ * {@link #handleIntervalBoundary(AggregationInterval, EventAggregationContext, Map)} called. 
  * 
  * @author Eric Dalquist
  * @version $Revision$
@@ -41,9 +53,10 @@ public interface IPortalEventAggregator<E extends PortalEvent> {
      * 
      * @param e The event to aggregate
      * @param eventSession Information about the event session associated with the event, MAY BE NULL!
+     * @param eventAggregationContext Context used to store stateful information for an event aggregation run
      * @param currentIntervals Information about all of the intervals the event exists in.
      */
-    void aggregateEvent(E e, EventSession eventSession, Map<AggregationInterval, AggregationIntervalInfo> currentIntervals);
+    void aggregateEvent(E e, EventSession eventSession, EventAggregationContext eventAggregationContext, Map<AggregationInterval, AggregationIntervalInfo> currentIntervals);
     
     /**
      * Handle crossing over an interval boundary, called after the LAST event of the interval is processed.
@@ -51,5 +64,5 @@ public interface IPortalEventAggregator<E extends PortalEvent> {
      * @param interval The type of interval that was crossed
      * @param intervals Information about all intervals that the previous set of events was part of
      */
-    void handleIntervalBoundary(AggregationInterval interval, Map<AggregationInterval, AggregationIntervalInfo> intervals);
+    void handleIntervalBoundary(AggregationInterval interval, EventAggregationContext eventAggregationContext, Map<AggregationInterval, AggregationIntervalInfo> intervals);
 }

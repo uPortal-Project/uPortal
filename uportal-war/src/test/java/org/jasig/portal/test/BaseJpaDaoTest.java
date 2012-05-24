@@ -43,21 +43,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.jpa.JpaInterceptor;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionOperations;
-import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * Base class for JPA based unit tests that want TX and entity manager support.
  * Also deletes all hibernate managed data from the database after each test execution 
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class BaseJpaDaoTest {
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
     
     protected JpaInterceptor jpaInterceptor;
     protected TransactionOperations transactionOperations;
@@ -69,12 +66,10 @@ public abstract class BaseJpaDaoTest {
     }
 
     @Autowired
-    public final void setPlatformTransactionManager(PlatformTransactionManager platformTransactionManager) {
-        final TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
-        transactionTemplate.afterPropertiesSet();
-        this.transactionOperations = transactionTemplate;
+    public void setTransactionOperations(TransactionOperations transactionOperations) {
+        this.transactionOperations = transactionOperations;
     }
-    
+
     protected abstract EntityManager getEntityManager();
 
     /**
@@ -97,11 +92,11 @@ public abstract class BaseJpaDaoTest {
                     this.executeInTransaction(new CallableWithoutResult() {
                         @Override
                         protected void callWithoutResult() {
-                            logger.info("Purging all: " + entityClassName);
+                            logger.trace("Purging all: " + entityClassName);
                             
                             final Query query = entityManager.createQuery("SELECT e FROM " + entityClassName + " AS e");
                             final List<?> entities = query.getResultList();
-                            logger.info("Found " + entities.size() + " " + entityClassName + " to delete");
+                            logger.trace("Found " + entities.size() + " " + entityClassName + " to delete");
                             for (final Object entity : entities) {
                                 entityManager.remove(entity);
                             }              
@@ -109,7 +104,7 @@ public abstract class BaseJpaDaoTest {
                     });
                 }
                 catch (DataIntegrityViolationException e) {
-                    logger.info("Failed to delete " + entityClassName + ". Must be a dependency of another entity");
+                    logger.trace("Failed to delete " + entityClassName + ". Must be a dependency of another entity");
                     failedEntitieTypes.add(entityType);
                 }
             }

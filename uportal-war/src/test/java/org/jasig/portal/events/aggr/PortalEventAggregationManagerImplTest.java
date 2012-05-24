@@ -27,9 +27,6 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.jasig.portal.IPortalInfoProvider;
 import org.jasig.portal.concurrency.CallableWithoutResult;
 import org.jasig.portal.concurrency.FunctionWithoutResult;
@@ -40,7 +37,7 @@ import org.jasig.portal.events.aggr.dao.DateDimensionDao;
 import org.jasig.portal.events.aggr.dao.IEventAggregationManagementDao;
 import org.jasig.portal.events.aggr.dao.TimeDimensionDao;
 import org.jasig.portal.events.handlers.db.IPortalEventDao;
-import org.jasig.portal.test.BaseJpaDaoTest;
+import org.jasig.portal.test.BaseAggrEventsJpaDaoTest;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
@@ -58,7 +55,7 @@ import com.google.common.base.Function;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaAggrEventsTestContext.xml")
-public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
+public class PortalEventAggregationManagerImplTest extends BaseAggrEventsJpaDaoTest {
     private PortalEventAggregationManagerImpl portalEventAggregationManager;
     private IPortalEventDao portalEventDao;
     private IClusterLockService clusterLockService;
@@ -71,13 +68,7 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
     private TimeDimensionDao timeDimensionDao;
     @Autowired
     private AggregationIntervalHelper intervalHelper;
-    @PersistenceContext(unitName = "uPortalAggrEventsPersistence")
-    private EntityManager entityManager;
-
-    @Override
-    protected EntityManager getEntityManager() {
-        return this.entityManager;
-    }
+    
 
     @Before
     public void setup() {
@@ -103,6 +94,8 @@ public class PortalEventAggregationManagerImplTest extends BaseJpaDaoTest {
         portalEventAggregationManager.setEventAggregationManagementDao(eventAggregationManagementDao);
         //        portalEventAggregationManager.setPortalEventAggregators(null);
         portalEventAggregationManager.setPortalInfoProvider(portalInfoProvider);
+        portalEventAggregationManager.setEntityManager(this.getEntityManager());
+        portalEventAggregationManager.setTransactionOperations(this.transactionOperations);
     }
 
     @Test

@@ -24,7 +24,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -33,14 +32,13 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.jpa.BaseJpaDao;
+import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletType;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
 
@@ -51,7 +49,7 @@ import com.google.common.base.Function;
  * @version $Revision$
  */
 @Repository
-public class JpaPortletDefinitionDao extends BaseJpaDao implements IPortletDefinitionDao {
+public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortletDefinitionDao {
     private CriteriaQuery<PortletDefinitionImpl> findAllPortletDefinitions;
     private CriteriaQuery<PortletDefinitionImpl> findDefinitionByFnameQuery;
     private CriteriaQuery<PortletDefinitionImpl> findDefinitionByNameQuery;
@@ -60,17 +58,6 @@ public class JpaPortletDefinitionDao extends BaseJpaDao implements IPortletDefin
     private ParameterExpression<String> fnameParameter;
     private ParameterExpression<String> nameParameter;
     private ParameterExpression<String> titleParameter;
-    private EntityManager entityManager;
-
-    @PersistenceContext(unitName = "uPortalPersistence")
-    public final void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
-    
-    @Override
-    protected EntityManager getEntityManager() {
-        return this.entityManager;
-    }
     
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -179,7 +166,7 @@ public class JpaPortletDefinitionDao extends BaseJpaDao implements IPortletDefin
         Validate.notNull(portletDefinitionId, "portletDefinitionId can not be null");
         
         final long internalPortletDefinitionId = getNativePortletDefinitionId(portletDefinitionId);
-        final PortletDefinitionImpl portletDefinition = this.entityManager.find(PortletDefinitionImpl.class, internalPortletDefinitionId);
+        final PortletDefinitionImpl portletDefinition = this.getEntityManager().find(PortletDefinitionImpl.class, internalPortletDefinitionId);
         
         return portletDefinition;
     }
@@ -190,7 +177,7 @@ public class JpaPortletDefinitionDao extends BaseJpaDao implements IPortletDefin
         Validate.notNull(portletDefinitionIdString, "portletDefinitionIdString can not be null");
         
         final long internalPortletDefinitionId = getNativePortletDefinitionId(portletDefinitionIdString);
-        final PortletDefinitionImpl portletDefinition = this.entityManager.find(PortletDefinitionImpl.class, internalPortletDefinitionId);
+        final PortletDefinitionImpl portletDefinition = this.getEntityManager().find(PortletDefinitionImpl.class, internalPortletDefinitionId);
         
         return portletDefinition;
     }
@@ -236,19 +223,20 @@ public class JpaPortletDefinitionDao extends BaseJpaDao implements IPortletDefin
     }
 
     @Override
-    @Transactional
+    @PortalTransactional
 	public void deletePortletDefinition(IPortletDefinition definition) {
         Validate.notNull(definition, "definition can not be null");
         
         final IPortletDefinition persistentPortletDefinition;
-        if (this.entityManager.contains(definition)) {
+        final EntityManager entityManager = this.getEntityManager();
+        if (entityManager.contains(definition)) {
             persistentPortletDefinition = definition;
         }
         else {
-            persistentPortletDefinition = this.entityManager.merge(definition);
+            persistentPortletDefinition = entityManager.merge(definition);
         }
         
-        this.entityManager.remove(persistentPortletDefinition);
+        entityManager.remove(persistentPortletDefinition);
 	}
 
 	@Override
@@ -261,7 +249,7 @@ public class JpaPortletDefinitionDao extends BaseJpaDao implements IPortletDefin
 	}
 	
     @Override
-    @Transactional
+    @PortalTransactional
     public IPortletDefinition createPortletDefinition(IPortletType portletType, String fname, String name, String title, String applicationId, String portletName, boolean isFramework) {
         Validate.notNull(portletType, "portletType can not be null");
         Validate.notEmpty(fname, "fname can not be null");
@@ -270,21 +258,18 @@ public class JpaPortletDefinitionDao extends BaseJpaDao implements IPortletDefin
         
         final PortletDefinitionImpl portletDefinition = new PortletDefinitionImpl(portletType, fname, name, title, applicationId, portletName, isFramework);
         
-        this.entityManager.persist(portletDefinition);
+        this.getEntityManager().persist(portletDefinition);
         
         return portletDefinition;
     }
 
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.dao.portlet.IPortletDefinitionDao#updatePortletDefinition(org.jasig.portal.om.portlet.IPortletDefinition)
-     */
     @Override
-    @Transactional
+    @PortalTransactional
     public IPortletDefinition updatePortletDefinition(IPortletDefinition portletDefinition) {
         Validate.notNull(portletDefinition, "portletDefinition can not be null");
         
-        this.entityManager.persist(portletDefinition);
+        this.getEntityManager().persist(portletDefinition);
         return portletDefinition;
     }
 

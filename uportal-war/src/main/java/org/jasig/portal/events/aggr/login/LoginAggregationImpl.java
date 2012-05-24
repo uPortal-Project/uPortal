@@ -24,6 +24,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -35,18 +36,19 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.Validate;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
-import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.AggregationInterval;
+import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl;
 import org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl;
@@ -70,6 +72,10 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl;
         pkColumnValue="UP_LOGIN_EVENT_AGGREGATE_PROP",
         allocationSize=100
     )
+@org.hibernate.annotations.Table(
+        appliesTo = "UP_LOGIN_EVENT_AGGREGATE",
+        indexes = @Index(name = "IDX_UP_LOGIN_EVENT_AGGR_DTI", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL" })
+        )
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class LoginAggregationImpl implements LoginAggregation, Serializable {
@@ -111,11 +117,15 @@ public class LoginAggregationImpl implements LoginAggregation, Serializable {
     private int uniqueLoginCount;
     
     @ElementCollection(fetch=FetchType.EAGER)
-    @JoinTable(
+    @CollectionTable(
             name = "UP_LOGIN_EVENT_AGGREGATE__UIDS",
             joinColumns = @JoinColumn(name = "LOGIN_AGGR_ID")
         )
+    @Column(name="UNIQUEUSERNAMES", nullable=false, updatable=false, length=255)
     private Set<String> uniqueUserNames = new LinkedHashSet<String>();
+    
+    @Transient
+    private Boolean complete = null;
     
     @SuppressWarnings("unused")
     private LoginAggregationImpl() {
@@ -191,7 +201,10 @@ public class LoginAggregationImpl implements LoginAggregation, Serializable {
     }
     
     private void checkState() {
-        if (this.loginCount > 0 && this.uniqueUserNames.isEmpty()) {
+        if (this.complete == null) {
+            this.complete = this.loginCount > 0 && this.uniqueUserNames.isEmpty();
+        }
+        if (this.complete == Boolean.TRUE) {
             throw new IllegalStateException("intervalComplete has been called, countUser can no longer be called");
         }
     }
@@ -199,6 +212,7 @@ public class LoginAggregationImpl implements LoginAggregation, Serializable {
     void intervalComplete(int duration) {
         this.duration = duration;
         this.uniqueUserNames.clear();
+        this.complete = Boolean.TRUE;
     }
 
     @Override
