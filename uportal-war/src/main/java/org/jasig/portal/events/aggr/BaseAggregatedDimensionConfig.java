@@ -19,6 +19,7 @@
 
 package org.jasig.portal.events.aggr;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import org.jasig.portal.utils.IncludeExcludeUtils;
@@ -29,7 +30,7 @@ import org.jasig.portal.utils.IncludeExcludeUtils;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface BaseAggregatedDimensionConfig<D> {
+public interface BaseAggregatedDimensionConfig<D> extends Serializable {
 
     /**
      * @return The aggregator the includes/excludes are for

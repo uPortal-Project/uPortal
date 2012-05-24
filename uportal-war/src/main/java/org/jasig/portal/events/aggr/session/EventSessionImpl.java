@@ -21,8 +21,6 @@ package org.jasig.portal.events.aggr.session;
 
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Cacheable;
@@ -48,15 +46,9 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
-import org.jasig.portal.events.aggr.AggregatedGroupConfig;
-import org.jasig.portal.events.aggr.IPortalEventAggregator;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl;
-import org.jasig.portal.utils.Tuple;
 import org.joda.time.DateTime;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Sets;
 
 /**
  * @author Eric Dalquist
@@ -102,11 +94,7 @@ public class EventSessionImpl implements EventSession, Serializable {
     @Transient
     private Set<AggregatedGroupMapping> unmodifiableGroupMappings;
     
-    @Transient
-    private final Map<Class<? extends IPortalEventAggregator>, Tuple<AggregatedGroupConfig, EventSession>> filteredEventSessionCache 
-            = new HashMap<Class<? extends IPortalEventAggregator>, Tuple<AggregatedGroupConfig,EventSession>>();
-    
-    @SuppressWarnings("unused")
+   @SuppressWarnings("unused")
     private EventSessionImpl() {
         this.id = -1;
         this.eventSessionId = null;
@@ -125,22 +113,6 @@ public class EventSessionImpl implements EventSession, Serializable {
     
     void recordAccess() {
         this.lastAccessed = DateTime.now();
-    }
-    
-    @Override
-    public EventSession getFilteredEventSession(AggregatedGroupConfig groupConfig) {
-        return getFilteredEventSession(this, groupConfig);
-    }
-    
-    private EventSession getFilteredEventSession(EventSession session, AggregatedGroupConfig groupConfig) {
-        Tuple<AggregatedGroupConfig, EventSession> tuple = this.filteredEventSessionCache.get(groupConfig.getAggregatorType());
-        if (tuple == null || tuple.first.getVersion() < groupConfig.getVersion()) {
-            //Cached version doesn't exist or is old
-            tuple = new Tuple<AggregatedGroupConfig, EventSession>(groupConfig, 
-                    new FilteringEventSession(session, groupConfig));
-            this.filteredEventSessionCache.put(groupConfig.getAggregatorType(), tuple);
-        }
-        return tuple.second;
     }
 
     @Override
@@ -193,77 +165,5 @@ public class EventSessionImpl implements EventSession, Serializable {
     public String toString() {
         return "EventSessionImpl [id=" + this.id + ", eventSessionId=" + this.eventSessionId + ", lastAccessed="
                 + this.lastAccessed + "]";
-    }
-    
-    private class FilteringEventSession implements EventSession {
-        private final EventSession parent;
-        private final AggregatedGroupConfig aggregatedGroupConfig;
-        private final Set<AggregatedGroupMapping> filteredGroupMappings;
-        
-        private FilteringEventSession(EventSession parent, AggregatedGroupConfig aggregatedGroupConfig) {
-            this.parent = parent;
-            this.aggregatedGroupConfig = aggregatedGroupConfig;
-            
-            this.filteredGroupMappings = Sets.filter(parent.getGroupMappings(), new Predicate<AggregatedGroupMapping>() {
-                @Override
-                public boolean apply(AggregatedGroupMapping input) {
-                    return FilteringEventSession.this.aggregatedGroupConfig.isIncluded(input);
-                }
-            });
-        }
-
-        @Override
-        public String getEventSessionId() {
-            return parent.getEventSessionId();
-        }
-
-        @Override
-        public Set<AggregatedGroupMapping> getGroupMappings() {
-            return this.filteredGroupMappings;
-        }
-
-        @Override
-        public EventSession getFilteredEventSession(AggregatedGroupConfig groupConfig) {
-            return EventSessionImpl.this.getFilteredEventSession(this, groupConfig);
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result
-                    + ((this.aggregatedGroupConfig == null) ? 0 : this.aggregatedGroupConfig.hashCode());
-            result = prime * result + ((this.parent == null) ? 0 : this.parent.hashCode());
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            FilteringEventSession other = (FilteringEventSession) obj;
-            if (this.aggregatedGroupConfig == null) {
-                if (other.aggregatedGroupConfig != null)
-                    return false;
-            }
-            else if (!this.aggregatedGroupConfig.equals(other.aggregatedGroupConfig))
-                return false;
-            if (this.parent == null) {
-                if (other.parent != null)
-                    return false;
-            }
-            else if (!this.parent.equals(other.parent))
-                return false;
-            return true;
-        }
-
-        @Override
-        public String toString() {
-            return parent.toString();
-        }
     }
 }

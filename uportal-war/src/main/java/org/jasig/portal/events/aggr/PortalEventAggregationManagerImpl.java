@@ -47,6 +47,7 @@ import org.jasig.portal.events.aggr.session.EventSession;
 import org.jasig.portal.events.aggr.session.EventSessionDao;
 import org.jasig.portal.events.handlers.db.IPortalEventDao;
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
+import org.jasig.portal.utils.cache.CacheKey;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
@@ -600,7 +601,14 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                     //If there is an event session get the aggregator specific version of it
                     if (eventSession != null) {
                         final AggregatedGroupConfig aggregatorGroupConfig = getAggregatorGroupConfig(aggregatorType);
-                        eventSession = eventSession.getFilteredEventSession(aggregatorGroupConfig);
+                        
+                        final CacheKey key = CacheKey.build(this.getClass().getName(), eventSession, aggregatorGroupConfig);
+                        EventSession filteredEventSession = this.eventAggregationContext.getAttribute(key);
+                        if (filteredEventSession == null) {
+                            filteredEventSession = new FilteringEventSession(eventSession, aggregatorGroupConfig);
+                            this.eventAggregationContext.setAttribute(key, filteredEventSession);
+                        }
+                        eventSession = filteredEventSession;
                     }
                     
                     //Aggregation magic happens here!
