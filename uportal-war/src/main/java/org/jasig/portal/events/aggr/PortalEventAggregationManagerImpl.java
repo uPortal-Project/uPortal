@@ -73,6 +73,8 @@ import com.google.common.collect.Sets;
  */
 @Service("portalEventAggregationManager")
 public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao implements IPortalEventAggregationManager {
+    private static final String EVENT_SESSION_CACHE_KEY_SOURCE = AggregateEventsHandler.class.getName() + "-EventSession";
+    
     private static final String DIMENSION_LOCK_NAME = PortalEventAggregationManagerImpl.class.getName() + ".DIMENSION_LOCK";
     private static final String AGGREGATION_LOCK_NAME = PortalEventAggregationManagerImpl.class.getName() + ".AGGREGATION_LOCK";
     private static final String PURGE_RAW_EVENTS_LOCK_NAME = PortalEventAggregationManagerImpl.class.getName() + ".PURGE_RAW_EVENTS_LOCK";
@@ -481,7 +483,6 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
     private final class AggregateEventsHandler extends FunctionWithoutResult<PortalEvent> {
         //Event Aggregation Context - used by aggregators to track state
         private final EventAggregationContext eventAggregationContext = new EventAggregationContextImpl(); 
-        
         private final MutableInt eventCounter;
         private final IEventAggregatorStatus eventAggregatorStatus;
 
@@ -505,7 +506,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
             this.defaultAggregatedGroupConfig = eventAggregationManagementDao.getDefaultAggregatedGroupConfig();
             this.defaultAggregatedIntervalConfig = eventAggregationManagementDao.getDefaultAggregatedIntervalConfig();
             
-            //Update the set of intervals that are actually being aggregated
+            //Create the set of intervals that are actually being aggregated
             final Set<AggregationInterval> handledIntervalsNotIncluded = EnumSet.allOf(AggregationInterval.class);
             final Set<AggregationInterval> handledIntervalsBuilder = EnumSet.noneOf(AggregationInterval.class);
             for (final IPortalEventAggregator<PortalEvent> portalEventAggregator : portalEventAggregators) {
@@ -576,19 +577,12 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
             }
         }
         
-
         private void doAggregateEvent(PortalEvent item) {
             eventCounter.increment();
             logger.trace("Aggregating event {} - {}", eventCounter, item);
             
             //Load or create the event session
-            EventSession eventSession;
-            if (item instanceof LoginEvent) {
-                eventSession = eventSessionDao.createEventSession((LoginEvent)item);
-            }
-            else {
-                eventSession = eventSessionDao.getEventSession(item.getEventSessionId());
-            }
+            EventSession eventSession = getEventSession(item);
             
             //Give each aggregator a chance at the event
             for (final IPortalEventAggregator<PortalEvent> portalEventAggregator : portalEventAggregators) {
@@ -602,10 +596,10 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                     if (eventSession != null) {
                         final AggregatedGroupConfig aggregatorGroupConfig = getAggregatorGroupConfig(aggregatorType);
                         
-                        final CacheKey key = CacheKey.build(this.getClass().getName(), eventSession, aggregatorGroupConfig);
+                        final CacheKey key = CacheKey.build(EVENT_SESSION_CACHE_KEY_SOURCE, eventSession, aggregatorGroupConfig);
                         EventSession filteredEventSession = this.eventAggregationContext.getAttribute(key);
                         if (filteredEventSession == null) {
-                            filteredEventSession = new FilteringEventSession(eventSession, aggregatorGroupConfig);
+                            filteredEventSession = new FilteredEventSession(eventSession, aggregatorGroupConfig);
                             this.eventAggregationContext.setAttribute(key, filteredEventSession);
                         }
                         eventSession = filteredEventSession;
@@ -615,6 +609,27 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                     portalEventAggregator.aggregateEvent(item, eventSession, eventAggregationContext, aggregatorIntervalInfo);
                 }
             }
+        }
+
+        protected EventSession getEventSession(PortalEvent item) {
+            final String eventSessionId = item.getEventSessionId();
+            
+            //For a LoginEvent create a new EventSession, cache in the aggregation context
+            if (item instanceof LoginEvent) {
+                final EventSession eventSession = eventSessionDao.createEventSession((LoginEvent)item);
+                this.eventAggregationContext.setAttribute(eventSessionId, eventSession);
+                return eventSession;
+            }
+            
+            //First check the aggregation context for a cached session event, fall back
+            //to asking the DAO if nothing in the context, cache the result
+            EventSession eventSession = this.eventAggregationContext.getAttribute(eventSessionId);
+            if (eventSession == null) {
+                eventSession = eventSessionDao.getEventSession(eventSessionId);
+                this.eventAggregationContext.setAttribute(eventSessionId, eventSession);
+            }
+            
+            return eventSession;
         }
         
         private void doHandleIntervalBoundary(AggregationInterval interval, Map<AggregationInterval, AggregationIntervalInfo> intervals) {

@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -43,8 +44,12 @@ import org.jasig.portal.utils.Populator;
 import com.google.common.collect.ImmutableSet;
 
 /**
+ * A object designed for use as a cache key. It assumes that all key values are immutable and pre-computes the hashCode.
+ * <br/>
+ * Tags can be added to a key which are used with the {@link TaggedCacheEntry} facilities. These tags ARE NOT included
+ * in CacheKey comparison. 
+ * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public final class CacheKey implements Serializable, TaggedCacheEntry {
     private static final long serialVersionUID = 1L;
@@ -58,6 +63,9 @@ public final class CacheKey implements Serializable, TaggedCacheEntry {
         WRITER = mapper.writerWithDefaultPrettyPrinter();
     }
 
+    /**
+     * Utility for building more complex cache keys
+     */
     public static final class CacheKeyBuilder<K extends Serializable, V extends Serializable> implements Populator<K, V> {
         private final String source;
         private ArrayList<Serializable> keyList;
@@ -205,6 +213,9 @@ public final class CacheKey implements Serializable, TaggedCacheEntry {
         if (tags == null) {
             this.tags = null;
         }
+        else if (tags.size() == 1) {
+            this.tags = Collections.singleton(tags.iterator().next());
+        }
         else {
             this.tags = ImmutableSet.copyOf(tags);
         }
@@ -246,19 +257,22 @@ public final class CacheKey implements Serializable, TaggedCacheEntry {
         if (getClass() != obj.getClass())
             return false;
         CacheKey other = (CacheKey) obj;
+        if (hashCode != other.hashCode)
+            return false;
+        if (!Arrays.equals(key, other.key))
+            return false;
         if (source == null) {
             if (other.source != null)
                 return false;
         }
         else if (!source.equals(other.source))
             return false;
-        if (!Arrays.deepEquals(key, other.key))
-            return false;
         return true;
     }
 
     @Override
     public String toString() {
+        //Try to use a JSON formatter for generating the toString
         try {
             return WRITER.writeValueAsString(this);
         }
@@ -272,6 +286,7 @@ public final class CacheKey implements Serializable, TaggedCacheEntry {
           //ignore
         }
         
+        //Fall back on a simpler tostring
         return "CacheKey [source=" + source + ", key=" + Arrays.toString(key) + ", tags=" + tags + "]";
     }
 }

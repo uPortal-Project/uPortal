@@ -8,19 +8,27 @@ import org.jasig.portal.events.aggr.session.EventSession;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
 
-class FilteringEventSession implements EventSession {
+/**
+ * {@link EventSession} that provides a filtered view of another {@link EventSession} based on
+ * an {@link AggregatedGroupConfig}
+ * 
+ * @author Eric Dalquist
+ */
+class FilteredEventSession implements EventSession {
+    private static final long serialVersionUID = 1L;
+    
     private final EventSession parent;
     private final AggregatedGroupConfig aggregatedGroupConfig;
     private final Set<AggregatedGroupMapping> filteredGroupMappings;
     
-    FilteringEventSession(EventSession parent, AggregatedGroupConfig aggregatedGroupConfig) {
+    FilteredEventSession(EventSession parent, AggregatedGroupConfig aggregatedGroupConfig) {
         this.parent = parent;
         this.aggregatedGroupConfig = aggregatedGroupConfig;
         
         this.filteredGroupMappings = Sets.filter(parent.getGroupMappings(), new Predicate<AggregatedGroupMapping>() {
             @Override
             public boolean apply(AggregatedGroupMapping input) {
-                return FilteringEventSession.this.aggregatedGroupConfig.isIncluded(input);
+                return FilteredEventSession.this.aggregatedGroupConfig.isIncluded(input);
             }
         });
     }
@@ -53,7 +61,7 @@ class FilteringEventSession implements EventSession {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        FilteringEventSession other = (FilteringEventSession) obj;
+        FilteredEventSession other = (FilteredEventSession) obj;
         if (this.aggregatedGroupConfig == null) {
             if (other.aggregatedGroupConfig != null)
                 return false;

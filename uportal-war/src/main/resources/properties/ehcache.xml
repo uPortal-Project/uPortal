@@ -39,14 +39,20 @@
         timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true" />
         
         
-    <cache name="org.jasig.portal.jpa.cache.EntityManagerCache"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="30" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
-
     <!-- ****************************************************************** -->
     <!-- ******************** uPortal Framework Caches ******************** -->
     <!-- ****************************************************************** -->
     
+    <!-- 
+     | Caches data scoped to an active EntityManager. Entries in this cache are short lived (duration of a thread of execution)
+     | - not replicated
+     +-->
+    <cache name="org.jasig.portal.jpa.cache.EntityManagerCache"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="30" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+        <cacheEventListenerFactory class="org.jasig.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=tagTrackingCacheEventListener" listenFor="local" />
+    </cache>
+
     <!-- 
      | Caches if the user is a default user (generally only used during import/export)
      | - 1 x user
