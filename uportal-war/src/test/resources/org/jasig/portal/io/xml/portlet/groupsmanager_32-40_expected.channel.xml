@@ -35,15 +35,15 @@
     <ns39:group xmlns:ns39="https://source.jasig.org/schemas/uportal/io/portlet-definition">Portal Administrators</ns39:group>
     <ns40:group xmlns:ns40="https://source.jasig.org/schemas/uportal/io/portlet-definition">Developers</ns40:group>
   <parameter>
-<name>hasedit</name>
+<name>editable</name>
 <value>false</value>
 </parameter>
 <parameter>
-<name>hashelp</name>
+<name>hasHelp</name>
 <value>false</value>
 </parameter>
 <parameter>
-<name>hasabout</name>
+<name>hasAbout</name>
 <value>false</value>
 </parameter>
 <parameter>
