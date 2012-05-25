@@ -118,6 +118,15 @@
             up.fluid = fluid;
             fluid = null;
             fluid_1_4 = null;
+						(function($) {
+							$(document).ready(function() {
+								$('#portalPageBar .icon-user').click(function() {
+									$('#portalPageBar .utilities').show().mouseleave(function() {
+										$(this).fadeOut();
+									});
+								});
+							});
+						})(up.jQuery)
         </script>
         <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
         <xsl:for-each select="/layout/header/channel-header">

@@ -1,0 +1,73 @@
+.up {
+	#portalPageBody {
+		background: #eee url(images/content-shadow.png) 0px 4px repeat-x;
+		
+		.up-portlet-wrapper { // portlet window
+			.up-portlet-titlebar {
+				background: #353333;
+				-webkit-border-radius: 4px;
+				-moz-border-radius: 4px;
+				border-radius: 4px;
+				
+				h2 {
+					font-family: 'Museo 300', Helvetica, arial, sans-serif;
+					font-weight: normal;
+					padding: 0;
+					color: white;
+					font-size: 16px;
+					padding: 0.25em;
+					a {
+						&:link {
+							color:white;
+						}
+						&:visited {
+							color:white;
+						}
+						&:hover {
+							color:white;
+						}
+						&:active, &:focus {
+							color:white;
+						}
+					}
+				}
+				.up-portlet-control.hide-content {
+					margin: 5px;
+				}
+				.up-portlet-controls {
+					top: 5px;
+					
+					.up-portlet-control {
+						 &:link {
+							color: white;
+						}
+						&:visited {
+							color: white;
+						}
+						&:hover {
+							color:#0083CA;
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	// empty tab "customize" box
+	#portalPageBodyCustomizeMessageRowContents {
+		border: 2px solid #0083CA;
+		-webkit-border-radius: 4px;
+		-moz-border-radius: 4px;
+		border-radius: 4px;
+	}
+	// outline of selected portlet
+	.fl-reorderer-movable-selected, .fl-reorderer-movable-selected:focus, .fl-reorderer-movable-dragging:focus {
+		outline: 2px solid #0083CA;
+	}
+	
+	// indicator of where the portlet will be dropped
+	.fl-reorderer-dropMarker {
+		background: #0083CA;
+		border: none;
+	}
+}

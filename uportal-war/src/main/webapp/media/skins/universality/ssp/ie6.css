@@ -1,0 +1,78 @@
+/**
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a
+ * copy of the License at:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+ /*
+ *
+ * IE6 VISUAL FIX
+ *
+ * This stylesheet, uportal3_ie6override, is utilized only when IE6 is used
+ * to view uPortal. Primarily, it addresses IE6's rendering of uPortal's 
+ * portlet container, portlet toolbar and icon display. It is important to 
+ * note that IE6 does not support .png transparency. All icons in this 
+ * skin use the .png format. The .png format offers many advantages in terms 
+ * of development time. If an institution or organization wishes to support 
+ * IE6, they will need to convert all .pngs used to a .gif format. All IE6 
+ * specific .gifs should be stored in the media/skins/universality/yourskinname/images 
+ * directory. In short, IE6 specific .gifs should be stored with their associated skin.
+ *
+ * This file overrides style definitions made within fluid.theme.uportal3.css. 
+ *
+ */
+
+/** portlets **/
+
+/* Instead of rounded top corners */
+.fl-theme-uportal3 .dashboard .portlet-top,
+.fl-theme-uportal3 .dashboard .portlet-bottom {_background:#e5e5e5;}
+.fl-theme-uportal3 .dashboard .portlet-top-inner,
+.fl-theme-uportal3 .dashboard .portlet-bottom-inner {_background:none;_height:3px; _font-size:0%;}
+.fl-theme-uportal3 .dashboard .alternate .portlet-top,
+.fl-theme-uportal3 .dashboard .alternate .portlet-bottom {_background:#98b6c1;}
+.fl-theme-uportal3 .dashboard .highlight .portlet-top,
+.fl-theme-uportal3 .dashboard .highlight .portlet-bottom {_background:#FF6600;}
+
+/* overrides layout.css */
+.fl-theme-uportal3 .dashboard .portlet-controls {_position:relative !important; _top:0em !important; _right:0em !important;}
+
+/* toolbar icons */
+/* Change these to .gif format if you are using icons
+.fl-theme-uportal3 .portlet-controls .help {_background: url("../../icons/help.png") no-repeat;}
+.fl-theme-uportal3 .portlet-controls .about {_background: url("../../icons/information.png") no-repeat;}
+.fl-theme-uportal3 .portlet-controls .edit {_background: url("../../icons/application_edit.png") no-repeat;}
+.fl-theme-uportal3 .portlet-controls .print {_background: url("../../icons/printer.png") no-repeat;}
+.fl-theme-uportal3 .portlet-controls .focus {_background: url("../../icons/zoom.png") no-repeat;}
+.fl-theme-uportal3 .portlet-controls .remove {_background: url("../../icons/cross.png") no-repeat;}
+.fl-theme-uportal3 .portlet-controls .add {_background: url("../../icons/application_add.png") no-repeat;}
+*/
+
+/* boxmodel */
+/* Forces IE6 to correctly clear floats. For more information on this technique please see the article, "How To Clear Floats Without Structural Markup"
+* located at http://www.positioniseverything.net/easyclearing.html
+*/
+.portlet-toolbar:after,
+.portlet-controls:after {_content:"."; _display:block; _height:0em; _clear:both; _visibility:hidden;}
+
+.portlet-toolbar,
+.portlet-controls {_display:inline-block;}
+
+* html .portlet-toolbar,
+* html .portlet-controls {_height:1%;}
+
+.portlet-toolbar,
+.portlet-controls {_display:block;}

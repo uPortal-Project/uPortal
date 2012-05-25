@@ -1,0 +1,29 @@
+.up {
+	#portalPageFooter {
+		background: #333333;
+		padding: 25px 0;
+		font-size: 11px;
+		
+		a {
+			&:link {
+				color: #666;
+			}
+			&:visited {
+				color: #666;
+			}
+			&:hover {
+				color: #666;
+			}
+			&:active {
+				color: #666;
+			}
+		}
+		.copyright {
+			text-align: center;
+			font-weight: bold;
+			font-size: 12px;
+			color: white;
+			padding-bottom: 300px;
+		}
+	}
+}

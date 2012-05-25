@@ -1,0 +1,57 @@
+.up {
+	.not-logged-in {
+		#portalPageHeader {
+			#portalLogo {
+				padding-left:25px;
+			}
+			
+			#portalLogin {
+				width: auto;
+				p { display: none; }
+				#portalCASLoginLink {
+					margin-bottom: 1em;
+				}
+			}
+		}
+		
+		#portalNavigation {
+			top: -55px;
+		}
+		
+		#portalPageBody {
+			background-position: 0px -2px;
+			
+			// login portlet styling
+			.login {
+				width: 30%;
+				margin: 0 auto;
+				
+				form {
+					& > div {
+						margin-bottom: 0.5em;
+						overflow: hidden;
+					}
+					
+					label {
+						width: 80px;
+						display: block;
+						float: left;
+						padding-top: 4px;
+					}
+					
+					input[type='text'], input[type='password'] {
+						float: left;
+						display: block;
+						width: 200px;
+					}
+					
+					.utilities {
+						input[type='submit'] {
+							margin: 0;
+						}
+					}
+				}
+			}
+		}
+	}
+}

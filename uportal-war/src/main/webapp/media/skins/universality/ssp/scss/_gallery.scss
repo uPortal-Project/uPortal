@@ -1,0 +1,110 @@
+.up {
+	.up-gallery {
+		display: none;
+		color: white;
+		a {
+			&:link {
+				color: #0083CA;
+			}
+			&:visited {
+				color: #0083CA;
+			}
+			&:hover {
+				color: #0083CA;
+			}
+			&:active {
+				color: #0083CA;
+			}
+		}
+		
+		.close-button {
+			bottom: 12px;
+		}
+		
+		.gallery-inner {
+			// left nav in gallery
+			.menu-wrapper {
+				.menu { // ul
+					border: none;
+					border-right: 1px solid #515151;
+					background: #1E1D1D;
+					
+					li {
+						border: none;
+						border-bottom: 1px solid #515151;
+						span {
+							font-weight: normal;
+						}
+						&.active {
+							border-left: none;
+							span {
+								font-weight: bold;
+							}
+						}
+					}
+				}
+			}
+			
+			.content-filters-wrapper {
+				.active {
+					h3 {
+						span {
+							background-color: #0083CA;
+							-webkit-border-radius: 4px;
+							-moz-border-radius: 4px;
+							border-radius: 4px;
+						}
+					}
+				}
+			}
+			
+			.results-wrapper {
+				.ri-wrapper, .portlet-wrapper, .package-wrapper {
+					border: 1px solid #515151;
+					-webkit-border-radius: 4px;
+					-moz-border-radius: 4px;
+					border-radius: 4px;
+					
+					.ri-utility {
+						background-color: #404040;
+						border-bottom: 1px solid #404040;
+					}
+					
+					&:hover, &:focus { // hover over portlet box
+						background: #282727;
+						.ri-link { // add button styling
+							background-color: #0083CA;
+							color: white;
+						}
+					}
+					
+					&.selected {
+						border-color: white;
+					}
+				}
+				
+				.pager-column {
+					
+					.pager-button-up, .pager-button-down {
+						border: 1px solid #707070;
+						-webkit-border-radius: 4px;
+						-moz-border-radius: 4px;
+						border-radius: 4px;
+						
+						&.fl-pager-disabled {
+							border-color: #404040;
+							
+							&:hover, &:focus {
+								background: #353333;
+							}
+						}
+						
+						&:focus, &:hover {
+							background: #282727;
+						}
+					}
+				}
+			}
+		}
+	}
+}

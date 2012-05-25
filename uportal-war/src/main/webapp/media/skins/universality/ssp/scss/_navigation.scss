@@ -1,0 +1,123 @@
+.up {
+	#portalNavigation {
+		position: absolute;
+		width: auto;
+		top: 35px;
+		margin-left: 240px;
+		background: none;
+		#portalNavigationList {
+			margin: 0;
+			
+			.portal-navigation {
+				background: none;
+				border: none;
+				margin-right: 1em;
+				&:first-child {
+					border-left:none;
+					&:hover, &:focus {
+				
+					}
+				}
+				
+				&:last-child {
+					border-right: none;
+				}
+				
+				&:hover, &:focus {
+				
+				}
+				
+				&.active {
+					-webkit-border-radius: 4px;
+					-moz-border-radius: 4px;
+					border-radius: 4px;
+					border-bottom: 1px solid #436cb1;
+					border-top: 1px solid #274085;
+			        -webkit-box-shadow: inset 0px 0px 3px 0px rgba(0, 0, 0, 0.5);
+
+			        box-shadow: inset 0px 0px 3px 0px rgba(0, 0, 0, 0.5);
+				}
+				.portal-navigation-link {
+					&:link {
+						color: white;
+					}
+					&:visited {
+						color: white;
+					}
+					&:hover {
+						color: #57bbff;
+					}
+					&:focus, &:active {
+						color: white;
+					}
+					
+				}
+				
+				.portal-flyout-container {
+					background: #2F2D2D;
+					-webkit-border-bottom-right-radius: 4px;
+					-webkit-border-bottom-left-radius: 4px;
+					-moz-border-radius-bottomright: 4px;
+					-moz-border-radius-bottomleft: 4px;
+					border-bottom-right-radius: 4px;
+					border-bottom-left-radius: 4px;
+					
+					.portal-subnav-list { // ul
+						.portal-subnav { // li
+							
+							&:last-child {
+								.portal-subnav-link {
+									&:hover {
+										-webkit-border-bottom-right-radius: 4px;
+										-webkit-border-bottom-left-radius: 4px;
+										-moz-border-radius-bottomright: 4px;
+										-moz-border-radius-bottomleft: 4px;
+										border-bottom-right-radius: 4px;
+										border-bottom-left-radius: 4px;
+									}
+								}
+							}
+							.portal-subnav-link { // anchor
+								&:link {
+									color: white;
+								}
+								&:visited {
+									color: white;
+								}
+								&:hover {
+									color: white;
+									background: #444242;
+									-webkit-box-shadow: inset 0px 0px 20px 0px rgba(0, 0, 0, 0.50);
+									-moz-box-shadow: inset 0px 0px 20px 0px rgba(0, 0, 0, 0.50);
+									box-shadow: inset 0px 0px 20px 0px rgba(0, 0, 0, 0.50);
+									
+								}
+								&:focus, &:active {
+									color: white;
+									background: #444242;
+									-webkit-box-shadow: inset 0px 0px 20px 0px rgba(0, 0, 0, 0.20);
+									-moz-box-shadow: inset 0px 0px 20px 0px rgba(0, 0, 0, 0.20);
+									box-shadow: inset 0px 0px 20px 0px rgba(0, 0, 0, 0.20);
+								}
+							}
+						}
+					}
+				}
+				
+				.portal-navigation-gripper {
+					top: 3px;
+					left: 3px;
+				}
+				
+				.portal-navigation-delete {
+					top: 3px;
+					right: 3px;
+				}
+			} // end .portal-navigation
+		}
+		
+		.portal-navigation-add {
+			display: none;
+		}
+	}
+}
