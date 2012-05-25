@@ -36,8 +36,8 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.events.aggr.session.EventSession;
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
 import org.jasig.portal.utils.cache.CacheKey;
+import org.joda.time.DateMidnight;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * Event aggregator that uses {@link LoginAggregationPrivateDao} to aggregate login events 
@@ -45,7 +45,6 @@ import org.springframework.stereotype.Service;
  * @author Eric Dalquist
  * @version $Revision$
  */
-@Service
 public class LoginPortalEventAggregator extends BaseAggrEventsJpaDao implements IPortalEventAggregator<LoginEvent> {
     private LoginAggregationPrivateDao loginAggregationDao;
 
@@ -74,14 +73,10 @@ public class LoginPortalEventAggregator extends BaseAggrEventsJpaDao implements 
             
             final Set<AggregatedGroupMapping> groupMappings = new LinkedHashSet<AggregatedGroupMapping>(eventSession.getGroupMappings());
             
-            final Object key = CacheKey.build(this.getClass().getName(), dateDimension.getDate(), timeDimension.getTime(), interval);
-            Set<LoginAggregationImpl> cachedLoginAggregations = eventAggregationContext.getAttribute(key);
-            if (cachedLoginAggregations == null) {
-                //Nothing in the aggr session yet, cache the current set of aggrportalEventAggregationManager.aggregateRawEvents()egations from the DB in the aggr session
-                final Set<LoginAggregationImpl> loginAggregations = this.loginAggregationDao.getLoginAggregationsForInterval(dateDimension, timeDimension, interval);
-                cachedLoginAggregations = new HashSet<LoginAggregationImpl>(loginAggregations);
-                eventAggregationContext.setAttribute(key, cachedLoginAggregations);
-            }
+            final Set<LoginAggregationImpl> cachedLoginAggregations = getLoginAggregations(eventAggregationContext,
+                    interval,
+                    dateDimension,
+                    timeDimension);
         
             for (final LoginAggregationImpl loginAggregation : cachedLoginAggregations) {
                 //Remove the aggregation from the group set to mark that it has been updated
@@ -100,13 +95,6 @@ public class LoginPortalEventAggregator extends BaseAggrEventsJpaDao implements 
         }
     }
 
-    private void updateAggregation(LoginEvent e, final AggregationIntervalInfo intervalInfo, final LoginAggregationImpl loginAggregation) {
-        final String userName = e.getUserName();
-        final int duration = intervalInfo.getDurationTo(e.getTimestampAsDate());
-        loginAggregation.setDuration(duration);
-        loginAggregation.countUser(userName);
-    }
-
     @AggrEventsTransactional
     @Override
     public void handleIntervalBoundary(AggregationInterval interval, EventAggregationContext eventAggregationContext,
@@ -116,11 +104,53 @@ public class LoginPortalEventAggregator extends BaseAggrEventsJpaDao implements 
         final DateDimension dateDimension = intervalInfo.getDateDimension();
         final TimeDimension timeDimension = intervalInfo.getTimeDimension();
         
-        final Set<LoginAggregationImpl> loginAggregations = this.loginAggregationDao.getLoginAggregationsForInterval(dateDimension, timeDimension, interval);
+        //Complete all of the login aggregations that have been touched by this session
+        final Set<LoginAggregationImpl> loginAggregations = this.getLoginAggregations(eventAggregationContext, interval, dateDimension, timeDimension);
         for (final LoginAggregationImpl loginAggregation : loginAggregations) {
             final int duration = intervalInfo.getTotalDuration();
             loginAggregation.intervalComplete(duration);
             this.loginAggregationDao.updateLoginAggregation(loginAggregation);
         }
+        
+        //Complete any orphaned login aggregations (somehow we missed the interval boundary for them)
+        DateMidnight start = intervalInfo.getStart().toDateMidnight();
+        final DateMidnight end = intervalInfo.getEnd().toDateMidnight();
+        if (start.equals(end)) {
+            start = start.minusDays(1);
+        }
+        
+        final Set<LoginAggregationImpl> unclosedLoginAggregations = this.loginAggregationDao.getUnclosedLoginAggregations(start, end, interval);
+        for (final LoginAggregationImpl loginAggregation : unclosedLoginAggregations) {
+            if (!loginAggregations.contains(loginAggregation)) {
+                final int duration = intervalInfo.getTotalDuration();
+                loginAggregation.intervalComplete(duration);
+                this.loginAggregationDao.updateLoginAggregation(loginAggregation);
+            }
+        }
+    }
+
+    /**
+     * Get the set of existing login aggregations looking first in the session and then in the db
+     */
+    private Set<LoginAggregationImpl> getLoginAggregations(EventAggregationContext eventAggregationContext,
+            final AggregationInterval interval, final DateDimension dateDimension, final TimeDimension timeDimension) {
+        
+        final CacheKey key = CacheKey.build(this.getClass().getName(), dateDimension.getDate(), timeDimension.getTime(), interval);
+        Set<LoginAggregationImpl> cachedLoginAggregations = eventAggregationContext.getAttribute(key);
+        if (cachedLoginAggregations == null) {
+            //Nothing in the aggr session yet, cache the current set of aggrportalEventAggregationManager.aggregateRawEvents()egations from the DB in the aggr session
+            final Set<LoginAggregationImpl> loginAggregations = this.loginAggregationDao.getLoginAggregationsForInterval(dateDimension, timeDimension, interval);
+            cachedLoginAggregations = new HashSet<LoginAggregationImpl>(loginAggregations);
+            eventAggregationContext.setAttribute(key, cachedLoginAggregations);
+        }
+        
+        return cachedLoginAggregations;
+    }
+
+    private void updateAggregation(LoginEvent e, final AggregationIntervalInfo intervalInfo, final LoginAggregationImpl loginAggregation) {
+        final String userName = e.getUserName();
+        final int duration = intervalInfo.getDurationTo(e.getTimestampAsDate());
+        loginAggregation.setDuration(duration);
+        loginAggregation.countUser(userName);
     }
 }

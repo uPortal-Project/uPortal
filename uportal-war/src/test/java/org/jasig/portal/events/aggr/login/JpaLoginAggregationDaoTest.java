@@ -289,7 +289,7 @@ public class JpaLoginAggregationDaoTest extends BaseAggrEventsJpaDaoTest {
                 final TimeDimension timeDimension = timeDimensionDao.getTimeDimensionByTime(instantTime);
                 final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
                 
-                final List<LoginAggregation> loginAggregations = loginAggregationDao.getLoginAggregations(
+                final List<LoginAggregationImpl> loginAggregations = loginAggregationDao.getLoginAggregations(
                         instantDate.monthOfYear().roundFloorCopy(),
                         instantDate.monthOfYear().roundCeilingCopy(),
                         AggregationInterval.FIVE_MINUTE,
@@ -297,6 +297,24 @@ public class JpaLoginAggregationDaoTest extends BaseAggrEventsJpaDaoTest {
                         
                         
                 assertEquals(1, loginAggregations.size());
+            }
+        });
+
+        this.execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                final DateDimension dateDimension = dateDimensionDao.getDateDimensionByDate(instantDate);
+                final TimeDimension timeDimension = timeDimensionDao.getTimeDimensionByTime(instantTime);
+                final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
+                
+                final DateMidnight date = dateDimension.getDate();
+                final Set<LoginAggregationImpl> loginAggregations = loginAggregationDao.getUnclosedLoginAggregations(
+                        date, 
+                        date.plusDays(1), 
+                        AggregationInterval.FIVE_MINUTE);
+                        
+                        
+                assertEquals(2, loginAggregations.size());
             }
         });
     }

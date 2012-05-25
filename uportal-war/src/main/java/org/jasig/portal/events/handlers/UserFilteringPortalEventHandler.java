@@ -79,8 +79,6 @@ public final class UserFilteringPortalEventHandler<E extends PortalEvent> implem
      * If the <code>supportGuest</code> property is true {@link ApplicationEvent}s where {@link IPerson#isGuest()} is true or
      * false will be supported. If the <code>supportGuest</code> property is false only {@link ApplicationEvent}s where
      * {@link IPerson#isGuest()} is false will be supported. The property defaults to true.
-     * 
-     * @param supportGuest the supportGuest to set
      */
     public void setSupportGuest(boolean supportGuest) {
         this.supportGuest = supportGuest;
@@ -88,9 +86,7 @@ public final class UserFilteringPortalEventHandler<E extends PortalEvent> implem
 
     /**
      * The <code>requireAll</code> can be used to require either any one criteria match for support or all three
-     * criteria.
-     * 
-     * @param requireAll the requireAll to set
+     * criteria. Defaults to true
      */
     public void setRequireAll(boolean requireAll) {
         this.requireAll = requireAll;

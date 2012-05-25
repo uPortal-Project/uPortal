@@ -93,12 +93,16 @@
     
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" lazy-init="false" />
     
-    <bean class="org.jasig.portal.jpa.cache.EntityManagerCache">
+    <bean class="org.jasig.portal.jpa.cache.EntityManagerCacheImpl">
         <property name="contentCache">
             <bean id="portalInfoProvider" class="org.jasig.portal.spring.MockitoFactoryBean">
                 <constructor-arg value="net.sf.ehcache.Ehcache" />
             </bean>
         </property>
+    </bean>
+    
+    <bean id="taggedCacheEntryPurger" class="org.jasig.portal.spring.MockitoFactoryBean">
+        <constructor-arg value="org.jasig.portal.utils.cache.TaggedCacheEntryPurger" />
     </bean>
 </beans>
 

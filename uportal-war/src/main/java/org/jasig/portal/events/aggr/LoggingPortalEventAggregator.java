@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
  * @author Eric Dalquist
  * @version $Revision$
  */
-//@Service
 public class LoggingPortalEventAggregator implements IPortalEventAggregator<PortalEvent> {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     

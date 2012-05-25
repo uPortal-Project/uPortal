@@ -57,6 +57,7 @@ public class JpaLoginAggregationDao extends BaseAggrEventsJpaDao implements Logi
     private CriteriaQuery<LoginAggregationImpl> findLoginAggregationByDateTimeIntervalQuery;
     private CriteriaQuery<LoginAggregationImpl> findLoginAggregationByDateTimeIntervalGroupQuery;
     private CriteriaQuery<LoginAggregationImpl> findLoginAggregationsByDateRangeQuery;
+    private CriteriaQuery<LoginAggregationImpl> findUnclosedLoginAggregationsByDateRangeQuery;
     private ParameterExpression<TimeDimension> timeDimensionParameter;
     private ParameterExpression<DateDimension> dateDimensionParameter;
     private ParameterExpression<AggregationInterval> intervalParameter;
@@ -138,17 +139,50 @@ public class JpaLoginAggregationDao extends BaseAggrEventsJpaDao implements Logi
                 return criteriaQuery;
             }
         });
+        
+        
+        
+        this.findUnclosedLoginAggregationsByDateRangeQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<LoginAggregationImpl>>() {
+            @Override
+            public CriteriaQuery<LoginAggregationImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<LoginAggregationImpl> criteriaQuery = cb.createQuery(LoginAggregationImpl.class);
+                
+                final Root<DateDimensionImpl> root = criteriaQuery.from(DateDimensionImpl.class);
+                final CollectionJoin<DateDimensionImpl, LoginAggregationImpl> loginAggrJoin = root.join(DateDimensionImpl_.loginAggregations, JoinType.LEFT);
+                
+                criteriaQuery.select(loginAggrJoin);
+                criteriaQuery.where(
+                        cb.and(
+                                cb.between(root.get(DateDimensionImpl_.date), startDate, endDate),
+                                cb.equal(loginAggrJoin.get(LoginAggregationImpl_.interval), intervalParameter),
+                                cb.equal(cb.size(loginAggrJoin.get(LoginAggregationImpl_.uniqueUserNames)), 0)
+                        )
+                );
+                
+                return criteriaQuery;
+            }
+        });
     }
     
     @Override
-    public List<LoginAggregation> getLoginAggregations(DateMidnight start, DateMidnight end, AggregationInterval interval, AggregatedGroupMapping... aggregatedGroupMapping) {
+    public Set<LoginAggregationImpl> getUnclosedLoginAggregations(DateMidnight start, DateMidnight end, AggregationInterval interval) {
+        final TypedQuery<LoginAggregationImpl> query = this.createQuery(findUnclosedLoginAggregationsByDateRangeQuery);
+        query.setParameter(this.startDate, start.toLocalDate());
+        query.setParameter(this.endDate, end.toLocalDate());
+        query.setParameter(this.intervalParameter, interval);
+        
+        return new LinkedHashSet<LoginAggregationImpl>(query.getResultList());
+    }
+    
+    @Override
+    public List<LoginAggregationImpl> getLoginAggregations(DateMidnight start, DateMidnight end, AggregationInterval interval, AggregatedGroupMapping... aggregatedGroupMapping) {
         final TypedQuery<LoginAggregationImpl> query = this.createQuery(findLoginAggregationsByDateRangeQuery);
         query.setParameter(this.startDate, start.toLocalDate());
         query.setParameter(this.endDate, end.toLocalDate());
         query.setParameter(this.intervalParameter, interval);
         query.setParameter(this.aggregatedGroupsParameter, ImmutableSet.copyOf(aggregatedGroupMapping));
         
-        return new ArrayList<LoginAggregation>(query.getResultList());
+        return new ArrayList<LoginAggregationImpl>(query.getResultList());
     }
 
     

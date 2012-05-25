@@ -17,31 +17,29 @@
  * under the License.
  */
 
-package org.jasig.portal.events.handlers.db;
+package org.jasig.portal.events.aggr.concuser;
 
-import org.jasig.portal.events.PortalEvent;
-import org.jasig.portal.events.handlers.QueueingEventHandler;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.jasig.portal.events.LoginEvent;
+import org.jasig.portal.events.aggr.BaseAggregation;
+import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 
 /**
- * Hands off queued portal events for storage by the IPortalEventDao
- * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class PortalEventDaoQueuingEventHandler extends QueueingEventHandler<PortalEvent> {
-    private IPortalEventDao portalEventDao;
+public interface LoginAggregation extends BaseAggregation {
+    /**
+     * @return The group this aggregation is for, null if it is for all users
+     */
+    AggregatedGroupMapping getAggregatedGroup();
     
     /**
-     * @param portalEventDao the portalEventDao to set
+     * @return Total number of {@link LoginEvent}s that occurred in the interval
      */
-    @Autowired
-    public void setPortalEventDao(IPortalEventDao portalEventDao) {
-        this.portalEventDao = portalEventDao;
-    }
-
-    @Override
-    protected void onApplicationEvents(Iterable<PortalEvent> events) {
-        this.portalEventDao.storePortalEvents(events);
-    }
+    int getLoginCount();
+    
+    /**
+     * @return Unique number of {@link LoginEvent}s that occurred in the interval, uniqueness is determined by {@link LoginEvent#getUserName()}
+     */
+    int getUniqueLoginCount();
 }

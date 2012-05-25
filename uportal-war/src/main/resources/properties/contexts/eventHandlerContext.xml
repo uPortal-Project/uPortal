@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  xmlns:tx="http://www.springframework.org/schema/tx"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
+
+    <!--
+     | Event Listeners, these are beans that implement the Spring ApplicationListener interface to handle application
+     | events. Most of these beans also extend from FilteringApplicationListener which allows for a list of 
+     | ApplicationEventFilters to be configured.
+     +-->
+    <bean id="filteringEventHandler" abstract="false">
+        <property name="applicationEventFilters">
+            <list>
+            
+                <!-- Can be used to filter events based on event type using an instanceof check
+                <bean class="org.jasig.portal.spring.context.ClassFilteringApplicationListener">
+                    <property name="supportedEvents">
+                        <list>
+                            <value>org.jasig.portal.events.LoginEvent</value>
+                            <value>org.jasig.portal.events.PortalRenderEvent</value>
+                        </list>
+                    </property>
+                </bean>
+                -->
+                
+                <!-- Can be used to filter events based on who generated the event
+                <bean class="org.jasig.portal.events.handlers.UserFilteringPortalEventHandler">
+                    <property name="ignoredUserNames">
+                        <list>
+                            <value>test-user1</value>
+                            <value>test-user2</value>
+                        </list>
+                    </property>
+                    <property name="supportedUserNames">
+                        <list>
+                            <value>user1</value>
+                            <value>user2</value>
+                        </list>
+                    </property>
+                    <property name="supportGuest" value="true" />
+                    <property name="requireAll" value="true" />
+                </bean>
+                 -->
+                 
+            </list>
+        </property>
+    </bean>
+    <!-- 
+    <bean class="org.jasig.portal.spring.context.LoggingEventHandler" parent="filteringEventHandler">
+        <!- - Uncomment and configure this property if a different filter set than the one specified by filteringEventHandler is needed
+        <property name="applicationEventFilters">
+            <list>
+            </list>
+        </property>
+        - ->
+    </bean>
+     -->
+    <bean id="portalEventDaoQueuingEventHandler" class="org.jasig.portal.events.handlers.db.PortalEventDaoQueuingEventHandler" parent="filteringEventHandler">
+        <!-- Uncomment and configure this property if a different filter set than the one specified by filteringEventHandler is needed
+        <property name="applicationEventFilters">
+            <list>
+            </list>
+        </property>
+        -->
+    </bean>
+    
+    
+    <!--
+     | Event Aggregators - These run in a single thread on a single node in the portal cluster. They are used to iterate
+     | through all events stored by the portalEventDaoQueuingEventHandler. 
+     |
+     | All beans that implement IPortalEventAggregator are used during aggregation
+     +-->
+     <!-- 
+    <bean id="loggingPortalEventAggregator" class="org.jasig.portal.events.aggr.LoggingPortalEventAggregator" />
+     -->
+    <bean id="loginPortalEventAggregator" class="org.jasig.portal.events.aggr.login.LoginPortalEventAggregator"/>
+</beans>

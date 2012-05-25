@@ -22,8 +22,8 @@ package org.jasig.portal.events.aggr.login;
 import java.util.List;
 import java.util.Set;
 
-import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.AggregationInterval;
+import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.joda.time.DateMidnight;
@@ -37,9 +37,14 @@ import org.joda.time.DateMidnight;
 public interface LoginAggregationDao<T extends LoginAggregation> {
     
     /**
+     * Login aggregations that have not been closed (still have data in the UIDs table) for an interval
+     */
+    Set<T> getUnclosedLoginAggregations(DateMidnight start, DateMidnight end, AggregationInterval interval);
+    
+    /**
      * login aggregations in a date range for a specified interval and group
      */
-    List<LoginAggregation> getLoginAggregations(DateMidnight start, DateMidnight end, AggregationInterval interval, AggregatedGroupMapping... aggregatedGroupMapping);
+    List<T> getLoginAggregations(DateMidnight start, DateMidnight end, AggregationInterval interval, AggregatedGroupMapping... aggregatedGroupMapping);
 
     /**
      * @return All login aggregations for the date, time and interval
