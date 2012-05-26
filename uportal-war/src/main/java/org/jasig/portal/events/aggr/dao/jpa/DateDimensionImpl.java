@@ -214,7 +214,7 @@ public class DateDimensionImpl implements DateDimension, Serializable {
     }
     @Override
     public String toString() {
-        return "DateDimension [id=" + id + ", date=" + getDate() + ", week=" + week + ", quarter=" + quarter + ", term=" + term + "]";
+        return getDate().toString();
     }
     
 }

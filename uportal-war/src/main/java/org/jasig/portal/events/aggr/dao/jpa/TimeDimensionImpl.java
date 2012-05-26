@@ -171,6 +171,6 @@ public class TimeDimensionImpl implements TimeDimension, Serializable {
     }
     @Override
     public String toString() {
-        return "TimeDimension [id=" + id + ", time=" + time + ", fiveMinuteIncrement=" + fiveMinuteIncrement + "]";
+        return time.toString();
     }
 }
