@@ -26,5 +26,6 @@
   <description>Super User role in SSP</description>
   <children>
     <group>PAGS_Role_Super User</group>
+    <literal>admin</literal>
   </children>
 </group>
