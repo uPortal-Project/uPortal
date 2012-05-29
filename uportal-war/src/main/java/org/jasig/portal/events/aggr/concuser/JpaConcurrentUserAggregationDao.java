@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.events.aggr.login;
+package org.jasig.portal.events.aggr.concuser;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -56,12 +56,12 @@ import com.google.common.collect.ImmutableSet;
  * @version $Revision$
  */
 @Repository
-public class JpaLoginAggregationDao extends BaseAggrEventsJpaDao implements LoginAggregationPrivateDao {
+public class JpaConcurrentUserAggregationDao extends BaseAggrEventsJpaDao implements ConcurrentUserAggregationPrivateDao {
 
-    private CriteriaQuery<LoginAggregationImpl> findLoginAggregationByDateTimeIntervalQuery;
-    private CriteriaQuery<LoginAggregationImpl> findLoginAggregationByDateTimeIntervalGroupQuery;
-    private CriteriaQuery<LoginAggregationImpl> findLoginAggregationsByDateRangeQuery;
-    private CriteriaQuery<LoginAggregationImpl> findUnclosedLoginAggregationsByDateRangeQuery;
+    private CriteriaQuery<ConcurrentUserAggregationImpl> findConcurrentUserAggregationByDateTimeIntervalQuery;
+    private CriteriaQuery<ConcurrentUserAggregationImpl> findConcurrentUserAggregationByDateTimeIntervalGroupQuery;
+    private CriteriaQuery<ConcurrentUserAggregationImpl> findConcurrentUserAggregationsByDateRangeQuery;
+    private CriteriaQuery<ConcurrentUserAggregationImpl> findUnclosedConcurrentUserAggregationsByDateRangeQuery;
     private ParameterExpression<TimeDimension> timeDimensionParameter;
     private ParameterExpression<DateDimension> dateDimensionParameter;
     private ParameterExpression<AggregationInterval> intervalParameter;
@@ -87,21 +87,21 @@ public class JpaLoginAggregationDao extends BaseAggrEventsJpaDao implements Logi
         this.startTime = this.createParameterExpression(LocalTime.class, "startTime");
         this.endTime = this.createParameterExpression(LocalTime.class, "endTime");
         
-        this.findLoginAggregationByDateTimeIntervalQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<LoginAggregationImpl>>() {
+        this.findConcurrentUserAggregationByDateTimeIntervalQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<ConcurrentUserAggregationImpl>>() {
             @Override
-            public CriteriaQuery<LoginAggregationImpl> apply(CriteriaBuilder cb) {
-                final CriteriaQuery<LoginAggregationImpl> criteriaQuery = cb.createQuery(LoginAggregationImpl.class);
+            public CriteriaQuery<ConcurrentUserAggregationImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<ConcurrentUserAggregationImpl> criteriaQuery = cb.createQuery(ConcurrentUserAggregationImpl.class);
                 
-                final Root<LoginAggregationImpl> lea = criteriaQuery.from(LoginAggregationImpl.class);
+                final Root<ConcurrentUserAggregationImpl> cua = criteriaQuery.from(ConcurrentUserAggregationImpl.class);
 
-                lea.fetch(LoginAggregationImpl_.uniqueUserNames, JoinType.LEFT);
+                cua.fetch(ConcurrentUserAggregationImpl_.uniqueSessionIds, JoinType.LEFT);
                 
-                criteriaQuery.select(lea);
+                criteriaQuery.select(cua);
                 criteriaQuery.where(
                         cb.and(
-                            cb.equal(lea.get(LoginAggregationImpl_.dateDimension), dateDimensionParameter),
-                            cb.equal(lea.get(LoginAggregationImpl_.timeDimension), timeDimensionParameter),
-                            cb.equal(lea.get(LoginAggregationImpl_.interval), intervalParameter)
+                            cb.equal(cua.get(ConcurrentUserAggregationImpl_.dateDimension), dateDimensionParameter),
+                            cb.equal(cua.get(ConcurrentUserAggregationImpl_.timeDimension), timeDimensionParameter),
+                            cb.equal(cua.get(ConcurrentUserAggregationImpl_.interval), intervalParameter)
                         )
                     );
                 
@@ -110,21 +110,21 @@ public class JpaLoginAggregationDao extends BaseAggrEventsJpaDao implements Logi
         });
 
         
-        this.findLoginAggregationByDateTimeIntervalGroupQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<LoginAggregationImpl>>() {
+        this.findConcurrentUserAggregationByDateTimeIntervalGroupQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<ConcurrentUserAggregationImpl>>() {
             @Override
-            public CriteriaQuery<LoginAggregationImpl> apply(CriteriaBuilder cb) {
-                final CriteriaQuery<LoginAggregationImpl> criteriaQuery = cb.createQuery(LoginAggregationImpl.class);
-                final Root<LoginAggregationImpl> lea = criteriaQuery.from(LoginAggregationImpl.class);
+            public CriteriaQuery<ConcurrentUserAggregationImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<ConcurrentUserAggregationImpl> criteriaQuery = cb.createQuery(ConcurrentUserAggregationImpl.class);
+                final Root<ConcurrentUserAggregationImpl> cua = criteriaQuery.from(ConcurrentUserAggregationImpl.class);
                 
-                lea.fetch(LoginAggregationImpl_.uniqueUserNames, JoinType.LEFT);
+                cua.fetch(ConcurrentUserAggregationImpl_.uniqueSessionIds, JoinType.LEFT);
 
-                criteriaQuery.select(lea);
+                criteriaQuery.select(cua);
                 criteriaQuery.where(
                         cb.and(
-                            cb.equal(lea.get(LoginAggregationImpl_.dateDimension), dateDimensionParameter),
-                            cb.equal(lea.get(LoginAggregationImpl_.timeDimension), timeDimensionParameter),
-                            cb.equal(lea.get(LoginAggregationImpl_.interval), intervalParameter),
-                            cb.equal(lea.get(LoginAggregationImpl_.aggregatedGroup), aggregatedGroupParameter)
+                            cb.equal(cua.get(ConcurrentUserAggregationImpl_.dateDimension), dateDimensionParameter),
+                            cb.equal(cua.get(ConcurrentUserAggregationImpl_.timeDimension), timeDimensionParameter),
+                            cb.equal(cua.get(ConcurrentUserAggregationImpl_.interval), intervalParameter),
+                            cb.equal(cua.get(ConcurrentUserAggregationImpl_.aggregatedGroup), aggregatedGroupParameter)
                         )
                     );
                 
@@ -133,28 +133,16 @@ public class JpaLoginAggregationDao extends BaseAggrEventsJpaDao implements Logi
         });
 
 
-        /*
-         * SQL (oracle syntax) this critera query is based on
-         * 
-         *   SELECT DD.DD_YEAR, DD.DD_MONTH, DD.DD_DAY, TD.TD_HOUR, TD.TD_MINUTE, LEA.LOGIN_COUNT, LEA.UNIQUE_LOGIN_COUNT
-         *   FROM UP_LOGIN_EVENT_AGGREGATE LEA
-         *       LEFT JOIN UP_DATE_DIMENSION DD on LEA.DATE_DIMENSION_ID = DD.DATE_ID
-         *       LEFT JOIN UP_TIME_DIMENSION TD on LEA.TIME_DIMENSION_ID = TD.TIME_ID
-         *   WHERE ( DD.DD_DATE >= To_date('2012/04/16', 'yyyy/mm/dd') AND DD.DD_DATE < To_date('2012/04/17', 'yyyy/mm/dd') ) AND
-         *          ( DD.DD_DATE > To_date('2012/04/16', 'yyyy/mm/dd') OR TD.TD_TIME >= To_date('1970/01/01 07:21', 'yyyy/mm/dd HH24:MI') ) AND
-         *          ( DD.DD_DATE < To_date('2012/04/16', 'yyyy/mm/dd') OR TD.TD_TIME < To_date('1970/01/01 09:20', 'yyyy/mm/dd HH24:MI') ) AND
-         *          LEA.AGGR_INTERVAL='FIVE_MINUTE' and LEA.AGGREGATED_GROUP_ID=791
-         */
-        this.findLoginAggregationsByDateRangeQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<LoginAggregationImpl>>() {
+        this.findConcurrentUserAggregationsByDateRangeQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<ConcurrentUserAggregationImpl>>() {
             @Override
-            public CriteriaQuery<LoginAggregationImpl> apply(CriteriaBuilder cb) {
-                final CriteriaQuery<LoginAggregationImpl> criteriaQuery = cb.createQuery(LoginAggregationImpl.class);
+            public CriteriaQuery<ConcurrentUserAggregationImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<ConcurrentUserAggregationImpl> criteriaQuery = cb.createQuery(ConcurrentUserAggregationImpl.class);
                 
-                final Root<LoginAggregationImpl> lea = criteriaQuery.from(LoginAggregationImpl.class);
-                final Join<LoginAggregationImpl, DateDimensionImpl> dd = lea.join(LoginAggregationImpl_.dateDimension, JoinType.LEFT);
-                final Join<LoginAggregationImpl, TimeDimensionImpl> td = lea.join(LoginAggregationImpl_.timeDimension, JoinType.LEFT);
+                final Root<ConcurrentUserAggregationImpl> cua = criteriaQuery.from(ConcurrentUserAggregationImpl.class);
+                final Join<ConcurrentUserAggregationImpl, DateDimensionImpl> dd = cua.join(ConcurrentUserAggregationImpl_.dateDimension, JoinType.LEFT);
+                final Join<ConcurrentUserAggregationImpl, TimeDimensionImpl> td = cua.join(ConcurrentUserAggregationImpl_.timeDimension, JoinType.LEFT);
                 
-                criteriaQuery.select(lea);
+                criteriaQuery.select(cua);
                 criteriaQuery.where(
                     cb.and(
                         cb.and( //Restrict results by outer date range
@@ -169,8 +157,8 @@ public class JpaLoginAggregationDao extends BaseAggrEventsJpaDao implements Logi
                             cb.lessThan(dd.get(DateDimensionImpl_.date), endMinusOneDate),
                             cb.lessThan(td.get(TimeDimensionImpl_.time), endTime)
                         ),
-                        cb.equal(lea.get(LoginAggregationImpl_.interval), intervalParameter),
-                        lea.get(LoginAggregationImpl_.aggregatedGroup).in(aggregatedGroupsParameter)
+                        cb.equal(cua.get(ConcurrentUserAggregationImpl_.interval), intervalParameter),
+                        cua.get(ConcurrentUserAggregationImpl_.aggregatedGroup).in(aggregatedGroupsParameter)
                     )
                 );
                 criteriaQuery.orderBy(cb.desc(dd.get(DateDimensionImpl_.date)), cb.desc(td.get(TimeDimensionImpl_.time)));
@@ -183,18 +171,18 @@ public class JpaLoginAggregationDao extends BaseAggrEventsJpaDao implements Logi
          * Similar to the previous query but only returns aggregates that have entries in their uniqueUserNames set. This is
          * used for finding aggregates that missed having intervalComplete called due to interval boundary placement.
          */
-        this.findUnclosedLoginAggregationsByDateRangeQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<LoginAggregationImpl>>() {
+        this.findUnclosedConcurrentUserAggregationsByDateRangeQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<ConcurrentUserAggregationImpl>>() {
             @Override
-            public CriteriaQuery<LoginAggregationImpl> apply(CriteriaBuilder cb) {
-                final CriteriaQuery<LoginAggregationImpl> criteriaQuery = cb.createQuery(LoginAggregationImpl.class);
+            public CriteriaQuery<ConcurrentUserAggregationImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<ConcurrentUserAggregationImpl> criteriaQuery = cb.createQuery(ConcurrentUserAggregationImpl.class);
                 
-                final Root<LoginAggregationImpl> lea = criteriaQuery.from(LoginAggregationImpl.class);
-                final Join<LoginAggregationImpl, DateDimensionImpl> dd = lea.join(LoginAggregationImpl_.dateDimension, JoinType.LEFT);
-                final Join<LoginAggregationImpl, TimeDimensionImpl> td = lea.join(LoginAggregationImpl_.timeDimension, JoinType.LEFT);
+                final Root<ConcurrentUserAggregationImpl> cua = criteriaQuery.from(ConcurrentUserAggregationImpl.class);
+                final Join<ConcurrentUserAggregationImpl, DateDimensionImpl> dd = cua.join(ConcurrentUserAggregationImpl_.dateDimension, JoinType.LEFT);
+                final Join<ConcurrentUserAggregationImpl, TimeDimensionImpl> td = cua.join(ConcurrentUserAggregationImpl_.timeDimension, JoinType.LEFT);
                 
-                lea.fetch(LoginAggregationImpl_.uniqueUserNames, JoinType.LEFT);
+                cua.fetch(ConcurrentUserAggregationImpl_.uniqueSessionIds, JoinType.LEFT);
 
-                criteriaQuery.select(lea);
+                criteriaQuery.select(cua);
                 criteriaQuery.where(
                     cb.and(
                         cb.and( //Restrict results by outer date range
@@ -209,8 +197,8 @@ public class JpaLoginAggregationDao extends BaseAggrEventsJpaDao implements Logi
                             cb.lessThan(dd.get(DateDimensionImpl_.date), endMinusOneDate),
                             cb.lessThan(td.get(TimeDimensionImpl_.time), endTime)
                         ),
-                        cb.equal(lea.get(LoginAggregationImpl_.interval), intervalParameter),
-                        cb.notEqual(cb.size(lea.get(LoginAggregationImpl_.uniqueUserNames)), 0)
+                        cb.equal(cua.get(ConcurrentUserAggregationImpl_.interval), intervalParameter),
+                        cb.notEqual(cb.size(cua.get(ConcurrentUserAggregationImpl_.uniqueSessionIds)), 0)
                     )
                 );
                 
@@ -220,8 +208,8 @@ public class JpaLoginAggregationDao extends BaseAggrEventsJpaDao implements Logi
     }
     
     @Override
-    public Set<LoginAggregationImpl> getUnclosedLoginAggregations(DateTime start, DateTime end, AggregationInterval interval) {
-        final TypedQuery<LoginAggregationImpl> query = this.createQuery(findUnclosedLoginAggregationsByDateRangeQuery);
+    public Set<ConcurrentUserAggregationImpl> getUnclosedConcurrentUserAggregations(DateTime start, DateTime end, AggregationInterval interval) {
+        final TypedQuery<ConcurrentUserAggregationImpl> query = this.createQuery(findUnclosedConcurrentUserAggregationsByDateRangeQuery);
         
         query.setParameter(this.startDate, start.toLocalDate());
         query.setParameter(this.startTime, start.toLocalTime());
@@ -232,14 +220,14 @@ public class JpaLoginAggregationDao extends BaseAggrEventsJpaDao implements Logi
         
         query.setParameter(this.intervalParameter, interval);
         
-        return new LinkedHashSet<LoginAggregationImpl>(query.getResultList());
+        return new LinkedHashSet<ConcurrentUserAggregationImpl>(query.getResultList());
     }
     
     @Override
-    public List<LoginAggregationImpl> getLoginAggregations(DateTime start, DateTime end, AggregationInterval interval,
+    public List<ConcurrentUserAggregationImpl> getConcurrentUserAggregations(DateTime start, DateTime end, AggregationInterval interval,
             AggregatedGroupMapping aggregatedGroupMapping, AggregatedGroupMapping... aggregatedGroupMappings) {
         
-        final TypedQuery<LoginAggregationImpl> query = this.createCachedQuery(findLoginAggregationsByDateRangeQuery);
+        final TypedQuery<ConcurrentUserAggregationImpl> query = this.createCachedQuery(findConcurrentUserAggregationsByDateRangeQuery);
         
         query.setParameter(this.startDate, start.toLocalDate());
         query.setParameter(this.startTime, start.toLocalTime());
@@ -253,47 +241,47 @@ public class JpaLoginAggregationDao extends BaseAggrEventsJpaDao implements Logi
         aggregatedGroupMappings = (AggregatedGroupMapping[])ArrayUtils.add(aggregatedGroupMappings, aggregatedGroupMapping);
         query.setParameter(this.aggregatedGroupsParameter, ImmutableSet.copyOf(aggregatedGroupMappings));
         
-        return new ArrayList<LoginAggregationImpl>(query.getResultList());
+        return new ArrayList<ConcurrentUserAggregationImpl>(query.getResultList());
     }
 
     
     @Override
-    public Set<LoginAggregationImpl> getLoginAggregationsForInterval(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval) {
-        final TypedQuery<LoginAggregationImpl> query = this.createQuery(this.findLoginAggregationByDateTimeIntervalQuery);
+    public Set<ConcurrentUserAggregationImpl> getConcurrentUserAggregationsForInterval(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval) {
+        final TypedQuery<ConcurrentUserAggregationImpl> query = this.createQuery(this.findConcurrentUserAggregationByDateTimeIntervalQuery);
         query.setParameter(this.dateDimensionParameter, dateDimension);
         query.setParameter(this.timeDimensionParameter, timeDimension);
         query.setParameter(this.intervalParameter, interval);
         
-        final List<LoginAggregationImpl> results = query.getResultList();
-        return new LinkedHashSet<LoginAggregationImpl>(results);
+        final List<ConcurrentUserAggregationImpl> results = query.getResultList();
+        return new LinkedHashSet<ConcurrentUserAggregationImpl>(results);
     }
 
     @Override
-    public LoginAggregationImpl getLoginAggregation(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval, AggregatedGroupMapping aggregatedGroup) {
-        final TypedQuery<LoginAggregationImpl> query = this.createCachedQuery(this.findLoginAggregationByDateTimeIntervalGroupQuery);
+    public ConcurrentUserAggregationImpl getConcurrentUserAggregation(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval, AggregatedGroupMapping aggregatedGroup) {
+        final TypedQuery<ConcurrentUserAggregationImpl> query = this.createCachedQuery(this.findConcurrentUserAggregationByDateTimeIntervalGroupQuery);
         query.setParameter(this.dateDimensionParameter, dateDimension);
         query.setParameter(this.timeDimensionParameter, timeDimension);
         query.setParameter(this.intervalParameter, interval);
         query.setParameter(this.aggregatedGroupParameter, aggregatedGroup);
         
-        final List<LoginAggregationImpl> results = query.getResultList();
+        final List<ConcurrentUserAggregationImpl> results = query.getResultList();
         return DataAccessUtils.uniqueResult(results);
     }
     
     @AggrEventsTransactional
     @Override
-    public LoginAggregationImpl createLoginAggregation(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval, AggregatedGroupMapping aggregatedGroup) {
-        final LoginAggregationImpl loginAggregation = new LoginAggregationImpl(timeDimension, dateDimension, interval, aggregatedGroup);
+    public ConcurrentUserAggregationImpl createConcurrentUserAggregation(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval, AggregatedGroupMapping aggregatedGroup) {
+        final ConcurrentUserAggregationImpl concurrentUserAggregation = new ConcurrentUserAggregationImpl(timeDimension, dateDimension, interval, aggregatedGroup);
         
-        this.getEntityManager().persist(loginAggregation);
+        this.getEntityManager().persist(concurrentUserAggregation);
         
-        return loginAggregation;
+        return concurrentUserAggregation;
     }
     
     @AggrEventsTransactional
     @Override
-    public void updateLoginAggregation(LoginAggregationImpl loginAggregation) {
-        this.getEntityManager().persist(loginAggregation);
+    public void updateConcurrentUserAggregation(ConcurrentUserAggregationImpl concurrentUserAggregation) {
+        this.getEntityManager().persist(concurrentUserAggregation);
     }
         
 }

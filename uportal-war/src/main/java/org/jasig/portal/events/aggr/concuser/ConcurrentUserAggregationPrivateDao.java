@@ -19,27 +19,24 @@
 
 package org.jasig.portal.events.aggr.concuser;
 
-import org.jasig.portal.events.LoginEvent;
-import org.jasig.portal.events.aggr.BaseAggregation;
+import org.jasig.portal.events.aggr.DateDimension;
+import org.jasig.portal.events.aggr.AggregationInterval;
+import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 
 /**
+ * Login Aggregation DAO used internally to create and update login aggregations
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface LoginAggregation extends BaseAggregation {
-    /**
-     * @return The group this aggregation is for, null if it is for all users
-     */
-    AggregatedGroupMapping getAggregatedGroup();
+interface ConcurrentUserAggregationPrivateDao extends ConcurrentUserAggregationDao<ConcurrentUserAggregationImpl> {
+
+    @Override
+    ConcurrentUserAggregationImpl getConcurrentUserAggregation(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval, AggregatedGroupMapping aggregatedGroup);
     
-    /**
-     * @return Total number of {@link LoginEvent}s that occurred in the interval
-     */
-    int getLoginCount();
+    ConcurrentUserAggregationImpl createConcurrentUserAggregation(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval, AggregatedGroupMapping aggregatedGroup);
     
-    /**
-     * @return Unique number of {@link LoginEvent}s that occurred in the interval, uniqueness is determined by {@link LoginEvent#getUserName()}
-     */
-    int getUniqueLoginCount();
+    void updateConcurrentUserAggregation(ConcurrentUserAggregationImpl loginAggregation);
+
 }

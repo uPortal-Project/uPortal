@@ -53,5 +53,6 @@
         <mapping class="org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl"/>
         <mapping class="org.jasig.portal.events.aggr.session.EventSessionImpl"/>
         <mapping class="org.jasig.portal.events.aggr.login.LoginAggregationImpl"/>
+        <mapping class="org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationImpl"/>
     </session-factory>
 </hibernate-configuration>

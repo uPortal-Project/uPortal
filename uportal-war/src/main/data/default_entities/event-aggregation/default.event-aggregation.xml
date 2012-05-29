@@ -26,12 +26,14 @@
     xsi:schemaLocation="
         https://source.jasig.org/schemas/uportal/io/event-aggregation https://source.jasig.org/schemas/uportal/io/event-aggregation/event-aggregation-4.0.xsd"
     version="4.0">
-    
     <aggregated-interval-config>
         <aggregator-type>org.jasig.portal.events.aggr.IPortalEventAggregator</aggregator-type>
         <exclude>MINUTE</exclude>
     </aggregated-interval-config>
-    
+    <aggregated-interval-config>
+        <aggregator-type>org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregator</aggregator-type>
+        <include>FIVE_MINUTE</include>
+    </aggregated-interval-config>
     <quarter-details>
         <id>0</id>
         <start>--01-01</start>

@@ -60,29 +60,29 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl;
  * @version $Revision$
  */
 @Entity
-@Table(name = "UP_CONCURRENT_USER_AGGREGATE")
+@Table(name = "UP_CONCURRENT_USER_AGGR")
 @Inheritance(strategy=InheritanceType.JOINED)
 @SequenceGenerator(
-        name="UP_CONCURRENT_USER_AGGREGATE_GEN",
-        sequenceName="UP_CONCURRENT_USER_AGGREGATE_SEQ",
+        name="UP_CONCURRENT_USER_AGGR_GEN",
+        sequenceName="UP_CONCURRENT_USER_AGGR_SEQ",
         allocationSize=100
     )
 @TableGenerator(
-        name="UP_CONCURRENT_USER_AGGREGATE_GEN",
-        pkColumnValue="UP_CONCURRENT_USER_AGGREGATE_PROP",
+        name="UP_CONCURRENT_USER_AGGR_GEN",
+        pkColumnValue="UP_CONCURRENT_USER_AGGR_PROP",
         allocationSize=100
     )
 @org.hibernate.annotations.Table(
-        appliesTo = "UP_CONCURRENT_USER_AGGREGATE",
-        indexes = @Index(name = "IDX_UP_CONCURRENT_USER_AGGR_DTI", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL" })
+        appliesTo = "UP_CONCURRENT_USER_AGGR",
+        indexes = @Index(name = "IDX_UP_CONC_USER_AGGR_DTI", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL" })
         )
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class ConcurrentUserAggregationImpl implements LoginAggregation, Serializable {
+public class ConcurrentUserAggregationImpl implements ConcurrentUserAggregation, Serializable {
     private static final long serialVersionUID = 1L;
     
     @Id
-    @GeneratedValue(generator = "UP_CONCURRENT_USER_AGGREGATE_GEN")
+    @GeneratedValue(generator = "UP_CONCURRENT_USER_AGGR_GEN")
     @Column(name="ID")
     @SuppressWarnings("unused")
     private final long id;
@@ -110,19 +110,16 @@ public class ConcurrentUserAggregationImpl implements LoginAggregation, Serializ
     @Column(name = "DURATION", nullable = false)
     private int duration;
     
-    @Column(name = "LOGIN_COUNT", nullable = false)
-    private int loginCount;
-    
-    @Column(name = "UNIQUE_LOGIN_COUNT", nullable = false)
-    private int uniqueLoginCount;
+    @Column(name = "CONCURRENT_USERS", nullable = false)
+    private int concurrentUsers;
     
     @ElementCollection(fetch=FetchType.EAGER)
     @CollectionTable(
-            name = "UP_CONCURRENT_USER_AGGREGATE__UIDS",
-            joinColumns = @JoinColumn(name = "LOGIN_AGGR_ID")
+            name = "UP_CONCURRENT_USER_AGGR__SIDS",
+            joinColumns = @JoinColumn(name = "CONC_USER_AGGR_ID")
         )
-    @Column(name="UNIQUEUSERNAMES", nullable=false, updatable=false, length=255)
-    private Set<String> uniqueUserNames = new LinkedHashSet<String>();
+    @Column(name="SESSION_ID", nullable=false, updatable=false, length=500)
+    private Set<String> uniqueSessionIds = new LinkedHashSet<String>();
     
     @Transient
     private Boolean complete = null;
@@ -176,42 +173,36 @@ public class ConcurrentUserAggregationImpl implements LoginAggregation, Serializ
     }
 
     @Override
-    public int getLoginCount() {
-        return this.loginCount;
+    public int getConcurrentUsers() {
+        return this.concurrentUsers;
     }
 
-    @Override
-    public int getUniqueLoginCount() {
-        return this.uniqueLoginCount;
-    }
-    
     void setDuration(int duration) {
         checkState();
         
         this.duration = duration;
     }
     
-    void countUser(String userName) {
+    void countSession(String eventSessionId) {
         checkState();
         
-        if (this.uniqueUserNames.add(userName)) {
-            this.uniqueLoginCount++;
+        if (this.uniqueSessionIds.add(eventSessionId)) {
+            this.concurrentUsers++;
         }
-        this.loginCount++;
     }
     
     private void checkState() {
         if (this.complete == null) {
-            this.complete = this.loginCount > 0 && this.uniqueUserNames.isEmpty();
+            this.complete = this.concurrentUsers > 0 && this.uniqueSessionIds.isEmpty();
         }
         if (this.complete == Boolean.TRUE) {
-            throw new IllegalStateException("intervalComplete has been called, countUser can no longer be called");
+            throw new IllegalStateException("intervalComplete has been called, countSession can no longer be called");
         }
     }
     
     void intervalComplete(int duration) {
         this.duration = duration;
-        this.uniqueUserNames.clear();
+        this.uniqueSessionIds.clear();
         this.complete = Boolean.TRUE;
     }
 
@@ -260,8 +251,8 @@ public class ConcurrentUserAggregationImpl implements LoginAggregation, Serializ
 
     @Override
     public String toString() {
-        return "LoginAggregationImpl [timeDimension=" + timeDimension + ", dateDimension=" + dateDimension
-                + ", interval=" + interval + ", groupName=" + aggregatedGroup + ", duration=" + duration + ", loginCount="
-                + loginCount + ", uniqueLoginCount=" + uniqueLoginCount + "]";
+        return "ConcurrentUserAggregationImpl [dateDimension=" + dateDimension + ", timeDimension=" + timeDimension
+                + ", interval=" + interval + ", aggregatedGroup=" + aggregatedGroup + ", duration=" + duration
+                + ", concurrentUsers=" + concurrentUsers + "]";
     }
 }
