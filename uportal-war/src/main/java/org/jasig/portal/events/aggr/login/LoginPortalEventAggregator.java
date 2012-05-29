@@ -27,6 +27,7 @@ import java.util.Set;
 import org.jasig.portal.events.LoginEvent;
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.aggr.AggregationInterval;
+import org.jasig.portal.events.aggr.AggregationIntervalHelper;
 import org.jasig.portal.events.aggr.AggregationIntervalInfo;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.EventAggregationContext;
@@ -34,9 +35,10 @@ import org.jasig.portal.events.aggr.IPortalEventAggregator;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.events.aggr.session.EventSession;
-import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
+import org.jasig.portal.jpa.BaseAggrEventsJpaDao.AggrEventsTransactional;
 import org.jasig.portal.utils.cache.CacheKey;
-import org.joda.time.DateMidnight;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -45,20 +47,27 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class LoginPortalEventAggregator extends BaseAggrEventsJpaDao implements IPortalEventAggregator<LoginEvent> {
+public class LoginPortalEventAggregator implements IPortalEventAggregator<LoginEvent> {
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    
     private LoginAggregationPrivateDao loginAggregationDao;
+    private AggregationIntervalHelper aggregationIntervalHelper;
+
+    @Autowired
+    public void setLoginAggregationDao(LoginAggregationPrivateDao loginAggregationDao) {
+        this.loginAggregationDao = loginAggregationDao;
+    }
+    
+    @Autowired
+    public void setAggregationIntervalHelper(AggregationIntervalHelper aggregationIntervalHelper) {
+        this.aggregationIntervalHelper = aggregationIntervalHelper;
+    }
 
     @Override
     public boolean supports(Class<? extends PortalEvent> type) {
         return LoginEvent.class.isAssignableFrom(type);
     }
 
-    @Autowired
-    public void setLoginAggregationDao(LoginAggregationPrivateDao loginAggregationDao) {
-        this.loginAggregationDao = loginAggregationDao;
-    }
-
-    
     @AggrEventsTransactional
     @Override
     public void aggregateEvent(LoginEvent e, EventSession eventSession,
@@ -109,23 +118,18 @@ public class LoginPortalEventAggregator extends BaseAggrEventsJpaDao implements 
         for (final LoginAggregationImpl loginAggregation : loginAggregations) {
             final int duration = intervalInfo.getTotalDuration();
             loginAggregation.intervalComplete(duration);
+            logger.debug("Marked complete: " + loginAggregation);
             this.loginAggregationDao.updateLoginAggregation(loginAggregation);
         }
         
-        //Complete any orphaned login aggregations (somehow we missed the interval boundary for them)
-        DateMidnight start = intervalInfo.getStart().toDateMidnight();
-        final DateMidnight end = intervalInfo.getEnd().toDateMidnight();
-        if (start.equals(end)) {
-            start = start.minusDays(1);
-        }
-        
-        final Set<LoginAggregationImpl> unclosedLoginAggregations = this.loginAggregationDao.getUnclosedLoginAggregations(start, end, interval);
+        //Look for any uncomplete aggregations from the previous interval
+        final AggregationIntervalInfo prevIntervalInfo = this.aggregationIntervalHelper.getIntervalInfo(interval, intervalInfo.getStart().minusMinutes(1));
+        final Set<LoginAggregationImpl> unclosedLoginAggregations = this.loginAggregationDao.getUnclosedLoginAggregations(prevIntervalInfo.getStart(), prevIntervalInfo.getEnd(), interval);
         for (final LoginAggregationImpl loginAggregation : unclosedLoginAggregations) {
-            if (!loginAggregations.contains(loginAggregation)) {
-                final int duration = intervalInfo.getTotalDuration();
-                loginAggregation.intervalComplete(duration);
-                this.loginAggregationDao.updateLoginAggregation(loginAggregation);
-            }
+            final int duration = intervalInfo.getTotalDuration();
+            loginAggregation.intervalComplete(duration);
+            logger.debug("Marked complete previously missed: " + loginAggregation);
+            this.loginAggregationDao.updateLoginAggregation(loginAggregation);
         }
     }
 

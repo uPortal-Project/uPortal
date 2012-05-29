@@ -116,7 +116,7 @@ public class LoginAggregationImpl implements LoginAggregation, Serializable {
     @Column(name = "UNIQUE_LOGIN_COUNT", nullable = false)
     private int uniqueLoginCount;
     
-    @ElementCollection(fetch=FetchType.EAGER)
+    @ElementCollection(fetch=FetchType.LAZY)
     @CollectionTable(
             name = "UP_LOGIN_EVENT_AGGREGATE__UIDS",
             joinColumns = @JoinColumn(name = "LOGIN_AGGR_ID")

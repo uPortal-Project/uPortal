@@ -23,12 +23,21 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.concurrent.Callable;
 
 import javax.naming.CompositeName;
 
+import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.mutable.MutableInt;
+import org.apache.commons.lang.mutable.MutableObject;
 import org.jasig.portal.concurrency.CallableWithoutResult;
+import org.jasig.portal.concurrency.FunctionWithoutResult;
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.TimeDimension;
@@ -39,6 +48,7 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.groups.ICompositeGroupService;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.test.BaseAggrEventsJpaDaoTest;
+import org.jasig.portal.utils.Tuple;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
@@ -47,6 +57,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.google.common.base.Function;
 
 /**
  * @author Eric Dalquist
@@ -290,8 +302,8 @@ public class JpaLoginAggregationDaoTest extends BaseAggrEventsJpaDaoTest {
                 final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
                 
                 final List<LoginAggregationImpl> loginAggregations = loginAggregationDao.getLoginAggregations(
-                        instantDate.monthOfYear().roundFloorCopy(),
-                        instantDate.monthOfYear().roundCeilingCopy(),
+                        instantDate.monthOfYear().roundFloorCopy().toDateTime(),
+                        instantDate.monthOfYear().roundCeilingCopy().toDateTime(),
                         AggregationInterval.FIVE_MINUTE,
                         groupA);
                         
@@ -299,23 +311,318 @@ public class JpaLoginAggregationDaoTest extends BaseAggrEventsJpaDaoTest {
                 assertEquals(1, loginAggregations.size());
             }
         });
-
-        this.execute(new CallableWithoutResult() {
+    }
+    
+    /**
+     * Populate date & time dimensions in an interval range executing a callback for each pair
+     */
+    public final <T> List<T> populateDateTimeDimensions(final DateTime start, final DateTime end,
+            final Function<Tuple<DateDimension, TimeDimension>, T> newDimensionHandler) {
+        
+        return this.executeInTransaction(new Callable<List<T>>() {
             @Override
-            protected void callWithoutResult() {
-                final DateDimension dateDimension = dateDimensionDao.getDateDimensionByDate(instantDate);
-                final TimeDimension timeDimension = timeDimensionDao.getTimeDimensionByTime(instantTime);
-                final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
+            public List<T> call() throws Exception {
+                final List<T> results = new LinkedList<T>();
+                final SortedMap<LocalTime, TimeDimension> times = new TreeMap<LocalTime, TimeDimension>();
+                final SortedMap<DateMidnight, DateDimension> dates = new TreeMap<DateMidnight, DateDimension>();
                 
-                final DateMidnight date = dateDimension.getDate();
-                final Set<LoginAggregationImpl> loginAggregations = loginAggregationDao.getUnclosedLoginAggregations(
-                        date, 
-                        date.plusDays(1), 
-                        AggregationInterval.FIVE_MINUTE);
-                        
-                        
-                assertEquals(2, loginAggregations.size());
+                DateTime nextDateTime = start.minuteOfDay().roundFloorCopy();
+                while (nextDateTime.isBefore(end)) {
+                    
+                    //get/create TimeDimension
+                    final LocalTime localTime = nextDateTime.toLocalTime();
+                    TimeDimension td = times.get(localTime);
+                    if (td == null) {
+                        td = timeDimensionDao.createTimeDimension(localTime);
+                        times.put(localTime, td);
+                    }
+                    
+                    //get/create DateDimension
+                    final DateMidnight dateMidnight = nextDateTime.toDateMidnight();
+                    DateDimension dd = dates.get(dateMidnight);
+                    if (dd == null) {
+                        dd = dateDimensionDao.createDateDimension(dateMidnight, 0, null);
+                        dates.put(dateMidnight, dd);
+                    }
+                    
+                    //Let callback do work
+                    if (newDimensionHandler != null) {
+                        final T result = newDimensionHandler.apply(new Tuple<DateDimension, TimeDimension>(dd, td));
+                        if (result != null) {
+                            results.add(result);
+                        }
+                    }
+                    
+                    nextDateTime = nextDateTime.plusMinutes(1);
+                }
+                
+                return results;
             }
         });
     }
+    
+
+    @Test
+    public void testLoginAggregationRangeQuery() throws Exception {
+        final IEntityGroup entityGroupA = mock(IEntityGroup.class);
+        when(entityGroupA.getServiceName()).thenReturn(new CompositeName("local"));
+        when(entityGroupA.getName()).thenReturn("Group A");
+        when(compositeGroupService.findGroup("local.0")).thenReturn(entityGroupA);
+        
+        final IEntityGroup entityGroupB = mock(IEntityGroup.class);
+        when(entityGroupB.getServiceName()).thenReturn(new CompositeName("local"));
+        when(entityGroupB.getName()).thenReturn("Group B");
+        when(compositeGroupService.findGroup("local.1")).thenReturn(entityGroupB);
+        
+        final MutableInt aggrs = new MutableInt();
+        
+        //Create 2 days of login aggregates ... every 5 minutes
+        final DateTime start = new DateTime(1326734644000l).minuteOfDay().roundFloorCopy();
+        final DateTime end = start.plusDays(2);
+        final AggregationInterval interval = AggregationInterval.FIVE_MINUTE;
+        
+        final MutableObject startObj = new MutableObject();
+        final MutableObject endObj = new MutableObject();
+        
+        this.executeInTransaction(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                final Random r = new Random(0);
+                
+                final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
+                final AggregatedGroupMapping groupB = aggregatedGroupLookupDao.getGroupMapping("local.1");
+                
+                populateDateTimeDimensions(start, end, new FunctionWithoutResult<Tuple<DateDimension, TimeDimension>>() {
+                    @Override
+                    protected void applyWithoutResult(Tuple<DateDimension, TimeDimension> input) {
+                        final TimeDimension td = input.second;
+                        final DateDimension dd = input.first;
+                        final DateTime instant = td.getTime().toDateTime(dd.getDate());
+                        
+                        if (startObj.getValue() == null) {
+                            startObj.setValue(instant);
+                        }
+                        endObj.setValue(instant);
+                        
+                        if (instant.equals(interval.determineStart(instant))) {
+                             final LoginAggregationImpl loginAggregationA = loginAggregationDao.createLoginAggregation(dd, td, interval, groupA);
+                             final LoginAggregationImpl loginAggregationB = loginAggregationDao.createLoginAggregation(dd, td, interval, groupB);
+                             
+                             for (int u = 0; u < r.nextInt(50); u++) {
+                                 loginAggregationA.countUser(RandomStringUtils.random(8, 0, 0, true, true, null, r));
+                                 loginAggregationB.countUser(RandomStringUtils.random(8, 0, 0, true, true, null, r));
+                             }
+                             
+                             loginAggregationA.intervalComplete(5);
+                             loginAggregationB.intervalComplete(5);
+                             
+                             loginAggregationDao.updateLoginAggregation(loginAggregationA);
+                             loginAggregationDao.updateLoginAggregation(loginAggregationB);
+                             
+                             aggrs.add(2);
+                         }
+                    }
+                });
+            }
+        });
+        
+        //Verify all aggrs created
+        assertEquals(1152, aggrs.intValue());
+
+        //Find all aggrs
+        this.execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
+                final AggregatedGroupMapping groupB = aggregatedGroupLookupDao.getGroupMapping("local.1");
+                
+                final List<LoginAggregationImpl> loginAggregations = 
+                        loginAggregationDao.getLoginAggregations(start, end.plusDays(1), interval, groupA, groupB);
+                
+                assertEquals(1152, loginAggregations.size());
+            }
+        });
+
+        //Find first days worth
+        this.execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
+                final AggregatedGroupMapping groupB = aggregatedGroupLookupDao.getGroupMapping("local.1");
+                
+                final List<LoginAggregationImpl> loginAggregations = 
+                        loginAggregationDao.getLoginAggregations(start, end, interval, groupA, groupB);
+                
+                assertEquals(576, loginAggregations.size());
+            }
+        });
+
+        //Find second days worth
+        this.execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
+                final AggregatedGroupMapping groupB = aggregatedGroupLookupDao.getGroupMapping("local.1");
+                
+                final List<LoginAggregationImpl> loginAggregations = 
+                        loginAggregationDao.getLoginAggregations(start.plusDays(1), end.plusDays(1), interval, groupA, groupB);
+                
+                assertEquals(576, loginAggregations.size());
+            }
+        });
+
+        //Find first 12 hours worth
+        this.execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
+                final AggregatedGroupMapping groupB = aggregatedGroupLookupDao.getGroupMapping("local.1");
+                
+                final List<LoginAggregationImpl> loginAggregations = 
+                        loginAggregationDao.getLoginAggregations(start, end.minusHours(12), interval, groupA, groupB);
+                
+                assertEquals(288, loginAggregations.size());
+            }
+        });
+
+        //Find middle 24 hours worth
+        this.execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
+                final AggregatedGroupMapping groupB = aggregatedGroupLookupDao.getGroupMapping("local.1");
+                
+                final List<LoginAggregationImpl> loginAggregations = 
+                        loginAggregationDao.getLoginAggregations(start.plusHours(12), end.plusHours(12), interval, groupA, groupB);
+                
+                assertEquals(576, loginAggregations.size());
+            }
+        });
+
+        //Find middle 24 hours worth for one group
+        this.execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
+                
+                final List<LoginAggregationImpl> loginAggregations = 
+                        loginAggregationDao.getLoginAggregations(start.plusHours(12), end.plusHours(12), interval, groupA);
+                
+                assertEquals(288, loginAggregations.size());
+            }
+        });
+
+        //Find last 12 hours worth
+        this.execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
+                final AggregatedGroupMapping groupB = aggregatedGroupLookupDao.getGroupMapping("local.1");
+                
+                final List<LoginAggregationImpl> loginAggregations = 
+                        loginAggregationDao.getLoginAggregations(start.plusHours(36), end.plusDays(1), interval, groupA, groupB);
+                
+                assertEquals(288, loginAggregations.size());
+            }
+        });
+    }
+    
+
+    @Test
+    public void testUnclosedLoginAggregationRangeQuery() throws Exception {
+        final IEntityGroup entityGroupA = mock(IEntityGroup.class);
+        when(entityGroupA.getServiceName()).thenReturn(new CompositeName("local"));
+        when(entityGroupA.getName()).thenReturn("Group A");
+        when(compositeGroupService.findGroup("local.0")).thenReturn(entityGroupA);
+        
+        final IEntityGroup entityGroupB = mock(IEntityGroup.class);
+        when(entityGroupB.getServiceName()).thenReturn(new CompositeName("local"));
+        when(entityGroupB.getName()).thenReturn("Group B");
+        when(compositeGroupService.findGroup("local.1")).thenReturn(entityGroupB);
+        
+        final MutableInt aggrs = new MutableInt();
+        
+        //Create 10 minutes of aggregations
+        final DateTime start = new DateTime(1326734644000l).minuteOfDay().roundFloorCopy();
+        final DateTime end = start.plusMinutes(10);
+        final AggregationInterval interval = AggregationInterval.FIVE_MINUTE;
+        
+        final MutableObject startObj = new MutableObject();
+        final MutableObject endObj = new MutableObject();
+        
+        this.executeInTransaction(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                final Random r = new Random(0);
+                
+                final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
+                final AggregatedGroupMapping groupB = aggregatedGroupLookupDao.getGroupMapping("local.1");
+                
+                populateDateTimeDimensions(start, end, new FunctionWithoutResult<Tuple<DateDimension, TimeDimension>>() {
+                    @Override
+                    protected void applyWithoutResult(Tuple<DateDimension, TimeDimension> input) {
+                        final TimeDimension td = input.second;
+                        final DateDimension dd = input.first;
+                        final DateTime instant = td.getTime().toDateTime(dd.getDate());
+                        
+                        if (startObj.getValue() == null) {
+                            startObj.setValue(instant);
+                        }
+                        endObj.setValue(instant);
+                        
+                        if (instant.equals(interval.determineStart(instant))) {
+                             final LoginAggregationImpl loginAggregationA = loginAggregationDao.createLoginAggregation(dd, td, interval, groupA);
+                             final LoginAggregationImpl loginAggregationB = loginAggregationDao.createLoginAggregation(dd, td, interval, groupB);
+                             
+                             for (int u = 0; u < r.nextInt(50); u++) {
+                                 loginAggregationA.countUser(RandomStringUtils.random(8, 0, 0, true, true, null, r));
+                                 loginAggregationB.countUser(RandomStringUtils.random(8, 0, 0, true, true, null, r));
+                             }
+                             
+                             if (aggrs.intValue() % 4 == 0) {
+                                 loginAggregationA.intervalComplete(5);
+                             }
+                             loginAggregationB.intervalComplete(5);
+                             
+                             loginAggregationDao.updateLoginAggregation(loginAggregationA);
+                             loginAggregationDao.updateLoginAggregation(loginAggregationB);
+                             
+                             aggrs.add(2);
+                         }
+                    }
+                });
+            }
+        });
+        
+        //Verify all aggrs created
+        assertEquals(4, aggrs.intValue());
+
+        //Find unclosed 1 aggr
+        this.execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                final Set<LoginAggregationImpl> loginAggregations = loginAggregationDao
+                        .getUnclosedLoginAggregations(start, end.plusDays(1), interval);
+                
+                assertEquals(1, loginAggregations.size());
+                
+                for (final LoginAggregationImpl loginAggregationImpl : loginAggregations) {
+                    loginAggregationImpl.intervalComplete(5);
+                    loginAggregationDao.updateLoginAggregation(loginAggregationImpl);
+                }
+            }
+        });
+
+        //Find unclosed 0 aggr
+        this.execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                final Set<LoginAggregationImpl> loginAggregations = loginAggregationDao
+                        .getUnclosedLoginAggregations(start, end.plusDays(1), interval);
+                
+                assertEquals(0, loginAggregations.size());
+            }
+        });
+    }
+
 }

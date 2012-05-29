@@ -91,7 +91,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
     private DateDimensionDao dateDimensionDao;
     private AggregationIntervalHelper intervalHelper;
     private EventSessionDao eventSessionDao;
-    private Set<IPortalEventAggregator<PortalEvent>> portalEventAggregators;
+    private Set<IPortalEventAggregator<PortalEvent>> portalEventAggregators = Collections.emptySet();
     
     private int eventAggregationBatchSize = 2000;
     private ReadablePeriod aggregationDelay = Period.seconds(30);
@@ -407,6 +407,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
             }
         }
         
+        //Flush any dimension creation before aggregation
         this.getEntityManager().flush();
         this.getEntityManager().setFlushMode(FlushModeType.COMMIT);
 

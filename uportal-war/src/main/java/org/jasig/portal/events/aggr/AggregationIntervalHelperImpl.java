@@ -27,7 +27,6 @@ import org.jasig.portal.events.aggr.dao.IEventAggregationManagementDao;
 import org.jasig.portal.events.aggr.dao.TimeDimensionDao;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeFieldType;
 import org.joda.time.LocalTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -89,8 +88,8 @@ public class AggregationIntervalHelperImpl implements AggregationIntervalHelper 
                 break;
             }
             default: {
-                start = determineStart(interval, instant);
-                end = determineEnd(interval, start);
+                start = interval.determineStart(instant);
+                end = interval.determineEnd(start);
             }
         }
         
@@ -101,31 +100,5 @@ public class AggregationIntervalHelperImpl implements AggregationIntervalHelper 
         final DateDimension startDateDimension = this.dateDimensionDao.getDateDimensionByDate(startDateMidnight);
         
         return new AggregationIntervalInfo(interval, start, end, startDateDimension, startTimeDimension);
-    }
-
-    protected DateTime determineStart(AggregationInterval interval, DateTime instant) {
-        final DateTimeFieldType dateTimeFieldType = interval.getDateTimeFieldType();
-        if (dateTimeFieldType != null) {
-            return instant.property(dateTimeFieldType).roundFloorCopy();
-        }
-        
-        if (interval == AggregationInterval.FIVE_MINUTE) {
-            return instant.hourOfDay().roundFloorCopy().plusMinutes((instant.getMinuteOfHour() / 5) * 5);
-        }
-        
-        throw new IllegalArgumentException("Unsupportd Interval: " + interval);
-    }
-
-    protected DateTime determineEnd(AggregationInterval interval, DateTime start) {
-        final DateTimeFieldType dateTimeFieldType = interval.getDateTimeFieldType();
-        if (dateTimeFieldType != null) {
-            return start.property(dateTimeFieldType).addToCopy(1);
-        }
-        
-        if (interval == AggregationInterval.FIVE_MINUTE) {
-            return start.plusMinutes(5);
-        }
-        
-        throw new IllegalArgumentException("Unsupportd Interval: " + interval);
     }
 }

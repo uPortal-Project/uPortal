@@ -24,7 +24,8 @@ FROM UP_LOGIN_EVENT_AGGREGATE LEA
 WHERE ( DD.DD_DATE >= To_date('2012/04/16', 'yyyy/mm/dd') AND DD.DD_DATE < To_date('2012/04/17', 'yyyy/mm/dd') ) AND
        LEA.AGGR_INTERVAL='FIVE_MINUTE' and LEA.AGGREGATED_GROUP_ID=791
        
-       
+
+--Get events between date & time       
 SELECT DD.DD_YEAR, DD.DD_MONTH, DD.DD_DAY, TD.TD_HOUR, TD.TD_MINUTE, LEA.LOGIN_COUNT, LEA.UNIQUE_LOGIN_COUNT
 FROM UP_LOGIN_EVENT_AGGREGATE LEA
 	LEFT JOIN UP_DATE_DIMENSION DD on LEA.DATE_DIMENSION_ID = DD.DATE_ID
@@ -35,18 +36,23 @@ WHERE ( DD.DD_DATE >= To_date('2012/04/16', 'yyyy/mm/dd') AND DD.DD_DATE < To_da
        LEA.AGGR_INTERVAL='FIVE_MINUTE' and LEA.AGGREGATED_GROUP_ID=791
 
 
-
+--List all dates + times in range
 SELECT DD.DD_YEAR, DD.DD_MONTH, DD.DD_DAY, TD.TD_HOUR, TD.TD_MINUTE
 FROM   UP_DATE_DIMENSION DD, UP_TIME_DIMENSION TD 
-WHERE  ( DD.DD_DATE BETWEEN To_date('2012/04/15', 'yyyy/mm/dd') AND 
-                            To_date('2012/04/17', 'yyyy/mm/dd') ) AND
-       ( DD.DD_DATE > To_date('2012/04/15', 'yyyy/mm/dd') OR TD.TD_TIME > To_date('1970/01/01 00:04', 'yyyy/mm/dd HH24:MI') ) AND
-       ( DD.DD_DATE < To_date('2012/04/17', 'yyyy/mm/dd') OR TD.TD_TIME < To_date('1970/01/01 23:55', 'yyyy/mm/dd HH24:MI') )
+WHERE  ( DD.DD_DATE >= To_date('2012/04/16', 'yyyy/mm/dd') AND DD.DD_DATE < To_date('2012/04/17', 'yyyy/mm/dd') ) AND
+       ( DD.DD_DATE > To_date('2012/04/16', 'yyyy/mm/dd') OR TD.TD_TIME >= To_date('1970/01/01 07:21', 'yyyy/mm/dd HH24:MI') ) AND
+       ( DD.DD_DATE < To_date('2012/04/16', 'yyyy/mm/dd') OR TD.TD_TIME < To_date('1970/01/01 09:20', 'yyyy/mm/dd HH24:MI') )
 ORDER  BY DD.DD_DATE, 
           TD.TD_TIME 
 
 
-
+--Old Stats Query
+SELECT DD.CALENDAR_YEAR_NUMBER, DD.CALENDAR_MONTH_NUMBER, DD.CALENDAR_DAY_NUMBER, TD.HOUR, TD.MINUTE, LEA.LOGIN_COUNT, LEA.LOGIN_COUNT_UNIQUE
+FROM PORTAL_LOGIN_AGGR_T LEA
+	LEFT JOIN DATE_DIMENSION_T DD on LEA.DATE_DIMENSION_KEY = DD.DATE_DIMENSION_KEY
+	LEFT JOIN TIME_DIMENSION_T TD on LEA.TIME_DIMENSION_KEY = TD.TIME_DIMENSION_KEY
+WHERE ( DD.FULL_DATE >= To_date('2011/04/01', 'yyyy/mm/dd') AND DD.FULL_DATE < To_date('2011/04/17', 'yyyy/mm/dd') ) AND
+       LEA.INTERVAL_KEY=30 and LEA.PORTAL_GROUP_LOOKUP_KEY=0
 
 
 
