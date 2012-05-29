@@ -22,34 +22,10 @@
 
 <skins>
     <skin>
-        <skin-key>uportal3</skin-key>
-        <skin-name>uPortal 3</skin-name>
+        <skin-key>ssp</skin-key>
+        <skin-name>ssp</skin-name>
         <skin-description>
-            Blue and white.
-        </skin-description>
-    </skin>
-    
-    <skin>
-        <skin-key>ivy</skin-key>
-        <skin-name>Ivy</skin-name>
-        <skin-description>
-            Light blue and white.
-        </skin-description>
-    </skin>
-    
-    <skin>
-        <skin-key>coal</skin-key>
-        <skin-name>Coal</skin-name>
-        <skin-description>
-            Dark charcoal and gray.
-        </skin-description>
-    </skin>
-    
-    <skin>
-        <skin-key>hc</skin-key>
-        <skin-name>High Contrast</skin-name>
-        <skin-description>
-            High contrast black and white.
+            SSP Platform
         </skin-description>
     </skin>
 </skins>
