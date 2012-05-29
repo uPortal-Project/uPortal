@@ -19,6 +19,7 @@
 
 package org.jasig.portal.events.aggr.concuser;
 
+import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.aggr.BaseAggregationPrivateDao;
 
 /**
@@ -26,6 +27,7 @@ import org.jasig.portal.events.aggr.BaseAggregationPrivateDao;
  * 
  * @author Eric Dalquist
  */
-interface ConcurrentUserAggregationPrivateDao extends ConcurrentUserAggregationDao<ConcurrentUserAggregationImpl>, BaseAggregationPrivateDao<ConcurrentUserAggregationImpl> {
+interface ConcurrentUserAggregationPrivateDao extends ConcurrentUserAggregationDao<ConcurrentUserAggregationImpl>,
+        BaseAggregationPrivateDao<PortalEvent, ConcurrentUserAggregationImpl> {
 
 }

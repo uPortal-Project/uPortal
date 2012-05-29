@@ -40,7 +40,7 @@ public class ConcurrentUserAggregator extends BasePortalEventAggregator<PortalEv
     }
     
     @Override
-    protected BaseAggregationPrivateDao<ConcurrentUserAggregationImpl> getAggregationDao() {
+    protected BaseAggregationPrivateDao<PortalEvent, ConcurrentUserAggregationImpl> getAggregationDao() {
         return this.concurrentUserAggregationDao;
     }
 

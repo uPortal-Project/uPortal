@@ -17,15 +17,20 @@
  * under the License.
  */
 
-package org.jasig.portal.events.aggr.login;
+package org.jasig.portal.events.aggr.tab;
 
-import org.jasig.portal.events.aggr.BaseAggregationDao;
-import org.jasig.portal.events.aggr.BaseAggregationKey;
+import org.jasig.portal.events.aggr.BaseAggregation;
+import org.jasig.portal.events.aggr.TimedAggregation;
 
 /**
- * DAO used to query information about login aggregates: Total Logins and Unique Logins per date,time,interval,group
+ * Tracks tab render stats, all times are in nanoseconds.
  * 
  * @author Eric Dalquist
  */
-public interface LoginAggregationDao<T extends LoginAggregation> extends BaseAggregationDao<T, BaseAggregationKey> {
+public interface TabRenderAggregation extends TabRenderAggregationKey, BaseAggregation, TimedAggregation {
+    
+    /**
+     * @return Number of times the tab was rendered
+     */
+    int getRenderCount();
 }

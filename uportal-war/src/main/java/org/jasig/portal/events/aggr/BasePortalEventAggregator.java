@@ -29,6 +29,8 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.events.aggr.session.EventSession;
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao.AggrEventsTransactional;
 import org.jasig.portal.utils.cache.CacheKey;
+import org.joda.time.DateMidnight;
+import org.joda.time.LocalTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +39,17 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Base {@link PortalEvent} aggregator, useful for aggregations that extend from {@link BaseAggregationImpl} 
  * 
  * @author Eric Dalquist
- * @param <E>
- * @param <T>
+ * @param <E> The {@link PortalEvent} type handled by this aggregator
+ * @param <T> The {@link BaseAggregationImpl} subclass operated on by this aggregator 
+ * @param <K> The {@link BaseAggregationKey} type used by this aggregator
  */
-public abstract class BasePortalEventAggregator<E extends PortalEvent, T extends BaseAggregationImpl> implements IPortalEventAggregator<E> {
+public abstract class BasePortalEventAggregator<
+            E extends PortalEvent, 
+            T extends BaseAggregationImpl,
+            K extends BaseAggregationKey> 
+    implements IPortalEventAggregator<E> {
+    
+    
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
     private AggregationIntervalHelper aggregationIntervalHelper;
@@ -50,7 +59,21 @@ public abstract class BasePortalEventAggregator<E extends PortalEvent, T extends
         this.aggregationIntervalHelper = aggregationIntervalHelper;
     }
     
-    protected abstract BaseAggregationPrivateDao<T> getAggregationDao();
+    /**
+     * @return The private aggregation DAO to use
+     */
+    protected abstract BaseAggregationPrivateDao<T, K> getAggregationDao();
+
+    /**
+     * Called for each {@link BaseAggregationImpl} that needs to be updated 
+     * 
+     * @param e The {@link PortalEvent} to get the data from
+     * @param intervalInfo The info about the interval the aggregation is for
+     * @param aggregation The aggregation to update
+     */
+    protected abstract void updateAggregation(E e, AggregationIntervalInfo intervalInfo, T aggregation);
+    
+    protected abstract K createAggregationKey(AggregationIntervalInfo intervalInfo, AggregatedGroupMapping aggregatedGroup, E event); 
 
     @AggrEventsTransactional
     @Override
@@ -58,15 +81,12 @@ public abstract class BasePortalEventAggregator<E extends PortalEvent, T extends
             EventAggregationContext eventAggregationContext,
             Map<AggregationInterval, AggregationIntervalInfo> currentIntervals) {
         
-        final BaseAggregationPrivateDao<T> aggregationDao = this.getAggregationDao();
+        final BaseAggregationPrivateDao<T, K> aggregationDao = this.getAggregationDao();
         
         for (Map.Entry<AggregationInterval, AggregationIntervalInfo> intervalInfoEntry : currentIntervals.entrySet()) {
-            final AggregationInterval interval = intervalInfoEntry.getKey();
             final AggregationIntervalInfo intervalInfo = intervalInfoEntry.getValue();
-            final DateDimension dateDimension = intervalInfo.getDateDimension();
-            final TimeDimension timeDimension = intervalInfo.getTimeDimension();
             
-            final Collection<T> cachedAggregations = getAggregations(eventAggregationContext, interval, dateDimension, timeDimension);
+            final Collection<T> cachedAggregations = getOrLoadAggregations(eventAggregationContext, intervalInfo, e);
             
             //If the number of cached aggregations != number of group mappings we need to figure out which groups don't have an
             //aggregation yet. This is done by cloning the groupMappings map and removing groups we see from it as the cached
@@ -93,7 +113,8 @@ public abstract class BasePortalEventAggregator<E extends PortalEvent, T extends
             //Create aggregations for any left over groups
             if (mutableGroupMappings != null && !mutableGroupMappings.isEmpty()) {
                 for (final AggregatedGroupMapping aggregatedGroup : mutableGroupMappings) {
-                    final T aggregation = aggregationDao.createAggregation(dateDimension, timeDimension, interval, aggregatedGroup);
+                    final K key = this.createAggregationKey(intervalInfo, aggregatedGroup, e);
+                    final T aggregation = aggregationDao.createAggregation(key);
                     cachedAggregations.add(aggregation);
                     updateAggregation(e, intervalInfo, aggregation);
                 }
@@ -107,13 +128,11 @@ public abstract class BasePortalEventAggregator<E extends PortalEvent, T extends
             Map<AggregationInterval, AggregationIntervalInfo> intervals) {
         
         final AggregationIntervalInfo intervalInfo = intervals.get(interval);
-        final DateDimension dateDimension = intervalInfo.getDateDimension();
-        final TimeDimension timeDimension = intervalInfo.getTimeDimension();
         
-        final BaseAggregationPrivateDao<T> aggregationDao = this.getAggregationDao();
+        final BaseAggregationPrivateDao<T, K> aggregationDao = this.getAggregationDao();
         
         //Complete all of the aggregations that have been touched by this session
-        final Collection<T> aggregations = this.getAggregations(eventAggregationContext, interval, dateDimension, timeDimension);
+        final Collection<T> aggregations = this.getCachedAggregations(eventAggregationContext, intervalInfo);
         for (final T loginAggregation : aggregations) {
             final int duration = intervalInfo.getTotalDuration();
             loginAggregation.intervalComplete(duration);
@@ -123,6 +142,7 @@ public abstract class BasePortalEventAggregator<E extends PortalEvent, T extends
         
         //Look for any uncomplete aggregations from the previous interval
         final AggregationIntervalInfo prevIntervalInfo = this.aggregationIntervalHelper.getIntervalInfo(interval, intervalInfo.getStart().minusMinutes(1));
+        
         final Collection<T> unclosedLoginAggregations = aggregationDao.getUnclosedAggregations(prevIntervalInfo.getStart(), prevIntervalInfo.getEnd(), interval);
         for (final T aggregation : unclosedLoginAggregations) {
             final int duration = intervalInfo.getTotalDuration();
@@ -135,26 +155,115 @@ public abstract class BasePortalEventAggregator<E extends PortalEvent, T extends
     /**
      * Get the set of existing aggregations looking first in the aggregation session and then in the db
      */
-    private Collection<T> getAggregations(EventAggregationContext eventAggregationContext,
-            final AggregationInterval interval, final DateDimension dateDimension, final TimeDimension timeDimension) {
+    private Collection<T> getOrLoadAggregations(EventAggregationContext eventAggregationContext, AggregationIntervalInfo intervalInfo, E event) {
         
-        final CacheKey key = CacheKey.build(this.getClass().getName(), dateDimension.getDate(), timeDimension.getTime(), interval);
-        Collection<T> cachedAggregations = eventAggregationContext.getAttribute(key);
+        final CacheKey cacheKey = createAggregationSessionCacheKey(intervalInfo);
+        
+        Collection<T> cachedAggregations = eventAggregationContext.getAttribute(cacheKey);
         if (cachedAggregations == null) {
             //Nothing in the aggr session yet, cache the current set of aggregations from the DB in the aggr session
-            cachedAggregations = this.getAggregationDao().getAggregationsForInterval(dateDimension, timeDimension, interval);
-            eventAggregationContext.setAttribute(key, cachedAggregations);
+            final K key = this.createAggregationKey(intervalInfo, null, event);
+            cachedAggregations = this.getAggregationDao().getAggregationsForInterval(key);
+            eventAggregationContext.setAttribute(cacheKey, cachedAggregations);
         }
         
         return cachedAggregations;
     }
 
     /**
-     * Called for each {@link BaseAggregationImpl} that needs to be updated 
-     * 
-     * @param e The {@link PortalEvent} to get the data from
-     * @param intervalInfo The info about the interval the aggregation is for
-     * @param aggregation The aggregation to update
+     * Get the set of existing aggregations from the aggregation session
      */
-    protected abstract void updateAggregation(E e, AggregationIntervalInfo intervalInfo, T aggregation);
+    private Collection<T> getCachedAggregations(EventAggregationContext eventAggregationContext, AggregationIntervalInfo intervalInfo) {
+        final CacheKey cacheKey = createAggregationSessionCacheKey(intervalInfo);
+        return eventAggregationContext.getAttribute(cacheKey);
+    }
+
+    /**
+     * Create the CacheKey used to store data in the aggregation session
+     */
+    private CacheKey createAggregationSessionCacheKey(AggregationIntervalInfo intervalInfo) {
+        final String name = this.getClass().getName();
+        final DateMidnight date = intervalInfo.getDateDimension().getDate();
+        final LocalTime time = intervalInfo.getTimeDimension().getTime();
+        final AggregationInterval aggregationInterval = intervalInfo.getAggregationInterval();
+        return CacheKey.build(name, date, time, aggregationInterval);
+    }
+    
+    protected static class BaseAggregationKeyImpl implements BaseAggregationKey {
+        private final TimeDimension timeDimension;
+        private final DateDimension dateDimension;
+        private final AggregationInterval aggregationInterval;
+        private final AggregatedGroupMapping aggregatedGroupMapping;
+        
+        public BaseAggregationKeyImpl(TimeDimension timeDimension, DateDimension dateDimension,
+                AggregationInterval aggregationInterval, AggregatedGroupMapping aggregatedGroupMapping) {
+            this.timeDimension = timeDimension;
+            this.dateDimension = dateDimension;
+            this.aggregationInterval = aggregationInterval;
+            this.aggregatedGroupMapping = aggregatedGroupMapping;
+        }
+
+        @Override
+        public TimeDimension getTimeDimension() {
+            return this.timeDimension;
+        }
+
+        @Override
+        public DateDimension getDateDimension() {
+            return this.dateDimension;
+        }
+
+        @Override
+        public AggregationInterval getInterval() {
+            return this.aggregationInterval;
+        }
+
+        @Override
+        public AggregatedGroupMapping getAggregatedGroup() {
+            return this.aggregatedGroupMapping;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((aggregatedGroupMapping == null) ? 0 : aggregatedGroupMapping.hashCode());
+            result = prime * result + ((aggregationInterval == null) ? 0 : aggregationInterval.hashCode());
+            result = prime * result + ((dateDimension == null) ? 0 : dateDimension.hashCode());
+            result = prime * result + ((timeDimension == null) ? 0 : timeDimension.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (obj instanceof BaseAggregationKey)
+                return false;
+            BaseAggregationKey other = (BaseAggregationKey) obj;
+            if (aggregatedGroupMapping == null) {
+                if (other.getAggregatedGroup() != null)
+                    return false;
+            }
+            else if (!aggregatedGroupMapping.equals(other.getAggregatedGroup()))
+                return false;
+            if (aggregationInterval != other.getInterval())
+                return false;
+            if (dateDimension == null) {
+                if (other.getDateDimension() != null)
+                    return false;
+            }
+            else if (!dateDimension.equals(other.getDateDimension()))
+                return false;
+            if (timeDimension == null) {
+                if (other.getTimeDimension() != null)
+                    return false;
+            }
+            else if (!timeDimension.equals(other.getTimeDimension()))
+                return false;
+            return true;
+        }
+    }
 }

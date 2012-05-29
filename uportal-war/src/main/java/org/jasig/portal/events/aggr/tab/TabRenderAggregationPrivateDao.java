@@ -17,15 +17,16 @@
  * under the License.
  */
 
-package org.jasig.portal.events.aggr.login;
+package org.jasig.portal.events.aggr.tab;
 
-import org.jasig.portal.events.aggr.BaseAggregationDao;
-import org.jasig.portal.events.aggr.BaseAggregationKey;
+import org.jasig.portal.events.aggr.BaseAggregationPrivateDao;
 
 /**
- * DAO used to query information about login aggregates: Total Logins and Unique Logins per date,time,interval,group
+ * Tab Aggregation DAO used internally to create and update tab aggregations
  * 
  * @author Eric Dalquist
  */
-public interface LoginAggregationDao<T extends LoginAggregation> extends BaseAggregationDao<T, BaseAggregationKey> {
+interface TabRenderAggregationPrivateDao extends TabRenderAggregationDao<TabRenderAggregationImpl>,
+        BaseAggregationPrivateDao<TabRenderAggregationImpl, TabRenderAggregationKey> {
+
 }

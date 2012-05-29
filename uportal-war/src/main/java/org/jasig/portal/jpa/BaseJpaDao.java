@@ -56,15 +56,8 @@ public abstract class BaseJpaDao implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
     }
-
-    /**
-     * Subclasses can implement this method to generate {@link CriteriaQuery} objects.
-     * Called by {@link #afterPropertiesSet()}
-     */
-    protected void buildParameterExpressions(CriteriaBuilder criteriaBuilder) {
-    }
     
-    protected <T> ParameterExpression<T> createParameterExpression(Class<T> paramClass) {
+    protected final <T> ParameterExpression<T> createParameterExpression(Class<T> paramClass) {
         final EntityManager entityManager = this.getEntityManager();
         final EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
         final CriteriaBuilder criteriaBuilder = entityManagerFactory.getCriteriaBuilder();
@@ -72,7 +65,7 @@ public abstract class BaseJpaDao implements InitializingBean {
         return criteriaBuilder.parameter(paramClass);
     }
     
-    protected <T> ParameterExpression<T> createParameterExpression(Class<T> paramClass, String name) {
+    protected final <T> ParameterExpression<T> createParameterExpression(Class<T> paramClass, String name) {
         final EntityManager entityManager = this.getEntityManager();
         final EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
         final CriteriaBuilder criteriaBuilder = entityManagerFactory.getCriteriaBuilder();
@@ -80,7 +73,7 @@ public abstract class BaseJpaDao implements InitializingBean {
         return criteriaBuilder.parameter(paramClass, name);
     }
     
-    protected <T> CriteriaQuery<T> createCriteriaQuery(Function<CriteriaBuilder, CriteriaQuery<T>> builder) {
+    protected final <T> CriteriaQuery<T> createCriteriaQuery(Function<CriteriaBuilder, CriteriaQuery<T>> builder) {
         final EntityManager entityManager = this.getEntityManager();
         final EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
         final CriteriaBuilder criteriaBuilder = entityManagerFactory.getCriteriaBuilder();
@@ -129,7 +122,7 @@ public abstract class BaseJpaDao implements InitializingBean {
      * 
      * @param criteriaQuery The criteria to create the cache name for
      */
-    protected <T> String getCacheRegionName(CriteriaQuery<T> criteriaQuery) {
+    protected final <T> String getCacheRegionName(CriteriaQuery<T> criteriaQuery) {
         final Set<Root<?>> roots = criteriaQuery.getRoots();
         final Class<?> cacheRegionType = roots.iterator().next().getJavaType();
         final String cacheRegion = cacheRegionType.getName() + QUERY_SUFFIX;

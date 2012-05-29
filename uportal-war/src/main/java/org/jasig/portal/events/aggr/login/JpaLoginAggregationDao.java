@@ -19,12 +19,15 @@
 
 package org.jasig.portal.events.aggr.login;
 
+import java.util.List;
+
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.jasig.portal.events.aggr.AggregationInterval;
+import org.jasig.portal.events.aggr.BaseAggregationKey;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.JpaBaseAggregationDao;
 import org.jasig.portal.events.aggr.TimeDimension;
@@ -37,25 +40,30 @@ import org.springframework.stereotype.Repository;
  * @author Eric Dalquist
  */
 @Repository
-public class JpaLoginAggregationDao extends JpaBaseAggregationDao<LoginAggregationImpl> implements LoginAggregationPrivateDao {
+public class JpaLoginAggregationDao extends JpaBaseAggregationDao<LoginAggregationImpl, BaseAggregationKey> implements
+        LoginAggregationPrivateDao {
 
     public JpaLoginAggregationDao() {
         super(LoginAggregationImpl.class);
     }
-    
+
     @Override
     protected void addFetches(Root<LoginAggregationImpl> root) {
-        root.fetch(LoginAggregationImpl_.uniqueUserNames, JoinType.LEFT);        
+        root.fetch(LoginAggregationImpl_.uniqueUserNames, JoinType.LEFT);
     }
 
     @Override
-    protected Predicate createUnclosedPredicate(CriteriaBuilder cb, Root<LoginAggregationImpl> root) {
-        return cb.notEqual(cb.size(root.get(LoginAggregationImpl_.uniqueUserNames)), 0);
+    protected void addUnclosedPredicate(CriteriaBuilder cb, Root<LoginAggregationImpl> root,
+            List<Predicate> keyPredicates) {
+        keyPredicates.add(cb.notEqual(cb.size(root.get(LoginAggregationImpl_.uniqueUserNames)), 0));
     }
 
     @Override
-    protected LoginAggregationImpl createAggregationInstance(DateDimension dateDimension, TimeDimension timeDimension,
-            AggregationInterval interval, AggregatedGroupMapping aggregatedGroup) {
+    protected LoginAggregationImpl createAggregationInstance(BaseAggregationKey key) {
+        final TimeDimension timeDimension = key.getTimeDimension();
+        final DateDimension dateDimension = key.getDateDimension();
+        final AggregationInterval interval = key.getInterval();
+        final AggregatedGroupMapping aggregatedGroup = key.getAggregatedGroup();
         return new LoginAggregationImpl(timeDimension, dateDimension, interval, aggregatedGroup);
     }
 }

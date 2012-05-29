@@ -19,6 +19,7 @@
 
 package org.jasig.portal.events.aggr;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -55,8 +56,15 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Eric Dalquist
  * @param <T> The entity type being aggregated
+ * @param <K> The entity primary key
  */
-public abstract class JpaBaseAggregationDao<T extends BaseAggregationImpl> extends BaseAggrEventsJpaDao implements BaseAggregationPrivateDao<T> {
+public abstract class JpaBaseAggregationDao<
+            T extends BaseAggregationImpl, 
+            K extends BaseAggregationKey> 
+        extends BaseAggrEventsJpaDao 
+        implements BaseAggregationPrivateDao<T, K> {
+    
+    
     private final Class<T> aggregationEntityType;
     
     protected CriteriaQuery<T> findAggregationByDateTimeIntervalQuery;
@@ -86,18 +94,41 @@ public abstract class JpaBaseAggregationDao<T extends BaseAggregationImpl> exten
     protected abstract void addFetches(Root<T> root);
     
     /**
-     * Create the additional predicate needed to find the unclosed aggregates 
+     * Add the additional predicate needed to find the unclosed aggregates 
      */
-    protected abstract Predicate createUnclosedPredicate(CriteriaBuilder cb, Root<T> root);
+    protected abstract void addUnclosedPredicate(CriteriaBuilder cb, Root<T> root, List<Predicate> keyPredicates);
+    
+    /**
+     * Add the additional predicate needed if using an extension of {@link BaseAggregationKey}
+     */
+    protected void addAggregationSpecificKeyPredicate(CriteriaBuilder cb, Root<T> root, List<Predicate> keyPredicates) {
+    }
+    
+    /**
+     * Bind the non-standard key parameters from the extension of {@link BaseAggregationKey}
+     */
+    protected void bindAggregationSpecificKeyParameters(TypedQuery<T> query, K key) {
+    }
+    
+    /**
+     * For subclasses to use to create additional {@link ParameterExpression}s
+     */
+    protected void createParameterExpressions() {
+    }
+    
+    /**
+     * For subclasses to use to create additional {@link CriteriaQuery}s
+     */
+    protected void createCriteriaQueries() {
+    }
     
     /**
      * Create a new aggregation instance
      */
-    protected abstract T createAggregationInstance(DateDimension dateDimension, TimeDimension timeDimension,
-            AggregationInterval interval, AggregatedGroupMapping aggregatedGroup);
+    protected abstract T createAggregationInstance(K key);
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public final void afterPropertiesSet() throws Exception {
         this.timeDimensionParameter = this.createParameterExpression(TimeDimension.class, "timeDimension");
         this.dateDimensionParameter = this.createParameterExpression(DateDimension.class, "dateDimension");
         this.intervalParameter = this.createParameterExpression(AggregationInterval.class, "interval");
@@ -108,6 +139,7 @@ public abstract class JpaBaseAggregationDao<T extends BaseAggregationImpl> exten
         this.endDate = this.createParameterExpression(LocalDate.class, "endDate");
         this.startTime = this.createParameterExpression(LocalTime.class, "startTime");
         this.endTime = this.createParameterExpression(LocalTime.class, "endTime");
+        this.createParameterExpressions();
         
         this.findAggregationByDateTimeIntervalQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<T>>() {
             @Override
@@ -118,14 +150,15 @@ public abstract class JpaBaseAggregationDao<T extends BaseAggregationImpl> exten
 
                 addFetches(ba);
                 
+                //Build the where clause in a List so it can all be appended in one go
+                final List<Predicate> keyPredicates = new ArrayList<Predicate>();
+                keyPredicates.add(cb.equal(ba.get(BaseAggregationImpl_.dateDimension), dateDimensionParameter));
+                keyPredicates.add(cb.equal(ba.get(BaseAggregationImpl_.timeDimension), timeDimensionParameter));
+                keyPredicates.add(cb.equal(ba.get(BaseAggregationImpl_.interval), intervalParameter));
+                addAggregationSpecificKeyPredicate(cb, ba, keyPredicates);
+                
                 criteriaQuery.select(ba);
-                criteriaQuery.where(
-                        cb.and(
-                            cb.equal(ba.get(BaseAggregationImpl_.dateDimension), dateDimensionParameter),
-                            cb.equal(ba.get(BaseAggregationImpl_.timeDimension), timeDimensionParameter),
-                            cb.equal(ba.get(BaseAggregationImpl_.interval), intervalParameter)
-                        )
-                    );
+                criteriaQuery.where(keyPredicates.toArray(new Predicate[keyPredicates.size()]));
                 
                 return criteriaQuery;
             }
@@ -138,15 +171,16 @@ public abstract class JpaBaseAggregationDao<T extends BaseAggregationImpl> exten
                 final CriteriaQuery<T> criteriaQuery = cb.createQuery(aggregationEntityType);
                 final Root<T> ba = criteriaQuery.from(aggregationEntityType);
                 
+
+                final List<Predicate> keyPredicates = new ArrayList<Predicate>();
+                keyPredicates.add(cb.equal(ba.get(BaseAggregationImpl_.dateDimension), dateDimensionParameter));
+                keyPredicates.add(cb.equal(ba.get(BaseAggregationImpl_.timeDimension), timeDimensionParameter));
+                keyPredicates.add(cb.equal(ba.get(BaseAggregationImpl_.interval), intervalParameter));
+                keyPredicates.add(cb.equal(ba.get(BaseAggregationImpl_.aggregatedGroup), aggregatedGroupParameter));
+                addAggregationSpecificKeyPredicate(cb, ba, keyPredicates);
+                
                 criteriaQuery.select(ba);
-                criteriaQuery.where(
-                        cb.and(
-                            cb.equal(ba.get(BaseAggregationImpl_.dateDimension), dateDimensionParameter),
-                            cb.equal(ba.get(BaseAggregationImpl_.timeDimension), timeDimensionParameter),
-                            cb.equal(ba.get(BaseAggregationImpl_.interval), intervalParameter),
-                            cb.equal(ba.get(BaseAggregationImpl_.aggregatedGroup), aggregatedGroupParameter)
-                        )
-                    );
+                criteriaQuery.where(keyPredicates.toArray(new Predicate[keyPredicates.size()]));
                 
                 return criteriaQuery;
             }
@@ -162,25 +196,26 @@ public abstract class JpaBaseAggregationDao<T extends BaseAggregationImpl> exten
                 final Join<T, DateDimensionImpl> dd = ba.join(BaseAggregationImpl_.dateDimension, JoinType.LEFT);
                 final Join<T, TimeDimensionImpl> td = ba.join(BaseAggregationImpl_.timeDimension, JoinType.LEFT);
                 
+
+                final List<Predicate> keyPredicates = new ArrayList<Predicate>();
+                keyPredicates.add(cb.and( //Restrict results by outer date range
+                        cb.greaterThanOrEqualTo(dd.get(DateDimensionImpl_.date), startDate),
+                        cb.lessThan(dd.get(DateDimensionImpl_.date), endDate)
+                    ));
+                keyPredicates.add(cb.or( //Restrict start of range by time as well
+                        cb.greaterThan(dd.get(DateDimensionImpl_.date), startDate),
+                        cb.greaterThanOrEqualTo(td.get(TimeDimensionImpl_.time), startTime)
+                    ));
+                keyPredicates.add(cb.or( //Restrict end of range by time as well
+                        cb.lessThan(dd.get(DateDimensionImpl_.date), endMinusOneDate),
+                        cb.lessThan(td.get(TimeDimensionImpl_.time), endTime)
+                    ));
+                keyPredicates.add(cb.equal(ba.get(BaseAggregationImpl_.interval), intervalParameter));
+                keyPredicates.add(ba.get(BaseAggregationImpl_.aggregatedGroup).in(aggregatedGroupsParameter));
+                addAggregationSpecificKeyPredicate(cb, ba, keyPredicates);
+                
                 criteriaQuery.select(ba);
-                criteriaQuery.where(
-                    cb.and(
-                        cb.and( //Restrict results by outer date range
-                            cb.greaterThanOrEqualTo(dd.get(DateDimensionImpl_.date), startDate),
-                            cb.lessThan(dd.get(DateDimensionImpl_.date), endDate)
-                        ),
-                        cb.or( //Restrict start of range by time as well
-                            cb.greaterThan(dd.get(DateDimensionImpl_.date), startDate),
-                            cb.greaterThanOrEqualTo(td.get(TimeDimensionImpl_.time), startTime)
-                        ),
-                        cb.or( //Restrict end of range by time as well
-                            cb.lessThan(dd.get(DateDimensionImpl_.date), endMinusOneDate),
-                            cb.lessThan(td.get(TimeDimensionImpl_.time), endTime)
-                        ),
-                        cb.equal(ba.get(BaseAggregationImpl_.interval), intervalParameter),
-                        ba.get(BaseAggregationImpl_.aggregatedGroup).in(aggregatedGroupsParameter)
-                    )
-                );
+                criteriaQuery.where(keyPredicates.toArray(new Predicate[keyPredicates.size()]));
                 criteriaQuery.orderBy(cb.desc(dd.get(DateDimensionImpl_.date)), cb.desc(td.get(TimeDimensionImpl_.time)));
                 
                 return criteriaQuery;
@@ -202,36 +237,39 @@ public abstract class JpaBaseAggregationDao<T extends BaseAggregationImpl> exten
                 final Join<T, TimeDimensionImpl> td = ba.join(BaseAggregationImpl_.timeDimension, JoinType.LEFT);
                 
                 addFetches(ba);
+                
+                final List<Predicate> keyPredicates = new ArrayList<Predicate>();
+                keyPredicates.add(cb.and( //Restrict results by outer date range
+                        cb.greaterThanOrEqualTo(dd.get(DateDimensionImpl_.date), startDate),
+                        cb.lessThan(dd.get(DateDimensionImpl_.date), endDate)
+                    ));
+                keyPredicates.add(cb.or( //Restrict start of range by time as well
+                        cb.greaterThan(dd.get(DateDimensionImpl_.date), startDate),
+                        cb.greaterThanOrEqualTo(td.get(TimeDimensionImpl_.time), startTime)
+                    ));
+                keyPredicates.add(cb.or( //Restrict end of range by time as well
+                        cb.lessThan(dd.get(DateDimensionImpl_.date), endMinusOneDate),
+                        cb.lessThan(td.get(TimeDimensionImpl_.time), endTime)
+                    ));
+                keyPredicates.add(cb.equal(ba.get(BaseAggregationImpl_.interval), intervalParameter));
+                keyPredicates.add(ba.get(BaseAggregationImpl_.aggregatedGroup).in(aggregatedGroupsParameter));
+                //No aggregation specific key bits here, we only have start/end/interval parameters to work with
+                addUnclosedPredicate(cb, ba, keyPredicates);
 
                 criteriaQuery.select(ba);
-                criteriaQuery.where(
-                    cb.and(
-                        cb.and( //Restrict results by outer date range
-                            cb.greaterThanOrEqualTo(dd.get(DateDimensionImpl_.date), startDate),
-                            cb.lessThan(dd.get(DateDimensionImpl_.date), endDate)
-                        ),
-                        cb.or( //Restrict start of range by time as well
-                            cb.greaterThan(dd.get(DateDimensionImpl_.date), startDate),
-                            cb.greaterThanOrEqualTo(td.get(TimeDimensionImpl_.time), startTime)
-                        ),
-                        cb.or( //Restrict end of range by time as well
-                            cb.lessThan(dd.get(DateDimensionImpl_.date), endMinusOneDate),
-                            cb.lessThan(td.get(TimeDimensionImpl_.time), endTime)
-                        ),
-                        cb.equal(ba.get(BaseAggregationImpl_.interval), intervalParameter),
-                        createUnclosedPredicate(cb, ba)
-                    )
-                );
+                criteriaQuery.where(keyPredicates.toArray(new Predicate[keyPredicates.size()]));
                 
                 return criteriaQuery;
             }
         });
+        
+        this.createCriteriaQueries();
     }
     
     @Override
-    public final List<T> getAggregations(DateTime start, DateTime end,
-            AggregationInterval interval, AggregatedGroupMapping aggregatedGroupMapping,
+    public final List<T> getAggregations(DateTime start, DateTime end, K key,
             AggregatedGroupMapping... aggregatedGroupMappings) {
+
         final TypedQuery<T> query = this.createCachedQuery(findAggregationsByDateRangeQuery);
         
         query.setParameter(this.startDate, start.toLocalDate());
@@ -241,43 +279,45 @@ public abstract class JpaBaseAggregationDao<T extends BaseAggregationImpl> exten
         query.setParameter(this.endTime, end.toLocalTime());
         query.setParameter(this.endMinusOneDate, end.minusDays(1).toLocalDate());
         
-        query.setParameter(this.intervalParameter, interval);
+        query.setParameter(this.intervalParameter, key.getInterval());
+        
+        this.bindAggregationSpecificKeyParameters(query, key);
 
-        aggregatedGroupMappings = (AggregatedGroupMapping[])ArrayUtils.add(aggregatedGroupMappings, aggregatedGroupMapping);
+        aggregatedGroupMappings = (AggregatedGroupMapping[])ArrayUtils.add(aggregatedGroupMappings, key.getAggregatedGroup());
         query.setParameter(this.aggregatedGroupsParameter, ImmutableSet.copyOf(aggregatedGroupMappings));
         
         return query.getResultList();
     }
 
     @Override
-    public final Collection<T> getAggregationsForInterval(DateDimension dateDimension,
-            TimeDimension timeDimension, AggregationInterval interval) {
+    public final Collection<T> getAggregationsForInterval(K key) {
         final TypedQuery<T> query = this.createQuery(this.findAggregationByDateTimeIntervalQuery);
-        query.setParameter(this.dateDimensionParameter, dateDimension);
-        query.setParameter(this.timeDimensionParameter, timeDimension);
-        query.setParameter(this.intervalParameter, interval);
+        query.setParameter(this.dateDimensionParameter, key.getDateDimension());
+        query.setParameter(this.timeDimensionParameter, key.getTimeDimension());
+        query.setParameter(this.intervalParameter, key.getInterval());
+        
+        this.bindAggregationSpecificKeyParameters(query, key);
         
         //Need set to handle duplicate results from join
         return new LinkedHashSet<T>(query.getResultList());
     }
 
     @Override
-    public final T getAggregation(DateDimension dateDimension, TimeDimension timeDimension,
-            AggregationInterval interval, AggregatedGroupMapping aggregatedGroup) {
+    public final T getAggregation(K key) {
         final TypedQuery<T> query = this.createCachedQuery(this.findAggregationByDateTimeIntervalGroupQuery);
-        query.setParameter(this.dateDimensionParameter, dateDimension);
-        query.setParameter(this.timeDimensionParameter, timeDimension);
-        query.setParameter(this.intervalParameter, interval);
-        query.setParameter(this.aggregatedGroupParameter, aggregatedGroup);
+        query.setParameter(this.dateDimensionParameter, key.getDateDimension());
+        query.setParameter(this.timeDimensionParameter, key.getTimeDimension());
+        query.setParameter(this.intervalParameter, key.getInterval());
+        query.setParameter(this.aggregatedGroupParameter, key.getAggregatedGroup());
+        
+        this.bindAggregationSpecificKeyParameters(query, key);
         
         final List<T> results = query.getResultList();
         return DataAccessUtils.uniqueResult(results);
     }
 
-
     @Override
-    public final Collection<T> getUnclosedAggregations(DateTime start, DateTime end,
-            AggregationInterval interval) {
+    public Collection<T> getUnclosedAggregations(DateTime start, DateTime end, AggregationInterval interval) {
         final TypedQuery<T> query = this.createQuery(findUnclosedAggregationsByDateRangeQuery);
         
         query.setParameter(this.startDate, start.toLocalDate());
@@ -295,9 +335,8 @@ public abstract class JpaBaseAggregationDao<T extends BaseAggregationImpl> exten
 
     @AggrEventsTransactional
     @Override
-    public final T createAggregation(DateDimension dateDimension, TimeDimension timeDimension,
-            AggregationInterval interval, AggregatedGroupMapping aggregatedGroup) {
-        final T aggregation = createAggregationInstance(dateDimension, timeDimension, interval, aggregatedGroup);
+    public final T createAggregation(K key) {
+        final T aggregation = createAggregationInstance(key);
         
         this.getEntityManager().persist(aggregation);
         

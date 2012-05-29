@@ -31,24 +31,28 @@ import org.joda.time.DateTime;
  * @author Eric Dalquist
  * @param <T> Aggregation type
  */
-public interface BaseAggregationDao<T extends BaseAggregation> {
+public interface BaseAggregationDao<
+            T extends BaseAggregation, 
+            K extends BaseAggregationKey> {
     /**
      * Aggregations in a date range for a specified interval and group(s) ordered by date/time
      * 
      * @param start the start {@link DateTime} of the range, inclusive
      * @param end the end {@link DateTime} of the range, exclusive
-     * @param interval the aggregation interval to query for
-     * @param aggregatedGroupMapping The group(s) to get data for
+     * @param key The {@link BaseAggregationKey#getDateDimension()} and {@link BaseAggregationKey#getTimeDimension()} fields on the key are ignored for this method
+     * @param aggregatedGroupMapping Groups in addition to the group specified by {@link BaseAggregationKey#getAggregatedGroup()} to get aggregations for
      */
-    List<T> getAggregations(DateTime start, DateTime end, AggregationInterval interval, AggregatedGroupMapping aggregatedGroupMapping, AggregatedGroupMapping... aggregatedGroupMappings);
+    List<T> getAggregations(DateTime start, DateTime end, K key, AggregatedGroupMapping... aggregatedGroupMappings);
 
     /**
+     * Get all aggregations regardless of associated {@link AggregatedGroupMapping} 
+     * @param key The {@link BaseAggregationKey#getAggregatedGroup()} field is ignored for this method
      * @return All aggregations for the date, time and interval
      */
-    Collection<T> getAggregationsForInterval(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval);
+    Collection<T> getAggregationsForInterval(K key);
     
     /**
      * Get a specific aggregation 
      */
-    T getAggregation(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval, AggregatedGroupMapping aggregatedGroup);
+    T getAggregation(K key);
 }

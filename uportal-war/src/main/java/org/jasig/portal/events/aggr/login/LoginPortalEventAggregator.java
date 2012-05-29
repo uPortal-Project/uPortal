@@ -21,9 +21,14 @@ package org.jasig.portal.events.aggr.login;
 
 import org.jasig.portal.events.LoginEvent;
 import org.jasig.portal.events.PortalEvent;
+import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.AggregationIntervalInfo;
+import org.jasig.portal.events.aggr.BaseAggregationKey;
 import org.jasig.portal.events.aggr.BaseAggregationPrivateDao;
 import org.jasig.portal.events.aggr.BasePortalEventAggregator;
+import org.jasig.portal.events.aggr.DateDimension;
+import org.jasig.portal.events.aggr.TimeDimension;
+import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -32,7 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class LoginPortalEventAggregator extends BasePortalEventAggregator<LoginEvent, LoginAggregationImpl> {
+public class LoginPortalEventAggregator extends BasePortalEventAggregator<LoginEvent, LoginAggregationImpl, BaseAggregationKey> {
     private LoginAggregationPrivateDao loginAggregationDao;
 
     @Autowired
@@ -41,8 +46,17 @@ public class LoginPortalEventAggregator extends BasePortalEventAggregator<LoginE
     }
 
     @Override
-    protected BaseAggregationPrivateDao<LoginAggregationImpl> getAggregationDao() {
+    protected BaseAggregationPrivateDao<LoginAggregationImpl, BaseAggregationKey> getAggregationDao() {
         return this.loginAggregationDao;
+    }
+
+    @Override
+    protected BaseAggregationKey createAggregationKey(AggregationIntervalInfo intervalInfo,
+            AggregatedGroupMapping aggregatedGroup, LoginEvent event) {
+        final TimeDimension timeDimension = intervalInfo.getTimeDimension();
+        final DateDimension dateDimension = intervalInfo.getDateDimension();
+        final AggregationInterval aggregationInterval = intervalInfo.getAggregationInterval();
+        return new BaseAggregationKeyImpl(timeDimension, dateDimension, aggregationInterval, aggregatedGroup);
     }
 
     @Override
@@ -57,4 +71,6 @@ public class LoginPortalEventAggregator extends BasePortalEventAggregator<LoginE
         aggregation.setDuration(duration);
         aggregation.countUser(userName);
     }
+    
+    
 }
