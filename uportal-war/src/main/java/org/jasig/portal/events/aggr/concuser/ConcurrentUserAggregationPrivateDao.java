@@ -19,24 +19,13 @@
 
 package org.jasig.portal.events.aggr.concuser;
 
-import org.jasig.portal.events.aggr.DateDimension;
-import org.jasig.portal.events.aggr.AggregationInterval;
-import org.jasig.portal.events.aggr.TimeDimension;
-import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.jasig.portal.events.aggr.BaseAggregationPrivateDao;
 
 /**
- * Login Aggregation DAO used internally to create and update login aggregations
+ * Concurrent User Aggregation DAO used internally to create and update concurrent user aggregations
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
-interface ConcurrentUserAggregationPrivateDao extends ConcurrentUserAggregationDao<ConcurrentUserAggregationImpl> {
-
-    @Override
-    ConcurrentUserAggregationImpl getConcurrentUserAggregation(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval, AggregatedGroupMapping aggregatedGroup);
-    
-    ConcurrentUserAggregationImpl createConcurrentUserAggregation(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval, AggregatedGroupMapping aggregatedGroup);
-    
-    void updateConcurrentUserAggregation(ConcurrentUserAggregationImpl loginAggregation);
+interface ConcurrentUserAggregationPrivateDao extends ConcurrentUserAggregationDao<ConcurrentUserAggregationImpl>, BaseAggregationPrivateDao<ConcurrentUserAggregationImpl> {
 
 }

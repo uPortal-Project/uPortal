@@ -19,7 +19,7 @@
 
 package org.jasig.portal.events.aggr.concuser;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -116,8 +116,6 @@ public class JpaConcurrentUserAggregationDao extends BaseAggrEventsJpaDao implem
                 final CriteriaQuery<ConcurrentUserAggregationImpl> criteriaQuery = cb.createQuery(ConcurrentUserAggregationImpl.class);
                 final Root<ConcurrentUserAggregationImpl> cua = criteriaQuery.from(ConcurrentUserAggregationImpl.class);
                 
-                cua.fetch(ConcurrentUserAggregationImpl_.uniqueSessionIds, JoinType.LEFT);
-
                 criteriaQuery.select(cua);
                 criteriaQuery.where(
                         cb.and(
@@ -208,25 +206,9 @@ public class JpaConcurrentUserAggregationDao extends BaseAggrEventsJpaDao implem
     }
     
     @Override
-    public Set<ConcurrentUserAggregationImpl> getUnclosedConcurrentUserAggregations(DateTime start, DateTime end, AggregationInterval interval) {
-        final TypedQuery<ConcurrentUserAggregationImpl> query = this.createQuery(findUnclosedConcurrentUserAggregationsByDateRangeQuery);
-        
-        query.setParameter(this.startDate, start.toLocalDate());
-        query.setParameter(this.startTime, start.toLocalTime());
-        
-        query.setParameter(this.endDate, end.toLocalDate());
-        query.setParameter(this.endTime, end.toLocalTime());
-        query.setParameter(this.endMinusOneDate, end.minusDays(1).toLocalDate());
-        
-        query.setParameter(this.intervalParameter, interval);
-        
-        return new LinkedHashSet<ConcurrentUserAggregationImpl>(query.getResultList());
-    }
-    
-    @Override
-    public List<ConcurrentUserAggregationImpl> getConcurrentUserAggregations(DateTime start, DateTime end, AggregationInterval interval,
-            AggregatedGroupMapping aggregatedGroupMapping, AggregatedGroupMapping... aggregatedGroupMappings) {
-        
+    public List<ConcurrentUserAggregationImpl> getAggregations(DateTime start, DateTime end,
+            AggregationInterval interval, AggregatedGroupMapping aggregatedGroupMapping,
+            AggregatedGroupMapping... aggregatedGroupMappings) {
         final TypedQuery<ConcurrentUserAggregationImpl> query = this.createCachedQuery(findConcurrentUserAggregationsByDateRangeQuery);
         
         query.setParameter(this.startDate, start.toLocalDate());
@@ -241,23 +223,24 @@ public class JpaConcurrentUserAggregationDao extends BaseAggrEventsJpaDao implem
         aggregatedGroupMappings = (AggregatedGroupMapping[])ArrayUtils.add(aggregatedGroupMappings, aggregatedGroupMapping);
         query.setParameter(this.aggregatedGroupsParameter, ImmutableSet.copyOf(aggregatedGroupMappings));
         
-        return new ArrayList<ConcurrentUserAggregationImpl>(query.getResultList());
+        return query.getResultList();
     }
 
-    
     @Override
-    public Set<ConcurrentUserAggregationImpl> getConcurrentUserAggregationsForInterval(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval) {
+    public Collection<ConcurrentUserAggregationImpl> getAggregationsForInterval(DateDimension dateDimension,
+            TimeDimension timeDimension, AggregationInterval interval) {
         final TypedQuery<ConcurrentUserAggregationImpl> query = this.createQuery(this.findConcurrentUserAggregationByDateTimeIntervalQuery);
         query.setParameter(this.dateDimensionParameter, dateDimension);
         query.setParameter(this.timeDimensionParameter, timeDimension);
         query.setParameter(this.intervalParameter, interval);
         
-        final List<ConcurrentUserAggregationImpl> results = query.getResultList();
-        return new LinkedHashSet<ConcurrentUserAggregationImpl>(results);
+        //Need set to handle duplicate results from join
+        return new LinkedHashSet<ConcurrentUserAggregationImpl>(query.getResultList());
     }
 
     @Override
-    public ConcurrentUserAggregationImpl getConcurrentUserAggregation(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval, AggregatedGroupMapping aggregatedGroup) {
+    public ConcurrentUserAggregationImpl getAggregation(DateDimension dateDimension, TimeDimension timeDimension,
+            AggregationInterval interval, AggregatedGroupMapping aggregatedGroup) {
         final TypedQuery<ConcurrentUserAggregationImpl> query = this.createCachedQuery(this.findConcurrentUserAggregationByDateTimeIntervalGroupQuery);
         query.setParameter(this.dateDimensionParameter, dateDimension);
         query.setParameter(this.timeDimensionParameter, timeDimension);
@@ -267,21 +250,40 @@ public class JpaConcurrentUserAggregationDao extends BaseAggrEventsJpaDao implem
         final List<ConcurrentUserAggregationImpl> results = query.getResultList();
         return DataAccessUtils.uniqueResult(results);
     }
-    
+
+
+    @Override
+    public Collection<ConcurrentUserAggregationImpl> getUnclosedAggregations(DateTime start, DateTime end,
+            AggregationInterval interval) {
+        final TypedQuery<ConcurrentUserAggregationImpl> query = this.createQuery(findUnclosedConcurrentUserAggregationsByDateRangeQuery);
+        
+        query.setParameter(this.startDate, start.toLocalDate());
+        query.setParameter(this.startTime, start.toLocalTime());
+        
+        query.setParameter(this.endDate, end.toLocalDate());
+        query.setParameter(this.endTime, end.toLocalTime());
+        query.setParameter(this.endMinusOneDate, end.minusDays(1).toLocalDate());
+        
+        query.setParameter(this.intervalParameter, interval);
+        
+        //Need set to handle duplicate results from join
+        return new LinkedHashSet<ConcurrentUserAggregationImpl>(query.getResultList());
+    }
+
     @AggrEventsTransactional
     @Override
-    public ConcurrentUserAggregationImpl createConcurrentUserAggregation(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval, AggregatedGroupMapping aggregatedGroup) {
+    public ConcurrentUserAggregationImpl createAggregation(DateDimension dateDimension, TimeDimension timeDimension,
+            AggregationInterval interval, AggregatedGroupMapping aggregatedGroup) {
         final ConcurrentUserAggregationImpl concurrentUserAggregation = new ConcurrentUserAggregationImpl(timeDimension, dateDimension, interval, aggregatedGroup);
         
         this.getEntityManager().persist(concurrentUserAggregation);
         
         return concurrentUserAggregation;
     }
-    
+
     @AggrEventsTransactional
     @Override
-    public void updateConcurrentUserAggregation(ConcurrentUserAggregationImpl concurrentUserAggregation) {
-        this.getEntityManager().persist(concurrentUserAggregation);
+    public void updateAggregation(ConcurrentUserAggregationImpl aggregation) {
+        this.getEntityManager().persist(aggregation);
     }
-        
 }

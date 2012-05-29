@@ -30,10 +30,6 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
  * @author Eric Dalquist
  */
 public interface ConcurrentUserAggregation extends BaseAggregation {
-    /**
-     * @return The group this aggregation is for, null if it is for all users
-     */
-    AggregatedGroupMapping getAggregatedGroup();
     
     /**
      * @return Total number of users that were active for the duration of this aggregation.

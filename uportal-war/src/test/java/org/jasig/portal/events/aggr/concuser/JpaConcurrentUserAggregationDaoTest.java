@@ -23,13 +23,9 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.LinkedList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.concurrent.Callable;
 
 import javax.naming.CompositeName;
 
@@ -57,8 +53,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import com.google.common.base.Function;
 
 /**
  * @author Eric Dalquist
@@ -112,9 +106,9 @@ public class JpaConcurrentUserAggregationDaoTest extends BaseAggrEventsJpaDaoTes
                 final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
                 final AggregatedGroupMapping groupB = aggregatedGroupLookupDao.getGroupMapping("local.1");
                 
-                final ConcurrentUserAggregationImpl concurrentUserAggregationFiveMinuteGroupA = concurrentUserAggregationDao.createConcurrentUserAggregation(dateDimension, timeDimension, AggregationInterval.FIVE_MINUTE, groupA);
-                final ConcurrentUserAggregationImpl concurrentUserAggregationFiveMinuteGroupB = concurrentUserAggregationDao.createConcurrentUserAggregation(dateDimension, timeDimension, AggregationInterval.FIVE_MINUTE, groupB);
-                final ConcurrentUserAggregationImpl concurrentUserAggregationHour = concurrentUserAggregationDao.createConcurrentUserAggregation(dateDimension, timeDimension, AggregationInterval.HOUR, groupA);
+                final ConcurrentUserAggregationImpl concurrentUserAggregationFiveMinuteGroupA = concurrentUserAggregationDao.createAggregation(dateDimension, timeDimension, AggregationInterval.FIVE_MINUTE, groupA);
+                final ConcurrentUserAggregationImpl concurrentUserAggregationFiveMinuteGroupB = concurrentUserAggregationDao.createAggregation(dateDimension, timeDimension, AggregationInterval.FIVE_MINUTE, groupB);
+                final ConcurrentUserAggregationImpl concurrentUserAggregationHour = concurrentUserAggregationDao.createAggregation(dateDimension, timeDimension, AggregationInterval.HOUR, groupA);
 
                 concurrentUserAggregationFiveMinuteGroupA.countSession("joe");
                 concurrentUserAggregationFiveMinuteGroupA.countSession("john");
@@ -134,8 +128,8 @@ public class JpaConcurrentUserAggregationDaoTest extends BaseAggrEventsJpaDaoTes
                 concurrentUserAggregationHour.countSession("john");
                 concurrentUserAggregationHour.setDuration(1);
                 
-                concurrentUserAggregationDao.updateConcurrentUserAggregation(concurrentUserAggregationFiveMinuteGroupA);
-                concurrentUserAggregationDao.updateConcurrentUserAggregation(concurrentUserAggregationHour);
+                concurrentUserAggregationDao.updateAggregation(concurrentUserAggregationFiveMinuteGroupA);
+                concurrentUserAggregationDao.updateAggregation(concurrentUserAggregationHour);
             }
         });
         
@@ -148,7 +142,7 @@ public class JpaConcurrentUserAggregationDaoTest extends BaseAggrEventsJpaDaoTes
                 final TimeDimension timeDimension = timeDimensionDao.getTimeDimensionByTime(instantTime);
                 final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
                 
-                final Set<ConcurrentUserAggregationImpl> concurrentUserAggregationsFiveMinute = concurrentUserAggregationDao.getConcurrentUserAggregationsForInterval(dateDimension, timeDimension, AggregationInterval.FIVE_MINUTE);
+                final Collection<ConcurrentUserAggregationImpl> concurrentUserAggregationsFiveMinute = concurrentUserAggregationDao.getAggregationsForInterval(dateDimension, timeDimension, AggregationInterval.FIVE_MINUTE);
                 assertEquals(2, concurrentUserAggregationsFiveMinute.size());
                 
                 for (final ConcurrentUserAggregationImpl concurrentUserAggregation : concurrentUserAggregationsFiveMinute) {
@@ -161,7 +155,7 @@ public class JpaConcurrentUserAggregationDaoTest extends BaseAggrEventsJpaDaoTes
                 }
                 
                 
-                final Set<ConcurrentUserAggregationImpl> concurrentUserAggregationsHour = concurrentUserAggregationDao.getConcurrentUserAggregationsForInterval(dateDimension, timeDimension, AggregationInterval.HOUR);
+                final Collection<ConcurrentUserAggregationImpl> concurrentUserAggregationsHour = concurrentUserAggregationDao.getAggregationsForInterval(dateDimension, timeDimension, AggregationInterval.HOUR);
                 assertEquals(1, concurrentUserAggregationsHour.size());
                 
                 final ConcurrentUserAggregationImpl concurrentUserAggregation = concurrentUserAggregationsHour.iterator().next();
@@ -179,9 +173,9 @@ public class JpaConcurrentUserAggregationDaoTest extends BaseAggrEventsJpaDaoTes
                 final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
                 final AggregatedGroupMapping groupB = aggregatedGroupLookupDao.getGroupMapping("local.1");
 
-                final ConcurrentUserAggregationImpl concurrentUserAggregationFiveMinuteGroupA = concurrentUserAggregationDao.getConcurrentUserAggregation(dateDimension, timeDimension, AggregationInterval.FIVE_MINUTE, groupA);
-                final ConcurrentUserAggregationImpl concurrentUserAggregationFiveMinuteGroupB = concurrentUserAggregationDao.getConcurrentUserAggregation(dateDimension, timeDimension, AggregationInterval.FIVE_MINUTE, groupB);
-                final ConcurrentUserAggregationImpl concurrentUserAggregationHour = concurrentUserAggregationDao.getConcurrentUserAggregation(dateDimension, timeDimension, AggregationInterval.HOUR, groupA);
+                final ConcurrentUserAggregationImpl concurrentUserAggregationFiveMinuteGroupA = concurrentUserAggregationDao.getAggregation(dateDimension, timeDimension, AggregationInterval.FIVE_MINUTE, groupA);
+                final ConcurrentUserAggregationImpl concurrentUserAggregationFiveMinuteGroupB = concurrentUserAggregationDao.getAggregation(dateDimension, timeDimension, AggregationInterval.FIVE_MINUTE, groupB);
+                final ConcurrentUserAggregationImpl concurrentUserAggregationHour = concurrentUserAggregationDao.getAggregation(dateDimension, timeDimension, AggregationInterval.HOUR, groupA);
                 
                 concurrentUserAggregationFiveMinuteGroupA.countSession("john");
                 concurrentUserAggregationFiveMinuteGroupA.countSession("elvira");
@@ -200,9 +194,9 @@ public class JpaConcurrentUserAggregationDaoTest extends BaseAggrEventsJpaDaoTes
                 concurrentUserAggregationHour.countSession("erin");
                 concurrentUserAggregationHour.setDuration(2);
                 
-                concurrentUserAggregationDao.updateConcurrentUserAggregation(concurrentUserAggregationFiveMinuteGroupA);
-                concurrentUserAggregationDao.updateConcurrentUserAggregation(concurrentUserAggregationFiveMinuteGroupB);
-                concurrentUserAggregationDao.updateConcurrentUserAggregation(concurrentUserAggregationHour);
+                concurrentUserAggregationDao.updateAggregation(concurrentUserAggregationFiveMinuteGroupA);
+                concurrentUserAggregationDao.updateAggregation(concurrentUserAggregationFiveMinuteGroupB);
+                concurrentUserAggregationDao.updateAggregation(concurrentUserAggregationHour);
             }
         });
 
@@ -214,7 +208,7 @@ public class JpaConcurrentUserAggregationDaoTest extends BaseAggrEventsJpaDaoTes
                 final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
 
                 
-                final Set<ConcurrentUserAggregationImpl> concurrentUserAggregationsFiveMinute = concurrentUserAggregationDao.getConcurrentUserAggregationsForInterval(dateDimension, timeDimension, AggregationInterval.FIVE_MINUTE);
+                final Collection<ConcurrentUserAggregationImpl> concurrentUserAggregationsFiveMinute = concurrentUserAggregationDao.getAggregationsForInterval(dateDimension, timeDimension, AggregationInterval.FIVE_MINUTE);
                 assertEquals(2, concurrentUserAggregationsFiveMinute.size());
                 
                 for (final ConcurrentUserAggregationImpl concurrentUserAggregation : concurrentUserAggregationsFiveMinute) {
@@ -227,7 +221,7 @@ public class JpaConcurrentUserAggregationDaoTest extends BaseAggrEventsJpaDaoTes
                 }
                 
                 
-                final Set<ConcurrentUserAggregationImpl> concurrentUserAggregationsHour = concurrentUserAggregationDao.getConcurrentUserAggregationsForInterval(dateDimension, timeDimension, AggregationInterval.HOUR);
+                final Collection<ConcurrentUserAggregationImpl> concurrentUserAggregationsHour = concurrentUserAggregationDao.getAggregationsForInterval(dateDimension, timeDimension, AggregationInterval.HOUR);
                 assertEquals(1, concurrentUserAggregationsHour.size());
                 
                 final ConcurrentUserAggregationImpl concurrentUserAggregation = concurrentUserAggregationsHour.iterator().next();
@@ -243,17 +237,17 @@ public class JpaConcurrentUserAggregationDaoTest extends BaseAggrEventsJpaDaoTes
                 final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
                 final AggregatedGroupMapping groupB = aggregatedGroupLookupDao.getGroupMapping("local.1");
 
-                final ConcurrentUserAggregationImpl concurrentUserAggregationFiveMinuteGroupA = concurrentUserAggregationDao.getConcurrentUserAggregation(dateDimension, timeDimension, AggregationInterval.FIVE_MINUTE, groupA);
-                final ConcurrentUserAggregationImpl concurrentUserAggregationFiveMinuteGroupB = concurrentUserAggregationDao.getConcurrentUserAggregation(dateDimension, timeDimension, AggregationInterval.FIVE_MINUTE, groupB);
-                final ConcurrentUserAggregationImpl concurrentUserAggregationHour = concurrentUserAggregationDao.getConcurrentUserAggregation(dateDimension, timeDimension, AggregationInterval.HOUR, groupA);
+                final ConcurrentUserAggregationImpl concurrentUserAggregationFiveMinuteGroupA = concurrentUserAggregationDao.getAggregation(dateDimension, timeDimension, AggregationInterval.FIVE_MINUTE, groupA);
+                final ConcurrentUserAggregationImpl concurrentUserAggregationFiveMinuteGroupB = concurrentUserAggregationDao.getAggregation(dateDimension, timeDimension, AggregationInterval.FIVE_MINUTE, groupB);
+                final ConcurrentUserAggregationImpl concurrentUserAggregationHour = concurrentUserAggregationDao.getAggregation(dateDimension, timeDimension, AggregationInterval.HOUR, groupA);
                 
                 concurrentUserAggregationFiveMinuteGroupA.intervalComplete(5);
                 concurrentUserAggregationFiveMinuteGroupB.intervalComplete(5);
                 concurrentUserAggregationHour.intervalComplete(60);
                 
-                concurrentUserAggregationDao.updateConcurrentUserAggregation(concurrentUserAggregationFiveMinuteGroupA);
-                concurrentUserAggregationDao.updateConcurrentUserAggregation(concurrentUserAggregationFiveMinuteGroupB);
-                concurrentUserAggregationDao.updateConcurrentUserAggregation(concurrentUserAggregationHour);
+                concurrentUserAggregationDao.updateAggregation(concurrentUserAggregationFiveMinuteGroupA);
+                concurrentUserAggregationDao.updateAggregation(concurrentUserAggregationFiveMinuteGroupB);
+                concurrentUserAggregationDao.updateAggregation(concurrentUserAggregationHour);
             }
         });
 
@@ -264,7 +258,7 @@ public class JpaConcurrentUserAggregationDaoTest extends BaseAggrEventsJpaDaoTes
                 final TimeDimension timeDimension = timeDimensionDao.getTimeDimensionByTime(instantTime);
                 final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
                 
-                final Set<ConcurrentUserAggregationImpl> concurrentUserAggregationsFiveMinute = concurrentUserAggregationDao.getConcurrentUserAggregationsForInterval(dateDimension, timeDimension, AggregationInterval.FIVE_MINUTE);
+                final Collection<ConcurrentUserAggregationImpl> concurrentUserAggregationsFiveMinute = concurrentUserAggregationDao.getAggregationsForInterval(dateDimension, timeDimension, AggregationInterval.FIVE_MINUTE);
                 assertEquals(2, concurrentUserAggregationsFiveMinute.size());
                 
                 for (final ConcurrentUserAggregationImpl concurrentUserAggregation : concurrentUserAggregationsFiveMinute) {
@@ -277,7 +271,7 @@ public class JpaConcurrentUserAggregationDaoTest extends BaseAggrEventsJpaDaoTes
                 }
                 
                 
-                final Set<ConcurrentUserAggregationImpl> concurrentUserAggregationsHour = concurrentUserAggregationDao.getConcurrentUserAggregationsForInterval(dateDimension, timeDimension, AggregationInterval.HOUR);
+                final Collection<ConcurrentUserAggregationImpl> concurrentUserAggregationsHour = concurrentUserAggregationDao.getAggregationsForInterval(dateDimension, timeDimension, AggregationInterval.HOUR);
                 assertEquals(1, concurrentUserAggregationsHour.size());
                 
                 final ConcurrentUserAggregationImpl concurrentUserAggregation = concurrentUserAggregationsHour.iterator().next();
@@ -292,7 +286,7 @@ public class JpaConcurrentUserAggregationDaoTest extends BaseAggrEventsJpaDaoTes
                 final TimeDimension timeDimension = timeDimensionDao.getTimeDimensionByTime(instantTime);
                 final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
                 
-                final List<ConcurrentUserAggregationImpl> concurrentUserAggregations = concurrentUserAggregationDao.getConcurrentUserAggregations(
+                final List<ConcurrentUserAggregationImpl> concurrentUserAggregations = concurrentUserAggregationDao.getAggregations(
                         instantDate.monthOfYear().roundFloorCopy().toDateTime(),
                         instantDate.monthOfYear().roundCeilingCopy().toDateTime(),
                         AggregationInterval.FIVE_MINUTE,
@@ -303,55 +297,6 @@ public class JpaConcurrentUserAggregationDaoTest extends BaseAggrEventsJpaDaoTes
             }
         });
     }
-    
-    /**
-     * Populate date & time dimensions in an interval range executing a callback for each pair
-     */
-    public final <T> List<T> populateDateTimeDimensions(final DateTime start, final DateTime end,
-            final Function<Tuple<DateDimension, TimeDimension>, T> newDimensionHandler) {
-        
-        return this.executeInTransaction(new Callable<List<T>>() {
-            @Override
-            public List<T> call() throws Exception {
-                final List<T> results = new LinkedList<T>();
-                final SortedMap<LocalTime, TimeDimension> times = new TreeMap<LocalTime, TimeDimension>();
-                final SortedMap<DateMidnight, DateDimension> dates = new TreeMap<DateMidnight, DateDimension>();
-                
-                DateTime nextDateTime = start.minuteOfDay().roundFloorCopy();
-                while (nextDateTime.isBefore(end)) {
-                    
-                    //get/create TimeDimension
-                    final LocalTime localTime = nextDateTime.toLocalTime();
-                    TimeDimension td = times.get(localTime);
-                    if (td == null) {
-                        td = timeDimensionDao.createTimeDimension(localTime);
-                        times.put(localTime, td);
-                    }
-                    
-                    //get/create DateDimension
-                    final DateMidnight dateMidnight = nextDateTime.toDateMidnight();
-                    DateDimension dd = dates.get(dateMidnight);
-                    if (dd == null) {
-                        dd = dateDimensionDao.createDateDimension(dateMidnight, 0, null);
-                        dates.put(dateMidnight, dd);
-                    }
-                    
-                    //Let callback do work
-                    if (newDimensionHandler != null) {
-                        final T result = newDimensionHandler.apply(new Tuple<DateDimension, TimeDimension>(dd, td));
-                        if (result != null) {
-                            results.add(result);
-                        }
-                    }
-                    
-                    nextDateTime = nextDateTime.plusMinutes(1);
-                }
-                
-                return results;
-            }
-        });
-    }
-    
 
     @Test
     public void testConcurrentUserAggregationRangeQuery() throws Exception {
@@ -396,8 +341,8 @@ public class JpaConcurrentUserAggregationDaoTest extends BaseAggrEventsJpaDaoTes
                         endObj.setValue(instant);
                         
                         if (instant.equals(interval.determineStart(instant))) {
-                             final ConcurrentUserAggregationImpl concurrentUserAggregationA = concurrentUserAggregationDao.createConcurrentUserAggregation(dd, td, interval, groupA);
-                             final ConcurrentUserAggregationImpl concurrentUserAggregationB = concurrentUserAggregationDao.createConcurrentUserAggregation(dd, td, interval, groupB);
+                             final ConcurrentUserAggregationImpl concurrentUserAggregationA = concurrentUserAggregationDao.createAggregation(dd, td, interval, groupA);
+                             final ConcurrentUserAggregationImpl concurrentUserAggregationB = concurrentUserAggregationDao.createAggregation(dd, td, interval, groupB);
                              
                              for (int u = 0; u < r.nextInt(50); u++) {
                                  concurrentUserAggregationA.countSession(RandomStringUtils.random(8, 0, 0, true, true, null, r));
@@ -407,8 +352,8 @@ public class JpaConcurrentUserAggregationDaoTest extends BaseAggrEventsJpaDaoTes
                              concurrentUserAggregationA.intervalComplete(5);
                              concurrentUserAggregationB.intervalComplete(5);
                              
-                             concurrentUserAggregationDao.updateConcurrentUserAggregation(concurrentUserAggregationA);
-                             concurrentUserAggregationDao.updateConcurrentUserAggregation(concurrentUserAggregationB);
+                             concurrentUserAggregationDao.updateAggregation(concurrentUserAggregationA);
+                             concurrentUserAggregationDao.updateAggregation(concurrentUserAggregationB);
                              
                              aggrs.add(2);
                          }
@@ -428,7 +373,7 @@ public class JpaConcurrentUserAggregationDaoTest extends BaseAggrEventsJpaDaoTes
                 final AggregatedGroupMapping groupB = aggregatedGroupLookupDao.getGroupMapping("local.1");
                 
                 final List<ConcurrentUserAggregationImpl> concurrentUserAggregations = 
-                        concurrentUserAggregationDao.getConcurrentUserAggregations(start, end.plusDays(1), interval, groupA, groupB);
+                        concurrentUserAggregationDao.getAggregations(start, end.plusDays(1), interval, groupA, groupB);
                 
                 assertEquals(1152, concurrentUserAggregations.size());
             }
@@ -442,7 +387,7 @@ public class JpaConcurrentUserAggregationDaoTest extends BaseAggrEventsJpaDaoTes
                 final AggregatedGroupMapping groupB = aggregatedGroupLookupDao.getGroupMapping("local.1");
                 
                 final List<ConcurrentUserAggregationImpl> concurrentUserAggregations = 
-                        concurrentUserAggregationDao.getConcurrentUserAggregations(start, end, interval, groupA, groupB);
+                        concurrentUserAggregationDao.getAggregations(start, end, interval, groupA, groupB);
                 
                 assertEquals(576, concurrentUserAggregations.size());
             }
@@ -456,7 +401,7 @@ public class JpaConcurrentUserAggregationDaoTest extends BaseAggrEventsJpaDaoTes
                 final AggregatedGroupMapping groupB = aggregatedGroupLookupDao.getGroupMapping("local.1");
                 
                 final List<ConcurrentUserAggregationImpl> concurrentUserAggregations = 
-                        concurrentUserAggregationDao.getConcurrentUserAggregations(start.plusDays(1), end.plusDays(1), interval, groupA, groupB);
+                        concurrentUserAggregationDao.getAggregations(start.plusDays(1), end.plusDays(1), interval, groupA, groupB);
                 
                 assertEquals(576, concurrentUserAggregations.size());
             }
@@ -470,7 +415,7 @@ public class JpaConcurrentUserAggregationDaoTest extends BaseAggrEventsJpaDaoTes
                 final AggregatedGroupMapping groupB = aggregatedGroupLookupDao.getGroupMapping("local.1");
                 
                 final List<ConcurrentUserAggregationImpl> concurrentUserAggregations = 
-                        concurrentUserAggregationDao.getConcurrentUserAggregations(start, end.minusHours(12), interval, groupA, groupB);
+                        concurrentUserAggregationDao.getAggregations(start, end.minusHours(12), interval, groupA, groupB);
                 
                 assertEquals(288, concurrentUserAggregations.size());
             }
@@ -484,7 +429,7 @@ public class JpaConcurrentUserAggregationDaoTest extends BaseAggrEventsJpaDaoTes
                 final AggregatedGroupMapping groupB = aggregatedGroupLookupDao.getGroupMapping("local.1");
                 
                 final List<ConcurrentUserAggregationImpl> concurrentUserAggregations = 
-                        concurrentUserAggregationDao.getConcurrentUserAggregations(start.plusHours(12), end.plusHours(12), interval, groupA, groupB);
+                        concurrentUserAggregationDao.getAggregations(start.plusHours(12), end.plusHours(12), interval, groupA, groupB);
                 
                 assertEquals(576, concurrentUserAggregations.size());
             }
@@ -497,7 +442,7 @@ public class JpaConcurrentUserAggregationDaoTest extends BaseAggrEventsJpaDaoTes
                 final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
                 
                 final List<ConcurrentUserAggregationImpl> concurrentUserAggregations = 
-                        concurrentUserAggregationDao.getConcurrentUserAggregations(start.plusHours(12), end.plusHours(12), interval, groupA);
+                        concurrentUserAggregationDao.getAggregations(start.plusHours(12), end.plusHours(12), interval, groupA);
                 
                 assertEquals(288, concurrentUserAggregations.size());
             }
@@ -511,7 +456,7 @@ public class JpaConcurrentUserAggregationDaoTest extends BaseAggrEventsJpaDaoTes
                 final AggregatedGroupMapping groupB = aggregatedGroupLookupDao.getGroupMapping("local.1");
                 
                 final List<ConcurrentUserAggregationImpl> concurrentUserAggregations = 
-                        concurrentUserAggregationDao.getConcurrentUserAggregations(start.plusHours(36), end.plusDays(1), interval, groupA, groupB);
+                        concurrentUserAggregationDao.getAggregations(start.plusHours(36), end.plusDays(1), interval, groupA, groupB);
                 
                 assertEquals(288, concurrentUserAggregations.size());
             }
@@ -562,8 +507,8 @@ public class JpaConcurrentUserAggregationDaoTest extends BaseAggrEventsJpaDaoTes
                         endObj.setValue(instant);
                         
                         if (instant.equals(interval.determineStart(instant))) {
-                             final ConcurrentUserAggregationImpl concurrentUserAggregationA = concurrentUserAggregationDao.createConcurrentUserAggregation(dd, td, interval, groupA);
-                             final ConcurrentUserAggregationImpl concurrentUserAggregationB = concurrentUserAggregationDao.createConcurrentUserAggregation(dd, td, interval, groupB);
+                             final ConcurrentUserAggregationImpl concurrentUserAggregationA = concurrentUserAggregationDao.createAggregation(dd, td, interval, groupA);
+                             final ConcurrentUserAggregationImpl concurrentUserAggregationB = concurrentUserAggregationDao.createAggregation(dd, td, interval, groupB);
                              
                              for (int u = 0; u < r.nextInt(50); u++) {
                                  concurrentUserAggregationA.countSession(RandomStringUtils.random(8, 0, 0, true, true, null, r));
@@ -575,8 +520,8 @@ public class JpaConcurrentUserAggregationDaoTest extends BaseAggrEventsJpaDaoTes
                              }
                              concurrentUserAggregationB.intervalComplete(5);
                              
-                             concurrentUserAggregationDao.updateConcurrentUserAggregation(concurrentUserAggregationA);
-                             concurrentUserAggregationDao.updateConcurrentUserAggregation(concurrentUserAggregationB);
+                             concurrentUserAggregationDao.updateAggregation(concurrentUserAggregationA);
+                             concurrentUserAggregationDao.updateAggregation(concurrentUserAggregationB);
                              
                              aggrs.add(2);
                          }
@@ -592,14 +537,14 @@ public class JpaConcurrentUserAggregationDaoTest extends BaseAggrEventsJpaDaoTes
         this.execute(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
-                final Set<ConcurrentUserAggregationImpl> concurrentUserAggregations = concurrentUserAggregationDao
-                        .getUnclosedConcurrentUserAggregations(start, end.plusDays(1), interval);
+                final Collection<ConcurrentUserAggregationImpl> concurrentUserAggregations = concurrentUserAggregationDao
+                        .getUnclosedAggregations(start, end.plusDays(1), interval);
                 
                 assertEquals(1, concurrentUserAggregations.size());
                 
                 for (final ConcurrentUserAggregationImpl concurrentUserAggregationImpl : concurrentUserAggregations) {
                     concurrentUserAggregationImpl.intervalComplete(5);
-                    concurrentUserAggregationDao.updateConcurrentUserAggregation(concurrentUserAggregationImpl);
+                    concurrentUserAggregationDao.updateAggregation(concurrentUserAggregationImpl);
                 }
             }
         });
@@ -608,8 +553,8 @@ public class JpaConcurrentUserAggregationDaoTest extends BaseAggrEventsJpaDaoTes
         this.execute(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
-                final Set<ConcurrentUserAggregationImpl> concurrentUserAggregations = concurrentUserAggregationDao
-                        .getUnclosedConcurrentUserAggregations(start, end.plusDays(1), interval);
+                final Collection<ConcurrentUserAggregationImpl> concurrentUserAggregations = concurrentUserAggregationDao
+                        .getUnclosedAggregations(start, end.plusDays(1), interval);
                 
                 assertEquals(0, concurrentUserAggregations.size());
             }

@@ -19,7 +19,7 @@
 
 package org.jasig.portal.events.aggr.login;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -116,8 +116,6 @@ public class JpaLoginAggregationDao extends BaseAggrEventsJpaDao implements Logi
                 final CriteriaQuery<LoginAggregationImpl> criteriaQuery = cb.createQuery(LoginAggregationImpl.class);
                 final Root<LoginAggregationImpl> lea = criteriaQuery.from(LoginAggregationImpl.class);
                 
-                lea.fetch(LoginAggregationImpl_.uniqueUserNames, JoinType.LEFT);
-
                 criteriaQuery.select(lea);
                 criteriaQuery.where(
                         cb.and(
@@ -220,23 +218,7 @@ public class JpaLoginAggregationDao extends BaseAggrEventsJpaDao implements Logi
     }
     
     @Override
-    public Set<LoginAggregationImpl> getUnclosedLoginAggregations(DateTime start, DateTime end, AggregationInterval interval) {
-        final TypedQuery<LoginAggregationImpl> query = this.createQuery(findUnclosedLoginAggregationsByDateRangeQuery);
-        
-        query.setParameter(this.startDate, start.toLocalDate());
-        query.setParameter(this.startTime, start.toLocalTime());
-        
-        query.setParameter(this.endDate, end.toLocalDate());
-        query.setParameter(this.endTime, end.toLocalTime());
-        query.setParameter(this.endMinusOneDate, end.minusDays(1).toLocalDate());
-        
-        query.setParameter(this.intervalParameter, interval);
-        
-        return new LinkedHashSet<LoginAggregationImpl>(query.getResultList());
-    }
-    
-    @Override
-    public List<LoginAggregationImpl> getLoginAggregations(DateTime start, DateTime end, AggregationInterval interval,
+    public List<LoginAggregationImpl> getAggregations(DateTime start, DateTime end, AggregationInterval interval,
             AggregatedGroupMapping aggregatedGroupMapping, AggregatedGroupMapping... aggregatedGroupMappings) {
         
         final TypedQuery<LoginAggregationImpl> query = this.createCachedQuery(findLoginAggregationsByDateRangeQuery);
@@ -253,23 +235,27 @@ public class JpaLoginAggregationDao extends BaseAggrEventsJpaDao implements Logi
         aggregatedGroupMappings = (AggregatedGroupMapping[])ArrayUtils.add(aggregatedGroupMappings, aggregatedGroupMapping);
         query.setParameter(this.aggregatedGroupsParameter, ImmutableSet.copyOf(aggregatedGroupMappings));
         
-        return new ArrayList<LoginAggregationImpl>(query.getResultList());
+        return query.getResultList();
     }
 
-    
     @Override
-    public Set<LoginAggregationImpl> getLoginAggregationsForInterval(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval) {
+    public Collection<LoginAggregationImpl> getAggregationsForInterval(DateDimension dateDimension,
+            TimeDimension timeDimension, AggregationInterval interval) {
+        
         final TypedQuery<LoginAggregationImpl> query = this.createQuery(this.findLoginAggregationByDateTimeIntervalQuery);
         query.setParameter(this.dateDimensionParameter, dateDimension);
         query.setParameter(this.timeDimensionParameter, timeDimension);
         query.setParameter(this.intervalParameter, interval);
         
-        final List<LoginAggregationImpl> results = query.getResultList();
-        return new LinkedHashSet<LoginAggregationImpl>(results);
+        //Need set to handle duplicate results from join
+        return new LinkedHashSet<LoginAggregationImpl>(query.getResultList());
     }
 
+
     @Override
-    public LoginAggregationImpl getLoginAggregation(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval, AggregatedGroupMapping aggregatedGroup) {
+    public LoginAggregationImpl getAggregation(DateDimension dateDimension, TimeDimension timeDimension,
+            AggregationInterval interval, AggregatedGroupMapping aggregatedGroup) {
+       
         final TypedQuery<LoginAggregationImpl> query = this.createCachedQuery(this.findLoginAggregationByDateTimeIntervalGroupQuery);
         query.setParameter(this.dateDimensionParameter, dateDimension);
         query.setParameter(this.timeDimensionParameter, timeDimension);
@@ -280,20 +266,37 @@ public class JpaLoginAggregationDao extends BaseAggrEventsJpaDao implements Logi
         return DataAccessUtils.uniqueResult(results);
     }
     
+    @Override
+    public Collection<LoginAggregationImpl> getUnclosedAggregations(DateTime start, DateTime end, AggregationInterval interval) {
+        final TypedQuery<LoginAggregationImpl> query = this.createQuery(findUnclosedLoginAggregationsByDateRangeQuery);
+        
+        query.setParameter(this.startDate, start.toLocalDate());
+        query.setParameter(this.startTime, start.toLocalTime());
+        
+        query.setParameter(this.endDate, end.toLocalDate());
+        query.setParameter(this.endTime, end.toLocalTime());
+        query.setParameter(this.endMinusOneDate, end.minusDays(1).toLocalDate());
+        
+        query.setParameter(this.intervalParameter, interval);
+        
+        //Need set to handle duplicate results from join
+        return new LinkedHashSet<LoginAggregationImpl>(query.getResultList());
+    }
+
     @AggrEventsTransactional
     @Override
-    public LoginAggregationImpl createLoginAggregation(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval, AggregatedGroupMapping aggregatedGroup) {
+    public LoginAggregationImpl createAggregation(DateDimension dateDimension, TimeDimension timeDimension,
+            AggregationInterval interval, AggregatedGroupMapping aggregatedGroup) {
         final LoginAggregationImpl loginAggregation = new LoginAggregationImpl(timeDimension, dateDimension, interval, aggregatedGroup);
         
         this.getEntityManager().persist(loginAggregation);
         
         return loginAggregation;
     }
-    
+
     @AggrEventsTransactional
     @Override
-    public void updateLoginAggregation(LoginAggregationImpl loginAggregation) {
-        this.getEntityManager().persist(loginAggregation);
+    public void updateAggregation(LoginAggregationImpl aggregation) {
+        this.getEntityManager().persist(aggregation);
     }
-        
 }
