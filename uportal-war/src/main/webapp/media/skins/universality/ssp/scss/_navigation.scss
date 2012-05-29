@@ -54,7 +54,7 @@
 				}
 				
 				.portal-flyout-container {
-					background: #2F2D2D;
+					background: #57bbff;
 					-webkit-border-bottom-right-radius: 4px;
 					-webkit-border-bottom-left-radius: 4px;
 					-moz-border-radius-bottomright: 4px;
@@ -64,7 +64,7 @@
 					
 					.portal-subnav-list { // ul
 						.portal-subnav { // li
-							
+							background: #57bbff;
 							&:last-child {
 								.portal-subnav-link {
 									&:hover {
@@ -79,22 +79,17 @@
 							}
 							.portal-subnav-link { // anchor
 								&:link {
-									color: white;
+									color: black;
 								}
 								&:visited {
-									color: white;
+									color: black;
 								}
 								&:hover {
 									color: white;
-									background: #444242;
-									-webkit-box-shadow: inset 0px 0px 20px 0px rgba(0, 0, 0, 0.50);
-									-moz-box-shadow: inset 0px 0px 20px 0px rgba(0, 0, 0, 0.50);
-									box-shadow: inset 0px 0px 20px 0px rgba(0, 0, 0, 0.50);
-									
 								}
 								&:focus, &:active {
 									color: white;
-									background: #444242;
+									background: #57bbff;
 									-webkit-box-shadow: inset 0px 0px 20px 0px rgba(0, 0, 0, 0.20);
 									-moz-box-shadow: inset 0px 0px 20px 0px rgba(0, 0, 0, 0.20);
 									box-shadow: inset 0px 0px 20px 0px rgba(0, 0, 0, 0.20);

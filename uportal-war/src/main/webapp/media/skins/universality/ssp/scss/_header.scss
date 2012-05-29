@@ -37,6 +37,8 @@
 				}
 				.utilities {
 					display: none;
+					position: relative;
+					z-index: 9999;
 					//padding: 0.5em 0;
 					background: #57bbff;
 					-webkit-border-radius: 3px;

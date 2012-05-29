@@ -33,7 +33,7 @@
     <uri>classpath:/layout/theme/universality/universality.xsl</uri>
     <stylesheet-parameter>
         <name>skin</name>
-        <default-value>uportal3</default-value>
+        <default-value>ssp</default-value>
         <scope>PERSISTENT</scope>
         <description>Skin name</description>
     </stylesheet-parameter>
