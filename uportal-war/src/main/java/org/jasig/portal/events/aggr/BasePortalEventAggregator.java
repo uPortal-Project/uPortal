@@ -66,22 +66,33 @@ public abstract class BasePortalEventAggregator<E extends PortalEvent, T extends
             final DateDimension dateDimension = intervalInfo.getDateDimension();
             final TimeDimension timeDimension = intervalInfo.getTimeDimension();
             
-            final Set<AggregatedGroupMapping> groupMappings = new LinkedHashSet<AggregatedGroupMapping>(eventSession.getGroupMappings());
+            final Collection<T> cachedAggregations = getAggregations(eventAggregationContext, interval, dateDimension, timeDimension);
             
-            final Collection<T> cachedAggregations = getAggregations(eventAggregationContext,
-                    interval,
-                    dateDimension,
-                    timeDimension);
+            //If the number of cached aggregations != number of group mappings we need to figure out which groups don't have an
+            //aggregation yet. This is done by cloning the groupMappings map and removing groups we see from it as the cached
+            //aggregations are parsed
+            final Set<AggregatedGroupMapping> groupMappings = eventSession.getGroupMappings();
+            final Set<AggregatedGroupMapping> mutableGroupMappings;
+            if (groupMappings.size() != cachedAggregations.size()) {
+                mutableGroupMappings = new LinkedHashSet<AggregatedGroupMapping>(groupMappings);
+            }
+            else {
+                mutableGroupMappings = null;
+            }
         
+            //Update the aggregation for each cached aggr
             for (final T aggregation : cachedAggregations) {
                 //Remove the aggregation from the group set to mark that it has been updated
-                groupMappings.remove(aggregation.getAggregatedGroup());
+                if (mutableGroupMappings != null) {
+                    mutableGroupMappings.remove(aggregation.getAggregatedGroup());
+                }
+                
                 updateAggregation(e, intervalInfo, aggregation);
             }
             
-            //Create any left over groups
-            if (!groupMappings.isEmpty()) {
-                for (final AggregatedGroupMapping aggregatedGroup : groupMappings) {
+            //Create aggregations for any left over groups
+            if (mutableGroupMappings != null && !mutableGroupMappings.isEmpty()) {
+                for (final AggregatedGroupMapping aggregatedGroup : mutableGroupMappings) {
                     final T aggregation = aggregationDao.createAggregation(dateDimension, timeDimension, interval, aggregatedGroup);
                     cachedAggregations.add(aggregation);
                     updateAggregation(e, intervalInfo, aggregation);
@@ -122,7 +133,7 @@ public abstract class BasePortalEventAggregator<E extends PortalEvent, T extends
     }
 
     /**
-     * Get the set of existing aggregations looking first in the session and then in the db
+     * Get the set of existing aggregations looking first in the aggregation session and then in the db
      */
     private Collection<T> getAggregations(EventAggregationContext eventAggregationContext,
             final AggregationInterval interval, final DateDimension dateDimension, final TimeDimension timeDimension) {
