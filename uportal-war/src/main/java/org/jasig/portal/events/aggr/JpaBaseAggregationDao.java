@@ -252,7 +252,6 @@ public abstract class JpaBaseAggregationDao<
                         cb.lessThan(td.get(TimeDimensionImpl_.time), endTime)
                     ));
                 keyPredicates.add(cb.equal(ba.get(BaseAggregationImpl_.interval), intervalParameter));
-                keyPredicates.add(ba.get(BaseAggregationImpl_.aggregatedGroup).in(aggregatedGroupsParameter));
                 //No aggregation specific key bits here, we only have start/end/interval parameters to work with
                 addUnclosedPredicate(cb, ba, keyPredicates);
 

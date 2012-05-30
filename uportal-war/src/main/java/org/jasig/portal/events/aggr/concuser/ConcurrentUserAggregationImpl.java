@@ -126,8 +126,30 @@ public class ConcurrentUserAggregationImpl extends BaseAggregationImpl implement
     }
 
     @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + concurrentUsers;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ConcurrentUserAggregationImpl other = (ConcurrentUserAggregationImpl) obj;
+        if (concurrentUsers != other.concurrentUsers)
+            return false;
+        return true;
+    }
+
+    @Override
     public String toString() {
-        return "ConcurrentUserAggregationImpl [dateDimension=" + getDateDimension() + ", timeDimension=" + getTimeDimension()
+        return "ConcurrentUserAggregationImpl [id=" + id + ", dateDimension=" + getDateDimension() + ", timeDimension=" + getTimeDimension()
                 + ", interval=" + getInterval() + ", aggregatedGroup=" + getAggregatedGroup() + ", duration=" + getDuration()
                 + ", concurrentUsers=" + concurrentUsers + "]";
     }

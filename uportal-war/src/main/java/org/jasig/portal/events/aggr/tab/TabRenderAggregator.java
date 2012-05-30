@@ -28,7 +28,10 @@ import org.jasig.portal.events.aggr.BasePortalEventAggregator;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.core.JdbcOperations;
 
 /**
  * Event aggregator that uses {@link TabRenderAggregationPrivateDao} to aggregate concurrent user data 
@@ -38,6 +41,13 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class TabRenderAggregator extends BasePortalEventAggregator<PortalRenderEvent, TabRenderAggregationImpl, TabRenderAggregationKey> {
     private TabRenderAggregationPrivateDao concurrentUserAggregationDao;
+    private JdbcOperations portalJdbcOperations;
+    
+    @Autowired
+    @Qualifier(BasePortalJpaDao.PERSISTENCE_UNIT_NAME)
+    public void setPortalJdbcOperations(JdbcOperations portalJdbcOperations) {
+        this.portalJdbcOperations = portalJdbcOperations;
+    }
 
     @Autowired
     public void setConcurrentUserAggregationDao(TabRenderAggregationPrivateDao concurrentUserAggregationDao) {
@@ -73,21 +83,8 @@ public class TabRenderAggregator extends BasePortalEventAggregator<PortalRenderE
         //TODO resolve tab name
         final String targetedLayoutNodeId = event.getTargetedLayoutNodeId();
         
-        return new TabRenderAggregationKeyImpl(timeDimension, dateDimension, aggregationInterval, aggregatedGroup, targetedLayoutNodeId);
-    }
-    
-    private static class TabRenderAggregationKeyImpl extends BaseAggregationKeyImpl implements TabRenderAggregationKey {
-        private final String tabName;
+//        this.portalJdbcOperations.se
         
-        public TabRenderAggregationKeyImpl(TimeDimension timeDimension, DateDimension dateDimension,
-                AggregationInterval aggregationInterval, AggregatedGroupMapping aggregatedGroupMapping, String tabName) {
-            super(timeDimension, dateDimension, aggregationInterval, aggregatedGroupMapping);
-            this.tabName = tabName;
-        }
-
-        @Override
-        public String getTabName() {
-            return this.tabName;
-        }
+        return new TabRenderAggregationKeyImpl(dateDimension, timeDimension, aggregationInterval, aggregatedGroup, targetedLayoutNodeId);
     }
 }

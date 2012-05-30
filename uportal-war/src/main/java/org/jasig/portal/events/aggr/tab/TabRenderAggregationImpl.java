@@ -41,6 +41,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
@@ -69,7 +70,7 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
     )
 @org.hibernate.annotations.Table(
         appliesTo = "UP_TAB_RENDER_AGGR",
-        indexes = @Index(name = "IDX_UP_CONC_USER_AGGR_DTI", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL" })
+        indexes = @Index(name = "IDX_UP_TAB_REND_AGGR_DTI", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL" })
         )
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -79,11 +80,10 @@ public class TabRenderAggregationImpl extends BaseAggregationImpl implements Tab
     @Id
     @GeneratedValue(generator = "UP_TAB_RENDER_AGGR_GEN")
     @Column(name="ID")
-    @SuppressWarnings("unused")
     private final long id;
     
     @NaturalId
-    @Column(name = "TAB_NAME", nullable = false)
+    @Column(name = "TAB_NAME", nullable = false, length=400)
     private final String tabName;
     
     @Column(name = "RENDER_COUNT", nullable = false)
@@ -117,6 +117,8 @@ public class TabRenderAggregationImpl extends BaseAggregationImpl implements Tab
     
     @Transient
     private DescriptiveStatistics statistics;
+    @Transient
+    private SummaryStatistics summaryStatistics;
     
     @SuppressWarnings("unused")
     private TabRenderAggregationImpl() {
@@ -190,12 +192,17 @@ public class TabRenderAggregationImpl extends BaseAggregationImpl implements Tab
         
         //Lazily init the statistics object
         if (this.statistics == null) {
-            final double[] doubleRenderTimes = new double[this.renderTimes.size()];
-            int i = 0;
-            for (final Long renderTime : this.renderTimes) {
-                doubleRenderTimes[i++] = renderTime.doubleValue();
+            if (this.renderTimes.isEmpty()) {
+                this.statistics = new DescriptiveStatistics();
             }
-            this.statistics = new DescriptiveStatistics(doubleRenderTimes);
+            else {
+                final double[] doubleRenderTimes = new double[this.renderTimes.size()];
+                int i = 0;
+                for (final Long renderTime : this.renderTimes) {
+                    doubleRenderTimes[i++] = renderTime.doubleValue();
+                }
+                this.statistics = new DescriptiveStatistics(doubleRenderTimes);
+            }
         }
         
         this.renderTimes.add(executionTime);
@@ -212,8 +219,62 @@ public class TabRenderAggregationImpl extends BaseAggregationImpl implements Tab
     }
 
     @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        long temp;
+        temp = Double.doubleToLongBits(geometricMean);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(max);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(mean);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(min);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(ninetiethPercentile);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        result = prime * result + renderCount;
+        temp = Double.doubleToLongBits(standardDeviation);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        result = prime * result + ((tabName == null) ? 0 : tabName.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        TabRenderAggregationImpl other = (TabRenderAggregationImpl) obj;
+        if (Double.doubleToLongBits(geometricMean) != Double.doubleToLongBits(other.geometricMean))
+            return false;
+        if (Double.doubleToLongBits(max) != Double.doubleToLongBits(other.max))
+            return false;
+        if (Double.doubleToLongBits(mean) != Double.doubleToLongBits(other.mean))
+            return false;
+        if (Double.doubleToLongBits(min) != Double.doubleToLongBits(other.min))
+            return false;
+        if (Double.doubleToLongBits(ninetiethPercentile) != Double.doubleToLongBits(other.ninetiethPercentile))
+            return false;
+        if (renderCount != other.renderCount)
+            return false;
+        if (Double.doubleToLongBits(standardDeviation) != Double.doubleToLongBits(other.standardDeviation))
+            return false;
+        if (tabName == null) {
+            if (other.tabName != null)
+                return false;
+        }
+        else if (!tabName.equals(other.tabName))
+            return false;
+        return true;
+    }
+
+    @Override
     public String toString() {
-        return "TabRenderAggregationImpl [dateDimension=" + getDateDimension() + ", timeDimension="
+        return "TabRenderAggregationImpl [id=" + id + ", dateDimension=" + getDateDimension() + ", timeDimension="
                 + getTimeDimension() + ", interval=" + getInterval() + ", aggregatedGroup=" + getAggregatedGroup()
                 + ", duration=" + getDuration() + " tabName=" + tabName + ", renderCount=" + renderCount
                 + ", geometricMean=" + geometricMean + ", max=" + max + ", mean=" + mean + ", min=" + min

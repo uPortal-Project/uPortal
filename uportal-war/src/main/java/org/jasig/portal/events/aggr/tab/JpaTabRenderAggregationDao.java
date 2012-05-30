@@ -59,7 +59,7 @@ public class JpaTabRenderAggregationDao extends
 
     @Override
     protected void addFetches(Root<TabRenderAggregationImpl> root) {
-        root.fetch(ConcurrentUserAggregationImpl_.uniqueSessionIds, JoinType.LEFT);
+        root.fetch(TabRenderAggregationImpl_.renderTimes, JoinType.LEFT);
     }
 
     @Override

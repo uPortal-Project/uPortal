@@ -214,7 +214,7 @@ public class DateDimensionImpl implements DateDimension, Serializable {
     }
     @Override
     public String toString() {
-        return getDate().toString();
+        return getDate().toString("yyyy-MM-dd ZZ");
     }
     
 }

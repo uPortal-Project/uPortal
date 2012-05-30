@@ -17,17 +17,17 @@
  * under the License.
  */
 
-package org.jasig.portal.events.aggr.concuser;
+package org.jasig.portal.dao.usertype;
 
-import org.jasig.portal.events.aggr.BaseAggregationKey;
-import org.jasig.portal.events.aggr.BaseAggregationPrivateDao;
+import org.jadira.usertype.spi.shared.AbstractSingleColumnUserType;
 
 /**
- * Concurrent User Aggregation DAO used internally to create and update concurrent user aggregations
+ * Uses Jackson to convert objects to/from JSON
  * 
  * @author Eric Dalquist
+ * @version $Revision$
  */
-interface ConcurrentUserAggregationPrivateDao extends ConcurrentUserAggregationDao<ConcurrentUserAggregationImpl>,
-        BaseAggregationPrivateDao<ConcurrentUserAggregationImpl, BaseAggregationKey> {
+public class JacksonType extends AbstractSingleColumnUserType<Object, String, JacksonColumnMapper> {
+    private static final long serialVersionUID = 1L;
 
 }

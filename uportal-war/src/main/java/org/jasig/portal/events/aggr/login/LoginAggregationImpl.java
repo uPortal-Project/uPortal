@@ -134,8 +134,33 @@ public class LoginAggregationImpl extends BaseAggregationImpl implements LoginAg
     }
 
     @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + loginCount;
+        result = prime * result + uniqueLoginCount;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        LoginAggregationImpl other = (LoginAggregationImpl) obj;
+        if (loginCount != other.loginCount)
+            return false;
+        if (uniqueLoginCount != other.uniqueLoginCount)
+            return false;
+        return true;
+    }
+
+    @Override
     public String toString() {
-        return "LoginAggregationImpl [timeDimension=" + getTimeDimension() + ", dateDimension=" + getDateDimension()
+        return "LoginAggregationImpl [id=" + id + ", timeDimension=" + getTimeDimension() + ", dateDimension=" + getDateDimension()
                 + ", interval=" + getInterval() + ", groupName=" + getAggregatedGroup() + ", duration=" + getDuration() + ", loginCount="
                 + loginCount + ", uniqueLoginCount=" + uniqueLoginCount + "]";
     }

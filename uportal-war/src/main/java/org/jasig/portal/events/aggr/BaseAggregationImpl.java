@@ -175,7 +175,7 @@ public abstract class BaseAggregationImpl implements BaseAggregation, Serializab
             return true;
         if (obj == null)
             return false;
-        if (getClass().isAssignableFrom(obj.getClass()))
+        if (!(obj instanceof BaseAggregationImpl))
             return false;
         BaseAggregationImpl other = (BaseAggregationImpl) obj;
         if (dateDimension == null) {

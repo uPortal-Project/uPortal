@@ -20,6 +20,9 @@
 package org.jasig.portal.events.aggr;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -34,6 +37,8 @@ import org.joda.time.LocalTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.google.common.collect.UnmodifiableIterator;
 
 /**
  * Base {@link PortalEvent} aggregator, useful for aggregations that extend from {@link BaseAggregationImpl} 
@@ -131,20 +136,21 @@ public abstract class BasePortalEventAggregator<
         
         final BaseAggregationPrivateDao<T, K> aggregationDao = this.getAggregationDao();
         
-        //Complete all of the aggregations that have been touched by this session
-        final Collection<T> aggregations = this.getCachedAggregations(eventAggregationContext, intervalInfo);
-        for (final T loginAggregation : aggregations) {
+        //Complete all of the aggregations that have been touched by this session, can be null if no events of
+        //the handled type have been seen so far in this session
+        final Iterable<T> aggregations = this.getCachedAggregations(eventAggregationContext, intervalInfo);
+        for (final T aggregation : aggregations) {
             final int duration = intervalInfo.getTotalDuration();
-            loginAggregation.intervalComplete(duration);
-            logger.debug("Marked complete: " + loginAggregation);
-            aggregationDao.updateAggregation(loginAggregation);
+            aggregation.intervalComplete(duration);
+            logger.debug("Marked complete: " + aggregation);
+            aggregationDao.updateAggregation(aggregation);
         }
         
         //Look for any uncomplete aggregations from the previous interval
         final AggregationIntervalInfo prevIntervalInfo = this.aggregationIntervalHelper.getIntervalInfo(interval, intervalInfo.getStart().minusMinutes(1));
         
-        final Collection<T> unclosedLoginAggregations = aggregationDao.getUnclosedAggregations(prevIntervalInfo.getStart(), prevIntervalInfo.getEnd(), interval);
-        for (final T aggregation : unclosedLoginAggregations) {
+        final Collection<T> unclosedAggregations = aggregationDao.getUnclosedAggregations(prevIntervalInfo.getStart(), prevIntervalInfo.getEnd(), interval);
+        for (final T aggregation : unclosedAggregations) {
             final int duration = intervalInfo.getTotalDuration();
             aggregation.intervalComplete(duration);
             logger.debug("Marked complete previously missed: " + aggregation);
@@ -156,15 +162,21 @@ public abstract class BasePortalEventAggregator<
      * Get the set of existing aggregations looking first in the aggregation session and then in the db
      */
     private Collection<T> getOrLoadAggregations(EventAggregationContext eventAggregationContext, AggregationIntervalInfo intervalInfo, E event) {
-        
-        final CacheKey cacheKey = createAggregationSessionCacheKey(intervalInfo);
-        
-        Collection<T> cachedAggregations = eventAggregationContext.getAttribute(cacheKey);
+        final K key = this.createAggregationKey(intervalInfo, null, event);
+        Collection<T> cachedAggregations = eventAggregationContext.getAttribute(key);
         if (cachedAggregations == null) {
             //Nothing in the aggr session yet, cache the current set of aggregations from the DB in the aggr session
-            final K key = this.createAggregationKey(intervalInfo, null, event);
             cachedAggregations = this.getAggregationDao().getAggregationsForInterval(key);
-            eventAggregationContext.setAttribute(cacheKey, cachedAggregations);
+            eventAggregationContext.setAttribute(key, cachedAggregations);
+            
+            //Track all event scoped collections
+            final CacheKey cacheKey = createAggregationSessionCacheKey(intervalInfo);
+            Set<K> eventScopedKeys = eventAggregationContext.getAttribute(cacheKey);
+            if (eventScopedKeys == null) {
+                eventScopedKeys = new HashSet<K>();
+                eventAggregationContext.setAttribute(cacheKey, eventScopedKeys);
+            }
+            eventScopedKeys.add(key);
         }
         
         return cachedAggregations;
@@ -173,9 +185,40 @@ public abstract class BasePortalEventAggregator<
     /**
      * Get the set of existing aggregations from the aggregation session
      */
-    private Collection<T> getCachedAggregations(EventAggregationContext eventAggregationContext, AggregationIntervalInfo intervalInfo) {
+    private Iterable<T> getCachedAggregations(final EventAggregationContext eventAggregationContext, AggregationIntervalInfo intervalInfo) {
         final CacheKey cacheKey = createAggregationSessionCacheKey(intervalInfo);
-        return eventAggregationContext.getAttribute(cacheKey);
+        final Set<K> eventScopedKeys = eventAggregationContext.getAttribute(cacheKey);
+        if (eventScopedKeys == null || eventScopedKeys.isEmpty()) {
+            return Collections.emptySet();
+        }
+        
+        //Use a little iterator of iterator pattern to avoid extra trips over the collection of cached aggregations
+        return new Iterable<T>() {
+            @Override
+            public Iterator<T> iterator() {
+                return new UnmodifiableIterator<T>() {
+                    final Iterator<K> eventScopedKeysItr = eventScopedKeys.iterator();
+                    Iterator<T> cachedAggregationsItr;
+                    
+                    @Override
+                    public boolean hasNext() {
+                        return (cachedAggregationsItr != null && cachedAggregationsItr.hasNext()) ||
+                                eventScopedKeysItr.hasNext();
+                    }
+
+                    @Override
+                    public T next() {
+                        if (cachedAggregationsItr == null || !cachedAggregationsItr.hasNext()) {
+                            final K key = eventScopedKeysItr.next();
+                            final Collection<T> cachedAggregations = eventAggregationContext.getAttribute(key);
+                            cachedAggregationsItr = cachedAggregations.iterator();
+                        }
+                        
+                        return cachedAggregationsItr.next();
+                    }
+                };
+            }
+        };
     }
 
     /**
@@ -187,83 +230,5 @@ public abstract class BasePortalEventAggregator<
         final LocalTime time = intervalInfo.getTimeDimension().getTime();
         final AggregationInterval aggregationInterval = intervalInfo.getAggregationInterval();
         return CacheKey.build(name, date, time, aggregationInterval);
-    }
-    
-    protected static class BaseAggregationKeyImpl implements BaseAggregationKey {
-        private final TimeDimension timeDimension;
-        private final DateDimension dateDimension;
-        private final AggregationInterval aggregationInterval;
-        private final AggregatedGroupMapping aggregatedGroupMapping;
-        
-        public BaseAggregationKeyImpl(TimeDimension timeDimension, DateDimension dateDimension,
-                AggregationInterval aggregationInterval, AggregatedGroupMapping aggregatedGroupMapping) {
-            this.timeDimension = timeDimension;
-            this.dateDimension = dateDimension;
-            this.aggregationInterval = aggregationInterval;
-            this.aggregatedGroupMapping = aggregatedGroupMapping;
-        }
-
-        @Override
-        public TimeDimension getTimeDimension() {
-            return this.timeDimension;
-        }
-
-        @Override
-        public DateDimension getDateDimension() {
-            return this.dateDimension;
-        }
-
-        @Override
-        public AggregationInterval getInterval() {
-            return this.aggregationInterval;
-        }
-
-        @Override
-        public AggregatedGroupMapping getAggregatedGroup() {
-            return this.aggregatedGroupMapping;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((aggregatedGroupMapping == null) ? 0 : aggregatedGroupMapping.hashCode());
-            result = prime * result + ((aggregationInterval == null) ? 0 : aggregationInterval.hashCode());
-            result = prime * result + ((dateDimension == null) ? 0 : dateDimension.hashCode());
-            result = prime * result + ((timeDimension == null) ? 0 : timeDimension.hashCode());
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (obj instanceof BaseAggregationKey)
-                return false;
-            BaseAggregationKey other = (BaseAggregationKey) obj;
-            if (aggregatedGroupMapping == null) {
-                if (other.getAggregatedGroup() != null)
-                    return false;
-            }
-            else if (!aggregatedGroupMapping.equals(other.getAggregatedGroup()))
-                return false;
-            if (aggregationInterval != other.getInterval())
-                return false;
-            if (dateDimension == null) {
-                if (other.getDateDimension() != null)
-                    return false;
-            }
-            else if (!dateDimension.equals(other.getDateDimension()))
-                return false;
-            if (timeDimension == null) {
-                if (other.getTimeDimension() != null)
-                    return false;
-            }
-            else if (!timeDimension.equals(other.getTimeDimension()))
-                return false;
-            return true;
-        }
     }
 }

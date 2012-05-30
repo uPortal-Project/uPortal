@@ -17,17 +17,15 @@
  * under the License.
  */
 
-package org.jasig.portal.events.aggr.login;
+package org.jasig.portal.events.aggr.tab;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.AggregationIntervalInfo;
-import org.jasig.portal.events.aggr.BaseAggregationKey;
-import org.jasig.portal.events.aggr.BaseAggregationKeyImpl;
 import org.jasig.portal.events.aggr.BaseAggregationPrivateDao;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.JpaBaseAggregationDaoTest;
@@ -44,41 +42,47 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaAggrEventsTestContext.xml")
-public class JpaLoginAggregationDaoTest extends JpaBaseAggregationDaoTest<LoginAggregationImpl, BaseAggregationKey> {
+public class JpaTabRenderAggregationDaoTest extends JpaBaseAggregationDaoTest<TabRenderAggregationImpl, TabRenderAggregationKey> {
     @Autowired
-    private LoginAggregationPrivateDao loginAggregationDao;
-    
+    private TabRenderAggregationPrivateDao renderAggregationDao;
+
     @Override
-    protected BaseAggregationPrivateDao<LoginAggregationImpl, BaseAggregationKey> getAggregationDao() {
-        return this.loginAggregationDao;
+    protected BaseAggregationPrivateDao<TabRenderAggregationImpl, TabRenderAggregationKey> getAggregationDao() {
+        return this.renderAggregationDao;
     }
 
     @Override
-    protected void updateAggregation(AggregationIntervalInfo intervalInfo, LoginAggregationImpl aggregation, Random r) {
-        aggregation.countUser(RandomStringUtils.random(8, 0, 0, true, true, null, r));
+    protected void updateAggregation(AggregationIntervalInfo intervalInfo, TabRenderAggregationImpl aggregation,
+            Random r) {
+        aggregation.countRender(r.nextInt((int)TimeUnit.SECONDS.toNanos(10)));
     }
 
     @Override
-    protected BaseAggregationKey createAggregationKey(AggregationIntervalInfo intervalInfo, AggregatedGroupMapping aggregatedGroup) {
-        final DateDimension dateDimension = intervalInfo.getDateDimension();
-        final TimeDimension timeDimension = intervalInfo.getTimeDimension();
-        final AggregationInterval aggregationInterval = intervalInfo.getAggregationInterval();
-        return new BaseAggregationKeyImpl(dateDimension, timeDimension, aggregationInterval, aggregatedGroup);
-    }
-
-    @Override
-    protected BaseAggregationKey createAggregationKey(AggregationInterval interval, AggregatedGroupMapping aggregatedGroup) {
-        return new BaseAggregationKeyImpl(interval, aggregatedGroup);
-    }
-
-    @Override
-    protected List<LoginAggregationImpl> createAggregations(AggregationIntervalInfo intervalInfo,
+    protected TabRenderAggregationKey createAggregationKey(AggregationIntervalInfo intervalInfo,
             AggregatedGroupMapping aggregatedGroup) {
-
+        
         final DateDimension dateDimension = intervalInfo.getDateDimension();
         final TimeDimension timeDimension = intervalInfo.getTimeDimension();
         final AggregationInterval aggregationInterval = intervalInfo.getAggregationInterval();
-        return Collections.singletonList(loginAggregationDao.createAggregation(new BaseAggregationKeyImpl(
-                dateDimension, timeDimension, aggregationInterval, aggregatedGroup)));
+        return new TabRenderAggregationKeyImpl(dateDimension, timeDimension, aggregationInterval, aggregatedGroup, "Foo");
     }
+
+    @Override
+    protected TabRenderAggregationKey createAggregationKey(AggregationInterval interval,
+            AggregatedGroupMapping aggregatedGroup) {
+        
+        return new TabRenderAggregationKeyImpl(interval, aggregatedGroup, "Foo");
+    }
+
+    @Override
+    protected List<TabRenderAggregationImpl> createAggregations(AggregationIntervalInfo intervalInfo,
+            AggregatedGroupMapping aggregatedGroup) {
+        
+        final DateDimension dateDimension = intervalInfo.getDateDimension();
+        final TimeDimension timeDimension = intervalInfo.getTimeDimension();
+        final AggregationInterval aggregationInterval = intervalInfo.getAggregationInterval();
+        return Collections.singletonList(renderAggregationDao.createAggregation(new TabRenderAggregationKeyImpl(
+                dateDimension, timeDimension, aggregationInterval, aggregatedGroup, "Foo")));
+    }
+    
 }

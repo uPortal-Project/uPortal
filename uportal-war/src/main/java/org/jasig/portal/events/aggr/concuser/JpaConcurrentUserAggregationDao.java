@@ -19,12 +19,15 @@
 
 package org.jasig.portal.events.aggr.concuser;
 
+import java.util.List;
+
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.jasig.portal.events.aggr.AggregationInterval;
+import org.jasig.portal.events.aggr.BaseAggregationKey;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.JpaBaseAggregationDao;
 import org.jasig.portal.events.aggr.TimeDimension;
@@ -37,7 +40,9 @@ import org.springframework.stereotype.Repository;
  * @author Eric Dalquist
  */
 @Repository
-public class JpaConcurrentUserAggregationDao extends JpaBaseAggregationDao<ConcurrentUserAggregationImpl> implements ConcurrentUserAggregationPrivateDao {
+public class JpaConcurrentUserAggregationDao extends
+        JpaBaseAggregationDao<ConcurrentUserAggregationImpl, BaseAggregationKey> implements
+        ConcurrentUserAggregationPrivateDao {
 
     public JpaConcurrentUserAggregationDao() {
         super(ConcurrentUserAggregationImpl.class);
@@ -47,15 +52,19 @@ public class JpaConcurrentUserAggregationDao extends JpaBaseAggregationDao<Concu
     protected void addFetches(Root<ConcurrentUserAggregationImpl> root) {
         root.fetch(ConcurrentUserAggregationImpl_.uniqueSessionIds, JoinType.LEFT);        
     }
-
+    
     @Override
-    protected Predicate createUnclosedPredicate(CriteriaBuilder cb, Root<ConcurrentUserAggregationImpl> root) {
-        return cb.notEqual(cb.size(root.get(ConcurrentUserAggregationImpl_.uniqueSessionIds)), 0);
+    protected void addUnclosedPredicate(CriteriaBuilder cb, Root<ConcurrentUserAggregationImpl> root,
+            List<Predicate> keyPredicates) {
+        keyPredicates.add(cb.notEqual(cb.size(root.get(ConcurrentUserAggregationImpl_.uniqueSessionIds)), 0));
     }
 
     @Override
-    protected ConcurrentUserAggregationImpl createAggregationInstance(DateDimension dateDimension,
-            TimeDimension timeDimension, AggregationInterval interval, AggregatedGroupMapping aggregatedGroup) {
+    protected ConcurrentUserAggregationImpl createAggregationInstance(BaseAggregationKey key) {
+        final TimeDimension timeDimension = key.getTimeDimension();
+        final DateDimension dateDimension = key.getDateDimension();
+        final AggregationInterval interval = key.getInterval();
+        final AggregatedGroupMapping aggregatedGroup = key.getAggregatedGroup();
         return new ConcurrentUserAggregationImpl(timeDimension, dateDimension, interval, aggregatedGroup);
     }
 }

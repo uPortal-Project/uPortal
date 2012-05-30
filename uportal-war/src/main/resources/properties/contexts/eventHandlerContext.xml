@@ -100,7 +100,8 @@
      +-->
      <!-- 
     <bean id="loggingPortalEventAggregator" class="org.jasig.portal.events.aggr.LoggingPortalEventAggregator" />
-     -->
     <bean id="loginPortalEventAggregator" class="org.jasig.portal.events.aggr.login.LoginPortalEventAggregator"/>
     <bean id="concurrentUserAggregator" class="org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregator"/>
+     -->
+    <bean id="tabRenderAggregator" class="org.jasig.portal.events.aggr.tab.TabRenderAggregator"/>
 </beans>
