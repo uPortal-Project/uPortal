@@ -20,14 +20,14 @@
 package org.jasig.portal.events.aggr.tab;
 
 import org.jasig.portal.events.aggr.BaseAggregation;
-import org.jasig.portal.events.aggr.TimedAggregation;
+import org.jasig.portal.events.aggr.TimedAggregationStatistics;
 
 /**
  * Tracks tab render stats, all times are in nanoseconds.
  * 
  * @author Eric Dalquist
  */
-public interface TabRenderAggregation extends TabRenderAggregationKey, BaseAggregation, TimedAggregation {
+public interface TabRenderAggregation extends TabRenderAggregationKey, BaseAggregation, TimedAggregationStatistics {
     
     /**
      * @return Number of times the tab was rendered

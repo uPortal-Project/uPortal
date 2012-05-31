@@ -10,7 +10,6 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
-import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.commons.math3.stat.descriptive.moment.GeometricMean;
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
@@ -26,7 +25,6 @@ import org.apache.commons.math3.util.MathUtils;
 import org.apache.commons.math3.util.Precision;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
 /**
@@ -48,7 +46,7 @@ import org.hibernate.annotations.Type;
     )
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class JpaStatisticalSummary implements StatisticalSummary {
+public class JpaStatisticalSummary implements TimedAggregationStatistics {
     @SuppressWarnings("unused")
     @Id
     @GeneratedValue(generator = "UP_STAT_SUMMARY_GEN")
@@ -333,19 +331,6 @@ public class JpaStatisticalSummary implements StatisticalSummary {
         outBuffer.append("standard deviation: ").append(getStandardDeviation()).append("\n");
         outBuffer.append("sum of logs: ").append(getSumOfLogs()).append("\n");
         return outBuffer.toString();
-    }
-
-    /**
-     * Resets all statistics and storage
-     */
-    public void clear() {
-        _getMin().clear();
-        _getMax().clear();
-        _getSum().clear();
-        _getSumLog().clear();
-        _getSumsq().clear();
-        _getGeoMean().clear();
-        _getSecondMoment().clear();
     }
 
     /**

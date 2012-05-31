@@ -59,13 +59,13 @@ public class JpaTabRenderAggregationDao extends
 
     @Override
     protected void addFetches(Root<TabRenderAggregationImpl> root) {
-        root.fetch(TabRenderAggregationImpl_.renderTimes, JoinType.LEFT);
+        root.fetch(TabRenderAggregationImpl_.statisticalSummary, JoinType.LEFT);
     }
 
     @Override
     protected void addUnclosedPredicate(CriteriaBuilder cb, Root<TabRenderAggregationImpl> root,
             List<Predicate> keyPredicates) {
-        keyPredicates.add(cb.notEqual(cb.size(root.get(TabRenderAggregationImpl_.renderTimes)), 0));
+        keyPredicates.add(cb.isNotNull(root.get(TabRenderAggregationImpl_.statisticalSummary)));
     }
 
     @Override

@@ -21,6 +21,8 @@ package org.jasig.portal.events.aggr;
 
 import java.io.Serializable;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -39,6 +41,7 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl;
 /**
  * @author Eric Dalquist
  */
+@Access(AccessType.FIELD)
 @MappedSuperclass
 public abstract class BaseAggregationImpl implements BaseAggregation, Serializable {
     private static final long serialVersionUID = 1L;

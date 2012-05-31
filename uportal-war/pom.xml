@@ -617,7 +617,7 @@
                         <configuration>
                             <outputDirectory>target/generated-sources/annotations</outputDirectory>
                             <optionMap>
-                                <ormXmlList>/properties/db/stats/orm.xml</ormXmlList>
+                                <fullyAnnotationConfigured>false</fullyAnnotationConfigured>
                                 <addGeneratedAnnotation>true</addGeneratedAnnotation>
                             </optionMap>
                         </configuration>

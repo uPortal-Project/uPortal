@@ -66,7 +66,7 @@ public class TabRenderAggregator extends BasePortalEventAggregator<PortalRenderE
 
     @Override
     protected void updateAggregation(PortalRenderEvent e, AggregationIntervalInfo intervalInfo, TabRenderAggregationImpl aggregation) {
-        final long executionTime = e.getExecutionTime();
+        final long executionTime = e.getExecutionTimeNano();
         final int duration = intervalInfo.getDurationTo(e.getTimestampAsDate());
         aggregation.setDuration(duration);
         aggregation.countRender(executionTime);

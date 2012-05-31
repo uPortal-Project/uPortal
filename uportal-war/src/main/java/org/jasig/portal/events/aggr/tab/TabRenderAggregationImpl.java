@@ -20,35 +20,32 @@
 package org.jasig.portal.events.aggr.tab;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
 
 import javax.persistence.Cacheable;
-import javax.persistence.CollectionTable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.persistence.Transient;
 
 import org.apache.commons.lang.Validate;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.BaseAggregationImpl;
 import org.jasig.portal.events.aggr.DateDimension;
+import org.jasig.portal.events.aggr.JpaStatisticalSummary;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 
@@ -77,6 +74,7 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 public class TabRenderAggregationImpl extends BaseAggregationImpl implements TabRenderAggregation, Serializable {
     private static final long serialVersionUID = 1L;
     
+    @SuppressWarnings("unused")
     @Id
     @GeneratedValue(generator = "UP_TAB_RENDER_AGGR_GEN")
     @Column(name="ID")
@@ -88,37 +86,55 @@ public class TabRenderAggregationImpl extends BaseAggregationImpl implements Tab
     
     @Column(name = "RENDER_COUNT", nullable = false)
     private int renderCount;
-    
-    @Column(name = "GEOMETRIC_MEAN_TIME", nullable = false)
-    private double geometricMean;
-    
-    @Column(name = "MAX_TIME", nullable = false)
-    private double max;
-    
+
+    @Column(name = "SUM_TIME", nullable = false)
+    private double sum;
+
+    @Column(name = "SUMSQ_TIME", nullable = false)
+    private double sumsq;
+
     @Column(name = "MEAN_TIME", nullable = false)
     private double mean;
-    
+
+    @Column(name = "STD_DEVIATION_TIME", nullable = false)
+    private double standardDeviation;
+
+    @Column(name = "VARIANCE_TIME", nullable = false)
+    private double variance;
+
+    @Column(name = "POPULATION_VARIANCE_TIME", nullable = false)
+    private double populationVariance;
+
+    @Column(name = "MAX_TIME", nullable = false)
+    private double max;
+
     @Column(name = "MIN_TIME", nullable = false)
     private double min;
+
+    @Column(name = "GEOMETRIC_MEAN_TIME", nullable = false)
+    private double geometricMean;
+
+    @Column(name = "SUM_OF_LOGS_TIME", nullable = false)
+    private double sumOfLogs;
+
+    @Column(name = "SECOND_MOMENT_TIME", nullable = false)
+    private double secondMoment;
     
-    @Column(name = "NINETIETH_PERCENTILE", nullable = false)
-    private double ninetiethPercentile;
-    
-    @Column(name = "STANDARD_DEVIATION", nullable = false)
-    private double standardDeviation;
-    
-    @ElementCollection(fetch=FetchType.EAGER)
-    @CollectionTable(
-            name = "UP_TAB_RENDER_AGGR__TIMES",
-            joinColumns = @JoinColumn(name = "TAB_RENDER_ID")
-        )
-    @Column(name="RENDER_TIME", nullable=false, updatable=false)
-    private Collection<Long> renderTimes = new ArrayList<Long>();
-    
-    @Transient
-    private DescriptiveStatistics statistics;
-    @Transient
-    private SummaryStatistics summaryStatistics;
+    @OneToOne(cascade = { CascadeType.ALL }, orphanRemoval=true)
+    @JoinColumn(name = "STATS_SUMMARY_ID", nullable = true)
+    @Fetch(FetchMode.JOIN)
+    private JpaStatisticalSummary statisticalSummary;
+//    
+//    @ElementCollection(fetch=FetchType.EAGER)
+//    @CollectionTable(
+//            name = "UP_TAB_RENDER_AGGR__TIMES",
+//            joinColumns = @JoinColumn(name = "TAB_RENDER_ID")
+//        )
+//    @Column(name="RENDER_TIME", nullable=false, updatable=false)
+//    private Collection<Long> renderTimes = new ArrayList<Long>();
+//    
+//    @Transient
+//    private DescriptiveStatistics statistics;
     
     @SuppressWarnings("unused")
     private TabRenderAggregationImpl() {
@@ -131,7 +147,7 @@ public class TabRenderAggregationImpl extends BaseAggregationImpl implements Tab
             AggregationInterval interval, AggregatedGroupMapping aggregatedGroup, String tabName) {
         super(timeDimension, dateDimension, interval, aggregatedGroup);
 
-        Validate.notNull(dateDimension);
+        Validate.notNull(tabName);
         
         this.id = -1;
         this.tabName = tabName;
@@ -146,76 +162,89 @@ public class TabRenderAggregationImpl extends BaseAggregationImpl implements Tab
     public int getRenderCount() {
         return this.renderCount;
     }
-    
-    @Override
-    public double getGeometricMeanTime() {
-        return this.geometricMean;
-    }
 
     @Override
-    public double getMaxTime() {
-        return this.max;
+    public long getN() {
+        return this.renderCount;
     }
 
-    @Override
-    public double getMeanTime() {
+    public double getSum() {
+        return this.sum;
+    }
+
+    public double getSumsq() {
+        return this.sumsq;
+    }
+
+    public double getMean() {
         return this.mean;
     }
 
-    @Override
-    public double getMinTime() {
+    public double getStandardDeviation() {
+        return this.standardDeviation;
+    }
+
+    public double getVariance() {
+        return this.variance;
+    }
+
+    public double getPopulationVariance() {
+        return this.populationVariance;
+    }
+
+    public double getMax() {
+        return this.max;
+    }
+
+    public double getMin() {
         return this.min;
     }
 
-    @Override
-    public double getNinetiethPercentileTime() {
-        return this.ninetiethPercentile;
+    public double getGeometricMean() {
+        return this.geometricMean;
     }
 
-    @Override
-    public double getStandardDeviationTime() {
-        return this.standardDeviation;
+    public double getSumOfLogs() {
+        return this.sumOfLogs;
+    }
+
+    public double getSecondMoment() {
+        return this.secondMoment;
     }
 
     @Override
     protected boolean isComplete() {
-        return this.renderCount > 0 && this.renderTimes.isEmpty();
+        return this.renderCount > 0 && this.statisticalSummary == null;
     }
 
     @Override
     protected void completeInterval() {
-        this.renderTimes.clear();
+        this.statisticalSummary = null;
     }
     
     void countRender(long executionTime) {
         checkState();
         
         //Lazily init the statistics object
-        if (this.statistics == null) {
-            if (this.renderTimes.isEmpty()) {
-                this.statistics = new DescriptiveStatistics();
-            }
-            else {
-                final double[] doubleRenderTimes = new double[this.renderTimes.size()];
-                int i = 0;
-                for (final Long renderTime : this.renderTimes) {
-                    doubleRenderTimes[i++] = renderTime.doubleValue();
-                }
-                this.statistics = new DescriptiveStatistics(doubleRenderTimes);
-            }
+        if (this.statisticalSummary == null) {
+            this.statisticalSummary = new JpaStatisticalSummary();
         }
         
-        this.renderTimes.add(executionTime);
-        this.renderCount++;
-        this.statistics.addValue(executionTime);
-        
+        this.statisticalSummary.addValue(executionTime);
+
         //Update statistic values
-        this.geometricMean = this.statistics.getGeometricMean();
-        this.max = this.statistics.getMax();
-        this.mean = this.statistics.getMean();
-        this.min = this.statistics.getMin();
-        this.ninetiethPercentile = this.statistics.getPercentile(90);
-        this.standardDeviation = this.statistics.getStandardDeviation();
+        this.renderCount = (int)this.statisticalSummary.getN();
+        this.sum = this.statisticalSummary.getSum();
+        this.sumsq = this.statisticalSummary.getSumsq();
+        this.mean = this.statisticalSummary.getMean();
+        this.standardDeviation = this.statisticalSummary.getStandardDeviation();
+        this.variance = this.statisticalSummary.getVariance();
+        this.populationVariance = this.statisticalSummary.getPopulationVariance();
+        this.max = this.statisticalSummary.getMax();
+        this.min = this.statisticalSummary.getMin();
+        this.geometricMean = this.statisticalSummary.getGeometricMean();
+        this.sumOfLogs = this.statisticalSummary.getSumOfLogs();
+        this.secondMoment = this.statisticalSummary.getSecondMoment();
     }
 
     @Override
@@ -224,17 +253,6 @@ public class TabRenderAggregationImpl extends BaseAggregationImpl implements Tab
         int result = super.hashCode();
         long temp;
         temp = Double.doubleToLongBits(geometricMean);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(max);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(mean);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(min);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(ninetiethPercentile);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        result = prime * result + renderCount;
-        temp = Double.doubleToLongBits(standardDeviation);
         result = prime * result + (int) (temp ^ (temp >>> 32));
         result = prime * result + ((tabName == null) ? 0 : tabName.hashCode());
         return result;
@@ -251,18 +269,6 @@ public class TabRenderAggregationImpl extends BaseAggregationImpl implements Tab
         TabRenderAggregationImpl other = (TabRenderAggregationImpl) obj;
         if (Double.doubleToLongBits(geometricMean) != Double.doubleToLongBits(other.geometricMean))
             return false;
-        if (Double.doubleToLongBits(max) != Double.doubleToLongBits(other.max))
-            return false;
-        if (Double.doubleToLongBits(mean) != Double.doubleToLongBits(other.mean))
-            return false;
-        if (Double.doubleToLongBits(min) != Double.doubleToLongBits(other.min))
-            return false;
-        if (Double.doubleToLongBits(ninetiethPercentile) != Double.doubleToLongBits(other.ninetiethPercentile))
-            return false;
-        if (renderCount != other.renderCount)
-            return false;
-        if (Double.doubleToLongBits(standardDeviation) != Double.doubleToLongBits(other.standardDeviation))
-            return false;
         if (tabName == null) {
             if (other.tabName != null)
                 return false;
@@ -274,12 +280,12 @@ public class TabRenderAggregationImpl extends BaseAggregationImpl implements Tab
 
     @Override
     public String toString() {
-        return "TabRenderAggregationImpl [id=" + id + ", dateDimension=" + getDateDimension() + ", timeDimension="
-                + getTimeDimension() + ", interval=" + getInterval() + ", aggregatedGroup=" + getAggregatedGroup()
-                + ", duration=" + getDuration() + " tabName=" + tabName + ", renderCount=" + renderCount
-                + ", geometricMean=" + geometricMean + ", max=" + max + ", mean=" + mean + ", min=" + min
-                + ", ninetiethPercentileTime=" + ninetiethPercentile + ", standardDeviation=" + standardDeviation
-                + "]";
-    }    
-    
+        return "TabRenderAggregationImpl [tabName=" + tabName + ", renderCount=" + renderCount + ", sum=" + sum
+                + ", sumsq=" + sumsq + ", mean=" + mean + ", standardDeviation=" + standardDeviation + ", variance="
+                + variance + ", populationVariance=" + populationVariance + ", max=" + max + ", min=" + min
+                + ", geometricMean=" + geometricMean + ", sumOfLogs=" + sumOfLogs + ", secondMoment=" + secondMoment
+                + ", getTimeDimension" + getTimeDimension() + ", getDateDimension" + getDateDimension()
+                + ", getInterval" + getInterval() + ", getDuration" + getDuration() + ", getAggregatedGroup"
+                + getAggregatedGroup() + "]";
+    }
 }

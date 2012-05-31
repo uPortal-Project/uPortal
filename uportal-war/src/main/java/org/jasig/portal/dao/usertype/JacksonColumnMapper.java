@@ -34,7 +34,8 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 /**
- * Mapper that read/writes objects to JSON
+ * Mapper that read/writes objects to JSON. Uses a 2 step serialization/deserialization process so the
+ * object's type can be recorded in the JSON data
  * 
  * @author Eric Dalquist
  */
@@ -97,7 +98,6 @@ public class JacksonColumnMapper extends AbstractStringColumnMapper<Object> {
     @Override
     public final String toNonNullValue(Object value) {
         try {
-            //Gross but 2-step is needed to deserialize using the correct type
             final Class<? extends Object> type = value.getClass();
             final ObjectWriter typeWriter = typedObjectWriters.getUnchecked(type);
             final String valueAsString = typeWriter.writeValueAsString(value);
@@ -116,32 +116,32 @@ public class JacksonColumnMapper extends AbstractStringColumnMapper<Object> {
     }
     
     public static final class JsonWrapper {
-        private Class<?> type;
-        private String value;
+        private Class<?> t;
+        private String v;
         
         public JsonWrapper() {
         }
         
         public JsonWrapper(Class<?> type, String value) {
-            this.type = type;
-            this.value = value;
+            this.t = type;
+            this.v = value;
         }
         
         public Class<?> getType() {
-            return type;
+            return t;
         }
         public void setType(Class<?> type) {
-            this.type = type;
+            this.t = type;
         }
         public String getValue() {
-            return value;
+            return v;
         }
         public void setValue(String value) {
-            this.value = value;
+            this.v = value;
         }
         @Override
         public String toString() {
-            return "JsonWrapper [type=" + type + ", value=" + value + "]";
+            return "JsonWrapper [type=" + t + ", value=" + v + "]";
         }
     }
 }
