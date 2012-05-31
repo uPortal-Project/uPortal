@@ -99,7 +99,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
     private Set<IPortalEventAggregator<PortalEvent>> portalEventAggregators = Collections.emptySet();
     private List<ApplicationEventFilter<PortalEvent>> applicationEventFilters = Collections.emptyList();
     
-    private int eventAggregationBatchSize = 5000;
+    private int eventAggregationBatchSize = 10000;
     private ReadablePeriod aggregationDelay = Period.seconds(30);
     private ReadablePeriod purgeDelay = Period.days(1);
     private ReadablePeriod dimensionBuffer = Period.days(30);
@@ -169,7 +169,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
         this.purgeDelay = purgeDelay;
     }
     
-    @Value("${org.jasig.portal.event.aggr.PortalEventAggregationManager.eventAggregationBatchSize:5000}")
+    @Value("${org.jasig.portal.event.aggr.PortalEventAggregationManager.eventAggregationBatchSize:10000}")
     public void setEventAggregationBatchSize(int eventAggregationBatchSize) {
         this.eventAggregationBatchSize = eventAggregationBatchSize;
     }
