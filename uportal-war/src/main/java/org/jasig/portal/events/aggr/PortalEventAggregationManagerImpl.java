@@ -204,6 +204,8 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
 
     @Override
     public boolean aggregateRawEvents() {
+        //TODO eventually consider JTA/XA for this http://docs.codehaus.org/display/BTM/Home 
+        
         TryLockFunctionResult<Boolean> result = null;
         do {
             if (result != null) {

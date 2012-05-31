@@ -14,7 +14,7 @@ public interface TabRenderAggregationKey extends BaseAggregationKey {
     public static final String PERSONAL_TAB_NAME = "CATCH_ALL_PERSONAL_TAB";
     
     /**
-     * Tab name used renders with no targeted tab
+     * Tab name used for renders with no targeted tab
      */
     public static final String NO_TAB_NAME = "CATCH_ALL_NULL_TAB";
 

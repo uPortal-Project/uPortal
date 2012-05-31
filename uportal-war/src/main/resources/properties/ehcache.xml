@@ -44,6 +44,14 @@
     <!-- ****************************************************************** -->
     
     <!-- 
+     | Caches layout node id -> tab name resolutions done by the tab renderer aggregator
+     | - not replicated
+     +-->
+    <cache name="org.jasig.portal.events.aggr.tabrender.TabRenderAggregator.layoutNodeIdNameResolver"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    
+    <!-- 
      | Caches data scoped to an active EntityManager. Entries in this cache are short lived (duration of a thread of execution)
      | - not replicated
      +-->
@@ -764,12 +772,13 @@
         timeToIdleSeconds="0" timeToLiveSeconds="3600" memoryStoreEvictionPolicy="LRU" statistics="true"/>
 
     <!--
-     | Caches mapping from uPortal group into long-term consistent event aggregate group 
+     | Caches mapping from uPortal group into long-term consistent event aggregate group, cache forever as this table
+     | is only ever added to and entries are immutable 
      | - 1 x portal group
      +-->
     <cache name="AggregateEvents.org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl" 
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="30" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <cache name="AggregateEvents.org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl.Query" 
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="30" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
