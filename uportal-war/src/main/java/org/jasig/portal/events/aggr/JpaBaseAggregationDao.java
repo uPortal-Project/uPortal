@@ -25,6 +25,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -45,6 +46,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
@@ -332,7 +334,8 @@ public abstract class JpaBaseAggregationDao<
         return new LinkedHashSet<T>(query.getResultList());
     }
 
-    @AggrEventsTransactional
+//    @AggrEventsTransactional
+    @Transactional(PERSISTENCE_UNIT_NAME)
     @Override
     public final T createAggregation(K key) {
         final T aggregation = createAggregationInstance(key);
@@ -342,9 +345,20 @@ public abstract class JpaBaseAggregationDao<
         return aggregation;
     }
 
-    @AggrEventsTransactional
+//    @AggrEventsTransactional
+    @Transactional(PERSISTENCE_UNIT_NAME)
     @Override
     public final void updateAggregation(T aggregation) {
         this.getEntityManager().persist(aggregation);
+    }
+
+//    @AggrEventsTransactional
+    @Transactional(PERSISTENCE_UNIT_NAME)
+    @Override
+    public final void updateAggregations(Iterable<T> aggregations) {
+        final EntityManager entityManager = this.getEntityManager();
+        for (final T aggregation : aggregations) {
+            entityManager.persist(aggregation);
+        }
     }
 }

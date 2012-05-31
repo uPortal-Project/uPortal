@@ -98,6 +98,19 @@
     <bean id="loginPortalEventAggregator" class="org.jasig.portal.events.aggr.login.LoginPortalEventAggregator"/>
     <bean id="concurrentUserAggregator" class="org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregator"/>
     <bean id="tabRenderAggregator" class="org.jasig.portal.events.aggr.tabrender.TabRenderAggregator"/>
+    <bean id="portletExecutionAggregatorAll" class="org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregator"/>
+    <bean id="portletExecutionAggregatorAction" class="org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregator">
+        <property name="executionType" value="ACTION" />
+    </bean>
+    <bean id="portletExecutionAggregatorEvent" class="org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregator">
+        <property name="executionType" value="EVENT" />
+    </bean>
+    <bean id="portletExecutionAggregatorRender" class="org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregator">
+        <property name="executionType" value="RENDER" />
+    </bean>
+    <bean id="portletExecutionAggregatorResource" class="org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregator">
+        <property name="executionType" value="RESOURCE" />
+    </bean>
     
     <!-- 
      | List of event filters to apply to all event aggregators

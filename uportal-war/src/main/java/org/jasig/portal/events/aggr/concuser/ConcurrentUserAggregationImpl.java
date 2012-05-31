@@ -57,12 +57,12 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 @SequenceGenerator(
         name="UP_CONCURRENT_USER_AGGR_GEN",
         sequenceName="UP_CONCURRENT_USER_AGGR_SEQ",
-        allocationSize=100
+        allocationSize=1000
     )
 @TableGenerator(
         name="UP_CONCURRENT_USER_AGGR_GEN",
         pkColumnValue="UP_CONCURRENT_USER_AGGR_PROP",
-        allocationSize=100
+        allocationSize=1000
     )
 @org.hibernate.annotations.Table(
         appliesTo = "UP_CONCURRENT_USER_AGGR",

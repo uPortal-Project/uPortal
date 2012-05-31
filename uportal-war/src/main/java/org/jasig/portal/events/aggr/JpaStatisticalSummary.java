@@ -37,12 +37,12 @@ import org.hibernate.annotations.Type;
 @SequenceGenerator(
         name="UP_STAT_SUMMARY_GEN",
         sequenceName="UP_STAT_SUMMARY_SEQ",
-        allocationSize=10
+        allocationSize=20000
     )
 @TableGenerator(
         name="UP_STAT_SUMMARY_GEN",
         pkColumnValue="UP_STAT_SUMMARY",
-        allocationSize=10
+        allocationSize=20000
     )
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)

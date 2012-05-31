@@ -1,5 +1,7 @@
 package org.jasig.portal.events.aggr;
 
+import java.io.Serializable;
+
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 
 /**
@@ -8,7 +10,7 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
  * 
  * @author Eric Dalquist
  */
-public interface BaseAggregationKey {
+public interface BaseAggregationKey extends Serializable {
     /**
      * @return The time of day the aggregation is for
      */

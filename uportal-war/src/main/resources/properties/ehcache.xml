@@ -49,7 +49,7 @@
      +-->
     <cache name="org.jasig.portal.jpa.cache.EntityManagerCache"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="30" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory class="org.jasig.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=tagTrackingCacheEventListener" listenFor="local" />
     </cache>
 
@@ -813,6 +813,20 @@
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="30" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <cache name="AggregateEvents.org.jasig.portal.events.aggr.tabrender.TabRenderAggregationImpl.Query" 
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="30" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+
+    <!--
+     | Caches portlet execution aggregations, primarily used during event aggregation 
+     | - 1 x portlet x request type x group x interval
+     +-->
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregationImpl" 
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="30" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregationImpl.renderTimes" 
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="30" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregationImpl.Query" 
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="30" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
 

@@ -56,6 +56,7 @@ public abstract class BasePortalEventAggregator<
     
     
     protected final Logger logger = LoggerFactory.getLogger(getClass());
+    private final String cacheKeySource = this.getClass().getName();
     
     private AggregationIntervalHelper aggregationIntervalHelper;
 
@@ -149,41 +150,41 @@ public abstract class BasePortalEventAggregator<
         for (final T aggregation : aggregations) {
             final int duration = intervalInfo.getTotalDuration();
             aggregation.intervalComplete(duration);
-            logger.trace("Marked complete: " + aggregation);
-            aggregationDao.updateAggregation(aggregation);
         }
+        aggregationDao.updateAggregations(aggregations);
         
         //Look for any uncomplete aggregations from the previous interval
         final AggregationIntervalInfo prevIntervalInfo = this.aggregationIntervalHelper.getIntervalInfo(interval, intervalInfo.getStart().minusMinutes(1));
-        
         final Collection<T> unclosedAggregations = aggregationDao.getUnclosedAggregations(prevIntervalInfo.getStart(), prevIntervalInfo.getEnd(), interval);
         for (final T aggregation : unclosedAggregations) {
             final int duration = intervalInfo.getTotalDuration();
             aggregation.intervalComplete(duration);
-            logger.debug("Marked complete previously missed: " + aggregation);
-            aggregationDao.updateAggregation(aggregation);
+            logger.debug("Marked complete, was previously unclosed: {}", aggregation);
         }
+        aggregationDao.updateAggregations(unclosedAggregations);
     }
 
     /**
      * Get the set of existing aggregations looking first in the aggregation session and then in the db
      */
     private Collection<T> getOrLoadAggregations(EventAggregationContext eventAggregationContext, AggregationIntervalInfo intervalInfo, E event) {
-        final K key = this.createAggregationKey(intervalInfo, null, event);
-        Collection<T> cachedAggregations = eventAggregationContext.getAttribute(key);
+        final K aggregationKey = this.createAggregationKey(intervalInfo, null, event);
+        final CacheKey cachedAggregationsCacheKey = CacheKey.build(cacheKeySource, aggregationKey);
+        
+        Collection<T> cachedAggregations = eventAggregationContext.getAttribute(cachedAggregationsCacheKey);
         if (cachedAggregations == null) {
             //Nothing in the aggr session yet, cache the current set of aggregations from the DB in the aggr session
-            cachedAggregations = this.getAggregationDao().getAggregationsForInterval(key);
-            eventAggregationContext.setAttribute(key, cachedAggregations);
+            cachedAggregations = this.getAggregationDao().getAggregationsForInterval(aggregationKey);
+            eventAggregationContext.setAttribute(cachedAggregationsCacheKey, cachedAggregations);
             
             //Track all event scoped collections
-            final CacheKey cacheKey = createAggregationSessionCacheKey(intervalInfo);
-            Set<K> eventScopedKeys = eventAggregationContext.getAttribute(cacheKey);
+            final CacheKey eventScopedKeysCacheKey = createAggregationSessionCacheKey(intervalInfo);
+            Set<CacheKey> eventScopedKeys = eventAggregationContext.getAttribute(eventScopedKeysCacheKey);
             if (eventScopedKeys == null) {
-                eventScopedKeys = new HashSet<K>();
-                eventAggregationContext.setAttribute(cacheKey, eventScopedKeys);
+                eventScopedKeys = new HashSet<CacheKey>();
+                eventAggregationContext.setAttribute(eventScopedKeysCacheKey, eventScopedKeys);
             }
-            eventScopedKeys.add(key);
+            eventScopedKeys.add(cachedAggregationsCacheKey);
         }
         
         return cachedAggregations;
@@ -193,8 +194,8 @@ public abstract class BasePortalEventAggregator<
      * Get the set of existing aggregations from the aggregation session
      */
     private Iterable<T> getCachedAggregations(final EventAggregationContext eventAggregationContext, AggregationIntervalInfo intervalInfo) {
-        final CacheKey cacheKey = createAggregationSessionCacheKey(intervalInfo);
-        final Set<K> eventScopedKeys = eventAggregationContext.getAttribute(cacheKey);
+        final CacheKey eventScopedKeysCacheKey = createAggregationSessionCacheKey(intervalInfo);
+        final Set<CacheKey> eventScopedKeys = eventAggregationContext.getAttribute(eventScopedKeysCacheKey);
         if (eventScopedKeys == null || eventScopedKeys.isEmpty()) {
             return Collections.emptySet();
         }
@@ -204,7 +205,7 @@ public abstract class BasePortalEventAggregator<
             @Override
             public Iterator<T> iterator() {
                 return new UnmodifiableIterator<T>() {
-                    final Iterator<K> eventScopedKeysItr = eventScopedKeys.iterator();
+                    final Iterator<CacheKey> eventScopedKeysItr = eventScopedKeys.iterator();
                     Iterator<T> cachedAggregationsItr;
                     
                     @Override
@@ -216,8 +217,8 @@ public abstract class BasePortalEventAggregator<
                     @Override
                     public T next() {
                         if (cachedAggregationsItr == null || !cachedAggregationsItr.hasNext()) {
-                            final K key = eventScopedKeysItr.next();
-                            final Collection<T> cachedAggregations = eventAggregationContext.getAttribute(key);
+                            final CacheKey cachedAggregationsCacheKey = eventScopedKeysItr.next();
+                            final Collection<T> cachedAggregations = eventAggregationContext.getAttribute(cachedAggregationsCacheKey);
                             cachedAggregationsItr = cachedAggregations.iterator();
                         }
                         
@@ -232,10 +233,9 @@ public abstract class BasePortalEventAggregator<
      * Create the CacheKey used to store data in the aggregation session
      */
     private CacheKey createAggregationSessionCacheKey(AggregationIntervalInfo intervalInfo) {
-        final String name = this.getClass().getName();
         final DateMidnight date = intervalInfo.getDateDimension().getDate();
         final LocalTime time = intervalInfo.getTimeDimension().getTime();
         final AggregationInterval aggregationInterval = intervalInfo.getAggregationInterval();
-        return CacheKey.build(name, date, time, aggregationInterval);
+        return CacheKey.build(cacheKeySource, date, time, aggregationInterval);
     }
 }

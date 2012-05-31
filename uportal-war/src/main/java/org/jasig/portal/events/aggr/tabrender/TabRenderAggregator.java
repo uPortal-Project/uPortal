@@ -34,13 +34,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcOperations;
 
 /**
- * Event aggregator that uses {@link TabRenderAggregationPrivateDao} to aggregate concurrent user data 
+ * Event aggregator that uses {@link TabRenderAggregationPrivateDao} to aggregate tab renders 
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
 public class TabRenderAggregator extends BasePortalEventAggregator<PortalRenderEvent, TabRenderAggregationImpl, TabRenderAggregationKey> {
-    private TabRenderAggregationPrivateDao concurrentUserAggregationDao;
+    private TabRenderAggregationPrivateDao tabRenderAggregationDao;
     private JdbcOperations portalJdbcOperations;
     
     @Autowired
@@ -50,8 +50,8 @@ public class TabRenderAggregator extends BasePortalEventAggregator<PortalRenderE
     }
 
     @Autowired
-    public void setConcurrentUserAggregationDao(TabRenderAggregationPrivateDao concurrentUserAggregationDao) {
-        this.concurrentUserAggregationDao = concurrentUserAggregationDao;
+    public void setTabRenderAggregationDao(TabRenderAggregationPrivateDao tabRenderAggregationDao) {
+        this.tabRenderAggregationDao = tabRenderAggregationDao;
     }
 
     @Override
@@ -61,7 +61,7 @@ public class TabRenderAggregator extends BasePortalEventAggregator<PortalRenderE
 
     @Override
     protected BaseAggregationPrivateDao<TabRenderAggregationImpl, TabRenderAggregationKey> getAggregationDao() {
-        return this.concurrentUserAggregationDao;
+        return this.tabRenderAggregationDao;
     }
 
     @Override
@@ -80,10 +80,26 @@ public class TabRenderAggregator extends BasePortalEventAggregator<PortalRenderE
         final DateDimension dateDimension = intervalInfo.getDateDimension();
         final AggregationInterval aggregationInterval = intervalInfo.getAggregationInterval();
         
-        //TODO resolve tab name
-        final String targetedLayoutNodeId = event.getTargetedLayoutNodeId();
-        
-//        this.portalJdbcOperations.se
+        String targetedLayoutNodeId = event.getTargetedLayoutNodeId();
+        /*
+         * TODO resolve tab name
+u120l1s4
+u123l1s4
+u124l1s4
+u112l1s4
+s24
+u111l1s64
+u122l1s4
+u114l1s4
+u121l1s4
+u110l1s4
+u115l1s4
+u113l1s4
+        this.portalJdbcOperations.se
+         */
+        if (targetedLayoutNodeId == null) {
+            targetedLayoutNodeId = TabRenderAggregationKey.NO_TAB_NAME;
+        }
         
         return new TabRenderAggregationKeyImpl(dateDimension, timeDimension, aggregationInterval, aggregatedGroup, targetedLayoutNodeId);
     }

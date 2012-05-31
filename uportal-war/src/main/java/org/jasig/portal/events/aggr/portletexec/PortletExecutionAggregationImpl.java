@@ -17,13 +17,15 @@
  * under the License.
  */
 
-package org.jasig.portal.events.aggr.tabrender;
+package org.jasig.portal.events.aggr.portletexec;
 
 import java.io.Serializable;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -37,6 +39,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.Type;
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.BaseTimedAggregationStatsImpl;
 import org.jasig.portal.events.aggr.DateDimension;
@@ -47,69 +50,84 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
  * @author Eric Dalquist
  */
 @Entity
-@Table(name = "UP_TAB_RENDER_AGGR")
+@Table(name = "UP_PORTLET_EXEC_AGGR")
 @Inheritance(strategy=InheritanceType.JOINED)
 @SequenceGenerator(
-        name="UP_TAB_RENDER_AGGR_GEN",
-        sequenceName="UP_TAB_RENDER_AGGR_SEQ",
-        allocationSize=5000
+        name="UP_PORTLET_EXEC_AGGR_GEN",
+        sequenceName="UP_PORTLET_EXEC_AGGR_SEQ",
+        allocationSize=10000
     )
 @TableGenerator(
-        name="UP_TAB_RENDER_AGGR_GEN",
-        pkColumnValue="UP_TAB_RENDER_AGGR_PROP",
-        allocationSize=5000
+        name="UP_PORTLET_EXEC_AGGR_GEN",
+        pkColumnValue="UP_PORTLET_EXEC_AGGR_PROP",
+        allocationSize=10000
     )
 @org.hibernate.annotations.Table(
-        appliesTo = "UP_TAB_RENDER_AGGR",
-        indexes = @Index(name = "IDX_UP_TAB_REND_AGGR_DTI", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL" })
+        appliesTo = "UP_PORTLET_EXEC_AGGR",
+        indexes = @Index(name = "IDX_UP_PLT_EXEC_AGGR_DTI", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL" })
         )
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class TabRenderAggregationImpl extends BaseTimedAggregationStatsImpl implements TabRenderAggregation, Serializable {
+public class PortletExecutionAggregationImpl extends BaseTimedAggregationStatsImpl implements PortletExecutionAggregation, Serializable {
     private static final long serialVersionUID = 1L;
     
     @SuppressWarnings("unused")
     @Id
-    @GeneratedValue(generator = "UP_TAB_RENDER_AGGR_GEN")
+    @GeneratedValue(generator = "UP_PORTLET_EXEC_AGGR_GEN")
     @Column(name="ID")
     private final long id;
     
     @NaturalId
-    @Column(name = "TAB_NAME", nullable = false, length=400)
-    private final String tabName;
+    @Column(name = "FNAME", nullable = false, length=400)
+    @Type(type="fname")
+    private final String fname;
+    
+    @NaturalId
+    @Column(name = "EXECUTION_TYPE", nullable = false, length=50)
+    @Enumerated(EnumType.STRING)
+    private final ExecutionType executionType;
     
     @SuppressWarnings("unused")
-    private TabRenderAggregationImpl() {
+    private PortletExecutionAggregationImpl() {
         super();
         this.id = -1;
-        this.tabName = null;
+        this.fname = null;
+        this.executionType = null;
     }
     
-    TabRenderAggregationImpl(TimeDimension timeDimension, DateDimension dateDimension, 
-            AggregationInterval interval, AggregatedGroupMapping aggregatedGroup, String tabName) {
+    PortletExecutionAggregationImpl(TimeDimension timeDimension, DateDimension dateDimension, 
+            AggregationInterval interval, AggregatedGroupMapping aggregatedGroup, String tabName, ExecutionType executionType) {
         super(timeDimension, dateDimension, interval, aggregatedGroup);
 
         Validate.notNull(tabName);
+        Validate.notNull(executionType);
         
         this.id = -1;
-        this.tabName = tabName;
+        this.fname = tabName;
+        this.executionType = executionType;
     }
 
     @Override
-    public String getTabName() {
-        return this.tabName;
+    public String getFname() {
+        return this.fname;
     }
     
     @Override
-    public int getRenderCount() {
+    public int getExecutionCount() {
         return (int)this.getN();
+    }
+    
+    @Override
+    public ExecutionType getExecutionType() {
+        return this.executionType;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((tabName == null) ? 0 : tabName.hashCode());
+        result = prime * result + ((executionType == null) ? 0 : executionType.hashCode());
+        result = prime * result + ((fname == null) ? 0 : fname.hashCode());
         return result;
     }
 
@@ -121,20 +139,22 @@ public class TabRenderAggregationImpl extends BaseTimedAggregationStatsImpl impl
             return false;
         if (getClass() != obj.getClass())
             return false;
-        TabRenderAggregationImpl other = (TabRenderAggregationImpl) obj;
-        if (tabName == null) {
-            if (other.tabName != null)
+        PortletExecutionAggregationImpl other = (PortletExecutionAggregationImpl) obj;
+        if (executionType != other.executionType)
+            return false;
+        if (fname == null) {
+            if (other.fname != null)
                 return false;
         }
-        else if (!tabName.equals(other.tabName))
+        else if (!fname.equals(other.fname))
             return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "TabRenderAggregationImpl [tabName=" + tabName + ", getTimeDimension=" + getTimeDimension()
-                + ", getDateDimension=" + getDateDimension() + ", getInterval=" + getInterval()
-                + ", getAggregatedGroup=" + getAggregatedGroup() + "]";
+        return "PortletExecutionAggregationImpl [fname=" + fname + ", executionType=" + executionType
+                + ", getTimeDimension=" + getTimeDimension() + ", getDateDimension=" + getDateDimension()
+                + ", getInterval=" + getInterval() + ", getAggregatedGroup=" + getAggregatedGroup() + "]";
     }
 }

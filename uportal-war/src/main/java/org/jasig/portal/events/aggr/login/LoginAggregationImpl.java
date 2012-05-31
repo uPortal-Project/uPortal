@@ -57,12 +57,12 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 @SequenceGenerator(
         name="UP_LOGIN_EVENT_AGGREGATE_GEN",
         sequenceName="UP_LOGIN_EVENT_AGGREGATE_SEQ",
-        allocationSize=100
+        allocationSize=1000
     )
 @TableGenerator(
         name="UP_LOGIN_EVENT_AGGREGATE_GEN",
         pkColumnValue="UP_LOGIN_EVENT_AGGREGATE_PROP",
-        allocationSize=100
+        allocationSize=1000
     )
 @org.hibernate.annotations.Table(
         appliesTo = "UP_LOGIN_EVENT_AGGREGATE",

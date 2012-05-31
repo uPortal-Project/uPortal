@@ -40,6 +40,7 @@
     <bean id="loginAggregationDao" class="org.jasig.portal.events.aggr.login.JpaLoginAggregationDao" />
     <bean id="concurrentUserAggregationDao" class="org.jasig.portal.events.aggr.concuser.JpaConcurrentUserAggregationDao" />
     <bean id="tabRenderAggregationDao" class="org.jasig.portal.events.aggr.tabrender.JpaTabRenderAggregationDao"/>
+    <bean id="portletExecutionAggregationDao" class="org.jasig.portal.events.aggr.portletexec.JpaPortletExecutionAggregationDao"/>
     <bean id="eventSessionDao" class="org.jasig.portal.events.aggr.session.JpaEventSessionDao">
         <property name="eventSessionDuration" value="PT0S" />
     </bean>

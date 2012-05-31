@@ -34,4 +34,9 @@ public interface BaseAggregationPrivateDao<
      * @param aggregation The aggregation to update
      */
     void updateAggregation(T aggregation);
+    
+    /**
+     * @param aggregations The aggregations to update
+     */
+    void updateAggregations(Iterable<T> aggregations);
 }
