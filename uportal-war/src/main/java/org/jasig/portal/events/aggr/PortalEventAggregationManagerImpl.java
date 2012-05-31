@@ -19,6 +19,7 @@
 
 package org.jasig.portal.events.aggr;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -30,6 +31,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.annotation.Resource;
 import javax.persistence.FlushModeType;
 
 import org.apache.commons.lang.mutable.MutableInt;
@@ -47,6 +49,7 @@ import org.jasig.portal.events.aggr.session.EventSession;
 import org.jasig.portal.events.aggr.session.EventSessionDao;
 import org.jasig.portal.events.handlers.db.IPortalEventDao;
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
+import org.jasig.portal.spring.context.ApplicationEventFilter;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
@@ -58,12 +61,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.OrderComparator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -92,11 +97,22 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
     private AggregationIntervalHelper intervalHelper;
     private EventSessionDao eventSessionDao;
     private Set<IPortalEventAggregator<PortalEvent>> portalEventAggregators = Collections.emptySet();
+    private List<ApplicationEventFilter<PortalEvent>> applicationEventFilters = Collections.emptyList();
     
     private int eventAggregationBatchSize = 2000;
     private ReadablePeriod aggregationDelay = Period.seconds(30);
     private ReadablePeriod purgeDelay = Period.days(1);
     private ReadablePeriod dimensionBuffer = Period.days(30);
+    
+    /**
+     * @param applicationEventFilters The list of filters to test each event with
+     */
+    @Resource(name="aggregatorEventFilters")
+    public void setApplicationEventFilters(List<ApplicationEventFilter<PortalEvent>> applicationEventFilters) {
+        applicationEventFilters = new ArrayList<ApplicationEventFilter<PortalEvent>>(applicationEventFilters);
+        Collections.sort(applicationEventFilters, OrderComparator.INSTANCE);
+        this.applicationEventFilters = ImmutableList.copyOf(applicationEventFilters);
+    }
     
     @Autowired
     public void setEventSessionDao(EventSessionDao eventSessionDao) {
@@ -580,6 +596,14 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
         
         private void doAggregateEvent(PortalEvent item) {
             eventCounter.increment();
+
+            for (final ApplicationEventFilter<PortalEvent> applicationEventFilter : applicationEventFilters) {
+                if (!applicationEventFilter.supports(item)) {
+                    logger.trace("Skipping event {} - {} excluded by filter {}", new Object[] { eventCounter, item,
+                            applicationEventFilter });
+                    return;
+                }
+            }
             logger.trace("Aggregating event {} - {}", eventCounter, item);
             
             //Load or create the event session

@@ -52,20 +52,13 @@
                 
                 <!-- Can be used to filter events based on who generated the event
                 <bean class="org.jasig.portal.events.handlers.UserFilteringPortalEventHandler">
-                    <property name="ignoredUserNames">
+                    <property name="ignoredUserNamePatterns">
                         <list>
-                            <value>test-user1</value>
-                            <value>test-user2</value>
-                        </list>
-                    </property>
-                    <property name="supportedUserNames">
-                        <list>
-                            <value>user1</value>
-                            <value>user2</value>
+                            <value>user\..*</value>
+                            <value>vptest-user.*</value>
                         </list>
                     </property>
                     <property name="supportGuest" value="true" />
-                    <property name="requireAll" value="true" />
                 </bean>
                  -->
                  
@@ -92,6 +85,7 @@
     </bean>
     
     
+    
     <!--
      | Event Aggregators - These run in a single thread on a single node in the portal cluster. They are used to iterate
      | through all events stored by the portalEventDaoQueuingEventHandler. 
@@ -104,4 +98,20 @@
     <bean id="loginPortalEventAggregator" class="org.jasig.portal.events.aggr.login.LoginPortalEventAggregator"/>
     <bean id="concurrentUserAggregator" class="org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregator"/>
     <bean id="tabRenderAggregator" class="org.jasig.portal.events.aggr.tabrender.TabRenderAggregator"/>
+    
+    <!-- 
+     | List of event filters to apply to all event aggregators
+     +-->
+    <util:list id="aggregatorEventFilters">
+        <!-- 
+        <bean class="org.jasig.portal.events.handlers.UserFilteringPortalEventHandler">
+            <property name="ignoredUserNamePatterns">
+                <list>
+                    <value>user\..*</value>
+                    <value>vptest-user.*</value>
+                </list>
+            </property>
+        </bean>
+         -->
+    </util:list>
 </beans>
