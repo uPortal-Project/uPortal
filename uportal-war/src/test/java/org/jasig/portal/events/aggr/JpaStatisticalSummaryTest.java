@@ -3,6 +3,7 @@ package org.jasig.portal.events.aggr;
 import static junit.framework.Assert.assertEquals;
 
 import java.util.Random;
+import java.util.concurrent.Callable;
 
 import org.apache.commons.math3.stat.descriptive.StorelessUnivariateStatistic;
 import org.apache.commons.math3.stat.descriptive.moment.SecondMoment;
@@ -32,23 +33,38 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = "classpath:jpaAggrEventsTestContext.xml")
 public class JpaStatisticalSummaryTest extends BaseAggrEventsJpaDaoTest {
     
-    @Test
-    public void testJpaStatisticalSummary() {
-        this.executeInTransaction(new CallableWithoutResult() {
-            @Override
-            protected void callWithoutResult() {
-                final JpaStatisticalSummary jpaStatisticalSummary = new JpaStatisticalSummary();
-                
-                final Random r = new Random(0);
-                for (int i = 0; i < 10; i++) {
-                    final int nextInt = r.nextInt(100000000);
-                    jpaStatisticalSummary.addValue(nextInt);
-                }
-                
-                getEntityManager().persist(jpaStatisticalSummary);
-            }
-        });
-    }
+//    @Test
+//    public void testJpaStatisticalSummary() {
+//        final long id = this.executeInTransaction(new Callable<Long>() {
+//            @Override
+//            public Long call() throws Exception {
+//                final JpaStatisticalSummary jpaStatisticalSummary = new JpaStatisticalSummary();
+//                
+//                final Random r = new Random(0);
+//                for (int i = 0; i < 10; i++) {
+//                    final int nextInt = r.nextInt(100000000);
+//                    jpaStatisticalSummary.addValue(nextInt);
+//                }
+//                
+//                getEntityManager().persist(jpaStatisticalSummary);
+//                
+//                System.out.println(jpaStatisticalSummary);
+//                
+//                return jpaStatisticalSummary.getStatSummaryId();
+//            }
+//        });
+//        
+//        System.out.println(id);
+//        
+//        this.executeInTransaction(new CallableWithoutResult() {
+//            @Override
+//            protected void callWithoutResult() {
+//                final JpaStatisticalSummary jpaStatisticalSummary = getEntityManager().find(JpaStatisticalSummary.class, id);
+//                
+//                System.out.println(jpaStatisticalSummary);
+//            }
+//        });
+//    }
 
     
     @Ignore

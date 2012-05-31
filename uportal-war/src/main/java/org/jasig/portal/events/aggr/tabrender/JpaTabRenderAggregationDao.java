@@ -66,7 +66,7 @@ public class JpaTabRenderAggregationDao extends
     @Override
     protected void addUnclosedPredicate(CriteriaBuilder cb, Root<TabRenderAggregationImpl> root,
             List<Predicate> keyPredicates) {
-        keyPredicates.add(cb.isNotNull(root.get(TabRenderAggregationImpl_.statisticalSummary)));
+        keyPredicates.add(cb.isFalse(root.get(TabRenderAggregationImpl_.complete)));
     }
 
     @Override

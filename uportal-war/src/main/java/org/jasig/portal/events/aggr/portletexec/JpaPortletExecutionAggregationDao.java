@@ -68,7 +68,7 @@ public class JpaPortletExecutionAggregationDao extends
     @Override
     protected void addUnclosedPredicate(CriteriaBuilder cb, Root<PortletExecutionAggregationImpl> root,
             List<Predicate> keyPredicates) {
-        keyPredicates.add(cb.isNotNull(root.get(PortletExecutionAggregationImpl_.statisticalSummary)));
+        keyPredicates.add(cb.isFalse(root.get(PortletExecutionAggregationImpl_.complete)));
     }
 
     @Override

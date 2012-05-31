@@ -50,7 +50,6 @@
         <mapping class="org.jasig.portal.events.aggr.dao.jpa.AggregatedIntervalConfigImpl"/>
         <mapping class="org.jasig.portal.events.aggr.dao.jpa.QuarterDetailImpl"/>
         <mapping class="org.jasig.portal.events.aggr.dao.jpa.AcademicTermDetailImpl"/>
-        <mapping class="org.jasig.portal.events.aggr.JpaStatisticalSummary"/>
         <mapping class="org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl"/>
         <mapping class="org.jasig.portal.events.aggr.session.EventSessionImpl"/>
         <mapping class="org.jasig.portal.events.aggr.login.LoginAggregationImpl"/>

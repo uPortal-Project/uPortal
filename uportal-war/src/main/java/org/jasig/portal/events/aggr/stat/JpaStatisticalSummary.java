@@ -1,13 +1,7 @@
-package org.jasig.portal.events.aggr;
+package org.jasig.portal.events.aggr.stat;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
+import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
 import javax.persistence.Transient;
 
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
@@ -23,64 +17,38 @@ import org.apache.commons.math3.stat.descriptive.summary.SumOfSquares;
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.MathUtils;
 import org.apache.commons.math3.util.Precision;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Type;
+import org.jasig.portal.events.aggr.TimedAggregationStatistics;
 
 /**
  * Semi-Clone of {@link SummaryStatistics} that can be persisted in a database
  * 
  * @author Eric Dalquist
  */
-@Entity
-@Table(name = "UP_STAT_SUMMARY")
-@SequenceGenerator(
-        name="UP_STAT_SUMMARY_GEN",
-        sequenceName="UP_STAT_SUMMARY_SEQ",
-        allocationSize=20000
-    )
-@TableGenerator(
-        name="UP_STAT_SUMMARY_GEN",
-        pkColumnValue="UP_STAT_SUMMARY",
-        allocationSize=20000
-    )
-@Cacheable
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Embeddable
 public class JpaStatisticalSummary implements TimedAggregationStatistics {
-    @SuppressWarnings("unused")
-    @Id
-    @GeneratedValue(generator = "UP_STAT_SUMMARY_GEN")
-    @Column(name = "STAT_SUMMARY_ID")
-    private final long statSummaryId;
 
     /** SecondMoment is used to compute the mean and variance */
-    @Column(name = "SECOND_MOMENT_JSON", length = 1000, nullable = false)
-    @Type(type = "stats_json")
+    @Embedded
     private SecondMoment secondMoment;
     
     /** sum of values that have been added */
-    @Column(name = "SUM_JSON", length = 500, nullable = false)
-    @Type(type = "stats_json")
+    @Embedded
     private Sum sum;
 
     /** sum of the square of each value that has been added */
-    @Column(name = "SUMSQ_JSON", length = 500, nullable = false)
-    @Type(type = "stats_json")
+    @Embedded
     private SumOfSquares sumsq;
 
     /** min of values that have been added */
-    @Column(name = "MIN_JSON", length = 500, nullable = false)
-    @Type(type = "stats_json")
+    @Embedded
     private Min min;
 
     /** max of values that have been added */
-    @Column(name = "MAX_JSON", length = 500, nullable = false)
-    @Type(type = "stats_json")
+    @Embedded
     private Max max;
 
     /** sumLog of values that have been added */
-    @Column(name = "SUMLOG_JSON", length = 500, nullable = false)
-    @Type(type = "stats_json")
+    @Embedded
     private SumOfLogs sumLog;
 
     /** geoMean of values that have been added */
@@ -94,10 +62,6 @@ public class JpaStatisticalSummary implements TimedAggregationStatistics {
     /** variance of values that have been added */
     @Transient
     private Variance variance;
-    
-    public JpaStatisticalSummary() {
-        this.statSummaryId = -1;
-    }
     
     //***** ALL FIELDS ARE LAZILY INITIALIZED HERE *****//
     
@@ -164,6 +128,7 @@ public class JpaStatisticalSummary implements TimedAggregationStatistics {
         _getSumLog().increment(value);
         _getSecondMoment().increment(value);
     }
+    
 
     /**
      * Returns the number of available values

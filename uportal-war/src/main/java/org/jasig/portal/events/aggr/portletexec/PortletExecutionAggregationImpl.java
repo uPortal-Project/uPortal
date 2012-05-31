@@ -64,7 +64,10 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
     )
 @org.hibernate.annotations.Table(
         appliesTo = "UP_PORTLET_EXEC_AGGR",
-        indexes = @Index(name = "IDX_UP_PLT_EXEC_AGGR_DTI", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL" })
+        indexes = {
+                @Index(name = "IDX_UP_PLT_EXEC_AGGR_DTI", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL" }),
+                @Index(name = "IDX_UP_PLT_EXEC_AGGR_DTIC", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL", "STATS_COMPLETE" })
+            }
         )
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)

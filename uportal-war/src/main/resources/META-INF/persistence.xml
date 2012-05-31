@@ -35,6 +35,8 @@
         </properties>
     </persistence-unit>
     <persistence-unit name="AggrEventsDB" transaction-type="RESOURCE_LOCAL">
+        <mapping-file>META-INF/orm.xml</mapping-file>
+    
         <properties>
             <property name="hibernate.ejb.cfgfile" value="/properties/db/hibernate-aggr-events.cfg.xml" />
             <property name="hibernate.archive.autodetection" value="" />

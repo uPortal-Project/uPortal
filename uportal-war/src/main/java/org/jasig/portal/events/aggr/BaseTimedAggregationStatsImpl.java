@@ -23,17 +23,15 @@ import java.io.Serializable;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.JoinColumn;
+import javax.persistence.Embedded;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.jasig.portal.events.aggr.stat.JpaStatisticalSummary;
 
 /**
  * Base for aggregate entities that track timed statistics
@@ -81,10 +79,11 @@ public abstract class BaseTimedAggregationStatsImpl extends BaseAggregationImpl 
     @Column(name = "SECOND_MOMENT_TIME", nullable = false)
     private double secondMoment;
     
-    @OneToOne(cascade = { CascadeType.ALL }, orphanRemoval=true)
-    @JoinColumn(name = "STATS_SUMMARY_ID", nullable = true)
-    @Fetch(FetchMode.JOIN)
+    @Embedded
     private JpaStatisticalSummary statisticalSummary;
+    
+    @Column(name = "STATS_COMPLETE", nullable = false)
+    private boolean complete = false;
 
     @Transient
     private boolean modified = false;
@@ -165,7 +164,7 @@ public abstract class BaseTimedAggregationStatsImpl extends BaseAggregationImpl 
      */
     @Override
     protected boolean isComplete() {
-        return this.count > 0 && this.statisticalSummary == null;
+        return this.count > 0 && (this.complete || this.statisticalSummary == null);
     }
 
     /**
@@ -176,6 +175,7 @@ public abstract class BaseTimedAggregationStatsImpl extends BaseAggregationImpl 
         updateStats();
         
         this.statisticalSummary = null;
+        this.complete = true;
     }
     
     /**
@@ -199,6 +199,7 @@ public abstract class BaseTimedAggregationStatsImpl extends BaseAggregationImpl 
      * automatically by the getter of each field
      */
     @PrePersist
+    @PreUpdate
     final void updateStats() {
         if (!this.modified || this.statisticalSummary == null) {
             return;

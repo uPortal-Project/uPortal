@@ -241,6 +241,8 @@ public class PortalEventAggregationManagerImplTest extends BaseAggrEventsJpaDaoT
 
     @Test
     public void aggregateRawEvents()  throws Exception {
+        portalEventAggregationManager.setEventAggregationBatchSize(1234);
+        
         final TryLockFunctionResult<?> tryLockFunctionResult = mock(TryLockFunctionResult.class);
         when(this.clusterLockService.doInTryLock(Mockito.anyString(), Mockito.any(Function.class))).thenReturn(tryLockFunctionResult);
         
@@ -256,6 +258,7 @@ public class PortalEventAggregationManagerImplTest extends BaseAggrEventsJpaDaoT
             }
         });
         
-        verify(portalEventDao).aggregatePortalEvents(Mockito.any(DateTime.class), Mockito.any(DateTime.class), Mockito.eq(2000), Mockito.any(FunctionWithoutResult.class));
+        
+        verify(portalEventDao).aggregatePortalEvents(Mockito.any(DateTime.class), Mockito.any(DateTime.class), Mockito.eq(1234), Mockito.any(FunctionWithoutResult.class));
     }
 }
