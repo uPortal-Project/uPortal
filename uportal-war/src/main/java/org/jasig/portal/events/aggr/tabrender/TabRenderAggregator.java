@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.events.aggr.tab;
+package org.jasig.portal.events.aggr.tabrender;
 
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.PortalRenderEvent;
@@ -69,7 +69,7 @@ public class TabRenderAggregator extends BasePortalEventAggregator<PortalRenderE
         final long executionTime = e.getExecutionTimeNano();
         final int duration = intervalInfo.getDurationTo(e.getTimestampAsDate());
         aggregation.setDuration(duration);
-        aggregation.countRender(executionTime);
+        aggregation.addValue(executionTime);
     }
 
     @Override

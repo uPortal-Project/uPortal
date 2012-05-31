@@ -39,7 +39,7 @@
     <bean id="aggregatedGroupLookupDao" class="org.jasig.portal.events.aggr.groups.JpaAggregatedGroupLookupDao" />
     <bean id="loginAggregationDao" class="org.jasig.portal.events.aggr.login.JpaLoginAggregationDao" />
     <bean id="concurrentUserAggregationDao" class="org.jasig.portal.events.aggr.concuser.JpaConcurrentUserAggregationDao" />
-    <bean id="tabRenderAggregationDao" class="org.jasig.portal.events.aggr.tab.JpaTabRenderAggregationDao"/>
+    <bean id="tabRenderAggregationDao" class="org.jasig.portal.events.aggr.tabrender.JpaTabRenderAggregationDao"/>
     <bean id="eventSessionDao" class="org.jasig.portal.events.aggr.session.JpaEventSessionDao">
         <property name="eventSessionDuration" value="PT0S" />
     </bean>

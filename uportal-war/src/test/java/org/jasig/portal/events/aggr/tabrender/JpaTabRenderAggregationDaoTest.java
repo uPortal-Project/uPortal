@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.events.aggr.tab;
+package org.jasig.portal.events.aggr.tabrender;
 
 import java.util.Collections;
 import java.util.List;
@@ -31,6 +31,10 @@ import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.JpaBaseAggregationDaoTest;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.jasig.portal.events.aggr.tabrender.TabRenderAggregationImpl;
+import org.jasig.portal.events.aggr.tabrender.TabRenderAggregationKey;
+import org.jasig.portal.events.aggr.tabrender.TabRenderAggregationKeyImpl;
+import org.jasig.portal.events.aggr.tabrender.TabRenderAggregationPrivateDao;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -54,7 +58,7 @@ public class JpaTabRenderAggregationDaoTest extends JpaBaseAggregationDaoTest<Ta
     @Override
     protected void updateAggregation(AggregationIntervalInfo intervalInfo, TabRenderAggregationImpl aggregation,
             Random r) {
-        aggregation.countRender(r.nextInt((int)TimeUnit.SECONDS.toNanos(10)));
+        aggregation.addValue(r.nextInt((int)TimeUnit.SECONDS.toNanos(10)));
     }
 
     @Override

@@ -806,13 +806,13 @@
      | Caches tab render aggregations, primarily used during event aggregation 
      | - 1 x tab x group x interval
      +-->
-    <cache name="AggregateEvents.org.jasig.portal.events.aggr.tab.TabRenderAggregationImpl" 
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.tabrender.TabRenderAggregationImpl" 
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="30" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <cache name="AggregateEvents.org.jasig.portal.events.aggr.tab.TabRenderAggregationImpl.renderTimes" 
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.tabrender.TabRenderAggregationImpl.renderTimes" 
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="30" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <cache name="AggregateEvents.org.jasig.portal.events.aggr.tab.TabRenderAggregationImpl.Query" 
+    <cache name="AggregateEvents.org.jasig.portal.events.aggr.tabrender.TabRenderAggregationImpl.Query" 
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="30" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
 

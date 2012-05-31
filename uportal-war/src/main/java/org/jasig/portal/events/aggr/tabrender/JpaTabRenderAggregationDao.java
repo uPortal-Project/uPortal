@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.events.aggr.tab;
+package org.jasig.portal.events.aggr.tabrender;
 
 import java.util.List;
 
@@ -33,6 +33,7 @@ import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.JpaBaseAggregationDao;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.jasig.portal.events.aggr.tabrender.TabRenderAggregationImpl_;
 import org.springframework.stereotype.Repository;
 
 /**

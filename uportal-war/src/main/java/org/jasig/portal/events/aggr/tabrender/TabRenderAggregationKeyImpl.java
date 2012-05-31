@@ -1,4 +1,4 @@
-package org.jasig.portal.events.aggr.tab;
+package org.jasig.portal.events.aggr.tabrender;
 
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.BaseAggregationKeyImpl;

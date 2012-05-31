@@ -78,6 +78,13 @@ public abstract class BasePortalEventAggregator<
      */
     protected abstract void updateAggregation(E e, AggregationIntervalInfo intervalInfo, T aggregation);
     
+    /**
+     * Create a unique key that describes the aggregation.
+     * 
+     * @param intervalInfo The info about the interval the aggregation is for
+     * @param aggregatedGroup The group the aggregation is for
+     * @param event The event the aggregation is for
+     */
     protected abstract K createAggregationKey(AggregationIntervalInfo intervalInfo, AggregatedGroupMapping aggregatedGroup, E event); 
 
     @AggrEventsTransactional
@@ -142,7 +149,7 @@ public abstract class BasePortalEventAggregator<
         for (final T aggregation : aggregations) {
             final int duration = intervalInfo.getTotalDuration();
             aggregation.intervalComplete(duration);
-            logger.debug("Marked complete: " + aggregation);
+            logger.trace("Marked complete: " + aggregation);
             aggregationDao.updateAggregation(aggregation);
         }
         
