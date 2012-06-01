@@ -21,6 +21,7 @@ package org.jasig.portal.events.aggr;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.joda.time.DateTime;
@@ -49,7 +50,7 @@ public interface BaseAggregationDao<
      * @param key The {@link BaseAggregationKey#getAggregatedGroup()} field is ignored for this method
      * @return All aggregations for the date, time and interval
      */
-    Collection<T> getAggregationsForInterval(K key);
+    Map<K, Collection<T>> getAggregationsForInterval(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval);
     
     /**
      * Get a specific aggregation 

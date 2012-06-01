@@ -12,14 +12,14 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
  */
 public interface BaseAggregationKey extends Serializable {
     /**
-     * @return The time of day the aggregation is for
-     */
-    TimeDimension getTimeDimension();
-    
-    /**
      * @return The day the aggregation is for
      */
     DateDimension getDateDimension();
+    
+    /**
+     * @return The time of day the aggregation is for
+     */
+    TimeDimension getTimeDimension();
     
     /**
      * @return The interval the aggregation is for

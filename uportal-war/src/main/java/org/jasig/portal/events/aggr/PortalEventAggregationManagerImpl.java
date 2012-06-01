@@ -203,9 +203,13 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
             return result.isExecuted();
         }
         catch (InterruptedException e) {
-            logger.warn("Interrupted while aggregating", e);
+            logger.warn("Interrupted while populating dimensions", e);
             Thread.currentThread().interrupt();
             return false;
+        }
+        catch (RuntimeException e) {
+            logger.error("populateDimensions failed", e);
+            throw e;
         }
     }
 
@@ -248,6 +252,10 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                 Thread.currentThread().interrupt();
                 return false;
             }
+            catch (RuntimeException e) {
+                logger.error("aggregateRawEvents failed", e);
+                throw e;
+            }
             
         //Loop if doAggregateRawEvents returns false, this means that there is more to aggregate 
         } while (result != null && result.isExecuted() && !result.getResult());
@@ -285,6 +293,10 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
             Thread.currentThread().interrupt();
             return false;
         }
+        catch (RuntimeException e) {
+            logger.error("purgeRawEvents failed", e);
+            throw e;
+        }
     }
     
     @Override
@@ -308,6 +320,10 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
             logger.warn("Interrupted while purging event sessions", e);
             Thread.currentThread().interrupt();
             return false;
+        }
+        catch (RuntimeException e) {
+            logger.error("purgeEventSessions failed", e);
+            throw e;
         }
     }
 

@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.jasig.portal.events.PortalEvent;
@@ -56,13 +57,6 @@ public abstract class BasePortalEventAggregator<
     
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     private final String cacheKeySource = this.getClass().getName();
-    
-//    private AggregationIntervalHelper aggregationIntervalHelper;
-//
-//    @Autowired
-//    public final void setAggregationIntervalHelper(AggregationIntervalHelper aggregationIntervalHelper) {
-//        this.aggregationIntervalHelper = aggregationIntervalHelper;
-//    }
     
     /**
      * @return The private aggregation DAO to use
@@ -151,16 +145,6 @@ public abstract class BasePortalEventAggregator<
             aggregation.intervalComplete(duration);
         }
         aggregationDao.updateAggregations(aggregations);
-        
-//        //Look for any uncomplete aggregations from the previous interval
-//        final AggregationIntervalInfo prevIntervalInfo = this.aggregationIntervalHelper.getIntervalInfo(interval, intervalInfo.getStart().minusMinutes(1));
-//        final Collection<T> unclosedAggregations = aggregationDao.getUnclosedAggregations(prevIntervalInfo.getStart(), prevIntervalInfo.getEnd(), interval);
-//        for (final T aggregation : unclosedAggregations) {
-//            final int duration = intervalInfo.getTotalDuration();
-//            aggregation.intervalComplete(duration);
-//            logger.debug("Marked complete, was previously unclosed: {}", aggregation);
-//        }
-//        aggregationDao.updateAggregations(unclosedAggregations);
     }
 
     /**
@@ -173,17 +157,29 @@ public abstract class BasePortalEventAggregator<
         Collection<T> cachedAggregations = eventAggregationContext.getAttribute(cachedAggregationsCacheKey);
         if (cachedAggregations == null) {
             //Nothing in the aggr session yet, cache the current set of aggregations from the DB in the aggr session
-            cachedAggregations = this.getAggregationDao().getAggregationsForInterval(aggregationKey);
-            eventAggregationContext.setAttribute(cachedAggregationsCacheKey, cachedAggregations);
+            final DateDimension dateDimension = intervalInfo.getDateDimension();
+            final TimeDimension timeDimension = intervalInfo.getTimeDimension();
+            final AggregationInterval aggregationInterval = intervalInfo.getAggregationInterval();
             
-            //Track all event scoped collections
-            final CacheKey eventScopedKeysCacheKey = createAggregationSessionCacheKey(intervalInfo);
-            Set<CacheKey> eventScopedKeys = eventAggregationContext.getAttribute(eventScopedKeysCacheKey);
-            if (eventScopedKeys == null) {
-                eventScopedKeys = new HashSet<CacheKey>();
-                eventAggregationContext.setAttribute(eventScopedKeysCacheKey, eventScopedKeys);
+            
+            final Map<K, Collection<T>> aggregationsForInterval = this.getAggregationDao().getAggregationsForInterval(dateDimension, timeDimension, aggregationInterval);
+            for (Entry<K, Collection<T>> aggregationsForIntervalEntry : aggregationsForInterval.entrySet()) {
+                final K key = aggregationsForIntervalEntry.getKey();
+                
+                eventAggregationContext.setAttribute(cachedAggregationsCacheKey, cachedAggregations);
+                
+                //Track all event scoped collections
+                final CacheKey eventScopedKeysCacheKey = createAggregationSessionCacheKey(intervalInfo);
+                Set<CacheKey> eventScopedKeys = eventAggregationContext.getAttribute(eventScopedKeysCacheKey);
+                if (eventScopedKeys == null) {
+                    eventScopedKeys = new HashSet<CacheKey>();
+                    eventAggregationContext.setAttribute(eventScopedKeysCacheKey, eventScopedKeys);
+                }
+                eventScopedKeys.add(cachedAggregationsCacheKey);
             }
-            eventScopedKeys.add(cachedAggregationsCacheKey);
+            
+            
+            
         }
         
         return cachedAggregations;

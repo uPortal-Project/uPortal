@@ -21,8 +21,11 @@ package org.jasig.portal.events.aggr;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
@@ -127,6 +130,11 @@ public abstract class JpaBaseAggregationDao<
      * Create a new aggregation instance
      */
     protected abstract T createAggregationInstance(K key);
+    
+    /**
+     * Get the aggregation key for this instance
+     */
+    protected abstract K getAggregationKey(T instance);
 
     @Override
     public final void afterPropertiesSet() throws Exception {
@@ -151,15 +159,12 @@ public abstract class JpaBaseAggregationDao<
 
                 addFetches(ba);
                 
-                //Build the where clause in a List so it can all be appended in one go
-                final List<Predicate> keyPredicates = new ArrayList<Predicate>();
-                keyPredicates.add(cb.equal(ba.get(BaseAggregationImpl_.dateDimension), dateDimensionParameter));
-                keyPredicates.add(cb.equal(ba.get(BaseAggregationImpl_.timeDimension), timeDimensionParameter));
-                keyPredicates.add(cb.equal(ba.get(BaseAggregationImpl_.interval), intervalParameter));
-                addAggregationSpecificKeyPredicate(cb, ba, keyPredicates);
-                
                 criteriaQuery.select(ba);
-                criteriaQuery.where(keyPredicates.toArray(new Predicate[keyPredicates.size()]));
+                criteriaQuery.where(
+                        cb.equal(ba.get(BaseAggregationImpl_.dateDimension), dateDimensionParameter),
+                        cb.equal(ba.get(BaseAggregationImpl_.timeDimension), timeDimensionParameter),
+                        cb.equal(ba.get(BaseAggregationImpl_.interval), intervalParameter)
+                );
                 
                 return criteriaQuery;
             }
@@ -290,16 +295,26 @@ public abstract class JpaBaseAggregationDao<
     }
 
     @Override
-    public final Collection<T> getAggregationsForInterval(K key) {
+    public final Map<K, Collection<T>> getAggregationsForInterval(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval) {
         final TypedQuery<T> query = this.createCachedQuery(this.findAggregationByDateTimeIntervalQuery);
-        query.setParameter(this.dateDimensionParameter, key.getDateDimension());
-        query.setParameter(this.timeDimensionParameter, key.getTimeDimension());
-        query.setParameter(this.intervalParameter, key.getInterval());
+        query.setParameter(this.dateDimensionParameter, dateDimension);
+        query.setParameter(this.timeDimensionParameter, timeDimension);
+        query.setParameter(this.intervalParameter, interval);
         
-        this.bindAggregationSpecificKeyParameters(query, key);
+        final List<T> results = query.getResultList();
+        final Map<K, Collection<T>> resultMap = new HashMap<K, Collection<T>>();
+        for (final T result : results) {
+            final K key = this.getAggregationKey(result);
+            
+            Collection<T> resultSet = resultMap.get(key);
+            if (resultSet == null) {
+                resultSet = new HashSet<T>();
+                resultMap.put(key, resultSet);
+            }
+            resultSet.add(result);
+        }
         
-        //Need set to handle duplicate results from join
-        return new LinkedHashSet<T>(query.getResultList());
+        return resultMap;
     }
 
     @Override
