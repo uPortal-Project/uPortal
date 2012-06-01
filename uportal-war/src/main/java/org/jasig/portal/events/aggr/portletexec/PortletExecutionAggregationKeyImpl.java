@@ -5,6 +5,7 @@ import org.jasig.portal.events.aggr.BaseAggregationKeyImpl;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.jasig.portal.events.aggr.portlets.AggregatedPortletMapping;
 
 /**
  * Basic impl of {@link PortletExecutionAggregationKey}
@@ -12,33 +13,35 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
  * @author Eric Dalquist
  */
 public class PortletExecutionAggregationKeyImpl extends BaseAggregationKeyImpl implements PortletExecutionAggregationKey {
-    private final String fname;
+    private static final long serialVersionUID = 1L;
+    
+    private final AggregatedPortletMapping portletMapping;
     private final ExecutionType executionType;
     
     public PortletExecutionAggregationKeyImpl(AggregationInterval aggregationInterval,
-            AggregatedGroupMapping aggregatedGroupMapping, String fname, ExecutionType executionType) {
+            AggregatedGroupMapping aggregatedGroupMapping, AggregatedPortletMapping portletMapping, ExecutionType executionType) {
         super(aggregationInterval, aggregatedGroupMapping);
-        this.fname = fname;
+        this.portletMapping = portletMapping;
         this.executionType = executionType;
     }
 
     public PortletExecutionAggregationKeyImpl(DateDimension dateDimension, TimeDimension timeDimension,
-            AggregationInterval aggregationInterval, String fname, ExecutionType executionType) {
+            AggregationInterval aggregationInterval, AggregatedPortletMapping portletMapping, ExecutionType executionType) {
         super(dateDimension, timeDimension, aggregationInterval);
-        this.fname = fname;
+        this.portletMapping = portletMapping;
         this.executionType = executionType;
     }
 
     public PortletExecutionAggregationKeyImpl(DateDimension dateDimension, TimeDimension timeDimension,
-            AggregationInterval aggregationInterval, AggregatedGroupMapping aggregatedGroupMapping, String fname, ExecutionType executionType) {
+            AggregationInterval aggregationInterval, AggregatedGroupMapping aggregatedGroupMapping, AggregatedPortletMapping portletMapping, ExecutionType executionType) {
         super(dateDimension, timeDimension, aggregationInterval, aggregatedGroupMapping);
-        this.fname = fname;
+        this.portletMapping = portletMapping;
         this.executionType = executionType;
     }
 
     @Override
-    public String getFname() {
-        return this.fname;
+    public AggregatedPortletMapping getPortletMapping() {
+        return this.portletMapping;
     }
     
     @Override
@@ -51,7 +54,7 @@ public class PortletExecutionAggregationKeyImpl extends BaseAggregationKeyImpl i
         final int prime = 31;
         int result = super.hashCode();
         result = prime * result + ((executionType == null) ? 0 : executionType.hashCode());
-        result = prime * result + ((fname == null) ? 0 : fname.hashCode());
+        result = prime * result + ((portletMapping == null) ? 0 : portletMapping.hashCode());
         return result;
     }
 
@@ -66,18 +69,18 @@ public class PortletExecutionAggregationKeyImpl extends BaseAggregationKeyImpl i
         PortletExecutionAggregationKeyImpl other = (PortletExecutionAggregationKeyImpl) obj;
         if (executionType != other.executionType)
             return false;
-        if (fname == null) {
-            if (other.fname != null)
+        if (portletMapping == null) {
+            if (other.portletMapping != null)
                 return false;
         }
-        else if (!fname.equals(other.fname))
+        else if (!portletMapping.equals(other.portletMapping))
             return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "PortletExecutionAggregationKeyImpl [fname=" + fname + ", executionType=" + executionType
+        return "PortletExecutionAggregationKeyImpl [portletMapping=" + portletMapping + ", executionType=" + executionType
                 + ", getTimeDimension=" + getTimeDimension() + ", getDateDimension=" + getDateDimension()
                 + ", getInterval=" + getInterval() + ", getAggregatedGroup=" + getAggregatedGroup() + "]";
     }

@@ -48,7 +48,7 @@
     </bean>
 
 
-    <bean id="aggrEventsEntityManagerFactory" class="org.jasig.portal.jpa.EventingLocalContainerEntityManagerFactoryBean" depends-on="cacheManager">
+    <bean id="aggrEventsEntityManagerFactory" class="org.jasig.portal.jpa.EventingLocalContainerEntityManagerFactoryBean" depends-on="eventAggrCacheManager">
         <qualifier value="AggrEventsDB"/>
         <property name="dataSource" ref="AggrEventsDB" />
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
@@ -57,8 +57,8 @@
         </property>
         <property name="jpaProperties">
             <props>
-                <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory</prop>
-                <prop key="net.sf.ehcache.configurationResourceName">/properties/ehcache.xml</prop>
+                <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SpringBeanEhCacheRegionFactory</prop>
+                <prop key="org.jasig.portal.cache.CacheManagerName">uPortalEventAggr.cacheManager</prop>
             </props>
         </property>
     </bean>

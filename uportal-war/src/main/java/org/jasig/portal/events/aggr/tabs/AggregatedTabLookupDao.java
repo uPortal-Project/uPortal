@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.events.aggr.groups;
+package org.jasig.portal.events.aggr.tabs;
 
 import java.util.Set;
 
@@ -27,19 +27,20 @@ import java.util.Set;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface AggregatedGroupLookupDao {
-    /**
-     * Get the group mapping object for the specified group key
-     */
-    AggregatedGroupMapping getGroupMapping(String portalGroupKey);
+public interface AggregatedTabLookupDao {
     
     /**
-     * Get the group mapping for the specified service and name
+     * Get the tab mapping object for the specified layout node id
      */
-    AggregatedGroupMapping getGroupMapping(String groupService, String groupName);
+    AggregatedTabMapping getMappedTabForLayoutId(String layoutNodeId);
     
     /**
-     * Get the set of all groups that have been aggregated 
+     * Get the tab mapping for the specified tab name
      */
-    Set<AggregatedGroupMapping> getGroupMappings();
+    AggregatedTabMapping getTabMapping(String fragmentName, String tabName);
+    
+    /**
+     * All tabs that have aggregated data
+     */
+    Set<AggregatedTabMapping> getTabMappings();
 }

@@ -138,10 +138,10 @@ public class JpaClusterLockDao extends BasePortalJpaDao implements IClusterLockD
     }
 
     @Override
-    public boolean getLock(final String mutexName) {
-        return this.executeIgnoreRollback(new TransactionCallback<Boolean>() {
+    public ClusterMutex getLock(final String mutexName) {
+        return this.executeIgnoreRollback(new TransactionCallback<ClusterMutex>() {
             @Override
-            public Boolean doInTransaction(TransactionStatus status) {
+            public ClusterMutex doInTransaction(TransactionStatus status) {
                 final EntityManager entityManager = getEntityManager();
 
                 final ClusterMutex clusterMutex = getClusterMutex(mutexName);
@@ -159,7 +159,7 @@ public class JpaClusterLockDao extends BasePortalJpaDao implements IClusterLockD
                     
                     //Already locked
                     logger.trace("Mutex {} is already locked: {}", mutexName, clusterMutex);
-                    return false;
+                    return null;
                 }
                 
                 //Lock the mutex and update the DB
@@ -171,12 +171,12 @@ public class JpaClusterLockDao extends BasePortalJpaDao implements IClusterLockD
                 }
                 catch (OptimisticLockException e) {
                     logger.trace("Mutex {} was locked by another thread or server", mutexName);
-                    return false;
+                    return null;
                 }
                 
-                return true;
+                return clusterMutex;
             }
-        }, false);
+        }, null);
     }
 
     @Override

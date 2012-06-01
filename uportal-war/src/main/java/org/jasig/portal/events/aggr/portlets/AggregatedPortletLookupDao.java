@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.events.aggr.groups;
+package org.jasig.portal.events.aggr.portlets;
 
 import java.util.Set;
 
@@ -27,19 +27,14 @@ import java.util.Set;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface AggregatedGroupLookupDao {
+public interface AggregatedPortletLookupDao {
     /**
-     * Get the group mapping object for the specified group key
+     * Get the portlet mapping object for the specified fname
      */
-    AggregatedGroupMapping getGroupMapping(String portalGroupKey);
+    AggregatedPortletMapping getMappedPortletForFname(String fname);
     
     /**
-     * Get the group mapping for the specified service and name
+     * All tabs that have aggregated data
      */
-    AggregatedGroupMapping getGroupMapping(String groupService, String groupName);
-    
-    /**
-     * Get the set of all groups that have been aggregated 
-     */
-    Set<AggregatedGroupMapping> getGroupMappings();
+    Set<AggregatedPortletMapping> getPortletMappings();
 }

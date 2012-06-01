@@ -19,9 +19,10 @@
 
 package org.jasig.portal.concurrency.locking;
 
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
@@ -30,6 +31,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+
+import junit.framework.Assert;
 
 import org.jasig.portal.IPortalInfoProvider;
 import org.jasig.portal.concurrency.CallableWithoutResult;
@@ -117,8 +120,8 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
                         try {
                             threadGroupRunner.tick(1);
                             try {
-                                final boolean locked = clusterLockDao.getLock(mutexName);
-                                if (locked) {
+                                final ClusterMutex mutex = clusterLockDao.getLock(mutexName);
+                                if (mutex != null) {
                                     lockCounter.incrementAndGet();
                                 }
                             }
@@ -168,8 +171,8 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
                         try {
                             threadGroupRunner.tick(1);
                             try {
-                                final boolean locked = clusterLockDao.getLock(mutexName);
-                                if (locked) {
+                                final ClusterMutex mutex = clusterLockDao.getLock(mutexName);
+                                if (mutex != null) {
                                     lockCounter.incrementAndGet();
                                 }
                             }
@@ -227,8 +230,8 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
         execute(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
-                final boolean locked = clusterLockDao.getLock(mutexName);
-                assertTrue(locked);
+                final ClusterMutex mutex = clusterLockDao.getLock(mutexName);
+                assertNotNull(mutex);
             }
         }); 
         
@@ -240,8 +243,8 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
             execute(new CallableWithoutResult() {
                 @Override
                 protected void callWithoutResult() {
-                    final boolean locked = clusterLockDao.getLock(mutexName);
-                    assertFalse(locked);
+                    final ClusterMutex mutex = clusterLockDao.getLock(mutexName);
+                    assertNull(mutex);
                 }
             });
             TimeUnit.MILLISECONDS.sleep(5);
@@ -285,7 +288,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
             @Override
             protected void callWithoutResult() {
                 final ClusterMutex mutex = clusterLockDao.getClusterMutex(mutexName);
-                assertNotNull(mutex);
+                Assert.assertNotNull(mutex);
             }
         });
         
@@ -294,8 +297,8 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
         execute(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
-                final boolean locked = clusterLockDao.getLock(mutexName);
-                assertTrue(locked);
+                final ClusterMutex mutex = clusterLockDao.getLock(mutexName);
+                Assert.assertNotNull(mutex);
             }
         }); 
         
@@ -310,8 +313,8 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
             execute(new CallableWithoutResult() {
                 @Override
                 protected void callWithoutResult() {
-                    final boolean locked = clusterLockDao.getLock(mutexName);
-                    if (!locked) {
+                    final ClusterMutex mutex = clusterLockDao.getLock(mutexName);
+                    if (mutex == null) {
                         lockFailCount.incrementAndGet();
                     }
                     else {

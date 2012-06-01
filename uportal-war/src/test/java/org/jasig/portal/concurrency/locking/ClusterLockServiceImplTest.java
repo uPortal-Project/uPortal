@@ -91,9 +91,9 @@ public class ClusterLockServiceImplTest extends BasePortalJpaDaoTest {
                     @Override
                     public Object call() throws Exception {
                         threadGroupRunner.tick(1);
-                        final TryLockFunctionResult<Object> result = service.doInTryLock(mutexName, new Function<String, Object>() {
+                        final TryLockFunctionResult<Object> result = service.doInTryLock(mutexName, new Function<ClusterMutex, Object>() {
                             @Override
-                            public Object apply(String input) {
+                            public Object apply(ClusterMutex input) {
                                 if (concurrent.getAndSet(true)) {
                                     fail("Only one thread should be in Function at a time");
                                 }

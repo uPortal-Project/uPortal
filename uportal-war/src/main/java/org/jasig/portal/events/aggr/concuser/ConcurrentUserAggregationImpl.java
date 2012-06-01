@@ -69,14 +69,13 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
         indexes = @Index(name = "IDX_UP_CONC_USER_AGGR_DTI", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL" })
         )
 @Cacheable
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class ConcurrentUserAggregationImpl extends BaseAggregationImpl implements ConcurrentUserAggregation, Serializable {
     private static final long serialVersionUID = 1L;
     
     @Id
     @GeneratedValue(generator = "UP_CONCURRENT_USER_AGGR_GEN")
     @Column(name="ID")
-    @SuppressWarnings("unused")
     private final long id;
     
     @Column(name = "CONCURRENT_USERS", nullable = false)
@@ -88,6 +87,7 @@ public class ConcurrentUserAggregationImpl extends BaseAggregationImpl implement
             joinColumns = @JoinColumn(name = "CONC_USER_AGGR_ID")
         )
     @Column(name="SESSION_ID", nullable=false, updatable=false, length=500)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<String> uniqueSessionIds = new LinkedHashSet<String>();
     
     @SuppressWarnings("unused")

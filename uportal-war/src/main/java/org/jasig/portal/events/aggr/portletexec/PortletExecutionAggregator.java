@@ -29,6 +29,8 @@ import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregationKey.ExecutionType;
+import org.jasig.portal.events.aggr.portlets.AggregatedPortletLookupDao;
+import org.jasig.portal.events.aggr.portlets.AggregatedPortletMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -39,12 +41,19 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class PortletExecutionAggregator extends BasePortalEventAggregator<PortletExecutionEvent, PortletExecutionAggregationImpl, PortletExecutionAggregationKey> {
     private PortletExecutionAggregationPrivateDao portletExecutionAggregationDao;
+    private AggregatedPortletLookupDao aggregatedPortletLookupDao;
     private ExecutionType executionType = ExecutionType.ALL;
 
     @Autowired
     public void setPortletExecutionAggregationDao(PortletExecutionAggregationPrivateDao portletExecutionAggregationDao) {
         this.portletExecutionAggregationDao = portletExecutionAggregationDao;
     }
+
+    @Autowired
+    public void setAggregatedPortletLookupDao(AggregatedPortletLookupDao aggregatedPortletLookupDao) {
+        this.aggregatedPortletLookupDao = aggregatedPortletLookupDao;
+    }
+
 
     /**
      * Set the type of portlet execution this aggregator works on. 
@@ -80,7 +89,8 @@ public class PortletExecutionAggregator extends BasePortalEventAggregator<Portle
         final AggregationInterval aggregationInterval = intervalInfo.getAggregationInterval();
 
         final String fname = event.getFname();
+        final AggregatedPortletMapping mappedPortlet = this.aggregatedPortletLookupDao.getMappedPortletForFname(fname);
         
-        return new PortletExecutionAggregationKeyImpl(dateDimension, timeDimension, aggregationInterval, aggregatedGroup, fname, executionType);
+        return new PortletExecutionAggregationKeyImpl(dateDimension, timeDimension, aggregationInterval, aggregatedGroup, mappedPortlet, executionType);
     }
 }

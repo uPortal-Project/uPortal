@@ -41,9 +41,9 @@ interface IClusterLockDao {
      * Lock the specified mutex
      * 
      * @param mutexName The mutex to lock
-     * @return True if the lock was successfully acquired, false if the lock is already held.
+     * @return The ClusterMutex if the lock was successfully acquired, null if the lock is already held.
      */
-    boolean getLock(String mutexName);
+    ClusterMutex getLock(String mutexName);
     
     /**
      * Update the specified mutex, the mutex must already be locked by this server. It is expected

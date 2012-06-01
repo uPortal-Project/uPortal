@@ -61,7 +61,7 @@ import org.joda.time.LocalDate;
         allocationSize=1
     )
 @Cacheable
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class DateDimensionImpl implements DateDimension, Serializable {
     private static final long serialVersionUID = 1L;
    

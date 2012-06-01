@@ -35,8 +35,10 @@ import javax.annotation.Resource;
 import javax.persistence.FlushModeType;
 
 import org.apache.commons.lang.mutable.MutableInt;
+import org.hibernate.Session;
 import org.jasig.portal.IPortalInfoProvider;
 import org.jasig.portal.concurrency.FunctionWithoutResult;
+import org.jasig.portal.concurrency.locking.ClusterMutex;
 import org.jasig.portal.concurrency.locking.IClusterLockService;
 import org.jasig.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
 import org.jasig.portal.events.LoginEvent;
@@ -65,6 +67,7 @@ import org.springframework.core.OrderComparator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -183,13 +186,17 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
     }
 
     @Override
-    @AggrEventsTransactional
     public boolean populateDimensions() {
         try {
-            final TryLockFunctionResult<Object> result = this.clusterLockService.doInTryLock(DIMENSION_LOCK_NAME, new FunctionWithoutResult<String>() {
+            final TryLockFunctionResult<Object> result = this.clusterLockService.doInTryLock(DIMENSION_LOCK_NAME, new FunctionWithoutResult<ClusterMutex>() {
                 @Override
-                protected void applyWithoutResult(String input) {
-                    doPopulateDimensions();
+                protected void applyWithoutResult(ClusterMutex input) {
+                    getTransactionOperations().execute(new TransactionCallbackWithoutResult() {
+                        @Override
+                        protected void doInTransactionWithoutResult(TransactionStatus status) {
+                            doPopulateDimensions();
+                        }
+                    });
                 }
             });
             
@@ -212,66 +219,93 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                 logger.debug("doAggregateRawEvents signaled that not all events were aggregated in a single transaction, running again.");
             }
             
-            result = this.getTransactionOperations().execute(new TransactionCallback<TryLockFunctionResult<Boolean>>() {
-                @Override
-                public TryLockFunctionResult<Boolean> doInTransaction(TransactionStatus status) {
-                    try {
-                        return clusterLockService.doInTryLock(AGGREGATION_LOCK_NAME, new Function<String, Boolean>() {
+            try {
+                result = clusterLockService.doInTryLock(AGGREGATION_LOCK_NAME, new Function<ClusterMutex, Boolean>() {
+                    @Override
+                    public Boolean apply(final ClusterMutex input) {
+                        //Executing withing lock
+                        final long start = System.nanoTime();
+                        
+                        final EventProcessingResult result = getTransactionOperations().execute(new TransactionCallback<EventProcessingResult>() {
                             @Override
-                            public Boolean apply(String input) {
+                            public EventProcessingResult doInTransaction(TransactionStatus status) {
                                 return doAggregateRawEvents();
                             }
                         });
+                        
+                        if (logger.isDebugEnabled()) {
+                            final long runTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
+                            logger.debug("Aggregated {} events between {} and {} in {}ms - {} events/second", 
+                                    new Object[] { result.eventCount, result.start, result.end, runTime, result.eventCount/(runTime/1000d) });
+                        }
+                        
+                        return result.complete;
                     }
-                    catch (InterruptedException e) {
-                        logger.warn("Interrupted while aggregating", e);
-                        Thread.currentThread().interrupt();
-                        return null;
-                    }
-                }
-            });
+                });
+            }
+            catch (InterruptedException e) {
+                logger.warn("Interrupted while aggregating", e);
+                Thread.currentThread().interrupt();
+                return false;
+            }
             
-            //Loop if doAggregateRawEvents returns false, this means that there is more to aggregate 
+        //Loop if doAggregateRawEvents returns false, this means that there is more to aggregate 
         } while (result != null && result.isExecuted() && !result.getResult());
         
         return result != null && result.isExecuted();
     }
     
     @Override
-    @AggrEventsTransactional
     public boolean purgeRawEvents() {
         try {
-            final TryLockFunctionResult<Object> result = this.clusterLockService.doInTryLock(PURGE_RAW_EVENTS_LOCK_NAME, new FunctionWithoutResult<String>() {
+            final TryLockFunctionResult<Object> result = this.clusterLockService.doInTryLock(PURGE_RAW_EVENTS_LOCK_NAME, new FunctionWithoutResult<ClusterMutex>() {
                 @Override
-                protected void applyWithoutResult(String input) {
-                    doPurgeRawEvents();
+                protected void applyWithoutResult(ClusterMutex input) {
+                    final long start = System.nanoTime();
+                    
+                    final EventProcessingResult result = getTransactionOperations().execute(new TransactionCallback<EventProcessingResult>() {
+                        @Override
+                        public EventProcessingResult doInTransaction(TransactionStatus status) {
+                            return doPurgeRawEvents();
+                        }
+                    });
+                    
+                    if (logger.isDebugEnabled()) {
+                        final long runTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
+                        logger.debug("Purged {} events before {} in {}ms - {} events/second", 
+                                new Object[] { result.eventCount, result.end, runTime, result.eventCount/(runTime/1000d) });
+                    }
                 }
             });
             
             return result.isExecuted();
         }
         catch (InterruptedException e) {
-            logger.warn("Interrupted while purging", e);
+            logger.warn("Interrupted while purging raw events", e);
             Thread.currentThread().interrupt();
             return false;
         }
     }
     
     @Override
-    @AggrEventsTransactional
     public boolean purgeEventSessions() {
         try {
-            final TryLockFunctionResult<Object> result = this.clusterLockService.doInTryLock(PURGE_EVENT_SESSION_LOCK_NAME, new FunctionWithoutResult<String>() {
+            final TryLockFunctionResult<Object> result = this.clusterLockService.doInTryLock(PURGE_EVENT_SESSION_LOCK_NAME, new FunctionWithoutResult<ClusterMutex>() {
                 @Override
-                protected void applyWithoutResult(String input) {
-                    eventSessionDao.purgeExpiredEventSessions();
+                protected void applyWithoutResult(ClusterMutex input) {
+                    getTransactionOperations().execute(new TransactionCallbackWithoutResult() {
+                        @Override
+                        protected void doInTransactionWithoutResult(TransactionStatus status) {
+                            eventSessionDao.purgeExpiredEventSessions();
+                        }
+                    });
                 }
             });
             
             return result.isExecuted();
         }
         catch (InterruptedException e) {
-            logger.warn("Interrupted while purging", e);
+            logger.warn("Interrupted while purging event sessions", e);
             Thread.currentThread().interrupt();
             return false;
         }
@@ -416,7 +450,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
     /**
      * @return true if all events for the time period were aggregated, false if not
      */
-    boolean doAggregateRawEvents() {
+    EventProcessingResult doAggregateRawEvents() {
         if (!this.checkedDimensions.get() && this.checkedDimensions.compareAndSet(false, true)) {
             //First time aggregation has happened, run populateDimensions to ensure enough dimension data exists
             final boolean populatedDimensions = this.populateDimensions();
@@ -433,6 +467,13 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
         
         //Update status with current server name
         final String serverName = this.portalInfoProvider.getServerName();
+        final String previousServerName = eventAggregatorStatus.getServerName();
+        if (previousServerName != null && !serverName.equals(previousServerName)) {
+            this.logger.debug("Last aggregation run on {} clearing all aggregation caches", previousServerName);
+            final Session session = getEntityManager().unwrap(Session.class);
+            session.getSessionFactory().getCache().evictEntityRegions();
+        }
+        
         eventAggregatorStatus.setServerName(serverName);
         
         //Calculate date range for aggregation
@@ -448,23 +489,31 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
         
         //Do aggregation, capturing the start and end dates
         eventAggregatorStatus.setLastStart(DateTime.now());
-        final long start = System.nanoTime();
         portalEventDao.aggregatePortalEvents(lastAggregated, newestEventTime, this.eventAggregationBatchSize, new AggregateEventsHandler(events, eventAggregatorStatus));
         eventAggregatorStatus.setLastEnd(new DateTime());
         
-        if (logger.isDebugEnabled()) {
-            final long runTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
-            logger.debug("Aggregated {} events between {} and {} in {}ms - {} events/second", 
-                    new Object[] { events, lastAggregated, newestEventTime, runTime, events.doubleValue()/(runTime/1000d) });
-        }
-
         //Store the results of the aggregation
         eventAggregationManagementDao.updateEventAggregatorStatus(eventAggregatorStatus);
         
-        return this.eventAggregationBatchSize <= 0 || events.intValue() < this.eventAggregationBatchSize;
+        final boolean complete = this.eventAggregationBatchSize <= 0 || events.intValue() < this.eventAggregationBatchSize;
+        return new EventProcessingResult(events.intValue(), lastAggregated, newestEventTime, complete);
+    }
+    
+    static class EventProcessingResult {
+        private final int eventCount;
+        private final DateTime start;
+        private final DateTime end;
+        private final boolean complete;
+        
+        private EventProcessingResult(int eventCount, DateTime lastAggregated, DateTime newestEventTime, boolean complete) {
+            this.eventCount = eventCount;
+            this.start = lastAggregated;
+            this.end = newestEventTime;
+            this.complete = complete;
+        }
     }
 
-    void doPurgeRawEvents() {
+    EventProcessingResult doPurgeRawEvents() {
         final IEventAggregatorStatus eventPurgerStatus = eventAggregationManagementDao.getEventAggregatorStatus(ProcessingType.PURGING, true);
         
         //Update status with current server name
@@ -480,7 +529,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
             eventPurgerStatus.setLastEnd(new DateTime());
             eventAggregationManagementDao.updateEventAggregatorStatus(eventPurgerStatus);
             
-            return;
+            return new EventProcessingResult(0, null, null, true);
         }
         
         //Calculate purge end date from most recent aggregation minus the purge delay
@@ -489,14 +538,14 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
         
         //Purge events
         logger.debug("Starting purge of events before {}", purgeEnd);
-        final long start = System.nanoTime();
         final int events = portalEventDao.deletePortalEventsBefore(purgeEnd);
-        logger.debug("Purged {} events before {} in {}ms", new Object[] {events, purgeEnd, TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start) });
         
         //Update the status object and store it
         eventPurgerStatus.setLastEventDate(purgeEnd.minusMillis(1)); //decrement by 1ms since deletePortalEventsBefore uses lessThan and not lessThanEqualTo 
         eventPurgerStatus.setLastEnd(new DateTime());
         eventAggregationManagementDao.updateEventAggregatorStatus(eventPurgerStatus);
+        
+        return new EventProcessingResult(events, null, purgeEnd, true);
     }
     
     private final class AggregateEventsHandler extends FunctionWithoutResult<PortalEvent> {

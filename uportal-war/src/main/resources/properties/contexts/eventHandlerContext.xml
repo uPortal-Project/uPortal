@@ -116,15 +116,14 @@
      | List of event filters to apply to all event aggregators
      +-->
     <util:list id="aggregatorEventFilters">
-        <!-- 
         <bean class="org.jasig.portal.events.handlers.UserFilteringPortalEventHandler">
             <property name="ignoredUserNamePatterns">
                 <list>
                     <value>user\..*</value>
                     <value>vptest-user.*</value>
+                    <value>portal\..*</value>
                 </list>
             </property>
         </bean>
-         -->
     </util:list>
 </beans>

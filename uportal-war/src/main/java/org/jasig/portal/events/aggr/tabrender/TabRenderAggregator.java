@@ -19,13 +19,6 @@
 
 package org.jasig.portal.events.aggr.tabrender;
 
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import net.sf.ehcache.Ehcache;
-import net.sf.ehcache.Element;
-
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.PortalRenderEvent;
 import org.jasig.portal.events.aggr.AggregationInterval;
@@ -35,10 +28,9 @@ import org.jasig.portal.events.aggr.BasePortalEventAggregator;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
-import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.jasig.portal.events.aggr.tabs.AggregatedTabLookupDao;
+import org.jasig.portal.events.aggr.tabs.AggregatedTabMapping;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.core.JdbcOperations;
 
 /**
  * Event aggregator that uses {@link TabRenderAggregationPrivateDao} to aggregate tab renders 
@@ -48,19 +40,11 @@ import org.springframework.jdbc.core.JdbcOperations;
  */
 public class TabRenderAggregator extends BasePortalEventAggregator<PortalRenderEvent, TabRenderAggregationImpl, TabRenderAggregationKey> {
     private TabRenderAggregationPrivateDao tabRenderAggregationDao;
-    private JdbcOperations portalJdbcOperations;
-    private Ehcache layoutNodeIdNameResolutionCache;
+    private AggregatedTabLookupDao aggregatedTabLookupDao;
     
     @Autowired
-    @Qualifier("org.jasig.portal.events.aggr.tabrender.TabRenderAggregator.layoutNodeIdNameResolver")
-    public void setLayoutNodeIdNameResolutionCache(Ehcache layoutNodeIdNameResolutionCache) {
-        this.layoutNodeIdNameResolutionCache = layoutNodeIdNameResolutionCache;
-    }
-
-    @Autowired
-    @Qualifier(BasePortalJpaDao.PERSISTENCE_UNIT_NAME)
-    public void setPortalJdbcOperations(JdbcOperations portalJdbcOperations) {
-        this.portalJdbcOperations = portalJdbcOperations;
+    public void setAggregatedTabLookupDao(AggregatedTabLookupDao aggregatedTabLookupDao) {
+        this.aggregatedTabLookupDao = aggregatedTabLookupDao;
     }
 
     @Autowired
@@ -85,8 +69,6 @@ public class TabRenderAggregator extends BasePortalEventAggregator<PortalRenderE
         aggregation.setDuration(duration);
         aggregation.addValue(executionTime);
     }
-    
-    private final Pattern DLM_NODE = Pattern.compile("^u(\\d+)l(\\d+)s(\\d+)$");
 
     @Override
     protected TabRenderAggregationKey createAggregationKey(AggregationIntervalInfo intervalInfo,
@@ -97,53 +79,8 @@ public class TabRenderAggregator extends BasePortalEventAggregator<PortalRenderE
         final AggregationInterval aggregationInterval = intervalInfo.getAggregationInterval();
         
         final String targetedLayoutNodeId = event.getTargetedLayoutNodeId();
-        final String tabName = resolveTabName(targetedLayoutNodeId);
+        final AggregatedTabMapping mappedTab = this.aggregatedTabLookupDao.getMappedTabForLayoutId(targetedLayoutNodeId);
         
-        return new TabRenderAggregationKeyImpl(dateDimension, timeDimension, aggregationInterval, aggregatedGroup, tabName);
-    }
-
-    protected final String resolveTabName(final String targetedLayoutNodeId) {
-        //Check the cache first
-        final Element element = layoutNodeIdNameResolutionCache.get(targetedLayoutNodeId);
-        if (element != null) {
-            return (String)element.getValue();
-        }
-        
-        final String tabName;
-        if (targetedLayoutNodeId == null) {
-            //No layout node id, return null placeholder
-            tabName = TabRenderAggregationKey.NO_TAB_NAME;
-        }
-        else {
-            final Matcher nodeIdMatcher = DLM_NODE.matcher(targetedLayoutNodeId);
-            if (nodeIdMatcher.matches()) {
-                final int userId = Integer.parseInt(nodeIdMatcher.group(1));
-                final int layoutId = Integer.parseInt(nodeIdMatcher.group(2));
-                final int nodeId = Integer.parseInt(nodeIdMatcher.group(3));
-                
-                final List<String> result = this.portalJdbcOperations.queryForList(
-                        "SELECT NAME FROM UP_LAYOUT_STRUCT where USER_ID = ? AND LAYOUT_ID = ? AND STRUCT_ID = ?", 
-                        String.class, 
-                        userId, layoutId, nodeId);
-                
-                if (result.isEmpty()) {
-                    //No tab name found, fall back to using the bare layout node id
-                    tabName = targetedLayoutNodeId;
-                }
-                else {
-                    //Use the found tab name
-                    tabName = result.iterator().next();
-                }
-            }
-            else {
-                //Node isn't from DLM return personal placeholder
-                tabName = TabRenderAggregationKey.PERSONAL_TAB_NAME;
-            }
-        }
-
-        //cache the resolution
-        layoutNodeIdNameResolutionCache.put(new Element(targetedLayoutNodeId, tabName));
-        
-        return tabName;
+        return new TabRenderAggregationKeyImpl(dateDimension, timeDimension, aggregationInterval, aggregatedGroup, mappedTab);
     }
 }

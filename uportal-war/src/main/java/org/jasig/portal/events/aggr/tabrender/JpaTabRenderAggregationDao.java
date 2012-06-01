@@ -33,7 +33,8 @@ import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.JpaBaseAggregationDao;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
-import org.jasig.portal.events.aggr.tabrender.TabRenderAggregationImpl_;
+import org.jasig.portal.events.aggr.tabs.AggregatedTabMapping;
+import org.jasig.portal.events.aggr.tabs.AggregatedTabMappingImpl;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -46,7 +47,7 @@ public class JpaTabRenderAggregationDao extends
         JpaBaseAggregationDao<TabRenderAggregationImpl, TabRenderAggregationKey> implements
         TabRenderAggregationPrivateDao {
     
-    private ParameterExpression<String> tabNameParameter;
+    private ParameterExpression<AggregatedTabMappingImpl> tabMappingParameter;
 
     public JpaTabRenderAggregationDao() {
         super(TabRenderAggregationImpl.class);
@@ -55,7 +56,7 @@ public class JpaTabRenderAggregationDao extends
 
     @Override
     protected void createParameterExpressions() {
-        this.tabNameParameter = this.createParameterExpression(String.class, "tabName");
+        this.tabMappingParameter = this.createParameterExpression(AggregatedTabMappingImpl.class, "tabMapping");
     }
 
     @Override
@@ -72,13 +73,13 @@ public class JpaTabRenderAggregationDao extends
     @Override
     protected void addAggregationSpecificKeyPredicate(CriteriaBuilder cb, Root<TabRenderAggregationImpl> root,
             List<Predicate> keyPredicates) {
-        keyPredicates.add(cb.equal(root.get(TabRenderAggregationImpl_.tabName), tabNameParameter));
+        keyPredicates.add(cb.equal(root.get(TabRenderAggregationImpl_.aggregatedTab), tabMappingParameter));
     }
 
     @Override
     protected void bindAggregationSpecificKeyParameters(TypedQuery<TabRenderAggregationImpl> query,
             TabRenderAggregationKey key) {
-        query.setParameter(this.tabNameParameter, key.getTabName());
+        query.setParameter(this.tabMappingParameter, (AggregatedTabMappingImpl)key.getTabMapping());
     }
 
     @Override
@@ -87,7 +88,7 @@ public class JpaTabRenderAggregationDao extends
         final DateDimension dateDimension = key.getDateDimension();
         final AggregationInterval interval = key.getInterval();
         final AggregatedGroupMapping aggregatedGroup = key.getAggregatedGroup();
-        final String tabName = key.getTabName();
-        return new TabRenderAggregationImpl(timeDimension, dateDimension, interval, aggregatedGroup, tabName);
+        final AggregatedTabMapping tabMapping = key.getTabMapping();
+        return new TabRenderAggregationImpl(timeDimension, dateDimension, interval, aggregatedGroup, tabMapping);
     }
 }

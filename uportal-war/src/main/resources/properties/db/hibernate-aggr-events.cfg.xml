@@ -37,7 +37,6 @@
         <property name="hibernate.cache.use_query_cache">true</property>
         <property name="hibernate.cache.use_second_level_cache">true</property>
         <property name="hibernate.cache.use_minimal_puts">true</property>
-        <property name="hibernate.cache.region_prefix">AggregateEvents</property>
         
         <property name="hibernate.current_session_context_class">thread</property>
         
@@ -51,6 +50,8 @@
         <mapping class="org.jasig.portal.events.aggr.dao.jpa.QuarterDetailImpl"/>
         <mapping class="org.jasig.portal.events.aggr.dao.jpa.AcademicTermDetailImpl"/>
         <mapping class="org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl"/>
+        <mapping class="org.jasig.portal.events.aggr.tabs.AggregatedTabMappingImpl"/>
+        <mapping class="org.jasig.portal.events.aggr.portlets.AggregatedPortletMappingImpl"/>
         <mapping class="org.jasig.portal.events.aggr.session.EventSessionImpl"/>
         <mapping class="org.jasig.portal.events.aggr.login.LoginAggregationImpl"/>
         <mapping class="org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationImpl"/>

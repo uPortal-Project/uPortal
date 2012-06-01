@@ -34,6 +34,8 @@ import org.jasig.portal.events.aggr.JpaBaseAggregationDao;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregationKey.ExecutionType;
+import org.jasig.portal.events.aggr.portlets.AggregatedPortletMapping;
+import org.jasig.portal.events.aggr.portlets.AggregatedPortletMappingImpl;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -46,7 +48,7 @@ public class JpaPortletExecutionAggregationDao extends
         JpaBaseAggregationDao<PortletExecutionAggregationImpl, PortletExecutionAggregationKey> implements
         PortletExecutionAggregationPrivateDao {
     
-    private ParameterExpression<String> fNameParameter;
+    private ParameterExpression<AggregatedPortletMappingImpl> portletMappingParameter;
     private ParameterExpression<ExecutionType> executionTypeParameter;
 
     public JpaPortletExecutionAggregationDao() {
@@ -56,7 +58,7 @@ public class JpaPortletExecutionAggregationDao extends
 
     @Override
     protected void createParameterExpressions() {
-        this.fNameParameter = this.createParameterExpression(String.class, "fname");
+        this.portletMappingParameter = this.createParameterExpression(AggregatedPortletMappingImpl.class, "portletMapping");
         this.executionTypeParameter = this.createParameterExpression(ExecutionType.class, "executionType");
     }
 
@@ -74,14 +76,14 @@ public class JpaPortletExecutionAggregationDao extends
     @Override
     protected void addAggregationSpecificKeyPredicate(CriteriaBuilder cb, Root<PortletExecutionAggregationImpl> root,
             List<Predicate> keyPredicates) {
-        keyPredicates.add(cb.equal(root.get(PortletExecutionAggregationImpl_.fname), fNameParameter));
+        keyPredicates.add(cb.equal(root.get(PortletExecutionAggregationImpl_.aggregatedPortlet), portletMappingParameter));
         keyPredicates.add(cb.equal(root.get(PortletExecutionAggregationImpl_.executionType), executionTypeParameter));
     }
 
     @Override
     protected void bindAggregationSpecificKeyParameters(TypedQuery<PortletExecutionAggregationImpl> query,
             PortletExecutionAggregationKey key) {
-        query.setParameter(this.fNameParameter, key.getFname());
+        query.setParameter(this.portletMappingParameter, (AggregatedPortletMappingImpl)key.getPortletMapping());
         query.setParameter(this.executionTypeParameter, key.getExecutionType());
     }
 
@@ -91,8 +93,8 @@ public class JpaPortletExecutionAggregationDao extends
         final DateDimension dateDimension = key.getDateDimension();
         final AggregationInterval interval = key.getInterval();
         final AggregatedGroupMapping aggregatedGroup = key.getAggregatedGroup();
-        final String fname = key.getFname();
+        final AggregatedPortletMapping portletMapping = key.getPortletMapping();
         final ExecutionType executionType = key.getExecutionType();
-        return new PortletExecutionAggregationImpl(timeDimension, dateDimension, interval, aggregatedGroup, fname, executionType);
+        return new PortletExecutionAggregationImpl(timeDimension, dateDimension, interval, aggregatedGroup, portletMapping, executionType);
     }
 }

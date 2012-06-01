@@ -8,6 +8,8 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
  * @author Eric Dalquist
  */
 public class BaseAggregationKeyImpl implements BaseAggregationKey {
+    private static final long serialVersionUID = 1L;
+    
     private final TimeDimension timeDimension;
     private final DateDimension dateDimension;
     private final AggregationInterval aggregationInterval;

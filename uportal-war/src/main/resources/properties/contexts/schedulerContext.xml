@@ -49,7 +49,7 @@
         <property name="daemon" value="true" />
     </bean>
     
-    <!-- <task:scheduled-tasks scheduler="uPortalTaskScheduler">-->
+    <task:scheduled-tasks scheduler="uPortalTaskScheduler">
         <!--
          | Prime #s are used so that over time the executions will distribute themselves fairly evenly over time
          | instead of always happening on at the same time (ex: always at 33 seconds of each minute)
@@ -62,5 +62,7 @@
         <!--<task:scheduled ref="portalEventAggregationManager" method="purgeRawEvents" fixed-delay="61300"/> <!- - ~1 minute period -->
         <!--<task:scheduled ref="portalEventAggregationManager" method="populateDimensions" fixed-delay="86820000"/> <!- - ~24 hour period -->
         <!--<task:scheduled ref="portalEventAggregationManager" method="purgeEventSessions" fixed-delay="61700"/> <!- - ~1 minute period -->
-    <!-- </task:scheduled-tasks> -->
+        <task:scheduled ref="cacheManagerExpiredElementEvictor" method="evictExpiredElements" fixed-delay="61900"/> <!-- ~1 minute period -->
+        <task:scheduled ref="eventAggrCacheManagerExpiredElementEvictor" method="evictExpiredElements" fixed-delay="61300"/> <!-- ~1 minute period -->
+    </task:scheduled-tasks>
 </beans>

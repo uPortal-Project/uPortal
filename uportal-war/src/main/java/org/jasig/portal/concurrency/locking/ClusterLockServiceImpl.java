@@ -25,7 +25,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.joda.time.Duration;
@@ -92,7 +92,7 @@ public class ClusterLockServiceImpl implements IClusterLockService {
      * @see org.jasig.portal.concurrency.locking.IClusterLockService#doInTryLock(java.lang.String, com.google.common.base.Function)
      */
     @Override
-    public <T> TryLockFunctionResult<T> doInTryLock(final String mutexName, Function<String, T> lockFunction) throws InterruptedException {
+    public <T> TryLockFunctionResult<T> doInTryLock(final String mutexName, Function<ClusterMutex, T> lockFunction) throws InterruptedException {
         /*
          * locking strategy requires 2 threads
          * the caller thread is the 'work thread', it executes the lockFunction
@@ -104,7 +104,7 @@ public class ClusterLockServiceImpl implements IClusterLockService {
         //Thread coordination objects
         final CountDownLatch dbLockLatch = new CountDownLatch(1);
         final CountDownLatch workCompleteLatch = new CountDownLatch(1);
-        final AtomicBoolean dbLocked = new AtomicBoolean(false);
+        final AtomicReference<ClusterMutex> dbLocked = new AtomicReference<ClusterMutex>(null);
         
         
         Future<Boolean> lockFuture = null;
@@ -125,14 +125,15 @@ public class ClusterLockServiceImpl implements IClusterLockService {
             //Wait for DB lock acquisition
             dbLockLatch.await();
             
-            if (!dbLocked.get()) {
+            final ClusterMutex mutex = dbLocked.get();
+            if (mutex == null) {
                 //Failed to get DB lock, stop now
                 this.logger.trace("failed to aquire database lock, returning notExecuted result for: {}", mutexName);
                 return TryLockFunctionResultImpl.getNotExecutedInstance();
             }
             
             //Execute the lockFunction
-            final T result = lockFunction.apply(mutexName);
+            final T result = lockFunction.apply(mutex);
             
             //Return the result
             return new TryLockFunctionResultImpl<T>(result);
@@ -193,15 +194,15 @@ public class ClusterLockServiceImpl implements IClusterLockService {
      */
     private final class DatabaseLockWorker implements Callable<Boolean> {
         private final Thread worker;
-        private final AtomicBoolean dbLocked;
+        private final AtomicReference<ClusterMutex> mutexRef;
         private final String mutexName;
         private final CountDownLatch dbLockLatch;
         private final CountDownLatch workCompleteLatch;
 
-        private DatabaseLockWorker(Thread worker, AtomicBoolean dbLocked, String mutexName, CountDownLatch dbLockLatch,
+        private DatabaseLockWorker(Thread worker, AtomicReference<ClusterMutex> mutexRef, String mutexName, CountDownLatch dbLockLatch,
                 CountDownLatch workCompleteLatch) {
             this.worker = worker;
-            this.dbLocked = dbLocked;
+            this.mutexRef = mutexRef;
             this.mutexName = mutexName;
             this.dbLockLatch = dbLockLatch;
             this.workCompleteLatch = workCompleteLatch;
@@ -213,11 +214,11 @@ public class ClusterLockServiceImpl implements IClusterLockService {
                 final long lockTimeout = System.currentTimeMillis() + maximumLockDuration.getMillis();
                 try {
                     //Try to acquire the lock, set the success to the dbLocked holder
-                    final boolean locked = clusterLockDao.getLock(this.mutexName);
-                    this.dbLocked.set(locked);
+                    final ClusterMutex mutex = clusterLockDao.getLock(this.mutexName);
+                    this.mutexRef.set(mutex);
 
                     //If acquisition failed return immediately
-                    if (!locked) {
+                    if (mutex == null) {
                         logger.trace("failed to acquire db lock for: {}", this.mutexName);
                         return false;
                     }
@@ -249,7 +250,7 @@ public class ClusterLockServiceImpl implements IClusterLockService {
             }
             finally {
                 //If the db lock was acquired release it
-                if (this.dbLocked.get()) {
+                if (this.mutexRef.get() != null) {
                     if (this.workCompleteLatch.getCount() != 0) {
                         //Worker isn't done but we're in the finally block, must have hit an exception
                         //Interrupt the worker thread to notify it that the lock has been given up on

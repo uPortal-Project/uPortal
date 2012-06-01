@@ -32,6 +32,8 @@ import org.jasig.portal.events.aggr.JpaBaseAggregationDaoTest;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregationKey.ExecutionType;
+import org.jasig.portal.events.aggr.portlets.AggregatedPortletLookupDao;
+import org.jasig.portal.events.aggr.portlets.AggregatedPortletMapping;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -46,6 +48,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class JpaPortletExecutionAggregationDaoTest extends JpaBaseAggregationDaoTest<PortletExecutionAggregationImpl, PortletExecutionAggregationKey> {
     @Autowired
     private PortletExecutionAggregationPrivateDao renderAggregationDao;
+    @Autowired
+    private AggregatedPortletLookupDao aggregatedPortletLookupDao;
 
     @Override
     protected BaseAggregationPrivateDao<PortletExecutionAggregationImpl, PortletExecutionAggregationKey> getAggregationDao() {
@@ -65,14 +69,18 @@ public class JpaPortletExecutionAggregationDaoTest extends JpaBaseAggregationDao
         final DateDimension dateDimension = intervalInfo.getDateDimension();
         final TimeDimension timeDimension = intervalInfo.getTimeDimension();
         final AggregationInterval aggregationInterval = intervalInfo.getAggregationInterval();
-        return new PortletExecutionAggregationKeyImpl(dateDimension, timeDimension, aggregationInterval, aggregatedGroup, "Foo", ExecutionType.ALL);
+        
+        final AggregatedPortletMapping mappedPortlet = aggregatedPortletLookupDao.getMappedPortletForFname("Foo");
+        
+        return new PortletExecutionAggregationKeyImpl(dateDimension, timeDimension, aggregationInterval, aggregatedGroup, mappedPortlet, ExecutionType.ALL);
     }
 
     @Override
     protected PortletExecutionAggregationKey createAggregationKey(AggregationInterval interval,
             AggregatedGroupMapping aggregatedGroup) {
         
-        return new PortletExecutionAggregationKeyImpl(interval, aggregatedGroup, "Foo", ExecutionType.ALL);
+        final AggregatedPortletMapping mappedPortlet = aggregatedPortletLookupDao.getMappedPortletForFname("Foo");
+        return new PortletExecutionAggregationKeyImpl(interval, aggregatedGroup, mappedPortlet, ExecutionType.ALL);
     }
 
     @Override
@@ -82,8 +90,9 @@ public class JpaPortletExecutionAggregationDaoTest extends JpaBaseAggregationDao
         final DateDimension dateDimension = intervalInfo.getDateDimension();
         final TimeDimension timeDimension = intervalInfo.getTimeDimension();
         final AggregationInterval aggregationInterval = intervalInfo.getAggregationInterval();
+        final AggregatedPortletMapping mappedPortlet = aggregatedPortletLookupDao.getMappedPortletForFname("Foo");
         return Collections.singletonList(renderAggregationDao.createAggregation(new PortletExecutionAggregationKeyImpl(
-                dateDimension, timeDimension, aggregationInterval, aggregatedGroup, "Foo", ExecutionType.ALL)));
+                dateDimension, timeDimension, aggregationInterval, aggregatedGroup, mappedPortlet, ExecutionType.ALL)));
     }
     
 }

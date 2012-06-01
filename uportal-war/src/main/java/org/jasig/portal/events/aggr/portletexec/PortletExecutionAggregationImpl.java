@@ -30,6 +30,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -39,12 +41,13 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
-import org.hibernate.annotations.Type;
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.BaseTimedAggregationStatsImpl;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.jasig.portal.events.aggr.portlets.AggregatedPortletMapping;
+import org.jasig.portal.events.aggr.portlets.AggregatedPortletMappingImpl;
 
 /**
  * @author Eric Dalquist
@@ -65,12 +68,12 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 @org.hibernate.annotations.Table(
         appliesTo = "UP_PORTLET_EXEC_AGGR",
         indexes = {
-                @Index(name = "IDX_UP_PLT_EXEC_AGGR_DTI", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL" }),
+                @Index(name = "IDX_UP_PLT_EXEC_AGGR_DTIPE", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL", "AGGR_PORTLET_ID", "EXECUTION_TYPE" }),
                 @Index(name = "IDX_UP_PLT_EXEC_AGGR_DTIC", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL", "STATS_COMPLETE" })
             }
         )
 @Cacheable
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class PortletExecutionAggregationImpl extends BaseTimedAggregationStatsImpl implements PortletExecutionAggregation, Serializable {
     private static final long serialVersionUID = 1L;
     
@@ -81,9 +84,9 @@ public class PortletExecutionAggregationImpl extends BaseTimedAggregationStatsIm
     private final long id;
     
     @NaturalId
-    @Column(name = "FNAME", nullable = false, length=400)
-    @Type(type="fname")
-    private final String fname;
+    @ManyToOne(targetEntity=AggregatedPortletMappingImpl.class)
+    @JoinColumn(name = "AGGR_PORTLET_ID", nullable = false)
+    private final AggregatedPortletMapping aggregatedPortlet;
     
     @NaturalId
     @Column(name = "EXECUTION_TYPE", nullable = false, length=50)
@@ -94,25 +97,25 @@ public class PortletExecutionAggregationImpl extends BaseTimedAggregationStatsIm
     private PortletExecutionAggregationImpl() {
         super();
         this.id = -1;
-        this.fname = null;
+        this.aggregatedPortlet = null;
         this.executionType = null;
     }
     
     PortletExecutionAggregationImpl(TimeDimension timeDimension, DateDimension dateDimension, 
-            AggregationInterval interval, AggregatedGroupMapping aggregatedGroup, String tabName, ExecutionType executionType) {
+            AggregationInterval interval, AggregatedGroupMapping aggregatedGroup, AggregatedPortletMapping aggregatedPortlet, ExecutionType executionType) {
         super(timeDimension, dateDimension, interval, aggregatedGroup);
 
-        Validate.notNull(tabName);
+        Validate.notNull(aggregatedPortlet);
         Validate.notNull(executionType);
         
         this.id = -1;
-        this.fname = tabName;
+        this.aggregatedPortlet = aggregatedPortlet;
         this.executionType = executionType;
     }
 
     @Override
-    public String getFname() {
-        return this.fname;
+    public AggregatedPortletMapping getPortletMapping() {
+        return this.aggregatedPortlet;
     }
     
     @Override
@@ -129,8 +132,8 @@ public class PortletExecutionAggregationImpl extends BaseTimedAggregationStatsIm
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
+        result = prime * result + ((aggregatedPortlet == null) ? 0 : aggregatedPortlet.hashCode());
         result = prime * result + ((executionType == null) ? 0 : executionType.hashCode());
-        result = prime * result + ((fname == null) ? 0 : fname.hashCode());
         return result;
     }
 
@@ -143,20 +146,20 @@ public class PortletExecutionAggregationImpl extends BaseTimedAggregationStatsIm
         if (getClass() != obj.getClass())
             return false;
         PortletExecutionAggregationImpl other = (PortletExecutionAggregationImpl) obj;
-        if (executionType != other.executionType)
-            return false;
-        if (fname == null) {
-            if (other.fname != null)
+        if (aggregatedPortlet == null) {
+            if (other.aggregatedPortlet != null)
                 return false;
         }
-        else if (!fname.equals(other.fname))
+        else if (!aggregatedPortlet.equals(other.aggregatedPortlet))
+            return false;
+        if (executionType != other.executionType)
             return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "PortletExecutionAggregationImpl [fname=" + fname + ", executionType=" + executionType
+        return "PortletExecutionAggregationImpl [aggregatedPortlet=" + aggregatedPortlet + ", executionType=" + executionType
                 + ", getTimeDimension=" + getTimeDimension() + ", getDateDimension=" + getDateDimension()
                 + ", getInterval=" + getInterval() + ", getAggregatedGroup=" + getAggregatedGroup() + "]";
     }

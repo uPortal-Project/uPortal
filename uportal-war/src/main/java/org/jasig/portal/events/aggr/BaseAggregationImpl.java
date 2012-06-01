@@ -63,7 +63,7 @@ public abstract class BaseAggregationImpl implements BaseAggregation, Serializab
     
     @NaturalId
     @ManyToOne(targetEntity=AggregatedGroupMappingImpl.class)
-    @JoinColumn(name = "AGGREGATED_GROUP_ID", nullable = false)
+    @JoinColumn(name = "AGGR_GROUP_ID", nullable = false)
     private final AggregatedGroupMapping aggregatedGroup;
     
     @Column(name = "DURATION", nullable = false)

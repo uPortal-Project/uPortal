@@ -35,6 +35,8 @@ import org.jasig.portal.events.aggr.tabrender.TabRenderAggregationImpl;
 import org.jasig.portal.events.aggr.tabrender.TabRenderAggregationKey;
 import org.jasig.portal.events.aggr.tabrender.TabRenderAggregationKeyImpl;
 import org.jasig.portal.events.aggr.tabrender.TabRenderAggregationPrivateDao;
+import org.jasig.portal.events.aggr.tabs.AggregatedTabLookupDao;
+import org.jasig.portal.events.aggr.tabs.AggregatedTabMapping;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -49,6 +51,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class JpaTabRenderAggregationDaoTest extends JpaBaseAggregationDaoTest<TabRenderAggregationImpl, TabRenderAggregationKey> {
     @Autowired
     private TabRenderAggregationPrivateDao renderAggregationDao;
+    @Autowired
+    private AggregatedTabLookupDao aggregatedTabLookupDao;
 
     @Override
     protected BaseAggregationPrivateDao<TabRenderAggregationImpl, TabRenderAggregationKey> getAggregationDao() {
@@ -68,14 +72,15 @@ public class JpaTabRenderAggregationDaoTest extends JpaBaseAggregationDaoTest<Ta
         final DateDimension dateDimension = intervalInfo.getDateDimension();
         final TimeDimension timeDimension = intervalInfo.getTimeDimension();
         final AggregationInterval aggregationInterval = intervalInfo.getAggregationInterval();
-        return new TabRenderAggregationKeyImpl(dateDimension, timeDimension, aggregationInterval, aggregatedGroup, "Foo");
+        final AggregatedTabMapping mappedTab = this.aggregatedTabLookupDao.getMappedTabForLayoutId("u1l1n1");
+        return new TabRenderAggregationKeyImpl(dateDimension, timeDimension, aggregationInterval, aggregatedGroup, mappedTab);
     }
 
     @Override
     protected TabRenderAggregationKey createAggregationKey(AggregationInterval interval,
             AggregatedGroupMapping aggregatedGroup) {
-        
-        return new TabRenderAggregationKeyImpl(interval, aggregatedGroup, "Foo");
+        final AggregatedTabMapping mappedTab = this.aggregatedTabLookupDao.getMappedTabForLayoutId("u1l1n1");
+        return new TabRenderAggregationKeyImpl(interval, aggregatedGroup, mappedTab);
     }
 
     @Override
@@ -85,8 +90,9 @@ public class JpaTabRenderAggregationDaoTest extends JpaBaseAggregationDaoTest<Ta
         final DateDimension dateDimension = intervalInfo.getDateDimension();
         final TimeDimension timeDimension = intervalInfo.getTimeDimension();
         final AggregationInterval aggregationInterval = intervalInfo.getAggregationInterval();
+        final AggregatedTabMapping mappedTab = this.aggregatedTabLookupDao.getMappedTabForLayoutId("u1l1n1");
         return Collections.singletonList(renderAggregationDao.createAggregation(new TabRenderAggregationKeyImpl(
-                dateDimension, timeDimension, aggregationInterval, aggregatedGroup, "Foo")));
+                dateDimension, timeDimension, aggregationInterval, aggregatedGroup, mappedTab)));
     }
     
 }

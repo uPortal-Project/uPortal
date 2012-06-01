@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.events.aggr.groups;
+package org.jasig.portal.events.aggr.tabs;
 
 import java.io.Serializable;
 
@@ -35,73 +35,66 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.NaturalId;
 
-/**
- * @author Eric Dalquist
- * @version $Revision$
- */
-
 @Entity
-@Table(name = "UP_AGGR_GROUP_MAPPING")
+@Table(name = "UP_AGGR_TAB_MAPPING")
 @SequenceGenerator(
-        name="UP_AGGR_GROUP_MAPPING_GEN",
-        sequenceName="UP_AGGR_GROUP_MAPPING_SEQ",
+        name="UP_AGGR_TAB_MAPPING_GEN",
+        sequenceName="UP_AGGR_TAB_MAPPING_SEQ",
         allocationSize=10
     )
 @TableGenerator(
-        name="UP_AGGR_GROUP_MAPPING_GEN",
-        pkColumnValue="UP_AGGR_GROUP_MAPPING_PROP",
+        name="UP_AGGR_TAB_MAPPING_GEN",
+        pkColumnValue="UP_AGGR_TAB_MAPPING_PROP",
         allocationSize=10
     )
 @Immutable
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class AggregatedGroupMappingImpl implements AggregatedGroupMapping, Serializable {
+public class AggregatedTabMappingImpl implements AggregatedTabMapping, Serializable {
     private static final long serialVersionUID = 1L;
     
     @Id
-    @GeneratedValue(generator = "UP_AGGR_GROUP_MAPPING_GEN")
+    @GeneratedValue(generator = "UP_AGGR_TAB_MAPPING_GEN")
     @Column(name="ID")
     private final long id;
     
     @NaturalId
-    @Column(name = "GROUP_SERVICE", length=200, nullable = false)
-    private final String groupService;
+    @Column(name = "FRAGMENT_NAME", length=200, nullable = false)
+    private final String fragmentName;
     
     @NaturalId
-    @Column(name = "GROUP_NAME", length=200, nullable = false)
-    private final String groupName;
+    @Column(name = "TAB_NAME", length=200, nullable = false)
+    private final String tabName;
     
     @SuppressWarnings("unused")
-    private AggregatedGroupMappingImpl() {
+    private AggregatedTabMappingImpl() {
         this.id = -1;
-        this.groupService = null;
-        this.groupName = null;
+        this.fragmentName = null;
+        this.tabName = null;
     }
     
-    AggregatedGroupMappingImpl(String groupService, String groupName) {
+    AggregatedTabMappingImpl(String fragmentName, String tabName) {
         this.id = -1;
-        this.groupService = groupService;
-        this.groupName = groupName;
-    }
-
-
-
-    @Override
-    public String getGroupName() {
-        return this.groupName;
+        this.fragmentName = fragmentName;
+        this.tabName = tabName;
     }
 
     @Override
-    public String getGroupService() {
-        return this.groupService;
+    public String getFragmentName() {
+        return this.fragmentName;
+    }
+
+    @Override
+    public String getTabName() {
+        return this.tabName;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((groupName == null) ? 0 : groupName.hashCode());
-        result = prime * result + ((groupService == null) ? 0 : groupService.hashCode());
+        result = prime * result + ((fragmentName == null) ? 0 : fragmentName.hashCode());
+        result = prime * result + ((tabName == null) ? 0 : tabName.hashCode());
         return result;
     }
 
@@ -113,24 +106,24 @@ public class AggregatedGroupMappingImpl implements AggregatedGroupMapping, Seria
             return false;
         if (getClass() != obj.getClass())
             return false;
-        AggregatedGroupMappingImpl other = (AggregatedGroupMappingImpl) obj;
-        if (groupName == null) {
-            if (other.groupName != null)
+        AggregatedTabMappingImpl other = (AggregatedTabMappingImpl) obj;
+        if (fragmentName == null) {
+            if (other.fragmentName != null)
                 return false;
         }
-        else if (!groupName.equals(other.groupName))
+        else if (!fragmentName.equals(other.fragmentName))
             return false;
-        if (groupService == null) {
-            if (other.groupService != null)
+        if (tabName == null) {
+            if (other.tabName != null)
                 return false;
         }
-        else if (!groupService.equals(other.groupService))
+        else if (!tabName.equals(other.tabName))
             return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "AggregatedGroupMapping [id=" + id + ", groupService=" + groupService + ", groupName=" + groupName + "]";
+        return "AggregatedTabMappingImpl [id=" + id + ", fragmentName=" + fragmentName + ", tabName=" + tabName + "]";
     }
 }

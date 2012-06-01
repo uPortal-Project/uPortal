@@ -19,7 +19,9 @@
 
 package org.jasig.portal.events.aggr.groups;
 
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -49,6 +51,7 @@ import com.google.common.base.Function;
 @Repository
 public class JpaAggregatedGroupLookupDao extends BaseAggrEventsJpaDao implements AggregatedGroupLookupDao {
     private CriteriaQuery<AggregatedGroupMappingImpl> findGroupMappingByServiceAndNameQuery;
+    private CriteriaQuery<AggregatedGroupMappingImpl> findAllGroupMappingsQuery;
     private ParameterExpression<String> groupServiceParameter;
     private ParameterExpression<String> groupNameParameter;
     
@@ -70,6 +73,15 @@ public class JpaAggregatedGroupLookupDao extends BaseAggrEventsJpaDao implements
     public void afterPropertiesSet() throws Exception {
         this.groupServiceParameter = this.createParameterExpression(String.class, "groupService");
         this.groupNameParameter = this.createParameterExpression(String.class, "groupName");
+        
+        this.findAllGroupMappingsQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<AggregatedGroupMappingImpl>>() {
+            @Override
+            public CriteriaQuery<AggregatedGroupMappingImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<AggregatedGroupMappingImpl> criteriaQuery = cb.createQuery(AggregatedGroupMappingImpl.class);
+                criteriaQuery.from(AggregatedGroupMappingImpl.class);
+                return criteriaQuery;
+            }
+        });
         
         this.findGroupMappingByServiceAndNameQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<AggregatedGroupMappingImpl>>() {
             @Override
@@ -136,4 +148,12 @@ public class JpaAggregatedGroupLookupDao extends BaseAggrEventsJpaDao implements
         
         return this.getGroupMapping(groupService, groupName);
     }
+
+    @Override
+    public Set<AggregatedGroupMapping> getGroupMappings() {
+        final TypedQuery<AggregatedGroupMappingImpl> cachedQuery = this.createCachedQuery(this.findAllGroupMappingsQuery);
+        
+        return new LinkedHashSet<AggregatedGroupMapping>(cachedQuery.getResultList());
+    }
+    
 }

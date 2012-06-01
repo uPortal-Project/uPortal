@@ -26,8 +26,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -57,7 +55,7 @@ import org.springframework.util.Assert;
         allocationSize=1
     )
 //THIS CLASS CANNOT BE CACHED
-class ClusterMutex implements Serializable {
+public class ClusterMutex implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -79,6 +77,9 @@ class ClusterMutex implements Serializable {
     
     @Column(name="SERVER_ID", length=200)
     private String serverId;
+    
+    @Column(name="PREV_SERVER_ID", length=200)
+    private String previousServerId;
     
     @Column(name="LOCK_START", nullable=false)
     private Date lockStart = new Date(0);
@@ -126,10 +127,17 @@ class ClusterMutex implements Serializable {
     }
 
     /**
-     * @return the serverId
+     * @return the serverId that currently owns the lock, null if the mutex is not locked
      */
     public String getServerId() {
         return this.serverId;
+    }
+    
+    /**
+     * @return the serverId of the previous lock owner, null if the mutex has never been locked or is locked for the first time 
+     */
+    public String getPreviousServerId() {
+        return this.previousServerId;
     }
 
     /**
@@ -175,6 +183,7 @@ class ClusterMutex implements Serializable {
         this.locked = false;
         this.lockEnd = new Date();
         this.serverId = null;
+        this.previousServerId = this.serverId;
     }
 
     /**
@@ -218,8 +227,8 @@ class ClusterMutex implements Serializable {
 
     @Override
     public String toString() {
-        return "ClusterMutex [id=" + this.id + ", name=" + this.name + ", locked=" + this.locked + ", serverId="
-                + this.serverId + ", lockStart=" + this.lockStart + ", lastUpdate=" + this.lastUpdate + ", lockEnd="
-                + this.lockEnd + "]";
+        return "ClusterMutex [name=" + name + ", locked=" + locked + ", serverId=" + serverId + ", previousServerId="
+                + previousServerId + ", lockStart=" + lockStart + ", lastUpdate=" + lastUpdate + ", lockEnd=" + lockEnd
+                + "]";
     }
 }

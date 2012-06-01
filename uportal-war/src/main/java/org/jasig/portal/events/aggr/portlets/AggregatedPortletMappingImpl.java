@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.events.aggr.groups;
+package org.jasig.portal.events.aggr.portlets;
 
 import java.io.Serializable;
 
@@ -34,74 +34,67 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.NaturalId;
-
-/**
- * @author Eric Dalquist
- * @version $Revision$
- */
+import org.hibernate.annotations.Type;
 
 @Entity
-@Table(name = "UP_AGGR_GROUP_MAPPING")
+@Table(name = "UP_AGGR_PORTLET_MAPPING")
 @SequenceGenerator(
-        name="UP_AGGR_GROUP_MAPPING_GEN",
-        sequenceName="UP_AGGR_GROUP_MAPPING_SEQ",
+        name="UP_AGGR_PORTLET_MAPPING_GEN",
+        sequenceName="UP_AGGR_PORTLET_MAPPING_SEQ",
         allocationSize=10
     )
 @TableGenerator(
-        name="UP_AGGR_GROUP_MAPPING_GEN",
-        pkColumnValue="UP_AGGR_GROUP_MAPPING_PROP",
+        name="UP_AGGR_PORTLET_MAPPING_GEN",
+        pkColumnValue="UP_AGGR_PORTLET_MAPPING_PROP",
         allocationSize=10
     )
 @Immutable
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class AggregatedGroupMappingImpl implements AggregatedGroupMapping, Serializable {
+public class AggregatedPortletMappingImpl implements AggregatedPortletMapping, Serializable {
     private static final long serialVersionUID = 1L;
     
     @Id
-    @GeneratedValue(generator = "UP_AGGR_GROUP_MAPPING_GEN")
+    @GeneratedValue(generator = "UP_AGGR_PORTLET_MAPPING_GEN")
     @Column(name="ID")
     private final long id;
     
+    @Column(name = "PORTLET_NAME", length = 128, nullable = false, unique = true)
+    private final String name;
+
     @NaturalId
-    @Column(name = "GROUP_SERVICE", length=200, nullable = false)
-    private final String groupService;
-    
-    @NaturalId
-    @Column(name = "GROUP_NAME", length=200, nullable = false)
-    private final String groupName;
+    @Column(name = "PORTLET_FNAME", length = 255, nullable = false)
+    @Type(type = "fname")
+    private final String fname;
     
     @SuppressWarnings("unused")
-    private AggregatedGroupMappingImpl() {
+    private AggregatedPortletMappingImpl() {
         this.id = -1;
-        this.groupService = null;
-        this.groupName = null;
+        this.name = null;
+        this.fname = null;
     }
     
-    AggregatedGroupMappingImpl(String groupService, String groupName) {
+    AggregatedPortletMappingImpl(String name, String fname) {
         this.id = -1;
-        this.groupService = groupService;
-        this.groupName = groupName;
-    }
-
-
-
-    @Override
-    public String getGroupName() {
-        return this.groupName;
+        this.name = name;
+        this.fname = fname;
     }
 
     @Override
-    public String getGroupService() {
-        return this.groupService;
+    public String getFName() {
+        return this.fname;
+    }
+
+    @Override
+    public String getName() {
+        return this.name;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((groupName == null) ? 0 : groupName.hashCode());
-        result = prime * result + ((groupService == null) ? 0 : groupService.hashCode());
+        result = prime * result + ((fname == null) ? 0 : fname.hashCode());
         return result;
     }
 
@@ -113,24 +106,18 @@ public class AggregatedGroupMappingImpl implements AggregatedGroupMapping, Seria
             return false;
         if (getClass() != obj.getClass())
             return false;
-        AggregatedGroupMappingImpl other = (AggregatedGroupMappingImpl) obj;
-        if (groupName == null) {
-            if (other.groupName != null)
+        AggregatedPortletMappingImpl other = (AggregatedPortletMappingImpl) obj;
+        if (fname == null) {
+            if (other.fname != null)
                 return false;
         }
-        else if (!groupName.equals(other.groupName))
-            return false;
-        if (groupService == null) {
-            if (other.groupService != null)
-                return false;
-        }
-        else if (!groupService.equals(other.groupService))
+        else if (!fname.equals(other.fname))
             return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "AggregatedGroupMapping [id=" + id + ", groupService=" + groupService + ", groupName=" + groupName + "]";
+        return "AggregatedPortletMappingImpl [id=" + id + ", name=" + name + ", fname=" + fname + "]";
     }
 }

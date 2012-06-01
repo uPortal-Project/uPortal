@@ -36,7 +36,11 @@
     <bean id="timeDimensionDao" class="org.jasig.portal.events.aggr.dao.jpa.JpaTimeDimensionDao" />    
     <bean id="dateDimensionDao" class="org.jasig.portal.events.aggr.dao.jpa.JpaDateDimensionDao" />
     <bean id="eventAggregationManagementDao" class="org.jasig.portal.events.aggr.dao.jpa.JpaEventAggregationManagementDao" />
+    
     <bean id="aggregatedGroupLookupDao" class="org.jasig.portal.events.aggr.groups.JpaAggregatedGroupLookupDao" />
+    <bean id="aggregatedPortletLookupDao" class="org.jasig.portal.events.aggr.portlets.JpaAggregatedPortletLookupDao" />
+    <bean id="aggregatedTabLookupDao" class="org.jasig.portal.events.aggr.tabs.JpaAggregatedTabLookupDao" />
+    
     <bean id="loginAggregationDao" class="org.jasig.portal.events.aggr.login.JpaLoginAggregationDao" />
     <bean id="concurrentUserAggregationDao" class="org.jasig.portal.events.aggr.concuser.JpaConcurrentUserAggregationDao" />
     <bean id="tabRenderAggregationDao" class="org.jasig.portal.events.aggr.tabrender.JpaTabRenderAggregationDao"/>
@@ -48,6 +52,18 @@
     <bean id="compositeGroupService" class="org.jasig.portal.spring.MockitoFactoryBean" >
         <constructor-arg value="org.jasig.portal.groups.ICompositeGroupService" />
     </bean>
+    <bean id="portletDefinitionDao" class="org.jasig.portal.spring.MockitoFactoryBean" >
+        <constructor-arg value="org.jasig.portal.portlet.dao.IPortletDefinitionDao" />
+    </bean>
+    <bean id="portalJdbcOperations" class="org.jasig.portal.spring.MockitoFactoryBean" >
+        <qualifier value="PortalDb" />
+        <constructor-arg value="org.springframework.jdbc.core.JdbcOperations" />
+    </bean>
+    <bean id="org.jasig.portal.events.aggr.tabrender.TabRenderAggregator.layoutNodeIdNameResolver" class="org.jasig.portal.spring.MockitoFactoryBean" >
+        <qualifier value="org.jasig.portal.events.aggr.tabrender.TabRenderAggregator.layoutNodeIdNameResolver"/>
+        <constructor-arg value="net.sf.ehcache.Ehcache" />
+    </bean>
+    
     
     <bean id="localPropertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="properties">

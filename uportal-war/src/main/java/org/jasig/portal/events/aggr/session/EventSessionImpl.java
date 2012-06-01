@@ -68,7 +68,7 @@ import org.joda.time.DateTime;
         allocationSize=100
     )
 @Cacheable
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class EventSessionImpl implements EventSession, Serializable {
     private static final long serialVersionUID = 1L;
     
@@ -83,7 +83,7 @@ public class EventSessionImpl implements EventSession, Serializable {
     
     @ManyToMany(targetEntity=AggregatedGroupMappingImpl.class, fetch=FetchType.EAGER)
     @JoinTable(name="UP_EVENT_SESSION_GROUPS", inverseJoinColumns = @JoinColumn(name = "GROUP_ID"))
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @Fetch(FetchMode.JOIN)
     private final Set<AggregatedGroupMapping> groupMappings;
     

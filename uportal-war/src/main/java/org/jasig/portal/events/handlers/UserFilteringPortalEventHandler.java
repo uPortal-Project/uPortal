@@ -124,12 +124,12 @@ public final class UserFilteringPortalEventHandler<E extends PortalEvent> implem
         //ignored userName pattern check
         if (this.ignoredUserNamePatterns != null) {
             for (final Pattern ignoredUserNamePattern : this.ignoredUserNamePatterns) {
-                if (!ignoredUserNamePattern.matcher(userName).matches()) {
+                if (ignoredUserNamePattern.matcher(userName).matches()) {
                     return false;
                 }
             }
         }
         
-        return this.supportedUserNames == null;
+        return this.supportedUserNames == null || this.supportedUserNames.isEmpty();
     }
 }

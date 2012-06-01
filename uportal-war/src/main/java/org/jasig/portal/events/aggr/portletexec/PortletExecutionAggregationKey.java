@@ -7,6 +7,7 @@ import org.jasig.portal.events.PortletExecutionEvent;
 import org.jasig.portal.events.PortletRenderExecutionEvent;
 import org.jasig.portal.events.PortletResourceExecutionEvent;
 import org.jasig.portal.events.aggr.BaseAggregationKey;
+import org.jasig.portal.events.aggr.portlets.AggregatedPortletMapping;
 
 /**
  * Primary Key for a {@link PortletExecutionAggregation}
@@ -17,7 +18,7 @@ public interface PortletExecutionAggregationKey extends BaseAggregationKey {
     /**
      * @return The name of the tab
      */
-    String getFname();
+    AggregatedPortletMapping getPortletMapping();
     
     /**
      * @return The type of portlet execution 

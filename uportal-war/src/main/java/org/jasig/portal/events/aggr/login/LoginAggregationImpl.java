@@ -52,31 +52,30 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
  * @version $Revision$
  */
 @Entity
-@Table(name = "UP_LOGIN_EVENT_AGGREGATE")
+@Table(name = "UP_LOGIN_EVENT_AGGR")
 @Inheritance(strategy=InheritanceType.JOINED)
 @SequenceGenerator(
-        name="UP_LOGIN_EVENT_AGGREGATE_GEN",
-        sequenceName="UP_LOGIN_EVENT_AGGREGATE_SEQ",
+        name="UP_LOGIN_EVENT_AGGR_GEN",
+        sequenceName="UP_LOGIN_EVENT_AGGR_SEQ",
         allocationSize=1000
     )
 @TableGenerator(
-        name="UP_LOGIN_EVENT_AGGREGATE_GEN",
-        pkColumnValue="UP_LOGIN_EVENT_AGGREGATE_PROP",
+        name="UP_LOGIN_EVENT_AGGR_GEN",
+        pkColumnValue="UP_LOGIN_EVENT_AGGR_PROP",
         allocationSize=1000
     )
 @org.hibernate.annotations.Table(
-        appliesTo = "UP_LOGIN_EVENT_AGGREGATE",
+        appliesTo = "UP_LOGIN_EVENT_AGGR",
         indexes = @Index(name = "IDX_UP_LOGIN_EVENT_AGGR_DTI", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL" })
         )
 @Cacheable
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class LoginAggregationImpl extends BaseAggregationImpl implements LoginAggregation, Serializable {
     private static final long serialVersionUID = 1L;
     
     @Id
-    @GeneratedValue(generator = "UP_LOGIN_EVENT_AGGREGATE_GEN")
+    @GeneratedValue(generator = "UP_LOGIN_EVENT_AGGR_GEN")
     @Column(name="ID")
-    @SuppressWarnings("unused")
     private final long id;
     
     @Column(name = "LOGIN_COUNT", nullable = false)
@@ -87,10 +86,11 @@ public class LoginAggregationImpl extends BaseAggregationImpl implements LoginAg
     
     @ElementCollection(fetch=FetchType.LAZY)
     @CollectionTable(
-            name = "UP_LOGIN_EVENT_AGGREGATE__UIDS",
+            name = "UP_LOGIN_EVENT_AGGR__UIDS",
             joinColumns = @JoinColumn(name = "LOGIN_AGGR_ID")
         )
     @Column(name="UNIQUEUSERNAMES", nullable=false, updatable=false, length=255)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<String> uniqueUserNames = new LinkedHashSet<String>();
     
     @SuppressWarnings("unused")

@@ -36,7 +36,6 @@ import org.joda.time.DateMidnight;
 import org.joda.time.LocalTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.UnmodifiableIterator;
 
@@ -58,12 +57,12 @@ public abstract class BasePortalEventAggregator<
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     private final String cacheKeySource = this.getClass().getName();
     
-    private AggregationIntervalHelper aggregationIntervalHelper;
-
-    @Autowired
-    public final void setAggregationIntervalHelper(AggregationIntervalHelper aggregationIntervalHelper) {
-        this.aggregationIntervalHelper = aggregationIntervalHelper;
-    }
+//    private AggregationIntervalHelper aggregationIntervalHelper;
+//
+//    @Autowired
+//    public final void setAggregationIntervalHelper(AggregationIntervalHelper aggregationIntervalHelper) {
+//        this.aggregationIntervalHelper = aggregationIntervalHelper;
+//    }
     
     /**
      * @return The private aggregation DAO to use
@@ -104,14 +103,14 @@ public abstract class BasePortalEventAggregator<
             //If the number of cached aggregations != number of group mappings we need to figure out which groups don't have an
             //aggregation yet. This is done by cloning the groupMappings map and removing groups we see from it as the cached
             //aggregations are parsed
-            final Set<AggregatedGroupMapping> groupMappings = eventSession.getGroupMappings();
-            final Set<AggregatedGroupMapping> mutableGroupMappings;
-            if (groupMappings.size() != cachedAggregations.size()) {
-                mutableGroupMappings = new LinkedHashSet<AggregatedGroupMapping>(groupMappings);
+            final Set<AggregatedGroupMapping> groupMappings;
+            if (eventSession == null) {
+                groupMappings = Collections.emptySet();
             }
             else {
-                mutableGroupMappings = null;
+                groupMappings = eventSession.getGroupMappings();
             }
+            final Set<AggregatedGroupMapping> mutableGroupMappings = new LinkedHashSet<AggregatedGroupMapping>(groupMappings);
         
             //Update the aggregation for each cached aggr
             for (final T aggregation : cachedAggregations) {
@@ -124,7 +123,7 @@ public abstract class BasePortalEventAggregator<
             }
             
             //Create aggregations for any left over groups
-            if (mutableGroupMappings != null && !mutableGroupMappings.isEmpty()) {
+            if (!mutableGroupMappings.isEmpty()) {
                 for (final AggregatedGroupMapping aggregatedGroup : mutableGroupMappings) {
                     final K key = this.createAggregationKey(intervalInfo, aggregatedGroup, e);
                     final T aggregation = aggregationDao.createAggregation(key);
@@ -153,15 +152,15 @@ public abstract class BasePortalEventAggregator<
         }
         aggregationDao.updateAggregations(aggregations);
         
-        //Look for any uncomplete aggregations from the previous interval
-        final AggregationIntervalInfo prevIntervalInfo = this.aggregationIntervalHelper.getIntervalInfo(interval, intervalInfo.getStart().minusMinutes(1));
-        final Collection<T> unclosedAggregations = aggregationDao.getUnclosedAggregations(prevIntervalInfo.getStart(), prevIntervalInfo.getEnd(), interval);
-        for (final T aggregation : unclosedAggregations) {
-            final int duration = intervalInfo.getTotalDuration();
-            aggregation.intervalComplete(duration);
-            logger.debug("Marked complete, was previously unclosed: {}", aggregation);
-        }
-        aggregationDao.updateAggregations(unclosedAggregations);
+//        //Look for any uncomplete aggregations from the previous interval
+//        final AggregationIntervalInfo prevIntervalInfo = this.aggregationIntervalHelper.getIntervalInfo(interval, intervalInfo.getStart().minusMinutes(1));
+//        final Collection<T> unclosedAggregations = aggregationDao.getUnclosedAggregations(prevIntervalInfo.getStart(), prevIntervalInfo.getEnd(), interval);
+//        for (final T aggregation : unclosedAggregations) {
+//            final int duration = intervalInfo.getTotalDuration();
+//            aggregation.intervalComplete(duration);
+//            logger.debug("Marked complete, was previously unclosed: {}", aggregation);
+//        }
+//        aggregationDao.updateAggregations(unclosedAggregations);
     }
 
     /**
@@ -210,19 +209,24 @@ public abstract class BasePortalEventAggregator<
                     
                     @Override
                     public boolean hasNext() {
-                        return (cachedAggregationsItr != null && cachedAggregationsItr.hasNext()) ||
-                                eventScopedKeysItr.hasNext();
+                        checkState();
+                        
+                        return cachedAggregationsItr != null && cachedAggregationsItr.hasNext();
                     }
 
                     @Override
                     public T next() {
-                        if (cachedAggregationsItr == null || !cachedAggregationsItr.hasNext()) {
+                        checkState();
+                        
+                        return cachedAggregationsItr.next();
+                    }
+
+                    private void checkState() {
+                        while ((cachedAggregationsItr == null || !cachedAggregationsItr.hasNext()) && eventScopedKeysItr.hasNext()) {
                             final CacheKey cachedAggregationsCacheKey = eventScopedKeysItr.next();
                             final Collection<T> cachedAggregations = eventAggregationContext.getAttribute(cachedAggregationsCacheKey);
                             cachedAggregationsItr = cachedAggregations.iterator();
                         }
-                        
-                        return cachedAggregationsItr.next();
                     }
                 };
             }

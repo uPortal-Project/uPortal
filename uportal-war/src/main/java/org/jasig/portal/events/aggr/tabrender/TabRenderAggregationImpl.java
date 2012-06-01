@@ -28,6 +28,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -42,6 +44,8 @@ import org.jasig.portal.events.aggr.BaseTimedAggregationStatsImpl;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.jasig.portal.events.aggr.tabs.AggregatedTabMapping;
+import org.jasig.portal.events.aggr.tabs.AggregatedTabMappingImpl;
 
 /**
  * @author Eric Dalquist
@@ -62,12 +66,12 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 @org.hibernate.annotations.Table(
         appliesTo = "UP_TAB_RENDER_AGGR",
         indexes = {
-                @Index(name = "IDX_UP_TAB_REND_AGGR_DTI", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL" }),
+                @Index(name = "IDX_UP_TAB_REND_AGGR_DTIT", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL", "AGGR_TAB_ID" }),
                 @Index(name = "IDX_UP_TAB_REND_AGGR_DTIC", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL", "STATS_COMPLETE" })
             }
         )
 @Cacheable
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class TabRenderAggregationImpl extends BaseTimedAggregationStatsImpl implements TabRenderAggregation, Serializable {
     private static final long serialVersionUID = 1L;
     
@@ -78,29 +82,30 @@ public class TabRenderAggregationImpl extends BaseTimedAggregationStatsImpl impl
     private final long id;
     
     @NaturalId
-    @Column(name = "TAB_NAME", nullable = false, length=400)
-    private final String tabName;
+    @ManyToOne(targetEntity=AggregatedTabMappingImpl.class)
+    @JoinColumn(name = "AGGR_TAB_ID", nullable = false)
+    private final AggregatedTabMapping aggregatedTab;
     
     @SuppressWarnings("unused")
     private TabRenderAggregationImpl() {
         super();
         this.id = -1;
-        this.tabName = null;
+        this.aggregatedTab = null;
     }
     
     TabRenderAggregationImpl(TimeDimension timeDimension, DateDimension dateDimension, 
-            AggregationInterval interval, AggregatedGroupMapping aggregatedGroup, String tabName) {
+            AggregationInterval interval, AggregatedGroupMapping aggregatedGroup, AggregatedTabMapping aggregatedTab) {
         super(timeDimension, dateDimension, interval, aggregatedGroup);
 
-        Validate.notNull(tabName);
+        Validate.notNull(aggregatedTab);
         
         this.id = -1;
-        this.tabName = tabName;
+        this.aggregatedTab = aggregatedTab;
     }
 
     @Override
-    public String getTabName() {
-        return this.tabName;
+    public AggregatedTabMapping getTabMapping() {
+        return this.aggregatedTab;
     }
     
     @Override
@@ -112,7 +117,7 @@ public class TabRenderAggregationImpl extends BaseTimedAggregationStatsImpl impl
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((tabName == null) ? 0 : tabName.hashCode());
+        result = prime * result + ((aggregatedTab == null) ? 0 : aggregatedTab.hashCode());
         return result;
     }
 
@@ -125,18 +130,18 @@ public class TabRenderAggregationImpl extends BaseTimedAggregationStatsImpl impl
         if (getClass() != obj.getClass())
             return false;
         TabRenderAggregationImpl other = (TabRenderAggregationImpl) obj;
-        if (tabName == null) {
-            if (other.tabName != null)
+        if (aggregatedTab == null) {
+            if (other.aggregatedTab != null)
                 return false;
         }
-        else if (!tabName.equals(other.tabName))
+        else if (!aggregatedTab.equals(other.aggregatedTab))
             return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "TabRenderAggregationImpl [tabName=" + tabName + ", getTimeDimension=" + getTimeDimension()
+        return "TabRenderAggregationImpl [aggregatedTab=" + aggregatedTab + ", getTimeDimension=" + getTimeDimension()
                 + ", getDateDimension=" + getDateDimension() + ", getInterval=" + getInterval()
                 + ", getAggregatedGroup=" + getAggregatedGroup() + "]";
     }
