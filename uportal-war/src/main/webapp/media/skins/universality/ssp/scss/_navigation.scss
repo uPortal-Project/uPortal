@@ -111,8 +111,20 @@
 			} // end .portal-navigation
 		}
 		
-		.portal-navigation-add {
-			display: none;
+		.portal-navigation-add-item {
+			display: none;  //temporary
+			padding: 0;
+			background: none;
+			border: none;
+			.portal-navigation-add {
+				background: url(images/add.png) left center no-repeat;
+				padding-left: 24px;
+				font-weight: normal;
+				font-size: 11px;
+				height: 32px;
+				line-height: 32px;
+				color: white;
+			}
 		}
 	}
 }
