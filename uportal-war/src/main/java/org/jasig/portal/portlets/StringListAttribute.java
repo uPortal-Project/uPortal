@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 public class StringListAttribute implements Serializable {
     private static final long serialVersionUID = 1L;
     private List<String> value = new ArrayList<String>();
@@ -46,6 +48,25 @@ public class StringListAttribute implements Serializable {
      */
     public List<String> getValue() {
         return value;
+    }
+    
+    /**
+     * A {@link StringListAttribute} is considered blank <i>unless</i> it has at 
+     * least one non-zero-length, non-whitespace entry.
+     * 
+     * @return
+     */
+    public boolean isBlank() {
+        boolean rslt = true;  // default
+        if (value != null) {
+            for (String v : value) {
+                if (StringUtils.isNotBlank(v)) {
+                    rslt = false;
+                    break;
+                }
+            }
+        }
+        return rslt;
     }
 
     /**

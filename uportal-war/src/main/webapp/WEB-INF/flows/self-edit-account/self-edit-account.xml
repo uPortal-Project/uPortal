@@ -47,7 +47,7 @@
             <set name="flowScope.accountForm" value="userAccountHelper.getForm(person.name)"/>
         </on-entry>
         <transition on="save" to="success">
-            <evaluate expression="userAccountHelper.updateAccount(accountForm)"/>
+            <evaluate expression="userAccountHelper.updateAccount(person, accountForm)"/>
         </transition>
         <transition on="cancel" to="finish"/>
     </view-state>
