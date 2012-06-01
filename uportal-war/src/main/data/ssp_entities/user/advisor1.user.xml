@@ -20,19 +20,7 @@
         <value>(555) 555-5555</value>
     </attribute>
     <attribute>
-        <name>sspRoleAcademicCounselorOrAdvisor</name>
-        <value>true</value>
-    </attribute>
-    <attribute>
-        <name>title</name>
-    </attribute>
-    <attribute>
-        <name>alternateEmailAddress</name>
-    </attribute>
-    <attribute>
-        <name>department</name>
-    </attribute>
-    <attribute>
-        <name>sspRoleStudent</name>
+        <name>sspRole</name>
+        <value>sspRoleAcademicCounselorOrAdvisor</value>
     </attribute>
 </user>
