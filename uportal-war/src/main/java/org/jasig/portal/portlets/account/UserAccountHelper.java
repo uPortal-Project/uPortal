@@ -31,6 +31,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+
+import org.stringtemplate.v4.*;
+
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -68,16 +71,14 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
-import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroup;
 
 @Component("userAccountHelper")
 public class UserAccountHelper {
 
     protected final Log log = LogFactory.getLog(getClass());
     
-    private String passwordResetTemplate  = "properties/templates/passwordReset";
-    private STGroup stringTemplateGroup = new STGroup('$', '$');
+    private String templateDir  = "properties/templates";
+    private String passwordResetTemplate  = "passwordReset";
     private ILocaleStore localeStore;
     private ILocalAccountDao accountDao;
     private IPortalPasswordService passwordService;
@@ -106,7 +107,7 @@ public class UserAccountHelper {
     
     @Resource(name="accountEditAttributes")
     public void setAccountEditAttributes(List<Preference> accountEditAttributes) {
-        this.accountEditAttributes = accountEditAttributes;
+        this.accountEditAttributes = Collections.unmodifiableList(accountEditAttributes);
     }
     
     @Autowired
@@ -144,7 +145,7 @@ public class UserAccountHelper {
     
     public PersonForm getNewAccountForm() {
         
-        PersonForm form = new PersonForm();
+        PersonForm form = new PersonForm(accountEditAttributes);
         
         Set<String> attributeNames = accountDao.getCurrentAttributeNames();
         for (String name : attributeNames) {
@@ -158,7 +159,7 @@ public class UserAccountHelper {
         
         ILocalAccountPerson person = accountDao.getPerson(username);
         
-        PersonForm form = new PersonForm();
+        PersonForm form = new PersonForm(accountEditAttributes);
         form.setUsername(person.getName());
         form.setId(person.getId());
         
@@ -188,6 +189,7 @@ public class UserAccountHelper {
     
     public List<JsonEntityBean> getParentGroups(String target) {
         IGroupMember member = GroupService.getEntity(target, IPerson.class);
+        @SuppressWarnings("unchecked")
         Iterator<IGroupMember> iterator = (Iterator<IGroupMember>) member.getAllContainingGroups();
         List<JsonEntityBean> parents = new ArrayList<JsonEntityBean>();
         while (iterator.hasNext()) {
@@ -230,6 +232,13 @@ public class UserAccountHelper {
 
     }
     
+    /**
+     * Returns the collection of attributes that the specified currentUser can 
+     * edit.
+     * 
+     * @param currentUser
+     * @return
+     */
     public List<Preference> getEditableUserAttributes(IPerson currentUser) {
         
         EntityIdentifier ei = currentUser.getEntityIdentifier();
@@ -243,7 +252,7 @@ public class UserAccountHelper {
         }
         return allowedAttributes;
     }
-    
+
     public boolean canDeleteUser(IPerson currentUser, String target) {
         
         // first check to see if this is a local user
@@ -271,7 +280,7 @@ public class UserAccountHelper {
         
     }
     
-    public void updateAccount(PersonForm form) {
+    public void updateAccount(IPerson currentUser, PersonForm form) {
         
         ILocalAccountPerson account;
         
@@ -280,6 +289,10 @@ public class UserAccountHelper {
         if (form.getId() < 0) {
             account = accountDao.getPerson(form.getUsername());
             if (account == null) {
+                /*
+                 * Should there be a permissions check to verify 
+                 * the user is allowed to create new users?
+                 */
                 account = accountDao.createPerson(form.getUsername());
             }
         } 
@@ -289,11 +302,40 @@ public class UserAccountHelper {
             account = accountDao.getPerson(form.getId());
         }
         
+        /*
+         * SANITY CHECK #1:  Is the user permitted to modify this account?  
+         * (Presumably this check was already made when the page was rendered, 
+         * but re-checking alleviates danger from cleverly-crafted HTTP 
+         * requests.) 
+         */
+        if (!canEditUser(currentUser, account.getName())) {
+            throw new RuntimeException("Current user " + currentUser.getName()
+                    + " does not have permissions to update person " 
+                    + account.getName());
+        }
+
+        // Used w/ check #2
+        EntityIdentifier ei = currentUser.getEntityIdentifier();
+        IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+        
         // update the account attributes to match those specified in the form
         Map<String, List<String>> attributes = new HashMap<String, List<String>>();        
         for (Map.Entry<String, StringListAttribute> entry : form.getAttributes().entrySet()) {
-            if (entry.getValue() != null) {
+            if (entry.getValue() != null && !entry.getValue().isBlank()) {
+                
+                /*
+                 * SANITY CHECK #2:  Has the user hand-added an attribute he or 
+                 * she is not permitted to modify (or cleverly tweaked the HTTP 
+                 * request)? 
+                 */
+                if (!ap.hasPermission("UP_USERS", "EDIT_USER_ATTRIBUTE", entry.getKey())) {
+                    throw new RuntimeException("Current user " + currentUser.getName()
+                            + " does not have permissions to edit attribute " 
+                            + entry.getKey());
+                }
+                
                 attributes.put(entry.getKey(), entry.getValue().getValue());
+
             }
         }
         account.setAttributes(attributes);
@@ -351,19 +393,20 @@ public class UserAccountHelper {
         log.debug("Sending password reset instructions to user with url " + url.toString());
 
         String emailAddress = (String) account.getAttributeValue("mail");
-        
-        final ST template = stringTemplateGroup
-            .getInstanceOf(passwordResetTemplate);
-        template.add("displayName", account.getAttributeValue("given") + " " + account.getAttributeValue("sn"));
+
+        final STGroup group = new STGroupDir(templateDir, '$', '$');
+        final ST template = group.getInstanceOf(passwordResetTemplate);
+        template.add("displayName", person.getAttribute("displayName"));
         template.add("url", url.toString());
 
         MimeMessage message = mailSender.createMimeMessage();
+        String body = template.render();
 
         try {
             
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setTo(emailAddress);
-            helper.setText(template.toString(), true);
+            helper.setText(body, true);
             helper.setSubject(messageSource.getMessage("reset.your.password", new Object[]{}, locale));
             helper.setFrom(portalEmailAddress, messageSource.getMessage("portal.name", new Object[]{}, locale));
 

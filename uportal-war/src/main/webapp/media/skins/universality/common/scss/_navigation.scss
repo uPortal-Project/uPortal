@@ -37,11 +37,13 @@
 			.portal-navigation-link {
 				/* Anchor tag within the list item. */
 				display: block;
-				padding: $navTabPadding;
 				color: $navTabLink;
 				@include text-shadow($navTabTextShadow);
 				text-decoration: none;
 				font-weight: $navTabWeight;
+			}
+			.portal-navigation-link, .fl-inlineEditContainer {
+			    padding: $navTabPadding;
 			}
 		}
 		.portal-navigation:hover, .portal-navigation:focus {
@@ -132,6 +134,13 @@
 				color: $navAddTabLinkHover;
 			}
 		}
+        li.portal-navigation-add-item {
+          float:right;
+          background: transparent none;
+          border:0;
+          margin:1px;
+          padding-left:5px;
+        }
 		.active .portal-navigation-gripper {
 			/* Gripper for indicating drag and drop ability. */
 			background: $navReorderGripperImage;

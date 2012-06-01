@@ -158,6 +158,11 @@ public class EventSessionImpl implements EventSession, Serializable {
         return ugm;
     }
 
+    public void addGroupMappings(Set<AggregatedGroupMapping> groupMappings) {
+        this.groupMappings.addAll(groupMappings);
+        this.unmodifiableGroupMappings = null;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;

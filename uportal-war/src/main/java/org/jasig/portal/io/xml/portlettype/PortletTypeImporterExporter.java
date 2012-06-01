@@ -132,7 +132,6 @@ public class PortletTypeImporterExporter extends
 		result.setUri(portletType.getCpdUri());
 		result.setDescription(portletType.getDescription());
 		result.setName(portletType.getName());
-		result.setVersion("4.0");
 		return result;
 	}
 }

@@ -36,6 +36,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Version;
 
 import org.apache.commons.lang.Validate;
 import org.hibernate.annotations.Cache;
@@ -63,6 +64,10 @@ public class AggregatedIntervalConfigImpl extends BaseAggregatedDimensionConfigI
     @Column(name = "ID")
     @SuppressWarnings("unused")
     private final long id;
+
+    @Version
+    @Column(name = "ENTITY_VERSION")
+    private final long entityVersion = -1;
     
     @NaturalId
     @Column(name = "AGGREGATOR_TYPE", nullable = false, updatable = false)
@@ -98,6 +103,11 @@ public class AggregatedIntervalConfigImpl extends BaseAggregatedDimensionConfigI
         this.aggregatorType = aggregatorType;
         this.includedIntervals = new LinkedHashSet<AggregationInterval>();
         this.excludedIntervals = new LinkedHashSet<AggregationInterval>();
+    }
+    
+    @Override
+    public long getVersion() {
+        return this.entityVersion;
     }
 
     @Override

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
+import javax.portlet.MimeResponse;
 import javax.servlet.jsp.JspWriter;
 
 import org.jasig.portal.portlet.rendering.PortletOutputHandler;
@@ -34,10 +35,12 @@ import org.jasig.portal.portlet.rendering.PortletOutputHandler;
 public class JspWriterPortletOutputHandler implements PortletOutputHandler {
     private final JspWriter jspWriter;
     private final PrintWriter printWriter;
+    private final MimeResponse mimeResponse;
     
-    public JspWriterPortletOutputHandler(JspWriter jspWriter) {
+    public JspWriterPortletOutputHandler(JspWriter jspWriter, MimeResponse mimeResponse) {
         this.jspWriter = jspWriter;
         this.printWriter = new PrintWriter(this.jspWriter);
+        this.mimeResponse = mimeResponse;
     }
 
     @Override
@@ -82,9 +85,16 @@ public class JspWriterPortletOutputHandler implements PortletOutputHandler {
 
     @Override
     public void setBufferSize(int size) {
+        mimeResponse.setBufferSize(size);
     }
 
     @Override
     public void setContentType(String contentType) {
+        mimeResponse.setContentType(contentType);
+    }
+
+    @Override
+    public String getContentType() {
+        return mimeResponse.getContentType();
     }
 }

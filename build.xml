@@ -249,12 +249,10 @@
 
         <echo>Creating HBM2DDL Update Script</echo>
         <echo file="${portal-shell-script}" append="true">
-            //hibernateUpdate(String target, String schemaExportBeanName, boolean export, String outputFile, boolean haltOnError)
+        	//hibernateUpdate(String target, String schemaExportBeanName, boolean export, String outputFile, boolean haltOnError)
             portalShellBuildHelper.hibernateUpdate("db-hibernate-update",
                 '${schemaExportBean}',
                 Boolean.parseBoolean('${export}'),
-                Boolean.parseBoolean('${create}'),
-                Boolean.parseBoolean('${drop}'),
                 /${outputFileEscaped}/,
                 Boolean.parseBoolean('${haltOnError}'));
         </echo>

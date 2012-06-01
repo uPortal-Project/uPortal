@@ -226,7 +226,12 @@
 .portlet .portlet-section {}
 .portlet .portlet-section > .titlebar {margin-bottom:0.5em;}
 .portlet .portlet-section > .titlebar .title {border-bottom:0.1em solid #ddd;}
-.portlet .portlet-section > .titlebar .options {position:absolute; top:1em; right:0; font-size:85%;}
+.portlet .portlet-section > .titlebar .options {
+  position:absolute;
+  top:1em;
+  right:0;
+  font-size:85%;
+}
 .portlet .portlet-section > .titlebar .options a {text-decoration:none; color:#666;}
 .portlet .portlet-section > .titlebar .options a:hover,
 .portlet .portlet-section > .titlebar .options a:focus {text-decoration:none; background-color:#dfefff; color:#000;}
@@ -328,6 +333,7 @@
 .portlet table.portlet-table th {background-color:#E2E8E7 !important; color:#333; font-size:85%; padding:1px 1em; text-align:left;}
 .portlet table.portlet-table th a {color:#333 !important; padding-right:16px; background:transparent url(../images/sort.png) 0 0 no-repeat;}
 .portlet table.portlet-table td {padding:5px 1em;}
+.portlet table.portlet-table td > div + div > input {margin-top:.5em;}
 .portlet table.portlet-table th:hover,
 .portlet table.portlet-table th:focus {background-color:#336699 !important; color:#fff !important;}
 .portlet table.portlet-table th:hover a
@@ -344,6 +350,8 @@
 .portlet table.portlet-table tbody tr:focus td:focus a,
 .portlet table.portlet-table tbody tr:hover td:hover a:hover,
 .portlet table.portlet-table tbody tr:focus td:focus a:focus {color:#fff !important;}
+.portlet table.portlet-table td.attribute-name {color:rgba(0,0,0,.37);}
+.portlet table.portlet-table td.attribute-name strong {color:rgba(0,0,0,.73);font-weight:normal;}
 .portlet table.purpose-layout,
 .portlet table.purpose-layout th,
 .portlet table.purpose-layout td {border:none !important; background:none !important; background-color:transparent !important;}
@@ -524,10 +532,26 @@
 .cache-manager .cache-member:hover,
 .cache-manager .cache-member:focus {background-color:#FFFFCC; color:#336699;}
 
+/* User Administration */
+.user-mgr .delete-attribute-value-link{
+  display:inline-block;
+  text-indent:-9999em;
+  width:16px;
+  height:16px;
+  background: transparent url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/delete.png") no-repeat scroll left top;
+}
+.prs-lkp .person-search-results{ margin-left:0;border:2px solid #999 }
+.prs-lkp .person-search-result{ list-style:none;padding:.5em;border-top:1px solid #ccc;border-bottom:0 }
+.prs-lkp .person-search-result:first-child{ border-top:0 }
+.prs-lkp .person-search-result table{ margin:0 }
+.prs-lkp .person-search-result table td{ padding:.2em 2em }
+
+
 /* Portlet Administration */
 .override-preference td {color:graytext; text-decoration:line-through;}
 
 /* Permissions Administration */
+.prm-mgr table{ width:100% }
 .prm-mgr table .inherited-permission {
     display: inline-block;
 	margin-left: 1em;
@@ -541,6 +565,12 @@
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
 }
+
+.prm-mgr .view-permissions .options .flc-pager-top{ overflow:hidden }
+.prm-mgr .view-permissions .options .flc-pager-top > ul{ float:right;display:block;overflow:hidden }
+.prm-mgr .view-permissions .options .flc-pager-top > div{ overflow:hidden;clear:right;float:right }
+.prm-mgr .view-permissions .options .flc-pager-top .flc-pager-links{ margin:0; display:inline }
+
 .prm-mgr .permission-lookup form {
 	background-image:-webkit-gradient(linear, 0% 0%, 0% 50%, from(#e2e8e7), to(#fff)); 
 	background-image:-moz-linear-gradient(0% 50% 90deg, #e2e8e7, #fff);
@@ -598,3 +628,12 @@
 .uptrans-form-container form input[type="text"] {width: 100%;}
 .uptrans-form-container form .buttons {text-align: right;}
 .uptrans-form-container form textarea {width: 100%; height: 50px;}
+
+/** Error Portlet **/
+.portlet.error .stacktrace {
+    width: 100%;
+    height: 20em;
+    overflow: auto;
+    border: 1px solid gray;
+    display: none;
+}

@@ -94,4 +94,21 @@ public class ResourceResponsePortletOutputHandler extends MimeResponsePortletOut
     public void addIntHeader(String name, int value) {
         this.resourceResponse.addProperty(name, Integer.toString(value));        
     }
+
+    @Override
+    public boolean containsHeader(String name) {
+        // TODO Need reference to the request to answer this
+        return false;
+    }
+
+    @Override
+    public String getCharacterEncoding() {
+        return this.resourceResponse.getCharacterEncoding();
+    }
+
+    @Override
+    public Locale getLocale() {
+        return this.resourceResponse.getLocale();
+    }
+    
 }

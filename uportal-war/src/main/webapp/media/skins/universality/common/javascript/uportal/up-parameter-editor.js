@@ -67,7 +67,7 @@ var up = up || {};
 
         } else {
             td.append(
-                $(document.createElement("input")).attr("name", paramPath)
+                $(document.createElement("input")).attr({"name" : paramPath, "type" : "text" })
             );
         }
         
@@ -103,8 +103,8 @@ var up = up || {};
         paramPath = getParameterPath(link.attr("paramName"), that);
         link.before($(document.createElement("div"))
             .append(
-                $(document.createElement("input")).attr("name", paramPath)
-            ).append(
+                $(document.createElement("input")).attr({"name" : paramPath, "type" : "text"})
+            ).append(" ").append(
                 $(document.createElement("a")).attr("href", "javascript:;")
                     .addClass(that.options.displayClasses.deleteValueLink)
                     .text(that.options.messages.remove)
@@ -124,7 +124,8 @@ var up = up || {};
     var showAddParameterDialog = function(that) {
         var dialog = that.options.dialog;
         if (that.options.dialogInitialized) {
-            // if the dialog has already been initialized, just open it
+            // if the dialog has already been initialized, clear the previous value and open it
+            dialog.find("form").get(0).reset();
             dialog.dialog('open');
         } else {
             // set the dialog form to add the appropriate parameter

@@ -24,11 +24,19 @@
     xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
-    <input name="person" required="true"/>
+    <input name="accountForm" required="true"/>
+
+    <on-start>
+        <set name="flashScope.servletRequest" 
+            value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
+        <set name="flowScope.person" value="personManager.getPerson(servletRequest)"/>    
+        <set name="flowScope.editAttributes" value="userAccountHelper.getEditableUserAttributes(person)"/>
+    </on-start>
     
-    <view-state id="editLocalAccount" model="person">
+    <view-state id="editLocalAccount" model="accountForm">
         <transition on="save" to="saveAccount"/>
         <transition on="cancel" to="cancel" bind="false"/>
+        <transition on="finish" to="finish" bind="false"/>
     </view-state>
     
     <action-state id="saveAccount">
@@ -38,15 +46,13 @@
             <set name="flashScope.user"
                 value="personManager.getPerson(servletRequest)"/>
         </on-entry>
-        <evaluate expression="userAccountHelper.updateAccount(person)"/>
+        <evaluate expression="userAccountHelper.updateAccount(person, accountForm)"/>
         <transition to="finish"/>
     </action-state>
     
-    <end-state id="cancel">
-        <output name="person" value="personLookupHelper.findPerson(portalWebFlowUtils.getCurrentPerson(externalContext), person.username)"/>
-    </end-state>
+    <end-state id="cancel"/>
     <end-state id="finish">
-        <output name="person" value="personLookupHelper.findPerson(portalWebFlowUtils.getCurrentPerson(externalContext), person.username)"/>
+        <output name="person" value="personLookupHelper.findPerson(portalWebFlowUtils.getCurrentPerson(externalContext), accountForm.username)"/>
     </end-state>
     
 </flow>

@@ -38,12 +38,6 @@
 	
 	@include button();
 	
-	.skip-link {
-		/* Skip-to navigation links. Make them visually hidden, but available to screen readers and focusable. */
-		@include visuallyhidden();
-		@include focusable();
-	}
-	
 	#portalPageBodyInner {
 		/* Page body. */
 		padding: $portalPageBodyInnerPadding;

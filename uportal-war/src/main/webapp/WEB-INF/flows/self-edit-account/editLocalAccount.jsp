@@ -60,7 +60,7 @@
                             <c:forEach items="${ editAttributes }" var="attribute">
                                 <tr>
                                     <td class="attribute-name">
-                                        <spring:message code="${ attribute.label }"/>
+                                        <strong><spring:message code="${ attribute.label }"/></strong>
                                     </td>
                                     <td>
                                           <c:set var="paramPath" value="attributes['${ attribute.name }'].value"/>
@@ -93,11 +93,11 @@
 
                             <!--  Password and confirm password -->
                             <tr>
-                                <td class="attribute-name"><spring:message code="password"/></td>
+                                <td class="attribute-name"><strong><spring:message code="password"/></strong></td>
                                 <td><form:password path="password"/></td>
                             </tr>
                             <tr>
-                                <td class="attribute-name"><spring:message code="confirm.password"/></td>
+                                <td class="attribute-name"><strong><spring:message code="confirm.password"/></strong></td>
                                 <td><form:password path="confirmPassword"/></td>
                             </tr>
 

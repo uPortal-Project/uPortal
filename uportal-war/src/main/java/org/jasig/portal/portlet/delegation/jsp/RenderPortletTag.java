@@ -163,7 +163,7 @@ public class RenderPortletTag extends TagSupport {
 
         final JspWriter out = this.pageContext.getOut();
         try {
-            portletDelegationDispatcher.doRender(renderRequest, renderResponse, delegationRequest, new JspWriterPortletOutputHandler(out));
+            portletDelegationDispatcher.doRender(renderRequest, renderResponse, delegationRequest, new JspWriterPortletOutputHandler(out, renderResponse));
         }
         catch (IOException e) {
             throw new JspException("Failed to execute delegate render on portlet '" + this.fname + "'", e);

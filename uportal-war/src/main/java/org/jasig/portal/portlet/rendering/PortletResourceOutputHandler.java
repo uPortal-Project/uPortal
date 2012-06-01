@@ -83,4 +83,21 @@ public interface PortletResourceOutputHandler extends PortletOutputHandler {
      * @see HttpServletResponse#addIntHeader(String, int)
      */
     void addIntHeader(String name, int value);
+    
+    /**
+     * @see HttpServletResponse#containsHeader(String)
+     */
+    boolean containsHeader(String name);
+    
+    /**
+     * @see HttpServletResponse#getCharacterEncoding()
+     * @return The character encoding that has been set or if nothing has been set the default character encoding for the response
+     */
+    String getCharacterEncoding();
+    
+    /**
+     * @see HttpServletResponse#getLocale()
+     * @return The locale that has been set or if nothing has been set the default locale for the response
+     */
+    Locale getLocale();
 }

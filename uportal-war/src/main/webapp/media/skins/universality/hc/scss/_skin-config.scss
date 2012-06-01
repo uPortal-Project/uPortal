@@ -1,6 +1,8 @@
 //====================================
-// Skin Config
+// HIGH CONTRAST SKIN: Config
 //====================================
+// This file is written in SASS. To find out how to install SASS to generate CSS visit http://sass-lang.com
+
 // Configure these settings to make both broad and fine adjustments to the skin.
 // If there isn't a configuration here you need, make an override in "_skin-overrides.scss".
 //
@@ -132,7 +134,7 @@ $navTabActiveHoverLink			: $white;
 $navTabActiveHoverTextShadow	: dark;
 // Add Tab
 $navAddTabTopPosition			: 0;
-$navAddTabPadding				: 0.3em 1em;
+$navAddTabPadding				: 7px 19px;
 $navAddTabBackground			: $white;
 $navAddTabBorder				: none;
 $navAddTabRound					: 5px;

@@ -253,7 +253,6 @@ public class EventAggregationConfigurationImporterExporter extends
 	@Override
 	public ExternalEventAggregationConfiguration exportData(String id) {
 	    final ExternalEventAggregationConfiguration externalData = new ExternalEventAggregationConfiguration();
-	    externalData.setVersion("4.0");
 	    
 	    //Copy interval configs
 	    final List<ExternalAggregatedIntervalConfig> aggregatedIntervalConfigs = externalData.getAggregatedIntervalConfigs();

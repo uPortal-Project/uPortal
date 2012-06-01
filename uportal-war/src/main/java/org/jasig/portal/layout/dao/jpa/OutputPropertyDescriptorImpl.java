@@ -27,6 +27,7 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -58,19 +59,32 @@ public class OutputPropertyDescriptorImpl extends AbstractStylesheetDataImpl imp
     @Column(name="SS_DESC_LAYOUT_ATTR_ID")
     private final long id;
     
+    @Version
+    @Column(name = "ENTITY_VERSION")
+    private final long entityVersion;
+    
     //Required by hibernate for reflective creation
     @SuppressWarnings("unused")
     private OutputPropertyDescriptorImpl() {
         this.id = -1;
+        this.entityVersion = -1;
     }
     
     public OutputPropertyDescriptorImpl(String name, Scope scope) {
         super(name, scope);
         this.id = -1;
+        this.entityVersion = -1;
     }
 
     @Override
     public long getId() {
         return this.id;
+    }
+
+    @Override
+    public String toString() {
+        return "OutputPropertyDescriptorImpl [getId()="
+                + this.getId() + ", entityVersion=" + this.entityVersion + ", getName()=" + this.getName() + ", getDefaultValue()=" + this.getDefaultValue()
+                + ", getScope()=" + this.getScope() + ", getDescription()=" + this.getDescription() + "]";
     }
 }

@@ -55,7 +55,7 @@
                         <c:forEach items="${ attributeNames }" var="attribute">
                             <tr>
                                 <td class="attribute-name">
-                                    <spring:message code="attribute.displayName.${ attribute.key }"/>
+                                    <strong><spring:message code="attribute.displayName.${ attribute.key }"/></strong>
                                 </td>
                                 <td>
                                     <c:if test="${ fn:length(person.attributeMap[attribute.key]) > 0 }">

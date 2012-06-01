@@ -132,4 +132,24 @@ public class ResourcePortletOutputHandler implements PortletResourceOutputHandle
     public void addIntHeader(String name, int value) {
         this.response.addIntHeader(name, value);
     }
+
+    @Override
+    public String getContentType() {
+        return this.response.getContentType();
+    }
+
+    @Override
+    public boolean containsHeader(String name) {
+        return this.response.containsHeader(name);
+    }
+
+    @Override
+    public String getCharacterEncoding() {
+        return this.response.getCharacterEncoding();
+    }
+
+    @Override
+    public Locale getLocale() {
+        return this.response.getLocale();
+    }
 }

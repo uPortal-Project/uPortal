@@ -49,7 +49,7 @@
     xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
     xsi:schemaLocation="
             https://source.jasig.org/schemas/uportal/layout/portal-url https://source.jasig.org/schemas/uportal/layout/portal-url-4.0.xsd"
-    exclude-result-prefixes="url upAuth upGroup upMsg" 
+    exclude-result-prefixes="url upAuth upGroup upMsg dlm xsi" 
     version="1.0">
       
   <!-- ========== TEMPLATE: PORTLET ========== -->
@@ -123,7 +123,7 @@
             <!-- ****** PORTLET TITLE AND TOOLBAR ****** -->
             <div id="toolbar_{@ID}" class="fl-widget-titlebar up-portlet-titlebar"> <!-- Portlet toolbar. -->
               <xsl:if test="$USE_PORTLET_MINIMIZE_CONTENT='true'">
-	              <xsl:if test="not(//focused)">
+	              <xsl:if test="not(//focused) and not(//layout_fragment)">
 	            	<xsl:choose>
 	            	  <xsl:when test="@windowState='minimized'"> <!-- Return from Minimized. -->
 				        <xsl:variable name="portletReturnUrl">
@@ -175,7 +175,7 @@
                     </xsl:with-param>
                   </xsl:call-template>
                 </xsl:variable>
-                <a name="{@ID}" id="{@ID}" href="{$portletMaxUrl}"> <!-- Reference anchor for page focus on refresh and link to focused view of channel. -->
+                <a id="{@ID}" href="{$portletMaxUrl}"> <!-- Reference anchor for page focus on refresh and link to focused view of channel. -->
                   {up-portlet-title(<xsl:value-of select="@ID" />)}
                 </a>
               </h2>
@@ -330,7 +330,7 @@
       	  	<span class="label"><xsl:value-of select="upMsg:getMessage('print', $USER_LANG)"/></span>
         </a>
       </xsl:if>
-      <xsl:if test="not(//focused) and @windowState!='minimized'"> <!-- Focus. -->
+      <xsl:if test="not(//focused) and not(//layout_fragment) and @windowState!='minimized'"> <!-- Focus. -->
         <xsl:variable name="portletMaxUrl">
           <xsl:call-template name="portalUrl">
             <xsl:with-param name="url">
