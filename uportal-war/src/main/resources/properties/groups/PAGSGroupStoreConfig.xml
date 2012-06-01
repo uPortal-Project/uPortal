@@ -128,9 +128,9 @@
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspAccessAcademicResourceCenter</attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.ValueExistsTester</tester-class>
-          <test-value></test-value>
+          <attribute-name>sspAccess</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>sspAccessAcademicResourceCenter</test-value>
         </test>
       </test-group>
     </selection-test>
@@ -143,9 +143,9 @@
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspAccessCounselingServices</attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.ValueExistsTester</tester-class>
-          <test-value></test-value>
+          <attribute-name>sspAccess</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>sspAccessCounselingServices</test-value>
         </test>
       </test-group>
     </selection-test>
@@ -158,9 +158,9 @@
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspAccessDisability</attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.ValueExistsTester</tester-class>
-          <test-value></test-value>
+          <attribute-name>sspAccess</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>sspAccessDisability</test-value>
         </test>
       </test-group>
     </selection-test>
@@ -173,9 +173,9 @@
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspAccessDisplacedWorkers</attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.ValueExistsTester</tester-class>
-          <test-value></test-value>
+          <attribute-name>sspAccess</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>sspAccessDisplacedWorkers</test-value>
         </test>
       </test-group>
     </selection-test>
@@ -188,9 +188,9 @@
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspAccessEarlyAlert</attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.ValueExistsTester</tester-class>
-          <test-value></test-value>
+          <attribute-name>sspAccess</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>sspAccessEarlyAlert</test-value>
         </test>
       </test-group>
     </selection-test>
@@ -203,9 +203,9 @@
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspAccessEnglishAsSecondLanguage</attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.ValueExistsTester</tester-class>
-          <test-value></test-value>
+          <attribute-name>sspAccess</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>sspAccessEnglishAsSecondLanguage</test-value>
         </test>
       </test-group>
     </selection-test>
@@ -218,9 +218,9 @@
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspAccessFastForward</attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.ValueExistsTester</tester-class>
-          <test-value></test-value>
+          <attribute-name>sspAccess</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>sspAccessFastForward</test-value>
         </test>
       </test-group>
     </selection-test>
@@ -233,9 +233,9 @@
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspAccessIndividualizedLearningPlan</attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.ValueExistsTester</tester-class>
-          <test-value></test-value>
+          <attribute-name>sspAccess</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>sspAccessIndividualizedLearningPlan</test-value>
         </test>
       </test-group>
     </selection-test>
@@ -248,9 +248,9 @@
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspAccessManager</attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.ValueExistsTester</tester-class>
-          <test-value></test-value>
+          <attribute-name>sspAccess</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>sspAccessManager</test-value>
         </test>
       </test-group>
     </selection-test>
@@ -263,9 +263,9 @@
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspAccessStaff</attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.ValueExistsTester</tester-class>
-          <test-value></test-value>
+          <attribute-name>sspRole</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>sspAccessStaff</test-value>
         </test>
       </test-group>
     </selection-test>
@@ -278,9 +278,9 @@
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspRoleAcademicCounselorOrAdvisor</attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.ValueExistsTester</tester-class>
-          <test-value></test-value>
+          <attribute-name>sspRole</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>sspRoleAcademicCounselorOrAdvisor</test-value>
         </test>
       </test-group>
     </selection-test>
@@ -293,9 +293,9 @@
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspRoleCounselor</attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.ValueExistsTester</tester-class>
-          <test-value></test-value>
+          <attribute-name>sspRole</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>sspRoleCounselor</test-value>
         </test>
       </test-group>
     </selection-test>
@@ -308,9 +308,9 @@
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspRoleFaculty</attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.ValueExistsTester</tester-class>
-          <test-value></test-value>
+          <attribute-name>sspRole</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>sspRoleFaculty</test-value>
         </test>
       </test-group>
     </selection-test>
@@ -323,9 +323,9 @@
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspRoleDeveloper</attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.ValueExistsTester</tester-class>
-          <test-value></test-value>
+          <attribute-name>sspRole</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>sspRoleDeveloper</test-value>
         </test>
       </test-group>
     </selection-test>
@@ -338,9 +338,9 @@
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspRoleManagement</attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.ValueExistsTester</tester-class>
-          <test-value></test-value>
+          <attribute-name>sspRole</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>sspRoleManagement</test-value>
         </test>
       </test-group>
     </selection-test>
@@ -353,9 +353,9 @@
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspRoleSuperUser</attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.ValueExistsTester</tester-class>
-          <test-value></test-value>
+          <attribute-name>sspRole</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>sspRoleSuperUser</test-value>
         </test>
       </test-group>
     </selection-test>
@@ -368,9 +368,9 @@
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspRoleSupportStaff</attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.ValueExistsTester</tester-class>
-          <test-value></test-value>
+          <attribute-name>sspRole</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>sspRoleSupportStaff</test-value>
         </test>
       </test-group>
     </selection-test>
@@ -383,9 +383,9 @@
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspRoleStudent</attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.ValueExistsTester</tester-class>
-          <test-value></test-value>
+          <attribute-name>sspRole</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>sspRoleStudent</test-value>
         </test>
       </test-group>
     </selection-test>

@@ -132,6 +132,133 @@
             <constructor-arg value="telephoneNumber"/>
             <constructor-arg value="attribute.displayName.telephoneNumber"/>
         </bean>
+        
+        <!-- 
+         | Attributes for SSP Permissions:
+         | These attributes place users in PAGS groups, which are themselves 
+         | members of similarly-named database (local) groups.  The local groups 
+         | are referenced using <security-role-ref> elements in the SSP portlet 
+         | app.
+         +-->
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createMultiChoicePreference">
+
+			<!-- String name -->
+            <constructor-arg value="sspRole"/>
+
+			<!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="SSP Role(s)"/>
+
+			<!-- MultiChoiceDisplay displayType -->
+            <constructor-arg value="CHECKBOX"/>
+
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="Academic Counselor or Advisor" />
+            			<property name="value" value="sspRoleAcademicCounselorOrAdvisor" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="Counselor" />
+            			<property name="value" value="sspRoleCounselor" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="Faculty" />
+            			<property name="value" value="sspRoleFaculty" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="Developer" />
+            			<property name="value" value="sspRoleDeveloper" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="Management" />
+            			<property name="value" value="sspRoleManagement" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="Super User" />
+            			<property name="value" value="sspRoleSuperUser" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="Support Staff" />
+            			<property name="value" value="sspRoleSupportStaff" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="Student" />
+            			<property name="value" value="sspRoleStudent" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            
+            <!-- List<String> defaultValues -->
+            <constructor-arg>
+            	<list /><!-- none -->
+            </constructor-arg>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createMultiChoicePreference">
+
+			<!-- String name -->
+            <constructor-arg value="sspAccess"/>
+
+			<!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="SSP Special Access"/>
+
+			<!-- MultiChoiceDisplay displayType -->
+            <constructor-arg value="CHECKBOX"/>
+
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="Academic Resource Center" />
+            			<property name="value" value="sspAccessAcademicResourceCenter" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="Counseling Services" />
+            			<property name="value" value="sspAccessCounselingServices" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="Disability" />
+            			<property name="value" value="sspAccessDisability" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="Displaced Workers" />
+            			<property name="value" value="sspAccessDisplacedWorkers" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="Early Alert" />
+            			<property name="value" value="sspAccessEarlyAlert" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="English as a Second Language" />
+            			<property name="value" value="sspAccessEnglishAsSecondLanguage" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="Fast Forward" />
+            			<property name="value" value="sspAccessFastForward" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="Individualized Learning Plan" />
+            			<property name="value" value="sspAccessIndividualizedLearningPlan" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="Manager" />
+            			<property name="value" value="sspAccessManager" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="Staff" />
+            			<property name="value" value="sspAccessStaff" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            
+            <!-- List<String> defaultValues -->
+            <constructor-arg>
+            	<list /><!-- none -->
+            </constructor-arg>
+        </bean>
+
     </util:list>
     
     <!-- Spring mail-sending service -->
