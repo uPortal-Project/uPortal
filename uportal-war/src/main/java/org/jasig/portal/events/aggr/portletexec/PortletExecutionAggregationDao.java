@@ -26,5 +26,6 @@ import org.jasig.portal.events.aggr.BaseAggregationDao;
  * 
  * @author Eric Dalquist
  */
-public interface PortletExecutionAggregationDao<T extends PortletExecutionAggregation> extends BaseAggregationDao<T, PortletExecutionAggregationKey> {
+public interface PortletExecutionAggregationDao<T extends PortletExecutionAggregation> 
+        extends BaseAggregationDao<T, PortletExecutionAggregationKey> {
 }

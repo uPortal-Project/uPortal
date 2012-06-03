@@ -24,11 +24,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
@@ -60,7 +61,7 @@ import com.google.common.base.Function;
  * @version $Revision$
  */
 public abstract class JpaBaseAggregationDaoTest<
-            T extends BaseAggregationImpl,
+            T extends BaseAggregationImpl<K>,
             K extends BaseAggregationKey> 
         extends BaseAggrEventsJpaDaoTest {
     
@@ -100,7 +101,7 @@ public abstract class JpaBaseAggregationDaoTest<
     /**
      * Create a list of aggregations for use in the lifecycle test
      */
-    protected abstract List<T> createAggregations(AggregationIntervalInfo intervalInfo, AggregatedGroupMapping aggregatedGroup);
+    protected abstract Map<K, T> createAggregations(AggregationIntervalInfo intervalInfo, AggregatedGroupMapping aggregatedGroup);
     
     
     @Test
@@ -118,25 +119,25 @@ public abstract class JpaBaseAggregationDaoTest<
         final DateTime instant = new DateTime(1326734644000l); //just a random time
         
         //Create required date and time dimensions
-        populateDateTimeDimensions(instant.minusDays(1), instant.plusDays(1), null);
+        populateDateTimeDimensions(instant.minusHours(2), instant.plusHours(2), null);
         
         //Create aggregations
-        final Set<T> createdAggrs = this.executeInTransaction(new Callable<Set<T>>() {
+        final Map<K, T> createdAggrs = this.executeInTransaction(new Callable<Map<K, T>>() {
             @Override
-            public Set<T> call() throws Exception {
+            public Map<K, T> call() throws Exception {
                 final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
                 final AggregatedGroupMapping groupB = aggregatedGroupLookupDao.getGroupMapping("local.1");
                 
                 final AggregationIntervalInfo fiveMinuteInfo = aggregationIntervalHelper.getIntervalInfo(AggregationInterval.FIVE_MINUTE, instant);
-                final AggregationIntervalInfo hourMinuteInfo = aggregationIntervalHelper.getIntervalInfo(AggregationInterval.HOUR, instant);
+                final AggregationIntervalInfo hourInfo = aggregationIntervalHelper.getIntervalInfo(AggregationInterval.HOUR, instant);
                 
-                final List<T> fiveMinGroupA = createAggregations(fiveMinuteInfo, groupA);
-                final List<T> fiveMinGroupB = createAggregations(fiveMinuteInfo, groupB);
-                final List<T> hourGroupA = createAggregations(hourMinuteInfo, groupA);
+                final Map<K, T> fiveMinGroupA = createAggregations(fiveMinuteInfo, groupA);
+                final Map<K, T> fiveMinGroupB = createAggregations(fiveMinuteInfo, groupB);
+                final Map<K, T> hourGroupA = createAggregations(hourInfo, groupA);
                 
-                final Set<T> aggrs = new LinkedHashSet<T>(fiveMinGroupA);
-                aggrs.addAll(fiveMinGroupB);
-                aggrs.addAll(hourGroupA);
+                final Map<K, T> aggrs = new HashMap<K, T>(fiveMinGroupA);
+                aggrs.putAll(fiveMinGroupB);
+                aggrs.putAll(hourGroupA);
                 
                 return aggrs;
             }
@@ -147,41 +148,57 @@ public abstract class JpaBaseAggregationDaoTest<
             @Override
             protected void callWithoutResult() {
                 final AggregationIntervalInfo fiveMinuteInfo = aggregationIntervalHelper.getIntervalInfo(AggregationInterval.FIVE_MINUTE, instant);
-                final AggregationIntervalInfo hourMinuteInfo = aggregationIntervalHelper.getIntervalInfo(AggregationInterval.HOUR, instant);
+                final AggregationIntervalInfo hourInfo = aggregationIntervalHelper.getIntervalInfo(AggregationInterval.HOUR, instant);
                 
-                final Collection<T> fiveMinGroup = getAggregationDao().getAggregationsForInterval(createAggregationKey(fiveMinuteInfo, null));
-                final Collection<T> hourGroup = getAggregationDao().getAggregationsForInterval(createAggregationKey(hourMinuteInfo, null));
+                final Map<K, T> fiveMinGroup = getAggregationDao().getAggregationsForInterval(
+                        fiveMinuteInfo.getDateDimension(), 
+                        fiveMinuteInfo.getTimeDimension(), 
+                        fiveMinuteInfo.getAggregationInterval());
                 
-                final Set<T> foundAggrs = new LinkedHashSet<T>(fiveMinGroup);
-                foundAggrs.addAll(hourGroup);
+                final Map<K, T> hourGroup = getAggregationDao().getAggregationsForInterval(
+                        hourInfo.getDateDimension(), 
+                        hourInfo.getTimeDimension(), 
+                        hourInfo.getAggregationInterval());
+                
+                final Map<K, T> foundAggrs = new HashMap<K, T>(fiveMinGroup);
+                foundAggrs.putAll(hourGroup);
                 
                 assertEquals("Aggregations not created as expected", createdAggrs, foundAggrs);
             }
         });
 
         //Update Aggregations
-        final Set<T> updatedAggrs = this.executeInTransaction(new Callable<Set<T>>() {
+        final Map<K, T> updatedAggrs = this.executeInTransaction(new Callable<Map<K, T>>() {
             @Override
-            public Set<T> call() throws Exception {
+            public Map<K, T> call() throws Exception {
                 final Random r = new Random(0);
                 
                 final AggregationIntervalInfo fiveMinuteInfo = aggregationIntervalHelper.getIntervalInfo(AggregationInterval.FIVE_MINUTE, instant);
-                final AggregationIntervalInfo hourMinuteInfo = aggregationIntervalHelper.getIntervalInfo(AggregationInterval.HOUR, instant);
+                final AggregationIntervalInfo hourInfo = aggregationIntervalHelper.getIntervalInfo(AggregationInterval.HOUR, instant);
                 
-                final Collection<T> fiveMinGroup = getAggregationDao().getAggregationsForInterval(createAggregationKey(fiveMinuteInfo, null));
-                final Collection<T> hourGroup = getAggregationDao().getAggregationsForInterval(createAggregationKey(hourMinuteInfo, null));
+                final Map<K, T> fiveMinGroup = getAggregationDao().getAggregationsForInterval(
+                        fiveMinuteInfo.getDateDimension(), 
+                        fiveMinuteInfo.getTimeDimension(), 
+                        fiveMinuteInfo.getAggregationInterval());
                 
-                final Set<T> updatedAggrs = new LinkedHashSet<T>();
+                final Map<K, T> hourGroup = getAggregationDao().getAggregationsForInterval(
+                        hourInfo.getDateDimension(), 
+                        hourInfo.getTimeDimension(), 
+                        hourInfo.getAggregationInterval());
                 
-                for (final T aggr : fiveMinGroup) {
+                final Map<K, T> updatedAggrs = new HashMap<K, T>();
+                
+                for (final Entry<K, T> aggrEntry : fiveMinGroup.entrySet()) {
+                    final T aggr = aggrEntry.getValue();
                     updateAggregation(fiveMinuteInfo, aggr, r);
                     getAggregationDao().updateAggregation(aggr);
-                    updatedAggrs.add(aggr);
+                    updatedAggrs.put(aggrEntry.getKey(), aggr);
                 }
-                for (final T aggr : hourGroup) {
-                    updateAggregation(hourMinuteInfo, aggr, r);
+                for (final Entry<K, T> aggrEntry : hourGroup.entrySet()) {
+                    final T aggr = aggrEntry.getValue();
+                    updateAggregation(hourInfo, aggr, r);
                     getAggregationDao().updateAggregation(aggr);
-                    updatedAggrs.add(aggr);
+                    updatedAggrs.put(aggrEntry.getKey(), aggr);
                 }
                 
                 return updatedAggrs;
@@ -193,39 +210,55 @@ public abstract class JpaBaseAggregationDaoTest<
             @Override
             protected void callWithoutResult() {
                 final AggregationIntervalInfo fiveMinuteInfo = aggregationIntervalHelper.getIntervalInfo(AggregationInterval.FIVE_MINUTE, instant);
-                final AggregationIntervalInfo hourMinuteInfo = aggregationIntervalHelper.getIntervalInfo(AggregationInterval.HOUR, instant);
+                final AggregationIntervalInfo hourInfo = aggregationIntervalHelper.getIntervalInfo(AggregationInterval.HOUR, instant);
                 
-                final Collection<T> fiveMinGroup = getAggregationDao().getAggregationsForInterval(createAggregationKey(fiveMinuteInfo, null));
-                final Collection<T> hourGroup = getAggregationDao().getAggregationsForInterval(createAggregationKey(hourMinuteInfo, null));
+                final Map<K, T> fiveMinGroup = getAggregationDao().getAggregationsForInterval(
+                        fiveMinuteInfo.getDateDimension(), 
+                        fiveMinuteInfo.getTimeDimension(), 
+                        fiveMinuteInfo.getAggregationInterval());
                 
-                final Set<T> foundAggrs = new LinkedHashSet<T>(fiveMinGroup);
-                foundAggrs.addAll(hourGroup);
+                final Map<K, T> hourGroup = getAggregationDao().getAggregationsForInterval(
+                        hourInfo.getDateDimension(), 
+                        hourInfo.getTimeDimension(), 
+                        hourInfo.getAggregationInterval());
+                
+                final Map<K, T> foundAggrs = new HashMap<K, T>(fiveMinGroup);
+                foundAggrs.putAll(hourGroup);
                 
                 assertEquals("Aggregations not updated as expected", updatedAggrs, foundAggrs);
             }
         });
 
         //Complete intervals
-        final Set<T> completeAggrs = this.executeInTransaction(new Callable<Set<T>>() {
+        final Map<K, T> completeAggrs = this.executeInTransaction(new Callable<Map<K, T>>() {
             @Override
-            public Set<T> call() throws Exception {
+            public Map<K, T> call() throws Exception {
                 final AggregationIntervalInfo fiveMinuteInfo = aggregationIntervalHelper.getIntervalInfo(AggregationInterval.FIVE_MINUTE, instant);
-                final AggregationIntervalInfo hourMinuteInfo = aggregationIntervalHelper.getIntervalInfo(AggregationInterval.HOUR, instant);
+                final AggregationIntervalInfo hourInfo = aggregationIntervalHelper.getIntervalInfo(AggregationInterval.HOUR, instant);
                 
-                final Collection<T> fiveMinGroup = getAggregationDao().getAggregationsForInterval(createAggregationKey(fiveMinuteInfo, null));
-                final Collection<T> hourGroup = getAggregationDao().getAggregationsForInterval(createAggregationKey(hourMinuteInfo, null));
+                final Map<K, T> fiveMinGroup = getAggregationDao().getAggregationsForInterval(
+                        fiveMinuteInfo.getDateDimension(), 
+                        fiveMinuteInfo.getTimeDimension(), 
+                        fiveMinuteInfo.getAggregationInterval());
                 
-                final Set<T> completeAggrs = new LinkedHashSet<T>();
+                final Map<K, T> hourGroup = getAggregationDao().getAggregationsForInterval(
+                        hourInfo.getDateDimension(), 
+                        hourInfo.getTimeDimension(), 
+                        hourInfo.getAggregationInterval());
                 
-                for (final T aggr : fiveMinGroup) {
+                final Map<K, T> completeAggrs = new HashMap<K, T>();
+                
+                for (final Entry<K, T> aggrEntry : fiveMinGroup.entrySet()) {
+                    final T aggr = aggrEntry.getValue();
                     aggr.intervalComplete(5);
                     getAggregationDao().updateAggregation(aggr);
-                    completeAggrs.add(aggr);
+                    completeAggrs.put(aggrEntry.getKey(), aggr);
                 }
-                for (final T aggr : hourGroup) {
+                for (final Entry<K, T> aggrEntry : hourGroup.entrySet()) {
+                    final T aggr = aggrEntry.getValue();
                     aggr.intervalComplete(60);
                     getAggregationDao().updateAggregation(aggr);
-                    completeAggrs.add(aggr);
+                    completeAggrs.put(aggrEntry.getKey(), aggr);
                 }
                 
                 return completeAggrs;
@@ -237,13 +270,20 @@ public abstract class JpaBaseAggregationDaoTest<
             @Override
             protected void callWithoutResult() {
                 final AggregationIntervalInfo fiveMinuteInfo = aggregationIntervalHelper.getIntervalInfo(AggregationInterval.FIVE_MINUTE, instant);
-                final AggregationIntervalInfo hourMinuteInfo = aggregationIntervalHelper.getIntervalInfo(AggregationInterval.HOUR, instant);
+                final AggregationIntervalInfo hourInfo = aggregationIntervalHelper.getIntervalInfo(AggregationInterval.HOUR, instant);
                 
-                final Collection<T> fiveMinGroup = getAggregationDao().getAggregationsForInterval(createAggregationKey(fiveMinuteInfo, null));
-                final Collection<T> hourGroup = getAggregationDao().getAggregationsForInterval(createAggregationKey(hourMinuteInfo, null));
+                final Map<K, T> fiveMinGroup = getAggregationDao().getAggregationsForInterval(
+                        fiveMinuteInfo.getDateDimension(), 
+                        fiveMinuteInfo.getTimeDimension(), 
+                        fiveMinuteInfo.getAggregationInterval());
                 
-                final Set<T> foundAggrs = new LinkedHashSet<T>(fiveMinGroup);
-                foundAggrs.addAll(hourGroup);
+                final Map<K, T> hourGroup = getAggregationDao().getAggregationsForInterval(
+                        hourInfo.getDateDimension(), 
+                        hourInfo.getTimeDimension(), 
+                        hourInfo.getAggregationInterval());
+                
+                final Map<K, T> foundAggrs = new HashMap<K, T>(fiveMinGroup);
+                foundAggrs.putAll(hourGroup);
                 
                 assertEquals("Aggregations not completed as expected", completeAggrs, foundAggrs);
             }

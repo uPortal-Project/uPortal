@@ -20,7 +20,7 @@
 package org.jasig.portal.events.aggr.tabrender;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -31,10 +31,6 @@ import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.JpaBaseAggregationDaoTest;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
-import org.jasig.portal.events.aggr.tabrender.TabRenderAggregationImpl;
-import org.jasig.portal.events.aggr.tabrender.TabRenderAggregationKey;
-import org.jasig.portal.events.aggr.tabrender.TabRenderAggregationKeyImpl;
-import org.jasig.portal.events.aggr.tabrender.TabRenderAggregationPrivateDao;
 import org.jasig.portal.events.aggr.tabs.AggregatedTabLookupDao;
 import org.jasig.portal.events.aggr.tabs.AggregatedTabMapping;
 import org.junit.runner.RunWith;
@@ -84,15 +80,17 @@ public class JpaTabRenderAggregationDaoTest extends JpaBaseAggregationDaoTest<Ta
     }
 
     @Override
-    protected List<TabRenderAggregationImpl> createAggregations(AggregationIntervalInfo intervalInfo,
-            AggregatedGroupMapping aggregatedGroup) {
+    protected Map<TabRenderAggregationKey, TabRenderAggregationImpl> createAggregations(
+            AggregationIntervalInfo intervalInfo, AggregatedGroupMapping aggregatedGroup) {
         
         final DateDimension dateDimension = intervalInfo.getDateDimension();
         final TimeDimension timeDimension = intervalInfo.getTimeDimension();
         final AggregationInterval aggregationInterval = intervalInfo.getAggregationInterval();
         final AggregatedTabMapping mappedTab = this.aggregatedTabLookupDao.getMappedTabForLayoutId("u1l1n1");
-        return Collections.singletonList(renderAggregationDao.createAggregation(new TabRenderAggregationKeyImpl(
-                dateDimension, timeDimension, aggregationInterval, aggregatedGroup, mappedTab)));
+        final TabRenderAggregationKeyImpl key = new TabRenderAggregationKeyImpl(
+                dateDimension, timeDimension, aggregationInterval, aggregatedGroup, mappedTab);
+        final TabRenderAggregationImpl aggr = renderAggregationDao.createAggregation(key);
+        return Collections.<TabRenderAggregationKey, TabRenderAggregationImpl>singletonMap(key, aggr);
     }
     
 }

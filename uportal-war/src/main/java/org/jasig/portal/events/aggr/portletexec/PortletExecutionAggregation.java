@@ -21,13 +21,26 @@ package org.jasig.portal.events.aggr.portletexec;
 
 import org.jasig.portal.events.aggr.BaseAggregation;
 import org.jasig.portal.events.aggr.TimedAggregationStatistics;
+import org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregationKey.ExecutionType;
+import org.jasig.portal.events.aggr.portlets.AggregatedPortletMapping;
 
 /**
  * Tracks portlet execution stats
  * 
  * @author Eric Dalquist
  */
-public interface PortletExecutionAggregation extends PortletExecutionAggregationKey, BaseAggregation, TimedAggregationStatistics {
+public interface PortletExecutionAggregation 
+        extends BaseAggregation<PortletExecutionAggregationKey>, TimedAggregationStatistics {
+
+    /**
+     * @return The name of the tab
+     */
+    AggregatedPortletMapping getPortletMapping();
+    
+    /**
+     * @return The type of portlet execution 
+     */
+    ExecutionType getExecutionType();
     
     /**
      * @return Number of times portlet was executed

@@ -22,8 +22,6 @@ package org.jasig.portal.events.aggr.concuser;
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.AggregationIntervalInfo;
-import org.jasig.portal.events.aggr.BaseAggregationKey;
-import org.jasig.portal.events.aggr.BaseAggregationKeyImpl;
 import org.jasig.portal.events.aggr.BaseAggregationPrivateDao;
 import org.jasig.portal.events.aggr.BasePortalEventAggregator;
 import org.jasig.portal.events.aggr.DateDimension;
@@ -37,7 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class ConcurrentUserAggregator extends BasePortalEventAggregator<PortalEvent, ConcurrentUserAggregationImpl, BaseAggregationKey> {
+public class ConcurrentUserAggregator extends BasePortalEventAggregator<PortalEvent, ConcurrentUserAggregationImpl, ConcurrentUserAggregationKey> {
     private ConcurrentUserAggregationPrivateDao concurrentUserAggregationDao;
 
     @Autowired
@@ -46,10 +44,10 @@ public class ConcurrentUserAggregator extends BasePortalEventAggregator<PortalEv
     }
 
     @Override
-    protected BaseAggregationPrivateDao<ConcurrentUserAggregationImpl, BaseAggregationKey> getAggregationDao() {
+    protected BaseAggregationPrivateDao<ConcurrentUserAggregationImpl, ConcurrentUserAggregationKey> getAggregationDao() {
         return this.concurrentUserAggregationDao;
     }
-
+    
     @Override
     public boolean supports(Class<? extends PortalEvent> type) {
         return true;
@@ -64,11 +62,11 @@ public class ConcurrentUserAggregator extends BasePortalEventAggregator<PortalEv
     }
     
     @Override
-    protected BaseAggregationKey createAggregationKey(AggregationIntervalInfo intervalInfo,
+    protected ConcurrentUserAggregationKey createAggregationKey(AggregationIntervalInfo intervalInfo,
             AggregatedGroupMapping aggregatedGroup, PortalEvent event) {
         final TimeDimension timeDimension = intervalInfo.getTimeDimension();
         final DateDimension dateDimension = intervalInfo.getDateDimension();
         final AggregationInterval aggregationInterval = intervalInfo.getAggregationInterval();
-        return new BaseAggregationKeyImpl(dateDimension, timeDimension, aggregationInterval, aggregatedGroup);
+        return new ConcurrentUserAggregationKeyImpl(dateDimension, timeDimension, aggregationInterval, aggregatedGroup);
     }
 }

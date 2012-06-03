@@ -19,6 +19,8 @@
 
 package org.jasig.portal.events.aggr;
 
+import java.io.Serializable;
+
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeFieldType;
 
@@ -29,7 +31,7 @@ import org.joda.time.DateTimeFieldType;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface DateDimension {
+public interface DateDimension extends Serializable {
     /**
      * @return The ID of the dimension
      */

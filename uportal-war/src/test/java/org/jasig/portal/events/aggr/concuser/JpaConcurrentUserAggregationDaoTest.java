@@ -20,14 +20,12 @@
 package org.jasig.portal.events.aggr.concuser;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.AggregationIntervalInfo;
-import org.jasig.portal.events.aggr.BaseAggregationKey;
-import org.jasig.portal.events.aggr.BaseAggregationKeyImpl;
 import org.jasig.portal.events.aggr.BaseAggregationPrivateDao;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.JpaBaseAggregationDaoTest;
@@ -44,12 +42,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaAggrEventsTestContext.xml")
-public class JpaConcurrentUserAggregationDaoTest extends JpaBaseAggregationDaoTest<ConcurrentUserAggregationImpl, BaseAggregationKey> {
+public class JpaConcurrentUserAggregationDaoTest extends JpaBaseAggregationDaoTest<ConcurrentUserAggregationImpl, ConcurrentUserAggregationKey> {
     @Autowired
     private ConcurrentUserAggregationPrivateDao concurrentUserAggregationDao;
     
     @Override
-    protected BaseAggregationPrivateDao<ConcurrentUserAggregationImpl, BaseAggregationKey> getAggregationDao() {
+    protected BaseAggregationPrivateDao<ConcurrentUserAggregationImpl, ConcurrentUserAggregationKey> getAggregationDao() {
         return this.concurrentUserAggregationDao;
     }
 
@@ -59,26 +57,27 @@ public class JpaConcurrentUserAggregationDaoTest extends JpaBaseAggregationDaoTe
     }
 
     @Override
-    protected BaseAggregationKey createAggregationKey(AggregationIntervalInfo intervalInfo, AggregatedGroupMapping aggregatedGroup) {
+    protected ConcurrentUserAggregationKey createAggregationKey(AggregationIntervalInfo intervalInfo, AggregatedGroupMapping aggregatedGroup) {
         final DateDimension dateDimension = intervalInfo.getDateDimension();
         final TimeDimension timeDimension = intervalInfo.getTimeDimension();
         final AggregationInterval aggregationInterval = intervalInfo.getAggregationInterval();
-        return new BaseAggregationKeyImpl(dateDimension, timeDimension, aggregationInterval, aggregatedGroup);
+        return new ConcurrentUserAggregationKeyImpl(dateDimension, timeDimension, aggregationInterval, aggregatedGroup);
     }
 
     @Override
-    protected BaseAggregationKey createAggregationKey(AggregationInterval interval, AggregatedGroupMapping aggregatedGroup) {
-        return new BaseAggregationKeyImpl(interval, aggregatedGroup);
+    protected ConcurrentUserAggregationKey createAggregationKey(AggregationInterval interval, AggregatedGroupMapping aggregatedGroup) {
+        return new ConcurrentUserAggregationKeyImpl(interval, aggregatedGroup);
     }
-    
+
     @Override
-    protected List<ConcurrentUserAggregationImpl> createAggregations(AggregationIntervalInfo intervalInfo,
-            AggregatedGroupMapping aggregatedGroup) {
+    protected Map<ConcurrentUserAggregationKey, ConcurrentUserAggregationImpl> createAggregations(
+            AggregationIntervalInfo intervalInfo, AggregatedGroupMapping aggregatedGroup) {
         
         final DateDimension dateDimension = intervalInfo.getDateDimension();
         final TimeDimension timeDimension = intervalInfo.getTimeDimension();
         final AggregationInterval aggregationInterval = intervalInfo.getAggregationInterval();
-        return Collections.singletonList(concurrentUserAggregationDao.createAggregation(new BaseAggregationKeyImpl(
-                dateDimension, timeDimension, aggregationInterval, aggregatedGroup)));
+        final ConcurrentUserAggregationKeyImpl key = new ConcurrentUserAggregationKeyImpl(dateDimension, timeDimension, aggregationInterval, aggregatedGroup);
+        final ConcurrentUserAggregationImpl aggr = concurrentUserAggregationDao.createAggregation(key);
+        return Collections.<ConcurrentUserAggregationKey, ConcurrentUserAggregationImpl>singletonMap(key, aggr);
     }
 }

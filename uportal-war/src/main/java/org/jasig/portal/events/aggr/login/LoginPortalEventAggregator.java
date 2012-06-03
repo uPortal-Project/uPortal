@@ -23,8 +23,6 @@ import org.jasig.portal.events.LoginEvent;
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.AggregationIntervalInfo;
-import org.jasig.portal.events.aggr.BaseAggregationKey;
-import org.jasig.portal.events.aggr.BaseAggregationKeyImpl;
 import org.jasig.portal.events.aggr.BaseAggregationPrivateDao;
 import org.jasig.portal.events.aggr.BasePortalEventAggregator;
 import org.jasig.portal.events.aggr.DateDimension;
@@ -38,7 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class LoginPortalEventAggregator extends BasePortalEventAggregator<LoginEvent, LoginAggregationImpl, BaseAggregationKey> {
+public class LoginPortalEventAggregator extends BasePortalEventAggregator<LoginEvent, LoginAggregationImpl, LoginAggregationKey> {
     private LoginAggregationPrivateDao loginAggregationDao;
 
     @Autowired
@@ -47,17 +45,17 @@ public class LoginPortalEventAggregator extends BasePortalEventAggregator<LoginE
     }
 
     @Override
-    protected BaseAggregationPrivateDao<LoginAggregationImpl, BaseAggregationKey> getAggregationDao() {
+    protected BaseAggregationPrivateDao<LoginAggregationImpl, LoginAggregationKey> getAggregationDao() {
         return this.loginAggregationDao;
     }
 
     @Override
-    protected BaseAggregationKey createAggregationKey(AggregationIntervalInfo intervalInfo,
+    protected LoginAggregationKey createAggregationKey(AggregationIntervalInfo intervalInfo,
             AggregatedGroupMapping aggregatedGroup, LoginEvent event) {
         final TimeDimension timeDimension = intervalInfo.getTimeDimension();
         final DateDimension dateDimension = intervalInfo.getDateDimension();
         final AggregationInterval aggregationInterval = intervalInfo.getAggregationInterval();
-        return new BaseAggregationKeyImpl(dateDimension, timeDimension, aggregationInterval, aggregatedGroup);
+        return new LoginAggregationKeyImpl(dateDimension, timeDimension, aggregationInterval, aggregatedGroup);
     }
 
     @Override

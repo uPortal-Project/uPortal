@@ -35,6 +35,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.Validate;
 import org.hibernate.annotations.Cache;
@@ -46,6 +47,7 @@ import org.jasig.portal.events.aggr.BaseTimedAggregationStatsImpl;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregationKey.ExecutionType;
 import org.jasig.portal.events.aggr.portlets.AggregatedPortletMapping;
 import org.jasig.portal.events.aggr.portlets.AggregatedPortletMappingImpl;
 
@@ -68,13 +70,16 @@ import org.jasig.portal.events.aggr.portlets.AggregatedPortletMappingImpl;
 @org.hibernate.annotations.Table(
         appliesTo = "UP_PORTLET_EXEC_AGGR",
         indexes = {
-                @Index(name = "IDX_UP_PLT_EXEC_AGGR_DTIPE", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL", "AGGR_PORTLET_ID", "EXECUTION_TYPE" }),
+                @Index(name = "IDX_UP_PLT_EXEC_AGGR_DTI", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL" }),
                 @Index(name = "IDX_UP_PLT_EXEC_AGGR_DTIC", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL", "STATS_COMPLETE" })
-            }
-        )
+        }
+    )
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class PortletExecutionAggregationImpl extends BaseTimedAggregationStatsImpl implements PortletExecutionAggregation, Serializable {
+public final class PortletExecutionAggregationImpl 
+        extends BaseTimedAggregationStatsImpl<PortletExecutionAggregationKey> 
+        implements PortletExecutionAggregation, Serializable {
+    
     private static final long serialVersionUID = 1L;
     
     @SuppressWarnings("unused")
@@ -92,6 +97,9 @@ public class PortletExecutionAggregationImpl extends BaseTimedAggregationStatsIm
     @Column(name = "EXECUTION_TYPE", nullable = false, length=50)
     @Enumerated(EnumType.STRING)
     private final ExecutionType executionType;
+    
+    @Transient
+    private PortletExecutionAggregationKey aggregationKey;
     
     @SuppressWarnings("unused")
     private PortletExecutionAggregationImpl() {
@@ -127,6 +135,16 @@ public class PortletExecutionAggregationImpl extends BaseTimedAggregationStatsIm
     public ExecutionType getExecutionType() {
         return this.executionType;
     }
+    
+    @Override
+    public PortletExecutionAggregationKey getAggregationKey() {
+        PortletExecutionAggregationKey key = this.aggregationKey;
+        if (key == null) {
+            key = new PortletExecutionAggregationKeyImpl(this);
+            this.aggregationKey = key;
+        }
+        return key;
+    }
 
     @Override
     public int hashCode() {
@@ -143,16 +161,16 @@ public class PortletExecutionAggregationImpl extends BaseTimedAggregationStatsIm
             return true;
         if (!super.equals(obj))
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof PortletExecutionAggregation))
             return false;
-        PortletExecutionAggregationImpl other = (PortletExecutionAggregationImpl) obj;
+        PortletExecutionAggregation other = (PortletExecutionAggregation) obj;
         if (aggregatedPortlet == null) {
-            if (other.aggregatedPortlet != null)
+            if (other.getPortletMapping() != null)
                 return false;
         }
-        else if (!aggregatedPortlet.equals(other.aggregatedPortlet))
+        else if (!aggregatedPortlet.equals(other.getPortletMapping()))
             return false;
-        if (executionType != other.executionType)
+        if (executionType != other.getExecutionType())
             return false;
         return true;
     }
@@ -160,7 +178,7 @@ public class PortletExecutionAggregationImpl extends BaseTimedAggregationStatsIm
     @Override
     public String toString() {
         return "PortletExecutionAggregationImpl [aggregatedPortlet=" + aggregatedPortlet + ", executionType=" + executionType
-                + ", getTimeDimension=" + getTimeDimension() + ", getDateDimension=" + getDateDimension()
-                + ", getInterval=" + getInterval() + ", getAggregatedGroup=" + getAggregatedGroup() + "]";
+                + ", timeDimension=" + getTimeDimension() + ", dateDimension=" + getDateDimension()
+                + ", interval=" + getInterval() + ", aggregatedGroup=" + getAggregatedGroup() + "]";
     }
 }

@@ -37,6 +37,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -67,10 +68,12 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 @org.hibernate.annotations.Table(
         appliesTo = "UP_LOGIN_EVENT_AGGR",
         indexes = @Index(name = "IDX_UP_LOGIN_EVENT_AGGR_DTI", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL" })
-        )
+    )
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class LoginAggregationImpl extends BaseAggregationImpl implements LoginAggregation, Serializable {
+public final class LoginAggregationImpl 
+        extends BaseAggregationImpl<LoginAggregationKey> 
+        implements LoginAggregation, Serializable {
     private static final long serialVersionUID = 1L;
     
     @Id
@@ -92,6 +95,9 @@ public class LoginAggregationImpl extends BaseAggregationImpl implements LoginAg
     @Column(name="UNIQUEUSERNAMES", nullable=false, updatable=false, length=255)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<String> uniqueUserNames = new LinkedHashSet<String>();
+
+    @Transient
+    private LoginAggregationKeyImpl aggregationKey;
     
     @SuppressWarnings("unused")
     private LoginAggregationImpl() {
@@ -115,6 +121,16 @@ public class LoginAggregationImpl extends BaseAggregationImpl implements LoginAg
     }
     
     @Override
+    public LoginAggregationKey getAggregationKey() {
+        LoginAggregationKeyImpl key = this.aggregationKey;
+        if (key == null) {
+            key = new LoginAggregationKeyImpl(this);
+            this.aggregationKey = key;
+        }
+        return key;
+    }
+
+    @Override
     protected boolean isComplete() {
         return this.loginCount > 0 && this.uniqueUserNames.isEmpty();
     }
@@ -134,28 +150,12 @@ public class LoginAggregationImpl extends BaseAggregationImpl implements LoginAg
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + loginCount;
-        result = prime * result + uniqueLoginCount;
-        return result;
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (!super.equals(obj))
+        if (!(obj instanceof LoginAggregation))
             return false;
-        if (getClass() != obj.getClass())
-            return false;
-        LoginAggregationImpl other = (LoginAggregationImpl) obj;
-        if (loginCount != other.loginCount)
-            return false;
-        if (uniqueLoginCount != other.uniqueLoginCount)
-            return false;
-        return true;
+        return super.equals(obj);
     }
 
     @Override

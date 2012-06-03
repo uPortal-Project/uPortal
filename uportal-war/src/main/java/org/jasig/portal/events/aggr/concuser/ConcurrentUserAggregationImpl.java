@@ -37,6 +37,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -67,10 +68,13 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 @org.hibernate.annotations.Table(
         appliesTo = "UP_CONCURRENT_USER_AGGR",
         indexes = @Index(name = "IDX_UP_CONC_USER_AGGR_DTI", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL" })
-        )
+    )
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class ConcurrentUserAggregationImpl extends BaseAggregationImpl implements ConcurrentUserAggregation, Serializable {
+public final class ConcurrentUserAggregationImpl 
+        extends BaseAggregationImpl<ConcurrentUserAggregationKey> 
+        implements ConcurrentUserAggregation, Serializable {
+
     private static final long serialVersionUID = 1L;
     
     @Id
@@ -90,6 +94,9 @@ public class ConcurrentUserAggregationImpl extends BaseAggregationImpl implement
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<String> uniqueSessionIds = new LinkedHashSet<String>();
     
+    @Transient
+    private ConcurrentUserAggregationKey aggregationKey;
+    
     @SuppressWarnings("unused")
     private ConcurrentUserAggregationImpl() {
         super();
@@ -105,6 +112,16 @@ public class ConcurrentUserAggregationImpl extends BaseAggregationImpl implement
     @Override
     public int getConcurrentUsers() {
         return this.concurrentUsers;
+    }
+
+    @Override
+    public ConcurrentUserAggregationKey getAggregationKey() {
+        ConcurrentUserAggregationKey key = this.aggregationKey;
+        if (key == null) {
+            key = new ConcurrentUserAggregationKeyImpl(this);
+            this.aggregationKey = key;
+        }
+        return key;
     }
 
     @Override
@@ -126,25 +143,12 @@ public class ConcurrentUserAggregationImpl extends BaseAggregationImpl implement
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + concurrentUsers;
-        return result;
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (!super.equals(obj))
+        if (!(obj instanceof ConcurrentUserAggregation))
             return false;
-        if (getClass() != obj.getClass())
-            return false;
-        ConcurrentUserAggregationImpl other = (ConcurrentUserAggregationImpl) obj;
-        if (concurrentUsers != other.concurrentUsers)
-            return false;
-        return true;
+        return super.equals(obj);
     }
 
     @Override

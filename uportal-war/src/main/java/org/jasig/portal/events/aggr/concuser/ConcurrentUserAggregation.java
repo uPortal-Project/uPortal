@@ -21,7 +21,6 @@ package org.jasig.portal.events.aggr.concuser;
 
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.aggr.BaseAggregation;
-import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 
 /**
  * Tracks the number of concurrent users. Measured by unique {@link PortalEvent#getEventSessionId()} values
@@ -29,7 +28,7 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
  * 
  * @author Eric Dalquist
  */
-public interface ConcurrentUserAggregation extends BaseAggregation {
+public interface ConcurrentUserAggregation extends BaseAggregation<ConcurrentUserAggregationKey> {
     
     /**
      * @return Total number of users that were active for the duration of this aggregation.

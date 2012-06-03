@@ -7,21 +7,25 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
  * 
  * @author Eric Dalquist
  */
-public class BaseAggregationKeyImpl implements BaseAggregationKey {
+public abstract class BaseAggregationKeyImpl implements BaseAggregationKey {
     private static final long serialVersionUID = 1L;
     
     private final TimeDimension timeDimension;
     private final DateDimension dateDimension;
     private final AggregationInterval aggregationInterval;
     private final AggregatedGroupMapping aggregatedGroupMapping;
+    
+    public BaseAggregationKeyImpl(BaseAggregation<?> baseAggregation) {
+        this(
+                baseAggregation.getDateDimension(),
+                baseAggregation.getTimeDimension(),
+                baseAggregation.getInterval(),
+                baseAggregation.getAggregatedGroup()
+        );
+    }
 
     public BaseAggregationKeyImpl(AggregationInterval aggregationInterval, AggregatedGroupMapping aggregatedGroupMapping) {
         this(null, null, aggregationInterval, aggregatedGroupMapping);
-    }
-    
-    public BaseAggregationKeyImpl(DateDimension dateDimension, TimeDimension timeDimension,
-            AggregationInterval aggregationInterval) {
-        this(dateDimension, timeDimension, aggregationInterval, null);
     }
     
     public BaseAggregationKeyImpl(DateDimension dateDimension, TimeDimension timeDimension,
@@ -93,12 +97,5 @@ public class BaseAggregationKeyImpl implements BaseAggregationKey {
         else if (!timeDimension.equals(other.getTimeDimension()))
             return false;
         return true;
-    }
-
-    @Override
-    public String toString() {
-        return "BaseAggregationKeyImpl [dateDimension=" + dateDimension + ", timeDimension=" + timeDimension
-                + ", aggregationInterval=" + aggregationInterval + ", aggregatedGroupMapping=" + aggregatedGroupMapping
-                + "]";
     }
 }

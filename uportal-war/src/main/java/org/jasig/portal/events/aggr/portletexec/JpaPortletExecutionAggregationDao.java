@@ -97,4 +97,10 @@ public class JpaPortletExecutionAggregationDao extends
         final ExecutionType executionType = key.getExecutionType();
         return new PortletExecutionAggregationImpl(timeDimension, dateDimension, interval, aggregatedGroup, portletMapping, executionType);
     }
+
+
+    @Override
+    protected PortletExecutionAggregationKey getAggregationKey(PortletExecutionAggregationImpl instance) {
+        return instance.getAggregationKey();
+    }
 }

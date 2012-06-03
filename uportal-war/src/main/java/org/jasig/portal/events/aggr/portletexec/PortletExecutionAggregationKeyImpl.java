@@ -12,22 +12,21 @@ import org.jasig.portal.events.aggr.portlets.AggregatedPortletMapping;
  * 
  * @author Eric Dalquist
  */
-public class PortletExecutionAggregationKeyImpl extends BaseAggregationKeyImpl implements PortletExecutionAggregationKey {
+class PortletExecutionAggregationKeyImpl extends BaseAggregationKeyImpl implements PortletExecutionAggregationKey {
     private static final long serialVersionUID = 1L;
     
     private final AggregatedPortletMapping portletMapping;
     private final ExecutionType executionType;
     
+    public PortletExecutionAggregationKeyImpl(PortletExecutionAggregation baseAggregation) {
+        super(baseAggregation);
+        this.portletMapping = baseAggregation.getPortletMapping();
+        this.executionType = baseAggregation.getExecutionType();
+    }
+
     public PortletExecutionAggregationKeyImpl(AggregationInterval aggregationInterval,
             AggregatedGroupMapping aggregatedGroupMapping, AggregatedPortletMapping portletMapping, ExecutionType executionType) {
         super(aggregationInterval, aggregatedGroupMapping);
-        this.portletMapping = portletMapping;
-        this.executionType = executionType;
-    }
-
-    public PortletExecutionAggregationKeyImpl(DateDimension dateDimension, TimeDimension timeDimension,
-            AggregationInterval aggregationInterval, AggregatedPortletMapping portletMapping, ExecutionType executionType) {
-        super(dateDimension, timeDimension, aggregationInterval);
         this.portletMapping = portletMapping;
         this.executionType = executionType;
     }
@@ -64,24 +63,24 @@ public class PortletExecutionAggregationKeyImpl extends BaseAggregationKeyImpl i
             return true;
         if (!super.equals(obj))
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof PortletExecutionAggregationKey))
             return false;
-        PortletExecutionAggregationKeyImpl other = (PortletExecutionAggregationKeyImpl) obj;
-        if (executionType != other.executionType)
+        PortletExecutionAggregationKey other = (PortletExecutionAggregationKey) obj;
+        if (executionType != other.getExecutionType())
             return false;
         if (portletMapping == null) {
-            if (other.portletMapping != null)
+            if (other.getPortletMapping() != null)
                 return false;
         }
-        else if (!portletMapping.equals(other.portletMapping))
+        else if (!portletMapping.equals(other.getPortletMapping()))
             return false;
         return true;
     }
-
+    
     @Override
     public String toString() {
-        return "PortletExecutionAggregationKeyImpl [portletMapping=" + portletMapping + ", executionType=" + executionType
-                + ", getTimeDimension=" + getTimeDimension() + ", getDateDimension=" + getDateDimension()
-                + ", getInterval=" + getInterval() + ", getAggregatedGroup=" + getAggregatedGroup() + "]";
+        return "PortletExecutionAggregationKey [dateDimension=" + getDateDimension() + ", timeDimension="
+                + getTimeDimension() + ", interval=" + getInterval() + ", aggregatedGroup=" + getAggregatedGroup()
+                + ", executionType=" + executionType + ", portletMapping=" + portletMapping + "]";
     }
 }

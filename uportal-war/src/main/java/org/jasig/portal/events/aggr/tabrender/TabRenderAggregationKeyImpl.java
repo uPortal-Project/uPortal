@@ -12,20 +12,19 @@ import org.jasig.portal.events.aggr.tabs.AggregatedTabMapping;
  * 
  * @author Eric Dalquist
  */
-public class TabRenderAggregationKeyImpl extends BaseAggregationKeyImpl implements TabRenderAggregationKey {
+class TabRenderAggregationKeyImpl extends BaseAggregationKeyImpl implements TabRenderAggregationKey {
     private static final long serialVersionUID = 1L;
     
     private final AggregatedTabMapping tabMapping;
     
+    public TabRenderAggregationKeyImpl(TabRenderAggregation baseAggregation) {
+        super(baseAggregation);
+        this.tabMapping = baseAggregation.getTabMapping();
+    }
+
     public TabRenderAggregationKeyImpl(AggregationInterval aggregationInterval,
             AggregatedGroupMapping aggregatedGroupMapping, AggregatedTabMapping tabMapping) {
         super(aggregationInterval, aggregatedGroupMapping);
-        this.tabMapping = tabMapping;
-    }
-
-    public TabRenderAggregationKeyImpl(DateDimension dateDimension, TimeDimension timeDimension,
-            AggregationInterval aggregationInterval, AggregatedTabMapping tabMapping) {
-        super(dateDimension, timeDimension, aggregationInterval);
         this.tabMapping = tabMapping;
     }
 
@@ -39,7 +38,7 @@ public class TabRenderAggregationKeyImpl extends BaseAggregationKeyImpl implemen
     public AggregatedTabMapping getTabMapping() {
         return this.tabMapping;
     }
-    
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -56,20 +55,20 @@ public class TabRenderAggregationKeyImpl extends BaseAggregationKeyImpl implemen
             return false;
         if (getClass() != obj.getClass())
             return false;
-        TabRenderAggregationKeyImpl other = (TabRenderAggregationKeyImpl) obj;
+        TabRenderAggregationKey other = (TabRenderAggregationKey) obj;
         if (tabMapping == null) {
-            if (other.tabMapping != null)
+            if (other.getTabMapping() != null)
                 return false;
         }
-        else if (!tabMapping.equals(other.tabMapping))
+        else if (!tabMapping.equals(other.getTabMapping()))
             return false;
         return true;
     }
-
+    
     @Override
     public String toString() {
-        return "TabRenderAggregationKeyImpl [tabMapping=" + tabMapping + ", getDateDimension()=" + getDateDimension()
-                + ", getTimeDimension()=" + getTimeDimension() + ", getInterval()=" + getInterval()
-                + ", getAggregatedGroup()=" + getAggregatedGroup() + "]";
+        return "TabRenderAggregationKey [dateDimension=" + getDateDimension() + ", timeDimension="
+                + getTimeDimension() + ", interval=" + getInterval() + ", aggregatedGroup=" + getAggregatedGroup()
+                + ", tabMapping=" + tabMapping + "]";
     }
 }

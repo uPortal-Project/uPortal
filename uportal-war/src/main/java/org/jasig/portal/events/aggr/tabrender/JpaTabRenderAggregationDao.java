@@ -91,4 +91,9 @@ public class JpaTabRenderAggregationDao extends
         final AggregatedTabMapping tabMapping = key.getTabMapping();
         return new TabRenderAggregationImpl(timeDimension, dateDimension, interval, aggregatedGroup, tabMapping);
     }
+
+    @Override
+    protected TabRenderAggregationKey getAggregationKey(TabRenderAggregationImpl instance) {
+        return instance.getAggregationKey();
+    }
 }

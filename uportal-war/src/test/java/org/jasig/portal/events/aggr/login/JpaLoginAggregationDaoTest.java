@@ -20,14 +20,12 @@
 package org.jasig.portal.events.aggr.login;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.AggregationIntervalInfo;
-import org.jasig.portal.events.aggr.BaseAggregationKey;
-import org.jasig.portal.events.aggr.BaseAggregationKeyImpl;
 import org.jasig.portal.events.aggr.BaseAggregationPrivateDao;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.JpaBaseAggregationDaoTest;
@@ -44,12 +42,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaAggrEventsTestContext.xml")
-public class JpaLoginAggregationDaoTest extends JpaBaseAggregationDaoTest<LoginAggregationImpl, BaseAggregationKey> {
+public class JpaLoginAggregationDaoTest extends JpaBaseAggregationDaoTest<LoginAggregationImpl, LoginAggregationKey> {
     @Autowired
     private LoginAggregationPrivateDao loginAggregationDao;
     
     @Override
-    protected BaseAggregationPrivateDao<LoginAggregationImpl, BaseAggregationKey> getAggregationDao() {
+    protected BaseAggregationPrivateDao<LoginAggregationImpl, LoginAggregationKey> getAggregationDao() {
         return this.loginAggregationDao;
     }
 
@@ -59,26 +57,27 @@ public class JpaLoginAggregationDaoTest extends JpaBaseAggregationDaoTest<LoginA
     }
 
     @Override
-    protected BaseAggregationKey createAggregationKey(AggregationIntervalInfo intervalInfo, AggregatedGroupMapping aggregatedGroup) {
+    protected LoginAggregationKey createAggregationKey(AggregationIntervalInfo intervalInfo, AggregatedGroupMapping aggregatedGroup) {
         final DateDimension dateDimension = intervalInfo.getDateDimension();
         final TimeDimension timeDimension = intervalInfo.getTimeDimension();
         final AggregationInterval aggregationInterval = intervalInfo.getAggregationInterval();
-        return new BaseAggregationKeyImpl(dateDimension, timeDimension, aggregationInterval, aggregatedGroup);
+        return new LoginAggregationKeyImpl(dateDimension, timeDimension, aggregationInterval, aggregatedGroup);
     }
 
     @Override
-    protected BaseAggregationKey createAggregationKey(AggregationInterval interval, AggregatedGroupMapping aggregatedGroup) {
-        return new BaseAggregationKeyImpl(interval, aggregatedGroup);
+    protected LoginAggregationKey createAggregationKey(AggregationInterval interval, AggregatedGroupMapping aggregatedGroup) {
+        return new LoginAggregationKeyImpl(interval, aggregatedGroup);
     }
 
     @Override
-    protected List<LoginAggregationImpl> createAggregations(AggregationIntervalInfo intervalInfo,
+    protected Map<LoginAggregationKey, LoginAggregationImpl> createAggregations(AggregationIntervalInfo intervalInfo,
             AggregatedGroupMapping aggregatedGroup) {
 
         final DateDimension dateDimension = intervalInfo.getDateDimension();
         final TimeDimension timeDimension = intervalInfo.getTimeDimension();
         final AggregationInterval aggregationInterval = intervalInfo.getAggregationInterval();
-        return Collections.singletonList(loginAggregationDao.createAggregation(new BaseAggregationKeyImpl(
-                dateDimension, timeDimension, aggregationInterval, aggregatedGroup)));
+        final LoginAggregationKeyImpl key = new LoginAggregationKeyImpl(dateDimension, timeDimension, aggregationInterval, aggregatedGroup);
+        final LoginAggregationImpl aggr = loginAggregationDao.createAggregation(key);
+        return Collections.<LoginAggregationKey, LoginAggregationImpl>singletonMap(key, aggr);
     }
 }

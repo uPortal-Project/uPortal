@@ -26,5 +26,6 @@ import org.jasig.portal.events.aggr.BaseAggregationDao;
  * 
  * @author Eric Dalquist
  */
-public interface TabRenderAggregationDao<T extends TabRenderAggregation> extends BaseAggregationDao<T, TabRenderAggregationKey> {
+public interface TabRenderAggregationDao<T extends TabRenderAggregation> 
+        extends BaseAggregationDao<T, TabRenderAggregationKey> {
 }

@@ -19,8 +19,6 @@
 
 package org.jasig.portal.events.aggr;
 
-import java.io.Serializable;
-
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
@@ -39,11 +37,13 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl;
 
 /**
+ * Base implementations for aggregations that are grouped by date, time, interval and group
+ * 
  * @author Eric Dalquist
  */
 @Access(AccessType.FIELD)
 @MappedSuperclass
-public abstract class BaseAggregationImpl implements BaseAggregation, Serializable {
+public abstract class BaseAggregationImpl<K extends BaseAggregationKey> implements BaseAggregation<K> {
     private static final long serialVersionUID = 1L;
     
     @NaturalId
@@ -180,26 +180,26 @@ public abstract class BaseAggregationImpl implements BaseAggregation, Serializab
             return false;
         if (!(obj instanceof BaseAggregationImpl))
             return false;
-        BaseAggregationImpl other = (BaseAggregationImpl) obj;
+        BaseAggregation<?> other = (BaseAggregation<?>) obj;
         if (dateDimension == null) {
-            if (other.dateDimension != null)
+            if (other.getDateDimension() != null)
                 return false;
         }
-        else if (!dateDimension.equals(other.dateDimension))
+        else if (!dateDimension.equals(other.getDateDimension()))
             return false;
         if (aggregatedGroup == null) {
-            if (other.aggregatedGroup != null)
+            if (other.getAggregatedGroup() != null)
                 return false;
         }
-        else if (!aggregatedGroup.equals(other.aggregatedGroup))
+        else if (!aggregatedGroup.equals(other.getAggregatedGroup()))
             return false;
-        if (interval != other.interval)
+        if (interval != other.getInterval())
             return false;
         if (timeDimension == null) {
-            if (other.timeDimension != null)
+            if (other.getTimeDimension() != null)
                 return false;
         }
-        else if (!timeDimension.equals(other.timeDimension))
+        else if (!timeDimension.equals(other.getTimeDimension()))
             return false;
         return true;
     }

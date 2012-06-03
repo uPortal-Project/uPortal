@@ -19,7 +19,6 @@
 
 package org.jasig.portal.events.aggr.login;
 
-import org.jasig.portal.events.aggr.BaseAggregationKey;
 import org.jasig.portal.events.aggr.BaseAggregationPrivateDao;
 
 /**
@@ -29,6 +28,6 @@ import org.jasig.portal.events.aggr.BaseAggregationPrivateDao;
  * @version $Revision$
  */
 interface LoginAggregationPrivateDao extends LoginAggregationDao<LoginAggregationImpl>,
-        BaseAggregationPrivateDao<LoginAggregationImpl, BaseAggregationKey> {
+        BaseAggregationPrivateDao<LoginAggregationImpl, LoginAggregationKey> {
 
 }

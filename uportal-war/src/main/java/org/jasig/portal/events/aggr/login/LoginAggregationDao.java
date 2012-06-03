@@ -20,12 +20,12 @@
 package org.jasig.portal.events.aggr.login;
 
 import org.jasig.portal.events.aggr.BaseAggregationDao;
-import org.jasig.portal.events.aggr.BaseAggregationKey;
 
 /**
  * DAO used to query information about login aggregates: Total Logins and Unique Logins per date,time,interval,group
  * 
  * @author Eric Dalquist
  */
-public interface LoginAggregationDao<T extends LoginAggregation> extends BaseAggregationDao<T, BaseAggregationKey> {
+public interface LoginAggregationDao<T extends LoginAggregation> 
+        extends BaseAggregationDao<T, LoginAggregationKey> {
 }

@@ -22,7 +22,6 @@ package org.jasig.portal.events.aggr;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +62,7 @@ import com.google.common.collect.ImmutableSet;
  * @param <K> The entity primary key
  */
 public abstract class JpaBaseAggregationDao<
-            T extends BaseAggregationImpl, 
+            T extends BaseAggregationImpl<K>, 
             K extends BaseAggregationKey> 
         extends BaseAggrEventsJpaDao 
         implements BaseAggregationPrivateDao<T, K> {
@@ -295,23 +294,17 @@ public abstract class JpaBaseAggregationDao<
     }
 
     @Override
-    public final Map<K, Collection<T>> getAggregationsForInterval(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval) {
+    public final Map<K, T> getAggregationsForInterval(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval) {
         final TypedQuery<T> query = this.createCachedQuery(this.findAggregationByDateTimeIntervalQuery);
         query.setParameter(this.dateDimensionParameter, dateDimension);
         query.setParameter(this.timeDimensionParameter, timeDimension);
         query.setParameter(this.intervalParameter, interval);
         
         final List<T> results = query.getResultList();
-        final Map<K, Collection<T>> resultMap = new HashMap<K, Collection<T>>();
+        final Map<K, T> resultMap = new HashMap<K, T>();
         for (final T result : results) {
             final K key = this.getAggregationKey(result);
-            
-            Collection<T> resultSet = resultMap.get(key);
-            if (resultSet == null) {
-                resultSet = new HashSet<T>();
-                resultMap.put(key, resultSet);
-            }
-            resultSet.add(result);
+            resultMap.put(key, result);
         }
         
         return resultMap;

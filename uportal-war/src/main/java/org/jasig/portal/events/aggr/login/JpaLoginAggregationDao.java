@@ -27,7 +27,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.jasig.portal.events.aggr.AggregationInterval;
-import org.jasig.portal.events.aggr.BaseAggregationKey;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.JpaBaseAggregationDao;
 import org.jasig.portal.events.aggr.TimeDimension;
@@ -40,7 +39,7 @@ import org.springframework.stereotype.Repository;
  * @author Eric Dalquist
  */
 @Repository
-public class JpaLoginAggregationDao extends JpaBaseAggregationDao<LoginAggregationImpl, BaseAggregationKey> implements
+public class JpaLoginAggregationDao extends JpaBaseAggregationDao<LoginAggregationImpl, LoginAggregationKey> implements
         LoginAggregationPrivateDao {
 
     public JpaLoginAggregationDao() {
@@ -57,13 +56,18 @@ public class JpaLoginAggregationDao extends JpaBaseAggregationDao<LoginAggregati
             List<Predicate> keyPredicates) {
         keyPredicates.add(cb.notEqual(cb.size(root.get(LoginAggregationImpl_.uniqueUserNames)), 0));
     }
-
+    
     @Override
-    protected LoginAggregationImpl createAggregationInstance(BaseAggregationKey key) {
+    protected LoginAggregationImpl createAggregationInstance(LoginAggregationKey key) {
         final TimeDimension timeDimension = key.getTimeDimension();
         final DateDimension dateDimension = key.getDateDimension();
         final AggregationInterval interval = key.getInterval();
         final AggregatedGroupMapping aggregatedGroup = key.getAggregatedGroup();
         return new LoginAggregationImpl(timeDimension, dateDimension, interval, aggregatedGroup);
+    }
+
+    @Override
+    protected LoginAggregationKey getAggregationKey(LoginAggregationImpl instance) {
+        return instance.getAggregationKey();
     }
 }

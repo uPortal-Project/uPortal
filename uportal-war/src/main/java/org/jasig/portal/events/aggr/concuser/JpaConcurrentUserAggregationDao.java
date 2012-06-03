@@ -27,7 +27,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.jasig.portal.events.aggr.AggregationInterval;
-import org.jasig.portal.events.aggr.BaseAggregationKey;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.JpaBaseAggregationDao;
 import org.jasig.portal.events.aggr.TimeDimension;
@@ -41,7 +40,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class JpaConcurrentUserAggregationDao extends
-        JpaBaseAggregationDao<ConcurrentUserAggregationImpl, BaseAggregationKey> implements
+        JpaBaseAggregationDao<ConcurrentUserAggregationImpl, ConcurrentUserAggregationKey> implements
         ConcurrentUserAggregationPrivateDao {
 
     public JpaConcurrentUserAggregationDao() {
@@ -60,11 +59,16 @@ public class JpaConcurrentUserAggregationDao extends
     }
 
     @Override
-    protected ConcurrentUserAggregationImpl createAggregationInstance(BaseAggregationKey key) {
+    protected ConcurrentUserAggregationImpl createAggregationInstance(ConcurrentUserAggregationKey key) {
         final TimeDimension timeDimension = key.getTimeDimension();
         final DateDimension dateDimension = key.getDateDimension();
         final AggregationInterval interval = key.getInterval();
         final AggregatedGroupMapping aggregatedGroup = key.getAggregatedGroup();
         return new ConcurrentUserAggregationImpl(timeDimension, dateDimension, interval, aggregatedGroup);
+    }
+
+    @Override
+    protected ConcurrentUserAggregationKey getAggregationKey(ConcurrentUserAggregationImpl instance) {
+        return instance.getAggregationKey();
     }
 }

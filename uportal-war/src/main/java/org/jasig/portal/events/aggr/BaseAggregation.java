@@ -19,6 +19,10 @@
 
 package org.jasig.portal.events.aggr;
 
+import java.io.Serializable;
+
+import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+
 
 /**
  * Base of all aggregations which includes time, date, interval, group, and duration
@@ -26,10 +30,34 @@ package org.jasig.portal.events.aggr;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface BaseAggregation extends BaseAggregationKey {
+public interface BaseAggregation<K extends BaseAggregationKey> extends Serializable {
+    /**
+     * @return The day the aggregation is for
+     */
+    DateDimension getDateDimension();
+    
+    /**
+     * @return The time of day the aggregation is for
+     */
+    TimeDimension getTimeDimension();
+    
+    /**
+     * @return The interval the aggregation is for
+     */
+    AggregationInterval getInterval();
+    
+    /**
+     * @return The group this aggregation is for, null if it is for all users
+     */
+    AggregatedGroupMapping getAggregatedGroup();
     
     /**
      * @return Duration in minutes of the aggregated time span
      */
     int getDuration();
+    
+    /**
+     * @return The key for this aggregation
+     */
+    K getAggregationKey();
 }
