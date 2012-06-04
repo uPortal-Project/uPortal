@@ -313,12 +313,14 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                                 final long start = System.nanoTime();
                                 
                                 final DateTime lastEventDate = eventAggregatorStatus.getLastEventDate();
-                                final int purgeCount = eventSessionDao.purgeExpiredEventSessions(lastEventDate);
-                                
-                                if (logger.isInfoEnabled()) {
-                                    final long runTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
-                                    logger.info("Purged {} event sessions before {} in {}ms - {} events/second", 
-                                            new Object[] { purgeCount, lastEventDate, runTime, purgeCount/(runTime/1000d) });
+                                if (lastEventDate != null) {
+                                    final int purgeCount = eventSessionDao.purgeExpiredEventSessions(lastEventDate);
+                                    
+                                    if (logger.isInfoEnabled()) {
+                                        final long runTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
+                                        logger.info("Purged {} event sessions before {} in {}ms - {} events/second", 
+                                                new Object[] { purgeCount, lastEventDate, runTime, purgeCount/(runTime/1000d) });
+                                    }
                                 }
                             }
                         }

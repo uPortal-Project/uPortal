@@ -285,7 +285,7 @@ public class JpaClusterLockDao extends BasePortalJpaDao implements IClusterLockD
         }
         final String serverName = this.portalInfoProvider.getUniqueServerName();
         if (!serverName.equals(clusterMutex.getServerId())) {
-            throw new IllegalMonitorStateException("Mutex is currently locked by another server: " + clusterMutex);
+            throw new IllegalMonitorStateException("Mutex is currently locked by another server: " + clusterMutex + " local serverName: " + serverName);
         }
     }
 

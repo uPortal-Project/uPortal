@@ -83,7 +83,9 @@ public class JpaAggregatedGroupLookupDaoTest extends BaseAggrEventsJpaDaoTest {
             protected void callWithoutResult() {
                 final AggregatedGroupMapping groupMapping = aggregatedGroupLookupDao.getGroupMapping("local.2");
                 
-                assertNull(groupMapping);
+                assertNotNull(groupMapping);
+                assertEquals("local", groupMapping.getGroupService());
+                assertEquals("2", groupMapping.getGroupName());
             }
         });
     }
