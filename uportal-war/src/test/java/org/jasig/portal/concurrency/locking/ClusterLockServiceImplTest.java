@@ -73,7 +73,7 @@ public class ClusterLockServiceImplTest extends BasePortalJpaDaoTest {
 
     private void testTryLockFunction(final IClusterLockService service) throws InterruptedException {
         reset(portalInfoProvider);
-        when(portalInfoProvider.getServerName()).thenReturn("ServerA");
+        when(portalInfoProvider.getUniqueServerName()).thenReturn("ServerA");
         
         final ThreadGroupRunner threadGroupRunner = new ThreadGroupRunner("ClusterLockServiceImplTest-", true);
         final String mutexName = "testLockFunction";

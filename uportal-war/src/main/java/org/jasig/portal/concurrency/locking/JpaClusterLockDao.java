@@ -163,7 +163,7 @@ public class JpaClusterLockDao extends BasePortalJpaDao implements IClusterLockD
                 }
                 
                 //Lock the mutex and update the DB
-                clusterMutex.lock(portalInfoProvider.getServerName());
+                clusterMutex.lock(portalInfoProvider.getUniqueServerName());
                 entityManager.persist(clusterMutex);
                 try {
                     entityManager.flush();
@@ -283,7 +283,7 @@ public class JpaClusterLockDao extends BasePortalJpaDao implements IClusterLockD
         if (!clusterMutex.isLocked()) {
             throw new IllegalMonitorStateException("Mutex is not currently locked, it cannot be updated: " + clusterMutex);
         }
-        final String serverName = this.portalInfoProvider.getServerName();
+        final String serverName = this.portalInfoProvider.getUniqueServerName();
         if (!serverName.equals(clusterMutex.getServerId())) {
             throw new IllegalMonitorStateException("Mutex is currently locked by another server: " + clusterMutex);
         }

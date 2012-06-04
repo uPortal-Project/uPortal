@@ -51,7 +51,9 @@ public class PortalInfoProviderImpl implements IPortalInfoProvider, ReadWriteCal
     
     private String serverName;
     private String networkInterfaceName;
+    
     private String resolvedServerName;
+    private String resolvedUniqueServerName;
 
     /**
      * @param serverName A specific server name for {@link #getServerName()} to return
@@ -77,6 +79,12 @@ public class PortalInfoProviderImpl implements IPortalInfoProvider, ReadWriteCal
     }
     
     @Override
+    public String getUniqueServerName() {
+        ReadWriteLockTemplate.doWithLock(serverNameResolutionLock, this);
+        return this.resolvedUniqueServerName;
+    }
+
+    @Override
     public ReadResult<String> doInReadLock() {
         if (this.resolvedServerName != null) {
             return ReadResult.create(false, this.resolvedServerName);
@@ -87,8 +95,8 @@ public class PortalInfoProviderImpl implements IPortalInfoProvider, ReadWriteCal
 
     @Override
     public String doInWriteLock(ReadResult<String> readResult) {
-        final String serverName = resolveServerName();
-        this.resolvedServerName = serverName + "_" + RandomTokenGenerator.INSTANCE.generateRandomToken(4);
+        this.resolvedServerName = resolveServerName();
+        this.resolvedUniqueServerName = this.resolvedServerName + "_" + RandomTokenGenerator.INSTANCE.generateRandomToken(4);
         return this.resolvedServerName;
     }
 

@@ -36,24 +36,19 @@ import org.springframework.core.GenericTypeResolver;
 import com.google.common.collect.MapMaker;
 
 /**
- * Extension of SmartApplicationListener that allows configuration of a set of supported event classes
+ * Extension of SmartApplicationListener that allows configuration of a set of supported and ignored event classes.
  * 
  * extend GenericApplicationListenerAdapter
  */
-public class ClassFilteringApplicationListener<E extends ApplicationEvent> implements ApplicationEventFilter<E>, InitializingBean {
+public class ClassApplicationEventFilter<E extends ApplicationEvent> implements ApplicationEventFilter<E>, InitializingBean {
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	private final Map<Class<? extends ApplicationEvent>, Boolean> supportedEventsCache = new MapMaker().weakKeys().makeMap();
 	private Class<?> typeArg;
 	
-    private Set<Class<? extends ApplicationEvent>> supportedEvents;
+    private Set<Class<? extends ApplicationEvent>> supportedEvents = Collections.emptySet();
+    private Set<Class<? extends ApplicationEvent>> ignoredEvents = Collections.emptySet();
 
-    /**
-     * @return the supportedEvents
-     */
-    public Collection<Class<? extends ApplicationEvent>> getSupportedEvents() {
-        return Collections.unmodifiableCollection(supportedEvents);
-    }
     /**
      * If no <code>supportedEvents</code> {@link Collection} is configured all {@link ApplicationEvent} sub-classes are
      * supported otherwise matching is done. The property defaults to null (all event types)
@@ -63,17 +58,30 @@ public class ClassFilteringApplicationListener<E extends ApplicationEvent> imple
     public void setSupportedEvents(Collection<Class<? extends ApplicationEvent>> supportedEvents) {
         this.supportedEventsCache.clear();
         if (supportedEvents == null) {
-            this.supportedEvents = null;
+            this.supportedEvents = Collections.emptySet();
         }
         else {
             this.supportedEvents = new LinkedHashSet<Class<? extends ApplicationEvent>>(supportedEvents);
         }
     }
-    
-    /* (non-Javadoc)
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+
+    /**
+     * If no <code>ignoredEvents</code> {@link Collection} is configured all {@link ApplicationEvent} sub-classes are
+     * supported otherwise matching is done. The property defaults to null (all event types)
+     * 
+     * @param supportedEvents the supportedEvents to set
      */
-    @Override
+    public void setIgnoredEvents(Collection<Class<? extends ApplicationEvent>> ignoredEvents) {
+        this.supportedEventsCache.clear();
+        if (ignoredEvents == null) {
+            this.ignoredEvents = Collections.emptySet();
+        }
+        else {
+            this.ignoredEvents = new LinkedHashSet<Class<? extends ApplicationEvent>>(ignoredEvents);
+        }
+    }
+
+
     public void afterPropertiesSet() throws Exception {
         //Figure out the generic type's Class, cribbed from SmartApplicationListener
         Class<?> typeArg = GenericTypeResolver.resolveTypeArgument(this.getClass(), ApplicationListener.class);
@@ -107,6 +115,21 @@ public class ClassFilteringApplicationListener<E extends ApplicationEvent> imple
             return false;
         }
         
+        if (this.ignoredEvents.contains(eventType)) {
+            return false;
+        }
+        
+        if (this.supportedEvents.contains(eventType)) {
+            return true;
+        }
+        
+        //Check inheritance for includes match if no explicitly matching
+        for (final Class<? extends ApplicationEvent> includedType : this.ignoredEvents) {
+            if (includedType.isAssignableFrom(eventType)) {
+                return false;
+            }
+        }
+        
         //Check inheritance for includes match if no explicitly matching
         for (final Class<? extends ApplicationEvent> includedType : this.supportedEvents) {
             if (includedType.isAssignableFrom(eventType)) {
@@ -114,7 +137,7 @@ public class ClassFilteringApplicationListener<E extends ApplicationEvent> imple
             }
         }
         
-        return false;
+        return this.supportedEvents.isEmpty();
     }
 
 }

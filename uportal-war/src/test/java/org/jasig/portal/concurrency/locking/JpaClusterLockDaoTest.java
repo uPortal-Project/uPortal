@@ -27,6 +27,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -62,7 +63,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
     @Test
     public void testConcurrentCreation() throws InterruptedException  {
         reset(portalInfoProvider);
-        when(portalInfoProvider.getServerName()).thenReturn("ServerA");
+        when(portalInfoProvider.getUniqueServerName()).thenReturn("ServerA");
         
         final ThreadGroupRunner threadGroupRunner = new ThreadGroupRunner("JpaClusterLockDaoTest-", true);
         
@@ -94,7 +95,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
     @Test
     public void testConcurrentLocking() throws InterruptedException  {
         reset(portalInfoProvider);
-        when(portalInfoProvider.getServerName()).thenReturn("ServerA");
+        when(portalInfoProvider.getUniqueServerName()).thenReturn("ServerA");
 
         final String mutexName = "testConcurrentLocking";
 
@@ -155,7 +156,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
     @Test
     public void testConcurrentCreateLocking() throws InterruptedException  {
         reset(portalInfoProvider);
-        when(portalInfoProvider.getServerName()).thenReturn("ServerA");
+        when(portalInfoProvider.getUniqueServerName()).thenReturn("ServerA");
 
         final String mutexName = "testConcurrentLocking";
         final ThreadGroupRunner threadGroupRunner = new ThreadGroupRunner("JpaClusterLockDaoTest-", true);
@@ -209,7 +210,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
         final String mutexName = "testNotAbandoned";
         
         reset(portalInfoProvider);
-        when(portalInfoProvider.getServerName()).thenAnswer(new Answer<String>() {
+        when(portalInfoProvider.getUniqueServerName()).thenAnswer(new Answer<String>() {
             @Override
             public String answer(InvocationOnMock invocation) throws Throwable {
                 return currentServer.get();
@@ -227,17 +228,17 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
         
         //lock serverA
         currentServer.set("ServerA");
-        execute(new CallableWithoutResult() {
+        final ClusterMutex lockedMutex = execute(new Callable<ClusterMutex>() {
             @Override
-            protected void callWithoutResult() {
+            public ClusterMutex call() throws Exception {
                 final ClusterMutex mutex = clusterLockDao.getLock(mutexName);
                 assertNotNull(mutex);
+                return mutex;
             }
         }); 
         
-        //test context configures a 100ms abandoned lock timeout
-        for (int i = 0; i < 5; i++) {
-            TimeUnit.MILLISECONDS.sleep(5);
+        //test context configures a 100ms abandoned lock timeout, spin in tryLock/updateLock for 110ms
+        while (lockedMutex.getLockStart() + 110 > System.currentTimeMillis())
             //try lock ServerB
             currentServer.set("ServerB");
             execute(new CallableWithoutResult() {
@@ -247,7 +248,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
                     assertNull(mutex);
                 }
             });
-            TimeUnit.MILLISECONDS.sleep(5);
+            TimeUnit.MILLISECONDS.sleep(1);
             //ServerA update ping
             currentServer.set("ServerA");
             execute(new CallableWithoutResult() {
@@ -256,6 +257,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
                     clusterLockDao.updateLock(mutexName);
                 }
             });
+            TimeUnit.MILLISECONDS.sleep(1);
         }
 
         currentServer.set("ServerA");
@@ -276,7 +278,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
         final String mutexName = "testNotAbandoned";
         
         reset(portalInfoProvider);
-        when(portalInfoProvider.getServerName()).thenAnswer(new Answer<String>() {
+        when(portalInfoProvider.getUniqueServerName()).thenAnswer(new Answer<String>() {
             @Override
             public String answer(InvocationOnMock invocation) throws Throwable {
                 return currentServer.get();
@@ -347,7 +349,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
         final String mutexName = "testUnlockedUpdate";
         
         reset(portalInfoProvider);
-        when(portalInfoProvider.getServerName()).thenAnswer(new Answer<String>() {
+        when(portalInfoProvider.getUniqueServerName()).thenAnswer(new Answer<String>() {
             @Override
             public String answer(InvocationOnMock invocation) throws Throwable {
                 return currentServer.get();
@@ -370,7 +372,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
         final String mutexName = "testUnlockedRelease";
         
         reset(portalInfoProvider);
-        when(portalInfoProvider.getServerName()).thenAnswer(new Answer<String>() {
+        when(portalInfoProvider.getUniqueServerName()).thenAnswer(new Answer<String>() {
             @Override
             public String answer(InvocationOnMock invocation) throws Throwable {
                 return currentServer.get();
@@ -393,7 +395,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
         final String mutexName = "testUnlockedUpdate";
         
         reset(portalInfoProvider);
-        when(portalInfoProvider.getServerName()).thenAnswer(new Answer<String>() {
+        when(portalInfoProvider.getUniqueServerName()).thenAnswer(new Answer<String>() {
             @Override
             public String answer(InvocationOnMock invocation) throws Throwable {
                 return currentServer.get();
@@ -425,7 +427,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
         final String mutexName = "testUnlockedRelease";
         
         reset(portalInfoProvider);
-        when(portalInfoProvider.getServerName()).thenAnswer(new Answer<String>() {
+        when(portalInfoProvider.getUniqueServerName()).thenAnswer(new Answer<String>() {
             @Override
             public String answer(InvocationOnMock invocation) throws Throwable {
                 return currentServer.get();

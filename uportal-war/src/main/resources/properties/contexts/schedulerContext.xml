@@ -41,7 +41,7 @@
     </bean>
     
     <bean id="uPortalTaskScheduler" class="org.jasig.portal.utils.threading.DelegatingThreadPoolTaskScheduler">
-        <property name="initialDelay" value="PT10S" />
+        <property name="initialDelay" value="PT120S" />
         <property name="executorService" ref="uPortalTaskExecutor" />
         <property name="poolSize" value="${org.jasig.portal.task.sched.threadPool.poolSize}" />
         <property name="threadGroupName" value="uPortal-TaskSchedulerThreadGroup" />

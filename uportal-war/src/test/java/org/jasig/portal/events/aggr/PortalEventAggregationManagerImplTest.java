@@ -249,7 +249,7 @@ public class PortalEventAggregationManagerImplTest extends BaseAggrEventsJpaDaoT
         final IEventAggregatorStatus eventAggregatorStatus = mock(IEventAggregatorStatus.class);
         when(this.eventAggregationManagementDao.getEventAggregatorStatus(ProcessingType.AGGREGATION, true)).thenReturn(eventAggregatorStatus);
         
-        when(this.portalInfoProvider.getServerName()).thenReturn("TEST_SERVER_NAME");
+        when(this.portalInfoProvider.getUniqueServerName()).thenReturn("TEST_SERVER_NAME");
         
         this.executeInTransaction(new CallableWithoutResult() {
             @Override

@@ -30,60 +30,60 @@
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
 
+    <!-- 
+     | List of event filters to apply to all event listeners
+     +-->
+    <util:list id="listenerEventFilters">
+        <!-- Can be used to filter events based on event type using an instanceof check -->
+        <bean class="org.jasig.portal.spring.context.ClassApplicationEventFilter">
+            <property name="supportedEvents">
+                <list>
+                    <value>org.jasig.portal.events.PortalEvent</value>
+                </list>
+            </property>
+        </bean>
+        <!-- Can be used to filter events based on who generated the event
+        <bean class="org.jasig.portal.events.handlers.UserFilteringPortalEventHandler">
+            <property name="ignoredUserNamePatterns">
+                <list>
+                    <value>user\..*</value>
+                    <value>vptest-user.*</value>
+                </list>
+            </property>
+            <property name="supportGuest" value="true" />
+        </bean>
+         -->
+    </util:list>
+    
+    <!-- 
+     | List of event filters to apply to all event aggregators
+     +-->
+    <util:list id="aggregatorEventFilters">
+        <bean class="org.jasig.portal.events.handlers.UserFilteringPortalEventHandler">
+            <property name="ignoredUserNamePatterns">
+                <list>
+                    <value>user\..*</value>
+                    <value>vptest-user.*</value>
+                    <value>portal\..*</value>
+                </list>
+            </property>
+        </bean>
+    </util:list>
+    
+    
     <!--
      | Event Listeners, these are beans that implement the Spring ApplicationListener interface to handle application
      | events. Most of these beans also extend from FilteringApplicationListener which allows for a list of 
      | ApplicationEventFilters to be configured.
      +-->
-    <bean id="filteringEventHandler" abstract="false">
-        <property name="applicationEventFilters">
-            <list>
-            
-                <!-- Can be used to filter events based on event type using an instanceof check
-                <bean class="org.jasig.portal.spring.context.ClassFilteringApplicationListener">
-                    <property name="supportedEvents">
-                        <list>
-                            <value>org.jasig.portal.events.LoginEvent</value>
-                            <value>org.jasig.portal.events.PortalRenderEvent</value>
-                        </list>
-                    </property>
-                </bean>
-                -->
-                
-                <!-- Can be used to filter events based on who generated the event
-                <bean class="org.jasig.portal.events.handlers.UserFilteringPortalEventHandler">
-                    <property name="ignoredUserNamePatterns">
-                        <list>
-                            <value>user\..*</value>
-                            <value>vptest-user.*</value>
-                        </list>
-                    </property>
-                    <property name="supportGuest" value="true" />
-                </bean>
-                 -->
-                 
-            </list>
-        </property>
+     <!-- 
+    <bean class="org.jasig.portal.spring.context.LoggingEventHandler">
+        <property name="applicationEventFilters" ref="listenerEventFilters" />
     </bean>
-    <!-- 
-    <bean class="org.jasig.portal.spring.context.LoggingEventHandler" parent="filteringEventHandler">
-        <!- - Uncomment and configure this property if a different filter set than the one specified by filteringEventHandler is needed
-        <property name="applicationEventFilters">
-            <list>
-            </list>
-        </property>
-        - ->
+    -->
+    <bean id="portalEventDaoQueuingEventHandler" class="org.jasig.portal.events.handlers.db.PortalEventDaoQueuingEventHandler">
+        <property name="applicationEventFilters" ref="listenerEventFilters" />
     </bean>
-     -->
-    <bean id="portalEventDaoQueuingEventHandler" class="org.jasig.portal.events.handlers.db.PortalEventDaoQueuingEventHandler" parent="filteringEventHandler">
-        <!-- Uncomment and configure this property if a different filter set than the one specified by filteringEventHandler is needed
-        <property name="applicationEventFilters">
-            <list>
-            </list>
-        </property>
-        -->
-    </bean>
-    
     
     
     <!--
@@ -111,19 +111,4 @@
     <bean id="portletExecutionAggregatorResource" class="org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregator">
         <property name="executionType" value="RESOURCE" />
     </bean>
-    
-    <!-- 
-     | List of event filters to apply to all event aggregators
-     +-->
-    <util:list id="aggregatorEventFilters">
-        <bean class="org.jasig.portal.events.handlers.UserFilteringPortalEventHandler">
-            <property name="ignoredUserNamePatterns">
-                <list>
-                    <value>user\..*</value>
-                    <value>vptest-user.*</value>
-                    <value>portal\..*</value>
-                </list>
-            </property>
-        </bean>
-    </util:list>
 </beans>

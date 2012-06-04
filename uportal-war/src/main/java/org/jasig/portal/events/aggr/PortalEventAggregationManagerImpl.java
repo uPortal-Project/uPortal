@@ -237,9 +237,9 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                             }
                         });
                         
-                        if (logger.isDebugEnabled()) {
+                        if (logger.isInfoEnabled()) {
                             final long runTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
-                            logger.debug("Aggregated {} events between {} and {} in {}ms - {} events/second", 
+                            logger.info("Aggregated {} events between {} and {} in {}ms - {} events/second", 
                                     new Object[] { result.eventCount, result.start, result.end, runTime, result.eventCount/(runTime/1000d) });
                         }
                         
@@ -278,9 +278,9 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                         }
                     });
                     
-                    if (logger.isDebugEnabled()) {
+                    if (logger.isInfoEnabled()) {
                         final long runTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
-                        logger.debug("Purged {} events before {} in {}ms - {} events/second", 
+                        logger.info("Purged {} events before {} in {}ms - {} events/second", 
                                 new Object[] { result.eventCount, result.end, runTime, result.eventCount/(runTime/1000d) });
                     }
                 }
@@ -482,7 +482,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
         final IEventAggregatorStatus eventAggregatorStatus = eventAggregationManagementDao.getEventAggregatorStatus(ProcessingType.AGGREGATION, true);
         
         //Update status with current server name
-        final String serverName = this.portalInfoProvider.getServerName();
+        final String serverName = this.portalInfoProvider.getUniqueServerName();
         final String previousServerName = eventAggregatorStatus.getServerName();
         if (previousServerName != null && !serverName.equals(previousServerName)) {
             this.logger.debug("Last aggregation run on {} clearing all aggregation caches", previousServerName);
@@ -533,7 +533,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
         final IEventAggregatorStatus eventPurgerStatus = eventAggregationManagementDao.getEventAggregatorStatus(ProcessingType.PURGING, true);
         
         //Update status with current server name
-        final String serverName = this.portalInfoProvider.getServerName();
+        final String serverName = this.portalInfoProvider.getUniqueServerName();
         eventPurgerStatus.setServerName(serverName);
         eventPurgerStatus.setLastStart(new DateTime());
         
