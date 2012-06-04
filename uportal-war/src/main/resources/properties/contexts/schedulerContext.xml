@@ -28,6 +28,8 @@
     
     <task:annotation-driven executor="uPortalTaskExecutor" scheduler="uPortalTaskScheduler"/>
     
+    <bean id="loggingAbortHandler" class="org.jasig.portal.utils.threading.LoggingAbortHandler" />
+    
     <bean id="uPortalTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean">
         <property name="corePoolSize" value="${org.jasig.portal.task.exec.threadPool.initialThreads}" />
         <property name="maxPoolSize" value="${org.jasig.portal.task.exec.threadPool.maxThreads}" />
@@ -38,6 +40,7 @@
         <property name="keepAliveSeconds" value="${org.jasig.portal.task.exec.threadPool.keepAliveSeconds}" />
         <property name="daemon" value="true" />
         <property name="allowCoreThreadTimeOut" value="true" />
+        <property name="rejectedExecutionHandler" ref="loggingAbortHandler" />
     </bean>
     
     <bean id="uPortalTaskScheduler" class="org.jasig.portal.utils.threading.DelegatingThreadPoolTaskScheduler">
@@ -47,6 +50,7 @@
         <property name="threadGroupName" value="uPortal-TaskSchedulerThreadGroup" />
         <property name="threadNamePrefix" value="uPortal-TaskScheduler-" />
         <property name="daemon" value="true" />
+        <property name="rejectedExecutionHandler" ref="loggingAbortHandler" />
     </bean>
     
     <task:scheduled-tasks scheduler="uPortalTaskScheduler">
