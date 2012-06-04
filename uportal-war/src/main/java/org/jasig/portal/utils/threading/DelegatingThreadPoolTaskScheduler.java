@@ -25,11 +25,14 @@ import java.util.concurrent.Delayed;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.joda.time.ReadableDuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.SchedulingTaskExecutor;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.Trigger;
@@ -46,6 +49,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler 
     implements TaskScheduler, SchedulingTaskExecutor {
     private static final long serialVersionUID = 1L;
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(DelegatingThreadPoolTaskScheduler.class);
     
     private volatile long initialized = System.currentTimeMillis();
     private volatile long lastStartDelay = 0; 
@@ -216,7 +221,12 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
 
         @Override
         public void run() {
-            executorService.submit(this.runnable);
+            try {
+                executorService.submit(this.runnable);
+            }
+            catch (RejectedExecutionException e) {
+                throw new RejectedExecutionException("Failed to execute scheduled task " + this.runnable, e); 
+            }
         }
     }
     
@@ -231,7 +241,12 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
 
         @Override
         public Future<T> call() throws Exception {
-            return executorService.submit(this.callable);
+            try {
+                return executorService.submit(this.callable);
+            }
+            catch (RejectedExecutionException e) {
+                throw new RejectedExecutionException("Failed to execute scheduled task " + this.callable, e); 
+            }
         }
     }
     
