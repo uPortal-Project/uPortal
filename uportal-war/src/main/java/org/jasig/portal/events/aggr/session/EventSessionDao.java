@@ -21,6 +21,7 @@ package org.jasig.portal.events.aggr.session;
 
 import org.jasig.portal.events.LoginEvent;
 import org.jasig.portal.events.PortalEvent;
+import org.joda.time.DateTime;
 
 /**
  * Tracks event session data during aggregation. 
@@ -41,10 +42,10 @@ public interface EventSessionDao {
     /**
      * Get the current event session, null if no session has been created by {@link #createEventSession(LoginEvent)}
      * 
-     * @param eventSessionId The current session id, see {@link PortalEvent#getEventSessionId()}
+     * @param event The event to get the session for
      * @return The event session
      */
-    EventSession getEventSession(String eventSessionId);
+    EventSession getEventSession(PortalEvent event);
     
     /**
      * @param eventSessionId The id of the session to delete, see {@link PortalEvent#getEventSessionId()}
@@ -54,5 +55,5 @@ public interface EventSessionDao {
     /**
      * Purge expired events, expired is defined by the implementation
      */
-    void purgeExpiredEventSessions();
+    int purgeExpiredEventSessions(DateTime lastAggregatedEventDate);
 }

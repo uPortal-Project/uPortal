@@ -19,6 +19,9 @@
 
 package org.jasig.portal.events.aggr.tabrender;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.PortalRenderEvent;
 import org.jasig.portal.events.aggr.AggregationInterval;
@@ -26,6 +29,7 @@ import org.jasig.portal.events.aggr.AggregationIntervalInfo;
 import org.jasig.portal.events.aggr.BaseAggregationPrivateDao;
 import org.jasig.portal.events.aggr.BasePortalEventAggregator;
 import org.jasig.portal.events.aggr.DateDimension;
+import org.jasig.portal.events.aggr.EventAggregationContext;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.events.aggr.tabs.AggregatedTabLookupDao;
@@ -39,6 +43,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @version $Revision$
  */
 public class TabRenderAggregator extends BasePortalEventAggregator<PortalRenderEvent, TabRenderAggregationImpl, TabRenderAggregationKey> {
+    private static final String MAPPED_TABS_CACHE_KEY = TabRenderAggregator.class.getName() + "_MAPPED_TABS";
+    
     private TabRenderAggregationPrivateDao tabRenderAggregationDao;
     private AggregatedTabLookupDao aggregatedTabLookupDao;
     
@@ -63,7 +69,8 @@ public class TabRenderAggregator extends BasePortalEventAggregator<PortalRenderE
     }
 
     @Override
-    protected void updateAggregation(PortalRenderEvent e, AggregationIntervalInfo intervalInfo, TabRenderAggregationImpl aggregation) {
+    protected void updateAggregation(PortalRenderEvent e, EventAggregationContext eventAggregationContext,
+            AggregationIntervalInfo intervalInfo, TabRenderAggregationImpl aggregation) {
         final long executionTime = e.getExecutionTimeNano();
         final int duration = intervalInfo.getDurationTo(e.getTimestampAsDate());
         aggregation.setDuration(duration);
@@ -71,15 +78,27 @@ public class TabRenderAggregator extends BasePortalEventAggregator<PortalRenderE
     }
 
     @Override
-    protected TabRenderAggregationKey createAggregationKey(AggregationIntervalInfo intervalInfo,
-            AggregatedGroupMapping aggregatedGroup, PortalRenderEvent event) {
-        
+    protected TabRenderAggregationKey createAggregationKey(PortalRenderEvent e,
+            EventAggregationContext eventAggregationContext, AggregationIntervalInfo intervalInfo,
+            AggregatedGroupMapping aggregatedGroup) {
+
         final TimeDimension timeDimension = intervalInfo.getTimeDimension();
         final DateDimension dateDimension = intervalInfo.getDateDimension();
         final AggregationInterval aggregationInterval = intervalInfo.getAggregationInterval();
         
-        final String targetedLayoutNodeId = event.getTargetedLayoutNodeId();
-        final AggregatedTabMapping mappedTab = this.aggregatedTabLookupDao.getMappedTabForLayoutId(targetedLayoutNodeId);
+        
+        Map<String, AggregatedTabMapping> mappedPortlets = eventAggregationContext.getAttribute(MAPPED_TABS_CACHE_KEY);
+        if (mappedPortlets == null) {
+            mappedPortlets = new HashMap<String, AggregatedTabMapping>();
+            eventAggregationContext.setAttribute(MAPPED_TABS_CACHE_KEY, mappedPortlets);
+        }
+        
+        final String targetedLayoutNodeId = e.getTargetedLayoutNodeId();
+        AggregatedTabMapping mappedTab = mappedPortlets.get(targetedLayoutNodeId);
+        if (mappedTab == null) {
+            mappedTab = this.aggregatedTabLookupDao.getMappedTabForLayoutId(targetedLayoutNodeId);
+            mappedPortlets.put(targetedLayoutNodeId, mappedTab);
+        }
         
         return new TabRenderAggregationKeyImpl(dateDimension, timeDimension, aggregationInterval, aggregatedGroup, mappedTab);
     }

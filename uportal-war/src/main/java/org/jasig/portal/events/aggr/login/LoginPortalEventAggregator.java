@@ -26,6 +26,7 @@ import org.jasig.portal.events.aggr.AggregationIntervalInfo;
 import org.jasig.portal.events.aggr.BaseAggregationPrivateDao;
 import org.jasig.portal.events.aggr.BasePortalEventAggregator;
 import org.jasig.portal.events.aggr.DateDimension;
+import org.jasig.portal.events.aggr.EventAggregationContext;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,8 +51,8 @@ public class LoginPortalEventAggregator extends BasePortalEventAggregator<LoginE
     }
 
     @Override
-    protected LoginAggregationKey createAggregationKey(AggregationIntervalInfo intervalInfo,
-            AggregatedGroupMapping aggregatedGroup, LoginEvent event) {
+    protected LoginAggregationKey createAggregationKey(LoginEvent e, EventAggregationContext eventAggregationContext,
+            AggregationIntervalInfo intervalInfo, AggregatedGroupMapping aggregatedGroup) {
         final TimeDimension timeDimension = intervalInfo.getTimeDimension();
         final DateDimension dateDimension = intervalInfo.getDateDimension();
         final AggregationInterval aggregationInterval = intervalInfo.getAggregationInterval();
@@ -64,12 +65,11 @@ public class LoginPortalEventAggregator extends BasePortalEventAggregator<LoginE
     }
 
     @Override
-    protected void updateAggregation(LoginEvent e, AggregationIntervalInfo intervalInfo, LoginAggregationImpl aggregation) {
+    protected void updateAggregation(LoginEvent e, EventAggregationContext eventAggregationContext,
+            AggregationIntervalInfo intervalInfo, LoginAggregationImpl aggregation) {
         final String userName = e.getUserName();
         final int duration = intervalInfo.getDurationTo(e.getTimestampAsDate());
         aggregation.setDuration(duration);
         aggregation.countUser(userName);
     }
-    
-    
 }

@@ -64,7 +64,7 @@ public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalE
     private String deleteQuery;
     private String selectQuery;
     private String selectUnaggregatedQuery;
-    private int flushPeriod = 500;
+    private int flushPeriod = 1000;
     private CriteriaQuery<DateTime> findNewestPersistentPortalEventTimestampQuery;
     private CriteriaQuery<DateTime> findOldestPersistentPortalEventTimestampQuery;
     private ParameterExpression<DateTime> startTimeParameter;
@@ -81,7 +81,7 @@ public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalE
     /**
      * Frequency that updated events should be flushed during a call to {@link #aggregatePortalEvents(DateTime, DateTime, int, FunctionWithoutResult)}, defaults to 1000.
      */
-    @Value("${org.jasig.portal.events.handlers.db.JpaPortalEventStore.flushPeriod:500}")
+    @Value("${org.jasig.portal.events.handlers.db.JpaPortalEventStore.flushPeriod:1000}")
     public void setAggregationFlushPeriod(int flushPeriod) {
         this.flushPeriod = flushPeriod;
     }

@@ -101,18 +101,18 @@ public class EventSessionImpl implements EventSession, Serializable {
         this.groupMappings = null;
     }
     
-    EventSessionImpl(String eventSessionId, Set<AggregatedGroupMapping> groupMappings) {
+    EventSessionImpl(String eventSessionId, DateTime eventDate, Set<AggregatedGroupMapping> groupMappings) {
         Validate.notNull(eventSessionId);
         Validate.notNull(groupMappings);
         
         this.id = -1;
         this.eventSessionId = eventSessionId;
         this.groupMappings = groupMappings;
-        this.lastAccessed = DateTime.now();
+        this.lastAccessed = eventDate;
     }
     
-    void recordAccess() {
-        this.lastAccessed = DateTime.now();
+    void recordAccess(DateTime eventDate) {
+        this.lastAccessed = eventDate;
     }
 
     @Override

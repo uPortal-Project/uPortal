@@ -90,10 +90,10 @@ public class JpaEventSessionDaoTest extends BaseAggrEventsJpaDaoTest {
         this.execute(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
-                final EventSession eventSession1 = eventSessionDao.getEventSession(eventSessionId1);
+                final EventSession eventSession1 = eventSessionDao.getEventSession(loginEvent1);
                 assertNull(eventSession1);
                 
-                final EventSession eventSession2 = eventSessionDao.getEventSession(eventSessionId2);
+                final EventSession eventSession2 = eventSessionDao.getEventSession(loginEvent2);
                 assertNull(eventSession2);
             }
         });
@@ -127,7 +127,7 @@ public class JpaEventSessionDaoTest extends BaseAggrEventsJpaDaoTest {
         this.execute(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
-                final EventSession eventSession = eventSessionDao.getEventSession(eventSessionId1);
+                final EventSession eventSession = eventSessionDao.getEventSession(loginEvent1);
                 assertNotNull(eventSession);
                 
                 assertEquals(eventSessionId1, eventSession.getEventSessionId());
@@ -140,14 +140,14 @@ public class JpaEventSessionDaoTest extends BaseAggrEventsJpaDaoTest {
         this.execute(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
-                eventSessionDao.purgeExpiredEventSessions();
+                eventSessionDao.purgeExpiredEventSessions(loginEvent1.getTimestampAsDate().plusYears(1));
             }
         });
         
         this.execute(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
-                final EventSession eventSession = eventSessionDao.getEventSession(eventSessionId1);
+                final EventSession eventSession = eventSessionDao.getEventSession(loginEvent1);
                 assertNull(eventSession);
             }
         });

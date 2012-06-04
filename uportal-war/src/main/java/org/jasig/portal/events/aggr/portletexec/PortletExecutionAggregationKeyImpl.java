@@ -12,7 +12,7 @@ import org.jasig.portal.events.aggr.portlets.AggregatedPortletMapping;
  * 
  * @author Eric Dalquist
  */
-class PortletExecutionAggregationKeyImpl extends BaseAggregationKeyImpl implements PortletExecutionAggregationKey {
+final class PortletExecutionAggregationKeyImpl extends BaseAggregationKeyImpl implements PortletExecutionAggregationKey {
     private static final long serialVersionUID = 1L;
     
     private final AggregatedPortletMapping portletMapping;
@@ -39,12 +39,12 @@ class PortletExecutionAggregationKeyImpl extends BaseAggregationKeyImpl implemen
     }
 
     @Override
-    public AggregatedPortletMapping getPortletMapping() {
+    public final AggregatedPortletMapping getPortletMapping() {
         return this.portletMapping;
     }
     
     @Override
-    public ExecutionType getExecutionType() {
+    public final ExecutionType getExecutionType() {
         return this.executionType;
     }
 

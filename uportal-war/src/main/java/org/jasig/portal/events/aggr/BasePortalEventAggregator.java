@@ -66,7 +66,7 @@ public abstract class BasePortalEventAggregator<
      * @param intervalInfo The info about the interval the aggregation is for
      * @param aggregation The aggregation to update
      */
-    protected abstract void updateAggregation(E e, AggregationIntervalInfo intervalInfo, T aggregation);
+    protected abstract void updateAggregation(E e, EventAggregationContext eventAggregationContext, AggregationIntervalInfo intervalInfo, T aggregation);
     
     /**
      * Create a unique key that describes the aggregation.
@@ -75,7 +75,7 @@ public abstract class BasePortalEventAggregator<
      * @param aggregatedGroup The group the aggregation is for
      * @param event The event the aggregation is for
      */
-    protected abstract K createAggregationKey(AggregationIntervalInfo intervalInfo, AggregatedGroupMapping aggregatedGroup, E event);
+    protected abstract K createAggregationKey(E e, EventAggregationContext eventAggregationContext, AggregationIntervalInfo intervalInfo, AggregatedGroupMapping aggregatedGroup);
     
     /**
      * Create a cache key with which to store the data returned by {@link BaseAggregationDao#getAggregationsForInterval(DateDimension, TimeDimension, AggregationInterval)}
@@ -112,13 +112,13 @@ public abstract class BasePortalEventAggregator<
             
             //For each group get/create then update the aggregation
             for (final AggregatedGroupMapping groupMapping : groupMappings) {
-                final K key = this.createAggregationKey(intervalInfo, groupMapping, e);
+                final K key = this.createAggregationKey(e, eventAggregationContext, intervalInfo, groupMapping);
                 T aggregation = aggregationsForInterval.get(key);
                 if (aggregation == null) {
                     aggregation = aggregationDao.createAggregation(key);
                     aggregationsForInterval.put(key, aggregation);
                 }
-                updateAggregation(e, intervalInfo, aggregation);
+                updateAggregation(e, eventAggregationContext, intervalInfo, aggregation);
             }
         }
     }

@@ -19,6 +19,9 @@
 
 package org.jasig.portal.events.aggr.portletexec;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.PortletExecutionEvent;
 import org.jasig.portal.events.aggr.AggregationInterval;
@@ -26,6 +29,7 @@ import org.jasig.portal.events.aggr.AggregationIntervalInfo;
 import org.jasig.portal.events.aggr.BaseAggregationPrivateDao;
 import org.jasig.portal.events.aggr.BasePortalEventAggregator;
 import org.jasig.portal.events.aggr.DateDimension;
+import org.jasig.portal.events.aggr.EventAggregationContext;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregationKey.ExecutionType;
@@ -40,6 +44,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @version $Revision$
  */
 public class PortletExecutionAggregator extends BasePortalEventAggregator<PortletExecutionEvent, PortletExecutionAggregationImpl, PortletExecutionAggregationKey> {
+    private static final String MAPPED_PORTLETS_CACHE_KEY = PortletExecutionAggregator.class.getName() + "_MAPPED_PORTLETS";
+
     private PortletExecutionAggregationPrivateDao portletExecutionAggregationDao;
     private AggregatedPortletLookupDao aggregatedPortletLookupDao;
     private ExecutionType executionType = ExecutionType.ALL;
@@ -71,25 +77,36 @@ public class PortletExecutionAggregator extends BasePortalEventAggregator<Portle
     protected BaseAggregationPrivateDao<PortletExecutionAggregationImpl, PortletExecutionAggregationKey> getAggregationDao() {
         return this.portletExecutionAggregationDao;
     }
-
+    
     @Override
-    protected void updateAggregation(PortletExecutionEvent e, AggregationIntervalInfo intervalInfo, PortletExecutionAggregationImpl aggregation) {
+    protected void updateAggregation(PortletExecutionEvent e, EventAggregationContext eventAggregationContext,
+            AggregationIntervalInfo intervalInfo, PortletExecutionAggregationImpl aggregation) {
         final long executionTime = e.getExecutionTimeNano();
         final int duration = intervalInfo.getDurationTo(e.getTimestampAsDate());
         aggregation.setDuration(duration);
         aggregation.addValue(executionTime);
     }
-
+    
     @Override
-    protected PortletExecutionAggregationKey createAggregationKey(AggregationIntervalInfo intervalInfo,
-            AggregatedGroupMapping aggregatedGroup, PortletExecutionEvent event) {
+    protected PortletExecutionAggregationKey createAggregationKey(PortletExecutionEvent e, EventAggregationContext eventAggregationContext,
+            AggregationIntervalInfo intervalInfo, AggregatedGroupMapping aggregatedGroup) {
         
         final TimeDimension timeDimension = intervalInfo.getTimeDimension();
         final DateDimension dateDimension = intervalInfo.getDateDimension();
         final AggregationInterval aggregationInterval = intervalInfo.getAggregationInterval();
-
-        final String fname = event.getFname();
-        final AggregatedPortletMapping mappedPortlet = this.aggregatedPortletLookupDao.getMappedPortletForFname(fname);
+        
+        Map<String, AggregatedPortletMapping> mappedPortlets = eventAggregationContext.getAttribute(MAPPED_PORTLETS_CACHE_KEY);
+        if (mappedPortlets == null) {
+            mappedPortlets = new HashMap<String, AggregatedPortletMapping>();
+            eventAggregationContext.setAttribute(MAPPED_PORTLETS_CACHE_KEY, mappedPortlets);
+        }
+        
+        final String fname = e.getFname();
+        AggregatedPortletMapping mappedPortlet = mappedPortlets.get(fname);
+        if (mappedPortlet == null) {
+            mappedPortlet = this.aggregatedPortletLookupDao.getMappedPortletForFname(fname);
+            mappedPortlets.put(fname, mappedPortlet);
+        }
         
         return new PortletExecutionAggregationKeyImpl(dateDimension, timeDimension, aggregationInterval, aggregatedGroup, mappedPortlet, executionType);
     }

@@ -19,9 +19,11 @@
 
 package org.jasig.portal.events.aggr.groups;
 
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -29,6 +31,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
+import org.jasig.portal.groups.CompositeEntityIdentifier;
 import org.jasig.portal.groups.ICompositeGroupService;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
@@ -134,13 +137,21 @@ public class JpaAggregatedGroupLookupDao extends BaseAggrEventsJpaDao implements
             }
         });
     }
+    
+    private final Set<String> warnedGroupKeys = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 
     @Override
     public AggregatedGroupMapping getGroupMapping(final String portalGroupKey) {
         final IEntityGroup group = compositeGroupService.findGroup(portalGroupKey);
         if (group == null) {
-            logger.info("No group found for key {}, no aggregate group mapping will be done and the group key will be ignored.", portalGroupKey);
-            return null;
+            if (warnedGroupKeys.add(portalGroupKey)) {
+                logger.warn("No group found for key {}, no aggregate group mapping will be done and the group key will be ignored.", portalGroupKey);
+            }
+            
+            final CompositeEntityIdentifier compositeEntityIdentifier = new CompositeEntityIdentifier(portalGroupKey, IEntityGroup.class);
+            final String serviceName = compositeEntityIdentifier.getServiceName().toString();
+            final String groupKey = compositeEntityIdentifier.getLocalKey();
+            return this.getGroupMapping(serviceName, groupKey);
         }
         
         final String groupService = group.getServiceName().toString();

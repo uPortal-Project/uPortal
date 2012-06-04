@@ -308,7 +308,19 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                     getTransactionOperations().execute(new TransactionCallbackWithoutResult() {
                         @Override
                         protected void doInTransactionWithoutResult(TransactionStatus status) {
-                            eventSessionDao.purgeExpiredEventSessions();
+                            final IEventAggregatorStatus eventAggregatorStatus = eventAggregationManagementDao.getEventAggregatorStatus(ProcessingType.AGGREGATION, false);
+                            if (eventAggregatorStatus != null) {
+                                final long start = System.nanoTime();
+                                
+                                final DateTime lastEventDate = eventAggregatorStatus.getLastEventDate();
+                                final int purgeCount = eventSessionDao.purgeExpiredEventSessions(lastEventDate);
+                                
+                                if (logger.isInfoEnabled()) {
+                                    final long runTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
+                                    logger.info("Purged {} event sessions before {} in {}ms - {} events/second", 
+                                            new Object[] { purgeCount, lastEventDate, runTime, purgeCount/(runTime/1000d) });
+                                }
+                            }
                         }
                     });
                 }
@@ -717,7 +729,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
             //to asking the DAO if nothing in the context, cache the result
             EventSession eventSession = this.eventAggregationContext.getAttribute(eventSessionId);
             if (eventSession == null) {
-                eventSession = eventSessionDao.getEventSession(eventSessionId);
+                eventSession = eventSessionDao.getEventSession(item);
                 this.eventAggregationContext.setAttribute(eventSessionId, eventSession);
             }
             

@@ -25,6 +25,7 @@ import org.jasig.portal.events.aggr.AggregationIntervalInfo;
 import org.jasig.portal.events.aggr.BaseAggregationPrivateDao;
 import org.jasig.portal.events.aggr.BasePortalEventAggregator;
 import org.jasig.portal.events.aggr.DateDimension;
+import org.jasig.portal.events.aggr.EventAggregationContext;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +55,8 @@ public class ConcurrentUserAggregator extends BasePortalEventAggregator<PortalEv
     }
     
     @Override
-    protected void updateAggregation(PortalEvent e, AggregationIntervalInfo intervalInfo, ConcurrentUserAggregationImpl aggregation) {
+    protected void updateAggregation(PortalEvent e, EventAggregationContext eventAggregationContext,
+            AggregationIntervalInfo intervalInfo, ConcurrentUserAggregationImpl aggregation) {
         final String eventSessionId = e.getEventSessionId();
         final int duration = intervalInfo.getDurationTo(e.getTimestampAsDate());
         aggregation.setDuration(duration);
@@ -62,8 +64,9 @@ public class ConcurrentUserAggregator extends BasePortalEventAggregator<PortalEv
     }
     
     @Override
-    protected ConcurrentUserAggregationKey createAggregationKey(AggregationIntervalInfo intervalInfo,
-            AggregatedGroupMapping aggregatedGroup, PortalEvent event) {
+    protected ConcurrentUserAggregationKey createAggregationKey(PortalEvent e,
+            EventAggregationContext eventAggregationContext, AggregationIntervalInfo intervalInfo,
+            AggregatedGroupMapping aggregatedGroup) {
         final TimeDimension timeDimension = intervalInfo.getTimeDimension();
         final DateDimension dateDimension = intervalInfo.getDateDimension();
         final AggregationInterval aggregationInterval = intervalInfo.getAggregationInterval();

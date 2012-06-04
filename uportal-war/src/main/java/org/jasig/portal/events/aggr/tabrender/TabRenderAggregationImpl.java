@@ -73,7 +73,7 @@ import org.jasig.portal.events.aggr.tabs.AggregatedTabMappingImpl;
     )
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class TabRenderAggregationImpl
+public final class TabRenderAggregationImpl
         extends BaseTimedAggregationStatsImpl<TabRenderAggregationKey> 
         implements TabRenderAggregation, Serializable {
     

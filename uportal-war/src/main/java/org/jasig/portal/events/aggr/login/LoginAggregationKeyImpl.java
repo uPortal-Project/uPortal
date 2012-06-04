@@ -6,7 +6,7 @@ import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 
-class LoginAggregationKeyImpl extends BaseAggregationKeyImpl implements LoginAggregationKey {
+final class LoginAggregationKeyImpl extends BaseAggregationKeyImpl implements LoginAggregationKey {
     private static final long serialVersionUID = 1L;
 
     public LoginAggregationKeyImpl(AggregationInterval aggregationInterval,

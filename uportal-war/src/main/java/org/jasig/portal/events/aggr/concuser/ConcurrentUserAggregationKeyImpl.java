@@ -6,7 +6,7 @@ import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 
-class ConcurrentUserAggregationKeyImpl extends BaseAggregationKeyImpl implements ConcurrentUserAggregationKey {
+final class ConcurrentUserAggregationKeyImpl extends BaseAggregationKeyImpl implements ConcurrentUserAggregationKey {
     private static final long serialVersionUID = 1L;
     
     public ConcurrentUserAggregationKeyImpl(ConcurrentUserAggregation concurrentUserAggregation) {

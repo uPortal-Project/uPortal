@@ -37,22 +37,22 @@ public abstract class BaseAggregationKeyImpl implements BaseAggregationKey {
     }
 
     @Override
-    public TimeDimension getTimeDimension() {
+    public final TimeDimension getTimeDimension() {
         return this.timeDimension;
     }
 
     @Override
-    public DateDimension getDateDimension() {
+    public final DateDimension getDateDimension() {
         return this.dateDimension;
     }
 
     @Override
-    public AggregationInterval getInterval() {
+    public final AggregationInterval getInterval() {
         return this.aggregationInterval;
     }
 
     @Override
-    public AggregatedGroupMapping getAggregatedGroup() {
+    public final AggregatedGroupMapping getAggregatedGroup() {
         return this.aggregatedGroupMapping;
     }
 
