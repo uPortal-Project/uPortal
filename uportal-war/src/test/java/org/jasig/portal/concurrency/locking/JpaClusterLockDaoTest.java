@@ -238,7 +238,7 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
         }); 
         
         //test context configures a 100ms abandoned lock timeout, spin in tryLock/updateLock for 110ms
-        while (lockedMutex.getLockStart() + 110 > System.currentTimeMillis())
+        while (lockedMutex.getLockStart() + 110 > System.currentTimeMillis()) {
             //try lock ServerB
             currentServer.set("ServerB");
             execute(new CallableWithoutResult() {
