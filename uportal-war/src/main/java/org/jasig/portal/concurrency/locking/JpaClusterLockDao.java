@@ -34,6 +34,8 @@ import javax.persistence.criteria.Root;
 import org.hibernate.exception.ConstraintViolationException;
 import org.jasig.portal.IPortalInfoProvider;
 import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.jasig.portal.jpa.cache.EntityManagerCache;
+import org.jasig.portal.utils.cache.CacheKey;
 import org.joda.time.Duration;
 import org.joda.time.ReadableDuration;
 import org.slf4j.Logger;
@@ -62,6 +64,8 @@ import com.google.common.base.Function;
  */
 @Repository
 public class JpaClusterLockDao extends BasePortalJpaDao implements IClusterLockDao {
+    private static final String CLUSTER_MUTEX_SOURCE = JpaClusterLockDao.class.getName() + "_CLUSTER_MUTEX";
+    
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
     private ParameterExpression<String> nameParameter;
@@ -69,7 +73,7 @@ public class JpaClusterLockDao extends BasePortalJpaDao implements IClusterLockD
     private ReadableDuration abandonedLockAge = Duration.standardSeconds(5);
     private IPortalInfoProvider portalInfoProvider;
     private TransactionTemplate newTransactionTemplate;
-    
+    private EntityManagerCache entityManagerCache;
     
     /**
      * Maximum age of the {@link ClusterMutex#getLastUpdate()} field for a locked mutex. A ClusterMutex with an
@@ -92,6 +96,11 @@ public class JpaClusterLockDao extends BasePortalJpaDao implements IClusterLockD
         this.newTransactionTemplate = new TransactionTemplate(platformTransactionManager);
         this.newTransactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         this.newTransactionTemplate.afterPropertiesSet();
+    }
+
+    @Autowired
+    public void setEntityManagerCache(EntityManagerCache entityManagerCache) {
+        this.entityManagerCache = entityManagerCache;
     }
 
     @Override
@@ -239,10 +248,20 @@ public class JpaClusterLockDao extends BasePortalJpaDao implements IClusterLockD
         return transactionOperations.execute(new TransactionCallback<ClusterMutex>() {
             @Override
             public ClusterMutex doInTransaction(TransactionStatus status) {
+                final CacheKey key = CacheKey.build(CLUSTER_MUTEX_SOURCE, mutexName);
+                ClusterMutex clusterMutex = entityManagerCache.get(PERSISTENCE_UNIT_NAME, key);
+                if (clusterMutex != null) {
+                    return clusterMutex;
+                }
+                
                 final TypedQuery<ClusterMutex> query = createQuery(clusterLockByNameQuery);
                 query.setParameter(nameParameter, mutexName);
                 final List<ClusterMutex> results = query.getResultList();
-                return DataAccessUtils.singleResult(results);
+                clusterMutex = DataAccessUtils.singleResult(results);
+                
+                entityManagerCache.put(PERSISTENCE_UNIT_NAME, key, clusterMutex);
+                
+                return clusterMutex;
             }
         });
     }
