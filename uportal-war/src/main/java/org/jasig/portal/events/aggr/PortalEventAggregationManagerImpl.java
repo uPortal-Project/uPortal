@@ -89,7 +89,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
     private static final String PURGE_EVENT_SESSION_LOCK_NAME = PortalEventAggregationManagerImpl.class.getName() + ".PURGE_EVENT_SESSION_LOCK_NAME";
     
     protected final Logger logger = LoggerFactory.getLogger(getClass());
-    private final AtomicBoolean checkedDimensions = new AtomicBoolean(false);
+    private volatile boolean checkedDimensions = false;
     
     private IPortalInfoProvider portalInfoProvider;
     private IClusterLockService clusterLockService;
@@ -236,6 +236,11 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                                 return doAggregateRawEvents();
                             }
                         });
+                        
+                        if (result == null) {
+                            logger.warn("doAggregateRawEvents did not execute");
+                            return null;
+                        }
                         
                         if (logger.isInfoEnabled()) {
                             final long runTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
@@ -481,12 +486,15 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
      * @return true if all events for the time period were aggregated, false if not
      */
     EventProcessingResult doAggregateRawEvents() {
-        if (!this.checkedDimensions.get() && this.checkedDimensions.compareAndSet(false, true)) {
+        if (!this.checkedDimensions) {
             //First time aggregation has happened, run populateDimensions to ensure enough dimension data exists
             final boolean populatedDimensions = this.populateDimensions();
             if (!populatedDimensions) {
-                this.logger.warn("First time doAggregateRawEvents has run and populateDimensions returned false, assuming current dimension data is available");
+                this.logger.warn("Aborting raw event aggregation, populateDimensions returned false so the state of date/time dimensions are unknown");
+                return null;
             }
+            
+            this.checkedDimensions = true;
         }
         
         //Flush any dimension creation before aggregation
