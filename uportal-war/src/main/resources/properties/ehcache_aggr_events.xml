@@ -196,10 +196,10 @@
         timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <cache name="org.jasig.portal.events.aggr.tabs.AggregatedTabMappingImpl##NaturalId" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPoicy="LRU" statistics="true"/>
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <cache name="org.jasig.portal.events.aggr.tabs.AggregatedTabMappingImpl.Query" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPoicy="LRU" statistics="true"/>
+        timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
         
 
     <!--

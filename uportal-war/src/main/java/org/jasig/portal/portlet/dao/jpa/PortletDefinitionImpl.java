@@ -194,7 +194,7 @@ class PortletDefinitionImpl implements IPortletDefinition {
     @PostUpdate
     @PostRemove
     private void init() {
-        if (this.portletDefinitionId == null || this.portletDefinitionId.getLongId() != this.internalPortletDefinitionId) {
+        if (this.internalPortletDefinitionId != -1 && (this.portletDefinitionId == null || this.portletDefinitionId.getLongId() != this.internalPortletDefinitionId)) {
             this.portletDefinitionId = PortletDefinitionIdImpl.create(this.internalPortletDefinitionId);
         }
     }
@@ -257,6 +257,7 @@ class PortletDefinitionImpl implements IPortletDefinition {
      */
     @Override
     public IPortletDefinitionId getPortletDefinitionId() {
+        init();
         return this.portletDefinitionId;
     }
 
