@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.Resource;
 import javax.persistence.FlushModeType;
@@ -41,7 +40,6 @@ import org.jasig.portal.concurrency.FunctionWithoutResult;
 import org.jasig.portal.concurrency.locking.ClusterMutex;
 import org.jasig.portal.concurrency.locking.IClusterLockService;
 import org.jasig.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
-import org.jasig.portal.events.LoginEvent;
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.aggr.IEventAggregatorStatus.ProcessingType;
 import org.jasig.portal.events.aggr.dao.DateDimensionDao;
@@ -194,6 +192,11 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
 
     @Override
     public boolean populateDimensions() {
+        if (shutdown) {
+            logger.warn("populateDimensions called after shutdown, ignoring call");
+            return false;
+        }
+        
         try {
             final TryLockFunctionResult<Object> result = this.clusterLockService.doInTryLock(DIMENSION_LOCK_NAME, new FunctionWithoutResult<ClusterMutex>() {
                 @Override
@@ -222,7 +225,11 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
 
     @Override
     public boolean aggregateRawEvents() {
-        //TODO eventually consider JTA/XA for this http://docs.codehaus.org/display/BTM/Home 
+        //TODO eventually consider JTA/XA for this http://docs.codehaus.org/display/BTM/Home
+        if (shutdown) {
+            logger.warn("aggregateRawEvents called after shutdown, ignoring call");
+            return false;
+        }
         
         TryLockFunctionResult<Boolean> result = null;
         do {
@@ -234,7 +241,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                 result = clusterLockService.doInTryLock(AGGREGATION_LOCK_NAME, new Function<ClusterMutex, Boolean>() {
                     @Override
                     public Boolean apply(final ClusterMutex input) {
-                        //Executing withing lock
+                        //Executing within lock
                         final long start = System.nanoTime();
                         
                         final EventProcessingResult result = getTransactionOperations().execute(new TransactionCallback<EventProcessingResult>() {
@@ -277,6 +284,11 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
     
     @Override
     public boolean purgeRawEvents() {
+        if (shutdown) {
+            logger.warn("purgeRawEvents called after shutdown, ignoring call");
+            return false;
+        }
+        
         try {
             final TryLockFunctionResult<Object> result = this.clusterLockService.doInTryLock(PURGE_RAW_EVENTS_LOCK_NAME, new FunctionWithoutResult<ClusterMutex>() {
                 @Override
@@ -313,6 +325,11 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
     
     @Override
     public boolean purgeEventSessions() {
+        if (shutdown) {
+            logger.warn("purgeEventSessions called after shutdown, ignoring call");
+            return false;
+        }
+        
         try {
             final TryLockFunctionResult<Object> result = this.clusterLockService.doInTryLock(PURGE_EVENT_SESSION_LOCK_NAME, new FunctionWithoutResult<ClusterMutex>() {
                 @Override
@@ -351,9 +368,17 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
             logger.error("purgeEventSessions failed", e);
             throw e;
         }
+        finally {
+        }
     }
 
-
+    private void checkShutdown() {
+        if (shutdown) {
+            //Mark ourselves as interupted and throw an exception
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("uPortal is shutting down, throwing an exeption to stop processing");
+        }
+    }
 
     //use local flag to run on first call to doAggregation
     void doPopulateDimensions() {
@@ -384,12 +409,14 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
             LocalTime dimensionTime = timeDimension.getTime();
             if (nextTime.isBefore(dimensionTime)) {
                 do {
+                    checkShutdown();
                     this.timeDimensionDao.createTimeDimension(nextTime);
                     nextTime = nextTime.plusMinutes(1);
                 } while (nextTime.isBefore(dimensionTime));
             }
             else if (nextTime.isAfter(dimensionTime)) {
                 do {
+                    checkShutdown();
                     this.timeDimensionDao.createTimeDimension(dimensionTime);
                     dimensionTime = dimensionTime.plusMinutes(1);
                 } while (nextTime.isAfter(dimensionTime));
@@ -400,6 +427,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
         
         //Add any missing times from the tail
         while (nextTime.isBefore(lastTime) || nextTime.equals(lastTime)) {
+            checkShutdown();
             this.timeDimensionDao.createTimeDimension(nextTime);
             if (nextTime.equals(lastTime)) {
                 break;
@@ -455,12 +483,14 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
             DateMidnight dimensionDate = dateDimension.getDate();
             if (nextDate.isBefore(dimensionDate)) {
                 do {
+                    checkShutdown();
                     createDateDimension(quartersDetails, academicTermDetails, nextDate);
                     nextDate = nextDate.plusDays(1);
                 } while (nextDate.isBefore(dimensionDate));
             }
             else if (nextDate.isAfter(dimensionDate)) {
                 do {
+                    checkShutdown();
                     createDateDimension(quartersDetails, academicTermDetails, dimensionDate);
                     dimensionDate = dimensionDate.plusDays(1);
                 } while (nextDate.isAfter(dimensionDate));
@@ -471,6 +501,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
         
         //Add any missing dates from the tail
         while (nextDate.isBefore(end)) {
+            checkShutdown();
             createDateDimension(quartersDetails, academicTermDetails, nextDate);
             nextDate = nextDate.plusDays(1);
         }
@@ -497,7 +528,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
             //First time aggregation has happened, run populateDimensions to ensure enough dimension data exists
             final boolean populatedDimensions = this.populateDimensions();
             if (!populatedDimensions) {
-                this.logger.warn("Aborting raw event aggregation, populateDimensions returned false so the state of date/time dimensions are unknown");
+                this.logger.warn("Aborting raw event aggregation, populateDimensions returned false so the state of date/time dimensions is unknown");
                 return null;
             }
             
@@ -527,15 +558,25 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
             lastAggregated = new DateTime(0);
         }
         
-        DateTime newestEventTime = DateTime.now().minus(this.aggregationDelay).secondOfMinute().roundFloorCopy();
+        final DateTime newestEventTime = DateTime.now().minus(this.aggregationDelay).secondOfMinute().roundFloorCopy();
         
-        logger.debug("Starting aggregation of events between {} (inc) and {} (exc)", lastAggregated, newestEventTime);
+        final Thread currentThread = Thread.currentThread();
+        final String currentName = currentThread.getName();
         final MutableInt events = new MutableInt();
         
-        //Do aggregation, capturing the start and end dates
-        eventAggregatorStatus.setLastStart(DateTime.now());
-        portalEventDao.aggregatePortalEvents(lastAggregated, newestEventTime, this.eventAggregationBatchSize, new AggregateEventsHandler(events, eventAggregatorStatus));
-        eventAggregatorStatus.setLastEnd(new DateTime());
+        try {
+            currentThread.setName(currentName + "-" + lastAggregated + "_" + newestEventTime);
+        
+            logger.debug("Starting aggregation of events between {} (inc) and {} (exc)", lastAggregated, newestEventTime);
+            
+            //Do aggregation, capturing the start and end dates
+            eventAggregatorStatus.setLastStart(DateTime.now());
+            portalEventDao.aggregatePortalEvents(lastAggregated, newestEventTime, this.eventAggregationBatchSize, new AggregateEventsHandler(events, eventAggregatorStatus));
+            eventAggregatorStatus.setLastEnd(new DateTime());
+        }
+        finally {
+            currentThread.setName(currentName);
+        }
         
         //Store the results of the aggregation
         eventAggregationManagementDao.updateEventAggregatorStatus(eventAggregatorStatus);
@@ -581,9 +622,19 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
         final DateTime lastAggregated = eventAggregatorStatus.getLastEventDate();
         final DateTime purgeEnd = lastAggregated.minus(this.purgeDelay);
         
-        //Purge events
-        logger.debug("Starting purge of events before {}", purgeEnd);
-        final int events = portalEventDao.deletePortalEventsBefore(purgeEnd);
+        final Thread currentThread = Thread.currentThread();
+        final String currentName = currentThread.getName();
+        final int events;
+        try {
+            currentThread.setName(currentName + "-" + purgeEnd);
+        
+            //Purge events
+            logger.debug("Starting purge of events before {}", purgeEnd);
+            events = portalEventDao.deletePortalEventsBefore(purgeEnd);
+        }
+        finally {
+            currentThread.setName(currentName);
+        }
         
         //Update the status object and store it
         eventPurgerStatus.setLastEventDate(purgeEnd.minusMillis(1)); //decrement by 1ms since deletePortalEventsBefore uses lessThan and not lessThanEqualTo 
@@ -697,6 +748,8 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
         }
         
         private void doAggregateEvent(PortalEvent item) {
+            checkShutdown();
+            
             eventCounter.increment();
 
             for (final ApplicationEventFilter<PortalEvent> applicationEventFilter : applicationEventFilters) {
@@ -741,13 +794,6 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
         protected EventSession getEventSession(PortalEvent item) {
             final String eventSessionId = item.getEventSessionId();
             
-            //For a LoginEvent create a new EventSession, cache in the aggregation context
-            if (item instanceof LoginEvent) {
-                final EventSession eventSession = eventSessionDao.createEventSession((LoginEvent)item);
-                this.eventAggregationContext.setAttribute(eventSessionId, eventSession);
-                return eventSession;
-            }
-            
             //First check the aggregation context for a cached session event, fall back
             //to asking the DAO if nothing in the context, cache the result
             EventSession eventSession = this.eventAggregationContext.getAttribute(eventSessionId);
@@ -755,6 +801,10 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                 eventSession = eventSessionDao.getEventSession(item);
                 this.eventAggregationContext.setAttribute(eventSessionId, eventSession);
             }
+            
+            //Record the session access
+            eventSession.recordAccess(item.getTimestampAsDate());
+            eventSessionDao.storeEventSession(eventSession);
             
             return eventSession;
         }

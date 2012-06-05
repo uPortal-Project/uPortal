@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.events.aggr.session.EventSession;
+import org.joda.time.DateTime;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
@@ -31,6 +32,11 @@ class FilteredEventSession implements EventSession {
                 return FilteredEventSession.this.aggregatedGroupConfig.isIncluded(input);
             }
         });
+    }
+    
+    @Override
+    public void recordAccess(DateTime eventDate) {
+        parent.recordAccess(eventDate);
     }
 
     @Override

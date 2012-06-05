@@ -52,7 +52,7 @@ public interface IPortalEventAggregator<E extends PortalEvent> {
      * Add the specified event to the aggregate
      * 
      * @param e The event to aggregate
-     * @param eventSession Information about the event session associated with the event, MAY BE NULL!
+     * @param eventSession Information about the event session associated with the event
      * @param eventAggregationContext Context used to store stateful information for an event aggregation run
      * @param currentIntervals Information about all of the intervals the event exists in.
      */

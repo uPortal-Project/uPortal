@@ -210,7 +210,10 @@ public class ClusterLockServiceImpl implements IClusterLockService {
 
         @Override
         public Boolean call() throws Exception {
+            final Thread currentThread = Thread.currentThread();
+            final String currentName = currentThread.getName();
             try {
+                currentThread.setName(currentName + "-" + mutexName);
                 final long lockTimeout = System.currentTimeMillis() + maximumLockDuration.getMillis();
                 try {
                     //Try to acquire the lock, set the success to the dbLocked holder
@@ -249,6 +252,8 @@ public class ClusterLockServiceImpl implements IClusterLockService {
                 throw e;
             }
             finally {
+                currentThread.setName(currentName);
+                
                 //If the db lock was acquired release it
                 if (this.mutexRef.get() != null) {
                     if (this.workCompleteLatch.getCount() != 0) {
@@ -258,8 +263,13 @@ public class ClusterLockServiceImpl implements IClusterLockService {
                         logger.trace("Work thread {} for lock {} is not complete, interrupting.", this.worker.getName(), this.mutexName);
                     }
                     
-                    clusterLockDao.releaseLock(this.mutexName);
-                    logger.trace("released db lock for: {}", this.mutexName);
+                    try {
+                        clusterLockDao.releaseLock(this.mutexName);
+                        logger.trace("released db lock for: {}", this.mutexName);
+                    }
+                    catch (IllegalMonitorStateException e) {
+                        logger.error("failed to released db lock for: {}", this.mutexName, e);
+                    }
                 }
             }
             

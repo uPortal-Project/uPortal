@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.joda.time.DateTime;
 
 /**
  * Defines data that is tracked across all events associated with the same {@link PortalEvent#getEventSessionId()}
@@ -32,6 +33,8 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
  * @version $Revision$
  */
 public interface EventSession extends Serializable {
+    
+    void recordAccess(DateTime eventDate);
     
     /**
      * @see PortalEvent#getEventSessionId()

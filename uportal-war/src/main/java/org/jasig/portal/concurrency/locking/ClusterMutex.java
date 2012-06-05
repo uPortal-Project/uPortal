@@ -182,8 +182,8 @@ public class ClusterMutex implements Serializable {
         }
         this.locked = false;
         this.lockEnd = new Date();
-        this.serverId = null;
         this.previousServerId = this.serverId;
+        this.serverId = null;
     }
 
     /**

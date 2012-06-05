@@ -83,7 +83,7 @@ public class EventSessionImpl implements EventSession, Serializable {
     
     @ManyToMany(targetEntity=AggregatedGroupMappingImpl.class, fetch=FetchType.EAGER)
     @JoinTable(name="UP_EVENT_SESSION_GROUPS", inverseJoinColumns = @JoinColumn(name = "GROUP_ID"))
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     @Fetch(FetchMode.JOIN)
     private final Set<AggregatedGroupMapping> groupMappings;
     
@@ -111,7 +111,8 @@ public class EventSessionImpl implements EventSession, Serializable {
         this.lastAccessed = eventDate;
     }
     
-    void recordAccess(DateTime eventDate) {
+    @Override
+    public void recordAccess(DateTime eventDate) {
         this.lastAccessed = eventDate;
     }
 

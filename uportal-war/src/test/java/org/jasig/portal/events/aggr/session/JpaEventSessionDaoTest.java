@@ -21,7 +21,6 @@ package org.jasig.portal.events.aggr.session;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -91,36 +90,16 @@ public class JpaEventSessionDaoTest extends BaseAggrEventsJpaDaoTest {
             @Override
             protected void callWithoutResult() {
                 final EventSession eventSession1 = eventSessionDao.getEventSession(loginEvent1);
-                assertNull(eventSession1);
+                assertNotNull(eventSession1);
+                assertEquals(eventSessionId1, eventSession1.getEventSessionId());
+                final Set<AggregatedGroupMapping> groupMappings1 = eventSession1.getGroupMappings();
+                assertEquals(2, groupMappings1.size());
                 
                 final EventSession eventSession2 = eventSessionDao.getEventSession(loginEvent2);
-                assertNull(eventSession2);
-            }
-        });
-        
-        this.executeInTransaction(new CallableWithoutResult() {
-            @Override
-            protected void callWithoutResult() {
-                final EventSession eventSession = eventSessionDao.createEventSession(loginEvent1);
-                assertNotNull(eventSession);
-                
-                assertEquals(eventSessionId1, eventSession.getEventSessionId());
-                
-                final Set<AggregatedGroupMapping> groupMappings = eventSession.getGroupMappings();
-                assertEquals(2, groupMappings.size());
-            }
-        });
-        
-        this.executeInTransaction(new CallableWithoutResult() {
-            @Override
-            protected void callWithoutResult() {
-                final EventSession eventSession = eventSessionDao.createEventSession(loginEvent2);
-                assertNotNull(eventSession);
-                
-                assertEquals(eventSessionId2, eventSession.getEventSessionId());
-                
-                final Set<AggregatedGroupMapping> groupMappings = eventSession.getGroupMappings();
-                assertEquals(2, groupMappings.size());
+                assertNotNull(eventSession2);
+                assertEquals(eventSessionId2, eventSession2.getEventSessionId());
+                final Set<AggregatedGroupMapping> groupMappings2 = eventSession2.getGroupMappings();
+                assertEquals(2, groupMappings2.size());
             }
         });
         
@@ -141,14 +120,6 @@ public class JpaEventSessionDaoTest extends BaseAggrEventsJpaDaoTest {
             @Override
             protected void callWithoutResult() {
                 eventSessionDao.purgeExpiredEventSessions(loginEvent1.getTimestampAsDate().plusYears(1));
-            }
-        });
-        
-        this.execute(new CallableWithoutResult() {
-            @Override
-            protected void callWithoutResult() {
-                final EventSession eventSession = eventSessionDao.getEventSession(loginEvent1);
-                assertNull(eventSession);
             }
         });
     }

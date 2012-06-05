@@ -19,6 +19,7 @@
 
 package org.jasig.portal.events.aggr.session;
 
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,7 +35,11 @@ import org.jasig.portal.events.LoginEvent;
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupLookupDao;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.jasig.portal.groups.ICompositeGroupService;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
+import org.jasig.portal.security.IPerson;
 import org.joda.time.DateTime;
 import org.joda.time.ReadablePeriod;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +63,12 @@ public class JpaEventSessionDao extends BaseAggrEventsJpaDao implements EventSes
     
     private AggregatedGroupLookupDao aggregatedGroupLookupDao;
     private ReadablePeriod eventSessionDuration;
+    private ICompositeGroupService compositeGroupService;
+
+    @Autowired
+    public void setCompositeGroupService(ICompositeGroupService compositeGroupService) {
+        this.compositeGroupService = compositeGroupService;
+    }
     
     @Value("${org.jasig.portal.events.aggr.session.JpaEventSessionDao.eventSessionDuration:P1D}")
     public void setEventSessionDuration(ReadablePeriod eventSessionDuration) {
@@ -109,44 +120,33 @@ public class JpaEventSessionDao extends BaseAggrEventsJpaDao implements EventSes
                 "WHERE e." + EventSessionImpl_.eventSessionId.getName() + " = :" + this.eventSessionIdParameter.getName();
     }
     
-
     @AggrEventsTransactional
     @Override
-    public EventSession createEventSession(LoginEvent loginEvent) {
-        final Set<AggregatedGroupMapping> groupMappings = new LinkedHashSet<AggregatedGroupMapping>();
-        for (final String groupKey : loginEvent.getGroups()) {
-            final AggregatedGroupMapping groupMapping = this.aggregatedGroupLookupDao.getGroupMapping(groupKey);
-            if (groupMapping != null) {
-                groupMappings.add(groupMapping);
-            }
-        }
-        
-        final String eventSessionId = loginEvent.getEventSessionId();
-        final DateTime eventDate = loginEvent.getTimestampAsDate();
-        final EventSessionImpl eventSession = new EventSessionImpl(eventSessionId, eventDate, groupMappings);
-        
+    public void storeEventSession(EventSession eventSession) {
         this.getEntityManager().persist(eventSession);
-        
-        return eventSession;
     }
 
     @AggrEventsTransactional
     @Override
     public EventSession getEventSession(PortalEvent event) {
+        final String eventSessionId = event.getEventSessionId();
+        
         final TypedQuery<EventSessionImpl> query = this.createCachedQuery(this.findByEventSessionIdQuery);
-        query.setParameter(this.eventSessionIdParameter, event.getEventSessionId());
+        query.setParameter(this.eventSessionIdParameter, eventSessionId);
         
         final List<EventSessionImpl> results = query.getResultList();
         
-        final EventSessionImpl eventSession = DataAccessUtils.uniqueResult(results);
+        EventSessionImpl eventSession = DataAccessUtils.uniqueResult(results);
         if (eventSession == null) {
-            return null;
+            //No event session, somehow we missed the login event. Look at the groups the user is currently a member of
+            final Set<AggregatedGroupMapping> groupMappings = this.getGroupsForEvent(event);
+            
+            final DateTime eventDate = event.getTimestampAsDate();
+            eventSession = new EventSessionImpl(eventSessionId, eventDate, groupMappings);
+            
+            this.getEntityManager().persist(eventSession);
         }
-        
-        final DateTime eventDate = event.getTimestampAsDate();
-        eventSession.recordAccess(eventDate);
-        this.getEntityManager().persist(eventSession);
-        
+                
         return eventSession;
     }
 
@@ -169,5 +169,32 @@ public class JpaEventSessionDao extends BaseAggrEventsJpaDao implements EventSes
         }
         
         return resultList.size();
+    }
+    
+    /**
+     * Get groups for the event
+     */
+    protected Set<AggregatedGroupMapping> getGroupsForEvent(PortalEvent event) {
+        final Set<AggregatedGroupMapping> groupMappings = new LinkedHashSet<AggregatedGroupMapping>();
+        
+        if (event instanceof LoginEvent) {
+            for (final String groupKey : ((LoginEvent) event).getGroups()) {
+                final AggregatedGroupMapping groupMapping = this.aggregatedGroupLookupDao.getGroupMapping(groupKey);
+                if (groupMapping != null) {
+                    groupMappings.add(groupMapping);
+                }
+            }
+        }
+        else {
+            final String userName = event.getUserName();
+            final IGroupMember groupMember = this.compositeGroupService.getGroupMember(userName, IPerson.class);
+            for (final Iterator<IEntityGroup> containingGroups = this.compositeGroupService.findContainingGroups(groupMember); containingGroups.hasNext(); ) {
+                final IEntityGroup group = containingGroups.next();
+                final AggregatedGroupMapping groupMapping = this.aggregatedGroupLookupDao.getGroupMapping(group.getServiceName().toString(), group.getName());
+                groupMappings.add(groupMapping);
+            }
+        }
+        
+        return groupMappings;
     }
 }

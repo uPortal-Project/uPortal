@@ -19,6 +19,7 @@
 
 package org.jasig.portal.utils.threading;
 
+import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Delayed;
@@ -31,13 +32,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.joda.time.ReadableDuration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.SchedulingTaskExecutor;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.TriggerContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.scheduling.support.ScheduledMethodRunnable;
 
 /**
  * Scheduling thread pool that upon invocation of the scheduled task immediately
@@ -49,8 +49,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler 
     implements TaskScheduler, SchedulingTaskExecutor {
     private static final long serialVersionUID = 1L;
-    
-    private static final Logger LOGGER = LoggerFactory.getLogger(DelegatingThreadPoolTaskScheduler.class);
     
     private volatile long initialized = System.currentTimeMillis();
     private volatile long lastStartDelay = 0; 
@@ -102,14 +100,27 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
         return startDate;
     }
     
+    protected Runnable wrapRunnable(Runnable task) {
+        if (task instanceof ScheduledMethodRunnable) {
+            final Method method = ((ScheduledMethodRunnable) task).getMethod();
+            final String methodName = method.getName();
+            return new ThreadNamingRunnable("-" + methodName, task);
+        }
+
+        
+        return task; 
+    }
+    
     @Override
     public void execute(Runnable task, long startTimeout) {
+        task = wrapRunnable(task);
         final DelegatingRunnable delegatingRunnable = new DelegatingRunnable(this.executorService, task);
         super.execute(delegatingRunnable, startTimeout);
     }
 
     @Override
     public Future<?> submit(Runnable task) {
+        task = wrapRunnable(task);
         final DelegatingRunnable delegatingRunnable = new DelegatingRunnable(this.executorService, task);
         return super.submit(delegatingRunnable);
     }
@@ -124,12 +135,14 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
 
     @Override
     public void execute(Runnable task) {
+        task = wrapRunnable(task);
         final DelegatingRunnable delegatingRunnable = new DelegatingRunnable(this.executorService, task);
         super.execute(delegatingRunnable);        
     }
 
     @Override
     public ScheduledFuture<Object> schedule(Runnable task, final Trigger trigger) {
+        task = wrapRunnable(task);
         //Wrap the trigger so that the first call to nextExecutionTime adds in the additionalStartDelay 
         final Trigger wrappedTrigger = new Trigger() {
             boolean firstExecution = false;
@@ -162,6 +175,7 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
 
     @Override
     public ScheduledFuture<Object> scheduleAtFixedRate(Runnable task, Date startTime, long period) {
+        task = wrapRunnable(task);
         startTime = getDelayedStartDate(startTime);
         
         final DelegatingRunnable delegatingRunnable = new DelegatingRunnable(this.executorService, task);
@@ -172,6 +186,7 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
 
     @Override
     public ScheduledFuture<Object> scheduleAtFixedRate(Runnable task, long period) {
+        task = wrapRunnable(task);
         final long additionalStartDelay = this.getAdditionalStartDelay();
         if (additionalStartDelay > 0) {
             //If there is an additional delay use the alternate call which includes a startTime 
@@ -186,6 +201,7 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
 
     @Override
     public ScheduledFuture<Object> scheduleWithFixedDelay(Runnable task, Date startTime, long delay) {
+        task = wrapRunnable(task);
         startTime = getDelayedStartDate(startTime);
         
         final DelegatingRunnable delegatingRunnable = new DelegatingRunnable(this.executorService, task);
@@ -196,6 +212,7 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
 
     @Override
     public ScheduledFuture<Object> scheduleWithFixedDelay(Runnable task, long delay) {
+        task = wrapRunnable(task);
         final long additionalStartDelay = this.getAdditionalStartDelay();
         if (additionalStartDelay > 0) {
             //If there is an additional delay use the alternate call which includes a startTime 

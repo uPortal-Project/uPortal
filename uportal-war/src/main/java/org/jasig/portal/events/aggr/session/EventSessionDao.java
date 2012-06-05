@@ -19,7 +19,6 @@
 
 package org.jasig.portal.events.aggr.session;
 
-import org.jasig.portal.events.LoginEvent;
 import org.jasig.portal.events.PortalEvent;
 import org.joda.time.DateTime;
 
@@ -32,18 +31,15 @@ import org.joda.time.DateTime;
 public interface EventSessionDao {
     
     /**
-     * Create a new EventSession based on the LoginEvent
-     * 
-     * @param loginEvent the event to base the session on
-     * @return
+     * Store a modified event session
      */
-    EventSession createEventSession(LoginEvent loginEvent);
+    void storeEventSession(EventSession eventSession);
     
     /**
-     * Get the current event session, null if no session has been created by {@link #createEventSession(LoginEvent)}
+     * Get the {@link EventSession} for the event.
      * 
      * @param event The event to get the session for
-     * @return The event session
+     * @return The event session, will not return null
      */
     EventSession getEventSession(PortalEvent event);
     

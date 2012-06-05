@@ -94,11 +94,6 @@ public abstract class BasePortalEventAggregator<
             EventAggregationContext eventAggregationContext,
             Map<AggregationInterval, AggregationIntervalInfo> currentIntervals) {
         
-        if (eventSession == null) {
-            logger.warn("{} requires an EventSession to aggregate {}", this, e);
-            return;
-        }
-        
         final BaseAggregationPrivateDao<T, K> aggregationDao = this.getAggregationDao();
         
         for (Map.Entry<AggregationInterval, AggregationIntervalInfo> intervalInfoEntry : currentIntervals.entrySet()) {
