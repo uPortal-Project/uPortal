@@ -109,7 +109,7 @@
      | Local account editing
      +-->
     <subflow-state id="editLocalAccount" subflow="edit-account">
-        <input name="person" value="userAccountHelper.getForm(person.name)"/>
+        <input name="accountForm" value="userAccountHelper.getForm(person.name)"/>
         <output name="person" value="flowScope.person"/>
         
         <transition on="finish" to="viewUserDetails"/>

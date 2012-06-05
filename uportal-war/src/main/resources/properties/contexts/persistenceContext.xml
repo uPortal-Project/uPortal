@@ -36,6 +36,10 @@
     <aop:config>
         <aop:pointcut id="daoExecution" 
             expression="within(@org.springframework.stereotype.Repository *) &amp;&amp; execution(* org.jasig.portal..*.*(..))"/>
+
+        <aop:pointcut id="allExecutions" expression="execution(* *.*(..))"/>
+        
+        <aop:pointcut id="portletPreferenceExecution" expression="execution(* javax.portlet.PortletPreferences.*(..))"/>
             
         <aop:aspect ref="threadContextClassLoaderAspect">
             <!-- 
@@ -52,6 +56,7 @@
             <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.UserInfoService.*(..))"/>
             <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.driver.PortalAdministrationService.*(..))"/>
             <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.PortletPreferencesService.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.jasig.portal.portlet.container.services.PortletPreferencesFactory.*(..))"/>
             <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.PortletEnvironmentService.*(..))"/>
             <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.driver.PortletRegistryService.*(..))"/>
             <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.driver.PortletContextService.*(..))"/>
@@ -61,11 +66,32 @@
             <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.RequestDispatcherService.*(..))"/>
         </aop:aspect>
         
+        <aop:aspect ref="threadContextClassLoaderApplyingAspect">
+            <aop:around method="applyAspect" pointcut="execution(* org.jasig.portal.portlet.container.services.PortletPreferencesFactory.*(..))"/>
+        </aop:aspect>
+        
         <aop:aspect ref="sqlNextExceptionLoggerAspect">
             <aop:after-throwing pointcut-ref="daoExecution" method="logBatchUpdateExceptions" throwing="t"/>
         </aop:aspect>
     </aop:config>
     
+    <!-- 
+     | Aspect used to apply the threadContextClassLoaderAspect every PortletPreference impl returned by the
+     | targeted object 
+     +-->
+    <bean id="threadContextClassLoaderApplyingAspect" class="org.jasig.portal.spring.AspectApplyingAspect">
+        <property name="advices" ref="threadContextClassLoaderPortetPreferencesAdvice" />
+    </bean>
+    
+    <!-- 
+     | Advice object used to apply the threadContextClassLoaderAspect every method on a PortletPreference impl
+     +-->
+    <bean id="threadContextClassLoaderPortetPreferencesAdvice" class="org.jasig.portal.spring.AspectJAroundAdviceFactory">
+        <property name="aspect" ref="threadContextClassLoaderAspect" />
+        <property name="method" value="doThreadContextClassLoaderUpdate" />
+        <property name="args" value="org.aspectj.lang.ProceedingJoinPoint" />
+        <property name="pointcut" ref="portletPreferenceExecution" />
+    </bean>
     
     <!-- Aspect to force the Thread.getContextClassLoader() to the correct loader on cross-context calls form portlets -->
     <bean id="threadContextClassLoaderAspect" class="org.jasig.portal.portlet.dao.jpa.ThreadContextClassLoaderAspect" />
