@@ -60,6 +60,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.portlet.om.IPortletDefinition;
@@ -87,6 +88,7 @@ import org.jasig.portal.portlet.om.PortletLifecycleState;
         pkColumnValue="UP_PORTLET_DEF",
         allocationSize=5
     )
+@NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 class PortletDefinitionImpl implements IPortletDefinition {

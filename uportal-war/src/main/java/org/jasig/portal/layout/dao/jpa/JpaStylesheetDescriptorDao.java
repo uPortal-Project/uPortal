@@ -27,15 +27,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.ParameterExpression;
-import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Function;
@@ -49,36 +45,14 @@ import com.google.common.base.Function;
 @Repository("stylesheetDescriptorDao")
 public class JpaStylesheetDescriptorDao extends BasePortalJpaDao implements IStylesheetDescriptorDao {
     private CriteriaQuery<StylesheetDescriptorImpl> findAllDescriptors;
-    private CriteriaQuery<StylesheetDescriptorImpl> findDescriptorByNameQuery;
-    private ParameterExpression<String> nameParameter;
     
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.nameParameter = this.createParameterExpression(String.class, "name");
-        
         this.findAllDescriptors = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<StylesheetDescriptorImpl>>() {
             @Override
             public CriteriaQuery<StylesheetDescriptorImpl> apply(CriteriaBuilder cb) {
                 final CriteriaQuery<StylesheetDescriptorImpl> criteriaQuery = cb.createQuery(StylesheetDescriptorImpl.class);
                 criteriaQuery.from(StylesheetDescriptorImpl.class);
-                return criteriaQuery;
-            }
-        });
-        
-        
-        this.findDescriptorByNameQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<StylesheetDescriptorImpl>>() {
-            @Override
-            public CriteriaQuery<StylesheetDescriptorImpl> apply(CriteriaBuilder cb) {
-                final CriteriaQuery<StylesheetDescriptorImpl> criteriaQuery = cb.createQuery(StylesheetDescriptorImpl.class);
-                final Root<StylesheetDescriptorImpl> descriptorRoot = criteriaQuery.from(StylesheetDescriptorImpl.class);
-                criteriaQuery.select(descriptorRoot);
-                descriptorRoot.fetch(StylesheetDescriptorImpl_.layoutAttributes, JoinType.LEFT);
-                descriptorRoot.fetch(StylesheetDescriptorImpl_.outputProperties, JoinType.LEFT);
-                descriptorRoot.fetch(StylesheetDescriptorImpl_.stylesheetParameters, JoinType.LEFT);
-                criteriaQuery.where(
-                    cb.equal(descriptorRoot.get(StylesheetDescriptorImpl_.name), nameParameter)
-                );
-                
                 return criteriaQuery;
             }
         });
@@ -109,11 +83,9 @@ public class JpaStylesheetDescriptorDao extends BasePortalJpaDao implements ISty
 
     @Override
     public IStylesheetDescriptor getStylesheetDescriptorByName(String name) {
-        final TypedQuery<StylesheetDescriptorImpl> query = this.createCachedQuery(this.findDescriptorByNameQuery);
-        query.setParameter(this.nameParameter, name);
-        
-        final List<StylesheetDescriptorImpl> results = query.getResultList();
-        return DataAccessUtils.uniqueResult(results);
+        final NaturalIdQuery<StylesheetDescriptorImpl> query = this.createNaturalIdQuery(StylesheetDescriptorImpl.class);
+        query.using(StylesheetDescriptorImpl_.name, name);
+        return query.load();
     }
 
     @PortalTransactional

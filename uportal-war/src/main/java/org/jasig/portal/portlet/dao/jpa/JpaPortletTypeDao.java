@@ -26,14 +26,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.ParameterExpression;
-import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.portlet.dao.IPortletTypeDao;
 import org.jasig.portal.portlet.om.IPortletType;
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Function;
@@ -49,33 +46,14 @@ import com.google.common.base.Function;
 @Repository
 public class JpaPortletTypeDao extends BasePortalJpaDao implements IPortletTypeDao {
     private CriteriaQuery<PortletTypeImpl> findAllTypesQuery;
-    private CriteriaQuery<PortletTypeImpl> findTypeByNameQuery;
-    private ParameterExpression<String> nameParameter;
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.nameParameter = this.createParameterExpression(String.class, "name");
-        
         this.findAllTypesQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<PortletTypeImpl>>() {
             @Override
             public CriteriaQuery<PortletTypeImpl> apply(CriteriaBuilder cb) {
                 final CriteriaQuery<PortletTypeImpl> criteriaQuery = cb.createQuery(PortletTypeImpl.class);
                 criteriaQuery.from(PortletTypeImpl.class);
-                return criteriaQuery;
-            }
-        });
-        
-        
-        this.findTypeByNameQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<PortletTypeImpl>>() {
-            @Override
-            public CriteriaQuery<PortletTypeImpl> apply(CriteriaBuilder cb) {
-                final CriteriaQuery<PortletTypeImpl> criteriaQuery = cb.createQuery(PortletTypeImpl.class);
-                final Root<PortletTypeImpl> typeRoot = criteriaQuery.from(PortletTypeImpl.class);
-                criteriaQuery.select(typeRoot);
-                criteriaQuery.where(
-                    cb.equal(typeRoot.get(PortletTypeImpl_.name), nameParameter)
-                );
-                
                 return criteriaQuery;
             }
         });
@@ -118,11 +96,9 @@ public class JpaPortletTypeDao extends BasePortalJpaDao implements IPortletTypeD
 
     @Override
 	public IPortletType getPortletType(String name) {
-        final TypedQuery<PortletTypeImpl> query = this.createCachedQuery(this.findTypeByNameQuery);
-        query.setParameter(this.nameParameter, name);
-        
-        final List<PortletTypeImpl> channelTypes = query.getResultList();
-        return DataAccessUtils.uniqueResult(channelTypes);
+        final NaturalIdQuery<PortletTypeImpl> query = this.createNaturalIdQuery(PortletTypeImpl.class);
+        query.using(PortletTypeImpl_.name, name);
+        return query.load();
 	}
 
     @Override

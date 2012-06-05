@@ -28,8 +28,6 @@ import java.util.regex.Pattern;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.ParameterExpression;
-import javax.persistence.criteria.Root;
 
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
@@ -41,7 +39,6 @@ import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.TransactionStatus;
@@ -59,9 +56,7 @@ import com.google.common.base.Function;
 public class JpaAggregatedTabLookupDao extends BaseAggrEventsJpaDao implements AggregatedTabLookupDao {
     private static final Pattern DLM_NODE = Pattern.compile("^u(\\d+)l(\\d+)s(\\d+)$");
     
-    private CriteriaQuery<AggregatedTabMappingImpl> findTabMappingByTabName;
     private CriteriaQuery<AggregatedTabMappingImpl> findAllTabMappingsQuery;
-    private ParameterExpression<String> tabNameParameter;
 
     private EntityManagerCache entityManagerCache;
     private JdbcOperations portalJdbcOperations;
@@ -86,27 +81,11 @@ public class JpaAggregatedTabLookupDao extends BaseAggrEventsJpaDao implements A
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.tabNameParameter = this.createParameterExpression(String.class, "tabName");
-        
         this.findAllTabMappingsQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<AggregatedTabMappingImpl>>() {
             @Override
             public CriteriaQuery<AggregatedTabMappingImpl> apply(CriteriaBuilder cb) {
                 final CriteriaQuery<AggregatedTabMappingImpl> criteriaQuery = cb.createQuery(AggregatedTabMappingImpl.class);
                 criteriaQuery.from(AggregatedTabMappingImpl.class);
-                return criteriaQuery;
-            }
-        });
-        
-        this.findTabMappingByTabName = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<AggregatedTabMappingImpl>>() {
-            @Override
-            public CriteriaQuery<AggregatedTabMappingImpl> apply(CriteriaBuilder cb) {
-                final CriteriaQuery<AggregatedTabMappingImpl> criteriaQuery = cb.createQuery(AggregatedTabMappingImpl.class);
-                final Root<AggregatedTabMappingImpl> root = criteriaQuery.from(AggregatedTabMappingImpl.class);
-                criteriaQuery.select(root);
-                criteriaQuery.where(
-                        cb.equal(root.get(AggregatedTabMappingImpl_.tabName), tabNameParameter)
-                    );
-                
                 return criteriaQuery;
             }
         });
@@ -127,11 +106,10 @@ public class JpaAggregatedTabLookupDao extends BaseAggrEventsJpaDao implements A
             return tabMapping;
         }
         
-        final TypedQuery<AggregatedTabMappingImpl> query = this.createCachedQuery(this.findTabMappingByTabName);
-        query.setParameter(this.tabNameParameter, tabName);
-        
-        final List<AggregatedTabMappingImpl> resultList = query.getResultList();
-        tabMapping = DataAccessUtils.uniqueResult(resultList);
+        final NaturalIdQuery<AggregatedTabMappingImpl> query = this.createNaturalIdQuery(AggregatedTabMappingImpl.class);
+        query.using(AggregatedTabMappingImpl_.fragmentName, fragmentName);
+        query.using(AggregatedTabMappingImpl_.tabName, tabName);
+        tabMapping = query.load();
         if (tabMapping != null) {
             this.entityManagerCache.put(PERSISTENCE_UNIT_NAME, key, tabMapping);
             return tabMapping;

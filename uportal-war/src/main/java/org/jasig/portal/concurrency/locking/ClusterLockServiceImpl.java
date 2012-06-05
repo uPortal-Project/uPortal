@@ -59,8 +59,8 @@ public class ClusterLockServiceImpl implements IClusterLockService {
 
     private ExecutorService lockMonitorExecutorService;
     private IClusterLockDao clusterLockDao;
-    private ReadableDuration updateLockRate = Duration.millis(500);
-    private ReadableDuration maximumLockDuration = Duration.standardMinutes(15);
+    private ReadableDuration updateLockRate = Duration.standardSeconds(1);
+    private ReadableDuration maximumLockDuration = Duration.standardMinutes(60);
 
     @Autowired
     public void setClusterLockDao(IClusterLockDao clusterLockDao) {
@@ -74,7 +74,7 @@ public class ClusterLockServiceImpl implements IClusterLockService {
     /**
      * Rate at which {@link IClusterLockDao#updateLock(String)} is called while a mutex is locked, defaults to 500ms
      */
-    @Value("${org.jasig.portal.concurrency.locking.ClusterLockDao.updateLockRate:PT10S}")
+    @Value("${org.jasig.portal.concurrency.locking.ClusterLockDao.updateLockRate:PT1S}")
     public void setUpdateLockRate(ReadableDuration updateLockRate) {
         this.updateLockRate = updateLockRate;
     }

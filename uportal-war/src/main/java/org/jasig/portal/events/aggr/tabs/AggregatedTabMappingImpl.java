@@ -34,6 +34,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.NaturalIdCache;
 
 @Entity
 @Table(name = "UP_AGGR_TAB_MAPPING")
@@ -48,6 +49,7 @@ import org.hibernate.annotations.NaturalId;
         allocationSize=10
     )
 @Immutable
+@NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class AggregatedTabMappingImpl implements AggregatedTabMapping, Serializable {

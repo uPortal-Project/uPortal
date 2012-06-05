@@ -20,14 +20,11 @@
 package org.jasig.portal.events.aggr.portlets;
 
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.ParameterExpression;
-import javax.persistence.criteria.Root;
 
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
 import org.jasig.portal.jpa.cache.EntityManagerCache;
@@ -35,7 +32,6 @@ import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -50,9 +46,7 @@ import com.google.common.base.Function;
  */
 @Repository
 public class JpaAggregatedPortletLookupDao extends BaseAggrEventsJpaDao implements AggregatedPortletLookupDao {
-    private CriteriaQuery<AggregatedPortletMappingImpl> findPortletMappingByFName;
     private CriteriaQuery<AggregatedPortletMappingImpl> findAllPortletMappingsQuery;
-    private ParameterExpression<String> fNameParameter;
 
     private EntityManagerCache entityManagerCache;
     private IPortletDefinitionDao portletDefinitionDao;
@@ -69,27 +63,11 @@ public class JpaAggregatedPortletLookupDao extends BaseAggrEventsJpaDao implemen
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.fNameParameter = this.createParameterExpression(String.class, "fname");
-        
         this.findAllPortletMappingsQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<AggregatedPortletMappingImpl>>() {
             @Override
             public CriteriaQuery<AggregatedPortletMappingImpl> apply(CriteriaBuilder cb) {
                 final CriteriaQuery<AggregatedPortletMappingImpl> criteriaQuery = cb.createQuery(AggregatedPortletMappingImpl.class);
                 criteriaQuery.from(AggregatedPortletMappingImpl.class);
-                return criteriaQuery;
-            }
-        });
-        
-        this.findPortletMappingByFName = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<AggregatedPortletMappingImpl>>() {
-            @Override
-            public CriteriaQuery<AggregatedPortletMappingImpl> apply(CriteriaBuilder cb) {
-                final CriteriaQuery<AggregatedPortletMappingImpl> criteriaQuery = cb.createQuery(AggregatedPortletMappingImpl.class);
-                final Root<AggregatedPortletMappingImpl> root = criteriaQuery.from(AggregatedPortletMappingImpl.class);
-                criteriaQuery.select(root);
-                criteriaQuery.where(
-                        cb.equal(root.get(AggregatedPortletMappingImpl_.fname), fNameParameter)
-                    );
-                
                 return criteriaQuery;
             }
         });
@@ -105,11 +83,9 @@ public class JpaAggregatedPortletLookupDao extends BaseAggrEventsJpaDao implemen
             return portletMapping;
         }
         
-        final TypedQuery<AggregatedPortletMappingImpl> query = this.createCachedQuery(this.findPortletMappingByFName);
-        query.setParameter(this.fNameParameter, fname);
-        
-        final List<AggregatedPortletMappingImpl> resultList = query.getResultList();
-        portletMapping = DataAccessUtils.uniqueResult(resultList);
+        final NaturalIdQuery<AggregatedPortletMappingImpl> query = this.createNaturalIdQuery(AggregatedPortletMappingImpl.class);
+        query.using(AggregatedPortletMappingImpl_.fname, fname);
+        portletMapping = query.load();
         if (portletMapping != null) {
             this.entityManagerCache.put(PERSISTENCE_UNIT_NAME, key, portletMapping);
             return portletMapping;

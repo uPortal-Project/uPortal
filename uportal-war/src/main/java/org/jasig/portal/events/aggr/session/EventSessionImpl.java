@@ -45,6 +45,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl;
@@ -67,6 +68,7 @@ import org.joda.time.DateTime;
         pkColumnValue="UP_EVENT_SESSION_PROP",
         allocationSize=100
     )
+@NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class EventSessionImpl implements EventSession, Serializable {
@@ -83,7 +85,7 @@ public class EventSessionImpl implements EventSession, Serializable {
     
     @ManyToMany(targetEntity=AggregatedGroupMappingImpl.class, fetch=FetchType.EAGER)
     @JoinTable(name="UP_EVENT_SESSION_GROUPS", inverseJoinColumns = @JoinColumn(name = "GROUP_ID"))
-    @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @Fetch(FetchMode.JOIN)
     private final Set<AggregatedGroupMapping> groupMappings;
     

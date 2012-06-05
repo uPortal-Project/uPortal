@@ -51,17 +51,14 @@ import com.google.common.base.Function;
 @Repository
 public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortletDefinitionDao {
     private CriteriaQuery<PortletDefinitionImpl> findAllPortletDefinitions;
-    private CriteriaQuery<PortletDefinitionImpl> findDefinitionByFnameQuery;
     private CriteriaQuery<PortletDefinitionImpl> findDefinitionByNameQuery;
     private CriteriaQuery<PortletDefinitionImpl> findDefinitionByNameOrTitleQuery;
     private CriteriaQuery<PortletDefinitionImpl> searchDefinitionByNameOrTitleQuery;
-    private ParameterExpression<String> fnameParameter;
     private ParameterExpression<String> nameParameter;
     private ParameterExpression<String> titleParameter;
     
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.fnameParameter = this.createParameterExpression(String.class, "fname");
         this.nameParameter = this.createParameterExpression(String.class, "name");
         this.titleParameter = this.createParameterExpression(String.class, "title");
         
@@ -73,22 +70,6 @@ public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortle
                 criteriaQuery.select(definitionRoot);
                 addFetches(definitionRoot);
 
-                return criteriaQuery;
-            }
-        });
-
-        
-        this.findDefinitionByFnameQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<PortletDefinitionImpl>>() {
-            @Override
-            public CriteriaQuery<PortletDefinitionImpl> apply(CriteriaBuilder cb) {
-                final CriteriaQuery<PortletDefinitionImpl> criteriaQuery = cb.createQuery(PortletDefinitionImpl.class);
-                final Root<PortletDefinitionImpl> definitionRoot = criteriaQuery.from(PortletDefinitionImpl.class);
-                criteriaQuery.select(definitionRoot);
-                addFetches(definitionRoot);
-                criteriaQuery.where(
-                    cb.equal(definitionRoot.get(PortletDefinitionImpl_.fname), fnameParameter)
-                );
-                
                 return criteriaQuery;
             }
         });
@@ -185,11 +166,9 @@ public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortle
 	@Override
     @Transactional(readOnly=true)
     public IPortletDefinition getPortletDefinitionByFname(String fname) {
-	    final TypedQuery<PortletDefinitionImpl> query = this.createCachedQuery(this.findDefinitionByFnameQuery);
-        query.setParameter(this.fnameParameter, fname);
-        
-        final List<PortletDefinitionImpl> portletDefinitions = query.getResultList();
-        return DataAccessUtils.uniqueResult(portletDefinitions);
+	    final NaturalIdQuery<PortletDefinitionImpl> query = this.createNaturalIdQuery(PortletDefinitionImpl.class);
+	    query.using(PortletDefinitionImpl_.fname, fname);
+	    return query.load();
 	}
 
     @Override

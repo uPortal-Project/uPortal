@@ -25,14 +25,12 @@ import java.util.List;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.dao.TimeDimensionDao;
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
 import org.joda.time.LocalTime;
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Function;
@@ -45,13 +43,9 @@ import com.google.common.base.Function;
 public class JpaTimeDimensionDao extends BaseAggrEventsJpaDao implements TimeDimensionDao {
     
     private CriteriaQuery<TimeDimensionImpl> findAllTimeDimensionsQuery;
-    private CriteriaQuery<TimeDimensionImpl> findTimeDimensionByHourMinuteQuery;
-    private ParameterExpression<LocalTime> timeParameter;
     
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.timeParameter = this.createParameterExpression(LocalTime.class, "time");
-        
         this.findAllTimeDimensionsQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<TimeDimensionImpl>>() {
             @Override
             public CriteriaQuery<TimeDimensionImpl> apply(CriteriaBuilder cb) {
@@ -59,21 +53,6 @@ public class JpaTimeDimensionDao extends BaseAggrEventsJpaDao implements TimeDim
                 final Root<TimeDimensionImpl> dimensionRoot = criteriaQuery.from(TimeDimensionImpl.class);
                 criteriaQuery.select(dimensionRoot);
                 criteriaQuery.orderBy(cb.asc(dimensionRoot.get(TimeDimensionImpl_.time)));
-                
-                return criteriaQuery;
-            }
-        });
-        
-        
-        this.findTimeDimensionByHourMinuteQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<TimeDimensionImpl>>() {
-            @Override
-            public CriteriaQuery<TimeDimensionImpl> apply(CriteriaBuilder cb) {
-                final CriteriaQuery<TimeDimensionImpl> criteriaQuery = cb.createQuery(TimeDimensionImpl.class);
-                final Root<TimeDimensionImpl> dimensionRoot = criteriaQuery.from(TimeDimensionImpl.class);
-                criteriaQuery.select(dimensionRoot);
-                criteriaQuery.where(
-                    cb.equal(dimensionRoot.get(TimeDimensionImpl_.time), timeParameter)
-                );
                 
                 return criteriaQuery;
             }
@@ -107,10 +86,8 @@ public class JpaTimeDimensionDao extends BaseAggrEventsJpaDao implements TimeDim
     
     @Override
     public TimeDimension getTimeDimensionByTime(LocalTime localTime) {
-        final TypedQuery<TimeDimensionImpl> query = this.createCachedQuery(this.findTimeDimensionByHourMinuteQuery);
-        query.setParameter(this.timeParameter, localTime.minuteOfHour().roundFloorCopy());
-        
-        final List<TimeDimensionImpl> portletDefinitions = query.getResultList();
-        return DataAccessUtils.uniqueResult(portletDefinitions);
+        final NaturalIdQuery<TimeDimensionImpl> query = this.createNaturalIdQuery(TimeDimensionImpl.class);
+        query.using(TimeDimensionImpl_.time, localTime.minuteOfHour().roundFloorCopy());
+        return query.load();
     }
 }

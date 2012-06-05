@@ -38,6 +38,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.login.LoginAggregationImpl;
@@ -60,6 +61,7 @@ import org.joda.time.LocalDate;
         pkColumnValue="UP_DATE_DIMENSION_PROP",
         allocationSize=1
     )
+@NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class DateDimensionImpl implements DateDimension, Serializable {

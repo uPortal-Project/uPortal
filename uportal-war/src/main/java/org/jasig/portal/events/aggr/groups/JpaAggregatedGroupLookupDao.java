@@ -21,15 +21,12 @@ package org.jasig.portal.events.aggr.groups;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.ParameterExpression;
-import javax.persistence.criteria.Root;
 
 import org.jasig.portal.groups.CompositeEntityIdentifier;
 import org.jasig.portal.groups.ICompositeGroupService;
@@ -38,7 +35,6 @@ import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
 import org.jasig.portal.jpa.cache.EntityManagerCache;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -53,10 +49,7 @@ import com.google.common.base.Function;
  */
 @Repository
 public class JpaAggregatedGroupLookupDao extends BaseAggrEventsJpaDao implements AggregatedGroupLookupDao {
-    private CriteriaQuery<AggregatedGroupMappingImpl> findGroupMappingByServiceAndNameQuery;
     private CriteriaQuery<AggregatedGroupMappingImpl> findAllGroupMappingsQuery;
-    private ParameterExpression<String> groupServiceParameter;
-    private ParameterExpression<String> groupNameParameter;
     
 
     private EntityManagerCache entityManagerCache;
@@ -74,31 +67,11 @@ public class JpaAggregatedGroupLookupDao extends BaseAggrEventsJpaDao implements
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.groupServiceParameter = this.createParameterExpression(String.class, "groupService");
-        this.groupNameParameter = this.createParameterExpression(String.class, "groupName");
-        
         this.findAllGroupMappingsQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<AggregatedGroupMappingImpl>>() {
             @Override
             public CriteriaQuery<AggregatedGroupMappingImpl> apply(CriteriaBuilder cb) {
                 final CriteriaQuery<AggregatedGroupMappingImpl> criteriaQuery = cb.createQuery(AggregatedGroupMappingImpl.class);
                 criteriaQuery.from(AggregatedGroupMappingImpl.class);
-                return criteriaQuery;
-            }
-        });
-        
-        this.findGroupMappingByServiceAndNameQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<AggregatedGroupMappingImpl>>() {
-            @Override
-            public CriteriaQuery<AggregatedGroupMappingImpl> apply(CriteriaBuilder cb) {
-                final CriteriaQuery<AggregatedGroupMappingImpl> criteriaQuery = cb.createQuery(AggregatedGroupMappingImpl.class);
-                final Root<AggregatedGroupMappingImpl> root = criteriaQuery.from(AggregatedGroupMappingImpl.class);
-                criteriaQuery.select(root);
-                criteriaQuery.where(
-                        cb.and(
-                            cb.equal(root.get(AggregatedGroupMappingImpl_.groupService), groupServiceParameter),
-                            cb.equal(root.get(AggregatedGroupMappingImpl_.groupName), groupNameParameter)
-                        )
-                    );
-                
                 return criteriaQuery;
             }
         });
@@ -113,12 +86,11 @@ public class JpaAggregatedGroupLookupDao extends BaseAggrEventsJpaDao implements
             return groupMapping;
         }
         
-        final TypedQuery<AggregatedGroupMappingImpl> query = this.createCachedQuery(this.findGroupMappingByServiceAndNameQuery);
-        query.setParameter(this.groupServiceParameter, groupService);
-        query.setParameter(this.groupNameParameter, groupName);
+        final NaturalIdQuery<AggregatedGroupMappingImpl> query = this.createNaturalIdQuery(AggregatedGroupMappingImpl.class);
+        query.using(AggregatedGroupMappingImpl_.groupService, groupService);
+        query.using(AggregatedGroupMappingImpl_.groupName, groupName);
         
-        final List<AggregatedGroupMappingImpl> resultList = query.getResultList();
-        groupMapping = DataAccessUtils.uniqueResult(resultList);
+        groupMapping = query.load();
         if (groupMapping != null) {
             this.entityManagerCache.put(BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME, key, groupMapping);
             return groupMapping;

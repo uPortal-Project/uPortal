@@ -34,6 +34,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.NaturalIdCache;
 
 /**
  * @author Eric Dalquist
@@ -53,6 +54,7 @@ import org.hibernate.annotations.NaturalId;
         allocationSize=10
     )
 @Immutable
+@NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class AggregatedGroupMappingImpl implements AggregatedGroupMapping, Serializable {

@@ -59,7 +59,6 @@ import com.google.common.base.Function;
 public class JpaEventAggregationManagementDao extends BaseAggrEventsJpaDao implements IEventAggregationManagementDao {
     private static final Class<IPortalEventAggregator> DEFAULT_AGGREGATOR_TYPE = IPortalEventAggregator.class; 
     
-    private CriteriaQuery<EventAggregatorStatusImpl> findEventAggregatorStatusByProcessingTypeQuery;
     private CriteriaQuery<AggregatedGroupConfigImpl> findAllGroupConfigsQuery;
     private CriteriaQuery<AggregatedGroupConfigImpl> findGroupConfigForAggregatorQuery;
     private CriteriaQuery<AggregatedIntervalConfigImpl> findAllIntervalConfigsQuery;
@@ -68,27 +67,11 @@ public class JpaEventAggregationManagementDao extends BaseAggrEventsJpaDao imple
     private CriteriaQuery<AcademicTermDetailImpl> findAllAcademicTermDetailsQuery;
     private String deleteAllQuarterDetailsQuery;
 
-    private ParameterExpression<ProcessingType> processingTypeParameter;
     private ParameterExpression<Class> aggregatorTypeParameter;
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.processingTypeParameter = this.createParameterExpression(ProcessingType.class, "processingType");
         this.aggregatorTypeParameter = this.createParameterExpression(Class.class, "aggregatorType");
-        
-        this.findEventAggregatorStatusByProcessingTypeQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<EventAggregatorStatusImpl>>() {
-            @Override
-            public CriteriaQuery<EventAggregatorStatusImpl> apply(CriteriaBuilder cb) {
-                final CriteriaQuery<EventAggregatorStatusImpl> criteriaQuery = cb.createQuery(EventAggregatorStatusImpl.class);
-                final Root<EventAggregatorStatusImpl> entityRoot = criteriaQuery.from(EventAggregatorStatusImpl.class);
-                criteriaQuery.select(entityRoot);
-                criteriaQuery.where(
-                    cb.equal(entityRoot.get(EventAggregatorStatusImpl_.processingType), processingTypeParameter)
-                );
-                
-                return criteriaQuery;
-            }
-        });
         
         this.findAllGroupConfigsQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<AggregatedGroupConfigImpl>>() {
             @Override
@@ -184,11 +167,9 @@ public class JpaEventAggregationManagementDao extends BaseAggrEventsJpaDao imple
 
     @Override
     public IEventAggregatorStatus getEventAggregatorStatus(final ProcessingType processingType, boolean create) {
-        final TypedQuery<EventAggregatorStatusImpl> query = this.createCachedQuery(findEventAggregatorStatusByProcessingTypeQuery);
-        query.setParameter(this.processingTypeParameter, processingType);
-
-        final List<EventAggregatorStatusImpl> resultList = query.getResultList();
-        EventAggregatorStatusImpl status = DataAccessUtils.uniqueResult(resultList);
+        final NaturalIdQuery<EventAggregatorStatusImpl> query = this.createNaturalIdQuery(EventAggregatorStatusImpl.class);
+        query.using(EventAggregatorStatusImpl_.processingType, processingType);
+        EventAggregatorStatusImpl status = query.load();
         
         //Create the status object if it doesn't yet exist
         if (status == null && create) {

@@ -30,7 +30,6 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 import javax.servlet.http.Cookie;
@@ -42,7 +41,6 @@ import org.jasig.portal.portlet.dao.IPortletCookieDao;
 import org.jasig.portal.portlet.om.IPortalCookie;
 import org.jasig.portal.portlet.om.IPortletCookie;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Function;
@@ -60,14 +58,11 @@ public class JpaPortletCookieDaoImpl extends BasePortalJpaDao implements IPortle
 
 	private String deletePortalCookieQueryString;
 	private String deletePortletCookieQueryString;
-	private CriteriaQuery<PortalCookieImpl> findPortalCookieByValueQuery;
 	private CriteriaQuery<PortletCookieImpl> findExpiredByParentPortletCookiesQuery;
-    private ParameterExpression<String> valueParameter;
     private ParameterExpression<Date> nowParameter;
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.valueParameter = this.createParameterExpression(String.class, "value");
         this.nowParameter = this.createParameterExpression(Date.class, "now");
         
         this.deletePortalCookieQueryString = 
@@ -77,22 +72,6 @@ public class JpaPortletCookieDaoImpl extends BasePortalJpaDao implements IPortle
         this.deletePortletCookieQueryString = 
                 "DELETE FROM " + PortletCookieImpl.class.getName() + " e " +
                 "WHERE e." + PortletCookieImpl_.expires.getName() + " <= :" + this.nowParameter.getName();
-        
-        this.findPortalCookieByValueQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<PortalCookieImpl>>() {
-            @Override
-            public CriteriaQuery<PortalCookieImpl> apply(CriteriaBuilder cb) {
-                final CriteriaQuery<PortalCookieImpl> criteriaQuery = cb.createQuery(PortalCookieImpl.class);
-                final Root<PortalCookieImpl> typeRoot = criteriaQuery.from(PortalCookieImpl.class);
-                criteriaQuery.select(typeRoot);
-                typeRoot.fetch(PortalCookieImpl_.portletCookies, JoinType.LEFT);
-                criteriaQuery.where(
-                    cb.equal(typeRoot.get(PortalCookieImpl_.value), valueParameter)
-                );
-                
-                return criteriaQuery;
-            }
-        });
-        
         
         this.findExpiredByParentPortletCookiesQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<PortletCookieImpl>>() {
             @Override
@@ -117,9 +96,6 @@ public class JpaPortletCookieDaoImpl extends BasePortalJpaDao implements IPortle
 		return Base64.encodeBase64URLSafeString(keyBytes);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.cookies.IPortalCookieDao#createPortalCookie(javax.servlet.http.HttpServletRequest)
-	 */
 	@Override
 	@PortalTransactional
 	public IPortalCookie createPortalCookie(int maxAge) {
@@ -139,17 +115,11 @@ public class JpaPortletCookieDaoImpl extends BasePortalJpaDao implements IPortle
 		return portalCookie;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.cookies.IPortalCookieDao#getPortalCookie(java.lang.String)
-	 */
 	@Override
 	public IPortalCookie getPortalCookie(String portalCookieValue) {
-	    final TypedQuery<PortalCookieImpl> query = this.createCachedQuery(this.findPortalCookieByValueQuery);
-	    
-		query.setParameter(this.valueParameter, portalCookieValue);
-        
-		final List<PortalCookieImpl> results = query.getResultList();
-		return DataAccessUtils.uniqueResult(results);
+	    final NaturalIdQuery<PortalCookieImpl> query = this.createNaturalIdQuery(PortalCookieImpl.class);
+	    query.using(PortalCookieImpl_.value, portalCookieValue);
+	    return query.load();
 	}
 
     @Override

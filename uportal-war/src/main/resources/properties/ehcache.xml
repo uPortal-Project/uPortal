@@ -481,7 +481,10 @@
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
-    <!-- NOT CACHED: org.jasig.portal.concurrency.locking.ClusterMutex -->    
+    <!-- Only ID Cached -->
+    <cache name="org.jasig.portal.concurrency.locking.ClusterMutex##NaturalId"
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     <!-- 
      | Caches UserFragmentSubscriptions
@@ -512,6 +515,9 @@
     <cache name="org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl##NaturalId"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl.Query"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
@@ -611,6 +617,9 @@
     <cache name="org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl##NaturalId"
+        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl.Query"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
@@ -649,6 +658,9 @@
     <cache name="org.jasig.portal.portlet.dao.jpa.PortalCookieImpl"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortalCookieImpl#NaturalId"
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="900" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.jasig.portal.portlet.dao.jpa.PortalCookieImpl.Query"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
@@ -665,6 +677,9 @@
      | - replicated by invalidation
      +-->
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl##NaturalId"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl.Query"
@@ -722,6 +737,9 @@
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletTypeImpl"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletTypeImpl##NaturalId"
+        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletTypeImpl.Query"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />

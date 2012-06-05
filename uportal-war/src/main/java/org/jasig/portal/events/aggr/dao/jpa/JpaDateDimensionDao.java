@@ -47,7 +47,6 @@ import com.google.common.base.Function;
 public class JpaDateDimensionDao extends BaseAggrEventsJpaDao implements DateDimensionDao {
     private CriteriaQuery<DateDimensionImpl> findAllDateDimensionsQuery;
     private CriteriaQuery<DateDimensionImpl> findAllDateDimensionsBetweenQuery;
-    private CriteriaQuery<DateDimensionImpl> findDateDimensionByDateQuery;
     private CriteriaQuery<DateDimensionImpl> findNewestDateDimensionQuery;
     private CriteriaQuery<DateDimensionImpl> findOldestDateDimensionQuery;
     private ParameterExpression<LocalDate> dateTimeParameter;
@@ -82,20 +81,6 @@ public class JpaDateDimensionDao extends BaseAggrEventsJpaDao implements DateDim
                         )
                     );
                 criteriaQuery.orderBy(cb.asc(dimensionRoot.get(DateDimensionImpl_.date)));
-                
-                return criteriaQuery;
-            }
-        });
-        
-        this.findDateDimensionByDateQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<DateDimensionImpl>>() {
-            @Override
-            public CriteriaQuery<DateDimensionImpl> apply(CriteriaBuilder cb) {
-                final CriteriaQuery<DateDimensionImpl> criteriaQuery = cb.createQuery(DateDimensionImpl.class);
-                final Root<DateDimensionImpl> dimensionRoot = criteriaQuery.from(DateDimensionImpl.class);
-                criteriaQuery.select(dimensionRoot);
-                criteriaQuery.where(
-                    cb.equal(dimensionRoot.get(DateDimensionImpl_.date), dateTimeParameter)
-                );
                 
                 return criteriaQuery;
             }
@@ -195,10 +180,8 @@ public class JpaDateDimensionDao extends BaseAggrEventsJpaDao implements DateDim
 
     @Override
     public DateDimension getDateDimensionByDate(DateMidnight date) {
-        final TypedQuery<DateDimensionImpl> query = this.createCachedQuery(this.findDateDimensionByDateQuery);
-        query.setParameter(this.dateTimeParameter, date.toLocalDate());
-        
-        final List<DateDimensionImpl> portletDefinitions = query.getResultList();
-        return DataAccessUtils.uniqueResult(portletDefinitions);
+        final NaturalIdQuery<DateDimensionImpl> query = this.createNaturalIdQuery(DateDimensionImpl.class);
+        query.using(DateDimensionImpl_.date, date.toLocalDate());
+        return query.load();
     }
 }

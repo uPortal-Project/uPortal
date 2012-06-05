@@ -796,10 +796,11 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
             
             //First check the aggregation context for a cached session event, fall back
             //to asking the DAO if nothing in the context, cache the result
-            EventSession eventSession = this.eventAggregationContext.getAttribute(eventSessionId);
+            final CacheKey key = CacheKey.build(EVENT_SESSION_CACHE_KEY_SOURCE, eventSessionId);
+            EventSession eventSession = this.eventAggregationContext.getAttribute(key);
             if (eventSession == null) {
                 eventSession = eventSessionDao.getEventSession(item);
-                this.eventAggregationContext.setAttribute(eventSessionId, eventSession);
+                this.eventAggregationContext.setAttribute(key, eventSession);
             }
             
             //Record the session access

@@ -33,6 +33,7 @@ import javax.persistence.Version;
 
 import org.apache.commons.lang.Validate;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.NaturalIdCache;
 import org.springframework.util.Assert;
 
 /**
@@ -55,6 +56,7 @@ import org.springframework.util.Assert;
         allocationSize=1
     )
 //THIS CLASS CANNOT BE CACHED
+@NaturalIdCache
 public class ClusterMutex implements Serializable {
     private static final long serialVersionUID = 1L;
 

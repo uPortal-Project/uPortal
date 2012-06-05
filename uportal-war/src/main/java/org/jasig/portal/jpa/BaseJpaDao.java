@@ -28,7 +28,11 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
+import javax.persistence.metamodel.Attribute;
 
+import org.hibernate.LockOptions;
+import org.hibernate.NaturalIdLoadAccess;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -116,6 +120,16 @@ public abstract class BaseJpaDao implements InitializingBean {
         query.setHint("org.hibernate.cacheRegion", cacheRegion);
         return query;
     }
+    
+    /**
+     * Utility for creating queries based on naturalId
+     */
+    protected final <T> NaturalIdQuery<T> createNaturalIdQuery(Class<T> entityType) {
+        final EntityManager entityManager = this.getEntityManager();
+        final Session session = entityManager.unwrap(Session.class);
+        final NaturalIdLoadAccess naturalIdLoadAccess = session.byNaturalId(entityType);
+        return new NaturalIdQuery<T>(entityType, naturalIdLoadAccess);
+    }
 
     /**
      * Creates the cache region name for the criteria query
@@ -131,5 +145,50 @@ public abstract class BaseJpaDao implements InitializingBean {
             logger.warn("Query " + criteriaQuery + " in " + this.getClass() + " has " + roots.size() + " roots. The first will be used to generated the cache region name: " + cacheRegion);
         }
         return cacheRegion;
+    }
+    
+    /**
+     * Build a query for an entity using its naturalId 
+     * @param <T> The entity type to return
+     */
+    public static final class NaturalIdQuery<T> {
+        private final Class<T> type;
+        private final NaturalIdLoadAccess naturalIdLoadAccess;
+
+        public NaturalIdQuery(Class<T> type, NaturalIdLoadAccess naturalIdLoadAccess) {
+            this.type = type;
+            this.naturalIdLoadAccess = naturalIdLoadAccess;
+        }
+
+        /**
+         * @see NaturalIdLoadAccess#with(LockOptions)
+         */
+        public NaturalIdQuery<T> with(LockOptions lockOptions) {
+            naturalIdLoadAccess.with(lockOptions);
+            return this;
+        }
+
+        /**
+         * Set a naturalId parameter using the JPA2 MetaModel API
+         * @see NaturalIdLoadAccess#using(String, Object)
+         */
+        public <P> NaturalIdQuery<T> using(Attribute<? super T, P> attribute, P value) {
+            naturalIdLoadAccess.using(attribute.getName(), value);
+            return this;
+        }
+
+        /**
+         * @see NaturalIdLoadAccess#getReference()
+         */
+        public T getReference() {
+            return type.cast(naturalIdLoadAccess.getReference());
+        }
+
+        /**
+         * @see NaturalIdLoadAccess#load()
+         */
+        public T load() {
+            return type.cast(naturalIdLoadAccess.load());
+        }
     }
 }

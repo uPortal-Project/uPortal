@@ -19,17 +19,10 @@
 
 package org.jasig.portal.concurrency.locking;
 
-import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceException;
 import javax.persistence.RollbackException;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.ParameterExpression;
-import javax.persistence.criteria.Root;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.jasig.portal.IPortalInfoProvider;
@@ -43,7 +36,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -53,8 +45,6 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import com.google.common.base.Function;
 
 /**
  * DB based locking DAO using JPA2 locking APIs
@@ -68,8 +58,6 @@ public class JpaClusterLockDao extends BasePortalJpaDao implements IClusterLockD
     
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
-    private ParameterExpression<String> nameParameter;
-    private CriteriaQuery<ClusterMutex> clusterLockByNameQuery;
     private ReadableDuration abandonedLockAge = Duration.standardSeconds(5);
     private IPortalInfoProvider portalInfoProvider;
     private TransactionTemplate newTransactionTemplate;
@@ -103,27 +91,6 @@ public class JpaClusterLockDao extends BasePortalJpaDao implements IClusterLockD
         this.entityManagerCache = entityManagerCache;
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        this.nameParameter = this.createParameterExpression(String.class, "name");
-        
-        this.clusterLockByNameQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<ClusterMutex>>() {
-            @Override
-            public CriteriaQuery<ClusterMutex> apply(CriteriaBuilder cb) {
-                final CriteriaQuery<ClusterMutex> criteriaQuery = cb.createQuery(ClusterMutex.class);
-                final Root<ClusterMutex> definitionRoot = criteriaQuery.from(ClusterMutex.class);
-                criteriaQuery.select(definitionRoot);
-                criteriaQuery.where(
-                        cb.equal(definitionRoot.get(ClusterMutex_.name), nameParameter)
-                );
-                return criteriaQuery;
-            }
-        });
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.concurrency.locking.ClusterLockDao#getClusterMutex(java.lang.String)
-     */
     @Override
     public ClusterMutex getClusterMutex(final String mutexName) {
         //Do a get first
@@ -254,10 +221,9 @@ public class JpaClusterLockDao extends BasePortalJpaDao implements IClusterLockD
                     return clusterMutex;
                 }
                 
-                final TypedQuery<ClusterMutex> query = createQuery(clusterLockByNameQuery);
-                query.setParameter(nameParameter, mutexName);
-                final List<ClusterMutex> results = query.getResultList();
-                clusterMutex = DataAccessUtils.singleResult(results);
+                final NaturalIdQuery<ClusterMutex> query = createNaturalIdQuery(ClusterMutex.class);
+                query.using(ClusterMutex_.name, mutexName);
+                clusterMutex = query.load();
                 
                 entityManagerCache.put(PERSISTENCE_UNIT_NAME, key, clusterMutex);
                 

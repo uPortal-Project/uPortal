@@ -34,6 +34,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
 
 @Entity
@@ -49,6 +50,7 @@ import org.hibernate.annotations.Type;
         allocationSize=10
     )
 @Immutable
+@NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class AggregatedPortletMappingImpl implements AggregatedPortletMapping, Serializable {
