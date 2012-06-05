@@ -59,7 +59,6 @@
      | List of event filters to apply to all event aggregators
      +-->
     <util:list id="aggregatorEventFilters">
-    <!-- 
         <bean class="org.jasig.portal.events.handlers.UserFilteringPortalEventHandler">
             <property name="ignoredUserNamePatterns">
                 <list>
@@ -69,7 +68,6 @@
                 </list>
             </property>
         </bean>
-         -->
     </util:list>
     
     

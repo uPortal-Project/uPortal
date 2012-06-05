@@ -61,6 +61,7 @@ import org.joda.time.ReadablePeriod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.AopProxyUtils;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.OrderComparator;
@@ -80,7 +81,7 @@ import com.google.common.collect.Sets;
  * @version $Revision$
  */
 @Service("portalEventAggregationManager")
-public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao implements IPortalEventAggregationManager {
+public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao implements IPortalEventAggregationManager, DisposableBean {
     private static final String EVENT_SESSION_CACHE_KEY_SOURCE = AggregateEventsHandler.class.getName() + "-EventSession";
     
     private static final String DIMENSION_LOCK_NAME = PortalEventAggregationManagerImpl.class.getName() + ".DIMENSION_LOCK";
@@ -90,6 +91,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
     
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     private volatile boolean checkedDimensions = false;
+    private volatile boolean shutdown = false;
     
     private IPortalInfoProvider portalInfoProvider;
     private IClusterLockService clusterLockService;
@@ -183,6 +185,11 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
             throw new IllegalArgumentException("dimensionBuffer must be at least 1 day. Is: " + new Period(dimensionBuffer).toStandardDays().getDays());
         }
         this.dimensionBuffer = dimensionBuffer;
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        this.shutdown = true;
     }
 
     @Override
@@ -634,6 +641,12 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
 
         @Override
         protected void applyWithoutResult(PortalEvent event) {
+            if (shutdown) {
+                //Mark ourselves as interupted and throw an exception
+                Thread.currentThread().interrupt();
+                throw new RuntimeException("uPortal is shutting down, throwing an exeption to stop aggregation");
+            }
+            
             final DateTime eventDate = event.getTimestampAsDate();
             
             //If no interval data yet populate it.
