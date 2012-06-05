@@ -89,6 +89,7 @@ public class PersistentPortalEvent implements Serializable {
     
     @Column(name = "EVENT_DATA", nullable=false, updatable=false)
     @Lob
+    @Type(type="org.hibernate.type.StringClobType")
     private final String eventData; 
     
     @Column(name = "AGGREGATED") 
