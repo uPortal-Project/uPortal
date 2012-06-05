@@ -140,6 +140,7 @@ public class JpaPortletDaoTest extends BaseJpaDaoTest {
                 final List<IPortletPreference> prefsList2 = chanDef2.getPortletPreferences();
                 prefsList2.add(new PortletPreferenceImpl("prefName1", false, "val1", "val2"));
                 prefsList2.add(new PortletPreferenceImpl("prefName2", true, "val3", "val4"));
+                prefsList2.add(new PortletPreferenceImpl("prefNuméro1", true, "val3", "numéro1-non-ascii-char"));
                 
                 jpaPortletDefinitionDao.updatePortletDefinition(chanDef2);
             }
@@ -152,7 +153,7 @@ public class JpaPortletDaoTest extends BaseJpaDaoTest {
         
                 // verify preferences
                 final List<IPortletPreference> prefsList2 = chanDef2.getPortletPreferences();
-                assertEquals(2, prefsList2.size());
+                assertEquals(3, prefsList2.size());
             }
         });
         
@@ -167,10 +168,12 @@ public class JpaPortletDaoTest extends BaseJpaDaoTest {
                 final List<IPortletPreference> expectedPrefsList3 = new ArrayList<IPortletPreference>();
                 expectedPrefsList3.add(new PortletPreferenceImpl("prefName1", false, "val1", "val2"));
                 expectedPrefsList3.add(new PortletPreferenceImpl("prefName2", true, "val3", "val4"));
-                
+                expectedPrefsList3.add(new PortletPreferenceImpl("prefNuméro1", true, "val3", "numéro1-non-ascii-char"));
+
                 assertEquals(expectedPrefsList3, prefsList3);
                 
                 
+                prefsList3.remove(2);
                 prefsList3.remove(1);
                 prefsList3.add(new PortletPreferenceImpl("prefName3", false, "val5", "val6"));
                 
