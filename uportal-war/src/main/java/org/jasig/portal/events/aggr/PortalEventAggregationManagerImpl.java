@@ -34,6 +34,7 @@ import javax.annotation.Resource;
 import javax.persistence.FlushModeType;
 
 import org.apache.commons.lang.mutable.MutableInt;
+import org.apache.commons.lang.mutable.MutableObject;
 import org.hibernate.Session;
 import org.jasig.portal.IPortalInfoProvider;
 import org.jasig.portal.concurrency.FunctionWithoutResult;
@@ -580,6 +581,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
         final Thread currentThread = Thread.currentThread();
         final String currentName = currentThread.getName();
         final MutableInt events = new MutableInt();
+        final MutableObject lastEventDate = new MutableObject();
         
         try {
             currentThread.setName(currentName + "-" + lastAggregated + "_" + newestEventTime);
@@ -588,7 +590,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
             
             //Do aggregation, capturing the start and end dates
             eventAggregatorStatus.setLastStart(DateTime.now());
-            portalEventDao.aggregatePortalEvents(lastAggregated, newestEventTime, this.eventAggregationBatchSize, new AggregateEventsHandler(events, eventAggregatorStatus));
+            portalEventDao.aggregatePortalEvents(lastAggregated, newestEventTime, this.eventAggregationBatchSize, new AggregateEventsHandler(events, lastEventDate, eventAggregatorStatus));
             eventAggregatorStatus.setLastEnd(new DateTime());
         }
         finally {
@@ -599,7 +601,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
         eventAggregationManagementDao.updateEventAggregatorStatus(eventAggregatorStatus);
         
         final boolean complete = this.eventAggregationBatchSize <= 0 || events.intValue() < this.eventAggregationBatchSize;
-        return new EventProcessingResult(events.intValue(), lastAggregated, newestEventTime, complete);
+        return new EventProcessingResult(events.intValue(), lastAggregated, (DateTime)lastEventDate.getValue(), complete);
     }
     
     static class EventProcessingResult {
@@ -665,6 +667,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
         //Event Aggregation Context - used by aggregators to track state
         private final EventAggregationContext eventAggregationContext = new EventAggregationContextImpl(); 
         private final MutableInt eventCounter;
+        private final MutableObject lastEventDate;
         private final IEventAggregatorStatus eventAggregatorStatus;
 
         //pre-compute the set of intervals that our event aggregators support and only bother tracking those
@@ -681,8 +684,9 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
         private final AggregatedGroupConfig defaultAggregatedGroupConfig;
         private final AggregatedIntervalConfig defaultAggregatedIntervalConfig;
         
-        private AggregateEventsHandler(MutableInt eventCounter, IEventAggregatorStatus eventAggregatorStatus) {
+        private AggregateEventsHandler(MutableInt eventCounter, MutableObject lastEventDate, IEventAggregatorStatus eventAggregatorStatus) {
             this.eventCounter = eventCounter;
+            this.lastEventDate = lastEventDate;
             this.eventAggregatorStatus = eventAggregatorStatus;
             this.defaultAggregatedGroupConfig = eventAggregationManagementDao.getDefaultAggregatedGroupConfig();
             this.defaultAggregatedIntervalConfig = eventAggregationManagementDao.getDefaultAggregatedIntervalConfig();
@@ -716,6 +720,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
             }
             
             final DateTime eventDate = event.getTimestampAsDate();
+            this.lastEventDate.setValue(eventDate);
             
             //If no interval data yet populate it.
             if (this.currentIntervalInfo.isEmpty()) {

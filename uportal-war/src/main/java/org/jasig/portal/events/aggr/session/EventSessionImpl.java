@@ -44,6 +44,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
@@ -67,6 +68,10 @@ import org.joda.time.DateTime;
         name="UP_EVENT_SESSION_GEN",
         pkColumnValue="UP_EVENT_SESSION_PROP",
         allocationSize=100
+    )
+@org.hibernate.annotations.Table(
+        appliesTo = "UP_EVENT_SESSION",
+        indexes = @Index(name = "IDX_UP_EVENT_SESSION_DATE", columnNames = { "LAST_ACCESSED" })
     )
 @NaturalIdCache
 @Cacheable
