@@ -658,7 +658,7 @@
     <cache name="org.jasig.portal.portlet.dao.jpa.PortalCookieImpl"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortalCookieImpl#NaturalId"
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortalCookieImpl##NaturalId"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="900" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.jasig.portal.portlet.dao.jpa.PortalCookieImpl.Query"
