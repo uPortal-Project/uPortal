@@ -51,5 +51,5 @@ public interface EventSessionDao {
     /**
      * Purge expired events, expired is defined by the implementation
      */
-    int purgeExpiredEventSessions(DateTime lastAggregatedEventDate);
+    int purgeEventSessionsBefore(DateTime lastAggregatedEventDate);
 }

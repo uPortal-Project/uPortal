@@ -45,9 +45,7 @@
     <bean id="concurrentUserAggregationDao" class="org.jasig.portal.events.aggr.concuser.JpaConcurrentUserAggregationDao" />
     <bean id="tabRenderAggregationDao" class="org.jasig.portal.events.aggr.tabrender.JpaTabRenderAggregationDao"/>
     <bean id="portletExecutionAggregationDao" class="org.jasig.portal.events.aggr.portletexec.JpaPortletExecutionAggregationDao"/>
-    <bean id="eventSessionDao" class="org.jasig.portal.events.aggr.session.JpaEventSessionDao">
-        <property name="eventSessionDuration" value="PT0S" />
-    </bean>
+    <bean id="eventSessionDao" class="org.jasig.portal.events.aggr.session.JpaEventSessionDao" />
     
     <bean id="compositeGroupService" class="org.jasig.portal.spring.MockitoFactoryBean" >
         <constructor-arg value="org.jasig.portal.groups.ICompositeGroupService" />

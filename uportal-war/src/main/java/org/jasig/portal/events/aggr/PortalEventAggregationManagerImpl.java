@@ -111,6 +111,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
     private ReadablePeriod aggregationDelay = Period.seconds(30);
     private ReadablePeriod purgeDelay = Period.days(1);
     private ReadablePeriod dimensionBuffer = Period.days(30);
+    private ReadablePeriod eventSessionDuration = Period.days(1);
     
 
     @Autowired
@@ -195,6 +196,11 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
             throw new IllegalArgumentException("dimensionBuffer must be at least 1 day. Is: " + new Period(dimensionBuffer).toStandardDays().getDays());
         }
         this.dimensionBuffer = dimensionBuffer;
+    }
+    
+    @Value("${org.jasig.portal.events.aggr.session.JpaEventSessionDao.eventSessionDuration:P1D}")
+    public void setEventSessionDuration(ReadablePeriod eventSessionDuration) {
+        this.eventSessionDuration = eventSessionDuration;
     }
 
     @Override
@@ -361,12 +367,13 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                                 
                                 final DateTime lastEventDate = eventAggregatorStatus.getLastEventDate();
                                 if (lastEventDate != null) {
-                                    final int purgeCount = eventSessionDao.purgeExpiredEventSessions(lastEventDate);
+                                    final DateTime sessionPurgeDate = lastEventDate.minus(eventSessionDuration);
+                                    final int purgeCount = eventSessionDao.purgeEventSessionsBefore(sessionPurgeDate);
                                     
                                     if (logger.isInfoEnabled()) {
                                         final long runTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
                                         logger.info("Purged {} event sessions before {} in {}ms - {} sessions/second", 
-                                                new Object[] { purgeCount, lastEventDate, runTime, purgeCount/(runTime/1000d) });
+                                                new Object[] { purgeCount, sessionPurgeDate, runTime, purgeCount/(runTime/1000d) });
                                     }
                                 }
                             }

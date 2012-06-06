@@ -119,7 +119,7 @@ public class JpaEventSessionDaoTest extends BaseAggrEventsJpaDaoTest {
         this.execute(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
-                eventSessionDao.purgeExpiredEventSessions(loginEvent1.getTimestampAsDate().plusYears(1));
+                eventSessionDao.purgeEventSessionsBefore(loginEvent1.getTimestampAsDate().plusYears(1));
             }
         });
     }

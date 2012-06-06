@@ -43,9 +43,7 @@ import org.jasig.portal.jpa.cache.EntityManagerCache;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.joda.time.DateTime;
-import org.joda.time.ReadablePeriod;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Function;
@@ -64,7 +62,6 @@ public class JpaEventSessionDao extends BaseAggrEventsJpaDao implements EventSes
     private ParameterExpression<DateTime> dateTimeParameter;
     
     private AggregatedGroupLookupDao aggregatedGroupLookupDao;
-    private ReadablePeriod eventSessionDuration;
     private ICompositeGroupService compositeGroupService;
     private EntityManagerCache entityManagerCache;
     
@@ -76,11 +73,6 @@ public class JpaEventSessionDao extends BaseAggrEventsJpaDao implements EventSes
     @Autowired
     public void setCompositeGroupService(ICompositeGroupService compositeGroupService) {
         this.compositeGroupService = compositeGroupService;
-    }
-    
-    @Value("${org.jasig.portal.events.aggr.session.JpaEventSessionDao.eventSessionDuration:P1D}")
-    public void setEventSessionDuration(ReadablePeriod eventSessionDuration) {
-        this.eventSessionDuration = eventSessionDuration;
     }
 
     @Autowired
@@ -158,9 +150,9 @@ public class JpaEventSessionDao extends BaseAggrEventsJpaDao implements EventSes
 
     @AggrEventsTransactional
     @Override
-    public int purgeExpiredEventSessions(DateTime lastAggregatedEventDate) {
+    public int purgeEventSessionsBefore(DateTime lastAggregatedEventDate) {
         final TypedQuery<EventSessionImpl> query = this.createQuery(this.findExpiredEventSessionsQuery);
-        query.setParameter(this.dateTimeParameter, lastAggregatedEventDate.minus(eventSessionDuration));
+        query.setParameter(this.dateTimeParameter, lastAggregatedEventDate);
         final List<EventSessionImpl> resultList = query.getResultList();
         for (final EventSessionImpl eventSession : resultList) {
             this.getEntityManager().remove(eventSession);
