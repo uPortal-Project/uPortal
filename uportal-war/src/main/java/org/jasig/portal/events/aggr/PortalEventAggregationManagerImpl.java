@@ -49,6 +49,7 @@ import org.jasig.portal.events.aggr.session.EventSession;
 import org.jasig.portal.events.aggr.session.EventSessionDao;
 import org.jasig.portal.events.handlers.db.IPortalEventDao;
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
+import org.jasig.portal.jpa.BaseRawEventsJpaDao;
 import org.jasig.portal.spring.context.ApplicationEventFilter;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.joda.time.DateMidnight;
@@ -61,12 +62,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.OrderComparator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionOperations;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -91,6 +94,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
     private volatile boolean checkedDimensions = false;
     private volatile boolean shutdown = false;
     
+    private TransactionOperations rawEventsTransactionOperations;
     private IPortalInfoProvider portalInfoProvider;
     private IClusterLockService clusterLockService;
     private IEventAggregationManagementDao eventAggregationManagementDao;
@@ -106,6 +110,13 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
     private ReadablePeriod aggregationDelay = Period.seconds(30);
     private ReadablePeriod purgeDelay = Period.days(1);
     private ReadablePeriod dimensionBuffer = Period.days(30);
+    
+
+    @Autowired
+    @Qualifier(BaseRawEventsJpaDao.PERSISTENCE_UNIT_NAME)
+    public final void setRawEventsTransactionOperations(TransactionOperations rawEventsTransactionOperations) {
+        this.rawEventsTransactionOperations = rawEventsTransactionOperations;
+    }
     
     /**
      * @param applicationEventFilters The list of filters to test each event with
@@ -244,10 +255,16 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                         //Executing within lock
                         final long start = System.nanoTime();
                         
-                        final EventProcessingResult result = getTransactionOperations().execute(new TransactionCallback<EventProcessingResult>() {
+                        //Do RawTX around AggrTX. The AggrTX is MUCH more likely to fail than the RawTX and this results in both rolling back
+                        final EventProcessingResult result = rawEventsTransactionOperations.execute(new TransactionCallback<EventProcessingResult>() {
                             @Override
                             public EventProcessingResult doInTransaction(TransactionStatus status) {
-                                return doAggregateRawEvents();
+                                return getTransactionOperations().execute(new TransactionCallback<EventProcessingResult>() {
+                                        @Override
+                                        public EventProcessingResult doInTransaction(TransactionStatus status) {
+                                            return doAggregateRawEvents();
+                                        }
+                                    });
                             }
                         });
                         

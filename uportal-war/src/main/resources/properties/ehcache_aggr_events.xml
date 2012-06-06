@@ -24,7 +24,7 @@
     xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd" updateCheck="false" name="uPortalEventAggr.cacheManager"
     maxBytesLocalHeap="5%">
 
-    <sizeOfPolicy maxDepth="10000" maxDepthExceededBehavior="continue"/>
+    <sizeOfPolicy maxDepth="50000" maxDepthExceededBehavior="continue"/>
 
     <!--
      | General direct-access portal caches are in the first section
