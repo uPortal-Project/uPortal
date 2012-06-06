@@ -295,7 +295,7 @@ public abstract class JpaBaseAggregationDao<
 
     @Override
     public final Map<K, T> getAggregationsForInterval(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval) {
-        final TypedQuery<T> query = this.createCachedQuery(this.findAggregationByDateTimeIntervalQuery);
+        final TypedQuery<T> query = this.createQuery(this.findAggregationByDateTimeIntervalQuery);
         query.setParameter(this.dateDimensionParameter, dateDimension);
         query.setParameter(this.timeDimensionParameter, timeDimension);
         query.setParameter(this.intervalParameter, interval);
