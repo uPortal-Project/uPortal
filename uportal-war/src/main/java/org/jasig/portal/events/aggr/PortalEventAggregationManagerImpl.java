@@ -364,7 +364,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                                     
                                     if (logger.isInfoEnabled()) {
                                         final long runTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
-                                        logger.info("Purged {} event sessions before {} in {}ms - {} events/second", 
+                                        logger.info("Purged {} event sessions before {} in {}ms - {} sessions/second", 
                                                 new Object[] { purgeCount, lastEventDate, runTime, purgeCount/(runTime/1000d) });
                                     }
                                 }
