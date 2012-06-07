@@ -482,37 +482,41 @@ var uportal = uportal || {};
         });
         
         // initialize the portlet reorderer
-        that.components.portletReorderer = up.fluid.reorderLayout (
-            "#portalPageBodyColumns",
-            {
-                selectors: {
-                    columns: ".portal-page-column-inner",
-                    modules: ".up-portlet-wrapper",
-                    lockedModules: ".locked",
-                    dropWarning: $("#portalDropWarning"),
-                    grabHandle: "[id*=toolbar_]"
-                 },
-                 listeners: {
-                     afterMove: function(movedNode) {
-                         var method = 'insertBefore';
-                         var target = null;
-                         if ($(movedNode).nextAll('div[id*=portlet_]').size() > 0) {
-                             target = $(movedNode).nextAll('div[id*=portlet_]').get(0);
-                         } else if ($(movedNode).prevAll('div[id*=portlet_]').size() > 0) {
-                             target = $(movedNode).prevAll('div[id*=portlet_]').get(0);
-                             method = 'appendAfter';
-                         } else {
-                             target = $(movedNode).parent();
-                         }
-                         var columns = $('#portalPageBodyColumns > [id^=column_]');
-                         that.persistence.update({ action: 'movePortlet', method: method, elementID: up.defaultNodeIdExtractor(target), sourceID: up.defaultNodeIdExtractor(movedNode) });
-                     }
-                 },
-                 styles: {
-                     mouseDrag: "fl-reorderer-movable-dragging-mouse"
-                 }
-            }
-        );
+		// checks to see if chrome toolbars exist on the layout
+		// if so, initialize portlet reorderer
+		if ($("[id*=toolbar_]").length > 0) {
+	        that.components.portletReorderer = up.fluid.reorderLayout (
+	            "#portalPageBodyColumns",
+	            {
+	                selectors: {
+	                    columns: ".portal-page-column-inner",
+	                    modules: ".up-portlet-wrapper",
+	                    lockedModules: ".locked",
+	                    dropWarning: $("#portalDropWarning"),
+	                    grabHandle: "[id*=toolbar_]"
+	                 },
+	                 listeners: {
+	                     afterMove: function(movedNode) {
+	                         var method = 'insertBefore';
+	                         var target = null;
+	                         if ($(movedNode).nextAll('div[id*=portlet_]').size() > 0) {
+	                             target = $(movedNode).nextAll('div[id*=portlet_]').get(0);
+	                         } else if ($(movedNode).prevAll('div[id*=portlet_]').size() > 0) {
+	                             target = $(movedNode).prevAll('div[id*=portlet_]').get(0);
+	                             method = 'appendAfter';
+	                         } else {
+	                             target = $(movedNode).parent();
+	                         }
+	                         var columns = $('#portalPageBodyColumns > [id^=column_]');
+	                         that.persistence.update({ action: 'movePortlet', method: method, elementID: up.defaultNodeIdExtractor(target), sourceID: up.defaultNodeIdExtractor(movedNode) });
+	                     }
+	                 },
+	                 styles: {
+	                     mouseDrag: "fl-reorderer-movable-dragging-mouse"
+	                 }
+	            }
+	        );
+		}
 
         // Portlet deletion
         $('a[id*=removePortlet_]').click(function () {
