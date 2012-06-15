@@ -81,7 +81,10 @@ public class EntityTargetProviderImpl implements IPermissionTargetProvider, Seri
         for (String type : allowedEntityTypes) {
             JsonEntityBean entity = groupListHelper.getEntity(type, key, false);
             if (entity != null) {
-                IPermissionTarget target = new PermissionTargetImpl(entity.getId(), entity.getName());
+                String entityId = entity.getId();
+            	if("portlet".equals(type))
+                    entityId = IPermission.PORTLET_PREFIX.concat(entityId);
+                IPermissionTarget target = new PermissionTargetImpl(entityId, entity.getName());
                 return target;
             }
         }
