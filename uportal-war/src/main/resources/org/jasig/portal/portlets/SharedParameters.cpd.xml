@@ -83,6 +83,15 @@
             </single-choice-parameter-input>
         </parameter>
     
+        <parameter>
+            <name>hideFromDesktop</name>
+            <label>hide.in.desktop.theme</label>
+            <single-choice-parameter-input display="select">
+                <default>false</default>
+                <option value="false" label="false"/>
+                <option value="true" label="true"/>
+            </single-choice-parameter-input>
+        </parameter>
         
         <parameter>
             <name>blockImpersonation</name>
