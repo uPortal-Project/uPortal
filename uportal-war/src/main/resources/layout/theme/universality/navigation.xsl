@@ -407,6 +407,7 @@
           	<xsl:when test="$CONTEXT='flyout'">
             
               <xsl:for-each select="tabChannel">
+                <xsl:if test="not(@hideFromDesktop='true')">
                 <xsl:variable name="SUBNAV_POSITION"> <!-- Determine the position of the navigation option within the whole navigation list and add css hooks for the first and last positions. -->
                   <xsl:choose>
                     <xsl:when test="position()=1 and position()=last()">single</xsl:when>
@@ -430,12 +431,14 @@
                       <span class="portal-subnav-label"><xsl:value-of select="@title"/></span>
                   </a>
                 </li>
+                </xsl:if>
               </xsl:for-each>
               
             </xsl:when>
             <xsl:otherwise>
             	
               <xsl:for-each select="//navigation/tab[@activeTab='true']/tabChannel">
+                <xsl:if test="not(@hideFromDesktop='true')">
                 <xsl:variable name="SUBNAV_POSITION"> <!-- Determine the position of the navigation option within the whole navigation list and add css hooks for the first and last positions. -->
                   <xsl:choose>
                     <xsl:when test="position()=1 and position()=last()">single</xsl:when>
@@ -459,6 +462,7 @@
                     <span class="portal-subnav-label"><xsl:value-of select="@title"/></span>
                   </a>
                 </li>
+                </xsl:if>
               </xsl:for-each>
               
             </xsl:otherwise>
