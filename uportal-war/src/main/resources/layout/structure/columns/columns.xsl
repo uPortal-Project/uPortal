@@ -284,6 +284,7 @@
 </xsl:template>
 
 <xsl:template match="channel">
+<xsl:if test="not(parameter[@name='hideFromDesktop']/@value = 'true')">
   <xsl:choose>
     <xsl:when test="$userImpersonating = 'true' and parameter[@name='blockImpersonation']/@value = 'true'">
         <blocked-channel>
@@ -295,6 +296,7 @@
       <xsl:copy-of select="."/>
     </xsl:otherwise>
   </xsl:choose>
+</xsl:if>
 </xsl:template>
 
 <xsl:template match="parameter">

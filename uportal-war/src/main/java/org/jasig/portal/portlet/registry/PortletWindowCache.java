@@ -19,6 +19,7 @@
 
 package org.jasig.portal.portlet.registry;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -43,7 +44,9 @@ import com.google.common.base.Function;
  * @version $Revision$
  * @param <T>
  */
-class PortletWindowCache<T extends IPortletWindowDescriptor> {
+class PortletWindowCache<T extends IPortletWindowDescriptor> implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private final Lock writeLock;
     private final Lock readLock;
     
