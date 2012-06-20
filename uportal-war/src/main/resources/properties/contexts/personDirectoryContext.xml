@@ -150,6 +150,22 @@
                     <set>
                         <value>uid</value>
                         <value>user.login.id</value>
+                        <value>schoolId</value>
+                    </set>
+                </entry>
+                <entry key="givenName">
+                    <set>
+                        <value>firstName</value>
+                    </set>
+                </entry>
+                <entry key="sn">
+                    <set>
+                        <value>lastName</value>
+                    </set>
+                </entry>
+                <entry key="mail">
+                    <set>
+                        <value>primaryEmailAddress</value>
                     </set>
                 </entry>
             </map>

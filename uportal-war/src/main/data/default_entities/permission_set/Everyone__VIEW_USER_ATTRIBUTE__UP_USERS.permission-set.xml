@@ -56,4 +56,16 @@
   <target permission-type="GRANT">
                                                 <literal>username</literal>
                                             </target>
+  <target permission-type="GRANT">
+                                                <literal>schoolId</literal>
+                                            </target>
+  <target permission-type="GRANT">
+                                                <literal>firstName</literal>
+                                            </target>
+  <target permission-type="GRANT">
+                                                <literal>lastName</literal>
+                                            </target>
+  <target permission-type="GRANT">
+                                                <literal>primaryEmailAddress</literal>
+                                            </target>
 </permission-set>
