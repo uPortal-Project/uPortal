@@ -25,7 +25,7 @@
       <channel fname="fragment-admin-exit" unremovable="false" hidden="false" immutable="false" ID="n3"/>
     </folder>
     <folder ID="s6" hidden="false" immutable="false" name="Footer folder" type="footer" unremovable="false"/>
-    <folder ID="s7" hidden="false" immutable="false" name="Admin Tools" type="regular" unremovable="false">
+    <folder ID="s7" dlm:deleteAllowed="false"  dlm:moveAllowed="false" hidden="false" immutable="false" name="Admin Tools" type="regular" unremovable="false">
       <folder ID="s8" hidden="false" immutable="false" name="Column" type="regular" unremovable="false">
         <structure-attribute>
           <name>width</name>
