@@ -545,6 +545,7 @@ public class UrlSyntaxProviderImplTest {
         final String layoutNodeId = "u12l1s5";
         final String subscribeId = "u12l1n7";
         final String fname = "news";
+        final String resourceId = "calendar.2012-06-01.7";
         
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/uPortal");
@@ -563,11 +564,12 @@ public class UrlSyntaxProviderImplTest {
         
         final PortalUrlBuilder portalUrlBuilder = new PortalUrlBuilder(urlSyntaxProvider, request, layoutNodeId, portletWindowId1, UrlType.RESOURCE);
         final IPortletUrlBuilder portletUrlBuilder1 = portalUrlBuilder.getPortletUrlBuilder(portletWindowId1);
+        portletUrlBuilder1.setResourceId(resourceId);
         portletUrlBuilder1.setCacheability(ResourceURL.PAGE);
         
         final String url = portalUrlBuilder.getUrlString();
                      
-        assertEquals("/uPortal/f/u12l1s5/p/news.u12l1n7/detached/resource.uP?pCc=cacheLevelPage", url);
+        assertEquals("/uPortal/f/u12l1s5/p/news.u12l1n7/detached/resource.uP?pCc=cacheLevelPage&pCr=calendar.2012-06-01.7", url);
     }
     
     @Test
@@ -575,8 +577,9 @@ public class UrlSyntaxProviderImplTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/uPortal");
         request.setRequestURI("/f/u12l1s5/p/news.u12l1n7/detached/resource.uP");
-        request.setQueryString("?pCc=cacheLevelPage");
+        request.setQueryString("?pCc=cacheLevelPage&pCr=calendar.2012-06-01.7");
         request.addParameter("pCc", "cacheLevelPage");
+        request.addParameter("pCr", "calendar.2012-06-01.7");
         
         final MockPortletWindowId portletWindowId = new MockPortletWindowId("s3");
         final MockPortletWindowId detachedPortletWindowId = new MockPortletWindowId("d3");
@@ -608,6 +611,7 @@ public class UrlSyntaxProviderImplTest {
         assertEquals(IPortletRenderer.DETACHED, portletRequestInfo.getWindowState());
         assertNull(portletRequestInfo.getPortletMode());
         assertEquals(ResourceURL.PAGE, portletRequestInfo.getCacheability());
+        assertEquals("calendar.2012-06-01.7", portletRequestInfo.getResourceId());
 
         
         final PortalUrlBuilder portalUrlBuilder = new PortalUrlBuilder(urlSyntaxProvider, request, "u12l1s5", detachedPortletWindowId, UrlType.RESOURCE);
@@ -620,7 +624,7 @@ public class UrlSyntaxProviderImplTest {
         when(urlNodeSyntaxHelper.getFolderNamesForLayoutNode(request, "u12l1s5")).thenReturn(Collections.singletonList("u12l1s5"));
         
         final String canonicalUrl = this.urlSyntaxProvider.getCanonicalUrl(request);
-        assertEquals("/uPortal/f/u12l1s5/p/news.u12l1n7/detached/resource.uP?pCc=cacheLevelPage", canonicalUrl);
+        assertEquals("/uPortal/f/u12l1s5/p/news.u12l1n7/detached/resource.uP?pCc=cacheLevelPage&pCr=calendar.2012-06-01.7", canonicalUrl);
     }
 
     @Test
