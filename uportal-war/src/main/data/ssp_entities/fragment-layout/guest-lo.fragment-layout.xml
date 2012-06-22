@@ -8,25 +8,26 @@
       <folder ID="s5" hidden="false" immutable="false" name="Column" type="regular" unremovable="false">
         <structure-attribute>
           <name>width</name>
+          <value>40%</value>
+        </structure-attribute>
+        <channel fname="login" unremovable="false" hidden="false" immutable="false" ID="n6"/>
+      </folder>
+      <folder ID="s7" hidden="false" immutable="false" name="Column" type="regular" unremovable="false">
+        <structure-attribute>
+          <name>width</name>
           <value>60%</value>
         </structure-attribute>
       </folder>
-      <folder ID="s8" hidden="false" immutable="false" name="Column" type="regular" unremovable="false">
-        <structure-attribute>
-          <name>width</name>
-          <value>40%</value>
-        </structure-attribute>
-      </folder>
     </folder>
-    <folder ID="s11" hidden="false" immutable="false" name="Footer folder" type="footer" unremovable="false"/>
-    <folder ID="s13" hidden="false" immutable="false" name="My GPS" type="regular" unremovable="false">
-      <folder ID="s17" hidden="false" immutable="false" name="Column" type="regular" unremovable="false">
+    <folder ID="s8" hidden="false" immutable="false" name="My GPS" type="regular" unremovable="false">
+      <folder ID="s9" hidden="false" immutable="false" name="Column" type="regular" unremovable="false">
         <structure-attribute>
           <name>width</name>
           <value>100%</value>
         </structure-attribute>
-        <channel fname="my-gps" unremovable="false" hidden="false" immutable="false" ID="n24"/>
+        <channel fname="my-gps" unremovable="false" hidden="false" immutable="false" ID="n10"/>
       </folder>
     </folder>
+    <folder ID="s11" hidden="false" immutable="false" name="Footer folder" type="footer" unremovable="false"/>
   </folder>
 </layout>

@@ -22,13 +22,6 @@
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
-
-        <dependency>
-            <groupId>org.jasig.ssp.platform.portlets-overlay</groupId>
-            <artifactId>cas</artifactId>
-            <version>${project.version}</version>
-            <type>war</type>
-        </dependency>
         
         <dependency>
             <groupId>org.jasig.resourceserver</groupId>
@@ -104,12 +97,6 @@
                             <artifactId>platform-war</artifactId>
                             <bundleFileName>${ssp.docbase}.war</bundleFileName>
                             <contextRoot>/${ssp.docbase}</contextRoot>
-                        </webModule>
-                        <webModule>
-                            <groupId>org.jasig.ssp.platform.portlets-overlay</groupId>
-                            <artifactId>cas</artifactId>
-                            <bundleFileName>cas.war</bundleFileName>
-                            <contextRoot>/cas</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.jasig.ssp.platform.portlets-overlay</groupId>

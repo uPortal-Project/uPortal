@@ -16,7 +16,6 @@
     <description>Parent package for portlets deployed with SSP.</description>
 
     <modules>
-        <module>cas</module>
         <module>NotificationPortlet</module>
         <module>ssp</module>
     </modules>
