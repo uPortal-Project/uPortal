@@ -141,122 +141,716 @@
          | app.
          +-->
         <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
-            factory-method="createMultiChoicePreference">
-
-			<!-- String name -->
-            <constructor-arg value="sspRole"/>
-
-			<!-- String label (optionally a key for messages.properties) -->
-            <constructor-arg value="SSP Role(s)"/>
-
-			<!-- MultiChoiceDisplay displayType -->
-            <constructor-arg value="CHECKBOX"/>
-
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="PERSON_APPOINTMENT"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="PERSON_APPOINTMENT"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
 			<!-- List<Option> options -->
             <constructor-arg>
             	<list>
             		<bean class="org.jasig.portal.portletpublishing.xml.Option">
-            			<property name="label" value="Academic Counselor or Advisor" />
-            			<property name="value" value="sspRoleAcademicCounselorOrAdvisor" />
+            			<property name="label" value="NONE" />
+            			<property name="value" value="NONE" />
             		</bean>
             		<bean class="org.jasig.portal.portletpublishing.xml.Option">
-            			<property name="label" value="Counselor" />
-            			<property name="value" value="sspRoleCounselor" />
+            			<property name="label" value="READ" />
+            			<property name="value" value="READ" />
             		</bean>
             		<bean class="org.jasig.portal.portletpublishing.xml.Option">
-            			<property name="label" value="Faculty" />
-            			<property name="value" value="sspRoleFaculty" />
+            			<property name="label" value="WRITE" />
+            			<property name="value" value="WRITE" />
             		</bean>
             		<bean class="org.jasig.portal.portletpublishing.xml.Option">
-            			<property name="label" value="Developer" />
-            			<property name="value" value="sspRoleDeveloper" />
-            		</bean>
-            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
-            			<property name="label" value="Management" />
-            			<property name="value" value="sspRoleManagement" />
-            		</bean>
-            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
-            			<property name="label" value="Super User" />
-            			<property name="value" value="sspRoleSuperUser" />
-            		</bean>
-            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
-            			<property name="label" value="Support Staff" />
-            			<property name="value" value="sspRoleSupportStaff" />
-            		</bean>
-            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
-            			<property name="label" value="Student" />
-            			<property name="value" value="sspRoleStudent" />
+            			<property name="label" value="DELETE" />
+            			<property name="value" value="DELETE" />
             		</bean>
             	</list>
             </constructor-arg>
-            
-            <!-- List<String> defaultValues -->
-            <constructor-arg>
-            	<list /><!-- none -->
-            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="NONE"/>
         </bean>
         <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
-            factory-method="createMultiChoicePreference">
-
-			<!-- String name -->
-            <constructor-arg value="sspAccess"/>
-
-			<!-- String label (optionally a key for messages.properties) -->
-            <constructor-arg value="SSP Special Access"/>
-
-			<!-- MultiChoiceDisplay displayType -->
-            <constructor-arg value="CHECKBOX"/>
-
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="PERSON_CASELOAD"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="PERSON_CASELOAD"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
 			<!-- List<Option> options -->
             <constructor-arg>
             	<list>
             		<bean class="org.jasig.portal.portletpublishing.xml.Option">
-            			<property name="label" value="Academic Resource Center" />
-            			<property name="value" value="sspAccessAcademicResourceCenter" />
+            			<property name="label" value="NONE" />
+            			<property name="value" value="NONE" />
             		</bean>
             		<bean class="org.jasig.portal.portletpublishing.xml.Option">
-            			<property name="label" value="Counseling Services" />
-            			<property name="value" value="sspAccessCounselingServices" />
-            		</bean>
-            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
-            			<property name="label" value="Disability" />
-            			<property name="value" value="sspAccessDisability" />
-            		</bean>
-            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
-            			<property name="label" value="Displaced Workers" />
-            			<property name="value" value="sspAccessDisplacedWorkers" />
-            		</bean>
-            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
-            			<property name="label" value="Early Alert" />
-            			<property name="value" value="sspAccessEarlyAlert" />
-            		</bean>
-            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
-            			<property name="label" value="English as a Second Language" />
-            			<property name="value" value="sspAccessEnglishAsSecondLanguage" />
-            		</bean>
-            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
-            			<property name="label" value="Fast Forward" />
-            			<property name="value" value="sspAccessFastForward" />
-            		</bean>
-            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
-            			<property name="label" value="Individualized Learning Plan" />
-            			<property name="value" value="sspAccessIndividualizedLearningPlan" />
-            		</bean>
-            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
-            			<property name="label" value="Manager" />
-            			<property name="value" value="sspAccessManager" />
-            		</bean>
-            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
-            			<property name="label" value="Staff" />
-            			<property name="value" value="sspAccessStaff" />
+            			<property name="label" value="READ" />
+            			<property name="value" value="READ" />
             		</bean>
             	</list>
             </constructor-arg>
-            
-            <!-- List<String> defaultValues -->
+            <!-- String defaultValue -->
+            <constructor-arg value="NONE"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="PERSON_CHALLENGE"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="PERSON_CHALLENGE"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
             <constructor-arg>
-            	<list /><!-- none -->
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="NONE" />
+            			<property name="value" value="NONE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="READ" />
+            			<property name="value" value="READ" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="WRITE" />
+            			<property name="value" value="WRITE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="DELETE" />
+            			<property name="value" value="DELETE" />
+            		</bean>
+            	</list>
             </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="NONE"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="PERSON_DOCUMENT"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="PERSON_DOCUMENT"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="NONE" />
+            			<property name="value" value="NONE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="READ" />
+            			<property name="value" value="READ" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="WRITE" />
+            			<property name="value" value="WRITE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="DELETE" />
+            			<property name="value" value="DELETE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="NONE"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="PERSON_EARLY_ALERT"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="PERSON_EARLY_ALERT"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="NONE" />
+            			<property name="value" value="NONE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="READ" />
+            			<property name="value" value="READ" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="WRITE" />
+            			<property name="value" value="WRITE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="DELETE" />
+            			<property name="value" value="DELETE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="NONE"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="PERSON_EARLY_ALERT_RESPONSE"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="PERSON_EARLY_ALERT_RESPONSE"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="NONE" />
+            			<property name="value" value="NONE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="READ" />
+            			<property name="value" value="READ" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="WRITE" />
+            			<property name="value" value="WRITE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="DELETE" />
+            			<property name="value" value="DELETE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="NONE"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="PERSON_GOAL"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="PERSON_GOAL"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="NONE" />
+            			<property name="value" value="NONE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="READ" />
+            			<property name="value" value="READ" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="WRITE" />
+            			<property name="value" value="WRITE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="DELETE" />
+            			<property name="value" value="DELETE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="NONE"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="PERSON_JOURNAL_ENTRY"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="PERSON_JOURNAL_ENTRY"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="NONE" />
+            			<property name="value" value="NONE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="READ" />
+            			<property name="value" value="READ" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="WRITE" />
+            			<property name="value" value="WRITE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="DELETE" />
+            			<property name="value" value="DELETE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="NONE"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="PERSON"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="PERSON"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="NONE" />
+            			<property name="value" value="NONE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="READ" />
+            			<property name="value" value="READ" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="WRITE" />
+            			<property name="value" value="WRITE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="DELETE" />
+            			<property name="value" value="DELETE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="NONE"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="PERSON_SEARCH"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="PERSON_SEARCH"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="NONE" />
+            			<property name="value" value="NONE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="READ" />
+            			<property name="value" value="READ" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="NONE"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="PERSON_PROGRAM_STATUS"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="PERSON_PROGRAM_STATUS"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="NONE" />
+            			<property name="value" value="NONE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="READ" />
+            			<property name="value" value="READ" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="WRITE" />
+            			<property name="value" value="WRITE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="DELETE" />
+            			<property name="value" value="DELETE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="NONE"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="PERSON_TASK"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="PERSON_TASK"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="NONE" />
+            			<property name="value" value="NONE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="READ" />
+            			<property name="value" value="READ" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="WRITE" />
+            			<property name="value" value="WRITE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="DELETE" />
+            			<property name="value" value="DELETE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="NONE"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="REFERENCE"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="REFERENCE"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="NONE" />
+            			<property name="value" value="NONE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="READ" />
+            			<property name="value" value="READ" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="WRITE" />
+            			<property name="value" value="WRITE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="NONE"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="STUDENT_INTAKE"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="STUDENT_INTAKE"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="NONE" />
+            			<property name="value" value="NONE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="READ" />
+            			<property name="value" value="READ" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="WRITE" />
+            			<property name="value" value="WRITE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="NONE"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_MY_RECORD_ONLY"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_MY_RECORD_ONLY"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_EVERYONE"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_EVERYONE"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_ACADEMIC_RESOURCE_CENTER"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_ACADEMIC_RESOURCE_CENTER"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_COUNSELING_SERVICES"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_COUNSELING_SERVICES"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_DISABILITY"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_DISABILITY"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_DISPLACED_WORKERS"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_DISPLACED_WORKERS"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_EARLY_ALERT"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_EARLY_ALERT"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_ENGLISH_SECOND_LANGUAGE"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_ENGLISH_SECOND_LANGUAGE"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_FAST_FORWARD"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_FAST_FORWARD"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_INDIVIDUALIZED_LEARNING_PLAN"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_INDIVIDUALIZED_LEARNING_PLAN"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_MANAGER"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_MANAGER"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_STAFF"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_STAFF"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
         </bean>
 
     </util:list>

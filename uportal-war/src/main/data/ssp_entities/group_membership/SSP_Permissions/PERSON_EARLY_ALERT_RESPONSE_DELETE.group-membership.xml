@@ -20,19 +20,11 @@
 
 -->
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
-  <name>SSP Roles</name>
+  <name>PERSON_EARLY_ALERT_RESPONSE_DELETE</name>
   <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
-  <description>Container group for roles in the Student Success Plan product</description>
-  <children>
-    <group>Academic Counselor or Advisor</group>
-    <group>Anonymous</group>
-    <group>Counselor</group>
-    <group>Developer</group>
-    <group>Faculty</group>
-    <group>Management</group>
-    <group>Student</group>
-    <group>Super User</group>
-    <group>Support Staff</group>
+  <description>Parent group to which the PERSON_EARLY_ALERT_RESPONSE_DELETE permission in SSP attaches. Members of this group's child groups will have the PERSON_EARLY_ALERT_RESPONSE_DELETE permission.</description>
+  <children> 
+    <group>(has) PERSON_EARLY_ALERT_RESPONSE_DELETE</group> 
   </children>
 </group>

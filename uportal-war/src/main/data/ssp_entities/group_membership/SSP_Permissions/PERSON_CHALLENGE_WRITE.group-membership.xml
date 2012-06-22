@@ -20,20 +20,12 @@
 
 -->
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
-  <name>SSP Access Types</name>
+  <name>PERSON_CHALLENGE_WRITE</name>
   <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
-  <description>Container for Access Types in the Student Success Plan product</description>
-  <children>
-    <group>Academic Resource Center</group>
-    <group>Counseling Services</group>
-    <group>Disability</group>
-    <group>Displaced Workers</group>
-    <group>Early Alert</group>
-    <group>English as a Second Language</group>
-    <group>Fast Forward</group>
-    <group>Individualized Learning Plan</group>
-    <group>Manager</group>
-    <group>Staff</group>
+  <description>Parent group to which the PERSON_CHALLENGE_WRITE permission in SSP attaches. Members of this group's child groups will have the PERSON_CHALLENGE_WRITE permission.</description>
+  <children> 
+    <group>(has) PERSON_CHALLENGE_WRITE</group> 
+    <group>(has) PERSON_CHALLENGE_DELETE</group> 
   </children>
 </group>

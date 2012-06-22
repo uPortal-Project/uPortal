@@ -20,11 +20,12 @@
 
 -->
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
-  <name>Fast Forward</name>
+  <name>STUDENT_INTAKE_READ</name>
   <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
-  <description>Fast Forward access type in SSP</description>
-  <children>
-    <group>PAGS_AccessType_Fast Forward</group>
+  <description>Parent group to which the STUDENT_INTAKE_READ permission in SSP attaches. Members of this group's child groups will have the STUDENT_INTAKE_READ permission.</description>
+  <children> 
+    <group>(has) STUDENT_INTAKE_READ</group> 
+    <group>(has) STUDENT_INTAKE_WRITE</group> 
   </children>
 </group>

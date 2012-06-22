@@ -23,12 +23,7 @@
   <dlm:fragment name="SSP" ownerID="ssp-lo" precedence="50">
     <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory">
       <paren mode="OR">     
-        <attribute mode="deepMemberOf" name="Management"/>
-        <attribute mode="deepMemberOf" name="Super User"/>
-        <attribute mode="deepMemberOf" name="Academic Counselor or Advisor"/>
-        <attribute mode="deepMemberOf" name="Developer"/>
-        <attribute mode="deepMemberOf" name="Counselor"/>
-        <attribute mode="deepMemberOf" name="Support Staff"/>
+        <attribute mode="deepMemberOf" name="SSP Permissions"/>
         <attribute mode="deepMemberOf" name="Portal Administrators"/>
       </paren>
     </dlm:audience>

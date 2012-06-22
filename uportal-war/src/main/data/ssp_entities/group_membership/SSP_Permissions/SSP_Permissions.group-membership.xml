@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
+  <name>SSP Permissions</name>
+  <entity-type>org.jasig.portal.security.IPerson</entity-type>
+  <creator>system</creator>
+  <description>Contains child groups representing the individual permissions in SSP</description>
+  <children>
+    <group>PERSON_APPOINTMENT_READ</group>
+    <group>PERSON_APPOINTMENT_WRITE</group>
+    <group>PERSON_APPOINTMENT_DELETE</group>
+    <group>PERSON_CASELOAD_READ</group>
+    <group>PERSON_CHALLENGE_READ</group>
+    <group>PERSON_CHALLENGE_WRITE</group>
+    <group>PERSON_CHALLENGE_DELETE</group>
+    <group>PERSON_DOCUMENT_READ</group>
+    <group>PERSON_DOCUMENT_WRITE</group>
+    <group>PERSON_DOCUMENT_DELETE</group>
+    <group>PERSON_EARLY_ALERT_READ</group>
+    <group>PERSON_EARLY_ALERT_WRITE</group>
+    <group>PERSON_EARLY_ALERT_DELETE</group>
+    <group>PERSON_EARLY_ALERT_RESPONSE_READ</group>
+    <group>PERSON_EARLY_ALERT_RESPONSE_WRITE</group>
+    <group>PERSON_EARLY_ALERT_RESPONSE_DELETE</group>
+    <group>PERSON_GOAL_READ</group>
+    <group>PERSON_GOAL_WRITE</group>
+    <group>PERSON_GOAL_DELETE</group>
+    <group>PERSON_JOURNAL_ENTRY_READ</group>
+    <group>PERSON_JOURNAL_ENTRY_WRITE</group>
+    <group>PERSON_JOURNAL_ENTRY_DELETE</group>
+    <group>PERSON_READ</group>
+    <group>PERSON_WRITE</group>
+    <group>PERSON_DELETE</group>
+    <group>PERSON_SEARCH_READ</group>
+    <group>PERSON_PROGRAM_STATUS_READ</group>
+    <group>PERSON_PROGRAM_STATUS_WRITE</group>
+    <group>PERSON_PROGRAM_STATUS_DELETE</group>
+    <group>PERSON_TASK_READ</group>
+    <group>PERSON_TASK_WRITE</group>
+    <group>PERSON_TASK_DELETE</group>
+    <group>REFERENCE_READ</group>
+    <group>REFERENCE_WRITE</group>
+    <group>STUDENT_INTAKE_READ</group>
+    <group>STUDENT_INTAKE_WRITE</group>
+    <group>DATA_MY_RECORD_ONLY</group>
+    <group>DATA_EVERYONE</group>
+    <group>DATA_ACADEMIC_RESOURCE_CENTER</group>
+    <group>DATA_COUNSELING_SERVICES</group>
+    <group>DATA_DISABILITY</group>
+    <group>DATA_DISPLACED_WORKERS</group>
+    <group>DATA_EARLY_ALERT</group>
+    <group>DATA_ENGLISH_SECOND_LANGAGE</group>
+    <group>DATA_FAST_FORWARD</group>
+    <group>DATA_INDIVIDUALIZED_LEARNING_PLAN</group>
+    <group>DATA_MANAGER</group>
+    <group>DATA_STAFF</group>
+  </children>
+</group>

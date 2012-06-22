@@ -20,10 +20,11 @@
 
 -->
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
-  <name>Subscribable Fragments</name>
+  <name>DATA_ACADEMIC_RESOURCE_CENTER</name>
   <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
-  <description>These are fragment layout owner accounts</description>
-  <children>
+  <description>Parent group to which the DATA_ACADEMIC_RESOURCE_CENTER permission in SSP attaches. Members of this group's child groups will have the DATA_ACADEMIC_RESOURCE_CENTER permission.</description>
+  <children> 
+    <group>(has) DATA_ACADEMIC_RESOURCE_CENTER</group> 
   </children>
 </group>

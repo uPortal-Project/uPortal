@@ -20,12 +20,13 @@
 
 -->
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
-  <name>Super User</name>
+  <name>PERSON_JOURNAL_ENTRY_READ</name>
   <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
-  <description>Super User role in SSP</description>
-  <children>
-    <group>PAGS_Role_Super User</group>
-    <literal>admin</literal>
+  <description>Parent group to which the PERSON_JOURNAL_ENTRY_READ permission in SSP attaches. Members of this group's child groups will have the PERSON_JOURNAL_ENTRY_READ permission.</description>
+  <children> 
+    <group>(has) PERSON_JOURNAL_ENTRY_READ</group> 
+    <group>(has) PERSON_JOURNAL_ENTRY_WRITE</group> 
+    <group>(has) PERSON_JOURNAL_ENTRY_DELETE</group> 
   </children>
 </group>

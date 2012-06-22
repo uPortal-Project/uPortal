@@ -20,11 +20,13 @@
 
 -->
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
-  <name>Academic Counselor or Advisor</name>
+  <name>PERSON_CHALLENGE_READ</name>
   <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
-  <description>Academic Counselor or Advisor role in SSP</description>
-  <children>
-    <group>PAGS_Role_Academic Counselor or Advisor</group>
+  <description>Parent group to which the PERSON_CHALLENGE_READ permission in SSP attaches. Members of this group's child groups will have the PERSON_CHALLENGE_READ permission.</description>
+  <children> 
+    <group>(has) PERSON_CHALLENGE_READ</group> 
+    <group>(has) PERSON_CHALLENGE_WRITE</group> 
+    <group>(has) PERSON_CHALLENGE_DELETE</group> 
   </children>
 </group>

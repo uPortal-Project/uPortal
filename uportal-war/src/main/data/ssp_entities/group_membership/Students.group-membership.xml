@@ -25,7 +25,5 @@
   <creator>system</creator>
   <description>All students</description>
   <children>
-    <literal>student</literal>
-    <literal>student-lo</literal>
   </children>
 </group>

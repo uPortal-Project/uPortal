@@ -20,11 +20,11 @@
 
 -->
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
-  <name>Support Staff</name>
+  <name>PERSON_PROGRAM_STATUS_DELETE</name>
   <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
-  <description>Support Staff role in SSP</description>
-  <children>
-    <group>PAGS_Role_Support Staff</group>
+  <description>Parent group to which the PERSON_PROGRAM_STATUS_DELETE permission in SSP attaches. Members of this group's child groups will have the PERSON_PROGRAM_STATUS_DELETE permission.</description>
+  <children> 
+    <group>(has) PERSON_PROGRAM_STATUS_DELETE</group> 
   </children>
 </group>

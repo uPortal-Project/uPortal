@@ -20,10 +20,11 @@
 
 -->
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
-  <name>Subscribable Fragments</name>
+  <name>PERSON_JOURNAL_ENTRY_DELETE</name>
   <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
-  <description>These are fragment layout owner accounts</description>
-  <children>
+  <description>Parent group to which the PERSON_JOURNAL_ENTRY_DELETE permission in SSP attaches. Members of this group's child groups will have the PERSON_JOURNAL_ENTRY_DELETE permission.</description>
+  <children> 
+    <group>(has) PERSON_JOURNAL_ENTRY_DELETE</group> 
   </children>
 </group>

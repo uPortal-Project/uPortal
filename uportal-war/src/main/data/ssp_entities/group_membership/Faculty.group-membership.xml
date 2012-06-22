@@ -23,8 +23,7 @@
   <name>Faculty</name>
   <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
-  <description>Faculty role in SSP</description>
+  <description>All Faculty</description>
   <children>
-    <group>PAGS_Role_Faculty</group>
   </children>
 </group>

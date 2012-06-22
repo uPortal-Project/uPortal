@@ -19,8 +19,4 @@
         <name>telephoneNumber</name>
         <value>(555) 555-5555</value>
     </attribute>
-    <attribute>
-        <name>sspRole</name>
-        <value>sspRoleStudent</value>
-    </attribute>
 </user>

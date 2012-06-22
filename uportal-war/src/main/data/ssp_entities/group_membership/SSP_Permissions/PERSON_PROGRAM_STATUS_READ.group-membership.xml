@@ -20,11 +20,13 @@
 
 -->
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
-  <name>Manager</name>
+  <name>PERSON_PROGRAM_STATUS_READ</name>
   <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
-  <description>Manager access type in SSP</description>
-  <children>
-    <group>PAGS_AccessType_Manager</group>
+  <description>Parent group to which the PERSON_PROGRAM_STATUS_READ permission in SSP attaches. Members of this group's child groups will have the PERSON_PROGRAM_STATUS_READ permission.</description>
+  <children> 
+    <group>(has) PERSON_PROGRAM_STATUS_READ</group> 
+    <group>(has) PERSON_PROGRAM_STATUS_WRITE</group> 
+    <group>(has) PERSON_PROGRAM_STATUS_DELETE</group> 
   </children>
 </group>

@@ -20,11 +20,11 @@
 
 -->
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
-  <name>Developer</name>
+  <name>PERSON_CHALLENGE_DELETE</name>
   <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
-  <description>Developer role in SSP</description>
-  <children>
-    <group>PAGS_Role_Developer</group>
+  <description>Parent group to which the PERSON_CHALLENGE_DELETE permission in SSP attaches. Members of this group's child groups will have the PERSON_CHALLENGE_DELETE permission.</description>
+  <children> 
+    <group>(has) PERSON_CHALLENGE_DELETE</group> 
   </children>
 </group>

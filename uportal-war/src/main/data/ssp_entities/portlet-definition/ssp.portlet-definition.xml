@@ -11,12 +11,7 @@
         <ns2:portletName>SSP</ns2:portletName>
     </portlet-descriptor>
     <category>Advisor</category>
-    <group>Support Staff</group>
-    <group>Management</group>
-    <group>Counselor</group>
-    <group>Developer</group>
-    <group>Super User</group>
-    <group>Academic Counselor or Advisor</group>
+    <group>SSP Permissions</group>
     <parameter>
         <name>disableDynamicTitle</name>
         <value>true</value>

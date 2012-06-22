@@ -11,7 +11,7 @@
         <ns2:portletName>SSP Reports</ns2:portletName>
     </portlet-descriptor>
     <category>All categories</category>
-    <group>SSP Roles</group>
+    <group>SSP Permissions</group>
     <parameter>
         <name>disableDynamicTitle</name>
         <value>true</value>

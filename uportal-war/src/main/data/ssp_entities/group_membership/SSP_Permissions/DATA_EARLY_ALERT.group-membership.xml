@@ -20,11 +20,11 @@
 
 -->
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
-  <name>Academic Resource Center</name>
+  <name>DATA_EARLY_ALERT</name>
   <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
-  <description>Academic Resource Center access type in SSP</description>
-  <children>
-    <group>PAGS_AccessType_Academic Resource Center</group>
+  <description>Parent group to which the DATA_EARLY_ALERT permission in SSP attaches. Members of this group's child groups will have the DATA_EARLY_ALERT permission.</description>
+  <children> 
+    <group>(has) DATA_EARLY_ALERT</group> 
   </children>
 </group>

@@ -61,25 +61,54 @@
     <members>
       <member-key>all_users</member-key>
       <member-key>authenticated_users</member-key>
-      <member-key>pags_accesstype_academic_resource_center</member-key>
-      <member-key>accesstype_counseling_services</member-key>
-      <member-key>pags_accesstype_disability</member-key>
-      <member-key>pags_accesstype_displaced_workers</member-key>
-      <member-key>pags_accesstype_early_alert</member-key>
-      <member-key>pags_accesstype_english_second_language</member-key>
-      <member-key>pags_accesstype_fast_forward</member-key>
-      <member-key>pags_accesstype_individualized_learning_plan</member-key>
-      <member-key>pags_accesstype_manager</member-key>
-      <member-key>pags_accesstype_staff</member-key>
-      <member-key>pags_role_academic_counselor_or_advisor</member-key>
-      <member-key>pags_role_counselor</member-key>
-      <member-key>pags_role_faculty</member-key>
-      <member-key>pags_role_developer</member-key>
-      <member-key>pags_role_management</member-key>
-      <member-key>pags_role_super_user</member-key>
-      <member-key>pags_role_support_staff</member-key>
-      <member-key>pags_role_student</member-key>
-      <member-key>pags_role_anonymous</member-key>
+      <member-key>PERSON_APPOINTMENT_READ</member-key>
+      <member-key>PERSON_APPOINTMENT_WRITE</member-key>
+      <member-key>PERSON_APPOINTMENT_DELETE</member-key>
+      <member-key>PERSON_CASELOAD_READ</member-key>
+      <member-key>PERSON_CHALLENGE_READ</member-key>
+      <member-key>PERSON_CHALLENGE_WRITE</member-key>
+      <member-key>PERSON_CHALLENGE_DELETE</member-key>
+      <member-key>PERSON_DOCUMENT_READ</member-key>
+      <member-key>PERSON_DOCUMENT_WRITE</member-key>
+      <member-key>PERSON_DOCUMENT_DELETE</member-key>
+      <member-key>PERSON_EARLY_ALERT_READ</member-key>
+      <member-key>PERSON_EARLY_ALERT_WRITE</member-key>
+      <member-key>PERSON_EARLY_ALERT_DELETE</member-key>
+      <member-key>PERSON_EARLY_ALERT_RESPONSE_READ</member-key>
+      <member-key>PERSON_EARLY_ALERT_RESPONSE_WRITE</member-key>
+      <member-key>PERSON_EARLY_ALERT_RESPONSE_DELETE</member-key>
+      <member-key>PERSON_GOAL_READ</member-key>
+      <member-key>PERSON_GOAL_WRITE</member-key>
+      <member-key>PERSON_GOAL_DELETE</member-key>
+      <member-key>PERSON_JOURNAL_ENTRY_READ</member-key>
+      <member-key>PERSON_JOURNAL_ENTRY_WRITE</member-key>
+      <member-key>PERSON_JOURNAL_ENTRY_DELETE</member-key>
+      <member-key>PERSON_READ</member-key>
+      <member-key>PERSON_WRITE</member-key>
+      <member-key>PERSON_DELETE</member-key>
+      <member-key>PERSON_SEARCH_READ</member-key>
+      <member-key>PERSON_PROGRAM_STATUS_READ</member-key>
+      <member-key>PERSON_PROGRAM_STATUS_WRITE</member-key>
+      <member-key>PERSON_PROGRAM_STATUS_DELETE</member-key>
+      <member-key>PERSON_TASK_READ</member-key>
+      <member-key>PERSON_TASK_WRITE</member-key>
+      <member-key>PERSON_TASK_DELETE</member-key>
+      <member-key>REFERENCE_READ</member-key>
+      <member-key>REFERENCE_WRITE</member-key>
+      <member-key>STUDENT_INTAKE_READ</member-key>
+      <member-key>STUDENT_INTAKE_WRITE</member-key>
+      <member-key>DATA_MY_RECORD_ONLY</member-key>
+      <member-key>DATA_EVERYONE</member-key>
+      <member-key>DATA_ACADEMIC_RESOURCE_CENTER</member-key>
+      <member-key>DATA_COUNSELING_SERVICES</member-key>
+      <member-key>DATA_DISABILITY</member-key>
+      <member-key>DATA_DISPLACED_WORKERS</member-key>
+      <member-key>DATA_EARLY_ALERT</member-key>
+      <member-key>DATA_ENGLISH_SECOND_LANGAGE</member-key>
+      <member-key>DATA_FAST_FORWARD</member-key>
+      <member-key>DATA_INDIVIDUALIZED_LEARNING_PLAN</member-key>
+      <member-key>DATA_MANAGER</member-key>
+      <member-key>DATA_STAFF</member-key>
     </members>
   </group>
 
@@ -119,296 +148,728 @@
     </selection-test>
   </group>
   
-  <!--==================== SSP Groups ======================= -->
-  
+  <!--==================== SSP Groups (permissions) ======================= -->
+
   <group>
-    <group-key>pags_accesstype_academic_resource_center</group-key>
-    <group-name>PAGS_AccessType_Academic Resource Center</group-name>
-    <group-description>Academic Resource Center</group-description>
+    <group-key>PERSON_APPOINTMENT_READ</group-key>
+    <group-name>(has) PERSON_APPOINTMENT_READ</group-name>
+    <group-description>Users with the appropriate value in their PERSON_APPOINTMENT attribute.</group-description>
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspAccess</attribute-name>
+          <attribute-name>PERSON_APPOINTMENT</attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
-          <test-value>sspAccessAcademicResourceCenter</test-value>
+          <test-value>READ</test-value>
         </test>
       </test-group>
     </selection-test>
   </group>
-  
+
   <group>
-    <group-key>accesstype_counseling_services</group-key>
-    <group-name>PAGS_AccessType_Counseling Services</group-name>
-    <group-description>AccessType_Counseling Services</group-description>
+    <group-key>PERSON_APPOINTMENT_WRITE</group-key>
+    <group-name>(has) PERSON_APPOINTMENT_WRITE</group-name>
+    <group-description>Users with the appropriate value in their PERSON_APPOINTMENT attribute.</group-description>
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspAccess</attribute-name>
+          <attribute-name>PERSON_APPOINTMENT</attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
-          <test-value>sspAccessCounselingServices</test-value>
+          <test-value>WRITE</test-value>
         </test>
       </test-group>
     </selection-test>
   </group>
-  
+
   <group>
-    <group-key>pags_accesstype_disability</group-key>
-    <group-name>PAGS_AccessType_Disability</group-name>
-    <group-description>AccessType_Disability</group-description>
+    <group-key>PERSON_APPOINTMENT_DELETE</group-key>
+    <group-name>(has) PERSON_APPOINTMENT_DELETE</group-name>
+    <group-description>Users with the appropriate value in their PERSON_APPOINTMENT attribute.</group-description>
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspAccess</attribute-name>
+          <attribute-name>PERSON_APPOINTMENT</attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
-          <test-value>sspAccessDisability</test-value>
+          <test-value>DELETE</test-value>
         </test>
       </test-group>
     </selection-test>
   </group>
-  
+
   <group>
-    <group-key>pags_accesstype_displaced_workers</group-key>
-    <group-name>PAGS_AccessType_Displaced Workers</group-name>
-    <group-description>AccessType_Displaced Workers</group-description>
+    <group-key>PERSON_CASELOAD_READ</group-key>
+    <group-name>(has) PERSON_CASELOAD_READ</group-name>
+    <group-description>Users with the appropriate value in their PERSON_CASELOAD attribute.</group-description>
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspAccess</attribute-name>
+          <attribute-name>PERSON_CASELOAD</attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
-          <test-value>sspAccessDisplacedWorkers</test-value>
+          <test-value>READ</test-value>
         </test>
       </test-group>
     </selection-test>
   </group>
-  
+
   <group>
-    <group-key>pags_accesstype_early_alert</group-key>
-    <group-name>PAGS_AccessType_Early Alert</group-name>
-    <group-description>AccessType_Early Alert</group-description>
+    <group-key>PERSON_CHALLENGE_READ</group-key>
+    <group-name>(has) PERSON_CHALLENGE_READ</group-name>
+    <group-description>Users with the appropriate value in their PERSON_CHALLENGE attribute.</group-description>
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspAccess</attribute-name>
+          <attribute-name>PERSON_CHALLENGE</attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
-          <test-value>sspAccessEarlyAlert</test-value>
+          <test-value>READ</test-value>
         </test>
       </test-group>
     </selection-test>
   </group>
-  
+
   <group>
-    <group-key>pags_accesstype_english_second_language</group-key>
-    <group-name>PAGS_AccessType_English as a Second Language</group-name>
-    <group-description>AccessType_English as a Second Language</group-description>
+    <group-key>PERSON_CHALLENGE_WRITE</group-key>
+    <group-name>(has) PERSON_CHALLENGE_WRITE</group-name>
+    <group-description>Users with the appropriate value in their PERSON_CHALLENGE attribute.</group-description>
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspAccess</attribute-name>
+          <attribute-name>PERSON_CHALLENGE</attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
-          <test-value>sspAccessEnglishAsSecondLanguage</test-value>
+          <test-value>WRITE</test-value>
         </test>
       </test-group>
     </selection-test>
   </group>
-  
+
   <group>
-    <group-key>pags_accesstype_fast_forward</group-key>
-    <group-name>PAGS_AccessType_Fast Forward</group-name>
-    <group-description>AccessType_Fast Forward</group-description>
+    <group-key>PERSON_CHALLENGE_DELETE</group-key>
+    <group-name>(has) PERSON_CHALLENGE_DELETE</group-name>
+    <group-description>Users with the appropriate value in their PERSON_CHALLENGE attribute.</group-description>
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspAccess</attribute-name>
+          <attribute-name>PERSON_CHALLENGE</attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
-          <test-value>sspAccessFastForward</test-value>
+          <test-value>DELETE</test-value>
         </test>
       </test-group>
     </selection-test>
   </group>
-  
+
   <group>
-    <group-key>pags_accesstype_individualized_learning_plan</group-key>
-    <group-name>PAGS_AccessType_Individualized Learning Plan</group-name>
-    <group-description>AccessType_Individualized Learning Plan</group-description>
+    <group-key>PERSON_DOCUMENT_READ</group-key>
+    <group-name>(has) PERSON_DOCUMENT_READ</group-name>
+    <group-description>Users with the appropriate value in their PERSON_DOCUMENT attribute.</group-description>
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspAccess</attribute-name>
+          <attribute-name>PERSON_DOCUMENT</attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
-          <test-value>sspAccessIndividualizedLearningPlan</test-value>
+          <test-value>READ</test-value>
         </test>
       </test-group>
     </selection-test>
   </group>
-  
+
   <group>
-    <group-key>pags_accesstype_manager</group-key>
-    <group-name>PAGS_AccessType_Manager</group-name>
-    <group-description>AccessType_Manager</group-description>
+    <group-key>PERSON_DOCUMENT_WRITE</group-key>
+    <group-name>(has) PERSON_DOCUMENT_WRITE</group-name>
+    <group-description>Users with the appropriate value in their PERSON_DOCUMENT attribute.</group-description>
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspAccess</attribute-name>
+          <attribute-name>PERSON_DOCUMENT</attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
-          <test-value>sspAccessManager</test-value>
+          <test-value>WRITE</test-value>
         </test>
       </test-group>
     </selection-test>
   </group>
-  
+
   <group>
-    <group-key>pags_accesstype_staff</group-key>
-    <group-name>PAGS_AccessType_Staff</group-name>
-    <group-description>AccessType_Staff</group-description>
+    <group-key>PERSON_DOCUMENT_DELETE</group-key>
+    <group-name>(has) PERSON_DOCUMENT_DELETE</group-name>
+    <group-description>Users with the appropriate value in their PERSON_DOCUMENT attribute.</group-description>
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspRole</attribute-name>
+          <attribute-name>PERSON_DOCUMENT</attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
-          <test-value>sspAccessStaff</test-value>
+          <test-value>DELETE</test-value>
         </test>
       </test-group>
     </selection-test>
   </group>
-  
+
   <group>
-    <group-key>pags_role_academic_counselor_or_advisor</group-key>
-    <group-name>PAGS_Role_Academic Counselor or Advisor</group-name>
-    <group-description>Role_Academic Counselor or Advisor</group-description>
+    <group-key>PERSON_EARLY_ALERT_READ</group-key>
+    <group-name>(has) PERSON_EARLY_ALERT_READ</group-name>
+    <group-description>Users with the appropriate value in their PERSON_EARLY_ALERT attribute.</group-description>
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspRole</attribute-name>
+          <attribute-name>PERSON_EARLY_ALERT</attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
-          <test-value>sspRoleAcademicCounselorOrAdvisor</test-value>
+          <test-value>READ</test-value>
         </test>
       </test-group>
     </selection-test>
   </group>
-  
+
   <group>
-    <group-key>pags_role_counselor</group-key>
-    <group-name>PAGS_Role_Counselor</group-name>
-    <group-description>Role_Counselor</group-description>
+    <group-key>PERSON_EARLY_ALERT_WRITE</group-key>
+    <group-name>(has) PERSON_EARLY_ALERT_WRITE</group-name>
+    <group-description>Users with the appropriate value in their PERSON_EARLY_ALERT attribute.</group-description>
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspRole</attribute-name>
+          <attribute-name>PERSON_EARLY_ALERT</attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
-          <test-value>sspRoleCounselor</test-value>
+          <test-value>WRITE</test-value>
         </test>
       </test-group>
     </selection-test>
   </group>
-  
+
   <group>
-    <group-key>pags_role_faculty</group-key>
-    <group-name>PAGS_Role_Faculty</group-name>
-    <group-description>Role_Faculty</group-description>
+    <group-key>PERSON_EARLY_ALERT_DELETE</group-key>
+    <group-name>(has) PERSON_EARLY_ALERT_DELETE</group-name>
+    <group-description>Users with the appropriate value in their PERSON_EARLY_ALERT attribute.</group-description>
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspRole</attribute-name>
+          <attribute-name>PERSON_EARLY_ALERT</attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
-          <test-value>sspRoleFaculty</test-value>
+          <test-value>DELETE</test-value>
         </test>
       </test-group>
     </selection-test>
   </group>
-  
+
   <group>
-    <group-key>pags_role_developer</group-key>
-    <group-name>PAGS_Role_Developer</group-name>
-    <group-description>Role_Developer</group-description>
+    <group-key>PERSON_EARLY_ALERT_RESPONSE_READ</group-key>
+    <group-name>(has) PERSON_EARLY_ALERT_RESPONSE_READ</group-name>
+    <group-description>Users with the appropriate value in their PERSON_EARLY_ALERT_RESPONSE attribute.</group-description>
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspRole</attribute-name>
+          <attribute-name>PERSON_EARLY_ALERT_RESPONSE</attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
-          <test-value>sspRoleDeveloper</test-value>
+          <test-value>READ</test-value>
         </test>
       </test-group>
     </selection-test>
   </group>
-  
+
   <group>
-    <group-key>pags_role_management</group-key>
-    <group-name>PAGS_Role_Management</group-name>
-    <group-description>Role_Management</group-description>
+    <group-key>PERSON_EARLY_ALERT_RESPONSE_WRITE</group-key>
+    <group-name>(has) PERSON_EARLY_ALERT_RESPONSE_WRITE</group-name>
+    <group-description>Users with the appropriate value in their PERSON_EARLY_ALERT_RESPONSE attribute.</group-description>
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspRole</attribute-name>
+          <attribute-name>PERSON_EARLY_ALERT_RESPONSE</attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
-          <test-value>sspRoleManagement</test-value>
+          <test-value>WRITE</test-value>
         </test>
       </test-group>
     </selection-test>
   </group>
-  
+	
   <group>
-    <group-key>pags_role_super_user</group-key>
-    <group-name>PAGS_Role_Super User</group-name>
-    <group-description>Role_Super User</group-description>
+    <group-key>PERSON_EARLY_ALERT_RESPONSE_DELETE</group-key>
+    <group-name>(has) PERSON_EARLY_ALERT_RESPONSE_DELETE</group-name>
+    <group-description>Users with the appropriate value in their PERSON_EARLY_ALERT_RESPONSE attribute.</group-description>
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspRole</attribute-name>
+          <attribute-name>PERSON_EARLY_ALERT_RESPONSE</attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
-          <test-value>sspRoleSuperUser</test-value>
+          <test-value>DELETE</test-value>
         </test>
       </test-group>
     </selection-test>
   </group>
-  
+
   <group>
-    <group-key>pags_role_support_staff</group-key>
-    <group-name>PAGS_Role_Support Staff</group-name>
-    <group-description>Role_Support Staff</group-description>
+    <group-key>PERSON_GOAL_READ</group-key>
+    <group-name>(has) PERSON_GOAL_READ</group-name>
+    <group-description>Users with the appropriate value in their PERSON_GOAL attribute.</group-description>
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspRole</attribute-name>
+          <attribute-name>PERSON_GOAL</attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
-          <test-value>sspRoleSupportStaff</test-value>
+          <test-value>READ</test-value>
         </test>
       </test-group>
     </selection-test>
   </group>
-  
+
   <group>
-    <group-key>pags_role_student</group-key>
-    <group-name>PAGS_Role_Student</group-name>
-    <group-description>Role_Student</group-description>
+    <group-key>PERSON_GOAL_WRITE</group-key>
+    <group-name>(has) PERSON_GOAL_WRITE</group-name>
+    <group-description>Users with the appropriate value in their PERSON_GOAL attribute.</group-description>
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>sspRole</attribute-name>
+          <attribute-name>PERSON_GOAL</attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
-          <test-value>sspRoleStudent</test-value>
+          <test-value>WRITE</test-value>
         </test>
       </test-group>
     </selection-test>
   </group>
-  
+
   <group>
-    <group-key>pags_role_anonymous</group-key>
-    <group-name>PAGS_Role_Anonymous - Unauthenticated User</group-name>
-    <group-description>Role_Anonymous - Unauthenticated User</group-description>
+    <group-key>PERSON_GOAL_DELETE</group-key>
+    <group-name>(has) PERSON_GOAL_DELETE</group-name>
+    <group-description>Users with the appropriate value in their PERSON_GOAL attribute.</group-description>
     <selection-test>
       <test-group>
         <test>
-          <attribute-name></attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.GuestUserTester</tester-class>
-          <test-value>true</test-value>
+          <attribute-name>PERSON_GOAL</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>DELETE</test-value>
         </test>
       </test-group>
     </selection-test>
   </group>
-  
-  
-  
-  
+
+  <group>
+    <group-key>PERSON_JOURNAL_ENTRY_READ</group-key>
+    <group-name>(has) PERSON_JOURNAL_ENTRY_READ</group-name>
+    <group-description>Users with the appropriate value in their PERSON_JOURNAL_ENTRY attribute.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>PERSON_JOURNAL_ENTRY</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>READ</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+  <group>
+    <group-key>PERSON_JOURNAL_ENTRY_WRITE</group-key>
+    <group-name>(has) PERSON_JOURNAL_ENTRY_WRITE</group-name>
+    <group-description>Users with the appropriate value in their PERSON_JOURNAL_ENTRY attribute.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>PERSON_JOURNAL_ENTRY</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>WRITE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+  <group>
+    <group-key>PERSON_JOURNAL_ENTRY_DELETE</group-key>
+    <group-name>(has) PERSON_JOURNAL_ENTRY_DELETE</group-name>
+    <group-description>Users with the appropriate value in their PERSON_JOURNAL_ENTRY attribute.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>PERSON_JOURNAL_ENTRY</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>DELETE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+  <group>
+    <group-key>PERSON_READ</group-key>
+    <group-name>(has) PERSON_READ</group-name>
+    <group-description>Users with the appropriate value in their PERSON attribute.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>PERSON</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>READ</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+  <group>
+    <group-key>PERSON_WRITE</group-key>
+    <group-name>(has) PERSON_WRITE</group-name>
+    <group-description>Users with the appropriate value in their PERSON attribute.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>PERSON</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>WRITE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+  <group>
+    <group-key>PERSON_DELETE</group-key>
+    <group-name>(has) PERSON_DELETE</group-name>
+    <group-description>Users with the appropriate value in their PERSON attribute.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>PERSON</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>DELETE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+  <group>
+    <group-key>PERSON_SEARCH_READ</group-key>
+    <group-name>(has) PERSON_SEARCH_READ</group-name>
+    <group-description>Users with the appropriate value in their PERSON_SEARCH attribute.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>PERSON_SEARCH</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>READ</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+  <group>
+    <group-key>PERSON_PROGRAM_STATUS_READ</group-key>
+    <group-name>(has) PERSON_PROGRAM_STATUS_READ</group-name>
+    <group-description>Users with the appropriate value in their PERSON_PROGRAM_STATUS attribute.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>PERSON_PROGRAM_STATUS</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>READ</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+  <group>
+    <group-key>PERSON_PROGRAM_STATUS_WRITE</group-key>
+    <group-name>(has) PERSON_PROGRAM_STATUS_WRITE</group-name>
+    <group-description>Users with the appropriate value in their PERSON_PROGRAM_STATUS attribute.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>PERSON_PROGRAM_STATUS</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>WRITE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+  <group>
+    <group-key>PERSON_PROGRAM_STATUS_DELETE</group-key>
+    <group-name>(has) PERSON_PROGRAM_STATUS_DELETE</group-name>
+    <group-description>Users with the appropriate value in their PERSON_PROGRAM_STATUS attribute.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>PERSON_PROGRAM_STATUS</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>DELETE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+  <group>
+    <group-key>PERSON_TASK_READ</group-key>
+    <group-name>(has) PERSON_TASK_READ</group-name>
+    <group-description>Users with the appropriate value in their PERSON_TASK attribute.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>PERSON_TASK</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>READ</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+	
+  <group>
+    <group-key>PERSON_TASK_WRITE</group-key>
+    <group-name>(has) PERSON_TASK_WRITE</group-name>
+    <group-description>Users with the appropriate value in their PERSON_TASK attribute.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>PERSON_TASK</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>WRITE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+  <group>
+    <group-key>PERSON_TASK_DELETE</group-key>
+    <group-name>(has) PERSON_TASK_DELETE</group-name>
+    <group-description>Users with the appropriate value in their PERSON_TASK attribute.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>PERSON_TASK</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>DELETE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+  <group>
+    <group-key>REFERENCE_READ</group-key>
+    <group-name>(has) REFERENCE_READ</group-name>
+    <group-description>Users with the appropriate value in their REFERENCE attribute.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>REFERENCE</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>READ</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+  <group>
+    <group-key>REFERENCE_WRITE</group-key>
+    <group-name>(has) REFERENCE_WRITE</group-name>
+    <group-description>Users with the appropriate value in their REFERENCE attribute.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>REFERENCE</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>WRITE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+  <group>
+    <group-key>STUDENT_INTAKE_READ</group-key>
+    <group-name>(has) STUDENT_INTAKE_READ</group-name>
+    <group-description>Users with the appropriate value in their STUDENT_INTAKE attribute.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>STUDENT_INTAKE</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>READ</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+  <group>
+    <group-key>STUDENT_INTAKE_WRITE</group-key>
+    <group-name>(has) STUDENT_INTAKE_WRITE</group-name>
+    <group-description>Users with the appropriate value in their STUDENT_INTAKE attribute.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>STUDENT_INTAKE</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>WRITE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+  <group>
+    <group-key>DATA_MY_RECORD_ONLY</group-key>
+    <group-name>(has) DATA_MY_RECORD_ONLY</group-name>
+    <group-description>Users with the appropriate value in their DATA_MY_RECORD_ONLY attribute.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>DATA_MY_RECORD_ONLY</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+  <group>
+    <group-key>DATA_EVERYONE</group-key>
+    <group-name>(has) DATA_EVERYONE</group-name>
+    <group-description>Users with the appropriate value in their DATA_EVERYONE attribute.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>DATA_EVERYONE</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+  <group>
+    <group-key>DATA_ACADEMIC_RESOURCE_CENTER</group-key>
+    <group-name>(has) DATA_ACADEMIC_RESOURCE_CENTER</group-name>
+    <group-description>Users with the appropriate value in their DATA_ACADEMIC_RESOURCE_CENTER attribute.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>xxx</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+  <group>
+    <group-key>DATA_COUNSELING_SERVICES</group-key>
+    <group-name>(has) DATA_COUNSELING_SERVICES</group-name>
+    <group-description>Users with the appropriate value in their DATA_COUNSELING_SERVICES attribute.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>DATA_COUNSELING_SERVICES</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+  <group>
+    <group-key>DATA_DISABILITY</group-key>
+    <group-name>(has) DATA_DISABILITY</group-name>
+    <group-description>Users with the appropriate value in their DATA_DISABILITY attribute.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>DATA_DISABILITY</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+  <group>
+    <group-key>DATA_DISPLACED_WORKERS</group-key>
+    <group-name>(has) DATA_DISPLACED_WORKERS</group-name>
+    <group-description>Users with the appropriate value in their DATA_DISPLACED_WORKERS attribute.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>DATA_DISPLACED_WORKERS</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+  <group>
+    <group-key>DATA_EARLY_ALERT</group-key>
+    <group-name>(has) DATA_EARLY_ALERT</group-name>
+    <group-description>Users with the appropriate value in their DATA_EARLY_ALERT attribute.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>DATA_EARLY_ALERT</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+  <group>
+    <group-key>DATA_ENGLISH_SECOND_LANGAGE</group-key>
+    <group-name>(has) DATA_ENGLISH_SECOND_LANGAGE</group-name>
+    <group-description>Users with the appropriate value in their DATA_ENGLISH_SECOND_LANGAGE attribute.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>DATA_ENGLISH_SECOND_LANGAGE</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+  <group>
+    <group-key>DATA_FAST_FORWARD</group-key>
+    <group-name>(has) DATA_FAST_FORWARD</group-name>
+    <group-description>Users with the appropriate value in their DATA_FAST_FORWARD attribute.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>DATA_FAST_FORWARD</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+  <group>
+    <group-key>DATA_INDIVIDUALIZED_LEARNING_PLAN</group-key>
+    <group-name>(has) DATA_INDIVIDUALIZED_LEARNING_PLAN</group-name>
+    <group-description>Users with the appropriate value in their DATA_INDIVIDUALIZED_LEARNING_PLAN attribute.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>DATA_INDIVIDUALIZED_LEARNING_PLAN</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+  <group>
+    <group-key>DATA_MANAGER</group-key>
+    <group-name>(has) DATA_MANAGER</group-name>
+    <group-description>Users with the appropriate value in their DATA_MANAGER attribute.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>DATA_MANAGER</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+  <group>
+    <group-key>DATA_STAFF</group-key>
+    <group-name>(has) DATA_STAFF</group-name>
+    <group-description>Users with the appropriate value in their DATA_STAFF attribute.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>DATA_STAFF</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
   <!--==================== Other Examples ====================-->
 
 

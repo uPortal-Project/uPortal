@@ -20,11 +20,12 @@
 
 -->
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
-  <name>Counselor</name>
+  <name>PERSON_APPOINTMENT_WRITE</name>
   <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
-  <description>Counselor role in SSP</description>
-  <children>
-    <group>PAGS_Role_Counselor</group>
+  <description>Parent group to which the PERSON_APPOINTMENT_WRITE permission in SSP attaches. Members of this group's child groups will have the PERSON_APPOINTMENT_WRITE permission.</description>
+  <children> 
+    <group>(has) PERSON_APPOINTMENT_WRITE</group> 
+    <group>(has) PERSON_APPOINTMENT_DELETE</group> 
   </children>
 </group>

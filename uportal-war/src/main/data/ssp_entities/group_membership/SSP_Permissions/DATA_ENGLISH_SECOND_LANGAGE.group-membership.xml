@@ -20,11 +20,11 @@
 
 -->
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
-  <name>Displaced Workers</name>
+  <name>DATA_ENGLISH_SECOND_LANGAGE</name>
   <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
-  <description>Displaced Workers access type in SSP</description>
-  <children>
-    <group>PAGS_AccessType_Displaced Workers</group>
+  <description>Parent group to which the DATA_ENGLISH_SECOND_LANGAGE permission in SSP attaches. Members of this group's child groups will have the DATA_ENGLISH_SECOND_LANGAGE permission.</description>
+  <children> 
+    <group>(has) DATA_ENGLISH_SECOND_LANGAGE</group> 
   </children>
 </group>

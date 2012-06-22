@@ -23,8 +23,7 @@
   <name>Staff</name>
   <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
-  <description>Staff access type in SSP</description>
+  <description>All staff members</description>
   <children>
-    <group>PAGS_AccessType_Staff</group>
   </children>
 </group>

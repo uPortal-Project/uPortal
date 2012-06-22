@@ -30,6 +30,7 @@
     <literal>fragmentTemplate</literal>
     <literal>guest-lo</literal>
     <literal>ssp-lo</literal>
+    <literal>ssp-reports-lo</literal>
     <group>Subscribable Fragments</group>
   </children>
 </group>
