@@ -459,8 +459,8 @@ border: thin solid #b1c6f2;
 .up .not-logged-in #portalPageHeader #portalLogin #portalCASLoginLink { margin-bottom: 1em; }
 .up .not-logged-in #portalNavigation { top: 35px; }
 .up .not-logged-in #portalPageBody { background-position: 0px -2px; }
-.up .not-logged-in #portalPageBody .login { width: 30%; margin: 0 auto; }
+.up .not-logged-in #portalPageBody .login { width: auto; margin: 0 auto; }
 .up .not-logged-in #portalPageBody .login form > div { margin-bottom: 0.5em; overflow: hidden; }
-.up .not-logged-in #portalPageBody .login form label { width: 80px; display: block; float: left; padding-top: 4px; }
-.up .not-logged-in #portalPageBody .login form input[type='text'], .up .not-logged-in #portalPageBody .login form input[type='password'] { float: left; display: block; width: 200px; }
+.up .not-logged-in #portalPageBody .login form label { width: 80px; display: block; padding-top: 4px; margin-bottom: 5px; }
+.up .not-logged-in #portalPageBody .login form input[type='text'], .up .not-logged-in #portalPageBody .login form input[type='password'] { display: block; width: 200px; margin-bottom: 15px; }
 .up .not-logged-in #portalPageBody .login form .utilities input[type='submit'] { margin: 0; }

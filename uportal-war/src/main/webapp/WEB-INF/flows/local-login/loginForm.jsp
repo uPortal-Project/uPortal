@@ -63,11 +63,11 @@
             <label for="${n}password"><spring:message code="password"/></label>
             <input type="password" id="${n}password" name="password"/>
         
-            <label for="${n}profile"><spring:message code="profile"/></label>
+            <!--<label for="${n}profile"><spring:message code="profile"/></label>
             <select id="${n}profile" name="profile">
                 <option value="desktop" ${ profile == 'desktop' ? 'selected=selected' : '' }>Desktop</option>
                 <option value="mobile" ${ profile == 'mobile' ? 'selected=selected' : '' }>Mobile</option>
-            </select>
+            </select>-->
         
             <div class="buttons utilities">
                 <input type="submit" value="<spring:message code="login"/>" class="primary button"/>
