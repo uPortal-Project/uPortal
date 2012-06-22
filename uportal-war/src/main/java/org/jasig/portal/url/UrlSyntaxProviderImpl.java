@@ -212,7 +212,8 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
     }
     
     /**
-     * Enum used in getPortalRequestInfo to keep track of the parser state when reading the URL string
+     * Enum used in getPortalRequestInfo to keep track of the parser state when reading the URL string.
+     * IMPORTANT, if you add a new parse step the SWITCH block in getPortalRequestInfo MUST be updated
      */
     private enum ParseStep {
         FOLDER,
@@ -448,8 +449,22 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                         
                         if (pathPartIndex == requestPathParts.length - 1 && pathPart.endsWith(REQUEST_TYPE_SUFFIX) && pathPart.length() > REQUEST_TYPE_SUFFIX.length()) {
                             final String urlTypePart = pathPart.substring(0, pathPart.length() - REQUEST_TYPE_SUFFIX.length());
+                            final UrlType urlType;
                             
-                            final UrlType urlType = UrlType.valueOfIngoreCase(urlTypePart, null);
+                            //Handle inline resourceIds, look for a . in the request type string and use the suffix as the urlType
+                            final int lastPeriod = urlTypePart.lastIndexOf('.');
+                            if (lastPeriod >= 0 && lastPeriod < urlTypePart.length()) {
+                                final String urlTypePartSuffix = urlTypePart.substring(lastPeriod + 1);
+                                urlType = UrlType.valueOfIngoreCase(urlTypePartSuffix, null);
+                                if (urlType == UrlType.RESOURCE && targetedPortletRequestInfo != null) {
+                                    final String resourceId = urlTypePart.substring(0, lastPeriod);
+                                    targetedPortletRequestInfo.setResourceId(resourceId);
+                                }
+                            }
+                            else {
+                                urlType = UrlType.valueOfIngoreCase(urlTypePart, null);
+                            }
+                            
                             if (urlType != null) {
                                 portalRequestInfo.setUrlType(urlType);
                                 break;
@@ -931,6 +946,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
         final IPortletWindowId targetedPortletWindowId = portalUrlBuilder.getTargetPortletWindowId();
         final UrlType urlType = portalUrlBuilder.getUrlType();
         final UrlState urlState;
+        final String resourceId;
         if (targetedPortletWindowId != null) {
             final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, targetedPortletWindowId);
             final IPortletEntity portletEntity = portletWindow.getPortletEntity();
@@ -946,6 +962,14 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             }
             
             final IPortletUrlBuilder targetedPortletUrlBuilder = portletUrlBuilders.get(targetedPortletWindowId);
+            
+            //Determine the resourceId for resource requests
+            if (urlType == UrlType.RESOURCE && targetedPortletUrlBuilder != null) {
+                resourceId = targetedPortletUrlBuilder.getResourceId();
+            }
+            else {
+                resourceId = null;
+            }
             
             //Resource requests will never have a requested window state
             urlState = this.determineUrlState(portletWindow, targetedPortletUrlBuilder);
@@ -973,13 +997,19 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             }
             
             urlState = UrlState.NORMAL;
+            resourceId = null;
         }
         
         //Add the state of the URL
         url.addPath(urlState.toLowercaseString());
-
-        //File part specifying the type of URL
-        url.addPath(urlType.toLowercaseString() + REQUEST_TYPE_SUFFIX);
+        
+        //File part specifying the type of URL, resource URLs include the resourceId
+        if (urlType == UrlType.RESOURCE && resourceId != null) {
+            url.addPath(resourceId + "." + urlType.toLowercaseString() + REQUEST_TYPE_SUFFIX);
+        }
+        else {
+            url.addPath(urlType.toLowercaseString() + REQUEST_TYPE_SUFFIX);
+        }
         
         //Add all portal parameters
         final Map<String, String[]> portalParameters = portalUrlBuilder.getParameters();
@@ -1039,11 +1069,6 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                 final String cacheability = portletUrlBuilder.getCacheability();
                 if(cacheability != null) {
                     url.addParameter(PARAM_CACHEABILITY + prefixedPortletWindowId, cacheability);
-                }
-                
-                final String resourceId = portletUrlBuilder.getResourceId();
-                if(resourceId != null) {
-                    url.addParameter(PARAM_RESOURCE_ID + prefixedPortletWindowId, resourceId);
                 }
                 
                 break;
