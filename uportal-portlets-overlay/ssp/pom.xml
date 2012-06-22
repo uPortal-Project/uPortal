@@ -54,6 +54,21 @@
         </resources>
         <plugins>
             <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <overlays>
+                        <overlay>
+                            <groupId>org.jasig.ssp</groupId>
+                            <artifactId>ssp</artifactId>
+                            <includes> 
+                                <include>**</include> 
+                                <include>META-INF/context.xml</include> 
+                            </includes>
+                        </overlay>
+                    </overlays>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.portals.pluto</groupId>
                 <artifactId>maven-pluto-plugin</artifactId>
             </plugin>
