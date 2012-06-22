@@ -310,7 +310,8 @@
           </xsl:when>
           <xsl:otherwise>
             <!-- Otherwise render the local login form -->
-            <xsl:call-template name="local.login"/>
+            <!-- drew (2012/06/22):  Disabling local login in the header because we have it in the guest layout
+            <xsl:call-template name="local.login"/-->
           </xsl:otherwise>
         </xsl:choose>
       </div>
