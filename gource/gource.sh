@@ -34,7 +34,7 @@ shift
 
 LOG_FILE=`mktemp -t gource_git_log.XXXXXX`
 
-echo "Generating log file for $TITLE from $FROM_TAG to $TO_TAG" >&2
+echo "Generating log file for $TITLE from $FROM_TAG to $TO_TAG in $LOG_FILE" >&2
 git log \
     --pretty=format:user:%aN%n%at \
     --reverse \
@@ -57,7 +57,7 @@ gource \
     --hide bloom,filenames \
     -r 60 \
     --stop-at-end \
-    --title "Creating uPortal $TITLE" \
+    --title "Development on uPortal $TITLE" \
     --multi-sampling \
     --log-format git \
     $@ \
