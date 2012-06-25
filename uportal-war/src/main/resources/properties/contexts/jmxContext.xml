@@ -43,7 +43,6 @@
                 <entry key="uPortal:section=Framework,name=uPortalLockExecutor" value-ref="uPortalLockExecutor" />
                 <entry key="uPortal:section=Framework,name=PortletThreadPool" value-ref="portletThreadPool" />
                 
-                <entry key="uPortal:section=Cache,name=RequestCacheStatistics" value-ref="requestCacheAspect" />
                 <entry key="uPortal:section=Cache,name=CharacterDataEventCacheStats" value-ref="characterDataEventCacheStatsBean" />
                 
                 <entry key="uPortal:section=Hibernate,name=HibernateStatistics" value-ref="hibernateStatisticsMBean"/>

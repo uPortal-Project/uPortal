@@ -121,7 +121,7 @@
      +-->
     <subflow-state id="createLocalAccount" subflow="edit-account">
         
-        <input name="person" value="userAccountHelper.getNewAccountForm()"/>
+        <input name="accountForm" value="userAccountHelper.getNewAccountForm()"/>
         <output name="person" value="flowScope.person"/>
         
         <transition on="finish" to="viewUserDetails"/>
