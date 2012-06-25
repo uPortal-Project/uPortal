@@ -87,12 +87,21 @@ public class ClusterLockServiceImpl implements IClusterLockService {
     public void setMaximumLockDuration(ReadableDuration maximumLockDuration) {
         this.maximumLockDuration = maximumLockDuration;
     }
+    
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.concurrency.locking.IClusterLockService#doInTryLock(java.lang.String, com.google.common.base.Function)
-     */
+    @Override
+    public ClusterMutex getClusterMutex(String mutexName) {
+        return this.clusterLockDao.getClusterMutex(mutexName);
+    }
+
     @Override
     public <T> TryLockFunctionResult<T> doInTryLock(final String mutexName, Function<ClusterMutex, T> lockFunction) throws InterruptedException {
+        return doInTryLockIfNotRunSince(mutexName, 0, lockFunction);
+    }
+
+    @Override
+    public <T> TryLockFunctionResult<T> doInTryLockIfNotRunSince(String mutexName, long time,
+            Function<ClusterMutex, T> lockFunction) throws InterruptedException {
         /*
          * locking strategy requires 2 threads
          * the caller thread is the 'work thread', it executes the lockFunction
@@ -117,6 +126,19 @@ public class ClusterLockServiceImpl implements IClusterLockService {
         }
         try {
             this.logger.trace("acquired local lock for {}", mutexName);
+            
+            //Check last lock time
+            if (time > 0) {
+                final ClusterMutex clusterMutex = this.clusterLockDao.getClusterMutex(mutexName);
+                final long nextRunTime = System.currentTimeMillis() - time;
+                if (clusterMutex.getLockStart() > nextRunTime || 
+                    clusterMutex.getLastUpdate() > nextRunTime ||
+                    clusterMutex.getLockEnd() > nextRunTime) {
+                    
+                    this.logger.trace("db lock last run less than {}ms ago for {}", time, mutexName);
+                    return TryLockFunctionResultImpl.getNotExecutedInstance();
+                }
+            }
             
             final Thread currentThread = Thread.currentThread();
             final DatabaseLockWorker databaseLockWorker = new DatabaseLockWorker(currentThread, dbLocked, mutexName, dbLockLatch, workCompleteLatch);
@@ -158,18 +180,12 @@ public class ClusterLockServiceImpl implements IClusterLockService {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.concurrency.locking.IClusterLockService#isLockOwner(java.lang.String)
-     */
     @Override
     public boolean isLockOwner(String mutexName) {
         final ReentrantLock lock = getLocalLock(mutexName);
         return lock.isHeldByCurrentThread();
     }
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.concurrency.locking.IClusterLockService#isLocked(java.lang.String)
-     */
     @Override
     public boolean isLocked(String mutexName) {
         final ReentrantLock lock = getLocalLock(mutexName);

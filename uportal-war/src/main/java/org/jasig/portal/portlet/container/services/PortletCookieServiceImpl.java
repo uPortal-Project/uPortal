@@ -44,6 +44,7 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.util.WebUtils;
@@ -81,6 +82,7 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
     private int maxAge = DEFAULT_MAX_AGE;
     private long maxAgeUpdateInterval = TimeUnit.MINUTES.toMillis(5);
     private boolean portalCookieAlwaysSecure = false;
+    private long purgeExpiredCookiesPeriod = 0;
     
     @Autowired
     public void setPortletCookieDao(IPortletCookieDao portletCookieDao) {
@@ -92,11 +94,11 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
         this.clusterLockService = clusterLockService;
     }
 
+    @Value("#{${org.jasig.portal.portlet.container.services.PortletCookieServiceImpl.purgeExpiredCookiesPeriod:60100} * 0.95}")
+    public void setPurgeExpiredCookiesPeriod(long purgeExpiredCookiesPeriod) {
+        this.purgeExpiredCookiesPeriod = purgeExpiredCookiesPeriod;
+    }
 
-
-    /* (non-Javadoc)
-	 * @see org.springframework.web.context.ServletContextAware#setServletContext(javax.servlet.ServletContext)
-	 */
 	@Override
 	public void setServletContext(ServletContext servletContext) {
 		this.path = servletContext.getContextPath() + "/";
@@ -265,7 +267,7 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
     @Override
     public boolean purgeExpiredCookies() {
         try {
-            this.clusterLockService.doInTryLock(PURGE_LOCK_NAME, new FunctionWithoutResult<ClusterMutex>() {
+            this.clusterLockService.doInTryLockIfNotRunSince(PURGE_LOCK_NAME, this.purgeExpiredCookiesPeriod, new FunctionWithoutResult<ClusterMutex>() {
                 @Override
                 protected void applyWithoutResult(ClusterMutex input) {
                     portletCookieDao.purgeExpiredCookies();

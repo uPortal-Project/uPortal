@@ -81,7 +81,7 @@ public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalE
     /**
      * Frequency that updated events should be flushed during a call to {@link #aggregatePortalEvents(DateTime, DateTime, int, FunctionWithoutResult)}, defaults to 1000.
      */
-    @Value("${org.jasig.portal.events.handlers.db.JpaPortalEventStore.flushPeriod:1000}")
+    @Value("${org.jasig.portal.events.handlers.db.JpaPortalEventStore.aggregationFlushPeriod:1000}")
     public void setAggregationFlushPeriod(int flushPeriod) {
         this.flushPeriod = flushPeriod;
     }

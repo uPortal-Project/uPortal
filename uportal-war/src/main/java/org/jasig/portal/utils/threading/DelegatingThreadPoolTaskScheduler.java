@@ -41,7 +41,8 @@ import org.springframework.scheduling.support.ScheduledMethodRunnable;
 
 /**
  * Scheduling thread pool that upon invocation of the scheduled task immediately
- * delegates execution to another {@link ExecutorService}
+ * delegates execution to another {@link ExecutorService}. Also adds a configurable
+ * start delay to scheduled tasks
  * 
  * @author Eric Dalquist
  * @version $Revision$
@@ -149,6 +150,10 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
             @Override
             public Date nextExecutionTime(TriggerContext triggerContext) {
                 Date nextExecutionTime = trigger.nextExecutionTime(triggerContext);
+                if (nextExecutionTime == null) {
+                    return null;
+                }
+                
                 if (firstExecution) {
                     nextExecutionTime = getDelayedStartDate(nextExecutionTime);
                     firstExecution = true;
@@ -176,7 +181,8 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
     @Override
     public ScheduledFuture<Object> scheduleAtFixedRate(Runnable task, Date startTime, long period) {
         task = wrapRunnable(task);
-        startTime = getDelayedStartDate(startTime);
+        startTime = getDelayedStartDate(startTime); //Add scheduled task delay
+        startTime = new Date(startTime.getTime() + period); //Add period to inital run time
         
         final DelegatingRunnable delegatingRunnable = new DelegatingRunnable(this.executorService, task);
         @SuppressWarnings("unchecked")
@@ -202,7 +208,9 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
     @Override
     public ScheduledFuture<Object> scheduleWithFixedDelay(Runnable task, Date startTime, long delay) {
         task = wrapRunnable(task);
-        startTime = getDelayedStartDate(startTime);
+        startTime = getDelayedStartDate(startTime); //Add scheduled task delay
+        startTime = new Date(startTime.getTime() + delay); //Add period to inital run time
+
         
         final DelegatingRunnable delegatingRunnable = new DelegatingRunnable(this.executorService, task);
         @SuppressWarnings("unchecked")

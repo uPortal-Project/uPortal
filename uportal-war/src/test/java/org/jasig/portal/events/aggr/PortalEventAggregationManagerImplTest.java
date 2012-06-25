@@ -245,7 +245,7 @@ public class PortalEventAggregationManagerImplTest extends BaseAggrEventsJpaDaoT
         
         final TryLockFunctionResult<?> tryLockFunctionResult = mock(TryLockFunctionResult.class);
         when(tryLockFunctionResult.isExecuted()).thenReturn(true);
-        when(this.clusterLockService.doInTryLock(Mockito.anyString(), Mockito.any(Function.class))).thenReturn(tryLockFunctionResult);
+        when(this.clusterLockService.doInTryLockIfNotRunSince(Mockito.anyString(), Mockito.anyLong(), Mockito.any(Function.class))).thenReturn(tryLockFunctionResult);
         
         final IEventAggregatorStatus eventAggregatorStatus = mock(IEventAggregatorStatus.class);
         when(this.eventAggregationManagementDao.getEventAggregatorStatus(ProcessingType.AGGREGATION, true)).thenReturn(eventAggregatorStatus);
