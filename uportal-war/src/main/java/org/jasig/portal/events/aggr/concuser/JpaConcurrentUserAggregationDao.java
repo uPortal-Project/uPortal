@@ -26,8 +26,10 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.hibernate.Cache;
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.DateDimension;
+import org.jasig.portal.events.aggr.HibernateCacheEvictor;
 import org.jasig.portal.events.aggr.JpaBaseAggregationDao;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
@@ -42,6 +44,7 @@ import org.springframework.stereotype.Repository;
 public class JpaConcurrentUserAggregationDao extends
         JpaBaseAggregationDao<ConcurrentUserAggregationImpl, ConcurrentUserAggregationKey> implements
         ConcurrentUserAggregationPrivateDao {
+    private static final String SESSIONIDS_COLLECTION_ROLE = ConcurrentUserAggregationImpl.class.getName() + "." + ConcurrentUserAggregationImpl_.uniqueSessionIds.getName();
 
     public JpaConcurrentUserAggregationDao() {
         super(ConcurrentUserAggregationImpl.class);
@@ -70,5 +73,10 @@ public class JpaConcurrentUserAggregationDao extends
     @Override
     protected ConcurrentUserAggregationKey getAggregationKey(ConcurrentUserAggregationImpl instance) {
         return instance.getAggregationKey();
+    }
+
+    @Override
+    protected void evictRelatedCaches(HibernateCacheEvictor cacheEvictor, ConcurrentUserAggregationImpl aggregation) {
+        cacheEvictor.evictCollection(SESSIONIDS_COLLECTION_ROLE, aggregation.getId());
     }
 }

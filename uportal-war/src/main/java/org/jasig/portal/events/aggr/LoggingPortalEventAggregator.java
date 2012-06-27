@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.aggr.session.EventSession;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,5 +52,10 @@ public class LoggingPortalEventAggregator implements IPortalEventAggregator<Port
             Map<AggregationInterval, AggregationIntervalInfo> intervals) {
         
         logger.debug("INTERVAL: {} - {}", interval, intervals.get(interval));
+    }
+
+    @Override
+    public int cleanUnclosedAggregations(AggregationInterval interval, DateTime end) {
+        return 0;
     }
 }

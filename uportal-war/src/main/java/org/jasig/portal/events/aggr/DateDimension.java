@@ -81,4 +81,9 @@ public interface DateDimension extends Serializable {
      * @return The optional designation of the current term the day exists in, may be null
      */
     String getTerm();
+    
+    /**
+     * Set the term, only allowed if {@link #getTerm()} returns null
+     */
+    public void setTerm(String term);
 }

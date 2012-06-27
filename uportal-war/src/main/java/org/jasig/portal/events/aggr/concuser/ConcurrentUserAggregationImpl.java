@@ -108,6 +108,11 @@ public final class ConcurrentUserAggregationImpl
         super(timeDimension, dateDimension, interval, aggregatedGroup);
         this.id = -1;
     }
+    
+    @Override
+    public long getId() {
+        return this.id;
+    }
 
     @Override
     public int getConcurrentUsers() {

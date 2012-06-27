@@ -6,8 +6,8 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.events.aggr.session.EventSession;
 import org.joda.time.DateTime;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * {@link EventSession} that provides a filtered view of another {@link EventSession} based on
@@ -26,12 +26,13 @@ class FilteredEventSession implements EventSession {
         this.parent = parent;
         this.aggregatedGroupConfig = aggregatedGroupConfig;
         
-        this.filteredGroupMappings = Sets.filter(parent.getGroupMappings(), new Predicate<AggregatedGroupMapping>() {
-            @Override
-            public boolean apply(AggregatedGroupMapping input) {
-                return FilteredEventSession.this.aggregatedGroupConfig.isIncluded(input);
+        final Builder<AggregatedGroupMapping> filteredGroupMappingsBuilder = ImmutableSet.builder();
+        for (final AggregatedGroupMapping aggregatedGroupMapping : parent.getGroupMappings()) {
+            if (FilteredEventSession.this.aggregatedGroupConfig.isIncluded(aggregatedGroupMapping)) {
+                filteredGroupMappingsBuilder.add(aggregatedGroupMapping);
             }
-        });
+        }
+        this.filteredGroupMappings = filteredGroupMappingsBuilder.build();
     }
     
     @Override

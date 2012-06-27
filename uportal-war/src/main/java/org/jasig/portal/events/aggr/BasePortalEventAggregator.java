@@ -19,19 +19,24 @@
 
 package org.jasig.portal.events.aggr;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.hibernate.Cache;
+import org.hibernate.Session;
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.events.aggr.session.EventSession;
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao.AggrEventsTransactional;
 import org.jasig.portal.utils.cache.CacheKey;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.UnmodifiableIterator;
 
@@ -49,11 +54,17 @@ public abstract class BasePortalEventAggregator<
             K extends BaseAggregationKey> 
     implements IPortalEventAggregator<E> {
     
-    
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     private final String cacheKeySource = this.getClass().getName();
     private final String overallCacheKeySource = cacheKeySource + "_COMPOSITE";
+    private AggregationIntervalHelper aggregationIntervalHelper;
+//    private JpaCachePurger
     
+    @Autowired
+    public void setAggregationIntervalHelper(AggregationIntervalHelper aggregationIntervalHelper) {
+        this.aggregationIntervalHelper = aggregationIntervalHelper;
+    }
+
     /**
      * @return The private aggregation DAO to use
      */
@@ -134,7 +145,22 @@ public abstract class BasePortalEventAggregator<
             final int duration = intervalInfo.getTotalDuration();
             aggregation.intervalComplete(duration);
         }
-        aggregationDao.updateAggregations(aggregations);
+        aggregationDao.updateAggregations(aggregations, true);
+    }
+
+    @AggrEventsTransactional
+    @Override
+    public int cleanUnclosedAggregations(AggregationInterval interval, DateTime end) {
+        final BaseAggregationPrivateDao<T, K> aggregationDao = this.getAggregationDao();
+        final Collection<T> unclosedAggregations = aggregationDao.getUnclosedAggregations(end, interval);
+        for (final T aggregation : unclosedAggregations) {
+            final DateTime eventDate = aggregation.getTimeDimension().getTime().toDateTime(aggregation.getDateDimension().getDate());
+            final AggregationIntervalInfo unclosedIntervalInfo = this.aggregationIntervalHelper.getIntervalInfo(interval, eventDate);
+            aggregation.intervalComplete(unclosedIntervalInfo.getTotalDuration());
+        }
+        aggregationDao.updateAggregations(unclosedAggregations, true);
+        
+        return unclosedAggregations.size();
     }
 
     /**

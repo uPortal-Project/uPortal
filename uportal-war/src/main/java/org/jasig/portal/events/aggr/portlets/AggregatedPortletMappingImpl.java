@@ -29,6 +29,7 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -53,7 +54,7 @@ import org.hibernate.annotations.Type;
 @NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class AggregatedPortletMappingImpl implements AggregatedPortletMapping, Serializable {
+public final class AggregatedPortletMappingImpl implements AggregatedPortletMapping, Serializable {
     private static final long serialVersionUID = 1L;
     
     @Id
@@ -68,6 +69,9 @@ public class AggregatedPortletMappingImpl implements AggregatedPortletMapping, S
     @Column(name = "PORTLET_FNAME", length = 255, nullable = false)
     @Type(type = "fname")
     private final String fname;
+    
+    @Transient
+    private int hashCode = 0;
     
     @SuppressWarnings("unused")
     private AggregatedPortletMappingImpl() {
@@ -94,10 +98,14 @@ public class AggregatedPortletMappingImpl implements AggregatedPortletMapping, S
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((fname == null) ? 0 : fname.hashCode());
-        return result;
+        int h = this.hashCode;
+        if (h == 0) {
+            final int prime = 31;
+            h = 1;
+            h = prime * h + ((fname == null) ? 0 : fname.hashCode());
+            this.hashCode = h;
+        }
+        return h;
     }
 
     @Override
@@ -107,6 +115,8 @@ public class AggregatedPortletMappingImpl implements AggregatedPortletMapping, S
         if (obj == null)
             return false;
         if (getClass() != obj.getClass())
+            return false;
+        if (hashCode() != obj.hashCode())
             return false;
         AggregatedPortletMappingImpl other = (AggregatedPortletMappingImpl) obj;
         if (fname == null) {

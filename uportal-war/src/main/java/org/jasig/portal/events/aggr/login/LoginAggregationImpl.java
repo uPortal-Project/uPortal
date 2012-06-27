@@ -109,6 +109,11 @@ public final class LoginAggregationImpl
         super(timeDimension, dateDimension, interval, aggregatedGroup);
         this.id = -1;
     }
+    
+    @Override
+    public long getId() {
+        return this.id;
+    }
 
     @Override
     public int getLoginCount() {

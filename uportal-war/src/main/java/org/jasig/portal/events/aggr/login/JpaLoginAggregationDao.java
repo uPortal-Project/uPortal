@@ -28,6 +28,7 @@ import javax.persistence.criteria.Root;
 
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.DateDimension;
+import org.jasig.portal.events.aggr.HibernateCacheEvictor;
 import org.jasig.portal.events.aggr.JpaBaseAggregationDao;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
@@ -41,6 +42,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class JpaLoginAggregationDao extends JpaBaseAggregationDao<LoginAggregationImpl, LoginAggregationKey> implements
         LoginAggregationPrivateDao {
+    private static final String USERNAMES_COLLECTION_ROLE = LoginAggregationImpl.class.getName() + "." + LoginAggregationImpl_.uniqueUserNames.getName();
 
     public JpaLoginAggregationDao() {
         super(LoginAggregationImpl.class);
@@ -69,5 +71,10 @@ public class JpaLoginAggregationDao extends JpaBaseAggregationDao<LoginAggregati
     @Override
     protected LoginAggregationKey getAggregationKey(LoginAggregationImpl instance) {
         return instance.getAggregationKey();
+    }
+
+    @Override
+    protected void evictRelatedCaches(HibernateCacheEvictor cacheEvictor, LoginAggregationImpl aggregation) {
+        cacheEvictor.evictCollection(USERNAMES_COLLECTION_ROLE, aggregation.getId());
     }
 }

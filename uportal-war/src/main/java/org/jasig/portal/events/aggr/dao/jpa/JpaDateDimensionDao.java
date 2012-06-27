@@ -47,6 +47,7 @@ import com.google.common.base.Function;
 public class JpaDateDimensionDao extends BaseAggrEventsJpaDao implements DateDimensionDao {
     private CriteriaQuery<DateDimensionImpl> findAllDateDimensionsQuery;
     private CriteriaQuery<DateDimensionImpl> findAllDateDimensionsBetweenQuery;
+    private CriteriaQuery<DateDimensionImpl> findAllDateDimensionsWithoutTermQuery;
     private CriteriaQuery<DateDimensionImpl> findNewestDateDimensionQuery;
     private CriteriaQuery<DateDimensionImpl> findOldestDateDimensionQuery;
     private ParameterExpression<LocalDate> dateTimeParameter;
@@ -81,6 +82,18 @@ public class JpaDateDimensionDao extends BaseAggrEventsJpaDao implements DateDim
                         )
                     );
                 criteriaQuery.orderBy(cb.asc(dimensionRoot.get(DateDimensionImpl_.date)));
+                
+                return criteriaQuery;
+            }
+        });
+        
+        this.findAllDateDimensionsWithoutTermQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<DateDimensionImpl>>() {
+            @Override
+            public CriteriaQuery<DateDimensionImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<DateDimensionImpl> criteriaQuery = cb.createQuery(DateDimensionImpl.class);
+                final Root<DateDimensionImpl> dimensionRoot = criteriaQuery.from(DateDimensionImpl.class);
+                criteriaQuery.select(dimensionRoot);
+                criteriaQuery.where(cb.isNull(dimensionRoot.get(DateDimensionImpl_.term)));
                 
                 return criteriaQuery;
             }
@@ -152,6 +165,12 @@ public class JpaDateDimensionDao extends BaseAggrEventsJpaDao implements DateDim
         
         return dateDimension;
     }
+    
+    @Override
+    @AggrEventsTransactional
+    public void updateDateDimension(DateDimension dateDimension) {
+        this.getEntityManager().persist(dateDimension);
+    }
 
     @Override
     public List<DateDimension> getDateDimensions() {
@@ -171,6 +190,14 @@ public class JpaDateDimensionDao extends BaseAggrEventsJpaDao implements DateDim
         return new ArrayList<DateDimension>(portletDefinitions);
     }
     
+    @Override
+    public List<DateDimension> getDateDimensionsWithoutTerm() {
+        final TypedQuery<DateDimensionImpl> query = this.createQuery(this.findAllDateDimensionsWithoutTermQuery);
+        
+        final List<DateDimensionImpl> portletDefinitions = query.getResultList();
+        return new ArrayList<DateDimension>(portletDefinitions);
+    }
+
     @Override
     public DateDimension getDateDimensionById(long key) {
         final DateDimension dateDimension = this.getEntityManager().find(DateDimensionImpl.class, key);

@@ -39,7 +39,11 @@ public interface IEventAggregatorStatus {
         /**
          * Event purging processing
          */
-        PURGING;
+        PURGING,
+        /**
+         * Unclosed aggregation cleanup
+         */
+        CLEAN_UNCLOSED;
     }
     
     /**

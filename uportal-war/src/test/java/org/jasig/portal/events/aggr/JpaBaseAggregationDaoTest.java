@@ -534,7 +534,7 @@ public abstract class JpaBaseAggregationDaoTest<
             @Override
             protected void callWithoutResult() {
                 final Collection<T> baseAggregations = getAggregationDao()
-                        .getUnclosedAggregations(start, end.plusDays(1), interval);
+                        .getUnclosedAggregations(end.plusDays(1), interval);
                 
                 assertEquals(1, baseAggregations.size());
                 
@@ -550,7 +550,7 @@ public abstract class JpaBaseAggregationDaoTest<
             @Override
             protected void callWithoutResult() {
                 final Collection<T> baseAggregations = getAggregationDao()
-                        .getUnclosedAggregations(start, end.plusDays(1), interval);
+                        .getUnclosedAggregations(end.plusDays(1), interval);
                 
                 assertEquals(0, baseAggregations.size());
             }

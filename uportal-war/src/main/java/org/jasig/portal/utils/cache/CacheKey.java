@@ -256,9 +256,9 @@ public final class CacheKey implements Serializable, TaggedCacheEntry {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        CacheKey other = (CacheKey) obj;
-        if (hashCode != other.hashCode)
+        if (hashCode() != obj.hashCode())
             return false;
+        CacheKey other = (CacheKey) obj;
         if (!Arrays.deepEquals(key, other.key))
             return false;
         if (source == null) {

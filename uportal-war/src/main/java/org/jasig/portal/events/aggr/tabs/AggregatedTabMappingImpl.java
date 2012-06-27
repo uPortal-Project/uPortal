@@ -29,6 +29,7 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -52,7 +53,7 @@ import org.hibernate.annotations.NaturalIdCache;
 @NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class AggregatedTabMappingImpl implements AggregatedTabMapping, Serializable {
+public final class AggregatedTabMappingImpl implements AggregatedTabMapping, Serializable {
     private static final long serialVersionUID = 1L;
     
     @Id
@@ -67,6 +68,9 @@ public class AggregatedTabMappingImpl implements AggregatedTabMapping, Serializa
     @NaturalId
     @Column(name = "TAB_NAME", length=200, nullable = false)
     private final String tabName;
+    
+    @Transient
+    private int hashCode = 0;
     
     @SuppressWarnings("unused")
     private AggregatedTabMappingImpl() {
@@ -93,11 +97,15 @@ public class AggregatedTabMappingImpl implements AggregatedTabMapping, Serializa
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((fragmentName == null) ? 0 : fragmentName.hashCode());
-        result = prime * result + ((tabName == null) ? 0 : tabName.hashCode());
-        return result;
+        int h = this.hashCode;
+        if (h == 0) {
+            final int prime = 31;
+            h = 1;
+            h = prime * h + ((fragmentName == null) ? 0 : fragmentName.hashCode());
+            h = prime * h + ((tabName == null) ? 0 : tabName.hashCode());
+            this.hashCode = h;
+        }
+        return h;
     }
 
     @Override
@@ -107,6 +115,8 @@ public class AggregatedTabMappingImpl implements AggregatedTabMapping, Serializa
         if (obj == null)
             return false;
         if (getClass() != obj.getClass())
+            return false;
+        if (hashCode() != obj.hashCode())
             return false;
         AggregatedTabMappingImpl other = (AggregatedTabMappingImpl) obj;
         if (fragmentName == null) {

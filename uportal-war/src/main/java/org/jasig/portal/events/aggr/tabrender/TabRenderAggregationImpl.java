@@ -109,6 +109,11 @@ public final class TabRenderAggregationImpl
         this.id = -1;
         this.aggregatedTab = aggregatedTab;
     }
+    
+    @Override
+    public long getId() {
+        return this.id;
+    }
 
     @Override
     public AggregatedTabMapping getTabMapping() {

@@ -47,6 +47,7 @@ import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
 
 import com.google.common.base.Function;
@@ -69,6 +70,7 @@ public abstract class JpaBaseAggregationDao<
     
     
     private final Class<T> aggregationEntityType;
+    private HibernateCacheEvictor hibernateCacheEvictor;
     
     protected CriteriaQuery<T> findAggregationByDateTimeIntervalQuery;
     protected CriteriaQuery<T> findAggregationByDateTimeIntervalGroupQuery;
@@ -89,6 +91,11 @@ public abstract class JpaBaseAggregationDao<
         this.aggregationEntityType = aggregationEntityType;
     }
     
+    @Autowired
+    public void setHibernateCacheEvictor(HibernateCacheEvictor hibernateCacheEvictor) {
+        this.hibernateCacheEvictor = hibernateCacheEvictor;
+    }
+
     /**
      * Add any fetches needed for the following queries:
      *  findAggregationByDateTimeIntervalQuery
@@ -123,6 +130,12 @@ public abstract class JpaBaseAggregationDao<
      * For subclasses to use to create additional {@link CriteriaQuery}s
      */
     protected void createCriteriaQueries() {
+    }
+    
+    /**
+     * For subclasses to use to evict related data from the aggregation (collections, mapped classes, etc) 
+     */
+    protected void evictRelatedCaches(HibernateCacheEvictor cacheEvictor, T aggregation) {
     }
     
     /**
@@ -244,14 +257,7 @@ public abstract class JpaBaseAggregationDao<
                 addFetches(ba);
                 
                 final List<Predicate> keyPredicates = new ArrayList<Predicate>();
-                keyPredicates.add(cb.and( //Restrict results by outer date range
-                        cb.greaterThanOrEqualTo(dd.get(DateDimensionImpl_.date), startDate),
-                        cb.lessThan(dd.get(DateDimensionImpl_.date), endDate)
-                    ));
-                keyPredicates.add(cb.or( //Restrict start of range by time as well
-                        cb.greaterThan(dd.get(DateDimensionImpl_.date), startDate),
-                        cb.greaterThanOrEqualTo(td.get(TimeDimensionImpl_.time), startTime)
-                    ));
+                keyPredicates.add(cb.lessThan(dd.get(DateDimensionImpl_.date), endDate));
                 keyPredicates.add(cb.or( //Restrict end of range by time as well
                         cb.lessThan(dd.get(DateDimensionImpl_.date), endMinusOneDate),
                         cb.lessThan(td.get(TimeDimensionImpl_.time), endTime)
@@ -325,11 +331,8 @@ public abstract class JpaBaseAggregationDao<
     }
 
     @Override
-    public Collection<T> getUnclosedAggregations(DateTime start, DateTime end, AggregationInterval interval) {
+    public Collection<T> getUnclosedAggregations(DateTime end, AggregationInterval interval) {
         final TypedQuery<T> query = this.createQuery(findUnclosedAggregationsByDateRangeQuery);
-        
-        query.setParameter(this.startDate, start.toLocalDate());
-        query.setParameter(this.startTime, start.toLocalTime());
         
         query.setParameter(this.endDate, end.toLocalDate());
         query.setParameter(this.endTime, end.toLocalTime());
@@ -359,10 +362,16 @@ public abstract class JpaBaseAggregationDao<
 
     @AggrEventsTransactional
     @Override
-    public final void updateAggregations(Iterable<T> aggregations) {
+    public final void updateAggregations(Iterable<T> aggregations, boolean removeFromCache) {
         final EntityManager entityManager = this.getEntityManager();
+        
         for (final T aggregation : aggregations) {
             entityManager.persist(aggregation);
+            
+            if (removeFromCache) {
+                this.hibernateCacheEvictor.evictEntity(aggregation.getClass(), aggregation.getId());
+                evictRelatedCaches(this.hibernateCacheEvictor, aggregation);
+            }
         }
     }
 }

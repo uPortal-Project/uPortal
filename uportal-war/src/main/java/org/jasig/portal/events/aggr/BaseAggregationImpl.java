@@ -92,6 +92,8 @@ public abstract class BaseAggregationImpl<K extends BaseAggregationKey> implemen
         this.interval = interval;
         this.aggregatedGroup = aggregatedGroup;
     }
+    
+    public abstract long getId();
 
     @Override
     public final TimeDimension getTimeDimension() {

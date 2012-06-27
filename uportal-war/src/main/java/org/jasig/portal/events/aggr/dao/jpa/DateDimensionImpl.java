@@ -184,6 +184,13 @@ public class DateDimensionImpl implements DateDimension, Serializable {
     public String getTerm() {
         return this.term;
     }
+    @Override
+    public void setTerm(String term) {
+        if (this.term != null) {
+            throw new IllegalStateException("term is already set");
+        }
+        this.term = term;
+    }
     
     @Override
     public int hashCode() {

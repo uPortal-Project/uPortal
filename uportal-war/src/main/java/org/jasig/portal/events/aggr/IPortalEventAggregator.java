@@ -26,6 +26,7 @@ import javax.persistence.FlushModeType;
 
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.aggr.session.EventSession;
+import org.joda.time.DateTime;
 
 /**
  * Defines a class that aggregates events.
@@ -65,4 +66,14 @@ public interface IPortalEventAggregator<E extends PortalEvent> {
      * @param intervals Information about all intervals that the previous set of events was part of
      */
     void handleIntervalBoundary(AggregationInterval interval, EventAggregationContext eventAggregationContext, Map<AggregationInterval, AggregationIntervalInfo> intervals);
+    
+    /**
+     * Due to cases where an interval boundary might be missed this method should contain the logic to
+     * clean up and close all aggregations for the specified interval exist before the specified DateTime
+     * 
+     * @param interval The type of interval to close
+     * @param end The end date (exclusive) to close events before
+     * @return the number of unclosed aggregations that were closed
+     */
+    int cleanUnclosedAggregations(AggregationInterval interval, DateTime end);
 }

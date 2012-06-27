@@ -15,6 +15,8 @@ public abstract class BaseAggregationKeyImpl implements BaseAggregationKey {
     private final AggregationInterval aggregationInterval;
     private final AggregatedGroupMapping aggregatedGroupMapping;
     
+    private int hashCode = 0;
+    
     public BaseAggregationKeyImpl(BaseAggregation<?> baseAggregation) {
         this(
                 baseAggregation.getDateDimension(),
@@ -58,13 +60,17 @@ public abstract class BaseAggregationKeyImpl implements BaseAggregationKey {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((aggregatedGroupMapping == null) ? 0 : aggregatedGroupMapping.hashCode());
-        result = prime * result + ((aggregationInterval == null) ? 0 : aggregationInterval.hashCode());
-        result = prime * result + ((dateDimension == null) ? 0 : dateDimension.hashCode());
-        result = prime * result + ((timeDimension == null) ? 0 : timeDimension.hashCode());
-        return result;
+        int h = this.hashCode;
+        if (h == 0) {
+            final int prime = 31;
+            h = 1;
+            h = prime * h + ((aggregatedGroupMapping == null) ? 0 : aggregatedGroupMapping.hashCode());
+            h = prime * h + ((aggregationInterval == null) ? 0 : aggregationInterval.hashCode());
+            h = prime * h + ((dateDimension == null) ? 0 : dateDimension.hashCode());
+            h = prime * h + ((timeDimension == null) ? 0 : timeDimension.hashCode());
+            this.hashCode = h;
+        }
+        return h;
     }
 
     @Override
@@ -74,6 +80,8 @@ public abstract class BaseAggregationKeyImpl implements BaseAggregationKey {
         if (obj == null)
             return false;
         if (!(obj instanceof BaseAggregationKey))
+            return false;
+        if (this.hashCode() != obj.hashCode())
             return false;
         BaseAggregationKey other = (BaseAggregationKey) obj;
         if (aggregatedGroupMapping == null) {

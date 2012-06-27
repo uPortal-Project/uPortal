@@ -29,6 +29,7 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -57,7 +58,7 @@ import org.hibernate.annotations.NaturalIdCache;
 @NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class AggregatedGroupMappingImpl implements AggregatedGroupMapping, Serializable {
+public final class AggregatedGroupMappingImpl implements AggregatedGroupMapping, Serializable {
     private static final long serialVersionUID = 1L;
     
     @Id
@@ -72,6 +73,9 @@ public class AggregatedGroupMappingImpl implements AggregatedGroupMapping, Seria
     @NaturalId
     @Column(name = "GROUP_NAME", length=200, nullable = false)
     private final String groupName;
+    
+    @Transient
+    private int hashCode = 0;
     
     @SuppressWarnings("unused")
     private AggregatedGroupMappingImpl() {
@@ -100,11 +104,15 @@ public class AggregatedGroupMappingImpl implements AggregatedGroupMapping, Seria
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((groupName == null) ? 0 : groupName.hashCode());
-        result = prime * result + ((groupService == null) ? 0 : groupService.hashCode());
-        return result;
+        int h = this.hashCode;
+        if (h == 0) {
+            final int prime = 31;
+            h = 1;
+            h = prime * h + ((groupName == null) ? 0 : groupName.hashCode());
+            h = prime * h + ((groupService == null) ? 0 : groupService.hashCode());
+            this.hashCode = h;
+        }
+        return h;
     }
 
     @Override
@@ -114,6 +122,8 @@ public class AggregatedGroupMappingImpl implements AggregatedGroupMapping, Seria
         if (obj == null)
             return false;
         if (getClass() != obj.getClass())
+            return false;
+        if (hashCode() != obj.hashCode())
             return false;
         AggregatedGroupMappingImpl other = (AggregatedGroupMappingImpl) obj;
         if (groupName == null) {

@@ -17,6 +17,7 @@ final class PortletExecutionAggregationKeyImpl extends BaseAggregationKeyImpl im
     
     private final AggregatedPortletMapping portletMapping;
     private final ExecutionType executionType;
+    private int hashCode = 0;
     
     public PortletExecutionAggregationKeyImpl(PortletExecutionAggregation baseAggregation) {
         super(baseAggregation);
@@ -50,11 +51,15 @@ final class PortletExecutionAggregationKeyImpl extends BaseAggregationKeyImpl im
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((executionType == null) ? 0 : executionType.hashCode());
-        result = prime * result + ((portletMapping == null) ? 0 : portletMapping.hashCode());
-        return result;
+        int h = this.hashCode;
+        if (h == 0) {
+            final int prime = 31;
+            h = super.hashCode();
+            h = prime * h + ((executionType == null) ? 0 : executionType.hashCode());
+            h = prime * h + ((portletMapping == null) ? 0 : portletMapping.hashCode());
+            this.hashCode = h;
+        }
+        return h;
     }
 
     @Override

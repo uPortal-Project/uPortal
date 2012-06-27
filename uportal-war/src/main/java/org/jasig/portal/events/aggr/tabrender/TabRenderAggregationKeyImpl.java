@@ -16,6 +16,7 @@ final class TabRenderAggregationKeyImpl extends BaseAggregationKeyImpl implement
     private static final long serialVersionUID = 1L;
     
     private final AggregatedTabMapping tabMapping;
+    private int hashCode = 0;
     
     public TabRenderAggregationKeyImpl(TabRenderAggregation baseAggregation) {
         super(baseAggregation);
@@ -41,10 +42,14 @@ final class TabRenderAggregationKeyImpl extends BaseAggregationKeyImpl implement
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((tabMapping == null) ? 0 : tabMapping.hashCode());
-        return result;
+        int h = this.hashCode;
+        if (h == 0) {
+            final int prime = 31;
+            h = super.hashCode();
+            h = prime * h + ((tabMapping == null) ? 0 : tabMapping.hashCode());
+            this.hashCode = h;
+        }
+        return h;
     }
 
     @Override

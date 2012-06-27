@@ -120,6 +120,11 @@ public final class PortletExecutionAggregationImpl
         this.aggregatedPortlet = aggregatedPortlet;
         this.executionType = executionType;
     }
+    
+    @Override
+    public long getId() {
+        return this.id;
+    }
 
     @Override
     public AggregatedPortletMapping getPortletMapping() {
