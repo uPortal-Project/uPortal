@@ -40,6 +40,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.NaturalIdCache;
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.BaseTimedAggregationStatsImpl;
 import org.jasig.portal.events.aggr.DateDimension;
@@ -71,6 +72,7 @@ import org.jasig.portal.events.aggr.tabs.AggregatedTabMappingImpl;
                 @Index(name = "IDX_UP_TAB_REND_AGGR_DTIC", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL", "STATS_COMPLETE" })
         }
     )
+@NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public final class TabRenderAggregationImpl

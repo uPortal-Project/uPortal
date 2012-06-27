@@ -60,6 +60,11 @@
      +-->
     <util:list id="aggregatorEventFilters">
         <bean class="org.jasig.portal.events.handlers.UserFilteringPortalEventHandler">
+            <property name="ignoredUserNames">
+                <list>
+                    <value>ovis.webiso</value>
+                </list>
+            </property>
             <property name="ignoredUserNamePatterns">
                 <list>
                     <value>user\..*</value>

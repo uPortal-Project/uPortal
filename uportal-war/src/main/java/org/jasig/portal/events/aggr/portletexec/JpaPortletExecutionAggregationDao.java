@@ -86,6 +86,14 @@ public class JpaPortletExecutionAggregationDao extends
         query.setParameter(this.portletMappingParameter, (AggregatedPortletMappingImpl)key.getPortletMapping());
         query.setParameter(this.executionTypeParameter, key.getExecutionType());
     }
+    
+    @Override
+    protected void bindAggregationSpecificKeyParameters(NaturalIdQuery<PortletExecutionAggregationImpl> query,
+            PortletExecutionAggregationKey key) {
+        query.using(PortletExecutionAggregationImpl_.aggregatedPortlet, (AggregatedPortletMappingImpl)key.getPortletMapping());
+        query.using(PortletExecutionAggregationImpl_.executionType, key.getExecutionType());
+    }
+
 
     @Override
     protected PortletExecutionAggregationImpl createAggregationInstance(PortletExecutionAggregationKey key) {

@@ -21,6 +21,7 @@ package org.jasig.portal.events.aggr;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -325,14 +326,27 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                 getTransactionOperations().execute(new TransactionCallbackWithoutResult() {
                     @Override
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
+                        int evictedEntities = 0;
+                        int evictedCollections = 0;
+                        
                         final Session session = getEntityManager().unwrap(Session.class);
                         final Cache cache = session.getSessionFactory().getCache();
-                        for (final Entry<Class, Serializable> evictedEntityEntry : evictedEntities.get().entrySet()) {
-                            cache.evictEntity(evictedEntityEntry.getKey(), evictedEntityEntry.getValue());
+                        for (final Entry<Class, Collection<Serializable>> evictedEntityEntry : evictedEntitiesHolder.get().entrySet()) {
+                            final Class entityClass = evictedEntityEntry.getKey();
+                            for (final Serializable id : evictedEntityEntry.getValue()) {
+                                cache.evictEntity(entityClass, id);
+                                evictedEntities++;
+                            }
                         }
-                        for (final Entry<String, Serializable> evictedCollectionEntry : evictedCollections.get().entrySet()) {
-                            cache.evictCollection(evictedCollectionEntry.getKey(), evictedCollectionEntry.getValue());
+                        for (final Entry<String, Collection<Serializable>> evictedCollectionEntry : evictedCollectionsHolder.get().entrySet()) {
+                            final String role = evictedCollectionEntry.getKey();
+                            for (final Serializable id : evictedCollectionEntry.getValue()) {
+                                cache.evictCollection(role, id);
+                                evictedCollections++;
+                            }
                         }
+                        
+                        logger.debug("Evicted {} entities and {} collections from hibernate caches", evictedEntities, evictedCollections);
                     }
                 });
             }
@@ -346,8 +360,8 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                 throw e;
             }
             finally {
-                evictedEntities.remove();
-                evictedCollections.remove();
+                evictedEntitiesHolder.remove();
+                evictedCollectionsHolder.remove();
             }
             
         //Loop if doAggregateRawEvents returns false, this means that there is more to aggregate 
@@ -537,33 +551,39 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
         }
     }
     
-    private final ThreadLocal<Map<Class, Serializable>> evictedEntities = new ThreadLocal<Map<Class, Serializable>>() {
+    private final ThreadLocal<Map<Class, Collection<Serializable>>> evictedEntitiesHolder = new ThreadLocal<Map<Class, Collection<Serializable>>>() {
         @Override
-        protected Map<Class, Serializable> initialValue() {
-            return new HashMap<Class, Serializable>();
+        protected Map<Class, Collection<Serializable>> initialValue() {
+            return new HashMap<Class, Collection<Serializable>>();
         }
     };
-    private final ThreadLocal<Map<String, Serializable>> evictedCollections = new ThreadLocal<Map<String, Serializable>>() {
+    private final ThreadLocal<Map<String, Collection<Serializable>>> evictedCollectionsHolder = new ThreadLocal<Map<String, Collection<Serializable>>>() {
         @Override
-        protected Map<String, Serializable> initialValue() {
-            return new HashMap<String, Serializable>();
+        protected Map<String, Collection<Serializable>> initialValue() {
+            return new HashMap<String, Collection<Serializable>>();
         }
     };
     
     @Override
     public void evictEntity(Class entityClass, Serializable identifier) {
-        final Session session = getEntityManager().unwrap(Session.class);
-        final Cache cache = session.getSessionFactory().getCache();
-        cache.evictEntity(entityClass, identifier);
-        evictedEntities.get().put(entityClass, identifier);
+        final Map<Class, Collection<Serializable>> evictedEntities = evictedEntitiesHolder.get();
+        Collection<Serializable> ids = evictedEntities.get(entityClass);
+        if (ids == null) {
+            ids = new ArrayList<Serializable>();
+            evictedEntities.put(entityClass, ids);
+        }
+        ids.add(identifier);
     }
 
     @Override
     public void evictCollection(String role, Serializable ownerIdentifier) {
-        final Session session = getEntityManager().unwrap(Session.class);
-        final Cache cache = session.getSessionFactory().getCache();
-        cache.evictCollection(role, ownerIdentifier);
-        evictedCollections.get().put(role, ownerIdentifier);
+        final Map<String, Collection<Serializable>> evictedCollections = evictedCollectionsHolder.get();
+        Collection<Serializable> ids = evictedCollections.get(role);
+        if (ids == null) {
+            ids = new ArrayList<Serializable>();
+            evictedCollections.put(role, ids);
+        }
+        ids.add(role);
     }
 
     private void checkShutdown() {

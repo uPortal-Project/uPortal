@@ -43,12 +43,12 @@ import org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl_;
 import org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl;
 import org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl_;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl;
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.support.DataAccessUtils;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
@@ -115,9 +115,15 @@ public abstract class JpaBaseAggregationDao<
     }
     
     /**
-     * Bind the non-standard key parameters from the extension of {@link BaseAggregationKey}
+     * Bind the non-standard key parameters from the extension of {@link BaseAggregationKey} for standard queries
      */
     protected void bindAggregationSpecificKeyParameters(TypedQuery<T> query, K key) {
+    }
+    
+    /**
+     * Bind the non-standard key parameters from the extension of {@link BaseAggregationKey} for natual id queries
+     */
+    protected void bindAggregationSpecificKeyParameters(NaturalIdQuery<T> query, K key) {
     }
     
     /**
@@ -318,16 +324,15 @@ public abstract class JpaBaseAggregationDao<
 
     @Override
     public final T getAggregation(K key) {
-        final TypedQuery<T> query = this.createCachedQuery(this.findAggregationByDateTimeIntervalGroupQuery);
-        query.setParameter(this.dateDimensionParameter, key.getDateDimension());
-        query.setParameter(this.timeDimensionParameter, key.getTimeDimension());
-        query.setParameter(this.intervalParameter, key.getInterval());
-        query.setParameter(this.aggregatedGroupParameter, key.getAggregatedGroup());
+        final NaturalIdQuery<T> query = this.createNaturalIdQuery(this.aggregationEntityType);
+        query.using(BaseAggregationImpl_.dateDimension, (DateDimensionImpl)key.getDateDimension());
+        query.using(BaseAggregationImpl_.timeDimension, (TimeDimensionImpl)key.getTimeDimension());
+        query.using(BaseAggregationImpl_.interval, key.getInterval());
+        query.using(BaseAggregationImpl_.aggregatedGroup, (AggregatedGroupMappingImpl)key.getAggregatedGroup());
         
         this.bindAggregationSpecificKeyParameters(query, key);
         
-        final List<T> results = query.getResultList();
-        return DataAccessUtils.uniqueResult(results);
+        return query.load();
     }
 
     @Override

@@ -21,6 +21,7 @@ package org.jasig.portal.events.aggr;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -121,7 +122,10 @@ public abstract class BasePortalEventAggregator<
                 final K key = this.createAggregationKey(e, eventAggregationContext, intervalInfo, groupMapping);
                 T aggregation = aggregationsForInterval.get(key);
                 if (aggregation == null) {
-                    aggregation = aggregationDao.createAggregation(key);
+                    aggregation = aggregationDao.getAggregation(key);
+                    if (aggregation == null) {
+                        aggregation = aggregationDao.createAggregation(key);
+                    }
                     aggregationsForInterval.put(key, aggregation);
                 }
                 updateAggregation(e, eventAggregationContext, intervalInfo, aggregation);
@@ -171,11 +175,12 @@ public abstract class BasePortalEventAggregator<
         
         Map<K, T> aggregationsForInterval = eventAggregationContext.getAttribute(eventScopedCacheKey);
         if (aggregationsForInterval == null) {
-            final DateDimension dateDimension = intervalInfo.getDateDimension();
-            final TimeDimension timeDimension = intervalInfo.getTimeDimension();
-            final AggregationInterval aggregationInterval = intervalInfo.getAggregationInterval();
+//            final DateDimension dateDimension = intervalInfo.getDateDimension();
+//            final TimeDimension timeDimension = intervalInfo.getTimeDimension();
+//            final AggregationInterval aggregationInterval = intervalInfo.getAggregationInterval();
             
-            aggregationsForInterval = this.getAggregationDao().getAggregationsForInterval(dateDimension, timeDimension, aggregationInterval);
+//            aggregationsForInterval = this.getAggregationDao().getAggregationsForInterval(dateDimension, timeDimension, aggregationInterval);
+            aggregationsForInterval = new HashMap<K, T>();
             eventAggregationContext.setAttribute(eventScopedCacheKey, aggregationsForInterval);
             
             final CacheKey eventScopedKeysCacheKey = createAggregationSessionCacheKey(intervalInfo);

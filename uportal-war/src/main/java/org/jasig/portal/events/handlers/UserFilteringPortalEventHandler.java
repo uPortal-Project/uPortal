@@ -117,7 +117,7 @@ public final class UserFilteringPortalEventHandler<E extends PortalEvent> implem
         }
         
         //ignored userName check
-        if (this.ignoredUserNames != null && !this.ignoredUserNames.contains(userName)) {
+        if (this.ignoredUserNames != null && this.ignoredUserNames.contains(userName)) {
             return false;
         }
             

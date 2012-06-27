@@ -42,6 +42,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.NaturalIdCache;
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.BaseAggregationImpl;
 import org.jasig.portal.events.aggr.DateDimension;
@@ -69,6 +70,7 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
         appliesTo = "UP_CONCURRENT_USER_AGGR",
         indexes = @Index(name = "IDX_UP_CONC_USER_AGGR_DTI", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL" })
     )
+@NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public final class ConcurrentUserAggregationImpl 

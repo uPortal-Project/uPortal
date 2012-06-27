@@ -35,6 +35,7 @@ import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.events.aggr.tabs.AggregatedTabMapping;
 import org.jasig.portal.events.aggr.tabs.AggregatedTabMappingImpl;
+import org.jasig.portal.jpa.BaseJpaDao.NaturalIdQuery;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -80,6 +81,12 @@ public class JpaTabRenderAggregationDao extends
     protected void bindAggregationSpecificKeyParameters(TypedQuery<TabRenderAggregationImpl> query,
             TabRenderAggregationKey key) {
         query.setParameter(this.tabMappingParameter, (AggregatedTabMappingImpl)key.getTabMapping());
+    }
+    
+    @Override
+    protected void bindAggregationSpecificKeyParameters(NaturalIdQuery<TabRenderAggregationImpl> query,
+            TabRenderAggregationKey key) {
+        query.using(TabRenderAggregationImpl_.aggregatedTab, (AggregatedTabMappingImpl)key.getTabMapping());
     }
 
     @Override
