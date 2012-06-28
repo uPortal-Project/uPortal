@@ -31,29 +31,29 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 public class ExpiredEventsPurger {
 
     private static final String PURGE_RENDER_TIME_SQL = 
-        "DELETE FROM stats_render_time srt " +
-            "WHERE srt.event_id IN (SELECT se.id FROM stats_event se WHERE se.act_date < ?)";
+        "DELETE FROM stats_render_time " +
+            "WHERE event_id IN (SELECT se.id FROM stats_event se WHERE se.act_date < ?)";
 
     private static final String PURGE_FOLDER_SQL = 
-        "DELETE FROM stats_folder sf " +
-            "WHERE sf.event_id IN (SELECT se.id FROM stats_event se WHERE se.act_date < ?)";
+        "DELETE FROM stats_folder " +
+            "WHERE event_id IN (SELECT se.id FROM stats_event se WHERE se.act_date < ?)";
 
     private static final String PURGE_CHANNEL_SQL = 
-        "DELETE FROM stats_channel sc " +
-            "WHERE sc.event_id IN (SELECT se.id FROM stats_event se WHERE se.act_date < ?)";
+        "DELETE FROM stats_channel " +
+            "WHERE event_id IN (SELECT se.id FROM stats_event se WHERE se.act_date < ?)";
 
     private static final String PURGE_EVENT_SQL = 
-        "DELETE FROM stats_event se WHERE se.act_date < ?";
+        "DELETE FROM stats_event WHERE act_date < ?";
     
     // NB: Includes the date argument only so all statements have the same arguments
     private static final String PURGE_SESSION_GROUPS_SQL = 
-        "DELETE FROM stats_session_groups ssg " +
-            "WHERE ssg.session_id NOT IN (SELECT se.session_id FROM stats_event se WHERE se.act_date > ?)";
+        "DELETE FROM stats_session_groups " +
+            "WHERE session_id NOT IN (SELECT se.session_id FROM stats_event se WHERE se.act_date > ?)";
 
     // NB: Includes the date argument only so all statements have the same arguments
     private static final String PURGE_SESSION_SQL = 
-        "DELETE FROM stats_session ss " +
-            "WHERE ss.id NOT IN (SELECT se.session_id FROM stats_event se WHERE se.act_date > ?)";
+        "DELETE FROM stats_session " +
+            "WHERE id NOT IN (SELECT se.session_id FROM stats_event se WHERE se.act_date > ?)";
 
     // Establishes a viable order for executing the statements
     private static final String[] SQL = new String[] {
