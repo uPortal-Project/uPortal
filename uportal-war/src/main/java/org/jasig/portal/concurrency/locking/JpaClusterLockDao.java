@@ -139,7 +139,8 @@ public class JpaClusterLockDao extends BasePortalJpaDao implements IClusterLockD
                 }
                 
                 //Lock the mutex and update the DB
-                clusterMutex.lock(portalInfoProvider.getUniqueServerName());
+                final String uniqueServerName = portalInfoProvider.getUniqueServerName();
+                clusterMutex.lock(uniqueServerName);
                 entityManager.persist(clusterMutex);
                 try {
                     entityManager.flush();

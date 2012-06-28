@@ -65,10 +65,10 @@ public interface IClusterLockService {
     <T> TryLockFunctionResult<T> doInTryLockIfNotRunSince(String mutexName, long time, Function<ClusterMutex, T> lockFunction) throws InterruptedException;
     
     /**
-     * Check if the current thread already owns the specified lock
+     * Check if the current thread and server own the specified lock
      * 
      * @param mutexName Name of the lock (case sensitive)
-     * @return true if the current thread owns the lock on the specified mutex
+     * @return true if the current thread and server own the lock on the specified mutex
      */
     boolean isLockOwner(String mutexName);
     

@@ -107,13 +107,17 @@ public abstract class BasePortalEventAggregator<
             for (final AggregatedGroupMapping groupMapping : groupMappings) {
                 final K key = this.createAggregationKey(e, eventAggregationContext, intervalInfo, groupMapping);
 
-                //Load the aggregation, try from the cache first, then loading from the dao, then creating the aggregation
+                //Load the aggregation, try from the cache first
                 T aggregation = aggregationsCache.get(key);
                 if (aggregation == null) {
+                    //Then try loading from the db
                     aggregation = aggregationDao.getAggregation(key);
                     if (aggregation == null) {
+                        //Finally create the aggregation
                         aggregation = aggregationDao.createAggregation(key);
                     }
+                    
+                    //Store the loaded/created aggregation in the local cache
                     aggregationsCache.put(key, aggregation);
                 }
                 

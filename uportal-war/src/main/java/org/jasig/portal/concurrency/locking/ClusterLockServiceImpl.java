@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.jasig.portal.IPortalInfoProvider;
 import org.joda.time.Duration;
 import org.joda.time.ReadableDuration;
 import org.slf4j.Logger;
@@ -57,10 +58,16 @@ public class ClusterLockServiceImpl implements IClusterLockService {
         }
     });
 
+    private IPortalInfoProvider portalInfoProvider;
     private ExecutorService lockMonitorExecutorService;
     private IClusterLockDao clusterLockDao;
     private ReadableDuration updateLockRate = Duration.standardSeconds(1);
     private ReadableDuration maximumLockDuration = Duration.standardMinutes(60);
+    
+    @Autowired
+    public void setPortalInfoProvider(IPortalInfoProvider portalInfoProvider) {
+        this.portalInfoProvider = portalInfoProvider;
+    }
 
     @Autowired
     public void setClusterLockDao(IClusterLockDao clusterLockDao) {
@@ -183,7 +190,14 @@ public class ClusterLockServiceImpl implements IClusterLockService {
     @Override
     public boolean isLockOwner(String mutexName) {
         final ReentrantLock lock = getLocalLock(mutexName);
-        return lock.isHeldByCurrentThread();
+        if (!lock.isHeldByCurrentThread()) {
+            return false;
+        }
+
+        //local lock is owned by this thread, now make sure the server names match 
+        final ClusterMutex clusterMutex = this.clusterLockDao.getClusterMutex(mutexName);
+        final String uniqueServerName = portalInfoProvider.getUniqueServerName();
+        return uniqueServerName.equals(clusterMutex.getServerId());
     }
     
     @Override
