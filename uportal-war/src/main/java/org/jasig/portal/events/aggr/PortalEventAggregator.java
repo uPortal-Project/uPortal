@@ -20,8 +20,15 @@ public interface PortalEventAggregator {
      * <br/>
      * Note that this method MUST be called while the current thread & JVM owns the {@link #AGGREGATION_LOCK_NAME} cluster
      * wide lock via the {@link IClusterLockService}
+     * 
+     * @return null if aggregation is not attempted due to some dependency being missing
      */
     EventProcessingResult doAggregateRawEvents();
     
+    /**
+     * Evict cached data for the specified entities and keys.
+     * 
+     * @param evictedEntities Map of entity type to collection of primary keys to be evicted
+     */
     void evictAggregates(Map<Class<?>, Collection<Serializable>> evictedEntities);
 }

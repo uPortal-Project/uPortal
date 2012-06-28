@@ -139,12 +139,6 @@ public abstract class JpaBaseAggregationDao<
     }
     
     /**
-     * For subclasses to use to evict related data from the aggregation (collections, mapped classes, etc) 
-     */
-    protected void evictRelatedCaches(HibernateCacheEvictor cacheEvictor, T aggregation) {
-    }
-    
-    /**
      * Create a new aggregation instance
      */
     protected abstract T createAggregationInstance(K key);
@@ -385,7 +379,6 @@ public abstract class JpaBaseAggregationDao<
             
             if (removeFromCache) {
                 this.hibernateCacheEvictor.evictEntity(aggregation.getClass(), aggregation.getId());
-                evictRelatedCaches(this.hibernateCacheEvictor, aggregation);
             }
         }
     }

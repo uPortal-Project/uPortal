@@ -26,10 +26,8 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import org.hibernate.Cache;
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.DateDimension;
-import org.jasig.portal.events.aggr.HibernateCacheEvictor;
 import org.jasig.portal.events.aggr.JpaBaseAggregationDao;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
@@ -73,10 +71,5 @@ public class JpaConcurrentUserAggregationDao extends
     @Override
     protected ConcurrentUserAggregationKey getAggregationKey(ConcurrentUserAggregationImpl instance) {
         return instance.getAggregationKey();
-    }
-
-    @Override
-    protected void evictRelatedCaches(HibernateCacheEvictor cacheEvictor, ConcurrentUserAggregationImpl aggregation) {
-        cacheEvictor.evictCollection(SESSIONIDS_COLLECTION_ROLE, aggregation.getId());
     }
 }

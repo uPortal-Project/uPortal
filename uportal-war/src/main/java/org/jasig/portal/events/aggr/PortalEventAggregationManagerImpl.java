@@ -23,22 +23,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EnumMap;
-import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
-import javax.persistence.FlushModeType;
 
-import org.apache.commons.lang.mutable.MutableInt;
-import org.apache.commons.lang.mutable.MutableObject;
-import org.hibernate.Cache;
-import org.hibernate.Session;
 import org.jasig.portal.IPortalInfoProvider;
 import org.jasig.portal.concurrency.FunctionWithoutResult;
 import org.jasig.portal.concurrency.locking.ClusterMutex;
@@ -47,13 +39,10 @@ import org.jasig.portal.concurrency.locking.IClusterLockService.TryLockFunctionR
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.aggr.IEventAggregatorStatus.ProcessingType;
 import org.jasig.portal.events.aggr.dao.IEventAggregationManagementDao;
-import org.jasig.portal.events.aggr.session.EventSession;
 import org.jasig.portal.events.aggr.session.EventSessionDao;
 import org.jasig.portal.events.handlers.db.IPortalEventDao;
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
-import org.jasig.portal.jpa.BaseRawEventsJpaDao;
 import org.jasig.portal.spring.context.ApplicationEventFilter;
-import org.jasig.portal.utils.cache.CacheKey;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.ReadablePeriod;
@@ -62,20 +51,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.OrderComparator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionOperations;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
-import com.google.common.collect.Sets;
 
 /**
  * Service that handles the management of event aggregation & purging
@@ -84,9 +68,6 @@ import com.google.common.collect.Sets;
  */
 @Service("portalEventAggregationManager")
 public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao implements IPortalEventAggregationManager, HibernateCacheEvictor, DisposableBean {
-    private static final String EVENT_SESSION_CACHE_KEY_SOURCE = AggregateEventsHandler.class.getName() + "-EventSession";
-    
-    private static final String AGGREGATION_LOCK_NAME = PortalEventAggregationManagerImpl.class.getName() + ".AGGREGATION_LOCK";
     private static final String PURGE_RAW_EVENTS_LOCK_NAME = PortalEventAggregationManagerImpl.class.getName() + ".PURGE_RAW_EVENTS_LOCK";
     private static final String PURGE_EVENT_SESSION_LOCK_NAME = PortalEventAggregationManagerImpl.class.getName() + ".PURGE_EVENT_SESSION_LOCK";
     private static final String CLEAN_UNCLOSED_AGGREGATIONS_LOCK_NAME = PortalEventAggregationManagerImpl.class.getName() + ".CLEAN_UNCLOSED_AGGREGATIONS_LOCK";
@@ -98,7 +79,6 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
     private PortalEventDimensionPopulator portalEventDimensionPopulator;
     private PortalEventAggregator portalEventAggregator;
     
-    private TransactionOperations rawEventsTransactionOperations;
     private IPortalInfoProvider portalInfoProvider;
     private IClusterLockService clusterLockService;
     private IEventAggregationManagementDao eventAggregationManagementDao;
@@ -116,12 +96,6 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
     private long purgeRawEventsPeriod = 0;
     private long purgeEventSessionsPeriod = 0;
     private long cleanUnclosedAggregationsPeriod = 0;
-    
-    @Autowired
-    @Qualifier(BaseRawEventsJpaDao.PERSISTENCE_UNIT_NAME)
-    public final void setRawEventsTransactionOperations(TransactionOperations rawEventsTransactionOperations) {
-        this.rawEventsTransactionOperations = rawEventsTransactionOperations;
-    }
     
     /**
      * @param applicationEventFilters The list of filters to test each event with
@@ -265,7 +239,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                 final long start = System.nanoTime();
                 
                 //Try executing aggregation within lock
-                result = clusterLockService.doInTryLockIfNotRunSince(AGGREGATION_LOCK_NAME,
+                result = clusterLockService.doInTryLockIfNotRunSince(PortalEventAggregator.AGGREGATION_LOCK_NAME,
                         aggregatePeriod,
                         new Function<ClusterMutex, EventProcessingResult>() {
                             @Override
@@ -274,10 +248,12 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                             }
                         });
                 
+                //Check the result, warn if null
                 if (result == null) {
                     logger.warn("doAggregateRawEvents did not execute");
                 }
                 else {
+                    //Report on non-null result
                     aggrResult = result.getResult();
                     
                     if (logger.isInfoEnabled()) {
@@ -286,6 +262,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                                 new Object[] { aggrResult.getProcessed(), aggrResult.getStart(), aggrResult.getEnd(), runTime, aggrResult.getProcessed()/(runTime/1000d) });
                     }
                     
+                    //If events were processed purge old aggregations from the cache
                     if (aggrResult != null && aggrResult.getProcessed() > 0) {
                         final Map<Class<?>, Collection<Serializable>> evictedEntities = evictedEntitiesHolder.get();
                         portalEventAggregator.evictAggregates(evictedEntities);
@@ -326,7 +303,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                         @Override
                         public Boolean apply(ClusterMutex input) {
                             try {
-                                final TryLockFunctionResult<Boolean> result = clusterLockService.doInTryLock(AGGREGATION_LOCK_NAME,
+                                final TryLockFunctionResult<Boolean> result = clusterLockService.doInTryLock(PortalEventAggregator.AGGREGATION_LOCK_NAME,
                                         new Function<ClusterMutex, Boolean>() {
                                             @Override
                                             public Boolean apply(final ClusterMutex input) {
@@ -500,7 +477,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
     };
     
     @Override
-    public void evictEntity(Class entityClass, Serializable identifier) {
+    public void evictEntity(Class<?> entityClass, Serializable identifier) {
         final Map<Class<?>, Collection<Serializable>> evictedEntities = evictedEntitiesHolder.get();
         Collection<Serializable> ids = evictedEntities.get(entityClass);
         if (ids == null) {
@@ -516,71 +493,6 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
             Thread.currentThread().interrupt();
             throw new RuntimeException("uPortal is shutting down, throwing an exeption to stop processing");
         }
-    }
-    
-    /**
-     * @return true if all events for the time period were aggregated, false if not
-     */
-    EventProcessingResult doAggregateRawEvents() {
-        if (!this.checkedDimensions) {
-            //First time aggregation has happened, run populateDimensions to ensure enough dimension data exists
-            final boolean populatedDimensions = this.populateDimensions();
-            if (!populatedDimensions) {
-                this.logger.warn("Aborting raw event aggregation, populateDimensions returned false so the state of date/time dimensions is unknown");
-                return null;
-            }
-        }
-        
-        //Flush any dimension creation before aggregation
-        this.getEntityManager().flush();
-        this.getEntityManager().setFlushMode(FlushModeType.COMMIT);
-
-        final IEventAggregatorStatus eventAggregatorStatus = eventAggregationManagementDao.getEventAggregatorStatus(ProcessingType.AGGREGATION, true);
-        
-        //Update status with current server name
-        final String serverName = this.portalInfoProvider.getUniqueServerName();
-        final String previousServerName = eventAggregatorStatus.getServerName();
-        if (previousServerName != null && !serverName.equals(previousServerName)) {
-            this.logger.debug("Last aggregation run on {} clearing all aggregation caches", previousServerName);
-            final Session session = getEntityManager().unwrap(Session.class);
-            final Cache cache = session.getSessionFactory().getCache();
-            cache.evictEntityRegions();
-        }
-        
-        eventAggregatorStatus.setServerName(serverName);
-        
-        //Calculate date range for aggregation
-        DateTime lastAggregated = eventAggregatorStatus.getLastEventDate();
-        if (lastAggregated == null) {
-            lastAggregated = new DateTime(0);
-        }
-        
-        final DateTime newestEventTime = DateTime.now().minus(this.aggregationDelay).secondOfMinute().roundFloorCopy();
-        
-        final Thread currentThread = Thread.currentThread();
-        final String currentName = currentThread.getName();
-        final MutableInt events = new MutableInt();
-        final MutableObject lastEventDate = new MutableObject();
-        
-        try {
-            currentThread.setName(currentName + "-" + lastAggregated + "_" + newestEventTime);
-        
-            logger.debug("Starting aggregation of events between {} (inc) and {} (exc)", lastAggregated, newestEventTime);
-            
-            //Do aggregation, capturing the start and end dates
-            eventAggregatorStatus.setLastStart(DateTime.now());
-            portalEventDao.aggregatePortalEvents(lastAggregated, newestEventTime, this.eventAggregationBatchSize, new AggregateEventsHandler(events, lastEventDate, eventAggregatorStatus));
-            eventAggregatorStatus.setLastEnd(new DateTime());
-        }
-        finally {
-            currentThread.setName(currentName);
-        }
-        
-        //Store the results of the aggregation
-        eventAggregationManagementDao.updateEventAggregatorStatus(eventAggregatorStatus);
-        
-        final boolean complete = this.eventAggregationBatchSize <= 0 || events.intValue() < this.eventAggregationBatchSize;
-        return new EventProcessingResult(events.intValue(), lastAggregated, (DateTime)lastEventDate.getValue(), complete);
     }
     /**
      * @return true if all events to be purged have been. false if there are more events to purge
@@ -738,249 +650,5 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
     @SuppressWarnings("unchecked")
     protected <T> Class<T> getClass(T object) {
         return (Class<T>)AopProxyUtils.ultimateTargetClass(object);
-    }
-    
-    private final class AggregateEventsHandler extends FunctionWithoutResult<PortalEvent> {
-        //Event Aggregation Context - used by aggregators to track state
-        private final EventAggregationContext eventAggregationContext = new EventAggregationContextImpl(); 
-        private final MutableInt eventCounter;
-        private final MutableObject lastEventDate;
-        private final IEventAggregatorStatus eventAggregatorStatus;
-
-        //pre-compute the set of intervals that our event aggregators support and only bother tracking those
-        private final Set<AggregationInterval> handledIntervals;
-        
-        //Local tracking of the current aggregation interval and info about said interval
-        private final Map<AggregationInterval, AggregationIntervalInfo> currentIntervalInfo = new EnumMap<AggregationInterval, AggregationIntervalInfo>(AggregationInterval.class);
-        
-        //Local caches of per-aggregator config data, shouldn't ever change for the duration of an aggregation run
-        private final Map<Class<? extends IPortalEventAggregator>, AggregatedGroupConfig> aggregatorGroupConfigs = new HashMap<Class<? extends IPortalEventAggregator>, AggregatedGroupConfig>();
-        private final Map<Class<? extends IPortalEventAggregator>, AggregatedIntervalConfig> aggregatorIntervalConfigs = new HashMap<Class<? extends IPortalEventAggregator>, AggregatedIntervalConfig>();
-        private final Map<Class<? extends IPortalEventAggregator>, Map<AggregationInterval, AggregationIntervalInfo>> aggregatorReadOnlyIntervalInfo = new HashMap<Class<? extends IPortalEventAggregator>, Map<AggregationInterval,AggregationIntervalInfo>>();
-        private final AggregatedGroupConfig defaultAggregatedGroupConfig;
-        private final AggregatedIntervalConfig defaultAggregatedIntervalConfig;
-        
-        private AggregateEventsHandler(MutableInt eventCounter, MutableObject lastEventDate, IEventAggregatorStatus eventAggregatorStatus) {
-            this.eventCounter = eventCounter;
-            this.lastEventDate = lastEventDate;
-            this.eventAggregatorStatus = eventAggregatorStatus;
-            this.defaultAggregatedGroupConfig = eventAggregationManagementDao.getDefaultAggregatedGroupConfig();
-            this.defaultAggregatedIntervalConfig = eventAggregationManagementDao.getDefaultAggregatedIntervalConfig();
-            
-            //Create the set of intervals that are actually being aggregated
-            final Set<AggregationInterval> handledIntervalsNotIncluded = EnumSet.allOf(AggregationInterval.class);
-            final Set<AggregationInterval> handledIntervalsBuilder = EnumSet.noneOf(AggregationInterval.class);
-            for (final IPortalEventAggregator<PortalEvent> portalEventAggregator : portalEventAggregators) {
-                final Class<? extends IPortalEventAggregator> aggregatorType = getClass(portalEventAggregator);
-                
-                //Get aggregator specific interval info config
-                final AggregatedIntervalConfig aggregatorIntervalConfig = this.getAggregatorIntervalConfig(aggregatorType);
-                
-                for (final Iterator<AggregationInterval> intervalsIterator = handledIntervalsNotIncluded.iterator(); intervalsIterator.hasNext(); ) {
-                    final AggregationInterval interval = intervalsIterator.next();
-                    if (aggregatorIntervalConfig.isIncluded(interval)) {
-                        handledIntervalsBuilder.add(interval);
-                        intervalsIterator.remove();
-                    }
-                }
-            }
-            this.handledIntervals = Sets.immutableEnumSet(handledIntervalsBuilder);
-        }
-
-        @Override
-        protected void applyWithoutResult(PortalEvent event) {
-            if (shutdown) {
-                //Mark ourselves as interupted and throw an exception
-                Thread.currentThread().interrupt();
-                throw new RuntimeException("uPortal is shutting down, throwing an exeption to stop aggregation");
-            }
-            
-            final DateTime eventDate = event.getTimestampAsDate();
-            this.lastEventDate.setValue(eventDate);
-            
-            //If no interval data yet populate it.
-            if (this.currentIntervalInfo.isEmpty()) {
-                initializeIntervalInfo(eventDate);
-            }
-            
-            //Check each interval to see if an interval boundary has been crossed
-            for (final AggregationInterval interval : handledIntervals) {
-                AggregationIntervalInfo intervalInfo = this.currentIntervalInfo.get(interval);
-                if (intervalInfo != null && !intervalInfo.getEnd().isAfter(eventDate)) { //if there is no IntervalInfo that interval must not be supported in the current environment 
-                    logger.debug("Crossing {} Interval, triggered by {}", interval, event);
-                    this.doHandleIntervalBoundary(interval, this.currentIntervalInfo);
-                    
-                    intervalInfo = intervalHelper.getIntervalInfo(interval, eventDate); 
-                    this.currentIntervalInfo.put(interval, intervalInfo);
-                    
-                    this.aggregatorReadOnlyIntervalInfo.clear(); //Clear out cached per-aggregator interval info whenever a current interval info changes
-                }
-            }
-            
-            //Aggregate the event
-            this.doAggregateEvent(event);
-            
-            //Update the status object with the event date
-            eventAggregatorStatus.setLastEventDate(eventDate);
-        }
-
-        private void initializeIntervalInfo(final DateTime eventDate) {
-            final DateTime intervalDate;
-            final DateTime lastEventDate = eventAggregatorStatus.getLastEventDate();
-            if (lastEventDate != null) {
-                //If there was a previously aggregated event use that date to make sure an interval is not missed
-                intervalDate = lastEventDate;
-            }
-            else {
-                //Otherwise just use the current event date
-                intervalDate = eventDate;
-            }
-            
-            for (final AggregationInterval interval : this.handledIntervals) {
-                final AggregationIntervalInfo intervalInfo = intervalHelper.getIntervalInfo(interval, intervalDate);
-                if (intervalInfo != null) {
-                    this.currentIntervalInfo.put(interval, intervalInfo);
-                }
-                else {
-                    this.currentIntervalInfo.remove(interval);
-                }
-            }
-        }
-        
-        private void doAggregateEvent(PortalEvent item) {
-            checkShutdown();
-            
-            eventCounter.increment();
-
-            for (final ApplicationEventFilter<PortalEvent> applicationEventFilter : applicationEventFilters) {
-                if (!applicationEventFilter.supports(item)) {
-                    logger.trace("Skipping event {} - {} excluded by filter {}", new Object[] { eventCounter, item,
-                            applicationEventFilter });
-                    return;
-                }
-            }
-            logger.trace("Aggregating event {} - {}", eventCounter, item);
-            
-            //Load or create the event session
-            EventSession eventSession = getEventSession(item);
-            
-            //Give each aggregator a chance at the event
-            for (final IPortalEventAggregator<PortalEvent> portalEventAggregator : portalEventAggregators) {
-                if (portalEventAggregator.supports(item.getClass())) {
-                    final Class<? extends IPortalEventAggregator> aggregatorType = getClass(portalEventAggregator);
-                    
-                    //Get aggregator specific interval info map
-                    final Map<AggregationInterval, AggregationIntervalInfo> aggregatorIntervalInfo = this.getAggregatorIntervalInfo(aggregatorType);
-                    
-                    //If there is an event session get the aggregator specific version of it
-                    if (eventSession != null) {
-                        final AggregatedGroupConfig aggregatorGroupConfig = getAggregatorGroupConfig(aggregatorType);
-                        
-                        final CacheKey key = CacheKey.build(EVENT_SESSION_CACHE_KEY_SOURCE, eventSession, aggregatorGroupConfig);
-                        EventSession filteredEventSession = this.eventAggregationContext.getAttribute(key);
-                        if (filteredEventSession == null) {
-                            filteredEventSession = new FilteredEventSession(eventSession, aggregatorGroupConfig);
-                            this.eventAggregationContext.setAttribute(key, filteredEventSession);
-                        }
-                        eventSession = filteredEventSession;
-                    }
-                    
-                    //Aggregation magic happens here!
-                    portalEventAggregator.aggregateEvent(item, eventSession, eventAggregationContext, aggregatorIntervalInfo);
-                }
-            }
-        }
-
-        protected EventSession getEventSession(PortalEvent item) {
-            final String eventSessionId = item.getEventSessionId();
-            
-            //First check the aggregation context for a cached session event, fall back
-            //to asking the DAO if nothing in the context, cache the result
-            final CacheKey key = CacheKey.build(EVENT_SESSION_CACHE_KEY_SOURCE, eventSessionId);
-            EventSession eventSession = this.eventAggregationContext.getAttribute(key);
-            if (eventSession == null) {
-                eventSession = eventSessionDao.getEventSession(item);
-                this.eventAggregationContext.setAttribute(key, eventSession);
-            }
-            
-            //Record the session access
-            eventSession.recordAccess(item.getTimestampAsDate());
-            eventSessionDao.storeEventSession(eventSession);
-            
-            return eventSession;
-        }
-        
-        private void doHandleIntervalBoundary(AggregationInterval interval, Map<AggregationInterval, AggregationIntervalInfo> intervals) {
-            for (final IPortalEventAggregator<PortalEvent> portalEventAggregator : portalEventAggregators) {
-                
-                final Class<? extends IPortalEventAggregator> aggregatorType = getClass(portalEventAggregator);
-                final AggregatedIntervalConfig aggregatorIntervalConfig = this.getAggregatorIntervalConfig(aggregatorType);
-                
-                //If the aggreagator is configured to use the interval notify it of the interval boundary
-                if (aggregatorIntervalConfig.isIncluded(interval)) {
-                    final Map<AggregationInterval, AggregationIntervalInfo> aggregatorIntervalInfo = this.getAggregatorIntervalInfo(aggregatorType);
-                    portalEventAggregator.handleIntervalBoundary(interval, eventAggregationContext, aggregatorIntervalInfo);
-                }
-            }
-        }
-        
-        /**
-         * @return The interval info map for the aggregator
-         */
-        protected Map<AggregationInterval, AggregationIntervalInfo> getAggregatorIntervalInfo(final Class<? extends IPortalEventAggregator> aggregatorType) {
-            final AggregatedIntervalConfig aggregatorIntervalConfig = this.getAggregatorIntervalConfig(aggregatorType);
-            
-            Map<AggregationInterval, AggregationIntervalInfo> intervalInfo = this.aggregatorReadOnlyIntervalInfo.get(aggregatorType);
-            if (intervalInfo == null) {
-                final Builder<AggregationInterval, AggregationIntervalInfo> intervalInfoBuilder = ImmutableMap.builder();
-                
-                for (Map.Entry<AggregationInterval, AggregationIntervalInfo> intervalInfoEntry : this.currentIntervalInfo.entrySet()) {
-                    final AggregationInterval key = intervalInfoEntry.getKey();
-                    if (aggregatorIntervalConfig.isIncluded(key)) {
-                        intervalInfoBuilder.put(key, intervalInfoEntry.getValue());
-                    }
-                }
-                
-                intervalInfo = intervalInfoBuilder.build();
-                aggregatorReadOnlyIntervalInfo.put(aggregatorType, intervalInfo);
-            }
-            
-            return intervalInfo;
-        }
-
-        /**
-         * @return The group config for the aggregator, returns the default config if no aggregator specific config is set
-         */
-        protected AggregatedGroupConfig getAggregatorGroupConfig(final Class<? extends IPortalEventAggregator> aggregatorType) {
-            AggregatedGroupConfig config = this.aggregatorGroupConfigs.get(aggregatorType);
-            if (config == null) {
-                config = eventAggregationManagementDao.getAggregatedGroupConfig(aggregatorType);
-                if (config == null) {
-                    config = this.defaultAggregatedGroupConfig;
-                }
-                this.aggregatorGroupConfigs.put(aggregatorType, config);
-            }
-            return config;
-        }
-        
-        /**
-         * @return The interval config for the aggregator, returns the default config if no aggregator specific config is set
-         */
-        protected AggregatedIntervalConfig getAggregatorIntervalConfig(final Class<? extends IPortalEventAggregator> aggregatorType) {
-            AggregatedIntervalConfig config = this.aggregatorIntervalConfigs.get(aggregatorType);
-            if (config == null) {
-                config = eventAggregationManagementDao.getAggregatedIntervalConfig(aggregatorType);
-                if (config == null) {
-                    config = this.defaultAggregatedIntervalConfig;
-                }
-                this.aggregatorIntervalConfigs.put(aggregatorType, config);
-            }
-            return config;
-        }
-        
-        @SuppressWarnings("unchecked")
-        protected <T> Class<T> getClass(T object) {
-            return (Class<T>)AopProxyUtils.ultimateTargetClass(object);
-        }
     }
 }

@@ -13,5 +13,5 @@ public interface HibernateCacheEvictor {
     /**
      * @see Cache#evictEntity(Class, Serializable)
      */
-    void evictEntity(Class entityClass, Serializable identifier);
+    void evictEntity(Class<?> entityClass, Serializable identifier);
 }
