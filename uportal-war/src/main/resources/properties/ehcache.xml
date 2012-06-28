@@ -23,10 +23,6 @@
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd" updateCheck="false" name="uPortal.cacheManager">
      
-    <cacheManagerPeerListenerFactory
-        class="org.terracotta.ehcachedx.monitor.probe.ProbePeerListenerFactory"
-        properties="monitorAddress=localhost, monitorPort=9889, memoryMeasurement=false" />
- 
     <!--
      | General direct-access portal caches are in the first section
      | Hibernate entity caches are in the second section

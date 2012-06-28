@@ -55,7 +55,7 @@ public class LoggingPortalEventAggregator implements IPortalEventAggregator<Port
     }
 
     @Override
-    public int cleanUnclosedAggregations(AggregationInterval interval, DateTime end) {
+    public int cleanUnclosedAggregations(DateTime start, DateTime end, AggregationInterval interval) {
         return 0;
     }
 }

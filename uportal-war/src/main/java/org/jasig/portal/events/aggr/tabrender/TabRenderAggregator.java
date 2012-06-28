@@ -87,17 +87,17 @@ public class TabRenderAggregator extends BasePortalEventAggregator<PortalRenderE
         final AggregationInterval aggregationInterval = intervalInfo.getAggregationInterval();
         
         
-        Map<String, AggregatedTabMapping> mappedPortlets = eventAggregationContext.getAttribute(MAPPED_TABS_CACHE_KEY);
-        if (mappedPortlets == null) {
-            mappedPortlets = new HashMap<String, AggregatedTabMapping>();
-            eventAggregationContext.setAttribute(MAPPED_TABS_CACHE_KEY, mappedPortlets);
+        Map<String, AggregatedTabMapping> mappedTabs = eventAggregationContext.getAttribute(MAPPED_TABS_CACHE_KEY);
+        if (mappedTabs == null) {
+            mappedTabs = new HashMap<String, AggregatedTabMapping>();
+            eventAggregationContext.setAttribute(MAPPED_TABS_CACHE_KEY, mappedTabs);
         }
         
         final String targetedLayoutNodeId = e.getTargetedLayoutNodeId();
-        AggregatedTabMapping mappedTab = mappedPortlets.get(targetedLayoutNodeId);
+        AggregatedTabMapping mappedTab = mappedTabs.get(targetedLayoutNodeId);
         if (mappedTab == null) {
             mappedTab = this.aggregatedTabLookupDao.getMappedTabForLayoutId(targetedLayoutNodeId);
-            mappedPortlets.put(targetedLayoutNodeId, mappedTab);
+            mappedTabs.put(targetedLayoutNodeId, mappedTab);
         }
         
         return new TabRenderAggregationKeyImpl(dateDimension, timeDimension, aggregationInterval, aggregatedGroup, mappedTab);

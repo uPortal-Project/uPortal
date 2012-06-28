@@ -47,6 +47,9 @@
     <bean id="portletExecutionAggregationDao" class="org.jasig.portal.events.aggr.portletexec.JpaPortletExecutionAggregationDao"/>
     <bean id="eventSessionDao" class="org.jasig.portal.events.aggr.session.JpaEventSessionDao" />
     
+    <bean id="hibernateCacheEvictor" class="org.jasig.portal.spring.MockitoFactoryBean" >
+        <constructor-arg value="org.jasig.portal.events.aggr.HibernateCacheEvictor" />
+    </bean>
     <bean id="compositeGroupService" class="org.jasig.portal.spring.MockitoFactoryBean" >
         <constructor-arg value="org.jasig.portal.groups.ICompositeGroupService" />
     </bean>

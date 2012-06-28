@@ -263,7 +263,14 @@ public abstract class JpaBaseAggregationDao<
                 addFetches(ba);
                 
                 final List<Predicate> keyPredicates = new ArrayList<Predicate>();
-                keyPredicates.add(cb.lessThan(dd.get(DateDimensionImpl_.date), endDate));
+                keyPredicates.add(cb.and( //Restrict results by outer date range
+                        cb.greaterThanOrEqualTo(dd.get(DateDimensionImpl_.date), startDate),
+                        cb.lessThan(dd.get(DateDimensionImpl_.date), endDate)
+                    ));
+                keyPredicates.add(cb.or( //Restrict start of range by time as well
+                        cb.greaterThan(dd.get(DateDimensionImpl_.date), startDate),
+                        cb.greaterThanOrEqualTo(td.get(TimeDimensionImpl_.time), startTime)
+                    ));
                 keyPredicates.add(cb.or( //Restrict end of range by time as well
                         cb.lessThan(dd.get(DateDimensionImpl_.date), endMinusOneDate),
                         cb.lessThan(td.get(TimeDimensionImpl_.time), endTime)
@@ -336,8 +343,11 @@ public abstract class JpaBaseAggregationDao<
     }
 
     @Override
-    public Collection<T> getUnclosedAggregations(DateTime end, AggregationInterval interval) {
+    public Collection<T> getUnclosedAggregations(DateTime start, DateTime end, AggregationInterval interval) {
         final TypedQuery<T> query = this.createQuery(findUnclosedAggregationsByDateRangeQuery);
+        
+        query.setParameter(this.startDate, start.toLocalDate());
+        query.setParameter(this.startTime, start.toLocalTime());
         
         query.setParameter(this.endDate, end.toLocalDate());
         query.setParameter(this.endTime, end.toLocalTime());

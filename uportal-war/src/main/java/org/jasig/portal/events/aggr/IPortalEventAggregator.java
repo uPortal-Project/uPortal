@@ -71,9 +71,8 @@ public interface IPortalEventAggregator<E extends PortalEvent> {
      * Due to cases where an interval boundary might be missed this method should contain the logic to
      * clean up and close all aggregations for the specified interval exist before the specified DateTime
      * 
-     * @param interval The type of interval to close
-     * @param end The end date (exclusive) to close events before
      * @return the number of unclosed aggregations that were closed
+     * @see BaseAggregationPrivateDao#getUnclosedAggregations(DateTime, DateTime, AggregationInterval)
      */
-    int cleanUnclosedAggregations(AggregationInterval interval, DateTime end);
+    int cleanUnclosedAggregations(DateTime start, DateTime end, AggregationInterval interval);
 }

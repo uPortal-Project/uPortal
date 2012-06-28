@@ -19,10 +19,11 @@ public interface BaseAggregationPrivateDao<
     /**
      * Aggregations that have not been closed for an interval and occure before the end date
      * 
+     * @param start the start {@link DateTime} of the range, inclusive
      * @param end the end {@link DateTime} of the range, exclusive
-     * @param interval the interval to look in
+     * @param interval the interval to get aggregations for
      */
-    Collection<T> getUnclosedAggregations(DateTime end, AggregationInterval interval);
+    Collection<T> getUnclosedAggregations(DateTime start, DateTime end, AggregationInterval interval);
     
     /**
      * Create a new aggregation for the specified key
