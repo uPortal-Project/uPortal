@@ -26,19 +26,23 @@ import org.jasig.portal.events.aggr.dao.DateDimensionDao;
 import org.jasig.portal.events.aggr.dao.IEventAggregationManagementDao;
 import org.jasig.portal.events.aggr.dao.TimeDimensionDao;
 import org.jasig.portal.events.handlers.db.IPortalEventDao;
-import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
+import org.jasig.portal.jpa.BaseAggrEventsJpaDao.AggrEventsTransactional;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 import org.joda.time.Period;
 import org.joda.time.ReadablePeriod;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PortalEventDimensionPopulatorImpl extends BaseAggrEventsJpaDao implements DisposableBean, PortalEventDimensionPopulator {
+public class PortalEventDimensionPopulatorImpl implements DisposableBean, PortalEventDimensionPopulator {
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    
     private TimeDimensionDao timeDimensionDao;
     private DateDimensionDao dateDimensionDao;
     private AggregationIntervalHelper intervalHelper;
