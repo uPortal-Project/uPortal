@@ -87,6 +87,7 @@ public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements P
     private int eventAggregationBatchSize = 10000;
     private ReadablePeriod aggregationDelay = Period.seconds(30);
     
+    private final Map<Class<?>, List<String>> entityCollectionRoles = new HashMap<Class<?>, List<String>>();
     private volatile boolean shutdown = false;
     
     @Autowired
@@ -203,8 +204,6 @@ public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements P
         logger.debug("Evicted {} entities and {} collections from hibernate caches", evictedEntities, evictedCollections);        
     }
     
-    private final Map<Class<?>, List<String>> entityCollectionRoles = new HashMap<Class<?>, List<String>>();
-
     private List<String> getCollectionRoles(final SessionFactory sessionFactory, final Class<?> entityClass) {
         List<String> collectionRoles = entityCollectionRoles.get(entityClass);
         if (collectionRoles != null) {

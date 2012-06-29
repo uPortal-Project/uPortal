@@ -3,7 +3,7 @@ package org.jasig.portal.events.aggr;
 import org.jasig.portal.concurrency.locking.IClusterLockService;
 
 /**
- * Handles aggregation of portal events
+ * Handles purging of raw portal events
  */
 public interface PortalEventPurger {
     /**
