@@ -131,6 +131,6 @@ public class PortalEventPurgerImpl implements PortalEventPurger {
         eventPurgerStatus.setLastEnd(new DateTime());
         eventAggregationManagementDao.updateEventAggregatorStatus(eventPurgerStatus);
         
-        return new EventProcessingResult(events, null, purgeEnd, complete);
+        return new EventProcessingResult(events, lastAggregated, purgeEnd, complete);
     }
 }

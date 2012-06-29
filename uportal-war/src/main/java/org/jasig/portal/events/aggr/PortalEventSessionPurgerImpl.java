@@ -79,6 +79,6 @@ public class PortalEventSessionPurgerImpl implements PortalEventSessionPurger {
         final DateTime sessionPurgeDate = lastEventDate.minus(eventSessionDuration);
         final int purgeCount = eventSessionDao.purgeEventSessionsBefore(sessionPurgeDate);
         
-        return new EventProcessingResult(purgeCount, null, sessionPurgeDate, true);
+        return new EventProcessingResult(purgeCount, lastEventDate, sessionPurgeDate, true);
     }
 }

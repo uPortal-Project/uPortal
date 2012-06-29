@@ -67,9 +67,8 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
         allocationSize=1000
     )
 @org.hibernate.annotations.Table(
-        appliesTo = "UP_LOGIN_EVENT_AGGR",
-        indexes = @Index(name = "IDX_UP_LOGIN_EVENT_AGGR_DTI", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL" })
-    )
+        appliesTo = "UP_LOGIN_EVENT_AGGR", 
+        indexes = @Index(name = "IDX_UP_LOGIN_EVENT_AGGR_DTI", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL" }))
 @NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)

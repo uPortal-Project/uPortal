@@ -301,7 +301,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                     logger.warn("doPurgeRawEvents did not execute");
                 }
                 else if (purgeResult != null && logger.isInfoEnabled()) {
-                    logBeforeResult("Purged {} events before {} in {}ms - {} events/second", purgeResult, start);
+                    logBetweenResult("Purged {} events created at {} events/second between {} and {} in {}ms - {} e/s a {}x speedup", purgeResult, start);
                 }
             }
             catch (InterruptedException e) {
@@ -346,7 +346,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                 logger.warn("doPurgeRawEvents did not execute");
             }
             else if (purgeResult != null && logger.isInfoEnabled()) {
-                logBeforeResult("Purged {} event sessions before {} in {}ms - {} sessions/second", purgeResult, start);
+                logBetweenResult("Purged {} event sessions created at {} sessions/second between {} and {} in {}ms - {} s/s a {}x speedup", purgeResult, start);
             }
             
             return result.isExecuted() && purgeResult != null && purgeResult.isComplete();
@@ -383,14 +383,5 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                 new Object[] { aggrResult.getProcessed(), String.format("%.4f", creationRate), aggrResult.getStart(),
                         aggrResult.getEnd(), runTime, String.format("%.4f", processRate),
                         String.format("%.4f", processSpeedUp) });
-    }
-
-    protected void logBeforeResult(String message, EventProcessingResult aggrResult, long start) {
-        final long runTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
-        final double processRate = aggrResult.getProcessed() / (runTime / 1000d);
-        
-        logger.info(message,
-                new Object[] { aggrResult.getProcessed(), aggrResult.getEnd(), runTime,
-                        String.format("%.4f", processRate) });
     }
 }
