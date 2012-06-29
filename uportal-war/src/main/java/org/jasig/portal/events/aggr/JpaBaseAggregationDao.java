@@ -286,6 +286,14 @@ public abstract class JpaBaseAggregationDao<
     @Override
     public final List<T> getAggregations(DateTime start, DateTime end, K key,
             AggregatedGroupMapping... aggregatedGroupMappings) {
+        if (!start.isBefore(end)) {
+            throw new IllegalArgumentException("Start must be before End: " + start + " - " + end);
+        }
+        final LocalDate startDate = start.toLocalDate();
+        LocalDate endDate = end.toLocalDate();
+        if (startDate.equals(endDate)) {
+            endDate = endDate.plusDays(1);
+        }
 
         final TypedQuery<T> query = this.createCachedQuery(findAggregationsByDateRangeQuery);
         
@@ -338,12 +346,21 @@ public abstract class JpaBaseAggregationDao<
 
     @Override
     public Collection<T> getUnclosedAggregations(DateTime start, DateTime end, AggregationInterval interval) {
+        if (!start.isBefore(end)) {
+            throw new IllegalArgumentException("Start must be before End: " + start + " - " + end);
+        }
+        final LocalDate startDate = start.toLocalDate();
+        LocalDate endDate = end.toLocalDate();
+        if (startDate.equals(endDate)) {
+            endDate = endDate.plusDays(1);
+        }
+
         final TypedQuery<T> query = this.createQuery(findUnclosedAggregationsByDateRangeQuery);
         
-        query.setParameter(this.startDate, start.toLocalDate());
+        query.setParameter(this.startDate, startDate);
         query.setParameter(this.startTime, start.toLocalTime());
         
-        query.setParameter(this.endDate, end.toLocalDate());
+        query.setParameter(this.endDate, endDate);
         query.setParameter(this.endTime, end.toLocalTime());
         query.setParameter(this.endMinusOneDate, end.minusDays(1).toLocalDate());
         

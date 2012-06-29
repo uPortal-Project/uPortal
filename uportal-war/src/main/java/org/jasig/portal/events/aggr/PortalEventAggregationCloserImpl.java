@@ -149,6 +149,11 @@ public class PortalEventAggregationCloserImpl implements PortalEventAggregationC
                         }
                     }
                     
+                    if (cleanAfterDate.equals(cleanBeforeDate)) {
+                        logger.debug("No cleaning needed for {} starting at {}",  new Object[] { interval, cleanAfterDate, cleanBeforeDate});
+                        continue;
+                    }
+                    
                     logger.debug("Cleaning unclosed {} aggregations between {} and {}",  new Object[] { interval, cleanAfterDate, cleanBeforeDate});
 
                     for (final IPortalEventAggregator<PortalEvent> portalEventAggregator : portalEventAggregators) {
