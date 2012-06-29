@@ -269,7 +269,7 @@ public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements P
         final Thread currentThread = Thread.currentThread();
         final String currentName = currentThread.getName();
         final MutableInt events = new MutableInt();
-        final MutableObject lastEventDate = new MutableObject();
+        final MutableObject lastEventDate = new MutableObject(newestEventTime);
         
         try {
             currentThread.setName(currentName + "-" + lastAggregated + "_" + newestEventTime);
@@ -279,6 +279,7 @@ public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements P
             //Do aggregation, capturing the start and end dates
             eventAggregatorStatus.setLastStart(DateTime.now());
             portalEventDao.aggregatePortalEvents(lastAggregated, newestEventTime, this.eventAggregationBatchSize, new AggregateEventsHandler(events, lastEventDate, eventAggregatorStatus));
+            eventAggregatorStatus.setLastEventDate((DateTime)lastEventDate.getValue());
             eventAggregatorStatus.setLastEnd(new DateTime());
         }
         finally {
@@ -289,7 +290,7 @@ public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements P
         eventAggregationManagementDao.updateEventAggregatorStatus(eventAggregatorStatus);
         
         final boolean complete = this.eventAggregationBatchSize <= 0 || events.intValue() < this.eventAggregationBatchSize;
-        return new EventProcessingResult(events.intValue(), lastAggregated, (DateTime)lastEventDate.getValue(), complete);
+        return new EventProcessingResult(events.intValue(), lastAggregated, eventAggregatorStatus.getLastEventDate(), complete);
     }
 
     private final class AggregateEventsHandler extends FunctionWithoutResult<PortalEvent> {
@@ -373,12 +374,12 @@ public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements P
             this.doAggregateEvent(event);
             
             //Update the status object with the event date
-            eventAggregatorStatus.setLastEventDate(eventDate);
+            this.lastEventDate.setValue(eventDate);
         }
 
         private void initializeIntervalInfo(final DateTime eventDate) {
             final DateTime intervalDate;
-            final DateTime lastEventDate = eventAggregatorStatus.getLastEventDate();
+            final DateTime lastEventDate = this.eventAggregatorStatus.getLastEventDate();
             if (lastEventDate != null) {
                 //If there was a previously aggregated event use that date to make sure an interval is not missed
                 intervalDate = lastEventDate;
