@@ -1,7 +1,7 @@
 package org.jasig.portal.events.aggr;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -58,10 +58,10 @@ public final class UniqueStrings {
     private final long id;
     
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    @JoinColumn(name = "UNIQUE_STR_ID")
+    @JoinColumn(name = "UNIQUE_STR_ID", nullable = false)
     @Fetch(FetchMode.JOIN)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    private Collection<UniqueStringsSegment> uniqueStringSegments = new ArrayList<UniqueStringsSegment>(0);
+    private Set<UniqueStringsSegment> uniqueStringSegments = new HashSet<UniqueStringsSegment>(0);
     @Transient
     private UniqueStringsSegment currentUniqueUsernamesSegment;
     
@@ -83,9 +83,9 @@ public final class UniqueStrings {
         //Make sure a current segment exists
         if (this.currentUniqueUsernamesSegment == null) {
             final int segmentCount = this.uniqueStringSegments.size();
-            //For more than 1440 segments or a string/segment ratio worse than 10:1 merge old segments into new
-            if (segmentCount >= 1440 || (segmentCount > 1 && stringCount / segmentCount <= 10)) {
-                LOGGER.info("Merging {} segments with {} strings into a single segment", segmentCount, stringCount);
+            //For more than 1440 segments or a string/segment ratio worse than 2:1 merge old segments into new
+            if (segmentCount >= 1440 || (segmentCount > 1 && stringCount / segmentCount <= 2)) {
+                LOGGER.debug("Merging {} segments with {} strings into a single segment", segmentCount, stringCount);
                 this.currentUniqueUsernamesSegment = new UniqueStringsSegment();
                 
                 //Add all existing unique strings into one segment
