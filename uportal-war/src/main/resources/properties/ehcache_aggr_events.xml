@@ -198,6 +198,23 @@
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
         
+    <!--
+     | Caches unique string tracking data 
+     | - 1 x aggregation that counts unique strings
+     +-->
+    <cache name="org.jasig.portal.events.aggr.UniqueStrings" 
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="org.jasig.portal.events.aggr.UniqueStrings.uniqueStringSegments" 
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="org.jasig.portal.events.aggr.UniqueStringsSegment" 
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="org.jasig.portal.events.aggr.UniqueStringsSegment.uniqueStrings" 
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        
 
     <!--
      | Caches login aggregations, primarily used during event aggregation 

@@ -19,6 +19,7 @@
 
 package org.jasig.portal.events.aggr;
 
+import static junit.framework.Assert.fail;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -453,6 +454,93 @@ public abstract class JpaBaseAggregationDaoTest<
                         getAggregationDao().getAggregations(start.plusHours(36), end.plusDays(1), createAggregationKey(interval, groupA), groupB);
                 
                 assertEquals(288, baseAggregations.size());
+            }
+        });
+    }
+    
+    @Test
+    public final void testModifyingClosedAggregationRangeQuery() throws Exception {
+        final IEntityGroup entityGroupA = mock(IEntityGroup.class);
+        when(entityGroupA.getServiceName()).thenReturn(new CompositeName("local"));
+        when(entityGroupA.getName()).thenReturn("Group A");
+        when(compositeGroupService.findGroup("local.0")).thenReturn(entityGroupA);
+        
+        final MutableInt aggrs = new MutableInt();
+        
+        //Create 10 minutes of aggregations
+        final DateTime start = new DateTime(1326734644000l).minuteOfDay().roundFloorCopy();
+        final DateTime end = start.plusMinutes(10);
+        final AggregationInterval interval = AggregationInterval.FIVE_MINUTE;
+        
+        final MutableObject startObj = new MutableObject();
+        final MutableObject endObj = new MutableObject();
+        
+        this.executeInTransaction(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                final Random r = new Random(0);
+                
+                final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
+                
+                populateDateTimeDimensions(start, end, new FunctionWithoutResult<Tuple<DateDimension, TimeDimension>>() {
+                    @Override
+                    protected void applyWithoutResult(Tuple<DateDimension, TimeDimension> input) {
+                        final TimeDimension td = input.second;
+                        final DateDimension dd = input.first;
+                        final DateTime instant = td.getTime().toDateTime(dd.getDate());
+                        
+                        if (startObj.getValue() == null) {
+                            startObj.setValue(instant);
+                        }
+                        endObj.setValue(instant);
+                        
+                        if (instant.equals(interval.determineStart(instant))) {
+                            final AggregationIntervalInfo intervalInfo = aggregationIntervalHelper.getIntervalInfo(interval, instant);
+                            
+                            final T baseAggregationA = getAggregationDao().createAggregation(createAggregationKey(intervalInfo, groupA));
+                             
+                            for (int u = 0; u < r.nextInt(50); u++) {
+                                updateAggregation(intervalInfo, baseAggregationA, r);
+                            }
+                             
+                            baseAggregationA.intervalComplete(5);
+                             
+                            getAggregationDao().updateAggregation(baseAggregationA);
+                             
+                            aggrs.add(1);
+                        }
+                    }
+                });
+            }
+        });
+        
+        //Verify all aggrs created
+        assertEquals(2, aggrs.intValue());
+
+        //Find unclosed 1 aggr
+        this.execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                final Random r = new Random(0);
+                
+                final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
+                
+                final K key = createAggregationKey(interval, groupA);
+                final List<T> aggregations = getAggregationDao().getAggregations(start.minusDays(1), end.plusDays(1), key);
+                
+                assertEquals(2, aggregations.size());
+                
+                for (final T baseAggregationImpl : aggregations) {
+                    final DateTime instant = baseAggregationImpl.getTimeDimension().getTime().toDateTime(baseAggregationImpl.getDateDimension().getDate());
+                    final AggregationIntervalInfo intervalInfo = aggregationIntervalHelper.getIntervalInfo(interval, instant);
+                    try {
+                        updateAggregation(intervalInfo, baseAggregationImpl, r);
+                        fail("Expected aggregation update to throw IllegalStateException");
+                    }
+                    catch (IllegalStateException e) {
+                        //expected
+                    }
+                }
             }
         });
     }

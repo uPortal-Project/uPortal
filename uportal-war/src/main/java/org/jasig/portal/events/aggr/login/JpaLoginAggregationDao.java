@@ -41,21 +41,19 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class JpaLoginAggregationDao extends JpaBaseAggregationDao<LoginAggregationImpl, LoginAggregationKey> implements
         LoginAggregationPrivateDao {
-    private static final String USERNAMES_COLLECTION_ROLE = LoginAggregationImpl.class.getName() + "." + LoginAggregationImpl_.uniqueUserNames.getName();
-
     public JpaLoginAggregationDao() {
         super(LoginAggregationImpl.class);
     }
 
     @Override
     protected void addFetches(Root<LoginAggregationImpl> root) {
-        root.fetch(LoginAggregationImpl_.uniqueUserNames, JoinType.LEFT);
+        root.fetch(LoginAggregationImpl_.uniqueStrings, JoinType.LEFT);
     }
 
     @Override
     protected void addUnclosedPredicate(CriteriaBuilder cb, Root<LoginAggregationImpl> root,
             List<Predicate> keyPredicates) {
-        keyPredicates.add(cb.notEqual(cb.size(root.get(LoginAggregationImpl_.uniqueUserNames)), 0));
+        keyPredicates.add(cb.isNotNull(root.get(LoginAggregationImpl_.uniqueStrings)));
     }
     
     @Override

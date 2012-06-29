@@ -42,21 +42,19 @@ import org.springframework.stereotype.Repository;
 public class JpaConcurrentUserAggregationDao extends
         JpaBaseAggregationDao<ConcurrentUserAggregationImpl, ConcurrentUserAggregationKey> implements
         ConcurrentUserAggregationPrivateDao {
-    private static final String SESSIONIDS_COLLECTION_ROLE = ConcurrentUserAggregationImpl.class.getName() + "." + ConcurrentUserAggregationImpl_.uniqueSessionIds.getName();
-
     public JpaConcurrentUserAggregationDao() {
         super(ConcurrentUserAggregationImpl.class);
     }
     
     @Override
     protected void addFetches(Root<ConcurrentUserAggregationImpl> root) {
-        root.fetch(ConcurrentUserAggregationImpl_.uniqueSessionIds, JoinType.LEFT);        
+        root.fetch(ConcurrentUserAggregationImpl_.uniqueStrings, JoinType.LEFT);        
     }
     
     @Override
     protected void addUnclosedPredicate(CriteriaBuilder cb, Root<ConcurrentUserAggregationImpl> root,
             List<Predicate> keyPredicates) {
-        keyPredicates.add(cb.notEqual(cb.size(root.get(ConcurrentUserAggregationImpl_.uniqueSessionIds)), 0));
+        keyPredicates.add(cb.isNotNull(root.get(ConcurrentUserAggregationImpl_.uniqueStrings)));
     }
 
     @Override

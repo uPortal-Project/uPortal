@@ -20,20 +20,17 @@
 package org.jasig.portal.events.aggr.concuser;
 
 import java.io.Serializable;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 import javax.persistence.Cacheable;
-import javax.persistence.CollectionTable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -41,12 +38,15 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalIdCache;
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.BaseAggregationImpl;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.TimeDimension;
+import org.jasig.portal.events.aggr.UniqueStrings;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 
 /**
@@ -85,15 +85,11 @@ public final class ConcurrentUserAggregationImpl
     
     @Column(name = "CONCURRENT_USERS", nullable = false)
     private int concurrentUsers;
-    
-    @ElementCollection(fetch=FetchType.EAGER)
-    @CollectionTable(
-            name = "UP_CONCURRENT_USER_AGGR__SIDS",
-            joinColumns = @JoinColumn(name = "CONC_USER_AGGR_ID")
-        )
-    @Column(name="SESSION_ID", nullable=false, updatable=false, length=500)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    private Set<String> uniqueSessionIds = new LinkedHashSet<String>();
+
+    @OneToOne(cascade = { CascadeType.ALL }, orphanRemoval=true)
+    @JoinColumn(name = "UNIQUE_STRINGS_ID")
+    @Fetch(FetchMode.JOIN)
+    private UniqueStrings uniqueStrings;
     
     @Transient
     private ConcurrentUserAggregationKey aggregationKey;
@@ -132,18 +128,22 @@ public final class ConcurrentUserAggregationImpl
 
     @Override
     protected boolean isComplete() {
-        return this.concurrentUsers > 0 && this.uniqueSessionIds.isEmpty();
+        return this.concurrentUsers > 0 && this.uniqueStrings == null;
     }
 
     @Override
     protected void completeInterval() {
-        this.uniqueSessionIds.clear();
+        this.uniqueStrings = null;
     }
     
     void countSession(String eventSessionId) {
         checkState();
         
-        if (this.uniqueSessionIds.add(eventSessionId)) {
+        if (this.uniqueStrings == null) {
+            this.uniqueStrings = new UniqueStrings();
+        }
+        
+        if (this.uniqueStrings.add(eventSessionId)) {
             this.concurrentUsers++;
         }
     }
