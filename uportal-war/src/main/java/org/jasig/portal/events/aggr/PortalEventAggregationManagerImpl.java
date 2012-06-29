@@ -198,7 +198,9 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                     //If events were processed purge old aggregations from the cache
                     if (aggrResult != null && aggrResult.getProcessed() > 0) {
                         final Map<Class<?>, Collection<Serializable>> evictedEntities = evictedEntitiesHolder.get();
-                        portalEventAggregator.evictAggregates(evictedEntities);
+                        if (evictedEntities.size() > 0) {
+                            portalEventAggregator.evictAggregates(evictedEntities);
+                        }
                     }
                 }
             }
@@ -375,18 +377,20 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
         final long runTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
         final double processRate = aggrResult.getProcessed() / (runTime / 1000d);
         final double creationRate = aggrResult.getCreationRate();
-        final double processSpeedUp = creationRate / processRate;
+        final double processSpeedUp = processRate / creationRate;
 
         logger.info(message,
-                new Object[] { aggrResult.getProcessed(), creationRate, aggrResult.getStart(), aggrResult.getEnd(),
-                        runTime, processRate, processSpeedUp });
+                new Object[] { aggrResult.getProcessed(), String.format("%.4f", creationRate), aggrResult.getStart(),
+                        aggrResult.getEnd(), runTime, String.format("%.4f", processRate),
+                        String.format("%.4f", processSpeedUp) });
     }
 
     protected void logBeforeResult(String message, EventProcessingResult aggrResult, long start) {
         final long runTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
         final double processRate = aggrResult.getProcessed() / (runTime / 1000d);
         
-        logger.info(message,  
-                new Object[] { aggrResult.getProcessed(), aggrResult.getEnd(), runTime, processRate });
+        logger.info(message,
+                new Object[] { aggrResult.getProcessed(), aggrResult.getEnd(), runTime,
+                        String.format("%.4f", processRate) });
     }
 }

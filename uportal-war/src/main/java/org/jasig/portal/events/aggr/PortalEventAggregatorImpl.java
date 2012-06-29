@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.annotation.Resource;
 import javax.persistence.FlushModeType;
 
 import org.apache.commons.lang.mutable.MutableInt;
@@ -39,6 +40,7 @@ import org.hibernate.Cache;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.type.CollectionType;
 import org.hibernate.type.Type;
 import org.jasig.portal.IPortalInfoProvider;
 import org.jasig.portal.concurrency.FunctionWithoutResult;
@@ -135,7 +137,7 @@ public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements P
         this.portalEventAggregators = portalEventAggregators;
     }
 
-    @Autowired
+    @Resource(name="aggregatorEventFilters")
     public void setApplicationEventFilters(List<ApplicationEventFilter<PortalEvent>> applicationEventFilters) {
         this.applicationEventFilters = applicationEventFilters;
     }
@@ -212,12 +214,9 @@ public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements P
         
         final com.google.common.collect.ImmutableList.Builder<String> collectionRolesBuilder = ImmutableList.builder();
         final ClassMetadata classMetadata = sessionFactory.getClassMetadata(entityClass);
-        final String[] propertyNames = classMetadata.getPropertyNames();
-        final Type[] propertyTypes = classMetadata.getPropertyTypes();
-        for (int i = 0; i < propertyTypes.length; i++) {
-            final Type type = propertyTypes[i];
+        for (final Type type : classMetadata.getPropertyTypes()) {
             if (type.isCollectionType()) {
-                collectionRolesBuilder.add(classMetadata.getEntityName() + "." + propertyNames[i]);
+                collectionRolesBuilder.add(((CollectionType)type).getRole());
             }                
         }
         

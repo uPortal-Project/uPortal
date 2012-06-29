@@ -44,6 +44,16 @@ public class PortalEventSessionPurgerImpl implements PortalEventSessionPurger {
     private ReadablePeriod eventSessionDuration = Period.days(1);
     
     @Autowired
+    public void setEventSessionDao(EventSessionDao eventSessionDao) {
+        this.eventSessionDao = eventSessionDao;
+    }
+
+    @Autowired
+    public void setClusterLockService(IClusterLockService clusterLockService) {
+        this.clusterLockService = clusterLockService;
+    }
+
+    @Autowired
     public void setEventAggregationManagementDao(IEventAggregationManagementDao eventAggregationManagementDao) {
         this.eventAggregationManagementDao = eventAggregationManagementDao;
     }

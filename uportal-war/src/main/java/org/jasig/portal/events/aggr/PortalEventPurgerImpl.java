@@ -46,6 +46,11 @@ public class PortalEventPurgerImpl implements PortalEventPurger {
     private ReadablePeriod purgeDelay = Period.days(1);
     
     @Autowired
+    public void setClusterLockService(IClusterLockService clusterLockService) {
+        this.clusterLockService = clusterLockService;
+    }
+
+    @Autowired
     public void setEventAggregationManagementDao(IEventAggregationManagementDao eventAggregationManagementDao) {
         this.eventAggregationManagementDao = eventAggregationManagementDao;
     }

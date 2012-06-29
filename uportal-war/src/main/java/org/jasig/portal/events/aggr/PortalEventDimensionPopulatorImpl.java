@@ -54,6 +54,11 @@ public class PortalEventDimensionPopulatorImpl implements DisposableBean, Portal
     
     private volatile boolean checkedDimensions = false;
     private volatile boolean shutdown = false;
+    
+    @Autowired
+    public void setClusterLockService(IClusterLockService clusterLockService) {
+        this.clusterLockService = clusterLockService;
+    }
 
     @Autowired
     public void setTimeDimensionDao(TimeDimensionDao timeDimensionDao) {
