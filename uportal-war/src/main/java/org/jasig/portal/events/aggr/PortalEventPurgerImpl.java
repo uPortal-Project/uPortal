@@ -106,9 +106,9 @@ public class PortalEventPurgerImpl implements PortalEventPurger {
         }
 
         //Make sure purgeEnd is no more than 1 hour after the oldest event date to limit delete scope
-        oldestEventDate = oldestEventDate.plusHours(1);
-        if (oldestEventDate.isBefore(purgeEnd)) {
-            purgeEnd = oldestEventDate;
+        final DateTime purgeEndLimit = oldestEventDate.plusHours(1);
+        if (purgeEndLimit.isBefore(purgeEnd)) {
+            purgeEnd = purgeEndLimit;
             complete = false;
         }
         
@@ -131,6 +131,6 @@ public class PortalEventPurgerImpl implements PortalEventPurger {
         eventPurgerStatus.setLastEnd(new DateTime());
         eventAggregationManagementDao.updateEventAggregatorStatus(eventPurgerStatus);
         
-        return new EventProcessingResult(events, lastAggregated, purgeEnd, complete);
+        return new EventProcessingResult(events, oldestEventDate, purgeEnd, complete);
     }
 }

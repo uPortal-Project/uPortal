@@ -31,6 +31,7 @@ import org.jasig.portal.concurrency.locking.ClusterMutex;
 import org.jasig.portal.concurrency.locking.IClusterLockService;
 import org.jasig.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -192,7 +193,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                 }
                 else if (aggrResult != null) {
                     if (logger.isInfoEnabled()) {
-                        logBetweenResult("Aggregated {} events created at {} events/second between {} and {} in {}ms - {} e/s a {}x speedup", aggrResult, start);
+                        logResult("Aggregated {} events created at {} events/second between {} and {} in {}ms - {} e/s a {}x speedup", aggrResult, start);
                     }
                     
                     //If events were processed purge old aggregations from the cache
@@ -249,7 +250,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                 logger.warn("doCloseAggregations was not executed");
             }
             else if (cleanResult != null && logger.isInfoEnabled()) {
-                logBetweenResult("Clean {} unclosed agregations created at {} events/second between {} and {} in {}ms - {} e/s a {}x speedup", cleanResult, start);
+                logResult("Clean {} unclosed agregations created at {} events/second between {} and {} in {}ms - {} e/s a {}x speedup", cleanResult, start);
             }
             
             return result.isExecuted() && cleanResult != null && cleanResult.isComplete();
@@ -301,7 +302,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                     logger.warn("doPurgeRawEvents did not execute");
                 }
                 else if (purgeResult != null && logger.isInfoEnabled()) {
-                    logBetweenResult("Purged {} events created at {} events/second between {} and {} in {}ms - {} e/s a {}x speedup", purgeResult, start);
+                    logResult("Purged {} events created at {} events/second between {} and {} in {}ms - {} e/s a {}x speedup", purgeResult, start);
                 }
             }
             catch (InterruptedException e) {
@@ -346,7 +347,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                 logger.warn("doPurgeRawEvents did not execute");
             }
             else if (purgeResult != null && logger.isInfoEnabled()) {
-                logBetweenResult("Purged {} event sessions created at {} sessions/second between {} and {} in {}ms - {} s/s a {}x speedup", purgeResult, start);
+                logResult("Purged {} event sessions created before {} in {}ms - {} sessions/second", purgeResult, start);
             }
             
             return result.isExecuted() && purgeResult != null && purgeResult.isComplete();
@@ -373,15 +374,23 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
         ids.add(identifier);
     }
 
-    protected void logBetweenResult(String message, EventProcessingResult aggrResult, long start) {
+    protected void logResult(String message, EventProcessingResult aggrResult, long start) {
         final long runTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
         final double processRate = aggrResult.getProcessed() / (runTime / 1000d);
-        final double creationRate = aggrResult.getCreationRate();
-        final double processSpeedUp = processRate / creationRate;
 
-        logger.info(message,
-                new Object[] { aggrResult.getProcessed(), String.format("%.4f", creationRate), aggrResult.getStart(),
-                        aggrResult.getEnd(), runTime, String.format("%.4f", processRate),
-                        String.format("%.4f", processSpeedUp) });
+        final DateTime startDate = aggrResult.getStart();
+        if (startDate != null) {
+            final double creationRate = aggrResult.getCreationRate();
+            final double processSpeedUp = processRate / creationRate;
+            logger.info(message,
+                    new Object[] { aggrResult.getProcessed(), String.format("%.4f", creationRate), startDate,
+                            aggrResult.getEnd(), runTime, String.format("%.4f", processRate),
+                            String.format("%.4f", processSpeedUp) });
+        }
+        else {
+            logger.info(message,
+                    new Object[] { aggrResult.getProcessed(), aggrResult.getEnd(), runTime,
+                            String.format("%.4f", processRate) });
+        }
     }
 }
