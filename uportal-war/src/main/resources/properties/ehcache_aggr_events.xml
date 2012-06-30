@@ -24,9 +24,7 @@
     xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd" updateCheck="false" name="uPortalEventAggr.cacheManager">
     
     <!--
-     | General direct-access portal caches are in the first section
-     | Hibernate entity caches are in the second section
-     | Portal Event Hibernate caches are in the third section
+     | Caches used by the event aggregation hibernate persistence unit
      |
      | Please see http://ehcache.sourceforge.net/documentation/configuration.html for detailed information on
      | how to configurigure caches in this file
@@ -49,7 +47,7 @@
      +-->
     <cache name="org.hibernate.cache.internal.StandardQueryCache"
         eternal="false" overflowToDisk="false" diskPersistent="false" 
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        maxElementsInMemory="100" timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
         
     <!-- 
      | Caches last updated timestamp for each hibernate managed table
@@ -58,7 +56,7 @@
      +-->
     <cache name="org.hibernate.cache.spi.UpdateTimestampsCache"
         eternal="false" overflowToDisk="false" diskPersistent="false" 
-        maxElementsInMemory="100000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        maxElementsInMemory="100" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
         
     <!--
      | Caches academic terms configured for aggregation intervals
@@ -66,66 +64,13 @@
      +-->
     <cache name="org.jasig.portal.events.aggr.dao.jpa.AcademicTermDetailImpl" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        maxElementsInMemory="100" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="org.jasig.portal.events.aggr.dao.jpa.AcademicTermDetailImpl##NaturalId" 
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="100" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <cache name="org.jasig.portal.events.aggr.dao.jpa.AcademicTermDetailImpl.Query" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-        
-    <!--
-     | Caches aggregated group configuration
-     | - 1 x aggregator config
-     +-->
-    <cache name="org.jasig.portal.events.aggr.dao.jpa.AggregatedGroupConfigImpl" 
-        eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <cache name="org.jasig.portal.events.aggr.dao.jpa.AggregatedGroupConfigImpl.Query" 
-        eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <cache name="org.jasig.portal.events.aggr.dao.jpa.AggregatedGroupConfigImpl.includedGroups" 
-        eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <cache name="org.jasig.portal.events.aggr.dao.jpa.AggregatedGroupConfigImpl.excludedGroups" 
-        eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-        
-    <!--
-     | Caches aggregated interval configuration
-     | - 1 x aggregator config
-     +-->
-    <cache name="org.jasig.portal.events.aggr.dao.jpa.AggregatedIntervalConfigImpl" 
-        eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <cache name="org.jasig.portal.events.aggr.dao.jpa.AggregatedIntervalConfigImpl.includedIntervals" 
-        eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <cache name="org.jasig.portal.events.aggr.dao.jpa.AggregatedIntervalConfigImpl.excludedIntervals" 
-        eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <cache name="org.jasig.portal.events.aggr.dao.jpa.AggregatedIntervalConfigImpl.Query" 
-        eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-
-    <!--
-     | Caches date dimensions used for aggregations 
-     | - 1 x date in event range (plus 1 year to either side)
-     +-->
-    <cache name="org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl" 
-        eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <cache name="org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl.Query" 
-        eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <cache name="org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl##NaturalId" 
-        eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-
-    <!-- NOT CACHED: org.jasig.portal.events.aggr.dao.jpa.EventAggregatorStatusImpl -->
-    <cache name="org.jasig.portal.events.aggr.dao.jpa.EventAggregatorStatusImpl.Query" 
-        eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <cache name="org.jasig.portal.events.aggr.dao.jpa.EventAggregatorStatusImpl##NaturalId" 
-        eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        maxElementsInMemory="100" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
         
     <!--
      | Caches quarters configured for aggregation intervals
@@ -133,10 +78,58 @@
      +-->
     <cache name="org.jasig.portal.events.aggr.dao.jpa.QuarterDetailImpl" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        maxElementsInMemory="4" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <cache name="org.jasig.portal.events.aggr.dao.jpa.QuarterDetailImpl.Query" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        maxElementsInMemory="5" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        
+    <!--
+     | Caches aggregated group configuration
+     | - 1 x aggregator config
+     +-->
+    <cache name="org.jasig.portal.events.aggr.dao.jpa.AggregatedGroupConfigImpl" 
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="org.jasig.portal.events.aggr.dao.jpa.AggregatedGroupConfigImpl.Query" 
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="org.jasig.portal.events.aggr.dao.jpa.AggregatedGroupConfigImpl.includedGroups" 
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="org.jasig.portal.events.aggr.dao.jpa.AggregatedGroupConfigImpl.excludedGroups" 
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        
+    <!--
+     | Caches aggregated interval configuration
+     | - 1 x aggregator config
+     +-->
+    <cache name="org.jasig.portal.events.aggr.dao.jpa.AggregatedIntervalConfigImpl" 
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="org.jasig.portal.events.aggr.dao.jpa.AggregatedIntervalConfigImpl.includedIntervals" 
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="org.jasig.portal.events.aggr.dao.jpa.AggregatedIntervalConfigImpl.excludedIntervals" 
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="org.jasig.portal.events.aggr.dao.jpa.AggregatedIntervalConfigImpl.Query" 
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+
+    <!--
+     | Caches date dimensions used for aggregations 
+     | - 1 x date in event range (plus 1 year to either side)
+     +-->
+    <cache name="org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl" 
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="3660" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl##NaturalId" 
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="3660" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl.Query" 
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="3660" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
 
     <!--
      | Caches time dimensions used for aggregations 
@@ -144,15 +137,22 @@
      +-->
     <cache name="org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <cache name="org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl.Query" 
-        eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        maxElementsInMemory="1440" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <cache name="org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl##NaturalId" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        maxElementsInMemory="1440" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl.Query" 
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="1440" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
         
-
+    <!-- NOT CACHED: org.jasig.portal.events.aggr.dao.jpa.EventAggregatorStatusImpl -->
+    <cache name="org.jasig.portal.events.aggr.dao.jpa.EventAggregatorStatusImpl.Query" 
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="10" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="org.jasig.portal.events.aggr.dao.jpa.EventAggregatorStatusImpl##NaturalId" 
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="10" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        
     <!--
      | Caches mapping from uPortal group into long-term consistent event aggregate group, cache forever as this table
      | is only ever added to and entries are immutable 
@@ -160,43 +160,43 @@
      +-->
     <cache name="org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <cache name="org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl.Query" 
-        eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <cache name="org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl##NaturalId" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl.Query" 
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="1000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
         
     <!--
      | Caches mapping from uPortal Portlet into long-term consistent event aggregate portlet, cache forever as this table
      | is only ever added to and entries are immutable 
-     | - 1 x portal group
+     | - 1 x portal portlet
      +-->
     <cache name="org.jasig.portal.events.aggr.portlets.AggregatedPortletMappingImpl" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <cache name="org.jasig.portal.events.aggr.portlets.AggregatedPortletMappingImpl##NaturalId" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <cache name="org.jasig.portal.events.aggr.portlets.AggregatedPortletMappingImpl.Query" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        maxElementsInMemory="1000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
         
     <!--
      | Caches mapping from uPortal Tab Name into long-term consistent event aggregate tab name, cache forever as this table
      | is only ever added to and entries are immutable 
-     | - 1 x portal group
+     | - 1 x portal tab
      +-->
     <cache name="org.jasig.portal.events.aggr.tabs.AggregatedTabMappingImpl" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        maxElementsInMemory="500" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <cache name="org.jasig.portal.events.aggr.tabs.AggregatedTabMappingImpl##NaturalId" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        maxElementsInMemory="500" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <cache name="org.jasig.portal.events.aggr.tabs.AggregatedTabMappingImpl.Query" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        maxElementsInMemory="500" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
         
     <!--
      | Caches unique string tracking data 
@@ -204,10 +204,10 @@
      +-->
     <cache name="org.jasig.portal.events.aggr.UniqueStrings" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        maxElementsInMemory="10000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <cache name="org.jasig.portal.events.aggr.UniqueStrings.uniqueStringSegments" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        maxElementsInMemory="10000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <cache name="org.jasig.portal.events.aggr.UniqueStringsSegment" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
@@ -222,16 +222,16 @@
      +-->
     <cache name="org.jasig.portal.events.aggr.login.LoginAggregationImpl" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        maxElementsInMemory="5000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <cache name="org.jasig.portal.events.aggr.login.LoginAggregationImpl##NaturalId"
         eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        maxElementsInMemory="5000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <cache name="org.jasig.portal.events.aggr.login.LoginAggregationImpl.uniqueUserNames" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        maxElementsInMemory="5000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <cache name="org.jasig.portal.events.aggr.login.LoginAggregationImpl.Query" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        maxElementsInMemory="5000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
 
     <!--
      | Caches concurrent user aggregations, primarily used during event aggregation 
@@ -239,16 +239,16 @@
      +-->
     <cache name="org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationImpl" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        maxElementsInMemory="5000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <cache name="org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationImpl##NaturalId"
         eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        maxElementsInMemory="5000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <cache name="org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationImpl.uniqueSessionIds" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        maxElementsInMemory="5000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <cache name="org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationImpl.Query" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        maxElementsInMemory="5000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
 
     <!--
      | Caches tab render aggregations, primarily used during event aggregation 
@@ -256,13 +256,13 @@
      +-->
     <cache name="org.jasig.portal.events.aggr.tabrender.TabRenderAggregationImpl" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        maxElementsInMemory="10000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <cache name="org.jasig.portal.events.aggr.tabrender.TabRenderAggregationImpl##NaturalId"
         eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        maxElementsInMemory="10000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <cache name="org.jasig.portal.events.aggr.tabrender.TabRenderAggregationImpl.Query" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        maxElementsInMemory="10000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
 
     <!--
      | Caches portlet execution aggregations, primarily used during event aggregation 
@@ -285,13 +285,13 @@
     <cache name="org.jasig.portal.events.aggr.session.EventSessionImpl" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="org.jasig.portal.events.aggr.session.EventSessionImpl##NaturalId" 
+        eternal="false" overflowToDisk="false" diskPersistent="false"
+        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <cache name="org.jasig.portal.events.aggr.session.EventSessionImpl.groupMappings" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <cache name="org.jasig.portal.events.aggr.session.EventSessionImpl.Query" 
-        eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <cache name="org.jasig.portal.events.aggr.session.EventSessionImpl##NaturalId" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
 </ehcache>
