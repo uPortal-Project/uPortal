@@ -51,11 +51,5 @@ public interface IPortalEventAggregationManager {
      * @return If expired event sessions were purged
      */
     boolean purgeEventSessions();
-    
-    /**
-     * Requests that the unclosed aggregations be cleaned
-     * @return If unclosed aggregations were closed
-     */
-    boolean cleanUnclosedAggregations();
 
 }

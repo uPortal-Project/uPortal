@@ -206,6 +206,111 @@ public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements P
         logger.debug("Evicted {} entities and {} collections from hibernate caches", evictedEntities, evictedCollections);        
     }
     
+    @Override
+    public EventProcessingResult doCloseAggregations() {
+        if (!this.clusterLockService.isLockOwner(AGGREGATION_LOCK_NAME)) {
+            throw new IllegalStateException("The cluster lock " + AGGREGATION_LOCK_NAME + " must be owned by the current thread and server");
+        }
+        
+        final IEventAggregatorStatus cleanUnclosedStatus = eventAggregationManagementDao.getEventAggregatorStatus(ProcessingType.CLEAN_UNCLOSED, true);
+        
+        //Update status with current server name
+        final String serverName = this.portalInfoProvider.getUniqueServerName();
+        cleanUnclosedStatus.setServerName(serverName);
+        cleanUnclosedStatus.setLastStart(new DateTime());
+        
+        //Determine date of most recently aggregated data
+        final IEventAggregatorStatus eventAggregatorStatus = eventAggregationManagementDao.getEventAggregatorStatus(ProcessingType.AGGREGATION, false);
+        if (eventAggregatorStatus == null || eventAggregatorStatus.getLastEventDate() == null) {
+            //Nothing has been aggregated, skip unclosed cleanup
+            
+            cleanUnclosedStatus.setLastEnd(new DateTime());
+            eventAggregationManagementDao.updateEventAggregatorStatus(cleanUnclosedStatus);
+            
+            return new EventProcessingResult(0, null, null, true);
+        }
+        
+        //Calculate clean end date from most recent aggregation minus the purge delay
+        final DateTime lastAggregatedDate = eventAggregatorStatus.getLastEventDate();
+        final DateTime lastCleanUnclosedDate = cleanUnclosedStatus.getLastEventDate();
+        
+        if (lastAggregatedDate.equals(lastCleanUnclosedDate)) {
+            logger.debug("No events aggregated since last unclosed aggregation cleaning, skipping clean: {}", lastAggregatedDate);
+            return new EventProcessingResult(0, null, null, true);
+        }
+        
+        int closedAggregations = 0;
+        final Thread currentThread = Thread.currentThread();
+        final String currentName = currentThread.getName();
+        try {
+            currentThread.setName(currentName + "-" + lastAggregatedDate);
+            
+            //For each interval the aggregator supports, cleanup the unclosed aggregations
+            for (final AggregationInterval interval : AggregationInterval.values()) {
+                //Determine the current interval
+                final AggregationIntervalInfo currentInterval = intervalHelper.getIntervalInfo(interval, lastAggregatedDate);
+                if (currentInterval != null) {
+                    //Use the start of the current interval as the end of the current cleanup range
+                    final DateTime cleanBeforeDate = currentInterval.getStart();
+                    
+                    //Determine the end of the cleanup to use as the start of the cleanup range
+                    final DateTime cleanAfterDate;
+                    if (lastCleanUnclosedDate == null) {
+                        cleanAfterDate = new DateTime(0);
+                    }
+                    else {
+                        final AggregationIntervalInfo previousInterval = intervalHelper.getIntervalInfo(interval, lastCleanUnclosedDate);
+                        if (previousInterval == null) {
+                            cleanAfterDate = new DateTime(0);
+                        }
+                        else {
+                            cleanAfterDate = previousInterval.getStart();
+                        }
+                    }
+                    
+                    if (cleanAfterDate.equals(cleanBeforeDate)) {
+                        logger.debug("No cleaning needed for {} starting at {}",  new Object[] { interval, cleanAfterDate, cleanBeforeDate});
+                        continue;
+                    }
+                    
+                    logger.debug("Cleaning unclosed {} aggregations between {} and {}",  new Object[] { interval, cleanAfterDate, cleanBeforeDate});
+
+                    for (final IPortalEventAggregator<PortalEvent> portalEventAggregator : portalEventAggregators) {
+                        checkShutdown();
+                        
+                        final Class<? extends IPortalEventAggregator<?>> aggregatorType = getClass(portalEventAggregator);
+                        
+                        //Get aggregator specific interval info config
+                        AggregatedIntervalConfig aggregatorIntervalConfig = eventAggregationManagementDao.getAggregatedIntervalConfig(aggregatorType);
+                        if (aggregatorIntervalConfig == null) {
+                            aggregatorIntervalConfig = eventAggregationManagementDao.getDefaultAggregatedIntervalConfig();
+                        }
+                        
+                        //If the aggregator is being used for the specified interval call cleanUnclosedAggregations
+                        if (aggregatorIntervalConfig.isIncluded(interval)) {
+                            closedAggregations += portalEventAggregator.cleanUnclosedAggregations(cleanAfterDate, cleanBeforeDate, interval);
+                        }
+                    }
+                }
+            }
+        }
+        finally {
+            currentThread.setName(currentName);
+        }
+        
+        //Update the status object and store it
+        cleanUnclosedStatus.setLastEventDate(lastAggregatedDate); 
+        cleanUnclosedStatus.setLastEnd(new DateTime());
+        eventAggregationManagementDao.updateEventAggregatorStatus(cleanUnclosedStatus);
+        
+        return new EventProcessingResult(closedAggregations, lastCleanUnclosedDate, lastAggregatedDate, true);
+    }
+    
+    @SuppressWarnings("unchecked")
+    protected final <T> Class<T> getClass(T object) {
+        return (Class<T>)AopProxyUtils.ultimateTargetClass(object);
+    }
+    
     private List<String> getCollectionRoles(final SessionFactory sessionFactory, final Class<?> entityClass) {
         List<String> collectionRoles = entityCollectionRoles.get(entityClass);
         if (collectionRoles != null) {

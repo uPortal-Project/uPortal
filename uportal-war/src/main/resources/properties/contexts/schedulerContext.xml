@@ -71,6 +71,5 @@
         <task:scheduled ref="portalEventAggregationManager" method="purgeRawEvents" fixed-delay="${org.jasig.portal.events.aggr.session.PortalEventAggregationManager.purgeRawEventsPeriod}"/>
         <task:scheduled ref="portalEventAggregationManager" method="populateDimensions" fixed-delay="${org.jasig.portal.events.aggr.session.PortalEventAggregationManager.populateDimensionsPeriod}"/>
         <task:scheduled ref="portalEventAggregationManager" method="purgeEventSessions" fixed-delay="${org.jasig.portal.events.aggr.session.PortalEventAggregationManager.purgeEventSessionsPeriod}"/>
-        <task:scheduled ref="portalEventAggregationManager" method="cleanUnclosedAggregations" fixed-delay="${org.jasig.portal.events.aggr.session.PortalEventAggregationManager.cleanUnclosedAggregationsPeriod}"/>
     </task:scheduled-tasks>
 </beans>

@@ -26,6 +26,14 @@ public interface PortalEventAggregator {
     EventProcessingResult doAggregateRawEvents();
     
     /**
+     * Close aggregations that were missed when crossing an interval boundary.
+     * <br/>
+     * Note that this method MUST be called while the current thread & JVM owns the {@link #AGGREGATION_LOCK_NAME} cluster
+     * wide lock via the {@link IClusterLockService}
+     */
+    EventProcessingResult doCloseAggregations();
+    
+    /**
      * Evict cached data for the specified entities and keys.
      * 
      * @param evictedEntities Map of entity type to collection of primary keys to be evicted
