@@ -127,7 +127,8 @@ public class PortalEventPurgerImpl implements PortalEventPurger {
         }
         
         //Update the status object and store it
-        eventPurgerStatus.setLastEventDate(purgeEnd.minusMillis(1)); //decrement by 1ms since deletePortalEventsBefore uses lessThan and not lessThanEqualTo 
+        purgeEnd = purgeEnd.minusMillis(100); //decrement by 100ms since deletePortalEventsBefore uses lessThan and not lessThanEqualTo
+        eventPurgerStatus.setLastEventDate(purgeEnd); 
         eventPurgerStatus.setLastEnd(new DateTime());
         eventAggregationManagementDao.updateEventAggregatorStatus(eventPurgerStatus);
         
