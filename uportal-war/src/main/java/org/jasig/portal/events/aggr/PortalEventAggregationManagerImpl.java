@@ -30,7 +30,6 @@ import org.jasig.portal.concurrency.FunctionWithoutResult;
 import org.jasig.portal.concurrency.locking.ClusterMutex;
 import org.jasig.portal.concurrency.locking.IClusterLockService;
 import org.jasig.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
-import org.jasig.portal.events.aggr.IEventAggregatorStatus.ProcessingType;
 import org.jasig.portal.events.aggr.dao.IEventAggregationManagementDao;
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
 import org.joda.time.DateTime;
@@ -40,8 +39,6 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 
 import com.google.common.base.Function;
 
@@ -180,42 +177,6 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
             try {
                 long start = System.nanoTime();
                 
-                //Check if unclosed aggregation cleanup needs to be run
-                final Boolean cleanUnclosed = getTransactionOperations().execute(new TransactionCallback<Boolean>() {
-                    @Override
-                    public Boolean doInTransaction(TransactionStatus status) {
-                        final IEventAggregatorStatus cleanUnclosedStatus = eventAggregationManagementDao.getEventAggregatorStatus(ProcessingType.CLEAN_UNCLOSED, true);
-                        final IEventAggregatorStatus aggregationStatus = eventAggregationManagementDao.getEventAggregatorStatus(ProcessingType.AGGREGATION, true);
-                        
-                        final DateTime lastCleanedEventDate = cleanUnclosedStatus.getLastEventDate();
-                        final DateTime lastAggrEventDate = aggregationStatus.getLastEventDate();
-                        
-                        return lastAggrEventDate != null && (lastCleanedEventDate == null || lastCleanedEventDate.plusMillis(closeAggregationsPeriod).isBefore(lastAggrEventDate));
-                    }
-                });
-                if (cleanUnclosed) {
-                    result = clusterLockService.doInTryLock(PortalEventAggregator.AGGREGATION_LOCK_NAME,
-                            new Function<ClusterMutex, EventProcessingResult>() {
-                                @Override
-                                public EventProcessingResult apply(final ClusterMutex input) {
-                                    return portalEventAggregator.doCloseAggregations();
-                                }
-                            });
-                    
-                    final EventProcessingResult cleanResult = result.getResult();
-                    if (result.isExecuted() && cleanResult == null) {
-                        logger.warn("doCloseAggregations was not executed");
-                    }
-                    else if (cleanResult != null && logger.isInfoEnabled()) {
-                        logResult("Clean {} unclosed agregations created at {} events/second between {} and {} in {}ms - {} e/s a {}x speedup", cleanResult, start);
-                    }
-                    
-                    //Update start time so logging is accurate for aggregation
-                    start = System.nanoTime();
-                    //Set aggr period to 0 to allow immediate run locally
-                    aggregatePeriod = 0;
-                }
-                
                 //Try executing aggregation within lock
                 result = clusterLockService.doInTryLockIfNotRunSince(PortalEventAggregator.AGGREGATION_LOCK_NAME,
                         aggregatePeriod,
@@ -225,6 +186,12 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                                 return portalEventAggregator.doAggregateRawEvents();
                             }
                         });
+                
+                //Aggregation didn't run due to the lock either being owned or not old enough, return immediately
+                if (!result.isExecuted()) {
+                    return false;
+                }
+                
                 aggrResult = result.getResult();
                 
                 //Check the result, warn if null
@@ -236,11 +203,30 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                         logResult("Aggregated {} events created at {} events/second between {} and {} in {}ms - {} e/s a {}x speedup", aggrResult, start);
                     }
                     
-                    //If events were processed purge old aggregations from the cache
-                    if (aggrResult != null && aggrResult.getProcessed() > 0) {
+                    //If events were processed purge old aggregations from the cache and then clean unclosed aggregations
+                    if (aggrResult.getProcessed() > 0) {
                         final Map<Class<?>, Collection<Serializable>> evictedEntities = evictedEntitiesHolder.get();
                         if (evictedEntities.size() > 0) {
                             portalEventAggregator.evictAggregates(evictedEntities);
+                        }
+
+                        //Update start time so logging is accurate
+                        start = System.nanoTime();
+                        
+                        result = clusterLockService.doInTryLock(PortalEventAggregator.AGGREGATION_LOCK_NAME,
+                                new Function<ClusterMutex, EventProcessingResult>() {
+                                    @Override
+                                    public EventProcessingResult apply(final ClusterMutex input) {
+                                        return portalEventAggregator.doCloseAggregations();
+                                    }
+                                });
+                        
+                        final EventProcessingResult cleanResult = result.getResult();
+                        if (result.isExecuted() && cleanResult == null) {
+                            logger.warn("doCloseAggregations was not executed");
+                        }
+                        else if (cleanResult != null && logger.isInfoEnabled()) {
+                            logResult("Clean {} unclosed agregations created at {} events/second between {} and {} in {}ms - {} e/s a {}x speedup", cleanResult, start);
                         }
                     }
                 }
