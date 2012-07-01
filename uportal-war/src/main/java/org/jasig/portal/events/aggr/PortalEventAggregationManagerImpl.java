@@ -30,7 +30,6 @@ import org.jasig.portal.concurrency.FunctionWithoutResult;
 import org.jasig.portal.concurrency.locking.ClusterMutex;
 import org.jasig.portal.concurrency.locking.IClusterLockService;
 import org.jasig.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
-import org.jasig.portal.events.aggr.dao.IEventAggregationManagementDao;
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -56,10 +55,8 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
     private PortalEventPurger portalEventPurger;
     private PortalEventSessionPurger portalEventSessionPurger;
     private IClusterLockService clusterLockService;
-    private IEventAggregationManagementDao eventAggregationManagementDao;
     
     private long aggregateRawEventsPeriod = 0;
-    private int closeAggregationsPeriod = 0;
     private long purgeRawEventsPeriod = 0;
     private long purgeEventSessionsPeriod = 0;
     
@@ -71,11 +68,6 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
     };
     private volatile boolean shutdown = false;
     
-    @Autowired
-    public void setEventAggregationManagementDao(IEventAggregationManagementDao eventAggregationManagementDao) {
-        this.eventAggregationManagementDao = eventAggregationManagementDao;
-    }
-
     @Autowired
     public void setClusterLockService(IClusterLockService clusterLockService) {
         this.clusterLockService = clusterLockService;
@@ -114,11 +106,6 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
     @Value("#{${org.jasig.portal.events.aggr.session.PortalEventAggregationManager.purgeEventSessionsPeriod:61700} * 0.95}")
     public void setPurgeEventSessionsPeriod(long purgeEventSessionsPeriod) {
         this.purgeEventSessionsPeriod = purgeEventSessionsPeriod;
-    }
-
-    @Value("#{${org.jasig.portal.events.aggr.session.PortalEventAggregationManager.cleanUnclosedAggregationsPeriod:3670000} * 0.95}")
-    public void setCloseAggregationsPeriod(int closeAggregationsPeriod) {
-        this.closeAggregationsPeriod = closeAggregationsPeriod;
     }
 
     @Override
@@ -186,12 +173,6 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                                 return portalEventAggregator.doAggregateRawEvents();
                             }
                         });
-                
-                //Aggregation didn't run due to the lock either being owned or not old enough, return immediately
-                if (!result.isExecuted()) {
-                    return false;
-                }
-                
                 aggrResult = result.getResult();
                 
                 //Check the result, warn if null
@@ -212,7 +193,6 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
 
                         //Update start time so logging is accurate
                         start = System.nanoTime();
-                        
                         result = clusterLockService.doInTryLock(PortalEventAggregator.AGGREGATION_LOCK_NAME,
                                 new Function<ClusterMutex, EventProcessingResult>() {
                                     @Override
@@ -226,7 +206,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                             logger.warn("doCloseAggregations was not executed");
                         }
                         else if (cleanResult != null && logger.isInfoEnabled()) {
-                            logResult("Clean {} unclosed agregations created at {} events/second between {} and {} in {}ms - {} e/s a {}x speedup", cleanResult, start);
+                            logResult("Clean {} unclosed agregations created at {} aggrs/second between {} and {} in {}ms - {} a/s a {}x speedup", cleanResult, start);
                         }
                     }
                 }
@@ -241,6 +221,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                 throw e;
             }
             finally {
+                //Make sure we clean up the thread local
                 evictedEntitiesHolder.remove();
             }
             
