@@ -32,7 +32,6 @@ import org.jasig.portal.concurrency.locking.IClusterLockService;
 import org.jasig.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
 import org.jasig.portal.events.aggr.IEventAggregatorStatus.ProcessingType;
 import org.jasig.portal.events.aggr.dao.IEventAggregationManagementDao;
-import org.jasig.portal.events.aggr.dao.jpa.EventAggregatorStatusImpl_;
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -43,7 +42,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 
 import com.google.common.base.Function;
 
@@ -183,14 +181,19 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                 long start = System.nanoTime();
                 
                 //Check if unclosed aggregation cleanup needs to be run
-                final IEventAggregatorStatus cleanUnclosedStatus = getTransactionOperations().execute(new TransactionCallback<IEventAggregatorStatus>() {
+                final Boolean cleanUnclosed = getTransactionOperations().execute(new TransactionCallback<Boolean>() {
                     @Override
-                    public IEventAggregatorStatus doInTransaction(TransactionStatus status) {
-                        return eventAggregationManagementDao.getEventAggregatorStatus(ProcessingType.CLEAN_UNCLOSED, true);
+                    public Boolean doInTransaction(TransactionStatus status) {
+                        final IEventAggregatorStatus cleanUnclosedStatus = eventAggregationManagementDao.getEventAggregatorStatus(ProcessingType.CLEAN_UNCLOSED, true);
+                        final IEventAggregatorStatus aggregationStatus = eventAggregationManagementDao.getEventAggregatorStatus(ProcessingType.AGGREGATION, true);
+                        
+                        final DateTime lastCleanedEventDate = cleanUnclosedStatus.getLastEventDate();
+                        final DateTime lastAggrEventDate = aggregationStatus.getLastEventDate();
+                        
+                        return lastAggrEventDate != null && (lastCleanedEventDate == null || lastCleanedEventDate.plusMillis(closeAggregationsPeriod).isBefore(lastAggrEventDate));
                     }
                 });
-                final DateTime lastCleanedEventDate = cleanUnclosedStatus.getLastEventDate();
-                if (lastCleanedEventDate == null || lastCleanedEventDate.plusMillis((int) closeAggregationsPeriod).isBeforeNow()) {
+                if (cleanUnclosed) {
                     result = clusterLockService.doInTryLock(PortalEventAggregator.AGGREGATION_LOCK_NAME,
                             new Function<ClusterMutex, EventProcessingResult>() {
                                 @Override
