@@ -1,6 +1,7 @@
 package org.jasig.portal.events.aggr;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.persistence.Cacheable;
@@ -50,6 +51,12 @@ import org.slf4j.LoggerFactory;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public final class UniqueStrings {
+    private static final int MAXIMUM_SEGMENT_COUNT = 1440;
+
+    private static final int SEGMENT_MERGE_RATIO = 2;
+
+    private static final int SMALL_SEGMENT_THRESHOLD = 10;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(UniqueStrings.class);
     
     @Id
@@ -71,20 +78,24 @@ public final class UniqueStrings {
 
     public boolean add(String e) {
         int stringCount = 0;
-        
+        int smallSegments = 0;
         //Check if the username exists in any segment
         for (final UniqueStringsSegment uniqueUsernamesSegment : this.uniqueStringSegments) {
             if (uniqueUsernamesSegment.contains(e)) {
                 return false;
             }
-            stringCount += uniqueUsernamesSegment.size();
+            final int size = uniqueUsernamesSegment.size();
+            stringCount += size;
+            if (size <= SMALL_SEGMENT_THRESHOLD) {
+                smallSegments++;
+            }
         }
         
         //Make sure a current segment exists
         if (this.currentUniqueUsernamesSegment == null) {
             final int segmentCount = this.uniqueStringSegments.size();
             //For more than 1440 segments or a string/segment ratio worse than 2:1 merge old segments into new
-            if (segmentCount >= 1440 || (segmentCount > 1 && stringCount / segmentCount <= 2)) {
+            if (segmentCount >= MAXIMUM_SEGMENT_COUNT || (segmentCount > 1 && stringCount / segmentCount <= SEGMENT_MERGE_RATIO)) {
                 LOGGER.debug("Merging {} segments with {} strings into a single segment", segmentCount, stringCount);
                 this.currentUniqueUsernamesSegment = new UniqueStringsSegment();
                 
@@ -96,9 +107,26 @@ public final class UniqueStrings {
                 //Remove all old segments
                 this.uniqueStringSegments.clear();
                 
-                //Set the add the new segment
+                //Add the new segment
                 this.uniqueStringSegments.add(this.currentUniqueUsernamesSegment);
             }
+            //If there is more than 1 existing segment with only a few strings in it join together the small segments into the new segment
+            else if (smallSegments > 0) {
+                LOGGER.debug("Merging {} small segments into a single segment", smallSegments);
+                this.currentUniqueUsernamesSegment = new UniqueStringsSegment();
+                
+                for (final Iterator<UniqueStringsSegment> uniqueStringsSegmentItr = this.uniqueStringSegments.iterator(); uniqueStringsSegmentItr.hasNext();) {
+                    final UniqueStringsSegment uniqueStringsSegment = uniqueStringsSegmentItr.next();
+                    if (uniqueStringsSegment.size() <= SMALL_SEGMENT_THRESHOLD) {
+                        uniqueStringsSegmentItr.remove();
+                        this.currentUniqueUsernamesSegment.addAll(uniqueStringsSegment);
+                    }
+                }
+                
+                //Add the new segment
+                this.uniqueStringSegments.add(this.currentUniqueUsernamesSegment);
+            }
+            //Just create a new segment
             else {
                 this.currentUniqueUsernamesSegment = new UniqueStringsSegment();
                 this.uniqueStringSegments.add(this.currentUniqueUsernamesSegment);
