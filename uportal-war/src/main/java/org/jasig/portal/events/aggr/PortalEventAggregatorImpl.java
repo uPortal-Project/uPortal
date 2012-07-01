@@ -207,6 +207,7 @@ public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements P
     }
     
     @Override
+    @AggrEventsTransactional
     public EventProcessingResult doCloseAggregations() {
         if (!this.clusterLockService.isLockOwner(AGGREGATION_LOCK_NAME)) {
             throw new IllegalStateException("The cluster lock " + AGGREGATION_LOCK_NAME + " must be owned by the current thread and server");
@@ -236,7 +237,7 @@ public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements P
         
         if (lastAggregatedDate.equals(lastCleanUnclosedDate)) {
             logger.debug("No events aggregated since last unclosed aggregation cleaning, skipping clean: {}", lastAggregatedDate);
-            return new EventProcessingResult(0, null, null, true);
+            return new EventProcessingResult(0, lastCleanUnclosedDate, lastAggregatedDate, true);
         }
         
         int closedAggregations = 0;

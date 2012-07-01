@@ -146,9 +146,6 @@
         maxElementsInMemory="1440" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
         
     <!-- NOT CACHED: org.jasig.portal.events.aggr.dao.jpa.EventAggregatorStatusImpl -->
-    <cache name="org.jasig.portal.events.aggr.dao.jpa.EventAggregatorStatusImpl.Query" 
-        eternal="false" overflowToDisk="false" diskPersistent="false"
-        maxElementsInMemory="10" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <cache name="org.jasig.portal.events.aggr.dao.jpa.EventAggregatorStatusImpl##NaturalId" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="10" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
