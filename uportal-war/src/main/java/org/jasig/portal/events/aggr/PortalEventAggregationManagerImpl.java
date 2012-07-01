@@ -175,7 +175,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
             if (result != null) {
                 logger.debug("doAggregateRawEvents signaled that not all events were aggregated in a single transaction, running again.");
                 
-                //Set purge period to 0 to allow immediate re-run locally
+                //Set aggr period to 0 to allow immediate re-run locally
                 aggregatePeriod = 0;
             }
             
@@ -209,6 +209,8 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                     
                     //Update start time so logging is accurate for aggregation
                     start = System.nanoTime();
+                    //Set aggr period to 0 to allow immediate run locally
+                    aggregatePeriod = 0;
                 }
                 
                 //Try executing aggregation within lock
