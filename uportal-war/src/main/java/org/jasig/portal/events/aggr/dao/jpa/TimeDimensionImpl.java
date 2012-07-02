@@ -65,7 +65,7 @@ import org.joda.time.LocalTime;
 @NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class TimeDimensionImpl implements TimeDimension, Serializable {
+public final class TimeDimensionImpl implements TimeDimension, Serializable {
     private static final long serialVersionUID = 1L;
    
     @Id
