@@ -1,6 +1,7 @@
 package org.jasig.portal.utils.cache;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
@@ -14,6 +15,8 @@ import org.slf4j.LoggerFactory;
  * @author Eric Dalquist
  */
 public class ExpiredElementEvictor {
+    private final ReentrantLock evictLock = new ReentrantLock();
+    
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     private CacheManager cacheManager;
 
@@ -25,27 +28,38 @@ public class ExpiredElementEvictor {
      * Evicts expired elements from the {@link CacheManager}
      */
     public void evictExpiredElements() {
-        final long startTime = System.nanoTime();
-
-        final String[] cacheNames = this.cacheManager.getCacheNames();
-
         long evictedTotal = 0;
-        for (String cacheName : cacheNames) {
-            final Ehcache cache = this.cacheManager.getEhcache(cacheName);
-            if (null != cache) {
-                final long preEvictSize = cache.getMemoryStoreSize();
-                final long evictStart = System.nanoTime();
-                cache.evictExpiredElements();
-                if (logger.isDebugEnabled()) {
-                    final long evicted = preEvictSize - cache.getMemoryStoreSize();
-                    evictedTotal += evicted;
-                    logger.debug("Evicted " + evicted + " elements from cache '" + cacheName + "' in "
-                            + TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - evictStart) + " ms");
+        final long startTime;
+        final String[] cacheNames;
+        
+        if (!evictLock.tryLock()) {
+            //Lock is already held, skip eviction
+            return;
+        }
+        try {
+            startTime = System.nanoTime();
+            cacheNames = this.cacheManager.getCacheNames();
+    
+            for (String cacheName : cacheNames) {
+                final Ehcache cache = this.cacheManager.getEhcache(cacheName);
+                if (null != cache) {
+                    final long preEvictSize = cache.getMemoryStoreSize();
+                    final long evictStart = System.nanoTime();
+                    cache.evictExpiredElements();
+                    if (logger.isDebugEnabled()) {
+                        final long evicted = preEvictSize - cache.getMemoryStoreSize();
+                        evictedTotal += evicted;
+                        logger.debug("Evicted " + evicted + " elements from cache '" + cacheName + "' in "
+                                + TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - evictStart) + " ms");
+                    }
+                }
+                else if (logger.isDebugEnabled()) {
+                    logger.debug("No cache found with name " + cacheName);
                 }
             }
-            else if (logger.isDebugEnabled()) {
-                logger.debug("No cache found with name " + cacheName);
-            }
+        }
+        finally {
+            this.evictLock.unlock();
         }
 
         if (logger.isDebugEnabled()) {
