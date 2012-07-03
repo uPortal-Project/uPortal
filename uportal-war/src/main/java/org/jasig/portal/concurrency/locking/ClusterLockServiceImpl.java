@@ -64,6 +64,7 @@ public class ClusterLockServiceImpl implements IClusterLockService {
     private IClusterLockDao clusterLockDao;
     private ReadableDuration updateLockRate = Duration.standardSeconds(1);
     private ReadableDuration maximumLockDuration = Duration.standardMinutes(60);
+    private long dbLockTimeout = TimeUnit.SECONDS.toMillis(30);
     
     @Autowired
     public void setPortalInfoProvider(IPortalInfoProvider portalInfoProvider) {
@@ -95,9 +96,13 @@ public class ClusterLockServiceImpl implements IClusterLockService {
     public void setMaximumLockDuration(ReadableDuration maximumLockDuration) {
         this.maximumLockDuration = maximumLockDuration;
     }
-    
 
-    @Override
+    @Value("${org.jasig.portal.concurrency.locking.ClusterLockDao.dbLockAcquireTimeout:30000}")
+    public void setDbLockTimeout(long dbLockTimeout) {
+		this.dbLockTimeout = dbLockTimeout;
+	}
+
+	@Override
     public ClusterMutex getClusterMutex(String mutexName) {
         return this.clusterLockDao.getClusterMutex(mutexName);
     }
@@ -122,7 +127,7 @@ public class ClusterLockServiceImpl implements IClusterLockService {
         //Thread coordination objects
         final CountDownLatch dbLockLatch = new CountDownLatch(1);
         final CountDownLatch workCompleteLatch = new CountDownLatch(1);
-        final AtomicReference<ClusterMutex> dbLocked = new AtomicReference<ClusterMutex>(null);
+        final AtomicReference<ClusterMutex> mutexRef = new AtomicReference<ClusterMutex>(null);
         
         
         Future<Boolean> lockFuture = null;
@@ -168,13 +173,13 @@ public class ClusterLockServiceImpl implements IClusterLockService {
             }
             
             final Thread currentThread = Thread.currentThread();
-            final DatabaseLockWorker databaseLockWorker = new DatabaseLockWorker(currentThread, dbLocked, mutexName, dbLockLatch, workCompleteLatch);
+            final DatabaseLockWorker databaseLockWorker = new DatabaseLockWorker(currentThread, mutexRef, mutexName, dbLockLatch, workCompleteLatch);
             lockFuture = this.lockMonitorExecutorService.submit(databaseLockWorker);
             
             //Wait for DB lock acquisition
-            dbLockLatch.await();
+            dbLockLatch.await(dbLockTimeout, TimeUnit.MILLISECONDS);
             
-            final ClusterMutex mutex = dbLocked.get();
+            final ClusterMutex mutex = mutexRef.get();
             if (mutex == null) {
                 //Failed to get DB lock, stop now
                 this.logger.trace("failed to aquire database lock, returning notExecuted result for: {}", mutexName);

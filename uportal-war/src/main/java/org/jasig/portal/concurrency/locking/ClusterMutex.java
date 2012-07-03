@@ -65,7 +65,6 @@ public class ClusterMutex implements Serializable {
     @Column(name="MUTEX_ID")
     private final long id;
     
-    @SuppressWarnings("unused")
     @Version
     @Column(name = "ENTITY_VERSION")
     private final long entityVersion;

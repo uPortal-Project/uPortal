@@ -4,39 +4,68 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.annotation.Nullable;
 
+import org.jasig.portal.IPortalInfoProvider;
 import org.jasig.portal.concurrency.locking.IClusterLockService.LockStatus;
 import org.jasig.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
-import org.junit.Ignore;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 import com.google.common.base.Function;
 
-@Ignore
+//@Ignore
 @RunWith(MockitoJUnitRunner.class)
 public class ClusterLockServiceImplTest {
 	@InjectMocks private final ClusterLockServiceImpl clusterLockService = new ClusterLockServiceImpl();
 	@Mock private IClusterLockDao clusterLockDao;
-	@Mock private ExecutorService lockMonitorExecutorService;
+	@Mock private IPortalInfoProvider portalInfoProvider;
+	private ExecutorService lockMonitorExecutorService = Executors.newSingleThreadExecutor();
+	
+	@Before
+	public void setup() {
+		clusterLockService.setLockMonitorExecutorService(this.lockMonitorExecutorService);
+	}
+	
+	@After
+	public void teardown() {
+		this.lockMonitorExecutorService.shutdownNow();
+	}
 	
 	@Test
-	public void testLastRunDelay() throws InterruptedException {
-		String mutextName = "TEST";
+	public void testWithinLastRunDelay() throws InterruptedException {
+		final String mutexName = "TEST";
+		final String serverName = "server_1";
 		
-		final ClusterMutex clusterMutex = new ClusterMutex(mutextName);
-		when(clusterLockDao.getClusterMutex(mutextName)).thenReturn(clusterMutex);
+		final ClusterMutex clusterMutex = new ClusterMutex(mutexName);
+		clusterMutex.lock(serverName);
+		clusterMutex.unlock();
+		
+		when(clusterLockDao.getClusterMutex(mutexName)).thenReturn(clusterMutex);
+		when(clusterLockDao.getLock(mutexName)).thenAnswer(new Answer<ClusterMutex>() {
+			@Override
+			public ClusterMutex answer(InvocationOnMock invocation) throws Throwable {
+				clusterMutex.lock(serverName);
+				return clusterMutex;
+			}
+		});
 		
 		final TryLockFunctionResult<Boolean> result = this.clusterLockService
-				.doInTryLock(mutextName, LockOptions.builder().lastRunDelay(100),
+				.doInTryLock(mutexName, LockOptions.builder().lastRunDelay(1000),
 						new Function<ClusterMutex, Boolean>() {
 							@Override
 							public Boolean apply(@Nullable ClusterMutex input) {
@@ -50,4 +79,216 @@ public class ClusterLockServiceImplTest {
 		assertFalse(result.isExecuted());
 		
 	}
+	
+	@Test
+	public void testOutsideLastRunDelay() throws InterruptedException {
+		final String mutexName = "TEST";
+		final String serverName = "server_1";
+		
+		final ClusterMutex clusterMutex = new ClusterMutex(mutexName);
+		clusterMutex.lock(serverName);
+		clusterMutex.unlock();
+		
+		Thread.sleep(10);
+		
+		when(clusterLockDao.getClusterMutex(mutexName)).thenReturn(clusterMutex);
+		when(clusterLockDao.getLock(mutexName)).thenAnswer(new Answer<ClusterMutex>() {
+			@Override
+			public ClusterMutex answer(InvocationOnMock invocation) throws Throwable {
+				clusterMutex.lock(serverName);
+				return clusterMutex;
+			}
+		});
+		
+		final TryLockFunctionResult<Boolean> result = this.clusterLockService
+				.doInTryLock(mutexName, LockOptions.builder().lastRunDelay(10),
+						new Function<ClusterMutex, Boolean>() {
+							@Override
+							public Boolean apply(@Nullable ClusterMutex input) {
+								return Boolean.TRUE;
+							}
+						});
+		
+		assertNotNull(result);
+		assertEquals(LockStatus.EXECUTED, result.getLockStatus());
+		assertTrue(result.getResult());
+		assertTrue(result.isExecuted());
+		
+	}
+	
+	@Test
+	public void testWithinServerBiasDelayDifferentServer() throws InterruptedException {
+		final String mutexName = "TEST";
+		final String serverName = "server_1";
+		
+		final ClusterMutex clusterMutex = new ClusterMutex(mutexName);
+		clusterMutex.lock("server_2");
+		clusterMutex.unlock();
+		when(portalInfoProvider.getUniqueServerName()).thenReturn(serverName);
+		when(clusterLockDao.getClusterMutex(mutexName)).thenReturn(clusterMutex);
+		when(clusterLockDao.getLock(mutexName)).thenAnswer(new Answer<ClusterMutex>() {
+			@Override
+			public ClusterMutex answer(InvocationOnMock invocation) throws Throwable {
+				clusterMutex.lock(serverName);
+				return clusterMutex;
+			}
+		});
+		
+		final TryLockFunctionResult<Boolean> result = this.clusterLockService
+				.doInTryLock(mutexName, LockOptions.builder().serverBiasDelay(1000),
+						new Function<ClusterMutex, Boolean>() {
+							@Override
+							public Boolean apply(@Nullable ClusterMutex input) {
+								return Boolean.TRUE;
+							}
+						});
+		
+		assertNotNull(result);
+		assertEquals(LockStatus.SKIPPED_SERVER_BIAS, result.getLockStatus());
+		assertNull(result.getResult());
+		assertFalse(result.isExecuted());
+		
+	}
+	
+	@Test
+	public void testWithinServerBiasDelaySameServer() throws InterruptedException {
+		final String mutexName = "TEST";
+		final String serverName = "server_1";
+		
+		final ClusterMutex clusterMutex = new ClusterMutex(mutexName);
+		clusterMutex.lock(serverName);
+		clusterMutex.unlock();
+		when(portalInfoProvider.getUniqueServerName()).thenReturn(serverName);
+		when(clusterLockDao.getClusterMutex(mutexName)).thenReturn(clusterMutex);
+		when(clusterLockDao.getLock(mutexName)).thenAnswer(new Answer<ClusterMutex>() {
+			@Override
+			public ClusterMutex answer(InvocationOnMock invocation) throws Throwable {
+				clusterMutex.lock(serverName);
+				return clusterMutex;
+			}
+		});
+		
+		final TryLockFunctionResult<Boolean> result = this.clusterLockService
+				.doInTryLock(mutexName, LockOptions.builder().serverBiasDelay(1000),
+						new Function<ClusterMutex, Boolean>() {
+							@Override
+							public Boolean apply(@Nullable ClusterMutex input) {
+								return Boolean.TRUE;
+							}
+						});
+		
+		assertNotNull(result);
+		assertEquals(LockStatus.EXECUTED, result.getLockStatus());
+		assertTrue(result.getResult());
+		assertTrue(result.isExecuted());
+	}
+	
+	@Test
+	public void testOutsideServerBiasDelayDifferentServer() throws InterruptedException {
+		final String mutexName = "TEST";
+		final String serverName = "server_1";
+		
+		final ClusterMutex clusterMutex = new ClusterMutex(mutexName);
+		clusterMutex.lock("server_2");
+		clusterMutex.unlock();
+		
+		Thread.sleep(10);
+		when(portalInfoProvider.getUniqueServerName()).thenReturn(serverName);
+		when(clusterLockDao.getClusterMutex(mutexName)).thenReturn(clusterMutex);
+		when(clusterLockDao.getLock(mutexName)).thenAnswer(new Answer<ClusterMutex>() {
+			@Override
+			public ClusterMutex answer(InvocationOnMock invocation) throws Throwable {
+				clusterMutex.lock(serverName);
+				return clusterMutex;
+			}
+		});
+		
+		final TryLockFunctionResult<Boolean> result = this.clusterLockService
+				.doInTryLock(mutexName, LockOptions.builder().serverBiasDelay(10),
+						new Function<ClusterMutex, Boolean>() {
+							@Override
+							public Boolean apply(@Nullable ClusterMutex input) {
+								return Boolean.TRUE;
+							}
+						});
+		
+		assertNotNull(result);
+		assertEquals(LockStatus.EXECUTED, result.getLockStatus());
+		assertTrue(result.getResult());
+		assertTrue(result.isExecuted());
+		
+	}
+	
+	@Test
+	public void testOutsideServerBiasDelaySameServer() throws InterruptedException {
+		final String mutexName = "TEST";
+		final String serverName = "server_1";
+		
+		final ClusterMutex clusterMutex = new ClusterMutex(mutexName);
+		clusterMutex.lock(serverName);
+		clusterMutex.unlock();
+		
+		Thread.sleep(10);
+		when(portalInfoProvider.getUniqueServerName()).thenReturn(serverName);
+		when(clusterLockDao.getClusterMutex(mutexName)).thenReturn(clusterMutex);
+		when(clusterLockDao.getLock(mutexName)).thenAnswer(new Answer<ClusterMutex>() {
+			@Override
+			public ClusterMutex answer(InvocationOnMock invocation) throws Throwable {
+				clusterMutex.lock(serverName);
+				return clusterMutex;
+			}
+		});
+		
+		final TryLockFunctionResult<Boolean> result = this.clusterLockService
+				.doInTryLock(mutexName, LockOptions.builder().serverBiasDelay(10),
+						new Function<ClusterMutex, Boolean>() {
+							@Override
+							public Boolean apply(@Nullable ClusterMutex input) {
+								return Boolean.TRUE;
+							}
+						});
+		
+		assertNotNull(result);
+		assertEquals(LockStatus.EXECUTED, result.getLockStatus());
+		assertTrue(result.getResult());
+		assertTrue(result.isExecuted());
+		
+	}
+	
+	@Test
+	public void testLockThreadPoolDead() throws InterruptedException {
+		final String mutexName = "TEST";
+		final String serverName = "server_1";
+		
+		final ClusterMutex clusterMutex = new ClusterMutex(mutexName);
+		clusterMutex.lock(serverName);
+		clusterMutex.unlock();
+		
+		when(portalInfoProvider.getUniqueServerName()).thenReturn(serverName);
+		when(clusterLockDao.getClusterMutex(mutexName)).thenReturn(clusterMutex);
+		when(clusterLockDao.getLock(mutexName)).thenAnswer(new Answer<ClusterMutex>() {
+			@Override
+			public ClusterMutex answer(InvocationOnMock invocation) throws Throwable {
+				clusterMutex.lock(serverName);
+				return clusterMutex;
+			}
+		});
+		
+		ExecutorService fakeLockMonitorExecutorService = mock(ExecutorService.class);
+		this.clusterLockService.setLockMonitorExecutorService(fakeLockMonitorExecutorService);
+		this.clusterLockService.setDbLockTimeout(500);
+		
+		final TryLockFunctionResult<Boolean> result = this.clusterLockService
+				.doInTryLock(mutexName, LockOptions.builder().serverBiasDelay(10),
+						new Function<ClusterMutex, Boolean>() {
+							@Override
+							public Boolean apply(@Nullable ClusterMutex input) {
+								return Boolean.TRUE;
+							}
+						});
+		//TODO this should throw some sort of ex?
+		
+	}
+	
+	//test exec serv not actually execing
 }
