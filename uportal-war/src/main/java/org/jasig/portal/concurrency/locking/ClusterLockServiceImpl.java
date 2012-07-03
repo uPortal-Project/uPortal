@@ -49,6 +49,7 @@ import com.google.common.cache.LoadingCache;
  */
 @Service
 public class ClusterLockServiceImpl implements IClusterLockService {
+	private static final LockOptions DEFAULT_LOCK_OPTIONS = new LockOptions();
     private final Logger logger = LoggerFactory.getLogger(getClass());
     
     private final LoadingCache<String, ReentrantLock> localLocks = CacheBuilder.newBuilder().weakValues().build(new CacheLoader<String, ReentrantLock>() {
@@ -103,12 +104,13 @@ public class ClusterLockServiceImpl implements IClusterLockService {
 
     @Override
     public <T> TryLockFunctionResult<T> doInTryLock(final String mutexName, Function<ClusterMutex, T> lockFunction) throws InterruptedException {
-        return doInTryLockIfNotRunSince(mutexName, 0, lockFunction);
+        return doInTryLock(mutexName, DEFAULT_LOCK_OPTIONS, lockFunction);
     }
-
+    
     @Override
-    public <T> TryLockFunctionResult<T> doInTryLockIfNotRunSince(String mutexName, long time,
-            Function<ClusterMutex, T> lockFunction) throws InterruptedException {
+	public <T> TryLockFunctionResult<T> doInTryLock(String mutexName,
+			LockOptions lockOptions, Function<ClusterMutex, T> lockFunction)
+			throws InterruptedException {
         /*
          * locking strategy requires 2 threads
          * the caller thread is the 'work thread', it executes the lockFunction
@@ -129,21 +131,39 @@ public class ClusterLockServiceImpl implements IClusterLockService {
         final boolean lockedLocally = lock.tryLock();
         if (!lockedLocally) {
             this.logger.trace("local lock already held for {}", mutexName);
-            return TryLockFunctionResultImpl.getNotExecutedInstance();
+            return TryLockFunctionResultImpl.getSkippedInstance(LockStatus.SKIPPED_LOCKED);
         }
         try {
             this.logger.trace("acquired local lock for {}", mutexName);
             
             //Check last lock time
-            if (time > 0) {
+            final long lastRunDelay = lockOptions.getLastRunDelay();
+            final long serverBiasDelay = lockOptions.getServerBiasDelay();
+            if (lastRunDelay > 0 || serverBiasDelay > 0) {
                 final ClusterMutex clusterMutex = this.clusterLockDao.getClusterMutex(mutexName);
-                final long nextRunTime = System.currentTimeMillis() - time;
-                if (clusterMutex.getLockStart() > nextRunTime || 
-                    clusterMutex.getLastUpdate() > nextRunTime ||
-                    clusterMutex.getLockEnd() > nextRunTime) {
-                    
-                    this.logger.trace("db lock last run less than {}ms ago for {}", time, mutexName);
-                    return TryLockFunctionResultImpl.getNotExecutedInstance();
+                
+                if (lastRunDelay > 0) { 
+	                final long nextRunTime = System.currentTimeMillis() - lastRunDelay;
+	                if (clusterMutex.getLockStart() > nextRunTime || 
+	                    clusterMutex.getLastUpdate() > nextRunTime ||
+	                    clusterMutex.getLockEnd() > nextRunTime) {
+	                    
+	                    this.logger.trace("db lock last run less than {}ms ago for {}", lastRunDelay, mutexName);
+	                    return TryLockFunctionResultImpl.getSkippedInstance(LockStatus.SKIPPED_LAST_RUN);
+	                }
+                }
+	             
+                if (serverBiasDelay > 0) {
+                	final String uniqueServerName = portalInfoProvider.getUniqueServerName();
+	                final long nextRunTime = System.currentTimeMillis() - serverBiasDelay;
+	                if (!clusterMutex.getPreviousServerId().equals(uniqueServerName) && (
+                		clusterMutex.getLockStart() > nextRunTime || 
+	                    clusterMutex.getLastUpdate() > nextRunTime ||
+	                    clusterMutex.getLockEnd() > nextRunTime)) {
+	                    
+	                    this.logger.trace("db lock last run less than {}ms ago for {} on a server other than {}", new Object[] { lastRunDelay, mutexName, uniqueServerName });
+	                    return TryLockFunctionResultImpl.getSkippedInstance(LockStatus.SKIPPED_SERVER_BIAS);
+	                }
                 }
             }
             
@@ -158,7 +178,7 @@ public class ClusterLockServiceImpl implements IClusterLockService {
             if (mutex == null) {
                 //Failed to get DB lock, stop now
                 this.logger.trace("failed to aquire database lock, returning notExecuted result for: {}", mutexName);
-                return TryLockFunctionResultImpl.getNotExecutedInstance();
+                return TryLockFunctionResultImpl.getSkippedInstance(LockStatus.SKIPPED_LOCKED);
             }
             
             //Execute the lockFunction
@@ -308,39 +328,59 @@ public class ClusterLockServiceImpl implements IClusterLockService {
         }
     }
     
-    public static class TryLockFunctionResultImpl<T> implements TryLockFunctionResult<T> {
-        private static final TryLockFunctionResult<?> NOT_EXECUTED_INSTANCE = new TryLockFunctionResultImpl<Object>();
+    public static final class TryLockFunctionResultImpl<T> implements TryLockFunctionResult<T> {
+        private static final TryLockFunctionResult<?> SKIPPED_LOCKED_INSTANCE = new TryLockFunctionResultImpl<Object>(LockStatus.SKIPPED_LOCKED);
+        private static final TryLockFunctionResult<?> SKIPPED_LAST_RUN_INSTANCE = new TryLockFunctionResultImpl<Object>(LockStatus.SKIPPED_LAST_RUN);
+        private static final TryLockFunctionResult<?> SKIPPED_SERVER_BIAS_INSTANCE = new TryLockFunctionResultImpl<Object>(LockStatus.SKIPPED_SERVER_BIAS);
         
         @SuppressWarnings("unchecked")
-        static <T> TryLockFunctionResult<T> getNotExecutedInstance() {
-            return (TryLockFunctionResult<T>)NOT_EXECUTED_INSTANCE;
-        }
+		static <T> TryLockFunctionResult<T> getSkippedInstance(LockStatus lockStatus) {
+			switch (lockStatus) {
+				case SKIPPED_LAST_RUN: {
+					return (TryLockFunctionResult<T>) SKIPPED_LAST_RUN_INSTANCE;
+				}
+				case SKIPPED_LOCKED: {
+					return (TryLockFunctionResult<T>) SKIPPED_LOCKED_INSTANCE;
+				}
+				case SKIPPED_SERVER_BIAS: {
+					return (TryLockFunctionResult<T>) SKIPPED_SERVER_BIAS_INSTANCE;
+				}
+				default: {
+					throw new IllegalArgumentException(lockStatus + " is not a SKIPPED status");
+				}
+			}
+		}
         
-        private final boolean executed;
+        private final LockStatus lockStatus;
         private final T result;
 
-        private TryLockFunctionResultImpl() {
-            this.executed = false;
+        private TryLockFunctionResultImpl(LockStatus lockStatus) {
+            this.lockStatus = lockStatus;
             this.result = null;
         }
         TryLockFunctionResultImpl(T result) {
-            this.executed = true;
+            this.lockStatus = LockStatus.EXECUTED;
             this.result = result;
         }
 
         @Override
         public boolean isExecuted() {
-            return executed;
+            return this.lockStatus == LockStatus.EXECUTED;
         }
-
+        
         @Override
+		public LockStatus getLockStatus() {
+			return this.lockStatus;
+		}
+        
+		@Override
         public T getResult() {
             return result;
         }
 
         @Override
         public String toString() {
-            return "LockFunctionResult [executed=" + executed + ", result=" + result + "]";
+            return "LockFunctionResult [lockStatus=" + lockStatus + ", result=" + result + "]";
         }
     }
 }

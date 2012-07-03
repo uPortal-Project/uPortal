@@ -19,6 +19,7 @@
 
 package org.jasig.portal.concurrency.locking;
 
+
 import com.google.common.base.Function;
 
 /**
@@ -28,17 +29,49 @@ import com.google.common.base.Function;
  * @version $Revision$
  */
 public interface IClusterLockService {
-    public interface TryLockFunctionResult<T> {
+    /**
+	 * Result of a lock execution
+	 */
+	interface TryLockFunctionResult<T> {
 
         /**
          * @return True if the function was executed, false if not
+         * @deprecated use {@link #getLockStatus()}
          */
+		@Deprecated
         boolean isExecuted();
+        
+        /**
+         * @return The status of the lock at time of execution
+         */
+        LockStatus getLockStatus();
         
         /**
          * @return The function result, if {@link #isExecuted()} returns false this method should be ignored
          */
         T getResult();
+    }
+    
+    /**
+     * Various lock status values to communicate back to the caller
+     */
+    enum LockStatus {
+    	/**
+    	 * The specified {@link Function} was executed within the lock
+    	 */
+    	EXECUTED,
+    	/**
+    	 * {@link LockOptions#getLastRunDelay()} was greater than 0 and the lock was last held less than that many milliseconds ago
+    	 */
+    	SKIPPED_LAST_RUN,
+    	/**
+    	 * {@link LockOptions#getServerBiasDelay()} was greater than 0 and the lock was last held by a different server less than that many milliseconds ago
+    	 */
+    	SKIPPED_SERVER_BIAS,
+    	/**
+    	 * The lock was held by another thread/server
+    	 */
+    	SKIPPED_LOCKED;
     }
     
     /**
@@ -53,16 +86,14 @@ public interface IClusterLockService {
     
     /**
      * Execute the specified function within the named mutex. If the mutex is currently owned by another thread or
-     * server the method will return immediately. If the time parameter is greater than zero then it is used to check
-     * the last time the mutex was locked. If it wasn't more than the specified number of milliseconds in the past the
-     * lock function is not executed.
+     * server the method will return immediately.
      * 
      * @param mutexName Name of the lock (case sensitive)
-     * @param time The number of milliseconds since the last lock execution.
+     * @param lockOptions Options when getting the lock
      * @param lockFunction The fuction to call within the lock context, the parameter to the function is the locked {@link ClusterMutex}
      * @return The value returned by the lockFunction
      */
-    <T> TryLockFunctionResult<T> doInTryLockIfNotRunSince(String mutexName, long time, Function<ClusterMutex, T> lockFunction) throws InterruptedException;
+    <T> TryLockFunctionResult<T> doInTryLock(String mutexName, LockOptions lockOptions, Function<ClusterMutex, T> lockFunction) throws InterruptedException;
     
     /**
      * Check if the current thread and server own the specified lock

@@ -29,7 +29,9 @@ import java.util.concurrent.TimeUnit;
 import org.jasig.portal.concurrency.FunctionWithoutResult;
 import org.jasig.portal.concurrency.locking.ClusterMutex;
 import org.jasig.portal.concurrency.locking.IClusterLockService;
+import org.jasig.portal.concurrency.locking.IClusterLockService.LockStatus;
 import org.jasig.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
+import org.jasig.portal.concurrency.locking.LockOptions;
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -130,7 +132,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                                 }
                             });
             
-            return result.isExecuted();
+            return result.getLockStatus() ==  LockStatus.EXECUTED;
         }
         catch (InterruptedException e) {
             logger.warn("Interrupted while populating dimensions", e);
@@ -165,8 +167,8 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                 long start = System.nanoTime();
                 
                 //Try executing aggregation within lock
-                result = clusterLockService.doInTryLockIfNotRunSince(PortalEventAggregator.AGGREGATION_LOCK_NAME,
-                        aggregatePeriod,
+                result = clusterLockService.doInTryLock(PortalEventAggregator.AGGREGATION_LOCK_NAME,
+                		LockOptions.builder().lastRunDelay(aggregatePeriod).serverBiasDelay(this.aggregateRawEventsPeriod * 4),
                         new Function<ClusterMutex, EventProcessingResult>() {
                             @Override
                             public EventProcessingResult apply(final ClusterMutex input) {
@@ -176,7 +178,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                 aggrResult = result.getResult();
                 
                 //Check the result, warn if null
-                if (result.isExecuted() && aggrResult == null) {
+                if (result.getLockStatus() ==  LockStatus.EXECUTED && aggrResult == null) {
                     logger.warn("doAggregateRawEvents did not execute");
                 }
                 else if (aggrResult != null) {
@@ -202,7 +204,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                                 });
                         
                         final EventProcessingResult cleanResult = result.getResult();
-                        if (result.isExecuted() && cleanResult == null) {
+                        if (result.getLockStatus() ==  LockStatus.EXECUTED && cleanResult == null) {
                             logger.warn("doCloseAggregations was not executed");
                         }
                         else if (cleanResult != null && logger.isInfoEnabled()) {
@@ -226,9 +228,9 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
             }
             
         //Loop if doAggregateRawEvents returns false, this means that there is more to aggregate 
-        } while (result.isExecuted() && aggrResult != null && !aggrResult.isComplete());
+        } while (result.getLockStatus() ==  LockStatus.EXECUTED && aggrResult != null && !aggrResult.isComplete());
         
-        return result != null && result.isExecuted() && aggrResult != null && aggrResult.isComplete();
+        return result != null && result.getLockStatus() ==  LockStatus.EXECUTED && aggrResult != null && aggrResult.isComplete();
     }
     
     @Override
@@ -252,8 +254,8 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
             try {
                 final long start = System.nanoTime();
                 
-                result = clusterLockService.doInTryLockIfNotRunSince(PortalEventPurger.PURGE_RAW_EVENTS_LOCK_NAME,
-                        purgePeriod,
+                result = clusterLockService.doInTryLock(PortalEventPurger.PURGE_RAW_EVENTS_LOCK_NAME,
+                		LockOptions.builder().lastRunDelay(purgePeriod),
                         new Function<ClusterMutex, EventProcessingResult>() {
                             @Override
                             public EventProcessingResult apply(final ClusterMutex input) {
@@ -263,7 +265,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                 purgeResult = result.getResult();
                 
                 //Check the result, warn if null
-                if (result.isExecuted() && purgeResult == null) {
+                if (result.getLockStatus() ==  LockStatus.EXECUTED && purgeResult == null) {
                     logger.warn("doPurgeRawEvents did not execute");
                 }
                 else if (purgeResult != null && logger.isInfoEnabled()) {
@@ -281,9 +283,9 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
             }
             
         //Loop if doPurgeRawEvents returns false, this means that there is more to purge 
-        } while (result.isExecuted() && purgeResult != null && !purgeResult.isComplete());
+        } while (result.getLockStatus() ==  LockStatus.EXECUTED && purgeResult != null && !purgeResult.isComplete());
         
-        return result != null && result.isExecuted() && purgeResult != null && purgeResult.isComplete();
+        return result != null && result.getLockStatus() ==  LockStatus.EXECUTED && purgeResult != null && purgeResult.isComplete();
     }
     
     @Override
@@ -297,8 +299,8 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
             final long start = System.nanoTime();
             
             final TryLockFunctionResult<EventProcessingResult> result = clusterLockService
-                    .doInTryLockIfNotRunSince(PortalEventSessionPurger.PURGE_EVENT_SESSION_LOCK_NAME,
-                            this.purgeEventSessionsPeriod,
+                    .doInTryLock(PortalEventSessionPurger.PURGE_EVENT_SESSION_LOCK_NAME,
+                    		LockOptions.builder().lastRunDelay(this.purgeEventSessionsPeriod),
                             new Function<ClusterMutex, EventProcessingResult>() {
                                 @Override
                                 public EventProcessingResult apply(final ClusterMutex input) {
@@ -308,14 +310,14 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
             final EventProcessingResult purgeResult = result.getResult();
             
             //Check the result, warn if null
-            if (result.isExecuted() && purgeResult == null) {
+            if (result.getLockStatus() ==  LockStatus.EXECUTED && purgeResult == null) {
                 logger.warn("doPurgeRawEvents did not execute");
             }
             else if (purgeResult != null && logger.isInfoEnabled()) {
                 logResult("Purged {} event sessions created before {} in {}ms - {} sessions/second", purgeResult, start);
             }
             
-            return result.isExecuted() && purgeResult != null && purgeResult.isComplete();
+            return result.getLockStatus() ==  LockStatus.EXECUTED && purgeResult != null && purgeResult.isComplete();
         }
         catch (InterruptedException e) {
             logger.warn("Interrupted while purging event sessions", e);

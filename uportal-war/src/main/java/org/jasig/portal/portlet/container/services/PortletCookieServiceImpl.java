@@ -37,6 +37,9 @@ import javax.servlet.http.HttpSession;
 import org.jasig.portal.concurrency.FunctionWithoutResult;
 import org.jasig.portal.concurrency.locking.ClusterMutex;
 import org.jasig.portal.concurrency.locking.IClusterLockService;
+import org.jasig.portal.concurrency.locking.IClusterLockService.LockStatus;
+import org.jasig.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
+import org.jasig.portal.concurrency.locking.LockOptions;
 import org.jasig.portal.portlet.dao.IPortletCookieDao;
 import org.jasig.portal.portlet.om.IPortalCookie;
 import org.jasig.portal.portlet.om.IPortletCookie;
@@ -267,13 +270,13 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
     @Override
     public boolean purgeExpiredCookies() {
         try {
-            this.clusterLockService.doInTryLockIfNotRunSince(PURGE_LOCK_NAME, this.purgeExpiredCookiesPeriod, new FunctionWithoutResult<ClusterMutex>() {
+            TryLockFunctionResult<Object> result = this.clusterLockService.doInTryLock(PURGE_LOCK_NAME, LockOptions.builder().lastRunDelay(purgeExpiredCookiesPeriod), new FunctionWithoutResult<ClusterMutex>() {
                 @Override
                 protected void applyWithoutResult(ClusterMutex input) {
                     portletCookieDao.purgeExpiredCookies();
                 }
             });
-            return true;
+            return result.getLockStatus() ==  LockStatus.EXECUTED;
         }
         catch (InterruptedException e) {
             logger.warn("Interrupted while purging expired cookies", e);
