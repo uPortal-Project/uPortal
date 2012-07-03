@@ -49,7 +49,7 @@ import com.google.common.base.Function;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaClusterLockDaoTestContext.xml")
-public class ClusterLockServiceImplTest extends BasePortalJpaDaoTest {
+public class ClusterLockServiceImplDbBackedTest extends BasePortalJpaDaoTest {
     @Autowired
     @Qualifier("normal")
     private IClusterLockService clusterLockService;
