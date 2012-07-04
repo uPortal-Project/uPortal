@@ -64,7 +64,7 @@ public class ClusterLockServiceImpl implements IClusterLockService {
     private IClusterLockDao clusterLockDao;
     private ReadableDuration updateLockRate = Duration.standardSeconds(1);
     private ReadableDuration maximumLockDuration = Duration.standardMinutes(60);
-    private long dbLockTimeout = TimeUnit.SECONDS.toMillis(30);
+    private ReadableDuration dbLockTimeout = Duration.standardSeconds(30);
     
     @Autowired
     public void setPortalInfoProvider(IPortalInfoProvider portalInfoProvider) {
@@ -97,8 +97,8 @@ public class ClusterLockServiceImpl implements IClusterLockService {
         this.maximumLockDuration = maximumLockDuration;
     }
 
-    @Value("${org.jasig.portal.concurrency.locking.ClusterLockDao.dbLockAcquireTimeout:30000}")
-    public void setDbLockTimeout(long dbLockTimeout) {
+    @Value("${org.jasig.portal.concurrency.locking.ClusterLockDao.dbLockAcquireTimeout:PT30S}")
+    public void setDbLockTimeout(ReadableDuration dbLockTimeout) {
 		this.dbLockTimeout = dbLockTimeout;
 	}
 
@@ -177,7 +177,17 @@ public class ClusterLockServiceImpl implements IClusterLockService {
             lockFuture = this.lockMonitorExecutorService.submit(databaseLockWorker);
             
             //Wait for DB lock acquisition
-            dbLockLatch.await(dbLockTimeout, TimeUnit.MILLISECONDS);
+            final boolean dbLocked = dbLockLatch.await(dbLockTimeout.getMillis(), TimeUnit.MILLISECONDS);
+            if (!dbLocked) {
+            	//Worker never started or got to db level mutex acquisition
+            	
+            	//Cancel the lock worker
+            	lockFuture.cancel(true);
+
+            	//Return skipped result
+            	this.logger.trace("failed to aquire database lock due to DatabaseLockWorker not executing, returning notExecuted result for: {}", mutexName);
+                return TryLockFunctionResultImpl.getSkippedInstance(LockStatus.SKIPPED_LOCKED);
+            }
             
             final ClusterMutex mutex = mutexRef.get();
             if (mutex == null) {

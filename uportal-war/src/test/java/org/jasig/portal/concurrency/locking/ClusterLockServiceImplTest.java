@@ -5,17 +5,21 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import javax.annotation.Nullable;
 
 import org.jasig.portal.IPortalInfoProvider;
 import org.jasig.portal.concurrency.locking.IClusterLockService.LockStatus;
 import org.jasig.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
+import org.joda.time.Duration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,10 +38,11 @@ public class ClusterLockServiceImplTest {
 	@InjectMocks private final ClusterLockServiceImpl clusterLockService = new ClusterLockServiceImpl();
 	@Mock private IClusterLockDao clusterLockDao;
 	@Mock private IPortalInfoProvider portalInfoProvider;
-	private ExecutorService lockMonitorExecutorService = Executors.newSingleThreadExecutor();
+	private ExecutorService lockMonitorExecutorService;
 	
 	@Before
 	public void setup() {
+		lockMonitorExecutorService = Executors.newSingleThreadExecutor();
 		clusterLockService.setLockMonitorExecutorService(this.lockMonitorExecutorService);
 	}
 	
@@ -275,8 +280,10 @@ public class ClusterLockServiceImplTest {
 		});
 		
 		ExecutorService fakeLockMonitorExecutorService = mock(ExecutorService.class);
+		final Future dbLockWorkerFuture = mock(Future.class);
+		when(fakeLockMonitorExecutorService.submit(any(Callable.class))).thenReturn(dbLockWorkerFuture);
 		this.clusterLockService.setLockMonitorExecutorService(fakeLockMonitorExecutorService);
-		this.clusterLockService.setDbLockTimeout(500);
+		this.clusterLockService.setDbLockTimeout(Duration.millis(500));
 		
 		final TryLockFunctionResult<Boolean> result = this.clusterLockService
 				.doInTryLock(mutexName, LockOptions.builder().serverBiasDelay(10),
@@ -286,8 +293,11 @@ public class ClusterLockServiceImplTest {
 								return Boolean.TRUE;
 							}
 						});
-		//TODO this should throw some sort of ex?
 		
+		assertNotNull(result);
+		assertEquals(LockStatus.SKIPPED_LOCKED, result.getLockStatus());
+		assertNull(result.getResult());
+		assertFalse(result.isExecuted());
 	}
 	
 	//test exec serv not actually execing
