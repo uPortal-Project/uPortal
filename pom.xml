@@ -165,6 +165,7 @@
         <junit.version>4.10</junit.version>
         <log4j.version>1.2.16</log4j.version>
         <mail.version>1.4.5</mail.version>
+        <mobiledetect.version>1.1.0</mobiledetect.version>
         <mockito.version>1.9.0</mockito.version>
         <objenesis.version>1.2</objenesis.version>
         <org.springframework.webflow.version>2.3.1.RELEASE</org.springframework.webflow.version>
@@ -214,6 +215,11 @@
                 <groupId>aopalliance</groupId>
                 <artifactId>aopalliance</artifactId>
                 <version>${aopalliance.version}</version>
+            </dependency>
+			<dependency>
+                <groupId>au.com.flyingkite</groupId>
+                <artifactId>mobiledetect</artifactId>
+                <version>${mobiledetect.version}</version>
             </dependency>
             <dependency>
                 <groupId>cglib</groupId>
