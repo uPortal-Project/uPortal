@@ -47,6 +47,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -179,11 +180,12 @@ public class JpaPortalEventStoreTest extends BaseRawEventsJpaDaoTest {
                 int startSize;
                 do {
                     startSize = portalEvents.size();
-                    portalEventDao.aggregatePortalEvents(nextStart.get(), endDate, loadSize, new FunctionWithoutResult<PortalEvent>() {
+                    portalEventDao.aggregatePortalEvents(nextStart.get(), endDate, loadSize, new Function<PortalEvent, Boolean>() {
                         @Override
-                        protected void applyWithoutResult(PortalEvent input) {
+						public Boolean apply(PortalEvent input) {
                             portalEvents.add(input);
                             nextStart.set(input.getTimestampAsDate());
+                            return Boolean.FALSE;
                         }
                     });
                 } while (loadSize + startSize == portalEvents.size());

@@ -43,7 +43,6 @@ import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.CollectionType;
 import org.hibernate.type.Type;
 import org.jasig.portal.IPortalInfoProvider;
-import org.jasig.portal.concurrency.FunctionWithoutResult;
 import org.jasig.portal.concurrency.locking.IClusterLockService;
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.aggr.IEventAggregatorStatus.ProcessingType;
@@ -66,6 +65,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
@@ -87,6 +87,7 @@ public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements P
     private List<ApplicationEventFilter<PortalEvent>> applicationEventFilters = Collections.emptyList();
     
     private int eventAggregationBatchSize = 10000;
+    private int intervalAggregationBatchSize = 2;
     private ReadablePeriod aggregationDelay = Period.seconds(30);
     
     private final Map<Class<?>, List<String>> entityCollectionRoles = new HashMap<Class<?>, List<String>>();
@@ -151,8 +152,17 @@ public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements P
     public void setEventAggregationBatchSize(int eventAggregationBatchSize) {
         this.eventAggregationBatchSize = eventAggregationBatchSize;
     }
+    
+    @Value("${org.jasig.portal.event.aggr.PortalEventAggregationManager.intervalAggregationBatchSize:2}")
+    public void setIntervalAggregationBatchSize(int intervalAggregationBatchSize) {
+		this.intervalAggregationBatchSize = intervalAggregationBatchSize;
+	}
 
-    @Override
+	public void setShutdown(boolean shutdown) {
+		this.shutdown = shutdown;
+	}
+
+	@Override
     public void destroy() throws Exception {
         this.shutdown = true;
     }
@@ -377,6 +387,7 @@ public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements P
         final MutableInt events = new MutableInt();
         final MutableObject lastEventDate = new MutableObject(newestEventTime);
         
+        final boolean stoppedEarly;
         try {
             currentThread.setName(currentName + "-" + lastAggregated + "_" + newestEventTime);
         
@@ -384,9 +395,13 @@ public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements P
             
             //Do aggregation, capturing the start and end dates
             eventAggregatorStatus.setLastStart(DateTime.now());
-            portalEventDao.aggregatePortalEvents(lastAggregated, newestEventTime, this.eventAggregationBatchSize, new AggregateEventsHandler(events, lastEventDate, eventAggregatorStatus));
+            
+            stoppedEarly = portalEventDao.aggregatePortalEvents(
+            		lastAggregated, newestEventTime, this.eventAggregationBatchSize, 
+            		new AggregateEventsHandler(events, lastEventDate, eventAggregatorStatus));
+            
             eventAggregatorStatus.setLastEventDate((DateTime)lastEventDate.getValue());
-            eventAggregatorStatus.setLastEnd(new DateTime());
+            eventAggregatorStatus.setLastEnd(DateTime.now());
         }
         finally {
             currentThread.setName(currentName);
@@ -395,16 +410,17 @@ public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements P
         //Store the results of the aggregation
         eventAggregationManagementDao.updateEventAggregatorStatus(eventAggregatorStatus);
         
-        final boolean complete = this.eventAggregationBatchSize <= 0 || events.intValue() < this.eventAggregationBatchSize;
+        final boolean complete = !stoppedEarly || this.eventAggregationBatchSize <= 0 || events.intValue() < this.eventAggregationBatchSize;
         return new EventProcessingResult(events.intValue(), lastAggregated, eventAggregatorStatus.getLastEventDate(), complete);
     }
 
-    private final class AggregateEventsHandler extends FunctionWithoutResult<PortalEvent> {
+    private final class AggregateEventsHandler implements Function<PortalEvent, Boolean> {
         //Event Aggregation Context - used by aggregators to track state
         private final EventAggregationContext eventAggregationContext = new EventAggregationContextImpl(); 
         private final MutableInt eventCounter;
         private final MutableObject lastEventDate;
         private final IEventAggregatorStatus eventAggregatorStatus;
+        private int intervalsCrossed = 0;
 
         //pre-compute the set of intervals that our event aggregators support and only bother tracking those
         private final Set<AggregationInterval> handledIntervals;
@@ -447,7 +463,7 @@ public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements P
         }
 
         @Override
-        protected void applyWithoutResult(PortalEvent event) {
+		public Boolean apply(PortalEvent event) {
             if (shutdown) {
                 //Mark ourselves as interupted and throw an exception
                 Thread.currentThread().interrupt();
@@ -473,6 +489,8 @@ public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements P
                     this.currentIntervalInfo.put(interval, intervalInfo);
                     
                     this.aggregatorReadOnlyIntervalInfo.clear(); //Clear out cached per-aggregator interval info whenever a current interval info changes
+                    
+                    this.intervalsCrossed++;
                 }
             }
             
@@ -481,6 +499,9 @@ public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements P
             
             //Update the status object with the event date
             this.lastEventDate.setValue(eventDate);
+            
+            //If we have crossed more intervals than the interval batch size return true to stop aggregation
+            return this.intervalsCrossed >= intervalAggregationBatchSize;
         }
 
         private void initializeIntervalInfo(final DateTime eventDate) {

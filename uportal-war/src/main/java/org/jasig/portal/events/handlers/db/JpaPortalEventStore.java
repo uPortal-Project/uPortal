@@ -190,7 +190,7 @@ public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalE
 
     @Override
     @RawEventsTransactional
-    public void aggregatePortalEvents(DateTime startTime, DateTime endTime, int maxEvents, FunctionWithoutResult<PortalEvent> handler) {
+    public boolean aggregatePortalEvents(DateTime startTime, DateTime endTime, int maxEvents, Function<PortalEvent, Boolean> handler) {
         final Session session = this.getEntityManager().unwrap(Session.class);
         session.setFlushMode(FlushMode.COMMIT);
         final org.hibernate.Query query = session.createQuery(this.selectUnaggregatedQuery);
@@ -204,7 +204,7 @@ public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalE
         for (final ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY); results.next(); ) {
             final PersistentPortalEvent persistentPortalEvent = (PersistentPortalEvent)results.get(0);
             final PortalEvent portalEvent = this.toPortalEvent(persistentPortalEvent.getEventData(), persistentPortalEvent.getEventType());
-            handler.apply(portalEvent);
+            final Boolean stopAggregation = handler.apply(portalEvent);
             persistentPortalEvent.setAggregated(true);
             session.persist(persistentPortalEvent);
             
@@ -214,7 +214,14 @@ public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalE
                 session.flush();
                 session.clear();
             }
+            
+            if (stopAggregation) {
+            	this.logger.debug("Aggregation stop requested after processing event {}", portalEvent);
+            	return true;
+            }
         }
+        
+        return false;
     }
     
     @Override
