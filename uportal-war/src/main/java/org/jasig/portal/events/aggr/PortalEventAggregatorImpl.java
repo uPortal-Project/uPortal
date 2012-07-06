@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
 import javax.persistence.FlushModeType;
 
 import org.apache.commons.lang.mutable.MutableInt;
@@ -46,6 +48,7 @@ import org.jasig.portal.IPortalInfoProvider;
 import org.jasig.portal.concurrency.locking.IClusterLockService;
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.aggr.IEventAggregatorStatus.ProcessingType;
+import org.jasig.portal.events.aggr.dao.DateDimensionDao;
 import org.jasig.portal.events.aggr.dao.IEventAggregationManagementDao;
 import org.jasig.portal.events.aggr.session.EventSession;
 import org.jasig.portal.events.aggr.session.EventSessionDao;
@@ -83,11 +86,13 @@ public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements P
     private IPortalEventDao portalEventDao;
     private AggregationIntervalHelper intervalHelper;
     private EventSessionDao eventSessionDao;
+    private DateDimensionDao dateDimensionDao;
     private Set<IPortalEventAggregator<PortalEvent>> portalEventAggregators = Collections.emptySet();
     private List<ApplicationEventFilter<PortalEvent>> applicationEventFilters = Collections.emptyList();
     
     private int eventAggregationBatchSize = 10000;
     private int intervalAggregationBatchSize = 2;
+    private int cleanUnclosedAggregationsBatchSize = 1000;
     private ReadablePeriod aggregationDelay = Period.seconds(30);
     
     private final Map<Class<?>, List<String>> entityCollectionRoles = new HashMap<Class<?>, List<String>>();
@@ -157,6 +162,13 @@ public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements P
     public void setIntervalAggregationBatchSize(int intervalAggregationBatchSize) {
 		this.intervalAggregationBatchSize = intervalAggregationBatchSize;
 	}
+    
+    @Value("${org.jasig.portal.event.aggr.PortalEventAggregationManager.cleanUnclosedAggregationsBatchSize:1000}")
+    public void setCleanUnclosedAggregationsBatchSize(int cleanUnclosedAggregationsBatchSize) {
+		this.cleanUnclosedAggregationsBatchSize = cleanUnclosedAggregationsBatchSize;
+	}
+    
+    
 
 	public void setShutdown(boolean shutdown) {
 		this.shutdown = shutdown;
@@ -241,80 +253,105 @@ public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements P
             return new EventProcessingResult(0, null, null, true);
         }
         
-        //Calculate clean end date from most recent aggregation minus the purge delay
         final DateTime lastAggregatedDate = eventAggregatorStatus.getLastEventDate();
-        final DateTime lastCleanUnclosedDate = cleanUnclosedStatus.getLastEventDate();
+        
+        //If lastCleanUnclosedDate is null use the oldest date dimension as there can be 
+        //no aggregations that exist before it
+        DateTime lastCleanUnclosedDate = cleanUnclosedStatus.getLastEventDate();
+        if (lastCleanUnclosedDate == null) {
+        	final DateDimension oldestDateDimension = this.dateDimensionDao.getOldestDateDimension();
+        	lastCleanUnclosedDate = oldestDateDimension.getDate().toDateTime();
+        }
         
         if (lastAggregatedDate.equals(lastCleanUnclosedDate)) {
             logger.debug("No events aggregated since last unclosed aggregation cleaning, skipping clean: {}", lastAggregatedDate);
             return new EventProcessingResult(0, lastCleanUnclosedDate, lastAggregatedDate, true);
         }
+
+        //Switch to flush on commit to avoid flushes during queries
+        final EntityManager entityManager = this.getEntityManager();
+        entityManager.setFlushMode(FlushModeType.COMMIT);
         
+        //Track the number of closed aggregations and the last date of a cleaned interval
         int closedAggregations = 0;
+        DateTime lastCleanedDateTime = lastAggregatedDate;
+        
         final Thread currentThread = Thread.currentThread();
         final String currentName = currentThread.getName();
         try {
-            currentThread.setName(currentName + "-" + lastAggregatedDate);
+            currentThread.setName(currentName + "-" + lastCleanUnclosedDate + "-" + lastAggregatedDate);
             
-            //For each interval the aggregator supports, cleanup the unclosed aggregations
-            for (final AggregationInterval interval : AggregationInterval.values()) {
-                //Determine the current interval
-                final AggregationIntervalInfo currentInterval = intervalHelper.getIntervalInfo(interval, lastAggregatedDate);
-                if (currentInterval != null) {
-                    //Use the start of the current interval as the end of the current cleanup range
-                    final DateTime cleanBeforeDate = currentInterval.getStart();
-                    
-                    //Determine the end of the cleanup to use as the start of the cleanup range
-                    final DateTime cleanAfterDate;
-                    if (lastCleanUnclosedDate == null) {
-                        cleanAfterDate = new DateTime(0);
-                    }
-                    else {
-                        final AggregationIntervalInfo previousInterval = intervalHelper.getIntervalInfo(interval, lastCleanUnclosedDate);
-                        if (previousInterval == null) {
-                            cleanAfterDate = new DateTime(0);
-                        }
-                        else {
-                            cleanAfterDate = previousInterval.getStart();
-                        }
-                    }
-                    
-                    if (cleanAfterDate.equals(cleanBeforeDate)) {
-                        logger.debug("No cleaning needed for {} starting at {}",  new Object[] { interval, cleanAfterDate, cleanBeforeDate});
-                        continue;
-                    }
-                    
-                    logger.debug("Cleaning unclosed {} aggregations between {} and {}",  new Object[] { interval, cleanAfterDate, cleanBeforeDate});
+            //Local caches used to reduce db io
+            final Map<Class<?>, AggregatedIntervalConfig> aggregatedIntervalConfigCache = new HashMap<Class<?>, AggregatedIntervalConfig>();
+            final Set<AggregationIntervalInfo> cleanedIntervals = new HashSet<AggregationIntervalInfo>();
 
-                    for (final IPortalEventAggregator<PortalEvent> portalEventAggregator : portalEventAggregators) {
-                        checkShutdown();
-                        
-                        final Class<? extends IPortalEventAggregator<?>> aggregatorType = getClass(portalEventAggregator);
-                        
-                        //Get aggregator specific interval info config
-                        AggregatedIntervalConfig aggregatorIntervalConfig = eventAggregationManagementDao.getAggregatedIntervalConfig(aggregatorType);
-                        if (aggregatorIntervalConfig == null) {
-                            aggregatorIntervalConfig = eventAggregationManagementDao.getDefaultAggregatedIntervalConfig();
-                        }
-                        
-                        //If the aggregator is being used for the specified interval call cleanUnclosedAggregations
-                        if (aggregatorIntervalConfig.isIncluded(interval)) {
-                            closedAggregations += portalEventAggregator.cleanUnclosedAggregations(cleanAfterDate, cleanBeforeDate, interval);
-                        }
-                    }
-                }
-            }
+            //Track the last clean end date for the loop
+            DateTime localLastCleanUnclosedDate = lastCleanUnclosedDate;
+            do {
+	            //For each interval the aggregator supports, cleanup the unclosed aggregations
+	            for (final AggregationInterval interval : AggregationInterval.values()) {
+	            	
+	            	//The END date of the last clean session will find us the next interval to clean
+	            	final AggregationIntervalInfo nextIntervalToClean = intervalHelper.getIntervalInfo(interval, localLastCleanUnclosedDate);
+	            	final DateTime start = nextIntervalToClean.getStart();
+	            	final DateTime end = nextIntervalToClean.getEnd();
+	            	
+	            	if (!cleanedIntervals.add(nextIntervalToClean)) {
+	            		logger.debug("{} interval between {} and {} has already been cleaned on during this execution, ignoring",  new Object[] { interval, start, end});
+	            		continue;
+	            	}
+	            	
+					if (!end.isBefore(lastAggregatedDate)) {
+	            		logger.debug("{} interval between {} and {} is still active, ignoring",  new Object[] { interval, start, end});
+	            		continue;
+	            	}
+	                    
+	                //Track the oldest interval end so nothing is missed
+	                if (end.isBefore(lastCleanedDateTime)) {
+	                	lastCleanedDateTime = end;
+	                }
+	                    
+	                logger.debug("Cleaning unclosed {} aggregations between {} and {}",  new Object[] { interval, start, end});
+	
+	                for (final IPortalEventAggregator<PortalEvent> portalEventAggregator : portalEventAggregators) {
+	                    checkShutdown();
+	                    
+	                    final Class<? extends IPortalEventAggregator<?>> aggregatorType = getClass(portalEventAggregator);
+	                    
+	                    //Get aggregator specific interval info config
+	                    AggregatedIntervalConfig aggregatorIntervalConfig = aggregatedIntervalConfigCache.get(aggregatorType);
+	                    if (aggregatorIntervalConfig == null) {
+		                    aggregatorIntervalConfig = eventAggregationManagementDao.getAggregatedIntervalConfig(aggregatorType);
+		                    if (aggregatorIntervalConfig == null) {
+		                        aggregatorIntervalConfig = eventAggregationManagementDao.getDefaultAggregatedIntervalConfig();
+		                    }
+		                    
+		                    aggregatedIntervalConfigCache.put(aggregatorType, aggregatorIntervalConfig);
+	                    }
+	                    
+	                    //If the aggregator is being used for the specified interval call cleanUnclosedAggregations
+	                    if (aggregatorIntervalConfig.isIncluded(interval)) {
+	                        closedAggregations += portalEventAggregator.cleanUnclosedAggregations(start, end, interval);
+	                    }
+	                }
+	            }
+
+	            //Set the date to the end of the previously cleaned interval
+	            localLastCleanUnclosedDate = lastCleanedDateTime;
+	            
+            //Loop until either the batchSize of cleaned aggregations has been reached or no aggregation work is done
+            } while (closedAggregations <= cleanUnclosedAggregationsBatchSize && !lastCleanedDateTime.equals(lastAggregatedDate));
         }
         finally {
             currentThread.setName(currentName);
         }
         
         //Update the status object and store it
-        cleanUnclosedStatus.setLastEventDate(lastAggregatedDate); 
+        cleanUnclosedStatus.setLastEventDate(lastCleanedDateTime); 
         cleanUnclosedStatus.setLastEnd(new DateTime());
         eventAggregationManagementDao.updateEventAggregatorStatus(cleanUnclosedStatus);
         
-        return new EventProcessingResult(closedAggregations, lastCleanUnclosedDate, lastAggregatedDate, true);
+        return new EventProcessingResult(closedAggregations, lastCleanUnclosedDate, lastAggregatedDate, lastCleanedDateTime.equals(lastAggregatedDate));
     }
     
     @SuppressWarnings("unchecked")
@@ -357,8 +394,9 @@ public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements P
         }
         
         //Flush any dimension creation before aggregation
-        this.getEntityManager().flush();
-        this.getEntityManager().setFlushMode(FlushModeType.COMMIT);
+        final EntityManager entityManager = this.getEntityManager();
+		entityManager.flush();
+        entityManager.setFlushMode(FlushModeType.COMMIT);
 
         final IEventAggregatorStatus eventAggregatorStatus = eventAggregationManagementDao.getEventAggregatorStatus(ProcessingType.AGGREGATION, true);
         

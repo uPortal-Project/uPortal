@@ -193,23 +193,29 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                             portalEventAggregator.evictAggregates(evictedEntities);
                         }
 
-                        //Update start time so logging is accurate
-                        start = System.nanoTime();
-                        result = clusterLockService.doInTryLock(PortalEventAggregator.AGGREGATION_LOCK_NAME,
-                                new Function<ClusterMutex, EventProcessingResult>() {
-                                    @Override
-                                    public EventProcessingResult apply(final ClusterMutex input) {
-                                        return portalEventAggregator.doCloseAggregations();
-                                    }
-                                });
+                        TryLockFunctionResult<EventProcessingResult> cleanAggrResult;
+                        EventProcessingResult cleanResult;
+                        do {
+	                        //Update start time so logging is accurate
+	                        start = System.nanoTime();
+	                        cleanAggrResult = clusterLockService.doInTryLock(PortalEventAggregator.AGGREGATION_LOCK_NAME,
+	                                new Function<ClusterMutex, EventProcessingResult>() {
+	                                    @Override
+	                                    public EventProcessingResult apply(final ClusterMutex input) {
+	                                        return portalEventAggregator.doCloseAggregations();
+	                                    }
+	                                });
+	                        
+	                        cleanResult = cleanAggrResult.getResult();
+	                        if (cleanAggrResult.getLockStatus() ==  LockStatus.EXECUTED && cleanResult == null) {
+	                            logger.warn("doCloseAggregations was not executed");
+	                        }
+	                        else if (cleanResult != null && logger.isInfoEnabled()) {
+	                            logResult("Clean {} unclosed agregations created at {} aggrs/second between {} and {} in {}ms - {} a/s a {}x speedup", cleanResult, start);
+	                        }
                         
-                        final EventProcessingResult cleanResult = result.getResult();
-                        if (result.getLockStatus() ==  LockStatus.EXECUTED && cleanResult == null) {
-                            logger.warn("doCloseAggregations was not executed");
-                        }
-                        else if (cleanResult != null && logger.isInfoEnabled()) {
-                            logResult("Clean {} unclosed agregations created at {} aggrs/second between {} and {} in {}ms - {} a/s a {}x speedup", cleanResult, start);
-                        }
+                        //Loop if doCloseAggregations returns false, that means there is more to clean
+                        } while (cleanAggrResult.getLockStatus() == LockStatus.EXECUTED && cleanResult != null && !cleanResult.isComplete());
                     }
                 }
             }
@@ -228,7 +234,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
             }
             
         //Loop if doAggregateRawEvents returns false, this means that there is more to aggregate 
-        } while (result.getLockStatus() ==  LockStatus.EXECUTED && aggrResult != null && !aggrResult.isComplete());
+        } while (result.getLockStatus() == LockStatus.EXECUTED && aggrResult != null && !aggrResult.isComplete());
         
         return result != null && result.getLockStatus() ==  LockStatus.EXECUTED && aggrResult != null && aggrResult.isComplete();
     }

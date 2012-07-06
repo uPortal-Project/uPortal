@@ -17,7 +17,7 @@ public interface BaseAggregationPrivateDao<
         extends BaseAggregationDao<T, K> {
     
     /**
-     * Aggregations that have not been closed for an interval and occure before the end date
+     * Aggregations that have not been closed for an interval and occur in the date range
      * 
      * @param start the start {@link DateTime} of the range, inclusive
      * @param end the end {@link DateTime} of the range, exclusive

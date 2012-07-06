@@ -38,6 +38,7 @@ public class AggregationIntervalInfo implements Serializable {
     private final DateDimension dateDimension;
     private final TimeDimension timeDimension;
     private int duration = -1;
+    private int hashCode = 0;
 
     AggregationIntervalInfo(AggregationInterval aggregationInterval, DateTime start, DateTime end, DateDimension dateDimension, TimeDimension timeDimension) {
         Assert.notNull(aggregationInterval, "aggregationInterval can not be null");
@@ -114,15 +115,16 @@ public class AggregationIntervalInfo implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((aggregationInterval == null) ? 0 : aggregationInterval.hashCode());
-        result = prime * result + ((dateDimension == null) ? 0 : dateDimension.hashCode());
-        result = prime * result + duration;
-        result = prime * result + ((end == null) ? 0 : end.hashCode());
-        result = prime * result + ((start == null) ? 0 : start.hashCode());
-        result = prime * result + ((timeDimension == null) ? 0 : timeDimension.hashCode());
-        return result;
+    	int h = this.hashCode;
+    	if (h == 0) {
+	        final int prime = 31;
+	        h = 1;
+	        h = prime * h + ((aggregationInterval == null) ? 0 : aggregationInterval.hashCode());
+	        h = prime * h + ((end == null) ? 0 : end.hashCode());
+	        h = prime * h + ((start == null) ? 0 : start.hashCode());
+	        this.hashCode = h;
+    	}
+        return h;
     }
 
 
@@ -132,18 +134,10 @@ public class AggregationIntervalInfo implements Serializable {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (getClass() != obj.getClass() || hashCode() != obj.hashCode())
             return false;
         AggregationIntervalInfo other = (AggregationIntervalInfo) obj;
         if (aggregationInterval != other.aggregationInterval)
-            return false;
-        if (dateDimension == null) {
-            if (other.dateDimension != null)
-                return false;
-        }
-        else if (!dateDimension.equals(other.dateDimension))
-            return false;
-        if (duration != other.duration)
             return false;
         if (end == null) {
             if (other.end != null)
@@ -157,20 +151,15 @@ public class AggregationIntervalInfo implements Serializable {
         }
         else if (!start.equals(other.start))
             return false;
-        if (timeDimension == null) {
-            if (other.timeDimension != null)
-                return false;
-        }
-        else if (!timeDimension.equals(other.timeDimension))
-            return false;
         return true;
     }
 
 
     @Override
-    public String toString() {
-        return "AggregationIntervalInfo [aggregationInterval=" + aggregationInterval + ", start=" + start + ", end="
-                + end + ", dateDimension=" + dateDimension + ", timeDimension=" + timeDimension + ", duration="
-                + duration + "]";
-    }
+	public String toString() {
+		return "AggregationIntervalInfo [aggregationInterval="
+				+ aggregationInterval + ", start=" + start + ", end=" + end
+				+ ", duration=" + duration + ", dateDimension=" + dateDimension
+				+ ", timeDimension=" + timeDimension + "]";
+	}
 }
