@@ -293,6 +293,10 @@ public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements P
 	            	
 	            	//The END date of the last clean session will find us the next interval to clean
 	            	final AggregationIntervalInfo nextIntervalToClean = intervalHelper.getIntervalInfo(interval, localLastCleanUnclosedDate);
+	            	if (nextIntervalToClean == null) {
+	            		continue;
+	            	}
+	            	
 	            	final DateTime start = nextIntervalToClean.getStart();
 	            	final DateTime end = nextIntervalToClean.getEnd();
 	            	
