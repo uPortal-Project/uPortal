@@ -99,6 +99,11 @@ public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements P
     private volatile boolean shutdown = false;
     
     @Autowired
+    public void setDateDimensionDao(DateDimensionDao dateDimensionDao) {
+		this.dateDimensionDao = dateDimensionDao;
+	}
+
+	@Autowired
     public void setPortalEventAggregationManager(IPortalEventAggregationManager portalEventAggregationManager) {
         this.portalEventAggregationManager = portalEventAggregationManager;
     }
