@@ -38,6 +38,7 @@
           <name>width</name>
           <value>50%</value>
         </structure-attribute>
+        <channel fname="early-alert" unremovable="false" hidden="false" immutable="false" ID="n11"/>
       </folder>
     </folder>
   </folder>
