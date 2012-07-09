@@ -21,34 +21,40 @@ package org.jasig.portal.events.aggr;
 
 
 /**
- * Manages aggregation and purging of portal event data
+ * Manages processing of portal event data
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface IPortalEventAggregationManager {
+public interface IPortalEventProcessingManager {
     
     /**
      * Make sure {@link DateDimension} and {@link TimeDimension} objects exist for a reasonable distance into the future
      * @return If the dimensions were correctly populated
+     * @see PortalEventDimensionPopulator#doPopulateDimensions()
      */
     boolean populateDimensions();
 
     /**
      * Requests that raw event data be aggregated
      * @return If the available events were aggregated
+     * @see PortalRawEventsAggregator#doAggregateRawEvents()
+     * @see PortalRawEventsAggregator#evictAggregates(java.util.Map)
+     * @see PortalRawEventsAggregator#doCloseAggregations()
      */
     boolean aggregateRawEvents();
 
     /**
      * Requests that raw event data be purged
      * @return If expired events were purged
+     * @see PortalEventPurger#doPurgeRawEvents()
      */
     boolean purgeRawEvents();
 
     /**
      * Requests that event session data be purged
      * @return If expired event sessions were purged
+     * @see PortalEventSessionPurger#doPurgeEventSessions()
      */
     boolean purgeEventSessions();
 

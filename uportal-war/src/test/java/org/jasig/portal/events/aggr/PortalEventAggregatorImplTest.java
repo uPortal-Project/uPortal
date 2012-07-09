@@ -20,7 +20,7 @@ import org.springframework.transaction.support.TransactionOperations;
 @Ignore
 @RunWith(MockitoJUnitRunner.class)
 public class PortalEventAggregatorImplTest {
-    @InjectMocks private PortalEventAggregatorImpl portalEventAggregator = new PortalEventAggregatorImpl();
+    @InjectMocks private PortalRawEventsAggregatorImpl portalEventAggregator = new PortalRawEventsAggregatorImpl();
     @Mock private TransactionOperations transactionOperations;
     @Mock private IClusterLockService clusterLockService;
     @Mock private PortalEventDimensionPopulator portalEventDimensionPopulator;
@@ -36,7 +36,7 @@ public class PortalEventAggregatorImplTest {
                 return ((TransactionCallback<EventProcessingResult>)invocation.getArguments()[0]).doInTransaction(status);
             }
         });
-        when(clusterLockService.isLockOwner(PortalEventAggregator.AGGREGATION_LOCK_NAME)).thenReturn(true);
+        when(clusterLockService.isLockOwner(PortalRawEventsAggregator.AGGREGATION_LOCK_NAME)).thenReturn(true);
         when(portalEventDimensionPopulator.isCheckedDimensions()).thenReturn(true);
         
         portalEventAggregator.doAggregateRawEvents();

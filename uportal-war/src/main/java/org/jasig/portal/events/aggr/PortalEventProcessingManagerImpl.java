@@ -32,7 +32,6 @@ import org.jasig.portal.concurrency.locking.IClusterLockService;
 import org.jasig.portal.concurrency.locking.IClusterLockService.LockStatus;
 import org.jasig.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
 import org.jasig.portal.concurrency.locking.LockOptions;
-import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,17 +42,12 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.base.Function;
 
-/**
- * Service that handles the management of event aggregation & purging
- * 
- * @author Eric Dalquist
- */
 @Service("portalEventAggregationManager")
-public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao implements IPortalEventAggregationManager, HibernateCacheEvictor, DisposableBean {
+public class PortalEventProcessingManagerImpl implements IPortalEventProcessingManager, HibernateCacheEvictor, DisposableBean {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
     private PortalEventDimensionPopulator portalEventDimensionPopulator;
-    private PortalEventAggregator portalEventAggregator;
+    private PortalRawEventsAggregator portalEventAggregator;
     private PortalEventPurger portalEventPurger;
     private PortalEventSessionPurger portalEventSessionPurger;
     private IClusterLockService clusterLockService;
@@ -81,7 +75,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
     }
 
     @Autowired
-    public void setPortalEventAggregator(PortalEventAggregator portalEventAggregator) {
+    public void setPortalEventAggregator(PortalRawEventsAggregator portalEventAggregator) {
         this.portalEventAggregator = portalEventAggregator;
     }
 
@@ -95,17 +89,17 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
         this.portalEventSessionPurger = portalEventSessionPurger;
     }
 
-    @Value("#{${org.jasig.portal.events.aggr.session.PortalEventAggregationManager.aggregateRawEventsPeriod:60700} * 0.95}")
+    @Value("${org.jasig.portal.events.aggr.PortalEventProcessingManagerImpl.aggregateRawEventsPeriod}")
     public void setAggregateRawEventsPeriod(long aggregateRawEventsPeriod) {
         this.aggregateRawEventsPeriod = aggregateRawEventsPeriod;
     }
 
-    @Value("#{${org.jasig.portal.events.aggr.session.PortalEventAggregationManager.purgeRawEventsPeriod:61300} * 0.95}")
+    @Value("${org.jasig.portal.events.aggr.PortalEventProcessingManagerImpl.purgeRawEventsPeriod}")
     public void setPurgeRawEventsPeriod(long purgeRawEventsPeriod) {
         this.purgeRawEventsPeriod = purgeRawEventsPeriod;
     }
 
-    @Value("#{${org.jasig.portal.events.aggr.session.PortalEventAggregationManager.purgeEventSessionsPeriod:61700} * 0.95}")
+    @Value("${org.jasig.portal.events.aggr.PortalEventProcessingManagerImpl.purgeEventSessionsPeriod}")
     public void setPurgeEventSessionsPeriod(long purgeEventSessionsPeriod) {
         this.purgeEventSessionsPeriod = purgeEventSessionsPeriod;
     }
@@ -152,7 +146,8 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
             return false;
         }
 
-        long aggregatePeriod = this.aggregateRawEventsPeriod;
+        long aggregateLastRunDelay = (long)(this.aggregateRawEventsPeriod * .95);
+        final long aggregateServerBiasDelay = this.aggregateRawEventsPeriod * 4;
         TryLockFunctionResult<EventProcessingResult> result = null;
         EventProcessingResult aggrResult = null;
         do {
@@ -160,15 +155,15 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                 logger.debug("doAggregateRawEvents signaled that not all events were aggregated in a single transaction, running again.");
                 
                 //Set aggr period to 0 to allow immediate re-run locally
-                aggregatePeriod = 0;
+                aggregateLastRunDelay = 0;
             }
             
             try {
                 long start = System.nanoTime();
                 
                 //Try executing aggregation within lock
-                result = clusterLockService.doInTryLock(PortalEventAggregator.AGGREGATION_LOCK_NAME,
-                		LockOptions.builder().lastRunDelay(aggregatePeriod).serverBiasDelay(this.aggregateRawEventsPeriod * 4),
+                result = clusterLockService.doInTryLock(PortalRawEventsAggregator.AGGREGATION_LOCK_NAME,
+                		LockOptions.builder().lastRunDelay(aggregateLastRunDelay).serverBiasDelay(aggregateServerBiasDelay),
                         new Function<ClusterMutex, EventProcessingResult>() {
                             @Override
                             public EventProcessingResult apply(final ClusterMutex input) {
@@ -198,7 +193,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                         do {
 	                        //Update start time so logging is accurate
 	                        start = System.nanoTime();
-	                        cleanAggrResult = clusterLockService.doInTryLock(PortalEventAggregator.AGGREGATION_LOCK_NAME,
+	                        cleanAggrResult = clusterLockService.doInTryLock(PortalRawEventsAggregator.AGGREGATION_LOCK_NAME,
 	                                new Function<ClusterMutex, EventProcessingResult>() {
 	                                    @Override
 	                                    public EventProcessingResult apply(final ClusterMutex input) {
@@ -246,7 +241,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
             return false;
         }
         
-        long purgePeriod = this.purgeRawEventsPeriod;
+        long purgeLastRunDelay = (long)(this.purgeRawEventsPeriod * .95);
         TryLockFunctionResult<EventProcessingResult> result = null;
         EventProcessingResult purgeResult = null;
         do {
@@ -254,14 +249,14 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
                 logger.debug("doPurgeRawEvents signaled that not all events were purged in a single transaction, running again.");
                 
                 //Set purge period to 0 to allow immediate re-run locally
-                purgePeriod = 0;
+                purgeLastRunDelay = 0;
             }
             
             try {
                 final long start = System.nanoTime();
                 
                 result = clusterLockService.doInTryLock(PortalEventPurger.PURGE_RAW_EVENTS_LOCK_NAME,
-                		LockOptions.builder().lastRunDelay(purgePeriod),
+                		LockOptions.builder().lastRunDelay(purgeLastRunDelay),
                         new Function<ClusterMutex, EventProcessingResult>() {
                             @Override
                             public EventProcessingResult apply(final ClusterMutex input) {
@@ -304,9 +299,10 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
         try {
             final long start = System.nanoTime();
             
+            final long purgeLastRunDelay = (long)(this.purgeEventSessionsPeriod * .95);
             final TryLockFunctionResult<EventProcessingResult> result = clusterLockService
                     .doInTryLock(PortalEventSessionPurger.PURGE_EVENT_SESSION_LOCK_NAME,
-                    		LockOptions.builder().lastRunDelay(this.purgeEventSessionsPeriod),
+                    		LockOptions.builder().lastRunDelay(purgeLastRunDelay),
                             new Function<ClusterMutex, EventProcessingResult>() {
                                 @Override
                                 public EventProcessingResult apply(final ClusterMutex input) {
@@ -347,7 +343,7 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
         ids.add(identifier);
     }
 
-    protected void logResult(String message, EventProcessingResult aggrResult, long start) {
+    private void logResult(String message, EventProcessingResult aggrResult, long start) {
         final long runTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
         final double processRate = aggrResult.getProcessed() / (runTime / 1000d);
 
@@ -355,15 +351,21 @@ public class PortalEventAggregationManagerImpl extends BaseAggrEventsJpaDao impl
         if (startDate != null) {
             final double creationRate = aggrResult.getCreationRate();
             final double processSpeedUp = processRate / creationRate;
-            logger.info(message,
-                    new Object[] { aggrResult.getProcessed(), String.format("%.4f", creationRate), startDate,
-                            aggrResult.getEnd(), runTime, String.format("%.4f", processRate),
-                            String.format("%.4f", processSpeedUp) });
+            logger.info(message, new Object[] {
+                    aggrResult.getProcessed(), 
+                    String.format("%.4f", creationRate), 
+                    startDate,
+                    aggrResult.getEnd(), 
+                    runTime, 
+                    String.format("%.4f", processRate),
+                    String.format("%.4f", processSpeedUp) });
         }
         else {
-            logger.info(message,
-                    new Object[] { aggrResult.getProcessed(), aggrResult.getEnd(), runTime,
-                            String.format("%.4f", processRate) });
+            logger.info(message, new Object[] { 
+                    aggrResult.getProcessed(), 
+                    aggrResult.getEnd(), 
+                    runTime,
+                    String.format("%.4f", processRate) });
         }
     }
 }

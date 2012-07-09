@@ -65,7 +65,7 @@ public class PortalEventPurgerImpl implements PortalEventPurger {
         this.portalEventDao = portalEventDao;
     }
 
-    @Value("${org.jasig.portal.event.aggr.PortalEventAggregationManager.purgeDelay:P1D}")
+    @Value("${org.jasig.portal.events.aggr.PortalEventPurgerImpl.purgeDelay:P1D}")
     public void setPurgeDelay(ReadablePeriod purgeDelay) {
         this.purgeDelay = purgeDelay;
     }

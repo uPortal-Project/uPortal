@@ -58,7 +58,7 @@ public class PortalEventSessionPurgerImpl implements PortalEventSessionPurger {
         this.eventAggregationManagementDao = eventAggregationManagementDao;
     }
 
-    @Value("${org.jasig.portal.events.aggr.session.JpaEventSessionDao.eventSessionDuration:P1D}")
+    @Value("${org.jasig.portal.events.aggr.session.PortalEventSessionPurgerImpl.eventSessionDuration:P1D}")
     public void setEventSessionDuration(ReadablePeriod eventSessionDuration) {
         this.eventSessionDuration = eventSessionDuration;
     }

@@ -97,7 +97,7 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
         this.clusterLockService = clusterLockService;
     }
 
-    @Value("#{${org.jasig.portal.portlet.container.services.PortletCookieServiceImpl.purgeExpiredCookiesPeriod:60100} * 0.95}")
+    @Value("${org.jasig.portal.portlet.container.services.PortletCookieServiceImpl.purgeExpiredCookiesPeriod}")
     public void setPurgeExpiredCookiesPeriod(long purgeExpiredCookiesPeriod) {
         this.purgeExpiredCookiesPeriod = purgeExpiredCookiesPeriod;
     }
@@ -270,12 +270,16 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
     @Override
     public boolean purgeExpiredCookies() {
         try {
-            TryLockFunctionResult<Object> result = this.clusterLockService.doInTryLock(PURGE_LOCK_NAME, LockOptions.builder().lastRunDelay(purgeExpiredCookiesPeriod), new FunctionWithoutResult<ClusterMutex>() {
-                @Override
-                protected void applyWithoutResult(ClusterMutex input) {
-                    portletCookieDao.purgeExpiredCookies();
-                }
-            });
+            final long purgeExpiredLastRunDelay = (long)(purgeExpiredCookiesPeriod * .95);
+            final TryLockFunctionResult<Object> result = this.clusterLockService.doInTryLock(
+                    PURGE_LOCK_NAME, 
+                    LockOptions.builder().lastRunDelay(purgeExpiredLastRunDelay), 
+                    new FunctionWithoutResult<ClusterMutex>() {
+                        @Override
+                        protected void applyWithoutResult(ClusterMutex input) {
+                            portletCookieDao.purgeExpiredCookies();
+                        }
+                    });
             return result.getLockStatus() ==  LockStatus.EXECUTED;
         }
         catch (InterruptedException e) {

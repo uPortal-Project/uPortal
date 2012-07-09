@@ -160,8 +160,9 @@ public class ClusterLockServiceImpl implements IClusterLockService {
 	             
                 if (serverBiasDelay > 0) {
                 	final String uniqueServerName = portalInfoProvider.getUniqueServerName();
+                	final String previousServerId = clusterMutex.getPreviousServerId();
 	                final long nextRunTime = System.currentTimeMillis() - serverBiasDelay;
-	                if (!clusterMutex.getPreviousServerId().equals(uniqueServerName) && (
+	                if (!uniqueServerName.equals(previousServerId) && (
                 		clusterMutex.getLockStart() > nextRunTime || 
 	                    clusterMutex.getLastUpdate() > nextRunTime ||
 	                    clusterMutex.getLockEnd() > nextRunTime)) {

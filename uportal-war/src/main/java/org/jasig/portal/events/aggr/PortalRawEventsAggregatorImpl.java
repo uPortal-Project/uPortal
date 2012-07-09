@@ -74,11 +74,11 @@ import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Sets;
 
 @Service
-public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements PortalEventAggregator, DisposableBean {
+public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao implements PortalRawEventsAggregator, DisposableBean {
     private static final String EVENT_SESSION_CACHE_KEY_SOURCE = AggregateEventsHandler.class.getName() + "-EventSession";
 
     private IClusterLockService clusterLockService;
-    private IPortalEventAggregationManager portalEventAggregationManager;
+    private IPortalEventProcessingManager portalEventAggregationManager;
     private PortalEventDimensionPopulator portalEventDimensionPopulator;
     private IEventAggregationManagementDao eventAggregationManagementDao;
     private IPortalInfoProvider portalInfoProvider;
@@ -104,7 +104,7 @@ public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements P
 	}
 
 	@Autowired
-    public void setPortalEventAggregationManager(IPortalEventAggregationManager portalEventAggregationManager) {
+    public void setPortalEventAggregationManager(IPortalEventProcessingManager portalEventAggregationManager) {
         this.portalEventAggregationManager = portalEventAggregationManager;
     }
 
@@ -153,27 +153,27 @@ public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements P
         this.applicationEventFilters = applicationEventFilters;
     }
 
-    @Value("${org.jasig.portal.event.aggr.PortalEventAggregationManager.aggregationDelay:PT30S}")
+    @Value("${org.jasig.portal.events.aggr.PortalRawEventsAggregatorImpl.aggregationDelay:PT30S}")
     public void setAggregationDelay(ReadablePeriod aggregationDelay) {
         this.aggregationDelay = aggregationDelay;
     }
     
-    @Value("${org.jasig.portal.event.aggr.PortalEventAggregationManager.eventAggregationBatchSize:10000}")
+    @Value("${org.jasig.portal.events.aggr.PortalRawEventsAggregatorImpl.eventAggregationBatchSize:10000}")
     public void setEventAggregationBatchSize(int eventAggregationBatchSize) {
         this.eventAggregationBatchSize = eventAggregationBatchSize;
     }
     
-    @Value("${org.jasig.portal.event.aggr.PortalEventAggregationManager.intervalAggregationBatchSize:2}")
+    @Value("${org.jasig.portal.events.aggr.PortalRawEventsAggregatorImpl.intervalAggregationBatchSize:2}")
     public void setIntervalAggregationBatchSize(int intervalAggregationBatchSize) {
 		this.intervalAggregationBatchSize = intervalAggregationBatchSize;
 	}
     
-    @Value("${org.jasig.portal.event.aggr.PortalEventAggregationManager.cleanUnclosedAggregationsBatchSize:1000}")
+    @Value("${org.jasig.portal.events.aggr.PortalRawEventsAggregatorImpl.cleanUnclosedAggregationsBatchSize:1000}")
     public void setCleanUnclosedAggregationsBatchSize(int cleanUnclosedAggregationsBatchSize) {
 		this.cleanUnclosedAggregationsBatchSize = cleanUnclosedAggregationsBatchSize;
 	}
     
-    @Value("${org.jasig.portal.event.aggr.PortalEventAggregationManager.cleanUnclosedIntervalsBatchSize:300}")
+    @Value("${org.jasig.portal.events.aggr.PortalRawEventsAggregatorImpl.cleanUnclosedIntervalsBatchSize:300}")
     public void setCleanUnclosedIntervalsBatchSize(int cleanUnclosedIntervalsBatchSize) {
 		this.cleanUnclosedIntervalsBatchSize = cleanUnclosedIntervalsBatchSize;
 	}
@@ -430,7 +430,18 @@ public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements P
         //Calculate date range for aggregation
         DateTime lastAggregated = eventAggregatorStatus.getLastEventDate();
         if (lastAggregated == null) {
-            lastAggregated = new DateTime(0);
+            lastAggregated = portalEventDao.getOldestPortalEventTimestamp();
+            
+            //No portal events to aggregate, skip aggregation
+            if (lastAggregated == null) {
+                return new EventProcessingResult(0, null, null, true);
+            }
+            
+            //First time aggregation has run, initialize the CLEAN_UNCLOSED status to save catch-up time 
+            final IEventAggregatorStatus cleanUnclosedStatus = eventAggregationManagementDao.getEventAggregatorStatus(ProcessingType.CLEAN_UNCLOSED, true);
+            AggregationIntervalInfo oldestMinuteInterval = this.intervalHelper.getIntervalInfo(AggregationInterval.MINUTE, lastAggregated);
+            cleanUnclosedStatus.setLastEventDate(oldestMinuteInterval.getStart().minusMinutes(1));
+            eventAggregationManagementDao.updateEventAggregatorStatus(cleanUnclosedStatus);
         }
         
         final DateTime newestEventTime = DateTime.now().minus(this.aggregationDelay).secondOfMinute().roundFloorCopy();
@@ -482,7 +493,7 @@ public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements P
     		final Set<AggregationInterval> handledIntervalsNotIncluded = EnumSet.allOf(AggregationInterval.class);
     		final Set<AggregationInterval> handledIntervalsBuilder = EnumSet.noneOf(AggregationInterval.class);
     		for (final IPortalEventAggregator<PortalEvent> portalEventAggregator : portalEventAggregators) {
-    		    final Class<? extends IPortalEventAggregator<?>> aggregatorType = PortalEventAggregatorImpl.this.getClass(portalEventAggregator);
+    		    final Class<? extends IPortalEventAggregator<?>> aggregatorType = PortalRawEventsAggregatorImpl.this.getClass(portalEventAggregator);
     		    
     		    //Get aggregator specific interval info config
     		    final AggregatedIntervalConfig aggregatorIntervalConfig = this.getAggregatorIntervalConfig(aggregatorType);
@@ -633,7 +644,7 @@ public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements P
             //Give each aggregator a chance at the event
             for (final IPortalEventAggregator<PortalEvent> portalEventAggregator : portalEventAggregators) {
                 if (portalEventAggregator.supports(item.getClass())) {
-                    final Class<? extends IPortalEventAggregator<?>> aggregatorType = PortalEventAggregatorImpl.this.getClass(portalEventAggregator);
+                    final Class<? extends IPortalEventAggregator<?>> aggregatorType = PortalRawEventsAggregatorImpl.this.getClass(portalEventAggregator);
                     
                     //Get aggregator specific interval info map
                     final Map<AggregationInterval, AggregationIntervalInfo> aggregatorIntervalInfo = this.getAggregatorIntervalInfo(aggregatorType);
@@ -679,7 +690,7 @@ public class PortalEventAggregatorImpl extends BaseAggrEventsJpaDao implements P
         private void doHandleIntervalBoundary(AggregationInterval interval, Map<AggregationInterval, AggregationIntervalInfo> intervals) {
             for (final IPortalEventAggregator<PortalEvent> portalEventAggregator : portalEventAggregators) {
                 
-                final Class<? extends IPortalEventAggregator<?>> aggregatorType = PortalEventAggregatorImpl.this.getClass(portalEventAggregator);
+                final Class<? extends IPortalEventAggregator<?>> aggregatorType = PortalRawEventsAggregatorImpl.this.getClass(portalEventAggregator);
                 final AggregatedIntervalConfig aggregatorIntervalConfig = this.intervalsForAggregatorHelper.getAggregatorIntervalConfig(aggregatorType);
                 
                 //If the aggreagator is configured to use the interval notify it of the interval boundary

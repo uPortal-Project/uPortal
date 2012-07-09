@@ -85,7 +85,7 @@ public class PortalEventDimensionPopulatorImpl implements DisposableBean, Portal
         this.eventAggregationManagementDao = eventAggregationManagementDao;
     }
 
-    @Value("${org.jasig.portal.event.aggr.PortalEventAggregationManager.dimensionBuffer:P30D}")
+    @Value("${org.jasig.portal.events.aggr.PortalEventDimensionPopulatorImpl.dimensionBuffer:P30D}")
     public void setDimensionBuffer(ReadablePeriod dimensionBuffer) {
         if (new Period(dimensionBuffer).toStandardDays().getDays() < 1) {
             throw new IllegalArgumentException("dimensionBuffer must be at least 1 day. Is: " + new Period(dimensionBuffer).toStandardDays().getDays());
