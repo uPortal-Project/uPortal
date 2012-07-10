@@ -88,11 +88,13 @@ existingPlaceholders.putAll(activePlaceholders);
 def fatalPlaceholders = new TreeMap(); //Placeholders that are missing from properties file and have no default value
 def missingPlaceholders = new TreeMap(); //Placeholders that are missing from properties file
 def incorrectPlaceholders = new TreeMap(); //Placeholders that exist in the properties file but have differing default values
+def shouldntBeActivePlaceholders = new TreeMap(); //Placeholders that exist and are not commented out but are set to their default value
 
 //Process the search results into the missing, incorrect and not-used sets
 foundPlaceholders.each {
     existingValue = existingPlaceholders.remove(it.key);
-    if (!it.value.hasValue && activePlaceholders.get(it.key) == null) {
+    activeValue = activePlaceholders.get(it.key);
+    if (!it.value.hasValue && activeValue == null) {
         //No default value for the placeholder and no active property configured, this is a fatal problem
         fatalPlaceholders.put(it.key, it.value);
     }
@@ -100,10 +102,16 @@ foundPlaceholders.each {
         //Placeholder has a default but no matching entry in portal.properties, record it as missing
         missingPlaceholders.put(it.key, it.value);
     }
-    else if (it.value.hasValue && existingValue.value != it.value.value) {
-        //Placeholder has default value that doesn't match the value in portal.properties, record it as incorrect
-        it.value.oldValue = existingValue.value
-        incorrectPlaceholders.put(it.key, it.value);
+    else if (it.value.hasValue) {
+        if (existingValue.value != it.value.value) {
+            //Placeholder has default value that doesn't match the value in portal.properties, record it as incorrect
+            it.value.oldValue = existingValue.value
+            incorrectPlaceholders.put(it.key, it.value);
+        }
+        else if (activeValue != null && activeValue.value == it.value.value) {
+            //Placeholder has a default value which matches the active (uncommented) value in portal.properties
+            shouldntBeActivePlaceholders.put(it.key, it.value);
+        }
     }
 }
 
@@ -122,6 +130,16 @@ if (!missingPlaceholders.isEmpty()) {
     println "Properties that are missing from portal.properties"
     missingPlaceholders.each {
         println "\t" + it.key + "=" + it.value.value
+        if (opt.s) {
+            println "\t\t" + it.value.source;
+        }
+    }
+    println ""
+}
+if (!shouldntBeActivePlaceholders.isEmpty()) {
+    println "Properties that are not commented out where the default value matches the property value"
+    shouldntBeActivePlaceholders.each {
+        println "\t" + it.key + "=" + it.value.value;
         if (opt.s) {
             println "\t\t" + it.value.source;
         }
