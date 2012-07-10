@@ -60,4 +60,11 @@ public class BasePortalJpaDao extends BaseJpaDao {
     @Transactional(value = PERSISTENCE_UNIT_NAME, propagation = Propagation.REQUIRES_NEW)
     public @interface PortalTransactionalRequiresNew {
     }
+    
+    @Target({ElementType.METHOD, ElementType.TYPE})
+    @Retention(RetentionPolicy.RUNTIME)
+    @Inherited
+    @Transactional(value = PERSISTENCE_UNIT_NAME, readOnly = true) 
+    public @interface PortalTransactionalReadOnly {
+    }
 }
