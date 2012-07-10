@@ -19,7 +19,7 @@ import org.springframework.transaction.support.TransactionOperations;
 
 @Ignore
 @RunWith(MockitoJUnitRunner.class)
-public class PortalEventAggregatorImplTest {
+public class PortalRawEventsAggregatorImplTest {
     @InjectMocks private PortalRawEventsAggregatorImpl portalEventAggregator = new PortalRawEventsAggregatorImpl();
     @Mock private TransactionOperations transactionOperations;
     @Mock private IClusterLockService clusterLockService;

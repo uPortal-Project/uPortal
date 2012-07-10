@@ -90,7 +90,7 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao implemen
     private List<ApplicationEventFilter<PortalEvent>> applicationEventFilters = Collections.emptyList();
     
     private int eventAggregationBatchSize = 10000;
-    private int intervalAggregationBatchSize = 2;
+    private int intervalAggregationBatchSize = 5;
     private int cleanUnclosedAggregationsBatchSize = 1000;
     private int cleanUnclosedIntervalsBatchSize = 315;
     private ReadablePeriod aggregationDelay = Period.seconds(30);
@@ -163,7 +163,7 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao implemen
         this.eventAggregationBatchSize = eventAggregationBatchSize;
     }
     
-    @Value("${org.jasig.portal.events.aggr.PortalRawEventsAggregatorImpl.intervalAggregationBatchSize:2}")
+    @Value("${org.jasig.portal.events.aggr.PortalRawEventsAggregatorImpl.intervalAggregationBatchSize:5}")
     public void setIntervalAggregationBatchSize(int intervalAggregationBatchSize) {
 		this.intervalAggregationBatchSize = intervalAggregationBatchSize;
 	}
@@ -576,6 +576,7 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao implemen
             }
             
             //Check each interval to see if an interval boundary has been crossed
+            boolean intervalCrossed = false;
             for (final AggregationInterval interval : this.intervalsForAggregatorHelper.getHandledIntervals()) {
                 AggregationIntervalInfo intervalInfo = this.currentIntervalInfo.get(interval);
                 if (intervalInfo != null && !intervalInfo.getEnd().isAfter(eventDate)) { //if there is no IntervalInfo that interval must not be supported in the current environment 
@@ -587,8 +588,11 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao implemen
                     
                     this.aggregatorReadOnlyIntervalInfo.clear(); //Clear out cached per-aggregator interval info whenever a current interval info changes
                     
-                    this.intervalsCrossed++;
+                    intervalCrossed = true;
                 }
+            }
+            if (intervalCrossed) {
+                this.intervalsCrossed++;
             }
             
             //Aggregate the event
