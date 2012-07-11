@@ -61,17 +61,6 @@
     <ehcache:annotation-driven default-cache-key-generator="listCacheKeyGenerator" cache-manager="cacheManager" />
     
     <bean id="listCacheKeyGenerator" class="com.googlecode.ehcache.annotations.key.ListCacheKeyGenerator"/>
-    
-    <!--
-     | Service used by DLM to cache Layouts.
-     +-->
-    <bean id="layoutCachingService" class="org.jasig.portal.layout.dlm.LayoutCachingService">
-        <property name="layoutCache">
-            <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
-                <property name="cacheName" value="org.jasig.portal.layout.dlm.LAYOUT_CACHE" />
-            </bean>
-        </property>
-    </bean>
 
     <bean class="org.jasig.portal.utils.ResourceLoader">
         <property name="resourceUrlCache">
