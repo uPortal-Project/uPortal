@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.IUserProfile;
+import org.jasig.portal.layout.SessionAttributeProfileMapperImpl;
 import org.jasig.portal.portlets.login.LoginPortletHelper;
 import org.jasig.portal.security.mvc.LoginController;
 import org.jasig.portal.url.IPortalRequestUtils;
@@ -74,7 +75,7 @@ public class LoginPortletHelperTest {
     
     @Test
     public void testInSessionProfile() {
-        when(session.getAttribute(LoginController.REQUESTED_PROFILE_KEY, PortletSession.APPLICATION_SCOPE)).thenReturn("mobile");
+        when(session.getAttribute(SessionAttributeProfileMapperImpl.DEFAULT_SESSION_ATTRIBUTE_NAME, PortletSession.APPLICATION_SCOPE)).thenReturn("mobile");
         String profile = helper.getSelectedProfile(portletRequest);
         assertEquals("mobile", profile);
     }

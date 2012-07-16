@@ -48,6 +48,7 @@ import org.hibernate.mapping.Table;
 import org.hibernate.mapping.UniqueKey;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.service.jdbc.dialect.spi.DialectResolver;
+import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ResourceLoaderAware;
@@ -55,7 +56,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.NonTransientDataAccessResourceException;
-import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -84,7 +84,7 @@ public class HibernateDbLoader implements IDbLoader, ResourceLoaderAware {
     /**
      * @param jdbcOperations the jdbcTemplate to set
      */
-    @javax.annotation.Resource(name="PortalDb")
+    @javax.annotation.Resource(name=BasePortalJpaDao.PERSISTENCE_UNIT_NAME)
     public void setDataSource( DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
@@ -93,7 +93,7 @@ public class HibernateDbLoader implements IDbLoader, ResourceLoaderAware {
      * @param transactionTemplate the transactionTemplate to set
      */
     @Autowired
-    public void setTransactionManager(@Qualifier("PortalDb") PlatformTransactionManager transactionManager) {
+    public void setTransactionManager(@Qualifier(BasePortalJpaDao.PERSISTENCE_UNIT_NAME) PlatformTransactionManager transactionManager) {
         this.transactionTemplate = new TransactionTemplate(transactionManager);
     }
 

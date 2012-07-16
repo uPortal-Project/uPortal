@@ -42,6 +42,7 @@ import org.jasig.portal.IUserProfile;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.i18n.ILocaleStore;
 import org.jasig.portal.i18n.LocaleManager;
+import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.LayoutStructure;
 import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
@@ -128,7 +129,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
     }
 
     @Autowired
-    public void setPlatformTransactionManager(@Qualifier("PortalDb") PlatformTransactionManager platformTransactionManager) {
+    public void setPlatformTransactionManager(@Qualifier(BasePortalJpaDao.PERSISTENCE_UNIT_NAME) PlatformTransactionManager platformTransactionManager) {
         this.transactionOperations = new TransactionTemplate(platformTransactionManager);
         
         final DefaultTransactionDefinition nextStructTransactionDefinition = new DefaultTransactionDefinition();
@@ -136,7 +137,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
         this.nextStructTransactionOperations = new TransactionTemplate(platformTransactionManager, nextStructTransactionDefinition);
     }
 
-    @Resource(name="PortalDb")
+    @Resource(name=BasePortalJpaDao.PERSISTENCE_UNIT_NAME)
     public void setDataSource(DataSource dataSource) {
         this.jdbcOperations = new JdbcTemplate(dataSource);
         this.exceptionTranslator = new SQLErrorCodeSQLExceptionTranslator(dataSource);

@@ -22,7 +22,6 @@ package org.jasig.portal.events.handlers.db;
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.handlers.QueueingEventHandler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * Hands off queued portal events for storage by the IPortalEventDao
@@ -30,7 +29,6 @@ import org.springframework.stereotype.Service;
  * @author Eric Dalquist
  * @version $Revision$
  */
-@Service("PortalEventDaoQueuingEventHandler")
 public class PortalEventDaoQueuingEventHandler extends QueueingEventHandler<PortalEvent> {
     private IPortalEventDao portalEventDao;
     
@@ -42,9 +40,6 @@ public class PortalEventDaoQueuingEventHandler extends QueueingEventHandler<Port
         this.portalEventDao = portalEventDao;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.events.handlers.QueueingEventHandler#onApplicationEvents(java.lang.Iterable)
-     */
     @Override
     protected void onApplicationEvents(Iterable<PortalEvent> events) {
         this.portalEventDao.storePortalEvents(events);

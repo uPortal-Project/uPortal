@@ -25,6 +25,7 @@ import net.sf.ehcache.Ehcache;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 
@@ -39,9 +40,14 @@ public class EhcacheManagerBeanConfigurer implements BeanFactoryPostProcessor {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
     private CacheManager cacheManager;
+    private boolean skipDuplicates = false;
 
     public void setCacheManager(CacheManager cacheManager) {
         this.cacheManager = cacheManager;
+    }
+    
+    public void setSkipDuplicates(boolean skipDuplicates) {
+        this.skipDuplicates = skipDuplicates;
     }
 
     @Override
@@ -50,7 +56,20 @@ public class EhcacheManagerBeanConfigurer implements BeanFactoryPostProcessor {
         for (final String cacheName : cacheNames) {
             final Ehcache ehcache = this.cacheManager.getEhcache(cacheName);
             this.logger.debug("Registering Ehcache '" + cacheName + "' with bean factory");
-            beanFactory.registerSingleton(cacheName, ehcache);
+            if (beanFactory.containsBean(cacheName)) {
+                if (skipDuplicates) {
+                    continue;
+                }
+                
+                throw new BeanCreationException("Duplicate Ehcache " + cacheName + " from CacheManager " + cacheManager.getName());
+            }
+            
+            try {
+                beanFactory.registerSingleton(cacheName, ehcache);
+            }
+            catch (Exception e) {
+                throw new BeanCreationException("Failed to register Ehcache " + cacheName + " from CacheManager " + cacheManager.getName(), e);
+            }
         }
         this.logger.debug("Registered " + cacheNames.length + " Ehcaches with bean factory");
     }

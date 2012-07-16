@@ -22,15 +22,13 @@ package org.jasig.portal.io.xml;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 
-import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.io.xml.permission.ExternalPermissionOwner;
 import org.jasig.portal.io.xml.ssd.ExternalStylesheetDescriptor;
 import org.jasig.portal.io.xml.subscribedfragment.ExternalSubscribedFragments;
 import org.jasig.portal.io.xml.user.UserType;
+import org.jasig.portal.test.BasePortalJpaDaoTest;
 import org.jasig.portal.test.TimeZoneTestUtils;
 import org.jasig.portal.utils.ICounterStore;
 import org.jasig.portal.utils.Tuple;
@@ -59,7 +57,7 @@ import com.google.common.base.Function;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/org/jasig/portal/io/xml/importExportTestContext.xml")
-public class IdentityImportExportTest extends AbstractIdentityImportExportTest {
+public class IdentityImportExportTest extends BasePortalJpaDaoTest {
     private static final TimeZoneTestUtils TIME_ZONE_TEST_UTILS = new TimeZoneTestUtils();
     
     @BeforeClass
@@ -104,14 +102,6 @@ public class IdentityImportExportTest extends AbstractIdentityImportExportTest {
     private ICounterStore counterStore;
     private SimpleJdbcTemplate simpleJdbcTemplate;
     private int counter = 0;
-    
-    @PersistenceContext(unitName = "uPortalPersistence")
-    private EntityManager entityManager;
-    
-    @Override
-    protected EntityManager getEntityManager() {
-        return this.entityManager;
-    }
     
     protected void runSql(final String sql) {
         if (simpleJdbcTemplate == null) {
@@ -173,7 +163,7 @@ public class IdentityImportExportTest extends AbstractIdentityImportExportTest {
     public void testStylesheetDescriptor40ImportExport() throws Exception {
         final ClassPathResource stylesheetDescriptorResource = new ClassPathResource("/org/jasig/portal/io/xml/ssd/test_4-0.stylesheet-descriptor.xml");
         
-        this.testIdentityImportExport(
+        IdentityImportExportTestUtilities.testIdentityImportExport(this.transactionOperations,
                 this.stylesheetDescriptorImporter, this.stylesheetDescriptorExporter,
                 stylesheetDescriptorResource,
                 new Function<ExternalStylesheetDescriptor, String>() {
@@ -189,7 +179,7 @@ public class IdentityImportExportTest extends AbstractIdentityImportExportTest {
     public void testPermissionOwner40ImportExport() throws Exception {
         final ClassPathResource permissionOwnerResource = new ClassPathResource("/org/jasig/portal/io/xml/permission-owner/test_4-0.permission-owner.xml");
         
-        this.testIdentityImportExport(
+        IdentityImportExportTestUtilities.testIdentityImportExport(this.transactionOperations,
                 this.permissionOwnerImporter, this.permissionOwnerExporter,
                 permissionOwnerResource,
                 new Function<ExternalPermissionOwner, String>() {
@@ -205,7 +195,7 @@ public class IdentityImportExportTest extends AbstractIdentityImportExportTest {
     public void testUser40ImportExport() throws Exception {
         final ClassPathResource dataResource = new ClassPathResource("/org/jasig/portal/io/xml/user/test_4-0.user.xml");
         
-        this.<UserType>testIdentityImportExport(
+        IdentityImportExportTestUtilities.<UserType>testIdentityImportExport(this.transactionOperations,
                 this.userImporter, this.userExporter,
                 dataResource,
                 new Function<UserType, String>() {
@@ -221,7 +211,7 @@ public class IdentityImportExportTest extends AbstractIdentityImportExportTest {
     public void testFragmentDefinition31ImportExport() throws Exception {
         final ClassPathResource dataResource = new ClassPathResource("/org/jasig/portal/io/xml/fragment-definition/academic-tab_3-1.fragment-definition.xml");
         
-        this.<Tuple<String, Element>>testIdentityImportExport(
+        IdentityImportExportTestUtilities.<Tuple<String, Element>>testIdentityImportExport(this.transactionOperations,
                 this.fragmentDefinitionImporter, this.fragmentDefinitionExporter,
                 dataResource,
                 new Function<Tuple<String, Element>, String>() {
@@ -243,7 +233,7 @@ public class IdentityImportExportTest extends AbstractIdentityImportExportTest {
                 
         final ClassPathResource permissionOwnerResource = new ClassPathResource("/org/jasig/portal/io/xml/subscribed-fragment/test_4-0.subscribed-fragment.xml");
         
-        this.testIdentityImportExport(
+        IdentityImportExportTestUtilities.testIdentityImportExport(this.transactionOperations,
                 this.subscribedFragmentImporter, this.subscribedFragmentExporter,
                 permissionOwnerResource,
                 new Function<ExternalSubscribedFragments, String>() {

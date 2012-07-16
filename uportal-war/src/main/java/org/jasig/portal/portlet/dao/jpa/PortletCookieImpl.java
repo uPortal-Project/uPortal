@@ -40,6 +40,7 @@ import javax.servlet.http.Cookie;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
 import org.jasig.portal.portlet.om.IPortalCookie;
 import org.jasig.portal.portlet.om.IPortletCookie;
 
@@ -63,6 +64,10 @@ import org.jasig.portal.portlet.om.IPortletCookie;
         name="UP_PORTLET_COOKIES_GEN",
         pkColumnValue="UP_PORTLET_COOKIES",
         allocationSize=5
+    )
+@org.hibernate.annotations.Table(
+        appliesTo = "UP_PORTLET_COOKIES",
+        indexes = @Index(name = "IDX_UP_PRTLT_CKS_EXP", columnNames = { "EXPIRES" })
     )
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)

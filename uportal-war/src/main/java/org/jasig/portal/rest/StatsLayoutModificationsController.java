@@ -41,6 +41,7 @@ import javax.sql.DataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.jpa.BaseRawEventsJpaDao;
 import org.jasig.portal.security.AdminEvaluator;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
@@ -82,7 +83,7 @@ public class StatsLayoutModificationsController implements InitializingBean {
     private CacheFactory cacheFactory;
     private final Log log = LogFactory.getLog(getClass());
     
-    @Resource(name="RawEventsDB")
+    @Resource(name=BaseRawEventsJpaDao.PERSISTENCE_UNIT_NAME)
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }

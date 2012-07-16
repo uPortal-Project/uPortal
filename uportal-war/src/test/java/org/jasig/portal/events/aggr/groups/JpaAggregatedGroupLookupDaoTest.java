@@ -21,18 +21,15 @@ package org.jasig.portal.events.aggr.groups;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import javax.naming.CompositeName;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.jasig.portal.concurrency.CallableWithoutResult;
 import org.jasig.portal.groups.ICompositeGroupService;
 import org.jasig.portal.groups.IEntityGroup;
-import org.jasig.portal.test.BaseJpaDaoTest;
+import org.jasig.portal.test.BaseAggrEventsJpaDaoTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,19 +42,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaAggrEventsTestContext.xml")
-public class JpaAggregatedGroupLookupDaoTest extends BaseJpaDaoTest {
+public class JpaAggregatedGroupLookupDaoTest extends BaseAggrEventsJpaDaoTest {
     @Autowired
     private AggregatedGroupLookupDao aggregatedGroupLookupDao;
     @Autowired
     private ICompositeGroupService compositeGroupService;
-    
-    @PersistenceContext(unitName = "uPortalAggrEventsPersistence")
-    private EntityManager entityManager;
-    
-    @Override
-    protected EntityManager getEntityManager() {
-        return this.entityManager;
-    }
     
     @Test
     public void testLoginAggregationLifecycle() throws Exception {
@@ -93,7 +82,9 @@ public class JpaAggregatedGroupLookupDaoTest extends BaseJpaDaoTest {
             protected void callWithoutResult() {
                 final AggregatedGroupMapping groupMapping = aggregatedGroupLookupDao.getGroupMapping("local.2");
                 
-                assertNull(groupMapping);
+                assertNotNull(groupMapping);
+                assertEquals("local", groupMapping.getGroupService());
+                assertEquals("2", groupMapping.getGroupName());
             }
         });
     }

@@ -19,6 +19,7 @@
 
 package org.jasig.portal.events.aggr;
 
+import org.joda.time.DateTime;
 import org.joda.time.DateTimeFieldType;
 
 /**
@@ -85,5 +86,43 @@ public enum AggregationInterval {
      */
     public DateTimeFieldType getDateTimeFieldType() {
         return this.dateTimeFieldType;
+    }
+    
+    /**
+     * Determine the starting DateTime (inclusive) of an interval based on an instant in time
+     * 
+     * @param instant The instant in time to get the interval starting value for
+     * @return The start of this interval in relation to the provided instant
+     */
+    public DateTime determineStart(DateTime instant) {
+        if (this.dateTimeFieldType != null) {
+            return instant.property(this.dateTimeFieldType).roundFloorCopy();
+        }
+        
+        if (this == AggregationInterval.FIVE_MINUTE) {
+            return instant.hourOfDay().roundFloorCopy().plusMinutes((instant.getMinuteOfHour() / 5) * 5);
+        }
+        
+        throw new IllegalArgumentException("Cannot compute interval start time for " + this + " please use " + AggregationIntervalHelper.class);
+    }
+    
+    /**
+     * Determine the ending DateTime (exclusive) of an interval based on an instant in time
+     * 
+     * @param instant The start of an instant
+     * @return
+     */
+    public DateTime determineEnd(DateTime instant) {
+        if (this.dateTimeFieldType != null) {
+            final DateTime start = instant.property(this.dateTimeFieldType).roundFloorCopy();
+            return start.property(this.dateTimeFieldType).addToCopy(1);
+        }
+        
+        if (this == AggregationInterval.FIVE_MINUTE) {
+            final DateTime start = instant.hourOfDay().roundFloorCopy().plusMinutes((instant.getMinuteOfHour() / 5) * 5);
+            return start.plusMinutes(5);
+        }
+        
+        throw new IllegalArgumentException("Cannot compute interval end time for " + this + " please use " + AggregationIntervalHelper.class);
     }
 }

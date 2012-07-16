@@ -19,6 +19,8 @@
 
 package org.jasig.portal.events.aggr;
 
+import java.io.Serializable;
+
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTimeFieldType;
 
@@ -29,7 +31,7 @@ import org.joda.time.DateTimeFieldType;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface DateDimension {
+public interface DateDimension extends Serializable {
     /**
      * @return The ID of the dimension
      */
@@ -79,4 +81,9 @@ public interface DateDimension {
      * @return The optional designation of the current term the day exists in, may be null
      */
     String getTerm();
+    
+    /**
+     * Set the term, only allowed if {@link #getTerm()} returns null
+     */
+    public void setTerm(String term);
 }

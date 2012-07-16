@@ -36,5 +36,6 @@
         <property name="keepAliveSeconds" value="${org.jasig.portal.cluster.lock.threadPool.keepAliveSeconds}" />
         <property name="daemon" value="true" />
         <property name="allowCoreThreadTimeOut" value="true" />
+        <property name="rejectedExecutionHandler" ref="loggingAbortHandler" />
     </bean>
 </beans>

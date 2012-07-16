@@ -29,9 +29,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.Callable;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
 import org.jasig.portal.layout.dao.IStylesheetUserPreferencesDao;
@@ -40,7 +37,7 @@ import org.jasig.portal.layout.om.IStylesheetData.Scope;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.test.BaseJpaDaoTest;
+import org.jasig.portal.test.BasePortalJpaDaoTest;
 import org.jasig.portal.utils.MapPopulator;
 import org.jasig.portal.utils.PropertiesPopulator;
 import org.junit.Before;
@@ -56,20 +53,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaPortalTestApplicationContext.xml")
-public class JpaStylesheetDescriptorDaoTest extends BaseJpaDaoTest {
+public class JpaStylesheetDescriptorDaoTest extends BasePortalJpaDaoTest {
     @Autowired
     private IStylesheetDescriptorDao stylesheetDescriptorDao;
     @Autowired
     private IStylesheetUserPreferencesDao stylesheetUserPreferencesDao;
 
-    @PersistenceContext(unitName = "uPortalPersistence")
-    private EntityManager entityManager;
-    
-    @Override
-    protected EntityManager getEntityManager() {
-        return this.entityManager;
-    }
-    
     @Before
     public void onSetUp() throws Exception {
         this.execute(new Callable<Object>() {
