@@ -3,7 +3,7 @@
 
     Licensed to Jasig under one or more contributor license
     agreements. See the NOTICE file distributed with this work
-    for additional information regarding copyright ownership.z
+    for additional information regarding copyright ownership.
     Jasig licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License. You may obtain a
@@ -19,7 +19,6 @@
     under the License.
 
 -->
-
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd" updateCheck="false" name="uPortalEventAggr.cacheManager">
     
