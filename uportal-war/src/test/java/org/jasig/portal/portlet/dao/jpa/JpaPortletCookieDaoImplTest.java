@@ -90,7 +90,7 @@ public class JpaPortletCookieDaoImplTest extends BasePortalJpaDaoTest {
                 
                 long expirationDelay = portalCookie.getExpires().getTime() - System.currentTimeMillis();
                 if (expirationDelay > 0) {
-                    Thread.sleep(expirationDelay);
+                    Thread.sleep(Math.max(500, expirationDelay));
                 }
                 
                 portletCookieDao.purgeExpiredCookies();

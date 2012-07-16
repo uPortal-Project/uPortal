@@ -1,7 +1,5 @@
 package org.jasig.portal.version.dao.jpa;
 
-import java.io.Serializable;
-
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,7 +14,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
-import org.jasig.portal.version.om.Version;
+import org.jasig.portal.version.AbstractVersion;
 
 @Entity
 @Table(name = "UP_VERSION")
@@ -33,12 +31,12 @@ import org.jasig.portal.version.om.Version;
 @NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-class VersionImpl implements Version, Serializable {
+class VersionImpl extends AbstractVersion {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "UP_VERSION_GEN")
-    @Column(name = "OWNER_ID")
+    @Column(name = "VERSION_ID")
     private final long id;
     
     @javax.persistence.Version
@@ -100,38 +98,5 @@ class VersionImpl implements Version, Serializable {
 
     public void setPatch(int patch) {
         this.patch = patch;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + major;
-        result = prime * result + minor;
-        result = prime * result + patch;
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        VersionImpl other = (VersionImpl) obj;
-        if (major != other.major)
-            return false;
-        if (minor != other.minor)
-            return false;
-        if (patch != other.patch)
-            return false;
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return product + " " + major + "." + minor + "." + patch;
     }
 }

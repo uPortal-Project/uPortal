@@ -54,8 +54,10 @@ public class VersionUtils {
                 from.getPatch() <= to.getPatch();
     }
     
-    private static final class SimpleVersion implements Version {
-        private final int major;
+    private static final class SimpleVersion extends AbstractVersion {
+		private static final long serialVersionUID = 1L;
+
+		private final int major;
         private final int minor;
         private final int patch;
         
@@ -78,39 +80,6 @@ public class VersionUtils {
         @Override
         public int getPatch() {
             return patch;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + major;
-            result = prime * result + minor;
-            result = prime * result + patch;
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            SimpleVersion other = (SimpleVersion) obj;
-            if (major != other.major)
-                return false;
-            if (minor != other.minor)
-                return false;
-            if (patch != other.patch)
-                return false;
-            return true;
-        }
-        
-        @Override
-        public String toString() {
-            return major + "." + minor + "." + patch;
         }
     }
 }

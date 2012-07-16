@@ -1,6 +1,7 @@
 package org.jasig.portal.version.dao.jpa;
 
 import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.jasig.portal.jpa.OpenEntityManager;
 import org.jasig.portal.version.dao.VersionDao;
 import org.jasig.portal.version.om.Version;
 import org.springframework.stereotype.Repository;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Repository;
 public class JpaVersionDao extends BasePortalJpaDao implements VersionDao {
 
     @Override
+    @OpenEntityManager(unitName=BasePortalJpaDao.PERSISTENCE_UNIT_NAME)
     public VersionImpl getVersion(String product) {
         NaturalIdQuery<VersionImpl> query = this.createNaturalIdQuery(VersionImpl.class);
         query.using(VersionImpl_.product, product);
