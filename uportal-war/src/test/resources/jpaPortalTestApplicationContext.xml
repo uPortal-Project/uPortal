@@ -41,6 +41,7 @@
     <bean id="stylesheetDescriptorDao" class="org.jasig.portal.layout.dao.jpa.JpaStylesheetDescriptorDao" />
     <bean id="stylesheetUserPreferencesDao" class="org.jasig.portal.layout.dao.jpa.JpaStylesheetUserPreferencesDao" />
     <bean id="userFragmentSubscriptionDao" class="org.jasig.portal.fragment.subscribe.dao.jpa.JpaUserFragmentSubscriptionDaoImpl" />
+    <bean id="versionDao" class="org.jasig.portal.version.dao.jpa.JpaVersionDao" />
     
     <bean id="localPropertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="properties">
