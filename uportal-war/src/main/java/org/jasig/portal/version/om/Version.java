@@ -26,7 +26,7 @@ package org.jasig.portal.version.om;
  * 
  * @author Eric Dalquist
  */
-public interface Version {
+public interface Version extends Comparable<Version> {
     /**
      * @return The major part
      */
@@ -41,4 +41,14 @@ public interface Version {
      * @return The patch part
      */
     int getPatch();
+    
+    /**
+     * @return true if this version comes before the other version
+     */
+    boolean isBefore(Version other);
+    
+    /**
+     * @return true if this version comes after the other version
+     */
+    boolean isAfter(Version other);
 }

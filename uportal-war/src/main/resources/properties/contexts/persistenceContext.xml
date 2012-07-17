@@ -154,6 +154,7 @@
         <property name="hibernateToolConfigurationSource" ref="portalDbHibernateToolConfigurationSource" />
     </bean>
     <bean name="portalDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport" lazy-init="true">
+    	<qualifier value="PortalDb"/>
         <property name="hibernateToolConfigurationSource" ref="portalDbHibernateToolConfigurationSource" />
     </bean>
     <bean id="portalDbHibernateToolConfigurationSource" class="org.jasig.portal.tools.dbloader.HibernateToolConfigurationSourceImpl" lazy-init="true">

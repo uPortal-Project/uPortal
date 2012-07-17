@@ -28,7 +28,34 @@ import org.jasig.portal.version.om.Version;
  * @author Eric Dalquist
  */
 public abstract class AbstractVersion implements Version, Serializable {
-	private int hashCode = 0;
+    private static final long serialVersionUID = 1L;
+    
+    private int hashCode = 0;
+    
+    @Override
+    public final boolean isBefore(Version other) {
+        return Math.signum(compareTo(other)) == -1;
+    }
+
+    @Override
+    public final boolean isAfter(Version other) {
+        return Math.signum(compareTo(other)) == 1;
+    }
+
+    @Override
+    public final int compareTo(Version o) {
+        int diff = getMajor() - o.getMajor();
+        if (diff != 0) {
+            return diff;
+        }
+        
+        diff = getMinor() - o.getMinor();
+        if (diff != 0) {
+            return diff;
+        }
+        
+        return getPatch() - o.getPatch();
+    }
 
     @Override
     public final int hashCode() {

@@ -249,6 +249,8 @@
                         false,
                         /${outputFileEscaped}/,
                         true);
+                	
+                	versionedDataUpdater.postInitDatabase();
                 </echo>
             </then>
         </if>
@@ -267,6 +269,8 @@
 
         <echo>Creating HBM2DDL Update Script</echo>
         <echo file="${portal-shell-script}" append="true">
+        	versionedDataUpdater.preUpdatePortalDatabase();
+        	
         	//hibernateUpdate(String target, String schemaExportBeanName, boolean export, String outputFile, boolean haltOnError)
             portalShellBuildHelper.hibernateUpdate("db-hibernate-update",
                 '${schemaExportBean}',

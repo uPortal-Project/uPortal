@@ -75,6 +75,7 @@
     <!-- ********** Database Utilities ********** -->
     
     <bean name="rawEventsDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport" lazy-init="true">
+    	<qualifier value="RawEventsDB"/>
         <property name="hibernateToolConfigurationSource" ref="rawEventsDbHibernateToolConfigurationSource" />
     </bean>
     <bean id="rawEventsDbHibernateToolConfigurationSource" class="org.jasig.portal.tools.dbloader.HibernateToolConfigurationSourceImpl" lazy-init="true">
@@ -85,6 +86,7 @@
     </bean>
     
     <bean name="aggrEventsDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport" lazy-init="true">
+    	<qualifier value="AggrEventsDB"/>
         <property name="hibernateToolConfigurationSource" ref="aggrEventsDbHibernateToolConfigurationSource" />
     </bean>
     <bean id="aggrEventsDbHibernateToolConfigurationSource" class="org.jasig.portal.tools.dbloader.HibernateToolConfigurationSourceImpl" lazy-init="true">

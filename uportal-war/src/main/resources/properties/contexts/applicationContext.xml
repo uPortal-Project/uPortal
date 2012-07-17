@@ -56,7 +56,15 @@
     </bean>
     
     <util:map id="productVersions">
-    	<entry key="uPortal" value="${org.jasig.portal.version}" />
+    	<entry value="${org.jasig.portal.version}">
+    		<key><util:constant static-field="org.jasig.portal.jpa.BasePortalJpaDao.PERSISTENCE_UNIT_NAME"/></key>
+    	</entry>
+    	<entry value="${org.jasig.portal.version}">
+    		<key><util:constant static-field="org.jasig.portal.jpa.BaseRawEventsJpaDao.PERSISTENCE_UNIT_NAME"/></key>
+    	</entry>
+    	<entry value="${org.jasig.portal.version}">
+    		<key><util:constant static-field="org.jasig.portal.jpa.BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME"/></key>
+    	</entry>
     </util:map>
     
     <bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor" lazy-init="false" />
