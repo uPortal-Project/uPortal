@@ -29,6 +29,13 @@
             <artifactId>uportal-search-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uportal-java-api</artifactId>
+            <version>${project.version}</version>
+			<scope>provided</scope>
+        </dependency>
         
         <!-- ===== Compile Dependencies ======================================= -->
         <dependency>
