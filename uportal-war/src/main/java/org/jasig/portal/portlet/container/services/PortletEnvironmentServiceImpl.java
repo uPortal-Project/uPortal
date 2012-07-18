@@ -41,6 +41,8 @@ import org.apache.pluto.container.PortletRequestContext;
 import org.apache.pluto.container.PortletResourceRequestContext;
 import org.apache.pluto.container.PortletResourceResponseContext;
 import org.apache.pluto.container.PortletWindow;
+import org.jasig.portal.api.permissions.ApiPermissionsService;
+import org.jasig.portal.api.permissions.PermissionsService;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
@@ -75,6 +77,9 @@ public class PortletEnvironmentServiceImpl extends org.apache.pluto.container.im
 		this.portalRequestUtils = portalRequestUtils;
 	}
     
+    @Autowired
+    private ApiPermissionsService apiPermissionsService;
+    
     @Override
 	public PortletSession createPortletSession(PortletContext portletContext, PortletWindow portletWindow, HttpSession session) {
 		// TODO pluto 1.1 PortletEnvironmentService#createPortletSession passed in the request; now use IPortalRequestUtils#getCurrentPortalRequest()?
@@ -82,6 +87,8 @@ public class PortletEnvironmentServiceImpl extends org.apache.pluto.container.im
 		final IPortletWindow internalPortletWindow = this.portletWindowRegistry.convertPortletWindow(request, portletWindow);
 		final IPortletEntity portletEntity = internalPortletWindow.getPortletEntity();
         final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
+        
+        portletContext.setAttribute(PermissionsService.PORTLET_CONTEXT_ATTRIBUTE_NAME, apiPermissionsService);
         
 		return new ScopingPortletSessionImpl(portletEntityId, portletContext, portletWindow, session);
 	}
