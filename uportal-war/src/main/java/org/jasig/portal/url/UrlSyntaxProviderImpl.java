@@ -113,7 +113,107 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
     private static final String PORTAL_REQUEST_PARSING_IN_PROGRESS_ATTR = UrlSyntaxProviderImpl.class.getName() + ".PORTAL_REQUEST_PARSING_IN_PROGRESS";
     
     /**
-     * Enum used in getPortalRequestInfo to keep track of the parser state when reading the URL string
+     * Utility enum used for parsing parameters that can appear multiple times on one URL and may or may not
+     * be suffixed with the portlet's window id
+     */
+    private enum SuffixedPortletParameter {
+        RESOURCE_ID(UrlSyntaxProviderImpl.PARAM_RESOURCE_ID, UrlType.RESOURCE) {
+            @Override
+            public void updateRequestInfo(HttpServletRequest request,
+                IPortletWindowRegistry portletWindowRegistry, PortletRequestInfoImpl portletRequestInfo,
+                List<String> values, Map<IPortletWindowId, IPortletWindowId> delegateIdMappings) {
+                portletRequestInfo.setResourceId(values.get(0));                
+            }
+        },
+        CACHEABILITY(UrlSyntaxProviderImpl.PARAM_CACHEABILITY, UrlType.RESOURCE){
+            @Override
+            public void updateRequestInfo(HttpServletRequest request,
+                IPortletWindowRegistry portletWindowRegistry, PortletRequestInfoImpl portletRequestInfo,
+                List<String> values, Map<IPortletWindowId, IPortletWindowId> delegateIdMappings) {
+                portletRequestInfo.setCacheability(values.get(0));                
+            }
+        },
+        DELEGATE_PARENT(UrlSyntaxProviderImpl.PARAM_DELEGATE_PARENT, UrlType.RENDER, UrlType.ACTION, UrlType.RESOURCE){
+            @Override
+            public void updateRequestInfo(HttpServletRequest request,
+                IPortletWindowRegistry portletWindowRegistry, PortletRequestInfoImpl portletRequestInfo,
+                List<String> values, Map<IPortletWindowId, IPortletWindowId> delegateIdMappings) {
+                try {
+                    final IPortletWindowId delegateParentWindowId = portletWindowRegistry.getPortletWindowId(request, values.get(0));
+                    portletRequestInfo.setDelegateParentWindowId(delegateParentWindowId);
+                    final IPortletWindowId delegateWindowId = portletRequestInfo.getPortletWindowId();
+                    delegateIdMappings.put(delegateParentWindowId, delegateWindowId);
+                }
+                catch (IllegalArgumentException e) {
+                    this.logger.warn("Failed to parse delegate portlet window ID '" + values.get(0) + "', the delegation window parameter will be ignored", e);
+                }
+            }
+        },
+        WINDOW_STATE(UrlSyntaxProviderImpl.PARAM_WINDOW_STATE, UrlType.RENDER, UrlType.ACTION){
+            @Override
+            public void updateRequestInfo(HttpServletRequest request,
+                IPortletWindowRegistry portletWindowRegistry, PortletRequestInfoImpl portletRequestInfo,
+                List<String> values, Map<IPortletWindowId, IPortletWindowId> delegateIdMappings) {
+                portletRequestInfo.setWindowState(PortletUtils.getWindowState(values.get(0)));
+            }
+        },
+        PORTLET_MODE(UrlSyntaxProviderImpl.PARAM_PORTLET_MODE, UrlType.RENDER, UrlType.ACTION){
+            @Override
+            public void updateRequestInfo(HttpServletRequest request,
+                IPortletWindowRegistry portletWindowRegistry, PortletRequestInfoImpl portletRequestInfo,
+                List<String> values, Map<IPortletWindowId, IPortletWindowId> delegateIdMappings) {
+                portletRequestInfo.setPortletMode(PortletUtils.getPortletMode(values.get(0)));
+            }
+        },
+        COPY_PARAMETERS(UrlSyntaxProviderImpl.PARAM_COPY_PARAMETERS, UrlType.RENDER){
+            @Override
+            public void updateRequestInfo(HttpServletRequest request,
+                IPortletWindowRegistry portletWindowRegistry, PortletRequestInfoImpl portletRequestInfo,
+                List<String> values, Map<IPortletWindowId, IPortletWindowId> delegateIdMappings) {
+                final Map<String, List<String>> portletParameters = portletRequestInfo.getPortletParameters();
+                
+                final IPortletWindowId portletRequestInfoWindowId = portletRequestInfo.getPortletWindowId();
+                final IPortletWindow portletWindow = portletWindowRegistry.getPortletWindow(request, portletRequestInfoWindowId);
+                final Map<String, String[]> renderParameters = portletWindow.getRenderParameters();
+                
+                ParameterMap.putAllList(portletParameters, renderParameters);
+            }
+        };
+        
+        protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+        private final String parameterPrefix;
+        private final Set<UrlType> validUrlTypes;
+        
+        private SuffixedPortletParameter(String parameterPrefix, UrlType validUrlType, UrlType... validUrlTypes) {
+            this.parameterPrefix = parameterPrefix;
+            this.validUrlTypes = Sets.immutableEnumSet(validUrlType, validUrlTypes);
+        }
+        
+        /**
+         * @return The {@link UrlType}s this parameter is valid on
+         */
+        public Set<UrlType> getValidUrlTypes() {
+            return this.validUrlTypes;
+        }
+
+        /**
+         * @return The parameter prefix
+         */
+        public String getParameterPrefix() {
+            return this.parameterPrefix;
+        }
+        
+        /**
+         * Update the portlet request info based on the values for the parameter
+         */
+        public abstract void updateRequestInfo(HttpServletRequest request,
+                IPortletWindowRegistry portletWindowRegistry, PortletRequestInfoImpl portletRequestInfo,
+                List<String> values, Map<IPortletWindowId, IPortletWindowId> delegateIdMappings);
+    }
+    
+    /**
+     * Enum used in getPortalRequestInfo to keep track of the parser state when reading the URL string.
+     * IMPORTANT, if you add a new parse step the SWITCH block in getPortalRequestInfo MUST be updated
      */
     private enum ParseStep {
         FOLDER,
@@ -349,8 +449,22 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                         
                         if (pathPartIndex == requestPathParts.length - 1 && pathPart.endsWith(REQUEST_TYPE_SUFFIX) && pathPart.length() > REQUEST_TYPE_SUFFIX.length()) {
                             final String urlTypePart = pathPart.substring(0, pathPart.length() - REQUEST_TYPE_SUFFIX.length());
+                            final UrlType urlType;
                             
-                            final UrlType urlType = UrlType.valueOfIngoreCase(urlTypePart, null);
+                            //Handle inline resourceIds, look for a . in the request type string and use the suffix as the urlType
+                            final int lastPeriod = urlTypePart.lastIndexOf('.');
+                            if (lastPeriod >= 0 && lastPeriod < urlTypePart.length()) {
+                                final String urlTypePartSuffix = urlTypePart.substring(lastPeriod + 1);
+                                urlType = UrlType.valueOfIngoreCase(urlTypePartSuffix, null);
+                                if (urlType == UrlType.RESOURCE && targetedPortletRequestInfo != null) {
+                                    final String resourceId = urlTypePart.substring(0, lastPeriod);
+                                    targetedPortletRequestInfo.setResourceId(resourceId);
+                                }
+                            }
+                            else {
+                                urlType = UrlType.valueOfIngoreCase(urlTypePart, null);
+                            }
+                            
                             if (urlType != null) {
                                 portalRequestInfo.setUrlType(urlType);
                                 break;
@@ -450,54 +564,8 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                     
                     parameterEntryItr.remove();
                     
-                    //Use the enum helper to store the parameter values on the requet info
-                    switch (suffixedPortletParameter) {
-                        case RESOURCE_ID: {
-                            portletRequestInfo.setResourceId(values.get(0));
-                            break;
-                        }
-                        case CACHEABILITY: {
-                            portletRequestInfo.setCacheability(values.get(0));
-                            break;
-                        }
-                        case DELEGATE_PARENT: {
-                            try {
-                                final IPortletWindowId delegateParentWindowId = this.portletWindowRegistry.getPortletWindowId(request, values.get(0));
-                                portletRequestInfo.setDelegateParentWindowId(delegateParentWindowId);
-                                final IPortletWindowId delegateWindowId = portletRequestInfo.getPortletWindowId();
-                                delegateIdMappings.put(delegateParentWindowId, delegateWindowId);
-                            }
-                            catch (IllegalArgumentException e) {
-                                this.logger.warn("Failed to parse delegate portlet window ID '" + values.get(0) + "', the delegation window parameter will be ignored", e);
-                            }
-                            
-                            break;
-                        }
-                        case WINDOW_STATE: {
-                            portletRequestInfo.setWindowState(PortletUtils.getWindowState(values.get(0)));
-                            break;
-                        }
-                        case PORTLET_MODE: {
-                            portletRequestInfo.setPortletMode(PortletUtils.getPortletMode(values.get(0)));
-                            break;
-                        }
-                        case COPY_PARAMETERS: {
-                            final Map<String, List<String>> portletParameters = portletRequestInfo.getPortletParameters();
-                            
-                            final IPortletWindowId portletRequestInfoWindowId = portletRequestInfo.getPortletWindowId();
-                            final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletRequestInfoWindowId);
-                            final Map<String, String[]> renderParameters = portletWindow.getRenderParameters();
-                            
-                            ParameterMap.putAllList(portletParameters, renderParameters);
-                            
-                            break;
-                        }
-                        default: {
-                            //Uhoh, a new SuffixedPortletParameter was added without updating this switch block, don't fail but log a warning
-                            this.logger.warn("Programming Error: An unknown SuffixedPortletParameter " + name + " was seen in the UrlSyntaxProvider, it will be ignored. ALL possible SuffixedPortletParameter should be handled. " + suffixedPortletParameter);
-                        }
-                    }
-                    
+                    //Use the enum helper to store the parameter values on the request info
+                    suffixedPortletParameter.updateRequestInfo(request, portletWindowRegistry, portletRequestInfo, values, delegateIdMappings);
                     break;
                 }
             }
@@ -878,6 +946,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
         final IPortletWindowId targetedPortletWindowId = portalUrlBuilder.getTargetPortletWindowId();
         final UrlType urlType = portalUrlBuilder.getUrlType();
         final UrlState urlState;
+        final String resourceId;
         if (targetedPortletWindowId != null) {
             final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, targetedPortletWindowId);
             final IPortletEntity portletEntity = portletWindow.getPortletEntity();
@@ -893,6 +962,14 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             }
             
             final IPortletUrlBuilder targetedPortletUrlBuilder = portletUrlBuilders.get(targetedPortletWindowId);
+            
+            //Determine the resourceId for resource requests
+            if (urlType == UrlType.RESOURCE && targetedPortletUrlBuilder != null) {
+                resourceId = targetedPortletUrlBuilder.getResourceId();
+            }
+            else {
+                resourceId = null;
+            }
             
             //Resource requests will never have a requested window state
             urlState = this.determineUrlState(portletWindow, targetedPortletUrlBuilder);
@@ -920,13 +997,19 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             }
             
             urlState = UrlState.NORMAL;
+            resourceId = null;
         }
         
         //Add the state of the URL
         url.addPath(urlState.toLowercaseString());
-
-        //File part specifying the type of URL
-        url.addPath(urlType.toLowercaseString() + REQUEST_TYPE_SUFFIX);
+        
+        //File part specifying the type of URL, resource URLs include the resourceId
+        if (urlType == UrlType.RESOURCE && resourceId != null) {
+            url.addPath(resourceId + "." + urlType.toLowercaseString() + REQUEST_TYPE_SUFFIX);
+        }
+        else {
+            url.addPath(urlType.toLowercaseString() + REQUEST_TYPE_SUFFIX);
+        }
         
         //Add all portal parameters
         final Map<String, String[]> portalParameters = portalUrlBuilder.getParameters();
@@ -986,11 +1069,6 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                 final String cacheability = portletUrlBuilder.getCacheability();
                 if(cacheability != null) {
                     url.addParameter(PARAM_CACHEABILITY + prefixedPortletWindowId, cacheability);
-                }
-                
-                final String resourceId = portletUrlBuilder.getResourceId();
-                if(resourceId != null) {
-                    url.addParameter(PARAM_RESOURCE_ID + prefixedPortletWindowId, resourceId);
                 }
                 
                 break;
