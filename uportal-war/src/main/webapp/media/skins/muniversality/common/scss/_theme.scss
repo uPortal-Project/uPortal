@@ -76,6 +76,10 @@
 				color: $graydarker;		
 			}
 		}
+
+		> .titlebar + .ui-listview {
+		  margin-top: 18px;
+		}
 		
 		@include button();
 		
