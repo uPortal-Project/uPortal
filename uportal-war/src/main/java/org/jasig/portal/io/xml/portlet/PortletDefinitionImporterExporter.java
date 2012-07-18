@@ -196,9 +196,11 @@ public class PortletDefinitionImporterExporter
             final IPortletDescriptorKey portletDescriptorKey = def.getPortletDescriptorKey();
             portletDescriptorKey.setPortletName(portletDescriptor.getPortletName());
             if (isFramework != null && isFramework) {
-                portletDescriptorKey.setFrameworkPortlet(isFramework);
+                portletDescriptorKey.setFrameworkPortlet(true);
+                portletDescriptorKey.setWebAppName(null);
             }
             else {
+                portletDescriptorKey.setFrameworkPortlet(false);
                 portletDescriptorKey.setWebAppName(portletDescriptor.getWebAppName());
             }
         }
