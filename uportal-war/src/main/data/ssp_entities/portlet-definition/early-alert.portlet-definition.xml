@@ -11,7 +11,9 @@
         <ns2:portletName>EarlyAlert</ns2:portletName>
     </portlet-descriptor>
     <category>Services</category>
-    <group>Faculty</group>
+    <group>SSP_ADMINISTRATOR</group>
+    <group>SSP_DEVELOPER</group>
+    <group>SSP_FACULTY</group>
     <parameter>
         <name>disableDynamicTitle</name>
         <value>true</value>

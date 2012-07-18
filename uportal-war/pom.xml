@@ -29,6 +29,13 @@
             <artifactId>platform-search-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.jasig.ssp.platform</groupId>
+            <artifactId>platform-java-api</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
         
         <!-- ===== Compile Dependencies ======================================= -->
         <dependency>
