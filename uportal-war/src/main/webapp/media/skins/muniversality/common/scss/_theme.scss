@@ -75,6 +75,12 @@
 				font-size: 100%;
 				color: $graydarker;		
 			}
+			.subtitle + .text {
+			  margin-top: 14px;
+			}
+			.text p {
+			  margin-bottom: 12px;
+			}
 		}
 
 		> .titlebar + .ui-listview {

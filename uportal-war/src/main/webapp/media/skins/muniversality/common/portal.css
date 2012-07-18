@@ -726,6 +726,12 @@ mathematical calculations. */
   font-size: 100%;
   color: #767676;
 }
+.up .portlet-content .titlebar .subtitle + .text {
+  margin-top: 14px;
+}
+.up .portlet-content .titlebar .text p {
+  margin-bottom: 12px;
+}
 .up .portlet-content > .titlebar + .ui-listview {
   margin-top: 18px;
 }
