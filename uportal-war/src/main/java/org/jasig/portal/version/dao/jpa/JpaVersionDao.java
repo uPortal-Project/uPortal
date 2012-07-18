@@ -18,6 +18,7 @@
  */
 package org.jasig.portal.version.dao.jpa;
 
+import org.hibernate.exception.SQLGrammarException;
 import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.jpa.OpenEntityManager;
 import org.jasig.portal.version.dao.VersionDao;
@@ -32,7 +33,13 @@ public class JpaVersionDao extends BasePortalJpaDao implements VersionDao {
     public VersionImpl getVersion(String product) {
         NaturalIdQuery<VersionImpl> query = this.createNaturalIdQuery(VersionImpl.class);
         query.using(VersionImpl_.product, product);
-        return query.load();
+        try { 
+            return query.load();
+        }
+        catch (SQLGrammarException e) {
+            logger.warn("UP_VERSION table doesn't exist, returning null for version of " + product);
+            return null;
+        }
     }
 
     @Override
@@ -52,4 +59,12 @@ public class JpaVersionDao extends BasePortalJpaDao implements VersionDao {
         
         return version;
     }
+
+    @Override
+    @PortalTransactional
+    public Version setVersion(String product, Version version) {
+        return this.setVersion(product, version.getMajor(), version.getMinor(), version.getPatch());
+    }
+    
+    
 }

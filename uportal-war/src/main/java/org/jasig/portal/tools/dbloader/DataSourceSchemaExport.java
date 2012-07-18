@@ -79,9 +79,9 @@ public class DataSourceSchemaExport implements ISchemaExport {
         if (create) {
             exporter.execute(true, export, false, true);
 
+            @SuppressWarnings("unchecked")
+            final List<Exception> exceptions = exporter.getExceptions();
             if (haltOnError) {
-                @SuppressWarnings("unchecked")
-                final List<Exception> exceptions = exporter.getExceptions();
                 if (!exceptions.isEmpty()) {
                     final Exception e = exceptions.get(exceptions.size() - 1);
                     
@@ -92,6 +92,9 @@ public class DataSourceSchemaExport implements ISchemaExport {
                     logger.error("Schema Export threw " + exceptions.size() + " exceptions and was halted");
                     throw new RuntimeException(e);
                 }
+            }
+            else {
+                logger.info("Please ignore the {} errors listed during the previous operation.", exceptions.size());
             }
         }
     }

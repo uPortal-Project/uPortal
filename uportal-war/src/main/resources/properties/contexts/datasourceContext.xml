@@ -55,8 +55,8 @@
      | DataSource used to store raw portal event data, wrapper is used instead of alias so that Spring treats each
      | DataSource as unique.
      +-->
-    <bean id="RawEventsDB" class="org.springframework.jdbc.datasource.DelegatingDataSource">
-        <qualifier value="RawEventsDB" />
+    <bean id="RawEventsDb" class="org.springframework.jdbc.datasource.DelegatingDataSource">
+        <qualifier value="RawEventsDb" />
         <constructor-arg ref="PortalDb" />
     </bean>
     
@@ -64,8 +64,8 @@
      | DataSource used to store aggregated portal event data, wrapper is used instead of alias so that Spring treats each
      | DataSource as unique.
      +-->
-    <bean id="AggrEventsDB" class="org.springframework.jdbc.datasource.DelegatingDataSource">
-        <qualifier value="AggrEventsDB" />
+    <bean id="AggrEventsDb" class="org.springframework.jdbc.datasource.DelegatingDataSource">
+        <qualifier value="AggrEventsDb" />
         <constructor-arg ref="PortalDb" />
     </bean>
 </beans>

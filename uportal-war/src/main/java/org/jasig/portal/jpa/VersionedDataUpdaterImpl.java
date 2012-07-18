@@ -19,6 +19,7 @@
 package org.jasig.portal.jpa;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,20 +39,14 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.collect.ImmutableMap;
 
-/**
- * Runs steps needed to init/upgrade/update the database based on the version information
- * retrieved from {@link VersionDao}
- * 
- * @author Eric Dalquist
- */
 @Component("versionedDataUpdater")
-public class VersionedDataUpdaterImpl {
+public class VersionedDataUpdaterImpl implements VersionedDataUpdater {
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 	
-    private Map<String, Version> requiredProductVersions;
+    private Map<String, Version> requiredProductVersions = Collections.emptyMap();
     private VersionDao versionDao;
     
-    private Map<String, SortedSet<IVersionedDatabaseUpdateHelper>> databaseUpdateHelpers;
+    private Map<String, SortedSet<IVersionedDatabaseUpdateHelper>> databaseUpdateHelpers = Collections.emptyMap();
     
     @Resource(name = "productVersions")
     public void setRequiredProductVersions(Map<String, Version> requiredProductVersions) {
@@ -80,57 +75,73 @@ public class VersionedDataUpdaterImpl {
         this.versionDao = versionDao;
     }
 
-	/**
-	 * Initialize code-configured versions in the database. Nothing else is currently needed for init 
-	 */
+    @Override
     @PortalTransactional
 	public void postInitDatabase(String product) {
         final Version version = this.requiredProductVersions.get(product);
         if (version == null) {
             throw new IllegalArgumentException("No Version is configured for: " + product);
         }
+        
+        logger.info("PostInit - Set {} version to {}", product, version);
         this.versionDao.setVersion(product, version);
 	}
     
+    @Override
+    @OpenEntityManager(unitName = BasePortalJpaDao.PERSISTENCE_UNIT_NAME)
     public void preUpdateDatabase(String product) {
+        //This happens first because even if there are no updaters we need to make sure the attempted update is valid 
+        final Version dbVersion = getAndVerifyDatabaseVersionForUpdate(product);
+        
         final SortedSet<IVersionedDatabaseUpdateHelper> updateHelpers = this.databaseUpdateHelpers.get(product);
         if (updateHelpers == null || updateHelpers.isEmpty()) {
             logger.info("No IVersionedDatabaseUpdateHelpers configured for database {}, nothing will be done in preUpdate", product);
-            return;
         }
-        
-        final Version dbVersion = getAndVerifyDatabaseVersionForUpdate(product);
-        
-        //updateHelpers is sorted oldest to newest by version so iterate through and run the updaters that apply 
-        for (final IVersionedDatabaseUpdateHelper updateHelper : updateHelpers) {
-            if (dbVersion.isBefore(updateHelper.getVersion())) {
-                updateHelper.preUpdate();
+        else {
+            //updateHelpers is sorted oldest to newest by version so iterate through and run the updaters that apply 
+            for (final IVersionedDatabaseUpdateHelper updateHelper : updateHelpers) {
+                final Version updateVersion = updateHelper.getVersion();
+                if (dbVersion.equals(updateVersion) || dbVersion.isBefore(updateVersion)) {
+                    logger.info("PreUpdate {} from {}", product, updateVersion);
+                    updateHelper.preUpdate();
+                }
             }
         }
     }
     
+    @Override
+    @PortalTransactional
     public void postUpdateDatabase(String product) {
+        //This happens first because even if there are no updaters we need to make sure the attempted update is valid 
+        final Version dbVersion = getAndVerifyDatabaseVersionForUpdate(product);
+        
         final SortedSet<IVersionedDatabaseUpdateHelper> updateHelpers = this.databaseUpdateHelpers.get(product);
         if (updateHelpers == null || updateHelpers.isEmpty()) {
             logger.info("No IVersionedDatabaseUpdateHelpers configured for database {}, nothing will be done in postUpdate", product);
-            this.versionDao.setVersion(product, codeVersion);
-            return;
         }
-        
-        final Version dbVersion = getAndVerifyDatabaseVersionForUpdate(product);
-        
-        //updateHelpers is sorted oldest to newest by version so iterate through and run the updaters that apply 
-        for (final IVersionedDatabaseUpdateHelper updateHelper : updateHelpers) {
-            if (dbVersion.isBefore(updateHelper.getVersion())) {
-                updateHelper.postUpdate();
+        else {
+            //updateHelpers is sorted oldest to newest by version so iterate through and run the updaters that apply 
+            for (final IVersionedDatabaseUpdateHelper updateHelper : updateHelpers) {
+                final Version updateVersion = updateHelper.getVersion();
+                if (dbVersion.equals(updateVersion) || dbVersion.isBefore(updateVersion)) {
+                    logger.info("PostUpdate {} from {}", product, updateVersion);
+                    updateHelper.postUpdate();
+                }
             }
         }
         
+        //Update the db version number
+        final Version codeVersion = this.requiredProductVersions.get(product);
+        logger.info("PostUpdate - Set {} version to {}", product, codeVersion);
         this.versionDao.setVersion(product, codeVersion);
     }
     
     protected Version getAndVerifyDatabaseVersionForUpdate(String product) {
         final Version codeVersion = this.requiredProductVersions.get(product);
+        if (codeVersion == null) {
+            throw new IllegalStateException("No code version configured for " + product);
+        }
+        
         Version dbVersion = this.versionDao.getVersion(product);
         if (dbVersion == null) {
             //If null assume version 4.0.0
@@ -165,31 +176,4 @@ public class VersionedDataUpdaterImpl {
             return o1.getVersion().compareTo(o2.getVersion());
         }
     }
-//		switch (dbVersion.getPatch()) {
-//		    default: {
-//		        throw new IllegalStateException("Someone forgot to add handling for upgrading from database version " + dbVersion + " please report this as a bug");
-//		    }
-//			//Runs if updating from 4.0.0 or earlier
-//			case 0: {
-//				//Nothing special needed for 4.0.0 -> 4.0.1
-//			}
-//			//Runs if updating from 4.0.1 or earlier
-//			case 1: {
-//				//Nothing special needed for 4.0.1 -> 4.0.2
-//			}
-//			//Runs if updating from 4.0.2 or earlier
-//			case 2: {
-//				//Drop the UP_MUTEX table
-////				dropTable(this.portalJdbcOperations, "UP_MUTEX");
-//			}
-//			//Runs if updating from 4.0.3 or earlier
-//			case 3: {
-//				//Nothing special needed for 4.0.3 -> 4.0.4
-//			}
-//			//Runs if updating from 4.0.4 or earlier
-//			case 4: {
-//                //Nothing special needed for 4.0.4 -> 4.0.5
-//			}
-//			/** ADD NEW CASE HERE FOR EACH NEW PATCH RELEASE **/
-//		}
 }

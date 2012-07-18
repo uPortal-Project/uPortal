@@ -16,28 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.test;
+package org.jasig.portal.jpa;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
+import org.jasig.portal.version.dao.VersionDao;
 
 /**
- * Base class for AggrEventsDb unit tests that want TX and entity manager support.
+ * Runs steps needed to init/upgrade/update the database based on the version information
+ * retrieved from {@link VersionDao}
  * 
  * @author Eric Dalquist
  */
-public abstract class BaseAggrEventsJpaDaoTest extends BaseJpaDaoTest {
+public interface VersionedDataUpdater {
 
-    private EntityManager entityManager;
+    /**
+     * Run post-initialize steps for the versioned product 
+     */
+    void postInitDatabase(String product);
 
-    @PersistenceContext(unitName = BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME)
-    public final void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
-    @Override
-    protected final EntityManager getEntityManager() {
-        return this.entityManager;
-    }
+    /**
+     * Run the pre-update steps for the versioned product
+     */
+    void preUpdateDatabase(String product);
+
+    /**
+     * Run the post-update steps for the versioned product
+     */
+    void postUpdateDatabase(String product);
+
 }

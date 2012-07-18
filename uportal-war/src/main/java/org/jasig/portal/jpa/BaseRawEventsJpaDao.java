@@ -34,12 +34,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionOperations;
 
 /**
- * Base for DAOs that interact with the "RawEventsDB" JPA Persistent Unit 
+ * Base for DAOs that interact with the "RawEventsDb" JPA Persistent Unit 
  * 
  * @author Eric Dalquist
  */
 public class BaseRawEventsJpaDao extends BaseJpaDao {
-    public static final String PERSISTENCE_UNIT_NAME = "RawEventsDB";
+    public static final String PERSISTENCE_UNIT_NAME = "RawEventsDb";
     
     private EntityManager entityManager;
     private TransactionOperations transactionOperations;

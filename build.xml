@@ -214,6 +214,7 @@
 
     <target name="db-hibernate-portal" depends="prodPrompt" description="Drops then creates Hibernate managed tables for the portal">
         <property name="schemaExportBean" value="portalDbHibernateExport" />
+    	<property name="databaseQualifier" value="PortalDb" />
         <property name="export" value="true" />
         <property name="drop" value="true" />
         <property name="create" value="true" />
@@ -250,7 +251,7 @@
                         /${outputFileEscaped}/,
                         true);
                 	
-                	versionedDataUpdater.postInitDatabase();
+                	versionedDataUpdater.postInitDatabase('${databaseQualifier}');
                 </echo>
             </then>
         </if>
@@ -262,6 +263,7 @@
 
     <target name="db-hibernate-portal-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for the portal schema">
         <property name="schemaExportBean" value="portalDbHibernateExport" />
+    	<property name="databaseQualifier" value="PortalDb" />
         <property name="export" value="true" />
         <property name="outputFile" value=" " />
 
@@ -269,7 +271,7 @@
 
         <echo>Creating HBM2DDL Update Script</echo>
         <echo file="${portal-shell-script}" append="true">
-        	versionedDataUpdater.preUpdatePortalDatabase();
+        	versionedDataUpdater.preUpdateDatabase('${databaseQualifier}');
         	
         	//hibernateUpdate(String target, String schemaExportBeanName, boolean export, String outputFile, boolean haltOnError)
             portalShellBuildHelper.hibernateUpdate("db-hibernate-update",
@@ -277,6 +279,8 @@
                 Boolean.parseBoolean('${export}'),
                 /${outputFileEscaped}/,
                 true);
+        	
+        	versionedDataUpdater.postUpdateDatabase('${databaseQualifier}');
         </echo>
 
         <antcall target="up-shell">
@@ -303,24 +307,28 @@
     <target name="db-hibernate-raw-events" depends="prodPrompt" description="Drops then creates Hibernate managed tables used for raw portal event storage">
         <antcall target="db-hibernate-portal">
             <param name="schemaExportBean" value="rawEventsDbHibernateExport" />
+        	<param name="databaseQualifier" value="RawEventsDb" />
         </antcall>
     </target>
 
     <target name="db-hibernate-raw-events-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for raw portal event storage">
         <antcall target="db-hibernate-portal-update">
             <param name="schemaExportBean" value="rawEventsDbHibernateExport" />
+        	<param name="databaseQualifier" value="RawEventsDb" />
         </antcall>
     </target>
 
     <target name="db-hibernate-aggr-events" depends="prodPrompt" description="Drops then creates Hibernate managed tables used for aggregate portal event storage">
         <antcall target="db-hibernate-portal">
             <param name="schemaExportBean" value="aggrEventsDbHibernateExport" />
+        	<param name="databaseQualifier" value="AggrEventsDb" />
         </antcall>
     </target>
 
     <target name="db-hibernate-aggr-events-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for aggregate portal event storage">
         <antcall target="db-hibernate-portal-update">
             <param name="schemaExportBean" value="aggrEventsDbHibernateExport" />
+        	<param name="databaseQualifier" value="AggrEventsDb" />
         </antcall>
     </target>
 

@@ -50,8 +50,8 @@
                 <entry key="uPortal:section=Hibernate,name=AggrEventsHibernateStatistics" value-ref="aggrEventsHibernateStatisticsMBean"/>
                 
                 <entry key="uPortal:section=DataSource,name=PortalDB" value-ref="PortalDb"/>
-                <entry key="uPortal:section=DataSource,name=RawEventsDB" value-ref="RawEventsDB"/>
-                <entry key="uPortal:section=DataSource,name=AggrEventsDB" value-ref="AggrEventsDB"/>
+                <entry key="uPortal:section=DataSource,name=RawEventsDb" value-ref="RawEventsDb"/>
+                <entry key="uPortal:section=DataSource,name=AggrEventsDb" value-ref="AggrEventsDb"/>
             </map>
         </property>
     </bean>
@@ -60,8 +60,8 @@
         <property name="ignoredMethodMappings">
             <props>
                 <prop key="uPortal:section=DataSource,name=PortalDB">getConnection,getLogWriter,setLogWriter</prop>
-                <prop key="uPortal:section=DataSource,name=RawEventsDB">getConnection,getLogWriter,setLogWriter</prop>
-                <prop key="uPortal:section=DataSource,name=AggrEventsDB">getConnection,getLogWriter,setLogWriter</prop>
+                <prop key="uPortal:section=DataSource,name=RawEventsDb">getConnection,getLogWriter,setLogWriter</prop>
+                <prop key="uPortal:section=DataSource,name=AggrEventsDb">getConnection,getLogWriter,setLogWriter</prop>
             </props>
         </property>
     </bean>

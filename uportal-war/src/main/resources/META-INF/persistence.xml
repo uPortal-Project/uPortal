@@ -28,13 +28,13 @@
             <property name="hibernate.archive.autodetection" value="" />
         </properties>
     </persistence-unit>
-    <persistence-unit name="RawEventsDB" transaction-type="RESOURCE_LOCAL">
+    <persistence-unit name="RawEventsDb" transaction-type="RESOURCE_LOCAL">
         <properties>
             <property name="hibernate.ejb.cfgfile" value="/properties/db/hibernate-raw-events.cfg.xml" />
             <property name="hibernate.archive.autodetection" value="" />
         </properties>
     </persistence-unit>
-    <persistence-unit name="AggrEventsDB" transaction-type="RESOURCE_LOCAL">
+    <persistence-unit name="AggrEventsDb" transaction-type="RESOURCE_LOCAL">
         <mapping-file>META-INF/orm.xml</mapping-file>
     
         <properties>
