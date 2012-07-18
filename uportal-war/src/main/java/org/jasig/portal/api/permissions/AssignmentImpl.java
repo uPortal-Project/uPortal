@@ -36,7 +36,7 @@ import org.springframework.util.Assert;
 		Assert.notNull(owner, "Argument 'owner' cannot be null");
 		Assert.notNull(activity, "Argument 'activity' cannot be null");
 		Assert.notNull(principal, "Argument 'principal' cannot be null");
-		Assert.notNull(target, "Argument 'target' cannot be null");
+		// NB:  Target may be null
 		
 		this.owner = owner;
 		this.activity = activity;

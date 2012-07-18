@@ -123,9 +123,12 @@ public class ApiPermissionsService implements PermissionsService {
 	        Principal principalImpl = new PrincipalImpl(authP.getKey(), authP.getPrincipalString());
 	        
 	        // Target
+	        Target targetImpl = null;  // default
 	        IPermissionTargetProvider targetProvider = targetProviderRegistry.getTargetProvider(activity.getTargetProviderKey());
 	        IPermissionTarget target = targetProvider.getTarget(permission.getTarget());
-	        Target targetImpl = new TargetImpl(permission.getTarget(), target.getName());
+	        if (target != null) {
+	        	targetImpl = new TargetImpl(permission.getTarget(), target.getName());
+	        }
 
 	        rslt = new AssignmentImpl(ownerImpl, activityImpl, principalImpl, targetImpl, inherited);
 

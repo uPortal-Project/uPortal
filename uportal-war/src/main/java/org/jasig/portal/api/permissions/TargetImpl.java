@@ -31,7 +31,7 @@ import org.springframework.util.Assert;
 	public TargetImpl(String key, String name) {
 
 		Assert.notNull(key, "Argument 'key' cannot be null");
-		Assert.notNull(name, "Argument 'name' cannot be null");
+		// NB:  Name may be null
 		
 		this.key = key;
 		this.name = name;

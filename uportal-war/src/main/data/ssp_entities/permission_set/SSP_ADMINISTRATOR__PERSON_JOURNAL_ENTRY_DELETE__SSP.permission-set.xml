@@ -1,0 +1,12 @@
+
+<permission-set script="classpath://org/jasig/portal/io/import-permission_set_v3-1.crn">
+  <owner>SSP</owner>
+  <principal-type>org.jasig.portal.groups.IEntityGroup</principal-type>
+  <principal> 
+    <group>SSP_ADMINISTRATOR</group> 
+  </principal>
+  <activity>PERSON_JOURNAL_ENTRY_DELETE</activity>
+  <target permission-type="GRANT"> 
+    <literal>ALL</literal> 
+  </target>
+</permission-set>

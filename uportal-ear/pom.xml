@@ -24,8 +24,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jasig.portal</groupId>
-            <artifactId>uportal-java-api</artifactId>
+            <groupId>org.jasig.ssp.platform</groupId>
+            <artifactId>platform-java-api</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>

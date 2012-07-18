@@ -22,9 +22,12 @@
 <fragment-definition xmlns:dlm="http://org.jasig.portal.layout.dlm.config" script="classpath://org/jasig/portal/io/import-fragment-definition_v3-1.crn">
   <dlm:fragment name="SSP" ownerID="ssp-lo" precedence="50">
     <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory">
-      <paren mode="OR">     
-        <attribute mode="deepMemberOf" name="SSP Permissions"/>
-        <attribute mode="deepMemberOf" name="Portal Administrators"/>
+      <paren mode="OR">
+        <attribute mode="deepMemberOf" name="SSP_ADMINISTRATOR"/>
+        <attribute mode="deepMemberOf" name="SSP_COACH"/>
+        <attribute mode="deepMemberOf" name="SSP_DEVELOPER"/>
+        <attribute mode="deepMemberOf" name="SSP_MANAGER"/>
+        <attribute mode="deepMemberOf" name="SSP_SUPPORT_STAFF"/>
       </paren>
     </dlm:audience>
   </dlm:fragment>
