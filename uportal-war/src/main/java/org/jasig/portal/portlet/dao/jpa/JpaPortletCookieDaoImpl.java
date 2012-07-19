@@ -37,6 +37,7 @@ import javax.servlet.http.Cookie;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.time.DateUtils;
 import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.jasig.portal.jpa.OpenEntityManager;
 import org.jasig.portal.portlet.dao.IPortletCookieDao;
 import org.jasig.portal.portlet.om.IPortalCookie;
 import org.jasig.portal.portlet.om.IPortletCookie;
@@ -115,6 +116,7 @@ public class JpaPortletCookieDaoImpl extends BasePortalJpaDao implements IPortle
 		return portalCookie;
 	}
 
+	@OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
 	@Override
 	public IPortalCookie getPortalCookie(String portalCookieValue) {
 	    final NaturalIdQuery<PortalCookieImpl> query = this.createNaturalIdQuery(PortalCookieImpl.class);

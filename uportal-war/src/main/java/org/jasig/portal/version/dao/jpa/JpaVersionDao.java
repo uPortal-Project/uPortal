@@ -29,7 +29,7 @@ import org.springframework.stereotype.Repository;
 public class JpaVersionDao extends BasePortalJpaDao implements VersionDao {
 
     @Override
-    @OpenEntityManager(unitName=BasePortalJpaDao.PERSISTENCE_UNIT_NAME)
+    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     public VersionImpl getVersion(String product) {
         NaturalIdQuery<VersionImpl> query = this.createNaturalIdQuery(VersionImpl.class);
         query.using(VersionImpl_.product, product);

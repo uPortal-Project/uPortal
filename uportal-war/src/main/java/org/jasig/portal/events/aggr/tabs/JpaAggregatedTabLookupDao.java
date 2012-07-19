@@ -34,6 +34,7 @@ import net.sf.ehcache.Element;
 
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
 import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.jasig.portal.jpa.OpenEntityManager;
 import org.jasig.portal.jpa.cache.EntityManagerCache;
 import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.utils.cache.CacheKey;
@@ -97,6 +98,7 @@ public class JpaAggregatedTabLookupDao extends BaseAggrEventsJpaDao implements A
         return getTabMapping(resolveTabName.first, resolveTabName.second);
     }
 
+    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     @Override
     public AggregatedTabMapping getTabMapping(final String fragmentName, final String tabName) {
         final CacheKey key = CacheKey.build(this.getClass().getName(), tabName);

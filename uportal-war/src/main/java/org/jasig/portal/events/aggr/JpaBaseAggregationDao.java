@@ -45,6 +45,7 @@ import org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl_;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl;
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
+import org.jasig.portal.jpa.OpenEntityManager;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
@@ -332,6 +333,7 @@ public abstract class JpaBaseAggregationDao<
     }
 
     @Override
+    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     public final T getAggregation(K key) {
         final NaturalIdQuery<T> query = this.createNaturalIdQuery(this.aggregationEntityType);
         query.using(BaseAggregationImpl_.dateDimension, (DateDimensionImpl)key.getDateDimension());

@@ -27,6 +27,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
+import org.jasig.portal.jpa.OpenEntityManager;
 import org.jasig.portal.jpa.cache.EntityManagerCache;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
@@ -73,7 +74,7 @@ public class JpaAggregatedPortletLookupDao extends BaseAggrEventsJpaDao implemen
         });
     }
     
-    
+    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     @Override
     public AggregatedPortletMapping getMappedPortletForFname(final String fname) {
         final CacheKey key = CacheKey.build(this.getClass().getName(), fname);

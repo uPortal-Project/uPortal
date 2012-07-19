@@ -43,6 +43,7 @@ import org.jasig.portal.events.aggr.IPortalEventAggregator;
 import org.jasig.portal.events.aggr.QuarterDetail;
 import org.jasig.portal.events.aggr.dao.IEventAggregationManagementDao;
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
+import org.jasig.portal.jpa.OpenEntityManager;
 import org.joda.time.DateMidnight;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
@@ -164,7 +165,7 @@ public class JpaEventAggregationManagementDao extends BaseAggrEventsJpaDao imple
                 "DELETE FROM " + QuarterDetailImpl.class.getName() + " e ";
     }
 
-
+    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     @Override
     public IEventAggregatorStatus getEventAggregatorStatus(final ProcessingType processingType, boolean create) {
         final NaturalIdQuery<EventAggregatorStatusImpl> query = this.createNaturalIdQuery(EventAggregatorStatusImpl.class);

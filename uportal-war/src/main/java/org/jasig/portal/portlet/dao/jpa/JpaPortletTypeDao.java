@@ -29,6 +29,7 @@ import javax.persistence.criteria.CriteriaQuery;
 
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.jasig.portal.jpa.OpenEntityManager;
 import org.jasig.portal.portlet.dao.IPortletTypeDao;
 import org.jasig.portal.portlet.om.IPortletType;
 import org.springframework.stereotype.Repository;
@@ -94,7 +95,8 @@ public class JpaPortletTypeDao extends BasePortalJpaDao implements IPortletTypeD
 		return this.getEntityManager().find(PortletTypeImpl.class, id);
 	}
 
-    @Override
+	@OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
+	@Override
 	public IPortletType getPortletType(String name) {
         final NaturalIdQuery<PortletTypeImpl> query = this.createNaturalIdQuery(PortletTypeImpl.class);
         query.using(PortletTypeImpl_.name, name);

@@ -32,6 +32,7 @@ import org.jasig.portal.groups.CompositeEntityIdentifier;
 import org.jasig.portal.groups.ICompositeGroupService;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
+import org.jasig.portal.jpa.OpenEntityManager;
 import org.jasig.portal.jpa.cache.EntityManagerCache;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +78,7 @@ public class JpaAggregatedGroupLookupDao extends BaseAggrEventsJpaDao implements
         });
     }
     
+    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     @Override
     public AggregatedGroupMapping getGroupMapping(final String groupService, final String groupName) {
         final CacheKey key = CacheKey.build(this.getClass().getName(), groupService, groupName);

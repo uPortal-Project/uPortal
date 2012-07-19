@@ -30,6 +30,7 @@ import javax.persistence.criteria.Root;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.dao.TimeDimensionDao;
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
+import org.jasig.portal.jpa.OpenEntityManager;
 import org.joda.time.LocalTime;
 import org.springframework.stereotype.Repository;
 
@@ -84,6 +85,7 @@ public class JpaTimeDimensionDao extends BaseAggrEventsJpaDao implements TimeDim
         return timeDimension;
     }
     
+    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     @Override
     public TimeDimension getTimeDimensionByTime(LocalTime localTime) {
         final NaturalIdQuery<TimeDimensionImpl> query = this.createNaturalIdQuery(TimeDimensionImpl.class);

@@ -31,6 +31,7 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
 
 import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.jasig.portal.jpa.OpenEntityManager;
 import org.jasig.portal.permission.IPermissionActivity;
 import org.jasig.portal.permission.IPermissionOwner;
 import org.jasig.portal.permission.dao.IPermissionOwnerDao;
@@ -90,6 +91,7 @@ public class JpaPermissionOwnerDao extends BasePortalJpaDao implements IPermissi
         return getEntityManager().find(PermissionOwnerImpl.class, id);
     }
 
+    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     @Override
     public IPermissionOwner getPermissionOwner(String fname){
         final NaturalIdQuery<PermissionOwnerImpl> query = this.createNaturalIdQuery(PermissionOwnerImpl.class);

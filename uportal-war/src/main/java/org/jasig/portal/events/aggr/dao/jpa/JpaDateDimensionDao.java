@@ -32,6 +32,7 @@ import javax.persistence.criteria.Subquery;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.dao.DateDimensionDao;
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
+import org.jasig.portal.jpa.OpenEntityManager;
 import org.joda.time.DateMidnight;
 import org.joda.time.LocalDate;
 import org.springframework.dao.support.DataAccessUtils;
@@ -205,6 +206,7 @@ public class JpaDateDimensionDao extends BaseAggrEventsJpaDao implements DateDim
         return dateDimension;
     }
 
+    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     @Override
     public DateDimension getDateDimensionByDate(DateMidnight date) {
         final NaturalIdQuery<DateDimensionImpl> query = this.createNaturalIdQuery(DateDimensionImpl.class);
