@@ -26,7 +26,7 @@
     </parameter>
     <parameter>
         <name>showChrome</name>
-        <value>false</value>
+        <value>true</value>
     </parameter>
     <parameter>
         <name>hasHelp</name>
