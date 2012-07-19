@@ -26,23 +26,33 @@
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
     <!--
-     | DataSource objects used by the portal should be configured 
+     | DataSource objects used by the portal should be configured here
      +-->
-
-    <bean id="PortalDb" class="org.jasig.portal.utils.LoggingBasicDataSource" destroy-method="close">
-        <qualifier value="PortalDb"/>
-        <property name="driverClassName" value="${hibernate.connection.driver_class}" />
-        <property name="url" value="${hibernate.connection.url}" />
-        <property name="username" value="${hibernate.connection.username}" />
-        <property name="password" value="${hibernate.connection.password}" />
-        
+     
+    <!--  base pooled datasource with common configuration -->
+    <bean id="basePooledDataSource" class="org.jasig.portal.utils.LoggingBasicDataSource" abstract="true" destroy-method="close">
+        <property name="initialSize" value="1" />
+        <property name="minIdle" value="1" />
         <property name="maxActive" value="50" />
-        <property name="maxIdle" value="10" />
+        <property name="maxIdle" value="50" />
         <property name="maxWait" value="1000" />
         <property name="removeAbandoned" value="true" />
         <property name="removeAbandonedTimeout" value="300" />
         <property name="logAbandoned" value="true" />
         <property name="poolPreparedStatements" value="false" />
+        
+        <property name="testWhileIdle" value="true" />
+        <property name="timeBetweenEvictionRunsMillis" value="60000" />
+        <property name="numTestsPerEvictionRun" value="10" />
+        <property name="minEvictableIdleTimeMillis" value="150000" />
+    </bean>
+
+    <bean id="PortalDb" parent="basePooledDataSource">
+        <qualifier value="PortalDb"/>
+        <property name="driverClassName" value="${hibernate.connection.driver_class}" />
+        <property name="url" value="${hibernate.connection.url}" />
+        <property name="username" value="${hibernate.connection.username}" />
+        <property name="password" value="${hibernate.connection.password}" />
     </bean>
     <bean id="PortalDB.metadata" class="org.jasig.portal.rdbm.DatabaseMetaDataImpl">
         <constructor-arg index="0" ref="PortalDb" />
@@ -55,17 +65,22 @@
      | DataSource used to store raw portal event data, wrapper is used instead of alias so that Spring treats each
      | DataSource as unique.
      +-->
-    <bean id="RawEventsDb" class="org.springframework.jdbc.datasource.DelegatingDataSource">
+    <bean id="RawEventsDb" parent="basePooledDataSource">
         <qualifier value="RawEventsDb" />
-        <constructor-arg ref="PortalDb" />
-    </bean>
-    
+        <property name="driverClassName" value="${RawEventsJdbcDriver}" />
+        <property name="url" value="${RawEventsJdbcUrl}" />
+        <property name="username" value="${RawEventsJdbcUser}" />
+        <property name="password" value="${RawEventsJdbcPassword}" />
+    </bean>    
     <!-- 
      | DataSource used to store aggregated portal event data, wrapper is used instead of alias so that Spring treats each
      | DataSource as unique.
      +-->
-    <bean id="AggrEventsDb" class="org.springframework.jdbc.datasource.DelegatingDataSource">
+    <bean id="AggrEventsDb" parent="basePooledDataSource">
         <qualifier value="AggrEventsDb" />
-        <constructor-arg ref="PortalDb" />
-    </bean>
+        <property name="driverClassName" value="${AggrEventsJdbcDriver}" />
+        <property name="url" value="${AggrEventsJdbcUrl}" />
+        <property name="username" value="${AggrEventsJdbcUser}" />
+        <property name="password" value="${AggrEventsJdbcPassword}" />
+    </bean>    
 </beans>
