@@ -56,6 +56,8 @@ public class Version403AggrEventsDatabaseUpdateHelper implements IVersionedDatab
     @AggrEventsTransactional
     @Override
     public void preUpdate() {
+        JdbcUtils.dropTableIfExists(this.jdbcOperations, "UP_LOGIN_EVENT_AGGREGATE__UIDS");
+        JdbcUtils.dropTableIfExists(this.jdbcOperations, "UP_LOGIN_EVENT_AGGREGATE");
         JdbcUtils.dropTableIfExists(this.jdbcOperations, "UP_EVENT_AGGR_CONF_INTRVL_EXC");
         JdbcUtils.dropTableIfExists(this.jdbcOperations, "UP_EVENT_AGGR_CONF_INTRVL_INC");
     }

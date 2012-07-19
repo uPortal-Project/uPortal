@@ -152,6 +152,10 @@
         </up-shell-batch>
         <echo message="Finished initializing database" />
     </target>
+	
+	<target name="db-update" depends="prodPrompt" description="Updates an existing database from one patch version to the next">
+        <antcall target="db-hibernate-update" />
+	</target>
 
     <target name="db-ddl" depends="prodPrompt" description="Create a SQL script of commands to drop and create the uPortal database">
         <fail unless="ddlFile">
