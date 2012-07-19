@@ -23,7 +23,9 @@
   <dlm:fragment name="MyGPS" ownerID="my-gps-lo" precedence="0">
     <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory">
       <paren mode="OR">
-        <attribute mode="deepMemberOf" name="Everyone"/>
+        <attribute mode="deepMemberOf" name="SSP_ADMINISTRATOR"/>
+        <attribute mode="deepMemberOf" name="SSP_DEVELOPER"/>
+        <attribute mode="deepMemberOf" name="SSP_FACULTY"/>
       </paren>
     </dlm:audience>
   </dlm:fragment>
