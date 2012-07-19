@@ -107,6 +107,7 @@
             <props>
                 <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SpringBeanEhCacheRegionFactory</prop>
                 <prop key="org.jasig.portal.cache.CacheManagerName">uPortal.cacheManager</prop>
+                <prop key="persistenceUnitName">#{T(org.jasig.portal.jpa.BasePortalJpaDao).PERSISTENCE_UNIT_NAME}</prop>
             </props>
         </property>
     </bean>
