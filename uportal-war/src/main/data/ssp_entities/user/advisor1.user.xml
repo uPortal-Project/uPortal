@@ -19,4 +19,10 @@
         <name>telephoneNumber</name>
         <value>(555) 555-5555</value>
     </attribute>
+
+    <!-- SSP Permissions -->
+    <attribute>
+        <name>SSP_ROLES</name>
+        <value>SSP_COACH</value>
+    </attribute>
 </user>
