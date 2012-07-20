@@ -97,7 +97,7 @@
     
     <bean id="sqlNextExceptionLoggerAspect" class="org.jasig.portal.portlet.dao.jpa.SQLNextExceptionLoggerAspect" />
     
-    <bean id="entityManagerFactory" class="org.jasig.portal.jpa.EventingLocalContainerEntityManagerFactoryBean" depends-on="cacheManager">
+    <bean id="entityManagerFactory" class="org.jasig.portal.jpa.EventingLocalContainerEntityManagerFactoryBean" depends-on="cacheManager,hibernateConfigurationInjector">
         <property name="dataSource" ref="PortalDb" />
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="persistenceUnitName">
@@ -150,10 +150,9 @@
 
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
     
+    <bean class="org.jasig.portal.hibernate.HibernateConfigurationInjector" />
+    
     <!-- ********** Database Utilities ********** -->
-    <bean id="dbLoader" class="org.jasig.portal.tools.dbloader.HibernateDbLoader" lazy-init="true">
-        <property name="hibernateToolConfigurationSource" ref="portalDbHibernateToolConfigurationSource" />
-    </bean>
     <bean name="portalDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport" lazy-init="true">
     	<qualifier value="PortalDb"/>
         <property name="hibernateToolConfigurationSource" ref="portalDbHibernateToolConfigurationSource" />
