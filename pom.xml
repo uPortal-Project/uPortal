@@ -211,6 +211,11 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-jdbc</artifactId>
+                <version>7.0.29</version>
+            </dependency>
+            <dependency>
                 <groupId>org.antlr</groupId>
                 <artifactId>stringtemplate</artifactId>
                 <version>${stringtemplate.version}</version>

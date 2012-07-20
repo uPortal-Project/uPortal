@@ -14,7 +14,12 @@
     <name>uPortal WAR</name>
     <description>The uPortal web application.</description>
     
-    <dependencies>    
+    <dependencies>  
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-jdbc</artifactId>
+        </dependency>
+              
         <!-- ***** Portal JDBC Driver *****
          | The groupId, artifactId and version are configured in the root POM.
          +-->

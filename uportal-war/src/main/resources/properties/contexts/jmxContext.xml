@@ -29,7 +29,7 @@
     <bean id="mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean">
         <property name="locateExistingServerIfPossible" value="true" />
     </bean>
-
+    
     <!-- Exporter used to register beans with the mbean server -->
     <bean id="jmxAdapter" class="org.springframework.jmx.export.MBeanExporter">
         <property name="server" ref="mbeanServer" />
@@ -48,10 +48,6 @@
                 <entry key="uPortal:section=Hibernate,name=HibernateStatistics" value-ref="hibernateStatisticsMBean"/>
                 <entry key="uPortal:section=Hibernate,name=RawEventsHibernateStatistics" value-ref="rawEventsHibernateStatisticsMBean"/>
                 <entry key="uPortal:section=Hibernate,name=AggrEventsHibernateStatistics" value-ref="aggrEventsHibernateStatisticsMBean"/>
-                
-                <entry key="uPortal:section=DataSource,name=PortalDB" value-ref="PortalDb"/>
-                <entry key="uPortal:section=DataSource,name=RawEventsDb" value-ref="RawEventsDb"/>
-                <entry key="uPortal:section=DataSource,name=AggrEventsDb" value-ref="AggrEventsDb"/>
             </map>
         </property>
     </bean>
@@ -59,9 +55,6 @@
     <bean id="mbeanInfoAssembler" class="org.springframework.jmx.export.assembler.MethodExclusionMBeanInfoAssembler">
         <property name="ignoredMethodMappings">
             <props>
-                <prop key="uPortal:section=DataSource,name=PortalDB">getConnection,getLogWriter,setLogWriter</prop>
-                <prop key="uPortal:section=DataSource,name=RawEventsDb">getConnection,getLogWriter,setLogWriter</prop>
-                <prop key="uPortal:section=DataSource,name=AggrEventsDb">getConnection,getLogWriter,setLogWriter</prop>
             </props>
         </property>
     </bean>
