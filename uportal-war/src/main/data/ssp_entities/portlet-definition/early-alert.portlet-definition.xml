@@ -12,6 +12,7 @@
     </portlet-descriptor>
     <category>Services</category>
     <group>SSP_ADMINISTRATOR</group>
+    <group>SSP_COACH</group>
     <group>SSP_DEVELOPER</group>
     <group>SSP_FACULTY</group>
     <parameter>
