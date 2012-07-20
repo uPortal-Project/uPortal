@@ -61,11 +61,11 @@ public class Version404AggrEventsDatabaseUpdateHelper implements IVersionedDatab
     public void preUpdate() {
         //Drop the aggregate events database tables
         logger.info("Dropping aggregate event tables for upgrade from " + getVersion());
-        this.schemaExport.create(true, false, true, null, false);
+        this.schemaExport.drop(true, null, true);
         
         //Create the aggregate events database tables
         logger.info("Creating aggregate event tables for upgrade from " + getVersion());
-        this.schemaExport.create(true, true, false, null, true);
+        this.schemaExport.create(true, null, true);
         
         logger.warn("IMPORTANT: You must import your event aggregation configuration again!\n\tex: ant data-import -Dfile=/path/to/uportal/uportal-war/src/main/data/default_entities/event-aggregation/default.event-aggregation.xml");
     }

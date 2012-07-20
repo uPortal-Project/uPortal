@@ -71,7 +71,7 @@
         <property name="statisticsEnabled" value="true"/>
         <property name="sessionFactory">
             <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-                <property name="targetObject" ref="entityManagerFactory" />
+                <property name="targetObject" ref="PortalDbEntityManagerFactory" />
                 <property name="targetMethod" value="getSessionFactory" />
             </bean>
         </property>
@@ -82,7 +82,7 @@
         <property name="statisticsEnabled" value="true"/>
         <property name="sessionFactory">
             <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-                <property name="targetObject" ref="rawEventsEntityManagerFactory" />
+                <property name="targetObject" ref="RawEventsDbEntityManagerFactory" />
                 <property name="targetMethod" value="getSessionFactory" />
             </bean>
         </property>
@@ -93,7 +93,7 @@
         <property name="statisticsEnabled" value="true"/>
         <property name="sessionFactory">
             <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-                <property name="targetObject" ref="aggrEventsEntityManagerFactory" />
+                <property name="targetObject" ref="AggrEventsDbEntityManagerFactory" />
                 <property name="targetMethod" value="getSessionFactory" />
             </bean>
         </property>

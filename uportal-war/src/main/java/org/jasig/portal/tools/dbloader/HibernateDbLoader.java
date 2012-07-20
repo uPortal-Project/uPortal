@@ -41,12 +41,13 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.spi.Mapping;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.mapping.ForeignKey;
 import org.hibernate.mapping.Index;
 import org.hibernate.mapping.Table;
 import org.hibernate.mapping.UniqueKey;
-import org.jasig.portal.hibernate.ConfigurationAware;
-import org.jasig.portal.hibernate.DialectAware;
+import org.jasig.portal.hibernate.DelegatingHibernateIntegrator.HibernateConfiguration;
+import org.jasig.portal.hibernate.HibernateConfigurationAware;
 import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -74,8 +75,8 @@ import org.xml.sax.SAXException;
  */
 @Component("dbLoader")
 @Lazy
-@DependsOn("hibernateConfigurationInjector")
-public class HibernateDbLoader implements IDbLoader, DialectAware, ConfigurationAware, ResourceLoaderAware {
+@DependsOn(BasePortalJpaDao.PERSISTENCE_UNIT_NAME + "EntityManagerFactory")
+public class HibernateDbLoader extends HibernateConfigurationAware implements IDbLoader, ResourceLoaderAware {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
     private Configuration configuration;
@@ -102,14 +103,11 @@ public class HibernateDbLoader implements IDbLoader, DialectAware, Configuration
 	}
 
 	@Override
-	public void setDialect(String persistenceUnit, Dialect dialect) {
-		this.dialect = dialect;
-	}
-	
-    @Override
-	public void setConfiguration(String persistenceUnit, Configuration configuration) {
-		this.configuration = configuration;
-	}
+    public void setConfiguration(String persistenceUnit, HibernateConfiguration hibernateConfiguration) {
+	    final SessionFactoryImplementor sessionFactory = hibernateConfiguration.getSessionFactory();
+        this.dialect = sessionFactory.getDialect();
+	    this.configuration = hibernateConfiguration.getConfiguration();
+    }
 
 	@Override
     public void setResourceLoader(ResourceLoader resourceLoader) {

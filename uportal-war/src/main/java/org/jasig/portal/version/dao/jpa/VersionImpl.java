@@ -18,7 +18,6 @@
  */
 package org.jasig.portal.version.dao.jpa;
 
-import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,8 +26,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
@@ -47,8 +44,6 @@ import org.jasig.portal.version.AbstractVersion;
         allocationSize=1
     )
 @NaturalIdCache
-@Cacheable
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 class VersionImpl extends AbstractVersion {
     private static final long serialVersionUID = 1L;
 

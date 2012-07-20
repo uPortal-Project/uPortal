@@ -231,14 +231,11 @@
             <equals arg1="${drop}" arg2="true" />
             <then>
                 <echo file="${portal-shell-script}" append="true">
-                    //hibernateCreate(String target, String schemaExportBeanName, boolean export, boolean create, boolean drop, String outputFile, boolean haltOnError)
-                    portalShellBuildHelper.hibernateCreate("db-hibernate",
+                    //hibernateDrop(String target, String schemaExportBeanName, boolean export, String outputFile)
+                    portalShellBuildHelper.hibernateDrop("db-hibernate",
                         '${schemaExportBean}',
                         Boolean.parseBoolean('${export}'),
-                        false,
-                        true,
-                        /${outputFileEscaped}/,
-                        false);
+                        /${outputFileEscaped}/);
                 </echo>
             </then>
         </if>
@@ -246,14 +243,11 @@
     		<equals arg1="${create}" arg2="true" />
             <then>
                 <echo file="${portal-shell-script}" append="true">
-                    //hibernateCreate(String target, String schemaExportBeanName, boolean export, boolean create, boolean drop, String outputFile, boolean haltOnError)
+                    //hibernateCreate(String target, String schemaExportBeanName, boolean export, String outputFile)
                     portalShellBuildHelper.hibernateCreate("db-hibernate",
                         '${schemaExportBean}',
                         Boolean.parseBoolean('${export}'),
-                        true,
-                        false,
-                        /${outputFileEscaped}/,
-                        true);
+                        /${outputFileEscaped}/);
                 	
                 	versionedDataUpdater.postInitDatabase('${databaseQualifier}');
                 </echo>
@@ -275,14 +269,16 @@
 
         <echo>Creating HBM2DDL Update Script</echo>
         <echo file="${portal-shell-script}" append="true">
+        	logger.info("");
+        	logger.info("");
+        	logger.info("Update Database " + '${databaseQualifier}');
         	versionedDataUpdater.preUpdateDatabase('${databaseQualifier}');
         	
-        	//hibernateUpdate(String target, String schemaExportBeanName, boolean export, String outputFile, boolean haltOnError)
+        	//hibernateUpdate(String target, String schemaExportBeanName, boolean export, String outputFile)
             portalShellBuildHelper.hibernateUpdate("db-hibernate-update",
                 '${schemaExportBean}',
                 Boolean.parseBoolean('${export}'),
-                /${outputFileEscaped}/,
-                true);
+                /${outputFileEscaped}/);
         	
         	versionedDataUpdater.postUpdateDatabase('${databaseQualifier}');
         </echo>

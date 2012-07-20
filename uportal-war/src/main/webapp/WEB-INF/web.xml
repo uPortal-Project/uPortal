@@ -151,6 +151,10 @@
     <filter>
         <filter-name>OpenEntityManagerInViewFilter</filter-name>
         <filter-class>org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
+        <init-param>
+            <param-name>persistenceUnitName</param-name>
+            <param-value>PortalDb</param-value>
+        </init-param>
     </filter>
 
     <filter>
