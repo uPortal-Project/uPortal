@@ -15,11 +15,6 @@
     <description>The uPortal web application.</description>
     
     <dependencies>  
-        <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-jdbc</artifactId>
-        </dependency>
-              
         <!-- ***** Portal JDBC Driver *****
          | The groupId, artifactId and version are configured in the root POM.
          +-->
@@ -120,6 +115,11 @@
             <artifactId>commons-math3</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-jdbc</artifactId>
+        </dependency>
+        
         <dependency>
             <groupId>dom4j</groupId>
             <artifactId>dom4j</artifactId>

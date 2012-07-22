@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.utils;
+package org.jasig.portal.utils.jdbc;
 
 import javax.sql.DataSource;
 

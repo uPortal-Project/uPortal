@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.utils;
+package org.jasig.portal.utils.jdbc;
 
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
@@ -34,6 +34,7 @@ import org.hibernate.service.spi.SessionFactoryServiceRegistry;
 import org.jasig.portal.concurrency.FunctionWithoutResult;
 import org.jasig.portal.hibernate.DelegatingHibernateIntegrator.HibernateConfiguration;
 import org.jasig.portal.hibernate.HibernateConfigurationAware;
+import org.jasig.portal.utils.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.support.DatabaseMetaDataCallback;
