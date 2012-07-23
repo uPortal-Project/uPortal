@@ -5,7 +5,6 @@
     <lastPasswordChange>2012-07-22T20:49:29.636-07:00</lastPasswordChange>
     <attribute>
         <name>SSP_ROLES</name>
-        <value>SSP_COACH</value>
         <value>SSP_FACULTY</value>
     </attribute>
     <attribute>
