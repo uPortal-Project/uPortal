@@ -75,29 +75,39 @@ public class TomcatDataSourceFactory extends AbstractFactoryBean<DataSource>
 		final DataSource dataSource = new DataSource(this.poolConfiguration);
 
 		if (this.mBeanServer != null) {
-			final ConnectionPool pool = dataSource.createPool();
-			final org.apache.tomcat.jdbc.pool.jmx.ConnectionPool jmxPool = pool
-					.getJmxPool();
-
-			
-			this.objectName = ObjectName.getInstance(this.baseObjectName + this.poolConfiguration.getName());
-			logger.info("Registering DataSource in MBeanServer under name: " + this.objectName);
-			
-			final ObjectInstance instance = this.mBeanServer.registerMBean(
-					jmxPool, this.objectName);
-			this.objectName = instance.getObjectName();
+			try {
+				final ConnectionPool pool = dataSource.createPool();
+				final org.apache.tomcat.jdbc.pool.jmx.ConnectionPool jmxPool = pool
+						.getJmxPool();
+	
+				
+				this.objectName = ObjectName.getInstance(this.baseObjectName + this.poolConfiguration.getName());
+				logger.info("Registering DataSource " + this.poolConfiguration.getName() + " in MBeanServer under name: " + this.objectName);
+				
+				final ObjectInstance instance = this.mBeanServer.registerMBean(
+						jmxPool, this.objectName);
+				this.objectName = instance.getObjectName();
+			}
+			catch (Exception e) {
+				logger.warn("Failed to register connection pool with MBeanServer. JMX information will not be available for: " + this.poolConfiguration.getName(), e);
+			}
 		}
 		
 
 		if (dataSource.getValidationQuery() == null && this.delayedValidationQueryResolver != null) {
-			logger.info("Attempting to resolve validation query for " + dataSource);
-			this.delayedValidationQueryResolver.registerValidationQueryCallback(dataSource, new FunctionWithoutResult<String>() {
-				@Override
-				protected void applyWithoutResult(String input) {
-					logger.info("Resolved validation query '" + input + "' for " + dataSource);
-					dataSource.setValidationQuery(input);
-				}
-			});
+			logger.info("Attempting to resolve validation query for: " + this.poolConfiguration.getName());
+			try {
+				this.delayedValidationQueryResolver.registerValidationQueryCallback(dataSource, new FunctionWithoutResult<String>() {
+					@Override
+					protected void applyWithoutResult(String input) {
+						logger.info("Resolved validation query '" + input + "' for " + poolConfiguration.getName());
+						dataSource.setValidationQuery(input);
+					}
+				});
+			}
+			catch (Exception e) {
+				logger.warn("Failed to resolve validation query for: " + this.poolConfiguration.getName(), e);
+			}
 		}
 
 		return dataSource;
