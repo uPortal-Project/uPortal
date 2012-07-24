@@ -29,7 +29,7 @@
     xmlns:urlGen="http://xml.apache.org/xalan/java/org.jasig.portal.url.xml.XsltPortalUrlProvider"
     xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
     xsi:schemaLocation="
-            https://source.jasig.org/schemas/uportal/layout/portal-url ../../xsd/layout/portal-url-4.0.xsd"
+            https://source.jasig.org/schemas/uportal/layout/portal-url https://source.jasig.org/schemas/uportal/layout/portal-url-4.0.xsd"
     exclude-result-prefixes="java url urlGen exslt">
     
     <xsl:param name="XSLT_PORTAL_URL_PROVIDER" />

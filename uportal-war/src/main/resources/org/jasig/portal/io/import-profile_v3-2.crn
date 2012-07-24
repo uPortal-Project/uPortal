@@ -28,6 +28,7 @@
  |   - ${Attributes.NODE}=XML Element that defines the entity to import
  |
  +-->
+<sql-transaction>
 <with>
     <attribute key="USER_NAME">${valueOf(@username)}</attribute>
     <attribute key="USER_ID">${sql(SELECT user_id FROM up_user WHERE user_name = '${valueOf(@username)}')}</attribute>
@@ -122,4 +123,4 @@
         </with>
     </subtasks>
 </with>
- 
+</sql-transaction>

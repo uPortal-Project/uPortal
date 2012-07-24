@@ -39,6 +39,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.ILockableEntityGroup;
+import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.layout.dao.IStylesheetUserPreferencesDao;
 import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.persondir.ILocalAccountDao;
@@ -124,11 +125,11 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     }
 
     @Autowired
-    public void setPlatformTransactionManager(@Qualifier("PortalDb") PlatformTransactionManager platformTransactionManager) {
+    public void setPlatformTransactionManager(@Qualifier(BasePortalJpaDao.PERSISTENCE_UNIT_NAME) PlatformTransactionManager platformTransactionManager) {
         this.transactionOperations = new TransactionTemplate(platformTransactionManager);
     }
 
-    @javax.annotation.Resource(name="PortalDb")
+    @javax.annotation.Resource(name=BasePortalJpaDao.PERSISTENCE_UNIT_NAME)
     public void setDataSource(DataSource dataSource) {
         this.jdbcOperations = new JdbcTemplate(dataSource);
     }

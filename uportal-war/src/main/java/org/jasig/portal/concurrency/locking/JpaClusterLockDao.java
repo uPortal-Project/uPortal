@@ -19,22 +19,16 @@
 
 package org.jasig.portal.concurrency.locking;
 
-import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.OptimisticLockException;
-import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.RollbackException;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.ParameterExpression;
-import javax.persistence.criteria.Root;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.jasig.portal.IPortalInfoProvider;
-import org.jasig.portal.jpa.BaseJpaDao;
+import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.jasig.portal.jpa.cache.EntityManagerCache;
+import org.jasig.portal.utils.cache.CacheKey;
 import org.joda.time.Duration;
 import org.joda.time.ReadableDuration;
 import org.slf4j.Logger;
@@ -42,7 +36,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -50,9 +43,8 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import com.google.common.base.Function;
 
 /**
  * DB based locking DAO using JPA2 locking APIs
@@ -61,17 +53,15 @@ import com.google.common.base.Function;
  * @version $Revision$
  */
 @Repository
-public class JpaClusterLockDao extends BaseJpaDao implements IClusterLockDao {
+public class JpaClusterLockDao extends BasePortalJpaDao implements IClusterLockDao {
+    private static final String CLUSTER_MUTEX_SOURCE = JpaClusterLockDao.class.getName() + "_CLUSTER_MUTEX";
+    
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
-    private ParameterExpression<String> nameParameter;
-    private CriteriaQuery<ClusterMutex> clusterLockByNameQuery;
-    private EntityManager entityManager;
     private ReadableDuration abandonedLockAge = Duration.standardSeconds(5);
     private IPortalInfoProvider portalInfoProvider;
     private TransactionTemplate newTransactionTemplate;
-    private TransactionTemplate defaultTransactionTemplate;
-    
+    private EntityManagerCache entityManagerCache;
     
     /**
      * Maximum age of the {@link ClusterMutex#getLastUpdate()} field for a locked mutex. A ClusterMutex with an
@@ -79,7 +69,7 @@ public class JpaClusterLockDao extends BaseJpaDao implements IClusterLockDao {
      * <p/>
      * IMPORTANT: this value must be larger than the maximum possible clock skew across all servers in the cluster. 
      */
-    @Value("${org.jasig.portal.concurrency.locking.ClusterLockDao.abandonedLockAge:PT5S}")
+    @Value("${org.jasig.portal.concurrency.locking.ClusterLockDao.abandonedLockAge:PT60S}")
     public void setAbandonedLockAge(ReadableDuration abandonedLockAge) {
         this.abandonedLockAge = abandonedLockAge;
     }
@@ -90,49 +80,17 @@ public class JpaClusterLockDao extends BaseJpaDao implements IClusterLockDao {
     }
     
     @Autowired
-    public void setPlatformTransactionManager(@Qualifier("PortalDb") PlatformTransactionManager platformTransactionManager) {
+    public void setPlatformTransactionManager(@Qualifier(BasePortalJpaDao.PERSISTENCE_UNIT_NAME) PlatformTransactionManager platformTransactionManager) {
         this.newTransactionTemplate = new TransactionTemplate(platformTransactionManager);
         this.newTransactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         this.newTransactionTemplate.afterPropertiesSet();
-        
-        this.defaultTransactionTemplate = new TransactionTemplate(platformTransactionManager);
-        this.defaultTransactionTemplate.afterPropertiesSet();
     }
 
-    @PersistenceContext(unitName = "uPortalPersistence")
-    public final void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
-    
-    /* (non-Javadoc)
-     * @see org.jasig.portal.jpa.BaseJpaDao#getEntityManager()
-     */
-    @Override
-    protected EntityManager getEntityManager() {
-        return this.entityManager;
+    @Autowired
+    public void setEntityManagerCache(EntityManagerCache entityManagerCache) {
+        this.entityManagerCache = entityManagerCache;
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        this.nameParameter = this.createParameterExpression(String.class, "name");
-        
-        this.clusterLockByNameQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<ClusterMutex>>() {
-            @Override
-            public CriteriaQuery<ClusterMutex> apply(CriteriaBuilder cb) {
-                final CriteriaQuery<ClusterMutex> criteriaQuery = cb.createQuery(ClusterMutex.class);
-                final Root<ClusterMutex> definitionRoot = criteriaQuery.from(ClusterMutex.class);
-                criteriaQuery.select(definitionRoot);
-                criteriaQuery.where(
-                        cb.equal(definitionRoot.get(ClusterMutex_.name), nameParameter)
-                );
-                return criteriaQuery;
-            }
-        });
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.concurrency.locking.ClusterLockDao#getClusterMutex(java.lang.String)
-     */
     @Override
     public ClusterMutex getClusterMutex(final String mutexName) {
         //Do a get first
@@ -156,10 +114,11 @@ public class JpaClusterLockDao extends BaseJpaDao implements IClusterLockDao {
     }
 
     @Override
-    public boolean getLock(final String mutexName) {
-        return this.executeIgnoreRollback(new TransactionCallback<Boolean>() {
+    public ClusterMutex getLock(final String mutexName) {
+        return this.executeIgnoreRollback(new TransactionCallback<ClusterMutex>() {
             @Override
-            public Boolean doInTransaction(TransactionStatus status) {
+            public ClusterMutex doInTransaction(TransactionStatus status) {
+                final EntityManager entityManager = getEntityManager();
 
                 final ClusterMutex clusterMutex = getClusterMutex(mutexName);
                 
@@ -167,16 +126,21 @@ public class JpaClusterLockDao extends BaseJpaDao implements IClusterLockDao {
                 if (clusterMutex.isLocked()) {
                     //Check if the mutex is abandoned
                     if (isLockAbandoned(clusterMutex)) {
+                        //Unlock the abandoned mutex
                         unlockAbandonedLock(mutexName);
+
+                        //Attempt to get the lock again
+                        return getLock(mutexName);
                     }
                     
                     //Already locked
                     logger.trace("Mutex {} is already locked: {}", mutexName, clusterMutex);
-                    return false;
+                    return null;
                 }
                 
                 //Lock the mutex and update the DB
-                clusterMutex.lock(portalInfoProvider.getServerName());
+                final String uniqueServerName = portalInfoProvider.getUniqueServerName();
+                clusterMutex.lock(uniqueServerName);
                 entityManager.persist(clusterMutex);
                 try {
                     entityManager.flush();
@@ -184,12 +148,12 @@ public class JpaClusterLockDao extends BaseJpaDao implements IClusterLockDao {
                 }
                 catch (OptimisticLockException e) {
                     logger.trace("Mutex {} was locked by another thread or server", mutexName);
-                    return false;
+                    return null;
                 }
                 
-                return true;
+                return clusterMutex;
             }
-        }, false);
+        }, null);
     }
 
     @Override
@@ -197,6 +161,7 @@ public class JpaClusterLockDao extends BaseJpaDao implements IClusterLockDao {
         this.executeIgnoreRollback(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
+                final EntityManager entityManager = getEntityManager();
 
                 final ClusterMutex clusterMutex = getClusterMutex(mutexName);
                 
@@ -222,7 +187,8 @@ public class JpaClusterLockDao extends BaseJpaDao implements IClusterLockDao {
         this.executeIgnoreRollback(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
-
+                final EntityManager entityManager = getEntityManager();
+                
                 final ClusterMutex clusterMutex = getClusterMutex(mutexName);
                 
                 validateLockedMutex(clusterMutex);
@@ -246,13 +212,23 @@ public class JpaClusterLockDao extends BaseJpaDao implements IClusterLockDao {
      * Retrieves a ClusterMutex in a new TX
      */
     protected ClusterMutex getClusterMutexInternal(final String mutexName) {
-        return this.defaultTransactionTemplate.execute(new TransactionCallback<ClusterMutex>() {
+        final TransactionOperations transactionOperations = this.getTransactionOperations();
+        return transactionOperations.execute(new TransactionCallback<ClusterMutex>() {
             @Override
             public ClusterMutex doInTransaction(TransactionStatus status) {
-                final TypedQuery<ClusterMutex> query = createQuery(clusterLockByNameQuery);
-                query.setParameter(nameParameter, mutexName);
-                final List<ClusterMutex> results = query.getResultList();
-                return DataAccessUtils.singleResult(results);
+                final CacheKey key = CacheKey.build(CLUSTER_MUTEX_SOURCE, mutexName);
+                ClusterMutex clusterMutex = entityManagerCache.get(PERSISTENCE_UNIT_NAME, key);
+                if (clusterMutex != null) {
+                    return clusterMutex;
+                }
+                
+                final NaturalIdQuery<ClusterMutex> query = createNaturalIdQuery(ClusterMutex.class);
+                query.using(ClusterMutex_.name, mutexName);
+                clusterMutex = query.load();
+                
+                entityManagerCache.put(PERSISTENCE_UNIT_NAME, key, clusterMutex);
+                
+                return clusterMutex;
             }
         });
     }
@@ -265,6 +241,7 @@ public class JpaClusterLockDao extends BaseJpaDao implements IClusterLockDao {
         this.executeIgnoreRollback(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
+                final EntityManager entityManager = getEntityManager();
                 final ClusterMutex clusterMutex = new ClusterMutex(mutexName);
                 entityManager.persist(clusterMutex);
                 try {
@@ -292,9 +269,9 @@ public class JpaClusterLockDao extends BaseJpaDao implements IClusterLockDao {
         if (!clusterMutex.isLocked()) {
             throw new IllegalMonitorStateException("Mutex is not currently locked, it cannot be updated: " + clusterMutex);
         }
-        final String serverName = this.portalInfoProvider.getServerName();
+        final String serverName = this.portalInfoProvider.getUniqueServerName();
         if (!serverName.equals(clusterMutex.getServerId())) {
-            throw new IllegalMonitorStateException("Mutex is currently locked by another server: " + clusterMutex);
+            throw new IllegalMonitorStateException("Mutex is currently locked by another server: " + clusterMutex + " local serverName: " + serverName);
         }
     }
 
@@ -305,6 +282,7 @@ public class JpaClusterLockDao extends BaseJpaDao implements IClusterLockDao {
         this.executeIgnoreRollback(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
+                final EntityManager entityManager = getEntityManager();
                 final ClusterMutex clusterMutex = getClusterMutex(mutexName);
                 
                 if (!isLockAbandoned(clusterMutex)) {

@@ -26,14 +26,11 @@ import static org.junit.Assert.assertNull;
 import java.util.Collections;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.jasig.portal.concurrency.CallableWithoutResult;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.dao.DateDimensionDao;
 import org.jasig.portal.events.aggr.dao.TimeDimensionDao;
-import org.jasig.portal.test.BaseJpaDaoTest;
+import org.jasig.portal.test.BaseAggrEventsJpaDaoTest;
 import org.joda.time.DateMidnight;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,21 +42,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaAggrEventsTestContext.xml")
-public class JpaDateTimeDimensionDaoTest extends BaseJpaDaoTest {
+public class JpaDateTimeDimensionDaoTest extends BaseAggrEventsJpaDaoTest {
 	
     @Autowired
 	private DateDimensionDao dateDimensionDao;
     @Autowired
     private TimeDimensionDao timeDimensionDao;
     
-    @PersistenceContext(unitName = "uPortalAggrEventsPersistence")
-    private EntityManager entityManager;
-    
-    @Override
-    protected EntityManager getEntityManager() {
-        return this.entityManager;
-    }
-
 	@Test
 	public void testGetMinMaxDateDimension() {
         this.execute(new CallableWithoutResult() {

@@ -28,8 +28,14 @@ import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.commons.lang.StringUtils;
+import org.jasig.portal.utils.RandomTokenGenerator;
+import org.jasig.portal.utils.threading.ReadResult;
+import org.jasig.portal.utils.threading.ReadWriteCallback;
+import org.jasig.portal.utils.threading.ReadWriteLockTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,12 +46,14 @@ import org.springframework.stereotype.Service;
  * @version $Revision$
  */
 @Service("portalInfoProvider")
-public class PortalInfoProviderImpl implements IPortalInfoProvider {
+public class PortalInfoProviderImpl implements IPortalInfoProvider, ReadWriteCallback<String> {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
     private String serverName;
     private String networkInterfaceName;
+    
     private String resolvedServerName;
+    private String resolvedUniqueServerName;
 
     /**
      * @param serverName A specific server name for {@link #getServerName()} to return
@@ -63,41 +71,57 @@ public class PortalInfoProviderImpl implements IPortalInfoProvider {
         this.networkInterfaceName = StringUtils.trimToNull(networkInterfaceName);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.IPortalInfoProvider#getServerName()
-     */
+    private final ReadWriteLock serverNameResolutionLock = new ReentrantReadWriteLock();
+    
     @Override
     public final String getServerName() {
+        return ReadWriteLockTemplate.doWithLock(serverNameResolutionLock, this);
+    }
+    
+    @Override
+    public String getUniqueServerName() {
+        ReadWriteLockTemplate.doWithLock(serverNameResolutionLock, this);
+        return this.resolvedUniqueServerName;
+    }
+
+    @Override
+    public ReadResult<String> doInReadLock() {
+        if (this.resolvedServerName != null) {
+            return ReadResult.create(false, this.resolvedServerName);
+        }
+        
+        return ReadResult.create(true);
+    }
+
+    @Override
+    public String doInWriteLock(ReadResult<String> readResult) {
+        this.resolvedServerName = resolveServerName();
+        this.resolvedUniqueServerName = this.resolvedServerName + "_" + RandomTokenGenerator.INSTANCE.generateRandomToken(4);
+        return this.resolvedServerName;
+    }
+
+    protected String resolveServerName() {
         if (this.serverName != null) {
             return this.serverName;
         }
         
-        if (this.resolvedServerName != null) {
-            return this.resolvedServerName;
-        }
-        
         String name = getNetworkInterfaceName(this.networkInterfaceName);
         if (name != null) {
-            this.resolvedServerName = name;
             return name;
         }
         
         name = getLocalHostName();
         if (name != null) {
-            this.resolvedServerName = name;
             return name;
         }
         
         name = getDefaultNetworkInterfaceName();
         if (name != null) {
-            this.resolvedServerName = name;
             return name;
         }
         
         this.logger.warn("Failed to get serverName for NetworkInterface (" + this.networkInterfaceName + "), for InetAddress.getLocalHost(), for any NetworkInterface. Reverting to JVM instance specific UUID string.");
-        name = UUID.randomUUID().toString();
-        this.resolvedServerName = name;
-        return name;
+        return UUID.randomUUID().toString();
     }
     
     protected String getDefaultNetworkInterfaceName() {

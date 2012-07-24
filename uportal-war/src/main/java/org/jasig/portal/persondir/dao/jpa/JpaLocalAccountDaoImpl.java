@@ -29,7 +29,6 @@ import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Parameter;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CollectionJoin;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -42,36 +41,17 @@ import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.jpa.BaseJpaDao;
+import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.persondir.ILocalAccountDao;
 import org.jasig.portal.persondir.ILocalAccountPerson;
 import org.jasig.portal.persondir.LocalAccountQuery;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
 
 @Repository("localAccountDao")
-public class JpaLocalAccountDaoImpl extends BaseJpaDao implements ILocalAccountDao {
-    private EntityManager entityManager;
-
-    @PersistenceContext(unitName = "uPortalPersistence")
-    public final void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
-    
-    @Override
-    protected EntityManager getEntityManager() {
-        return this.entityManager;
-    }
-
-    @Override
-    public ILocalAccountPerson getPerson(long id) {
-        return entityManager.find(LocalAccountPersonImpl.class, id);
-    }
-    
-    
+public class JpaLocalAccountDaoImpl extends BasePortalJpaDao implements ILocalAccountDao {
     private CriteriaQuery<LocalAccountPersonImpl> findAllAccountsQuery;
     private CriteriaQuery<LocalAccountPersonImpl> findAccountByNameQuery;
     private CriteriaQuery<String> findAvailableAttributesQuery;
@@ -124,11 +104,16 @@ public class JpaLocalAccountDaoImpl extends BaseJpaDao implements ILocalAccountD
     }
     
     @Override
-    @Transactional
+    public ILocalAccountPerson getPerson(long id) {
+        return this.getEntityManager().find(LocalAccountPersonImpl.class, id);
+    }
+    
+    @Override
+    @PortalTransactional
     public ILocalAccountPerson createPerson(String username) {
         final ILocalAccountPerson person = new LocalAccountPersonImpl(username);
         
-        this.entityManager.persist(person);
+        this.getEntityManager().persist(person);
         
         return person;
     }
@@ -151,34 +136,37 @@ public class JpaLocalAccountDaoImpl extends BaseJpaDao implements ILocalAccountD
     }
 
     @Override
-    @Transactional
+    @PortalTransactional
     public ILocalAccountPerson updateAccount(ILocalAccountPerson account) {
         Validate.notNull(account, "account can not be null");
         
-        this.entityManager.persist(account);
+        this.getEntityManager().persist(account);
         
         return account;
     }
 
     @Override
-    @Transactional
+    @PortalTransactional
     public void deleteAccount(ILocalAccountPerson account) {
         Validate.notNull(account, "definition can not be null");
         
+        final EntityManager entityManager = this.getEntityManager();
+        
         final ILocalAccountPerson persistentAccount;
-        if (this.entityManager.contains(account)) {
+        if (entityManager.contains(account)) {
             persistentAccount = account;
         }
         else {
-            persistentAccount = this.entityManager.merge(account);
+            persistentAccount = entityManager.merge(account);
         }
         
-        this.entityManager.remove(persistentAccount);
+        entityManager.remove(persistentAccount);
     }
 
     @Override
     public List<ILocalAccountPerson> getPeople(LocalAccountQuery query) {
-        final CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
+        final EntityManager entityManager = this.getEntityManager();
+        final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         
         final CriteriaQuery<LocalAccountPersonImpl> criteriaQuery = cb.createQuery(LocalAccountPersonImpl.class);
         final Root<LocalAccountPersonImpl> accountRoot = criteriaQuery.from(LocalAccountPersonImpl.class);

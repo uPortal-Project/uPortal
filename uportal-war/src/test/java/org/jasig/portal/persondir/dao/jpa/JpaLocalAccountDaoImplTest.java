@@ -27,13 +27,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.jasig.portal.persondir.ILocalAccountDao;
 import org.jasig.portal.persondir.ILocalAccountPerson;
 import org.jasig.portal.persondir.LocalAccountQuery;
-import org.jasig.portal.test.BaseJpaDaoTest;
+import org.jasig.portal.test.BasePortalJpaDaoTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,18 +43,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaPortalTestApplicationContext.xml")
-public class JpaLocalAccountDaoImplTest extends BaseJpaDaoTest {
+public class JpaLocalAccountDaoImplTest extends BasePortalJpaDaoTest {
     @Autowired
     private ILocalAccountDao localAccountDao;
     
-    @PersistenceContext(unitName = "uPortalPersistence")
-    private EntityManager entityManager;
-    
-    @Override
-    protected EntityManager getEntityManager() {
-        return this.entityManager;
-    }
-
     @Test
     public void testAccountSearch() throws Exception {
         //Create users

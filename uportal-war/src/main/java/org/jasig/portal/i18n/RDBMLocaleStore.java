@@ -32,6 +32,7 @@ import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.security.IPerson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -61,11 +62,11 @@ public class RDBMLocaleStore implements ILocaleStore {
 
 
     @Autowired
-    public void setPlatformTransactionManager(@Qualifier("PortalDb") PlatformTransactionManager platformTransactionManager) {
+    public void setPlatformTransactionManager(@Qualifier(BasePortalJpaDao.PERSISTENCE_UNIT_NAME) PlatformTransactionManager platformTransactionManager) {
         this.transactionOperations = new TransactionTemplate(platformTransactionManager);
     }
 
-    @Resource(name="PortalDb")
+    @Resource(name=BasePortalJpaDao.PERSISTENCE_UNIT_NAME)
     public void setDataSource(DataSource dataSource) {
         this.jdbcOperations = new JdbcTemplate(dataSource);
     }

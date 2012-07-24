@@ -39,7 +39,12 @@ public abstract class PortletExecutionEvent extends PortalEvent {
     private static final long serialVersionUID = 1L;
     
     private final String fname;
+    /**
+     * Still here to support deserializing old event json
+     * @deprecated use {@link #executionTimeNano} instead
+     */
     @JsonSerialize(include = Inclusion.NON_NULL)
+    @Deprecated
     private Long executionTime;
     private long executionTimeNano;
     private final Map<String, List<String>> parameters;

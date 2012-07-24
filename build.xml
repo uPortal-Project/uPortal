@@ -152,6 +152,10 @@
         </up-shell-batch>
         <echo message="Finished initializing database" />
     </target>
+	
+	<target name="db-update" depends="prodPrompt" description="Updates an existing database from one patch version to the next">
+        <antcall target="db-hibernate-update" />
+	</target>
 
     <target name="db-ddl" depends="prodPrompt" description="Create a SQL script of commands to drop and create the uPortal database">
         <fail unless="ddlFile">
@@ -214,25 +218,41 @@
 
     <target name="db-hibernate-portal" depends="prodPrompt" description="Drops then creates Hibernate managed tables for the portal">
         <property name="schemaExportBean" value="portalDbHibernateExport" />
+    	<property name="databaseQualifier" value="PortalDb" />
         <property name="export" value="true" />
         <property name="drop" value="true" />
         <property name="create" value="true" />
         <property name="outputFile" value=" " />
-        <property name="haltOnError" value="true" />
 
         <groovy-safe-path property="outputFileEscaped" input="${outputFile}" />
 
         <echo>Creating HBM2DDL Script</echo>
-        <echo file="${portal-shell-script}" append="true">
-            //hibernateCreate(String target, String schemaExportBeanName, boolean export, boolean create, boolean drop, String outputFile, boolean haltOnError)
-            portalShellBuildHelper.hibernateCreate("db-hibernate",
-                '${schemaExportBean}',
-                Boolean.parseBoolean('${export}'),
-                Boolean.parseBoolean('${create}'),
-                Boolean.parseBoolean('${drop}'),
-                /${outputFileEscaped}/,
-                Boolean.parseBoolean('${haltOnError}'));
-        </echo>
+        <if>
+            <equals arg1="${drop}" arg2="true" />
+            <then>
+                <echo file="${portal-shell-script}" append="true">
+                    //hibernateDrop(String target, String schemaExportBeanName, boolean export, String outputFile)
+                    portalShellBuildHelper.hibernateDrop("db-hibernate",
+                        '${schemaExportBean}',
+                        Boolean.parseBoolean('${export}'),
+                        /${outputFileEscaped}/);
+                </echo>
+            </then>
+        </if>
+    	<if>
+    		<equals arg1="${create}" arg2="true" />
+            <then>
+                <echo file="${portal-shell-script}" append="true">
+                    //hibernateCreate(String target, String schemaExportBeanName, boolean export, String outputFile)
+                    portalShellBuildHelper.hibernateCreate("db-hibernate",
+                        '${schemaExportBean}',
+                        Boolean.parseBoolean('${export}'),
+                        /${outputFileEscaped}/);
+                	
+                	versionedDataUpdater.postInitDatabase('${databaseQualifier}');
+                </echo>
+            </then>
+        </if>
 
         <antcall target="up-shell">
             <param name="script" value="${portal-shell-script}" />
@@ -241,20 +261,26 @@
 
     <target name="db-hibernate-portal-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for the portal schema">
         <property name="schemaExportBean" value="portalDbHibernateExport" />
+    	<property name="databaseQualifier" value="PortalDb" />
         <property name="export" value="true" />
         <property name="outputFile" value=" " />
-        <property name="haltOnError" value="true" />
 
         <groovy-safe-path property="outputFileEscaped" input="${outputFile}" />
 
         <echo>Creating HBM2DDL Update Script</echo>
         <echo file="${portal-shell-script}" append="true">
-        	//hibernateUpdate(String target, String schemaExportBeanName, boolean export, String outputFile, boolean haltOnError)
+        	logger.info("");
+        	logger.info("");
+        	logger.info("Update Database " + '${databaseQualifier}');
+        	versionedDataUpdater.preUpdateDatabase('${databaseQualifier}');
+        	
+        	//hibernateUpdate(String target, String schemaExportBeanName, boolean export, String outputFile)
             portalShellBuildHelper.hibernateUpdate("db-hibernate-update",
                 '${schemaExportBean}',
                 Boolean.parseBoolean('${export}'),
-                /${outputFileEscaped}/,
-                Boolean.parseBoolean('${haltOnError}'));
+                /${outputFileEscaped}/);
+        	
+        	versionedDataUpdater.postUpdateDatabase('${databaseQualifier}');
         </echo>
 
         <antcall target="up-shell">
@@ -281,28 +307,28 @@
     <target name="db-hibernate-raw-events" depends="prodPrompt" description="Drops then creates Hibernate managed tables used for raw portal event storage">
         <antcall target="db-hibernate-portal">
             <param name="schemaExportBean" value="rawEventsDbHibernateExport" />
-            <param name="haltOnError" value="false" />
+        	<param name="databaseQualifier" value="RawEventsDb" />
         </antcall>
     </target>
 
     <target name="db-hibernate-raw-events-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for raw portal event storage">
         <antcall target="db-hibernate-portal-update">
             <param name="schemaExportBean" value="rawEventsDbHibernateExport" />
-            <param name="haltOnError" value="false" />
+        	<param name="databaseQualifier" value="RawEventsDb" />
         </antcall>
     </target>
 
     <target name="db-hibernate-aggr-events" depends="prodPrompt" description="Drops then creates Hibernate managed tables used for aggregate portal event storage">
         <antcall target="db-hibernate-portal">
             <param name="schemaExportBean" value="aggrEventsDbHibernateExport" />
-            <param name="haltOnError" value="false" />
+        	<param name="databaseQualifier" value="AggrEventsDb" />
         </antcall>
     </target>
 
     <target name="db-hibernate-aggr-events-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for aggregate portal event storage">
         <antcall target="db-hibernate-portal-update">
             <param name="schemaExportBean" value="aggrEventsDbHibernateExport" />
-            <param name="haltOnError" value="false" />
+        	<param name="databaseQualifier" value="AggrEventsDb" />
         </antcall>
     </target>
 

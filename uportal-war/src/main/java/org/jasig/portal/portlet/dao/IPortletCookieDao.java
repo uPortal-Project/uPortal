@@ -33,13 +33,13 @@ import org.jasig.portal.portlet.om.IPortletCookie;
 public interface IPortletCookieDao {
 
 	/**
-	 * 
+	 * @param maxAge The cookies maximum age in seconds
 	 * @return a brand new {@link IPortalCookie}
 	 */
 	public IPortalCookie createPortalCookie(int maxAge);
 	
 	/**
-	 * 
+	 * @param maxAge The cookies maximum age in seconds
 	 * @param portalCookie
 	 * @return
 	 */

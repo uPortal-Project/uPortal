@@ -22,8 +22,6 @@ package org.jasig.portal.events.handlers.db;
 import java.io.IOException;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -37,18 +35,17 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.introspect.JacksonAnnotationIntrospector;
 import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
+import org.hibernate.FlushMode;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.jasig.portal.concurrency.FunctionWithoutResult;
 import org.jasig.portal.events.PortalEvent;
-import org.jasig.portal.jpa.BaseJpaDao;
+import org.jasig.portal.jpa.BaseRawEventsJpaDao;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
 
@@ -61,8 +58,7 @@ import com.google.common.base.Function;
  * @version $Revision$
  */
 @Repository
-public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalEventDao {
 
     private final ObjectMapper mapper;
     private String deleteQuery;
@@ -74,7 +70,6 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
     private ParameterExpression<DateTime> startTimeParameter;
     private ParameterExpression<DateTime> endTimeParameter;
 
-    private EntityManager entityManager;
     
     public JpaPortalEventStore() {
         mapper = new ObjectMapper();
@@ -86,25 +81,9 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
     /**
      * Frequency that updated events should be flushed during a call to {@link #aggregatePortalEvents(DateTime, DateTime, int, FunctionWithoutResult)}, defaults to 1000.
      */
+    @Value("${org.jasig.portal.events.handlers.db.JpaPortalEventStore.aggregationFlushPeriod:1000}")
     public void setAggregationFlushPeriod(int flushPeriod) {
         this.flushPeriod = flushPeriod;
-    }
-
-
-    /**
-     * @param entityManager the entityManager to set
-     */
-    @PersistenceContext(unitName = "uPortalRawEventsPersistence")
-    public void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
-    
-    /* (non-Javadoc)
-     * @see org.jasig.portal.jpa.BaseJpaDao#getEntityManager()
-     */
-    @Override
-    protected EntityManager getEntityManager() {
-        return this.entityManager;
     }
     
     @Override
@@ -162,21 +141,15 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
     }
     
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.events.handlers.db.IPortalEventDao#storePortalEvent(org.jasig.portal.events.PortalEvent)
-     */
     @Override
-    @Transactional(value="rawEvents")
+    @RawEventsTransactional
     public void storePortalEvent(PortalEvent portalEvent) {
         final PersistentPortalEvent persistentPortalEvent = this.wrapPortalEvent(portalEvent);
-        this.entityManager.persist(persistentPortalEvent);
+        this.getEntityManager().persist(persistentPortalEvent);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.events.handlers.db.IPortalEventDao#storePortalEvents(org.jasig.portal.events.PortalEvent[])
-     */
     @Override
-    @Transactional(value="rawEvents")
+    @RawEventsTransactional
     public void storePortalEvents(PortalEvent... portalEvents) {
         for (final PortalEvent portalEvent : portalEvents) {
             try {
@@ -188,11 +161,8 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.events.handlers.db.IPortalEventDao#storePortalEvents(java.lang.Iterable)
-     */
     @Override
-    @Transactional(value="rawEvents")
+    @RawEventsTransactional
     public void storePortalEvents(Iterable<PortalEvent> portalEvents) {
         for (final PortalEvent portalEvent : portalEvents) {
             try {
@@ -219,9 +189,10 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
     }
 
     @Override
-    @Transactional(value="rawEvents")
-    public void aggregatePortalEvents(DateTime startTime, DateTime endTime, int maxEvents, FunctionWithoutResult<PortalEvent> handler) {
+    @RawEventsTransactional
+    public boolean aggregatePortalEvents(DateTime startTime, DateTime endTime, int maxEvents, Function<PortalEvent, Boolean> handler) {
         final Session session = this.getEntityManager().unwrap(Session.class);
+        session.setFlushMode(FlushMode.COMMIT);
         final org.hibernate.Query query = session.createQuery(this.selectUnaggregatedQuery);
         query.setParameter(this.startTimeParameter.getName(), startTime);
         query.setParameter(this.endTimeParameter.getName(), endTime);
@@ -233,17 +204,24 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
         for (final ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY); results.next(); ) {
             final PersistentPortalEvent persistentPortalEvent = (PersistentPortalEvent)results.get(0);
             final PortalEvent portalEvent = this.toPortalEvent(persistentPortalEvent.getEventData(), persistentPortalEvent.getEventType());
-            handler.apply(portalEvent);
+            final Boolean stopAggregation = handler.apply(portalEvent);
             persistentPortalEvent.setAggregated(true);
             session.persist(persistentPortalEvent);
             
             //periodic flush and clear of session to manage memory demands
             if (++resultCount % this.flushPeriod == 0) {
-                this.logger.debug("Aggregated {} events, flush and clear session.", resultCount);
+                this.logger.debug("Aggregated {} events, flush and clear {} EntityManager.", resultCount, PERSISTENCE_UNIT_NAME);
                 session.flush();
                 session.clear();
             }
+            
+            if (stopAggregation) {
+            	this.logger.debug("Aggregation stop requested after processing event {}", portalEvent);
+            	return true;
+            }
         }
+        
+        return false;
     }
     
     @Override
@@ -270,13 +248,10 @@ public class JpaPortalEventStore extends BaseJpaDao implements IPortalEventDao {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.events.handlers.db.IPortalEventDao#deletePortalEventsBefore(java.util.Date)
-     */
     @Override
-    @Transactional(value="rawEvents")
+    @RawEventsTransactional
     public int deletePortalEventsBefore(DateTime time) {
-        final Query query = this.entityManager.createQuery(this.deleteQuery);
+        final Query query = this.getEntityManager().createQuery(this.deleteQuery);
         query.setParameter(this.endTimeParameter.getName(), time);
         return query.executeUpdate();
     }
