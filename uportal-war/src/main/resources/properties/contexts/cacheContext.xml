@@ -38,7 +38,7 @@
     <!-- 
      | The per-cache settings are configured in /uportal-war/src/main/resources/properties/ehcache.xml
      +-->
-    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" depends-on="systemPropertySetter">
         <property name="configLocation" value="classpath:/properties/ehcache.xml" />
     </bean>
     <bean id="cacheManagerExpiredElementEvictor" class="org.jasig.portal.utils.cache.ExpiredElementEvictor">
@@ -46,7 +46,7 @@
     </bean>
     
     <!-- 
-     | The per-cache settings are configured in /uportal-war/src/main/resources/properties/ehcache.xml
+     | The per-cache settings are configured in /uportal-war/src/main/resources/properties/ehcache_aggr_events.xml
      +-->
     <bean id="eventAggrCacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
         <property name="configLocation" value="classpath:/properties/ehcache_aggr_events.xml" />

@@ -461,6 +461,7 @@
                             <copy file="${script}" tofile="${executed-portal-shell-script}" />
 
                             <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.shell.PortalShell">
+                            	<jvmarg value="-XX:MaxPermSize=256m"/>
                                 <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
                                 <classpath refid="uportal-war-full.classpath" />
                                 <arg value="-s" />
