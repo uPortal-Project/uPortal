@@ -474,13 +474,7 @@
   	<!-- Home Link -->
   	<xsl:call-template name="portal.page.bar.link.home" />
     <!-- Home Link -->
-    
-    <!-- Admin Link -->
-    <xsl:if test="$INSTITUTION != 'uportal'">
-  		<xsl:call-template name="portal.page.bar.link.admin" />
-    </xsl:if>
-    <!-- Admin Link -->
-    
+
     <!-- Sitemap Link -->
   	<xsl:call-template name="portal.page.bar.link.sitemap" />
     <!-- Sitemap Link -->
@@ -489,6 +483,10 @@
   	<xsl:call-template name="portal.page.bar.link.help" />
     <!-- Help Link -->
     
+    <!-- Admin Link -->
+    <xsl:call-template name="portal.page.bar.link.admin" />
+    <!-- Admin Link -->
+
     <!-- Logout Link -->
   	<xsl:call-template name="portal.page.bar.link.logout" />
     <!-- Logout Link -->
@@ -563,11 +561,7 @@
   	<!-- Home Link -->
   	<xsl:call-template name="portal.page.bar.link.home"/>
     <!-- Home Link -->
-    
-    <!-- Admin Link
-  	<xsl:call-template name="portal.page.bar.link.admin"/> -->
-    <!-- Admin Link -->
-    
+
     <!-- Sitemap Link
   	<xsl:call-template name="portal.page.bar.link.sitemap"/> -->
     <!-- Sitemap Link -->
@@ -576,6 +570,10 @@
   	<xsl:call-template name="portal.page.bar.link.help" />
     <!-- Help Link -->
     
+    <!-- Admin Link -->
+  	<xsl:call-template name="portal.page.bar.link.admin"/>
+    <!-- Admin Link -->
+
     <!-- Logout Link -->
   	<xsl:call-template name="portal.page.bar.link.logout" />
     <!-- Logout Link -->

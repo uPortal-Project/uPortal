@@ -20,14 +20,11 @@
 
 -->
 <fragment-definition xmlns:dlm="http://org.jasig.portal.layout.dlm.config" script="classpath://org/jasig/portal/io/import-fragment-definition_v3-1.crn">
-  <dlm:fragment name="Admin" ownerID="admin-lo" precedence="50">
+  <dlm:fragment name="Admin" ownerID="admin-lo" precedence="0">
     <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory">
-      <paren mode="OR">     
-        <attribute mode="deepMemberOf" name="Portal Administrators"/>
-        <attribute mode="deepMemberOf" name="SSP_ADMINISTRATOR"/>
-        <attribute mode="deepMemberOf" name="SSP_DEVELOPER"/>
-        <attribute mode="deepMemberOf" name="SSP_MANAGER"/>
-        <attribute mode="deepMemberOf" name="Portal Developers"/>
+      <paren mode="NOT">     
+        <!-- drew (2012/07/24):  Disabling the audience for this fragment;  use the 'Platform Administration' link (top-right flyout) instead -->
+        <attribute mode="deepMemberOf" name="Everyone"/>
       </paren>
     </dlm:audience>
   </dlm:fragment>

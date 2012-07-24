@@ -17,6 +17,7 @@
 
     <modules>
         <module>NotificationPortlet</module>
+        <module>SimpleContentPortlet</module>
         <module>ssp</module>
     </modules>
 

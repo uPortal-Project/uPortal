@@ -20,7 +20,7 @@
 
 -->
 <fragment-definition xmlns:dlm="http://org.jasig.portal.layout.dlm.config" script="classpath://org/jasig/portal/io/import-fragment-definition_v3-1.crn">
-  <dlm:fragment name="Guests" ownerID="guest-lo" precedence="80">
+  <dlm:fragment name="Guests" ownerID="guest-lo" precedence="100">
     <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.GuestUserEvaluatorFactory"/>
   </dlm:fragment>
 </fragment-definition>

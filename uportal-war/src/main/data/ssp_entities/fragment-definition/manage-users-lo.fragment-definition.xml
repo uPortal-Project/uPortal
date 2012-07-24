@@ -20,10 +20,12 @@
 
 -->
 <fragment-definition xmlns:dlm="http://org.jasig.portal.layout.dlm.config" script="classpath://org/jasig/portal/io/import-fragment-definition_v3-1.crn">
-  <dlm:fragment name="MyGPS" ownerID="my-gps-lo" precedence="30">
+  <dlm:fragment name="Manage Users" ownerID="manage-users-lo" precedence="10">
     <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory">
       <paren mode="OR">     
-        <attribute mode="deepMemberOf" name="Everyone"/>
+        <attribute mode="deepMemberOf" name="SSP_ADMINISTRATOR"/>
+        <attribute mode="deepMemberOf" name="SSP_DEVELOPER"/>
+        <attribute mode="deepMemberOf" name="SSP_MANAGER"/>
       </paren>
     </dlm:audience>
   </dlm:fragment>

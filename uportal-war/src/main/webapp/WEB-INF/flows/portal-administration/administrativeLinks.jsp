@@ -26,7 +26,7 @@
   
   <!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-    <h2 class="title" role="heading">Portal Administration Tools</h2>
+    <h2 class="title" role="heading">Platform Administration Tools</h2>
   </div>
   
   <!-- Portlet Content -->
@@ -35,7 +35,7 @@
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
     	<div class="titlebar">
-      		<h3 class="title" role="heading">Portal Entity Administration</h3>
+      		<h3 class="title" role="heading">Platform Entity Administration</h3>
         </div>
         <div class="content">
             <ul>
@@ -61,7 +61,7 @@
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
     	<div class="titlebar">
-      		<h3 class="title" role="heading">Portal Administration</h3>
+      		<h3 class="title" role="heading">Platform Administration</h3>
         </div>
         <div class="content">
             <ul>

@@ -19,12 +19,26 @@
     under the License.
 
 -->
-<fragment-definition xmlns:dlm="http://org.jasig.portal.layout.dlm.config" script="classpath://org/jasig/portal/io/import-fragment-definition_v3-1.crn">
-  <dlm:fragment name="MyGPS" ownerID="my-gps-lo" precedence="30">
-    <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory">
-      <paren mode="OR">     
-        <attribute mode="deepMemberOf" name="Everyone"/>
-      </paren>
-    </dlm:audience>
-  </dlm:fragment>
-</fragment-definition>
+
+<project name="${project.name} ${project.version}">
+    <bannerLeft>
+        <name>uPortal</name>
+        <src>http://www.jasig.org/sites/jasig.webchuckhosting.com/files/uportalLogo.jpg</src>
+        <href>http://www.jasig.org/uportal</href>
+    </bannerLeft>
+    <bannerRight>
+        <name>JA-SIG</name>
+        <src>http://www.jasig.org/sites/all/themes/jasig2/logo.png</src>
+        <href>http://www.jasig.org</href>
+    </bannerRight>
+    <publishDate position="left" format="MM-dd-yy hh:mm zz"/>
+
+    <body>
+        <breadcrumbs>
+          <item name="Home" href="${project.url}"/>
+        </breadcrumbs>
+    
+        <menu ref="modules" />
+        <menu ref="reports" />
+    </body>
+</project>

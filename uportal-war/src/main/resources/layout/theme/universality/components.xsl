@@ -58,7 +58,7 @@
    | This template renders skip-to navigation.
   -->
   <xsl:template name="skip.nav">
-  	<div id="portalSkipNav">
+    <div id="portalSkipNav">
       <a href="#portalNavigation" title="{upMsg:getMessage('skip.to.page.navigation', $USER_LANG)}" id="skipToNav" accesskey="N">
         <xsl:value-of select="upMsg:getMessage('skip.to.page.navigation', $USER_LANG)"/>
       </a>
@@ -74,7 +74,7 @@
    | This template renders a pipe ( | ), generally used to separate links.
   -->
   <xsl:template name="portal.pipe">
-		<span class="portal-pipe">|</span> 
+        <span class="portal-pipe">|</span> 
   </xsl:template>
   <!-- =========================================== -->
   
@@ -100,20 +100,20 @@
       </xsl:choose>
       <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
       <div id="portalPageBarLinks">
-				<span class="icon-user"></span>
-      	<ul class="utilities">
-	      	<xsl:choose>
-	          <xsl:when test="//focused">
-	            <!-- ****** PORTAL PAGE BAR LINKS FOCUSED BLOCK ****** -->
-	            <xsl:call-template name="portal.page.bar.links.focused.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
-	            <!-- ****** PORTAL PAGE BAR LINKS FOCUSED BLOCK ****** -->
-	          </xsl:when>
-	          <xsl:otherwise>
-	            <!-- ****** PORTAL PAGE BAR LINKS BLOCK ****** -->
-	            <xsl:call-template name="portal.page.bar.links.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
-	            <!-- ****** PORTAL PAGE BAR LINKS BLOCK ****** -->
-	          </xsl:otherwise>
-	        </xsl:choose>
+        <span class="icon-user"></span>
+        <ul class="utilities">
+            <xsl:choose>
+              <xsl:when test="//focused">
+                <!-- ****** PORTAL PAGE BAR LINKS FOCUSED BLOCK ****** -->
+                <xsl:call-template name="portal.page.bar.links.focused.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
+                <!-- ****** PORTAL PAGE BAR LINKS FOCUSED BLOCK ****** -->
+              </xsl:when>
+              <xsl:otherwise>
+                <!-- ****** PORTAL PAGE BAR LINKS BLOCK ****** -->
+                <xsl:call-template name="portal.page.bar.links.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
+                <!-- ****** PORTAL PAGE BAR LINKS BLOCK ****** -->
+              </xsl:otherwise>
+            </xsl:choose>
         </ul>
       </div>
       <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
@@ -128,7 +128,7 @@
    | This template renders the portal page bar title.
   -->
   <xsl:template name="portal.page.bar.title">
-  	<xsl:choose>
+    <xsl:choose>
       <xsl:when test="//focused">
         <!-- ****** PORTAL PAGE BAR TITLE FOCUSED BLOCK ****** -->
         <xsl:call-template name="portal.page.bar.title.focused.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
@@ -154,24 +154,24 @@
           <xsl:variable name="homeUrl">
             <xsl:call-template name="portalUrl"/>
           </xsl:variable>
-	      <a href="{$homeUrl}">
-	        <xsl:attribute name="title">
-	          <xsl:choose>
-	            <!-- Use the Back to Home label for focused view -->
-	            <xsl:when test="//focused"><xsl:value-of select="upMsg:getMessage('back.to.home.long', $USER_LANG)"/></xsl:when>
-	            <!-- Otherwise, just Home label -->
-	            <xsl:otherwise><xsl:value-of select="upMsg:getMessage('home', $USER_LANG)"/></xsl:otherwise>
-	          </xsl:choose>
-	        </xsl:attribute>
-	        <span>
-	          <xsl:choose>
-	            <!-- Use the Back to Home label for focused view -->
-	            <xsl:when test="//focused"><xsl:value-of select="upMsg:getMessage('back.to.home.long', $USER_LANG)"/></xsl:when>
-	            <!-- Otherwise, just Home label -->
-	            <xsl:otherwise><xsl:value-of select="upMsg:getMessage('home', $USER_LANG)"/></xsl:otherwise>
-	          </xsl:choose>
-	        </span>
-	      </a>
+          <a href="{$homeUrl}">
+            <xsl:attribute name="title">
+              <xsl:choose>
+                <!-- Use the Back to Home label for focused view -->
+                <xsl:when test="//focused"><xsl:value-of select="upMsg:getMessage('back.to.home.long', $USER_LANG)"/></xsl:when>
+                <!-- Otherwise, just Home label -->
+                <xsl:otherwise><xsl:value-of select="upMsg:getMessage('home', $USER_LANG)"/></xsl:otherwise>
+              </xsl:choose>
+            </xsl:attribute>
+            <span>
+              <xsl:choose>
+                <!-- Use the Back to Home label for focused view -->
+                <xsl:when test="//focused"><xsl:value-of select="upMsg:getMessage('back.to.home.long', $USER_LANG)"/></xsl:when>
+                <!-- Otherwise, just Home label -->
+                <xsl:otherwise><xsl:value-of select="upMsg:getMessage('home', $USER_LANG)"/></xsl:otherwise>
+              </xsl:choose>
+            </span>
+          </a>
       </li>
   </xsl:template>
   <!-- ========================================================== -->
@@ -183,20 +183,20 @@
    | This template renders the admin menu into the portal page bar.
   -->
   <xsl:template name="portal.page.bar.link.admin">
-  	<xsl:if test="upAuth:canRender($USER_ID, 'portlet-admin')">
-    	<li class="link-admin">
-    	  <xsl:variable name="portletAdminUrl">
+    <xsl:if test="upAuth:canRender($USER_ID, 'portal-administration')">
+        <li class="link-admin">
+          <xsl:variable name="portletAdminUrl">
             <xsl:call-template name="portalUrl">
                 <xsl:with-param name="url">
                     <url:portal-url>
-                        <url:fname>portlet-admin</url:fname>
+                        <url:fname>portal-administration</url:fname>
                         <url:portlet-url state="MAXIMIZED" />
                     </url:portal-url>
                 </xsl:with-param>
             </xsl:call-template>
-    	  </xsl:variable>
-    	  <a href="{$portletAdminUrl}" title="{upMsg:getMessage('go.to.portlet.manager', $USER_LANG)}">
-          <span><xsl:value-of select="upMsg:getMessage('portlet.manager', $USER_LANG)"/></span>
+          </xsl:variable>
+          <a href="{$portletAdminUrl}" title="{upMsg:getMessage('platform.administration', $USER_LANG)}">
+          <span><xsl:value-of select="upMsg:getMessage('platform.administration', $USER_LANG)"/></span>
         </a>
       </li>
     </xsl:if>
@@ -211,8 +211,8 @@
   -->
   <xsl:template name="portal.page.bar.link.sitemap">
     <xsl:if test="$AUTHENTICATED='true'">
-    	<li class="link-sitemap">
-    	  <xsl:variable name="layoutSitemapUrl">
+        <li class="link-sitemap">
+          <xsl:variable name="layoutSitemapUrl">
             <xsl:call-template name="portalUrl">
                 <xsl:with-param name="url">
                     <url:portal-url>
@@ -221,8 +221,8 @@
                     </url:portal-url>
                 </xsl:with-param>
             </xsl:call-template>
-    	  </xsl:variable>
-    	  <a href="{$layoutSitemapUrl}" title="{upMsg:getMessage('go.to.site.map', $USER_LANG)}">
+          </xsl:variable>
+          <a href="{$layoutSitemapUrl}" title="{upMsg:getMessage('go.to.site.map', $USER_LANG)}">
           <span><xsl:value-of select="upMsg:getMessage('site.map', $USER_LANG)"/></span>
         </a>
       </li>
@@ -237,7 +237,7 @@
    | This template renders the help link into the portal page bar.
   -->
   <xsl:template name="portal.page.bar.link.help">
-  	<li class="link-help">
+    <li class="link-help">
       <a href="{$HELP_URL}" title="{upMsg:getMessage('view.help.for.portal', $USER_LANG)}" target="_blank">
         <span><xsl:value-of select="upMsg:getMessage('help', $USER_LANG)"/></span>
       </a>
@@ -385,11 +385,11 @@
    | This template renders the administration links navigation component, a prominent, short list of links to administrative functions.
   -->
   <xsl:template name="administration.links">
-  	<xsl:if test="upAuth:canRender($USER_ID, 'portlet-admin') or upGroup:isUserDeepMemberOfGroupName($USER_ID, 'Fragment Owners')">
+    <xsl:if test="upAuth:canRender($USER_ID, 'portlet-admin') or upGroup:isUserDeepMemberOfGroupName($USER_ID, 'Fragment Owners')">
       <div id="portalAdminLinks" class="fl-widget">
         <div class="fl-widget-inner">
-        	<div class="fl-widget-titlebar">
-          	<h2><xsl:value-of select="upMsg:getMessage('administration', $USER_LANG)"/></h2>
+            <div class="fl-widget-titlebar">
+            <h2><xsl:value-of select="upMsg:getMessage('administration', $USER_LANG)"/></h2>
           </div>
           <div class="fl-widget-content">
             <ul class="fl-listmenu">
@@ -424,25 +424,25 @@
    | This template renders the quicklinks navigation component, a prominent, short list of links to high priority portlets regardless of the portlet's placement within the layout.
   -->
   <xsl:template name="quicklinks">
-  	<xsl:if test="count(/layout/navigation/descendant::tabChannel[@quicklink > 0]) > 0"> <!-- Write out markup only if one or more quicklinks exist. -->
+    <xsl:if test="count(/layout/navigation/descendant::tabChannel[@quicklink > 0]) > 0"> <!-- Write out markup only if one or more quicklinks exist. -->
       <div id="portalQuicklinks" class="fl-widget">
-      	<div class="fl-widget-inner">
-        	<div class="fl-widget-titlebar">
-        		<h2><xsl:value-of select="upMsg:getMessage('quicklinks', $USER_LANG)"/></h2>
+        <div class="fl-widget-inner">
+            <div class="fl-widget-titlebar">
+                <h2><xsl:value-of select="upMsg:getMessage('quicklinks', $USER_LANG)"/></h2>
           </div>
-        	<div class="fl-widget-content">
+            <div class="fl-widget-content">
             <ul class="fl-listmenu">  <!-- Navigation list. -->
               <xsl:apply-templates select="/layout/navigation/descendant::tabChannel[@quicklink > 0]" mode="quicklink"> <!-- Selects from the XML only those portlets with the matching quicklink parameter. -->
                 <xsl:sort select="@quicklink" order="ascending" /> <!-- Sorts the subsequent array in ascending order by the value of the quicklink parameter. -->
               </xsl:apply-templates>
             </ul>
-      		</div>
+            </div>
         </div>
       </div>
     </xsl:if>
   </xsl:template>
   <!-- ========================================== -->
-	
+    
   
   <!-- ========== TEMPLATE: QUICKLINKS LIST ========== -->
   <!-- =============================================== -->
@@ -478,7 +478,7 @@
     </li>
   </xsl:template>
   <!-- =============================================== -->
-	
+    
   
   <!-- ========== TEMPLATE: WEB SEARCH ========== -->
   <!-- ========================================== -->
@@ -488,8 +488,8 @@
   <xsl:template name="web.search">
     <div id="webSearchContainer" class="fl-widget">
       <div class="fl-widget-inner">
-      	<div class="fl-widget-titlebar">
-      		<h2><label for="webSearchInput"><xsl:value-of select="upMsg:getMessage('web.search', $USER_LANG)"/></label></h2>
+        <div class="fl-widget-titlebar">
+            <h2><label for="webSearchInput"><xsl:value-of select="upMsg:getMessage('web.search', $USER_LANG)"/></label></h2>
         </div>
         <div class="fl-widget-content">
             <xsl:variable name="searchUrl">
@@ -574,19 +574,19 @@
    | This template renders Back To Home link form the focused view.
   -->
   <xsl:template name="back.to.home">
-  	<xsl:if test="//focused">
+    <xsl:if test="//focused">
       <xsl:variable name="homeUrl">
         <xsl:call-template name="portalUrl"/>
       </xsl:variable>
       <a href="{$homeUrl}" id="portalBackToHome" title="{upMsg:getMessage('back.to.home.long', $USER_LANG)}">
         <span><xsl:value-of select="upMsg:getMessage('back.to.home', $USER_LANG)"/></span>
       </a>
-  	  <xsl:if test="//focused[@in-user-layout='no'] and $USE_AJAX='true' and $AUTHENTICATED">
-  	    <a href="javascript:;" id="focusedContentDialogLink" title="{upMsg:getMessage('back.to.home.long', $USER_LANG)}">
-  	      <span><xsl:value-of select="upMsg:getMessage('back.to.home', $USER_LANG)"/></span>
-  	    </a>
- 	    </xsl:if>
-  	</xsl:if>
+      <xsl:if test="//focused[@in-user-layout='no'] and $USE_AJAX='true' and $AUTHENTICATED">
+        <a href="javascript:;" id="focusedContentDialogLink" title="{upMsg:getMessage('back.to.home.long', $USER_LANG)}">
+          <span><xsl:value-of select="upMsg:getMessage('back.to.home', $USER_LANG)"/></span>
+        </a>
+        </xsl:if>
+    </xsl:if>
   </xsl:template>
   <!-- ============================================ -->
   

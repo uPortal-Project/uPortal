@@ -46,6 +46,13 @@
         
         <dependency>
             <groupId>org.jasig.ssp.platform.portlets-overlay</groupId>
+            <artifactId>SimpleContentPortlet</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.jasig.ssp.platform.portlets-overlay</groupId>
             <artifactId>ssp</artifactId>
             <version>${project.version}</version>
             <type>war</type>
@@ -110,6 +117,12 @@
                             <artifactId>NotificationPortlet</artifactId>
                             <bundleFileName>NotificationPortlet.war</bundleFileName>
                             <contextRoot>/NotificationPortlet</contextRoot>
+                        </webModule>
+                        <webModule>
+                            <groupId>org.jasig.ssp.platform.portlets-overlay</groupId>
+                            <artifactId>SimpleContentPortlet</artifactId>
+                            <bundleFileName>SimpleContentPortlet.war</bundleFileName>
+                            <contextRoot>/SimpleContentPortlet</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.jasig.ssp.platform.portlets-overlay</groupId>

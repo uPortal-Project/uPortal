@@ -20,10 +20,10 @@
 
 -->
 <portlet-definition xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns2="https://source.jasig.org/schemas/uportal" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns4="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:ns5="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/user" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd">
-    <title>Portal Administration</title>
-    <name>Portal Administration</name>
+    <title>Platform Administration</title>
+    <name>Platform Administration</name>
     <fname>portal-administration</fname>
-    <desc>Useful administrative links for managing portal entities and impersonating users</desc>
+    <desc>Useful administrative links for managing platform entities and impersonating users</desc>
     <type>Portlet</type>
     <timeout>50000</timeout>
     <portlet-descriptor>
