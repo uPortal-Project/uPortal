@@ -39,8 +39,11 @@
         <property name="maxIdle" value="50" />
         <property name="maxWait" value="2000" />
         
+        <property name="abandonWhenPercentageFull" value="70" />
         <property name="removeAbandoned" value="true" />
         <property name="removeAbandonedTimeout" value="300" />
+        
+        <property name="jdbcInterceptors" value="ConnectionState(useEquals=true);ResetAbandonedTimer"/>
         
         <property name="testWhileIdle" value="true" />
         <property name="testOnBorrow" value="true" />
