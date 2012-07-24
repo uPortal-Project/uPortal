@@ -293,6 +293,7 @@
 .portlet .panel-list.icon-large .UP_PORTLET_PUBLISH {background-image:url(/ResourceServingWebapp/rs/tango/0.8.90/32x32/actions/window-new.png);}
 .portlet .panel-list.icon-large .UP_PORTLET_SUBSCRIBE {background-image:url(/ResourceServingWebapp/rs/tango/0.8.90/32x32/apps/preferences-system-windows.png);}
 .portlet .panel-list.icon-large .UP_SYSTEM {background-image:url(/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/preferences-system.png);}
+.portlet .panel-list.icon-large .SSP {background-image:url(../images/ssp-permission-manager.png);}
 /* Rounded panel with gradient. */
 .portlet .panel-list.rounded .panel {
 	background:#eee url(../images/light_top_100px_70.png) 0 0 repeat-x;
