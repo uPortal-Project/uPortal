@@ -205,12 +205,12 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         this.fragmentNodeInfoCache = fragmentNodeInfoCache;
     }
 
-    @Value("${org.jasig.portal.io.layout.errorOnMissingPortlet}")
+    @Value("${org.jasig.portal.io.layout.errorOnMissingPortlet:true}")
     public void setErrorOnMissingPortlet(boolean errorOnMissingPortlet) {
         this.errorOnMissingPortlet = errorOnMissingPortlet;
     }
 
-    @Value("${org.jasig.portal.io.layout.errorOnMissingUser}")
+    @Value("${org.jasig.portal.io.layout.errorOnMissingUser:true}")
     public void setErrorOnMissingUser(boolean errorOnMissingUser) {
         this.errorOnMissingUser = errorOnMissingUser;
     }

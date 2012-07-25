@@ -31,6 +31,7 @@
         
         <property name="hibernate.max_fetch_depth">3</property>
         <property name="hibernate.default_batch_fetch_size">4</property>
+        <property name="hibernate.jdbc.batch_size">100</property>
         <property name="hibernate.id.new_generator_mappings">true</property>
 
         <!-- raw event store does NO caching -->

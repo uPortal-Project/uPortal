@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.spring.locator.EntityTypesLocator;
 import org.jasig.portal.utils.ICounterStore;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +92,7 @@ public class EntityTypes {
     
 
     @Autowired
-    public void setJdbcOperations(@Qualifier("PortalDb") JdbcOperations jdbcOperations) {
+    public void setJdbcOperations(@Qualifier(BasePortalJpaDao.PERSISTENCE_UNIT_NAME) JdbcOperations jdbcOperations) {
         this.jdbcOperations = jdbcOperations;
     }
 

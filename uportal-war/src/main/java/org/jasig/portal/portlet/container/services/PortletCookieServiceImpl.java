@@ -35,7 +35,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.jasig.portal.concurrency.FunctionWithoutResult;
+import org.jasig.portal.concurrency.locking.ClusterMutex;
 import org.jasig.portal.concurrency.locking.IClusterLockService;
+import org.jasig.portal.concurrency.locking.IClusterLockService.LockStatus;
+import org.jasig.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
+import org.jasig.portal.concurrency.locking.LockOptions;
 import org.jasig.portal.portlet.dao.IPortletCookieDao;
 import org.jasig.portal.portlet.om.IPortalCookie;
 import org.jasig.portal.portlet.om.IPortletCookie;
@@ -43,6 +47,7 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.util.WebUtils;
@@ -80,6 +85,7 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
     private int maxAge = DEFAULT_MAX_AGE;
     private long maxAgeUpdateInterval = TimeUnit.MINUTES.toMillis(5);
     private boolean portalCookieAlwaysSecure = false;
+    private long purgeExpiredCookiesPeriod = 0;
     
     @Autowired
     public void setPortletCookieDao(IPortletCookieDao portletCookieDao) {
@@ -91,11 +97,11 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
         this.clusterLockService = clusterLockService;
     }
 
+    @Value("${org.jasig.portal.portlet.container.services.PortletCookieServiceImpl.purgeExpiredCookiesPeriod}")
+    public void setPurgeExpiredCookiesPeriod(long purgeExpiredCookiesPeriod) {
+        this.purgeExpiredCookiesPeriod = purgeExpiredCookiesPeriod;
+    }
 
-
-    /* (non-Javadoc)
-	 * @see org.springframework.web.context.ServletContextAware#setServletContext(javax.servlet.ServletContext)
-	 */
 	@Override
 	public void setServletContext(ServletContext servletContext) {
 		this.path = servletContext.getContextPath() + "/";
@@ -264,13 +270,17 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
     @Override
     public boolean purgeExpiredCookies() {
         try {
-            this.clusterLockService.doInTryLock(PURGE_LOCK_NAME, new FunctionWithoutResult<String>() {
-                @Override
-                protected void applyWithoutResult(String input) {
-                    portletCookieDao.purgeExpiredCookies();
-                }
-            });
-            return true;
+            final long purgeExpiredLastRunDelay = (long)(purgeExpiredCookiesPeriod * .95);
+            final TryLockFunctionResult<Object> result = this.clusterLockService.doInTryLock(
+                    PURGE_LOCK_NAME, 
+                    LockOptions.builder().lastRunDelay(purgeExpiredLastRunDelay), 
+                    new FunctionWithoutResult<ClusterMutex>() {
+                        @Override
+                        protected void applyWithoutResult(ClusterMutex input) {
+                            portletCookieDao.purgeExpiredCookies();
+                        }
+                    });
+            return result.getLockStatus() ==  LockStatus.EXECUTED;
         }
         catch (InterruptedException e) {
             logger.warn("Interrupted while purging expired cookies", e);

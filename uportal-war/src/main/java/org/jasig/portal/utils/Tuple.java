@@ -21,11 +21,6 @@ package org.jasig.portal.utils;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
-
 /**
  * Simple object that contains two values who's references are immutable once initialized.
  * 
@@ -37,10 +32,28 @@ public class Tuple<A, B> implements Serializable {
 
     public final A first;
     public final B second;
+    private final boolean immutable;
+    private final int hash; 
+    
+    public static <A1, B1> Tuple<A1, B1> of(A1 a1, B1 b1) {
+        return new Tuple<A1, B1>(a1, b1);
+    }
 
     public Tuple(A first, B second) {
+        this(first, second, false);
+    }
+
+    public Tuple(A first, B second, boolean immutable) {
         this.first = first;
         this.second = second;
+        this.immutable = immutable;
+        
+        if (this.immutable) {
+            hash = internalHashCode();
+        }
+        else {
+            hash = 0;
+        }
     }
     
     public A getFirst() {
@@ -51,43 +64,49 @@ public class Tuple<A, B> implements Serializable {
         return second;
     }
 
-    /**
-     * @see java.lang.Object#equals(Object)
-     */
     @Override
-    public boolean equals(Object object) {
-        if (object == this) {
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        }
-        if (!(object instanceof Tuple)) {
+        if (obj == null)
             return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Tuple other = (Tuple) obj;
+        if (first == null) {
+            if (other.first != null)
+                return false;
         }
-        Tuple<?, ?> rhs = (Tuple<?, ?>) object;
-        return new EqualsBuilder()
-        .append(this.first, rhs.first)
-        .append(this.second, rhs.second)
-        .isEquals();
+        else if (!first.equals(other.first))
+            return false;
+        if (second == null) {
+            if (other.second != null)
+                return false;
+        }
+        else if (!second.equals(other.second))
+            return false;
+        return true;
     }
 
-    /**
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(1423361201, 771516529)
-            .append(this.first)
-            .append(this.second)
-            .toHashCode();
+        if (this.immutable) {
+            return this.hash;
+        }
+        
+        return internalHashCode();
     }
-
-    /**
-     * @see java.lang.Object#toString()
-     */
+    
+    private int internalHashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((first == null) ? 0 : first.hashCode());
+        result = prime * result + ((second == null) ? 0 : second.hashCode());
+        return result;
+    }
+    
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
-            .append("first", this.first)
-            .append("second", this.second)
-            .toString();
+        return "Tuple [first=" + first + ", second=" + second + "]";
     }
 }

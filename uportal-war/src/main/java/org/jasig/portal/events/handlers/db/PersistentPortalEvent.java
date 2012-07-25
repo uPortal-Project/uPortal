@@ -71,14 +71,17 @@ public class PersistentPortalEvent implements Serializable {
     @SuppressWarnings("unused")
     private final DateTime timestamp;
     
+    @Index(name = "IDX_UP_RAW_EVENTS_SERVER_ID")
     @Column(name="SERVER_ID", length=200, nullable=false, updatable=false)
     @SuppressWarnings("unused")
     private final String serverId;
     
+    @Index(name = "IDX_UP_RAW_EVENTS_SESSION_ID")
     @Column(name="SESSION_ID", length=500, nullable=false, updatable=false)
     @SuppressWarnings("unused")
     private final String eventSessionId;
     
+    @Index(name = "IDX_UP_RAW_EVENTS_USER_NAME")
     @Column(name="USER_NAME", length=35, nullable=false, updatable=false)
     @SuppressWarnings("unused")
     private final String userName;
@@ -91,6 +94,7 @@ public class PersistentPortalEvent implements Serializable {
     @Lob
     private final String eventData; 
     
+    @Index(name = "IDX_UP_RAW_EVENTS_AGGREGATED")
     @Column(name = "AGGREGATED") 
     private Boolean aggregated = false;
     

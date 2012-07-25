@@ -22,7 +22,6 @@ package org.jasig.portal.layout.dlm;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -30,31 +29,19 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.jpa.BaseJpaDao;
+import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
 
 @Repository
-public class FragmentDefinitionDao extends BaseJpaDao implements IFragmentDefinitionDao {
+public class FragmentDefinitionDao extends BasePortalJpaDao implements IFragmentDefinitionDao {
     private CriteriaQuery<FragmentDefinition> findAllFragmentsQuery;
     private CriteriaQuery<FragmentDefinition> findFragmentByNameQuery;
     private CriteriaQuery<FragmentDefinition> findFragmentByOwnerQuery;
     private ParameterExpression<String> nameParameter;
     private ParameterExpression<String> ownerParameter;
-    private EntityManager entityManager;
-
-    @PersistenceContext(unitName = "uPortalPersistence")
-    public final void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
-    
-    @Override
-    protected EntityManager getEntityManager() {
-        return this.entityManager;
-    }
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -129,28 +116,29 @@ public class FragmentDefinitionDao extends BaseJpaDao implements IFragmentDefini
     }
 
     @Override
-    @Transactional
+    @PortalTransactional
     public void updateFragmentDefinition(FragmentDefinition fd) {
         
         Validate.notNull(fd, "FragmentDefinition can not be null");
-        this.entityManager.persist(fd);
+        this.getEntityManager().persist(fd);
         
     }
 
     @Override
-    @Transactional
+    @PortalTransactional
     public void removeFragmentDefinition(FragmentDefinition fd) {
         
         Validate.notNull(fd, "FragmentDefinition can not be null");
         final FragmentDefinition persistentFragmentDefinition;
-        if (this.entityManager.contains(fd)) {
+        final EntityManager entityManager = this.getEntityManager();
+        if (entityManager.contains(fd)) {
             persistentFragmentDefinition = fd;
         }
         else {
-            persistentFragmentDefinition = this.entityManager.merge(fd);
+            persistentFragmentDefinition = entityManager.merge(fd);
         }
         
-        this.entityManager.remove(persistentFragmentDefinition);
+        entityManager.remove(persistentFragmentDefinition);
     }
 
 }

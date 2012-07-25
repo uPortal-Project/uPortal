@@ -32,8 +32,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.portlet.ActionRequest;
 import javax.xml.namespace.QName;
 
@@ -41,7 +39,7 @@ import org.jasig.portal.concurrency.CallableWithoutResult;
 import org.jasig.portal.concurrency.FunctionWithoutResult;
 import org.jasig.portal.events.handlers.db.IPortalEventDao;
 import org.jasig.portal.security.SystemPerson;
-import org.jasig.portal.test.BaseJpaDaoTest;
+import org.jasig.portal.test.BaseRawEventsJpaDaoTest;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,6 +47,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -59,16 +58,9 @@ import com.google.common.collect.ImmutableSet;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaRawEventsTestApplicationContext.xml")
-public class JpaPortalEventStoreTest extends BaseJpaDaoTest {
+public class JpaPortalEventStoreTest extends BaseRawEventsJpaDaoTest {
     @Autowired
     private IPortalEventDao portalEventDao;
-    @PersistenceContext(unitName = "uPortalRawEventsPersistence")
-    private EntityManager entityManager;
-    
-    @Override
-    protected EntityManager getEntityManager() {
-        return this.entityManager;
-    }
     
     @Test
     public void testStoreSingleEvents() throws Exception {
@@ -188,11 +180,12 @@ public class JpaPortalEventStoreTest extends BaseJpaDaoTest {
                 int startSize;
                 do {
                     startSize = portalEvents.size();
-                    portalEventDao.aggregatePortalEvents(nextStart.get(), endDate, loadSize, new FunctionWithoutResult<PortalEvent>() {
+                    portalEventDao.aggregatePortalEvents(nextStart.get(), endDate, loadSize, new Function<PortalEvent, Boolean>() {
                         @Override
-                        protected void applyWithoutResult(PortalEvent input) {
+						public Boolean apply(PortalEvent input) {
                             portalEvents.add(input);
                             nextStart.set(input.getTimestampAsDate());
+                            return Boolean.FALSE;
                         }
                     });
                 } while (loadSize + startSize == portalEvents.size());

@@ -27,10 +27,17 @@ package org.jasig.portal;
  */
 public interface IPortalInfoProvider {
     /**
-     * The name of the server, clients can assume that this name will be unique across all
-     * servers in a cluster.
+     * The name of the server
      * 
      * @return The name of the server
      */
     public String getServerName();
+    
+    /**
+     * The name of the server, clients can assume that this name will be unique across all
+     * instances in a cluster.
+     * 
+     * @return The name of the server
+     */
+    public String getUniqueServerName();
 }

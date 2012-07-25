@@ -29,6 +29,9 @@
     <typedef name="fname" class="org.jasig.portal.dao.usertype.FunctionalNameType" />
     <typedef name="windowState" class="org.jasig.portal.dao.usertype.WindowStateType" />
     <typedef name="qname" class="org.jasig.portal.dao.usertype.QNameType" />
+    <typedef name="json" class="org.jasig.portal.dao.usertype.JacksonType" />
+    <typedef name="stats_json" class="org.jasig.portal.dao.usertype.StatisticsJacksonType" />
+
     
     <!-- usertypes -->
     <typedef name="dateTime" class="org.jadira.usertype.dateandtime.joda.PersistentDateTime" />

@@ -24,7 +24,6 @@ import java.util.Locale;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -34,15 +33,14 @@ import javax.persistence.criteria.Root;
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.i18n.Message;
 import org.jasig.portal.i18n.dao.IMessageDao;
-import org.jasig.portal.jpa.BaseJpaDao;
+import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
 
 @Repository
-public class JpaMessageDao extends BaseJpaDao implements IMessageDao {
+public class JpaMessageDao extends BasePortalJpaDao implements IMessageDao {
     private CriteriaQuery<MessageImpl> findMessageByCodeAndLocaleQuery;
     private CriteriaQuery<MessageImpl> findMessageByCodeQuery;
     private CriteriaQuery<MessageImpl> findMessageByLocaleQuery;
@@ -50,18 +48,6 @@ public class JpaMessageDao extends BaseJpaDao implements IMessageDao {
     
     private ParameterExpression<String> codeParameter;
     private ParameterExpression<Locale> localeParameter;
-    private EntityManager entityManager;
-
-    @PersistenceContext(unitName = "uPortalPersistence")
-    public final void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
-    
-    @Override
-    protected EntityManager getEntityManager() {
-        return this.entityManager;
-    }
-    
     
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -124,39 +110,40 @@ public class JpaMessageDao extends BaseJpaDao implements IMessageDao {
     }
     
     @Override
-    @Transactional
+    @PortalTransactional
     public Message createMessage(String code, Locale locale, String value) {
         Validate.notNull(code, "code can not be null");
         
         final Message msg = new MessageImpl(code, locale, value);
         
-        this.entityManager.persist(msg);
+        this.getEntityManager().persist(msg);
         
         return msg;
     }
     
     @Override
-    @Transactional
+    @PortalTransactional
     public Message updateMessage(Message message) {
         Validate.notNull(message, "message can not be null");
         
-        this.entityManager.persist(message);
+        this.getEntityManager().persist(message);
         
         return message;
     }
     
     @Override
-    @Transactional
+    @PortalTransactional
     public void deleteMessage(Message message) {
         Validate.notNull(message, "message can not be null");
         
         final Message msg;
-        if (this.entityManager.contains(message)) {
+        final EntityManager entityManager = this.getEntityManager();
+        if (entityManager.contains(message)) {
             msg = message;
         } else {
-            msg = this.entityManager.merge(message);
+            msg = entityManager.merge(message);
         }
-        this.entityManager.remove(msg);
+        entityManager.remove(msg);
     }
     
     @Override

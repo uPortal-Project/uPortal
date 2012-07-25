@@ -57,6 +57,7 @@ import org.hibernate.id.enhanced.OptimizerFactory;
 import org.hibernate.id.enhanced.TableGenerator;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.Type;
+import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -90,12 +91,12 @@ public class HibernateStyleCounterStore implements ICounterStore {
     private int initialValue = 10;
     
     @Autowired
-    public void setTransactionOperations(@Qualifier("PortalDb") TransactionOperations transactionOperations) {
+    public void setTransactionOperations(@Qualifier(BasePortalJpaDao.PERSISTENCE_UNIT_NAME) TransactionOperations transactionOperations) {
         this.transactionOperations = transactionOperations;
     }
 
     @Autowired
-    public void setJdbcOperations(@Qualifier("PortalDb") JdbcOperations jdbcOperations) {
+    public void setJdbcOperations(@Qualifier(BasePortalJpaDao.PERSISTENCE_UNIT_NAME) JdbcOperations jdbcOperations) {
         this.jdbcOperations = jdbcOperations;
     }
 

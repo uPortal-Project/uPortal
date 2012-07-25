@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.IUserProfile;
+import org.jasig.portal.layout.SessionAttributeProfileMapperImpl;
 import org.jasig.portal.security.mvc.LoginController;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
@@ -85,7 +86,7 @@ public class LoginPortletHelper {
         // if a profile selection exists in the session, use it
         final PortletSession session = request.getPortletSession();
         String profileName = (String) session.getAttribute(
-                LoginController.REQUESTED_PROFILE_KEY,
+                SessionAttributeProfileMapperImpl.DEFAULT_SESSION_ATTRIBUTE_NAME,
                 PortletSession.APPLICATION_SCOPE);
         
         // otherwise, set the selected profile to the one currently in use by
