@@ -25,7 +25,6 @@
 	}
 	
 	.dashboard {
-		border: 1px solid $c1dark;
 		color: $white;
 		text-shadow: 0 1px 0 $black;
 		background: $bgc url("images/bg_320x480_flat.png") 0 25px no-repeat;
@@ -40,7 +39,6 @@
 	}
 	
 	.focused {
-		border: 1px solid $gray;
 		color: $text;
 		text-shadow: 0 1px 0 $white;
 		background: $graylighter;
@@ -77,6 +75,16 @@
 				font-size: 100%;
 				color: $graydarker;		
 			}
+			.subtitle + .text {
+			  margin-top: 14px;
+			}
+			.text p {
+			  margin-bottom: 12px;
+			}
+		}
+
+		> .titlebar + .ui-listview {
+		  margin-top: 18px;
 		}
 		
 		@include button();
