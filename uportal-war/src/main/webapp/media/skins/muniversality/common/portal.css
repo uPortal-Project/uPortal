@@ -588,7 +588,6 @@ mathematical calculations. */
   font-family: Helvetica, Arial, sans-serif;
 }
 .up .dashboard {
-  border: 1px solid #38678f;
   color: white;
   text-shadow: 0 1px 0 black;
   background: #3366cc url("images/bg_320x480_flat.png") 0 25px no-repeat;
@@ -605,7 +604,6 @@ mathematical calculations. */
   border-bottom: 1px solid rgba(130, 130, 130, 0.3);
 }
 .up .focused {
-  border: 1px solid #a9a9a9;
   color: #444444;
   text-shadow: 0 1px 0 white;
   background: #dcdcdc;
@@ -727,6 +725,15 @@ mathematical calculations. */
 .up .portlet-content .titlebar .subtitle {
   font-size: 100%;
   color: #767676;
+}
+.up .portlet-content .titlebar .subtitle + .text {
+  margin-top: 14px;
+}
+.up .portlet-content .titlebar .text p {
+  margin-bottom: 12px;
+}
+.up .portlet-content > .titlebar + .ui-listview {
+  margin-top: 18px;
 }
 .up .portlet-content .ui-btn-up-a, .up .portlet-content .ui-btn-up-b, .up .portlet-content .ui-btn-up-c, .up .portlet-content .ui-btn-up-d, .up .portlet-content .ui-btn-up-e {
   border-color: #c3c3c3;
