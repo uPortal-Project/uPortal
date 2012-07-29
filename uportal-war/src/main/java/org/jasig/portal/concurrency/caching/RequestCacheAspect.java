@@ -152,8 +152,8 @@ public class RequestCacheAspect implements InitializingBean, DisposableBean {
             //Execute the annotated emthod
             result = pjp.proceed();
             final long time = System.nanoTime() - start;
-            cacheStatistics.recordMiss(time);
-            overallStats.recordMiss(time);
+            cacheStatistics.recordMissAndLoad(time);
+            overallStats.recordMissAndLoad(time);
 
             if (result != null) {
                 //Cache the not-null result
@@ -170,8 +170,8 @@ public class RequestCacheAspect implements InitializingBean, DisposableBean {
         }
         catch (Throwable t) {
             final long time = System.nanoTime() - start;
-            cacheStatistics.recordException(time);
-            overallStats.recordMiss(time);
+            cacheStatistics.recordMissAndException(time);
+            overallStats.recordMissAndException(time);
             if (requestCache.cacheException()) {
                 //If caching exceptions wrapp the exception and cache it
                 cache.put(cacheKey, new ExceptionHolder(t));

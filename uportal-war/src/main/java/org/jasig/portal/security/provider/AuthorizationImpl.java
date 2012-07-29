@@ -490,7 +490,6 @@ throws AuthorizationException
  * @exception AuthorizationException indicates authorization information could not
  * be retrieved.
  */
-@RequestCache
 public IPermission[] getAllPermissionsForPrincipal
     (IAuthorizationPrincipal principal,
     String owner,

@@ -35,11 +35,13 @@ public final class CacheStatistics implements CacheStatisticsMBean {
         hitCount.incrementAndGet();
         totalHitTime.addAndGet(time);
     }
-    public final void recordMiss(long time) {
+    public final void recordMissAndLoad(long time) {
         missCount.incrementAndGet();
+        loadSuccessCount.incrementAndGet();
         totalLoadTime.addAndGet(time);
     }
-    public final void recordException(long time) {
+    public final void recordMissAndException(long time) {
+        missCount.incrementAndGet();
         loadExceptionCount.incrementAndGet();
         totalExceptionTime.addAndGet(time);
     }
