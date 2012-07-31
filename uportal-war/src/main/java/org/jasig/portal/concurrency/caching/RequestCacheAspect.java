@@ -21,8 +21,6 @@ package org.jasig.portal.concurrency.caching;
 
 import java.io.Serializable;
 import java.lang.annotation.AnnotationFormatError;
-import java.util.Collections;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -46,7 +44,6 @@ import org.jasig.portal.utils.cache.CacheKey;
 import org.jasig.portal.utils.web.PortalWebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.MBeanExportOperations;
@@ -62,13 +59,12 @@ import org.springframework.web.context.request.RequestAttributes;
  */
 @Aspect
 @Component("requestCacheAspect")
-public class RequestCacheAspect implements InitializingBean, DisposableBean {
+public class RequestCacheAspect implements InitializingBean {
     private static final String CACHE_MAP = RequestCacheAspect.class.getName() + ".CACHE_MAP";
     private static final Object NULL_PLACEHOLDER = new Object();
     
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
-    private final Set<ObjectName> registeredObjectNames = Collections.newSetFromMap(new ConcurrentHashMap<ObjectName, Boolean>());
     private final ConcurrentMap<String, CacheStatistics> methodStats = new ConcurrentHashMap<String, CacheStatistics>();
     private final CacheStatistics overallStats = new CacheStatistics();
 
@@ -89,12 +85,6 @@ public class RequestCacheAspect implements InitializingBean, DisposableBean {
         if (this.mBeanExportOperations != null) {
             final ObjectName name = new ObjectName("uPortal:section=Cache,RequestCache=RequestCache,name=OverallStatistics");
             registerMbean(this.overallStats, name);
-        }
-    }
-    @Override
-    public void destroy() throws Exception {
-        for (final ObjectName name : this.registeredObjectNames) {
-            this.mBeanExportOperations.unregisterManagedResource(name);
         }
     }
     
@@ -183,7 +173,6 @@ public class RequestCacheAspect implements InitializingBean, DisposableBean {
     
     protected void registerMbean(Object object, ObjectName name) throws InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException {
         this.mBeanExportOperations.registerManagedResource(object, name);
-        registeredObjectNames.add(name);
     }
     
     protected final CacheStatistics getCacheStatistics(ProceedingJoinPoint pjp, RequestCache requestCache) {
