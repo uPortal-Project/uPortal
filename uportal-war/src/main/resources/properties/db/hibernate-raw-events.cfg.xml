@@ -25,7 +25,7 @@
         "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 
 <hibernate-configuration>
-    <session-factory>
+    <session-factory name="RawEventsDb">
         <property name="hibernate.format_sql">true</property>
         <property name="hibernate.generate_statistics">true</property>
         
