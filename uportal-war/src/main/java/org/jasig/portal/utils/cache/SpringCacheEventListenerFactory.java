@@ -18,26 +18,52 @@
  */
 package org.jasig.portal.utils.cache;
 
+import java.util.Map;
 import java.util.Properties;
 
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.event.CacheEventListener;
+import net.sf.ehcache.event.CacheEventListenerAdapter;
 import net.sf.ehcache.event.CacheEventListenerFactory;
 
-import org.jasig.portal.spring.PortalApplicationContextLocator;
-import org.springframework.context.ApplicationContext;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
- * Creates {@link TagTrackingCacheEventListener} instances
+ * Returns references to Spring configured {@link CacheEventListener}s 
  */
-public class SpringCacheEventListenerFactory extends CacheEventListenerFactory {
+@Service
+public class SpringCacheEventListenerFactory extends CacheEventListenerFactory implements DisposableBean {
     public static final String BEAN_NAME = "beanName";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpringCacheEventListenerFactory.class);
+    private static final CacheEventListener NOOP_CACHE_EVENT_LISTENER = new CacheEventListenerAdapter();
+    private static volatile Map<String, CacheEventListener> cacheEventListeners;
+    
+    @Autowired
+    public void setCacheEventListeners(Map<String, CacheEventListener> cacheEventListeners) {
+        SpringCacheEventListenerFactory.cacheEventListeners = ImmutableMap.copyOf(cacheEventListeners);
+    }
     
     @Override
+    public void destroy() throws Exception {
+        cacheEventListeners = null;
+    }
+
+    @Override
     public CacheEventListener createCacheEventListener(Properties properties) {
-        final String beanName = properties.getProperty(BEAN_NAME);
+        final String beanName = StringUtils.trimToNull(properties.getProperty(BEAN_NAME));
+        if (beanName == null) {
+            throw new IllegalArgumentException("The " + BEAN_NAME + " property must be set");
+        }
         return new LazyCacheEventListener(beanName);
     }
     
@@ -55,8 +81,23 @@ public class SpringCacheEventListenerFactory extends CacheEventListenerFactory {
         private CacheEventListener getDelegate() {
             CacheEventListener d = this.delegate;
             if (d == null) {
-                final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-                d = applicationContext.getBean(beanName, CacheEventListener.class);
+                //Need a local reference here to avoid locking around cacheEventListeners reference changes
+                final Map<String, CacheEventListener> cel = cacheEventListeners;
+                if (cel == null) {
+                    //either pre-init or post-destroy, return noop logger
+                    return NOOP_CACHE_EVENT_LISTENER;
+                }
+                
+                final CacheEventListener cacheEventListener = cel.get(beanName);
+                if (cacheEventListener == null) {
+                    //If no listener is found just use the noop listener
+                    LOGGER.warn("No CacheEventListener bean found for name '" + beanName + "', using NOOP CacheEventListener instead.");
+                    d = NOOP_CACHE_EVENT_LISTENER;
+                }
+                else {
+                    d = cacheEventListener;
+                }
+                
                 this.delegate = d;
             }
             return d;
