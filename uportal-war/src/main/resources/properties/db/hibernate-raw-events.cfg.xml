@@ -26,6 +26,7 @@
 
 <hibernate-configuration>
     <session-factory name="RawEventsDb">
+        <property name="hibernate.session_factory_name_is_jndi">false</property>
         <property name="hibernate.format_sql">true</property>
         <property name="hibernate.generate_statistics">true</property>
         
