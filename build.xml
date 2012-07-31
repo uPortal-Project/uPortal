@@ -419,7 +419,7 @@
         <uportal-war-macro>
             <echo message="Invoking DbTest" />
             <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.tools.DbTest">
-                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+                <sysproperty key="logback.configurationFile" value="command-line.logback.xml" />
 
                 <classpath refid="uportal-war-full.classpath" />
             </java>
@@ -462,7 +462,7 @@
 
                             <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.shell.PortalShell">
                             	<jvmarg value="-XX:MaxPermSize=256m"/>
-                                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+                                <sysproperty key="logback.configurationFile" value="command-line.logback.xml" />
                                 <classpath refid="uportal-war-full.classpath" />
                                 <arg value="-s" />
                                 <arg value="${script}" />
@@ -472,7 +472,7 @@
                             <echo>Interactive Mode</echo>
 
                             <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.shell.PortalShell">
-                                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+                                <sysproperty key="logback.configurationFile" value="command-line.logback.xml" />
                                 <classpath refid="uportal-war-full.classpath" />
                             </java>
                         </else>
