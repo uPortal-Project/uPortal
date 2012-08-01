@@ -22,7 +22,8 @@
 <fragment-definition xmlns:dlm="http://org.jasig.portal.layout.dlm.config" script="classpath://org/jasig/portal/io/import-fragment-definition_v3-1.crn">
   <dlm:fragment name="MyGPS" ownerID="my-gps-lo" precedence="30">
     <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory">
-      <paren mode="OR">     
+      <paren mode="NOT">     
+        <!-- drew (2012/08/01):  Disabling the audience for this fragment;  there won't be a MyGPS in SSP 1.0.x -->
         <attribute mode="deepMemberOf" name="Everyone"/>
       </paren>
     </dlm:audience>
