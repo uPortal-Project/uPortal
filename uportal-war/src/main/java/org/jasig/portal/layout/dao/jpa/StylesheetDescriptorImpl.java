@@ -47,6 +47,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.dao.usertype.FunctionalNameType;
 import org.jasig.portal.layout.om.ILayoutAttributeDescriptor;
@@ -76,6 +77,7 @@ import org.jasig.portal.layout.om.IStylesheetUserPreferences;
         pkColumnValue="UP_SS_DESC",
         allocationSize=5
     )
+@NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class StylesheetDescriptorImpl implements IStylesheetDescriptor {

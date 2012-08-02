@@ -23,6 +23,8 @@ import org.jasig.portal.concurrency.FunctionWithoutResult;
 import org.jasig.portal.events.PortalEvent;
 import org.joda.time.DateTime;
 
+import com.google.common.base.Function;
+
 /**
  * Persists, retrieves and deletes portal events from a persistent store 
  * 
@@ -52,14 +54,17 @@ public interface IPortalEventDao {
     /**
      * Gets all un-aggregated persisted events in the time range. After the handler is called on each event
      * it is marked as aggregated. To deal with memory and data access issues the results are not
-     * returned but passed in order to the provided {@link FunctionWithoutResult} handler.
+     * returned but passed in order to the provided {@link Function} handler. If aggregation should stop
+     * the handler should return false after processing an event. Only events processed up to that point
+     * will be marked as aggregated.
      * 
      * @param startTime The inclusive start time to get events for
      * @param endTime The exclusive end time to get events for
      * @param maxEvents The maximum number events to retrieve. -1 means no limit
      * @param handler Function which will be called for each event.
+     * @return true if the handler returned true after handling an event.
      */
-    void aggregatePortalEvents(DateTime startTime, DateTime endTime, int maxEvents, FunctionWithoutResult<PortalEvent> handler);
+    boolean aggregatePortalEvents(DateTime startTime, DateTime endTime, int maxEvents, Function<PortalEvent, Boolean> handler);
     
     /**
      * @return The timestamp of the oldest event in the persitent store

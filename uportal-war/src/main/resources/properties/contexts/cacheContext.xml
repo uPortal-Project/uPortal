@@ -30,37 +30,37 @@
     <bean class="org.jasig.portal.utils.cache.EhcacheManagerBeanConfigurer">
         <property name="cacheManager" ref="cacheManager" />
     </bean>
+    <bean class="org.jasig.portal.utils.cache.EhcacheManagerBeanConfigurer">
+        <property name="cacheManager" ref="eventAggrCacheManager" />
+        <property name="skipDuplicates" value="true" />
+    </bean>
     
     <!-- 
      | The per-cache settings are configured in /uportal-war/src/main/resources/properties/ehcache.xml
-     | This file is specified by the cacheManager bean at the bottom of this document
      +-->
-    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
-        <property name="cacheManagerName" value="uPortal.cacheManager" />
+    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" depends-on="systemPropertySetter">
         <property name="configLocation" value="classpath:/properties/ehcache.xml" />
-        <property name="shared" value="true" />
+    </bean>
+    <bean id="cacheManagerExpiredElementEvictor" class="org.jasig.portal.utils.cache.ExpiredElementEvictor">
+        <property name="cacheManager" ref="cacheManager"></property>
+    </bean>
+    
+    <!-- 
+     | The per-cache settings are configured in /uportal-war/src/main/resources/properties/ehcache_aggr_events.xml
+     +-->
+    <bean id="eventAggrCacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+        <property name="configLocation" value="classpath:/properties/ehcache_aggr_events.xml" />
+    </bean>
+    <bean id="eventAggrCacheManagerExpiredElementEvictor" class="org.jasig.portal.utils.cache.ExpiredElementEvictor">
+        <property name="cacheManager" ref="eventAggrCacheManager"></property>
     </bean>
     
     <!-- 
      | Annotation based caching support
      +-->
-    <ehcache:annotation-driven default-cache-key-generator="listCacheKeyGenerator" />
-    <ehcache:config>
-        <ehcache:evict-expired-elements />
-    </ehcache:config>
+    <ehcache:annotation-driven default-cache-key-generator="listCacheKeyGenerator" cache-manager="cacheManager" />
     
     <bean id="listCacheKeyGenerator" class="com.googlecode.ehcache.annotations.key.ListCacheKeyGenerator"/>
-    
-    <!--
-     | Service used by DLM to cache Layouts.
-     +-->
-    <bean id="layoutCachingService" class="org.jasig.portal.layout.dlm.LayoutCachingService">
-        <property name="layoutCache">
-            <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
-                <property name="cacheName" value="org.jasig.portal.layout.dlm.LAYOUT_CACHE" />
-            </bean>
-        </property>
-    </bean>
 
     <bean class="org.jasig.portal.utils.ResourceLoader">
         <property name="resourceUrlCache">

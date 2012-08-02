@@ -19,8 +19,6 @@
 
 package org.jasig.portal.portlets.sqlquery;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +27,7 @@ import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 import javax.sql.DataSource;
 
+import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.portlet.ModelAndView;
@@ -80,7 +79,7 @@ public class SqlQueryPortletController extends AbstractController {
 		// find the configured SQL statement
 		PortletPreferences preferences = request.getPreferences();
 		String sqlQuery = preferences.getValue(SQL_QUERY_PARAM_NAME, null);
-		String dsName = preferences.getValue(DATASOURCE_BEAN_NAME_PARAM_NAME, "PortalDb");
+		String dsName = preferences.getValue(DATASOURCE_BEAN_NAME_PARAM_NAME, BasePortalJpaDao.PERSISTENCE_UNIT_NAME);
 		String viewName = preferences.getValue(VIEW_PARAM_NAME, "jsp/SqlQuery/results");
 		
 		// generate a JDBC template for the requested data source

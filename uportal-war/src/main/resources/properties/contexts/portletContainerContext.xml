@@ -37,6 +37,7 @@
         <property name="keepAliveSeconds" value="${org.jasig.portal.portlet.worker.threadPool.keepAliveSeconds}" />
         <property name="daemon" value="true" />
         <property name="allowCoreThreadTimeOut" value="true" />
+        <property name="rejectedExecutionHandler" ref="loggingAbortHandler" />
     </bean>
     
     <util:list id="portletExecutionInterceptors" value-type="org.jasig.portal.portlet.rendering.worker.IPortletExecutionInterceptor">
@@ -49,7 +50,7 @@
     </util:list>
     
     <bean id="JpaPortletExecutionInterceptor" class="org.jasig.portal.portlet.rendering.worker.JpaPortletExecutionInterceptor">
-        <property name="entityManagerFactory" ref="entityManagerFactory" />
+        <property name="entityManagerFactory" ref="PortalDbEntityManagerFactory" />
     </bean>
     
     <!-- 

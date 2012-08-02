@@ -19,12 +19,14 @@
 
 package org.jasig.portal.utils.threading;
 
+import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Delayed;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -35,10 +37,12 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.TriggerContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.scheduling.support.ScheduledMethodRunnable;
 
 /**
  * Scheduling thread pool that upon invocation of the scheduled task immediately
- * delegates execution to another {@link ExecutorService}
+ * delegates execution to another {@link ExecutorService}. Also adds a configurable
+ * start delay to scheduled tasks
  * 
  * @author Eric Dalquist
  * @version $Revision$
@@ -97,14 +101,27 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
         return startDate;
     }
     
+    protected Runnable wrapRunnable(Runnable task) {
+        if (task instanceof ScheduledMethodRunnable) {
+            final Method method = ((ScheduledMethodRunnable) task).getMethod();
+            final String methodName = method.getName();
+            return new ThreadNamingRunnable("-" + methodName, task);
+        }
+
+        
+        return task; 
+    }
+    
     @Override
     public void execute(Runnable task, long startTimeout) {
+        task = wrapRunnable(task);
         final DelegatingRunnable delegatingRunnable = new DelegatingRunnable(this.executorService, task);
         super.execute(delegatingRunnable, startTimeout);
     }
 
     @Override
     public Future<?> submit(Runnable task) {
+        task = wrapRunnable(task);
         final DelegatingRunnable delegatingRunnable = new DelegatingRunnable(this.executorService, task);
         return super.submit(delegatingRunnable);
     }
@@ -119,18 +136,24 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
 
     @Override
     public void execute(Runnable task) {
+        task = wrapRunnable(task);
         final DelegatingRunnable delegatingRunnable = new DelegatingRunnable(this.executorService, task);
         super.execute(delegatingRunnable);        
     }
 
     @Override
     public ScheduledFuture<Object> schedule(Runnable task, final Trigger trigger) {
+        task = wrapRunnable(task);
         //Wrap the trigger so that the first call to nextExecutionTime adds in the additionalStartDelay 
         final Trigger wrappedTrigger = new Trigger() {
             boolean firstExecution = false;
             @Override
             public Date nextExecutionTime(TriggerContext triggerContext) {
                 Date nextExecutionTime = trigger.nextExecutionTime(triggerContext);
+                if (nextExecutionTime == null) {
+                    return null;
+                }
+                
                 if (firstExecution) {
                     nextExecutionTime = getDelayedStartDate(nextExecutionTime);
                     firstExecution = true;
@@ -157,7 +180,9 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
 
     @Override
     public ScheduledFuture<Object> scheduleAtFixedRate(Runnable task, Date startTime, long period) {
-        startTime = getDelayedStartDate(startTime);
+        task = wrapRunnable(task);
+        startTime = getDelayedStartDate(startTime); //Add scheduled task delay
+        startTime = new Date(startTime.getTime() + period); //Add period to inital run time
         
         final DelegatingRunnable delegatingRunnable = new DelegatingRunnable(this.executorService, task);
         @SuppressWarnings("unchecked")
@@ -167,6 +192,7 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
 
     @Override
     public ScheduledFuture<Object> scheduleAtFixedRate(Runnable task, long period) {
+        task = wrapRunnable(task);
         final long additionalStartDelay = this.getAdditionalStartDelay();
         if (additionalStartDelay > 0) {
             //If there is an additional delay use the alternate call which includes a startTime 
@@ -181,7 +207,10 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
 
     @Override
     public ScheduledFuture<Object> scheduleWithFixedDelay(Runnable task, Date startTime, long delay) {
-        startTime = getDelayedStartDate(startTime);
+        task = wrapRunnable(task);
+        startTime = getDelayedStartDate(startTime); //Add scheduled task delay
+        startTime = new Date(startTime.getTime() + delay); //Add period to inital run time
+
         
         final DelegatingRunnable delegatingRunnable = new DelegatingRunnable(this.executorService, task);
         @SuppressWarnings("unchecked")
@@ -191,6 +220,7 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
 
     @Override
     public ScheduledFuture<Object> scheduleWithFixedDelay(Runnable task, long delay) {
+        task = wrapRunnable(task);
         final long additionalStartDelay = this.getAdditionalStartDelay();
         if (additionalStartDelay > 0) {
             //If there is an additional delay use the alternate call which includes a startTime 
@@ -216,7 +246,12 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
 
         @Override
         public void run() {
-            executorService.submit(this.runnable);
+            try {
+                executorService.submit(this.runnable);
+            }
+            catch (RejectedExecutionException e) {
+                throw new RejectedExecutionException("Failed to execute scheduled task " + this.runnable, e); 
+            }
         }
     }
     
@@ -231,7 +266,12 @@ public class DelegatingThreadPoolTaskScheduler extends ThreadPoolTaskScheduler
 
         @Override
         public Future<T> call() throws Exception {
-            return executorService.submit(this.callable);
+            try {
+                return executorService.submit(this.callable);
+            }
+            catch (RejectedExecutionException e) {
+                throw new RejectedExecutionException("Failed to execute scheduled task " + this.callable, e); 
+            }
         }
     }
     

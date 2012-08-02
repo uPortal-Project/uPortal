@@ -367,7 +367,7 @@ public final class UrlStringBuilder implements Serializable, Cloneable {
 
         //Add the path
         for (final String element : this.path) {
-            url.append("/").append(element);
+            url.append("/").append(this.encode(element));
         }
         
         //Add parameters

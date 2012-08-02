@@ -23,15 +23,14 @@ import java.util.Map;
 
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.aggr.session.EventSession;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
-@Service
 public class LoggingPortalEventAggregator implements IPortalEventAggregator<PortalEvent> {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
@@ -41,12 +40,22 @@ public class LoggingPortalEventAggregator implements IPortalEventAggregator<Port
     }
 
     @Override
-    public void aggregateEvent(PortalEvent e, EventSession eventSession, Map<AggregationInterval, AggregationIntervalInfo> currentIntervals) {
-        logger.debug("EVENT  : {}", e);
+    public void aggregateEvent(PortalEvent e, EventSession eventSession,
+            EventAggregationContext eventAggregationContext,
+            Map<AggregationInterval, AggregationIntervalInfo> currentIntervals) {
+        
+        logger.debug("EVENT   : {}", e);
     }
 
     @Override
-    public void handleIntervalBoundary(AggregationInterval interval, Map<AggregationInterval, AggregationIntervalInfo> intervals) {
+    public void handleIntervalBoundary(AggregationInterval interval, EventAggregationContext eventAggregationContext,
+            Map<AggregationInterval, AggregationIntervalInfo> intervals) {
+        
         logger.debug("INTERVAL: {} - {}", interval, intervals.get(interval));
+    }
+
+    @Override
+    public int cleanUnclosedAggregations(DateTime start, DateTime end, AggregationInterval interval) {
+        return 0;
     }
 }

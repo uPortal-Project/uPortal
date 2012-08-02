@@ -257,45 +257,8 @@ public class PermissionsRESTController {
     @RequestMapping("/assignments/principal/{principal}.json")
     public ModelAndView getAssignmentsForPrincipal(@PathVariable("principal") String principal, @RequestParam(value="includeInherited", required = false) boolean includeInherited, HttpServletRequest request, HttpServletResponse response) {
         
-        Set<UniquePermission> directAssignments = new HashSet<UniquePermission>();
-        
         JsonEntityBean entity = groupListHelper.getEntityForPrincipal(principal);
-        IAuthorizationPrincipal p = this.authorizationService.newPrincipal(entity.getId(), entity.getEntityType().getClazz());
-        
-        // first get the permissions explicitly set for this principal
-        IPermission[] directPermissions = permissionStore.select(null, p.getPrincipalString(), null, null, null);
-        for (IPermission permission : directPermissions) {
-            directAssignments.add(new UniquePermission(permission.getOwner(), permission.getActivity(), permission.getTarget(), false));
-        }
-        
-        Set<UniquePermission> inheritedAssignments = new HashSet<UniquePermission>();
-        if (includeInherited) {
-            IGroupMember member = GroupService.getGroupMember(p.getKey(), p.getType());
-            for (Iterator<IEntityGroup> iter = member.getAllContainingGroups(); iter.hasNext();) {
-                IEntityGroup parent = iter.next();
-
-                IAuthorizationPrincipal parentPrincipal = this.authorizationService.newPrincipal(parent);
-                IPermission[] parentPermissions = permissionStore.select(null, parentPrincipal.getPrincipalString(), null, null, null);
-                for (IPermission permission : parentPermissions) {
-                    inheritedAssignments.add(new UniquePermission(permission.getOwner(), permission.getActivity(), permission.getTarget(), true));
-                }
-            }
-        }
-        
-        List<JsonPermission> permissions = new ArrayList<JsonPermission>();
-        
-        for (UniquePermission permission : directAssignments) {
-            if (p.hasPermission(permission.getOwner(), permission.getActivity(), permission.getIdentifier())) {
-                permissions.add(getPermissionForPrincipal(permission, entity));
-            }
-        }
-
-        for (UniquePermission permission : inheritedAssignments) {
-            if (p.hasPermission(permission.getOwner(), permission.getActivity(), permission.getIdentifier())) {
-                permissions.add(getPermissionForPrincipal(permission, entity));
-            }
-        }
-        Collections.sort(permissions);
+        List<JsonPermission> permissions = getPermissionsForEntity(entity, includeInherited);
 
         ModelAndView mv = new ModelAndView();
         mv.addObject("assignments", permissions);
@@ -304,6 +267,20 @@ public class PermissionsRESTController {
         return mv;
     }
     
+    @PreAuthorize("(#entityType == 'person' and #id == authentication.name) or hasPermission('string', 'ALL', new org.jasig.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
+    @RequestMapping("/assignments/{entityType}/{id}.json")
+    public ModelAndView getAssignmentsForEntity(@PathVariable("entityType") String entityType, @PathVariable("id") String id, @RequestParam(value="includeInherited", required = false) boolean includeInherited, HttpServletRequest request, HttpServletResponse response) {
+        
+        JsonEntityBean entity = groupListHelper.getEntity(entityType, id, false);
+        List<JsonPermission> permissions = getPermissionsForEntity(entity, includeInherited);
+
+        ModelAndView mv = new ModelAndView();
+        mv.addObject("assignments", permissions);
+        mv.setViewName("json");
+        
+        return mv;
+    }
+
     @PreAuthorize("hasPermission('string', 'ALL', new org.jasig.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
     @RequestMapping("/assignments/target/{target}.json")
     public ModelAndView getAssignmentsOnTarget(@PathVariable("target") String target, @RequestParam(value="includeInherited", required = false) boolean includeInherited, HttpServletRequest request, HttpServletResponse response) {
@@ -371,6 +348,51 @@ public class PermissionsRESTController {
         mv.setViewName("json");
         
         return mv;
+    }
+    
+    protected List<JsonPermission> getPermissionsForEntity(JsonEntityBean entity, boolean includeInherited) {
+        
+        Set<UniquePermission> directAssignments = new HashSet<UniquePermission>();
+        
+        IAuthorizationPrincipal p = this.authorizationService.newPrincipal(entity.getId(), entity.getEntityType().getClazz());
+        
+        // first get the permissions explicitly set for this principal
+        IPermission[] directPermissions = permissionStore.select(null, p.getPrincipalString(), null, null, null);
+        for (IPermission permission : directPermissions) {
+            directAssignments.add(new UniquePermission(permission.getOwner(), permission.getActivity(), permission.getTarget(), false));
+        }
+        
+        Set<UniquePermission> inheritedAssignments = new HashSet<UniquePermission>();
+        if (includeInherited) {
+            IGroupMember member = GroupService.getGroupMember(p.getKey(), p.getType());
+            for (@SuppressWarnings("unchecked") Iterator<IEntityGroup> iter = member.getAllContainingGroups(); iter.hasNext();) {
+                IEntityGroup parent = iter.next();
+
+                IAuthorizationPrincipal parentPrincipal = this.authorizationService.newPrincipal(parent);
+                IPermission[] parentPermissions = permissionStore.select(null, parentPrincipal.getPrincipalString(), null, null, null);
+                for (IPermission permission : parentPermissions) {
+                    inheritedAssignments.add(new UniquePermission(permission.getOwner(), permission.getActivity(), permission.getTarget(), true));
+                }
+            }
+        }
+        
+        List<JsonPermission> rslt = new ArrayList<JsonPermission>();
+        
+        for (UniquePermission permission : directAssignments) {
+            if (p.hasPermission(permission.getOwner(), permission.getActivity(), permission.getIdentifier())) {
+                rslt.add(getPermissionForPrincipal(permission, entity));
+            }
+        }
+
+        for (UniquePermission permission : inheritedAssignments) {
+            if (p.hasPermission(permission.getOwner(), permission.getActivity(), permission.getIdentifier())) {
+                rslt.add(getPermissionForPrincipal(permission, entity));
+            }
+        }
+        Collections.sort(rslt);
+        
+        return rslt;
+
     }
     
     protected JsonPermission getPermissionForPrincipal(UniquePermission permission, JsonEntityBean entity) {

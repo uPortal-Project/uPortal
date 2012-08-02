@@ -34,6 +34,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.layout.SessionAttributeProfileMapperImpl;
 import org.jasig.portal.portlets.swapper.IdentitySwapperPrincipal;
 import org.jasig.portal.portlets.swapper.IdentitySwapperSecurityContext;
 import org.jasig.portal.security.IPerson;
@@ -235,7 +236,7 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
 
         final String requestedProfile = request.getParameter(LoginController.REQUESTED_PROFILE_KEY);
         if (requestedProfile != null) {
-            s.setAttribute("profileKey", requestedProfile);
+            s.setAttribute(SessionAttributeProfileMapperImpl.DEFAULT_SESSION_ATTRIBUTE_NAME, requestedProfile);
         }
 
         IPerson person = null;

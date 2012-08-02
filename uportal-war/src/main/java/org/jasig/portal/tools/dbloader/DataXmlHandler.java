@@ -28,10 +28,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionOperations;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -43,14 +43,14 @@ import org.xml.sax.SAXException;
  * @version $Revision$
  */
 public class DataXmlHandler extends BaseDbXmlHandler {
-    private final JdbcTemplate jdbcTemplate;
-    private final TransactionTemplate transactionTemplate;
+    private final JdbcOperations jdbcOperations;
+    private final TransactionOperations transactionOperations;
     private final Map<String, Map<String, Integer>> tableColumnInfo;
     private final List<String> script = new LinkedList<String>();
     
-    public DataXmlHandler(JdbcTemplate jdbcTemplate, TransactionTemplate transactionTemplate, Map<String, Map<String, Integer>> tableColumnTypes) {
-        this.jdbcTemplate = jdbcTemplate;
-        this.transactionTemplate = transactionTemplate;
+    public DataXmlHandler(JdbcOperations jdbcOperations, TransactionOperations transactionOperations, Map<String, Map<String, Integer>> tableColumnTypes) {
+        this.jdbcOperations = jdbcOperations;
+        this.transactionOperations = transactionOperations;
         this.tableColumnInfo = tableColumnTypes;
     }
     
@@ -145,13 +145,10 @@ public class DataXmlHandler extends BaseDbXmlHandler {
             this.logger.info(sql + "\t" + Arrays.asList(values) + "\t" + Arrays.asList(ArrayUtils.toObject(types)));
         }
 
-        this.transactionTemplate.execute(new TransactionCallback() {
-
-            /* (non-Javadoc)
-             * @see org.springframework.transaction.support.TransactionCallback#doInTransaction(org.springframework.transaction.TransactionStatus)
-             */
-            public Object doInTransaction(TransactionStatus status) {
-                return jdbcTemplate.update(sql, values, types);
+        this.transactionOperations.execute(new TransactionCallbackWithoutResult() {
+			@Override
+			protected void doInTransactionWithoutResult(TransactionStatus status) {
+                jdbcOperations.update(sql, values, types);
             }
         });
     }

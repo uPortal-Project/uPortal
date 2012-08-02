@@ -20,31 +20,38 @@
 package org.jasig.portal.tools.dbloader;
 
 /**
+ * Handles portal schema drop/create/update
+ * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface ISchemaExport {
 
     /**
-     * @deprecated use {@link #create(boolean, boolean, boolean, String, boolean)}
-     */
-    @Deprecated
-    public void hbm2ddl(boolean export, boolean create, boolean drop, String outputFile, boolean haltOnError);
-    
-    /**
-     * @param export If the database should have the SQL executed against it
-     * @param create If database objects should be created
-     * @param drop If existing database objects should be dropped before creating new objects
-     * @param outputFile Optional file to write out the SQL to.
-     * @param haltOnError If an error should cause creation to halt with an exception
-     */
-    public void create(boolean export, boolean create, boolean drop, String outputFile, boolean haltOnError);
-    
-    /**
+     * Drop all objects, does not fail if drop statements fail to execute
+     * 
      * @param export If the database should have the SQL executed against it
      * @param outputFile Optional file to write out the SQL to.
-     * @param haltOnError If an error should cause creation to halt with an exception
+     * @param append If the output file should be appended to or overwritten
      */
-    public void update(boolean export, String outputFile, boolean haltOnError);
+    public void drop(boolean export, String outputFile, boolean append);
+    
+    /**
+     * Create all objects, fails if any create statement fails to execute
+     * 
+     * @param export If the database should have the SQL executed against it
+     * @param outputFile Optional file to write out the SQL to.
+     * @param append If the output file should be appended to or overwritten
+     */
+    public void create(boolean export, String outputFile, boolean append);
+    
+    /**
+     * Update all objects to match the current required schema, fails if any statement
+     * fails to execute.
+     * 
+     * @param export If the database should have the SQL executed against it
+     * @param outputFile Optional file to write out the SQL to.
+     * @param append If the output file should be appended to or overwritten
+     */
+    public void update(boolean export, String outputFile, boolean append);
 
 }

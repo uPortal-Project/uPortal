@@ -25,13 +25,11 @@ import static org.junit.Assert.assertNull;
 
 import java.util.concurrent.Callable;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.servlet.http.Cookie;
 
 import org.jasig.portal.portlet.dao.IPortletCookieDao;
 import org.jasig.portal.portlet.om.IPortalCookie;
-import org.jasig.portal.test.BaseJpaDaoTest;
+import org.jasig.portal.test.BasePortalJpaDaoTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,22 +44,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaPortalTestApplicationContext.xml")
-public class JpaPortletCookieDaoImplTest extends BaseJpaDaoTest {
+public class JpaPortletCookieDaoImplTest extends BasePortalJpaDaoTest {
 	
     @Autowired
 	private IPortletCookieDao portletCookieDao;
 
-    @PersistenceContext(unitName = "uPortalPersistence")
-    private EntityManager entityManager;
-    
-    @Override
-    protected EntityManager getEntityManager() {
-        return this.entityManager;
-    }
-
-	/**
-	 * 
-	 */
 	@Test
 	public void testPortalCookieLifeCycle() {
         final String value = this.execute(new Callable<String>() {
@@ -103,7 +90,7 @@ public class JpaPortletCookieDaoImplTest extends BaseJpaDaoTest {
                 
                 long expirationDelay = portalCookie.getExpires().getTime() - System.currentTimeMillis();
                 if (expirationDelay > 0) {
-                    Thread.sleep(expirationDelay);
+                    Thread.sleep(Math.max(500, expirationDelay));
                 }
                 
                 portletCookieDao.purgeExpiredCookies();

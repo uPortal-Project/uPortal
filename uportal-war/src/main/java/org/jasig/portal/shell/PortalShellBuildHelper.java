@@ -74,10 +74,10 @@ public class PortalShellBuildHelper {
     public void db(String target, String tablesFile, String dataFile, String scriptFile, boolean dropTables,
             boolean createTables, boolean populateTables) {
         try {
+            PortalShell.LOGGER.info("");
+            PortalShell.LOGGER.info("");
+            
             //DbLoader Script
-            PortalShell.LOGGER.info("");
-            PortalShell.LOGGER.info("");
-
             final DbLoaderConfigBuilder dbLoaderConfig = new DbLoaderConfigBuilder();
             dbLoaderConfig.setTablesFile(tablesFile);
             dbLoaderConfig.setDataFile(dataFile);
@@ -95,8 +95,7 @@ public class PortalShellBuildHelper {
         }
     }
 
-    public void hibernateCreate(String target, String schemaExportBeanName, boolean export, boolean create,
-            boolean drop, String outputFile, boolean haltOnError) {
+    public void hibernateCreate(String target, String schemaExportBeanName, boolean export, String outputFile) {
         final ISchemaExport schemaExportBean = this.schemaExportBeans.get(schemaExportBeanName);
         if (schemaExportBean == null) {
             throw new RuntimeException(target + " could not find schemaExportBean " + schemaExportBeanName);
@@ -105,19 +104,18 @@ public class PortalShellBuildHelper {
         try {
             PortalShell.LOGGER.info("");
             PortalShell.LOGGER.info("");
-            PortalShell.LOGGER.info("HBM2DDL: " + schemaExportBeanName);
+            PortalShell.LOGGER.info("Hibernate Create DDL: " + schemaExportBeanName);
 
             outputFile = StringUtils.trimToNull(outputFile);
 
-            schemaExportBean.create(export, create, drop, outputFile, haltOnError);
+            schemaExportBean.create(export, outputFile, true);
         }
         catch (Exception e) {
             throw new RuntimeException(target + " for " + schemaExportBeanName + " failed", e);
         }
     }
 
-    public void hibernateUpdate(String target, String schemaExportBeanName, boolean export, String outputFile,
-            boolean haltOnError) {
+    public void hibernateDrop(String target, String schemaExportBeanName, boolean export, String outputFile) {
         final ISchemaExport schemaExportBean = this.schemaExportBeans.get(schemaExportBeanName);
         if (schemaExportBean == null) {
             throw new RuntimeException(target + " could not find schemaExportBean " + schemaExportBeanName);
@@ -126,11 +124,31 @@ public class PortalShellBuildHelper {
         try {
             PortalShell.LOGGER.info("");
             PortalShell.LOGGER.info("");
-            PortalShell.LOGGER.info("HBM2DDL Schema Update: " + schemaExportBeanName);
+            PortalShell.LOGGER.info("Hibernate Drop DDL: " + schemaExportBeanName);
 
             outputFile = StringUtils.trimToNull(outputFile);
 
-            schemaExportBean.update(export, outputFile, haltOnError);
+            schemaExportBean.drop(export, outputFile, true);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(target + " for " + schemaExportBeanName + " failed", e);
+        }
+    }
+
+    public void hibernateUpdate(String target, String schemaExportBeanName, boolean export, String outputFile) {
+        final ISchemaExport schemaExportBean = this.schemaExportBeans.get(schemaExportBeanName);
+        if (schemaExportBean == null) {
+            throw new RuntimeException(target + " could not find schemaExportBean " + schemaExportBeanName);
+        }
+
+        try {
+            PortalShell.LOGGER.info("");
+            PortalShell.LOGGER.info("");
+            PortalShell.LOGGER.info("Hibernate Update DDL: " + schemaExportBeanName);
+
+            outputFile = StringUtils.trimToNull(outputFile);
+
+            schemaExportBean.update(export, outputFile, true);
         }
         catch (Exception e) {
             throw new RuntimeException(target + " for " + schemaExportBeanName + " failed", e);

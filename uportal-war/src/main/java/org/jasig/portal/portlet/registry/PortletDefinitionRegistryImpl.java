@@ -114,7 +114,6 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
 	}
     
     @Override
-    @RequestCache
     public IPortletDefinition getPortletDefinitionByFname(String fname) {
         Validate.notNull(fname, "portletFname can not be null");
         

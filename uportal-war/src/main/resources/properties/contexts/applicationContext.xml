@@ -20,10 +20,14 @@
 
 -->
 
-<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans"
-    xmlns:context="http://www.springframework.org/schema/context" xmlns:aop="http://www.springframework.org/schema/aop"
-    xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
         
 
@@ -51,6 +55,30 @@
         </property>
     </bean>
     
+    <bean id="systemPropertySetter" class="org.jasig.portal.spring.context.SystemPropertySetter">
+        <property name="systemProperties">
+            <props>
+                <prop key="uPortal.cacheManager.jgroups.udp.mcast_addr">${uPortal.cacheManager.jgroups.udp.mcast_addr:}</prop>
+                <prop key="uPortal.cacheManager.jgroups.udp.mcast_port">${uPortal.cacheManager.jgroups.udp.mcast_port:}</prop>
+                <prop key="uPortal.cacheManager.jgroups.udp.bind_port">${uPortal.cacheManager.jgroups.udp.bind_port:}</prop>
+                <prop key="uPortal.cacheManager.jgroups.udp.ip_ttl">${uPortal.cacheManager.jgroups.udp.ip_ttl:}</prop>
+                <prop key="uPortal.cacheManager.jgroups.fd_sock.start_port">${uPortal.cacheManager.jgroups.fd_sock.start_port:}</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <util:map id="productVersions" value-type="org.jasig.portal.version.om.Version">
+    	<entry value="4.0.6">
+    		<key><util:constant static-field="org.jasig.portal.jpa.BasePortalJpaDao.PERSISTENCE_UNIT_NAME"/></key>
+    	</entry>
+    	<entry value="4.0.6">
+    		<key><util:constant static-field="org.jasig.portal.jpa.BaseRawEventsJpaDao.PERSISTENCE_UNIT_NAME"/></key>
+    	</entry>
+    	<entry value="4.0.6">
+    		<key><util:constant static-field="org.jasig.portal.jpa.BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME"/></key>
+    	</entry>
+    </util:map>
+    
     <bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor" lazy-init="false" />
     
     <bean id="portalPropertyEditorRegistrar" class="org.jasig.portal.spring.properties.PortalPropertyEditorRegistrar">
@@ -60,6 +88,7 @@
                 <entry key="javax.portlet.WindowState"><bean class="org.jasig.portal.spring.properties.WindowStateEditor" /></entry>
                 <entry key="org.joda.time.ReadablePeriod"><bean class="org.jasig.portal.spring.properties.ReadablePeriodEditor" /></entry>
                 <entry key="org.joda.time.ReadableDuration"><bean class="org.jasig.portal.spring.properties.ReadableDurationEditor" /></entry>
+                <entry key="org.jasig.portal.version.om.Version"><bean class="org.jasig.portal.spring.properties.VersionEditor"/></entry>
             </map>
         </property>
     </bean>

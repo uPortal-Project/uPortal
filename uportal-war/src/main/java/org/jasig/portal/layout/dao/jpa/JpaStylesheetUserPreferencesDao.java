@@ -21,8 +21,6 @@ package org.jasig.portal.layout.dao.jpa;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -31,14 +29,13 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
 import org.jasig.portal.IUserProfile;
-import org.jasig.portal.jpa.BaseJpaDao;
+import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.layout.dao.IStylesheetUserPreferencesDao;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.security.IPerson;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
 
@@ -49,24 +46,13 @@ import com.google.common.base.Function;
  * @version $Revision$
  */
 @Repository("stylesheetUserPreferencesDao")
-public class JpaStylesheetUserPreferencesDao extends BaseJpaDao implements IStylesheetUserPreferencesDao {
+public class JpaStylesheetUserPreferencesDao extends BasePortalJpaDao implements IStylesheetUserPreferencesDao {
     private CriteriaQuery<StylesheetUserPreferencesImpl> findAllPreferences;
     private CriteriaQuery<StylesheetUserPreferencesImpl> findAllPreferencesForUser;
     private CriteriaQuery<StylesheetUserPreferencesImpl> findPreferencesByDescriptorUserProfileQuery;
     private ParameterExpression<StylesheetDescriptorImpl> stylesheetDescriptorParameter;
     private ParameterExpression<Integer> userIdParameter;
     private ParameterExpression<Integer> profileIdParameter;
-    private EntityManager entityManager;
-
-    @PersistenceContext(unitName = "uPortalPersistence")
-    public final void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
-    
-    @Override
-    protected EntityManager getEntityManager() {
-        return this.entityManager;
-    }
     
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -140,57 +126,44 @@ public class JpaStylesheetUserPreferencesDao extends BaseJpaDao implements IStyl
         return query.getResultList();
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.dao.IStylesheetUserPreferencesDao#createStylesheetUserPreferences(org.jasig.portal.layout.om.IStylesheetDescriptor, org.jasig.portal.security.IPerson, org.jasig.portal.UserProfile)
-     */
-    @Transactional
+    @PortalTransactional
     @Override
     public IStylesheetUserPreferences createStylesheetUserPreferences(IStylesheetDescriptor stylesheetDescriptor, IPerson person, IUserProfile profile) {
         final int userId = person.getID();
         final int profileId = profile.getProfileId();
         final StylesheetUserPreferencesImpl stylesheetUserPreferences = new StylesheetUserPreferencesImpl(stylesheetDescriptor, userId, profileId);
         
-        this.entityManager.persist(stylesheetUserPreferences);
+        this.getEntityManager().persist(stylesheetUserPreferences);
         
         return stylesheetUserPreferences;
     }
     
-    @Transactional
+    @PortalTransactional
     @Override
     public IStylesheetUserPreferences createStylesheetUserPreferences(IStylesheetDescriptor stylesheetDescriptor, int userId, int profileId) {
         final StylesheetUserPreferencesImpl stylesheetUserPreferences = new StylesheetUserPreferencesImpl(stylesheetDescriptor, userId, profileId);
         
-        this.entityManager.persist(stylesheetUserPreferences);
+        this.getEntityManager().persist(stylesheetUserPreferences);
         
         return stylesheetUserPreferences;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.dao.IStylesheetUserPreferencesDao#getStylesheetUserPreferences()
-     */
     @Override
     public List<? extends IStylesheetUserPreferences> getStylesheetUserPreferences() {
         final TypedQuery<StylesheetUserPreferencesImpl> query = this.createCachedQuery(this.findAllPreferences);
         return query.getResultList();
     }
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.dao.IStylesheetUserPreferencesDao#getStylesheetUserPreferences(int)
-     */
     @Override
     public IStylesheetUserPreferences getStylesheetUserPreferences(long id) {
-        return this.entityManager.find(StylesheetUserPreferencesImpl.class, id);
+        return this.getEntityManager().find(StylesheetUserPreferencesImpl.class, id);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.dao.IStylesheetUserPreferencesDao#getStylesheetUserPreferences(long, org.jasig.portal.security.IPerson, org.jasig.portal.UserProfile)
-     */
     @Override
     public IStylesheetUserPreferences getStylesheetUserPreferences(IStylesheetDescriptor stylesheetDescriptor, IPerson person, IUserProfile profile) {
         return this.getStylesheetUserPreferences(stylesheetDescriptor, person.getID(), profile.getProfileId());
     }
     
-    @SuppressWarnings("deprecation")
     @Deprecated
     @Override
     public IStylesheetUserPreferences getStylesheetUserPreferences(IStylesheetDescriptor stylesheetDescriptor, int personId, int profileId) {
@@ -204,21 +177,15 @@ public class JpaStylesheetUserPreferencesDao extends BaseJpaDao implements IStyl
         return DataAccessUtils.uniqueResult(results);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.dao.IStylesheetUserPreferencesDao#storeStylesheetUserPreferences(org.jasig.portal.layout.om.IStylesheetUserPreferences)
-     */
-    @Transactional
+    @PortalTransactional
     @Override
     public void storeStylesheetUserPreferences(IStylesheetUserPreferences stylesheetUserPreferences) {
-        this.entityManager.persist(stylesheetUserPreferences);
+        this.getEntityManager().persist(stylesheetUserPreferences);
     }
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.layout.dao.IStylesheetUserPreferencesDao#deleteStylesheetUserPreferences(org.jasig.portal.layout.om.IStylesheetUserPreferences)
-     */
-    @Transactional
+    @PortalTransactional
     @Override
     public void deleteStylesheetUserPreferences(IStylesheetUserPreferences stylesheetUserPreferences) {
-        this.entityManager.remove(stylesheetUserPreferences);
+        this.getEntityManager().remove(stylesheetUserPreferences);
     }
 }

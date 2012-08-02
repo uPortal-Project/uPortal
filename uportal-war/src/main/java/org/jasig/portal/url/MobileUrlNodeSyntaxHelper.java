@@ -88,6 +88,7 @@ public class MobileUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IUrlNodeSyntaxHelper#getFolderNamesForLayoutNode(javax.servlet.http.HttpServletRequest, java.lang.String)
      */
+    @RequestCache(keyMask={false, true})
     @Override
     public List<String> getFolderNamesForLayoutNode(HttpServletRequest request, String layoutNodeId) {
         //layout node folders are never part of the mobile url
@@ -105,7 +106,7 @@ public class MobileUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
     /* (non-Javadoc)
      * @see org.jasig.portal.url.IUrlNodeSyntaxHelper#getFolderNameForPortlet(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindowId)
      */
-    @RequestCache
+    @RequestCache(keyMask={false, true})
     @Override
     public String getFolderNameForPortlet(HttpServletRequest request, IPortletWindowId portletWindowId) {
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
@@ -122,7 +123,6 @@ public class MobileUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
     /* (non-Javadoc)
 	 * @see org.jasig.portal.url.IUrlNodeSyntaxHelper#getPortletForFolderName(javax.servlet.http.HttpServletRequest, java.lang.String, java.lang.String)
 	 */
-    @RequestCache
 	@Override
 	public IPortletWindowId getPortletForFolderName(HttpServletRequest request, String targetedLayoutNodeId, String folderName) {
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);

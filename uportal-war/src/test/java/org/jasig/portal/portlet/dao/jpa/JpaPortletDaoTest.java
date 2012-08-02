@@ -31,9 +31,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.jasig.portal.concurrency.CallableWithoutResult;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.dao.IPortletEntityDao;
@@ -44,7 +41,7 @@ import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletType;
-import org.jasig.portal.test.BaseJpaDaoTest;
+import org.jasig.portal.test.BasePortalJpaDaoTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -58,7 +55,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaPortalTestApplicationContext.xml")
-public class JpaPortletDaoTest extends BaseJpaDaoTest {
+public class JpaPortletDaoTest extends BasePortalJpaDaoTest {
     @Autowired
     private IPortletTypeDao jpaChannelTypeDao;
     @Autowired
@@ -66,14 +63,6 @@ public class JpaPortletDaoTest extends BaseJpaDaoTest {
     @Autowired
     private IPortletEntityDao jpaPortletEntityDao;
 
-    @PersistenceContext(unitName = "uPortalPersistence")
-    private EntityManager entityManager;
-    
-    @Override
-    protected EntityManager getEntityManager() {
-        return this.entityManager;
-    }
-    
     @Before
     public void onSetUp() throws Exception {
         this.execute(new Callable<Object>() {
