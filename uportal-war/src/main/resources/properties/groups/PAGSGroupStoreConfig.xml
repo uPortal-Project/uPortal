@@ -63,24 +63,20 @@
       <member-key>authenticated_users</member-key>
       <!-- Roles -->
       <member-key>SSP_ADMINISTRATOR</member-key>
-      <member-key>SSP_SUPPORT_STAFF</member-key>
       <member-key>SSP_COACH</member-key>
       <member-key>SSP_DEVELOPER</member-key>
       <member-key>SSP_FACULTY</member-key>
       <member-key>SSP_MANAGER</member-key>
+      <member-key>SSP_SUPPORT_STAFF</member-key>
       <!-- Special Permissions -->
-      <member-key>DATA_MY_RECORD_ONLY</member-key>
-      <member-key>DATA_EVERYONE</member-key>
       <member-key>DATA_ACADEMIC_RESOURCE_CENTER</member-key>
       <member-key>DATA_COUNSELING_SERVICES</member-key>
       <member-key>DATA_DISABILITY</member-key>
       <member-key>DATA_DISPLACED_WORKERS</member-key>
       <member-key>DATA_EARLY_ALERT</member-key>
-      <member-key>DATA_ENGLISH_SECOND_LANGAGE</member-key>
+      <member-key>DATA_ENGLISH_SECOND_LANGUAGE</member-key>
       <member-key>DATA_FAST_FORWARD</member-key>
       <member-key>DATA_INDIVIDUALIZED_LEARNING_PLAN</member-key>
-      <member-key>DATA_MANAGER</member-key>
-      <member-key>DATA_STAFF</member-key>
     </members>
   </group>
 
@@ -213,43 +209,13 @@
   </group>
 
   <group>
-    <group-key>DATA_MY_RECORD_ONLY</group-key>
-    <group-name>(has) DATA_MY_RECORD_ONLY</group-name>
-    <group-description>Users with the appropriate value in their DATA_MY_RECORD_ONLY attribute.</group-description>
-    <selection-test>
-      <test-group>
-        <test>
-          <attribute-name>DATA_MY_RECORD_ONLY</attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
-          <test-value>TRUE</test-value>
-        </test>
-      </test-group>
-    </selection-test>
-  </group>
-
-  <group>
-    <group-key>DATA_EVERYONE</group-key>
-    <group-name>(has) DATA_EVERYONE</group-name>
-    <group-description>Users with the appropriate value in their DATA_EVERYONE attribute.</group-description>
-    <selection-test>
-      <test-group>
-        <test>
-          <attribute-name>DATA_EVERYONE</attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
-          <test-value>TRUE</test-value>
-        </test>
-      </test-group>
-    </selection-test>
-  </group>
-
-  <group>
     <group-key>DATA_ACADEMIC_RESOURCE_CENTER</group-key>
     <group-name>(has) DATA_ACADEMIC_RESOURCE_CENTER</group-name>
     <group-description>Users with the appropriate value in their DATA_ACADEMIC_RESOURCE_CENTER attribute.</group-description>
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>xxx</attribute-name>
+          <attribute-name>DATA_ACADEMIC_RESOURCE_CENTER</attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
           <test-value>TRUE</test-value>
         </test>
@@ -318,13 +284,13 @@
   </group>
 
   <group>
-    <group-key>DATA_ENGLISH_SECOND_LANGAGE</group-key>
-    <group-name>(has) DATA_ENGLISH_SECOND_LANGAGE</group-name>
-    <group-description>Users with the appropriate value in their DATA_ENGLISH_SECOND_LANGAGE attribute.</group-description>
+    <group-key>DATA_ENGLISH_SECOND_LANGUAGE</group-key>
+    <group-name>(has) DATA_ENGLISH_SECOND_LANGUAGE</group-name>
+    <group-description>Users with the appropriate value in their DATA_ENGLISH_SECOND_LANGUAGE attribute.</group-description>
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>DATA_ENGLISH_SECOND_LANGAGE</attribute-name>
+          <attribute-name>DATA_ENGLISH_SECOND_LANGUAGE</attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
           <test-value>TRUE</test-value>
         </test>
@@ -355,36 +321,6 @@
       <test-group>
         <test>
           <attribute-name>DATA_INDIVIDUALIZED_LEARNING_PLAN</attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
-          <test-value>TRUE</test-value>
-        </test>
-      </test-group>
-    </selection-test>
-  </group>
-
-  <group>
-    <group-key>DATA_MANAGER</group-key>
-    <group-name>(has) DATA_MANAGER</group-name>
-    <group-description>Users with the appropriate value in their DATA_MANAGER attribute.</group-description>
-    <selection-test>
-      <test-group>
-        <test>
-          <attribute-name>DATA_MANAGER</attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
-          <test-value>TRUE</test-value>
-        </test>
-      </test-group>
-    </selection-test>
-  </group>
-
-  <group>
-    <group-key>DATA_STAFF</group-key>
-    <group-name>(has) DATA_STAFF</group-name>
-    <group-description>Users with the appropriate value in their DATA_STAFF attribute.</group-description>
-    <selection-test>
-      <test-group>
-        <test>
-          <attribute-name>DATA_STAFF</attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
           <test-value>TRUE</test-value>
         </test>
