@@ -187,30 +187,6 @@
         <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
             factory-method="createSingleChoicePreference">
             <!-- String name -->
-            <constructor-arg value="DATA_EVERYONE"/>
-            <!-- String label (optionally a key for messages.properties) -->
-            <constructor-arg value="DATA_EVERYONE"/>
-            <!-- SingleChoiceDisplay displayType -->
-            <constructor-arg value="SELECT"/>
-			<!-- List<Option> options -->
-            <constructor-arg>
-            	<list>
-            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
-            			<property name="label" value="FALSE" />
-            			<property name="value" value="FALSE" />
-            		</bean>
-            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
-            			<property name="label" value="TRUE" />
-            			<property name="value" value="TRUE" />
-            		</bean>
-            	</list>
-            </constructor-arg>
-            <!-- String defaultValue -->
-            <constructor-arg value="FALSE"/>
-        </bean>
-        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
-            factory-method="createSingleChoicePreference">
-            <!-- String name -->
             <constructor-arg value="DATA_ACADEMIC_RESOURCE_CENTER"/>
             <!-- String label (optionally a key for messages.properties) -->
             <constructor-arg value="DATA_ACADEMIC_RESOURCE_CENTER"/>
@@ -382,54 +358,6 @@
             <constructor-arg value="DATA_INDIVIDUALIZED_LEARNING_PLAN"/>
             <!-- String label (optionally a key for messages.properties) -->
             <constructor-arg value="DATA_INDIVIDUALIZED_LEARNING_PLAN"/>
-            <!-- SingleChoiceDisplay displayType -->
-            <constructor-arg value="SELECT"/>
-			<!-- List<Option> options -->
-            <constructor-arg>
-            	<list>
-            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
-            			<property name="label" value="FALSE" />
-            			<property name="value" value="FALSE" />
-            		</bean>
-            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
-            			<property name="label" value="TRUE" />
-            			<property name="value" value="TRUE" />
-            		</bean>
-            	</list>
-            </constructor-arg>
-            <!-- String defaultValue -->
-            <constructor-arg value="FALSE"/>
-        </bean>
-        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
-            factory-method="createSingleChoicePreference">
-            <!-- String name -->
-            <constructor-arg value="DATA_MANAGER"/>
-            <!-- String label (optionally a key for messages.properties) -->
-            <constructor-arg value="DATA_MANAGER"/>
-            <!-- SingleChoiceDisplay displayType -->
-            <constructor-arg value="SELECT"/>
-			<!-- List<Option> options -->
-            <constructor-arg>
-            	<list>
-            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
-            			<property name="label" value="FALSE" />
-            			<property name="value" value="FALSE" />
-            		</bean>
-            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
-            			<property name="label" value="TRUE" />
-            			<property name="value" value="TRUE" />
-            		</bean>
-            	</list>
-            </constructor-arg>
-            <!-- String defaultValue -->
-            <constructor-arg value="FALSE"/>
-        </bean>
-        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
-            factory-method="createSingleChoicePreference">
-            <!-- String name -->
-            <constructor-arg value="DATA_STAFF"/>
-            <!-- String label (optionally a key for messages.properties) -->
-            <constructor-arg value="DATA_STAFF"/>
             <!-- SingleChoiceDisplay displayType -->
             <constructor-arg value="SELECT"/>
 			<!-- List<Option> options -->
