@@ -187,6 +187,8 @@
 
                 </div>
             </div>
+            
+            <p><spring:message code="some.changes,may.require.a.few.minutes.to.take.effect"/></p>
 
             <!-- Portlet Section -->
             <div class="portlet-section" role="region">

@@ -245,7 +245,7 @@
      +-->
     <cache name="org.jasig.portal.groups.IEntity"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     <!-- 
      | Caches IPermissionSet objects
