@@ -1,21 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beansProjectDescription>
 	<version>1</version>
-	<pluginVersion><![CDATA[2.9.0.201203011806-RELEASE]]></pluginVersion>
+	<pluginVersion><![CDATA[3.0.0.201207310107-CI-B91]]></pluginVersion>
 	<configSuffixes>
 		<configSuffix><![CDATA[xml]]></configSuffix>
 	</configSuffixes>
 	<enableImports><![CDATA[false]]></enableImports>
 	<configs>
-		<config>src/main/resources/properties/contexts/abstractionLayerContext.xml</config>
 		<config>src/main/resources/properties/contexts/applicationContext.xml</config>
 		<config>src/main/resources/properties/contexts/cacheContext.xml</config>
 		<config>src/main/resources/properties/contexts/channelContainerContext.xml</config>
 		<config>src/main/resources/properties/contexts/clusterContext.xml</config>
 		<config>src/main/resources/properties/contexts/datasourceContext.xml</config>
-		<config>src/main/resources/properties/contexts/eventAggregationContext.xml</config>
 		<config>src/main/resources/properties/contexts/eventPersistenceContext.xml</config>
-		<config>src/main/resources/properties/contexts/flatGroupStoreContext.xml</config>
 		<config>src/main/resources/properties/contexts/flowsContext.xml</config>
 		<config>src/main/resources/properties/contexts/groupsContext.xml</config>
 		<config>src/main/resources/properties/contexts/importExportContext.xml</config>
@@ -34,7 +31,6 @@
 		<config>src/main/resources/properties/contexts/securityContext.xml</config>
 		<config>src/main/resources/properties/contexts/servicesContext.xml</config>
 		<config>src/main/resources/properties/contexts/userContext.xml</config>
-		<config>src/main/resources/properties/contexts/utilityGroupStoreContext.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
