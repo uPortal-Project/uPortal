@@ -49,6 +49,7 @@
                 <directory>src/main/resources</directory>
                 <excludes>
                     <!-- List the same files or patterns as above here...  -->
+                    <include>changeme*/*.*</include>
                 </excludes>
             </resource>
         </resources>
