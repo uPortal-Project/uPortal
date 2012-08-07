@@ -165,7 +165,7 @@ public class DialectAwareTransactionInterceptor extends TransactionManagerCachin
             
             //Proxy the existing transactionAttribute to mix in our SkipTransactionAttribute interface
             return (TransactionAttribute)Proxy.newProxyInstance(
-                    Thread.currentThread().getContextClassLoader(), 
+                    DialectAwareTransactionInterceptor.class.getClassLoader(), 
                     interfaces.toArray(new Class<?>[interfaces.size()]), 
                     new InvocationHandler() {
                         @Override

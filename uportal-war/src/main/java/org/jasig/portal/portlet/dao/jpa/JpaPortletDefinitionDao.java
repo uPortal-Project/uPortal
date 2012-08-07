@@ -144,7 +144,7 @@ public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortle
     
  
     @Override
-    @DialectAwareTransactional(PostgreSQL81Dialect.class)
+    @DialectAwareTransactional(value = PostgreSQL81Dialect.class, exclude = false)
     @PortalTransactionalReadOnly
     public IPortletDefinition getPortletDefinition(IPortletDefinitionId portletDefinitionId) {
         Validate.notNull(portletDefinitionId, "portletDefinitionId can not be null");
@@ -156,7 +156,7 @@ public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortle
     }
     
     @Override
-    @DialectAwareTransactional(PostgreSQL81Dialect.class)
+    @DialectAwareTransactional(value = PostgreSQL81Dialect.class, exclude = false)
     @PortalTransactionalReadOnly
     public IPortletDefinition getPortletDefinition(String portletDefinitionIdString) {
         Validate.notNull(portletDefinitionIdString, "portletDefinitionIdString can not be null");
@@ -168,7 +168,7 @@ public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortle
     }
 
 	@Override
-	@DialectAwareTransactional(PostgreSQL81Dialect.class)
+	@DialectAwareTransactional(value = PostgreSQL81Dialect.class, exclude = false)
     @PortalTransactionalReadOnly
     public IPortletDefinition getPortletDefinitionByFname(String fname) {
 	    final NaturalIdQuery<PortletDefinitionImpl> query = this.createNaturalIdQuery(PortletDefinitionImpl.class);
@@ -177,7 +177,7 @@ public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortle
 	}
 
     @Override
-    @DialectAwareTransactional(PostgreSQL81Dialect.class)
+    @DialectAwareTransactional(value = PostgreSQL81Dialect.class, exclude = false)
     @PortalTransactionalReadOnly
     public IPortletDefinition getPortletDefinitionByName(String name) {
         final TypedQuery<PortletDefinitionImpl> query = this.createCachedQuery(this.findDefinitionByNameQuery);
@@ -188,7 +188,7 @@ public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortle
     }
     
     @Override
-    @DialectAwareTransactional(PostgreSQL81Dialect.class)
+    @DialectAwareTransactional(value = PostgreSQL81Dialect.class, exclude = false)
     @PortalTransactionalReadOnly
     public List<IPortletDefinition> searchForPortlets(String term, boolean allowPartial) {
         final CriteriaQuery<PortletDefinitionImpl> criteriaQuery;
@@ -226,7 +226,7 @@ public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortle
 	}
 
 	@Override
-	@DialectAwareTransactional(PostgreSQL81Dialect.class)
+	@DialectAwareTransactional(value = PostgreSQL81Dialect.class, exclude = false)
 	@PortalTransactionalReadOnly
     public List<IPortletDefinition> getPortletDefinitions() {
 	    final TypedQuery<PortletDefinitionImpl> query = this.createCachedQuery(this.findAllPortletDefinitions);
