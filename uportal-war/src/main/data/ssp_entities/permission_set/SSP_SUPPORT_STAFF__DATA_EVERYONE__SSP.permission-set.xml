@@ -3,9 +3,9 @@
   <owner>SSP</owner>
   <principal-type>org.jasig.portal.groups.IEntityGroup</principal-type>
   <principal> 
-    <group>(has) DATA_MANAGER</group> 
+    <group>SSP_SUPPORT_STAFF</group> 
   </principal>
-  <activity>DATA_MANAGER</activity>
+  <activity>DATA_EVERYONE</activity>
   <target permission-type="GRANT"> 
     <literal>ALL</literal> 
   </target>

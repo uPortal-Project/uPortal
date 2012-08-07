@@ -3,7 +3,7 @@
   <owner>SSP</owner>
   <principal-type>org.jasig.portal.groups.IEntityGroup</principal-type>
   <principal> 
-    <group>(has) DATA_STAFF</group> 
+    <group>SSP_SUPPORT_STAFF</group> 
   </principal>
   <activity>DATA_STAFF</activity>
   <target permission-type="GRANT"> 
