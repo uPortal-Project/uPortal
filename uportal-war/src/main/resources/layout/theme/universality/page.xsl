@@ -116,6 +116,8 @@
             var up = up || {};
             up.jQuery = jQuery.noConflict(true);
             up.fluid = fluid;
+            up._ = _.noConflict();
+            up.Backbone = Backbone.noConflict();
             fluid = null;
             fluid_1_4 = null;
         </script>
