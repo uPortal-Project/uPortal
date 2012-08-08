@@ -151,3 +151,11 @@
 		}
 	}
 }
+
+// Opacity (pass in whole number as percentage)
+@mixin opacity($percentage) {
+  -moz-opacity: $percentage/100;
+  opacity: $percentage/100;
+  filter: progid:DXImageTransform.Microsoft.Alpha(opacity=#{$percentage});
+  filter:alpha(opacity=#{$percentage});
+}

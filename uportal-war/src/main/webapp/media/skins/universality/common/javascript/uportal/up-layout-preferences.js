@@ -129,17 +129,18 @@ var uportal = uportal || {};
                 if (!separateAcceptor) minColumns++;
             }
         }
-                    
-        var permitted = layouts.slice();
-        $(permitted).each(function(idx, layout){
-            if (
-                (!canAddColumns && layout.columns.length > columns.length) ||
-                (layout.columns.length < minColumns)
-               ) {
+        
+        // set disabled to true for layouts not permitted
+        $(layouts).each(function(idx, layout) {
+            var cannotAddColumns    = !canAddColumns && layout.columns.length > columns.length,
+                cannotRemoveColumns = layout.columns.length < minColumns;
+
+            if (cannotAddColumns || cannotRemoveColumns) {
                 layout.disabled = true;
             }
         });
-        return permitted;
+        
+        return layouts;
     };
     
     var updateColumns = function(layout, that) {
