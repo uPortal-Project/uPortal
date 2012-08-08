@@ -48,7 +48,7 @@
     <portlet-preference>
         <name>url</name>
         <readOnly>false</readOnly>
-        <value>http://www.salon.com/feed/RDF/salon_use.rdf</value>
+        <value>http://www.salon.com/feed/</value>
     </portlet-preference>
     <portlet-preference>
         <name>summaryView</name>
