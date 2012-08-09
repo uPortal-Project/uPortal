@@ -197,7 +197,19 @@
 		 			border: $galleryRIBorderHover;
 		 			@include gradient($galleryRIGradient1Hover,$galleryRIGradient2Hover);
 		 		}
-		 		.portlet-wrapper, .package-wrapper {
+		
+        .ri-wrapper.disabled {
+          @include opacity(20);
+          border: none !important;
+          
+          &:hover, &:focus,
+          a:hover, a:focus {
+            background: none !important;
+            cursor: default !important;
+          }
+        }
+        
+        .portlet-wrapper, .package-wrapper {
 		 			.ri-link {
 		 				color: $galleryRILink;
 		 				background: $galleryRIBackground;
