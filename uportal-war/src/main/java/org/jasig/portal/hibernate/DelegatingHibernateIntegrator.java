@@ -41,26 +41,23 @@ import org.slf4j.LoggerFactory;
  * @author Eric Dalquist
  */
 public class DelegatingHibernateIntegrator implements Integrator {
-	private static final Set<HibernateConfigurationAware> configurationAwareBeans = new HashSet<HibernateConfigurationAware>();
+	private static final Set<HibernateConfigurationAwareInjector> configurationAwareBeans = new HashSet<HibernateConfigurationAwareInjector>();
 	private static final Map<String, HibernateConfiguration> hibernateInfoMap = new HashMap<String, DelegatingHibernateIntegrator.HibernateConfiguration>();
 	
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 	
-	public static void registerConfigurationAwareBeans(HibernateConfigurationAware configurationAwareBean) {
+	public static void registerConfigurationAwareBeans(HibernateConfigurationAwareInjector configurationAwareBean) {
 	    synchronized (configurationAwareBeans) {
 	        //make sure any hibernate configs already loaded get injected
 	        for (final Map.Entry<String, HibernateConfiguration> configEntry : hibernateInfoMap.entrySet()) {
-	            final String persistenceUnitName = configEntry.getKey();
-	            if (configurationAwareBean.supports(persistenceUnitName)) {
-	                configurationAwareBean.setConfiguration(persistenceUnitName, configEntry.getValue());
-	            }
+                configurationAwareBean.setConfiguration(configEntry.getKey(), configEntry.getValue());
 	        }
 	        
 	        configurationAwareBeans.add(configurationAwareBean);
 	    }
 	}
 	
-	public static void unregisterConfigurationAwareBeans(HibernateConfigurationAware configurationAwareBean) {
+	public static void unregisterConfigurationAwareBeans(HibernateConfigurationAwareInjector configurationAwareBean) {
 		configurationAwareBeans.remove(configurationAwareBean);
 	}
 
@@ -79,10 +76,8 @@ public class DelegatingHibernateIntegrator implements Integrator {
         synchronized (configurationAwareBeans) {
             hibernateInfoMap.put(persistenceUnitName, hibernateConfiguration);
         	
-        	for (final HibernateConfigurationAware configurationAwareBean : configurationAwareBeans) {
-        	    if (configurationAwareBean.supports(persistenceUnitName)) {
-        	        configurationAwareBean.setConfiguration(persistenceUnitName, hibernateConfiguration);
-        	    }
+        	for (final HibernateConfigurationAwareInjector configurationAwareBean : configurationAwareBeans) {
+    	        configurationAwareBean.setConfiguration(persistenceUnitName, hibernateConfiguration);
     		}
         }
     }

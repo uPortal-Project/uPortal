@@ -31,9 +31,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-
-import org.stringtemplate.v4.*;
-
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -65,12 +62,16 @@ import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;
 import org.jasig.portal.url.IPortletUrlBuilder;
 import org.jasig.portal.url.UrlType;
+import org.jasig.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
+import org.stringtemplate.v4.STGroupDir;
 
 @Component("userAccountHelper")
 public class UserAccountHelper {
@@ -252,6 +253,40 @@ public class UserAccountHelper {
         }
         return allowedAttributes;
     }
+    
+    public List<GroupedPersonAttribute> groupPersonAttributes(final IPersonAttributes user, final HttpServletRequest request) {
+        
+        // get the locale for the current user
+        final Locale locale = getCurrentUserLocale(request);
+
+        // construct a list of grouped user attributes for the specified user
+        final List<GroupedPersonAttribute> displayAttributes = new ArrayList<GroupedPersonAttribute>();
+        for (Map.Entry<String, List<Object>> attr : user.getAttributes().entrySet()) {
+            
+            // get the display name for this user attribute
+            final String displayName = messageSource.getMessage("attribute.displayName.".concat(attr.getKey()), new Object[]{}, attr.getKey(), locale);
+            boolean found = false;
+
+            // if this display name and value is already in the list, add this 
+            // new attribute name to that group
+            for (GroupedPersonAttribute displayAttribute : displayAttributes) {
+                if (displayAttribute.getDisplayName().equals(displayName) && attr.getValue().equals(displayAttribute.getValues())) {
+                    displayAttribute.getAttributeNames().add(attr.getKey());
+                    found = true;
+                    break;
+                }
+            }
+            
+            // otherwise add a new group
+            if (!found) {
+                final GroupedPersonAttribute displayAttribute = new GroupedPersonAttribute(displayName, attr.getValue(), attr.getKey());
+                displayAttributes.add(displayAttribute);
+            }
+        }
+        
+        Collections.sort(displayAttributes, new GroupedPersonAttributeByNameComparator());
+        return displayAttributes;
+    }
 
     public boolean canDeleteUser(IPerson currentUser, String target) {
         
@@ -421,6 +456,14 @@ public class UserAccountHelper {
         } catch (UnsupportedEncodingException e) {
             log.error("Unable to send password reset email ", e);
         }
+    }
+    
+    protected Locale getCurrentUserLocale(final HttpServletRequest request) {
+        final IPerson person = personManager.getPerson(request);
+        final Locale[] userLocales = localeStore.getUserLocales(person);
+        final LocaleManager localeManager = new LocaleManager(person, userLocales);
+        final Locale locale = localeManager.getLocales()[0];
+        return locale;
     }
     
 }

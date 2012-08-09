@@ -18,12 +18,14 @@
  */
 package org.jasig.portal.utils.cache;
 
+import java.io.Serializable;
+
 /**
  * Tag for a cache entry
  * 
  * @author Eric Dalquist
  */
-public interface CacheEntryTag {
+public interface CacheEntryTag extends Serializable {
     /**
      * @return The type of tag, should be a generally consistent type across the application. ex: username
      */

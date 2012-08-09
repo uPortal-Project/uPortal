@@ -24,7 +24,9 @@ package org.jasig.portal.utils.cache;
  * @author Eric Dalquist
  */
 public class SimpleCacheEntryTag implements CacheEntryTag {
-    private final String tagType;
+	private static final long serialVersionUID = 1L;
+	
+	private final String tagType;
     private final String tagValue;
     private final int hash;
     

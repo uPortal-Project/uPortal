@@ -304,10 +304,6 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	    portletDef.getPortletDescriptorKey().setPortletName(form.getPortletName());
 	    portletDef.getPortletDescriptorKey().setFrameworkPortlet(form.isFramework());
 	    
-	    portletDef.addParameter("editable", Boolean.toString(form.isEditable()));
-	    portletDef.addParameter("hasHelp", Boolean.toString(form.isHasHelp()));
-	    portletDef.addParameter("hasAbout", Boolean.toString(form.isHasAbout()));
-	    
 	    Date now = new Date();
 
 		int order = form.getLifecycleState().getOrder();
@@ -407,7 +403,11 @@ public class PortletAdministrationHelper implements ServletContextAware {
 			    portletDef.addParameter(key, value);
 			}
 		}
-		
+
+	    portletDef.addParameter(IPortletDefinition.EDITABLE_PARAM, Boolean.toString(form.isEditable()));
+	    portletDef.addParameter(IPortletDefinition.HAS_HELP_PARAM, Boolean.toString(form.isHasHelp()));
+	    portletDef.addParameter(IPortletDefinition.HAS_ABOUT_PARAM, Boolean.toString(form.isHasAbout()));
+	    
 		for (String key : form.getPortletPreferences().keySet()) {
 			List<String> prefValues = form.getPortletPreferences().get(key).getValue();
 			if (prefValues != null && prefValues.size() > 0) {

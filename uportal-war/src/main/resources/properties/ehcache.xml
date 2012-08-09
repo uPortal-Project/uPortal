@@ -35,6 +35,10 @@
     <!-- Location of persistent caches on disk -->
     <diskStore path="java.io.tmpdir/uPortal" />
     
+    <cacheManagerPeerProviderFactory
+        class="net.sf.ehcache.distribution.jgroups.JGroupsCacheManagerPeerProviderFactory"
+        properties="file=/properties/jgroups.xml" />
+    
     <defaultCache eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
@@ -137,7 +141,15 @@
      +-->
     <cache name="org.jasig.portal.layout.dlm.FragmentActivator.userViews"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
+
         
     <!-- 
      | Caches exceptions from loading fragment layout
@@ -166,6 +178,12 @@
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="900" timeToLiveSeconds="7200" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory class="org.jasig.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=tagTrackingCacheEventListener" listenFor="local" />
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
     </cache>
         
     <!-- 
@@ -211,13 +229,34 @@
      +-->
     <cache name="org.jasig.portal.EntityTypes.CLASS_BY_ID"
         eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.EntityTypes.ID_BY_CLASS"
         eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.EntityTypes.ALL"
         eternal="false" maxElementsInMemory="1" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
         
         
     
@@ -246,16 +285,74 @@
     </cache>
 
 
+    <!-- ******************** UW Person Directory Caches ******************** -->
+        
     <!-- 
-     | Caches queries against the local UP_PERSON_DIR table
+     | Caches queries against LDAP
      | - 1 x user
      | - not replicated - doesn't represent an updatable data store
      +-->
-    <cache name="org.jasig.services.persondir.USER_INFO.up_person_dir"
+    <cache name="org.jasig.services.persondir.USER_INFO.ldap"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory class="org.jasig.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=tagTrackingCacheEventListener" listenFor="local" />
     </cache>
+        
+    <!-- 
+     | Caches queries for the current post-graduation term
+     | - 1 x user
+     | - not replicated - doesn't represent an updatable data store
+     +-->
+    <cache name="org.jasig.services.persondir.USER_INFO.post_grad_survey_term"
+        eternal="false" maxElementsInMemory="10" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory class="org.jasig.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=tagTrackingCacheEventListener" listenFor="local" />
+    </cache>
+        
+    <!-- 
+     | Caches queries against the graduating senior data source
+     | - 1 x user
+     | - not replicated - doesn't represent an updatable data store
+     +-->
+    <cache name="org.jasig.services.persondir.USER_INFO.graduating_senior"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory class="org.jasig.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=tagTrackingCacheEventListener" listenFor="local" />
+    </cache>
+        
+    <!-- 
+     | Caches queries against the graduating masters data source
+     | - 1 x user
+     | - not replicated - doesn't represent an updatable data store
+     +-->
+    <cache name="org.jasig.services.persondir.USER_INFO.graduating_masters"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory class="org.jasig.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=tagTrackingCacheEventListener" listenFor="local" />
+    </cache>
+        
+    <!-- 
+     | Caches queries against the graduating senior survey results data source
+     | - 1 x user
+     | - not replicated - doesn't represent an updatable data store
+     +-->
+    <cache name="org.jasig.services.persondir.USER_INFO.graduating_senior_survey"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory class="org.jasig.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=tagTrackingCacheEventListener" listenFor="local" />
+    </cache>
+        
+    <!-- 
+     | Caches queries against the heritage survey results data source
+     | - 1 x user
+     | - not replicated - doesn't represent an updatable data store
+     +-->
+    <cache name="org.jasig.services.persondir.USER_INFO.heritage_check"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory class="org.jasig.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=tagTrackingCacheEventListener" listenFor="local" />
+    </cache>
+        
         
 
     <!-- ******************** uPortal IBasicEntity Caches ******************** -->
@@ -267,7 +364,14 @@
      +-->
     <cache name="org.jasig.portal.groups.IEntityGroup"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     
     <!-- 
      | Caches IEntity objects
@@ -276,7 +380,14 @@
      +-->
     <cache name="org.jasig.portal.groups.IEntity"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     
     <!-- 
      | Caches IPermissionSet objects
@@ -285,7 +396,14 @@
      +-->
     <cache name="org.jasig.portal.security.IPermissionSet"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
         
 
      
@@ -425,10 +543,24 @@
     <!-- Only ID Cached -->
     <cache name="org.jasig.portal.concurrency.locking.ClusterMutex##NaturalId"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.version.dao.jpa.VersionImpl##NaturalId"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
         
     <!-- 
      | Caches UserFragmentSubscriptions
@@ -436,10 +568,24 @@
      +-->
     <cache name="org.jasig.portal.fragment.subscribe.dao.jpa.UserFragmentSubscriptionImpl"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.fragment.subscribe.dao.jpa.UserFragmentSubscriptionImpl.Query"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
         
     <!--
      | Caches message
@@ -447,10 +593,24 @@
      +-->
     <cache name="org.jasig.portal.i18n.dao.jpa.MessageImpl" 
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="60" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        timeToIdleSeconds="60" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.i18n.dao.jpa.MessageImpl.Query" 
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="60" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+        timeToIdleSeconds="60" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
             
     <!-- 
      | Caches StylesheetDescriptor 
@@ -458,22 +618,64 @@
      +-->
     <cache name="org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl##NaturalId"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl.Query"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl.outputProperties"
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl.stylesheetParameters"
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl.layoutAttributes"
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
 
     <!-- 
      | Caches StylesheetUserPreferences
@@ -482,37 +684,114 @@
      +-->
     <cache name="org.jasig.portal.layout.dao.jpa.StylesheetUserPreferencesImpl"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.layout.dao.jpa.StylesheetUserPreferencesImpl.Query"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.layout.dao.jpa.StylesheetUserPreferencesImpl.layoutAttributes"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.layout.dao.jpa.StylesheetUserPreferencesImpl.outputProperties"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.layout.dao.jpa.StylesheetUserPreferencesImpl.parameters"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.layout.dao.jpa.OutputPropertyDescriptorImpl"
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.layout.dao.jpa.StylesheetParameterDescriptorImpl"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.layout.dao.jpa.LayoutNodeAttributesImpl"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.layout.dao.jpa.LayoutNodeAttributesImpl.attributes"
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.layout.dao.jpa.LayoutAttributeDescriptorImpl"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.layout.dao.jpa.LayoutAttributeDescriptorImpl.targetElementNames"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     
     <!-- 
      | Caches DLM Evaluator object
@@ -521,37 +800,114 @@
      +-->
     <cache name="org.jasig.portal.layout.dlm.Evaluator"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.layout.dlm.FragmentDefinition.evaluators"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.layout.dlm.FragmentDefinition.Query"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.layout.dlm.providers.Paren.evaluators"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.layout.dlm.providers.EvaluatorGroup.evaluators"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.layout.dlm.providers.AllUsersEvaluatorFactory"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.layout.dlm.providers.AttributeEvaluator"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluator"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.layout.dlm.providers.GuestUserEvaluatorFactory"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.layout.dlm.providers.ProfileEvaluator"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.layout.dlm.providers.SubscribedTabEvaluator"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
         
     <!-- 
      | Caches PermissionOwner objects
@@ -560,19 +916,54 @@
      +-->
     <cache name="org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl##NaturalId"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl.Query"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl.activities"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.permission.dao.jpa.PermissionActivityImpl"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
         
     <!-- 
      | Caches local users
@@ -581,19 +972,54 @@
      +-->
     <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl.Query"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />        
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl.attributes"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" /> 
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl"
         eternal="false" maxElementsInMemory="5000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl.values"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />  
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
 
     <!-- 
      | Caches PortalCookieImpl objects
@@ -601,19 +1027,54 @@
      +-->   
     <cache name="org.jasig.portal.portlet.dao.jpa.PortalCookieImpl"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.portlet.dao.jpa.PortalCookieImpl##NaturalId"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="900" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.portlet.dao.jpa.PortalCookieImpl.Query"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.portlet.dao.jpa.PortalCookieImpl.portletCookies"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />  
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletCookieImpl"
         eternal="false" maxElementsInMemory="25000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
 
     <!-- 
      | Caches PortletDefinitionImpl objects
@@ -622,22 +1083,64 @@
      +-->
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl##NaturalId"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl.Query"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl.localizations"
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl.parameters"
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionParameterImpl"
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     
     <!-- 
      | Caches PortletEntityImpl objects
@@ -646,13 +1149,34 @@
      +-->
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl"
         eternal="false" maxElementsInMemory="15000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl.Query"
         eternal="false" maxElementsInMemory="1500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl.windowStates"
         eternal="false" maxElementsInMemory="15000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     
     <!-- 
      | Caches PortletPreferencesImpl objects
@@ -662,16 +1186,44 @@
      +-->
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl"
         eternal="false" maxElementsInMemory="15500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl.portletPreferences"
         eternal="false" maxElementsInMemory="15500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl"
         eternal="false" maxElementsInMemory="2200" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl.values"
         eternal="false" maxElementsInMemory="2200" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
         
     <!-- 
      | Caches PortletType objects
@@ -680,13 +1232,34 @@
      +-->
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletTypeImpl"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletTypeImpl##NaturalId"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.portlet.dao.jpa.PortletTypeImpl.Query"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     
 
 </ehcache>

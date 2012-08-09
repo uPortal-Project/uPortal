@@ -88,7 +88,7 @@
 
     <!-- ********** Database Utilities ********** -->
     
-    <bean name="rawEventsDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport" lazy-init="true" depends-on="RawEventsDbEntityManagerFactory">
+    <bean name="rawEventsDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport" lazy-init="true" depends-on="RawEventsDbEntityManagerFactory,hibernateConfigurationAwareInjector">
     	<qualifier value="RawEventsDb"/>
         <property name="jdbcOperations" ref="rawEventsJdbcOperations" />
         <property name="persistenceUnit">
@@ -96,7 +96,7 @@
         </property>
     </bean>
     
-    <bean name="aggrEventsDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport" lazy-init="true" depends-on="AggrEventsDbEntityManagerFactory">
+    <bean name="aggrEventsDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport" lazy-init="true" depends-on="AggrEventsDbEntityManagerFactory,hibernateConfigurationAwareInjector">
     	<qualifier value="AggrEventsDb"/>
         <property name="jdbcOperations" ref="aggrEventsJdbcOperations" />
         <property name="persistenceUnit">

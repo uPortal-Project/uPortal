@@ -144,6 +144,13 @@
     <bean id="uPortalAccountUserSource" class="org.jasig.portal.persondir.LocalAccountPersonAttributeDao">
         <property name="localAccountDao" ref="localAccountDao"/>
         <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
+        <property name="queryAttributeMapping">
+            <map>
+                <entry key="username" value="username" />
+                <entry key="givenName" value="givenName" />
+                <entry key="sn" value="sn"/>
+            </map>
+        </property>
         <property name="resultAttributeMapping">
             <map>
                 <entry key="username">

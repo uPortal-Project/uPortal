@@ -89,10 +89,15 @@ public class EntityManagerCacheImpl implements ApplicationListener<AbstractEntit
     @Override
     public void put(String persistenceUnitName, Serializable key, Object value) {
         final Map<String, Deque<String>> currentEntityManagers = CURRENT_ENTITY_MANAGER_SESSIONS.get();
-        final Deque<String> entityManagerIds = currentEntityManagers.get(persistenceUnitName);
+        if (currentEntityManagers == null) {
+            logger.error("There is no currentEntityManagers Map in the ThreadLocal, no EntityManager scoped caching will be done. persistenceUnitName=" + persistenceUnitName + ", key=" + key, new Throwable());
+            return;
+        }
         
+        final Deque<String> entityManagerIds = currentEntityManagers.get(persistenceUnitName);
         if (entityManagerIds == null || entityManagerIds.isEmpty()) {
-            throw new IllegalStateException("Cannot access cache for persistent unit " + persistenceUnitName + ", it has no active EntityManager: key=" + key);
+            logger.error("Cannot access cache for persistent unit " + persistenceUnitName + ", it has no active EntityManager, no EntityManager scoped caching will be done. key=" + key, new Throwable());
+            return;
         }
         
         final String entityManagerId = entityManagerIds.getFirst();
@@ -104,10 +109,15 @@ public class EntityManagerCacheImpl implements ApplicationListener<AbstractEntit
     @Override
     public <T> T get(String persistenceUnitName, Serializable key) {
         final Map<String, Deque<String>> currentEntityManagers = CURRENT_ENTITY_MANAGER_SESSIONS.get();
-        final Deque<String> entityManagerIds = currentEntityManagers.get(persistenceUnitName);
+        if (currentEntityManagers == null) {
+            logger.error("There is no currentEntityManagers Map in the ThreadLocal, no EntityManager scoped caching will be done. persistenceUnitName=" + persistenceUnitName + ", key=" + key, new Throwable());
+            return null;
+        }
         
+        final Deque<String> entityManagerIds = currentEntityManagers.get(persistenceUnitName);
         if (entityManagerIds == null || entityManagerIds.isEmpty()) {
-            throw new IllegalStateException("Cannot access cache for persistent unit " + persistenceUnitName + ", it has no active EntityManager: key=" + key);
+            logger.error("Cannot access cache for persistent unit " + persistenceUnitName + ", it has no active EntityManager, no EntityManager scoped caching will be done. key=" + key, new Throwable());
+            return null;
         }
         
         final String entityManagerId = entityManagerIds.getFirst();
@@ -163,19 +173,19 @@ public class EntityManagerCacheImpl implements ApplicationListener<AbstractEntit
             //Get the currentEntityManagers Map
             final Map<String, Deque<String>> currentEntityManagers = CURRENT_ENTITY_MANAGER_SESSIONS.get();
             if (currentEntityManagers == null || currentEntityManagers.isEmpty()) {
-                throw new IllegalStateException("Closing " + entityManagerId + " but there is no currentEntityManagers Map for this Thread");
+                logger.error("Closing " + entityManagerId + " but there is no currentEntityManagers Map for this Thread", new Throwable());
             }
             
             //Get the Deque of current entityManagerIds
             final Deque<String> entityManagerIds = currentEntityManagers.get(persistenceUnitName);
             if (entityManagerIds == null || entityManagerIds.isEmpty()) {
-                throw new IllegalStateException("Closing " + entityManagerId + " but there is no entityManagerIds Deque for this Thread");
+                logger.error("Closing " + entityManagerId + " but there is no entityManagerIds Deque for this Thread", new Throwable());
             }
             
             //Get the current EMiD for this PU
             final String currentEntityManagerId = entityManagerIds.getFirst();
             if (!currentEntityManagerId.equals(entityManagerId)) {
-                throw new IllegalStateException("Closing " + entityManagerId + " but the current EntityManagerId is " + currentEntityManagerId);
+                logger.error("Closing " + entityManagerId + " but the current EntityManagerId is " + currentEntityManagerId, new Throwable());
             }
             
             //Remove the current EMiD

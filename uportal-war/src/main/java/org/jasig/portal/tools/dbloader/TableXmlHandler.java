@@ -23,8 +23,8 @@ import java.lang.reflect.Field;
 import java.sql.Types;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
-import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.hibernate.MappingException;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Mappings;
@@ -66,7 +66,7 @@ public class TableXmlHandler extends BaseDbXmlHandler implements ITableDataProvi
 
 
     private Map<String, Table> tables = new LinkedHashMap<String, Table>();
-    private Map<String, Map<String, Integer>> tableColumnTypes = new CaseInsensitiveMap();
+    private Map<String, Map<String, Integer>> tableColumnTypes = new TreeMap<String, Map<String,Integer>>(String.CASE_INSENSITIVE_ORDER);
     
     private Table currentTable = null;
     private Map<String, Column> currentColumns = null;
@@ -83,7 +83,7 @@ public class TableXmlHandler extends BaseDbXmlHandler implements ITableDataProvi
     public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
         if ("table".equals(name)) {
             this.currentColumns = new LinkedHashMap<String, Column>();
-            this.currentColumnTypes = new CaseInsensitiveMap();
+            this.currentColumnTypes = new TreeMap<String, Integer>(String.CASE_INSENSITIVE_ORDER);
         }
         else if ("index".equals(name)) {
             this.currentIndex = new Index();

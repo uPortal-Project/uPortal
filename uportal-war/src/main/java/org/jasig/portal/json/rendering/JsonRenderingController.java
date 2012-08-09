@@ -25,6 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.rendering.IPortalRenderingPipeline;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,15 +43,22 @@ public class JsonRenderingController {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     private IPortalRenderingPipeline portalRenderingPipeline;
+    private IPortletWindowRegistry portletWindowRegistry;
     
     @Autowired
     @Qualifier("json")
     public void setPortalRenderingPipeline(IPortalRenderingPipeline portalRenderingPipeline) {
         this.portalRenderingPipeline = portalRenderingPipeline;
     }
-    
+
+    @Autowired
+    public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
+        this.portletWindowRegistry = portletWindowRegistry;
+    }
+
     @RequestMapping("/layout.json")
     public void renderRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        this.portletWindowRegistry.disablePersistentWindowStates(request);
         this.portalRenderingPipeline.renderState(request, response);
     }
 

@@ -153,6 +153,7 @@
         <easymock.version>3.1</easymock.version>
         <ejb3-persistence.version>1.0.1.GA</ejb3-persistence.version>
         <ehcache.version>2.5.3</ehcache.version>
+        <ehcache-jgroups3replication.version>1.7.4</ehcache-jgroups3replication.version>
         <ehcache-spring-annotations.version>1.2.0</ehcache-spring-annotations.version>
         <ehcache-web.version>2.0.4</ehcache-web.version>
         <guava.version>12.0.1</guava.version>
@@ -186,7 +187,7 @@
         <pluto.version>2.1.0-M2</pluto.version>
         <portlet-api.version>2.0</portlet-api.version>
         <quartz.version>1.8.4</quartz.version>
-        <resource-server.version>1.0.25</resource-server.version>
+        <resource-server.version>1.0.26</resource-server.version>
         <servlet-api.version>2.5</servlet-api.version>
         <slf4j.version>1.6.6</slf4j.version>
         <spring-framework.version>3.1.2.RELEASE</spring-framework.version>
@@ -560,6 +561,11 @@
                 <groupId>org.apache.portals.pluto</groupId>
                 <artifactId>pluto-container-driver-api</artifactId>
                 <version>${pluto.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jasig.ehcache</groupId>
+                <artifactId>ehcache-jgroups3replication</artifactId>
+                <version>${ehcache-jgroups3replication.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jasig.portal</groupId>
