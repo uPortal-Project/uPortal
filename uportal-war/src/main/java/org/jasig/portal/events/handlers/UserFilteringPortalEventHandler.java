@@ -103,6 +103,9 @@ public final class UserFilteringPortalEventHandler<E extends PortalEvent> implem
 
     @Override
     public boolean supports(E event) {
+        if (!(event instanceof PortalEvent)) {
+            return false;
+        }
         
         //Guest support check
         final IPerson person = event.getPerson();
