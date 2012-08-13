@@ -43,12 +43,12 @@ var up = up || {};
             
             tree.children.push({
                 ID: "layoutContainer:",
+                decorators: [
+                    { type: "addClass", classes: classes }
+                ],
                 children: [
                     {
-                        ID: "layout",
-                        decorators: [
-                            { type: "addClass", classes: classes }
-                        ]
+                        ID: "layout"
                     },
                     {
                         ID: "layoutLink",
