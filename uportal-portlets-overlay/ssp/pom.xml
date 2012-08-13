@@ -42,6 +42,7 @@
                 <directory>src/main/resources</directory>
                 <includes>
                     <!-- List files or patterns to be filtered here...  -->
+                    <include>changeme*/*.*</include>
                 </includes>
             </resource>
             <resource>
@@ -49,7 +50,6 @@
                 <directory>src/main/resources</directory>
                 <excludes>
                     <!-- List the same files or patterns as above here...  -->
-                    <include>changeme*/*.*</include>
                 </excludes>
             </resource>
         </resources>
