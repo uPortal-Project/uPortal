@@ -848,7 +848,7 @@
   padding-bottom: 5px;
   color: white;
 }
-.up .up-gallery .gallery-inner .results-wrapper .ri-wrapper {
+.up .up-gallery .gallery-inner .results-wrapper .results-item {
   background: black;
   border: 1px solid #262626;
   -moz-border-radius: 5px;
@@ -857,6 +857,14 @@
   -moz-box-shadow: 1px 1px 2px black;
   -webkit-box-shadow: 1px 1px 2px black;
   box-shadow: 1px 1px 2px black;
+}
+.up .up-gallery .gallery-inner .results-wrapper .results-item:hover {
+  background: black;
+  border: 1px soild black;
+  background-image: -moz-linear-gradient(top, black, black);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, black), color-stop(1, black));
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='black', EndColorStr='black')";
+  background-image: linear-gradient(top, black, black);
 }
 .up .up-gallery .gallery-inner .results-wrapper .ri-wrapper .ri-utility {
   height: 16px;
@@ -876,14 +884,6 @@
 }
 .up .up-gallery .gallery-inner .results-wrapper .ri-wrapper .ri-description {
   color: white;
-}
-.up .up-gallery .gallery-inner .results-wrapper .ri-wrapper:hover, .up .up-gallery .gallery-inner .results-wrapper .ri-wrapper:focus {
-  background: black;
-  border: 1px soild black;
-  background-image: -moz-linear-gradient(top, black, black);
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, black), color-stop(1, black));
-  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='black', EndColorStr='black')";
-  background-image: linear-gradient(top, black, black);
 }
 .up .up-gallery .gallery-inner .results-wrapper .ri-wrapper.disabled {
   -moz-opacity: 0.2;
