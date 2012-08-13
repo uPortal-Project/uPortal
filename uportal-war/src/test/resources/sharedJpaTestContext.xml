@@ -78,6 +78,8 @@
     </bean>
     
     <bean class="org.jasig.portal.hibernate.HibernateConfigurationAwareInjector" />
+    
+    <bean class="org.jasig.portal.jpa.OpenEntityManagerAspect" />
 
     <!-- This mimics what <tx:annotation-driven/> does but uses our custom TransactionManagerCachingTransactionInterceptor -->    
     <bean id="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource#0" 
