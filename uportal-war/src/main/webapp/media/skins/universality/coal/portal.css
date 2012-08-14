@@ -856,7 +856,10 @@
   padding-bottom: 5px;
   color: #a9a9a9;
 }
-.up .up-gallery .gallery-inner .results-wrapper .layout-wrapper .ri-link, .up .up-gallery .gallery-inner .results-wrapper .skins-wrapper .ri-link {
+.up .up-gallery .gallery-inner .results-wrapper .layout-wrapper .ri-link,
+.up .up-gallery .gallery-inner .results-wrapper .skins-wrapper .ri-link,
+.up .up-gallery .gallery-inner .results-wrapper .portlet.result-item,
+.up .up-gallery .gallery-inner .results-wrapper .package.results-item {
   background: #333333;
   border: 1px solid #595959;
   -moz-border-radius: 5px;
@@ -866,9 +869,16 @@
   -webkit-box-shadow: 1px 1px 2px black;
   box-shadow: 1px 1px 2px black;
 }
-.up .up-gallery .gallery-inner .results-wrapper .layout-wrapper .ri-link:hover,
-.up .up-gallery .gallery-inner .results-wrapper .layout-wrapper .ri-link:focus,
-.up .up-gallery .gallery-inner .results-wrapper .layout-wrapper .ri-link:active, .up .up-gallery .gallery-inner .results-wrapper .skins-wrapper .ri-link:hover, .up .up-gallery .gallery-inner .results-wrapper .skins-wrapper .ri-link:focus, .up .up-gallery .gallery-inner .results-wrapper .skins-wrapper .ri-link:active {
+.up .up-gallery .gallery-inner .results-wrapper .layout-wrapper .ri-link:hover, .up .up-gallery .gallery-inner .results-wrapper .layout-wrapper .ri-link:focus, .up .up-gallery .gallery-inner .results-wrapper .layout-wrapper .ri-link:active,
+.up .up-gallery .gallery-inner .results-wrapper .skins-wrapper .ri-link:hover,
+.up .up-gallery .gallery-inner .results-wrapper .skins-wrapper .ri-link:focus,
+.up .up-gallery .gallery-inner .results-wrapper .skins-wrapper .ri-link:active,
+.up .up-gallery .gallery-inner .results-wrapper .portlet.result-item:hover,
+.up .up-gallery .gallery-inner .results-wrapper .portlet.result-item:focus,
+.up .up-gallery .gallery-inner .results-wrapper .portlet.result-item:active,
+.up .up-gallery .gallery-inner .results-wrapper .package.results-item:hover,
+.up .up-gallery .gallery-inner .results-wrapper .package.results-item:focus,
+.up .up-gallery .gallery-inner .results-wrapper .package.results-item:active {
   background: #1a1a1a;
   border: 1px solid #e68537;
   background-image: -moz-linear-gradient(top, #333333, #0d0d0d);

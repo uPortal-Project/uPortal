@@ -26,7 +26,6 @@
 	 				@include box-shadow($galleryHandleShadow);
 	 			}
 	 			
-	 			
 	 			span {
 	 				background-image: $galleryHandleIconClosed;
 	 				background-position: right center;
@@ -162,24 +161,31 @@
 		 		padding-bottom: $galleryResultsBottomPadding;
 		 		color: $galleryResultsText;
 		 		
-		 		.layout-wrapper, .skins-wrapper {
-		 		  .ri-link {
-  		 		  background: $galleryRIBackground;
-  		 			border: $galleryRIBorder;
-  		 			@if ($galleryRIRound != false) {
-  		 				@include rounded($galleryRIRound);
-  		 			}
-  		 			@if ($galleryRIShadow != false) {
-  		 				@include box-shadow($galleryRIShadow);
-  		 			}
-  		 		}
-  		 		.ri-link:hover,
-  		 		.ri-link:focus,
-  		 		.ri-link:active {
+		 		.layout-wrapper .ri-link,
+		 		.skins-wrapper .ri-link,
+		 		.portlet.result-item,
+		 		.package.results-item {
+		 		  background: $galleryRIBackground;
+		 			border: $galleryRIBorder;
+		 			@if ($galleryRIRound != false) {
+		 				@include rounded($galleryRIRound);
+		 			}
+		 			@if ($galleryRIShadow != false) {
+		 				@include box-shadow($galleryRIShadow);
+		 			}
+		 			&:hover,
+  		 		&:focus,
+  		 		&:active {
   		 			background: $galleryRIBackgroundHover;
   		 			border: $galleryRIBorderHover;
   		 			@include gradient($galleryRIGradient1Hover,$galleryRIGradient2Hover);
   		 		}
+		 		}
+		 		.layout-wrapper, .skins-wrapper {
+		 		  .ri-link {
+
+  		 		}
+
 		 		}
 		 		.results-item.disabled {
           @include opacity(20);
