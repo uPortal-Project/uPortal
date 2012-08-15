@@ -33,7 +33,6 @@
         <param-name>contextConfigLocation</param-name>
         <param-value>classpath:/properties/contexts/*.xml,classpath:/properties/contextOverrides/*.xml</param-value>
     </context-param>
-    </listener>
     
     <!-- 
      | uPortal utility for accessing the WebApplicationContext from code that doesn't have a reference to the ServletContext
