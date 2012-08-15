@@ -1190,7 +1190,7 @@
                         <autoVersionSubmodules>true</autoVersionSubmodules>
                         <localCheckout>true</localCheckout>
                         <tagNameFormat>uportal-@{project.version}</tagNameFormat>
-                        <pushChanges>false</pushChasnges>
+                        <pushChanges>false</pushChanges>
                     </configuration>
                 </plugin>
                 <plugin>
