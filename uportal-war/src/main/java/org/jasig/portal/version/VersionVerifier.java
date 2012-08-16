@@ -65,7 +65,7 @@ public class VersionVerifier implements InitializingBean {
             }
             
             final Version expectedVersion = productVersionEntry.getValue();
-			if (!dbVersion.equals(expectedVersion)) {
+			if (dbVersion.isBefore(expectedVersion)) {
             	throw new ApplicationContextException("Database Version for " + product + " is " + dbVersion + " but the code version is " + expectedVersion + ". Please run 'ant db-update'");
             }
 			
