@@ -8,7 +8,7 @@
     </parent>
     
     <prerequisites>
-    	<maven>3.0.0</maven>
+        <maven>3.0.0</maven>
     </prerequisites>
 
     <modelVersion>4.0.0</modelVersion>
@@ -110,7 +110,7 @@
         <BookmarksPortlet.version>1.0.11</BookmarksPortlet.version>
         <cas-server.version>3.4.11</cas-server.version>
         <cas-proxy-test-portlet.version>1.0.0-RC3</cas-proxy-test-portlet.version>
-        <email-preview.version>1.1.1</email-preview.version>
+        <email-preview.version>2.0.1</email-preview.version>
         <FunctionalTestsPortlet.version>1.1.0</FunctionalTestsPortlet.version>
         <jasig-widget-portlets.version>1.0.2</jasig-widget-portlets.version>
         <NewsReaderPortlet.version>3.0.2</NewsReaderPortlet.version>
