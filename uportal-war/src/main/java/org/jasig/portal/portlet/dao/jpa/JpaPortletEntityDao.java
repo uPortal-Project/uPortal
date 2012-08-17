@@ -33,13 +33,16 @@ import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
+import org.hibernate.dialect.PostgreSQL81Dialect;
 import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.jasig.portal.jpa.OpenEntityManager;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.dao.IPortletEntityDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
+import org.jasig.portal.spring.tx.DialectAwareTransactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataRetrievalFailureException;
@@ -150,7 +153,9 @@ public class JpaPortletEntityDao extends BasePortalJpaDao implements IPortletEnt
     }
 
     @Override
+    @DialectAwareTransactional(value = PostgreSQL81Dialect.class, exclude = false)
     @PortalTransactionalReadOnly
+    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     public IPortletEntity getPortletEntity(IPortletEntityId portletEntityId) {
         Validate.notNull(portletEntityId, "portletEntityId can not be null");
         
@@ -173,7 +178,9 @@ public class JpaPortletEntityDao extends BasePortalJpaDao implements IPortletEnt
     }
 
     @Override
+    @DialectAwareTransactional(value = PostgreSQL81Dialect.class, exclude = false)
     @PortalTransactionalReadOnly
+    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     public IPortletEntity getPortletEntity(String layoutNodeId, int userId) {
         Validate.notNull(layoutNodeId, "portletEntity can not be null");
         
@@ -192,7 +199,9 @@ public class JpaPortletEntityDao extends BasePortalJpaDao implements IPortletEnt
     }
 
     @Override
+    @DialectAwareTransactional(value = PostgreSQL81Dialect.class, exclude = false)
     @PortalTransactionalReadOnly
+    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     public Set<IPortletEntity> getPortletEntities(IPortletDefinitionId portletDefinitionId) {
         Validate.notNull(portletDefinitionId, "portletEntity can not be null");
         
@@ -206,7 +215,9 @@ public class JpaPortletEntityDao extends BasePortalJpaDao implements IPortletEnt
     }
     
     @Override
+    @DialectAwareTransactional(value = PostgreSQL81Dialect.class, exclude = false)
     @PortalTransactionalReadOnly
+    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     public Set<IPortletEntity> getPortletEntitiesForUser(int userId) {
         final TypedQuery<PortletEntityImpl> query = this.createCachedQuery(this.findEntitiesForUserIdQuery);
         query.setParameter(this.userIdParameter, userId);

@@ -59,6 +59,7 @@
             <props>
                 <prop key="hibernate.cache.use_query_cache">false</prop>
                 <prop key="hibernate.cache.use_second_level_cache">false</prop>
+                <prop key="persistenceUnitName">${persistenceUnitName}</prop>
                 <!-- Uncomment for testing with a cache
                 <prop key="hibernate.cache.provider_class">org.hibernate.cache.HashtableCacheProvider</prop>
                 <prop key="hibernate.cache.use_query_cache">true</prop>
@@ -75,12 +76,16 @@
     <bean id="jpaInterceptor" class="org.springframework.orm.jpa.JpaInterceptor">
         <property name="entityManagerFactory" ref="factoryBean" />
     </bean>
+    
+    <bean class="org.jasig.portal.hibernate.HibernateConfigurationAwareInjector" />
+    
+    <bean class="org.jasig.portal.jpa.OpenEntityManagerAspect" />
 
     <!-- This mimics what <tx:annotation-driven/> does but uses our custom TransactionManagerCachingTransactionInterceptor -->    
     <bean id="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource#0" 
             class="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource"/>
     <bean id="org.springframework.transaction.interceptor.TransactionInterceptor#0"
-            class="org.jasig.portal.spring.tx.TransactionManagerCachingTransactionInterceptor">
+            class="org.jasig.portal.spring.tx.DialectAwareTransactionInterceptor">
         <property name="transactionAttributeSource" ref="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource#0" />
         <property name="transactionManagerBeanName" value="transactionManager" />
     </bean>

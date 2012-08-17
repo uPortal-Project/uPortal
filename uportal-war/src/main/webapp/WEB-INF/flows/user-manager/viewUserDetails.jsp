@@ -86,15 +86,14 @@
                             <th><spring:message code="attribute.value"/></th>
                         </tr>
                     </thead>
-                    <c:forEach items="${ person.attributes }" var="attribute">
+                    <c:forEach items="${ groupedAttributes }" var="attribute">
                         <tr>
                             <td class="attribute-name">
-                                <c:set var="attrName" value="${ attribute.key }"/>
-                                <strong><spring:message code="attribute.displayName.${attrName}" text="${attrName}"/></strong>
-                                <spring:message code="${attrName}"/>
+                                <strong>${ attribute.displayName }</strong>
+                                (<c:forEach items="${attribute.attributeNames}" var="name" varStatus="status">${ name }${ status.last ? '' : ',' }</c:forEach>)
                             </td>
                             <td>
-                                <c:forEach items="${ attribute.value }" var="value">
+                                <c:forEach items="${ attribute.values }" var="value">
                                    <div>${fn:escapeXml(value)}</div>
                                 </c:forEach>
                             </td>

@@ -83,7 +83,7 @@
       </xsl:choose>
     </xsl:variable>
     
-    <html lang="{substring-before($USER_LANG,'-')}">
+    <html lang="{$USER_LANG}">
       <head>
         <title>
           <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
@@ -116,6 +116,8 @@
             var up = up || {};
             up.jQuery = jQuery.noConflict(true);
             up.fluid = fluid;
+            up._ = _.noConflict();
+            up.Backbone = Backbone.noConflict();
             fluid = null;
             fluid_1_4 = null;
         </script>

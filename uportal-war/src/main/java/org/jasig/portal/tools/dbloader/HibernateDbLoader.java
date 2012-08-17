@@ -75,8 +75,8 @@ import org.xml.sax.SAXException;
  */
 @Component("dbLoader")
 @Lazy
-@DependsOn(BasePortalJpaDao.PERSISTENCE_UNIT_NAME + "EntityManagerFactory")
-public class HibernateDbLoader extends HibernateConfigurationAware implements IDbLoader, ResourceLoaderAware {
+@DependsOn( { BasePortalJpaDao.PERSISTENCE_UNIT_NAME + "EntityManagerFactory", "hibernateConfigurationAwareInjector" } )
+public class HibernateDbLoader implements IDbLoader, ResourceLoaderAware, HibernateConfigurationAware {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
     private Configuration configuration;

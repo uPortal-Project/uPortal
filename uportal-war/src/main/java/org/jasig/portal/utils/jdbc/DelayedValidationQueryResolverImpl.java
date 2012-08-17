@@ -41,7 +41,7 @@ import org.springframework.jdbc.support.DatabaseMetaDataCallback;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.jdbc.support.MetaDataAccessException;
 
-public class DelayedValidationQueryResolverImpl extends HibernateConfigurationAware implements DelayedValidationQueryResolver {
+public class DelayedValidationQueryResolverImpl implements DelayedValidationQueryResolver, HibernateConfigurationAware {
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 	
 	private final List<Tuple<DataSource, FunctionWithoutResult<String>>> delayedDataSources = new ArrayList<Tuple<DataSource,FunctionWithoutResult<String>>>();

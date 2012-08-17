@@ -36,7 +36,10 @@ import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionOperations;
 
@@ -48,15 +51,26 @@ import com.google.common.base.Function;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public abstract class BaseJpaDao implements InitializingBean {
+public abstract class BaseJpaDao implements InitializingBean, ApplicationContextAware {
     private static final String QUERY_SUFFIX = ".Query";
     
     protected final Logger logger = LoggerFactory.getLogger(getClass());
+    
+    private ApplicationContext applicationContext;
     
     protected abstract EntityManager getEntityManager();
     
     protected abstract TransactionOperations getTransactionOperations();
     
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
     @Override
     public void afterPropertiesSet() throws Exception {
     }
@@ -109,9 +123,6 @@ public abstract class BaseJpaDao implements InitializingBean {
      * Common logic for creating and configuring JPA queries
      * 
      * @param criteriaQuery The criteria to create the query from
-     * @param queryName A name for the query, used with the query root class name to generate the cache region name. For example
-     *                  a query with root class "org.jasig.portal.events.aggr.session.EventSessionImpl" and queryName "FIND_BY_EVENT_SESSION_ID"
-     *                  will result in a region named "org.jasig.portal.events.aggr.session.EventSessionImpl.query.FIND_BY_EVENT_SESSION_ID"
      */
     protected final <T> TypedQuery<T> createCachedQuery(CriteriaQuery<T> criteriaQuery) {
         final TypedQuery<T> query = this.getEntityManager().createQuery(criteriaQuery);
@@ -122,11 +133,18 @@ public abstract class BaseJpaDao implements InitializingBean {
     }
     
     /**
-     * Utility for creating queries based on naturalId
+     * Utility for creating queries based on naturalId. The caller MUST be annotated with {@link OpenEntityManager} or
+     * {@link Transactional} so that the Hibernate specific extensions are available.
      */
     protected final <T> NaturalIdQuery<T> createNaturalIdQuery(Class<T> entityType) {
         final EntityManager entityManager = this.getEntityManager();
-        final Session session = entityManager.unwrap(Session.class);
+        final Session session;
+        try {
+            session = entityManager.unwrap(Session.class);
+        }
+        catch (IllegalStateException e) {
+            throw new IllegalStateException("The DAO Method that calls createNaturalIdQuery must be annotated with @OpenEntityManager or @Transactional", e);
+        }
         final NaturalIdLoadAccess naturalIdLoadAccess = session.byNaturalId(entityType);
         return new NaturalIdQuery<T>(entityType, naturalIdLoadAccess);
     }

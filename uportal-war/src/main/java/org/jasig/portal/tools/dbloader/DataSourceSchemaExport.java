@@ -51,7 +51,7 @@ import org.springframework.jdbc.core.JdbcOperations;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class DataSourceSchemaExport extends HibernateConfigurationAware implements ISchemaExport {
+public class DataSourceSchemaExport implements ISchemaExport, HibernateConfigurationAware {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
     private final Formatter formatter = FormatStyle.DDL.getFormatter();
