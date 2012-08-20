@@ -8,3 +8,4 @@
 *.sass-cache
 /uportal-impl
 uportal-portlets-overlay/ssp/target/
+*.iml
