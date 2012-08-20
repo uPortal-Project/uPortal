@@ -77,8 +77,6 @@
             <snapshots><enabled>true</enabled></snapshots>
         </pluginRepository>
     </pluginRepositories>
-
-
     <properties>
         <!-- The final name of the SSP Platform web-application -->
         <ssp.docbase>ssp-platform</ssp.docbase>
@@ -1091,7 +1089,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>2.2.1</version>
+                    <version>2.3.2</version>
                     <configuration>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
                         <localCheckout>true</localCheckout>
