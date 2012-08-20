@@ -21,28 +21,40 @@
 -->
 
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns="http://www.springframework.org/schema/beans" 
-       xsi:schemaLocation="
-           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
     <!--
-     | DataSource objects used by the portal should be configured 
+     | DataSource objects used by the portal should be configured here
      +-->
+     
+    <!--  base pooled datasource with common configuration -->
+    <bean id="basePooledDataSource" class="org.jasig.portal.utils.jdbc.TomcatDataSourceFactory" abstract="true">
+    	<property name="baseObjectName" value="uPortal:section=DataSource,name=" />
+        <property name="initialSize" value="1" />
+        <property name="minIdle" value="1" />
+        <property name="maxActive" value="50" />
+        <property name="maxIdle" value="50" />
+        <property name="maxWait" value="2000" />
+        
+        <property name="abandonWhenPercentageFull" value="70" />
+        <property name="removeAbandoned" value="true" />
+        <property name="removeAbandonedTimeout" value="300" />
+        
+        <property name="jdbcInterceptors" value="ConnectionState(useEquals=true);ResetAbandonedTimer"/>
+        
+        <property name="testWhileIdle" value="true" />
+        <property name="testOnBorrow" value="true" />
+    </bean>
 
-    <bean id="PortalDb" class="org.jasig.portal.utils.LoggingBasicDataSource" destroy-method="close">
+    <bean id="PortalDb" parent="basePooledDataSource">
         <qualifier value="PortalDb"/>
         <property name="driverClassName" value="${hibernate.connection.driver_class}" />
         <property name="url" value="${hibernate.connection.url}" />
         <property name="username" value="${hibernate.connection.username}" />
         <property name="password" value="${hibernate.connection.password}" />
-        
-        <property name="maxActive" value="50" />
-        <property name="maxIdle" value="10" />
-        <property name="maxWait" value="1000" />
-        <property name="removeAbandoned" value="true" />
-        <property name="removeAbandonedTimeout" value="300" />
-        <property name="logAbandoned" value="true" />
-        <property name="poolPreparedStatements" value="false" />
     </bean>
     <bean id="PortalDB.metadata" class="org.jasig.portal.rdbm.DatabaseMetaDataImpl">
         <constructor-arg index="0" ref="PortalDb" />
@@ -55,17 +67,37 @@
      | DataSource used to store raw portal event data, wrapper is used instead of alias so that Spring treats each
      | DataSource as unique.
      +-->
-    <bean id="RawEventsDB" class="org.springframework.jdbc.datasource.DelegatingDataSource">
-        <qualifier value="RawEventsDB" />
-        <constructor-arg ref="PortalDb" />
-    </bean>
-    
+    <bean id="RawEventsDb" parent="basePooledDataSource">
+        <qualifier value="RawEventsDb" />
+        <property name="driverClassName" value="${RawEventsJdbcDriver}" />
+        <property name="url" value="${RawEventsJdbcUrl}" />
+        <property name="username" value="${RawEventsJdbcUser}" />
+        <property name="password" value="${RawEventsJdbcPassword}" />
+    </bean>    
     <!-- 
      | DataSource used to store aggregated portal event data, wrapper is used instead of alias so that Spring treats each
      | DataSource as unique.
      +-->
-    <bean id="AggrEventsDB" class="org.springframework.jdbc.datasource.DelegatingDataSource">
-        <qualifier value="AggrEventsDB" />
-        <constructor-arg ref="PortalDb" />
+    <bean id="AggrEventsDb" parent="basePooledDataSource">
+        <qualifier value="AggrEventsDb" />
+        <property name="driverClassName" value="${AggrEventsJdbcDriver}" />
+        <property name="url" value="${AggrEventsJdbcUrl}" />
+        <property name="username" value="${AggrEventsJdbcUser}" />
+        <property name="password" value="${AggrEventsJdbcPassword}" />
+    </bean>    
+    
+    <bean class="org.jasig.portal.utils.jdbc.DelayedValidationQueryResolverImpl">
+    	<property name="persistenceUnit">
+    		<util:constant static-field="org.jasig.portal.jpa.BasePortalJpaDao.PERSISTENCE_UNIT_NAME"/>
+    	</property>
+    	<property name="validationQueryMap">
+    		<map>
+    			<entry key="org.hibernate.dialect.Oracle8iDialect" value="SELECT 1 FROM DUAL" />
+    			<entry key="org.hibernate.dialect.MySQLDialect" value="SELECT 1" />
+    			<entry key="org.hibernate.dialect.PostgreSQL81Dialect" value="SELECT 1" />
+    			<entry key="org.hibernate.dialect.SQLServerDialect" value="SELECT 1" />
+    			<entry key="org.hibernate.dialect.HSQLDialect" value="select 1 from INFORMATION_SCHEMA.SYSTEM_USERS" />
+    		</map>
+    	</property>
     </bean>
 </beans>

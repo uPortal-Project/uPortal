@@ -28,6 +28,8 @@
     
     <task:annotation-driven executor="uPortalTaskExecutor" scheduler="uPortalTaskScheduler"/>
     
+    <bean id="loggingAbortHandler" class="org.jasig.portal.utils.threading.LoggingAbortHandler" />
+    
     <bean id="uPortalTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean">
         <property name="corePoolSize" value="${org.jasig.portal.task.exec.threadPool.initialThreads}" />
         <property name="maxPoolSize" value="${org.jasig.portal.task.exec.threadPool.maxThreads}" />
@@ -38,6 +40,7 @@
         <property name="keepAliveSeconds" value="${org.jasig.portal.task.exec.threadPool.keepAliveSeconds}" />
         <property name="daemon" value="true" />
         <property name="allowCoreThreadTimeOut" value="true" />
+        <property name="rejectedExecutionHandler" ref="loggingAbortHandler" />
     </bean>
     
     <bean id="uPortalTaskScheduler" class="org.jasig.portal.utils.threading.DelegatingThreadPoolTaskScheduler">
@@ -47,20 +50,26 @@
         <property name="threadGroupName" value="uPortal-TaskSchedulerThreadGroup" />
         <property name="threadNamePrefix" value="uPortal-TaskScheduler-" />
         <property name="daemon" value="true" />
+        <property name="rejectedExecutionHandler" ref="loggingAbortHandler" />
     </bean>
     
     <task:scheduled-tasks scheduler="uPortalTaskScheduler">
         <!--
-         | Prime #s are used so that over time the executions will distribute themselves fairly evenly over time
-         | instead of always happening on at the same time (ex: always at 33 seconds of each minute)
-         |
-         | Handy site for finding primes: http://www.numberempire.com/primenumbers.php
+         | Prime numbers are used so that executions will be distributed over time. Use this site for
+         | finding primes: http://www.numberempire.com/primenumbers.php Generate a 3 or 4 digit prime
+         | and then append enough 0s to get the duration scale required.
          +-->
-        <task:scheduled ref="portletCookieService" method="purgeExpiredCookies" fixed-delay="60100"/> <!-- ~1 minute period -->
-        <task:scheduled ref="PortalEventDaoQueuingEventHandler" method="flush" fixed-delay="997"/> <!-- ~1 second period -->
-        <task:scheduled ref="portalEventAggregationManager" method="aggregateRawEvents" fixed-delay="60700"/> <!-- ~1 minute period -->
-        <task:scheduled ref="portalEventAggregationManager" method="purgeRawEvents" fixed-delay="61300"/> <!-- ~1 minute period -->
-        <task:scheduled ref="portalEventAggregationManager" method="populateDimensions" fixed-delay="86820000"/> <!-- ~24 hour period -->
-        <task:scheduled ref="portalEventAggregationManager" method="purgeEventSessions" fixed-delay="61700"/> <!-- ~1 minute period -->
+         
+        <!-- local tasks -->
+        <task:scheduled ref="portalEventDaoQueuingEventHandler" method="flush" fixed-delay="997"/> <!-- ~1 second period -->
+        <task:scheduled ref="cacheManagerExpiredElementEvictor" method="evictExpiredElements" fixed-delay="61900"/> <!-- ~1 minute period -->
+        <task:scheduled ref="eventAggrCacheManagerExpiredElementEvictor" method="evictExpiredElements" fixed-delay="61300"/> <!-- ~1 minute period -->
+        
+        <!-- clustered tasks -->
+        <task:scheduled ref="portletCookieService" method="purgeExpiredCookies" fixed-delay="${org.jasig.portal.portlet.container.services.PortletCookieServiceImpl.purgeExpiredCookiesPeriod}"/>
+        <task:scheduled ref="portalEventAggregationManager" method="aggregateRawEvents" fixed-delay="${org.jasig.portal.events.aggr.PortalEventProcessingManagerImpl.aggregateRawEventsPeriod}"/>
+        <task:scheduled ref="portalEventAggregationManager" method="populateDimensions" fixed-delay="${org.jasig.portal.events.aggr.PortalEventProcessingManagerImpl.populateDimensionsPeriod}"/>
+        <task:scheduled ref="portalEventAggregationManager" method="purgeEventSessions" fixed-delay="${org.jasig.portal.events.aggr.PortalEventProcessingManagerImpl.purgeEventSessionsPeriod}"/>
+        <task:scheduled ref="portalEventAggregationManager" method="purgeRawEvents" 	fixed-delay="${org.jasig.portal.events.aggr.PortalEventProcessingManagerImpl.purgeRawEventsPeriod}"/>
     </task:scheduled-tasks>
 </beans>

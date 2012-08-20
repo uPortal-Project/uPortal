@@ -202,7 +202,6 @@ public class StylesheetDescriptorImporterExporter extends AbstractJaxbDataHandle
 	 */
 	protected ExternalStylesheetDescriptor convert(IStylesheetDescriptor stylesheetDescriptor) {
 		final ExternalStylesheetDescriptor externalStylesheetDescriptor = new ExternalStylesheetDescriptor();
-        externalStylesheetDescriptor.setVersion("4.0");
         
         externalStylesheetDescriptor.setName(stylesheetDescriptor.getName());
         externalStylesheetDescriptor.setUrlSyntaxHelper(stylesheetDescriptor.getUrlNodeSyntaxHelperName());

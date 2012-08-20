@@ -60,6 +60,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.portlet.om.IPortletDefinition;
@@ -87,6 +88,7 @@ import org.jasig.portal.portlet.om.PortletLifecycleState;
         pkColumnValue="UP_PORTLET_DEF",
         allocationSize=5
     )
+@NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 class PortletDefinitionImpl implements IPortletDefinition {
@@ -192,7 +194,7 @@ class PortletDefinitionImpl implements IPortletDefinition {
     @PostUpdate
     @PostRemove
     private void init() {
-        if (this.portletDefinitionId == null || this.portletDefinitionId.getLongId() != this.internalPortletDefinitionId) {
+        if (this.internalPortletDefinitionId != -1 && (this.portletDefinitionId == null || this.portletDefinitionId.getLongId() != this.internalPortletDefinitionId)) {
             this.portletDefinitionId = PortletDefinitionIdImpl.create(this.internalPortletDefinitionId);
         }
     }
@@ -255,6 +257,7 @@ class PortletDefinitionImpl implements IPortletDefinition {
      */
     @Override
     public IPortletDefinitionId getPortletDefinitionId() {
+        init();
         return this.portletDefinitionId;
     }
 
@@ -270,8 +273,8 @@ class PortletDefinitionImpl implements IPortletDefinition {
 	 * @see org.jasig.portal.portlet.om.IPortletEntity#setPortletPreferences(java.util.List)
 	 */
 	@Override
-	public void setPortletPreferences(List<IPortletPreference> portletPreferences) {
-		this.portletPreferences.setPortletPreferences(portletPreferences);
+	public boolean setPortletPreferences(List<IPortletPreference> portletPreferences) {
+		return this.portletPreferences.setPortletPreferences(portletPreferences);
 	}
 
 	@Override

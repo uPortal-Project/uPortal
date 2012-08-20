@@ -19,12 +19,11 @@
 
 package org.jasig.portal.events.aggr.session;
 
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -33,16 +32,19 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
 import org.jasig.portal.events.LoginEvent;
+import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupLookupDao;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
-import org.jasig.portal.jpa.BaseJpaDao;
+import org.jasig.portal.groups.ICompositeGroupService;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
+import org.jasig.portal.jpa.cache.EntityManagerCache;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.utils.cache.CacheKey;
 import org.joda.time.DateTime;
-import org.joda.time.ReadablePeriod;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
 
@@ -51,20 +53,26 @@ import com.google.common.base.Function;
  * @version $Revision$
  */
 @Repository("eventSessionDao")
-public class JpaEventSessionDao extends BaseJpaDao implements EventSessionDao {
+public class JpaEventSessionDao extends BaseAggrEventsJpaDao implements EventSessionDao {
+    private final static String EVENT_SESSION_CACHE_SOURCE = JpaEventSessionDao.class.getName() + "_EVENT_SESSION";
+
     private String deleteByEventSessionIdQuery;
     private CriteriaQuery<EventSessionImpl> findExpiredEventSessionsQuery;
-    private CriteriaQuery<EventSessionImpl> findByEventSessionIdQuery;
     private ParameterExpression<String> eventSessionIdParameter;
     private ParameterExpression<DateTime> dateTimeParameter;
     
-    private EntityManager entityManager;
     private AggregatedGroupLookupDao aggregatedGroupLookupDao;
-    private ReadablePeriod eventSessionDuration;
+    private ICompositeGroupService compositeGroupService;
+    private EntityManagerCache entityManagerCache;
     
-    @Value("${org.jasig.portal.events.aggr.session.JpaEventSessionDao.eventSessionDuration:P1D}")
-    public void setEventSessionDuration(ReadablePeriod eventSessionDuration) {
-        this.eventSessionDuration = eventSessionDuration;
+    @Autowired
+    public void setEntityManagerCache(EntityManagerCache entityManagerCache) {
+        this.entityManagerCache = entityManagerCache;
+    }
+
+    @Autowired
+    public void setCompositeGroupService(ICompositeGroupService compositeGroupService) {
+        this.compositeGroupService = compositeGroupService;
     }
 
     @Autowired
@@ -72,35 +80,10 @@ public class JpaEventSessionDao extends BaseJpaDao implements EventSessionDao {
         this.aggregatedGroupLookupDao = aggregatedGroupLookupDao;
     }
 
-    @PersistenceContext(unitName = "uPortalAggrEventsPersistence")
-    public void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
-
-    @Override
-    protected EntityManager getEntityManager() {
-        return this.entityManager;
-    }
-    
     @Override
     public void afterPropertiesSet() throws Exception {
         this.eventSessionIdParameter = this.createParameterExpression(String.class, "eventSessionId");
         this.dateTimeParameter = this.createParameterExpression(DateTime.class, "dateTime");
-        
-        this.findByEventSessionIdQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<EventSessionImpl>>() {
-            @Override
-            public CriteriaQuery<EventSessionImpl> apply(CriteriaBuilder cb) {
-                final CriteriaQuery<EventSessionImpl> criteriaQuery = cb.createQuery(EventSessionImpl.class);
-                final Root<EventSessionImpl> root = criteriaQuery.from(EventSessionImpl.class);
-                criteriaQuery.select(root);
-                criteriaQuery.where(
-                        cb.equal(root.get(EventSessionImpl_.eventSessionId), eventSessionIdParameter)
-                    );
-                
-                return criteriaQuery;
-            }
-        });
-        
         
         this.findExpiredEventSessionsQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<EventSessionImpl>>() {
             @Override
@@ -122,57 +105,87 @@ public class JpaEventSessionDao extends BaseJpaDao implements EventSessionDao {
                 "WHERE e." + EventSessionImpl_.eventSessionId.getName() + " = :" + this.eventSessionIdParameter.getName();
     }
     
-
-    @Transactional("aggrEvents")
+    @AggrEventsTransactional
     @Override
-    public EventSession createEventSession(LoginEvent loginEvent) {
-        final Set<AggregatedGroupMapping> groupMappings = new LinkedHashSet<AggregatedGroupMapping>();
-        for (final String groupKey : loginEvent.getGroups()) {
-            final AggregatedGroupMapping groupMapping = this.aggregatedGroupLookupDao.getGroupMapping(groupKey);
-            groupMappings.add(groupMapping);
+    public void storeEventSession(EventSession eventSession) {
+        this.getEntityManager().persist(eventSession);
+    }
+    
+    @AggrEventsTransactional
+    @Override
+    public EventSession getEventSession(PortalEvent event) {
+        final String eventSessionId = event.getEventSessionId();
+        
+        final CacheKey key = CacheKey.build(EVENT_SESSION_CACHE_SOURCE, eventSessionId);
+        EventSessionImpl eventSession = this.entityManagerCache.get(PERSISTENCE_UNIT_NAME, key);
+        if (eventSession != null) {
+            return eventSession;
         }
         
-        final EventSessionImpl eventSession = new EventSessionImpl(loginEvent.getEventSessionId(), groupMappings);
-        
-        this.entityManager.persist(eventSession);
-        
-        return eventSession;
-    }
+        final NaturalIdQuery<EventSessionImpl> naturalIdQuery = this.createNaturalIdQuery(EventSessionImpl.class);
+        naturalIdQuery.using(EventSessionImpl_.eventSessionId, eventSessionId);
 
-    @Transactional("aggrEvents")
-    @Override
-    public EventSession getEventSession(String eventSessionId) {
-        final TypedQuery<EventSessionImpl> query = this.createCachedQuery(this.findByEventSessionIdQuery);
-        query.setParameter(this.eventSessionIdParameter, eventSessionId);
-        
-        final List<EventSessionImpl> results = query.getResultList();
-        
-        final EventSessionImpl eventSession = DataAccessUtils.uniqueResult(results);
+        eventSession = naturalIdQuery.load();
         if (eventSession == null) {
-            return null;
+            //No event session, somehow we missed the login event. Look at the groups the user is currently a member of
+            final Set<AggregatedGroupMapping> groupMappings = this.getGroupsForEvent(event);
+            
+            final DateTime eventDate = event.getTimestampAsDate();
+            eventSession = new EventSessionImpl(eventSessionId, eventDate, groupMappings);
+            
+            this.getEntityManager().persist(eventSession);
+            this.entityManagerCache.put(PERSISTENCE_UNIT_NAME, key, eventSession);
         }
-        
-        eventSession.recordAccess();
-        this.entityManager.persist(eventSession);
-        
+                
         return eventSession;
     }
 
-    @Transactional("aggrEvents")
+    @AggrEventsTransactional
     @Override
     public void deleteEventSession(String eventSessionId) {
-        final Query query = this.entityManager.createQuery(this.deleteByEventSessionIdQuery);
+        final Query query = this.getEntityManager().createQuery(this.deleteByEventSessionIdQuery);
         query.setParameter(this.eventSessionIdParameter.getName(), eventSessionId);
         query.executeUpdate();
     }
 
-    @Transactional("aggrEvents")
+    @AggrEventsTransactional
     @Override
-    public void purgeExpiredEventSessions() {
+    public int purgeEventSessionsBefore(DateTime lastAggregatedEventDate) {
         final TypedQuery<EventSessionImpl> query = this.createQuery(this.findExpiredEventSessionsQuery);
-        query.setParameter(this.dateTimeParameter, DateTime.now().minus(eventSessionDuration));
-        for (final EventSessionImpl eventSession : query.getResultList()) {
-            this.entityManager.remove(eventSession);
+        query.setParameter(this.dateTimeParameter, lastAggregatedEventDate);
+        final List<EventSessionImpl> resultList = query.getResultList();
+        for (final EventSessionImpl eventSession : resultList) {
+            this.getEntityManager().remove(eventSession);
         }
+        
+        return resultList.size();
+    }
+    
+    /**
+     * Get groups for the event
+     */
+    protected Set<AggregatedGroupMapping> getGroupsForEvent(PortalEvent event) {
+        final Set<AggregatedGroupMapping> groupMappings = new LinkedHashSet<AggregatedGroupMapping>();
+        
+        if (event instanceof LoginEvent) {
+            for (final String groupKey : ((LoginEvent) event).getGroups()) {
+                final AggregatedGroupMapping groupMapping = this.aggregatedGroupLookupDao.getGroupMapping(groupKey);
+                if (groupMapping != null) {
+                    groupMappings.add(groupMapping);
+                }
+            }
+        }
+        else {
+            final String userName = event.getUserName();
+            final IGroupMember groupMember = this.compositeGroupService.getGroupMember(userName, IPerson.class);
+            for (@SuppressWarnings("unchecked")
+            final Iterator<IEntityGroup> containingGroups = this.compositeGroupService.findContainingGroups(groupMember); containingGroups.hasNext(); ) {
+                final IEntityGroup group = containingGroups.next();
+                final AggregatedGroupMapping groupMapping = this.aggregatedGroupLookupDao.getGroupMapping(group.getServiceName().toString(), group.getName());
+                groupMappings.add(groupMapping);
+            }
+        }
+        
+        return groupMappings;
     }
 }

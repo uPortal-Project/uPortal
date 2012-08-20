@@ -136,7 +136,12 @@
     <xsl:template match="hasedit|hashelp|hasabout|secure|locale">
         <parameter>
             <name>
-                <xsl:value-of select="name()"/>
+	      <xsl:choose>
+		<xsl:when test="name() = 'hasedit'">editable</xsl:when>
+		<xsl:when test="name() = 'hasabout'">hasAbout</xsl:when>
+		<xsl:when test="name() = 'hashelp'">hasHelp</xsl:when>
+                <xsl:otherwise><xsl:value-of select="name()"/></xsl:otherwise>
+	      </xsl:choose>
             </name>
             <value>
                 <xsl:choose>

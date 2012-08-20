@@ -26,7 +26,6 @@
 	 				@include box-shadow($galleryHandleShadow);
 	 			}
 	 			
-	 			
 	 			span {
 	 				background-image: $galleryHandleIconClosed;
 	 				background-position: right center;
@@ -162,8 +161,11 @@
 		 		padding-bottom: $galleryResultsBottomPadding;
 		 		color: $galleryResultsText;
 		 		
-		 		.ri-wrapper {
-		 			background: $galleryRIBackground;
+		 		.layout-wrapper .ri-link,
+		 		.skins-wrapper .ri-link,
+		 		.portlet.result-item,
+		 		.package.results-item {
+		 		  background: $galleryRIBackground;
 		 			border: $galleryRIBorder;
 		 			@if ($galleryRIRound != false) {
 		 				@include rounded($galleryRIRound);
@@ -171,7 +173,39 @@
 		 			@if ($galleryRIShadow != false) {
 		 				@include box-shadow($galleryRIShadow);
 		 			}
-		 			
+		 			&:hover,
+  		 		&:focus,
+  		 		&:active {
+  		 			background: $galleryRIBackgroundHover;
+  		 			border: $galleryRIBorderHover;
+  		 			@include gradient($galleryRIGradient1Hover,$galleryRIGradient2Hover);
+  		 		}
+		 		}
+		 		.layout-wrapper, .skins-wrapper {
+		 		  .ri-link {
+
+  		 		}
+
+		 		}
+		 		.results-item.disabled {
+          @include opacity(20);
+          border-color: #3A3A3A !important;
+
+          &:hover, &:focus,
+          a:hover, a:focus {
+            background: none !important;
+            cursor: default !important;
+          }
+        }
+        .results-item.selected .ri-link {
+	 				background: $galleryRISelectedBackground;
+	 				border-width: $galleryRISelectedBorderWidth;
+	 				border-style: $galleryRISelectedBorderStyle;
+	 				border-color: $galleryRISelectedBorderColor;
+	 				margin-bottom: -#{$galleryRISelectedBorderWidth * 2};
+	 			}
+		 		
+		 		.ri-wrapper {
 		 			.ri-utility {
 		 				height: $galleryRIUtilityHeight;
 		 				background: $galleryRIUtilityBackground;
@@ -192,12 +226,8 @@
 		 				color: $galleryRIDescription;
 		 			}
 		 		}
-		 		.ri-wrapper:hover, .ri-wrapper:focus {
-		 			background: $galleryRIBackgroundHover;
-		 			border: $galleryRIBorderHover;
-		 			@include gradient($galleryRIGradient1Hover,$galleryRIGradient2Hover);
-		 		}
-		 		.portlet-wrapper, .package-wrapper {
+        
+        .portlet-wrapper, .package-wrapper {
 		 			.ri-link {
 		 				color: $galleryRILink;
 		 				background: $galleryRIBackground;
@@ -220,11 +250,6 @@
 		 				
 		 				display: block;
 		 			}
-	 			}
-	 			
-	 			.selected {
-	 				background: $galleryRISelectedBackground;
-	 				border: $galleryRISelectedBorder;
 	 			}
 	 			
 	 			.pager {

@@ -45,7 +45,7 @@
     xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
     xmlns:upElemTitle="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanLayoutElementTitleHelper"
     xsi:schemaLocation="
-            https://source.jasig.org/schemas/uportal/layout/portal-url ../../../xsd/layout/portal-url-4.0.xsd"
+            https://source.jasig.org/schemas/uportal/layout/portal-url https://source.jasig.org/schemas/uportal/layout/portal-url-4.0.xsd"
     exclude-result-prefixes="url upAuth upGroup upMsg upElemTitle" 
     version="1.0">
     
@@ -137,10 +137,10 @@
                         <xsl:otherwise><xsl:value-of select="$CONTEXT_PATH"/>/media/skins/icons/mobile/default.png</xsl:otherwise>
                     </xsl:choose>
                 </xsl:variable>
-                <a href="{$portletUrl}" title="To view {@name}">
+                <a href="{$portletUrl}" title="To view {@title}">
                     <span class="{$newItemCountClasses}">{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}</span>
-                    <span class="icon"><img class="portlet-icon" src="{$iconUrl}" alt="{@name}"/></span>
-                    <span class="title"><xsl:value-of select="@name" /></span>
+                    <span class="icon"><img class="portlet-icon" src="{$iconUrl}" alt="{@title}"/></span>
+                    <span class="title"><xsl:value-of select="@title" /></span>
                 </a>
             </div>
         </xsl:for-each>
@@ -174,9 +174,9 @@
                             </xsl:choose>
                         </xsl:variable>
                         <xsl:variable name="newItemCountClasses">ui-li-count badge new-item up-new-item-count-{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}</xsl:variable>
-                        <a href="{$portletUrl}" title="To view {@name}">
-                            <img class="portlet-icon" src="{$iconUrl}" alt="{@name}"/>
-                            <h3><xsl:value-of select="@name" /></h3>
+                        <a href="{$portletUrl}" title="To view {@title}">
+                            <img class="portlet-icon" src="{$iconUrl}" alt="{@title}"/>
+                            <h3><xsl:value-of select="@title" /></h3>
                             <p><xsl:value-of select="@description"/></p>
                             <span class="{$newItemCountClasses}">{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}</span>
                         </a>
@@ -209,7 +209,7 @@
             <a href="{$basePortalUrl}" data-icon="home" data-direction="reverse">
                 <xsl:value-of select="upMsg:getMessage('home', $USER_LANG)"/>
             </a>
-            <h1 class="title"><xsl:value-of select="//content/focused/channel/@name" /></h1>
+            <h1 class="title">{up-portlet-title(<xsl:value-of select="//content/focused/channel/@ID" />)}</h1>
         </div>
     </xsl:if>
 </xsl:template>

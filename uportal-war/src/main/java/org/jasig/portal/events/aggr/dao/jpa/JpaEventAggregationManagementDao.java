@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -43,16 +42,13 @@ import org.jasig.portal.events.aggr.IEventAggregatorStatus.ProcessingType;
 import org.jasig.portal.events.aggr.IPortalEventAggregator;
 import org.jasig.portal.events.aggr.QuarterDetail;
 import org.jasig.portal.events.aggr.dao.IEventAggregationManagementDao;
-import org.jasig.portal.jpa.BaseJpaDao;
+import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
+import org.jasig.portal.jpa.OpenEntityManager;
 import org.joda.time.DateMidnight;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionOperations;
 
 import com.google.common.base.Function;
 
@@ -61,10 +57,9 @@ import com.google.common.base.Function;
  * @version $Revision$
  */
 @Repository
-public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEventAggregationManagementDao {
+public class JpaEventAggregationManagementDao extends BaseAggrEventsJpaDao implements IEventAggregationManagementDao {
     private static final Class<IPortalEventAggregator> DEFAULT_AGGREGATOR_TYPE = IPortalEventAggregator.class; 
     
-    private CriteriaQuery<EventAggregatorStatusImpl> findEventAggregatorStatusByProcessingTypeQuery;
     private CriteriaQuery<AggregatedGroupConfigImpl> findAllGroupConfigsQuery;
     private CriteriaQuery<AggregatedGroupConfigImpl> findGroupConfigForAggregatorQuery;
     private CriteriaQuery<AggregatedIntervalConfigImpl> findAllIntervalConfigsQuery;
@@ -73,45 +68,11 @@ public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEve
     private CriteriaQuery<AcademicTermDetailImpl> findAllAcademicTermDetailsQuery;
     private String deleteAllQuarterDetailsQuery;
 
-    private ParameterExpression<ProcessingType> processingTypeParameter;
     private ParameterExpression<Class> aggregatorTypeParameter;
-    
-    private TransactionOperations transactionOperations;
-    private EntityManager entityManager;
-    
-    @PersistenceContext(unitName = "uPortalAggrEventsPersistence")
-    public void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
-    
-    @Autowired
-    public void setTransactionOperations(@Qualifier("aggrEvents") TransactionOperations transactionOperations) {
-        this.transactionOperations = transactionOperations;
-    }
 
     @Override
-    protected EntityManager getEntityManager() {
-        return this.entityManager;
-    }
-    
-    @Override
     public void afterPropertiesSet() throws Exception {
-        this.processingTypeParameter = this.createParameterExpression(ProcessingType.class, "processingType");
         this.aggregatorTypeParameter = this.createParameterExpression(Class.class, "aggregatorType");
-        
-        this.findEventAggregatorStatusByProcessingTypeQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<EventAggregatorStatusImpl>>() {
-            @Override
-            public CriteriaQuery<EventAggregatorStatusImpl> apply(CriteriaBuilder cb) {
-                final CriteriaQuery<EventAggregatorStatusImpl> criteriaQuery = cb.createQuery(EventAggregatorStatusImpl.class);
-                final Root<EventAggregatorStatusImpl> entityRoot = criteriaQuery.from(EventAggregatorStatusImpl.class);
-                criteriaQuery.select(entityRoot);
-                criteriaQuery.where(
-                    cb.equal(entityRoot.get(EventAggregatorStatusImpl_.processingType), processingTypeParameter)
-                );
-                
-                return criteriaQuery;
-            }
-        });
         
         this.findAllGroupConfigsQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<AggregatedGroupConfigImpl>>() {
             @Override
@@ -204,22 +165,20 @@ public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEve
                 "DELETE FROM " + QuarterDetailImpl.class.getName() + " e ";
     }
 
-
+    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     @Override
     public IEventAggregatorStatus getEventAggregatorStatus(final ProcessingType processingType, boolean create) {
-        final TypedQuery<EventAggregatorStatusImpl> query = this.createCachedQuery(findEventAggregatorStatusByProcessingTypeQuery);
-        query.setParameter(this.processingTypeParameter, processingType);
-
-        final List<EventAggregatorStatusImpl> resultList = query.getResultList();
-        EventAggregatorStatusImpl status = DataAccessUtils.uniqueResult(resultList);
+        final NaturalIdQuery<EventAggregatorStatusImpl> query = this.createNaturalIdQuery(EventAggregatorStatusImpl.class);
+        query.using(EventAggregatorStatusImpl_.processingType, processingType);
+        EventAggregatorStatusImpl status = query.load();
         
         //Create the status object if it doesn't yet exist
         if (status == null && create) {
-            status = this.transactionOperations.execute(new TransactionCallback<EventAggregatorStatusImpl>() {
+            status = this.getTransactionOperations().execute(new TransactionCallback<EventAggregatorStatusImpl>() {
                 @Override
                 public EventAggregatorStatusImpl doInTransaction(TransactionStatus status) {
                     final EventAggregatorStatusImpl eventAggregatorStatus = new EventAggregatorStatusImpl(processingType);
-                    entityManager.persist(eventAggregatorStatus);
+                    getEntityManager().persist(eventAggregatorStatus);
                     return eventAggregatorStatus;
                 }
             });
@@ -229,9 +188,9 @@ public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEve
     }
 
     @Override
-    @Transactional(value="aggrEventsTransactionManager")
+    @AggrEventsTransactional
     public void updateEventAggregatorStatus(IEventAggregatorStatus eventAggregatorStatus) {
-        this.entityManager.persist(eventAggregatorStatus);
+        this.getEntityManager().persist(eventAggregatorStatus);
     }
 
     @Override
@@ -239,7 +198,7 @@ public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEve
         AggregatedGroupConfig groupConfig = this.getAggregatedGroupConfig(DEFAULT_AGGREGATOR_TYPE);
         
         if (groupConfig == null) {
-            groupConfig = this.transactionOperations.execute(new TransactionCallback<AggregatedGroupConfig>() {
+            groupConfig = this.getTransactionOperations().execute(new TransactionCallback<AggregatedGroupConfig>() {
                 @Override
                 public AggregatedGroupConfig doInTransaction(TransactionStatus status) {
                     return createAggregatedGroupConfig(DEFAULT_AGGREGATOR_TYPE);
@@ -266,23 +225,23 @@ public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEve
     }
 
     @Override
-    @Transactional(value="aggrEventsTransactionManager")
+    @AggrEventsTransactional
     public AggregatedGroupConfig createAggregatedGroupConfig(Class<? extends IPortalEventAggregator> aggregatorType) {
         final AggregatedGroupConfig aggregatedGroupConfig = new AggregatedGroupConfigImpl(aggregatorType);
-        this.entityManager.persist(aggregatedGroupConfig);
+        this.getEntityManager().persist(aggregatedGroupConfig);
         return aggregatedGroupConfig;
     }
 
     @Override
-    @Transactional(value="aggrEventsTransactionManager")
+    @AggrEventsTransactional
     public void updateAggregatedGroupConfig(AggregatedGroupConfig aggregatedGroupConfig) {
-        this.entityManager.persist(aggregatedGroupConfig);
+        this.getEntityManager().persist(aggregatedGroupConfig);
     }
 
     @Override
-    @Transactional(value="aggrEventsTransactionManager")
+    @AggrEventsTransactional
     public void deleteAggregatedGroupConfig(AggregatedGroupConfig aggregatedGroupConfig) {
-        this.entityManager.remove(aggregatedGroupConfig);        
+        this.getEntityManager().remove(aggregatedGroupConfig);        
     }
     
 
@@ -299,7 +258,7 @@ public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEve
         AggregatedIntervalConfig intervalConfig = this.getAggregatedIntervalConfig(DEFAULT_AGGREGATOR_TYPE);
         
         if (intervalConfig == null) {
-            intervalConfig = this.transactionOperations.execute(new TransactionCallback<AggregatedIntervalConfig>() {
+            intervalConfig = this.getTransactionOperations().execute(new TransactionCallback<AggregatedIntervalConfig>() {
                 @Override
                 public AggregatedIntervalConfig doInTransaction(TransactionStatus status) {
                     return createAggregatedIntervalConfig(DEFAULT_AGGREGATOR_TYPE);
@@ -318,23 +277,23 @@ public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEve
     }
 
     @Override
-    @Transactional(value="aggrEventsTransactionManager")
+    @AggrEventsTransactional
     public AggregatedIntervalConfig createAggregatedIntervalConfig(Class<? extends IPortalEventAggregator> aggregatorType) {
         final AggregatedIntervalConfig aggregatedIntervalConfig = new AggregatedIntervalConfigImpl(aggregatorType);
-        this.entityManager.persist(aggregatedIntervalConfig);
+        this.getEntityManager().persist(aggregatedIntervalConfig);
         return aggregatedIntervalConfig;
     }
 
     @Override
-    @Transactional(value="aggrEventsTransactionManager")
+    @AggrEventsTransactional
     public void updateAggregatedIntervalConfig(AggregatedIntervalConfig aggregatedIntervalConfig) {
-        this.entityManager.persist(aggregatedIntervalConfig);
+        this.getEntityManager().persist(aggregatedIntervalConfig);
     }
 
     @Override
-    @Transactional(value="aggrEventsTransactionManager")
+    @AggrEventsTransactional
     public void deleteAggregatedIntervalConfig(AggregatedIntervalConfig aggregatedIntervalConfig) {
-        this.entityManager.remove(aggregatedIntervalConfig);        
+        this.getEntityManager().remove(aggregatedIntervalConfig);        
     }
     
 
@@ -347,7 +306,7 @@ public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEve
         }
         
         //No valid quarters config in db, populate the standard quarters
-        return this.transactionOperations.execute(new TransactionCallback<List<QuarterDetail>>() {
+        return this.getTransactionOperations().execute(new TransactionCallback<List<QuarterDetail>>() {
 
             @Override
             public List<QuarterDetail> doInTransaction(TransactionStatus status) {
@@ -359,15 +318,16 @@ public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEve
     }
 
     @Override
-    @Transactional(value="aggrEventsTransactionManager")
+    @AggrEventsTransactional
     public void setQuarterDetails(List<QuarterDetail> newQuarterDetails) {
         newQuarterDetails = EventDateTimeUtils.validateQuarters(newQuarterDetails);
         
-        final Query deleteAllQuery = this.entityManager.createQuery(deleteAllQuarterDetailsQuery);
+        final EntityManager entityManager = this.getEntityManager();
+        final Query deleteAllQuery = entityManager.createQuery(deleteAllQuarterDetailsQuery);
         deleteAllQuery.executeUpdate();
 
         for (final QuarterDetail quarterDetail : newQuarterDetails) {
-            this.entityManager.persist(quarterDetail);
+            entityManager.persist(quarterDetail);
         }
     }
 
@@ -378,7 +338,7 @@ public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEve
     }
 
     @Override
-    @Transactional(value="aggrEventsTransactionManager", noRollbackFor = IllegalArgumentException.class)
+    @org.springframework.transaction.annotation.Transactional(value=BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME, noRollbackFor = IllegalArgumentException.class)
     public void addAcademicTermDetails(DateMidnight start, DateMidnight end, String termName) {
         //Check if term dates overlap and fail if they do
         final List<AcademicTermDetail> academicTermDetail = this.getAcademicTermDetails();
@@ -393,18 +353,18 @@ public class JpaEventAggregationManagementDao extends BaseJpaDao implements IEve
         }
         
         final AcademicTermDetailImpl newTerm = new AcademicTermDetailImpl(start, end, termName);
-        this.entityManager.persist(newTerm);
+        this.getEntityManager().persist(newTerm);
     }
 
     @Override
-    @Transactional(value="aggrEventsTransactionManager")
+    @AggrEventsTransactional
     public void updateAcademicTermDetails(AcademicTermDetail academicTermDetail) {
-        this.entityManager.persist(academicTermDetail);
+        this.getEntityManager().persist(academicTermDetail);
     }
 
     @Override
-    @Transactional(value="aggrEventsTransactionManager")
+    @AggrEventsTransactional
     public void deleteAcademicTermDetails(AcademicTermDetail academicTermDetail) {
-        this.entityManager.remove(academicTermDetail);
+        this.getEntityManager().remove(academicTermDetail);
     }
 }

@@ -39,6 +39,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.login.LoginAggregationImpl;
@@ -61,9 +62,10 @@ import org.joda.time.LocalTime;
         allocationSize=1
     )
 @Immutable
+@NaturalIdCache
 @Cacheable
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class TimeDimensionImpl implements TimeDimension, Serializable {
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+public final class TimeDimensionImpl implements TimeDimension, Serializable {
     private static final long serialVersionUID = 1L;
    
     @Id
@@ -171,6 +173,6 @@ public class TimeDimensionImpl implements TimeDimension, Serializable {
     }
     @Override
     public String toString() {
-        return "TimeDimension [id=" + id + ", time=" + time + ", fiveMinuteIncrement=" + fiveMinuteIncrement + "]";
+        return time.toString();
     }
 }

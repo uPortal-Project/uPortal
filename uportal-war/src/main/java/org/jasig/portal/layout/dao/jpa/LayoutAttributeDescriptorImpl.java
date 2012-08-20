@@ -33,6 +33,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -66,6 +67,10 @@ public class LayoutAttributeDescriptorImpl extends AbstractStylesheetDataImpl im
     @Column(name="SS_DESC_LAYOUT_ATTR_ID")
     private final long id;
 
+    @Version
+    @Column(name = "ENTITY_VERSION")
+    private final long entityVersion;
+    
     @ElementCollection(fetch = FetchType.EAGER)
     @JoinTable(
         name = "UP_SS_DESC_LAY_ATTR_ELMS",
@@ -80,11 +85,13 @@ public class LayoutAttributeDescriptorImpl extends AbstractStylesheetDataImpl im
     @SuppressWarnings("unused")
     private LayoutAttributeDescriptorImpl() {
         this.id = -1;
+        this.entityVersion = -1;
     }
 
     public LayoutAttributeDescriptorImpl(String name, Scope scope) {
         super(name, scope);
         this.id = -1;
+        this.entityVersion = -1;
     }
     
     @Override
@@ -111,7 +118,7 @@ public class LayoutAttributeDescriptorImpl extends AbstractStylesheetDataImpl im
     @Override
     public String toString() {
         return "LayoutAttributeDescriptorImpl [getId()="
-                + this.getId() + ", getName()=" + this.getName() + ", getDefaultValue()=" + this.getDefaultValue()
+                + this.getId() + ", entityVersion=" + this.entityVersion + ", getName()=" + this.getName() + ", getDefaultValue()=" + this.getDefaultValue()
                 + ", getScope()=" + this.getScope() + ", getDescription()=" + this.getDescription() + "targetElementNames=" + this.targetElementNames + "]";
     }
 }

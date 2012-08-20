@@ -60,7 +60,6 @@ public class PortalDriverServicesImpl implements PortalDriverServices {
     //OptionalContainerServices
     private UserInfoService userInfoService;
     private PortalAdministrationService portalAdministrationService;
-    private PortletPreferencesService portletPreferencesService;
     private PortletEnvironmentService portletEnvironmentService;
     private PortletRegistryService portletRegistryService;
     private PortletContextService portletContextService;
@@ -105,11 +104,6 @@ public class PortalDriverServicesImpl implements PortalDriverServices {
     }
 
     @Autowired
-    public void setPortletPreferencesService(PortletPreferencesService portletPreferencesService) {
-        this.portletPreferencesService = portletPreferencesService;
-    }
-
-    @Autowired
     public void setPortletEnvironmentService(PortletEnvironmentService portletEnvironmentService) {
         this.portletEnvironmentService = portletEnvironmentService;
     }
@@ -144,121 +138,76 @@ public class PortalDriverServicesImpl implements PortalDriverServices {
         this.requestDispatcherService = requestDispatcherService;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.container.ContainerServices#getPortalContext()
-     */
     @Override
     public PortalContext getPortalContext() {
         return this.portalContext;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.container.ContainerServices#getEventCoordinationService()
-     */
     @Override
     public EventCoordinationService getEventCoordinationService() {
         return this.eventCoordinationService;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.container.ContainerServices#getPortletRequestContextService()
-     */
     @Override
     public PortletRequestContextService getPortletRequestContextService() {
         return this.portletRequestContextService;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.container.ContainerServices#getFilterManagerService()
-     */
     @Override
     public FilterManagerService getFilterManagerService() {
         return this.filterManagerService;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.container.ContainerServices#getPortletURLListenerService()
-     */
     @Override
     public PortletURLListenerService getPortletURLListenerService() {
         return this.portletURLListenerService;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.container.ContainerServices#getPortletPreferencesService()
-     */
     @Override
     public PortletPreferencesService getPortletPreferencesService() {
-        return this.portletPreferencesService;
+        throw new UnsupportedOperationException("uPortal provides custom PortletPreferences implementations which do not use the PortletPreferencesService");
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.container.ContainerServices#getPortletEnvironmentService()
-     */
     @Override
     public PortletEnvironmentService getPortletEnvironmentService() {
         return this.portletEnvironmentService;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.container.ContainerServices#getPortletInvokerService()
-     */
     @Override
     public PortletInvokerService getPortletInvokerService() {
         return this.portletInvokerService;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.container.ContainerServices#getUserInfoService()
-     */
     @Override
     public UserInfoService getUserInfoService() {
         return this.userInfoService;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.container.ContainerServices#getNamespaceMapper()
-     */
     @Override
     public NamespaceMapper getNamespaceMapper() {
         return this.namespaceMapper;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.container.ContainerServices#getCCPPProfileService()
-     */
     @Override
     public CCPPProfileService getCCPPProfileService() {
         return this.ccppProfileService;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.container.ContainerServices#getRequestDispatcherService()
-     */
     @Override
     public RequestDispatcherService getRequestDispatcherService() {
         return this.requestDispatcherService;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.container.driver.PortalDriverContainerServices#getPortletContextService()
-     */
     @Override
     public PortletContextService getPortletContextService() {
         return this.portletContextService;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.container.driver.PortalDriverContainerServices#getPortletRegistryService()
-     */
     @Override
     public PortletRegistryService getPortletRegistryService() {
         return this.portletRegistryService;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.pluto.container.driver.PortalDriverContainerServices#getPortalAdministrationService()
-     */
     @Override
     public PortalAdministrationService getPortalAdministrationService() {
         return this.portalAdministrationService;

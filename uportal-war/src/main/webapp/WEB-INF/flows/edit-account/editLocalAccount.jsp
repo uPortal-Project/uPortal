@@ -20,6 +20,7 @@
 --%>
 
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
+<%@ taglib prefix="editPortlet" tagdir="/WEB-INF/tags/edit-portlet" %>
 <portlet:actionURL var="formUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
 </portlet:actionURL>
@@ -32,7 +33,7 @@
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
         <h2 class="title" role="heading">
             <c:choose>
-                <c:when test="${ person.id < 0 }">
+                <c:when test="${ accountForm.id < 0 }">
                     <spring:message code="create.new.user"/>
                 </c:when>
                 <c:otherwise>
@@ -40,7 +41,7 @@
                         <portlet:param name="execution" value="${flowExecutionKey}" />
                         <portlet:param name="_eventId" value="finish"/>
                     </portlet:actionURL>
-                    <a href="${ userUrl }">${ fn:escapeXml(person.username )}</a> >
+                    <a href="${ userUrl }">${ fn:escapeXml(accountForm.username )}</a> >
                     <spring:message code="edit.user"/>
                 </c:otherwise>
             </c:choose>
@@ -50,10 +51,10 @@
     <!-- Portlet Body -->
     <div class="fl-widget-content content portlet-content" role="main">
 
-        <form:form modelAttribute="person" action="${formUrl}" method="POST">
+        <form:form modelAttribute="accountForm" action="${formUrl}" method="POST">
 
             <!-- Portlet Messages -->
-            <spring:hasBindErrors name="person">
+            <spring:hasBindErrors name="accountForm">
                 <div class="portlet-msg-error portlet-msg error" role="alert">
                     <form:errors path="*" element="div"/>
                 </div> <!-- end: portlet-msg -->
@@ -66,7 +67,7 @@
                     <table class="portlet-table">
                         <tbody>
 
-                            <c:if test="${ person.id < 0 }">
+                            <c:if test="${ accountForm.id < 0 }">
                                 <tr>
                                     <td class="attribute-name"><spring:message code="username"/></td>
                                     <td><form:input path="username"/></td>
@@ -91,9 +92,45 @@
             <!-- Portlet Section -->
             <div class="portlet-section" role="region">
                 <div class="titlebar">
-                    <h3 class="title" role="heading"><spring:message code="attributes"/></h3>
+                    <h3 class="title" role="heading"><spring:message code="standard.attributes"/></h3>
                 </div>
-                <div id="${n}userAttributes" class="content">
+                <div id="${n}standardAttributes" class="content">
+                
+                    <table class="portlet-table">
+                        <thead>
+                            <tr>
+                                <th><spring:message code="attribute.name"/></th>
+                                <th><spring:message code="attribute.value"/></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <!-- Print out each attribute -->
+                            <c:forEach items="${ editAttributes }" var="attribute">
+                                <tr>
+                                    <td class="attribute-name">
+                                        <strong><spring:message code="${ attribute.label }"/></strong>
+                                    </td>
+                                    <td>
+                                          <c:set var="paramPath" value="attributes['${ attribute.name }'].value"/>
+                                          <editPortlet:preferenceInput input="${ attribute.preferenceInput.value }" 
+                                            path="${ paramPath }" values="${ accountForm.attributes[attribute.name].value }"/>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                            
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+            <!-- Portlet Section -->
+            <div class="portlet-section" role="region">
+                <div class="titlebar">
+                    <h3 class="title" role="heading"><spring:message code="custom.attributes"/></h3>
+                </div>
+                <div id="${n}customAttributes" class="content">
                 
                     <table class="portlet-table">
                         <thead>
@@ -106,7 +143,7 @@
                         <tbody>
 
                             <!-- Print out each attribute -->
-                            <c:forEach items="${ person.attributes }" var="attribute">
+                            <c:forEach items="${ accountForm.customAttributes }" var="attribute">
                                 <tr>
 
                                     <td class="attribute-name">
@@ -158,7 +195,7 @@
                     <div class="buttons">
                         <input class="button primary" type="submit" value="<spring:message code="save"/>" name="_eventId_save"/>
                         <c:choose>
-                            <c:when test="${ person.id < 0 }">
+                            <c:when test="${ accountForm.id < 0 }">
                                 <input class="button" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
                             </c:when>
                             <c:otherwise>
@@ -188,23 +225,41 @@
         var $ = up.jQuery;
         $(document).ready(function(){
             up.ParameterEditor(
-                $("#${n}userAttributes"),
-                {
-                    parameterBindName: 'attributes',
-                    multivalued: true,
-                    dialog: $("#${n}parameterForm"),
-                    displayClasses: {
-                        deleteItemLink: "delete-attribute-link",
-                        deleteValueLink: "delete-attribute-value-link",
-                        addItemLink: "add-attribute-link",
-                        addValueLink: "add-attribute-value-link"
-                    },
-                    messages: {
-                        remove: '<spring:message code="remove"/>',
-                        addValue: '<spring:message code="add.value"/>'
+                    $("#${n}standardAttributes"),
+                    {
+                        parameterBindName: 'attributes',
+                        multivalued: true,
+                        dialog: $("#${n}parameterForm"),
+                        displayClasses: {
+                            deleteItemLink: "delete-attribute-link",
+                            deleteValueLink: "delete-attribute-value-link",
+                            addItemLink: "add-attribute-link",
+                            addValueLink: "add-attribute-value-link"
+                        },
+                        messages: {
+                            remove: '<spring:message code="remove"/>',
+                            addValue: '<spring:message code="add.value"/>'
+                        }
                     }
-                }
-            );
+                );
+            up.ParameterEditor(
+                    $("#${n}customAttributes"),
+                    {
+                        parameterBindName: 'attributes',
+                        multivalued: true,
+                        dialog: $("#${n}parameterForm"),
+                        displayClasses: {
+                            deleteItemLink: "delete-attribute-link",
+                            deleteValueLink: "delete-attribute-value-link",
+                            addItemLink: "add-attribute-link",
+                            addValueLink: "add-attribute-value-link"
+                        },
+                        messages: {
+                            remove: '<spring:message code="remove"/>',
+                            addValue: '<spring:message code="add.value"/>'
+                        }
+                    }
+                );
         });
     });
 </script>

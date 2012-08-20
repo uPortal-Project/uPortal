@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  xmlns:tx="http://www.springframework.org/schema/tx"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
+    
+    <!-- ================================================================================
+     | This section of this file relates to handling portal events as they are fired.
+     + ================================================================================== -->
+
+    <!-- 
+     | List of event filters to apply to all event listeners that handle newly fired events.
+     +-->
+    <util:list id="listenerEventFilters">
+        <!-- Can be used to filter events based on event type using an instanceof check -->
+        <bean class="org.jasig.portal.spring.context.ClassApplicationEventFilter">
+            <property name="supportedEvents">
+                <list>
+                    <value>org.jasig.portal.events.PortalEvent</value>
+                </list>
+            </property>
+        </bean>
+        <!-- Can be used to filter events based on who generated the event
+        <bean class="org.jasig.portal.events.handlers.UserFilteringPortalEventHandler">
+            <property name="ignoredUserNamePatterns">
+                <list>
+                    <value>user\..*</value>
+                    <value>vptest-user.*</value>
+                </list>
+            </property>
+            <property name="supportGuest" value="true" />
+        </bean>
+         -->
+    </util:list>
+    
+    <!--
+     | Event Listeners, these are beans that implement the Spring ApplicationListener interface to handle application
+     | events. Most of these beans also extend from FilteringApplicationListener which allows for a list of 
+     | ApplicationEventFilters to be configured.
+     +-->
+     <!-- 
+    <bean class="org.jasig.portal.spring.context.LoggingEventHandler">
+        <property name="applicationEventFilters" ref="listenerEventFilters" />
+    </bean>
+    -->
+    
+    <!-- 
+     | 
+     +-->
+    <bean id="portalEventDaoQueuingEventHandler" class="org.jasig.portal.events.handlers.db.PortalEventDaoQueuingEventHandler">
+        <property name="applicationEventFilters" ref="listenerEventFilters" />
+    </bean>
+
+
+    
+    <!-- ================================================================================
+     | This section of this file relates to the aggregation of persisted portal events
+     + ================================================================================== -->
+    
+    <!-- 
+     | List of event filters to apply to all event aggregators. Used to ignore certain events
+     | during aggregation, such as events from monitoring tools.
+     +-->
+    <util:list id="aggregatorEventFilters">
+        <bean class="org.jasig.portal.events.handlers.UserFilteringPortalEventHandler">
+            <!-- Uncomment to ignore specific users 
+            <property name="ignoredUserNames">
+                <list>
+                    <value>ovis.webiso</value>
+                </list>
+            </property>
+             -->
+             <!-- Uncomment to ignore username patterns
+            <property name="ignoredUserNamePatterns">
+                <list>
+                    <value>user\..*</value>
+                    <value>vptest-user.*</value>
+                    <value>portal\..*</value>
+                </list>
+            </property>
+            -->
+        </bean>
+    </util:list>
+    
+    <!--
+     | Event Aggregators - These run in a single thread on a single node in the portal cluster. They are used to iterate
+     | through all events stored by the portalEventDaoQueuingEventHandler. 
+     |
+     | All beans that implement IPortalEventAggregator are used during aggregation
+     +-->
+    <!-- Useful for debugging, logs each event as it is processed by the aggregation system 
+    <bean id="loggingPortalEventAggregator" class="org.jasig.portal.events.aggr.LoggingPortalEventAggregator" />
+     -->
+    <bean id="loginPortalEventAggregator" class="org.jasig.portal.events.aggr.login.LoginPortalEventAggregator"/>
+    <bean id="concurrentUserAggregator" class="org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregator"/>
+    <bean id="tabRenderAggregator" class="org.jasig.portal.events.aggr.tabrender.TabRenderAggregator"/>
+    <bean id="portletExecutionAggregatorAll" class="org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregator"/>
+    <bean id="portletExecutionAggregatorAction" class="org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregator">
+        <property name="executionType" value="ACTION" />
+    </bean>
+    <bean id="portletExecutionAggregatorEvent" class="org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregator">
+        <property name="executionType" value="EVENT" />
+    </bean>
+    <bean id="portletExecutionAggregatorRender" class="org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregator">
+        <property name="executionType" value="RENDER" />
+    </bean>
+    <bean id="portletExecutionAggregatorResource" class="org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregator">
+        <property name="executionType" value="RESOURCE" />
+    </bean>
+</beans>

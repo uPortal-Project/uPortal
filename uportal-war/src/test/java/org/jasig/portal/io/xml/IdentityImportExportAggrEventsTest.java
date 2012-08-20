@@ -19,12 +19,10 @@
 
 package org.jasig.portal.io.xml;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.jasig.portal.events.aggr.groups.AggregatedGroupLookupDao;
 import org.jasig.portal.io.xml.eventaggr.ExternalEventAggregationConfiguration;
 import org.jasig.portal.spring.MockitoFactoryBean;
+import org.jasig.portal.test.BaseAggrEventsJpaDaoTest;
 import org.jasig.portal.test.TimeZoneTestUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -44,7 +42,7 @@ import com.google.common.base.Function;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/org/jasig/portal/io/xml/importExportAggrEventTestContext.xml")
-public class IdentityImportExportAggrEventsTest extends AbstractIdentityImportExportTest {
+public class IdentityImportExportAggrEventsTest extends BaseAggrEventsJpaDaoTest {
     private static final TimeZoneTestUtils TIME_ZONE_TEST_UTILS = new TimeZoneTestUtils();
     
     @BeforeClass
@@ -66,14 +64,6 @@ public class IdentityImportExportAggrEventsTest extends AbstractIdentityImportEx
     @Autowired
     private AggregatedGroupLookupDao aggregatedGroupLookupDao;
     
-    @PersistenceContext(unitName = "uPortalAggrEventsPersistence")
-    private EntityManager entityManager;
-    
-    @Override
-    protected EntityManager getEntityManager() {
-        return this.entityManager;
-    }
-    
     @Before
     public void setup() {
         MockitoFactoryBean.resetAllMocks();
@@ -85,7 +75,8 @@ public class IdentityImportExportAggrEventsTest extends AbstractIdentityImportEx
     public void testEventAggregationConfigurationImportExport() throws Exception {
         final ClassPathResource dataResource = new ClassPathResource("/org/jasig/portal/io/xml/event-aggregation/default.event-aggregation.xml");
         
-        this.<ExternalEventAggregationConfiguration>testIdentityImportExport(
+        IdentityImportExportTestUtilities.<ExternalEventAggregationConfiguration>testIdentityImportExport(
+                this.transactionOperations,
                 this.eventAggregationConfigurationImporter, this.eventAggregationConfigurationExporter,
                 dataResource,
                 new Function<ExternalEventAggregationConfiguration, String>() {

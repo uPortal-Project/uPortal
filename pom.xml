@@ -6,11 +6,15 @@
         <artifactId>jasig-parent</artifactId>
         <version>33</version>
     </parent>
+    
+    <prerequisites>
+        <maven>3.0.0</maven>
+    </prerequisites>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jasig.portal</groupId>
     <artifactId>uportal-parent</artifactId>
-    <version>4.0.6-SNAPSHOT</version>
+    <version>4.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>uPortal Parent</name>
@@ -106,7 +110,7 @@
         <BookmarksPortlet.version>1.0.11</BookmarksPortlet.version>
         <cas-server.version>3.4.11</cas-server.version>
         <cas-proxy-test-portlet.version>1.0.0-RC3</cas-proxy-test-portlet.version>
-        <email-preview.version>1.1.1</email-preview.version>
+        <email-preview.version>2.0.1</email-preview.version>
         <FunctionalTestsPortlet.version>1.1.0</FunctionalTestsPortlet.version>
         <jasig-widget-portlets.version>1.0.2</jasig-widget-portlets.version>
         <NewsReaderPortlet.version>3.0.2</NewsReaderPortlet.version>
@@ -118,9 +122,9 @@
         <!-- Project Dependency Version Properties -->
         <aopalliance.version>1.0</aopalliance.version>
         <activation.version>1.1.1</activation.version>
-        <ant.version>1.8.3</ant.version>
-        <aspectjrt.version>1.6.12</aspectjrt.version>
-        <aspectjweaver.version>1.6.12</aspectjweaver.version>
+        <ant.version>1.8.4</ant.version>
+        <aspectjrt.version>1.7.0</aspectjrt.version>
+        <aspectjweaver.version>1.7.0</aspectjweaver.version>
         <cas-clearpass.version>1.0.8.GA</cas-clearpass.version>
         <casclient.version>3.2.1</casclient.version>
         <ccpp.version>1.0</ccpp.version>
@@ -132,38 +136,38 @@
         <commons-dbcp.version>1.4</commons-dbcp.version>
         <commons-fileupload.version>1.2.2</commons-fileupload.version>
         <commons-httpclient.version>3.1</commons-httpclient.version>
-        <commons-io.version>2.2</commons-io.version>
+        <commons-io.version>2.4</commons-io.version>
         <commons-lang.version>2.6</commons-lang.version>
-        <commons-logging.version>1.1.1</commons-logging.version>
-        <commons-logging-api.version>1.1</commons-logging-api.version>
         <commons-pool.version>1.6</commons-pool.version>
+        <commons-math3.version>3.0</commons-math3.version>
         <dom4j.version>1.6.1</dom4j.version>
         <easymock.version>3.1</easymock.version>
         <ejb3-persistence.version>1.0.1.GA</ejb3-persistence.version>
-        <ehcache.version>2.5.1</ehcache.version>
+        <ehcache.version>2.6.0</ehcache.version>
+        <ehcache-jgroups3replication.version>1.7.4</ehcache-jgroups3replication.version>
         <ehcache-spring-annotations.version>1.2.0</ehcache-spring-annotations.version>
         <ehcache-web.version>2.0.4</ehcache-web.version>
-        <guava.version>11.0.2</guava.version>
-        <groovy.version>1.8.5</groovy.version>
+        <guava.version>13.0</guava.version>
+        <groovy.version>2.0.1</groovy.version>
         <grouperClient.version>1.6.3</grouperClient.version>
-        <hibernate.version>4.0.1.Final</hibernate.version>
+        <hibernate.version>4.1.6.Final</hibernate.version>
         <hibernate-jpamodelgen.version>1.2.0.Final</hibernate-jpamodelgen.version>
         <hibernate-jpa-api.version>1.0.1.Final</hibernate-jpa-api.version>
         <hsqldb.version>2.2.8</hsqldb.version>
-        <jackson.version>1.9.6</jackson.version>
+        <jackson.version>1.9.9</jackson.version>
         <jansi.version>1.8</jansi.version>
         <javassist.version>3.16.1-GA</javassist.version> 
         <jasypt.version>1.9.0</jasypt.version>
-        <jaxb2basics.version>0.6.3</jaxb2basics.version>
+        <jaxb2basics.version>0.6.4</jaxb2basics.version>
         <jdom.version>1.0</jdom.version>
-        <jline.version>2.6</jline.version>
+        <jline.version>1.0</jline.version>
         <joda-time.version>2.1</joda-time.version>
         <json-lib-ext-spring.version>1.0.2</json-lib-ext-spring.version>
         <jsp-api.version>2.1.1</jsp-api.version>
         <jstl.version>1.1.2</jstl.version>
         <jtidy.version>4aug2000r7-dev</jtidy.version>
         <junit.version>4.10</junit.version>
-        <log4j.version>1.2.16</log4j.version>
+        <logback.version>1.0.6</logback.version>
         <mail.version>1.4.5</mail.version>
         <mockito.version>1.9.0</mockito.version>
         <objenesis.version>1.2</objenesis.version>
@@ -174,19 +178,20 @@
         <pluto.version>2.1.0-M2</pluto.version>
         <portlet-api.version>2.0</portlet-api.version>
         <quartz.version>1.8.4</quartz.version>
-        <resource-server.version>1.0.25</resource-server.version>
+        <resource-server.version>1.0.26</resource-server.version>
         <servlet-api.version>2.5</servlet-api.version>
-        <slf4j.version>1.6.4</slf4j.version>
-        <spring-framework.version>3.1.1.RELEASE</spring-framework.version>
+        <slf4j.version>1.6.6</slf4j.version>
+        <spring-framework.version>3.1.2.RELEASE</spring-framework.version>
         <spring-ldap.version>1.3.1.RELEASE</spring-ldap.version>
-        <spring-security.version>3.1.0.RELEASE</spring-security.version>
+        <spring-security.version>3.1.2.RELEASE</spring-security.version>
         <standard.version>1.1.2</standard.version>
         <stax-api.version>1.0.1</stax-api.version>
         <staxmate.version>2.0.1</staxmate.version>
         <stringtemplate.version>4.0.2</stringtemplate.version>
+        <tomcat-jdbc.version>7.0.29</tomcat-jdbc.version>
         <uportal-ear-deployer.version>1.0.1</uportal-ear-deployer.version>
         <usertype.version>3.0.0.CR1</usertype.version>
-        <woodstox.version>4.1.2</woodstox.version>
+        <woodstox.version>4.1.4</woodstox.version>
         <xmlunit.version>1.3</xmlunit.version>
         <xstream.version>1.4.2</xstream.version>
         
@@ -217,8 +222,13 @@
             </dependency>
             <dependency>
                 <groupId>cglib</groupId>
-                <artifactId>cglib</artifactId>
+                <artifactId>cglib-nodep</artifactId>
                 <version>${cglib.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
@@ -230,6 +240,10 @@
                 <artifactId>cernunnos</artifactId>
                 <version>${cernunnos.version}</version>
                 <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
                     <exclusion>
                         <artifactId>cvsclient</artifactId>
                         <groupId>org.netbeans.lib</groupId>
@@ -319,6 +333,12 @@
                 <groupId>commons-httpclient</groupId>
                 <artifactId>commons-httpclient</artifactId>
                 <version>${commons-httpclient.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
@@ -331,19 +351,19 @@
                 <version>${commons-lang.version}</version>
             </dependency>
             <dependency>
-                <groupId>commons-logging</groupId>
-                <artifactId>commons-logging</artifactId>
-                <version>${commons-logging.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-logging</groupId>
-                <artifactId>commons-logging-api</artifactId>
-                <version>${commons-logging-api.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>commons-pool</groupId>
                 <artifactId>commons-pool</artifactId>
                 <version>${commons-pool.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-math3</artifactId>
+                <version>${commons-math3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-jdbc</artifactId>
+                <version>${tomcat-jdbc.version}</version>
             </dependency>
             <dependency>
                 <groupId>dom4j</groupId>
@@ -432,29 +452,6 @@
                 <version>${jtidy.version}</version>
             </dependency>
             <dependency>
-                <groupId>log4j</groupId>
-                <artifactId>log4j</artifactId>
-                <version>${log4j.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.sun.jdmk</groupId>
-                        <artifactId>jmxtools</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sun.jmx</groupId>
-                        <artifactId>jmxri</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>javax.jms</groupId>
-                        <artifactId>jms</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>javax.mail</groupId>
-                        <artifactId>mail</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
                 <groupId>net.sf.ehcache</groupId>
                 <artifactId>ehcache-core</artifactId>
                 <version>${ehcache.version}</version>
@@ -468,6 +465,12 @@
                 <groupId>net.sf.json-lib</groupId>
                 <artifactId>json-lib-ext-spring</artifactId>
                 <version>${json-lib-ext-spring.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.jvnet.jaxb2_commons</groupId>
@@ -539,6 +542,11 @@
                 <version>${pluto.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.jasig.ehcache</groupId>
+                <artifactId>ehcache-jgroups3replication</artifactId>
+                <version>${ehcache-jgroups3replication.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.jasig.portal</groupId>
                 <artifactId>pluto-taglib</artifactId>
                 <version>${pluto.version}</version>
@@ -567,6 +575,21 @@
             <dependency>
                 <groupId>org.codehaus.groovy</groupId>
                 <artifactId>groovy</artifactId>
+                <version>${groovy.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-groovysh</artifactId>
+                <version>${groovy.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-jsr223</artifactId>
+                <version>${groovy.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-xml</artifactId>
                 <version>${groovy.version}</version>
             </dependency>
             <dependency>
@@ -649,6 +672,12 @@
                 <groupId>org.jasig.cas.client</groupId>
                 <artifactId>cas-client-core</artifactId>
                 <version>${casclient.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.jasig.cas3.extensions</groupId>
@@ -664,11 +693,23 @@
                 <groupId>org.jasig.resourceserver</groupId>
                 <artifactId>resource-server-api</artifactId>
                 <version>${resource-server.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.jasig.resourceserver</groupId>
                 <artifactId>resource-server-utils</artifactId>
                 <version>${resource-server.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.jasig.service.persondir</groupId>
@@ -680,6 +721,10 @@
                 <artifactId>person-directory-impl</artifactId>
                 <version>${person-directory.version}</version>
                 <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
                     <exclusion>
                         <groupId>com.sun.xml.bind</groupId>
                         <artifactId>jaxb-impl</artifactId>
@@ -720,7 +765,17 @@
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-jcl</artifactId>
+                <artifactId>jcl-over-slf4j</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jul-to-slf4j</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>log4j-over-slf4j</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
             <dependency>
@@ -752,6 +807,12 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-core</artifactId>
                 <version>${spring-framework.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -802,11 +863,23 @@
                 <groupId>org.springframework.ldap</groupId>
                 <artifactId>spring-ldap-core</artifactId>
                 <version>${spring-ldap.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.springframework.ldap</groupId>
                 <artifactId>spring-ldap-core-tiger</artifactId>
                 <version>${spring-ldap.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>
@@ -827,17 +900,37 @@
                 <groupId>org.springframework.webflow</groupId>
                 <artifactId>spring-binding</artifactId>
                 <version>${org.springframework.webflow.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.springframework.webflow</groupId>
                 <artifactId>spring-webflow</artifactId>
                 <version>${org.springframework.webflow.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.springmodules</groupId>
                 <artifactId>spring-modules-cache</artifactId>
                 <version>0.8a</version>
                 <exclusions>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
                     <exclusion>
                         <groupId>org.springframework</groupId>
                         <artifactId>spring</artifactId>
@@ -881,10 +974,6 @@
                     <exclusion>
                         <groupId>commons-attributes</groupId>
                         <artifactId>commons-attributes-compiler</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>cglib</groupId>
-                        <artifactId>cglib-nodep</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>jboss</groupId>
@@ -989,12 +1078,12 @@
                         </goals>
                         <configuration>
                             <rules>
-                            <requireMavenVersion>
-                              <version>2.2</version>
-                            </requireMavenVersion>
-                            <requireJavaVersion>
-                              <version>1.6</version>
-                            </requireJavaVersion>
+                              <requireMavenVersion>
+                                <version>2.2</version>
+                              </requireMavenVersion>
+                              <requireJavaVersion>
+                                <version>1.6</version>
+                              </requireJavaVersion>
                             </rules>
                         </configuration>
                     </execution>
@@ -1092,7 +1181,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.3.1</version>
+                    <version>2.4</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-release-plugin</artifactId>
@@ -1145,11 +1234,11 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.9</version>
+                    <version>2.12</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-war-plugin</artifactId>
-                    <version>2.1.1</version>
+                    <version>2.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.portals.pluto</groupId>
@@ -1164,7 +1253,7 @@
                 <plugin>
                     <groupId>org.jasig.portal</groupId>
                     <artifactId>maven-uportal-plugin</artifactId>
-                    <version>1.0.0-M3</version>
+                    <version>1.0.0-M4</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jvnet.jaxb2.maven2</groupId>

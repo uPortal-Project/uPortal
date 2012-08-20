@@ -43,50 +43,54 @@
         <property name="defaultProfileName" value="default" />
         <property name="subMappers">
             <util:list>
-                <bean class="org.jasig.portal.layout.SessionAttributeProfileMapperImpl"
-                    p:mappings-ref="profileKeyMappings"/>
-                <bean class="org.jasig.portal.layout.UserAgentProfileMapper">
-                    <property name="mappings">
-                        <list>
-                            <!-- Apple iPad -->
-                            <bean class="org.jasig.portal.layout.UserAgentProfileMapper.Mapping">
-                                <property name="pattern" value=".*iPad.*" />
-                                <property name="profileName" value="default" />
-                            </bean>
-                            <!-- Apple iPhone -->
-                            <bean class="org.jasig.portal.layout.UserAgentProfileMapper.Mapping">
-                                <property name="pattern" value=".*iPhone.*" />
-                                <property name="profileName" value="mobileDefault" />
-                            </bean>
-                            <!-- Android -->
-                            <bean class="org.jasig.portal.layout.UserAgentProfileMapper.Mapping">
-                                <property name="pattern" value=".*Android.*Mobile.*" />
-                                <property name="profileName" value="mobileDefault" />
-                            </bean>
-                            <!-- Palm Pre -->
-                            <bean class="org.jasig.portal.layout.UserAgentProfileMapper.Mapping">
-                                <property name="pattern" value=".*Safari.*Pre.*" />
-                                <property name="profileName" value="mobileDefault" />
-                            </bean>
-                            <!-- Nokia S60 web browser -->
-                            <bean class="org.jasig.portal.layout.UserAgentProfileMapper.Mapping">
-                                <property name="pattern" value=".*Nokia.*AppleWebKit.*" />
-                                <property name="profileName" value="mobileDefault" />
-                            </bean>
-                            <!-- Blackberry web browser -->
-                            <bean class="org.jasig.portal.layout.UserAgentProfileMapper.Mapping">
-                                <property name="pattern" value=".*Black[Bb]erry.*" />
-                                <property name="profileName" value="mobileDefault" />
-                            </bean>
-                            <!-- Opera Mobile web browser -->
-                            <bean class="org.jasig.portal.layout.UserAgentProfileMapper.Mapping">
-                                <property name="pattern" value=".*Opera Mobile.*" />
-                                <property name="profileName" value="mobileDefault" />
-                            </bean>
-                        </list>
-                    </property>
-                </bean>
+                <ref bean="sessionAttributeProfileMapper" />
+                <ref bean="userAgentProfileMapper" />
             </util:list>
+        </property>
+    </bean>
+    
+    <bean id="sessionAttributeProfileMapper" class="org.jasig.portal.layout.SessionAttributeProfileMapperImpl"
+        p:mappings-ref="profileKeyMappings"/>
+    
+    <bean id="userAgentProfileMapper" class="org.jasig.portal.layout.UserAgentProfileMapper">
+        <property name="mappings">
+            <list>
+                <!-- Apple iPad -->
+                <bean class="org.jasig.portal.layout.UserAgentProfileMapper.Mapping">
+                    <property name="pattern" value=".*iPad.*" />
+                    <property name="profileName" value="default" />
+                </bean>
+                <!-- Apple iPhone -->
+                <bean class="org.jasig.portal.layout.UserAgentProfileMapper.Mapping">
+                    <property name="pattern" value=".*iPhone.*" />
+                    <property name="profileName" value="mobileDefault" />
+                </bean>
+                <!-- Android -->
+                <bean class="org.jasig.portal.layout.UserAgentProfileMapper.Mapping">
+                    <property name="pattern" value=".*Android.*Mobile.*" />
+                    <property name="profileName" value="mobileDefault" />
+                </bean>
+                <!-- Palm Pre -->
+                <bean class="org.jasig.portal.layout.UserAgentProfileMapper.Mapping">
+                    <property name="pattern" value=".*Safari.*Pre.*" />
+                    <property name="profileName" value="mobileDefault" />
+                </bean>
+                <!-- Nokia S60 web browser -->
+                <bean class="org.jasig.portal.layout.UserAgentProfileMapper.Mapping">
+                    <property name="pattern" value=".*Nokia.*AppleWebKit.*" />
+                    <property name="profileName" value="mobileDefault" />
+                </bean>
+                <!-- Blackberry web browser -->
+                <bean class="org.jasig.portal.layout.UserAgentProfileMapper.Mapping">
+                    <property name="pattern" value=".*Black[Bb]erry.*" />
+                    <property name="profileName" value="mobileDefault" />
+                </bean>
+                <!-- Opera Mobile web browser -->
+                <bean class="org.jasig.portal.layout.UserAgentProfileMapper.Mapping">
+                    <property name="pattern" value=".*Opera Mobile.*" />
+                    <property name="profileName" value="mobileDefault" />
+                </bean>
+            </list>
         </property>
     </bean>
 
@@ -104,71 +108,33 @@
         <entry key="postalAddress" value="MAP"/>
     </util:map>
 
+    <!-- Form inputs for local account editing.  These fields will be filtered
+        according to user permissions. -->
     <util:list id="accountEditAttributes">
-        <bean class="org.jasig.portal.portletpublishing.xml.Preference" 
-                p:name="title" p:label="attribute.displayName.title">
-            <property name="preferenceInput">
-                <bean class="javax.xml.bind.JAXBElement">
-                    <constructor-arg value="single-text-parameter-input"/>
-                    <constructor-arg value="org.jasig.portal.portletpublishing.xml.SingleTextPreferenceInput"/>
-                    <constructor-arg>
-                        <bean class="org.jasig.portal.portletpublishing.xml.SingleTextPreferenceInput" 
-                            p:display="TEXT"/>
-                    </constructor-arg>
-                </bean>
-            </property>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleTextPreference">
+            <constructor-arg value="title"/>
+            <constructor-arg value="attribute.displayName.title"/>
         </bean>
-        <bean class="org.jasig.portal.portletpublishing.xml.Preference" 
-                p:name="department" p:label="attribute.displayName.department">
-            <property name="preferenceInput">
-                <bean class="javax.xml.bind.JAXBElement">
-                    <constructor-arg value="single-text-parameter-input"/>
-                    <constructor-arg value="org.jasig.portal.portletpublishing.xml.SingleTextPreferenceInput"/>
-                    <constructor-arg>
-                        <bean class="org.jasig.portal.portletpublishing.xml.SingleTextPreferenceInput" 
-                            p:display="TEXT"/>
-                    </constructor-arg>
-                </bean>
-            </property>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleTextPreference">
+            <constructor-arg value="department"/>
+            <constructor-arg value="attribute.displayName.department"/>
         </bean>
-        <bean class="org.jasig.portal.portletpublishing.xml.Preference" 
-                p:name="organization" p:label="attribute.displayName.organization">
-            <property name="preferenceInput">
-                <bean class="javax.xml.bind.JAXBElement">
-                    <constructor-arg value="single-text-parameter-input"/>
-                    <constructor-arg value="org.jasig.portal.portletpublishing.xml.SingleTextPreferenceInput"/>
-                    <constructor-arg>
-                        <bean class="org.jasig.portal.portletpublishing.xml.SingleTextPreferenceInput" 
-                            p:display="TEXT"/>
-                    </constructor-arg>
-                </bean>
-            </property>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleTextPreference">
+            <constructor-arg value="organization"/>
+            <constructor-arg value="attribute.displayName.organization"/>
         </bean>
-        <bean class="org.jasig.portal.portletpublishing.xml.Preference" 
-                p:name="mail" p:label="attribute.displayName.mail">
-            <property name="preferenceInput">
-                <bean class="javax.xml.bind.JAXBElement">
-                    <constructor-arg value="single-text-parameter-input"/>
-                    <constructor-arg value="org.jasig.portal.portletpublishing.xml.SingleTextPreferenceInput"/>
-                    <constructor-arg>
-                        <bean class="org.jasig.portal.portletpublishing.xml.SingleTextPreferenceInput" 
-                            p:display="TEXT"/>
-                    </constructor-arg>
-                </bean>
-            </property>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleTextPreference">
+            <constructor-arg value="mail"/>
+            <constructor-arg value="attribute.displayName.mail"/>
         </bean>
-        <bean class="org.jasig.portal.portletpublishing.xml.Preference" 
-                p:name="telephoneNumber" p:label="attribute.displayName.telephoneNumber">
-            <property name="preferenceInput">
-                <bean class="javax.xml.bind.JAXBElement">
-                    <constructor-arg value="single-text-parameter-input"/>
-                    <constructor-arg value="org.jasig.portal.portletpublishing.xml.SingleTextPreferenceInput"/>
-                    <constructor-arg>
-                        <bean class="org.jasig.portal.portletpublishing.xml.SingleTextPreferenceInput" 
-                            p:display="TEXT"/>
-                    </constructor-arg>
-                </bean>
-            </property>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleTextPreference">
+            <constructor-arg value="telephoneNumber"/>
+            <constructor-arg value="attribute.displayName.telephoneNumber"/>
         </bean>
     </util:list>
     

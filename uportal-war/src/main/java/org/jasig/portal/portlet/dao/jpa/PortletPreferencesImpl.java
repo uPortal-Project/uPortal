@@ -127,42 +127,47 @@ class PortletPreferencesImpl {
         return this.filteringPortletPreferences;
     }
     
-    public void setPortletPreferences(List<IPortletPreference> newPreferences) {
+    public boolean setPortletPreferences(List<IPortletPreference> newPreferences) {
         if (this.portletPreferences == newPreferences) {
-            return;
+            return false;
         }
         
         if (newPreferences == null) {
+            final boolean modified = !this.portletPreferences.isEmpty(); 
         	this.portletPreferences = new ArrayList<IPortletPreference>(0);
+        	return modified;
         }
-        else if (this.portletPreferences == null) {
-            this.portletPreferences = newPreferences;
+        
+        boolean modified = false;
+        //Build map of existing preferences for tracking which preferences have been removed
+        final Map<String, IPortletPreference> oldPreferences = new LinkedHashMap<String, IPortletPreference>();
+        for (final IPortletPreference preference : this.portletPreferences) {
+            oldPreferences.put(preference.getName(), preference);
         }
-        else {
-            //Build map of existing preferences for tracking which preferences have been removed
-            final Map<String, IPortletPreference> oldPreferences = new LinkedHashMap<String, IPortletPreference>();
-            for (final IPortletPreference preference : this.portletPreferences) {
-                oldPreferences.put(preference.getName(), preference);
-            }
-            this.portletPreferences.clear();
+        this.portletPreferences.clear();
 
-            for (final IPortletPreference preference : newPreferences) {
-                final String name = preference.getName();
+        for (final IPortletPreference preference : newPreferences) {
+            final String name = preference.getName();
 
-                //Remove the existing preference from the map since it is supposed to be persisted 
-                final IPortletPreference existingPreference = oldPreferences.remove(name);
-                if (existingPreference == null) {
-                    //New preference, add it to the list
-                    this.portletPreferences.add(preference);
-                }
-                else {
-                    //Existing preference, update the fields
-                    existingPreference.setValues(preference.getValues());
-                    existingPreference.setReadOnly(preference.isReadOnly());
-                    this.portletPreferences.add(existingPreference);
-                }
+            //Remove the existing preference from the map since it is supposed to be persisted 
+            final IPortletPreference existingPreference = oldPreferences.remove(name);
+            if (existingPreference == null) {
+                modified = true;
+                
+                //New preference, add it to the list
+                this.portletPreferences.add(preference);
+            }
+            else {
+                modified = modified || !existingPreference.equals(preference);
+                
+                //Existing preference, update the fields
+                existingPreference.setValues(preference.getValues());
+                existingPreference.setReadOnly(preference.isReadOnly());
+                this.portletPreferences.add(existingPreference);
             }
         }
+        
+        return modified;
     }
 
     /**

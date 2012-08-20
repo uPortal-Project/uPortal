@@ -41,6 +41,7 @@ public final class CharacterDataEventImpl implements CharacterDataEvent {
     //Since the cache using weak refs for the events it should never be a cause for object retention therefor no max-size is needed
     private static final LoadingCache<String, CharacterDataEvent> WEAK_EVENT_CACHE = CacheBuilder.newBuilder()
             .weakValues()
+            .recordStats()
             .build(new CacheLoader<String, CharacterDataEvent>() {
                 @Override
                 public CharacterDataEvent load(String data) throws Exception {

@@ -21,13 +21,12 @@
 -->
 
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns="http://www.springframework.org/schema/beans"
-       xmlns:aop="http://www.springframework.org/schema/aop"
-       xmlns:tx="http://www.springframework.org/schema/tx"
-       xsi:schemaLocation="
-           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
-           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:aop="http://www.springframework.org/schema/aop"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
         
     <bean id="permissionStore" class="org.jasig.portal.security.provider.RDBMPermissionImpl"/>
 
@@ -36,6 +35,10 @@
     <aop:config>
         <aop:pointcut id="daoExecution" 
             expression="within(@org.springframework.stereotype.Repository *) &amp;&amp; execution(* org.jasig.portal..*.*(..))"/>
+
+        <aop:pointcut id="allExecutions" expression="execution(* *.*(..))"/>
+        
+        <aop:pointcut id="portletPreferenceExecution" expression="execution(* javax.portlet.PortletPreferences.*(..))"/>
             
         <aop:aspect ref="threadContextClassLoaderAspect">
             <!-- 
@@ -52,6 +55,7 @@
             <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.UserInfoService.*(..))"/>
             <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.driver.PortalAdministrationService.*(..))"/>
             <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.PortletPreferencesService.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.jasig.portal.portlet.container.services.PortletPreferencesFactory.*(..))"/>
             <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.PortletEnvironmentService.*(..))"/>
             <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.driver.PortletRegistryService.*(..))"/>
             <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.driver.PortletContextService.*(..))"/>
@@ -61,25 +65,49 @@
             <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.RequestDispatcherService.*(..))"/>
         </aop:aspect>
         
+        <aop:aspect ref="threadContextClassLoaderApplyingAspect">
+            <aop:around method="applyAspect" pointcut="execution(* org.jasig.portal.portlet.container.services.PortletPreferencesFactory.*(..))"/>
+        </aop:aspect>
+        
         <aop:aspect ref="sqlNextExceptionLoggerAspect">
             <aop:after-throwing pointcut-ref="daoExecution" method="logBatchUpdateExceptions" throwing="t"/>
         </aop:aspect>
     </aop:config>
     
+    <!-- 
+     | Aspect used to apply the threadContextClassLoaderAspect every PortletPreference impl returned by the
+     | targeted object 
+     +-->
+    <bean id="threadContextClassLoaderApplyingAspect" class="org.jasig.portal.spring.AspectApplyingAspect">
+        <property name="advices" ref="threadContextClassLoaderPortetPreferencesAdvice" />
+    </bean>
+    
+    <!-- 
+     | Advice object used to apply the threadContextClassLoaderAspect every method on a PortletPreference impl
+     +-->
+    <bean id="threadContextClassLoaderPortetPreferencesAdvice" class="org.jasig.portal.spring.AspectJAroundAdviceFactory">
+        <property name="aspect" ref="threadContextClassLoaderAspect" />
+        <property name="method" value="doThreadContextClassLoaderUpdate" />
+        <property name="args" value="org.aspectj.lang.ProceedingJoinPoint" />
+        <property name="pointcut" ref="portletPreferenceExecution" />
+    </bean>
     
     <!-- Aspect to force the Thread.getContextClassLoader() to the correct loader on cross-context calls form portlets -->
     <bean id="threadContextClassLoaderAspect" class="org.jasig.portal.portlet.dao.jpa.ThreadContextClassLoaderAspect" />
     
     <bean id="sqlNextExceptionLoggerAspect" class="org.jasig.portal.portlet.dao.jpa.SQLNextExceptionLoggerAspect" />
     
-    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="cacheManager">
+    <bean id="PortalDbEntityManagerFactory" class="org.jasig.portal.jpa.EventingLocalContainerEntityManagerFactoryBean" depends-on="cacheManager">
         <property name="dataSource" ref="PortalDb" />
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
-        <property name="persistenceUnitName" value="uPortalPersistence" />
+        <property name="persistenceUnitName">
+            <util:constant static-field="org.jasig.portal.jpa.BasePortalJpaDao.PERSISTENCE_UNIT_NAME"/>
+        </property>
         <property name="jpaProperties">
             <props>
-                <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory</prop>
-                <prop key="net.sf.ehcache.configurationResourceName">/properties/ehcache.xml</prop>
+                <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SpringBeanEhCacheRegionFactory</prop>
+                <prop key="org.jasig.portal.cache.CacheManagerName">uPortal.cacheManager</prop>
+                <prop key="persistenceUnitName">#{T(org.jasig.portal.jpa.BasePortalJpaDao).PERSISTENCE_UNIT_NAME}</prop>
             </props>
         </property>
     </bean>
@@ -89,12 +117,12 @@
     </bean> 
     
     <bean id="jpaInterceptor" class="org.springframework.orm.jpa.JpaInterceptor">
-        <property name="entityManagerFactory" ref="entityManagerFactory" />
+        <property name="entityManagerFactory" ref="PortalDbEntityManagerFactory" />
     </bean>
 
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <qualifier value="PortalDb"/>
-        <property name="entityManagerFactory" ref="entityManagerFactory" />
+        <property name="entityManagerFactory" ref="PortalDbEntityManagerFactory" />
     </bean>
     <bean id="transactionOperations" class="org.springframework.transaction.support.TransactionTemplate">
         <qualifier value="PortalDb"/>
@@ -106,19 +134,28 @@
     </bean>
     
     
-    <tx:annotation-driven transaction-manager="transactionManager" />
+    <!-- This mimics what <tx:annotation-driven/> does but uses our custom TransactionManagerCachingTransactionInterceptor -->    
+    <bean id="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource#0" 
+            class="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource"/>
+    <bean id="org.springframework.transaction.interceptor.TransactionInterceptor#0"
+            class="org.jasig.portal.spring.tx.DialectAwareTransactionInterceptor">
+        <property name="transactionAttributeSource" ref="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource#0" />
+        <property name="transactionManagerBeanName" value="transactionManager" />
+    </bean>
+    <bean id="org.springframework.transaction.config.internalTransactionAdvisor" 
+            class="org.springframework.transaction.interceptor.BeanFactoryTransactionAttributeSourceAdvisor">
+        <property name="transactionAttributeSource" ref="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource#0" />
+        <property name="adviceBeanName" value="org.springframework.transaction.interceptor.TransactionInterceptor#0" />
+    </bean>
 
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
     
     <!-- ********** Database Utilities ********** -->
-    <bean id="dbLoader" class="org.jasig.portal.tools.dbloader.HibernateDbLoader" lazy-init="true">
-        <property name="hibernateToolConfigurationSource" ref="portalDbHibernateToolConfigurationSource" />
-    </bean>
-    <bean name="portalDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport" lazy-init="true">
-        <property name="hibernateToolConfigurationSource" ref="portalDbHibernateToolConfigurationSource" />
-    </bean>
-    <bean id="portalDbHibernateToolConfigurationSource" class="org.jasig.portal.tools.dbloader.HibernateToolConfigurationSourceImpl" lazy-init="true">
-        <property name="dataSource" ref="PortalDb" />
-        <property name="persistenceUnitName" value="uPortalPersistence" />
+    <bean name="portalDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport" lazy-init="true" depends-on="PortalDbEntityManagerFactory,hibernateConfigurationAwareInjector">
+    	<qualifier value="PortalDb"/>
+        <property name="jdbcOperations" ref="jdbcOperations" />
+        <property name="persistenceUnit">
+            <util:constant static-field="org.jasig.portal.jpa.BasePortalJpaDao.PERSISTENCE_UNIT_NAME"/>
+        </property>
     </bean>
 </beans>

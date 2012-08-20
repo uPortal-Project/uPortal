@@ -19,11 +19,27 @@
 
 package org.jasig.portal.portlet.container.services;
 
+import javax.portlet.ActionRequest;
+import javax.portlet.Event;
+import javax.portlet.EventRequest;
 import javax.portlet.PortletContext;
+import javax.portlet.PortletPreferences;
 import javax.portlet.PortletSession;
+import javax.portlet.RenderRequest;
+import javax.portlet.ResourceRequest;
+import javax.portlet.filter.ActionRequestWrapper;
+import javax.portlet.filter.EventRequestWrapper;
+import javax.portlet.filter.RenderRequestWrapper;
+import javax.portlet.filter.ResourceRequestWrapper;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.pluto.container.PortletActionResponseContext;
+import org.apache.pluto.container.PortletEventResponseContext;
+import org.apache.pluto.container.PortletRenderResponseContext;
+import org.apache.pluto.container.PortletRequestContext;
+import org.apache.pluto.container.PortletResourceRequestContext;
+import org.apache.pluto.container.PortletResourceResponseContext;
 import org.apache.pluto.container.PortletWindow;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
@@ -42,39 +58,24 @@ import org.springframework.stereotype.Service;
  */
 @Service("portletEnvironmentService")
 public class PortletEnvironmentServiceImpl extends org.apache.pluto.container.impl.PortletEnvironmentServiceImpl {
+    private PortletPreferencesFactory portletPreferencesFactory;
     private IPortletWindowRegistry portletWindowRegistry;
     private IPortalRequestUtils portalRequestUtils;
-    /**
-     * @return the portletWindowRegistry
-     */
-    public IPortletWindowRegistry getPortletWindowRegistry() {
-        return portletWindowRegistry;
+
+    @Autowired
+    public void setPortletPreferencesFactory(PortletPreferencesFactory portletPreferencesFactory) {
+        this.portletPreferencesFactory = portletPreferencesFactory;
     }
-    /**
-     * @param portletWindowRegistry the portletWindowRegistry to set
-     */
     @Autowired
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         this.portletWindowRegistry = portletWindowRegistry;
     }
-    /**
-	 * @return the portalRequestUtils
-	 */
-	public IPortalRequestUtils getPortalRequestUtils() {
-		return portalRequestUtils;
-	}
-	/**
-	 * @param portalRequestUtils the portalRequestUtils to set
-	 */
-	@Autowired
+    @Autowired
 	public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
 		this.portalRequestUtils = portalRequestUtils;
 	}
-	/*
-     * (non-Javadoc)
-     * @see org.apache.pluto.container.impl.PortletEnvironmentServiceImpl#createPortletSession(javax.portlet.PortletContext, org.apache.pluto.container.PortletWindow, javax.servlet.http.HttpSession)
-     */
-	@Override
+    
+    @Override
 	public PortletSession createPortletSession(PortletContext portletContext, PortletWindow portletWindow, HttpSession session) {
 		// TODO pluto 1.1 PortletEnvironmentService#createPortletSession passed in the request; now use IPortalRequestUtils#getCurrentPortalRequest()?
 		final HttpServletRequest request = portalRequestUtils.getCurrentPortalRequest();
@@ -84,6 +85,80 @@ public class PortletEnvironmentServiceImpl extends org.apache.pluto.container.im
         
 		return new ScopingPortletSessionImpl(portletEntityId, portletContext, portletWindow, session);
 	}
+
+    @Override
+    public ActionRequest createActionRequest(final PortletRequestContext requestContext,
+            PortletActionResponseContext responseContext) {
+        
+        final ActionRequest actionRequest = super.createActionRequest(requestContext, responseContext);
+        
+        return new ActionRequestWrapper(actionRequest) {
+            private PortletPreferences portletPreferences;
+            
+            @Override
+            public PortletPreferences getPreferences() {
+                if (this.portletPreferences == null) {
+                    this.portletPreferences = portletPreferencesFactory.createPortletPreferences(requestContext, false);
+                }
+                return this.portletPreferences;
+            }
+        };
+    }
     
+    @Override
+    public EventRequest createEventRequest(final PortletRequestContext requestContext,
+            PortletEventResponseContext responseContext, Event event) {
+
+        final EventRequest eventRequest = super.createEventRequest(requestContext, responseContext, event);
+        
+        return new EventRequestWrapper(eventRequest) {
+            private PortletPreferences portletPreferences;
+            
+            @Override
+            public PortletPreferences getPreferences() {
+                if (this.portletPreferences == null) {
+                    this.portletPreferences = portletPreferencesFactory.createPortletPreferences(requestContext, false);
+                }
+                return this.portletPreferences;
+            }
+        };
+    }
     
+    @Override
+    public RenderRequest createRenderRequest(final PortletRequestContext requestContext,
+            PortletRenderResponseContext responseContext) {
+        
+        final RenderRequest renderRequest = super.createRenderRequest(requestContext, responseContext);
+        
+        return new RenderRequestWrapper(renderRequest) {
+            private PortletPreferences portletPreferences;
+            
+            @Override
+            public PortletPreferences getPreferences() {
+                if (this.portletPreferences == null) {
+                    this.portletPreferences = portletPreferencesFactory.createPortletPreferences(requestContext, true);
+                }
+                return this.portletPreferences;
+            }
+        };
+    }
+    
+    @Override
+    public ResourceRequest createResourceRequest(final PortletResourceRequestContext requestContext,
+            PortletResourceResponseContext responseContext) {
+        
+        final ResourceRequest resourceRequest = super.createResourceRequest(requestContext, responseContext);
+        
+        return new ResourceRequestWrapper(resourceRequest) {
+            private PortletPreferences portletPreferences;
+            
+            @Override
+            public PortletPreferences getPreferences() {
+                if (this.portletPreferences == null) {
+                    this.portletPreferences = portletPreferencesFactory.createPortletPreferences(requestContext, false);
+                }
+                return this.portletPreferences;
+            }
+        };
+    }
 }

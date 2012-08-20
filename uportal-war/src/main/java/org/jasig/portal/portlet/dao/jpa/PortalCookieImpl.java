@@ -41,7 +41,9 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.NaturalIdCache;
 import org.jasig.portal.portlet.om.IPortalCookie;
 import org.jasig.portal.portlet.om.IPortletCookie;
 
@@ -65,6 +67,11 @@ import org.jasig.portal.portlet.om.IPortletCookie;
         pkColumnValue="UP_PORTAL_COOKIES",
         allocationSize=100
     )
+@org.hibernate.annotations.Table(
+        appliesTo = "UP_PORTAL_COOKIES",
+        indexes = @Index(name = "IDX_UP_PRTL_CK_EXP", columnNames = { "EXPIRES" })
+    )
+@NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 class PortalCookieImpl implements IPortalCookie {
@@ -79,8 +86,10 @@ class PortalCookieImpl implements IPortalCookie {
     
     @Column(name = "CREATED", nullable = false, updatable = false)
 	private final Date created;
+    
 	@Column(name = "EXPIRES", nullable = false, updatable = true)
 	private Date expires;
+	
 	@NaturalId
 	@Column(name = "COOKIE_VALUE", length=100, nullable = false)
 	private final String value;

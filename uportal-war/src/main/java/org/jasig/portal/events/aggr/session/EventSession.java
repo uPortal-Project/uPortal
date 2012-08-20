@@ -19,11 +19,12 @@
 
 package org.jasig.portal.events.aggr.session;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import org.jasig.portal.events.PortalEvent;
-import org.jasig.portal.events.aggr.AggregatedGroupConfig;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.joda.time.DateTime;
 
 /**
  * Defines data that is tracked across all events associated with the same {@link PortalEvent#getEventSessionId()}
@@ -31,7 +32,9 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface EventSession {
+public interface EventSession extends Serializable {
+    
+    void recordAccess(DateTime eventDate);
     
     /**
      * @see PortalEvent#getEventSessionId()
@@ -42,9 +45,4 @@ public interface EventSession {
      * @return The event store resolved group mappings for the event session, immutable
      */
     Set<AggregatedGroupMapping> getGroupMappings();
-    
-    /**
-     * @return A view of this event session that filters the results of {@link #getGroupMappings()} using {@link AggregatedGroupConfig#isIncluded(AggregatedGroupMapping)}
-     */
-    EventSession getFilteredEventSession(AggregatedGroupConfig groupConfig);
 }

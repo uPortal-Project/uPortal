@@ -25,12 +25,14 @@
         "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 
 <hibernate-configuration>
-    <session-factory>
+    <session-factory name="RawEventsDb">
+        <property name="hibernate.session_factory_name_is_jndi">false</property>
         <property name="hibernate.format_sql">true</property>
         <property name="hibernate.generate_statistics">true</property>
         
         <property name="hibernate.max_fetch_depth">3</property>
         <property name="hibernate.default_batch_fetch_size">4</property>
+        <property name="hibernate.jdbc.batch_size">100</property>
         <property name="hibernate.id.new_generator_mappings">true</property>
 
         <!-- raw event store does NO caching -->

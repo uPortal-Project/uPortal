@@ -47,7 +47,7 @@
     xmlns:upMsg="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanMessageHelper"
     xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
     xsi:schemaLocation="
-            https://source.jasig.org/schemas/uportal/layout/portal-url ../../../xsd/layout/portal-url-4.0.xsd"
+            https://source.jasig.org/schemas/uportal/layout/portal-url https://source.jasig.org/schemas/uportal/layout/portal-url-4.0.xsd"
     exclude-result-prefixes="url upAuth upGroup upMsg dlm xsi" 
     version="1.0">
 
@@ -211,9 +211,9 @@
                                     </xsl:choose>
                                 </span>
                             </a>
-                            <div class="ri-titlebar portlet-thumb-titlebar"></div>
                             <div class="ri-content portlet-thumb-content ui-helper-clearfix">
-                            	<div class="ri-icon portlet-thumb-icon"><span>Thumbnail</span></div>
+                                <div class="ri-titlebar portlet-thumb-titlebar"></div>
+                                <div class="ri-icon portlet-thumb-icon"><span>Thumbnail</span></div>
                                 <div class="ri-description portlet-thumb-description">Description</div>
                             </div>
                         </div>
@@ -242,10 +242,10 @@
                        <div class="ri-wrapper package-wrapper">
                            <div class="ri-utility"></div>
                            <a href="javascript:;" class="ri-link package-link"><span><xsl:value-of select="upMsg:getMessage('subscribe', $USER_LANG)"/></span></a>
-                           <div class="ri-titlebar package-titlebar">Titlebar</div>
                            <div class="ri-content package-content ui-helper-clearfix">
-                                <div class="ri-icon package-icon"><span>Thumbnail</span></div>
-                                <div class="ri-description package-description">Description</div>
+                               <div class="ri-titlebar package-titlebar">Titlebar</div>
+                               <div class="ri-icon package-icon"><span>Thumbnail</span></div>
+                               <div class="ri-description package-description">Description</div>
                            </div>
                        </div>
                     </li>

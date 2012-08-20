@@ -278,6 +278,7 @@ table.purpose-layout td {margin:0; padding:0;}
 #portalNavigation .portal-navigation-add,
 #portalNavigation .portal-navigation-delete,
 #portalNavigation .active .portal-navigation-gripper {display: block; position: absolute; text-decoration: none; border: none;}
+#portalNavigation .portal-navigation-add{ position:static }
 #portalNavigation .portal-navigation-add:hover,
 #portalNavigation .portal-navigation-delete:hover {background-position: 0px -16px;}
 #portalNavigation .portal-navigation-delete,
@@ -399,11 +400,10 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .content-filters-wrapper {width:200px; padding:0px; display:block; height:174px; position:relative;}
 .up-gallery .content-results-wrapper {margin:0 0 0 220px; display:block; height:172px;}
 .up-gallery .content-pager-wrapper {padding:0px; width:70px; display:block; height:170px;}
-.up-gallery .content-results-wrapper .column-inner {padding-left:15px;}
 .up-gallery .content-results-wrapper {padding:0px;}
 .up-gallery .skins .content-results-wrapper,
 .up-gallery .layouts .content-results-wrapper {margin-left:0px; margin-right:0px;}
-.up-gallery .results-wrapper {overflow:hidden;}
+.up-gallery .results-wrapper {overflow:hidden; padding-right:1px;}
 .up-gallery .fl-col-mixed2 .fl-col-main {padding-left:0px;}
 .up-gallery .content .add-content,
 .up-gallery .content .use-content {overflow-y: hidden;}
@@ -490,16 +490,20 @@ table.purpose-layout td {margin:0; padding:0;}
  */
 .up-gallery .results-wrapper {font-size:10px; position:relative;}
 .up-gallery .results-wrapper-inner {padding: 0px 5px;}
-.up-gallery .results-wrapper .results-list {list-style:none; padding:0; margin:0; position:relative; width:100%}
-.up-gallery .results-wrapper .results-list li {display:block; list-style:none; padding:0; maring:0; position:relative; float:left;}
-.up-gallery .results-wrapper .results-list li .ri-wrapper {padding:0px; margin:5px 5px 0 0; overflow:hidden; position:relative;}
+.up-gallery .results-wrapper .results-list {list-style:none; padding-top: 5px; margin:0; position:relative; width:100%; overflow:hidden;}
+.up-gallery .results-wrapper .results-list .results-item,
+.up-gallery .results-wrapper .results-list .result-item {margin-right: 5px; margin-bottom:5px;}
+.up-gallery .results-wrapper .results-list li {display:block; list-style:none; padding:0; margin:0; position:relative; float:left;}
+.up-gallery .results-wrapper .results-list li .ri-wrapper {padding:0px; position:relative;}
+.up-gallery .results-wrapper .results-list .skins-wrapper .ri-link,
+.up-gallery .results-wrapper .results-list .layout-wrapper .ri-link {display:block; padding:5px;}
+.up-gallery .results-wrapper .results-list .ri-link .ri-content {overflow: hidden;}
 .up-gallery .results-wrapper a {text-decoration:none;}
 .up-gallery .results-column.fl-col-main {margin:0 74px 0 0; padding:0px; position:relative;}
 .up-gallery .results-wrapper .pager-column.fl-col-side {float:right; width:74px; margin:0px; padding:0px;}
-.up-gallery .ri-titlebar {font-size:11px; font-weight:bold;}
-.up-gallery .ri-titlebar,
-.up-gallery .ri-content {padding: 5px 8px 3px 8px;}
-.up-gallery .ri-icon {float:left; margin:0 15px 5px 0;}
+.up-gallery .ri-titlebar {font-size:11px; font-weight:bold; margin-bottom: 5px;}
+.up-gallery .ri-icon {float:left; margin-right:5px;}
+.up-gallery .skins-wrapper .ri-icon {margin-right:0;}
 .up-gallery .ri-icon span {visibility: hidden;}
 .up-gallery .ri-description {clear:right; display:inline;}
 
@@ -507,13 +511,15 @@ table.purpose-layout td {margin:0; padding:0;}
  * The list of portlets and packages for add and use.
  */
 .up-gallery .portlet-list li,
-.up-gallery .package-list li {width: 33%; height:50%;}
+.up-gallery .package-list li {width: 32%; height:50%;}
 .up-gallery .portlet-list li .portlet-wrapper,
 .up-gallery .package-list li .package-wrapper {height:80px;}
 .up-gallery .portlet-wrapper .ri-link,
 .up-gallery .package-wrapper .ri-link {position: absolute; top: 0px; right: 0px; display: block; cursor:pointer; padding:2px 8px; text-align:center;}
 .up-gallery .portlet-wrapper .ri-icon,
 .up-gallery .package-wrapper .ri-icon {width:32px; height:32px;}
+.up-gallery .package-wrapper .ri-content,
+.up-gallery .portlet-wrapper .ri-content {padding:5px;}
 /* Drag Handle */
 .up-gallery .portlet-thumb-gripper {display: block; cursor: move;}
 .up-gallery .portlet-thumb-gripper span {display: block; width: 16px; height: 16px; overflow: hidden; visibility: hidden;}
@@ -525,7 +531,6 @@ table.purpose-layout td {margin:0; padding:0;}
 /* Gallery Skin List 
  * The list of skins.
  */
-.up-gallery .results-wrapper .skins-list li {width:140px; height:75%;}
 .up-gallery .skins-wrapper .skin-thumb {width: 120px; height: 70px;}
 
 /* Gallery Layout List 

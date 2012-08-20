@@ -19,27 +19,31 @@
 
 package org.jasig.portal.tools.dbloader;
 
-import java.util.List;
-import java.util.Properties;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
+import java.sql.Connection;
+import java.sql.SQLException;
 
-import javax.persistence.spi.PersistenceUnitInfo;
-import javax.sql.DataSource;
-
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.NullWriter;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.cfg.Environment;
-import org.hibernate.ejb.Ejb3Configuration;
-import org.hibernate.internal.util.config.ConfigurationHelper;
-import org.hibernate.service.ServiceRegistry;
-import org.hibernate.service.ServiceRegistryBuilder;
-import org.hibernate.service.jdbc.dialect.spi.DialectResolver;
-import org.hibernate.tool.hbm2ddl.SchemaExport;
-import org.hibernate.tool.hbm2ddl.SchemaUpdate;
+import org.hibernate.dialect.Dialect;
+import org.hibernate.engine.jdbc.internal.FormatStyle;
+import org.hibernate.engine.jdbc.internal.Formatter;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
+import org.jasig.portal.hibernate.DelegatingHibernateIntegrator.HibernateConfiguration;
+import org.jasig.portal.hibernate.HibernateConfigurationAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.datasource.lookup.SingleDataSourceLookup;
-import org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager;
-
-import com.google.common.collect.ImmutableMap;
+import org.springframework.beans.factory.annotation.Required;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.ConnectionCallback;
+import org.springframework.jdbc.core.JdbcOperations;
 
 /**
  * Runs the Hibernate Schema Export tool using the specified DataSource for the target DB.
@@ -47,109 +51,110 @@ import com.google.common.collect.ImmutableMap;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class DataSourceSchemaExport implements ISchemaExport {
+public class DataSourceSchemaExport implements ISchemaExport, HibernateConfigurationAware {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
-    private HibernateToolConfigurationSource hibernateToolConfigurationSource;
-
-    public void setHibernateToolConfigurationSource(HibernateToolConfigurationSource hibernateToolConfigurationSource) {
-        this.hibernateToolConfigurationSource = hibernateToolConfigurationSource;
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.tools.dbl.ISchemaExport#hbm2ddl(boolean, boolean, boolean, java.lang.String, boolean)
+    private final Formatter formatter = FormatStyle.DDL.getFormatter();
+    private JdbcOperations jdbcOperations;
+    private Configuration configuration;
+    private Dialect dialect;
+    private String persistenceUnit;
+    
+    /**
+     * The name of the persistence unit to use
      */
-    @SuppressWarnings("deprecation")
-    @Override
-    public void hbm2ddl(boolean export, boolean create, boolean drop, String outputFile, boolean haltOnError) {
-        this.create(export, create, drop, outputFile, haltOnError);
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.tools.dbloader.ISchemaExport#create(boolean, boolean, boolean, java.lang.String, boolean)
-     */
-    @Override
-    public void create(final boolean export, final boolean create, final boolean drop, final String outputFile, final boolean haltOnError) {
-        final SchemaExport exporter = createExporter(outputFile, haltOnError);
-        
-        if (drop) {
-            exporter.execute(true, export, true, false);
-        }
-        
-        if (create) {
-            exporter.execute(true, export, false, true);
-
-            if (haltOnError) {
-                @SuppressWarnings("unchecked")
-                final List<Exception> exceptions = exporter.getExceptions();
-                if (!exceptions.isEmpty()) {
-                    final Exception e = exceptions.get(exceptions.size() - 1);
-                    
-                    if (e instanceof RuntimeException) {
-                        throw (RuntimeException)e;
-                    }
-                    
-                    logger.error("Schema Export threw " + exceptions.size() + " exceptions and was halted");
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-    }
-
-    protected SchemaExport createExporter(String outputFile, boolean haltOnError) {
-        final Configuration configuration = this.hibernateToolConfigurationSource.getConfiguration();
-        final ServiceRegistry serviceRegistry = this.hibernateToolConfigurationSource.getServiceRegistry();
-        
-        final SchemaExport exporter = new SchemaExport( serviceRegistry, configuration );
-        exporter.setHaltOnError(haltOnError);
-        if (outputFile != null) {
-            exporter.setFormat(true);
-            exporter.setOutputFile(outputFile);
-        }
-        else {
-            exporter.setFormat(false);
-        }
-        return exporter;
+    @Required
+    public void setPersistenceUnit(String persistenceUnit) {
+        this.persistenceUnit = persistenceUnit;
     }
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.tools.dbloader.ISchemaExport#update(boolean, boolean, boolean, java.lang.String, boolean)
-     */
-    @Override
-    public void update(boolean export, String outputFile, boolean haltOnError) {
-        final SchemaUpdate updater = this.createUpdater(outputFile, haltOnError);
-        
-        updater.execute(true, export);
+    @Required
+    public void setJdbcOperations(JdbcOperations jdbcOperations) {
+        this.jdbcOperations = jdbcOperations;
+    }
 
-        if (haltOnError) {
-            @SuppressWarnings("unchecked")
-            final List<Exception> exceptions = updater.getExceptions();
-            if (!exceptions.isEmpty()) {
-                final Exception e = exceptions.get(exceptions.size() - 1);
-                
-                if (e instanceof RuntimeException) {
-                    throw (RuntimeException)e;
-                }
-                
-                logger.error("Schema Update threw " + exceptions.size() + " exceptions and was halted");
-                throw new RuntimeException(e);
+    @Override
+    public boolean supports(String persistenceUnit) {
+        return this.persistenceUnit.equals(persistenceUnit);
+    }
+
+    @Override
+    public void setConfiguration(String persistenceUnit, HibernateConfiguration hibernateConfiguration) {
+        this.configuration = hibernateConfiguration.getConfiguration();
+        final SessionFactoryImplementor sessionFactory = hibernateConfiguration.getSessionFactory();
+        this.dialect = sessionFactory.getDialect();
+    }
+    
+    @Override
+    public void drop(boolean export, String outputFile, boolean append) {
+        final String[] dropSQL = configuration.generateDropSchemaScript(dialect);
+        perform(dropSQL, outputFile, append, false);
+    }
+    
+    @Override
+    public void create(boolean export, String outputFile, boolean append) {
+        final String[] createSQL = configuration.generateSchemaCreationScript(dialect);
+        perform(createSQL, outputFile, append, true);
+    }
+    
+    @Override
+    public void update(boolean export, String outputFile, boolean append) {
+        final DatabaseMetadata databaseMetadata = this.jdbcOperations.execute(new ConnectionCallback<DatabaseMetadata>() {
+            @Override
+            public DatabaseMetadata doInConnection(Connection con) throws SQLException, DataAccessException {
+                return new DatabaseMetadata( con, dialect );
             }
+        });
+        
+        final String[] updateSQL = configuration.generateSchemaUpdateScript(dialect, databaseMetadata);
+        perform(updateSQL, outputFile, append, true);
+    }
+
+    private void perform(String[] sqlCommands, String outputFile, boolean append, boolean failFast) {
+        final PrintWriter sqlWriter = getSqlWriter(outputFile, append);
+        try {
+            for (final String sqlCommand : sqlCommands) {
+                final String formatted = formatter.format(sqlCommand);
+                sqlWriter.println(formatted);
+
+                try {
+                    jdbcOperations.execute(sqlCommand);
+                    logger.info(sqlCommand);
+                }
+                catch (Exception e) {
+                    if (failFast) {
+                        logger.error("Failed to execute: {}\n\t{}", sqlCommand, e.getMessage());
+                        throw new RuntimeException("Failed to execute: " + sqlCommand, e);
+                    }
+                    else {
+                        if (logger.isDebugEnabled()) {
+                            logger.info("Failed to execute: " + sqlCommand, e);
+                        }
+                        else {
+                            logger.info("Failed to execute (probably ignorable): {}", sqlCommand);
+                        }
+                    }
+                }
+            }
+        }
+        finally {
+            IOUtils.closeQuietly(sqlWriter);
         }
     }
 
-    protected SchemaUpdate createUpdater(String outputFile, boolean haltOnError) {
-        final Configuration configuration = this.hibernateToolConfigurationSource.getConfiguration();
-        final ServiceRegistry serviceRegistry = this.hibernateToolConfigurationSource.getServiceRegistry();
-        
-        final SchemaUpdate updater = new SchemaUpdate(serviceRegistry, configuration);
-        updater.setHaltOnError(haltOnError);
-        if (outputFile != null) {
-            updater.setFormat(true);
-            updater.setOutputFile(outputFile);
+    private PrintWriter getSqlWriter(String outputFile, boolean append) {
+        final Writer sqlWriter;
+        if (StringUtils.trimToNull(outputFile) != null) {
+            try {
+                sqlWriter = new BufferedWriter(new FileWriter(outputFile, append));
+            }
+            catch (IOException e) {
+                throw new RuntimeException("", e);
+            }
         }
         else {
-            updater.setFormat(false);
+            sqlWriter = new NullWriter();
         }
-        return updater;
+        return new PrintWriter(sqlWriter);
     }
 }

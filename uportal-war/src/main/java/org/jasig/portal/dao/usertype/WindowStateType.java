@@ -24,7 +24,7 @@ import javax.portlet.WindowState;
 import org.jadira.usertype.spi.shared.AbstractSingleColumnUserType;
 
 /**
- * Uses a regular expression to validate strings coming to/from the database.
+ * Converts portlet WindowState objects to/from strings.
  * 
  * @author Eric Dalquist
  * @version $Revision$

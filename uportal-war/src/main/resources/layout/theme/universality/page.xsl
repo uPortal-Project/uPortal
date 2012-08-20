@@ -47,7 +47,7 @@
     xmlns:upMsg="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanMessageHelper"
     xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
     xsi:schemaLocation="
-            https://source.jasig.org/schemas/uportal/layout/portal-url ../../../xsd/layout/portal-url-4.0.xsd"
+            https://source.jasig.org/schemas/uportal/layout/portal-url https://source.jasig.org/schemas/uportal/layout/portal-url-4.0.xsd"
     exclude-result-prefixes="url upAuth upGroup upMsg dlm xsi" 
     version="1.0">
   
@@ -83,7 +83,7 @@
       </xsl:choose>
     </xsl:variable>
     
-    <html lang="{substring-before($USER_LANG,'-')}">
+    <html lang="{$USER_LANG}">
       <head>
         <title>
           <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
@@ -116,6 +116,8 @@
             var up = up || {};
             up.jQuery = jQuery.noConflict(true);
             up.fluid = fluid;
+            up._ = _.noConflict();
+            up.Backbone = Backbone.noConflict();
             fluid = null;
             fluid_1_4 = null;
         </script>

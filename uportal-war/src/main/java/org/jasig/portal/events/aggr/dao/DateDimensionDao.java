@@ -47,6 +47,11 @@ public interface DateDimensionDao {
      * @return The created dimension
      */
     DateDimension createDateDimension(DateMidnight cal, int quarter, String term);
+    
+    /**
+     * Store an updated DateDimension
+     */
+    void updateDateDimension(DateDimension dateDimension);
 
     /**
      * @return A list of all date dimensions in the persistent store, chronological order
@@ -59,6 +64,11 @@ public interface DateDimensionDao {
      * @return A list of the date dimensions that exist between the specified start and end
      */
     List<DateDimension> getDateDimensionsBetween(DateMidnight start, DateMidnight end);
+    
+    /**
+     * @return {@link DateDimension}s that do not have terms
+     */
+    List<DateDimension> getDateDimensionsWithoutTerm();
 
     /**
      * @return The {@link DateDimension} corresponding to the specified id

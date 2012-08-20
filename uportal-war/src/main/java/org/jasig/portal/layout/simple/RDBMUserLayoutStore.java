@@ -42,6 +42,7 @@ import org.jasig.portal.IUserProfile;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.i18n.ILocaleStore;
 import org.jasig.portal.i18n.LocaleManager;
+import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.LayoutStructure;
 import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
@@ -96,6 +97,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
     protected final Log log = LogFactory.getLog(getClass());
     private static String PROFILE_TABLE = "UP_USER_PROFILE";
 
+    protected static final String DEFAULT_LAYOUT_FNAME = "default";
+
   //This class is instantiated ONCE so NO class variables can be used to keep state between calls
   protected static final String channelPrefix = "n";
   protected static final String folderPrefix = "s";
@@ -126,7 +129,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
     }
 
     @Autowired
-    public void setPlatformTransactionManager(@Qualifier("PortalDb") PlatformTransactionManager platformTransactionManager) {
+    public void setPlatformTransactionManager(@Qualifier(BasePortalJpaDao.PERSISTENCE_UNIT_NAME) PlatformTransactionManager platformTransactionManager) {
         this.transactionOperations = new TransactionTemplate(platformTransactionManager);
         
         final DefaultTransactionDefinition nextStructTransactionDefinition = new DefaultTransactionDefinition();
@@ -134,7 +137,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
         this.nextStructTransactionOperations = new TransactionTemplate(platformTransactionManager, nextStructTransactionDefinition);
     }
 
-    @Resource(name="PortalDb")
+    @Resource(name=BasePortalJpaDao.PERSISTENCE_UNIT_NAME)
     public void setDataSource(DataSource dataSource) {
         this.jdbcOperations = new JdbcTemplate(dataSource);
         this.exceptionTranslator = new SQLErrorCodeSQLExceptionTranslator(dataSource);
@@ -1681,60 +1684,47 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                       }
                   }
                   
-                  if (layoutId == 0) {
-                	  
-                	  // determine the fname for the currently-requested profile
-                	  query = "SELECT PROFILE_FNAME FROM UP_USER_PROFILE WHERE " +
-                	  		"USER_ID=? AND PROFILE_ID=?";
+                  // find the layout used by the default profle for this user
+                  query = "SELECT LAYOUT_ID FROM UP_USER_PROFILE " +
+                		  "WHERE USER_ID=? AND PROFILE_FNAME='" + DEFAULT_LAYOUT_FNAME + "'";
                 	  pstmt = con.prepareStatement(query);
-                	  pstmt.setInt(1, u);
-                	  pstmt.setInt(2, p);
-                	  
-                	  rs = pstmt.executeQuery();
-                	  String profileFname = null;
-                	  if (rs.next()) {
-                		  profileFname = rs.getString("PROFILE_FNAME");
-                	  }
-                	  
-                	  // using the fname calculated above, attempt to get the 
-                	  // layout id of the default user profile for this fname
-                	  query = "SELECT LAYOUT_ID FROM UP_USER_PROFILE LEFT JOIN " +
-                	  		"UP_USER ON UP_USER_PROFILE.USER_ID=UP_USER.USER_DFLT_USR_ID " +
-                	  		"WHERE UP_USER.USER_ID=? AND UP_USER_PROFILE.PROFILE_FNAME=?";
-                	  pstmt = con.prepareStatement(query);
-                	  pstmt.setInt(1, u);
-                	  pstmt.setString(2, profileFname);
+                	  pstmt.setInt(1, userId);
                 	  rs = pstmt.executeQuery();
                 	  int intendedLayoutId = 0;
                 	  if (rs.next()) {
                 		  intendedLayoutId = rs.getInt("LAYOUT_ID");
+                	  if (rs.wasNull()) {
+                		  intendedLayoutId = 0;
+                	  }
                 	  }
                 	  
-                	  // check to see if another profile for the current user
-                	  // has already created the requested layout
+                  // check to see if this profile for the current user
+                  // has already used the requested layout
                 	  query = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE " +
-                	  		"USER_ID=? AND LAYOUT_ID=?";
+                		  "USER_ID=? AND LAYOUT_ID=? AND PROFILE_ID=?";
                 	  pstmt = con.prepareStatement(query);
-                	  pstmt.setInt(1, u);
+                	  pstmt.setInt(1, userId);
                 	  pstmt.setInt(2, intendedLayoutId);
+                	  pstmt.setInt(3, profileId);
                 	  rs = pstmt.executeQuery();
-                	  if (rs.next()) {
-                    	  
-                    	  // if the layout already exists, update the profile to
+                  if (!rs.next()) {
+                	  // if the layout's not already been used, update the profile to
                     	  // point to that layout
                     	  query = "UPDATE UP_USER_PROFILE SET LAYOUT_ID=? WHERE " +
                     	  		"USER_ID=? AND PROFILE_ID=?";
+
                     	  pstmt = con.prepareStatement(query);
+
                     	  pstmt.setInt(1, intendedLayoutId);
-                    	  pstmt.setInt(2, u);
-                    	  pstmt.setInt(3, p);
+                    	  pstmt.setInt(2, userId);
+                    	  pstmt.setInt(3, profileId);
                     	  pstmt.execute();
                     	  
+
                     	  layoutId = intendedLayoutId;
                 		  
                 	  }
                       
-                  }
                   
               }
               finally {

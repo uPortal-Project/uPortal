@@ -40,6 +40,7 @@ import org.codehaus.groovy.tools.shell.IO;
 import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -72,20 +73,27 @@ public class PortalShell {
         }
         
         final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
-        final Binding binding = new SpringBinding(applicationContext);
-        binding.setVariable("logger", LOGGER);
-        
-        if (commandLine.hasOption("script")) {
-            final String scriptName = commandLine.getOptionValue("script");
-            final File scriptFile = getAbsoluteFile(scriptName);
-            
-            final CompilerConfiguration conf = new CompilerConfiguration(System.getProperties());
-            final GroovyShell shell = new GroovyShell(binding, conf);
-            shell.run(scriptFile, args);
+        try {
+	        final Binding binding = new SpringBinding(applicationContext);
+	        binding.setVariable("logger", LOGGER);
+	        
+	        if (commandLine.hasOption("script")) {
+	            final String scriptName = commandLine.getOptionValue("script");
+	            final File scriptFile = getAbsoluteFile(scriptName);
+	            
+	            final CompilerConfiguration conf = new CompilerConfiguration(System.getProperties());
+	            final GroovyShell shell = new GroovyShell(binding, conf);
+	            shell.run(scriptFile, args);
+	        }
+	        else {
+	            final Groovysh shell = new Groovysh(binding, new IO());
+	            shell.run();
+	        }
         }
-        else {
-            final Groovysh shell = new Groovysh(binding, new IO());
-            shell.run();
+        finally {
+        	if (applicationContext instanceof DisposableBean) {
+        		((DisposableBean) applicationContext).destroy();
+        	}
         }
     }
     

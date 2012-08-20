@@ -29,11 +29,13 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.NaturalIdCache;
 
 /**
  * @author Eric Dalquist
@@ -41,25 +43,26 @@ import org.hibernate.annotations.NaturalId;
  */
 
 @Entity
-@Table(name = "UP_AGGREGATE_GROUP_MAPPING")
+@Table(name = "UP_AGGR_GROUP_MAPPING")
 @SequenceGenerator(
-        name="UP_AGGREGATE_GROUP_MAPPING_GEN",
-        sequenceName="UP_AGGREGATE_GROUP_MAPPING_SEQ",
+        name="UP_AGGR_GROUP_MAPPING_GEN",
+        sequenceName="UP_AGGR_GROUP_MAPPING_SEQ",
         allocationSize=10
     )
 @TableGenerator(
-        name="UP_AGGREGATE_GROUP_MAPPING_GEN",
-        pkColumnValue="UP_AGGREGATE_GROUP_MAPPING_PROP",
+        name="UP_AGGR_GROUP_MAPPING_GEN",
+        pkColumnValue="UP_AGGR_GROUP_MAPPING_PROP",
         allocationSize=10
     )
 @Immutable
+@NaturalIdCache
 @Cacheable
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class AggregatedGroupMappingImpl implements AggregatedGroupMapping, Serializable {
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+public final class AggregatedGroupMappingImpl implements AggregatedGroupMapping, Serializable {
     private static final long serialVersionUID = 1L;
     
     @Id
-    @GeneratedValue(generator = "UP_AGGREGATE_GROUP_MAPPING_GEN")
+    @GeneratedValue(generator = "UP_AGGR_GROUP_MAPPING_GEN")
     @Column(name="ID")
     private final long id;
     
@@ -70,6 +73,9 @@ public class AggregatedGroupMappingImpl implements AggregatedGroupMapping, Seria
     @NaturalId
     @Column(name = "GROUP_NAME", length=200, nullable = false)
     private final String groupName;
+    
+    @Transient
+    private int hashCode = 0;
     
     @SuppressWarnings("unused")
     private AggregatedGroupMappingImpl() {
@@ -98,11 +104,15 @@ public class AggregatedGroupMappingImpl implements AggregatedGroupMapping, Seria
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((groupName == null) ? 0 : groupName.hashCode());
-        result = prime * result + ((groupService == null) ? 0 : groupService.hashCode());
-        return result;
+        int h = this.hashCode;
+        if (h == 0) {
+            final int prime = 31;
+            h = 1;
+            h = prime * h + ((groupName == null) ? 0 : groupName.hashCode());
+            h = prime * h + ((groupService == null) ? 0 : groupService.hashCode());
+            this.hashCode = h;
+        }
+        return h;
     }
 
     @Override
@@ -112,6 +122,8 @@ public class AggregatedGroupMappingImpl implements AggregatedGroupMapping, Seria
         if (obj == null)
             return false;
         if (getClass() != obj.getClass())
+            return false;
+        if (hashCode() != obj.hashCode())
             return false;
         AggregatedGroupMappingImpl other = (AggregatedGroupMappingImpl) obj;
         if (groupName == null) {

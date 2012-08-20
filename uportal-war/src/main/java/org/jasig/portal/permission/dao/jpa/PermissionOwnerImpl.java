@@ -42,6 +42,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.permission.IPermissionActivity;
 import org.jasig.portal.permission.IPermissionOwner;
@@ -66,6 +67,7 @@ import org.jasig.portal.permission.IPermissionOwner;
         pkColumnValue="UP_PERMISSION_OWNER",
         allocationSize=1
     )
+@NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 class PermissionOwnerImpl implements IPermissionOwner, Serializable {

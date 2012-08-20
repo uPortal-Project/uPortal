@@ -29,41 +29,61 @@
                         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
                         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
-    <!-- JPA Test Context for DAOs that use the uPortalAggrEventsPersistence PersistenceContext -->
+    <!-- JPA Test Context for DAOs that use the AggrEventsDb PersistenceContext -->
     
     
     <bean id="intervalHelper" class="org.jasig.portal.events.aggr.AggregationIntervalHelperImpl" />
     <bean id="timeDimensionDao" class="org.jasig.portal.events.aggr.dao.jpa.JpaTimeDimensionDao" />    
     <bean id="dateDimensionDao" class="org.jasig.portal.events.aggr.dao.jpa.JpaDateDimensionDao" />
     <bean id="eventAggregationManagementDao" class="org.jasig.portal.events.aggr.dao.jpa.JpaEventAggregationManagementDao" />
-    <bean id="aggregatedGroupLookupDao" class="org.jasig.portal.events.aggr.groups.JpaAggregatedGroupLookupDao" />
-    <bean id="loginAggregationDao" class="org.jasig.portal.events.aggr.login.JpaLoginAggregationDao" />
-    <bean id="eventSessionDao" class="org.jasig.portal.events.aggr.session.JpaEventSessionDao">
-        <property name="eventSessionDuration" value="PT0S" />
-    </bean>
     
+    <bean id="aggregatedGroupLookupDao" class="org.jasig.portal.events.aggr.groups.JpaAggregatedGroupLookupDao" />
+    <bean id="aggregatedPortletLookupDao" class="org.jasig.portal.events.aggr.portlets.JpaAggregatedPortletLookupDao" />
+    <bean id="aggregatedTabLookupDao" class="org.jasig.portal.events.aggr.tabs.JpaAggregatedTabLookupDao" />
+    
+    <bean id="loginAggregationDao" class="org.jasig.portal.events.aggr.login.JpaLoginAggregationDao" />
+    <bean id="concurrentUserAggregationDao" class="org.jasig.portal.events.aggr.concuser.JpaConcurrentUserAggregationDao" />
+    <bean id="tabRenderAggregationDao" class="org.jasig.portal.events.aggr.tabrender.JpaTabRenderAggregationDao"/>
+    <bean id="portletExecutionAggregationDao" class="org.jasig.portal.events.aggr.portletexec.JpaPortletExecutionAggregationDao"/>
+    <bean id="eventSessionDao" class="org.jasig.portal.events.aggr.session.JpaEventSessionDao" />
+    
+    <bean id="hibernateCacheEvictor" class="org.jasig.portal.spring.MockitoFactoryBean" >
+        <constructor-arg value="org.jasig.portal.events.aggr.HibernateCacheEvictor" />
+    </bean>
     <bean id="compositeGroupService" class="org.jasig.portal.spring.MockitoFactoryBean" >
         <constructor-arg value="org.jasig.portal.groups.ICompositeGroupService" />
     </bean>
+    <bean id="portletDefinitionDao" class="org.jasig.portal.spring.MockitoFactoryBean" >
+        <constructor-arg value="org.jasig.portal.portlet.dao.IPortletDefinitionDao" />
+    </bean>
+    <bean id="portalJdbcOperations" class="org.jasig.portal.spring.MockitoFactoryBean" >
+        <qualifier value="PortalDb" />
+        <constructor-arg value="org.springframework.jdbc.core.JdbcOperations" />
+    </bean>
+    <bean id="org.jasig.portal.events.aggr.tabrender.TabRenderAggregator.layoutNodeIdNameResolver" class="org.jasig.portal.spring.MockitoFactoryBean" >
+        <qualifier value="org.jasig.portal.events.aggr.tabrender.TabRenderAggregator.layoutNodeIdNameResolver"/>
+        <constructor-arg value="net.sf.ehcache.Ehcache" />
+    </bean>
+    
     
     <bean id="localPropertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="properties">
             <props>
-                <prop key="persistenceUnitName">uPortalAggrEventsPersistence</prop>
+                <prop key="persistenceUnitName">AggrEventsDb</prop>
             </props>
         </property>
     </bean>
     <alias name="aggrEventsTransactionManager" alias="transactionManager"/>
     <bean id="aggrEventsTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <qualifier value="aggrEvents" />
+        <qualifier value="AggrEventsDb" />
         <property name="entityManagerFactory" ref="factoryBean" />
     </bean>
     <bean id="aggrTransactionOperations" class="org.springframework.transaction.support.TransactionTemplate">
-        <qualifier value="aggrEvents"/>
+        <qualifier value="AggrEventsDb"/>
         <property name="transactionManager" ref="aggrEventsTransactionManager" />
     </bean>
-    <bean id="AggrEventsDB" parent="TestDb">
-        <qualifier value="AggrEventsDB" />
+    <bean id="AggrEventsDb" parent="TestDb">
+        <qualifier value="AggrEventsDb" />
     </bean>
     <import resource="classpath:sharedJpaTestContext.xml"/>
 </beans>

@@ -29,7 +29,7 @@
     <bean id="mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean">
         <property name="locateExistingServerIfPossible" value="true" />
     </bean>
-
+    
     <!-- Exporter used to register beans with the mbean server -->
     <bean id="jmxAdapter" class="org.springframework.jmx.export.MBeanExporter">
         <property name="server" ref="mbeanServer" />
@@ -43,16 +43,11 @@
                 <entry key="uPortal:section=Framework,name=uPortalLockExecutor" value-ref="uPortalLockExecutor" />
                 <entry key="uPortal:section=Framework,name=PortletThreadPool" value-ref="portletThreadPool" />
                 
-                <entry key="uPortal:section=Cache,name=RequestCacheStatistics" value-ref="requestCacheAspect" />
                 <entry key="uPortal:section=Cache,name=CharacterDataEventCacheStats" value-ref="characterDataEventCacheStatsBean" />
                 
                 <entry key="uPortal:section=Hibernate,name=HibernateStatistics" value-ref="hibernateStatisticsMBean"/>
                 <entry key="uPortal:section=Hibernate,name=RawEventsHibernateStatistics" value-ref="rawEventsHibernateStatisticsMBean"/>
                 <entry key="uPortal:section=Hibernate,name=AggrEventsHibernateStatistics" value-ref="aggrEventsHibernateStatisticsMBean"/>
-                
-                <entry key="uPortal:section=DataSource,name=PortalDB" value-ref="PortalDb"/>
-                <entry key="uPortal:section=DataSource,name=RawEventsDB" value-ref="RawEventsDB"/>
-                <entry key="uPortal:section=DataSource,name=AggrEventsDB" value-ref="AggrEventsDB"/>
             </map>
         </property>
     </bean>
@@ -60,9 +55,6 @@
     <bean id="mbeanInfoAssembler" class="org.springframework.jmx.export.assembler.MethodExclusionMBeanInfoAssembler">
         <property name="ignoredMethodMappings">
             <props>
-                <prop key="uPortal:section=DataSource,name=PortalDB">getConnection,getLogWriter,setLogWriter</prop>
-                <prop key="uPortal:section=DataSource,name=RawEventsDB">getConnection,getLogWriter,setLogWriter</prop>
-                <prop key="uPortal:section=DataSource,name=AggrEventsDB">getConnection,getLogWriter,setLogWriter</prop>
             </props>
         </property>
     </bean>
@@ -72,7 +64,7 @@
         <property name="statisticsEnabled" value="true"/>
         <property name="sessionFactory">
             <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-                <property name="targetObject" ref="entityManagerFactory" />
+                <property name="targetObject" ref="PortalDbEntityManagerFactory" />
                 <property name="targetMethod" value="getSessionFactory" />
             </bean>
         </property>
@@ -83,7 +75,7 @@
         <property name="statisticsEnabled" value="true"/>
         <property name="sessionFactory">
             <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-                <property name="targetObject" ref="rawEventsEntityManagerFactory" />
+                <property name="targetObject" ref="RawEventsDbEntityManagerFactory" />
                 <property name="targetMethod" value="getSessionFactory" />
             </bean>
         </property>
@@ -94,7 +86,7 @@
         <property name="statisticsEnabled" value="true"/>
         <property name="sessionFactory">
             <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-                <property name="targetObject" ref="aggrEventsEntityManagerFactory" />
+                <property name="targetObject" ref="AggrEventsDbEntityManagerFactory" />
                 <property name="targetMethod" value="getSessionFactory" />
             </bean>
         </property>
@@ -112,6 +104,23 @@
         <property name="arguments">
             <list>
                 <ref bean="cacheManager" />
+                <ref bean="mbeanServer" />
+                <value>true</value>
+                <value>true</value>
+                <value>true</value>
+                <value>true</value>
+                <value>true</value>
+            </list>
+        </property>
+    </bean>
+    
+    <!-- EhCache management and statistics -->
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass" value="net.sf.ehcache.management.ManagementService" />
+        <property name="targetMethod" value="registerMBeans" />
+        <property name="arguments">
+            <list>
+                <ref bean="eventAggrCacheManager" />
                 <ref bean="mbeanServer" />
                 <value>true</value>
                 <value>true</value>

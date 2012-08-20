@@ -87,6 +87,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     static final String STATELESS_PORTLET_WINDOW_ID = "tw";
     static final String PORTLET_WINDOW_DATA_ATTRIBUTE = PortletWindowRegistryImpl.class.getName() + ".PORTLET_WINDOW_DATA";
     static final String PORTLET_WINDOW_ATTRIBUTE = PortletWindowRegistryImpl.class.getName() + ".PORTLET_WINDOW.thread-";
+    static final String DISABLE_PERSISTENT_WINDOWS = PortletWindowRegistryImpl.class.getName() + ".DISABLE_PERSISTENT_WINDOWS";
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -521,7 +522,22 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     }
     
     @Override
+    public void disablePersistentWindowStates(HttpServletRequest request) {
+        request = this.portalRequestUtils.getOriginalPortalRequest(request);
+        request.setAttribute(DISABLE_PERSISTENT_WINDOWS, Boolean.TRUE);
+    }
+    
+    protected boolean isDisablePersistentWindowStates(HttpServletRequest request) {
+        request = this.portalRequestUtils.getOriginalPortalRequest(request);
+        return Boolean.TRUE == request.getAttribute(DISABLE_PERSISTENT_WINDOWS);
+    }
+    
+    @Override
     public void storePortletWindow(HttpServletRequest request, IPortletWindow portletWindow) {
+        if (isDisablePersistentWindowStates(request)) {
+            return;
+        }
+        
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IPerson person = userInstance.getPerson();
         if (person.isGuest()) {

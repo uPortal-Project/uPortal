@@ -59,15 +59,15 @@
 
     </ns8:parameter>
     <parameter>
-        <name>hasedit</name>
+        <name>editable</name>
         <value>false</value>
     </parameter>
     <parameter>
-        <name>hashelp</name>
+        <name>hasHelp</name>
         <value>false</value>
     </parameter>
     <parameter>
-        <name>hasabout</name>
+        <name>hasAbout</name>
         <value>false</value>
     </parameter>
     <parameter>

@@ -34,6 +34,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Version;
 
 import org.apache.commons.lang.Validate;
 import org.hibernate.annotations.Cache;
@@ -41,6 +42,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.NaturalIdCache;
 import org.jasig.portal.events.aggr.AggregatedGroupConfig;
 import org.jasig.portal.events.aggr.IPortalEventAggregator;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
@@ -57,11 +59,17 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class AggregatedGroupConfigImpl extends BaseAggregatedDimensionConfigImpl<AggregatedGroupMapping> implements AggregatedGroupConfig {
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(generator = "UP_EVENT_AGGR_CONF_GROUPS_GEN")
     @Column(name = "ID")
     @SuppressWarnings("unused")
     private final long id;
+
+    @Version
+    @Column(name = "ENTITY_VERSION")
+    private final long entityVersion = -1;
     
     @NaturalId
     @Column(name = "AGGREGATOR_TYPE", nullable = false, updatable = false)
@@ -100,7 +108,10 @@ public class AggregatedGroupConfigImpl extends BaseAggregatedDimensionConfigImpl
         return this.aggregatorType;
     }
     
-    
+    @Override
+    public long getVersion() {
+        return this.entityVersion;
+    }
     
     @Override
     public Set<AggregatedGroupMapping> getIncluded() {

@@ -123,7 +123,7 @@
             <!-- ****** PORTLET TITLE AND TOOLBAR ****** -->
             <div id="toolbar_{@ID}" class="fl-widget-titlebar up-portlet-titlebar"> <!-- Portlet toolbar. -->
               <xsl:if test="$USE_PORTLET_MINIMIZE_CONTENT='true'">
-	              <xsl:if test="not(//focused)">
+	              <xsl:if test="not(//focused) and not(//layout_fragment)">
 	            	<xsl:choose>
 	            	  <xsl:when test="@windowState='minimized'"> <!-- Return from Minimized. -->
 				        <xsl:variable name="portletReturnUrl">
@@ -330,7 +330,7 @@
       	  	<span class="label"><xsl:value-of select="upMsg:getMessage('print', $USER_LANG)"/></span>
         </a>
       </xsl:if>
-      <xsl:if test="not(//focused) and @windowState!='minimized'"> <!-- Focus. -->
+      <xsl:if test="not(//focused) and not(//layout_fragment) and @windowState!='minimized'"> <!-- Focus. -->
         <xsl:variable name="portletMaxUrl">
           <xsl:call-template name="portalUrl">
             <xsl:with-param name="url">

@@ -36,6 +36,7 @@ import org.jasig.portal.io.xml.IPortalData;
 import org.jasig.portal.io.xml.IPortalDataType;
 import org.jasig.portal.io.xml.PortalDataKey;
 import org.jasig.portal.io.xml.SimpleStringPortalData;
+import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.persondir.ILocalAccountDao;
 import org.jasig.portal.persondir.ILocalAccountPerson;
 import org.jasig.portal.utils.ICounterStore;
@@ -95,7 +96,7 @@ public class UserImporterExporter extends
         this.counterStore = counterStore;
     }
 
-    @Resource(name="PortalDb")
+    @Resource(name=BasePortalJpaDao.PERSISTENCE_UNIT_NAME)
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
@@ -263,7 +264,6 @@ public class UserImporterExporter extends
 	    else {
 	        userType = new ExternalUser();
 	    }
-	    userType.setVersion("4.0");
 	    userType.setUsername(userName);
 	    userType.setDefaultUser(defaultUserName);
 	    
