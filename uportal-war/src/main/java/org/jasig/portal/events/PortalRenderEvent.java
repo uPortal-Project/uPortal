@@ -44,7 +44,12 @@ public final class PortalRenderEvent extends PortalEvent {
     private final UrlType urlType;
     private final Map<String, List<String>> parameters;
     private final String targetedLayoutNodeId;
+    /**
+     * Still here to support deserializing old event json
+     * @deprecated use {@link #executionTimeNano} instead
+     */
     @JsonSerialize(include = Inclusion.NON_NULL)
+    @Deprecated
     private Long executionTime;
     private long executionTimeNano;
 

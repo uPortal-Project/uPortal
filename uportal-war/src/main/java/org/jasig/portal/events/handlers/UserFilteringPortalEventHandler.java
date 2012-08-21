@@ -21,6 +21,7 @@ package org.jasig.portal.events.handlers;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.security.IPerson;
@@ -41,7 +42,7 @@ public final class UserFilteringPortalEventHandler<E extends PortalEvent> implem
 	private boolean supportGuest = true;
 	private Set<String> supportedUserNames;
 	private Set<String> ignoredUserNames;
-    private boolean requireAll = true;
+    private Set<Pattern> ignoredUserNamePatterns;
 
     /**
      * If no <code>supportedUserNames</code> {@link Collection} is configured all user-names are supported otherwise
@@ -74,73 +75,64 @@ public final class UserFilteringPortalEventHandler<E extends PortalEvent> implem
             this.ignoredUserNames = ImmutableSet.copyOf(ignoredUserNames);
         }
     }
+    
+    /**
+     * If no <code>ignoredUserNamePatterns</code> {@link Collection} is configured all user-names are supported otherwise
+     * exact regex pattern matching is done to determine ignored userNames. The property defaults to null (all user
+     * names)
+     * 
+     * @param ignoredUserNamePatterns the ignoredUserNamePatterns to set
+     */
+    public void setIgnoredUserNamePatterns(Collection<Pattern> ignoredUserNamePatterns) {
+        if (ignoredUserNamePatterns == null) {
+            this.ignoredUserNamePatterns = null;
+        }
+        else {
+            this.ignoredUserNamePatterns = ImmutableSet.copyOf(ignoredUserNamePatterns);
+        }
+    }
 
     /**
      * If the <code>supportGuest</code> property is true {@link ApplicationEvent}s where {@link IPerson#isGuest()} is true or
      * false will be supported. If the <code>supportGuest</code> property is false only {@link ApplicationEvent}s where
      * {@link IPerson#isGuest()} is false will be supported. The property defaults to true.
-     * 
-     * @param supportGuest the supportGuest to set
      */
     public void setSupportGuest(boolean supportGuest) {
         this.supportGuest = supportGuest;
     }
 
-    /**
-     * The <code>requireAll</code> can be used to require either any one criteria match for support or all three
-     * criteria.
-     * 
-     * @param requireAll the requireAll to set
-     */
-    public void setRequireAll(boolean requireAll) {
-        this.requireAll = requireAll;
-    }
-
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.spring.context.ApplicationEventFilter#supports(org.springframework.context.ApplicationEvent)
-     */
     @Override
     public boolean supports(E event) {
+        if (!(event instanceof PortalEvent)) {
+            return false;
+        }
         
         //Guest support check
         final IPerson person = event.getPerson();
-        if (this.supportGuest || !person.isGuest()) {
-            if (!this.requireAll) {
-                return true;
-            }
-        }
-        else {
-            if (this.requireAll) {
-                return false;
-            }
+        if (person != null && !this.supportGuest && person.isGuest()) {
+            return false;
         }
         
         //userName check
-        final String userName = person.getUserName();
-        if (this.supportedUserNames == null || this.supportedUserNames.contains(userName)) {
-            if (!this.requireAll) {
-                return true;
-            }
-        }
-        else {
-            if (this.requireAll) {
-                return false;
-            }
+        final String userName = event.getUserName();
+        if (this.supportedUserNames != null && this.supportedUserNames.contains(userName)) {
+            return true;
         }
         
         //ignored userName check
-        if (this.ignoredUserNames == null || !this.ignoredUserNames.contains(userName)) {
-            if (!this.requireAll) {
-                return true;
-            }
+        if (this.ignoredUserNames != null && this.ignoredUserNames.contains(userName)) {
+            return false;
         }
-        else {
-            if (this.requireAll) {
-                return false;
+            
+        //ignored userName pattern check
+        if (this.ignoredUserNamePatterns != null) {
+            for (final Pattern ignoredUserNamePattern : this.ignoredUserNamePatterns) {
+                if (ignoredUserNamePattern.matcher(userName).matches()) {
+                    return false;
+                }
             }
         }
         
-        return false;
+        return this.supportedUserNames == null || this.supportedUserNames.isEmpty();
     }
 }

@@ -29,6 +29,7 @@ import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.rdbm.IDatabaseMetadata;
 import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.portal.spring.locator.PortalDbLocator;
@@ -36,6 +37,7 @@ import org.jasig.portal.spring.locator.PortalDbMetadataLocator;
 import org.jasig.portal.utils.MovingAverage;
 import org.jasig.portal.utils.MovingAverageSample;
 import org.springframework.context.ApplicationContext;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataAccessResourceFailureException;
 
 
@@ -69,7 +71,7 @@ public class RDBMServices {
     /**
      * Name of the default portal database expected in the Spring application context
      */
-    public static final String PORTAL_DB = "PortalDb";
+    public static final String PORTAL_DB = BasePortalJpaDao.PERSISTENCE_UNIT_NAME;
 
     /**
      * Name of the {@link IDatabaseMetadata} expected in the Spring application context

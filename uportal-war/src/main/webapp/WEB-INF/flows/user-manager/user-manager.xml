@@ -45,11 +45,13 @@
      | User summary and links
      +-->
   <view-state id="viewUserDetails">
-    <on-entry>
-      <set name="flashScope.servletRequest"
-           value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
+        <on-entry>
+            <set name="flashScope.servletRequest"
+                value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
             <set name="flashScope.user" 
                 value="personManager.getPerson(servletRequest)"/>
+            <set name="flashScope.groupedAttributes" 
+                value="userAccountHelper.groupPersonAttributes(person, servletRequest)"/>
             <set name="viewScope.canEdit" value="userAccountHelper.canEditUser(user, person.name)"/>
             <set name="viewScope.canDelete" value="userAccountHelper.canDeleteUser(user, person.name)"/>
             <set name="viewScope.canImpersonate" value="userAccountHelper.canImpersonateUser(user, person.name)"/>

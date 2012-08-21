@@ -105,6 +105,7 @@
             <plugin>
                 <artifactId>maven-ear-plugin</artifactId>
                 <configuration>
+                    <fileNameMapping>no-version</fileNameMapping>
                     <modules>
                         <webModule>
                             <groupId>org.jasig.ssp.platform</groupId>

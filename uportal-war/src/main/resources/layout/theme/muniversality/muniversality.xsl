@@ -74,7 +74,7 @@
     xmlns:upMsg="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanMessageHelper"
     xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
     xsi:schemaLocation="
-            https://source.jasig.org/schemas/uportal/layout/portal-url ../../../xsd/layout/portal-url-4.0.xsd"
+            https://source.jasig.org/schemas/uportal/layout/portal-url https://source.jasig.org/schemas/uportal/layout/portal-url-4.0.xsd"
     exclude-result-prefixes="url upAuth upGroup upMsg" 
     version="1.0">
 
@@ -212,6 +212,8 @@
         up.fluid = fluid;
         fluid = null;
         fluid_1_4 = null;
+        up._ = _.noConflict();
+        up.Backbone = Backbone.noConflict();
         
         <xsl:if test="$VIEW != 'grid'">
             up.jQuery(document).ready(function() {
@@ -299,7 +301,7 @@
 | Template contents can be any valid XSL or XHTML.
 -->
 <xsl:template match="/">
-    <html lang="{substring-before($USER_LANG,'-')}">
+    <html lang="{$USER_LANG}">
         <head>
             <xsl:call-template name="page.title" />
             <xsl:call-template name="page.meta" />

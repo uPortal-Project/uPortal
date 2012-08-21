@@ -38,6 +38,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.login.LoginAggregationImpl;
@@ -60,8 +61,9 @@ import org.joda.time.LocalDate;
         pkColumnValue="UP_DATE_DIMENSION_PROP",
         allocationSize=1
     )
+@NaturalIdCache
 @Cacheable
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class DateDimensionImpl implements DateDimension, Serializable {
     private static final long serialVersionUID = 1L;
    
@@ -182,6 +184,13 @@ public class DateDimensionImpl implements DateDimension, Serializable {
     public String getTerm() {
         return this.term;
     }
+    @Override
+    public void setTerm(String term) {
+        if (this.term != null) {
+            throw new IllegalStateException("term is already set");
+        }
+        this.term = term;
+    }
     
     @Override
     public int hashCode() {
@@ -214,7 +223,7 @@ public class DateDimensionImpl implements DateDimension, Serializable {
     }
     @Override
     public String toString() {
-        return "DateDimension [id=" + id + ", date=" + getDate() + ", week=" + week + ", quarter=" + quarter + ", term=" + term + "]";
+        return getDate().toString("yyyy-MM-dd ZZ");
     }
     
 }

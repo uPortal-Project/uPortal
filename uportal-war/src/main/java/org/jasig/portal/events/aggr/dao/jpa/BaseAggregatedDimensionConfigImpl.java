@@ -19,8 +19,8 @@
 
 package org.jasig.portal.events.aggr.dao.jpa;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.persistence.MappedSuperclass;
 import javax.persistence.PostPersist;
@@ -41,7 +41,7 @@ import org.jasig.portal.utils.IncludeExcludeUtils;
 public abstract class BaseAggregatedDimensionConfigImpl<D> implements BaseAggregatedDimensionConfig<D> {
     
     @Transient
-    private final Map<D, Boolean> includedCache = new ConcurrentHashMap<D, Boolean>();
+    private final Map<D, Boolean> includedCache = new HashMap<D, Boolean>();
     
     @PostUpdate
     @PostPersist

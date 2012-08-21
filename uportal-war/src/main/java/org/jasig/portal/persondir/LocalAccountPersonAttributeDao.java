@@ -55,6 +55,7 @@ public class LocalAccountPersonAttributeDao extends AbstractDefaultAttributePers
     private Set<String> possibleUserAttributes;
     private String unmappedUsernameAttribute = null;
     private String displayNameAttribute = "displayName";
+    private Map<String, Set<String>> queryAttributeMapping;
     
 
     /**
@@ -66,6 +67,16 @@ public class LocalAccountPersonAttributeDao extends AbstractDefaultAttributePers
         this.localAccountDao = localAccountDao;
     }
 
+    public void setQueryAttributeMapping(final Map<String, ?> queryAttributeMapping) {
+        final Map<String, Set<String>> parsedQueryAttributeMapping = MultivaluedPersonAttributeUtils.parseAttributeToAttributeMapping(queryAttributeMapping);
+        
+        if (parsedQueryAttributeMapping.containsKey("")) {
+            throw new IllegalArgumentException("The map from attribute names to attributes must not have any empty keys.");
+        }
+        
+        this.queryAttributeMapping = parsedQueryAttributeMapping;
+    }
+    
     /**
      * @return the resultAttributeMapping
      */
@@ -137,8 +148,12 @@ public class LocalAccountPersonAttributeDao extends AbstractDefaultAttributePers
      * @return Set 
      */
     public Set<String> getAvailableQueryAttributes() {
-        return localAccountDao.getCurrentAttributeNames();
-    }
+        if (this.queryAttributeMapping == null) {
+            return Collections.emptySet();
+        }
+        
+        return Collections.unmodifiableSet(this.queryAttributeMapping.keySet());
+    }    
     
     /* (non-Javadoc)
      * @see org.jasig.services.persondir.IPersonAttributeDao#getPeopleWithMultivaluedAttributes(java.util.Map)

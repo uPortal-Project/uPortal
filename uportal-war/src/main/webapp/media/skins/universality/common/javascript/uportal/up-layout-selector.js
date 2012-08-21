@@ -30,12 +30,11 @@ var up = up || {};
 
         tree = { children: [ ] };
         $(that.options.layouts).each(function (idx, layout) {
-            var classes, layoutString;
-            layoutString = layout.columns.join("-");
-            classes = "";
+            var layoutString = layout.columns.join("-"),
+                classes = "";
             
             if (layout.columns.join("-") === currentLayoutString) {
-                classes += "selected"
+                classes += "selected";
             }
             
             if (layout.disabled) {
@@ -44,21 +43,23 @@ var up = up || {};
             
             tree.children.push({
                 ID: "layoutContainer:",
+                decorators: [
+                    { type: "addClass", classes: classes }
+                ],
                 children: [
                     {
-                        ID: "layout",
-                        decorators: [
-                            { type: "addClass", classes: classes }
-                        ]
+                        ID: "layout"
                     },
                     {
                         ID: "layoutLink",
                         decorators: [
                             { type: "jQuery", func: "click", 
                                 args: function () {
-                                    that.options.currentLayout = layout.columns;
-                                    that.refresh();
-                                    that.events.onLayoutSelect.fire(layout, that);
+                                    if (!layout.disabled) {
+                                        that.refresh();
+                                        that.options.currentLayout = layout.columns;
+                                        that.events.onLayoutSelect.fire(layout, that);
+                                    }
                                 } 
                             }
                         ]

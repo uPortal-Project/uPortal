@@ -22,8 +22,6 @@ package org.jasig.portal.fragment.subscribe.dao.jpa;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -33,11 +31,10 @@ import javax.persistence.criteria.Root;
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.fragment.subscribe.IUserFragmentSubscription;
 import org.jasig.portal.fragment.subscribe.dao.IUserFragmentSubscriptionDao;
-import org.jasig.portal.jpa.BaseJpaDao;
+import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.security.IPerson;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
 
@@ -49,7 +46,7 @@ import com.google.common.base.Function;
  * @version $Revision$ $Date$
  */
 @Repository
-public class JpaUserFragmentSubscriptionDaoImpl extends BaseJpaDao implements IUserFragmentSubscriptionDao {
+public class JpaUserFragmentSubscriptionDaoImpl extends BasePortalJpaDao implements IUserFragmentSubscriptionDao {
     private CriteriaQuery<UserFragmentSubscriptionImpl> findUserFragmentInfoByPersonQuery;
     private CriteriaQuery<UserFragmentSubscriptionImpl> findUserFragmentInfoByPersonAndOwnerQuery;
     private CriteriaQuery<String> findUsersWithActiveSubscriptionsQuery;
@@ -57,18 +54,7 @@ public class JpaUserFragmentSubscriptionDaoImpl extends BaseJpaDao implements IU
     private ParameterExpression<Integer> userIdParameter;
     private ParameterExpression<String> fragmentOwnerParameter;
     
-    private EntityManager entityManager;
 
-    @PersistenceContext(unitName = "uPortalPersistence")
-    public final void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
-    
-    @Override
-    protected EntityManager getEntityManager() {
-        return this.entityManager;
-    }
-    
     @Override
     public void afterPropertiesSet() throws Exception {
         this.userIdParameter = this.createParameterExpression(Integer.TYPE, "userId");
@@ -114,20 +100,20 @@ public class JpaUserFragmentSubscriptionDaoImpl extends BaseJpaDao implements IU
     }
     
     @Override
-    @Transactional
+    @PortalTransactional
     public IUserFragmentSubscription createUserFragmentInfo(IPerson person, IPerson fragmentOwner) {
         final IUserFragmentSubscription userFragmentInfo = new UserFragmentSubscriptionImpl(person, fragmentOwner);
-        this.entityManager.persist(userFragmentInfo);
+        this.getEntityManager().persist(userFragmentInfo);
 
         return userFragmentInfo;
     }
 
     @Override
-    @Transactional
+    @PortalTransactional
     public void deleteUserFragmentInfo(IUserFragmentSubscription userFragmentInfo) {
         Validate.notNull(userFragmentInfo, "user fragment info can not be null");
         userFragmentInfo.setInactive();
-        this.entityManager.persist(userFragmentInfo);
+        this.getEntityManager().persist(userFragmentInfo);
 
     }
 
@@ -154,17 +140,17 @@ public class JpaUserFragmentSubscriptionDaoImpl extends BaseJpaDao implements IU
     @Override
     public IUserFragmentSubscription getUserFragmentInfo(long userFragmentInfoId) {
 
-        final UserFragmentSubscriptionImpl userFragmentInfo = this.entityManager
+        final UserFragmentSubscriptionImpl userFragmentInfo = this.getEntityManager()
                 .find(UserFragmentSubscriptionImpl.class, userFragmentInfoId);
 
         return userFragmentInfo;
     }
 
     @Override
-    @Transactional
+    @PortalTransactional
     public void updateUserFragmentInfo(IUserFragmentSubscription userFragmentInfo) {
         Validate.notNull(userFragmentInfo, "user fragment info can not be null");
-        this.entityManager.persist(userFragmentInfo);
+        this.getEntityManager().persist(userFragmentInfo);
 
     }
 

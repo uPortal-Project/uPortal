@@ -62,7 +62,7 @@ import org.joda.time.ReadableInstant;
         allocationSize=1
     )
 @Cacheable
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class AcademicTermDetailImpl implements AcademicTermDetail, Serializable {
     private static final long serialVersionUID = 1L;
    

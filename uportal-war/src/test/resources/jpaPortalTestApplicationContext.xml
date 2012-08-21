@@ -29,8 +29,7 @@
                         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
                         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
-    <!-- JPA Test Context for DAOs that use the uPortalPersistence PersistenceContext -->
-
+    <!-- JPA Test Context for DAOs that use the PortalDb PersistenceContext -->
     <bean id="portletCookieDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletCookieDaoImpl" />
     <bean id="multilingualMessageDao" class="org.jasig.portal.i18n.dao.jpa.JpaMessageDao" />
     <bean id="localAccountDao" class="org.jasig.portal.persondir.dao.jpa.JpaLocalAccountDaoImpl" />
@@ -42,17 +41,22 @@
     <bean id="stylesheetDescriptorDao" class="org.jasig.portal.layout.dao.jpa.JpaStylesheetDescriptorDao" />
     <bean id="stylesheetUserPreferencesDao" class="org.jasig.portal.layout.dao.jpa.JpaStylesheetUserPreferencesDao" />
     <bean id="userFragmentSubscriptionDao" class="org.jasig.portal.fragment.subscribe.dao.jpa.JpaUserFragmentSubscriptionDaoImpl" />
+    <bean id="versionDao" class="org.jasig.portal.version.dao.jpa.JpaVersionDao" />
     
     <bean id="localPropertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="properties">
             <props>
-                <prop key="persistenceUnitName">uPortalPersistence</prop>
+                <prop key="persistenceUnitName">PortalDb</prop>
             </props>
         </property>
     </bean>
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <qualifier value="PortalDb" />
         <property name="entityManagerFactory" ref="factoryBean" />
+    </bean>
+    <bean id="transactionOperations" class="org.springframework.transaction.support.TransactionTemplate">
+        <qualifier value="PortalDb"/>
+        <property name="transactionManager" ref="transactionManager" />
     </bean>
     <bean id="PortalDb" parent="TestDb">
         <qualifier value="PortalDb" />

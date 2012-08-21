@@ -25,6 +25,7 @@ import javax.portlet.PortletMode;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 
+import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.springframework.validation.BindException;
 import org.springframework.web.portlet.mvc.SimpleFormController;
 
@@ -36,7 +37,7 @@ import org.springframework.web.portlet.mvc.SimpleFormController;
  */
 public class SqlQueryConfigurationController extends SimpleFormController {
 	
-	private String defaultDataSource = "PortalDb";
+	private String defaultDataSource = BasePortalJpaDao.PERSISTENCE_UNIT_NAME;
 	private String defaultView = "jsp/SqlQuery/results";
 
 	@Override

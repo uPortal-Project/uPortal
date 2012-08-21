@@ -22,6 +22,9 @@ package org.jasig.portal.events;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
+
 
 /**
  * @author Eric Dalquist
@@ -31,12 +34,19 @@ public final class PortletRenderExecutionEvent extends PortletExecutionEvent {
     private static final long serialVersionUID = 1L;
     
     private final boolean targeted;
-    private final boolean usedPortalCache;
-
+    
+    /**
+     * Still here to support deserializing old event json
+     * @deprecated use {@link #usedPortalCache} instead
+     */
+    @JsonSerialize(include = Inclusion.NON_NULL)
+    @Deprecated
+    private Boolean cached;
+    private Boolean usedPortalCache;
+    
     @SuppressWarnings("unused")
     private PortletRenderExecutionEvent() {
         this.targeted = false;
-        this.usedPortalCache = false;
     }
 
     PortletRenderExecutionEvent(PortalEventBuilder eventBuilder, String fname, long executionTime, Map<String, List<String>> parameters, boolean targeted, boolean usedPortalCache) {
@@ -57,14 +67,17 @@ public final class PortletRenderExecutionEvent extends PortletExecutionEvent {
      */
     @Deprecated
     public boolean isCached() {
-        return this.usedPortalCache;
+        return this.isUsedPortalCache();
     }
     
     /**
      * @return true If the rendering was from the portal's cache
      */
     public boolean isUsedPortalCache() {
-        return usedPortalCache;
+        if (usedPortalCache == null) {
+            usedPortalCache = usedPortalCache != null ? usedPortalCache : false; 
+        }
+        return this.usedPortalCache;
     }
 
     /* (non-Javadoc)
@@ -74,6 +87,6 @@ public final class PortletRenderExecutionEvent extends PortletExecutionEvent {
     public String toString() {
         return super.toString() + 
                 ", targeted=" + this.targeted + 
-                ", cached=" + this.usedPortalCache + "]";
+                ", cached=" + this.isUsedPortalCache() + "]";
     }
 }

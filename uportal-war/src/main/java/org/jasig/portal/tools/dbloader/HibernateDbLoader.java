@@ -21,8 +21,6 @@ package org.jasig.portal.tools.dbloader;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -32,7 +30,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import javax.sql.DataSource;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -40,26 +37,30 @@ import javax.xml.parsers.SAXParserFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.Environment;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.spi.Mapping;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.mapping.ForeignKey;
 import org.hibernate.mapping.Index;
 import org.hibernate.mapping.Table;
 import org.hibernate.mapping.UniqueKey;
-import org.hibernate.service.ServiceRegistry;
-import org.hibernate.service.jdbc.dialect.spi.DialectResolver;
+import org.jasig.portal.hibernate.DelegatingHibernateIntegrator.HibernateConfiguration;
+import org.jasig.portal.hibernate.HibernateConfigurationAware;
+import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ResourceLoaderAware;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.NonTransientDataAccessResourceException;
-import org.springframework.jdbc.BadSqlGrammarException;
-import org.springframework.jdbc.core.ConnectionCallback;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.support.TransactionOperations;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -72,51 +73,47 @@ import org.xml.sax.SAXException;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class HibernateDbLoader implements IDbLoader, ResourceLoaderAware {
+@Component("dbLoader")
+@Lazy
+@DependsOn( { BasePortalJpaDao.PERSISTENCE_UNIT_NAME + "EntityManagerFactory", "hibernateConfigurationAwareInjector" } )
+public class HibernateDbLoader implements IDbLoader, ResourceLoaderAware, HibernateConfigurationAware {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
-    private HibernateToolConfigurationSource hibernateToolConfigurationSource;
-    private JdbcTemplate jdbcTemplate;
-    private TransactionTemplate transactionTemplate;
-    private Dialect preferedDialect;
+    private Configuration configuration;
+    private Dialect dialect;
+    private JdbcOperations jdbcOperations;
+    private TransactionOperations transactionOperations;
     private ResourceLoader resourceLoader;
     
-    /**
-     * @param jdbcOperations the jdbcTemplate to set
-     */
-    @javax.annotation.Resource(name="PortalDb")
-    public void setDataSource( DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+	@Autowired
+	public void setJdbcOperations(
+			@Qualifier(BasePortalJpaDao.PERSISTENCE_UNIT_NAME) JdbcOperations jdbcOperations) {
+		this.jdbcOperations = jdbcOperations;
+	}
+
+	@Autowired
+	public void setTransactionOperations(
+			@Qualifier(BasePortalJpaDao.PERSISTENCE_UNIT_NAME) TransactionOperations transactionOperations) {
+		this.transactionOperations = transactionOperations;
+	}
+
+	@Override
+	public boolean supports(String persistenceUnit) {
+		return BasePortalJpaDao.PERSISTENCE_UNIT_NAME.equals(persistenceUnit);
+	}
+
+	@Override
+    public void setConfiguration(String persistenceUnit, HibernateConfiguration hibernateConfiguration) {
+	    final SessionFactoryImplementor sessionFactory = hibernateConfiguration.getSessionFactory();
+        this.dialect = sessionFactory.getDialect();
+	    this.configuration = hibernateConfiguration.getConfiguration();
     }
 
-    /**
-     * @param transactionTemplate the transactionTemplate to set
-     */
-    @Autowired
-    public void setTransactionManager(@Qualifier("PortalDb") PlatformTransactionManager transactionManager) {
-        this.transactionTemplate = new TransactionTemplate(transactionManager);
-    }
-
-    /**
-     * @param dialect the dialect to set
-     */
-    @Autowired(required=false)
-    public void setDialect(Dialect dialect) {
-        this.preferedDialect = dialect;
-    }
-    
-    public void setHibernateToolConfigurationSource(HibernateToolConfigurationSource hibernateToolConfigurationSource) {
-        this.hibernateToolConfigurationSource = hibernateToolConfigurationSource;
-    }
-
-    @Override
+	@Override
     public void setResourceLoader(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.tools.dbloader.IDbLoader#process(org.jasig.portal.tools.dbloader.DbLoaderConfiguration)
-     */
     @Override
     public void process(DbLoaderConfig configuration) throws ParserConfigurationException, SAXException, IOException {
         final String scriptFile = configuration.getScriptFile();
@@ -128,24 +125,6 @@ public class HibernateDbLoader implements IDbLoader, ResourceLoaderAware {
             script = new LinkedList<String>();
         }
         
-        final Dialect dialect;
-        if (this.preferedDialect != null) {
-            dialect = this.preferedDialect;
-        }
-        else {
-            final ServiceRegistry serviceRegistry = this.hibernateToolConfigurationSource.getServiceRegistry();
-            final DialectResolver resolver = serviceRegistry.getService(DialectResolver.class);
-            
-            dialect = this.jdbcTemplate.execute(new ConnectionCallback<Dialect>() {
-                @Override
-                public Dialect doInConnection(Connection con) throws SQLException, DataAccessException {
-                    return resolver.resolveDialect(con.getMetaData());
-                }
-            });
-            
-            logger.info("Resolved Hibernate Dialect: " + dialect.getClass().getName());
-        }
-        
         final ITableDataProvider tableData = this.loadTables(configuration, dialect);
         
         //Handle table drop/create
@@ -153,10 +132,9 @@ public class HibernateDbLoader implements IDbLoader, ResourceLoaderAware {
             //Load Table object model
             final Map<String, Table> tables = tableData.getTables();
             
-            //TODO don't know if this data can be pulled from somewhere?
-            final Mapping mapping = null;
-            final String defaultCatalog = null;
-            final String defaultSchema = null;
+            final Mapping mapping = this.configuration.buildMapping();
+            final String defaultCatalog = this.configuration.getProperty(Environment.DEFAULT_CATALOG);
+            final String defaultSchema = this.configuration.getProperty(Environment.DEFAULT_SCHEMA);
             
             final Map<String, DataAccessException> failedSql = new LinkedHashMap<String, DataAccessException>();
             
@@ -169,7 +147,7 @@ public class HibernateDbLoader implements IDbLoader, ResourceLoaderAware {
                     for (final String sql : dropScript) {
                         this.logger.info(sql);
                         try {
-                            jdbcTemplate.update(sql);
+                            jdbcOperations.update(sql);
                         }
                         catch (NonTransientDataAccessResourceException dae) {
                             throw dae;
@@ -197,7 +175,7 @@ public class HibernateDbLoader implements IDbLoader, ResourceLoaderAware {
                     this.logger.info("Creating tables");
                     for (final String sql : createScript) {
                         this.logger.info(sql);
-                        jdbcTemplate.update(sql);
+                        jdbcOperations.update(sql);
                     }
                 }
                 else {
@@ -325,7 +303,7 @@ public class HibernateDbLoader implements IDbLoader, ResourceLoaderAware {
 
         //Setup parser with custom handler to generate Table model and parse
         final SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
-        final DataXmlHandler dh = new DataXmlHandler(jdbcTemplate, transactionTemplate, tableColumnTypes);
+        final DataXmlHandler dh = new DataXmlHandler(jdbcOperations, transactionOperations, tableColumnTypes);
         saxParser.parse(new InputSource(dataFile.getInputStream()), dh);
     }
 }

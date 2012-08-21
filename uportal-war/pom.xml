@@ -53,6 +53,11 @@
         </dependency>
         
         <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+        
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
@@ -108,15 +113,20 @@
         </dependency>
 
         <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>commons-pool</groupId>
             <artifactId>commons-pool</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+        </dependency>
 
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-jdbc</artifactId>
+        </dependency>
+        
         <dependency>
             <groupId>dom4j</groupId>
             <artifactId>dom4j</artifactId>
@@ -145,11 +155,6 @@
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
         </dependency>
 
         <dependency>
@@ -226,6 +231,11 @@
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-groovysh</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -245,12 +255,6 @@
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
             <artifactId>hibernate-jpa-2.0-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jasig.cas3.extensions</groupId>
-            <artifactId>clearpass-integration-uportal</artifactId>
-            <scope>runtime</scope>
         </dependency>
         
         <dependency>
@@ -290,7 +294,7 @@
         
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jcl</artifactId>
+            <artifactId>jcl-over-slf4j</artifactId>
         </dependency>
         
         <dependency>
@@ -416,12 +420,6 @@
         
         <!-- ===== Provided Dependencies ====================================== -->
         <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>javax.ccpp</groupId>
             <artifactId>ccpp</artifactId>
             <scope>provided</scope>
@@ -481,13 +479,49 @@
         <!-- ===== Runtime Dependencies ======================================= -->
         <dependency>
             <groupId>cglib</groupId>
-            <artifactId>cglib</artifactId>
+            <artifactId>cglib-nodep</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.jasig.ehcache</groupId>
+                <artifactId>ehcache-jgroups3replication</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-jsr223</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-xml</artifactId>
             <scope>runtime</scope>
         </dependency>
         
         <dependency>
             <groupId>org.fusesource.jansi</groupId>
             <artifactId>jansi</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas3.extensions</groupId>
+            <artifactId>clearpass-integration-uportal</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
             <scope>runtime</scope>
         </dependency>
 
@@ -535,10 +569,6 @@
         </dependency>
     </dependencies>
     
-    <properties>
-        <war-plugin-webxml-source>${project.build.directory}/pluto-resources/web.xml</war-plugin-webxml-source>
-    </properties>
-
     <build>
         <finalName>${ssp.docbase}</finalName>
         <filters>
@@ -574,6 +604,28 @@
             </resource>
         </resources>
         <plugins>
+            <plugin>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                              <bannedDependencies>
+                                 <excludes>
+                                    <exclude>commons-logging:commons-logging</exclude>
+                                    <exclude>commons-logging:commons-logging-api</exclude>
+                                    <exclude>log4j:log4j</exclude>
+                                 </excludes>
+                              </bannedDependencies>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- Generates JAXB binding classes -->            
             <plugin>
                 <groupId>org.jvnet.jaxb2.maven2</groupId>
@@ -612,7 +664,7 @@
                         <configuration>
                             <outputDirectory>target/generated-sources/annotations</outputDirectory>
                             <optionMap>
-                                <ormXmlList>/properties/db/stats/orm.xml</ormXmlList>
+                                <fullyAnnotationConfigured>false</fullyAnnotationConfigured>
                                 <addGeneratedAnnotation>true</addGeneratedAnnotation>
                             </optionMap>
                         </configuration>
@@ -671,7 +723,7 @@
                         <filter>${basedir}/../${filters.file}</filter>
                     </filters>
                     <attachClasses>true</attachClasses>
-                    <webXml>${war-plugin-webxml-source}</webXml>
+                    <webXml>${project.build.directory}/pluto-resources/web.xml</webXml>
                 </configuration>
             </plugin>
             <plugin>
@@ -758,19 +810,27 @@
                 <activeByDefault>false</activeByDefault>
             </activation>
             
-            <properties>
-                <war-plugin-webxml-source>${project.basedir}/target/jspweb.xml</war-plugin-webxml-source>
-            </properties>
-            
             <build>
                 <plugins>
+                    <plugin>
+                        <groupId>org.apache.portals.pluto</groupId>
+                        <artifactId>maven-pluto-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>assemble</goal>
+                                </goals>
+                                <configuration>
+                                    <webXml>${project.basedir}/target/jspweb.xml</webXml>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <groupId>org.codehaus.mojo.jspc</groupId>
                         <artifactId>jspc-maven-plugin</artifactId>
                         <version>2.0-alpha-3</version>
-                        <configuration>
-                            <inputWebXml>${project.build.directory}/pluto-resources/web.xml</inputWebXml>
-                        </configuration>
                         <executions>
                             <execution>
                                 <goals>
@@ -788,12 +848,36 @@
                             </dependency>
                         </dependencies>
                     </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo.javascript</groupId>
-                        <artifactId>maven-javascript-report-plugin</artifactId>
-                        <extensions>true</extensions>
-                    </plugin>
                 </plugins>
+                <pluginManagement>
+                  <plugins>
+                    <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+                    <plugin>
+                      <groupId>org.eclipse.m2e</groupId>
+                      <artifactId>lifecycle-mapping</artifactId>
+                      <version>1.0.0</version>
+                      <configuration>
+                        <lifecycleMappingMetadata>
+                          <pluginExecutions>
+                            <pluginExecution>
+                              <pluginExecutionFilter>
+                                <groupId>org.codehaus.mojo.jspc</groupId>
+                                <artifactId>jspc-maven-plugin</artifactId>
+                                <versionRange>[2.0-alpha-3,)</versionRange>
+                                <goals>
+                                  <goal>compile</goal>
+                                </goals>
+                              </pluginExecutionFilter>
+                              <action>
+                                <ignore></ignore>
+                              </action>
+                            </pluginExecution>
+                          </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                      </configuration>
+                    </plugin>
+                  </plugins>
+                </pluginManagement>
             </build>
         </profile>
     </profiles>

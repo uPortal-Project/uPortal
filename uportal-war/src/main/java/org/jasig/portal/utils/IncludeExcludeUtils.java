@@ -35,8 +35,8 @@ public final class IncludeExcludeUtils {
      * <p/>
      * Returns true if one of the following is true: <br/>
      * includes is empty && excludes is empty<br/>
-     * excludes is not empty && includes contains value<br/>
-     * includes is empty && excludes does not contain value<br/>
+     * includes contains value<br/>
+     * includes is empty and excludes does not contain value<br/>
      * 
      * @param value Value to test
      * @param includes Included values
@@ -45,7 +45,7 @@ public final class IncludeExcludeUtils {
      */
     public static <T> boolean included(T value, Collection<? extends T> includes, Collection<? extends T> excludes) {
         return  (includes.isEmpty() && excludes.isEmpty()) ||
-                (!excludes.isEmpty() && includes.contains(value)) ||
+                includes.contains(value) ||
                 (includes.isEmpty() && !excludes.contains(value));
     }
 }

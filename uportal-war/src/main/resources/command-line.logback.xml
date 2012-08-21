@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+  <contextName>uPortal-command-line</contextName>
+    
+  <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+    <resetJUL>true</resetJUL>
+  </contextListener>
+  
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%-5level [%date{mm:ss.SSS}] %m%n</pattern>
+    </encoder>
+  </appender>
+  
+  <!--
+   | Insert the current time formatted as "yyyyMMdd'T'HHmmss" under
+   | the key "bySecond" into the logger context. This value will be
+   | available to all subsequent configuration elements.
+   +-->
+  <timestamp key="bySecond" datePattern="yyyyMMdd'T'HHmmss"/>
+  
+  <appender name="F" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!--
+     | See http://logback.qos.ch/manual/appenders.html#RollingFileAppender
+     | and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy
+     | for further documentation
+     +-->
+    <File>cmdline-${bySecond}.log</File>
+    <encoder>
+      <pattern>%-5level [%thread] %logger{36} %d{ISO8601} - %msg%n</pattern>
+    </encoder>
+  </appender>
+  
+  <root level="WARN">
+    <appender-ref ref="CONSOLE"/>
+  </root>
+  <logger name="org.hibernate.dialect" additivity="false" level="INFO">
+    <appender-ref ref="CONSOLE"/>
+  </logger>
+  <logger name="org.jasig.portal" additivity="false" level="INFO">
+    <appender-ref ref="CONSOLE"/>
+  </logger>
+  
+  <!-- Debugging event aggregation
+  <logger name="org.jasig.portal.concurrency.locking" additivity="false" level="DEBUG">
+    <appender-ref ref="CONSOLE"/>
+  </logger>
+  <logger name="org.jasig.portal.events" additivity="false" level="DEBUG">
+    <appender-ref ref="CONSOLE"/>
+  </logger>
+   -->
+   
+  <!-- Debugging database issues during import/export/delete
+  <logger name="org.jasig.portal.io.xml.JaxbPortalDataHandlerService" additivity="false" level="TRACE">
+    <appender-ref ref="CONSOLE"/>
+  </logger>
+  <logger name="org.springframework.orm.jpa.JpaTransactionManager" additivity="false" level="DEBUG">
+    <appender-ref ref="CONSOLE"/>
+  </logger>
+  <logger name="org.hibernate.SQL" additivity="false" level="DEBUG">
+    <appender-ref ref="CONSOLE"/>
+  </logger>
+  <logger name="org.hibernate.type" additivity="false" level="DEBUG">
+    <appender-ref ref="CONSOLE"/>
+  </logger>
+   -->
+   
+  <!-- Hide Validation Query Resolution Warnings, not all DBs may be working during import/export -->
+  <logger name="org.jasig.portal.utils.jdbc.DelayedValidationQueryResolverImpl" additivity="false" level="ERROR"/>
+  <logger name="org.jasig.portal.utils.jdbc.TomcatDataSourceFactory" additivity="false" level="ERROR"/>
+  
+  <!-- Hide some bad Hibernate log messages -->
+  <logger name="org.hibernate.cfg.annotations.reflection.JPAOverriddenAnnotationReader" additivity="false" level="ERROR"/>
+  <logger name="org.hibernate.ejb.metamodel.MetadataContext" additivity="false" level="FATAL"/>
+  <logger name="org.hibernate.engine.jdbc.spi.SqlExceptionHelper" additivity="false" level="FATAL"/>
+
+  <!-- Hide some bad JGroups log messages -->
+  <logger name="org.jgroups.protocols" additivity="false" level="WARN"/>
+</configuration>

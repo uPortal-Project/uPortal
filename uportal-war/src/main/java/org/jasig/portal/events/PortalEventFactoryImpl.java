@@ -468,7 +468,7 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
             eventSessionId = createSessionId(person);
             session.setAttribute(EVENT_SESSION_ID_ATTR, eventSessionId);
             
-            this.logger.info("Generated PortalEvent SessionId: {}", eventSessionId);
+            this.logger.debug("Generated PortalEvent SessionId: {}", eventSessionId);
             
             return eventSessionId;
         }

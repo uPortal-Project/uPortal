@@ -48,7 +48,7 @@
     <portlet-preference>
         <name>url</name>
         <readOnly>false</readOnly>
-        <value>http://www.fool.com/xml/foolnews_rss091.xml</value>
+        <value>http://www.fool.com/feeds/index.aspx?id=foolwatch&amp;format=rss2</value>
     </portlet-preference>
     <portlet-preference>
         <name>summaryView</name>

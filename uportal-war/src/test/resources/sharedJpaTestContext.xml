@@ -22,10 +22,8 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:util="http://www.springframework.org/schema/util"
-    xmlns:tx="http://www.springframework.org/schema/tx"
     xmlns:aop="http://www.springframework.org/schema/aop"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-                        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
                         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
                         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
                         
@@ -54,13 +52,14 @@
         <property name="poolPreparedStatements" value="false" />
     </bean>
     
-    <bean id="factoryBean" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="" autowire="byType">
+    <bean id="factoryBean" class="org.jasig.portal.jpa.EventingLocalContainerEntityManagerFactoryBean" depends-on="" autowire="byType">
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="persistenceUnitName" value="${persistenceUnitName}" />
         <property name="jpaProperties">
             <props>
                 <prop key="hibernate.cache.use_query_cache">false</prop>
                 <prop key="hibernate.cache.use_second_level_cache">false</prop>
+                <prop key="persistenceUnitName">${persistenceUnitName}</prop>
                 <!-- Uncomment for testing with a cache
                 <prop key="hibernate.cache.provider_class">org.hibernate.cache.HashtableCacheProvider</prop>
                 <prop key="hibernate.cache.use_query_cache">true</prop>
@@ -77,8 +76,24 @@
     <bean id="jpaInterceptor" class="org.springframework.orm.jpa.JpaInterceptor">
         <property name="entityManagerFactory" ref="factoryBean" />
     </bean>
+    
+    <bean class="org.jasig.portal.hibernate.HibernateConfigurationAwareInjector" />
+    
+    <bean class="org.jasig.portal.jpa.OpenEntityManagerAspect" />
 
-    <tx:annotation-driven transaction-manager="transactionManager" />
+    <!-- This mimics what <tx:annotation-driven/> does but uses our custom TransactionManagerCachingTransactionInterceptor -->    
+    <bean id="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource#0" 
+            class="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource"/>
+    <bean id="org.springframework.transaction.interceptor.TransactionInterceptor#0"
+            class="org.jasig.portal.spring.tx.DialectAwareTransactionInterceptor">
+        <property name="transactionAttributeSource" ref="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource#0" />
+        <property name="transactionManagerBeanName" value="transactionManager" />
+    </bean>
+    <bean id="org.springframework.transaction.config.internalTransactionAdvisor" 
+            class="org.springframework.transaction.interceptor.BeanFactoryTransactionAttributeSourceAdvisor">
+        <property name="transactionAttributeSource" ref="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource#0" />
+        <property name="adviceBeanName" value="org.springframework.transaction.interceptor.TransactionInterceptor#0" />
+    </bean>
     
     <aop:config>
         <aop:pointcut id="daoExecution" 
@@ -92,6 +107,18 @@
     <bean id="sqlNextExceptionLoggerAspect" class="org.jasig.portal.portlet.dao.jpa.SQLNextExceptionLoggerAspect" />
     
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" lazy-init="false" />
+    
+    <bean class="org.jasig.portal.jpa.cache.EntityManagerCacheImpl">
+        <property name="contentCache">
+            <bean id="portalInfoProvider" class="org.jasig.portal.spring.MockitoFactoryBean">
+                <constructor-arg value="net.sf.ehcache.Ehcache" />
+            </bean>
+        </property>
+    </bean>
+    
+    <bean id="taggedCacheEntryPurger" class="org.jasig.portal.spring.MockitoFactoryBean">
+        <constructor-arg value="org.jasig.portal.utils.cache.TaggedCacheEntryPurger" />
+    </bean>
 </beans>
 
 

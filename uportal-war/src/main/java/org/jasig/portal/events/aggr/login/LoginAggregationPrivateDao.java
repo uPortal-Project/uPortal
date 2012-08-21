@@ -19,10 +19,7 @@
 
 package org.jasig.portal.events.aggr.login;
 
-import org.jasig.portal.events.aggr.DateDimension;
-import org.jasig.portal.events.aggr.AggregationInterval;
-import org.jasig.portal.events.aggr.TimeDimension;
-import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.jasig.portal.events.aggr.BaseAggregationPrivateDao;
 
 /**
  * Login Aggregation DAO used internally to create and update login aggregations
@@ -30,13 +27,7 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
  * @author Eric Dalquist
  * @version $Revision$
  */
-interface LoginAggregationPrivateDao extends LoginAggregationDao<LoginAggregationImpl> {
-
-    @Override
-    LoginAggregationImpl getLoginAggregation(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval, AggregatedGroupMapping aggregatedGroup);
-    
-    LoginAggregationImpl createLoginAggregation(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval, AggregatedGroupMapping aggregatedGroup);
-    
-    void updateLoginAggregation(LoginAggregationImpl loginAggregation);
+interface LoginAggregationPrivateDao extends LoginAggregationDao<LoginAggregationImpl>,
+        BaseAggregationPrivateDao<LoginAggregationImpl, LoginAggregationKey> {
 
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beansProjectDescription>
 	<version>1</version>
-	<pluginVersion><![CDATA[2.7.1.201107082359-RELEASE]]></pluginVersion>
+	<pluginVersion><![CDATA[3.0.0.201207310107-CI-B91]]></pluginVersion>
 	<configSuffixes>
 		<configSuffix><![CDATA[xml]]></configSuffix>
 	</configSuffixes>
@@ -10,9 +10,11 @@
 		<config>src/main/resources/properties/contexts/applicationContext.xml</config>
 		<config>src/main/resources/properties/contexts/cacheContext.xml</config>
 		<config>src/main/resources/properties/contexts/channelContainerContext.xml</config>
-		<config>src/main/resources/properties/contexts/checksContext.xml</config>
+		<config>src/main/resources/properties/contexts/clusterContext.xml</config>
 		<config>src/main/resources/properties/contexts/datasourceContext.xml</config>
+		<config>src/main/resources/properties/contexts/eventPersistenceContext.xml</config>
 		<config>src/main/resources/properties/contexts/flowsContext.xml</config>
+		<config>src/main/resources/properties/contexts/groupsContext.xml</config>
 		<config>src/main/resources/properties/contexts/importExportContext.xml</config>
 		<config>src/main/resources/properties/contexts/jmxContext.xml</config>
 		<config>src/main/resources/properties/contexts/jsonRenderingPipelineContext.xml</config>
@@ -28,9 +30,7 @@
 		<config>src/main/resources/properties/contexts/schedulerContext.xml</config>
 		<config>src/main/resources/properties/contexts/securityContext.xml</config>
 		<config>src/main/resources/properties/contexts/servicesContext.xml</config>
-		<config>src/main/resources/properties/contexts/statsContext.xml</config>
 		<config>src/main/resources/properties/contexts/userContext.xml</config>
-		<config>src/main/resources/properties/contexts/views/mvcViews.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
@@ -38,31 +38,9 @@
 			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
 			<incomplete>false</incomplete>
 			<configs>
-				<config>src/main/resources/properties/contexts/applicationContext.xml</config>
-				<config>src/main/resources/properties/contexts/cacheContext.xml</config>
-				<config>src/main/resources/properties/contexts/channelContainerContext.xml</config>
-				<config>src/main/resources/properties/contexts/checksContext.xml</config>
-				<config>src/main/resources/properties/contexts/datasourceContext.xml</config>
-				<config>src/main/resources/properties/contexts/flowsContext.xml</config>
-				<config>src/main/resources/properties/contexts/importExportContext.xml</config>
-				<config>src/main/resources/properties/contexts/jmxContext.xml</config>
-				<config>src/main/resources/properties/contexts/jsonRenderingPipelineContext.xml</config>
-				<config>src/main/resources/properties/contexts/layoutContext.xml</config>
-				<config>src/main/resources/properties/contexts/ldapContext.xml</config>
-				<config>src/main/resources/properties/contexts/locatorContext.xml</config>
-				<config>src/main/resources/properties/contexts/mvcContext.xml</config>
-				<config>src/main/resources/properties/contexts/persistenceContext.xml</config>
-				<config>src/main/resources/properties/contexts/personDirectoryContext.xml</config>
-				<config>src/main/resources/properties/contexts/portletContainerContext.xml</config>
-				<config>src/main/resources/properties/contexts/renderingPipelineContext.xml</config>
-				<config>src/main/resources/properties/contexts/requestParameterProcessingContext.xml</config>
-				<config>src/main/resources/properties/contexts/schedulerContext.xml</config>
-				<config>src/main/resources/properties/contexts/securityContext.xml</config>
-				<config>src/main/resources/properties/contexts/servicesContext.xml</config>
-				<config>src/main/resources/properties/contexts/statsContext.xml</config>
-				<config>src/main/resources/properties/contexts/userContext.xml</config>
-				<config>src/main/resources/properties/contexts/views/mvcViews.xml</config>
 			</configs>
+			<profiles>
+			</profiles>
 		</configSet>
 	</configSets>
 </beansProjectDescription>

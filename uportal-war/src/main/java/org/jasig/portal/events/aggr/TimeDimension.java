@@ -19,6 +19,7 @@
 
 package org.jasig.portal.events.aggr;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
 import org.joda.time.LocalTime;
@@ -30,7 +31,7 @@ import org.joda.time.LocalTime;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface TimeDimension {
+public interface TimeDimension extends Serializable {
     /**
      * @return The ID of the dimension
      */

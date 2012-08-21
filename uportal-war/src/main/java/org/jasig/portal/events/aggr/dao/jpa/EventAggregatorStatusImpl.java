@@ -31,6 +31,7 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.events.aggr.IEventAggregatorStatus;
 import org.joda.time.DateTime;
@@ -43,6 +44,7 @@ import org.joda.time.DateTime;
 @Table(name = "UP_EVENT_AGGR_STATUS")
 @SequenceGenerator(name = "UP_EVENT_AGGR_STATUS_GEN", sequenceName = "UP_EVENT_AGGR_STATUS_SEQ", allocationSize = 10)
 @TableGenerator(name = "UP_EVENT_AGGR_STATUS_GEN", pkColumnValue = "UP_EVENT_AGGR_STATUS", allocationSize = 10)
+@NaturalIdCache
 class EventAggregatorStatusImpl implements IEventAggregatorStatus {
     
     @Id

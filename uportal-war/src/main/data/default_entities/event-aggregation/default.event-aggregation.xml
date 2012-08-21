@@ -27,11 +27,44 @@
         https://source.jasig.org/schemas/uportal/io/event-aggregation https://source.jasig.org/schemas/uportal/io/event-aggregation/event-aggregation-4.0.xsd"
     version="4.0">
     
-    <aggregated-interval-config>
+    <!-- 
+     | Only aggregate data for the local.Everyone group to reduce storage requirements
+     +-->
+    <aggregated-group-config>
         <aggregator-type>org.jasig.portal.events.aggr.IPortalEventAggregator</aggregator-type>
-        <exclude>MINUTE</exclude>
-    </aggregated-interval-config>
+        <include>
+            <groupService>local</groupService>
+            <groupName>Everyone</groupName>
+        </include>
+    </aggregated-group-config>
     
+    <!-- 
+     | Setup conservative list of included intervals to reduce storage requirements.
+     +-->
+    <aggregated-interval-config>
+        <aggregator-type>org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregator</aggregator-type>
+        <include>FIVE_MINUTE</include>
+    </aggregated-interval-config>
+    <aggregated-interval-config>
+        <aggregator-type>org.jasig.portal.events.aggr.login.LoginPortalEventAggregator</aggregator-type>
+        <include>FIVE_MINUTE</include>
+        <include>HOUR</include>
+        <include>DAY</include>
+        <include>MONTH</include>
+    </aggregated-interval-config>
+    <aggregated-interval-config>
+        <aggregator-type>org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregator</aggregator-type>
+        <include>HOUR</include>
+        <include>DAY</include>
+        <include>MONTH</include>
+    </aggregated-interval-config>
+    <aggregated-interval-config>
+        <aggregator-type>org.jasig.portal.events.aggr.tabrender.TabRenderAggregator</aggregator-type>
+        <include>HOUR</include>
+        <include>DAY</include>
+        <include>MONTH</include>
+    </aggregated-interval-config>
+
     <quarter-details>
         <id>0</id>
         <start>--01-01</start>

@@ -23,7 +23,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.aopalliance.intercept.MethodInvocation;
@@ -31,17 +31,33 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.cache.CacheKey.CacheKeyBuilder;
+import org.jasig.services.persondir.support.IUsernameAttributeProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springmodules.cache.key.CacheKeyGenerator;
 
-public class PersonDirectoryCacheKeyGenerator implements CacheKeyGenerator {
-    private static final Serializable POSSIBLE_USER_ATTRIBUTE_NAMES_VALUE = new Serializable() { private static final long serialVersionUID = 1L; };
-    private static final Serializable AVAILABLE_QUERY_ATTRIBUTES_VALUE = new Serializable() { private static final long serialVersionUID = 1L; };
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
+public class PersonDirectoryCacheKeyGenerator implements CacheKeyGenerator {
     protected final Log logger = LogFactory.getLog(this.getClass());
     
-    private String defaultAttributeName = "username";
+    private final LoadingCache<Method, CachableMethod> resolvedMethodCache = CacheBuilder
+            .newBuilder().build(new CacheLoader<Method, CachableMethod>() {
+                @Override
+                public CachableMethod load(Method key) throws Exception {
+                    return resolveCacheableMethod(key);
+                }
+            });
+    
+    private IUsernameAttributeProvider usernameAttributeProvider;
     private boolean ignoreEmptyAttributes = false;
     
+    @Autowired
+    public void setUsernameAttributeProvider(IUsernameAttributeProvider usernameAttributeProvider) {
+        this.usernameAttributeProvider = usernameAttributeProvider;
+    }
+
 
     /**
      * If seed attributes with empty values (null, empty string or empty list values) should be ignored when generating
@@ -55,7 +71,7 @@ public class PersonDirectoryCacheKeyGenerator implements CacheKeyGenerator {
     @Override
     public Serializable generateKey(MethodInvocation methodInvocation) {
         //Determine the tareted CachableMethod
-        final CachableMethod cachableMethod = this.resolveCacheableMethod(methodInvocation);
+        final CachableMethod cachableMethod = this.resolvedMethodCache.getUnchecked(methodInvocation.getMethod());
 
         //Use the resolved cachableMethod to determine the seed Map and then get the hash of the key elements
         final Object[] methodArguments = methodInvocation.getArguments();
@@ -68,17 +84,35 @@ public class PersonDirectoryCacheKeyGenerator implements CacheKeyGenerator {
             case PEOPLE_MULTIVALUED_MAP:
             case MULTIVALUED_USER_ATTRIBUTES__MAP:
             case USER_ATTRIBUTES__MAP: {
-                for (final Map.Entry<String, Object> e : ((Map<String, Object>)methodArguments[0]).entrySet()) {
+                final Map<String, Object> queryMap = (Map<String, Object>)methodArguments[0];
+                
+                //If possible tag the cache key with the username
+                final String usernameAttribute = this.usernameAttributeProvider.getUsernameAttribute();
+                Object usernameValue = queryMap.get(usernameAttribute);
+                if (usernameValue instanceof String) {
+                    cacheKeyBuilder.addTag(UsernameTaggedCacheEntryPurger.createCacheEntryTag((String) usernameValue));
+                }
+                else if (usernameValue instanceof List) {
+                    final List usernameValueList = (List) usernameValue;
+                    if (usernameValueList.size() == 1) {
+                        usernameValue = usernameValueList.get(0);
+                        if (usernameValue instanceof String) {
+                            cacheKeyBuilder.addTag(UsernameTaggedCacheEntryPurger.createCacheEntryTag((String) usernameValue));
+                        }
+                    }
+                }
+                
+                for (final Map.Entry<String, Object> e : queryMap.entrySet()) {
                     final String key = e.getKey();
                     final Object value = e.getValue();
                     
                     //Skip null/empty attribute values
                     if (ignoreEmptyAttributes &&
                             (
-                                    value == null ||
-                                    (value instanceof Collection && ((Collection)value).isEmpty()) ||
-                                    (value instanceof Map && ((Map)value).isEmpty()) ||
-                                    (value.getClass().isArray() && Array.getLength(value) == 0)
+                                value == null ||
+                                (value instanceof Collection && ((Collection)value).isEmpty()) ||
+                                (value instanceof Map && ((Map)value).isEmpty()) ||
+                                (value.getClass().isArray() && Array.getLength(value) == 0)
                             )
                         ) {
                         continue;
@@ -101,7 +135,8 @@ public class PersonDirectoryCacheKeyGenerator implements CacheKeyGenerator {
                     break;
                 }
                 
-                cacheKeyBuilder.put(this.defaultAttributeName, (Serializable)Collections.singletonList(uid));
+                cacheKeyBuilder.add(uid);
+                cacheKeyBuilder.addTag(UsernameTaggedCacheEntryPurger.createCacheEntryTag(uid));
                 break;
             }
             
@@ -112,19 +147,13 @@ public class PersonDirectoryCacheKeyGenerator implements CacheKeyGenerator {
                 if (StringUtils.isEmpty(uid)) {
                     break;
                 }
-                cacheKeyBuilder.put(this.defaultAttributeName, (String)methodArguments[0]);
+                cacheKeyBuilder.add(uid);
+                cacheKeyBuilder.addTag(UsernameTaggedCacheEntryPurger.createCacheEntryTag(uid));
                 break;
             }
             
-            //The getPossibleUserAttributeNames has a special Map seed that we return to represent calls to it 
-            case POSSIBLE_USER_ATTRIBUTE_NAMES: {
-                cacheKeyBuilder.put("getPossibleUserAttributeNames_seedMap", POSSIBLE_USER_ATTRIBUTE_NAMES_VALUE);
-                break;
-            }
-            
-            //The getAvailableQueryAttributes has a special Map seed that we return to represent calls to it 
+            case POSSIBLE_USER_ATTRIBUTE_NAMES:
             case AVAILABLE_QUERY_ATTRIBUTES: {
-                cacheKeyBuilder.put("getAvailableQueryAttributes_seedMap", AVAILABLE_QUERY_ATTRIBUTES_VALUE);
                 break;
             }
             
@@ -152,10 +181,8 @@ public class PersonDirectoryCacheKeyGenerator implements CacheKeyGenerator {
      * Iterates over the {@link CachableMethod} instances to determine which instance the
      * passed {@link MethodInvocation} applies to.
      */
-    protected CachableMethod resolveCacheableMethod(MethodInvocation methodInvocation) {
-        final Method targetMethod = methodInvocation.getMethod();
+    protected CachableMethod resolveCacheableMethod(Method targetMethod) {
         final Class<?> targetClass = targetMethod.getDeclaringClass();
-        
         for (final CachableMethod cachableMethod : CachableMethod.values()) {
             Method cacheableMethod = null;
             try {
@@ -211,15 +238,10 @@ public class PersonDirectoryCacheKeyGenerator implements CacheKeyGenerator {
             this.args = args;
         }
 
-        /**
-         * @return the name
-         */
         public String getName() {
             return this.name;
         }
-        /**
-         * @return the args
-         */
+
         public Class<?>[] getArgs() {
             return this.args;
         }

@@ -142,6 +142,9 @@
 
             <fileset dir="${basedir}/live-nightly" />
         </copy>
+        
+        <!-- add logging symlink -->
+        <symlink link="/var/log/apache2/tomcat/${tomcat.loglink}" resource="${live-nightly.dir}/${dl.tomcat.finalName}/logs"/>
     </target>
     
     <target name="live-nightly-stop" depends="prepare-ln">

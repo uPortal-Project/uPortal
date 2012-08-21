@@ -29,7 +29,7 @@
                         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
                         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
-    <!-- JPA Test Context for DAOs that use the uPortalRawEventsPersistence PersistenceContext -->
+    <!-- JPA Test Context for DAOs that use the RawEventsDb PersistenceContext -->
 
     <bean class="org.jasig.portal.events.handlers.db.JpaPortalEventStore">
         <property name="aggregationFlushPeriod" value="5" />
@@ -39,17 +39,21 @@
     <bean id="localPropertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="properties">
             <props>
-                <prop key="persistenceUnitName">uPortalRawEventsPersistence</prop>
+                <prop key="persistenceUnitName">RawEventsDb</prop>
             </props>
         </property>
     </bean>
     <alias name="rawEventsTransactionManager" alias="transactionManager"/>
     <bean id="rawEventsTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <qualifier value="rawEvents" />
+        <qualifier value="RawEventsDb" />
         <property name="entityManagerFactory" ref="factoryBean" />
     </bean>
-    <bean id="RawEventsDB" parent="TestDb">
-        <qualifier value="RawEventsDB" />
+    <bean id="transactionOperations" class="org.springframework.transaction.support.TransactionTemplate">
+        <qualifier value="RawEventsDb"/>
+        <property name="transactionManager" ref="transactionManager" />
+    </bean>
+    <bean id="RawEventsDb" parent="TestDb">
+        <qualifier value="RawEventsDb" />
     </bean>
     <import resource="classpath:sharedJpaTestContext.xml"/>
 </beans>

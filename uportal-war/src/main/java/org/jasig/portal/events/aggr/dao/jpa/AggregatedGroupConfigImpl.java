@@ -42,6 +42,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.NaturalIdCache;
 import org.jasig.portal.events.aggr.AggregatedGroupConfig;
 import org.jasig.portal.events.aggr.IPortalEventAggregator;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
@@ -58,6 +59,8 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class AggregatedGroupConfigImpl extends BaseAggregatedDimensionConfigImpl<AggregatedGroupMapping> implements AggregatedGroupConfig {
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(generator = "UP_EVENT_AGGR_CONF_GROUPS_GEN")
     @Column(name = "ID")

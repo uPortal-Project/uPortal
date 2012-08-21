@@ -66,7 +66,7 @@ public abstract class PortalEvent extends ApplicationEvent {
         this.userName = null;
     }
 
-    PortalEvent(PortalEventBuilder eventBuilder) {
+    protected PortalEvent(PortalEventBuilder eventBuilder) {
         super(eventBuilder.source);
         
         this.serverId = eventBuilder.serverName;
@@ -131,20 +131,20 @@ public abstract class PortalEvent extends ApplicationEvent {
      * Builder to simplify construction of PortalEvents, should be extended by
      * any subclass of PortalEvent that wants to simplify its constructor
      */
-    static class PortalEventBuilder {
+    protected static class PortalEventBuilder {
         private final Object source;
         private final String serverName;
         private final String eventSessionId;
         private final IPerson person;
         
-         PortalEventBuilder(PortalEventBuilder portalEventBuilder) {
+        protected PortalEventBuilder(PortalEventBuilder portalEventBuilder) {
             this(portalEventBuilder.source, 
                     portalEventBuilder.serverName, 
                     portalEventBuilder.eventSessionId, 
                     portalEventBuilder.person);
         }
 
-        PortalEventBuilder(Object source, String serverName, String eventSessionId, IPerson person) {
+        protected PortalEventBuilder(Object source, String serverName, String eventSessionId, IPerson person) {
             Validate.notNull(source, "source");
             Validate.notNull(serverName, "serverId");
             Validate.notNull(eventSessionId, "eventSessionId");

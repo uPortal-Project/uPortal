@@ -22,19 +22,21 @@
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
     version="2.0">
-    <persistence-unit name="uPortalPersistence" transaction-type="RESOURCE_LOCAL">
+    <persistence-unit name="PortalDb" transaction-type="RESOURCE_LOCAL">
         <properties>
             <property name="hibernate.ejb.cfgfile" value="/properties/db/hibernate.cfg.xml" />
             <property name="hibernate.archive.autodetection" value="" />
         </properties>
     </persistence-unit>
-    <persistence-unit name="uPortalRawEventsPersistence" transaction-type="RESOURCE_LOCAL">
+    <persistence-unit name="RawEventsDb" transaction-type="RESOURCE_LOCAL">
         <properties>
             <property name="hibernate.ejb.cfgfile" value="/properties/db/hibernate-raw-events.cfg.xml" />
             <property name="hibernate.archive.autodetection" value="" />
         </properties>
     </persistence-unit>
-    <persistence-unit name="uPortalAggrEventsPersistence" transaction-type="RESOURCE_LOCAL">
+    <persistence-unit name="AggrEventsDb" transaction-type="RESOURCE_LOCAL">
+        <mapping-file>META-INF/orm.xml</mapping-file>
+    
         <properties>
             <property name="hibernate.ejb.cfgfile" value="/properties/db/hibernate-aggr-events.cfg.xml" />
             <property name="hibernate.archive.autodetection" value="" />

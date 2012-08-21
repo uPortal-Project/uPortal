@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+  version="2.0">
+  
+    <access>FIELD</access>
+
+    <mapped-superclass class="org.apache.commons.math3.stat.descriptive.moment.FirstMoment">
+        <attributes>
+            <basic name="m1">
+                <column name="CM_1MMNT_M1"/>
+            </basic>
+            <basic name="n">
+                <column name="CM_1MMNT_N"/>
+            </basic>
+            <basic name="dev">
+                <column name="CM_1MMNT_DEV"/>
+            </basic>
+            <basic name="nDev">
+                <column name="CM_1MMNT_NDEV"/>
+            </basic>
+        </attributes>
+    </mapped-superclass>
+    <embeddable class="org.apache.commons.math3.stat.descriptive.moment.SecondMoment">
+        <attributes>
+            <basic name="m2">
+                <column name="CM_2MMNT_M2"/>
+            </basic>
+        </attributes>
+    </embeddable>
+    <embeddable class="org.apache.commons.math3.stat.descriptive.summary.Sum">
+        <attributes>
+            <basic name="n">
+                <column name="CM_SUM_N"/>
+            </basic>
+            <basic name="value">
+                <column name="CM_SUM_VALUE"/>
+            </basic>
+        </attributes>
+    </embeddable>
+    <embeddable class="org.apache.commons.math3.stat.descriptive.summary.SumOfSquares">
+        <attributes>
+            <basic name="n">
+                <column name="CM_SUMOSQRS_N"/>
+            </basic>
+            <basic name="value">
+                <column name="CM_SUMOSQRS_VALUE"/>
+            </basic>
+        </attributes>
+    </embeddable>
+    <embeddable class="org.apache.commons.math3.stat.descriptive.rank.Min">
+        <attributes>
+            <basic name="n">
+                <column name="CM_MIN_N"/>
+            </basic>
+            <basic name="value">
+                <column name="CM_MIN_VALUE"/>
+            </basic>
+        </attributes>
+    </embeddable>
+    <embeddable class="org.apache.commons.math3.stat.descriptive.rank.Max">
+        <attributes>
+            <basic name="n">
+                <column name="CM_MAX_N"/>
+            </basic>
+            <basic name="value">
+                <column name="CM_MAX_VALUE"/>
+            </basic>
+        </attributes>
+    </embeddable>
+    <embeddable class="org.apache.commons.math3.stat.descriptive.summary.SumOfLogs">
+        <attributes>
+            <basic name="n">
+                <column name="CM_SUMOLOGS_N"/>
+            </basic>
+            <basic name="value">
+                <column name="CM_SUMOLOGS_VALUE"/>
+            </basic>
+        </attributes>
+    </embeddable>
+</entity-mappings>

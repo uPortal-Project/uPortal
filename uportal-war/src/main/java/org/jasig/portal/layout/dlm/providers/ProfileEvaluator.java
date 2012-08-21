@@ -55,7 +55,7 @@ public class ProfileEvaluator extends Evaluator {
         
         final ApplicationContext applicationContext = ApplicationContextLocator.getApplicationContext();
         final IPortalRequestUtils portalRequestUtils = applicationContext.getBean(IPortalRequestUtils.class);
-        final IProfileMapper profileMapper = applicationContext.getBean(IProfileMapper.class);
+        final IProfileMapper profileMapper = applicationContext.getBean("profileMapper", IProfileMapper.class);
         
         final HttpServletRequest request = portalRequestUtils.getCurrentPortalRequest();
         final String currentFname = profileMapper.getProfileFname(person, request);
