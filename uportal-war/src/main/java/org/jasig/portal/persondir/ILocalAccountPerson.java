@@ -30,6 +30,10 @@ import java.util.Map;
  */
 public interface ILocalAccountPerson {
 
+    /**
+     * The local account Id of this person object.  NOTE:  This is not the same 
+     * as the value of {@link IPerson#getID}. 
+     */
     public long getId();
     
     public String getName();
