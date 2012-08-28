@@ -177,7 +177,7 @@
         <oro.version>2.0.8</oro.version>
         <persistence-api.version>1.0</persistence-api.version>
         <person-directory.version>1.5.0</person-directory.version>
-        <pluto.version>2.1.0-M2</pluto.version>
+        <pluto.version>2.1.0-M3</pluto.version>
         <portlet-api.version>2.0</portlet-api.version>
         <quartz.version>1.8.4</quartz.version>
         <resource-server.version>1.0.26</resource-server.version>
@@ -561,7 +561,7 @@
                 <version>${ehcache-jgroups3replication.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jasig.portal</groupId>
+                <groupId>org.apache.portals.pluto</groupId>
                 <artifactId>pluto-taglib</artifactId>
                 <version>${pluto.version}</version>
             </dependency>

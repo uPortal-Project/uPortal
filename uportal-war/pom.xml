@@ -457,7 +457,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jasig.portal</groupId>
+            <groupId>org.apache.portals.pluto</groupId>
             <artifactId>pluto-taglib</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -575,6 +575,7 @@
                  | config tech, e.g. Spring property placeholder 
                  +-->
                 <includes>
+                    <include>org/apache/pluto/driver/container/pluto-configuration.properties</include>
                     <include>properties/portal.properties</include>
                     <include>properties/rdbm.properties</include>
                     <include>properties/security.properties</include>
