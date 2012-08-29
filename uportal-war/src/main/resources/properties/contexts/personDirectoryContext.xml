@@ -23,9 +23,11 @@
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns="http://www.springframework.org/schema/beans" 
        xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
     
     <!-- ********** User Information Support Beans ********** -->
     <!--
@@ -63,84 +65,102 @@
 
 
 
-	<!-- ********** Beans for Attributes from the HttpServletRequest **********-->
-	<!--
-	 | Merges attributes from the request with those from other DAOs
-	 +-->
-	<bean id="requestAttributeMergingDao"
-		class="org.jasig.services.persondir.support.MergingPersonAttributeDaoImpl">
-		<property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
-		<property name="merger">
-			<bean
-				class="org.jasig.services.persondir.support.merger.ReplacingAttributeAdder" />
-		</property>
-		<property name="personAttributeDaos">
-			<list>
-				<ref bean="requestAttributesDao" />
-				<!--  <ref bean="cachingMergedPersonAttributeDao" />-->
-				<ref bean="mergedPersonAttributeDao" />
-			</list>
-		</property>
-	</bean>
-
-	<!--
-	 | Servlet filter that creates an attribute for the serverName
-	 +
-	-->
-	<bean id="requestAttributeSourceFilter"
-		class="org.jasig.services.persondir.support.web.RequestAttributeSourceFilter">
-		<property name="additionalDescriptors" ref="requestAdditionalDescriptors" />
-		<property name="serverNameAttribute" value="serverName" />
-		<property name="processingPosition" value="BOTH" />
-	</bean>
-
-	<!--
-     | Session-scoped descriptors object. One of these will exist for each user in their session. It will store the
-     | attributes from the requst set by the requestAttributeSourceFilter
+    <!-- ********** Beans for Attributes from the HttpServletRequest **********-->
+    <!--
+     | Merges attributes from the request with those from other DAOs
      +-->
-	<bean id="requestAdditionalDescriptors"
-		class="org.jasig.services.persondir.support.AdditionalDescriptors"
-		scope="globalSession">
-		<aop:scoped-proxy />
-	</bean>
+    <bean id="requestAttributeMergingDao"
+        class="org.jasig.services.persondir.support.MergingPersonAttributeDaoImpl">
+        <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
+        <property name="merger">
+            <bean
+                class="org.jasig.services.persondir.support.merger.ReplacingAttributeAdder" />
+        </property>
+        <property name="personAttributeDaos">
+            <list>
+                <ref bean="requestAttributesDao" />
+                <ref bean="mergedPersonAttributeDao" />
+            </list>
+        </property>
+    </bean>
 
-	<!--
-	 | The person attributes DAO that returns the attributes from the request. Uses a currentUserProvider since the
-	 | username may not always be provided by the request object.
-	 +-->
-	<bean id="requestAttributesDao"
-		class="org.jasig.services.persondir.support.AdditionalDescriptorsPersonAttributeDao">
-		<property name="descriptors" ref="requestAdditionalDescriptors" />
-		<property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
-		<property name="currentUserProvider" ref="currentUserProvider" />
-	</bean>
+    <!--
+     | Servlet filter that creates an attribute for the serverName
+     +
+    -->
+    <bean id="requestAttributeSourceFilter"
+        class="org.jasig.services.persondir.support.web.RequestAttributeSourceFilter">
+        <property name="additionalDescriptors" ref="requestAdditionalDescriptors" />
+        <property name="usernameAttribute" value="remoteUser" />
+        <property name="remoteUserAttribute" value="remoteUser" />
+        <property name="serverNameAttribute" value="serverName" />
+        <property name="processingPosition" value="BOTH" />
+    </bean>
+
+    <!--
+     | Session-scoped descriptors object. One of these will exist for each user in their session. It will store the
+     | attributes from the request set by the requestAttributeSourceFilter
+     +-->
+    <bean id="requestAdditionalDescriptors" class="org.jasig.services.persondir.support.MediatingAdditionalDescriptors">
+        <property name="delegateDescriptors">
+            <list>
+                <bean class="org.jasig.services.persondir.support.AdditionalDescriptors" scope="globalSession">
+                    <aop:scoped-proxy />
+                </bean>
+                <bean class="org.jasig.services.persondir.support.AdditionalDescriptors" scope="request">
+                    <aop:scoped-proxy />
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <!--
+     | The person attributes DAO that returns the attributes from the request. Uses a currentUserProvider since the
+     | username may not always be provided by the request object.
+     +-->
+    <bean id="requestAttributesDao"
+        class="org.jasig.services.persondir.support.AdditionalDescriptorsPersonAttributeDao">
+        <property name="descriptors" ref="requestAdditionalDescriptors" />
+        <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
+        <property name="currentUserProvider" ref="currentUserProvider" />
+    </bean>
 
 
 
-	<!-- ********** Data source attribute DAOs **********-->
-	<!--
-	 | Merging DAOs that define the order that the data providing DAOs are called, results are cached by the outer
-	 | caching DAO 
-	 +-->
-	<bean id="mergedPersonAttributeDao"
-		class="org.jasig.services.persondir.support.MergingPersonAttributeDaoImpl">
-		<property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
-		<property name="merger">
-			<bean
-				class="org.jasig.services.persondir.support.merger.ReplacingAttributeAdder" />
-		</property>
-		<property name="personAttributeDaos">
-			<list>
-				<!--
-					<ref bean="cachinguPortalJdbcAttributeSource"/> <ref
-					bean="cachinguPortalJdbcUserSource"/>
-				-->
-                <ref bean="uPortalAccountUserSource" />
-				<ref bean="uPortalJdbcUserSource" />
-			</list>
-		</property>
-	</bean>
+    <!-- ********** Data source attribute DAOs **********-->
+    <!--
+     | Merging DAOs that define the order that the data providing DAOs are called, results are cached by the outer
+     | caching DAO 
+     +-->
+    <bean id="mergedPersonAttributeDao"
+		class="org.jasig.services.persondir.support.CachingPersonAttributeDaoImpl">
+        <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
+        <property name="cacheNullResults" value="true" />
+        <property name="userInfoCache">
+            <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
+                <property name="cacheFactory" ref="cacheFactory" />
+                <property name="cacheName" value="org.jasig.services.persondir.USER_INFO.merged" />
+            </bean>
+        </property>
+        <property name="cacheKeyGenerator" ref="userAttributeCacheKeyGenerator" />
+        <property name="cachedPersonAttributesDao" >
+            <bean class="org.jasig.services.persondir.support.CascadingPersonAttributeDao">
+                <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
+                <property name="personAttributeDaos">
+                    <list>
+                        <ref bean="uPortalAccountUserSource" />
+                        <ref bean="uPortalJdbcUserSource" />
+                        <!-- ADDITIONAL ATTRIBUTE SOURCES GET ADDED HERE -->
+                    </list>
+                </property>
+            </bean>
+        </property>
+    </bean>
 
+    <!--
+     | Looks in the local person-directory data. This is only used for portal-local users such as fragment owners
+     | All attributes are searchable via this configuration, results are cached by the underlying DAO
+     +-->
     <bean id="uPortalAccountUserSource" class="org.jasig.portal.persondir.LocalAccountPersonAttributeDao">
         <property name="localAccountDao" ref="localAccountDao"/>
         <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
@@ -178,80 +198,56 @@
             </map>
         </property>
     </bean>
-
-	<!--
-	 | Looks in the base UP_USER table, doesn't find attributes but will ensure a result if it the user exists in the 
-	 | portal database and is searched for by username, results are cached by the outer caching DAO
-	 +-->
-	<bean id="uPortalJdbcUserSource"
-		class="org.jasig.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao">
-		<constructor-arg index="0" ref="PersonDB" />
-		<constructor-arg>
-			<value>
-				SELECT USER_NAME
-				FROM UP_USER
-				WHERE {0}
+    
+    <!--
+     | Looks in the base UP_USER table, doesn't find attributes but will ensure a result if it the user exists in the
+     | portal database and is searched for by username, results are cached by the outer caching DAO
+     +-->
+    <bean id="uPortalJdbcUserSource"
+        class="org.jasig.services.persondir.support.CachingPersonAttributeDaoImpl">
+        <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
+        <property name="cacheNullResults" value="true" />
+        <property name="userInfoCache">
+            <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
+                <property name="cacheFactory" ref="cacheFactory" />
+                <property name="cacheName" value="org.jasig.services.persondir.USER_INFO.up_user" />
+            </bean>
+        </property>
+        <property name="cacheKeyGenerator" ref="userAttributeCacheKeyGenerator" />
+        <property name="cachedPersonAttributesDao" >
+            <bean class="org.jasig.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao">
+                <constructor-arg index="0" ref="PersonDB" />
+                <constructor-arg>
+                    <value> 
+                        SELECT USER_NAME
+                        FROM UP_USER
+                        WHERE {0}
                     </value>
-		</constructor-arg>
-		<property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
-		<property name="queryAttributeMapping">
-			<map>
-				<entry key="username" value="USER_NAME" />
-			</map>
-		</property>
-		<property name="resultAttributeMapping">
-			<map>
-				<entry key="USER_NAME">
-					<set>
-						<value>uid</value>
-                        <value>username</value>
-						<value>user.login.id</value>
-					</set>
-				</entry>
-			</map>
-		</property>
-	</bean>
-
-	<!-- 
-	<bean id="cachingMergedPersonAttributeDao" class="org.jasig.services.persondir.support.CachingPersonAttributeDaoImpl">
-		<property name="usernameAttributeProvider" ref="usernameAttributeProvider" /> 
-		<property name="cacheNullResults" value="true" /> 
-		<property name="userInfoCache"> 
-			<bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean"> 
-				<property name="cacheName" value="org.jasig.services.persondir.USER_INFO.merged"/> 
-			</bean> 
-		</property> 
-		<property name="cacheKeyGenerator" ref="userAttributeCacheKeyGenerator" /> 
-		<property name="cachedPersonAttributesDao" ref="mergedPersonAttributeDao"/>
-	</bean> 
-	<bean id="cachinguPortalJdbcUserSource" class="org.jasig.services.persondir.support.CachingPersonAttributeDaoImpl">
-		<property name="usernameAttributeProvider" ref="usernameAttributeProvider" /> 
-		<property name="cacheNullResults" value="true" /> 
-		<property name="userInfoCache"> 
-			<bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean"> 
-				<property name="cacheName" value="org.jasig.services.persondir.USER_INFO.up_user" /> 
-			</bean>
-		</property> 
-		<property name="cacheKeyGenerator" ref="userAttributeCacheKeyGenerator" /> 
-		<property name="cachedPersonAttributesDao" ref="uPortalJdbcUserSource"/> 
-	</bean>	
-	<bean id="cachinguPortalJdbcAttributeSource" class="org.jasig.services.persondir.support.CachingPersonAttributeDaoImpl">
-		<property name="usernameAttributeProvider" ref="usernameAttributeProvider" /> 
-		<property name="cacheNullResults" value="true" /> 
-		<property name="userInfoCache"> 
-			<bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean"> 
-				<property name="cacheName" value="org.jasig.services.persondir.USER_INFO.up_person_dir" />
-			</bean>
-		</property>
-		<property name="cacheKeyGenerator" ref="userAttributeCacheKeyGenerator" /> 
-		<property name="cachedPersonAttributesDao" ref="uPortalJdbcAttributeSource"/>
-	</bean> 
-	<bean id="userAttributeCacheKeyGenerator" class="org.jasig.portal.utils.cache.PersonDirectoryCacheKeyGenerator">
-		<property name="useAllAttributes" value="true" /> 
-		<property name="ignoreEmptyAttributes" value="true" /> 
-	</bean> 
-	<bean class="org.jasig.portal.user.UserAttributesCacheCleaner" />
-	-->
-
-
+                </constructor-arg>
+                <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
+                <property name="queryAttributeMapping">
+                    <map>
+                        <entry key="username" value="USER_NAME" />
+                    </map>
+                </property>
+                <property name="resultAttributeMapping">
+                    <map>
+                        <entry key="USER_NAME">
+                            <set>
+                                <value>uid</value>
+                                <value>username</value>
+                                <value>user.login.id</value>
+                            </set>
+                        </entry>
+                    </map>
+                </property>
+            </bean>
+        </property>
+    </bean>
+    
+    <!-- Where non-local attribute DAOs go -->
+    
+    <bean id="userAttributeCacheKeyGenerator" class="org.jasig.portal.utils.cache.PersonDirectoryCacheKeyGenerator">
+        <property name="ignoreEmptyAttributes" value="true" />
+    </bean>
 </beans>
