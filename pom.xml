@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jasig.parent</groupId>
         <artifactId>jasig-parent</artifactId>
-        <version>33</version>
+        <version>34</version>
     </parent>
     
     <prerequisites>
@@ -176,7 +176,7 @@
         <org.springframework.webflow.version>2.3.1.RELEASE</org.springframework.webflow.version>
         <oro.version>2.0.8</oro.version>
         <persistence-api.version>1.0</persistence-api.version>
-        <person-directory.version>1.5.0</person-directory.version>
+        <person-directory.version>1.5.1</person-directory.version>
         <pluto.version>2.1.0-M3</pluto.version>
         <portlet-api.version>2.0</portlet-api.version>
         <quartz.version>1.8.4</quartz.version>
