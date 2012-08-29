@@ -217,15 +217,6 @@
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true" />
         
-    <!-- 
-     | Caches queries against the local UP_PERSON_DIR table
-     | - 1 x user
-     | - not replicated - doesn't represent an updatable data store
-     +-->
-    <cache name="org.jasig.services.persondir.USER_INFO.up_person_dir"
-        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true" />
-        
 
     <!-- ******************** uPortal IBasicEntity Caches ******************** -->
 

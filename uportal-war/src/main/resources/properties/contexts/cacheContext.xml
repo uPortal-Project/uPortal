@@ -44,12 +44,9 @@
     <!-- 
      | Annotation based caching support
      +-->
-    <ehcache:annotation-driven default-cache-key-generator="listCacheKeyGenerator" />
-    <ehcache:config>
-        <ehcache:evict-expired-elements />
-    </ehcache:config>
+    <ehcache:annotation-driven default-cache-key-generator="portalCacheKeyGenerator" cache-manager="cacheManager" />   
     
-    <bean id="listCacheKeyGenerator" class="com.googlecode.ehcache.annotations.key.ListCacheKeyGenerator"/>
+    <bean id="portalCacheKeyGenerator" class="org.jasig.portal.utils.cache.PortalCacheKeyGenerator"/>
     
     <!--
      | Service used by DLM to cache Layouts.
@@ -57,6 +54,7 @@
     <bean id="layoutCachingService" class="org.jasig.portal.layout.dlm.LayoutCachingService">
         <property name="layoutCache">
             <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
+                <property name="cacheFactory" ref="cacheFactory" />
                 <property name="cacheName" value="org.jasig.portal.layout.dlm.LAYOUT_CACHE" />
             </bean>
         </property>
@@ -65,11 +63,13 @@
     <bean class="org.jasig.portal.utils.ResourceLoader">
         <property name="resourceUrlCache">
             <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
+                <property name="cacheFactory" ref="cacheFactory" />
                 <property name="cacheName" value="org.jasig.portal.utils.ResourceLoader.RESOURCE_URL_CACHE" />
             </bean>
         </property>
         <property name="resourceUrlNotFoundCache">
             <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
+                <property name="cacheFactory" ref="cacheFactory" />
                 <property name="cacheName" value="org.jasig.portal.utils.ResourceLoader.RESOURCE_URL_NOT_FOUND_CACHE" />
             </bean>
         </property>
