@@ -33,7 +33,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.events.IPortalEventFactory;
+import org.jasig.portal.events.IPortalAuthEventFactory;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.ISecurityContext;
@@ -58,7 +58,7 @@ public class LogoutController implements InitializingBean {
     private static final Log log = LogFactory.getLog(LogoutController.class);
 
     private Map<String, String> redirectMap;
-    private IPortalEventFactory portalEventFactory;
+    private IPortalAuthEventFactory portalEventFactory;
     private IPersonManager personManager;
 
     @Autowired
@@ -67,7 +67,7 @@ public class LogoutController implements InitializingBean {
     }
 
     @Autowired
-    public void setPortalEventFactory(IPortalEventFactory portalEventFactory) {
+    public void setPortalEventFactory(IPortalAuthEventFactory portalEventFactory) {
         this.portalEventFactory = portalEventFactory;
     }
 

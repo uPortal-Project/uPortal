@@ -21,20 +21,22 @@
 -->
 
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns="http://www.springframework.org/schema/beans" 
-       xsi:schemaLocation="
-           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
-
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+    
     <!-- Ref to the mbean server -->
     <bean id="mbeanServer" class="org.springframework.jmx.support.MBeanServerFactoryBean">
         <property name="locateExistingServerIfPossible" value="true" />
     </bean>
     
     <!-- Exporter used to register beans with the mbean server -->
-    <bean id="jmxAdapter" class="org.springframework.jmx.export.MBeanExporter">
+    <bean id="jmxAdapter" class="org.springframework.jmx.export.annotation.AnnotationMBeanExporter">
         <property name="server" ref="mbeanServer" />
         <property name="ensureUniqueRuntimeObjectNames" value="true" />
         <property name="assembler" ref="mbeanInfoAssembler" />
+        <property name="registrationBehaviorName" value="REGISTRATION_REPLACE_EXISTING" />
         <property name="beans">
             <map>
                 <entry key="uPortal:section=Framework,name=Statistics" value-ref="portalFrameworkMBean" />

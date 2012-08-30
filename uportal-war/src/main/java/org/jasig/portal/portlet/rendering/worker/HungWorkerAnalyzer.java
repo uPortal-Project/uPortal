@@ -19,220 +19,205 @@
 
 package org.jasig.portal.portlet.rendering.worker;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.jasig.portal.events.PortalEvent;
+import org.jasig.portal.events.PortletHungCompleteEvent;
+import org.jasig.portal.events.PortletHungEvent;
+import org.jasig.portal.utils.ConcurrentMapUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationListener;
+import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Service;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
+
+/**
+ * Watches for {@link PortletHungEvent} and {@link PortletHungCompleteEvent} events and uses that information to track
+ * the number of portlets for each fname that are hung.
+ * 
+ * @author Eric Dalquist
+ */
+@ManagedResource("uPortal:section=Framework,name=HungWorkerAnalyzer")
 @Service("hungWorkerAnalyzer")
-public final class HungWorkerAnalyzer {
+public class HungWorkerAnalyzer implements ApplicationListener<PortalEvent>, InitializingBean, IPortletExecutionInterceptor, HungWorkerAnalyzerMXBean {
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /**
-     * Indicates the number of threads in the hungWorkers queue a portlet (by 
-     * fname) must have before a WARN message is logged durring the analysis 
-     * process.  If a WARN message is logged, an INOFO message will not be 
-     * logged.
-     */
-    private static final int THRESHOLD_LOG_WARN = 10; 
 
-    /**
-     * Indicates the number of threads in the hungWorkers queue a portlet (by 
-     * fname) must have before an INFO message is logged durring the analysis 
-     * process.
-     */
-    private static final int THRESHOLD_LOG_INFO = 4; 
+    // Tracks the number of hung portlets for each fname 
+    private final ConcurrentMap<String, AtomicInteger> hungPortletCounts = new ConcurrentHashMap<String, AtomicInteger>();
 
-    /**
-     * A copy of the most recent analysis of hung workers.  This analysis can be 
-     * used to prevent misbehaving portlets from taking too many worker threads 
-     * and starving the portal of them. 
-     */
-    private volatile Map<String,PortletHungWorkerAnalysisEntry> hungWorkerAnalysis = Collections.emptyMap();
+    //Read only view that returns Integer instead of AtomicInteger, used for JMX stats
+    private final Map<String, Integer> hungPortletCountsView = Maps.transformValues(this.hungPortletCounts, new Function<AtomicInteger, Integer>() {
+        public Integer apply(AtomicInteger value) {
+            return value.get();
+        }
+    });
+    
+    private final AtomicInteger hungPortletCountTotal = new AtomicInteger();
+    
+    
+    @Deprecated
+    private Integer numberPermittedErrantByFname;
+    
+    private ThreadPoolExecutor portletThreadPool;
+    
+    private double percentPermittedErrantByFname = .1;
     
     /**
-     * The ratio, relative to a portlet's configured timeout value, of how long 
-     * it can hold onto a rendering thread before being considered errant.  
-     * Portlets with too many erant threads may be denied further worker 
-     * threads, thus preventing starvation.  
+     * @deprecated use {@link #setPercentPermittedErrantByFname(double)}
      */
-    private double errantThreshold = 2.0D;  // Spring-configurable, though the default should be good
-    
-    /**
-     * The number of errant threads a portlet may have (by fname) before further 
-     * worker threads will be withheld.  A portlet that does not receive worker 
-     * threads will render an error, but this outcome is better than starving 
-     * the portal for threads and causing ALL portlets to render errors for all 
-     * users.
-     */
-    private int numberPermittedErrantByFname = 10;  // Spring-configurable
-    
-    private final Log log = LogFactory.getLog(this.getClass());
-
-    /*
-     * Public API
-     */
-
-    /**
-     * @param errantThreshold The ratio, relative to a portlet's configured 
-     * timeout value, of how long it can hold onto a rendering thread before 
-     * being considered errant.  Default is 2.0D (which is probably reasonable 
-     * for most circumstances).
-     */
-    public void setErrantThreshold(double errantThreshold) {
-        this.errantThreshold = errantThreshold;
-    }
-
-    @Value("${org.jasig.portal.portlet.numberPermittedErrantByFname}")
-    public void setNumberPermittedErrantByFname(int numberPermittedErrantByFname) {
+    @Value("${org.jasig.portal.portlet.numberPermittedErrantByFname:}")
+    @Deprecated
+    public void setNumberPermittedErrantByFname(Integer numberPermittedErrantByFname) {
         this.numberPermittedErrantByFname = numberPermittedErrantByFname;
     }
     
-    public void analyze(final Queue<IPortletExecutionWorker<?>> hungWorkers) {
+    @Value("${org.jasig.portal.portlet.percentPermittedErrantByFname:.1}")
+    @Override
+    public void setPercentPermittedErrantByFname(double percentPermittedErrantByFname) {
+        this.percentPermittedErrantByFname = percentPermittedErrantByFname;
+    }
+    
+    @Override
+    public double getPercentPermittedErrantByFname() {
+        return this.percentPermittedErrantByFname;
+    }
+
+    @Autowired
+    public void setPortletThreadPool(@Qualifier("portletThreadPool") ExecutorService portletThreadPool) {
+        //Note this is injected as a ExecutorService then cast due to the original object being created by a FactoryBean that declares itself as an ExecutorService
+        this.portletThreadPool = (ThreadPoolExecutor)portletThreadPool;
+    }
+    
+    @Override
+    public int getHungPortletCountTotal() {
+        return hungPortletCountTotal.get();
+    }
+    
+    @Override
+    public Map<String, Integer> getHungPortletCounts() {
+        return this.hungPortletCountsView;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        if (numberPermittedErrantByFname != null) {
+            if (numberPermittedErrantByFname == 0) {
+                this.percentPermittedErrantByFname = 0;
+            }
+            else if (numberPermittedErrantByFname > 0) {
+                this.percentPermittedErrantByFname = ((double)numberPermittedErrantByFname) / this.portletThreadPool.getMaximumPoolSize();
+            }
+        }
+    }
+
+    @Override
+    public void onApplicationEvent(PortalEvent event) {
+        if (event instanceof PortletHungEvent) {
+            final IPortletExecutionWorker<?> worker = ((PortletHungEvent) event).getWorker();
+            countHungWorker(worker);
+        }
+        else if (event instanceof PortletHungCompleteEvent) {
+            final IPortletExecutionWorker<?> worker = ((PortletHungCompleteEvent) event).getWorker();
+            countHungCompleteWorker(worker);
+        }
+    }
+    
+    protected void countHungWorker(IPortletExecutionWorker<?> worker) {
+        final String portletFname = worker.getPortletFname();
+        AtomicInteger count = this.hungPortletCounts.get(portletFname);
+        if (count == null) {
+            count = ConcurrentMapUtils.putIfAbsent(this.hungPortletCounts, portletFname, new AtomicInteger());
+        }
+        final int hungWorkerCount = count.incrementAndGet();
+        this.hungPortletCountTotal.incrementAndGet();
+
+        logState(portletFname, hungWorkerCount);
+    }
+    
+    protected void countHungCompleteWorker(IPortletExecutionWorker<?> worker) {
+        final String portletFname = worker.getPortletFname();
+        final AtomicInteger count = this.hungPortletCounts.get(portletFname);
+        if (count != null) {
+            final int hungWorkerCount = count.decrementAndGet();
+
+            logState(portletFname, hungWorkerCount);
+        }
+        this.hungPortletCountTotal.decrementAndGet();
+    }
+
+    private void logState(final String portletFname, final int hungWorkerCount) {
+        final int maximumPoolSize = this.portletThreadPool.getMaximumPoolSize();
+        final int availableWorkers = maximumPoolSize - this.portletThreadPool.getActiveCount();
+        final double hungWorkerLimit = this.percentPermittedErrantByFname * availableWorkers;
         
-        final long startTime = System.currentTimeMillis();
-        
-        if (hungWorkers.isEmpty()) {
-            hungWorkerAnalysis = Collections.emptyMap();
+        final String msg = "Portlet '{}' has {} hung workers out of {} total and {} available workers with a limit of {} hung workers.";
+        final Object[] args = new Object[] { portletFname, hungWorkerCount, maximumPoolSize, availableWorkers, hungWorkerLimit };
+        if (hungWorkerCount >= Math.ceil(hungWorkerLimit)) {
+            logger.warn(msg, args);
+        }
+        else if (hungWorkerCount >= Math.ceil(hungWorkerLimit / 2)) {
+            logger.info(msg, args);
+        }
+        else {
+            logger.debug(msg, args);
+        }
+    }
+    
+    @Override
+    public void preSubmit(HttpServletRequest request, HttpServletResponse response, IPortletExecutionContext context) {
+        if (this.percentPermittedErrantByFname <= 0) {
+            //Hung worker starving is disabled, let everything execute
             return;
         }
         
-        // Prepare the report
-        final  Map<String,PortletHungWorkerAnalysisEntry> report = new HashMap<String,PortletHungWorkerAnalysisEntry>();
-        for (final IPortletExecutionWorker<?> worker : hungWorkers) {
-            // We won't analyze complete workers since they're not a problem
-            if (!worker.isComplete()) {
-                final String fname = worker.getPortletFname();
-                PortletHungWorkerAnalysisEntry entry = report.get(fname);
-                if (entry == null) {
-                    entry = new PortletHungWorkerAnalysisEntry(fname, worker.getApplicableTimeout());
-                    report.put(fname, entry);
-                }
-                entry.recordHungWorker(worker.getStartedTime());
-            }
+        final String portletFname = context.getPortletFname();
+        final AtomicInteger count = this.hungPortletCounts.get(portletFname);
+        if (count == null) {
+            //Never had a hung worker, good job go execute
+            return;
         }
         
-        // Log information from the report, if applicable
-        if (!report.isEmpty()) {
-            for (final PortletHungWorkerAnalysisEntry entry : report.values()) {
-                switch (entry.getNumberInHungWorkersQueue()) {
-                    case THRESHOLD_LOG_WARN:
-                        if (log.isWarnEnabled()) {
-                            log.warn(entry.toString());
-                        }
-                        break;
-                    case THRESHOLD_LOG_INFO:
-                        if (log.isInfoEnabled()) {
-                            log.info(entry.toString());
-                        }
-                        break;
-                    default:
-                        if (log.isDebugEnabled()) {
-                            log.debug(entry.toString());
-                        }
-                        break;
-                }
-            }
+        final int hungWorkers = count.get();
+        if (hungWorkers == 0) {
+            //Currently no hung workers, good job go execute
+            return;
         }
         
-        // Replace the existing hungWorkerAnalysis with the new report 
-        hungWorkerAnalysis = Collections.unmodifiableMap(report);
-        
-        if (log.isTraceEnabled()) {
-            final long runTime = System.currentTimeMillis() - startTime;
-            log.trace("Hung worker analysis performed;  analysis completed in (milliseconds):  " + runTime);
+        final int maximumPoolSize = this.portletThreadPool.getMaximumPoolSize();
+        final int availableWorkers = maximumPoolSize - this.portletThreadPool.getActiveCount();
+        final double hungWorkerLimit = this.percentPermittedErrantByFname * availableWorkers;
+        if (hungWorkers < Math.ceil(hungWorkerLimit)) {
+            //Number of hung workers is less than the calculated hung worker limit
+            return;
         }
         
-    }
-    
-    public boolean allowWorkerThreadAllocationForPortlet(final String fname) {
-        
-        boolean rslt = true;  // default... unless there's a reason not to
-        
-        /*
-         *  Setting numberPermittedErrantByFname=0 shuts this feature off and 
-         *  allows portlets to take workers no matter how many errant threads 
-         *  they have. 
-         */
-        if (numberPermittedErrantByFname != 0) {
-            final PortletHungWorkerAnalysisEntry entry = hungWorkerAnalysis.get(fname);
-            if (entry != null) {
-                // So there is a report on this fname;  now see if it meets the criteria
-                if (entry.getNumberErrant() >= this.numberPermittedErrantByFname) {
-                    // It DOES meet the criteria;  prevent further worker allocation
-                    rslt = false;
-                }
-            }
-        }
-        
-        if (!rslt && log.isTraceEnabled()) {
-            log.trace("Worker thread withheld for the following portlet:  " + fname);
-        }
-
-        return rslt;
-        
-    }
-    
-    /*
-     * Nested Types
-     */
-    
-    /**
-     * Provides important information about "hung worker" threads by portlet 
-     * fname.  Examples are how many workers are in the hung queue for an fname, 
-     * and how many of them are "errant" or rogue.  A worker is considered 
-     * errant if its render time exceeds its configured timeout multiplied by 
-     * <code>HungWorkerAnalyzer.errantThreshold</code>.
-     * 
-     * @author awills
-     */
-    private /* not-static */ final class PortletHungWorkerAnalysisEntry {
-        
-        private final String fname;
-        private final long configuredTimeout;
-        private int numberInHungWorkersQueue = 0;
-        private int numberErrant = 0;
-        private long longestRunTime = 0L;
-        
-        public PortletHungWorkerAnalysisEntry(final String fname, final long configuredTimeout) {
-            this.fname = fname;
-            this.configuredTimeout = configuredTimeout;
-        }
-        
-        public void recordHungWorker(final long currentRunTime) {
-            ++numberInHungWorkersQueue;
-            if (currentRunTime > configuredTimeout * errantThreshold) {
-                ++numberErrant;
-            }
-            if (currentRunTime > longestRunTime) {
-                longestRunTime = currentRunTime;
-            }
-        }
-        
-        public int getNumberInHungWorkersQueue() {
-            return numberInHungWorkersQueue;
-        }
-
-        public int getNumberErrant() {
-            return numberErrant;
-        }
-
-        @Override
-        public String toString() {
-            final StringBuilder rslt = new StringBuilder();
-            rslt.append("Portlet '").append(fname).append("' has ")
-                    .append(numberInHungWorkersQueue)
-                    .append(" workers not completing properly, of which ")
-                    .append(numberErrant)
-                    .append(" are considered errant.  The longest runtime is ")
-                    .append(longestRunTime).append(" milliseconds.");
-            return rslt.toString();
-        }
-        
+        final String msg = "Denying worker execution for " + portletFname + " that has " + hungWorkers + " hung threads over limit of " + hungWorkerLimit + " with " + availableWorkers + " threads of " + maximumPoolSize + " available";
+        logger.info(msg);
+        throw new IllegalStateException(msg);
     }
 
+    @Override
+    public void preExecution(HttpServletRequest request, HttpServletResponse response, IPortletExecutionContext context) {
+    }
+
+    @Override
+    public void postExecution(HttpServletRequest request, HttpServletResponse response,
+            IPortletExecutionContext context, Exception e) {
+    }
 }

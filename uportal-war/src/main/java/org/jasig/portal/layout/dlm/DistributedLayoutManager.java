@@ -45,7 +45,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.events.IPortalEventFactory;
+import org.jasig.portal.events.IPortalLayoutEventFactory;
 import org.jasig.portal.layout.IFolderLocalNameResolver;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
@@ -94,7 +94,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
     private ILayoutCachingService layoutCachingService;
     private IUserLayoutStore distributedLayoutStore;
     private XPathOperations xpathOperations;
-    private IPortalEventFactory portalEventFactory;
+    private IPortalLayoutEventFactory portalEventFactory;
     private IAuthorizationService authorizationService;
     
     protected final IPerson owner;
@@ -164,7 +164,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
     }
 
     @Autowired
-    public void setPortalEventFactory(IPortalEventFactory portalEventFactory) {
+    public void setPortalEventFactory(IPortalLayoutEventFactory portalEventFactory) {
         this.portalEventFactory = portalEventFactory;
     }
 
