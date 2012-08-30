@@ -43,6 +43,8 @@ import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
 
+import com.google.common.util.concurrent.Futures;
+
 /**
  * Base for portlet execution dispatching. Tracks the target, request, response objects as well as
  * submitted, started and completed timestamps.
@@ -102,9 +104,6 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
         return this.portletWindowId;
     }
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.rendering.worker.IPortletExecutionContext#getPortletFname()
-     */
     @Override
     public String getPortletFname() {
         return this.portletFname;
@@ -118,9 +117,6 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
         return this.timeout;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker#submit()
-     */
     @Override
     public final void submit() {
         if (this.submitted > 0) {
@@ -129,72 +125,92 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
         
         this.submitted = System.currentTimeMillis();
         
-        //Run pre-submit interceptors
+        try {
+            //Run pre-submit interceptors
+            for (final IPortletExecutionInterceptor interceptor : this.interceptors) {
+                interceptor.preSubmit(request, response, this);
+            }
+            
+            final Callable<V> callable = new PortletExecutionCallable<V>(this, new ExecutionLifecycleCallable<V>(new Callable<V>() {
+                    @Override
+                    public V call() throws Exception {
+                        return callInternal();
+                    }
+                })
+            );
+            
+            this.future = this.executorService.submit(callable);
+        }
+        catch (final Exception e) {
+            //All is not well do the basic portlet execution lifecycle and then, return a Future that simply rethrows the exception
+            
+            final Callable<Future<V>> callable = new ExecutionLifecycleCallable<Future<V>>(new Callable<Future<V>>() {
+                @Override
+                public Future<V> call() throws Exception {
+                    return Futures.immediateFailedFuture(e);
+                }
+            });
+            
+            try {
+                this.future = callable.call();
+            }
+            catch (Exception e1) {
+                //We know this will never throw
+            }
+        }
+    }
+    
+    private final class ExecutionLifecycleCallable<V1> implements Callable<V1> {
+        private final Callable<V1> callable;
+        
+        public ExecutionLifecycleCallable(Callable<V1> callable) {
+            this.callable = callable;
+        }
+
+        @Override
+        public V1 call() throws Exception {
+            startExecution();
+            
+            try {
+                runPreExecutionInterceptors();
+                
+                final V1 result = this.callable.call();
+                doPostExecution(null);
+                return result;
+            }
+            catch (Exception e) {
+                doPostExecution(e);
+                throw e;
+            }
+            finally {
+                executionComplete();
+            }
+        }
+    };
+    
+    private void startExecution() {
+        //grab the current thread
+        workerThread = Thread.currentThread();
+        
+        //signal any threads waiting for the worker to start
+        started = System.currentTimeMillis();
+        startLatch.countDown();
+    }
+    
+    private void runPreExecutionInterceptors() {
+
         for (final IPortletExecutionInterceptor interceptor : this.interceptors) {
-            interceptor.preSubmit(request, response, this);
+            interceptor.preExecution(request, response, this);
+        }
+    }
+    
+    private void executionComplete() {
+        complete = System.currentTimeMillis();
+        if (logger.isDebugEnabled()) {
+            logger.debug("Execution complete on portlet " + portletWindowId + " in " + getDuration() + "ms");
         }
         
-        /*
-         * Time to prepare a Callable for the executorService;  choose whether 
-         * to create a normal Callable (that invokes the portlet code), or a 
-         * special (dummy) Callable that throws an Exception indicating the 
-         * portlet has too many errant worker threads in the hungWorker queue. 
-         */
-        Callable<V> callable = null;
-        if (this.portletRenderer.getHungWorkerAnalyzer().allowWorkerThreadAllocationForPortlet(portletFname)) {
-            // All is well -- proceed as usual
-            callable = new PortletExecutionCallable<V>(new Callable<V>() {
-                /* (non-Javadoc)
-                 * @see java.util.concurrent.Callable#call()
-                 */
-                @Override
-                public V call() throws Exception {
-                    //grab the current thread
-                    workerThread = Thread.currentThread();
-                    
-                    //signal any threads waiting for the worker to start
-                    started = System.currentTimeMillis();
-                    startLatch.countDown();
-                    
-                    try {
-                        //Run pre-execution interceptors
-                        for (final IPortletExecutionInterceptor interceptor : PortletExecutionWorker.this.interceptors) {
-                            interceptor.preExecution(request, response, PortletExecutionWorker.this);
-                        }
-                        
-                        final V result = callInternal();
-                        doPostExecution(null);
-                        return result;
-                    }
-                    catch (Exception e) {
-                        logger.warn("Portlet '" + portletWindowId + "' failed with an exception", e);
-                        doPostExecution(e);
-                        throw e;
-                    }
-                    finally {
-                        complete = System.currentTimeMillis();
-                        if (logger.isDebugEnabled()) {
-                            logger.debug("Execution complete on portlet " + portletWindowId + " in " + getDuration() + "ms");
-                        }
-                        
-                        workerThread = null;
-                    }
-                }
-            }, this);
-        } else {
-            // All is NOT well -- replace the Callable with one that throws a meaningful Exception
-            callable = new PortletExecutionCallable<V>(new Callable<V>() {
-                @Override
-                public V call() throws Exception {
-                    Exception e = new RuntimeException("Portlet '" + portletFname + "' was not allocated a worker thread because it already has too many workers in a hung state.");
-                    logger.warn("Portlet '" + portletWindowId + "' failed with an exception", e);
-                    doPostExecution(e);
-                    throw e;
-                }
-            }, this);
-        }
-        
-        this.future = this.executorService.submit(callable);
+        workerThread = null;
     }
     
     private void doPostExecution(Exception e) {
@@ -216,9 +232,6 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
      */
     protected abstract V callInternal() throws Exception;
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker#isStarted()
-     */
     @Override
     public final boolean isStarted() {
         return this.started > 0;
@@ -231,7 +244,7 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
 
     @Override
     public boolean isComplete() {
-        return this.complete > 0 || (this.future != null && this.future.isDone());
+        return this.complete > 0 || this.workerThread == null || this.workerThread.getState() == State.TERMINATED;
     }
     
     @Override
@@ -239,9 +252,6 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
         return this.retrieved;
     }
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker#waitForStart()
-     */
     @Override
     public final long waitForStart(long timeout) throws InterruptedException {
         //Wait for start Callable to start
@@ -249,9 +259,6 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
         return this.started;
     }
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker#get(long)
-     */
     @Override
     public V get(long timeout) throws Exception {
         if (this.future == null) {
@@ -298,13 +305,14 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
         }
     }
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker#cancel()
-     */
     @Override
     public final void cancel() {
         if (this.future == null) {
             throw new IllegalStateException("submit() must be called before cancel() can be called");
+        }
+        
+        if (this.isComplete()) {
+            return;
         }
         
         //Mark worker as retrieved
@@ -313,68 +321,55 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
         //Notify the guarding req/res wrappers that cancel has been called
         this.canceled.set(true);
         
-        //Cancel the future, interuppting the thread
+        //Cancel the future, interrupting the thread
         this.future.cancel(true);
         
         //Track the number of times cancel has been called
-        this.cancelCount.incrementAndGet();
+        final int count = this.cancelCount.getAndIncrement();
+        if (count > 0) {
+            //Since Future.cancel only interrupts the thread on the first call interrupt the thread directly
+            final Thread thread = this.workerThread;
+            if (thread != null) {
+                thread.interrupt();
+            }
+        }
     }
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker#getCancelCount()
-     */
     @Override
     public final int getCancelCount() {
         return this.cancelCount.get();
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker#getSubmitted()
-     */
     @Override
     public final long getSubmittedTime() {
         return this.submitted;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker#getStarted()
-     */
     @Override
     public final long getStartedTime() {
         return this.started;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker#getComplete()
-     */
     @Override
     public final long getCompleteTime() {
         return this.complete;
     }
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker#getWait()
-     */
     @Override
     public final long getWait() {
         return this.started - this.submitted;
     }
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker#getDuration()
-     */
     @Override
     public final long getDuration() {
         return this.complete - this.started;
     }
     
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker#toString()
-     */
     @Override
     public String toString() {
         return "PortletExecutionWorker [" +
+                    "portletFname=" + this.portletFname + ", " +
+                    "timeout=" + this.timeout + ", " +
                     "portletWindowId=" + this.portletWindowId + ", " +
                     "started=" + this.started + ", " +
                     "submitted=" + this.submitted + ", " +

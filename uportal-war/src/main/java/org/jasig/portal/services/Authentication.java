@@ -29,7 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.IUserIdentityStore;
-import org.jasig.portal.events.IPortalEventFactory;
+import org.jasig.portal.events.IPortalAuthEventFactory;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IAdditionalDescriptor;
 import org.jasig.portal.security.IOpaqueCredentials;
@@ -70,7 +70,7 @@ public class Authentication {
     public static MovingAverageSample lastAuthentication = new MovingAverageSample();
 
     private IUserIdentityStore userIdentityStore;
-    private IPortalEventFactory portalEventFactory;
+    private IPortalAuthEventFactory portalEventFactory;
     private IPersonAttributeDao personAttributeDao;
 
     @Autowired
@@ -84,7 +84,7 @@ public class Authentication {
     }
 
     @Autowired
-    public void setPortalEventFactory(IPortalEventFactory portalEventFactory) {
+    public void setPortalEventFactory(IPortalAuthEventFactory portalEventFactory) {
         this.portalEventFactory = portalEventFactory;
     }
 

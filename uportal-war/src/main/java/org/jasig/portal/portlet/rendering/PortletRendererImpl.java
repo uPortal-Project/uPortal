@@ -42,7 +42,7 @@ import org.apache.pluto.container.PortletContainerException;
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.api.portlet.PortletDelegationLocator;
-import org.jasig.portal.events.IPortalEventFactory;
+import org.jasig.portal.events.IPortletExecutionEventFactory;
 import org.jasig.portal.portlet.PortletDispatchException;
 import org.jasig.portal.portlet.container.cache.CacheControlImpl;
 import org.jasig.portal.portlet.container.cache.CacheState;
@@ -59,7 +59,6 @@ import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
-import org.jasig.portal.portlet.rendering.worker.HungWorkerAnalyzer;
 import org.jasig.portal.portlet.session.PortletSessionAdministrativeRequestListener;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
@@ -91,16 +90,15 @@ public class PortletRendererImpl implements IPortletRenderer {
     private PortletContainer portletContainer;
     private PortletDelegationLocator portletDelegationLocator;
     private IPortletCacheControlService portletCacheControlService;
-    private IPortalEventFactory portalEventFactory;
+    private IPortletExecutionEventFactory portalEventFactory;
     private IUrlSyntaxProvider urlSyntaxProvider;
-    private HungWorkerAnalyzer hungWorkerAnalyzer;
 
     @Autowired
     public void setUrlSyntaxProvider(IUrlSyntaxProvider urlSyntaxProvider) {
         this.urlSyntaxProvider = urlSyntaxProvider;
     }
     @Autowired
-    public void setPortalEventFactory(IPortalEventFactory portalEventFactory) {
+    public void setPortalEventFactory(IPortletExecutionEventFactory portalEventFactory) {
         this.portalEventFactory = portalEventFactory;
     }
     @Autowired
@@ -127,13 +125,9 @@ public class PortletRendererImpl implements IPortletRenderer {
 			IPortletCacheControlService portletCacheControlService) {
 		this.portletCacheControlService = portletCacheControlService;
 	}
-    @Autowired
-    public void setHungWorkerAnalyzer(HungWorkerAnalyzer hungWorkerAnalyzer) {
-        this.hungWorkerAnalyzer = hungWorkerAnalyzer;
-    }
 	
 	
-	/**
+	/*
 	 * PLT 22.1 If the content of a portlet is cached and the portlet is target of request 
      * with an action-type semantic (e.g. an action or event call), the portlet container should discard the cache and
      * invoke the corresponding request handling methods of the portlet like processAction,or processEvent.
@@ -180,7 +174,7 @@ public class PortletRendererImpl implements IPortletRenderer {
         return executionTime;
     }
     
-    /**
+    /*
      * PLT 22.1 If the content of a portlet is cached and the portlet is target of request 
      * with an action-type semantic (e.g. an action or event call), the portlet container should discard the cache and
      * invoke the corresponding request handling methods of the portlet like processAction,or processEvent.
@@ -280,7 +274,7 @@ public class PortletRendererImpl implements IPortletRenderer {
             }
 
             @Override
-            public void publishRenderExecutionEvent(IPortalEventFactory portalEventFactory, PortletRendererImpl source,
+            public void publishRenderExecutionEvent(IPortletExecutionEventFactory portalEventFactory, PortletRendererImpl source,
                     HttpServletRequest request, String fname, long executionTime, Map<String, List<String>> parameters,
                     boolean targeted, boolean cached) {
                 portalEventFactory.publishPortletRenderHeaderExecutionEvent(request,
@@ -312,7 +306,7 @@ public class PortletRendererImpl implements IPortletRenderer {
             }
 
             @Override
-            public void publishRenderExecutionEvent(IPortalEventFactory portalEventFactory, PortletRendererImpl source,
+            public void publishRenderExecutionEvent(IPortletExecutionEventFactory portalEventFactory, PortletRendererImpl source,
                     HttpServletRequest request, String fname, long executionTime, Map<String, List<String>> parameters,
                     boolean targeted, boolean cached) {
                 portalEventFactory.publishPortletRenderExecutionEvent(request,
@@ -348,7 +342,7 @@ public class PortletRendererImpl implements IPortletRenderer {
         /**
          * Public portlet event
          */
-        public abstract void publishRenderExecutionEvent(IPortalEventFactory portalEventFactory,
+        public abstract void publishRenderExecutionEvent(IPortletExecutionEventFactory portalEventFactory,
                 PortletRendererImpl source, HttpServletRequest request, String fname, long executionTime,
                 Map<String, List<String>> parameters, boolean targeted, boolean cached);
 
@@ -780,11 +774,6 @@ public class PortletRendererImpl implements IPortletRenderer {
 		} else {
 			logger.debug("ignoring doReset as portletWindowRegistry#getPortletWindow returned a null result for portletWindowId " + portletWindowId);
 		}
-    }
-    
-    @Override
-    public HungWorkerAnalyzer getHungWorkerAnalyzer() {
-        return hungWorkerAnalyzer;
     }
     
     /**
