@@ -909,6 +909,24 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
     }
     
     @Override
+    public Iterable<String> getAllLayoutAttributeNodeIds(HttpServletRequest request, PreferencesScope prefScope, String name) {
+        
+        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
+        final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
+        
+        final LinkedHashSet<String> allNodeIds = new LinkedHashSet<String>();
+        
+        // bit of a hack -- could do with change to stylesheetUserPreferences to check for containsKey()
+        for (String node : getAllLayoutAttributeNodeIds(request, prefScope)) {
+            if (stylesheetUserPreferences.getLayoutAttribute(node, name) != null)
+                allNodeIds.add(node);
+        }
+        
+        
+        return allNodeIds;
+    }
+    
+    @Override
     public <P extends Populator<String, String>> P populateLayoutAttributes(HttpServletRequest request,
             PreferencesScope prefScope, String nodeId, P layoutAttributes) {
         final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
