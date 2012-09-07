@@ -31,7 +31,6 @@
         <ns2:portletName>Sitemap</ns2:portletName>
     </portlet-descriptor>
     <category>uPortal</category>
-    <group>Everyone</group>
     <parameter>
         <name>disableDynamicTitle</name>
         <value>true</value>
