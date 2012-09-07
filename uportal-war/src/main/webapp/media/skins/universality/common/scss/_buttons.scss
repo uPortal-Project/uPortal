@@ -2,146 +2,359 @@
 // Gives links and form buttons a consistent button look across the portal.
 // Pass in the desired type of button based on the context.
 
-// Use variables to store selectors.
-$btn-up-selector		: ".button, button, input[type='submit'], input[type='button']";
-$btn-hover-selector		: ".button:hover, .button:focus, a.button:hover, a.button:focus, button:hover, button:focus, input[type='submit']:hover, input[type='submit']:focus, input[type='button']:hover, input[type='button']:focus";
-$btn-down-selector		: ".button:active, button:active, input[type='submit']:active, input[type='button']:active";
-$btn-active-selector	: ".button.active, button.active, input[type='submit'].active, input[type='button'].active";
-$btn-disabled-selector	: ".button[disabled='disabled'], button[disabled='disabled'], input[disabled='disabled'], input[disabled='disabled']:hover, input[disabled='disabled']:focus ";
-
 // Mixin for repeated button style elements.
 // Text-shadow is either "light" or "dark"; light is below the text and white, dark is above the text and black.
-@mixin button-style($borderColor, $backgroundColor, $textColor, $textShadow, $gradientColor1, $gradientColor2) {
-	border-color	: $borderColor;
-	background		: $backgroundColor;
-	color			: $textColor;
-	@include text-shadow($textShadow);
-	@include gradient($gradientColor1, $gradientColor2);
-}
-
-// Specific styling for button Active (global "on") state.
-@mixin button-active() {
-	@include button-style($activeButtonBorder, $activeButtonBackground, $activeButtonText, $activeButtonTextShadow, $activeButtonGradient1, $activeButtonGradient2);
-}
-
-/* Apply baseline button styling once to every kind of button. */
-.up {
-	#{$btn-up-selector} {
-		display			: inline;
-		margin			: 0;
-		padding			: $buttonPadding;
-		border-width	: $buttonBorderWidth;
-		border-style	: $buttonBorderStyle;
-		font-family		: $buttonFont;
-		font-weight		: $buttonFontWeight;
-		font-size		: $buttonFontSize;
-		text-align		: $buttonTextAlign;
-		text-decoration	: none;
-		text-transform	: $buttonTextTransform;
-		cursor			: pointer;
-		@if ($buttonRound != false) {
-			@include rounded($buttonRound);
-		}
-		@if ($buttonShadow != false) {
-			@include box-shadow($buttonShadow);
-		}
-	}
-	
-	a.button {
-		display:inline-block;
-	}
-	
-	#{$btn-disabled-selector} {
-		background		: $disabledButtonBackground !important;
-		border-color	: $disabledButtonBorder !important;
-		color			: $disabledButtonText !important;
-		text-shadow		: none !important;
-		cursor			: default !important;
-	}
-	#{$btn-active-selector} {
-		@include button-active();
-	}
+@mixin button-style(
+  $borderColor, 
+  $backgroundColor, 
+  $textColor, 
+  $textShadow, 
+  $gradientColor1, 
+  $gradientColor2
+) {
+  border-color: $borderColor;
+  background: $backgroundColor;
+  color: $textColor;
+  @include text-shadow($textShadow);
+  @include gradient($gradientColor1, $gradientColor2);
 }
 
 // Specific styling for button Up state. Styling is contextual, by the type passed in.
 @mixin button-up($type) {
-	
-	@if $type == dark {
-		@include button-style($darkButtonBorder, $darkButtonBackground, $darkButtonText, $darkButtonTextShadow, $darkButtonGradient1, $darkButtonGradient2);
-	} @else if $type == light {
-		@include button-style($lightButtonBorder, $lightButtonBackground, $lightButtonText, $lightButtonTextShadow, $lightButtonGradient1, $lightButtonGradient2);
-	} @else if $type == login {
-		@include button-style($loginButtonBorder, $loginButtonBackground, $loginButtonText, $loginButtonTextShadow, $loginButtonGradient1, $loginButtonGradient2);
-	} @else if $type == utility {
-		@include button-style($utilityButtonBorder, $utilityButtonBackground, $utilityButtonText, $utilityButtonTextShadow, $utilityButtonGradient1, $utilityButtonGradient2);
-	}  @else if $type == search {
-		@include button-style($searchButtonBorder, $searchButtonBackground, $searchButtonText, $searchButtonTextShadow, $searchButtonGradient1, $searchButtonGradient2);
-		padding: $searchButtonPadding;
-		@if ($buttonRound != false) {
-			@include round(0, $buttonRound, $buttonRound, 0);
-		}
-	}  @else if $type == websearch {
-		@include button-style($websearchButtonBorder, $websearchButtonBackground, $websearchButtonText, $websearchButtonTextShadow, $websearchButtonGradient1, $websearchButtonGradient2);
-		padding: $websearchButtonPadding;
-		@if ($buttonRound != false) {
-			@include round(0, $buttonRound, $buttonRound, 0);
-		}
-	} @else {
-		@include button-style($buttonBorder, $buttonBackground, $buttonText, $buttonTextShadow, $buttonGradient1, $buttonGradient2);
-	}
+  display: inline;
+  margin: 0;
+  padding: $buttonPadding;
+  border-width: $buttonBorderWidth;
+  border-style: $buttonBorderStyle;
+  font-family: $buttonFont;
+  font-weight: $buttonFontWeight;
+  font-size: $buttonFontSize;
+  text-align: $buttonTextAlign;
+  text-decoration: none;
+  text-transform: $buttonTextTransform;
+  cursor: pointer;
+  @if ($buttonRound  != false) { @include rounded($buttonRound); }
+  @if ($buttonShadow != false) { @include box-shadow($buttonShadow); }
+
+  @if $type == 'dark' {
+    @include button-style(
+      $darkButtonBorder,
+      $darkButtonBackground,
+      $darkButtonText,
+      $darkButtonTextShadow,
+      $darkButtonGradient1,
+      $darkButtonGradient2
+    ); 
+  } 
+  @else if $type == 'light' {
+    @include button-style(
+      $lightButtonBorder,
+      $lightButtonBackground,
+      $lightButtonText,
+      $lightButtonTextShadow,
+      $lightButtonGradient1,
+      $lightButtonGradient2
+    );
+  } 
+  @else if $type == 'login' {
+    @include button-style(
+      $loginButtonBorder,
+      $loginButtonBackground,
+      $loginButtonText,
+      $loginButtonTextShadow,
+      $loginButtonGradient1,
+      $loginButtonGradient2
+    );
+  } 
+  @else if $type == 'utility' {
+    @include button-style(
+      $utilityButtonBorder,
+      $utilityButtonBackground,
+      $utilityButtonText,
+      $utilityButtonTextShadow,
+      $utilityButtonGradient1,
+      $utilityButtonGradient2
+    );
+  } 
+  @else if $type == 'search' {
+    @include button-style(
+      $searchButtonBorder,
+      $searchButtonBackground,
+      $searchButtonText,
+      $searchButtonTextShadow,
+      $searchButtonGradient1,
+      $searchButtonGradient2
+    );
+    padding: $searchButtonPadding;
+    @if ($buttonRound != false) {
+      @include round(0, $buttonRound, $buttonRound, 0);
+    }
+  } 
+  @else if $type == 'websearch' {
+    @include button-style(
+      $websearchButtonBorder,
+      $websearchButtonBackground,
+      $websearchButtonText,
+      $websearchButtonTextShadow,
+      $websearchButtonGradient1,
+      $websearchButtonGradient2
+    );
+    padding: $websearchButtonPadding;
+    @if ($buttonRound != false) {
+      @include round(0, $buttonRound, $buttonRound, 0);
+    }
+  } 
+  @else {
+    @include button-style(
+      $buttonBorder,
+      $buttonBackground,
+      $buttonText,
+      $buttonTextShadow,
+      $buttonGradient1,
+      $buttonGradient2
+    );
+  }
 }
 
 // Specific styling for button Hover state. Styling is contextual, by the type passed in.
 @mixin button-hover($type) {
-	
-	@if $type == dark {
-		@include button-style($darkButtonHoverBorder, $darkButtonHoverBackground, $darkButtonHoverText, $darkButtonHoverTextShadow, $darkButtonHoverGradient1, $darkButtonHoverGradient2);
-	} @else if $type == light {
-		@include button-style($lightButtonHoverBorder, $lightButtonHoverBackground, $lightButtonHoverText, $lightButtonHoverTextShadow, $lightButtonHoverGradient1, $lightButtonHoverGradient2);
-	} @else if $type == login {
-		@include button-style($loginButtonHoverBorder, $loginButtonHoverBackground, $loginButtonHoverText, $loginButtonHoverTextShadow, $loginButtonHoverGradient1, $loginButtonHoverGradient2);
-	} @else if $type == utility {
-		@include button-style($utilityButtonHoverBorder, $utilityButtonHoverBackground, $utilityButtonHoverText, $utilityButtonHoverTextShadow, $utilityButtonHoverGradient1, $utilityButtonHoverGradient2);
-	}  @else if $type == search {
-		@include button-style($searchButtonHoverBorder, $searchButtonHoverBackground, $searchButtonHoverText, $searchButtonHoverTextShadow, $searchButtonHoverGradient1, $searchButtonHoverGradient2);
-	}  @else if $type == websearch {
-		@include button-style($websearchButtonHoverBorder, $websearchButtonHoverBackground, $websearchButtonHoverText, $websearchButtonHoverTextShadow, $websearchButtonHoverGradient1, $websearchButtonHoverGradient2);
-	} @else {
-		@include button-style($buttonHoverBorder, $buttonHoverBackground, $buttonHoverText, $buttonHoverTextShadow, $buttonHoverGradient1, $buttonHoverGradient2);
-	}
+  @if $type == 'dark' {
+    @include button-style(
+      $darkButtonHoverBorder,
+      $darkButtonHoverBackground,
+      $darkButtonHoverText,
+      $darkButtonHoverTextShadow,
+      $darkButtonHoverGradient1,
+      $darkButtonHoverGradient2
+    );
+  } 
+  @else if $type == 'light' {
+    @include button-style(
+      $lightButtonHoverBorder,
+      $lightButtonHoverBackground,
+      $lightButtonHoverText,
+      $lightButtonHoverTextShadow,
+      $lightButtonHoverGradient1,
+      $lightButtonHoverGradient2
+    );
+  } 
+  @else if $type == 'login' {
+    @include button-style(
+      $loginButtonHoverBorder,
+      $loginButtonHoverBackground,
+      $loginButtonHoverText,
+      $loginButtonHoverTextShadow,
+      $loginButtonHoverGradient1,
+      $loginButtonHoverGradient2
+    );
+  } 
+  @else if $type == 'utility' {
+    @include button-style(
+      $utilityButtonHoverBorder,
+      $utilityButtonHoverBackground,
+      $utilityButtonHoverText,
+      $utilityButtonHoverTextShadow,
+      $utilityButtonHoverGradient1,
+      $utilityButtonHoverGradient2
+    );
+  } 
+  @else if $type == 'search' {
+  	@include button-style(
+      $searchButtonHoverBorder,
+      $searchButtonHoverBackground,
+      $searchButtonHoverText,
+      $searchButtonHoverTextShadow,
+      $searchButtonHoverGradient1,
+      $searchButtonHoverGradient2
+    );
+  } 
+  @else if $type == 'websearch' {
+    @include button-style(
+      $websearchButtonHoverBorder,
+      $websearchButtonHoverBackground,
+      $websearchButtonHoverText,
+      $websearchButtonHoverTextShadow,
+      $websearchButtonHoverGradient1,
+      $websearchButtonHoverGradient2
+    );
+  } 
+  @else {
+    @include button-style(
+      $buttonHoverBorder,
+      $buttonHoverBackground,
+      $buttonHoverText,
+      $buttonHoverTextShadow,
+      $buttonHoverGradient1,
+      $buttonHoverGradient2
+    );
+  }
 }
 
 // Specific styling for button Down state. Styling is contextual, by the type passed in.
 @mixin button-down($type) {
-	
-	@if $type == dark {
-		@include button-style($darkButtonDownBorder, $darkButtonDownBackground, $darkButtonDownText, $darkButtonDownTextShadow, $darkButtonDownGradient1, $darkButtonDownGradient2);
-	} @else if $type == light {
-		@include button-style($lightButtonDownBorder, $lightButtonDownBackground, $lightButtonDownText, $lightButtonDownTextShadow, $lightButtonDownGradient1, $darkButtonDownGradient2);
-	} @else if $type == login {
-		@include button-style($loginButtonHoverBorder, $loginButtonHoverBackground, $loginButtonHoverText, $loginButtonHoverTextShadow, $loginButtonHoverGradient1, $darkButtonHoverGradient2);
-	} @else if $type == utility {
-		@include button-style($utilityButtonDownBorder, $utilityButtonDownBackground, $utilityButtonDownText, $utilityButtonDownTextShadow, $utilityButtonDownGradient1, $utilityButtonDownGradient2);
-	}  @else if $type == search {
-		@include button-style($searchButtonDownBorder, $searchButtonDownBackground, $searchButtonDownText, $searchButtonDownTextShadow, $searchButtonDownGradient1, $searchButtonDownGradient2);
-	}  @else if $type == websearch {
-		@include button-style($websearchButtonDownBorder, $websearchButtonDownBackground, $websearchButtonDownText, $websearchButtonDownTextShadow, $websearchButtonDownGradient1, $websearchButtonDownGradient2);
-	} @else {
-		@include button-style($buttonDownBorder, $buttonDownBackground, $buttonDownText, $buttonDownTextShadow, $buttonDownGradient1, $buttonDownGradient2);
+  @if $type == 'dark' {
+    @include button-style(
+      $darkButtonDownBorder,
+      $darkButtonDownBackground,
+      $darkButtonDownText,
+      $darkButtonDownTextShadow,
+      $darkButtonDownGradient1,
+      $darkButtonDownGradient2
+    );
+  } 
+  @else if $type == 'light' {
+    @include button-style(
+      $lightButtonDownBorder,
+      $lightButtonDownBackground,
+      $lightButtonDownText,
+      $lightButtonDownTextShadow,
+      $lightButtonDownGradient1,
+      $darkButtonDownGradient2
+    );
+  } 
+  @else if $type == 'login' {
+    @include button-style(
+      $loginButtonHoverBorder,
+      $loginButtonHoverBackground,
+      $loginButtonHoverText,
+      $loginButtonHoverTextShadow,
+      $loginButtonHoverGradient1,
+      $darkButtonHoverGradient2
+    );
+  } 
+  @else if $type == 'utility' {
+    @include button-style(
+      $utilityButtonDownBorder,
+      $utilityButtonDownBackground,
+      $utilityButtonDownText,
+      $utilityButtonDownTextShadow,
+      $utilityButtonDownGradient1,
+      $utilityButtonDownGradient2
+    );
+  }
+  @else if $type == 'search' {
+    @include button-style(
+      $searchButtonDownBorder,
+      $searchButtonDownBackground,
+      $searchButtonDownText,
+      $searchButtonDownTextShadow,
+      $searchButtonDownGradient1,
+      $searchButtonDownGradient2
+    );
+  } 
+  @else if $type == 'websearch' {
+    @include button-style(
+      $websearchButtonDownBorder,
+      $websearchButtonDownBackground,
+      $websearchButtonDownText,
+      $websearchButtonDownTextShadow,
+      $websearchButtonDownGradient1,
+      $websearchButtonDownGradient2
+    );
+  } 
+  @else {
+    @include button-style(
+      $buttonDownBorder,
+      $buttonDownBackground,
+      $buttonDownText,
+      $buttonDownTextShadow,
+      $buttonDownGradient1,
+      $buttonDownGradient2
+    );
 	}
 }
 
 // Button mixin. Calls in the Up, Hover, and Down states.
 // Passes the context type to those mixins.
 // If no type is specified, default will be used, which will take the @else styles.
-@mixin button($type: default) {
-	#{$btn-up-selector} {
-		@include button-up($type);
-	}
-	#{$btn-hover-selector} {
-		@include button-hover($type);
-	}
-	#{$btn-down-selector} {
-		@include button-down($type);
-	}
+@mixin button-type($type: 'default') {
+    
+  // Active
+  @if $type == 'active' {
+    @include button-style(
+      $activeButtonBorder,
+      $activeButtonBackground, 
+      $activeButtonText, 
+      $activeButtonTextShadow, 
+      $activeButtonGradient1, 
+      $activeButtonGradient2
+    );
+  }
+  
+  // Disabled 
+  @else if $type == 'disabled' {
+      background: $disabledButtonBackground !important;
+      border-color : $disabledButtonBorder !important;
+      color : $disabledButtonText !important;
+      text-shadow : none !important;
+      cursor : default !important;
+  } 
+  
+  // Styles
+  @else {
+    @include button-up($type);
+    &:hover { 
+      @include button-hover($type); 
+    }
+    &:active,
+    &.active { 
+      @include button-down($type); 
+    }
+  }
+}
+
+.up {
+
+  // Global styles
+  .button, button, input[type='submit'], input[type='button'] {
+    @include button-type('default');
+  }
+  a.button {
+    display: inline-block;
+  }
+
+  // Disabled
+  .button, button, input {
+    &[disabled='disabled'] {
+      &:hover, &:focus {
+        @include button-type('disabled');
+      }
+    }
+  }
+
+  // Gallery close button
+  .up-gallery .close-button a.button {
+    @include button-type($galleryCloseButtonType);
+  }
+
+  // Web search
+  #webSearchContainer input[type='submit'] {
+    @include button-type('websearch');
+  }
+
+  // Login
+  #portalLogin #portalCASLogin a.button {
+    @include button-type('login');
+  }
+
+  // Fragment exit
+  #portalFragAdminExit input.button {
+    @include button-type($fragAdminHeaderButtonType);
+  }
+
+  // Page permissions
+  #portalEditPagePermissions a.button {
+  	@include button-type($fragAdminPagePermsButtonType);
+  }
+
+  // Column permissions
+  .column-permissions a.button {
+  	@include button-type($fragAdminColumnPermsButtonType);
+  }
+
+  // Portlet toolbar
+  .portlet .titlebar .toolbar .button {
+    @include button-type('light');
+    display: block;
+  }
 }

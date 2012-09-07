@@ -54,7 +54,6 @@
 		
 		.fl-widget-content {
 			background: $fragAdminHeaderContentBgd;
-			@include button($fragAdminHeaderButtonType);
 			
 			#exitFragment {
 				float: right;
@@ -68,12 +67,10 @@
 		display: block;
 		margin-top: .75em;
 		margin-right: 25px;
-		@include button($fragAdminPagePermsButtonType);
 	}
 
 	.column-permissions {
 		margin-bottom:0.5em;
-		@include button($fragAdminColumnPermsButtonType);
 	}
 	
 	.fragment-disabled, .fragment-disabled h2.fragment-title {

@@ -128,30 +128,6 @@
 .portlet .titlebar .actions li {border:none;}
 .portlet .titlebar .return-link {font-weight:bold; text-decoration:none !important;}
 .portlet .titlebar .toolbar {background:#e2e8e7; border-top:1px solid #ccc;}
-.portlet .titlebar .toolbar .button,
-.portlet .titlebar .toolbar a.button {
-	border-color:#ccc;
-	background-color:#e2e8e7;
-	background-image:-webkit-gradient(linear, 0% 0%, 0% 50%, from(#e2e8e7), to(#fff)); 
-	background-image:-moz-linear-gradient(0% 50% 90deg, #e2e8e7, #fff);
-	color:#555 !important;
-	text-shadow:none;
-}
-.portlet .titlebar .toolbar .button:hover,
-.portlet .titlebar .toolbar .button:focus,
-.portlet .titlebar .toolbar a.button:hover,
-.portlet .titlebar .toolbar a.button:focus,
-.portlet .titlebar .toolbar input[type="submit"]:hover,
-.portlet .titlebar .toolbar input[type="submit"]:focus,
-.portlet .titlebar .toolbar input[type="button"]:hover,
-.portlet .titlebar .toolbar input[type="button"]:focus {
-	border-color:#000;
-	background-color:#666;
-    background-image:-webkit-gradient(linear, 0% 0%, 0% 50%, from(#666), to(#999)); 
-    background-image:-moz-linear-gradient(0% 50% 90deg, #666, #999);
-	color:#fff !important;
-	text-shadow:0 -1px 1px rgba(0,0,0,.5); 
-}
 .portlet .titlebar .details {font-size:85%; background-color:#f8f8f8; font-weight:bold;}
 .portlet .titlebar .details .sysid .name {font-family:"Courier New", Courier, monospace;}
 .portlet .titlebar .details a {font-weight:normal;}
