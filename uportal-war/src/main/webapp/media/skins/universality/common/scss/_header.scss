@@ -94,7 +94,6 @@
 				background: $webSearchInputFocus;
 				border-color: $webSearchInputFocus;
 			}
-			@include button(websearch);
 		}
 	}
 	
@@ -115,7 +114,6 @@
 				
 				.fl-widget-content {
 					text-align: center;
-					@include button(login);
 				}
 			}
 		}
