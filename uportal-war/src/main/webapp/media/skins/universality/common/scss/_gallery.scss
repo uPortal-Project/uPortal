@@ -72,11 +72,6 @@
 			 		}
 			 		
 			 	}
-			 	
-			 	.close-button {
-			 		/* Close gallery ("I'm Done") button. */
-			 		@include button($galleryCloseButtonType);
-			 	}	
 		 	}
 		 	
 		 	.content-filters-wrapper {
