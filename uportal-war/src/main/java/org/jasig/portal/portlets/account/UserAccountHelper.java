@@ -160,17 +160,6 @@ public class UserAccountHelper {
         
         ILocalAccountPerson person = accountDao.getPerson(username);
         
-        if (person == null) {
-            /*
-             * NOTE:  We're probably here because an admin is editing attributes 
-             * on a user that is non-local in origin.  We need to create an 
-             * ILocalAccountPerson instance representing the user to support 
-             * this use case, but we're using the getForm() version, not the 
-             * getNewAccountForm(), because the username is already known.
-             */
-            person = accountDao.createPerson(username);
-        }
-        
         PersonForm form = new PersonForm(accountEditAttributes);
         form.setUsername(person.getName());
         form.setId(person.getId());
@@ -218,7 +207,12 @@ public class UserAccountHelper {
     }
     
     public boolean canEditUser(IPerson currentUser, String target) {
-
+        
+        // first check to see if this is a local user
+        if (!isLocalAccount(target)) {
+            return false;
+        }
+        
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
         
