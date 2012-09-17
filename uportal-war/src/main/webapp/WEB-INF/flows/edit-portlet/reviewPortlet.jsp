@@ -206,7 +206,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
               <tr>
                 <th><spring:message code="preferences"/></th>
                 <th><spring:message code="values"/></th>
-                <th><spring:message code="user.editable"/></th>
+                <th><spring:message code="read.only.prevents.user.customization"/></th>
               </tr>
             </thead>
             <tbody>
@@ -218,7 +218,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                         <div>${ fn:escapeXml(value )}</div>
                     </c:forEach>
                   </td>
-                  <td>${ fn:escapeXml(!pref.readOnly )}</td>
+                  <td>${ fn:escapeXml(pref.readOnly )}</td>
                 </tr>
               </c:forEach>
             </tbody>
@@ -249,7 +249,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
               <tr>
                 <th><spring:message code="preferences"/></th>
                 <th><spring:message code="values"/></th>
-                <th><spring:message code="user.editable"/></th>
+                <th><spring:message code="read.only.prevents.user.customization"/></th>
               </tr>
             </thead>
             <tfoot></tfoot>
@@ -262,7 +262,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                          <div>${ fn:escapeXml(val )}</div>
                         </c:forEach>
                     </td>
-                    <td>${ !fn:escapeXml(portlet.portletPreferenceReadOnly[key].value )}</td>
+                    <td>${ fn:escapeXml(portlet.portletPreferenceReadOnly[pref.key].value )}</td>
                   </tr>
               </c:forEach>
             </tbody>

@@ -157,7 +157,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     <tr>
                       <th><spring:message code="parameter"/></th>
                       <th><spring:message code="value"/></th>
-                      <th><spring:message code="user.editable"/></th>
+                      <th><spring:message code="read.only.prevents.user.customization"/></th>
                     </tr>
                   </thead>
                   <tbody>
