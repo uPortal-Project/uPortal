@@ -24,6 +24,8 @@ package org.jasig.portal.events.aggr.groups;
  * @version $Revision$
  */
 public interface AggregatedGroupMapping {
+    long getId();
+
     String getGroupName();
     
     String getGroupService();

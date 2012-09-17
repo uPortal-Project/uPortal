@@ -29,6 +29,11 @@ import java.util.Set;
  */
 public interface AggregatedGroupLookupDao {
     /**
+     * Get the group mapping object for the specified group mapping id
+     */
+    AggregatedGroupMapping getGroupMapping(long groupMappingId);
+    
+    /**
      * Get the group mapping object for the specified group key
      */
     AggregatedGroupMapping getGroupMapping(String portalGroupKey);
