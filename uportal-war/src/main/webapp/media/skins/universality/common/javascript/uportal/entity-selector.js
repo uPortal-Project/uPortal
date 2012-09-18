@@ -283,7 +283,8 @@ var up = up || {};
      * @param {String} key - reference to currrently 'focused' entity. ex: group:local.17
      */
     var browseEntity = function (that, key) {
-        var entity, currentEntityName, browsingInclude, entityBrowserContent, memberList, browsingResultNoMembers;
+    	console.log("browse");
+        var entity, currentEntityName, browsingInclude, entityBrowserContent, memberList;
         
         // Cache.
         entity = that.registry.getEntity(getTypeFromKey(key), getKey(key));
@@ -292,7 +293,6 @@ var up = up || {};
         browsingInclude = that.locate("browsingInclude");
         entityBrowserContent = that.locate("entityBrowserContent");
         memberList = entityBrowserContent.find("." + that.options.styles.memberList);
-        browsingResultNoMembers = that.locate("browsingResultNoMembers");
         
         // Set entity starting point / defaults.
         updateBreadcrumbs(that, entity);
@@ -309,15 +309,20 @@ var up = up || {};
             list.append(li);
             list.show();
         });//end:loop.
+        that.container.find(".no-members").each(function (idx, obj) {
+        	obj = $(obj);
+        	if (obj.parent().find("li").size() > 0) {
+        		obj.hide();
+        	} else {
+        		obj.show();
+        	}
+        });
         
         // Register click event on member list links.
         //entityBrowserContent.find("." + that.options.styles.memberLink).click(function () {
         entityBrowserContent.find("a").click(function () {
             browseEntity(that, $(this).find("span").attr("key"));
         });//end:click.
-        
-        // If there are no members overall, display the no contents message.
-        browsingResultNoMembers.css("display", entityBrowserContent.find("." + that.options.styles.memberList).find("li").size() > 0 ? "none" : "block");
         
         // Set selection state.
         setSelectionState(that, key, $.inArray(key, that.options.selected) >= 0);
@@ -535,7 +540,6 @@ var up = up || {};
             entityBrowserContent: "#entityBrowserContent",
             entityBrowserTitlebar: "#entityBrowserTitlebar",
             browsingInclude: "#browsingInclude",
-            browsingResultNoMembers: "#browsingResultNoMembers",
             closeSearch: "closeDropDown",
             searchForm: "#searchForm",
             searchDropDown: "#searchDropDown",

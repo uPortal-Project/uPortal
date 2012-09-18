@@ -94,7 +94,6 @@
                                     <div id="${n}entityBrowserContent" class="content">
                                         <!--includes-->
                                         <p><span id="${n}browsingInclude" class="current"></span> <spring:message code="includes"/>:</p>
-                                        <p id="${n}browsingResultNoMembers" style="display:none"><spring:message code="no.members"/></p>
                                         <!--members-->
                                         <c:forEach items="${selectTypes}" var="type">
                                         <c:choose>
@@ -102,24 +101,28 @@
                                                 <div class="group">
                                                     <h6 class="title"><spring:message code="groups"/></h6>
                                                     <ul class="member-list"></ul>
+                                                    <p class="no-members" style="display:none"><spring:message code="no.member.subgroups"/></p>
                                                 </div>
                                             </c:when>
                                             <c:when test="${type == 'person'}">
                                                 <div class="person">
                                                     <h6 class="title"><spring:message code="people"/></h6>
                                                     <ul class="member-list"></ul>
+                                                    <p class="no-members" style="display:none"><spring:message code="no.direct.member.people"/></p>
                                                 </div>
                                             </c:when>
                                             <c:when test="${type == 'category'}">
                                                 <div class="category">
                                                     <h6 class="title"><spring:message code="categories"/></h6>
                                                     <ul class="member-list"></ul>
+                                                    <p class="no-members" style="display:none"><spring:message code="no.member.subcategories"/></p>
                                                 </div>
                                             </c:when>
                                             <c:when test="${type == 'portlet'}">
                                                 <div class="portlet">
                                                     <h6 class="title"><spring:message code="portlets"/></h6>
                                                     <ul class="member-list"></ul>
+                                                    <p class="no-members" style="display:none"><spring:message code="no.direct.member.portlets"/></p>
                                                 </div>
                                             </c:when>
                                         </c:choose>
@@ -225,31 +228,34 @@
                                     <!--content-->
                                     <div id="${n}entityBrowserContent" class="content">
                                         <p><span id="${n}browsingInclude" class="current"></span> <spring:message code="includes"/>:</p>
-                                        <p id="${n}browsingResultNoMembers" style="display:none"><spring:message code="no.members"/></p>
                                         <c:forEach items="${selectTypes}" var="type">
                                         <c:choose>
                                             <c:when test="${type == 'group'}">
                                                 <div class="group">
                                                     <h6 class="title"><spring:message code="groups"/></h6>
                                                     <ul class="member-list"></ul>
+                                                    <p class="no-members" style="display:none"><spring:message code="no.member.subgroups"/></p>
                                                 </div>
                                             </c:when>
                                             <c:when test="${type == 'person'}">
                                                 <div class="person">
                                                     <h6 class="title"><spring:message code="people"/></h6>
                                                     <ul class="member-list"></ul>
+                                                    <p class="no-members" style="display:none"><spring:message code="no.direct.member.people"/></p>
                                                 </div>
                                             </c:when>
                                             <c:when test="${type == 'category'}">
                                                 <div class="category">
                                                     <h6 class="title"><spring:message code="categories"/></h6>
                                                     <ul class="member-list"></ul>
+                                                    <p class="no-members" style="display:none"><spring:message code="no.member.subcategories"/></p>
                                                 </div>
                                             </c:when>
                                             <c:when test="${type == 'portlet'}">
                                                 <div class="portlet">
                                                     <h6 class="title"><spring:message code="portlets"/></h6>
                                                     <ul class="member-list"></ul>
+                                                    <p class="no-members" style="display:none"><spring:message code="no.direct.member.portlets"/></p>
                                                 </div>
                                             </c:when>
                                         </c:choose>
@@ -314,7 +320,6 @@
                         entityBrowserContent: "#${n}entityBrowserContent",
                         entityBrowserTitlebar: "#${n}entityBrowserTitlebar",
                         browsingInclude: "#${n}browsingInclude",
-                        browsingResultNoMembers: "#${n}browsingResultNoMembers",
                         closeSearch: "#${n}closeDropDown",
                         searchForm: "#${n}searchForm",
                         searchDropDown: "#${n}searchDropDown",
