@@ -211,17 +211,7 @@
   <xsl:template name="portal.page.bar.link.sitemap">
     <xsl:if test="$AUTHENTICATED='true'">
     	<li class="link-sitemap">
-    	  <xsl:variable name="layoutSitemapUrl">
-            <xsl:call-template name="portalUrl">
-                <xsl:with-param name="url">
-                    <url:portal-url>
-                        <url:fname>layout-sitemap</url:fname>
-                        <url:portlet-url state="MAXIMIZED" />
-                    </url:portal-url>
-                </xsl:with-param>
-            </xsl:call-template>
-    	  </xsl:variable>
-    	  <a href="{$layoutSitemapUrl}" title="{upMsg:getMessage('go.to.site.map', $USER_LANG)}">
+    	  <a href="#sitemap" title="{upMsg:getMessage('go.to.site.map', $USER_LANG)}">
           <span><xsl:value-of select="upMsg:getMessage('site.map', $USER_LANG)"/></span>
         </a>
       </li>

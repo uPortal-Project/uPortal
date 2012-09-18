@@ -64,10 +64,11 @@
     xmlns:upAuth="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanAuthorizationHelper"
     xmlns:upGroup="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
     xmlns:upMsg="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanMessageHelper"
+    xmlns:upElemTitle="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanLayoutElementTitleHelper"
     xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
     xsi:schemaLocation="
             https://source.jasig.org/schemas/uportal/layout/portal-url https://source.jasig.org/schemas/uportal/layout/portal-url-4.0.xsd"
-    exclude-result-prefixes="url upAuth upGroup upMsg dlm xsi" 
+    exclude-result-prefixes="url upAuth upGroup upMsg upElemTitle dlm xsi" 
     version="1.0">
       
   <!-- ============================= -->
@@ -861,7 +862,59 @@
 
     <!-- Site Map -->
     <div id="portalPageFooterNav">
-        <xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'footerNav']/parent::*"/>
+        <a name="sitemap"></a>
+        <!-- 
+         | Tab layout:
+         | Tab1          Tab2          Tab3          Tab4         (<== limited to $TAB_WRAP_COUNT)
+         |   -portlet1     -portlet5     -portlet7     -portlet8
+         |   -portlet2     -portlet6                   -portlet9
+         |   -portlet3                                 -portlet10
+         |   -portlet4
+         |
+         | Tab5 ....
+         +-->
+
+        <xsl:variable name="TAB_WRAP_COUNT" select="4" />
+    
+        <!-- Here we can't use muenchian grouping, because due to some bug key ignores "match" argument, hence calculations using position() are unusable -->
+        <xsl:for-each select="//navigation/tab">
+          <xsl:if test="(position() mod $TAB_WRAP_COUNT)=1">
+            <xsl:variable name="ROW_NUM" select="ceiling(position() div $TAB_WRAP_COUNT)" />
+            <div class="fl-container-flex fl-col-flex4">
+              <xsl:for-each select="//navigation/tab">
+                <xsl:if test="ceiling(position() div $TAB_WRAP_COUNT) = $ROW_NUM">
+                    <xsl:variable name="tabLinkUrl">
+                      <xsl:call-template name="portalUrl">
+                        <xsl:with-param name="url">
+                          <url:portal-url>
+                            <url:layoutId><xsl:value-of select="@ID" /></url:layoutId>
+                          </url:portal-url>
+                        </xsl:with-param>
+                      </xsl:call-template>
+                    </xsl:variable>
+                    <div class="fl-col">
+                      <div><a href="{$tabLinkUrl}"><xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/></a></div>
+                      <ul>
+                          <xsl:for-each select="tabChannel">
+                              <xsl:variable name="portletLinkUrl">
+                              <xsl:call-template name="portalUrl">
+                                <xsl:with-param name="url">
+                                  <url:portal-url>
+                                    <url:layoutId><xsl:value-of select="@ID" /></url:layoutId>
+                                    <url:portlet-url state="MAXIMIZED" />
+                                  </url:portal-url>
+                                </xsl:with-param>
+                              </xsl:call-template>
+                            </xsl:variable>
+                            <li><a href="{$portletLinkUrl}"><xsl:value-of select="@name" /></a></li>
+                        </xsl:for-each>                      
+                      </ul>
+                    </div>
+                </xsl:if>
+              </xsl:for-each>
+            </div>
+          </xsl:if>
+        </xsl:for-each>
     </div> 
 
     <xsl:if test="$INSTITUTION='uportal' or $INSTITUTION='coal' or $INSTITUTION='ivy' or $INSTITUTION='hc'">

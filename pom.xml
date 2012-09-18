@@ -4,11 +4,11 @@
     <parent>
         <groupId>org.jasig.parent</groupId>
         <artifactId>jasig-parent</artifactId>
-        <version>33</version>
+        <version>34</version>
     </parent>
     
     <prerequisites>
-    	<maven>3.0.0</maven>
+        <maven>3.0.0</maven>
     </prerequisites>
 
     <modelVersion>4.0.0</modelVersion>
@@ -115,9 +115,9 @@
         <cas-server.version>3.4.11</cas-server.version>
         <cas-clearpass.version>1.0.7.GA</cas-clearpass.version>
         <cas-proxy-test-portlet.version>1.0.0-RC3</cas-proxy-test-portlet.version>
-        <email-preview.version>1.1.1</email-preview.version>
+        <email-preview.version>2.0.1</email-preview.version>
         <FunctionalTestsPortlet.version>1.1.0</FunctionalTestsPortlet.version>
-        <jasig-widget-portlets.version>1.0.2</jasig-widget-portlets.version>
+        <jasig-widget-portlets.version>1.0.3</jasig-widget-portlets.version>
         <googleportlet.version>0.4</googleportlet.version>
         <MapPortlet.version>1.0.0-SNAPSHOT</MapPortlet.version>
         <NewsReaderPortlet.version>3.0.2</NewsReaderPortlet.version>
@@ -183,8 +183,8 @@
         <org.springframework.webflow.version>2.3.1.RELEASE</org.springframework.webflow.version>
         <oro.version>2.0.8</oro.version>
         <persistence-api.version>1.0</persistence-api.version>
-        <person-directory.version>1.5.0</person-directory.version>
-        <pluto.version>2.1.0-M2</pluto.version>
+        <person-directory.version>1.5.1</person-directory.version>
+        <pluto.version>2.1.0-M3</pluto.version>
         <portlet-api.version>2.0</portlet-api.version>
         <quartz.version>1.8.4</quartz.version>
         <resource-server.version>1.0.26</resource-server.version>
@@ -568,7 +568,7 @@
                 <version>${ehcache-jgroups3replication.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jasig.portal</groupId>
+                <groupId>org.apache.portals.pluto</groupId>
                 <artifactId>pluto-taglib</artifactId>
                 <version>${pluto.version}</version>
             </dependency>

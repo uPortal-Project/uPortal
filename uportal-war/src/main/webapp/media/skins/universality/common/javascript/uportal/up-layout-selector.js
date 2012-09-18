@@ -43,12 +43,12 @@ var up = up || {};
             
             tree.children.push({
                 ID: "layoutContainer:",
+                decorators: [
+                    { type: "addClass", classes: classes }
+                ],
                 children: [
                     {
-                        ID: "layout",
-                        decorators: [
-                            { type: "addClass", classes: classes }
-                        ]
+                        ID: "layout"
                     },
                     {
                         ID: "layoutLink",
@@ -56,8 +56,8 @@ var up = up || {};
                             { type: "jQuery", func: "click", 
                                 args: function () {
                                     if (!layout.disabled) {
-                                        that.refresh();
                                         that.options.currentLayout = layout.columns;
+                                        that.refresh();
                                         that.events.onLayoutSelect.fire(layout, that);
                                     }
                                 } 
