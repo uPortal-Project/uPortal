@@ -18,7 +18,11 @@
  */
 package org.jasig.portal.events.aggr;
 
+import java.util.List;
+
 import org.joda.time.DateTime;
+
+import com.google.common.base.Function;
 
 
 /**
@@ -35,4 +39,19 @@ public interface AggregationIntervalHelper {
      * @return Information about the calculated interval, null if the specified interval is not currently supported
      */
     public AggregationIntervalInfo getIntervalInfo(AggregationInterval interval, DateTime date);
+
+    /**
+     * Fill in any missing timepoints in a list of data with zero-value aggregation
+     * objects.
+     * 
+     * @param <T>
+     * @param interval {@AggregationInterval} used in aggregation
+     * @param start start Date for the interval
+     * @param end end Date for the interval
+     * @param data List of data to fill in
+     * @param missingDataCreator Function used to create zero-value aggregation objects
+     * @return
+     */
+    public <T extends BaseAggregation> List<T> fillInBlanks(AggregationInterval interval, DateTime start, DateTime end, List<T> data, Function<AggregationIntervalInfo, T> missingDataCreator);
+
 }

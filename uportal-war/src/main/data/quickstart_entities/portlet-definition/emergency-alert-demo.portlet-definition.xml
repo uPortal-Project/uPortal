@@ -73,7 +73,7 @@
         <value>false</value>
     </parameter>
     <portlet-preference>
-        <name>AbstractXmlAlertService.enabledByDefault</name>
+        <name>AbstractCachingAlertService.enabledByDefault</name>
         <readOnly>true</readOnly>
         <value>false</value>
     </portlet-preference>
