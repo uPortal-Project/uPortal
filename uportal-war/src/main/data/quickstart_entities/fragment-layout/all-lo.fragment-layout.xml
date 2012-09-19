@@ -29,7 +29,6 @@
       <channel fname="tips" unremovable="false" hidden="false" immutable="false" ID="n6"/>
     </folder>
     <folder ID="s7" hidden="false" immutable="false" name="Footer folder" type="footer" unremovable="false">
-      <channel fname="layout-sitemap" unremovable="false" hidden="false" immutable="false" ID="n8"/>
     </folder>
   </folder>
 </layout>
