@@ -28,7 +28,7 @@
         <folder ID="s5" hidden="false" immutable="false" name="Main Staff Tab" type="regular" unremovable="false">
             <structure-attribute>
                 <name>externalId</name>
-                <value>main</value>
+                <value>main-staff-tab</value>
             </structure-attribute>
             <folder ID="s6" hidden="false" immutable="false" name="Column 1" type="regular" unremovable="false">
                 <structure-attribute>
