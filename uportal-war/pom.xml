@@ -754,9 +754,6 @@
                             <goal>update-stylesheets</goal>
                         </goals>
                         <inherited>false</inherited>
-                        <configuration>
-                            <baseOutputDirectory>${basedir}/src/main/webapp</baseOutputDirectory>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -774,6 +771,7 @@
                         <inherited>false</inherited>
                         <configuration>
                             <displayJsWarnings>false</displayJsWarnings>
+                            <useGeneratedSources>true</useGeneratedSources>
                             <includes>
                                 <include>media/skins/universality/**/skin.xml</include>
                             </includes>
@@ -789,6 +787,7 @@
                         <inherited>false</inherited>
                         <configuration>
                             <displayJsWarnings>false</displayJsWarnings>
+                            <useGeneratedSources>true</useGeneratedSources>
                             <includes>
                                 <include>media/skins/muniversality/**/skin.xml</include>
                             </includes>
