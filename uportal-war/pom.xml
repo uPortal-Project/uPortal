@@ -746,9 +746,19 @@
                 <groupId>org.jasig.maven</groupId>
                 <artifactId>sass-maven-plugin</artifactId>
                 <version>1.0.0</version>
-                <configuration>
-                    <baseOutputDirectory>${basedir}/src/main/webapp</baseOutputDirectory>
-                </configuration>
+                <executions>
+                    <execution>
+                        <id>compile-sass-skins</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>update-stylesheets</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <baseOutputDirectory>${basedir}/src/main/webapp</baseOutputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.jasig.resourceserver</groupId>
