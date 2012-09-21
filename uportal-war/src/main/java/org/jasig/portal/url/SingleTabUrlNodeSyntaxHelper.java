@@ -186,7 +186,12 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
             return Collections.emptyList();
         }
         
-        return Arrays.asList(tabId);
+        String externalId = stylesheetUserPreferencesService.getLayoutAttribute(request, PreferencesScope.STRUCTURE, tabId, "externalId");
+        if (externalId != null)
+            return Arrays.asList(externalId);
+        else
+            return Arrays.asList(tabId);
+        
     }
 
     /* (non-Javadoc)
@@ -198,7 +203,22 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
             return null;
         }
         
-        final String layoutNodeId = folderNames.get(0);
+        
+        String name = folderNames.get(0);
+        
+        for (String nodeIdToTest : stylesheetUserPreferencesService.getAllLayoutAttributeNodeIds(request, PreferencesScope.STRUCTURE, "externalId")) {
+            String value = stylesheetUserPreferencesService.getLayoutAttribute(request, PreferencesScope.STRUCTURE, nodeIdToTest, "externalId");
+            
+            if (value.equals(name)) {
+                name = nodeIdToTest;
+                break; // jump out with the first match -- What about if there are more than one with same externalId ?
+            }
+                
+        }
+        
+        
+        //final String layoutNodeId = folderNames.get(0);
+        final String layoutNodeId = name;
         
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();

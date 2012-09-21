@@ -909,6 +909,54 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
     }
     
     @Override
+    public Iterable<String> getAllLayoutAttributeNodeIds(HttpServletRequest request, PreferencesScope prefScope, String name) {
+        
+        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
+        final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
+        
+        final LinkedHashSet<String> allNodeIds = new LinkedHashSet<String>();
+        if (stylesheetUserPreferences != null)
+            // bit of a hack -- could do with change to stylesheetUserPreferences to check for containsKey()
+            for (String node : getAllLayoutAttributeNodeIds(request, prefScope)) {
+                if (stylesheetUserPreferences.getLayoutAttribute(node, name) != null)
+                    allNodeIds.add(node);
+            }
+        
+        
+        final HttpSession session = request.getSession(false);
+        if (session != null) {
+            final Map<String, Map<String, String>> sessionLayoutAttributes = PortalWebUtils.getMapSessionAttribute(session, LAYOUT_ATTRIBUTES_KEY + stylesheetPreferencesKey.toString(), false);
+            if (sessionLayoutAttributes != null) {
+                for (Map.Entry entry : sessionLayoutAttributes.entrySet()) {
+                    if (((Map<String,String>)entry.getValue()).containsKey(name))
+                        allNodeIds.add((String)entry.getKey());
+                }
+            }
+        }
+        
+        
+        final Map<String, Map<String, String>> requestLayoutAttributes = PortalWebUtils.getMapRequestAttribute(request, LAYOUT_ATTRIBUTES_KEY + stylesheetPreferencesKey.toString(), false);
+        if (requestLayoutAttributes != null) {
+            for (Map.Entry entry : requestLayoutAttributes.entrySet()) {
+                    if (((Map<String,String>)entry.getValue()).containsKey(name))
+                        allNodeIds.add((String)entry.getKey());
+                }
+        }
+        
+        
+        final IStylesheetUserPreferences distributedStylesheetUserPreferences = this.getDistributedStylesheetUserPreferences(request, prefScope);
+        if (distributedStylesheetUserPreferences != null) {
+            for (String nodeId : distributedStylesheetUserPreferences.getAllLayoutAttributeNodeIds()) {
+                if (distributedStylesheetUserPreferences.getLayoutAttribute(nodeId, name) != null)
+                    allNodeIds.add(nodeId);
+            }
+        }
+        
+        
+        return allNodeIds;
+    }
+    
+    @Override
     public <P extends Populator<String, String>> P populateLayoutAttributes(HttpServletRequest request,
             PreferencesScope prefScope, String nodeId, P layoutAttributes) {
         final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
