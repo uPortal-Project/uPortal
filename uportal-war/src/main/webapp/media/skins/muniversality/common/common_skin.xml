@@ -28,10 +28,10 @@
   <css included="aggregated" resource="true">/rs/jqueryui/1.8.13/theme/smoothness/jquery-ui-1.8.13-smoothness.min.css</css>
   
   <!-- Modified jQuery Mobile theme for uMobile. Decided not to use the jQuery Mobile's A,B,C,D,E color scheme setup. -->
-  <css>jquerymobile/jqm.theme.css</css>
+  <!--css>jquerymobile/jqm.theme.css</css-->
 
   <!-- Visual style for the mobile portal. -->
-  <css>portal.css</css>
+  <!--css>portal.css</css-->
   
   <!-- Visual style for portlet content.
   <css>portlet.css</css> -->
