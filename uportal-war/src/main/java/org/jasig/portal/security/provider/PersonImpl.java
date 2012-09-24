@@ -234,13 +234,14 @@ public class PersonImpl implements IPerson {
     /**
      * Determines whether or not this person is a "guest" user.
      * <p>
-     * This person is a "guest" if either of the following are true:
+     * This person is a "guest" if both of the following are true:
      * <ol>
      *   <li>This person's user name matches the value of the property
      *       <code>org.jasig.portal.security.PersonImpl.guest_user_name</code>
      *       in <code>portal.properties</code>.</li>
-     *   <li>This person has a populated instance ISecurityContext, but has not 
-     *       been successfully authenticated.</li>
+     *   <li>This person does not have a live instance ISecurityContext that 
+     *       states he/she has been successfully authenticated.  (It can be 
+     *       either null or unauthenticated.)</li>
      * </ol>
      * 
      * @return <code>true</code> If person is a guest, otherwise <code>false</code>
@@ -248,12 +249,8 @@ public class PersonImpl implements IPerson {
     public boolean isGuest() {
         boolean isGuest = false;  // default
         String userName = (String) getAttribute(IPerson.USERNAME);
-        if (PersonFactory.GUEST_USERNAME.equals(userName)) {
-            // This person *is* the guest user defined in portal.properties
-            isGuest = true;
-        } else if (m_securityContext != null && !m_securityContext.isAuthenticated()) {
-            // This person has a valid security context, but 
-            // it's telling us the user is not authenticated
+        if (PersonFactory.GUEST_USERNAME.equals(userName) && 
+                (m_securityContext == null || !m_securityContext.isAuthenticated())) {
             isGuest = true;
         }
         return isGuest;
