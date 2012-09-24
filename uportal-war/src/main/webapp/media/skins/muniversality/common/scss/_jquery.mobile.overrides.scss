@@ -4,7 +4,7 @@
 /* Overwrites to jQuery Mobile */
 .ui-icon,
 .ui-icon-searchfield:after {
-  background-image: url('images/icons-18-white-pack.png');
+  background-image: url('../common/jquerymobile/images/icons-18-white-pack.png');
 }
 
 
@@ -22,14 +22,14 @@ only screen and (min-resolution: 240dpi) {
   .ui-icon-heart , .ui-icon-wrench , .ui-icon-play , .ui-icon-pause , .ui-icon-stop , .ui-icon-person , .ui-icon-music,
   .ui-icon-rss , .ui-icon-wifi , .ui-icon-phone , .ui-icon-power , .ui-icon-lock , .ui-icon-flag , .ui-icon-calendar,
   .ui-icon-lightning , .ui-icon-drink , .ui-icon-android , .ui-icon-edit {
-    background-image: url('images/icons-36-white-pack.png');
+    background-image: url('../common/jquerymobile/images/icons-36-white-pack.png');
     -moz-background-size: 774px 54px;
     -o-background-size: 774px 54px;
     -webkit-background-size: 774px 54px;
     background-size: 774px 54px;
   }
   .ui-icon-alt {
-    background-image: url('images/icons-36-black-pack.png'	);
+    background-image: url('../common/jquerymobile/images/icons-36-black-pack.png'	);
   }
 }
 
