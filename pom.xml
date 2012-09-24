@@ -113,7 +113,7 @@
         <email-preview.version>2.0.1</email-preview.version>
         <FunctionalTestsPortlet.version>1.1.0</FunctionalTestsPortlet.version>
         <jasig-widget-portlets.version>1.0.3</jasig-widget-portlets.version>
-        <NewsReaderPortlet.version>3.0.2</NewsReaderPortlet.version>
+        <NewsReaderPortlet.version>3.0.3</NewsReaderPortlet.version>
         <NotificationPortlet.version>1.0.0</NotificationPortlet.version>
         <SimpleContentPortlet.version>1.0.2</SimpleContentPortlet.version>
         <WeatherPortlet.version>1.0.9</WeatherPortlet.version>
