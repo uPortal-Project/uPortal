@@ -1,0 +1,42 @@
+/**
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a
+ * copy of the License at:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+ 
+/*====================================*/
+/* uMOBILE PORTAL */
+/*====================================*/
+/*
+ * uMobile CSS is built with SASS:
+ * http://sass-lang.com/
+ * On top of jQuery Mobile (jQM):
+ * http://jquerymobile.com/
+ * jQM takes care of a lot of the basics. This CSS extends where needed.
+ */
+
+/* Imports
+--------------------------------------*/
+/* Import other SASS files. Breakdown is simply for organization. */
+
+@import "../../common/scss/_jquery.mobile.overrides.scss";
+
+@import "../../common/scss/_helpers";
+@import "skin-colors.scss"; // skin colors.
+@import "../../common/scss/_colors";
+@import "skin-config.scss"; // skin configuration.
+@import "../../common/scss/_theme.scss"; // skin configuration.
+@import "skin-overrides.scss"; // skin specific overrides.
