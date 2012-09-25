@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -55,6 +56,9 @@ import org.hibernate.annotations.Type;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.utils.Populator;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 
 /**
  * JPA implementation of stylesheet user preferences data
@@ -275,6 +279,23 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
         final LayoutNodeAttributesImpl layoutAttribute = getLayoutNodeAttributes(nodeId, true);
         final Map<String, String> attributes = layoutAttribute.getAttributes();
         return attributes.get(name);
+    }
+    
+    @Override
+    public Map<String, String> getAllNodesAndValuesForAttribute(String name) {
+        Validate.notEmpty(name, "name cannot be null");
+        
+        final Builder<String, String> result = ImmutableMap.builder();
+        for (final Entry<String, LayoutNodeAttributesImpl> layoutNodeAttributesEntry : this.layoutAttributes.entrySet()) {
+            final LayoutNodeAttributesImpl layoutNodeAttributes = layoutNodeAttributesEntry.getValue();
+            final String value = layoutNodeAttributes.getAttributes().get(name);
+            if (value != null) {
+                final String nodeId = layoutNodeAttributesEntry.getKey();
+                result.put(nodeId, value);
+            }
+        }
+        
+        return result.build();
     }
 
     /* (non-Javadoc)

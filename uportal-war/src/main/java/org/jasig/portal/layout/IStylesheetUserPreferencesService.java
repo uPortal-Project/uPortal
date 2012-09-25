@@ -20,6 +20,8 @@
 package org.jasig.portal.layout;
 
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.IUserProfile;
@@ -205,7 +207,17 @@ public interface IStylesheetUserPreferencesService {
      * @see IStylesheetUserPreferences#getAllLayoutAttributeNodeIds()
      */
     public Iterable<String> getAllLayoutAttributeNodeIds(HttpServletRequest request, PreferencesScope prefScope);
-    
+      
+    /**
+      * Get all layout node ids that have the specified attribute applied to them
+      * @param request The current request
+      * @param prefScope The stylesheet preferences scope
+      * @param name The name of the layout attribute
+      *
+     * @return Map of layoutNodeId to attribute value for all nodes that have an attribute with the specified name.
+     */
+    public Map<String, String> getAllNodesAndValuesForAttribute(HttpServletRequest request, PreferencesScope prefScope, String name);
+     
     /**
      * Add all layout attributes for the specified nodeId to the provided Map
      * 

@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -52,6 +53,8 @@ import org.springframework.web.util.WebUtils;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 
 /**
  * Handles retrieving and storing the various scopes of stylesheet user preference data.
@@ -755,6 +758,22 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         final HttpSession session = request.getSession();
         session.removeAttribute(key);
     }
+
+    /**
+     * @return Map<nodeId, Map<name, value>>
+     */
+    protected ConcurrentMap<String, Map<String, String>> getRequestLayoutAttributes(HttpServletRequest request,
+            StylesheetPreferencesKey stylesheetPreferencesKey) {
+        return PortalWebUtils.getMapRequestAttribute(request, LAYOUT_ATTRIBUTES_KEY + stylesheetPreferencesKey.toString(), false);
+    }
+
+    /**
+     * @return Map<nodeId, Map<name, value>>
+     */
+    protected ConcurrentMap<String, Map<String, String>> getSessionLayoutAttributes(HttpSession session, 
+            StylesheetPreferencesKey stylesheetPreferencesKey) {
+        return PortalWebUtils.getMapSessionAttribute(session, LAYOUT_ATTRIBUTES_KEY + stylesheetPreferencesKey.toString(), false);
+    }
     
     @Transactional
     @Override
@@ -888,14 +907,14 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         
         final HttpSession session = request.getSession(false);
         if (session != null) {
-            final Map<String, Map<String, String>> sessionLayoutAttributes = PortalWebUtils.getMapSessionAttribute(session, LAYOUT_ATTRIBUTES_KEY + stylesheetPreferencesKey.toString(), false);
+            final Map<String, Map<String, String>> sessionLayoutAttributes = getSessionLayoutAttributes(session, stylesheetPreferencesKey);
             if (sessionLayoutAttributes != null) {
                 allNodeIds.addAll(sessionLayoutAttributes.keySet());
             }
             
         }
 
-        final Map<String, Map<String, String>> requestLayoutAttributes = PortalWebUtils.getMapRequestAttribute(request, LAYOUT_ATTRIBUTES_KEY + stylesheetPreferencesKey.toString(), false);
+        final Map<String, Map<String, String>> requestLayoutAttributes = getRequestLayoutAttributes(request, stylesheetPreferencesKey);
         if (requestLayoutAttributes != null) {
             allNodeIds.addAll(requestLayoutAttributes.keySet());
         }
@@ -906,6 +925,55 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         }
         
         return allNodeIds;
+    }
+    
+    @Override
+    public Map<String, String> getAllNodesAndValuesForAttribute(HttpServletRequest request, PreferencesScope prefScope, String name) {
+        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
+        final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
+
+        final Builder<String, String> result = ImmutableMap.builder();
+        
+        final IStylesheetUserPreferences distributedStylesheetUserPreferences = this.getDistributedStylesheetUserPreferences(request, prefScope);
+        if (distributedStylesheetUserPreferences != null) {
+            final Map<String, String> allNodesAndValuesForAttribute = distributedStylesheetUserPreferences.getAllNodesAndValuesForAttribute(name);
+            result.putAll(allNodesAndValuesForAttribute);
+        }
+        
+        if (stylesheetUserPreferences != null) {
+            final Map<String, String> allNodesAndValuesForAttribute = stylesheetUserPreferences.getAllNodesAndValuesForAttribute(name);
+            result.putAll(allNodesAndValuesForAttribute);
+        }
+        
+        final HttpSession session = request.getSession(false);
+        if (session != null) {
+            //nodeId, name, value
+            final Map<String, Map<String, String>> sessionLayoutAttributes = getSessionLayoutAttributes(session, stylesheetPreferencesKey);
+            getAllNodesAndValuesForAttribute(sessionLayoutAttributes, name, result);
+        }
+
+        final Map<String, Map<String, String>> requestLayoutAttributes = getRequestLayoutAttributes(request, stylesheetPreferencesKey);
+        if (requestLayoutAttributes != null) {
+            getAllNodesAndValuesForAttribute(requestLayoutAttributes, name, result);
+        }
+
+        return result.build();
+    }
+
+    protected void getAllNodesAndValuesForAttribute(Map<String, Map<String, String>> layoutAttributes, String name, Builder<String, String> result) {
+        if (layoutAttributes == null) {
+            return;
+        }
+        
+        for (Map.Entry<String, Map<String, String>> layoutNodeAttributesEntry : layoutAttributes.entrySet()) {
+            //name, value
+            final Map<String, String> layoutNodeAttribute = layoutNodeAttributesEntry.getValue();
+            final String value = layoutNodeAttribute.get(name);
+            if (value != null) {
+                final String nodeId = layoutNodeAttributesEntry.getKey();
+                result.put(nodeId, value);
+            }
+        }
     }
     
     @Override
@@ -922,9 +990,9 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
             sessionLayoutAttributes = null;
         }
         else {
-            sessionLayoutAttributes = PortalWebUtils.getMapSessionAttribute(session, LAYOUT_ATTRIBUTES_KEY + stylesheetPreferencesKey.toString(), false);
+            sessionLayoutAttributes = getSessionLayoutAttributes(session, stylesheetPreferencesKey);
         }
-        final Map<String, Map<String, String>> requestLayoutAttributes = PortalWebUtils.getMapRequestAttribute(request, LAYOUT_ATTRIBUTES_KEY + stylesheetPreferencesKey.toString(), false);
+        final Map<String, Map<String, String>> requestLayoutAttributes = getRequestLayoutAttributes(request, stylesheetPreferencesKey);
         
         final IStylesheetUserPreferences distributedStylesheetUserPreferences = this.getDistributedStylesheetUserPreferences(request, prefScope);
         if (distributedStylesheetUserPreferences != null) {
@@ -1013,14 +1081,14 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         
         final HttpSession session = request.getSession(false);
         if (session != null) {
-            final Map<String, Map<String, String>> sessionLayoutAttributes = PortalWebUtils.getMapSessionAttribute(session, LAYOUT_ATTRIBUTES_KEY + stylesheetPreferencesKey.toString(), false);
+            final Map<String, Map<String, String>> sessionLayoutAttributes = getSessionLayoutAttributes(session, stylesheetPreferencesKey);
             if (sessionLayoutAttributes != null) {
                 sessionLayoutAttributes.remove(nodeId);
             }
             
         }
 
-        final Map<String, Map<String, String>> requestLayoutAttributes = PortalWebUtils.getMapRequestAttribute(request, LAYOUT_ATTRIBUTES_KEY + stylesheetPreferencesKey.toString(), false);
+        final Map<String, Map<String, String>> requestLayoutAttributes = getRequestLayoutAttributes(request, stylesheetPreferencesKey);
         if (requestLayoutAttributes != null) {
             requestLayoutAttributes.remove(nodeId);
         }
