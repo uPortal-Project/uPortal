@@ -67,50 +67,6 @@ public final class UrlStringBuilder implements Serializable, Cloneable {
         this.port = null;
         this.context = context;
     }
-
-//    /**
-//     * Creates a URL with a protocol and host, no port will be specified
-//     * 
-//     * @param encoding The encoding to use for parameters
-//     * @param protocol The protocol for the URL, ex: http
-//     * @param host The host for the URL
-//     */
-//    public UrlStringBuilder(String encoding, String protocol, String host) {
-//        this(encoding, protocol, host, null);
-//    }
-//    
-//    /**
-//     * Creates a URL with a protocol, host and port
-//     * 
-//     * @param encoding The encoding to use for parameters
-//     * @param protocol The protocol for the URL, ex: http
-//     * @param host The host for the URL
-//     * @param port The port to use for the URL
-//     */
-//    public UrlStringBuilder(String encoding, String protocol, String host, Integer port) {
-//        this(encoding, protocol, host, null, null);
-//    }
-//
-//    /**
-//     * Creates a URL with a protocol, host and port
-//     * 
-//     * @param encoding The encoding to use for parameters
-//     * @param protocol The protocol for the URL, ex: http
-//     * @param host The host for the URL
-//     * @param port The port to use for the URL
-//     */
-//    public UrlStringBuilder(String encoding, String protocol, String host, Integer port, String context) {
-//        Validate.notNull(encoding, "encoding can not be null");
-//        Validate.notNull(protocol, "protocol can not be null");
-//        Validate.notNull(host, "host can not be null");
-//        this.checkEncoding(encoding);
-//
-//        this.encoding = encoding;
-//        this.protocol = protocol;
-//        this.host = host;
-//        this.port = port;
-//        this.context = context;
-//    }
     
     /**
      * Copy constructor

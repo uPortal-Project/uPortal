@@ -51,20 +51,6 @@ public class UrlStringBuilderTest {
         Assert.assertEquals("/", url);
     }
 
-//    @Test
-//    public void testEmptyProtocolHostBuilder() {
-//        final UrlStringBuilder builder = new UrlStringBuilder("UTF-8", "http", "www.example.com");
-//        final String url = builder.toString();
-//        Assert.assertEquals("http://www.example.com", url);
-//    }
-//
-//    @Test
-//    public void testEmptyProtocolHostPortBuilder() {
-//        final UrlStringBuilder builder = new UrlStringBuilder("UTF-8", "http", "www.example.com", 8080);
-//        final String url = builder.toString();
-//        Assert.assertEquals("http://www.example.com:8080", url);
-//    }
-
     @Test
     public void testParameterEmptyBuilder() {
         final UrlStringBuilder builder = new UrlStringBuilder("UTF-8", null);
@@ -79,20 +65,20 @@ public class UrlStringBuilderTest {
         Assert.assertEquals("/?p1=v1&p1=&p1=v2&p2=va%2C%3F&p2=v+b", url);
     }
 
-//    @Test
-//    public void testParameterProtocolHostPortBuilder() {
-//        final UrlStringBuilder builder = new UrlStringBuilder("UTF-8", "http", "www.example.com", 8080);
-//        
-//        builder.addParameter("p1", "v1", null, "v2");
-//        
-//        builder.setParameter("p0");
-//        
-//        builder.addParameter("p2", (String)null);
-//        builder.setParameter("p2", Arrays.asList("va,?", "v b"));
-//        
-//        final String url = builder.toString();
-//        Assert.assertEquals("http://www.example.com:8080?p1=v1&p1=&p1=v2&p0&p2=va%2C%3F&p2=v+b", url);
-//    }
+    @Test
+    public void testParameterProtocolHostPortBuilder() {
+        final UrlStringBuilder builder = new UrlStringBuilder("UTF-8", "uPortal");
+        
+        builder.addParameter("p1", "v1", null, "v2");
+        
+        builder.setParameter("p0");
+        
+        builder.addParameter("p2", (String)null);
+        builder.setParameter("p2", Arrays.asList("va,?", "v b"));
+        
+        final String url = builder.toString();
+        Assert.assertEquals("/uPortal?p1=v1&p1=&p1=v2&p0&p2=va%2C%3F&p2=v+b", url);
+    }
 
     @Test
     public void testParametersBuilder() {
