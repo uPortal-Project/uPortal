@@ -37,13 +37,13 @@ public interface IStylesheetUserPreferences {
     /**
      * Unique identifier of these preferences
      */
-    public long getId();
+    long getId();
 
-    public long getStylesheetDescriptorId();
+    long getStylesheetDescriptorId();
 
-    public int getUserId();
+    int getUserId();
 
-    public int getProfileId();
+    int getProfileId();
     
     /**
      * Get an output property
@@ -52,7 +52,7 @@ public interface IStylesheetUserPreferences {
      * 
      * @see Map#get(Object)
      */
-    public String getOutputProperty(String name);
+    String getOutputProperty(String name);
     
     /**
      * Set an output property
@@ -63,7 +63,7 @@ public interface IStylesheetUserPreferences {
      * @see Transformer#setOutputProperty(String, String)
      * @see Map#put(Object, Object)
      */
-    public String setOutputProperty(String name, String value);
+    String setOutputProperty(String name, String value);
     
     /**
      * Remove an output property
@@ -72,17 +72,17 @@ public interface IStylesheetUserPreferences {
      * 
      * @see Map#remove(Object)
      */
-    public String removeOutputProperty(String name);
+    String removeOutputProperty(String name);
     
     /**
      * Add all output properties to the provided Properties object
      */
-    public <P extends Populator<String, String>> P populateOutputProperties(P properties);
+    <P extends Populator<String, String>> P populateOutputProperties(P properties);
     
     /**
      * @see Properties#clear();
      */
-    public void clearOutputProperties();
+    void clearOutputProperties();
     
 
     /**
@@ -92,7 +92,7 @@ public interface IStylesheetUserPreferences {
      * 
      * @see Map#get(Object)
      */
-    public String getStylesheetParameter(String name);
+    String getStylesheetParameter(String name);
     
     /**
      * Set a transformer parameter
@@ -103,7 +103,7 @@ public interface IStylesheetUserPreferences {
      * @see Transformer#setParameter(String, Object)
      * @see Map#put(Object, Object)
      */
-    public String setStylesheetParameter(String name, String value);
+    String setStylesheetParameter(String name, String value);
     
     /**
      * Remove a transformer parameter
@@ -112,17 +112,17 @@ public interface IStylesheetUserPreferences {
      * 
      * @see Map#remove(Object)
      */
-    public String removeStylesheetParameter(String name);
+    String removeStylesheetParameter(String name);
     
     /**
      * Add all stylesheet parameters to the provided Map
      */
-    public <P extends Populator<String, String>> P populateStylesheetParameters(P stylesheetParameters);
+    <P extends Populator<String, String>> P populateStylesheetParameters(P stylesheetParameters);
     
     /**
      * @see Map#clear();
      */
-    public void clearStylesheetParameters();
+    void clearStylesheetParameters();
 
     
     /**
@@ -133,7 +133,7 @@ public interface IStylesheetUserPreferences {
      * 
      * @see Map#get(Object)
      */
-    public String getLayoutAttribute(String nodeId, String name);
+    String getLayoutAttribute(String nodeId, String name);
     
     /**
      * Set an attribute to add to a layout folder
@@ -143,36 +143,44 @@ public interface IStylesheetUserPreferences {
      * @param value node attribute name, cannot be null
      * @see Map#put(Object, Object)
      */
-    public String setLayoutAttribute(String nodeId, String name, String value);
+    String setLayoutAttribute(String nodeId, String name, String value);
+    
+    /**
+     * Get all nodes and values that have the specified attribute set.
+     * 
+     * @param name The name of the layout attribute
+     * @return Map of layout node id to attribute value
+     */
+    Map<String, String> getAllNodesAndValuesForAttribute(String name);
     
     /**
      * @param nodeId The layout node id to remove the attribute from, cannot be null
      * @param name node attribute name, cannot be null
      * @see Map#remove(Object)
      */
-    public String removeLayoutAttribute(String nodeId, String name);
+    String removeLayoutAttribute(String nodeId, String name);
     
     /**
      * Add all layout attributes for the specified nodeId to the provided Map
      * 
      * @param nodeId The layout node id to get attributes for, cannot be null
      */
-    public <P extends Populator<String, String>> P populateLayoutAttributes(String nodeId, P layoutAttributes);
+    <P extends Populator<String, String>> P populateLayoutAttributes(String nodeId, P layoutAttributes);
     
     /**
      * @return Read-only view of all layout nodeIds stored in these preferences
      */
-    public Collection<String> getAllLayoutAttributeNodeIds();
+    Collection<String> getAllLayoutAttributeNodeIds();
     
     /**
      * @see Map#clear();
      */
-    public void clearLayoutAttributes(String nodeId);
+    void clearLayoutAttributes(String nodeId);
 
     
     /**
      * @see Map#clear();
      */
-    public void clearAllLayoutAttributes();
+    void clearAllLayoutAttributes();
 
 }
