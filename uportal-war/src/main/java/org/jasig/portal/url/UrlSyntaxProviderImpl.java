@@ -932,13 +932,10 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
         
         //Get the encoding and create a new URL string builder
         final String encoding = this.getEncoding(request);
-        final UrlStringBuilder url = new UrlStringBuilder(encoding);
         
         //Add the portal's context path
         final String contextPath = this.getCleanedContextPath(request);
-        if (contextPath.length() > 0) {
-            url.setPath(contextPath);
-        }
+        final UrlStringBuilder url = new UrlStringBuilder(encoding, contextPath.length() > 0 ? contextPath : null);
         
         final Map<IPortletWindowId, IPortletUrlBuilder> portletUrlBuilders = portalUrlBuilder.getPortletUrlBuilders();
         
