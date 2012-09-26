@@ -26,6 +26,15 @@
     
 
     <build>
+        <filters>
+            <filter>../../${filters.file}</filter>
+        </filters>
+        <resources>
+            <resource>
+                <filtering>true</filtering>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
         <plugins>
            <plugin>
                 <groupId>org.apache.portals.pluto</groupId>

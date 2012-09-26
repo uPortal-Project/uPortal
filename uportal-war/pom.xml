@@ -595,6 +595,13 @@
                     <exclude>properties/contexts/userContext.xml</exclude>
                 </excludes>
             </resource>
+            <resource>
+                <directory>src/main/webapp/WEB-INF</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>log4j.properties</include>
+                </includes>
+            </resource>
         </resources>
         <plugins>
             <!-- Generates JAXB binding classes -->            

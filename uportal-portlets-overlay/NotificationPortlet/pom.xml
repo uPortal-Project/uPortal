@@ -45,16 +45,8 @@
                 <directory>src/main/resources</directory>
                 <includes>
                     <!-- List files or patterns to be filtered here...  -->
-                    <include>configuration.properties</include>
+                    <include>*.properties</include>
                 </includes>
-            </resource>
-            <resource>
-                <filtering>false</filtering>
-                <directory>src/main/resources</directory>
-                <excludes>
-                    <!-- List the same files or patterns as above here...  -->
-                    <exclude>configuration.properties</exclude>
-                </excludes>
             </resource>
         </resources>
         <plugins>
