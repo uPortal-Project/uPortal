@@ -25,7 +25,7 @@
 <log4j:configuration debug="false" xmlns:log4j="http://jakarta.apache.org/log4j/">
 
     <!--
-      Log file variables, such as "{portal.logging.rootLevel}" are defined
+      Log file variables, such as "{environment.build.log.rootLevel}" are defined
       by properties in the uPortal/filters directory.  See the Building
       and Deploying uPortal section of the uPortal manual
     -->
@@ -83,7 +83,7 @@
       logger to System.out.
     -->
     <root>
-        <level value="${portal.logging.rootLevel}"/>
+        <level value="${environment.build.log.rootLevel}"/>
         <appender-ref ref="null"/>
     </root>
 </log4j:configuration>
