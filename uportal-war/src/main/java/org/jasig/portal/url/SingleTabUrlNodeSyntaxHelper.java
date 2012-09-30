@@ -22,6 +22,8 @@ package org.jasig.portal.url;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.xpath.XPathExpression;
@@ -30,6 +32,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.concurrency.caching.RequestCache;
+import org.jasig.portal.dao.usertype.FunctionalNameType;
 import org.jasig.portal.layout.IStylesheetUserPreferencesService;
 import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
 import org.jasig.portal.layout.IUserLayout;
@@ -63,7 +66,9 @@ import com.google.common.base.Function;
  */
 @Service
 public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
-    public static final char PORTLET_PATH_ELEMENT_SEPERATOR = '.';
+    public static final String EXTERNAL_ID_ATTR = "externalId";
+
+    private static final char PORTLET_PATH_ELEMENT_SEPERATOR = '.';
     
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
@@ -107,9 +112,6 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
         return this.getClass().getSimpleName();
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.url.IUrlNodeSyntaxHelper#getDefaultLayoutNodeId(javax.servlet.http.HttpServletRequest)
-     */
     @Override
     public String getDefaultLayoutNodeId(HttpServletRequest httpServletRequest) {
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(httpServletRequest);
@@ -169,9 +171,6 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.url.IUrlNodeSyntaxHelper#getFolderNamesForLayoutNode(javax.servlet.http.HttpServletRequest, java.lang.String)
-     */
     @RequestCache(keyMask={false, true})
     @Override
     public List<String> getFolderNamesForLayoutNode(HttpServletRequest request, String layoutNodeId) {
@@ -186,20 +185,81 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
             return Collections.emptyList();
         }
         
-        return Arrays.asList(tabId);
+        String externalId = stylesheetUserPreferencesService.getLayoutAttribute(request, PreferencesScope.STRUCTURE, tabId, EXTERNAL_ID_ATTR);
+        if (externalId != null) {
+            final Map<String, String> allNodesAndValuesForAttribute = stylesheetUserPreferencesService.getAllNodesAndValuesForAttribute(request, PreferencesScope.STRUCTURE, EXTERNAL_ID_ATTR);
+
+            boolean appendNodeId = false;
+            for (final Entry<String, String> nodeAttributeEntry : allNodesAndValuesForAttribute.entrySet()) {
+                final String entryNodeId = nodeAttributeEntry.getKey();
+                final String entryValue = nodeAttributeEntry.getValue();
+                if (!tabId.equals(entryNodeId) && externalId.equals(entryValue)) {
+                    appendNodeId = true;
+                    break;
+                }
+            }
+            
+            if (!FunctionalNameType.isValid(externalId)) {
+                logger.warn("ExternalId {} for tab {} is not a valid fname. It will be converted for use in the URL but this results in additional overhead", externalId, tabId);
+                externalId = FunctionalNameType.makeValid(externalId);
+            }
+            
+            if (appendNodeId) {
+                externalId = externalId + PORTLET_PATH_ELEMENT_SEPERATOR + layoutNodeId;
+            }
+            
+            return Arrays.asList(externalId);
+        }
+        else {
+            return Arrays.asList(tabId);
+        }
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.url.IUrlNodeSyntaxHelper#getLayoutNodeForFolderNames(javax.servlet.http.HttpServletRequest, java.util.List)
-     */
     @Override
     public String getLayoutNodeForFolderNames(HttpServletRequest request, List<String> folderNames) {
         if (folderNames == null || folderNames.isEmpty()) {
             return null;
         }
         
-        final String layoutNodeId = folderNames.get(0);
+        //Check if the folder name is compound and parse it if it is
+        String folderName = folderNames.get(0);
+        String layoutNodeId = null;
+        final int seperatorIndex = folderName.indexOf(PORTLET_PATH_ELEMENT_SEPERATOR);
+        if (seperatorIndex > 0 && seperatorIndex < folderName.length() - 1) {
+            layoutNodeId = folderName.substring(seperatorIndex + 1);
+            folderName = folderName.substring(0, seperatorIndex);
+        }
         
+        // Search the users layout attributes for a layout node with a matching externalId value
+        String firstMatchingNodeId = null;
+        final Map<String, String> allNodesAndValuesForAttribute = stylesheetUserPreferencesService.getAllNodesAndValuesForAttribute(request, PreferencesScope.STRUCTURE, EXTERNAL_ID_ATTR);
+        for (final Entry<String, String> entry : allNodesAndValuesForAttribute.entrySet()) {
+            final String value = entry.getValue();
+            //Have to test against the fname safe version of the externalId since the folderName could have already been translated
+            if (value.equals(folderName) || FunctionalNameType.makeValid(value).equals(folderName)) {
+                final String nodeId = entry.getKey();
+                
+                if (nodeId.equals(layoutNodeId)) {
+                    //ExternalId matched as well as the layoutNodeId, clear the firstMatchingNodeId since we found the nodeId here
+                    return nodeId;
+                }
+                else if (firstMatchingNodeId == null) {
+                    firstMatchingNodeId = nodeId;
+                }
+            }
+        }
+        
+        //If an explicit nodeId match isn't found but at least one matching externalId was found use that match
+        if (firstMatchingNodeId != null) {
+            layoutNodeId = firstMatchingNodeId;
+        }
+        //In this case the folderName must not have been an externalId, assume it is a layout node
+        else if (layoutNodeId == null) {
+            layoutNodeId = folderName;
+        }
+        
+        
+        //Verify the parsed layoutNodeId matches a node in the user's layout 
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
@@ -220,9 +280,6 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
         return node.getId();
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.url.IUrlNodeSyntaxHelper#getFolderNameForPortlet(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindowId)
-     */
     @RequestCache(keyMask={false, true})
     @Override
     public String getFolderNameForPortlet(HttpServletRequest request, IPortletWindowId portletWindowId) {
@@ -238,9 +295,6 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
     }
 
     
-    /* (non-Javadoc)
-	 * @see org.jasig.portal.url.IUrlNodeSyntaxHelper#getPortletForFolderName(javax.servlet.http.HttpServletRequest, java.lang.String, java.lang.String)
-	 */
 	@Override
 	public IPortletWindowId getPortletForFolderName(HttpServletRequest request, String targetedLayoutNodeId, String folderName) {
         //Basic parsing of the 
