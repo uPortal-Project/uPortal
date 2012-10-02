@@ -15,6 +15,15 @@ KIND, either express or implied. See the License for the
 specific language governing permissions and limitations
 under the License.
 
+===========================================================================
+
+This project derived from JA-SIG uPortal, and is distributed under the
+same license. This project is essentially a stripped-down version of JA-SIG
+uPortal with an additional (overlay) dependency on JA-SIG Student Success
+Plan (SSP).
+
+===========================================================================
+
 This project includes:
  Fluid Infusion and Skinning System under the New BSD license
 
