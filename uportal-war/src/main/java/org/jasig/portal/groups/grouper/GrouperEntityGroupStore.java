@@ -477,7 +477,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
 							.getName(), EntityTypes.LEAF_ENTITY_TYPE));
 				}
 			}
-			return entityIdentifiers.toArray(new EntityIdentifier[entityIdentifiers.size()]));
+			return entityIdentifiers.toArray(new EntityIdentifier[entityIdentifiers.size()]);
 
 		} catch (Exception e) {
 			LOGGER.warn("Exception while attempting to retrieve "
