@@ -29,7 +29,7 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet -->
-<div class="fl-widget portlet prs-lkp view-lookup" role="section">
+<div id="${n}" class="fl-widget portlet prs-lkp view-lookup" role="section">
 
 	<!-- Portlet Titlebar -->
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
@@ -40,112 +40,84 @@
     <div class="fl-widget-content content portlet-content" role="main">
 
         <div class="portlet-content">
-            <div id="${n}searchForms" class="ui-tabs">
-                <div>
-                     <ul>
-                         <li><a href="#${n}simpleForm"><span>Simple</span></a></li>
-                         <li><a href="#${n}advancedForm"><span>Advanced</span></a></li>
-                     </ul>
+            <form id="${n}searchForm" action="javascript:;">
+                <select id="${n}queryAttribute" name="queryAttribute">
+                        <option value=""><spring:message code="default.directory.attributes"/></option>
+                    <c:forEach var="queryAttribute" items="${queryAttributes}">
+                        <option value="${ queryAttribute }">
+                            <spring:message code="attribute.displayName.${queryAttribute}" text="${queryAttribute}"/>
+                        </option>
+                    </c:forEach>
+                </select>
+                <input id="${n}queryValue" type="text" name="queryValue"/>
+                
+                <!-- Buttons -->
+                <div class="buttons">
+                    <spring:message var="searchButtonText" code="search" />
+                    <input class="button primary" type="submit" class="button" value="${searchButtonText}" />
+
+                    <portlet:renderURL var="cancelUrl">
+                        <portlet:param name="execution" value="${flowExecutionKey}"/>
+                        <portlet:param name="_eventId" value="cancel"/>
+                    </portlet:renderURL>
+                    <a class="button" class="button" href="${ cancelUrl }">
+                        <spring:message code="cancel" />
+                    </a>
                 </div>
-                <div id="${n}simpleForm">
-                    <form action="javascript:;">
-                        Search for:
-                        <input id="${n}simpleQuery" type="text" name="simpleQuery"/>
+                
+            </form>
         
-                        <!-- Buttons -->
-                        <div class="buttons">
-                            <spring:message var="searchButtonText" code="search" />
-                            <input class="button primary" type="submit" class="button" value="${searchButtonText}" />
-        
-                            <portlet:renderURL var="cancelUrl">
-                                <portlet:param name="execution" value="${flowExecutionKey}"/>
-                                <portlet:param name="_eventId" value="cancel"/>
-                            </portlet:renderURL>
-                            <a class="button" class="button" href="${ cancelUrl }">
-                                <spring:message code="cancel" />
-                            </a>
-                        </div>
-                    </form>
-                </div>
-                <div id="${n}advancedForm" class="ui-tabs-hide">
-                    <form action="javascript:;">
-                        <select id="${n}queryAttribute" name="queryAttribute">
-                            <c:forEach var="queryAttribute" items="${queryAttributes}">
-                                <option value="${ queryAttribute }">
-                                    <spring:message code="attribute.displayName.${queryAttribute}" text="${queryAttribute}"/>
-                                </option>
-                            </c:forEach>
-                        </select>
-                        <input id="${n}queryValue" type="text" name="queryValue"/>
-                        
-                        <!-- Buttons -->
-                        <div class="buttons">
-                            <spring:message var="searchButtonText" code="search" />
-                            <input class="button primary" type="submit" class="button" value="${searchButtonText}" />
-        
-                            <portlet:renderURL var="cancelUrl">
-                                <portlet:param name="execution" value="${flowExecutionKey}"/>
-                                <portlet:param name="_eventId" value="cancel"/>
-                            </portlet:renderURL>
-                            <a class="button" class="button" href="${ cancelUrl }">
-                                <spring:message code="cancel" />
-                            </a>
-                        </div>
-                        
-                    </form>
-                </div>
-            </div>
-        
-        </div>
         <div id="${n}searchResults" class="portlet-section" style="display:none" role="region">
             <div class="titlebar">
                 <h3 role="heading" class="title">Search Results</h3>
             </div>
-            <p class="no-permissions-message" style="display:none"><spring:message code="no.matching.users"/></p>
+            <p class="no-users-message" style="display:none"><spring:message code="no.matching.users"/></p>
 
-            <div class="view-pager flc-pager-top" style="display:none;">
-                <ul id="pager-top" class="fl-pager-ui">
-                    <li class="flc-pager-previous"><a href="#">&lt; <spring:message code="previous"/></a></li>
-                    <li>
-                         <ul class="flc-pager-links demo-pager-links" style="margin:0; display:inline">
-                             <li class="flc-pager-pageLink"><a href="#">1</a></li>
-                             <li class="flc-pager-pageLink-skip">...</li>
-                             <li class="flc-pager-pageLink"><a href="#">2</a></li>
-                         </ul>
-                    </li>
-                    <li class="flc-pager-next"><a href="#"><spring:message code="next"/> &gt;</a></li>
-                    <li>
-                        <span class="flc-pager-summary"><spring:message code="show"/></span>
-                        <span> <select class="pager-page-size flc-pager-page-size">
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                            <option value="20">20</option>
-                            <option value="50">50</option>
-                        </select></span> <spring:message code="per.page"/>
-                    </li>
-                </ul>
+            <div class="results-pager">
+                <div class="view-pager flc-pager-top">
+                    <ul id="pager-top" class="fl-pager-ui">
+                        <li class="flc-pager-previous"><a href="#">&lt; <spring:message code="previous"/></a></li>
+                        <li>
+                             <ul class="flc-pager-links demo-pager-links" style="margin:0; display:inline">
+                                 <li class="flc-pager-pageLink"><a href="#">1</a></li>
+                                 <li class="flc-pager-pageLink-skip">...</li>
+                                 <li class="flc-pager-pageLink"><a href="#">2</a></li>
+                             </ul>
+                        </li>
+                        <li class="flc-pager-next"><a href="#"><spring:message code="next"/> &gt;</a></li>
+                        <li>
+                            <span class="flc-pager-summary"><spring:message code="show"/></span>
+                            <span> <select class="pager-page-size flc-pager-page-size">
+                                <option value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                            </select></span> <spring:message code="per.page"/>
+                        </li>
+                    </ul>
+                </div>
+                
+                <table id="${n}resultsTable" xmlns:rsf="http://ponder.org.uk">
+                    <thead>
+                        <tr rsf:id="header:">
+                            <th id="${n}displayName" class="flc-pager-sort-header">
+                                <a rsf:id="displayName" href="javascript:;">Name</a>
+                            </th>
+                            <th id="${n}username" class="flc-pager-sort-header">
+                                <a rsf:id="username" href="javascript:;">Username</a>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="${n}resultsBody">
+                        <tr rsf:id="row:">
+                            <td headers="${n}displayName">
+                                <a href="javascript:;" rsf:id="displayName">Name</a>
+                            </td>
+                            <td headers="${n}username" rsf:id="username">Username</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            
-            <table id="${n}resultsTable" xmlns:rsf="http://ponder.org.uk">
-                <thead>
-                    <tr rsf:id="header:">
-                        <th id="${n}displayName" class="flc-pager-sort-header">
-                            <a rsf:id="displayName" href="javascript:;">Name</a>
-                        </th>
-                        <th id="${n}username" class="flc-pager-sort-header">
-                            <a rsf:id="username" href="javascript:;">Username</a>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody id="${n}resultsBody">
-                    <tr rsf:id="row:">
-                        <td headers="${n}displayName">
-                            <a href="javascript:;" rsf:id="displayName">Name</a>
-                        </td>
-                        <td headers="${n}username" rsf:id="username">Username</td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
 
     </div>
@@ -157,8 +129,7 @@
         var fluid = up.fluid;
         var pager = null;
         
-        var attrs = [];
-        <c:forEach items="${queryAttributes}" var="attr">attrs.push('${attr}');</c:forEach>
+        var attrs = <json:serialize value="${ queryAttributes }"/>;
 
         var options = {
             annotateColumnRange: 'displayName',
@@ -200,10 +171,19 @@
                     $(data.people).each(function (idx, person) {
                         options.dataModel.push({ username: person.name, displayName: person.attributes.displayName[0] });
                     });
-                    if (pager) {
-                        up.refreshPager(pager, options.dataModel);
+                    if (options.dataModel.length == 0) {
+                    	console.log("none");
+                        $("#${n} .no-users-message").show();
+                    	$("#${n} .results-pager").hide();
                     } else {
-                        pager = up.fluid.pager("#${n}searchResults", options);
+                    	console.log(options.dataModel);
+                        if (pager) {
+                            up.refreshPager(pager, options.dataModel);
+                        } else {
+                            pager = up.fluid.pager("#${n}searchResults", options);
+                        }
+                        $("#${n} .no-users-message").hide();
+                        $("#${n} .results-pager").show();
                     }
                     $("#${n}searchResults").show();
                 }
@@ -211,21 +191,19 @@
         };
         
         $(document).ready(function(){
-            $("#${n}searchForms").tabs();
-            $("#${n}simpleForm form").submit(function() {
+            $("#${n}searchForm").submit(function() {
                 var data = { searchTerms: [] };
-                var searchTerm = $("#${n}simpleQuery").val();
-                $(attrs).each(function (idx, attr) {
-                    data.searchTerms.push(attr);
-                    data[attr] = searchTerm;
-                });
-                showSearchResults(data);
-                return false;
-            }); 
-            $("#${n}advancedForm form").submit(function() {
-                var attr = $("#${n}queryAttribute").val();
-                var data = { searchTerms: [attr] };
-                data[attr] = $("#${n}queryValue").val();
+                var searchTerm = $("#${n}queryValue").val();
+                var queryTerm = $("#${n}queryAttribute").val();
+                if (!queryTerm) {
+                    $(attrs).each(function (idx, attr) {
+                        data.searchTerms.push(attr);
+                        data[attr] = searchTerm;
+                    });
+                } else {
+                	data.searchTerms.push(queryTerm);
+                	data[queryTerm] = searchTerm;
+                }
                 showSearchResults(data);
                 return false;
             }); 

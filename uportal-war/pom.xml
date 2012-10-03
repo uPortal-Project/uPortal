@@ -131,6 +131,16 @@
         </dependency>
         
         <dependency>
+            <groupId>com.google.visualization</groupId>
+            <artifactId>visualization-datasource</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ibm.icu</groupId>
+            <artifactId>icu4j</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>javax.activation</groupId>
             <artifactId>activation</artifactId>
         </dependency>
@@ -446,7 +456,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jasig.portal</groupId>
+            <groupId>org.apache.portals.pluto</groupId>
             <artifactId>pluto-taglib</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -576,10 +586,12 @@
                  | config tech, e.g. Spring property placeholder 
                  +-->
                 <includes>
+                    <include>org/apache/pluto/driver/container/pluto-configuration.properties</include>
                     <include>properties/portal.properties</include>
                     <include>properties/rdbm.properties</include>
                     <include>properties/security.properties</include>
                     <include>properties/contexts/userContext.xml</include>
+                    <include>logback.xml</include>
                 </includes>
             </resource>
             <!-- 
@@ -594,6 +606,13 @@
                     <exclude>properties/security.properties</exclude>
                     <exclude>properties/contexts/userContext.xml</exclude>
                 </excludes>
+            </resource>
+            <resource>
+                <directory>src/main/webapp/WEB-INF</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>log4j.properties</include>
+                </includes>
             </resource>
         </resources>
         <plugins>
@@ -735,9 +754,16 @@
                 <groupId>org.jasig.maven</groupId>
                 <artifactId>sass-maven-plugin</artifactId>
                 <version>1.0.0</version>
-                <configuration>
-                    <baseOutputDirectory>${basedir}/src/main/webapp</baseOutputDirectory>
-                </configuration>
+                <executions>
+                    <execution>
+                        <id>compile-sass-skins</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>update-stylesheets</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.jasig.resourceserver</groupId>
@@ -753,6 +779,7 @@
                         <inherited>false</inherited>
                         <configuration>
                             <displayJsWarnings>false</displayJsWarnings>
+                            <useGeneratedSources>true</useGeneratedSources>
                             <includes>
                                 <include>media/skins/universality/**/skin.xml</include>
                             </includes>
@@ -768,6 +795,7 @@
                         <inherited>false</inherited>
                         <configuration>
                             <displayJsWarnings>false</displayJsWarnings>
+                            <useGeneratedSources>true</useGeneratedSources>
                             <includes>
                                 <include>media/skins/muniversality/**/skin.xml</include>
                             </includes>

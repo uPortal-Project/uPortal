@@ -26,6 +26,9 @@
 
     <build>
         <finalName>pluto-testsuite</finalName>
+        <filters>
+            <filter>../../${filters.file}</filter>
+        </filters>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>

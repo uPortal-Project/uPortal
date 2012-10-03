@@ -48,6 +48,7 @@ public final class UrlStringBuilder implements Serializable, Cloneable {
     private final String protocol;
     private final String host;
     private final Integer port;
+    private final String context;
     private final List<String> path = new LinkedList<String>();
     private final Map<String, List<String>> parameters = new LinkedHashMap<String, List<String>>();
     
@@ -56,7 +57,7 @@ public final class UrlStringBuilder implements Serializable, Cloneable {
      * 
      * @param encoding The encoding to use for parameters
      */
-    public UrlStringBuilder(String encoding) {
+    public UrlStringBuilder(String encoding, String context) {
         Validate.notNull(encoding, "encoding can not be null");
         this.checkEncoding(encoding);
 
@@ -64,37 +65,7 @@ public final class UrlStringBuilder implements Serializable, Cloneable {
         this.protocol = null;
         this.host = null;
         this.port = null;
-    }
-
-    /**
-     * Creates a URL with a protocol and host, no port will be specified
-     * 
-     * @param encoding The encoding to use for parameters
-     * @param protocol The protocol for the URL, ex: http
-     * @param host The host for the URL
-     */
-    public UrlStringBuilder(String encoding, String protocol, String host) {
-        this(encoding, protocol, host, null);
-    }
-
-    /**
-     * Creates a URL with a protocol, host and port
-     * 
-     * @param encoding The encoding to use for parameters
-     * @param protocol The protocol for the URL, ex: http
-     * @param host The host for the URL
-     * @param port The port to use for the URL
-     */
-    public UrlStringBuilder(String encoding, String protocol, String host, Integer port) {
-        Validate.notNull(encoding, "encoding can not be null");
-        Validate.notNull(protocol, "protocol can not be null");
-        Validate.notNull(host, "host can not be null");
-        this.checkEncoding(encoding);
-
-        this.encoding = encoding;
-        this.protocol = protocol;
-        this.host = host;
-        this.port = port;
+        this.context = context;
     }
     
     /**
@@ -107,6 +78,7 @@ public final class UrlStringBuilder implements Serializable, Cloneable {
         this.host = urlBuilder.host;
         this.protocol = urlBuilder.protocol;
         this.port = urlBuilder.port;
+        this.context = urlBuilder.context;
         this.path.addAll(urlBuilder.path);
         for (final Map.Entry<String, List<String>> paramEntry : urlBuilder.parameters.entrySet()) {
             final String key = paramEntry.getKey();
@@ -360,7 +332,12 @@ public final class UrlStringBuilder implements Serializable, Cloneable {
                 url.append(":").append(this.port);
             }
         }
-        //If no host/port and no path start with a /
+        
+        if (this.context != null) {
+            url.append("/").append(context);
+        }
+        
+        //If no host/port/context and no path start with a /
         else if (this.path.size() == 0) {
             url.append("/");
         }

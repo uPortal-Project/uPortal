@@ -911,20 +911,28 @@ throws AuthorizationException
         }
         else {
         	containingGroups = new HashSet<String>();
-        	IGroupMember targetEntity = GroupService.findGroup(target);
-    		if (targetEntity == null) {
-    			if (target.startsWith(IPermission.PORTLET_PREFIX)) {
-    				targetEntity = GroupService.getGroupMember(target.replace(IPermission.PORTLET_PREFIX, ""), IPortletDefinition.class);
-    			} else {
-    				targetEntity = GroupService.getGroupMember(target, IPerson.class);
-    			}
-    		}
-    		
-    		if (targetEntity != null) {
-    			for (Iterator containing = targetEntity.getAllContainingGroups(); containing.hasNext();) {
-    				containingGroups.add(((IEntityGroup)containing.next()).getKey());
-    			}
-    		}
+        	
+        	//Ignore target entity lookups for the various synthetic ALL targets
+        	if (!IPermission.ALL_CATEGORIES_TARGET.equals(target) &&
+                    !IPermission.ALL_GROUPS_TARGET.equals(target) &&
+                    !IPermission.ALL_PORTLETS_TARGET.equals(target) &&
+                    !IPermission.ALL_TARGET.equals(target)) {
+        	    
+            	IGroupMember targetEntity = GroupService.findGroup(target);
+        		if (targetEntity == null) {
+                    if (target.startsWith(IPermission.PORTLET_PREFIX)) {
+        				targetEntity = GroupService.getGroupMember(target.replace(IPermission.PORTLET_PREFIX, ""), IPortletDefinition.class);
+        			} else {
+        				targetEntity = GroupService.getGroupMember(target, IPerson.class);
+        			}
+        		}
+        		
+        		if (targetEntity != null) {
+        			for (Iterator containing = targetEntity.getAllContainingGroups(); containing.hasNext();) {
+        				containingGroups.add(((IEntityGroup)containing.next()).getKey());
+        			}
+        		}
+            }
     		
     		this.entityParentsCache.put(new Element(target, containingGroups));
         	

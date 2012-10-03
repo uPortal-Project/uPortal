@@ -29,6 +29,7 @@
 
 <%@ taglib prefix="up" uri="http://www.uportal.org/jsp/jstl/uportal/1.0" %>
 <%@ taglib prefix="rs" uri="http://www.jasig.org/resource-server" %>
+<%@ taglib prefix="json" tagdir="/WEB-INF/tags/json" %>
 
 <portlet:defineObjects/>
 

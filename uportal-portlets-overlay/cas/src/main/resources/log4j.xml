@@ -23,6 +23,13 @@
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 
 <log4j:configuration debug="false" xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+    <!--
+      Log file variables, such as "{environment.build.log.rootLevel}" are defined
+      by properties in the uPortal/filters directory.  See the Building
+      and Deploying uPortal section of the uPortal manual
+    -->
+
     <!--
       This default ConsoleAppender is used to log all NON perf4j messages
       to System.out
@@ -76,7 +83,7 @@
       logger to System.out.
     -->
     <root>
-        <level value="ERROR"/>
+        <level value="${environment.build.log.rootLevel}"/>
         <appender-ref ref="null"/>
     </root>
 </log4j:configuration>
