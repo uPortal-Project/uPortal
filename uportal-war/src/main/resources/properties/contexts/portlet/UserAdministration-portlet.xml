@@ -50,4 +50,6 @@
             </map>
         </property>
     </bean>
+    
+    <bean parent="primaryPropertyPlaceholderConfigurer" />
 </beans>

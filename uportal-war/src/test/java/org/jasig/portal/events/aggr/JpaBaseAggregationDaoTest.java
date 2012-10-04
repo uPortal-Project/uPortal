@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
@@ -359,6 +360,42 @@ public abstract class JpaBaseAggregationDaoTest<
         
         //Verify all aggrs created
         assertEquals(1152, aggrs.intValue());
+        
+
+
+        //Find aggrs for one day
+        this.execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
+                final AggregatedGroupMapping groupB = aggregatedGroupLookupDao.getGroupMapping("local.1");
+                
+                final DateTime queryStart = start.toDateMidnight().toDateTime();
+                final DateTime queryEnd = queryStart.plusDays(1).minusSeconds(1);
+                
+                final List<T> baseAggregations = 
+                        getAggregationDao().getAggregations(queryStart, queryEnd, createAggregationKey(interval, groupA), groupB);
+                
+                assertEquals(302, baseAggregations.size());
+            }
+        });
+        
+      //Find aggrs for second day
+        this.execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                final AggregatedGroupMapping groupA = aggregatedGroupLookupDao.getGroupMapping("local.0");
+                final AggregatedGroupMapping groupB = aggregatedGroupLookupDao.getGroupMapping("local.1");
+                
+                final DateTime queryStart = start.toDateMidnight().minusDays(1).toDateTime();
+                final DateTime queryEnd = queryStart.plusDays(2).minusSeconds(1);
+                
+                final List<T> baseAggregations = 
+                        getAggregationDao().getAggregations(queryStart, queryEnd, createAggregationKey(interval, groupA), groupB);
+                
+                assertEquals(302, baseAggregations.size());
+            }
+        });
 
         //Find all aggrs
         this.execute(new CallableWithoutResult() {
@@ -384,7 +421,7 @@ public abstract class JpaBaseAggregationDaoTest<
                 final List<T> baseAggregations = 
                         getAggregationDao().getAggregations(start, end, createAggregationKey(interval, groupA), groupB);
                 
-                assertEquals(576, baseAggregations.size());
+                assertEquals(1152, baseAggregations.size());
             }
         });
 
@@ -410,7 +447,7 @@ public abstract class JpaBaseAggregationDaoTest<
                 final AggregatedGroupMapping groupB = aggregatedGroupLookupDao.getGroupMapping("local.1");
                 
                 final List<T> baseAggregations = 
-                        getAggregationDao().getAggregations(start, end.minusHours(12), createAggregationKey(interval, groupA), groupB);
+                        getAggregationDao().getAggregations(start, start.plusHours(12), createAggregationKey(interval, groupA), groupB);
                 
                 assertEquals(288, baseAggregations.size());
             }
@@ -426,7 +463,7 @@ public abstract class JpaBaseAggregationDaoTest<
                 final List<T> baseAggregations = 
                         getAggregationDao().getAggregations(start.plusHours(12), end.plusHours(12), createAggregationKey(interval, groupA), groupB);
                 
-                assertEquals(576, baseAggregations.size());
+                assertEquals(864, baseAggregations.size());
             }
         });
 
@@ -439,7 +476,7 @@ public abstract class JpaBaseAggregationDaoTest<
                 final List<T> baseAggregations = 
                         getAggregationDao().getAggregations(start.plusHours(12), end.plusHours(12), createAggregationKey(interval, groupA));
                 
-                assertEquals(288, baseAggregations.size());
+                assertEquals(432, baseAggregations.size());
             }
         });
 
@@ -454,6 +491,18 @@ public abstract class JpaBaseAggregationDaoTest<
                         getAggregationDao().getAggregations(start.plusHours(36), end.plusDays(1), createAggregationKey(interval, groupA), groupB);
                 
                 assertEquals(288, baseAggregations.size());
+            }
+        });
+        
+        //TODO Query for intervals that are stored
+        this.execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                final Set<AggregatedGroupMapping> aggregatedGroupMappings = getAggregationDao().getAggregatedGroupMappings();
+                assertEquals(2, aggregatedGroupMappings.size());
+                
+                final Set<AggregationInterval> aggregationIntervals = getAggregationDao().getAggregationIntervals();
+                assertEquals(1, aggregationIntervals.size());
             }
         });
     }
@@ -531,7 +580,7 @@ public abstract class JpaBaseAggregationDaoTest<
                 assertEquals(2, aggregations.size());
                 
                 for (final T baseAggregationImpl : aggregations) {
-                    final DateTime instant = baseAggregationImpl.getTimeDimension().getTime().toDateTime(baseAggregationImpl.getDateDimension().getDate());
+                    final DateTime instant = baseAggregationImpl.getDateTime();
                     final AggregationIntervalInfo intervalInfo = aggregationIntervalHelper.getIntervalInfo(interval, instant);
                     try {
                         updateAggregation(intervalInfo, baseAggregationImpl, r);

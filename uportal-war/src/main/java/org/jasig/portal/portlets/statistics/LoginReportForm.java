@@ -1,57 +1,24 @@
 package org.jasig.portal.portlets.statistics;
 
-import java.util.ArrayList;
-import java.util.List;
 
-import org.jasig.portal.events.aggr.AggregationInterval;
-import org.joda.time.DateMidnight;
-
-public class LoginReportForm {
-
-    private DateMidnight start;
-    private DateMidnight end;
-    private AggregationInterval interval;
-    private boolean uniqueOnly = false;
-    private List<Long> groups = new ArrayList<Long>();
-
-    public DateMidnight getStart() {
-        return start;
+public class LoginReportForm extends BaseReportForm {
+    
+    private boolean totalLogins = true;
+    private boolean uniqueLogins = false;
+    
+    public boolean isTotalLogins() {
+        return totalLogins;
     }
 
-    public void setStart(DateMidnight start) {
-        this.start = start;
+    public void setTotalLogins(boolean totalLogins) {
+        this.totalLogins = totalLogins;
     }
 
-    public DateMidnight getEnd() {
-        return end;
+    public boolean isUniqueLogins() {
+        return uniqueLogins;
     }
 
-    public void setEnd(DateMidnight end) {
-        this.end = end;
+    public void setUniqueLogins(boolean uniqueLogins) {
+        this.uniqueLogins = uniqueLogins;
     }
-
-    public AggregationInterval getInterval() {
-        return interval;
-    }
-
-    public void setInterval(AggregationInterval interval) {
-        this.interval = interval;
-    }
-
-    public List<Long> getGroups() {
-        return groups;
-    }
-
-    public void setGroups(List<Long> groups) {
-        this.groups = groups;
-    }
-
-	public boolean isUniqueOnly() {
-		return uniqueOnly;
-	}
-
-	public void setUniqueOnly(boolean uniqueOnly) {
-		this.uniqueOnly = uniqueOnly;
-	}
-
 }

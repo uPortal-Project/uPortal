@@ -35,4 +35,6 @@
             <bean class="org.jasig.portal.portlets.MinimizedStateHandlerInterceptor"/>
         </property>
     </bean>
+    
+    <bean parent="primaryPropertyPlaceholderConfigurer" />
 </beans>
