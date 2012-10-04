@@ -72,9 +72,10 @@ import org.jasig.portal.events.aggr.portlets.AggregatedPortletMappingImpl;
         appliesTo = "UP_PORTLET_EXEC_AGGR",
         indexes = {
                 @Index(name = "IDX_UP_PLT_EXEC_AGGR_DTI", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL" }),
-                @Index(name = "IDX_UP_PLT_EXEC_AGGR_DTIC", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL", "STATS_COMPLETE" })
-        }
-    )
+                @Index(name = "IDX_UP_PLT_EXEC_AGGR_DTIC", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL", "STATS_COMPLETE" }),
+                @Index(name = "IDX_UP_PLT_EXEC_INTRVL", columnNames = { "AGGR_INTERVAL" }),
+                @Index(name = "IDX_UP_PLT_EXEC_GRP", columnNames = { "AGGR_GROUP_ID" })
+        })
 @NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)

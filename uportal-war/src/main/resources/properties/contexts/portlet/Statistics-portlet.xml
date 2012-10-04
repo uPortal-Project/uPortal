@@ -34,4 +34,6 @@
         <property name="interceptors" ref="minimizedStateHandlerInterceptor" />
     </bean>
     
+    <bean parent="primaryPropertyPlaceholderConfigurer" />
+    
 </beans>
