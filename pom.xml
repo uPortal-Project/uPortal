@@ -113,11 +113,11 @@
         <email-preview.version>2.0.1</email-preview.version>
         <FunctionalTestsPortlet.version>1.1.0</FunctionalTestsPortlet.version>
         <jasig-widget-portlets.version>1.0.3</jasig-widget-portlets.version>
-        <NewsReaderPortlet.version>3.0.2</NewsReaderPortlet.version>
+        <NewsReaderPortlet.version>3.0.3</NewsReaderPortlet.version>
         <NotificationPortlet.version>1.0.0</NotificationPortlet.version>
         <SimpleContentPortlet.version>1.0.2</SimpleContentPortlet.version>
         <WeatherPortlet.version>1.0.9</WeatherPortlet.version>
-        <WebProxyPortlet.version>1.1.6</WebProxyPortlet.version>
+        <WebProxyPortlet.version>1.1.7</WebProxyPortlet.version>
 
         <!-- Project Dependency Version Properties -->
         <aopalliance.version>1.0</aopalliance.version>
@@ -147,6 +147,7 @@
         <ehcache-jgroups3replication.version>1.7.4</ehcache-jgroups3replication.version>
         <ehcache-spring-annotations.version>1.2.0</ehcache-spring-annotations.version>
         <ehcache-web.version>2.0.4</ehcache-web.version>
+        <google-visualization.version>1.1.1</google-visualization.version>
         <guava.version>13.0</guava.version>
         <groovy.version>2.0.1</groovy.version>
         <grouperClient.version>1.6.3</grouperClient.version>
@@ -154,6 +155,7 @@
         <hibernate-jpamodelgen.version>1.2.0.Final</hibernate-jpamodelgen.version>
         <hibernate-jpa-api.version>1.0.1.Final</hibernate-jpa-api.version>
         <hsqldb.version>2.2.8</hsqldb.version>
+        <icu4j.version>4.0.1</icu4j.version>
         <jackson.version>1.9.9</jackson.version>
         <jansi.version>1.8</jansi.version>
         <javassist.version>3.16.1-GA</javassist.version> 
@@ -178,7 +180,7 @@
         <pluto.version>2.1.0-M3</pluto.version>
         <portlet-api.version>2.0</portlet-api.version>
         <quartz.version>1.8.4</quartz.version>
-        <resource-server.version>1.0.26</resource-server.version>
+        <resource-server.version>1.0.27-SNAPSHOT</resource-server.version>
         <servlet-api.version>2.5</servlet-api.version>
         <slf4j.version>1.6.6</slf4j.version>
         <spring-framework.version>3.1.2.RELEASE</spring-framework.version>
@@ -382,6 +384,17 @@
                 <version>${grouperClient.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.google.visualization</groupId>
+                <artifactId>visualization-datasource</artifactId>
+                <version>${google-visualization.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>commons-logging</artifactId>
+                        <groupId>commons-logging</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
                 <groupId>org.hsqldb</groupId>
                 <artifactId>hsqldb</artifactId>
                 <version>${hsqldb.version}</version>
@@ -395,6 +408,11 @@
                 <groupId>org.javassist</groupId>
                 <artifactId>javassist</artifactId>
                 <version>${javassist.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ibm.icu</groupId>
+                <artifactId>icu4j</artifactId>
+                <version>${icu4j.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.activation</groupId>

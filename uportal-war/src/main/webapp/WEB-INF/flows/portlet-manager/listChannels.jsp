@@ -329,7 +329,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 { 
                     portletRegistry: { 
                         type: "up.PortletRegistry",
-                        options: { portletListUrl: "<c:url value="/api/portletList"/>" } 
+                        options: { portletListUrl: "<c:url value="/api/portletList"><c:param name="type" value="manage"/></c:url>" } 
                     },
                     categoryListView: {
                         type: "up.PortletAdministrationCategoryListView"

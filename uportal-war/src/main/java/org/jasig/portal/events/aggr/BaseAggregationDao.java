@@ -21,6 +21,7 @@ package org.jasig.portal.events.aggr;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.joda.time.DateTime;
@@ -50,6 +51,16 @@ public interface BaseAggregationDao<
      * @return All aggregations for the date, time and interval
      */
     Map<K, T> getAggregationsForInterval(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval);
+    
+    /**
+     * @return All aggregation intervals that have aggregation data associated with them 
+     */
+    Set<AggregationInterval> getAggregationIntervals();
+    
+    /**
+     * @return All aggregated groups that have aggregation data associated with them
+     */
+    Set<AggregatedGroupMapping> getAggregatedGroupMappings();
     
     /**
      * Get a specific aggregation 

@@ -69,9 +69,10 @@ import org.jasig.portal.events.aggr.tabs.AggregatedTabMappingImpl;
         appliesTo = "UP_TAB_RENDER_AGGR",
         indexes = {
                 @Index(name = "IDX_UP_TAB_REND_AGGR_DTI", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL" }),
-                @Index(name = "IDX_UP_TAB_REND_AGGR_DTIC", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL", "STATS_COMPLETE" })
-        }
-    )
+                @Index(name = "IDX_UP_TAB_REND_AGGR_DTIC", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL", "STATS_COMPLETE" }),
+                @Index(name = "IDX_UP_TAB_REND_INTRVL", columnNames = { "AGGR_INTERVAL" }),
+                @Index(name = "IDX_UP_TAB_REND_GRP", columnNames = { "AGGR_GROUP_ID" })
+        })
 @NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)

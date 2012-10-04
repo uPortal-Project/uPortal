@@ -29,6 +29,8 @@ import java.util.Comparator;
  * 
  * @author Eric Dalquist
  * @version $Revision$
+ * @param <T> The root type being compared
+ * @param <C> The type that extracted for comparison
  */
 public abstract class ComparableExtractingComparator<T, C extends Comparable<C>> implements Comparator<T> {
     private final Comparator<C> comparator;

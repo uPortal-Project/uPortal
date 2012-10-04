@@ -23,12 +23,16 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.utils.Populator;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 
 /**
  * Stylesheet user preferences setup for memory or serialized storage. All APIs and returned objects are thread safe.
@@ -198,6 +202,23 @@ public class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences
         return layoutAttributes;
     }
     
+    @Override
+    public Map<String, String> getAllNodesAndValuesForAttribute(String name) {
+        Validate.notEmpty(name, "name cannot be null");
+        
+        final Builder<String, String> result = ImmutableMap.builder();
+        for (final Entry<String, ConcurrentMap<String, String>> layoutNodeAttributesEntry : this.layoutAttributes.entrySet()) {
+            final ConcurrentMap<String, String> layoutNodeAttributes = layoutNodeAttributesEntry.getValue();
+            final String value = layoutNodeAttributes.get(name);
+            if (value != null) {
+                final String nodeId = layoutNodeAttributesEntry.getKey();
+                result.put(nodeId, value);
+            }
+        }
+        
+        return result.build();
+    }
+
     @Override
     public Collection<String> getAllLayoutAttributeNodeIds() {
         return Collections.unmodifiableSet(this.layoutAttributes.keySet());

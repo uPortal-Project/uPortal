@@ -99,7 +99,8 @@ var uportal = uportal || {};
     };
     
     var getPermittedLayouts = function() {
-        var canAddColumns = $("#portalFlyoutNavigation_" + getActiveTabId()).hasClass("canAddChildren");
+    	
+        var canAddColumns = $("#portalNavigation_" + getActiveTabId()).hasClass("canAddChildren");
         var columns = $('#portalPageBodyColumns > [id^=column_]');
         
         // a deletable column must be marked deletable and contain no locked

@@ -24,4 +24,5 @@
   <root level="TRACE">
     <appender-ref ref="N"/>
   </root>
+
 </configuration>

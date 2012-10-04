@@ -18,6 +18,8 @@
  */
 package org.jasig.portal.events.aggr;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -25,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.events.aggr.dao.DateDimensionDao;
 import org.jasig.portal.events.aggr.dao.IEventAggregationManagementDao;
 import org.jasig.portal.events.aggr.dao.TimeDimensionDao;
+import org.jasig.portal.events.aggr.dao.jpa.AcademicTermDetailImpl;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
@@ -58,9 +61,131 @@ public class AggregationIntervalHelperImpl implements AggregationIntervalHelper 
         this.dateDimensionDao = dateDimensionDao;
     }
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.stats.IntervalHelper#getIntervalDates(org.jasig.portal.stats.Interval, java.util.Date)
-     */
+    
+    @Override
+    public List<DateTime> getIntervalStartDateTimesBetween(AggregationInterval interval, DateTime start, DateTime end) {
+        return getIntervalStartDateTimesBetween(interval, start, end, -1);
+    }
+    
+    public int intervalsBetween(AggregationInterval interval, DateTime start, DateTime end) {
+        //For intervals that support native determination
+        if (interval.isSupportsDetermination()) {
+            return interval.determineIntervalsBetween(start, end);
+        }
+        
+        //Special handling for intervals that don't support determination
+        
+        if (interval == AggregationInterval.ACADEMIC_TERM) {
+            //Since terms can have gaps all terms must be checked
+            
+            //Find the first term than is in the range via binary search
+            final List<AcademicTermDetail> terms = getAcademicTermsAfter(start);
+            
+            //Count all the terms that are in the range, breaking the loop on the first non-matching term
+            int count = 0;
+            for (final AcademicTermDetail academicTerm : terms) {
+                final DateMidnight termStart = academicTerm.getStart();
+                if (end.isAfter(termStart) && !start.isAfter(termStart)) {
+                    count++;
+                }
+                else if (count > 0) {
+                    //getAcademicTermDetails returns the list in order, after at least one match has been found
+                    //a term that doesn't match means no more matches will be found
+                    break;
+                }
+            }
+            return count;
+        }
+        
+        
+        //Fallback for any other interval type that needs explicit iteration
+        AggregationIntervalInfo nextInterval = this.getIntervalInfo(interval, start);
+
+        int count = 0;
+        while (nextInterval.getStart().isBefore(end)) {
+            //Needed to make sure we don't count a partial first interval
+            if (!start.isAfter(nextInterval.getStart())) {
+                count++;
+            }
+            
+            nextInterval = this.getIntervalInfo(interval, nextInterval.getEnd());
+        }
+        
+        return count;
+    }
+    
+    @Override
+    public List<DateTime> getIntervalStartDateTimesBetween(AggregationInterval interval, DateTime start, DateTime end, int maxTimes) {
+        if (interval.isSupportsDetermination()) {
+            //Get the interval count for the date-time field type and verify it is in the valid range.
+            final int intervals = interval.determineIntervalsBetween(start, end);
+            verifyIntervalCount(start, end, maxTimes, intervals);
+            
+            //Result list
+            final List<DateTime> result = new ArrayList<DateTime>(intervals);
+            
+            //Check if first interval in the range
+            DateTime intervalStart = interval.determineStart(start);
+            if (!intervalStart.isBefore(start)) {
+                result.add(intervalStart);
+            }
+            
+            //Move one step forward in the range
+            DateTime intervalEnd = interval.determineEnd(intervalStart);
+            intervalStart = interval.determineStart(intervalEnd);
+            
+            //Step through the interval start/end values to build the full list
+            while (intervalStart.isBefore(end)) {
+                result.add(intervalStart);
+                
+                intervalEnd = interval.determineEnd(intervalStart);
+                intervalStart = interval.determineStart(intervalEnd);
+            }
+            
+            return result;
+        }
+        
+        //Special handling for intervals that don't support determination
+        if (interval == AggregationInterval.ACADEMIC_TERM) {
+            //Since terms can have gaps all terms must be checked
+            final List<AcademicTermDetail> terms = getAcademicTermsAfter(start);
+            
+            //Use all the terms that are in the range, breaking the loop on the first non-matching term
+            final List<DateTime> result = new ArrayList<DateTime>(terms.size());
+            for (final AcademicTermDetail academicTerm : terms) {
+                final DateMidnight termStart = academicTerm.getStart();
+                if (end.isAfter(termStart) && !start.isAfter(termStart)) {
+                    result.add(start);
+                }
+                else if (!result.isEmpty()) {
+                    //getAcademicTermDetails returns the list in order, after at least one match has been found
+                    //a term that doesn't match means no more matches will be found
+                    break;
+                }
+            }
+            return result;
+        }
+
+        
+        //Fallback for any other interval type that needs explicit iteration
+        AggregationIntervalInfo nextInterval = this.getIntervalInfo(interval, start);
+
+        final List<DateTime> result = new ArrayList<DateTime>();
+        while (nextInterval.getStart().isBefore(end)) {
+            //Needed to make sure we don't count a partial first interval
+            if (!start.isAfter(nextInterval.getStart())) {
+                result.add(nextInterval.getStart());
+                
+                if (maxTimes > 0 && result.size() > maxTimes) {
+                    throw new IllegalArgumentException("There more than " + result.size() + " intervals between " + start + " and " + end + " which is more than the specified maximum of " + maxTimes);
+                }
+            }
+            
+            nextInterval = this.getIntervalInfo(interval, nextInterval.getEnd());
+        }
+        return result;
+    }
+
     @Override
     public AggregationIntervalInfo getIntervalInfo(AggregationInterval interval, DateTime date) {
         //Chop off everything below the minutes (seconds, millis)
@@ -100,5 +225,28 @@ public class AggregationIntervalHelperImpl implements AggregationIntervalHelper 
         final DateDimension startDateDimension = this.dateDimensionDao.getDateDimensionByDate(startDateMidnight);
         
         return new AggregationIntervalInfo(interval, start, end, startDateDimension, startTimeDimension);
+    }
+
+    /**
+     * Return a sorted list of AcademicTermDetail objects where the the first element of the list where the first element
+     * is the first term that starts after the specified start DateTime. 
+     */
+    protected List<AcademicTermDetail> getAcademicTermsAfter(DateTime start) {
+        final List<AcademicTermDetail> terms = this.eventAggregationManagementDao.getAcademicTermDetails();
+        final int index = Collections.binarySearch(terms, new AcademicTermDetailImpl(start.toDateMidnight(), start.plusDays(1).toDateMidnight(), ""));
+        if (index > 0) {
+            return terms.subList(index, terms.size());
+        }
+        else if (index < 0) {
+            return terms.subList(-(index + 1), terms.size());
+        }
+        return terms;
+    }
+
+    protected void verifyIntervalCount(DateTime start, DateTime end,
+            int maxTimes, final int intervals) {
+        if (maxTimes > 0 && intervals > maxTimes) {
+            throw new IllegalArgumentException("There are " + intervals + " intervals between " + start + " and " + end + " which is more than the specified maximum of " + maxTimes);
+        }
     }
 }

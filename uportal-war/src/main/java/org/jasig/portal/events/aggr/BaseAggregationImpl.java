@@ -35,6 +35,7 @@ import org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl;
 import org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl;
+import org.joda.time.DateTime;
 
 /**
  * Base implementations for aggregations that are grouped by date, time, interval and group
@@ -71,6 +72,8 @@ public abstract class BaseAggregationImpl<K extends BaseAggregationKey> implemen
     
     @Transient
     private Boolean complete = null;
+    @Transient
+    private DateTime dateTime = null;
     
     
     protected BaseAggregationImpl() {
@@ -94,6 +97,17 @@ public abstract class BaseAggregationImpl<K extends BaseAggregationKey> implemen
     }
     
     public abstract long getId();
+    
+
+    @Override
+    public DateTime getDateTime() {
+        DateTime dt = this.dateTime;
+        if (dt == null) {
+            dt = this.timeDimension.getTime().toDateTime(this.dateDimension.getDate());
+            this.dateTime = dt;
+        }
+        return dt;
+    }
 
     @Override
     public final TimeDimension getTimeDimension() {

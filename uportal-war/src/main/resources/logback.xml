@@ -20,12 +20,12 @@
     <!--See http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
     <!--and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy-->
     <!--for further documentation-->
-    <File>${catalina.base}/logs/portal/portal.log</File>
+    <File>${environment.build.log.logfileDirectory}/portal/portal.log</File>
     <encoder>
       <pattern>%-5level [%thread] %logger{36} %d{ISO8601} - %msg%n</pattern>
     </encoder>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>${catalina.base}/logs/portal/portal.log.%d{yyyy-MM-dd-HH}</fileNamePattern>
+      <fileNamePattern>${environment.build.log.logfileDirectory}/portal/portal.log.%d{yyyy-MM-dd-HH}</fileNamePattern>
     </rollingPolicy>
   </appender>
   
@@ -33,12 +33,12 @@
     <!--See http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
     <!--and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy-->
     <!--for further documentation-->
-    <File>${catalina.base}/logs/portal/portal-events.log</File>
+    <File>${environment.build.log.logfileDirectory}/portal/portal-events.log</File>
     <encoder>
       <pattern>%-5level [%thread] %logger{36} %d{ISO8601} - %msg%n</pattern>
     </encoder>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>${catalina.base}/logs/portal/portal-events.log.%d{yyyy-MM-dd-HH}</fileNamePattern>
+      <fileNamePattern>${environment.build.log.logfileDirectory}/portal/portal-events.log.%d{yyyy-MM-dd-HH}</fileNamePattern>
     </rollingPolicy>
   </appender>
   
@@ -46,12 +46,12 @@
     <!--See http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
     <!--and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy-->
     <!--for further documentation-->
-    <File>${catalina.base}/logs/audit/portal.audit.log</File>
+    <File>${environment.build.log.logfileDirectory}/audit/portal.audit.log</File>
     <encoder>
       <pattern>%-5level [%thread] %logger{36} %d{ISO8601} - %msg%n</pattern>
     </encoder>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>${catalina.base}/logs/audit/portal.audit.log.%d{yyyy-MM-dd}</fileNamePattern>
+      <fileNamePattern>${environment.build.log.logfileDirectory}/audit/portal.audit.log.%d{yyyy-MM-dd}</fileNamePattern>
     </rollingPolicy>
   </appender>
   
@@ -59,26 +59,26 @@
     <!--See http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
     <!--and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy-->
     <!--for further documentation-->
-    <File>${catalina.base}/logs/jgroups/portal.jgroups.log</File>
+    <File>${environment.build.log.logfileDirectory}/jgroups/portal.jgroups.log</File>
     <encoder>
       <pattern>%-5level [%thread] %logger{36} %d{ISO8601} - %msg%n</pattern>
     </encoder>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>${catalina.base}/logs/jgroups/portal.jgroups.log.%d{yyyy-MM-dd-HH}</fileNamePattern>
+      <fileNamePattern>${environment.build.log.logfileDirectory}/jgroups/portal.jgroups.log.%d{yyyy-MM-dd-HH}</fileNamePattern>
     </rollingPolicy>
   </appender>
   
-  <root level="INFO">
+  <root level="${environment.build.log.rootLevel}">
     <appender-ref ref="PORTAL"/>
   </root>
   
   <!-- Log use of the identity and attribute swapper -->
-  <logger name="org.jasig.portal.portlets.swapper" additivity="false" level="INFO">
+  <logger name="org.jasig.portal.portlets.swapper" additivity="false" level="${environment.build.log.rootLevel}">
     <appender-ref ref="SWAPPER"/>
   </logger>
 
   <!--  Portal Event aggregation -->
-  <logger name="org.jasig.portal.events" additivity="false" level="INFO">
+  <logger name="org.jasig.portal.events" additivity="false" level="${environment.build.log.rootLevel}">
     <appender-ref ref="EVENT"/>
   </logger>
   

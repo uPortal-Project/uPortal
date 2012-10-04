@@ -33,4 +33,6 @@
     <bean class="org.springframework.web.portlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
     <bean class="org.springframework.web.portlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
 
+    
+    <bean parent="primaryPropertyPlaceholderConfigurer" />
 </beans>
