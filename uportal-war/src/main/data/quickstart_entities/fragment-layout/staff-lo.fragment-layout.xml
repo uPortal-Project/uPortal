@@ -20,28 +20,32 @@
 
 -->
 <layout xmlns:dlm="http://www.uportal.org/layout/dlm" script="classpath://org/jasig/portal/io/import-layout_v3-2.crn" username="staff-lo">
-  <folder ID="s1" hidden="false" immutable="false" name="Root folder" type="root" unremovable="true">
-    <folder ID="s2" hidden="true" immutable="true" name="Header folder" type="header" unremovable="true">
-      <channel fname="fragment-admin-exit" unremovable="false" hidden="false" immutable="false" ID="n3"/>
+    <folder ID="s1" hidden="false" immutable="false" name="Root folder" type="root" unremovable="true">
+        <folder ID="s2" hidden="true" immutable="true" name="Header folder" type="header" unremovable="true">
+            <channel fname="fragment-admin-exit" unremovable="false" hidden="false" immutable="false" ID="n3"/>
+        </folder>
+        <folder ID="s4" hidden="false" immutable="false" name="Footer folder" type="footer" unremovable="false"/>
+        <folder ID="s5" hidden="false" immutable="false" name="Main Staff Tab" type="regular" unremovable="false">
+            <structure-attribute>
+                <name>externalId</name>
+                <value>main-staff-tab</value>
+            </structure-attribute>
+            <folder ID="s6" hidden="false" immutable="false" name="Column 1" type="regular" unremovable="false">
+                <structure-attribute>
+                    <name>width</name>
+                    <value>60%</value>
+                </structure-attribute>
+                <channel fname="staff-feature" unremovable="false" hidden="false" immutable="false" ID="n7"/>
+                <channel fname="notifications" unremovable="false" hidden="false" immutable="false" ID="n8"/>
+            </folder>
+            <folder ID="s9" hidden="false" immutable="false" name="Column 2" type="regular" unremovable="false">
+                <structure-attribute>
+                    <name>width</name>
+                    <value>40%</value>
+                </structure-attribute>
+                <channel fname="notification-demo" unremovable="false" hidden="false" immutable="false" ID="n11"/>
+                <channel fname="whos-online" unremovable="false" hidden="false" immutable="false" ID="n10"/>
+            </folder>
+        </folder>
     </folder>
-    <folder ID="s4" hidden="false" immutable="false" name="Footer folder" type="footer" unremovable="false"/>
-    <folder ID="s5" hidden="false" immutable="false" name="Main Staff Tab" type="regular" unremovable="false">
-      <folder ID="s6" hidden="false" immutable="false" name="Column 1" type="regular" unremovable="false">
-        <structure-attribute>
-          <name>width</name>
-          <value>60%</value>
-        </structure-attribute>
-        <channel fname="staff-feature" unremovable="false" hidden="false" immutable="false" ID="n7"/>
-        <channel fname="notifications" unremovable="false" hidden="false" immutable="false" ID="n8"/>
-      </folder>
-      <folder ID="s9" hidden="false" immutable="false" name="Column 2" type="regular" unremovable="false">
-        <structure-attribute>
-          <name>width</name>
-          <value>40%</value>
-        </structure-attribute>
-        <channel fname="notification-demo" unremovable="false" hidden="false" immutable="false" ID="n11"/>
-        <channel fname="whos-online" unremovable="false" hidden="false" immutable="false" ID="n10"/>
-      </folder>
-    </folder>
-  </folder>
 </layout>

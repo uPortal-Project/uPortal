@@ -25,6 +25,10 @@
       <channel fname="fragment-admin-exit" unremovable="false" hidden="false" immutable="false" ID="n3"/>
     </folder>
     <folder ID="s4" hidden="false" immutable="false" name="Welcome" type="regular" unremovable="false">
+      <structure-attribute>
+          <name>externalId</name>
+          <value>welcome</value>
+      </structure-attribute>
       <folder ID="s5" hidden="false" immutable="false" name="Column" type="regular" unremovable="false">
         <structure-attribute>
           <name>width</name>

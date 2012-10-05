@@ -22,6 +22,7 @@ package org.jasig.portal.events.aggr;
 import java.io.Serializable;
 
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.joda.time.DateTime;
 
 
 /**
@@ -31,6 +32,11 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
  * @version $Revision$
  */
 public interface BaseAggregation<K extends BaseAggregationKey> extends Serializable {
+    /**
+     * @return The {@link DateTime} the aggregation is for, short cut for getting the same info from {@link #getDateDimension()} and {@link #getTimeDimension()}
+     */
+    DateTime getDateTime();
+    
     /**
      * @return The day the aggregation is for
      */

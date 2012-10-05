@@ -68,7 +68,11 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
     )
 @org.hibernate.annotations.Table(
         appliesTo = "UP_CONCURRENT_USER_AGGR",
-        indexes = @Index(name = "IDX_UP_CONC_USER_AGGR_DTI", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL" }))
+        indexes = {
+                @Index(name = "IDX_UP_CONC_USER_AGGR_DTI", columnNames = { "DATE_DIMENSION_ID", "TIME_DIMENSION_ID", "AGGR_INTERVAL" }),
+                @Index(name = "IDX_UP_CONC_USER_INTRVL", columnNames = { "AGGR_INTERVAL" }),
+                @Index(name = "IDX_UP_CONC_USER_GRP", columnNames = { "AGGR_GROUP_ID" })
+        })
 @NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)

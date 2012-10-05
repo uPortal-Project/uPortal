@@ -83,7 +83,7 @@
       </xsl:choose>
     </xsl:variable>
     
-    <html lang="{substring-before($USER_LANG,'-')}">
+    <html lang="{$USER_LANG}">
       <head>
         <title>
           <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->

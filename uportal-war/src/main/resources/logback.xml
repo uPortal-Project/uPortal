@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- For assistance related to logback-translator or configuration  -->
+<!-- files in general, please contact the logback user mailing list -->
+<!-- at http://www.qos.ch/mailman/listinfo/logback-user             -->
+<!--                                                                -->
+<!-- For professional support please see                            -->
+<!--    http://www.qos.ch/shop/products/professionalSupport         -->
+<!--                                                                -->
+<configuration scan="true" scanPeriod="30 seconds">
+  <contextName>uPortal</contextName>
+ 
+  <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+    <resetJUL>true</resetJUL>
+  </contextListener>
+  
+  <jmxConfigurator />
+  
+  <appender name="PORTAL" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!--See http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+    <!--and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy-->
+    <!--for further documentation-->
+    <File>${environment.build.log.logfileDirectory}/portal/portal.log</File>
+    <encoder>
+      <pattern>%-5level [%thread] %logger{36} %d{ISO8601} - %msg%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${environment.build.log.logfileDirectory}/portal/portal.log.%d{yyyy-MM-dd-HH}</fileNamePattern>
+    </rollingPolicy>
+  </appender>
+  
+  <appender name="EVENT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!--See http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+    <!--and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy-->
+    <!--for further documentation-->
+    <File>${environment.build.log.logfileDirectory}/portal/portal-events.log</File>
+    <encoder>
+      <pattern>%-5level [%thread] %logger{36} %d{ISO8601} - %msg%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${environment.build.log.logfileDirectory}/portal/portal-events.log.%d{yyyy-MM-dd-HH}</fileNamePattern>
+    </rollingPolicy>
+  </appender>
+  
+  <appender name="SWAPPER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!--See http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+    <!--and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy-->
+    <!--for further documentation-->
+    <File>${environment.build.log.logfileDirectory}/audit/portal.audit.log</File>
+    <encoder>
+      <pattern>%-5level [%thread] %logger{36} %d{ISO8601} - %msg%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${environment.build.log.logfileDirectory}/audit/portal.audit.log.%d{yyyy-MM-dd}</fileNamePattern>
+    </rollingPolicy>
+  </appender>
+  
+  <appender name="JG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!--See http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+    <!--and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy-->
+    <!--for further documentation-->
+    <File>${environment.build.log.logfileDirectory}/jgroups/portal.jgroups.log</File>
+    <encoder>
+      <pattern>%-5level [%thread] %logger{36} %d{ISO8601} - %msg%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${environment.build.log.logfileDirectory}/jgroups/portal.jgroups.log.%d{yyyy-MM-dd-HH}</fileNamePattern>
+    </rollingPolicy>
+  </appender>
+  
+  <root level="${environment.build.log.rootLevel}">
+    <appender-ref ref="PORTAL"/>
+  </root>
+  
+  <!-- Log use of the identity and attribute swapper -->
+  <logger name="org.jasig.portal.portlets.swapper" additivity="false" level="${environment.build.log.rootLevel}">
+    <appender-ref ref="SWAPPER"/>
+  </logger>
+
+  <!--  Portal Event aggregation -->
+  <logger name="org.jasig.portal.events" additivity="false" level="${environment.build.log.rootLevel}">
+    <appender-ref ref="EVENT"/>
+  </logger>
+  
+  <!-- Uncomment to monitor jGroups clustering
+  <logger name="net.sf.ehcache.distribution" additivity="false" level="TRACE">
+    <appender-ref ref="JG"/>
+  </logger>
+  <logger name="org.jgroups" additivity="false" level="DEBUG">
+    <appender-ref ref="JG"/>
+  </logger>
+  -->
+
+  <!--  Log all TX, SQL and SQL Parameters
+  <logger name="org.springframework.orm.jpa.JpaTransactionManager" additivity="false" level="DEBUG">
+    <appender-ref ref="PORTAL"/>
+  </logger>
+  <logger name="org.hibernate.SQL" additivity="false" level="DEBUG">
+    <appender-ref ref="PORTAL"/>
+  </logger>
+  <logger name="org.hibernate.type" additivity="false" level="TRACE">
+    <appender-ref ref="PORTAL"/>
+  </logger>
+   -->
+   
+  <!-- Portlet Event handling logging
+  <logger name="org.jasig.portal.portlet.rendering.PortletEventCoordinatationService" additivity="false" level="DEBUG">
+    <appender-ref ref="PORTAL"/>
+  </logger>
+  -->
+  
+  <!-- Uncomment to see the XML at various stages in the rendering pipeline
+  <logger name="org.jasig.portal.rendering.LoggingStAXComponent" additivity="false" level="DEBUG">
+    <appender-ref ref="PORTAL"/>
+  </logger>
+  -->
+  
+  <!-- Uncomment to see fragment activation errors
+  <logger name="org.jasig.portal.layout.dlm.FragmentActivator" additivity="false" level="DEBUG">
+    <appender-ref ref="PORTAL"/>
+  </logger>
+  -->
+  
+  <!-- Uncomment to monitor portlet-spec caching behavior
+  <logger name="org.jasig.portal.portlet.rendering.PortletRendererImpl" additivity="false" level="DEBUG">
+    <appender-ref ref="PORTAL"/>
+  </logger>
+  <logger name="org.jasig.portal.portlet.container.cache" additivity="false" level="DEBUG">
+    <appender-ref ref="PORTAL"/>
+  </logger>
+  -->
+  
+  <!-- Hide some bad Hibernate log messages -->
+  <logger name="org.hibernate.cfg.annotations.reflection.JPAOverriddenAnnotationReader" additivity="false" level="ERROR"/>
+  <logger name="org.hibernate.ejb.metamodel.MetadataContext" additivity="false" level="FATAL"/>
+  <logger name="org.hibernate.engine.jdbc.spi.SqlExceptionHelper" additivity="false" level="FATAL"/>
+  
+</configuration>

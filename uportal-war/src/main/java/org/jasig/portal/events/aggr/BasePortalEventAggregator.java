@@ -171,7 +171,7 @@ public abstract class BasePortalEventAggregator<
         final BaseAggregationPrivateDao<T, K> aggregationDao = this.getAggregationDao();
         final Collection<T> unclosedAggregations = aggregationDao.getUnclosedAggregations(start, end, interval);
         for (final T aggregation : unclosedAggregations) {
-            final DateTime eventDate = aggregation.getTimeDimension().getTime().toDateTime(aggregation.getDateDimension().getDate());
+            final DateTime eventDate = aggregation.getDateTime();
             final AggregationIntervalInfo unclosedIntervalInfo = this.aggregationIntervalHelper.getIntervalInfo(interval, eventDate);
             aggregation.intervalComplete(unclosedIntervalInfo.getTotalDuration());
         }

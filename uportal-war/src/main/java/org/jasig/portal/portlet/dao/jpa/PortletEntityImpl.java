@@ -54,6 +54,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl;
@@ -99,6 +100,7 @@ class PortletEntityImpl implements IPortletEntity {
     private final String layoutNodeId;
 
     @NaturalId
+    @Index(name = "IDX_UP_PORTLET_ENT__UP_USER")
     @Column(name = "USER_ID", nullable = false)
     private final int userId;
 

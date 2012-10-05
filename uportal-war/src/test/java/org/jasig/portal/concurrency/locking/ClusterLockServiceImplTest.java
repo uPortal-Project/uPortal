@@ -32,8 +32,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import javax.annotation.Nullable;
-
 import org.jasig.portal.IPortalInfoProvider;
 import org.jasig.portal.concurrency.locking.IClusterLockService.LockStatus;
 import org.jasig.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
@@ -91,7 +89,7 @@ public class ClusterLockServiceImplTest {
 				.doInTryLock(mutexName, LockOptions.builder().lastRunDelay(1000),
 						new Function<ClusterMutex, Boolean>() {
 							@Override
-							public Boolean apply(@Nullable ClusterMutex input) {
+							public Boolean apply(ClusterMutex input) {
 								return Boolean.TRUE;
 							}
 						});
@@ -127,7 +125,7 @@ public class ClusterLockServiceImplTest {
 				.doInTryLock(mutexName, LockOptions.builder().lastRunDelay(10),
 						new Function<ClusterMutex, Boolean>() {
 							@Override
-							public Boolean apply(@Nullable ClusterMutex input) {
+							public Boolean apply(ClusterMutex input) {
 								return Boolean.TRUE;
 							}
 						});
@@ -161,7 +159,7 @@ public class ClusterLockServiceImplTest {
 				.doInTryLock(mutexName, LockOptions.builder().serverBiasDelay(1000),
 						new Function<ClusterMutex, Boolean>() {
 							@Override
-							public Boolean apply(@Nullable ClusterMutex input) {
+							public Boolean apply(ClusterMutex input) {
 								return Boolean.TRUE;
 							}
 						});
@@ -195,7 +193,7 @@ public class ClusterLockServiceImplTest {
 				.doInTryLock(mutexName, LockOptions.builder().serverBiasDelay(1000),
 						new Function<ClusterMutex, Boolean>() {
 							@Override
-							public Boolean apply(@Nullable ClusterMutex input) {
+							public Boolean apply(ClusterMutex input) {
 								return Boolean.TRUE;
 							}
 						});
@@ -230,7 +228,7 @@ public class ClusterLockServiceImplTest {
 				.doInTryLock(mutexName, LockOptions.builder().serverBiasDelay(10),
 						new Function<ClusterMutex, Boolean>() {
 							@Override
-							public Boolean apply(@Nullable ClusterMutex input) {
+							public Boolean apply(ClusterMutex input) {
 								return Boolean.TRUE;
 							}
 						});
@@ -266,7 +264,7 @@ public class ClusterLockServiceImplTest {
 				.doInTryLock(mutexName, LockOptions.builder().serverBiasDelay(10),
 						new Function<ClusterMutex, Boolean>() {
 							@Override
-							public Boolean apply(@Nullable ClusterMutex input) {
+							public Boolean apply(ClusterMutex input) {
 								return Boolean.TRUE;
 							}
 						});
@@ -307,7 +305,7 @@ public class ClusterLockServiceImplTest {
 				.doInTryLock(mutexName, LockOptions.builder().serverBiasDelay(10),
 						new Function<ClusterMutex, Boolean>() {
 							@Override
-							public Boolean apply(@Nullable ClusterMutex input) {
+							public Boolean apply(ClusterMutex input) {
 								return Boolean.TRUE;
 							}
 						});

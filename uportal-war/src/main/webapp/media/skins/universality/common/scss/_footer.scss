@@ -24,7 +24,6 @@
 		#portalPageFooterContent {
 			margin: 0 auto;
 			padding: $footerInnerPadding;
-    		width: $footerInnerWidth;
     		@if ($footerInnerBackground != false) {
     			background: $footerInnerBackground;
     		}
@@ -32,12 +31,11 @@
 		
 		#portalPageFooterNav {
 		    background: #1E2126;
-		    font-size: 13px;
+		    font-size: 10px;
+		    padding: 25px;
 		    
 		    .fl-container-flex {
-		        width: 960px;
             	margin: 0 auto;
-            	padding: 2em 0 0 0;
 		    }
 		    div > a {
             	font-weight: bold;
@@ -52,10 +50,13 @@
             	color: #699bc4;
             }
             .fl-col {
-            	margin-bottom: 2em;
+            	margin-left: 0;
+            	margin-right: 0.50%;
+            	padding: 0;
             }
             ul {
-            	margin: 1em 0 0 1em;
+              margin: 0;
+              padding-top: 12px;
             }
             ul li {
             	list-style: none;
