@@ -31,8 +31,8 @@
     <type>Portlet</type>
     <timeout>60000</timeout>
     <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
-        <up:webAppName>/jasig-widget-portlets</up:webAppName>
-        <up:portletName>youtube</up:portletName>
+        <up:webAppName>/NewsReaderPortlet</up:webAppName>
+        <up:portletName>single-feed-news</up:portletName>
     </portlet-descriptor>
     <category>Academics</category>
     <group>Everyone</group>
@@ -47,5 +47,25 @@
     <portlet-preference>
         <name>usernames</name>
         <value>OhioUniv</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>name</name>
+        <readOnly>false</readOnly>
+        <value>Videos</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>viewName</name>
+        <readOnly>false</readOnly>
+        <value>videos</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>mobileViewName</name>
+        <readOnly>false</readOnly>
+        <value>videos-jQM</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>url</name>
+        <readOnly>false</readOnly>
+        <value>https://gdata.youtube.com/feeds/api/users/ohiouniv/uploads</value>
     </portlet-preference>
 </portlet-definition>
