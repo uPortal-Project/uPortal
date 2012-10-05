@@ -5,11 +5,13 @@
  * uMobile CSS is built with SASS:
  * http://sass-lang.com/
  */
-
-/* Additional theme files boxed off for human use. */
-@import "colors";
+@import "reset";
+@import "layout";
+@import "navigation";
+@import "cas";
 @import "buttons";
 @import "badges";
+@import "portlet";
 
 .up {
 	
@@ -27,7 +29,7 @@
 	.dashboard {
 		color: $white;
 		text-shadow: 0 1px 0 $black;
-		background: $bgc url("images/bg_320x480_flat.png") 0 25px no-repeat;
+		background: $bgc url("../common/images/bg_320x480_flat.png") 0 25px no-repeat;
 		
 		.ui-link-inherit { color: $white; }
 		.ui-link { 
@@ -129,11 +131,11 @@
 	}
 	/* icons */
 	.ui-icon-map {
-		background-image: url(images/icons/location-18x18.png);
+		background-image: url(../common/images/icons/location-18x18.png);
 	}
 	
 	.ui-icon-phone {
-		background-image: url(images/icons/phone-18x18.png);
+		background-image: url(../common/images/icons/phone-18x18.png);
 	}
 }
 
@@ -141,12 +143,12 @@
 @media only screen and (-webkit-min-device-pixel-ratio: 2) {
 	.up {
 		.ui-icon-map {
-			background-image: url(images/icons/location-36x36.png);
+			background-image: url(../common/images/icons/location-36x36.png);
 			background-size: 18px 18px;
 		}
 	
 		.ui-icon-phone {
-			background-image: url(images/icons/phone-36x36.png);
+			background-image: url(../common/images/icons/phone-36x36.png);
 			background-size: 18px 18px;
 		}
 	}
