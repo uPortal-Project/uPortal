@@ -60,7 +60,7 @@
     <portlet-preference>
         <name>url</name>
         <readOnly>false</readOnly>
-        <value>http://feeds.nytimes.com/nyt/rss/Education</value>
+        <value>http://www.nytimes.com/services/xml/rss/nyt/Education.xml</value>
     </portlet-preference>
     <portlet-preference>
         <name>summaryView</name>
