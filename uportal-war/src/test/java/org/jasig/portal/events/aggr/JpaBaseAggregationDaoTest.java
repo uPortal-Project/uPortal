@@ -52,6 +52,7 @@ import org.jasig.portal.test.BaseAggrEventsJpaDaoTest;
 import org.jasig.portal.utils.Tuple;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.LocalTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,7 +119,7 @@ public abstract class JpaBaseAggregationDaoTest<
         when(entityGroupB.getName()).thenReturn("Group B");
         when(compositeGroupService.findGroup("local.1")).thenReturn(entityGroupB);
         
-        final DateTime instant = new DateTime(1326734644000l); //just a random time
+        final DateTime instant = new DateTime(1326734644000l, DateTimeZone.UTC); //just a random time
         
         //Create required date and time dimensions
         populateDateTimeDimensions(instant.minusHours(2), instant.plusHours(2), null);
@@ -307,7 +308,7 @@ public abstract class JpaBaseAggregationDaoTest<
         final MutableInt aggrs = new MutableInt();
         
         //Create 2 days of login aggregates ... every 5 minutes
-        final DateTime start = new DateTime(1326734644000l).minuteOfDay().roundFloorCopy();
+        final DateTime start = new DateTime(1326734644000l, DateTimeZone.UTC).minuteOfDay().roundFloorCopy();
         final DateTime end = start.plusDays(2);
         final AggregationInterval interval = AggregationInterval.FIVE_MINUTE;
         
@@ -376,7 +377,7 @@ public abstract class JpaBaseAggregationDaoTest<
                 final List<T> baseAggregations = 
                         getAggregationDao().getAggregations(queryStart, queryEnd, createAggregationKey(interval, groupA), groupB);
                 
-                assertEquals(302, baseAggregations.size());
+                assertEquals(158, baseAggregations.size());
             }
         });
         
@@ -393,7 +394,7 @@ public abstract class JpaBaseAggregationDaoTest<
                 final List<T> baseAggregations = 
                         getAggregationDao().getAggregations(queryStart, queryEnd, createAggregationKey(interval, groupA), groupB);
                 
-                assertEquals(302, baseAggregations.size());
+                assertEquals(158, baseAggregations.size());
             }
         });
 
@@ -517,7 +518,7 @@ public abstract class JpaBaseAggregationDaoTest<
         final MutableInt aggrs = new MutableInt();
         
         //Create 10 minutes of aggregations
-        final DateTime start = new DateTime(1326734644000l).minuteOfDay().roundFloorCopy();
+        final DateTime start = new DateTime(1326734644000l, DateTimeZone.UTC).minuteOfDay().roundFloorCopy();
         final DateTime end = start.plusMinutes(10);
         final AggregationInterval interval = AggregationInterval.FIVE_MINUTE;
         
@@ -610,7 +611,7 @@ public abstract class JpaBaseAggregationDaoTest<
         final MutableInt aggrs = new MutableInt();
         
         //Create 10 minutes of aggregations
-        final DateTime start = new DateTime(1326734644000l).minuteOfDay().roundFloorCopy();
+        final DateTime start = new DateTime(1326734644000l, DateTimeZone.UTC).minuteOfDay().roundFloorCopy();
         final DateTime end = start.plusMinutes(10);
         final AggregationInterval interval = AggregationInterval.FIVE_MINUTE;
         
