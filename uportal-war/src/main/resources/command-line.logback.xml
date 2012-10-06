@@ -20,7 +20,7 @@
    +-->
   <timestamp key="bySecond" datePattern="yyyyMMdd'T'HHmmss"/>
   
-  <appender name="F" class="ch.qos.logback.core.rolling.RollingFileAppender">
+  <appender name="F" class="ch.qos.logback.core.FileAppender">
     <!--
      | See http://logback.qos.ch/manual/appenders.html#RollingFileAppender
      | and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy
