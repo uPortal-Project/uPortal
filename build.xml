@@ -416,14 +416,17 @@
     </target>
 
     <target name="dbtest" description="Displays information about the database defined in rdbm.properties">
-        <uportal-war-macro>
-            <echo message="Invoking DbTest" />
-            <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.tools.DbTest">
-                <sysproperty key="logback.configurationFile" value="command-line.logback.xml" />
+    	<echo>Creating DBTest Script</echo>
+        <echo file="${portal-shell-script}" append="true">
+            logger.info("");
+            logger.info("");
+        	
+            portalShellBuildHelper.dbTest();
+        </echo>
 
-                <classpath refid="uportal-war-full.classpath" />
-            </java>
-        </uportal-war-macro>
+        <antcall target="up-shell">
+            <param name="script" value="${portal-shell-script}" />
+        </antcall>
     </target>
 
     <target name="regchantype" depends="prodPrompt" description="Registers a new channel type">
