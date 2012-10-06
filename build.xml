@@ -416,14 +416,17 @@
     </target>
 
     <target name="dbtest" description="Displays information about the database defined in rdbm.properties">
-        <uportal-war-macro>
-            <echo message="Invoking DbTest" />
-            <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.tools.DbTest">
-                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+    	<echo>Creating DBTest Script</echo>
+        <echo file="${portal-shell-script}" append="true">
+            logger.info("");
+            logger.info("");
+        	
+            portalShellBuildHelper.dbTest();
+        </echo>
 
-                <classpath refid="uportal-war-full.classpath" />
-            </java>
-        </uportal-war-macro>
+        <antcall target="up-shell">
+            <param name="script" value="${portal-shell-script}" />
+        </antcall>
     </target>
 
     <target name="regchantype" depends="prodPrompt" description="Registers a new channel type">
@@ -462,7 +465,7 @@
 
                             <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.shell.PortalShell">
                             	<jvmarg value="-XX:MaxPermSize=256m"/>
-                                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+                                <sysproperty key="logback.configurationFile" value="command-line.logback.xml" />
                                 <classpath refid="uportal-war-full.classpath" />
                                 <arg value="-s" />
                                 <arg value="${script}" />
@@ -472,7 +475,7 @@
                             <echo>Interactive Mode</echo>
 
                             <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.shell.PortalShell">
-                                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+                                <sysproperty key="logback.configurationFile" value="command-line.logback.xml" />
                                 <classpath refid="uportal-war-full.classpath" />
                             </java>
                         </else>
