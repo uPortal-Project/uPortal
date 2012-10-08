@@ -19,19 +19,16 @@
    | available to all subsequent configuration elements.
    +-->
   <timestamp key="bySecond" datePattern="yyyyMMdd'T'HHmmss"/>
-  
+
+  <!--   
   <appender name="F" class="ch.qos.logback.core.FileAppender">
-    <!--
-     | See http://logback.qos.ch/manual/appenders.html#RollingFileAppender
-     | and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy
-     | for further documentation
-     +-->
     <File>cmdline-${bySecond}.log</File>
     <encoder>
       <pattern>%-5level [%thread] %logger{36} %d{ISO8601} - %msg%n</pattern>
     </encoder>
   </appender>
-  
+   -->
+   
   <root level="WARN">
     <appender-ref ref="CONSOLE"/>
   </root>
