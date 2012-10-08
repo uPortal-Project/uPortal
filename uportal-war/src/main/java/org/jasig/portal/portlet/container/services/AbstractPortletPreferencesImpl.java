@@ -151,10 +151,10 @@ public abstract class AbstractPortletPreferencesImpl<C> implements PortletPrefer
         if (portletPreference != null) {
             final String[] values = portletPreference.getValues();
             if (values == null || values.length == 0) {
-                return null;
+                return def;
             }
             
-            return values[0];
+            return values[0] != null ? values[0] : def; // A null value is treated as a non-existent value
         }
         
         return def;
