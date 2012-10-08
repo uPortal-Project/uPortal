@@ -429,25 +429,6 @@
         </antcall>
     </target>
 
-    <target name="regchantype" depends="prodPrompt" description="Registers a new channel type">
-        <uportal-war-macro>
-            <property name="class" value=" " />
-            <property name="name" value=" " />
-            <property name="description" value=" " />
-            <property name="uri" value=" " />
-
-            <echo message="Invoking RegisterChannelType" />
-            <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterChannelType">
-                <classpath refid="uportal-war-full.classpath" />
-
-                <arg value="${class}" />
-                <arg value="${name}" />
-                <arg value="${description}" />
-                <arg value="${uri}" />
-            </java>
-        </uportal-war-macro>
-    </target>
-
     <target name="up-shell" description="Run a uPortal Groovy Shell. Interactive or scripted using -Dscript=">
         <if>
             <not>
@@ -753,59 +734,6 @@
         </antcall>
     </target>
 
-    <target name="addstylesheet" depends="prodPrompt" description="Registers a new theme or structure">
-        <uportal-war-macro>
-            <property name="stylesheetType" value=" " />
-            <property name="stylesheetUri" value=" " />
-            <property name="descriptionUri" value=" " />
-
-            <echo message="Invoking RegisterStylesheet (add)" />
-            <java dir="${basedir}" fork="true" classname="org.jasig.portal.tools.RegisterStylesheet">
-                <classpath refid="uportal-war-full.classpath" />
-
-                <arg value="${stylesheetType}" />
-                <arg value="${stylesheetUri}" />
-                <arg value="${descriptionUri}" />
-            </java>
-        </uportal-war-macro>
-    </target>
-
-    <target name="modstylesheet" depends="prodPrompt" description="Modifies an existing theme or structure">
-        <uportal-war-macro>
-            <property name="stylesheetType" value=" " />
-            <property name="stylesheetUri" value=" " />
-            <property name="descriptionUri" value=" " />
-            <property name="stylesheetId" value=" " />
-
-            <echo message="Invoking RegisterStylesheet (modify)" />
-            <java dir="${basedir}" fork="true" classname="org.jasig.portal.tools.RegisterStylesheet">
-                <classpath refid="uportal-war-full.classpath" />
-
-                <arg value="${stylesheetType}" />
-                <arg value="-u" />
-                <arg value="${stylesheetUri}" />
-                <arg value="${descriptionUri}" />
-                <arg value="${stylesheetId}" />
-            </java>
-        </uportal-war-macro>
-    </target>
-
-    <target name="delstylesheet" depends="prodPrompt" description="Deletes an existing theme or structure">
-        <uportal-war-macro>
-            <property name="stylesheetType" value=" " />
-            <property name="stylesheetId" value=" " />
-
-            <echo message="Invoking RegisterStylesheet (delete)" />
-            <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterStylesheet">
-                <classpath refid="uportal-war-full.classpath" />
-
-                <arg value="${stylesheetType}" />
-                <arg value="-d" />
-                <arg value="${stylesheetId}" />
-            </java>
-        </uportal-war-macro>
-    </target>
-
     <target name="hsql" description="Start a HSQLDB instance consistent with the default RDBMS requirements of uPortal">
         <property name="spawn" value="false" />
 
@@ -1091,6 +1019,26 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
     <target name="i18n-db">
         <echo>The "i18n-db" Ant task is no longer supported. Use "ant data-import" to import portal data.</echo>
         <fail message="The 'i18n-db' Ant task is no longer supported. Use 'ant data-import' to import portal data.">
+        </fail>
+    </target>
+    <target name="regchantype">
+        <echo>The "regchantype" Ant task is no longer supported. Use 'ant data-import' to import portal data.</echo>
+        <fail message="The 'regchantype' Ant task is no longer supported. Use 'ant data-import' to import portal data.">
+        </fail>
+    </target>
+    <target name="addstylesheet">
+        <echo>The "addstylesheet" Ant task is no longer supported. Use 'ant data-import' to import portal data.</echo>
+        <fail message="The 'addstylesheet' Ant task is no longer supported. Use 'ant data-import' to import portal data.">
+        </fail>
+    </target>
+    <target name="modstylesheet">
+        <echo>The "modstylesheet" Ant task is no longer supported. Use 'ant data-import' to import portal data.</echo>
+        <fail message="The 'modstylesheet' Ant task is no longer supported. Use 'ant data-import' to import portal data.">
+        </fail>
+    </target>
+    <target name="delstylesheet">
+        <echo>The "delstylesheet" Ant task is no longer supported. Use 'ant data-delete' to delete portal data.</echo>
+        <fail message="The 'delstylesheet' Ant task is no longer supported. Use 'ant data-delete' to delete portal data.">
         </fail>
     </target>
 
