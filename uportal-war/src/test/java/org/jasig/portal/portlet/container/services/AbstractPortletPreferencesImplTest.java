@@ -131,17 +131,29 @@ public class AbstractPortletPreferencesImplTest {
         String value = portletPreferences.getValue("key0", "FOOBAR");
         assertEquals("FOOBAR", value);
         
+        // Next 3 asserts check whether null values are treated like non-existent values as specified in
+        // PortletPreferences#getValue(String, String)
         value = portletPreferences.getValue("key1", "FOOBAR");
-        assertNull(value);
+        assertEquals("FOOBAR", value);
         
         value = portletPreferences.getValue("key2", "FOOBAR");
-        assertNull(value);
+        assertEquals("FOOBAR", value);
         
         value = portletPreferences.getValue("key3", "FOOBAR");
         assertNull(value);
         
         value = portletPreferences.getValue("key4", "FOOBAR");
         assertEquals("value1", value);
+        
+        value = portletPreferences.getValue("key1", null);
+        assertNull(value);
+        
+        value = portletPreferences.getValue("key2", null);
+        assertNull(value);
+        
+        
+        value = portletPreferences.getValue("key3", null);
+        assertNull(value);
     }
     
     @Test
