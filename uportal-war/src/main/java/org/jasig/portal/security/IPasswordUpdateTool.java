@@ -21,15 +21,14 @@ package org.jasig.portal.security;
 
 import java.io.IOException;
 
-import org.springframework.transaction.annotation.Transactional;
-
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
 public interface IPasswordUpdateTool {
-
-    @Transactional
-    public abstract boolean updatePassword(String user, boolean create) throws IOException;
+    
+    boolean updatePassword(String user, boolean create) throws IOException;
+    
+    void updatePassword(String user, String spass, boolean create) throws IOException;
 
 }

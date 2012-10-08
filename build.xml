@@ -707,19 +707,34 @@
 
 
     <target name="md5passwd" depends="prodPrompt" description="Creates a user in the UP_PERSON_DIR table">
-        <fail unless="username">
-            You must specify a 'username' parameter (-Dusername={juser})
-        </fail>
+    	<property name="username" value="" />
+    	
+    	<input message="Enter userId:" addproperty="user.id" defaultvalue="${username}"/> 
+        <input message="Enter password:" addproperty="user.pw1"> 
+          <handler classname="org.apache.tools.ant.input.SecureInputHandler" /> 
+        </input>
+    	<input message="Verify password:" addproperty="user.pw2"> 
+          <handler classname="org.apache.tools.ant.input.SecureInputHandler" /> 
+        </input>
 
-        <uportal-war-macro>
-            <echo message="Invoking creating/updating password for: ${username}" />
-            <java dir="${basedir}" classname="org.jasig.portal.security.Md5Passwd">
-                <classpath refid="uportal-war-full.classpath" />
+    	<fail message="Passwords do not match.">
+    	    <condition>
+    	        <not>
+    	            <equals arg1="${user.pw1}" arg2="${user.pw2}"/>
+    	        </not>
+    	    </condition>
+    	</fail>    	
 
-                <arg value="-c" />
-                <arg value="${username}" />
-            </java>
-        </uportal-war-macro>
+        <echo file="${portal-shell-script}" append="true">
+            logger.info("");
+            logger.info("");
+        	
+        	passwordUpdateTool.updatePassword('${user.id}', /${user.pw1}/, true);
+        </echo>
+
+        <antcall target="up-shell">
+            <param name="script" value="${portal-shell-script}" />
+        </antcall>
     </target>
 
     <target name="deluser" depends="prodPrompt" description="Delete traces of a user from the portal database">
