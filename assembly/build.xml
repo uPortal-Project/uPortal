@@ -159,7 +159,7 @@
         </copy>
     </target>
 	
-	<target name="live-nightly-setup" description="Setup live-nightly symlinks">
+	<target name="live-nightly-setup" depends="prepare-qs" description="Setup live-nightly symlinks">
 		<!-- add logging symlink -->
 		<echo>Creating symlink from /var/log/apache2/tomcat/${tomcat.loglink} to ${quickstart.dir}/${dl.tomcat.finalName}/logs</echo>
 	    <symlink link="/var/log/apache2/tomcat/${tomcat.loglink}" resource="${quickstart.dir}/${dl.tomcat.finalName}/logs" overwrite="true"/>
