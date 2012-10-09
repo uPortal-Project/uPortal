@@ -741,6 +741,12 @@
             <equals arg1="${spawn}" arg2="true" />
         </condition>
         <property name="failonerror" value="true" />
+    	
+        <fail message="There is already a service running on port ${environment.build.hsql.port}, please shut it down before starting the quickstart">
+            <condition>
+                <socket server="localhost" port="${environment.build.hsql.port}" />
+            </condition>
+        </fail>
 
         <uportal-parent-macro>
             <artifact:dependencies pathid="hsql.classpath" settingsFile="${maven.settings}">
@@ -766,9 +772,23 @@
 
             </java>
         </uportal-parent-macro>
+        
+    	<if>
+    		<equals arg1="${spawn}" arg2="true" />
+    	   <then>
+                <!-- wait for hsql to start -->
+                <echo>Waiting for HSQL to Start, checking port ${environment.build.hsql.port}</echo>
+                <waitfor maxwait="1" maxwaitunit="minute" checkevery="1" checkeveryunit="second" timeoutproperty="hsql-not-started">
+                    <socket server="localhost" port="${environment.build.hsql.port}" />
+                </waitfor>
+                <fail if="hsql-not-started" message="HSQL Failed To Start" />
+                <echo>HSQL Started</echo>
+    	   	</then>
+	   	</if>
     </target>
 
     <target name="hsql-shutdown" description="Compacts then cleanly shuts down hsql, useful if the 'hsql' task was run with '-Dspawn=true'">
+    	<echo>${environment.token}</echo>
         <uportal-parent-macro>
             <artifact:dependencies pathid="hsql.classpath" settingsFile="${maven.settings}">
                 <artifact:pom file="${bootstrap.dir}/hsqldb/pom.xml" settingsFile="${maven.settings}" inheritAllProperties="false" />
@@ -807,6 +827,20 @@
                 </catch>
             </trycatch>
         </uportal-parent-macro>
+    	
+    	<echo>Waiting for HSQL to stop, checking port ${environment.build.hsql.port}</echo>
+        <waitfor maxwait="1" maxwaitunit="minute" checkevery="1" checkeveryunit="second" timeoutproperty="hsql-not-stopped">
+            <not>
+                <socket server="localhost" port="${environment.build.hsql.port}" />
+            </not>
+        </waitfor>
+        <if>
+            <isset property="hsql-not-stopped"/>
+            <then>
+                <echo level="warn">HSQL Failed To Stop</echo>
+            </then>
+        </if>
+        <echo>HSQL Stopped</echo>
     </target>
 
     <!-- ============================== Utility Targets ============================== -->
