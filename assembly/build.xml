@@ -161,21 +161,21 @@
 	
 	<target name="live-nightly-setup" description="Setup live-nightly symlinks">
 		<!-- add logging symlink -->
-	    <symlink link="/var/log/apache2/tomcat/${tomcat.loglink}" resource="${live-nightly.dir}/${dl.tomcat.finalName}/logs"/>
+	    <symlink link="/var/log/apache2/tomcat/${tomcat.loglink}" resource="${quickstart.dir}/${dl.tomcat.finalName}/logs"/>
 	</target>
     
-    <target name="live-nightly-stop" depends="prepare-ln">
+    <target name="live-nightly-stop" depends="prepare-qs">
         <if>
-            <available file="${live-nightly.dir}/build.xml" />
+            <available file="${quickstart.dir}/build.xml" />
             <then>
-                <ant antfile="${live-nightly.dir}/build.xml" dir="${live-nightly.dir}" inheritall="false" target="stop" />
+                <ant antfile="${quickstart.dir}/build.xml" dir="${quickstart.dir}" inheritall="false" target="stop" />
                 <sleep minutes="1" />
             </then>
         </if>
     </target>
     
-    <target name="live-nightly-start" depends="prepare-ln">
-        <ant antfile="${live-nightly.dir}/build.xml" dir="${live-nightly.dir}" inheritall="false" target="start" />
+    <target name="live-nightly-start" depends="prepare-qs">
+        <ant antfile="${quickstart.dir}/build.xml" dir="${quickstart.dir}" inheritall="false" target="start" />
     </target>
             
     <target name="qs-package" depends="prepare-qs">
@@ -377,12 +377,5 @@
         <property name="quickstart.dir" value="${target.dir}/${quickstart.name}" />
 
         <mkdir dir="${quickstart.dir}" />
-    </target>
-
-    <target name="prepare-ln" depends="prepare">
-        <property name="live-nightly.name" value="${uportal.name}-live-nightly" />
-        <property name="live-nightly.dir" value="${target.dir}/${live-nightly.name}" />
-
-        <mkdir dir="${live-nightly.dir}" />
     </target>
 </project>
