@@ -1,3 +1,4 @@
+#! /bin/bash
 #
 # Licensed to Jasig under one or more contributor license
 # agreements. See the NOTICE file distributed with this work
@@ -17,5 +18,19 @@
 # under the License.
 #
 
-uportal.dir=${basedir}/@uportal.name@
-tomcat.dir=${basedir}/@tomcat.name@
+if [ ! -e $1 ]
+then
+    echo $1 does not exist, assuming Tomcat is stopped
+    exit 0
+fi
+
+pid=`cat $1`
+echo $pid
+if [ `ps -p $pid | grep -c $pid` = '0' ] 
+then
+    echo Tomcat is not running
+    exit 0
+else
+    echo Tomcat is running
+    exit 1
+fi
