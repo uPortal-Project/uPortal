@@ -217,7 +217,7 @@
         	<!-- Set the AJP port, listen only on localhost, and enable empty session path -->
             <replacefilter>
                 <replacetoken><![CDATA[<Connector port="8009" protocol="AJP/1.3" redirectPort="8443" />]]></replacetoken> 
-                <replacevalue expandProperties="true"><![CDATA[<Connector emptySessionPath="true" address="localhost" port="${environment.qs.tomcat.port.ajp}" protocol="AJP/1.3" redirectPort="8443" />]]></replacevalue>
+                <replacevalue expandProperties="true"><![CDATA[<Connector emptySessionPath="true" port="${environment.qs.tomcat.port.ajp}" protocol="AJP/1.3" redirectPort="8443" />]]></replacevalue>
             </replacefilter>
             
             <!-- Set the shutdown -->
