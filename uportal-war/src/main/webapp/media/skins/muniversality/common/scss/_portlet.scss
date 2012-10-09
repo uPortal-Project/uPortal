@@ -45,22 +45,22 @@
 			padding: 0.7em 15px;
 			
 			.ui-link-inherit {
-				padding: 0;
+				padding: 0.7em 15px 0.7em 100px;
 			}
 		}
 		.ui-li-has-thumb .ui-btn-inner {
-			padding: 0.7em 100px 0.7em 15px;
+			padding: 0;
 		}
 		.ui-icon {
 			display: none;
 		}
 		.ui-li-thumb {
 			left: auto;
-			right: 1px;
-			float: right;
-			margin-right: 0;
-			margin-left: 10px;
-			border: 1px solid $graydarker;
+			left: 1px;
+			float: left;
+			margin-right: 10px;
+			margin-left: 0;
+			//border: 1px solid $graydarker;
 		}
 		.title, .news-reader-story-title {
 			margin: 0 0 0.7em 0;
