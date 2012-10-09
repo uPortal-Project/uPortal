@@ -68,13 +68,13 @@
     </bean>
     
     <util:map id="productVersions" value-type="org.jasig.portal.version.om.Version">
-    	<entry value="4.0.6">
+    	<entry value="4.0.7">
     		<key><util:constant static-field="org.jasig.portal.jpa.BasePortalJpaDao.PERSISTENCE_UNIT_NAME"/></key>
     	</entry>
-    	<entry value="4.0.6">
+    	<entry value="4.0.7">
     		<key><util:constant static-field="org.jasig.portal.jpa.BaseRawEventsJpaDao.PERSISTENCE_UNIT_NAME"/></key>
     	</entry>
-    	<entry value="4.0.6">
+    	<entry value="4.0.7">
     		<key><util:constant static-field="org.jasig.portal.jpa.BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME"/></key>
     	</entry>
     </util:map>
