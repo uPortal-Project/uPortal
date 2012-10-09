@@ -17,7 +17,6 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-SHUTDOWN_WAIT=60
 
 pid=`cat catalina.pid`
 if [ -n "$pid" ]
