@@ -1,3 +1,4 @@
+#! /bin/bash
 #
 # Licensed to Jasig under one or more contributor license
 # agreements. See the NOTICE file distributed with this work
@@ -16,13 +17,27 @@
 # specific language governing permissions and limitations
 # under the License.
 #
+SHUTDOWN_WAIT=60
 
-maven.dir=${basedir}/@maven.name@
-uportal.dir=${basedir}/@uportal.name@
-tomcat.dir=${basedir}/@tomcat.name@
+pid=`cat catalina.pid`
+if [ -n "$pid" ]
+then
+    let kwait=$SHUTDOWN_WAIT
+    count=0;
+    until [ `ps -p $pid | grep -c $pid` = '0' ] || [ $count -gt $kwait ]
+    do
+        echo -n -e "\nwaiting for processes to exit";
+        sleep 1
+        let count=$count+1;
+    done
 
-TC_SHUTDOWN_PORT=@environment.qs.tomcat.port.shutdown@
-TC_HTTP_PORT=@environment.qs.tomcat.port.http@
-TC_AJP_PORT=@environment.qs.tomcat.port.ajp@
-UP_CONTEXT_PATH=@environment.build.uportal.context@
-UP_EVN=@environment@
+    if [ $count -gt $kwait ]; then
+        echo -n -e "\nkilling processes which didn't stop after $SHUTDOWN_WAIT seconds"
+        kill -9 $pid
+    fi
+    
+    echo "Tomcat has stopped"
+else
+    echo "Tomcat is not running"
+fi
+rm -f catalina.pid

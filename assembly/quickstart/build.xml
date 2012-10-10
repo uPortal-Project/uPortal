@@ -26,19 +26,25 @@
     
     <property environment="env" />
     
+    <property name="CATALINA_PID_FILE" value="${basedir}/catalina.pid" />
+    
     <target name="help">
         <echo>Refer to README.txt for information on using the quickstart</echo>
     </target>
 
     <target name="start" description="Starts the HSQL database and Tomcat">
-        <antcall target="hsql-start" />
-
-        <antcall target="tomcat-start" />
-
-<echo>
-uPortal Quick-Start started, please wait 30 seconds before trying browsing to
-http://localhost:8080/uPortal
-</echo>
+        <trycatch reference="startException">
+            <try>
+                <antcall target="hsql-start" />
+                <antcall target="tomcat-start" />
+                <echo>uPortal Quick-Start started: http://localhost:${TC_HTTP_PORT}${UP_CONTEXT_PATH}</echo>
+            </try>
+            <catch>
+                <echo>Quickstart failed to start, cleaning up.</echo>
+                <antcall target="stop"/>
+                <throw refid="startException"/>
+            </catch>
+        </trycatch>
     </target>
 
     <target name="stop" description="Stops Tomcat and the HSQL database">
@@ -48,31 +54,121 @@ http://localhost:8080/uPortal
     </target>
 
     <target name="tomcat-start" depends="prepare-tomcat">
-        <echo message="Starting Tomcat ..." />
+        <!--
+         | If not on windows and a pid file exists use it to check if the tomcat process is still running
+         +-->
+        <if>
+            <and>
+                <not>
+                    <os family="windows" />
+                </not>
+                <available file="${CATALINA_PID_FILE}"/>
+            </and>
+            <then>      
+                <exec executable="${basedir}/is-tomcat-stopped.sh" dir="${basedir}" resultproperty="IS_TC_RUNNING" failonerror="false">
+                    <arg value="${CATALINA_PID_FILE}"/>                 
+                </exec>
+                
+                <fail message="Tomcat is already running, please stop it first">
+                    <condition>
+                        <isfailure code="${IS_TC_RUNNING}"/>
+                    </condition>
+               </fail>
+            </then>
+        </if>
+        
+        <!--
+         | Verify that the tomcat shutdown and http ports are not in use
+         +-->
+        <fail message="Tomcat or another process is using ports ${TC_SHUTDOWN_PORT} and/or ${TC_HTTP_PORT} please stop the application before starting Tomcat">
+            <condition>
+                <or>
+                    <socket server="localhost" port="${TC_SHUTDOWN_PORT}" />
+                    <socket server="localhost" port="${TC_HTTP_PORT}" />
+                </or>
+            </condition>
+       </fail>
+                
+        <delete file="${CATALINA_PID_FILE}" />
 
-        <exec executable="${tomcat.dir}/bin/startup.${tcExecutableSuffix}" spawn="true" dir="${tomcat.dir}">
-            <env key="CATALINA_OPTS" value="-server -XX:MaxPermSize=300m -Xmx256m"/>
+        <echo message="Starting Tomcat ..." />
+        
+        <exec executable="${tomcat.dir}/bin/startup.${tcExecutableSuffix}" dir="${tomcat.dir}">
+            <env key="CATALINA_OPTS" value="-server -XX:MaxPermSize=300m -Xmx300m"/>
+            <env key="CATALINA_PID" value="${CATALINA_PID_FILE}"/>
         </exec>
+
+        <!--
+         | Wait 5 minutes for the uPortal favicon to become available, this signals that uPortal is up and running
+         +-->
+        <echo>Waiting for Tomcat to Start</echo>
+        <waitfor maxwait="5" maxwaitunit="minute" checkevery="10" checkeveryunit="second" timeoutproperty="tomcat-not-started">
+            <http url="http://localhost:${TC_HTTP_PORT}${UP_CONTEXT_PATH}/favicon.ico" />
+        </waitfor>
+        <fail if="tomcat-not-started" message="Tomcat Failed To Start" />
+        <echo>Tomcat Started</echo>
     </target>
 
     <target name="tomcat-stop" depends="prepare-tomcat">
         <echo message="Stopping Tomcat ..." />
             
         <exec executable="${tomcat.dir}/bin/shutdown.${tcExecutableSuffix}" dir="${tomcat.dir}" />
+        
+        <!--
+         | If not on windows and a pid file is available use ps to wait for the tomcat process to
+         | quit.
+         |
+         | If on windows or the pid file is not available wait up to 1 minute for the tomcat shutdown and
+         | http ports to close.
+         +-->
+        <echo>Waiting for Tomcat to Stop</echo>
+        <if>
+            <and>
+                <not>
+                    <os family="windows" />
+                </not>
+                <available file="${CATALINA_PID_FILE}" />
+            </and>
+            <then>
+                <exec executable="${basedir}/tomcat-shutdown-wait.sh" dir="${basedir}">
+                    <arg value="${CATALINA_PID_FILE}"/>
+                </exec>
+            </then>
+            <else>
+                <waitfor maxwait="1" maxwaitunit="minute" checkevery="1" checkeveryunit="second" timeoutproperty="tomcat-not-stopped">
+                    <not>
+                        <or>
+                            <socket server="localhost" port="${TC_SHUTDOWN_PORT}" />
+                            <socket server="localhost" port="${TC_HTTP_PORT}" />
+                        </or>
+                    </not>
+                </waitfor>
+                <if>
+                    <isset property="tomcat-not-stopped"/>
+                    <then>
+                        <echo level="warn">Tomcat Failed To Stop</echo>
+                    </then>
+                </if>
+            </else>
+        </if>
+        <echo>Tomcat Stopped</echo>
     </target>
 
     <target name="hsql-start">
-        <echo message="Starting HSQL ..." />
-
-        <ant target="hsql" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}">
+        <echo message="Starting HSQL" />
+        
+        <ant target="hsql" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}" >
+            <property name="env" value="${UP_EVN}"/>
             <property name="spawn" value="true" />
         </ant>
     </target>
 
     <target name="hsql-stop">
-        <echo message="Stopping HSQL ..." />
-            
-        <ant target="hsql-shutdown" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}" />
+    	<echo message="Stopping HSQL" />
+    	
+        <ant target="hsql-shutdown" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}" >
+            <property name="env" value="${UP_EVN}"/>
+        </ant>
     </target>
 
     <target name="prepare-tomcat">
@@ -83,6 +179,7 @@ http://localhost:8080/uPortal
             </then>
             <else>
                 <property name="tcExecutableSuffix" value="sh" />
+                <chmod dir="${basedir}" perm="ugo+rx" includes="*.sh"/>
             </else>
         </if>
     </target>

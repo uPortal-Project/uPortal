@@ -23,7 +23,27 @@
     <property name="uportal.source.dir" value="${basedir}/.." />
 
     <import file="${uportal.source.dir}/bootstrap/build_includes.xml" />
+	
+    <condition property="environment.token" value="${env}">
+        <isset property="env" />
+    </condition>
+    <property name="environment.token" value="local" />
+	
+    <fail message="filters/${environment.token}.properties does not exist, please copy local.properties and fill in your settings.">
+        <condition>
+        	<or>
+                <not>
+                    <available file="${basedir}/filters/${environment.token}.properties" />
+                </not>
+                <not>
+                    <available file="${basedir}/../filters/${environment.token}.properties" />
+                </not>
+    		</or>
+        </condition>
+    </fail>
 
+	<property file="${basedir}/../filters/${environment.token}.properties" />
+	<property file="${basedir}/filters/${environment.token}.properties" />
     <property file="${basedir}/build.properties" />
     <property name="target.dir" value="${basedir}/target" />
     <property name="download.dir" value="${target.dir}/downloads" />
@@ -101,12 +121,18 @@
                 <filter token="uportal.version" value="${uportal.version}" />
 
                 <filter token="quickstart.name" value="${quickstart.name}" />
+
+                <filter token="environment.qs.tomcat.port.shutdown" value="${environment.qs.tomcat.port.shutdown}" />
+            	<filter token="environment.qs.tomcat.port.http" value="${environment.qs.tomcat.port.http}" />
+            	<filter token="environment.qs.tomcat.port.ajp" value="${environment.qs.tomcat.port.ajp}" />
+            	<filter token="environment.build.uportal.context" value="${environment.build.uportal.context}" />
+            	<filter token="environment" value="${environment.token}" />
             </filterset>
 
             <fileset dir="${basedir}/quickstart" />
         </copy>
         
-        <chmod perm="755" dir="${quickstart.dir}" includes="ant*" verbose="true" />
+        <chmod perm="755" dir="${quickstart.dir}" includes="*.sh" verbose="true" />
         
         <if>
             <not>
@@ -132,33 +158,25 @@
             </fileset>
         </copy>
     </target>
+	
+	<target name="live-nightly-setup" depends="prepare-qs" description="Setup live-nightly symlinks">
+		<!-- add logging symlink -->
+		<echo>Creating symlink from /var/log/apache2/tomcat/${tomcat.loglink} to ${quickstart.dir}/${dl.tomcat.finalName}/logs</echo>
+	    <symlink link="/var/log/apache2/tomcat/${tomcat.loglink}" resource="${quickstart.dir}/${dl.tomcat.finalName}/logs" overwrite="true"/>
+	</target>
     
-    <target name="live-nightly" depends="prepare-ln, prepare-ln-tomcat, prepare-ln-uportal" description="Generates the quick start distribution">
-        <copy todir="${live-nightly.dir}" overwrite="true">
-            <filterset>
-                <filter token="tomcat.name" value="${dl.tomcat.finalName}" />
-                <filter token="uportal.name" value="${uportal.finalName}" />
-            </filterset>
-
-            <fileset dir="${basedir}/live-nightly" />
-        </copy>
-        
-        <!-- add logging symlink -->
-        <symlink link="/var/log/apache2/tomcat/${tomcat.loglink}" resource="${live-nightly.dir}/${dl.tomcat.finalName}/logs"/>
-    </target>
-    
-    <target name="live-nightly-stop" depends="prepare-ln">
+    <target name="live-nightly-stop" depends="prepare-qs">
         <if>
-            <available file="${live-nightly.dir}/build.xml" />
+            <available file="${quickstart.dir}/build.xml" />
             <then>
-                <ant antfile="${live-nightly.dir}/build.xml" dir="${live-nightly.dir}" inheritall="false" target="stop" />
+                <ant antfile="${quickstart.dir}/build.xml" dir="${quickstart.dir}" inheritall="false" target="stop" />
                 <sleep minutes="1" />
             </then>
         </if>
     </target>
     
-    <target name="live-nightly-start" depends="prepare-ln">
-        <ant antfile="${live-nightly.dir}/build.xml" dir="${live-nightly.dir}" inheritall="false" target="start" />
+    <target name="live-nightly-start" depends="prepare-qs">
+        <ant antfile="${quickstart.dir}/build.xml" dir="${quickstart.dir}" inheritall="false" target="start" />
     </target>
             
     <target name="qs-package" depends="prepare-qs">
@@ -187,18 +205,48 @@
     <target name="prepare-qs-tomcat" depends="prepare-qs">
         <download-extract download.name="tomcat" download.dir="${download.dir}" extract.dir="${quickstart.dir}" />
 
-        <!-- update server.xml to enable shared portlet sessions -->
-        <replace file="${dl.tomcat.dir}/conf/server.xml" token="${tomcat.conf.token}" value="${tomcat.conf.replacement}" summary="true" />
+        <!--
+         | Update server.xml
+         +-->
+        <replace file="${dl.tomcat.dir}/conf/server.xml" summary="true">
+        	<!-- Set the HTTP port, listen only on localhost, and enable empty session path -->
+        	<replacefilter>
+        	    <replacetoken><![CDATA[<Connector port="8080" protocol="HTTP/1.1"]]></replacetoken> 
+        	    <replacevalue expandProperties="true"><![CDATA[<Connector emptySessionPath="true" address="localhost" port="${environment.qs.tomcat.port.http}" protocol="HTTP/1.1"]]></replacevalue>
+        	</replacefilter>
+        	
+        	<!-- Set the AJP port, listen only on localhost, and enable empty session path -->
+            <replacefilter>
+                <replacetoken><![CDATA[<Connector port="8009" protocol="AJP/1.3" redirectPort="8443" />]]></replacetoken> 
+                <replacevalue expandProperties="true"><![CDATA[<Connector emptySessionPath="true" port="${environment.qs.tomcat.port.ajp}" protocol="AJP/1.3" redirectPort="8443" />]]></replacevalue>
+            </replacefilter>
+            
+            <!-- Set the shutdown -->
+            <replacefilter>
+                <replacetoken><![CDATA[<Server port="8005" shutdown="SHUTDOWN">]]></replacetoken> 
+                <replacevalue expandProperties="true"><![CDATA[<Server port="${environment.qs.tomcat.port.shutdown}" shutdown="SHUTDOWN">]]></replacevalue>
+            </replacefilter>
+        </replace>
         
         <!-- update catalina.properties tp emable shared/lib classloader -->
-        <replace file="${dl.tomcat.dir}/conf/catalina.properties" token="${tomcat.shared-lib.token}" value="${tomcat.shared-lib.replacement}" summary="true" />
+        <replace file="${dl.tomcat.dir}/conf/catalina.properties" summary="true">
+            <replacefilter>
+                <replacetoken>shared.loader=</replacetoken> 
+                <replacevalue expandProperties="true">shared.loader=${catalina.base}/shared/classes,${catalina.base}/shared/lib/*.jar</replacevalue>
+            </replacefilter>
+        </replace>
+        
+        <!-- remove all pre-packaged webapps -->
+        <delete includeemptydirs="true">  
+            <fileset dir="${dl.tomcat.dir}/webapps/" includes="**/*"/>  
+        </delete>
     </target>
 
-    <target name="prepare-qs-ant" depends="prepare-qs">
+    <target name="prepare-qs-ant" depends="prepare-qs" unless="no-bundled-ant">
         <download-extract download.name="ant" download.dir="${download.dir}" extract.dir="${quickstart.dir}" />
     </target>
 
-    <target name="prepare-qs-maven" depends="prepare-qs">
+    <target name="prepare-qs-maven" depends="prepare-qs" unless="no-bundled-maven">
         <download-extract download.name="maven" download.dir="${download.dir}" extract.dir="${quickstart.dir}" />
     </target>
 
@@ -217,7 +265,25 @@
                 <filter token="server.home" value="$${basedir}/../${dl.tomcat.finalName}" />
             </filterset>
         </copy>
-        <replace file="${uportal.dir}/build.properties" token="#maven.home=" value="maven.home=$${basedir}/../${dl.maven.finalName}" summary="true" />
+    	
+    	<if>
+    		<not>
+    	        <isset property="no-bundled-maven"/>
+    		</not>
+    		<then>
+            	<echo>Setting maven.home to: $${basedir}/../${dl.maven.finalName}</echo>
+                <replace file="${uportal.dir}/build.properties" token="#maven.home=" value="maven.home=$${basedir}/../${dl.maven.finalName}" summary="true" />
+    		</then>
+    	</if>
+    	
+    	<!-- Set the docbase for the deployment -->
+    	<echo>Setting uPortal docbase to: ${environment.qs.uportal.docbase}</echo>
+    	<replace file="${uportal.dir}/pom.xml" summary="true">
+            <replacefilter>
+                <replacetoken><![CDATA[<uportal.docbase>uPortal</uportal.docbase>]]></replacetoken> 
+                <replacevalue expandProperties="true"><![CDATA[<uportal.docbase>${environment.qs.uportal.docbase}</uportal.docbase>]]></replacevalue>
+            </replacefilter>
+        </replace>
         
         <!-- Update the uPortal release notes --> 
         <copy file="${uportal.source.dir}/releaseNotes.html" tofile="${uportal.dir}/releaseNotes.html" overwrite="true">
@@ -227,18 +293,25 @@
         </copy>
         
         <!-- Ensure a HSQL isntance isn't already running -->
-        <ant target="hsql-shutdown" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}" />
+        <ant target="hsql-shutdown" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}">
+            <property name="env" value="${environment.token}"/>
+        </ant>
             
         <!-- start quickstart hsql isntance -->
         <ant target="hsql" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}">
-            <property name="spawn" value="true" />
+        	<property name="env" value="${environment.token}"/>
+        	<property name="spawn" value="true" />
         </ant>
 
         <!-- run initportal to setup tomcat & database -->
-        <ant target="initportal" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}" />
+        <ant target="initportal" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}">
+            <property name="env" value="${environment.token}"/>
+        </ant>
 
         <!-- shutdown hsql nicely -->
-        <ant target="hsql-shutdown" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}" />
+        <ant target="hsql-shutdown" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}">
+            <property name="env" value="${environment.token}"/>
+        </ant>
 
         <!-- clean up maven build files, these don't need to be packaged up -->
         <ant target="mvn" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}">
@@ -305,76 +378,5 @@
         <property name="quickstart.dir" value="${target.dir}/${quickstart.name}" />
 
         <mkdir dir="${quickstart.dir}" />
-    </target>
-
-    <target name="prepare-ln-tomcat" depends="prepare-ln">
-        <download-extract download.name="tomcat" download.dir="${download.dir}" extract.dir="${live-nightly.dir}" />
-
-        <!--
-         | Update server.xml
-         | - ORDER OF THE FILTERS IS VERY IMPORTANT
-         +-->
-        <replace file="${dl.tomcat.dir}/conf/server.xml" summary="true">
-            <replacefilter token="${tomcat.disable_http_prefix.token}" value="${tomcat.disable_http_prefix.replacement}" />
-            <replacefilter token="${tomcat.disable_http_suffix.token}" value="${tomcat.disable_http_suffix.replacement}" />
-            <replacefilter token="${tomcat.ajp_port.token}" value="${tomcat.ajp_port.replacement}" />
-            <replacefilter token="${tomcat.conf.token}" value="${tomcat.conf.replacement}" />
-            <replacefilter token="${tomcat.shutdown.token}" value="${tomcat.shutdown.replacement}" />
-        </replace>
-        
-        <!-- update catalina.properties tp emable shared/lib classloader -->
-        <replace file="${dl.tomcat.dir}/conf/catalina.properties" token="${tomcat.shared-lib.token}" value="${tomcat.shared-lib.replacement}" summary="true" />
-        
-        <!-- remove all pre-packaged webapps -->
-        <delete includeemptydirs="true">  
-            <fileset dir="${dl.tomcat.dir}/webapps/" includes="**/*"/>  
-        </delete>  
-    </target>
-    
-    <target name="prepare-ln-uportal" depends="prepare-ln">
-        <property name="uportal.dir" value="${live-nightly.dir}/${uportal.finalName}" />
-
-        <!-- copy uPortal source export into quickstart folder -->
-        <mkdir dir="${uportal.dir}" />
-        <copy todir="${uportal.dir}" preservelastmodified="true">
-            <fileset refid="sourceFilesSvn" />
-        </copy>
-
-        <!-- create uPortal build.properties pointing to quickstart tomcat -->
-        <copy file="${uportal.dir}/build.properties.sample" tofile="${uportal.dir}/build.properties" overwrite="true">
-            <filterset>
-                <filter token="server.home" value="$${basedir}/../${dl.tomcat.finalName}" />
-            </filterset>
-        </copy>
-        
-        <replace file="${uportal.dir}/pom.xml" token="${uportal.docbase.token}" value="${uportal.docbase.replacement}" summary="true" />
-                    
-        <!-- Ensure a HSQL isntance isn't already running -->
-        <ant target="hsql-shutdown" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}" >
-            <property name="env" value="live-nightly"/>
-        </ant>
-            
-        <!-- start live-nightly hsql isntance -->
-        <ant target="hsql" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}">
-            <property name="env" value="live-nightly"/>
-            <property name="spawn" value="true" />
-        </ant>
-
-        <!-- run initportal to setup tomcat & database -->
-        <ant target="initportal" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}">
-            <property name="env" value="live-nightly"/>
-        </ant>
-
-        <!-- shutdown hsql nicely -->
-        <ant target="hsql-shutdown" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}" >
-            <property name="env" value="live-nightly"/>
-        </ant>
-    </target>
-
-    <target name="prepare-ln" depends="prepare">
-        <property name="live-nightly.name" value="${uportal.name}-live-nightly" />
-        <property name="live-nightly.dir" value="${target.dir}/${live-nightly.name}" />
-
-        <mkdir dir="${live-nightly.dir}" />
     </target>
 </project>
