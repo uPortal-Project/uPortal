@@ -25,9 +25,7 @@ import static org.junit.Assert.assertTrue;
 import org.easymock.EasyMock;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.junit.Test;
-
-import junit.framework.TestCase;
-
+ 
 /**
  * @author Eric Dalquist
  * @version $Revision$

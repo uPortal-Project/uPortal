@@ -515,11 +515,25 @@
             <scope>runtime</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.jasig.cas3.extensions</groupId>
-            <artifactId>clearpass-integration-uportal</artifactId>
+		<dependency>
+           	<groupId>org.jasig.cas</groupId>
+           	<artifactId>cas-server-extension-clearpass</artifactId>
+            <exclusions>
+             <exclusion>
+               <groupId>org.jasig.cas</groupId>
+               <artifactId>cas-server-core</artifactId>
+             </exclusion>
+             <exclusion>
+             	<groupId>javax.validation</groupId>	
+               	<artifactId>validation-api</artifactId>
+             </exclusion>
+             <exclusion>
+             	<groupId>org.slf4j</groupId>	
+               	<artifactId>slf4j-log4j12</artifactId>
+             </exclusion>
+            </exclusions>
             <scope>runtime</scope>
-        </dependency>
+         </dependency>
         
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -758,7 +772,7 @@
             <plugin>
                 <groupId>org.jasig.maven</groupId>
                 <artifactId>sass-maven-plugin</artifactId>
-                <version>1.0.0</version>
+                <version>1.0.1-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <id>compile-sass-skins</id>

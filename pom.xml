@@ -108,7 +108,7 @@
     
         <!-- WAR Dependency Version Properties -->
         <BookmarksPortlet.version>1.0.11</BookmarksPortlet.version>
-        <cas-server.version>3.4.11</cas-server.version>
+        <cas-server.version>3.5.1</cas-server.version>
         <cas-proxy-test-portlet.version>1.0.0-RC3</cas-proxy-test-portlet.version>
         <email-preview.version>2.0.1</email-preview.version>
         <FunctionalTestsPortlet.version>1.1.0</FunctionalTestsPortlet.version>
@@ -125,7 +125,6 @@
         <ant.version>1.8.4</ant.version>
         <aspectjrt.version>1.7.1</aspectjrt.version>
         <aspectjweaver.version>1.7.1</aspectjweaver.version>
-        <cas-clearpass.version>1.0.8.GA</cas-clearpass.version>
         <casclient.version>3.2.1</casclient.version>
         <ccpp.version>1.0</ccpp.version>
         <cernunnos.version>1.2.2</cernunnos.version>
@@ -704,10 +703,10 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>org.jasig.cas3.extensions</groupId>
-                <artifactId>clearpass-integration-uportal</artifactId>
-                <version>${cas-clearpass.version}</version>
-            </dependency>
+				<groupId>org.jasig.cas</groupId>
+				<artifactId>cas-server-extension-clearpass</artifactId>
+				<version>${cas-server.version}</version>
+			</dependency>
             <dependency>
                 <groupId>org.jasig.portal</groupId>
                 <artifactId>uportal-ear-deployer</artifactId>
