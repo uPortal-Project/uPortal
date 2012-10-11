@@ -37,6 +37,7 @@ import org.jasig.portal.events.aggr.BaseAggregationDateTimeComparator;
 import org.jasig.portal.events.aggr.BaseAggregationKey;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupLookupDao;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.jasig.portal.events.aggr.groups.AggregatedGroupMappingNameComparator;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
@@ -49,7 +50,6 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.portlet.ModelAndView;
 
-import AggregatedGroupMapping.AggregatedGroupMappingNameComparator;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;

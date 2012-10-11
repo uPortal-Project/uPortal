@@ -16,11 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package AggregatedGroupMapping;
+package org.jasig.portal.events.aggr.groups;
 
 import java.util.Comparator;
 
-import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.utils.ComparableExtractingComparator;
 
 public class AggregatedGroupMappingNameComparator extends
