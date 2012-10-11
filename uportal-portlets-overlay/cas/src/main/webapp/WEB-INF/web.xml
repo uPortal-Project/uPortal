@@ -64,40 +64,17 @@
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
-
-    <filter>
-        <filter-name>CAS Validation Filter</filter-name>
-        <filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>
-        <init-param>
-            <param-name>casServerUrlPrefix</param-name>
-            <param-value>${environment.build.cas.protocol}://${environment.build.cas.server}/cas</param-value>
-        </init-param>
-        <init-param>
-            <param-name>serverName</param-name>
-            <param-value>${environment.build.cas.protocol}://${environment.build.cas.server}</param-value>
-        </init-param>
-        <init-param>
-            <param-name>exceptionOnValidationFailure</param-name>
-            <param-value>false</param-value>
-        </init-param>
-        <!--init-param>
-            <param-name>allowedProxyChains</param-name> <param-value>${environment.build.uportal.protocol}://${environment.build.uportal.server}${environment.build.uportal.context}/CasProxyServlet</param-value>
-        </init-param-->
-        <init-param>
-            <param-name>useSession</param-name>
-            <param-value>false</param-value>
-        </init-param>
-        <init-param>
-            <param-name>redirectAfterValidation</param-name>
-            <param-value>false</param-value>
-        </init-param>
-    </filter>
     
-    <filter>
-        <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-        <filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
-    </filter>
-
+	<filter>
+	  <filter-name>clearPassFilterChainProxy</filter-name>
+	  <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	 
+	 <filter-mapping>
+	  <filter-name>clearPassFilterChainProxy</filter-name>
+	  <url-pattern>/clearPass</url-pattern>
+	</filter-mapping>
+	
     <filter-mapping>
       <filter-name>springSecurityFilterChain</filter-name>
       <url-pattern>/services/*</url-pattern>
@@ -107,16 +84,6 @@
 		<filter-name>CAS Client Info Logging Filter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-
-    <filter-mapping>
-        <filter-name>CAS Validation Filter</filter-name>
-        <url-pattern>/clearPass</url-pattern>
-    </filter-mapping>
-    
-    <filter-mapping>
-        <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-        <url-pattern>/clearPass</url-pattern>
-    </filter-mapping>
 
 	<!--
 		- Configures Log4J for this web app.
