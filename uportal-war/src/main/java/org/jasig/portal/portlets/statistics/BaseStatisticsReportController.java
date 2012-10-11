@@ -119,7 +119,11 @@ public abstract class BaseStatisticsReportController<T extends BaseAggregation<K
      */
     @ModelAttribute("intervals")
     public final Set<AggregationInterval> getIntervals() {
-        return this.getBaseAggregationDao().getAggregationIntervals();
+        final Set<AggregationInterval> intervals = this.getBaseAggregationDao().getAggregationIntervals();
+        
+        final Set<AggregationInterval> sortedIntervals = new TreeSet<AggregationInterval>();
+        sortedIntervals.addAll(intervals);
+        return sortedIntervals;
     }
     
     /**
@@ -128,7 +132,11 @@ public abstract class BaseStatisticsReportController<T extends BaseAggregation<K
      */
     @ModelAttribute("groups")
     public Set<AggregatedGroupMapping> getGroups() {
-        return this.getBaseAggregationDao().getAggregatedGroupMappings();
+        final Set<AggregatedGroupMapping> groupMappings = this.getBaseAggregationDao().getAggregatedGroupMappings();
+        
+        final Set<AggregatedGroupMapping> sortedGroupMappings = new TreeSet<AggregatedGroupMapping>(AggregatedGroupMappingNameComparator.INSTANCE);
+        sortedGroupMappings.addAll(groupMappings);
+        return sortedGroupMappings;
     }
     
     /**
@@ -161,9 +169,9 @@ public abstract class BaseStatisticsReportController<T extends BaseAggregation<K
      * Set the groups to have selected by default
      */
     protected void setReportFormGroups(final F report) {
-        final List<Long> groups = report.getGroups();
-        for (final AggregatedGroupMapping group : this.getGroups()) {
-            groups.add(group.getId());
+        final Set<AggregatedGroupMapping> groups = this.getGroups();
+        if (!groups.isEmpty()) {
+            report.getGroups().add(groups.iterator().next().getId());
         }
     }
     
