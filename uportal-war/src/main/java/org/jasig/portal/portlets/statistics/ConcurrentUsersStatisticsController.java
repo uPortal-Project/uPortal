@@ -51,8 +51,6 @@ public class ConcurrentUsersStatisticsController extends BaseStatisticsReportCon
     @Override
     protected ConcurrentUserReportForm createReportFormRequest() {
         return new ConcurrentUserReportForm();
-        
-        //TODO need smaller date range ....
     }
 
     @Override
