@@ -437,6 +437,7 @@ public class PortletDefinitionImporterExporter
             externalPortletParameter.setValue(param.getValue());
             parameterList.add(externalPortletParameter);
         }
+        Collections.sort(parameterList, ExternalPortletParameterNameComparator.INSTANCE);
 
          
         final List<ExternalPortletPreference> portletPreferenceList = rep.getPortletPreferences();
@@ -447,10 +448,11 @@ public class PortletDefinitionImporterExporter
              
             final List<String> value = externalPortletPreference.getValues();
             value.addAll(Arrays.asList(pref.getValues()));
+            //no sorting of preference values, order is specified by the portlet
              
             portletPreferenceList.add(externalPortletPreference);
         }
-         
+        Collections.sort(portletPreferenceList, ExternalPortletPreferenceNameComparator.INSTANCE);
          
         final List<String> categoryList = rep.getCategories();
         final IGroupMember gm = GroupService.getGroupMember(def.getPortletDefinitionId().getStringId(), IPortletDefinition.class);
@@ -460,6 +462,7 @@ public class PortletDefinitionImporterExporter
             IEntityGroup category = categories.next();
             categoryList.add(category.getName());
         }
+        Collections.sort(categoryList);
         
          
          
@@ -485,6 +488,9 @@ public class PortletDefinitionImporterExporter
                 userList.add(member.getKey());
             }
         }
+        
+        Collections.sort(groupList);
+        Collections.sort(userList);
          
         return rep;
     }
