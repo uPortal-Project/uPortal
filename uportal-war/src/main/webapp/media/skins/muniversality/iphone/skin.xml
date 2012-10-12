@@ -28,6 +28,9 @@
 
   <css import="true">../common/common_skin.xml</css>
 
+  <css>portal.css</css>
+
+
   <!-- Default jqueryui css -->
   <!--css included="plain">/ResourceServingWebapp/rs/jqueryui/1.8/theme/smoothness/jquery-ui-1.8-smoothness.css</css>
   <css included="aggregated">/ResourceServingWebapp/rs/jqueryui/1.8/theme/smoothness/jquery-ui-1.8-smoothness.min.css</css-->

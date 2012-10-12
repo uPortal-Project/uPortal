@@ -29,7 +29,7 @@ import org.jasig.portal.character.stream.CharacterEventReader;
 import org.jasig.portal.character.stream.events.CharacterDataEvent;
 import org.jasig.portal.character.stream.events.CharacterEvent;
 import org.jasig.portal.character.stream.events.CharacterEventTypes;
-import org.jasig.portal.events.IPortalEventFactory;
+import org.jasig.portal.events.IPortletExecutionEventFactory;
 import org.jasig.portal.rendering.CharacterPipelineComponent;
 import org.jasig.portal.rendering.IPortalRenderingPipeline;
 import org.jasig.portal.rendering.PipelineEventReader;
@@ -46,7 +46,7 @@ public class JsonLayoutRenderingPipeline implements IPortalRenderingPipeline {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
     private CharacterPipelineComponent pipeline;
-    private IPortalEventFactory portalEventFactory;
+    private IPortletExecutionEventFactory portalEventFactory;
     private IUrlSyntaxProvider urlSyntaxProvider;
     
 
@@ -56,7 +56,7 @@ public class JsonLayoutRenderingPipeline implements IPortalRenderingPipeline {
     }
 
     @Autowired
-    public void setPortalEventFactory(IPortalEventFactory portalEventFactory) {
+    public void setPortalEventFactory(IPortletExecutionEventFactory portalEventFactory) {
         this.portalEventFactory = portalEventFactory;
     }
 

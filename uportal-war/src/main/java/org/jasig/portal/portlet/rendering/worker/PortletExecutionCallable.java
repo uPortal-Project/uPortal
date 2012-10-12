@@ -35,7 +35,7 @@ final class PortletExecutionCallable<V> extends FutureTask<V> implements Callabl
     private final Callable<V> callable;
     private final IPortletExecutionContext portletExecutionContext;
 
-    public PortletExecutionCallable(Callable<V> callable, IPortletExecutionContext portletExecutionContext) {
+    public PortletExecutionCallable(IPortletExecutionContext portletExecutionContext, Callable<V> callable) {
         super(callable);
         this.callable = callable;
         this.portletExecutionContext = portletExecutionContext;

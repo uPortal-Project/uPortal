@@ -19,7 +19,10 @@
 
 package org.jasig.portal.utils;
 
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
+import com.google.common.base.Function;
 
 /**
  * Utilities for working with concurrent maps
@@ -46,5 +49,28 @@ public final class ConcurrentMapUtils {
         }
         
         return existingValue;
+    }
+    
+    /**
+     * Make a {@link ConcurrentMap} that when {@link ConcurrentMap#get(Object)} is called an null
+     * is returned the creator function is called and the value returned is used with {@link ConcurrentMap#putIfAbsent(Object, Object)}.
+     * The value that ends up in the {@link ConcurrentMap} is returned by the get function.
+     */
+    public static <K, V> ConcurrentMap<K, V> makeDefaultsMap(final Function<K, V> creator) {
+        return new ConcurrentHashMap<K, V>() {
+            @Override
+            public V get(Object keyObj) {
+                V value = super.get(keyObj);
+                if (value == null) {
+                    K key = (K)keyObj;
+                    value = creator.apply(key);
+                    final V existingValue = super.putIfAbsent(key, value);
+                    if (existingValue != null) {
+                        value = existingValue;
+                    }
+                }
+                return value;
+            }
+        };
     }
 }

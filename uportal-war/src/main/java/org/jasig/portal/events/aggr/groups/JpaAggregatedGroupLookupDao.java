@@ -140,5 +140,10 @@ public class JpaAggregatedGroupLookupDao extends BaseAggrEventsJpaDao implements
         
         return new LinkedHashSet<AggregatedGroupMapping>(cachedQuery.getResultList());
     }
+
+	@Override
+	public AggregatedGroupMapping getGroupMapping(long groupMappingId) {
+		return this.getEntityManager().find(AggregatedGroupMappingImpl.class, groupMappingId);
+	}
     
 }

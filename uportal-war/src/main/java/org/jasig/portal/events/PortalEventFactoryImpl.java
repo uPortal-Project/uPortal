@@ -41,6 +41,7 @@ import org.jasig.portal.events.PortalEvent.PortalEventBuilder;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.logging.ConditionalExceptionLogger;
 import org.jasig.portal.logging.ConditionalExceptionLoggerImpl;
+import org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.SystemPerson;
@@ -173,9 +174,6 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
         this.personManager = personManager;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.events.IPortalEventFactory#publishLoginEvent(javax.servlet.http.HttpServletRequest, java.lang.Object, org.jasig.portal.security.IPerson)
-     */
     @Override
     public void publishLoginEvent(HttpServletRequest request, Object source, IPerson person) {
         final PortalEventBuilder portalEventBuilder = this.createPortalEventBuilder(source, person, request);
@@ -187,9 +185,6 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
         this.applicationEventPublisher.publishEvent(loginEvent);
     }
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.events.IPortalEventFactory#publishLogoutEvent(javax.servlet.http.HttpServletRequest, java.lang.Object, org.jasig.portal.security.IPerson)
-     */
     @Override
     public void publishLogoutEvent(HttpServletRequest request, Object source, IPerson person) {
         final PortalEventBuilder portalEventBuilder = this.createPortalEventBuilder(source, person, request);
@@ -198,9 +193,6 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
         this.applicationEventPublisher.publishEvent(logoutEvent);
     }
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.events.IPortalEventFactory#publishPortletAddedToLayoutPortalEvent(javax.servlet.http.HttpServletRequest, java.lang.Object, org.jasig.portal.security.IPerson, long, java.lang.String, java.lang.String)
-     */
     @Override
     public void publishPortletAddedToLayoutPortalEvent(HttpServletRequest request, Object source, IPerson layoutOwner,
             long layoutId, String parentFolderId, String fname) {
@@ -210,18 +202,12 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
         this.applicationEventPublisher.publishEvent(portletAddedToLayoutPortalEvent);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.events.IPortalEventFactory#publishPortletAddedToLayoutPortalEvent(java.lang.Object, org.jasig.portal.security.IPerson, long, java.lang.String, java.lang.String)
-     */
     @Override
     public void publishPortletAddedToLayoutPortalEvent(Object source, IPerson person, long layoutId,
             String parentFolderId, String fname) {
         this.publishPortletAddedToLayoutPortalEvent(null, source, person, layoutId, parentFolderId, fname);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.events.IPortalEventFactory#publishPortletMovedInLayoutPortalEvent(javax.servlet.http.HttpServletRequest, java.lang.Object, org.jasig.portal.security.IPerson, long, java.lang.String, java.lang.String, java.lang.String)
-     */
     @Override
     public void publishPortletMovedInLayoutPortalEvent(HttpServletRequest request, Object source, IPerson layoutOwner,
             long layoutId, String oldParentFolderId, String newParentFolderId, String fname) {
@@ -231,18 +217,12 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
         this.applicationEventPublisher.publishEvent(portletMovedInLayoutPortalEvent);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.events.IPortalEventFactory#publishPortletMovedInLayoutPortalEvent(java.lang.Object, org.jasig.portal.security.IPerson, long, java.lang.String, java.lang.String, java.lang.String)
-     */
     @Override
     public void publishPortletMovedInLayoutPortalEvent(Object source, IPerson layoutOwner, long layoutId,
             String oldParentFolderId, String newParentFolderId, String fname) {
         this.publishPortletMovedInLayoutPortalEvent(null, source, layoutOwner, layoutId, oldParentFolderId, newParentFolderId, fname);
     }
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.events.IPortalEventFactory#publishPortletDeletedFromLayoutPortalEvent(javax.servlet.http.HttpServletRequest, java.lang.Object, org.jasig.portal.security.IPerson, long, java.lang.String, java.lang.String)
-     */
     @Override
     public void publishPortletDeletedFromLayoutPortalEvent(HttpServletRequest request, Object source, IPerson layoutOwner,
             long layoutId, String oldParentFolderId, String fname) {
@@ -252,18 +232,12 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
         this.applicationEventPublisher.publishEvent(portletDeletedFromLayoutPortalEvent);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.events.IPortalEventFactory#publishPortletDeletedFromLayoutPortalEvent(java.lang.Object, org.jasig.portal.security.IPerson, long, java.lang.String, java.lang.String)
-     */
     @Override
     public void publishPortletDeletedFromLayoutPortalEvent(Object source, IPerson layoutOwner, long layoutId,
             String oldParentFolderId, String fname) {
         this.publishPortletDeletedFromLayoutPortalEvent(null, source, layoutOwner, layoutId, oldParentFolderId, fname);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.events.IPortalEventFactory#publishFolderAddedToLayoutPortalEvent(javax.servlet.http.HttpServletRequest, java.lang.Object, org.jasig.portal.security.IPerson, long, java.lang.String)
-     */
     @Override
     public void publishFolderAddedToLayoutPortalEvent(HttpServletRequest request, Object source, IPerson layoutOwner,
             long layoutId, String newFolderId) {
@@ -273,17 +247,11 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
         this.applicationEventPublisher.publishEvent(folderAddedToLayoutPortalEvent);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.events.IPortalEventFactory#publishFolderAddedToLayoutPortalEvent(java.lang.Object, org.jasig.portal.security.IPerson, long, java.lang.String)
-     */
     @Override
     public void publishFolderAddedToLayoutPortalEvent(Object source, IPerson layoutOwner, long layoutId, String newFolderId) {
         this.publishFolderAddedToLayoutPortalEvent(null, source, layoutOwner, layoutId, newFolderId);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.events.IPortalEventFactory#publishFolderMovedInLayoutPortalEvent(javax.servlet.http.HttpServletRequest, java.lang.Object, org.jasig.portal.security.IPerson, long, java.lang.String, java.lang.String)
-     */
     @Override
     public void publishFolderMovedInLayoutPortalEvent(HttpServletRequest request, Object source, IPerson layoutOwner,
             long layoutId, String oldParentFolderId, String movedFolderId) {
@@ -293,18 +261,12 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
         this.applicationEventPublisher.publishEvent(folderMovedInLayoutPortalEvent);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.events.IPortalEventFactory#publishFolderMovedInLayoutPortalEvent(java.lang.Object, org.jasig.portal.security.IPerson, long, java.lang.String, java.lang.String)
-     */
     @Override
     public void publishFolderMovedInLayoutPortalEvent(Object source, IPerson person, long layoutId,
             String oldParentFolderId, String movedFolderId) {
         this.publishFolderMovedInLayoutPortalEvent(null, source, person, layoutId, oldParentFolderId, movedFolderId);
     }
     
-    /* (non-Javadoc)
-     * @see org.jasig.portal.events.IPortalEventFactory#publishFolderDeletedFromLayoutPortalEvent(javax.servlet.http.HttpServletRequest, java.lang.Object, org.jasig.portal.security.IPerson, long, java.lang.String, java.lang.String, java.lang.String)
-     */
     @Override
     public void publishFolderDeletedFromLayoutPortalEvent(HttpServletRequest request, Object source, IPerson layoutOwner,
             long layoutId, String oldParentFolderId, String deletedFolderId, String deletedFolderName) {
@@ -314,9 +276,6 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
         this.applicationEventPublisher.publishEvent(folderDeletedFromLayoutPortalEvent);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.events.IPortalEventFactory#publishFolderDeletedFromLayoutPortalEvent(java.lang.Object, org.jasig.portal.security.IPerson, long, java.lang.String, java.lang.String, java.lang.String)
-     */
     @Override
     public void publishFolderDeletedFromLayoutPortalEvent(Object source, IPerson person, long layoutId,
             String oldParentFolderId, String deletedFolderId, String deletedFolderName) {
@@ -324,9 +283,21 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
     }
     
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.events.IPortalEventFactory#publishPortletActionExecutionEvent(javax.servlet.http.HttpServletRequest, java.lang.Object, java.lang.String, long, java.lang.String)
-     */
+    @Override
+    public void publishPortletHungEvent(HttpServletRequest request, Object source, IPortletExecutionWorker<?> worker) {
+        final PortalEventBuilder eventBuilder = this.createPortalEventBuilder(source, request);
+        final PortletHungEvent portletHungEvent = new PortletHungEvent(eventBuilder, worker);
+        this.applicationEventPublisher.publishEvent(portletHungEvent);
+    }
+
+    @Override
+    public void publishPortletHungCompleteEvent(Object source,
+            IPortletExecutionWorker<?> worker) {
+        final PortalEventBuilder eventBuilder = this.createPortalEventBuilder(source, null);
+        final PortletHungCompleteEvent portletHungCompleteEvent = new PortletHungCompleteEvent(eventBuilder, worker);
+        this.applicationEventPublisher.publishEvent(portletHungCompleteEvent);
+    }
+
     @Override
     public void publishPortletActionExecutionEvent(HttpServletRequest request, Object source, String fname, long executionTime,
             Map<String, List<String>> parameters) {
@@ -337,9 +308,6 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
         this.applicationEventPublisher.publishEvent(portletActionExecutionEvent);
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.events.IPortalEventFactory#publishPortletEventExecutionEvent(javax.servlet.http.HttpServletRequest, java.lang.Object, java.lang.String, long, javax.xml.namespace.QName)
-     */
     @Override
     public void publishPortletEventExecutionEvent(HttpServletRequest request, Object source, String fname, long executionTime,
             Map<String, List<String>> parameters, QName eventName) {

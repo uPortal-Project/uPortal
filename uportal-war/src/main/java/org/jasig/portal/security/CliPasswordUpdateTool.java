@@ -26,6 +26,8 @@ import java.io.InputStreamReader;
 import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.persondir.ILocalAccountDao;
 import org.jasig.portal.persondir.ILocalAccountPerson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,8 +41,10 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Andrew Newman, newman@yale.edu
  * @version $Revision$
  */
-@Service
+@Service("passwordUpdateTool")
 public class CliPasswordUpdateTool implements IPasswordUpdateTool {
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    
     private ILocalAccountDao localAccountDao;
     private IPortalPasswordService portalPasswordService;
 
@@ -54,9 +58,6 @@ public class CliPasswordUpdateTool implements IPasswordUpdateTool {
         this.portalPasswordService = portalPasswordService;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.security.IPasswordUpdateTool#updatePassword(java.lang.String, boolean)
-     */
     @Override
     @Transactional
     public boolean updatePassword(String user, boolean create) throws IOException {
@@ -90,5 +91,32 @@ public class CliPasswordUpdateTool implements IPasswordUpdateTool {
 
         System.out.println("Password Updated...");
         return true;
+    }
+
+    @Override
+    @Transactional
+    public void updatePassword(String user, String spass, boolean create) throws IOException {
+        // Make sure user is specified correctly
+        if (StringUtils.isBlank(user)) {
+            throw new IllegalArgumentException("You did not specify a valid user name.  Please try again.");
+        }
+
+        // attempt to get the account form the database
+        ILocalAccountPerson account = this.localAccountDao.getPerson(user);
+        if (account == null) {
+            if (!create) {
+                throw new IllegalArgumentException("No such user: " + user);
+            }
+
+            account = this.localAccountDao.createPerson(user);
+        }
+
+        // update the user's password
+        final String encryptedPassword = this.portalPasswordService.encryptPassword(spass);
+        account.setPassword(encryptedPassword);
+        
+        this.localAccountDao.updateAccount(account);
+
+        logger.info("Password Updated for: {}", user);
     }
 }

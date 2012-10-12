@@ -39,4 +39,6 @@
         </property>
     </bean>
     
+    <bean parent="primaryPropertyPlaceholderConfigurer" />
+    
 </beans>

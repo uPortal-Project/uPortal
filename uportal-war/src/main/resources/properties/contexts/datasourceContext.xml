@@ -35,9 +35,11 @@
     	<property name="baseObjectName" value="uPortal:section=DataSource,name=" />
         <property name="initialSize" value="1" />
         <property name="minIdle" value="1" />
-        <property name="maxActive" value="50" />
+        <property name="maxActive" value="75" />
         <property name="maxIdle" value="50" />
-        <property name="maxWait" value="2000" />
+        <property name="maxWait" value="5000" /> <!-- 5 seconds -->
+        <property name="maxAge" value="3600000" /> <!-- 1 hour -->
+        <property name="minEvictableIdleTimeMillis" value="300000" /> <!-- 5 minutes -->
         
         <property name="abandonWhenPercentageFull" value="70" />
         <property name="removeAbandoned" value="true" />

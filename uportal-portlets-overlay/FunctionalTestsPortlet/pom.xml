@@ -2,9 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
-        <artifactId>umobile-portlets-overlay</artifactId>
-        <version>1.1-SNAPSHOT</version>
+        <groupId>org.jasig.portal.portlets-overlay</groupId>
+        <artifactId>uportal-portlets-overlay</artifactId>
+        <version>4.0.8-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -26,7 +26,22 @@
 
     <build>
         <plugins>
-           <plugin>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <filters>
+                        <filter>${basedir}/../../${filters.file}</filter>
+                    </filters>
+                    <webResources>
+                        <resource>
+                            <directory>${basedir}/src/main/webapp/WEB-INF</directory>
+                            <targetPath>WEB-INF</targetPath>
+                            <filtering>true</filtering>
+                        </resource>
+                    </webResources>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.portals.pluto</groupId>
                 <artifactId>maven-pluto-plugin</artifactId>
             </plugin>

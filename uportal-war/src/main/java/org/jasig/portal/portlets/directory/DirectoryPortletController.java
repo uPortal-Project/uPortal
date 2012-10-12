@@ -29,7 +29,6 @@ import javax.portlet.EventRequest;
 import javax.portlet.EventResponse;
 import javax.portlet.PortletRequest;
 import javax.portlet.RenderRequest;
-import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.portlet.container.properties.ThemeNameRequestPropertiesManager;
@@ -92,7 +91,7 @@ public class DirectoryPortletController {
     public void setDirectoryQueryAttributes(List<String> attributes) {
         this.directoryQueryAttributes = attributes;
     }
-    
+
     @EventMapping(SearchConstants.SEARCH_REQUEST_QNAME_STRING)
     public void search2(EventRequest request, EventResponse response) {
         
@@ -119,10 +118,14 @@ public class DirectoryPortletController {
                 url.setType(PortletUrlType.RENDER);
                 url.setPortletMode("VIEW");
                 url.setWindowState("maximized");
-                PortletUrlParameter param = new PortletUrlParameter();
-                param.setName("query");
-                param.getValue().add(query.getSearchTerms());
-                url.getParam().add(param);
+                PortletUrlParameter actionParam = new PortletUrlParameter();
+                actionParam.setName("action");
+                actionParam.getValue().add("findByUsername");
+                url.getParam().add(actionParam);
+                PortletUrlParameter usernameParam = new PortletUrlParameter();
+                usernameParam.setName("username");
+                usernameParam.getValue().add(person.getName());
+                url.getParam().add(usernameParam);
                 result.setPortletUrl(url);
                 results.getSearchResult().add(result);
             }

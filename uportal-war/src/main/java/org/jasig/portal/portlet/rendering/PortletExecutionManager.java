@@ -26,8 +26,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -37,10 +39,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.container.om.portlet.ContainerRuntimeOption;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
+import org.jasig.portal.events.IPortletExecutionEventFactory;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
 import org.jasig.portal.portlet.om.IPortletDescriptorKey;
@@ -49,27 +50,26 @@ import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
-import org.jasig.portal.portlet.rendering.worker.HungWorkerAnalyzer;
 import org.jasig.portal.portlet.rendering.worker.IPortletExecutionContext;
 import org.jasig.portal.portlet.rendering.worker.IPortletExecutionInterceptor;
 import org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker;
 import org.jasig.portal.portlet.rendering.worker.IPortletFailureExecutionWorker;
 import org.jasig.portal.portlet.rendering.worker.IPortletRenderExecutionWorker;
 import org.jasig.portal.portlet.rendering.worker.IPortletWorkerFactory;
+import org.jasig.portal.utils.ConcurrentMapUtils;
 import org.jasig.portal.utils.web.PortalWebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.util.WebUtils;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import com.google.common.base.Function;
 
 /**
  * Handles the asynchronous execution of portlets, handling execution errors and publishing
@@ -78,9 +78,10 @@ import com.google.common.cache.LoadingCache;
  * @author Eric Dalquist
  * @version $Revision$
  */
+@ManagedResource("uPortal:section=Framework,name=PortletExecutionManager")
 @Service("portletExecutionManager")
 public class PortletExecutionManager extends HandlerInterceptorAdapter
-        implements ApplicationEventPublisherAware, IPortletExecutionManager, IPortletExecutionInterceptor {
+        implements IPortletExecutionManager, IPortletExecutionInterceptor, PortletExecutionManagerMXBean {
     
     private static final long DEBUG_TIMEOUT = TimeUnit.HOURS.toMillis(1);
     private static final String PORTLET_HEADER_RENDERING_MAP = PortletExecutionManager.class.getName() + ".PORTLET_HEADER_RENDERING_MAP";
@@ -93,21 +94,19 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
      */
     protected static final String PORTLET_RENDER_HEADERS_OPTION = "javax.portlet.renderHeaders";
     
-    protected final Log logger = LogFactory.getLog(this.getClass());
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     /**
      * Queue used to track workers that did not complete in their alloted time. 
      */
     private final Queue<IPortletExecutionWorker<?>> hungWorkers = new ConcurrentLinkedQueue<IPortletExecutionWorker<?>>();
 
-    private ApplicationEventPublisher applicationEventPublisher;
-    
-    private final LoadingCache<IPortletDescriptorKey, AtomicInteger> executionCount = CacheBuilder.newBuilder().build(new CacheLoader<IPortletDescriptorKey, AtomicInteger>() {
-        @Override
-        public AtomicInteger load(IPortletDescriptorKey key) throws Exception {
+    private final ConcurrentMap<IPortletDescriptorKey, AtomicInteger> executionCount = ConcurrentMapUtils.makeDefaultsMap(new Function<IPortletDescriptorKey, AtomicInteger>(){
+        public AtomicInteger apply(IPortletDescriptorKey key) {
             return new AtomicInteger();
         }
     });
+    
     private boolean ignoreTimeouts = false;
     private int extendedTimeoutExecutions = 5;
     private long extendedTimeoutMultiplier = 20;
@@ -115,18 +114,66 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
     private IPortletWindowRegistry portletWindowRegistry;
     private IPortletEventCoordinationService eventCoordinationService;
     private IPortletWorkerFactory portletWorkerFactory;
-    private HungWorkerAnalyzer hungWorkerAnalyzer;
+    private IPortletExecutionEventFactory portletExecutionEventFactory;
     
     /**
      * @param maxEventIterations The maximum number of iterations to spend dispatching events. Defaults to 100
      */
+    @Override
+    @Value("${org.jasig.portal.portlet.maxEventIterations:100}")
     public void setMaxEventIterations(int maxEventIterations) {
         this.maxEventIterations = maxEventIterations;
     }
+    
+    @Override
+    public int getMaxEventIterations() {
+        return this.maxEventIterations;
+    }
 
+    @Override
     @Value("${org.jasig.portal.portlet.ignoreTimeout}")
     public void setIgnoreTimeouts(boolean ignoreTimeouts) {
         this.ignoreTimeouts = ignoreTimeouts;
+    }
+
+    @Override
+    public boolean isIgnoreTimeouts() {
+        return this.ignoreTimeouts;
+    }
+
+    @Override
+    @Value("${org.jasig.portal.portlet.extendedTimeoutExecutions:5}")
+    public void setExtendedTimeoutExecutions(int extendedTimeoutExecutions) {
+        this.extendedTimeoutExecutions = extendedTimeoutExecutions;
+    }
+
+    @Override
+    public int getExtendedTimeoutExecutions() {
+        return this.extendedTimeoutExecutions;
+    }
+
+    @Override
+    @Value("${org.jasig.portal.portlet.extendedTimeoutMultiplier:20}")
+    public void setExtendedTimeoutMultiplier(long extendedTimeoutMultiplier) {
+        this.extendedTimeoutMultiplier = extendedTimeoutMultiplier;
+    }
+
+    @Override
+    public long getExtendedTimeoutMultiplier() {
+        return this.extendedTimeoutMultiplier;
+    }
+    
+    @Override
+    public Map<String, Integer> getPortletExecutionCounts() {
+        final Map<String, Integer> counts = new TreeMap<String, Integer>();
+        
+        for (final Map.Entry<IPortletDescriptorKey, AtomicInteger> entry : this.executionCount.entrySet()) {
+            final IPortletDescriptorKey key = entry.getKey();
+            final AtomicInteger value = entry.getValue();
+            counts.put(key.getWebAppName() + "/" + key.getPortletName(), value.get());
+        }
+        
+        return counts;
     }
 
     @Autowired
@@ -139,26 +186,16 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         this.eventCoordinationService = eventCoordinationService;
     }
 
-
     @Autowired
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         this.portletWindowRegistry = portletWindowRegistry;
     }
-
-    @Override
-    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-        this.applicationEventPublisher = applicationEventPublisher;
-    }
     
     @Autowired
-    public void setHungWorkerAnalyzer(HungWorkerAnalyzer hungWorkerAnalyzer) {
-        this.hungWorkerAnalyzer = hungWorkerAnalyzer;
+    public void setPortletExecutionEventFactory(IPortletExecutionEventFactory portletExecutionEventFactory) {
+        this.portletExecutionEventFactory = portletExecutionEventFactory;
     }
-    
-    
-        /* (non-Javadoc)
-     * @see org.springframework.web.servlet.handler.HandlerInterceptorAdapter#afterCompletion(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.Object, java.lang.Exception)
-     */
+
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
             throws Exception {
@@ -202,13 +239,15 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
     protected void cancelWorker(HttpServletRequest request, IPortletExecutionWorker<?> portletExecutionWorker) {
         final IPortletWindowId portletWindowId = portletExecutionWorker.getPortletWindowId();
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
-        this.logger.warn(portletExecutionWorker + " has not completed, adding to hung-worker cleanup queue: " + portletWindow);
+        this.logger.warn("{} has not completed, adding to hung-worker cleanup queue: {}", portletExecutionWorker, portletWindow);
 
         portletExecutionWorker.cancel();
+        
+        this.portletExecutionEventFactory.publishPortletHungEvent(request, this, portletExecutionWorker);
         hungWorkers.offer(portletExecutionWorker);
     }
     
-    @Scheduled(fixedRate=200)
+    @Scheduled(fixedRate=1000)
     public void cleanupHungWorkers() {
         if (this.hungWorkers.isEmpty()) {
             return;
@@ -220,13 +259,19 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
             //If the worker completed remove it from queue
             if (worker.isComplete()) {
                 workerItr.remove();
+                this.logger.debug("{} has completed and is removed from the hung worker queue after {} cancels", worker, worker.getCancelCount());
+                
+                this.portletExecutionEventFactory.publishPortletHungCompleteEvent(this, worker);
             }
             //If the worker is still running cancel it
             else {
                 //Log a warning about the worker once every 30 seconds or so
                 final int cancelCount = worker.getCancelCount();
                 if (cancelCount % 150 == 0) {
-                    this.logger.warn(worker + " is still hung, cancel has been called " + cancelCount + " times");
+                    this.logger.warn("{} is still hung, cancel has been called {} times", worker, cancelCount);
+                }
+                else {
+                    this.logger.debug("{} is still hung, cancel has been called {} times", worker, cancelCount);
                 }
                 
                 worker.cancel();
@@ -234,11 +279,6 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         }
         
     }
-    
-    @Scheduled(fixedDelay=10000)  // Every ten seconds
-    public void analyzeHungWorkers() {
-        hungWorkerAnalyzer.analyze(hungWorkers);
-    }    
 
     @Override
     public void preSubmit(HttpServletRequest request, HttpServletResponse response, IPortletExecutionContext context) {
@@ -256,7 +296,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
         final IPortletDescriptorKey portletDescriptorKey = portletDefinition.getPortletDescriptorKey();
         
-        final AtomicInteger counter = this.executionCount.getUnchecked(portletDescriptorKey);
+        final AtomicInteger counter = this.executionCount.get(portletDescriptorKey);
         counter.incrementAndGet();
     }
 
@@ -495,7 +535,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
 					response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, "resource unavailable");
 				}
 			} catch (IOException e1) {
-				logger.fatal("caught IOException trying to send error response for failed resource worker", e);
+				logger.error("caught IOException trying to send error response for failed resource worker", e);
 			}
 		}
         
@@ -755,7 +795,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
     
     protected final long getModifiedTimeout(IPortletDefinition portletDefinition, HttpServletRequest request, long timeout) {
         final IPortletDescriptorKey portletDescriptorKey = portletDefinition.getPortletDescriptorKey();
-        final AtomicInteger counter = this.executionCount.getUnchecked(portletDescriptorKey);
+        final AtomicInteger counter = this.executionCount.get(portletDescriptorKey);
         final int executionCount = counter.get();
         
         if (executionCount > extendedTimeoutExecutions) {

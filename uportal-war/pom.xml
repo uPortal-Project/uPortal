@@ -132,6 +132,16 @@
         </dependency>
         
         <dependency>
+            <groupId>com.google.visualization</groupId>
+            <artifactId>visualization-datasource</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ibm.icu</groupId>
+            <artifactId>icu4j</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>javax.activation</groupId>
             <artifactId>activation</artifactId>
         </dependency>
@@ -596,6 +606,13 @@
                     <exclude>properties/contexts/userContext.xml</exclude>
                 </excludes>
             </resource>
+            <resource>
+                <directory>src/main/webapp/WEB-INF</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>log4j.properties</include>
+                </includes>
+            </resource>
         </resources>
         <plugins>
             <!-- Generates JAXB binding classes -->            
@@ -696,6 +713,24 @@
                     </filters>
                     <attachClasses>true</attachClasses>
                     <webXml>${project.build.directory}/pluto-resources/web.xml</webXml>
+                    <webResources>
+                        <resource>
+                            <directory>${basedir}/src/main/webapp/WEB-INF</directory>
+                            <targetPath>WEB-INF</targetPath>
+                            <filtering>true</filtering>
+                            <includes>
+                                <include>log4j.properties</include>
+                            </includes>
+                        </resource>
+                        <resource>
+                            <directory>${basedir}/src/main/webapp/WEB-INF</directory>
+                            <targetPath>WEB-INF</targetPath>
+                            <filtering>false</filtering>
+                            <excludes>
+                                <exclude>log4j.properties</exclude>
+                            </excludes>
+                        </resource>
+                    </webResources>
                 </configuration>
             </plugin>
             <plugin>

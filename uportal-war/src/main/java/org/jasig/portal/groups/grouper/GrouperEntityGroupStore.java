@@ -437,8 +437,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
                         + " results for query " + query);
             }
 
-            return (EntityIdentifier[]) groups
-                    .toArray(new EntityIdentifier[] {});
+            return groups.toArray(new EntityIdentifier[groups.size()]);
 
         } catch (Exception e) {
             LOGGER.warn("Exception while attempting to retrieve "
@@ -478,7 +477,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
 							.getName(), EntityTypes.LEAF_ENTITY_TYPE));
 				}
 			}
-			return ((EntityIdentifier[]) entityIdentifiers.toArray());
+			return entityIdentifiers.toArray(new EntityIdentifier[entityIdentifiers.size()]);
 
 		} catch (Exception e) {
 			LOGGER.warn("Exception while attempting to retrieve "

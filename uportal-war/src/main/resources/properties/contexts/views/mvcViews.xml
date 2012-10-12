@@ -33,6 +33,9 @@
         class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
         <property name="disableCaching" value="true" />
     </bean>
+    
+    <bean name="dataTableCsvView" class="org.jasig.portal.web.view.GoogleCsvDataTableView" />
+    <bean name="dataTableHtmlView" class="org.jasig.portal.web.view.GoogleHtmlDataTableView" />
            
     <bean name="jsonView" class="net.sf.json.spring.web.servlet.view.JsonView"/>
     

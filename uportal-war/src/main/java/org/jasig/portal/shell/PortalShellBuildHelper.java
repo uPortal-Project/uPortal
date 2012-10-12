@@ -28,6 +28,7 @@ import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.io.xml.IPortalData;
 import org.jasig.portal.io.xml.IPortalDataHandlerService;
 import org.jasig.portal.io.xml.PortalDataHandlerServiceUtils;
+import org.jasig.portal.tools.DbTest;
 import org.jasig.portal.tools.dbloader.DbLoaderConfigBuilder;
 import org.jasig.portal.tools.dbloader.IDbLoader;
 import org.jasig.portal.tools.dbloader.ISchemaExport;
@@ -50,6 +51,7 @@ public class PortalShellBuildHelper {
     private Map<String, ISchemaExport> schemaExportBeans;
     private IPortalDataHandlerService portalDataHandlerService;
     private IUserIdentityStore userIdentityStore;
+    private DbTest dbTest;
 
     @Autowired
     public void setDbLoader(IDbLoader dbLoader) {
@@ -69,6 +71,15 @@ public class PortalShellBuildHelper {
     @Autowired
     public void setUserIdentityStore(IUserIdentityStore userIdentityStore) {
         this.userIdentityStore = userIdentityStore;
+    }
+
+    @Autowired
+    public void setDbTest(DbTest dbTest) {
+        this.dbTest = dbTest;
+    }
+    
+    public void dbTest() {
+        this.dbTest.printDbInfo();
     }
 
     public void db(String target, String tablesFile, String dataFile, String scriptFile, boolean dropTables,

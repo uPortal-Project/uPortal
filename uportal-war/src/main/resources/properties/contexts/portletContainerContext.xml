@@ -41,6 +41,7 @@
     </bean>
     
     <util:list id="portletExecutionInterceptors" value-type="org.jasig.portal.portlet.rendering.worker.IPortletExecutionInterceptor">
+        <ref bean="hungWorkerAnalyzer"/>
         <ref bean="JpaPortletExecutionInterceptor"/>
         <ref bean="LocaleThreadLocalPortletExecutionInterceptor"/>
         <ref bean="RequestContextThreadLocalPortletExecutionInterceptor"/>

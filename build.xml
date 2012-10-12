@@ -417,33 +417,17 @@
     </target>
 
     <target name="dbtest" description="Displays information about the database defined in rdbm.properties">
-        <uportal-war-macro>
-            <echo message="Invoking DbTest" />
-            <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.tools.DbTest">
-                <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+    	<echo>Creating DBTest Script</echo>
+        <echo file="${portal-shell-script}" append="true">
+            logger.info("");
+            logger.info("");
+        	
+            portalShellBuildHelper.dbTest();
+        </echo>
 
-                <classpath refid="uportal-war-full.classpath" />
-            </java>
-        </uportal-war-macro>
-    </target>
-
-    <target name="regchantype" depends="prodPrompt" description="Registers a new channel type">
-        <uportal-war-macro>
-            <property name="class" value=" " />
-            <property name="name" value=" " />
-            <property name="description" value=" " />
-            <property name="uri" value=" " />
-
-            <echo message="Invoking RegisterChannelType" />
-            <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterChannelType">
-                <classpath refid="uportal-war-full.classpath" />
-
-                <arg value="${class}" />
-                <arg value="${name}" />
-                <arg value="${description}" />
-                <arg value="${uri}" />
-            </java>
-        </uportal-war-macro>
+        <antcall target="up-shell">
+            <param name="script" value="${portal-shell-script}" />
+        </antcall>
     </target>
 
     <target name="up-shell" description="Run a uPortal Groovy Shell. Interactive or scripted using -Dscript=">
@@ -719,19 +703,34 @@
 
 
     <target name="md5passwd" depends="prodPrompt" description="Creates a user in the UP_PERSON_DIR table">
-        <fail unless="username">
-            You must specify a 'username' parameter (-Dusername={juser})
-        </fail>
+    	<property name="username" value="" />
+    	
+    	<input message="Enter userId:" addproperty="user.id" defaultvalue="${username}"/> 
+        <input message="Enter password:" addproperty="user.pw1"> 
+          <handler classname="org.apache.tools.ant.input.SecureInputHandler" /> 
+        </input>
+    	<input message="Verify password:" addproperty="user.pw2"> 
+          <handler classname="org.apache.tools.ant.input.SecureInputHandler" /> 
+        </input>
 
-        <uportal-war-macro>
-            <echo message="Invoking creating/updating password for: ${username}" />
-            <java dir="${basedir}" classname="org.jasig.portal.security.Md5Passwd">
-                <classpath refid="uportal-war-full.classpath" />
+    	<fail message="Passwords do not match.">
+    	    <condition>
+    	        <not>
+    	            <equals arg1="${user.pw1}" arg2="${user.pw2}"/>
+    	        </not>
+    	    </condition>
+    	</fail>    	
 
-                <arg value="-c" />
-                <arg value="${username}" />
-            </java>
-        </uportal-war-macro>
+        <echo file="${portal-shell-script}" append="true">
+            logger.info("");
+            logger.info("");
+        	
+        	passwordUpdateTool.updatePassword('${user.id}', /${user.pw1}/, true);
+        </echo>
+
+        <antcall target="up-shell">
+            <param name="script" value="${portal-shell-script}" />
+        </antcall>
     </target>
 
     <target name="deluser" depends="prodPrompt" description="Delete traces of a user from the portal database">
@@ -750,59 +749,6 @@
         </antcall>
     </target>
 
-    <target name="addstylesheet" depends="prodPrompt" description="Registers a new theme or structure">
-        <uportal-war-macro>
-            <property name="stylesheetType" value=" " />
-            <property name="stylesheetUri" value=" " />
-            <property name="descriptionUri" value=" " />
-
-            <echo message="Invoking RegisterStylesheet (add)" />
-            <java dir="${basedir}" fork="true" classname="org.jasig.portal.tools.RegisterStylesheet">
-                <classpath refid="uportal-war-full.classpath" />
-
-                <arg value="${stylesheetType}" />
-                <arg value="${stylesheetUri}" />
-                <arg value="${descriptionUri}" />
-            </java>
-        </uportal-war-macro>
-    </target>
-
-    <target name="modstylesheet" depends="prodPrompt" description="Modifies an existing theme or structure">
-        <uportal-war-macro>
-            <property name="stylesheetType" value=" " />
-            <property name="stylesheetUri" value=" " />
-            <property name="descriptionUri" value=" " />
-            <property name="stylesheetId" value=" " />
-
-            <echo message="Invoking RegisterStylesheet (modify)" />
-            <java dir="${basedir}" fork="true" classname="org.jasig.portal.tools.RegisterStylesheet">
-                <classpath refid="uportal-war-full.classpath" />
-
-                <arg value="${stylesheetType}" />
-                <arg value="-u" />
-                <arg value="${stylesheetUri}" />
-                <arg value="${descriptionUri}" />
-                <arg value="${stylesheetId}" />
-            </java>
-        </uportal-war-macro>
-    </target>
-
-    <target name="delstylesheet" depends="prodPrompt" description="Deletes an existing theme or structure">
-        <uportal-war-macro>
-            <property name="stylesheetType" value=" " />
-            <property name="stylesheetId" value=" " />
-
-            <echo message="Invoking RegisterStylesheet (delete)" />
-            <java dir="${basedir}" classname="org.jasig.portal.tools.RegisterStylesheet">
-                <classpath refid="uportal-war-full.classpath" />
-
-                <arg value="${stylesheetType}" />
-                <arg value="-d" />
-                <arg value="${stylesheetId}" />
-            </java>
-        </uportal-war-macro>
-    </target>
-
     <target name="hsql" description="Start a HSQLDB instance consistent with the default RDBMS requirements of uPortal">
         <property name="spawn" value="false" />
 
@@ -810,6 +756,12 @@
             <equals arg1="${spawn}" arg2="true" />
         </condition>
         <property name="failonerror" value="true" />
+    	
+        <fail message="There is already a service running on port ${environment.build.hsql.port}, please shut it down before starting the quickstart">
+            <condition>
+                <socket server="localhost" port="${environment.build.hsql.port}" />
+            </condition>
+        </fail>
 
         <uportal-parent-macro>
             <artifact:dependencies pathid="hsql.classpath" settingsFile="${maven.settings}">
@@ -835,6 +787,19 @@
 
             </java>
         </uportal-parent-macro>
+        
+    	<if>
+    		<equals arg1="${spawn}" arg2="true" />
+    	   <then>
+                <!-- wait for hsql to start -->
+                <echo>Waiting for HSQL to Start, checking port ${environment.build.hsql.port}</echo>
+                <waitfor maxwait="1" maxwaitunit="minute" checkevery="1" checkeveryunit="second" timeoutproperty="hsql-not-started">
+                    <socket server="localhost" port="${environment.build.hsql.port}" />
+                </waitfor>
+                <fail if="hsql-not-started" message="HSQL Failed To Start" />
+                <echo>HSQL Started</echo>
+    	   	</then>
+	   	</if>
     </target>
 
     <target name="hsql-shutdown" description="Compacts then cleanly shuts down hsql, useful if the 'hsql' task was run with '-Dspawn=true'">
@@ -876,6 +841,20 @@
                 </catch>
             </trycatch>
         </uportal-parent-macro>
+    	
+    	<echo>Waiting for HSQL to stop, checking port ${environment.build.hsql.port}</echo>
+        <waitfor maxwait="1" maxwaitunit="minute" checkevery="1" checkeveryunit="second" timeoutproperty="hsql-not-stopped">
+            <not>
+                <socket server="localhost" port="${environment.build.hsql.port}" />
+            </not>
+        </waitfor>
+        <if>
+            <isset property="hsql-not-stopped"/>
+            <then>
+                <echo level="warn">HSQL Failed To Stop</echo>
+            </then>
+        </if>
+        <echo>HSQL Stopped</echo>
     </target>
 
     <!-- ============================== Utility Targets ============================== -->
@@ -1088,6 +1067,26 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
     <target name="i18n-db">
         <echo>The "i18n-db" Ant task is no longer supported. Use "ant data-import" to import portal data.</echo>
         <fail message="The 'i18n-db' Ant task is no longer supported. Use 'ant data-import' to import portal data.">
+        </fail>
+    </target>
+    <target name="regchantype">
+        <echo>The "regchantype" Ant task is no longer supported. Use 'ant data-import' to import portal data.</echo>
+        <fail message="The 'regchantype' Ant task is no longer supported. Use 'ant data-import' to import portal data.">
+        </fail>
+    </target>
+    <target name="addstylesheet">
+        <echo>The "addstylesheet" Ant task is no longer supported. Use 'ant data-import' to import portal data.</echo>
+        <fail message="The 'addstylesheet' Ant task is no longer supported. Use 'ant data-import' to import portal data.">
+        </fail>
+    </target>
+    <target name="modstylesheet">
+        <echo>The "modstylesheet" Ant task is no longer supported. Use 'ant data-import' to import portal data.</echo>
+        <fail message="The 'modstylesheet' Ant task is no longer supported. Use 'ant data-import' to import portal data.">
+        </fail>
+    </target>
+    <target name="delstylesheet">
+        <echo>The "delstylesheet" Ant task is no longer supported. Use 'ant data-delete' to delete portal data.</echo>
+        <fail message="The 'delstylesheet' Ant task is no longer supported. Use 'ant data-delete' to delete portal data.">
         </fail>
     </target>
 
