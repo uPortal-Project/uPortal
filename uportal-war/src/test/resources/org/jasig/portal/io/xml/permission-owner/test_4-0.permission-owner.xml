@@ -19,28 +19,10 @@
     under the License.
 
 -->
-<permission-owner xmlns="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns2="https://source.jasig.org/schemas/uportal/io/user" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns4="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns5="https://source.jasig.org/schemas/uportal" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/permission-owner https://source.jasig.org/schemas/uportal/io/permission-owner/permission-owner-4.0.xsd">
+<permission-owner version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/permission-owner https://source.jasig.org/schemas/uportal/io/permission-owner/permission-owner-4.0.xsd" xmlns:ns2="https://source.jasig.org/schemas/uportal/io/event-aggregation" xmlns="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns4="https://source.jasig.org/schemas/uportal" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns5="https://source.jasig.org/schemas/uportal/io/user" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:ns7="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns8="https://source.jasig.org/schemas/uportal/io/subscribed-fragment">
     <name>Users</name>
     <fname>UP_USERS</fname>
     <desc>Permissions controlling uPortal user account management</desc>
-    <activity>
-        <name>View user attribute</name>
-        <fname>VIEW_USER_ATTRIBUTE</fname>
-        <desc>View a specific user attribute.  This permission applies to that attribute for all visible users</desc>
-        <targetProvider>userAttributesTargetProvider</targetProvider>
-    </activity>
-    <activity>
-        <name>View user</name>
-        <fname>VIEW_USER</fname>
-        <desc>View a user.</desc>
-        <targetProvider>peopleAndGroupsTargetProvider</targetProvider>
-    </activity>
-    <activity>
-        <name>Edit user attribute</name>
-        <fname>EDIT_USER_ATTRIBUTE</fname>
-        <desc>Edit a specific user attribute.  This permission applies to that attribute for all editable users</desc>
-        <targetProvider>peopleAndGroupsTargetProvider</targetProvider>
-    </activity>
     <activity>
         <name>Delete users</name>
         <fname>DELETE_USER</fname>
@@ -54,9 +36,27 @@
         <targetProvider>peopleAndGroupsTargetProvider</targetProvider>
     </activity>
     <activity>
+        <name>Edit user attribute</name>
+        <fname>EDIT_USER_ATTRIBUTE</fname>
+        <desc>Edit a specific user attribute.  This permission applies to that attribute for all editable users</desc>
+        <targetProvider>peopleAndGroupsTargetProvider</targetProvider>
+    </activity>
+    <activity>
         <name>Impersonate users</name>
         <fname>IMPERSONATE</fname>
         <desc>Impersonate users for debugging purposes in uPortal</desc>
         <targetProvider>peopleAndGroupsTargetProvider</targetProvider>
+    </activity>
+    <activity>
+        <name>View user</name>
+        <fname>VIEW_USER</fname>
+        <desc>View a user.</desc>
+        <targetProvider>peopleAndGroupsTargetProvider</targetProvider>
+    </activity>
+    <activity>
+        <name>View user attribute</name>
+        <fname>VIEW_USER_ATTRIBUTE</fname>
+        <desc>View a specific user attribute.  This permission applies to that attribute for all visible users</desc>
+        <targetProvider>userAttributesTargetProvider</targetProvider>
     </activity>
 </permission-owner>
