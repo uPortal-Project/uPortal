@@ -172,6 +172,7 @@ public class PermissionOwnerImporterExporter extends
             
             externalActivities.add(externalActivity);
         }
+        Collections.sort(externalActivities, ExternalActivityFnameComparator.INSTANCE);
         
         return externalPermissionOwner;
     }

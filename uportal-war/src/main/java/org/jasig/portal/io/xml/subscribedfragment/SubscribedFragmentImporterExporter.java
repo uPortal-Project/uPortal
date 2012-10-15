@@ -176,6 +176,8 @@ public class SubscribedFragmentImporterExporter extends
         if (subscribedFragments.isEmpty()) {
 	        return null;
 	    }
+        
+        Collections.sort(subscribedFragments, SubscribedFragmentTypeComparator.INSTANCE);
 	    
 	    return data;
     }

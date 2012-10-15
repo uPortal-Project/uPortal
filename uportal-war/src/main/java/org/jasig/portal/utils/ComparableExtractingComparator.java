@@ -32,7 +32,7 @@ import java.util.Comparator;
  * @param <T> The root type being compared
  * @param <C> The type that extracted for comparison
  */
-public abstract class ComparableExtractingComparator<T, C extends Comparable<C>> implements Comparator<T> {
+public abstract class ComparableExtractingComparator<T, C extends Comparable<? super C>> implements Comparator<T> {
     private final Comparator<C> comparator;
     
     public ComparableExtractingComparator() {
