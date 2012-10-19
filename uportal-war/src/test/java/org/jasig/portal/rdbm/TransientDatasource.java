@@ -24,11 +24,12 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.io.IOUtils;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
@@ -41,7 +42,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 public class TransientDatasource implements DataSource {
     
     private DataSource delegate;
-    
+     
     public TransientDatasource() {
         
         final Properties dataSourceProperties = new Properties();
@@ -96,5 +97,9 @@ public class TransientDatasource implements DataSource {
 
     public int getLoginTimeout() throws SQLException {
         return delegate.getLoginTimeout();
+    }
+
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        throw new SQLFeatureNotSupportedException("This SQL feature is not yet supported.");
     }
 }
