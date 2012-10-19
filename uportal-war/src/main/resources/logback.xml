@@ -45,7 +45,7 @@
       <pattern>%-5level [%thread] %logger{36} %d{ISO8601} - %msg%n</pattern>
     </encoder>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>${environment.build.log.logfileDirectory}/portal/portal.log.%d{yyyy-MM-dd-HH}</fileNamePattern>
+      <fileNamePattern>${environment.build.log.logfileDirectory}/portal/portal.log.%d{${environment.build.log.rollingLogFileDatePattern}}</fileNamePattern>
     </rollingPolicy>
   </appender>
   
@@ -58,7 +58,7 @@
       <pattern>%-5level [%thread] %logger{36} %d{ISO8601} - %msg%n</pattern>
     </encoder>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>${environment.build.log.logfileDirectory}/portal/portal-events.log.%d{yyyy-MM-dd-HH}</fileNamePattern>
+      <fileNamePattern>${environment.build.log.logfileDirectory}/portal/portal-events.log.%d{${environment.build.log.rollingLogFileDatePattern}}</fileNamePattern>
     </rollingPolicy>
   </appender>
   
@@ -71,7 +71,7 @@
       <pattern>%-5level [%thread] %logger{36} %d{ISO8601} - %msg%n</pattern>
     </encoder>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>${environment.build.log.logfileDirectory}/audit/portal.audit.log.%d{yyyy-MM-dd}</fileNamePattern>
+      <fileNamePattern>${environment.build.log.logfileDirectory}/audit/portal.audit.log.%d{${environment.build.log.rollingLogFileDatePattern}}</fileNamePattern>
     </rollingPolicy>
   </appender>
   
@@ -84,7 +84,7 @@
       <pattern>%-5level [%thread] %logger{36} %d{ISO8601} - %msg%n</pattern>
     </encoder>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>${environment.build.log.logfileDirectory}/jgroups/portal.jgroups.log.%d{yyyy-MM-dd-HH}</fileNamePattern>
+      <fileNamePattern>${environment.build.log.logfileDirectory}/jgroups/portal.jgroups.log.%d{${environment.build.log.rollingLogFileDatePattern}}</fileNamePattern>
     </rollingPolicy>
   </appender>
   
