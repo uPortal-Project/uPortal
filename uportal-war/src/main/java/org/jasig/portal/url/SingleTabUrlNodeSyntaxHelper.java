@@ -129,14 +129,14 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
             }
         }
     
-        this.logger.warn("Failed to find default tab id for " + userInstance.getPerson().getUserName() + " with default tab index " + defaultTabIndex + ". Index 1 will be tried as a fall-back.");
+        this.logger.warn("Failed to find default tab id for '" + userInstance.getPerson().getUserName() + "' with default tab index " + defaultTabIndex + ". Index 1 will be tried as a fall-back.");
         
         final String firstTabId = getTabId(userLayout, "1");
         if (StringUtils.isNotEmpty(firstTabId)) {
             return firstTabId;
         }
         
-        this.logger.warn("Failed to find default tab id for " + userInstance.getPerson().getUserName() + " with default tab index 1. The user has no tabs.");
+        this.logger.warn("Failed to find default tab id for '" + userInstance.getPerson().getUserName() + "' with default tab index 1. The user has no tabs.");
         
         return userLayout.getRootId();
     }
