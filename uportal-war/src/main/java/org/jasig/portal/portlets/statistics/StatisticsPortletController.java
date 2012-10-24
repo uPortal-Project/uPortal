@@ -76,7 +76,7 @@ public class StatisticsPortletController {
         binder.registerCustomEditor(DateMidnight.class, new CustomDateMidnightEditor(formatter, false));
     }
     
-    @RenderMapping
+    @RequestMapping
     public String getReportList() throws TypeMismatchException {
         return "jsp/Statistics/reportList";
     }
