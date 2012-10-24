@@ -110,7 +110,7 @@
         <cas-server.version>3.4.11</cas-server.version>
         <NotificationPortlet.version>1.0.0</NotificationPortlet.version>
         <SimpleContentPortlet.version>1.0.2</SimpleContentPortlet.version>
-        <ssp.version>1.1.0-SNAPSHOT</ssp.version>
+        <ssp.version>1.2.0-SNAPSHOT</ssp.version>
 
         <!-- Project Dependency Version Properties -->
         <aopalliance.version>1.0</aopalliance.version>
