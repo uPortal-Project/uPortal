@@ -243,13 +243,12 @@
     		<equals arg1="${create}" arg2="true" />
             <then>
                 <echo file="${portal-shell-script}" append="true">
-                    //hibernateCreate(String target, String schemaExportBeanName, boolean export, String outputFile)
+                    //hibernateCreate(String target, String databaseQualifier, String schemaExportBeanName, boolean export, String outputFile)
                     portalShellBuildHelper.hibernateCreate("db-hibernate",
+                	    '${databaseQualifier}',
                         '${schemaExportBean}',
                         Boolean.parseBoolean('${export}'),
                         /${outputFileEscaped}/);
-                	
-                	versionedDataUpdater.postInitDatabase('${databaseQualifier}');
                 </echo>
             </then>
         </if>
@@ -272,15 +271,13 @@
         	logger.info("");
         	logger.info("");
         	logger.info("Update Database " + '${databaseQualifier}');
-        	versionedDataUpdater.preUpdateDatabase('${databaseQualifier}');
         	
-        	//hibernateUpdate(String target, String schemaExportBeanName, boolean export, String outputFile)
+        	//hibernateUpdate(String target, String databaseQualifier, String schemaExportBeanName, boolean export, String outputFile)
             portalShellBuildHelper.hibernateUpdate("db-hibernate-update",
+        	    '${databaseQualifier}',
                 '${schemaExportBean}',
                 Boolean.parseBoolean('${export}'),
                 /${outputFileEscaped}/);
-        	
-        	versionedDataUpdater.postUpdateDatabase('${databaseQualifier}');
         </echo>
 
         <antcall target="up-shell">
