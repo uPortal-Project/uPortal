@@ -34,7 +34,7 @@ public interface VersionDao {
     /**
      * Create or update a the version number for the specified product
      */
-    Version setVersion(String product, int major, int minor, int patch);
+    Version setVersion(String product, int major, int minor, int patch, Integer local);
     
     /**
      * @see #setVersion(String, int, int, int)
