@@ -30,6 +30,7 @@ import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.version.AbstractVersion;
+import org.jasig.portal.version.om.Version;
 
 @Entity
 @Table(name = "UP_VERSION")
@@ -70,6 +71,9 @@ class VersionImpl extends AbstractVersion {
     @Column(name = "PATCH_VER", nullable = false)
     private int patch;
     
+    @Column(name = "LOCAL_VER")
+    private Integer local;
+    
     @SuppressWarnings("unused")
     private VersionImpl() {
         this.id = -1;
@@ -84,6 +88,26 @@ class VersionImpl extends AbstractVersion {
         this.major = major;
         this.minor = minor;
         this.patch = patch;
+    }
+    
+    public VersionImpl(String product, int major, int minor, int patch, Integer local) {
+        this.id = -1;
+        this.entityVersion = -1;
+        this.product = product;
+        this.major = major;
+        this.minor = minor;
+        this.patch = patch;
+        this.local = local;
+    }
+    
+    public VersionImpl(String product, Version version) {
+        this.id = -1;
+        this.entityVersion = -1;
+        this.product = product;
+        this.major = version.getMajor();
+        this.minor = version.getMinor();
+        this.patch = version.getPatch();
+        this.local = version.getLocal();
     }
 
     @Override
@@ -101,6 +125,11 @@ class VersionImpl extends AbstractVersion {
         return this.patch;
     }
     
+    @Override
+    public Integer getLocal() {
+        return this.local;
+    }
+
     public void setMajor(int major) {
         this.major = major;
     }
@@ -111,5 +140,9 @@ class VersionImpl extends AbstractVersion {
 
     public void setPatch(int patch) {
         this.patch = patch;
+    }
+
+    public void setLocal(Integer local) {
+        this.local = local;
     }
 }

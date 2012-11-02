@@ -22,9 +22,12 @@ package org.jasig.portal.events.aggr;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Resource;
 
 import org.jasig.portal.concurrency.FunctionWithoutResult;
 import org.jasig.portal.concurrency.locking.ClusterMutex;
@@ -32,6 +35,10 @@ import org.jasig.portal.concurrency.locking.IClusterLockService;
 import org.jasig.portal.concurrency.locking.IClusterLockService.LockStatus;
 import org.jasig.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
 import org.jasig.portal.concurrency.locking.LockOptions;
+import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
+import org.jasig.portal.jpa.BaseRawEventsJpaDao;
+import org.jasig.portal.version.dao.VersionDao;
+import org.jasig.portal.version.om.Version;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +48,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
 
 @Service("portalEventAggregationManager")
 public class PortalEventProcessingManagerImpl implements IPortalEventProcessingManager, HibernateCacheEvictor, DisposableBean {
@@ -51,6 +59,8 @@ public class PortalEventProcessingManagerImpl implements IPortalEventProcessingM
     private PortalEventPurger portalEventPurger;
     private PortalEventSessionPurger portalEventSessionPurger;
     private IClusterLockService clusterLockService;
+    private Map<String, Version> requiredProductVersions = Collections.emptyMap();
+    private VersionDao versionDao;
     
     private long aggregateRawEventsPeriod = 0;
     private long purgeRawEventsPeriod = 0;
@@ -104,6 +114,16 @@ public class PortalEventProcessingManagerImpl implements IPortalEventProcessingM
         this.purgeEventSessionsPeriod = purgeEventSessionsPeriod;
     }
 
+    @Resource(name = "productVersions")
+    public void setRequiredProductVersions(Map<String, Version> requiredProductVersions) {
+        this.requiredProductVersions = ImmutableMap.copyOf(requiredProductVersions);
+    }
+    
+    @Autowired
+    public void setVersionDao(VersionDao versionDao) {
+        this.versionDao = versionDao;
+    }
+
     @Override
     public void destroy() throws Exception {
         this.shutdown = true;
@@ -113,6 +133,11 @@ public class PortalEventProcessingManagerImpl implements IPortalEventProcessingM
     public boolean populateDimensions() {
         if (shutdown) {
             logger.warn("populateDimensions called after shutdown, ignoring call");
+            return false;
+        }
+        
+        if (!this.checkDatabaseVersion(BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME)) {
+            logger.info("The database and software versions for " + BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME + " do not match. No dimension population will be done");
             return false;
         }
         
@@ -143,6 +168,16 @@ public class PortalEventProcessingManagerImpl implements IPortalEventProcessingM
     public boolean aggregateRawEvents() {
         if (shutdown) {
             logger.warn("aggregateRawEvents called after shutdown, ignoring call");
+            return false;
+        }
+        
+        if (!this.checkDatabaseVersion(BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME)) {
+            logger.info("The database and software versions for " + BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME + " do not match. No event aggregation will be done");
+            return false;
+        }
+        
+        if (!this.checkDatabaseVersion(BaseRawEventsJpaDao.PERSISTENCE_UNIT_NAME)) {
+            logger.info("The database and software versions for " + BaseRawEventsJpaDao.PERSISTENCE_UNIT_NAME + " do not match. No event aggregation will be done");
             return false;
         }
 
@@ -241,6 +276,11 @@ public class PortalEventProcessingManagerImpl implements IPortalEventProcessingM
             return false;
         }
         
+        if (!this.checkDatabaseVersion(BaseRawEventsJpaDao.PERSISTENCE_UNIT_NAME)) {
+            logger.info("The database and software versions for " + BaseRawEventsJpaDao.PERSISTENCE_UNIT_NAME + " do not match. No event purging will be done");
+            return false;
+        }
+        
         long purgeLastRunDelay = (long)(this.purgeRawEventsPeriod * .95);
         TryLockFunctionResult<EventProcessingResult> result = null;
         EventProcessingResult purgeResult = null;
@@ -296,6 +336,11 @@ public class PortalEventProcessingManagerImpl implements IPortalEventProcessingM
             return false;
         }
         
+        if (!this.checkDatabaseVersion(BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME)) {
+            logger.info("The database and software versions for " + BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME + " do not match. No event session purging will be done");
+            return false;
+        }
+        
         try {
             final long start = System.nanoTime();
             
@@ -341,6 +386,23 @@ public class PortalEventProcessingManagerImpl implements IPortalEventProcessingM
             evictedEntities.put(entityClass, ids);
         }
         ids.add(identifier);
+    }
+    
+    /**
+     * Check if the database and software versions match
+     */
+    private boolean checkDatabaseVersion(String databaseName) {
+        final Version softwareVersion = this.requiredProductVersions.get(databaseName);
+        if (softwareVersion == null) {
+            throw new IllegalStateException("No version number is configured for: " + databaseName);
+        }
+        
+        final Version databaseVersion = this.versionDao.getVersion(databaseName);
+        if (databaseVersion == null) {
+            throw new IllegalStateException("No version number is exists in the database for: " + databaseName);
+        }
+        
+        return softwareVersion.equals(databaseVersion);
     }
 
     private void logResult(String message, EventProcessingResult aggrResult, long start) {

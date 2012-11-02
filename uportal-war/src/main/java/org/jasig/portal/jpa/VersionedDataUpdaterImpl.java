@@ -102,8 +102,9 @@ public class VersionedDataUpdaterImpl implements VersionedDataUpdater {
             for (final IVersionedDatabaseUpdateHelper updateHelper : updateHelpers) {
                 final Version updateVersion = updateHelper.getVersion();
                 if (dbVersion.equals(updateVersion) || dbVersion.isBefore(updateVersion)) {
-                    logger.info("PreUpdate {} from {}", product, updateVersion);
+                    logger.info("PreUpdate {} from {} to {}", product, dbVersion, updateVersion);
                     updateHelper.preUpdate();
+                    logger.info("PreUpdate {} from {} to {} complete", product, dbVersion, updateVersion);
                 }
             }
         }
@@ -124,8 +125,9 @@ public class VersionedDataUpdaterImpl implements VersionedDataUpdater {
             for (final IVersionedDatabaseUpdateHelper updateHelper : updateHelpers) {
                 final Version updateVersion = updateHelper.getVersion();
                 if (dbVersion.equals(updateVersion) || dbVersion.isBefore(updateVersion)) {
-                    logger.info("PostUpdate {} from {}", product, updateVersion);
+                    logger.info("PostUpdate {} from {} to {}", product, dbVersion, updateVersion);
                     updateHelper.postUpdate();
+                    logger.info("PostUpdate {} from {} to {} complete", product, dbVersion, updateVersion);
                 }
             }
         }

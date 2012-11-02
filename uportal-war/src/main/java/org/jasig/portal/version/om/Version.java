@@ -43,6 +43,11 @@ public interface Version extends Comparable<Version> {
     int getPatch();
     
     /**
+     * @return The optional local part
+     */
+    Integer getLocal();
+    
+    /**
      * @return true if this version comes before the other version
      */
     boolean isBefore(Version other);

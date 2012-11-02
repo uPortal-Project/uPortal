@@ -50,6 +50,10 @@
             </props>
         </property>
     </bean>
+    <bean id="jdbcOperations" class="org.springframework.jdbc.core.JdbcTemplate">
+        <qualifier value="PortalDb"/>
+        <property name="dataSource" ref="PortalDb" />
+    </bean>
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <qualifier value="PortalDb" />
         <property name="entityManagerFactory" ref="factoryBean" />

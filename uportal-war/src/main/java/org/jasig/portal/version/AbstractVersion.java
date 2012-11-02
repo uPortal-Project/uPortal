@@ -34,27 +34,52 @@ public abstract class AbstractVersion implements Version, Serializable {
     
     @Override
     public final boolean isBefore(Version other) {
-        return Math.signum(compareTo(other)) == -1;
+        return compareTo(other) < 0;
     }
 
     @Override
     public final boolean isAfter(Version other) {
-        return Math.signum(compareTo(other)) == 1;
+        return compareTo(other) > 1;
     }
 
     @Override
     public final int compareTo(Version o) {
         int diff = getMajor() - o.getMajor();
-        if (diff != 0) {
-            return diff;
+        if (diff > 0) {
+            return 1;
+        }
+        if (diff < 0) {
+            return -1;
         }
         
         diff = getMinor() - o.getMinor();
-        if (diff != 0) {
-            return diff;
+        if (diff > 0) {
+            return 1;
+        }
+        if (diff < 0) {
+            return -1;
         }
         
-        return getPatch() - o.getPatch();
+        diff = getPatch() - o.getPatch();
+        if (diff > 0) {
+            return 1;
+        }
+        if (diff < 0) {
+            return -1;
+        }
+        
+        final Integer l = getLocal();
+        final Integer ol = o.getLocal();
+        if (l == ol) {
+            return 0;
+        }
+        if (l == null) {
+            return -1;
+        }
+        if (ol == null) {
+            return 1;
+        }
+        return l.compareTo(ol);
     }
 
     @Override
@@ -66,6 +91,8 @@ public abstract class AbstractVersion implements Version, Serializable {
 	        result = prime * result + getMajor();
 	        result = prime * result + getMinor();
 	        result = prime * result + getPatch();
+	        final Integer local = getLocal();
+	        result = prime * result + ((local == null) ? 0 : local.hashCode());
 	        hashCode = result;
     	}
     	return result;
@@ -86,11 +113,23 @@ public abstract class AbstractVersion implements Version, Serializable {
             return false;
         if (getPatch() != other.getPatch())
             return false;
+        final Integer local = getLocal();
+        final Integer oLocal = other.getLocal();
+        if (local == null) {
+            if (oLocal != null)
+                return false;
+        }
+        else if (!local.equals(oLocal))
+            return false;
         return true;
     }
     
     @Override
     public final String toString() {
-        return getMajor() + "." + getMinor() + "." + getPatch();
+        final Integer local = getLocal();
+        if (local == null) {
+            return getMajor() + "." + getMinor() + "." + getPatch();
+        }
+        return getMajor() + "." + getMinor() + "." + getPatch() + "." + local;
     }
 }
