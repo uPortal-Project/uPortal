@@ -29,6 +29,7 @@ import org.jasig.portal.version.om.Version;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -38,6 +39,9 @@ public class JpaVersionDaoTest extends BasePortalJpaDaoTest {
 
     @Autowired
     private VersionDao versionDao;
+    
+    @Autowired
+    private JdbcOperations jdbcOperations;
 
     @Test
     public void testVersionLifecycle() {
@@ -58,11 +62,12 @@ public class JpaVersionDaoTest extends BasePortalJpaDaoTest {
             protected void callWithoutResult() {
                 Version version = versionDao.getVersion(productName);
                 assertNull(version);
-                version = versionDao.setVersion(productName, 1, 2, 3);
+                version = versionDao.setVersion(productName, 1, 2, 3, null);
                 assertNotNull(version);
                 assertEquals(1, version.getMajor());
                 assertEquals(2, version.getMinor());
                 assertEquals(3, version.getPatch());
+                assertNull(version.getLocal());
             }
         });
 
@@ -75,13 +80,15 @@ public class JpaVersionDaoTest extends BasePortalJpaDaoTest {
                 assertEquals(1, version.getMajor());
                 assertEquals(2, version.getMinor());
                 assertEquals(3, version.getPatch());
+                assertNull(version.getLocal());
                 
 
-                version = versionDao.setVersion(productName, 4, 5, 6);
+                version = versionDao.setVersion(productName, 4, 5, 6, null);
                 assertNotNull(version);
                 assertEquals(4, version.getMajor());
                 assertEquals(5, version.getMinor());
                 assertEquals(6, version.getPatch());
+                assertNull(version.getLocal());
             }
         });
 
@@ -94,7 +101,49 @@ public class JpaVersionDaoTest extends BasePortalJpaDaoTest {
                 assertEquals(4, version.getMajor());
                 assertEquals(5, version.getMinor());
                 assertEquals(6, version.getPatch());
+                assertNull(version.getLocal());
             }
         });
+    }
+    
+
+
+    @Test
+    public void testVersionBadSql() {
+        final String productName = "TEST_VERSION";
+        
+        //Create
+        this.execute(new CallableWithoutResult() {
+            @Override
+            protected void callWithoutResult() {
+                Version version = versionDao.getVersion(productName);
+                assertNull(version);
+                version = versionDao.setVersion(productName, 1, 2, 3, null);
+                assertNotNull(version);
+                assertEquals(1, version.getMajor());
+                assertEquals(2, version.getMinor());
+                assertEquals(3, version.getPatch());
+                assertNull(version.getLocal());
+            }
+        });
+        
+        jdbcOperations.execute("ALTER TABLE UP_VERSION DROP LOCAL_VER");
+        try {
+            //Doesn't exist
+            this.execute(new CallableWithoutResult() {
+                @Override
+                protected void callWithoutResult() {
+                    final Version version = versionDao.getVersion(productName);
+                    assertNotNull(version);
+                    assertEquals(1, version.getMajor());
+                    assertEquals(2, version.getMinor());
+                    assertEquals(3, version.getPatch());
+                    assertNull(version.getLocal());
+                }
+            });
+        }
+        finally {
+            jdbcOperations.execute("ALTER TABLE UP_VERSION ADD COLUMN LOCAL_VER INTEGER");
+        }
     }
 }

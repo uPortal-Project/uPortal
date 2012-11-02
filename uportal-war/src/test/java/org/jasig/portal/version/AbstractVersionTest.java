@@ -88,5 +88,10 @@ public class AbstractVersionTest {
         public int getPatch() {
             return patch;
         }
+
+        @Override
+        public Integer getLocal() {
+            return null;
+        }
     }
 }

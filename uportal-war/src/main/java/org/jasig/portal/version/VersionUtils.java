@@ -27,12 +27,12 @@ import org.jasig.portal.version.om.Version;
  * Utilities for working with Version classes
  */
 public class VersionUtils {
-    private static final Pattern VERSION_PATTERN = Pattern.compile("^(\\d+)\\.(\\d+)\\.(\\d+)(?:[\\.-].*)?$");
+    private static final Pattern VERSION_PATTERN = Pattern.compile("^(\\d+)\\.(\\d+)\\.(\\d+)(?:\\.(\\d+))?(?:[\\.-].*)?$");
     
     /**
      * Parse a version string into a Version object, if the string doesn't match the pattern null is returned.
      * <p>
-     * The regular expression used in parsing is: ^(\d+)\.(\d+)\.(\d+)(?:[\.-].*)?$
+     * The regular expression used in parsing is: ^(\d+)\.(\d+)\.(\d+)(?:\.(\d+))?(?:[\.-].*)?$
      * <p>
      * Examples that match correctly:
      * <ul>
@@ -56,6 +56,11 @@ public class VersionUtils {
         final int major = Integer.parseInt(versionMatcher.group(1));
         final int minor = Integer.parseInt(versionMatcher.group(2));
         final int patch = Integer.parseInt(versionMatcher.group(3));
+        final String local = versionMatcher.group(4);
+        if (local != null) {
+            return new SimpleVersion(major, minor, patch, Integer.valueOf(local));
+        }
+        
         return new SimpleVersion(major, minor, patch);
     }
     
@@ -69,7 +74,7 @@ public class VersionUtils {
     public static boolean canUpdate(Version from, Version to) {
         return from.getMajor() == to.getMajor() &&
                 from.getMinor() == to.getMinor() &&
-                from.getPatch() <= to.getPatch();
+                from.compareTo(to) <= 0;
     }
     
     private static final class SimpleVersion extends AbstractVersion {
@@ -78,11 +83,20 @@ public class VersionUtils {
 		private final int major;
         private final int minor;
         private final int patch;
+        private final Integer local;
         
         public SimpleVersion(int major, int minor, int patch) {
             this.major = major;
             this.minor = minor;
             this.patch = patch;
+            this.local = null;
+        }
+        
+        public SimpleVersion(int major, int minor, int patch, Integer local) {
+            this.major = major;
+            this.minor = minor;
+            this.patch = patch;
+            this.local = local;
         }
 
         @Override
@@ -98,6 +112,10 @@ public class VersionUtils {
         @Override
         public int getPatch() {
             return patch;
+        }
+
+        public Integer getLocal() {
+            return local;
         }
     }
 }
