@@ -45,6 +45,9 @@
     <bean id="pingDao" class="org.jasig.portal.jgroups.protocols.JdbcPingDao">
         <property name="jdbcOperations" ref="jdbcOperations" />
     </bean>
+    <bean id="authDao" class="org.jasig.portal.jgroups.auth.JdbcAuthDao">
+        <property name="jdbcOperations" ref="jdbcOperations" />
+    </bean>
     
     <bean id="localPropertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="properties">
