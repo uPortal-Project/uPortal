@@ -54,6 +54,22 @@ public final class JdbcUtils {
     public static final <T> T dropTableIfExists(JdbcOperations jdbcOperations, final String table, final Function<JdbcOperations, T> preDropCallback) {
         LOGGER.info("Dropping table: " + table);
         
+        final boolean tableExists = doesTableExist(jdbcOperations, table);
+        
+        if (tableExists) {
+            final T ret = preDropCallback.apply(jdbcOperations);
+            jdbcOperations.execute("DROP TABLE " + table);
+            return ret;
+        }
+        
+        return null;
+    }
+
+    /**
+     * Check if the specified table exists
+     */
+    public static boolean doesTableExist(JdbcOperations jdbcOperations, final String table) {
+        
         final boolean tableExists = jdbcOperations.execute(new ConnectionCallback<Boolean>() {
             @Override
             public Boolean doInConnection(Connection con) throws SQLException,
@@ -71,14 +87,7 @@ public final class JdbcUtils {
                 return false;
             }
         });
-        
-        if (tableExists) {
-            final T ret = preDropCallback.apply(jdbcOperations);
-            jdbcOperations.execute("DROP TABLE " + table);
-            return ret;
-        }
-        
-        return null;
+        return tableExists;
     }
     
     /**

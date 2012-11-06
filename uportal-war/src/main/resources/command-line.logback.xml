@@ -83,6 +83,12 @@
   </logger>
    -->
    
+  <!-- 
+  <logger name="org.springframework.jdbc.core" additivity="false" level="TRACE">
+    <appender-ref ref="CONSOLE"/>
+  </logger>
+   -->
+   
   <!-- Hide Validation Query Resolution Warnings, not all DBs may be working during import/export -->
   <logger name="org.jasig.portal.utils.jdbc.DelayedValidationQueryResolverImpl" additivity="false" level="ERROR"/>
   <logger name="org.jasig.portal.utils.jdbc.TomcatDataSourceFactory" additivity="false" level="ERROR"/>

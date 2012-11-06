@@ -58,11 +58,8 @@
     <bean id="systemPropertySetter" class="org.jasig.portal.spring.context.SystemPropertySetter">
         <property name="systemProperties">
             <props>
-                <prop key="uPortal.cacheManager.jgroups.udp.mcast_addr">${uPortal.cacheManager.jgroups.udp.mcast_addr:}</prop>
-                <prop key="uPortal.cacheManager.jgroups.udp.mcast_port">${uPortal.cacheManager.jgroups.udp.mcast_port:}</prop>
-                <prop key="uPortal.cacheManager.jgroups.udp.bind_port">${uPortal.cacheManager.jgroups.udp.bind_port:}</prop>
-                <prop key="uPortal.cacheManager.jgroups.udp.ip_ttl">${uPortal.cacheManager.jgroups.udp.ip_ttl:}</prop>
                 <prop key="uPortal.cacheManager.jgroups.fd_sock.start_port">${uPortal.cacheManager.jgroups.fd_sock.start_port:}</prop>
+                <prop key="uPortal.cacheManager.jgroups.tcp.bind_port">${uPortal.cacheManager.jgroups.tcp.bind_port:}</prop>
             </props>
         </property>
     </bean>
