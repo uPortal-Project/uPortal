@@ -142,7 +142,7 @@ public class JpaVersionDao extends BasePortalJpaDao implements VersionDao {
         VersionImpl version = query.load();
         
         if (version == null) {
-            version = new VersionImpl(product, major, minor, patch);
+            version = new VersionImpl(product, major, minor, patch, local);
         }
         else {
             version.setMajor(major);
