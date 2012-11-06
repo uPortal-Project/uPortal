@@ -44,5 +44,12 @@
   <root level="TRACE">
     <appender-ref ref="N"/>
   </root>
-
+  <!-- 
+  <logger name="org.hibernate.SQL" additivity="false" level="DEBUG">
+    <appender-ref ref="C"/>
+  </logger>
+  <logger name="org.hibernate.type" additivity="false" level="TRACE">
+    <appender-ref ref="C"/>
+  </logger>
+   -->
 </configuration>

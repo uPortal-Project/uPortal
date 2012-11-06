@@ -162,6 +162,7 @@
         <jasypt.version>1.9.0</jasypt.version>
         <jaxb2basics.version>0.6.4</jaxb2basics.version>
         <jdom.version>1.0</jdom.version>
+        <jgroups.version>3.2.0.Final</jgroups.version>
         <jline.version>1.0</jline.version>
         <joda-time.version>2.1</joda-time.version>
         <json-lib-ext-spring.version>1.0.2</json-lib-ext-spring.version>
@@ -408,6 +409,11 @@
                 <groupId>org.javassist</groupId>
                 <artifactId>javassist</artifactId>
                 <version>${javassist.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jgroups</groupId>
+                <artifactId>jgroups</artifactId>
+                <version>${jgroups.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.ibm.icu</groupId>

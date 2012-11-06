@@ -37,7 +37,7 @@
     
     <cacheManagerPeerProviderFactory
         class="net.sf.ehcache.distribution.jgroups.JGroupsCacheManagerPeerProviderFactory"
-        properties="file=/properties/jgroups.xml" />
+        properties="file=properties/jgroups.xml" />
     
     <defaultCache eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true" />
