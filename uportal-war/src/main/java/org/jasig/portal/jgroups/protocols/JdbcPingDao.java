@@ -1,11 +1,18 @@
 package org.jasig.portal.jgroups.protocols;
 
+import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+import org.hibernate.annotations.Index;
 import org.jasig.portal.jpa.BasePortalJpaDao.PortalTransactional;
 import org.jasig.portal.utils.JdbcUtils;
 import org.jgroups.Address;
@@ -27,47 +34,114 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
  * @author Eric Dalquist
  */
 public class JdbcPingDao implements PingDao, InitializingBean {
-    private static final String TABLE_NAME = "UP_JGROUPS_PING";
-    
-    private static final String CREATE_TABLE_SQL =
-            "CREATE TABLE " + TABLE_NAME + " (" +
-                "CLUSTER_NAME varchar(200), " +
-                "MEMBER_ADDRESS_STR varchar(100), "  +                    
-                "MEMBER_ADDRESS_CLASS varchar(100), " +
-                "MEMBER_ADDRESS_DATA varbinary(1000), " +
-                "PHYSICAL_ADDRESS_STR varchar(100), " +                    
-                "PHYSICAL_ADDRESS_CLASS varchar(100), " +
-                "PHYSICAL_ADDRESS_DATA varbinary(1000), " +
-                "PRIMARY KEY (CLUSTER_NAME, MEMBER_ADDRESS_CLASS, MEMBER_ADDRESS_DATA) " +
-            ")";
-    
-    private static final String CREATE_INDEX_SQL = "create index IDX_JGROUPS_PING_CL_NAME on " + TABLE_NAME + " (CLUSTER_NAME)";
+    /**
+     * This class is ONLY used to provide for creation of the table/index required by the {@link JdbcPingDao}.
+     * Due to the JPA -> Hibernate -> Ehcache -> JGroups -> DAO_PING -> JdbcPingDao reference chain this class
+     * CANNOT directly reference the JPA entity manager or transaction manager
+     */
+    @Entity(name = Table.NAME)
+    public static class Table implements Serializable {
+        private static final long serialVersionUID = 1L;
+        
+        static final String NAME = "UP_JGROUPS_PING";
+        
+        static final String CLASS_COL_SUFFIX = "_CLASS";
+        static final String DATA_COL_SUFFIX = "_DATA";
+        
+        static final String COL_CLUSTER_NAME = "CLUSTER_NAME";
+        
+        static final String COL_MEMBER_ADDRESS = "MEMBER_ADDRESS";
+        static final String COL_MEMBER_ADDRESS_CLASS = COL_MEMBER_ADDRESS + CLASS_COL_SUFFIX;
+        static final String COL_MEMBER_ADDRESS_DATA = COL_MEMBER_ADDRESS + DATA_COL_SUFFIX;
 
+        static final String COL_PHYSICAL_ADDRESS = "PHYSICAL_ADDRESS";
+        static final String COL_PHYSICAL_ADDRESS_CLASS = COL_PHYSICAL_ADDRESS + CLASS_COL_SUFFIX;
+        static final String COL_PHYSICAL_ADDRESS_DATA = COL_PHYSICAL_ADDRESS + DATA_COL_SUFFIX;
+
+        @Id
+        @Column(name=COL_CLUSTER_NAME, length=200)
+        @Index(name="IDX_JGROUPS_PING")
+        private final String clusterName = null;
+        
+        
+        @Column(name=COL_MEMBER_ADDRESS, length=500)
+        private final String memberAddress = null;
+        
+        @Id
+        @Column(name=COL_MEMBER_ADDRESS_CLASS, length=200)
+        private final Class<? extends Address> memberAddressClass = null;
+        
+        @Id
+        @Column(name=COL_MEMBER_ADDRESS_DATA, length=1000)
+        private final byte[] memberAddressData = null;
+        
+        
+        @Column(name=COL_PHYSICAL_ADDRESS, length=500)
+        private final String physicalAddressName = null;
+        
+        @Column(name=COL_PHYSICAL_ADDRESS_CLASS, length=200)
+        private final Class<? extends Address> physicalAddressClass = null;
+        
+        @Column(name=COL_PHYSICAL_ADDRESS_DATA, length=1000)
+        private final byte[] physicalAddressData = null;
+    }
+
+    
+    private static final String CLASS_PRM_SUFFIX = "Class";
+    private static final String DATA_PRM_SUFFIX = "Data";
+    
+    private static final String PRM_CLUSTER_NAME = "clusterName";
+    
+    private static final String PRM_MEMBER_ADDRESS = "memberAddress";
+    private static final String PRM_MEMBER_ADDRESS_CLASS = PRM_MEMBER_ADDRESS + CLASS_PRM_SUFFIX;
+    private static final String PRM_MEMBER_ADDRESS_DATA = PRM_MEMBER_ADDRESS + DATA_PRM_SUFFIX;
+    
+    private static final String PRM_PHYSICAL_ADDRESS = "physicalAddress";
+    private static final String PRM_PHYSICAL_ADDRESS_CLASS = PRM_PHYSICAL_ADDRESS + CLASS_PRM_SUFFIX;
+    private static final String PRM_PHYSICAL_ADDRESS_DATA = PRM_PHYSICAL_ADDRESS + DATA_PRM_SUFFIX;
+    
+    
     private static final String UPDATE_SQL = 
-            "UPDATE " + TABLE_NAME + " " +
-            "SET PHYSICAL_ADDRESS_STR=:physicalAddressStr, PHYSICAL_ADDRESS_CLASS=:physicalAddressClass, PHYSICAL_ADDRESS_DATA=:physicalAddressData " +
-            "WHERE CLUSTER_NAME=:clusterName AND MEMBER_ADDRESS_CLASS=:memberAddressClass AND MEMBER_ADDRESS_DATA=:memberAddressData";
+            "UPDATE " + Table.NAME + " " +
+            "SET " + 
+                    Table.COL_PHYSICAL_ADDRESS + "=:" + PRM_PHYSICAL_ADDRESS + ", " +
+                    Table.COL_PHYSICAL_ADDRESS_CLASS + "=:" + PRM_PHYSICAL_ADDRESS_CLASS + ", " +
+                    Table.COL_PHYSICAL_ADDRESS_DATA + "=:" + PRM_PHYSICAL_ADDRESS_DATA + " " +
+            "WHERE " + 
+                    Table.COL_CLUSTER_NAME + "=:" + PRM_CLUSTER_NAME + " AND " +
+                    Table.COL_MEMBER_ADDRESS_CLASS + "=:" + PRM_MEMBER_ADDRESS_CLASS + " AND " +
+                    Table.COL_MEMBER_ADDRESS_DATA + "=:" + PRM_MEMBER_ADDRESS_DATA;
 
     private static final String INSERT_SQL = 
-            "INSERT INTO " + TABLE_NAME + " " +
-            "(CLUSTER_NAME, MEMBER_ADDRESS_STR, MEMBER_ADDRESS_CLASS, MEMBER_ADDRESS_DATA, PHYSICAL_ADDRESS_STR, PHYSICAL_ADDRESS_CLASS, PHYSICAL_ADDRESS_DATA) " +
-            "values (:clusterName, :memberAddressStr, :memberAddressClass, :memberAddressData, :physicalAddressStr, :physicalAddressClass, :physicalAddressData)";
+            "INSERT INTO " + Table.NAME + " " +
+            "(" +
+                Table.COL_CLUSTER_NAME + ", " +
+                Table.COL_MEMBER_ADDRESS + ", " + Table.COL_MEMBER_ADDRESS_CLASS + ", " + Table.COL_MEMBER_ADDRESS_DATA + ", " +
+                Table.COL_PHYSICAL_ADDRESS + ", " + Table.COL_PHYSICAL_ADDRESS_CLASS + ", " + Table.COL_PHYSICAL_ADDRESS_DATA + ") " +
+            "values (" +
+                ":" + PRM_CLUSTER_NAME + ", " +
+                ":" + PRM_MEMBER_ADDRESS + ", :" + PRM_MEMBER_ADDRESS_CLASS + ", :" + PRM_MEMBER_ADDRESS_DATA + ", " +
+                ":" + PRM_PHYSICAL_ADDRESS + ", :" + PRM_PHYSICAL_ADDRESS_CLASS + ", :" + PRM_PHYSICAL_ADDRESS_DATA + ")";
 
     private static final String SELECT_CLUSTER_SQL = 
-            "SELECT MEMBER_ADDRESS_CLASS, MEMBER_ADDRESS_DATA, PHYSICAL_ADDRESS_CLASS, PHYSICAL_ADDRESS_DATA " +
-            "FROM " + TABLE_NAME + " " +
-            "WHERE CLUSTER_NAME=:clusterName";
+            "SELECT " +
+                Table.COL_MEMBER_ADDRESS_CLASS + ", " +
+                Table.COL_MEMBER_ADDRESS_DATA + ", " +
+                Table.COL_PHYSICAL_ADDRESS_CLASS + ", " +
+                Table.COL_PHYSICAL_ADDRESS_DATA + " " +
+            "FROM " + Table.NAME + " " +
+            "WHERE " + Table.COL_CLUSTER_NAME + "=:" + PRM_CLUSTER_NAME;
 
     private static final String DELETE_SQL = 
-            "DELETE FROM " + TABLE_NAME + " " +
-            "WHERE CLUSTER_NAME=:clusterName";
+            "DELETE FROM " + Table.NAME + " " +
+            "WHERE " + Table.COL_CLUSTER_NAME + "=:" + PRM_CLUSTER_NAME;
 
     
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
     private JdbcOperations jdbcOperations;
     private NamedParameterJdbcOperations namedParameterJdbcOperations;
-
+    private volatile boolean ready = false; 
     
     public void setJdbcOperations(JdbcOperations jdbcOperations) {
         this.jdbcOperations = jdbcOperations;
@@ -76,28 +150,20 @@ public class JdbcPingDao implements PingDao, InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        final boolean tableExists = JdbcUtils.doesTableExist(this.jdbcOperations, TABLE_NAME);
-        if (!tableExists) {
-            logger.info("Creating jGroups PingDao table: {}", TABLE_NAME);
-            this.jdbcOperations.execute(CREATE_TABLE_SQL);
-            try {
-                this.jdbcOperations.execute(CREATE_INDEX_SQL);
-            }
-            catch (Exception e) {
-                //ignore, not fatal
-            }
-        }
-        
         DAO_PING.setPingDao(this);
     }
 
     @PortalTransactional
     @Override
     public void addAddress(String clusterName, Address address, PhysicalAddress physicalAddress) {
+        if (!isReady()) {
+            return;
+        }
+        
         final Map<String, Object> paramMap = new HashMap<String, Object>();
-        paramMap.put("clusterName", clusterName);
-        setStreamableParam(paramMap, "memberAddress", address);
-        setStreamableParam(paramMap, "physicalAddress", physicalAddress);
+        paramMap.put(PRM_CLUSTER_NAME, clusterName);
+        setStreamableParam(paramMap, PRM_MEMBER_ADDRESS, address);
+        setStreamableParam(paramMap, PRM_PHYSICAL_ADDRESS, physicalAddress);
         
         final int rowCount = this.namedParameterJdbcOperations.update(UPDATE_SQL, paramMap);
         if (rowCount == 0) {
@@ -111,8 +177,12 @@ public class JdbcPingDao implements PingDao, InitializingBean {
 
     @Override
     public Map<Address, PhysicalAddress> getAddresses(String clusterName) {
+        if (!isReady()) {
+            return Collections.emptyMap();
+        }
+        
         final Map<String, Object> paramMap = new HashMap<String, Object>();
-        paramMap.put("clusterName", clusterName);
+        paramMap.put(PRM_CLUSTER_NAME, clusterName);
         
         return this.namedParameterJdbcOperations.query(SELECT_CLUSTER_SQL, paramMap, new ResultSetExtractor<Map<Address, PhysicalAddress>>() {
             @Override
@@ -120,8 +190,8 @@ public class JdbcPingDao implements PingDao, InitializingBean {
                 final Map<Address, PhysicalAddress> result = new HashMap<Address, PhysicalAddress>();
                 
                 while (rs.next()) {
-                    final Address memberAddress = getStreamableParam(rs, "MEMBER_ADDRESS");
-                    final PhysicalAddress physicalAddress = getStreamableParam(rs, "PHYSICAL_ADDRESS");
+                    final Address memberAddress = getStreamableParam(rs, Table.COL_MEMBER_ADDRESS);
+                    final PhysicalAddress physicalAddress = getStreamableParam(rs, Table.COL_PHYSICAL_ADDRESS);
                     
                     result.put(memberAddress, physicalAddress);
                 }
@@ -135,15 +205,23 @@ public class JdbcPingDao implements PingDao, InitializingBean {
     @PortalTransactional
     @Override
     public void purgeOtherAddresses(String clusterName, Collection<Address> includedAddresses) {
+        if (!isReady()) {
+            return;
+        }
+        
         final Map<String, Object> paramMap = new HashMap<String, Object>();
-        paramMap.put("clusterName", clusterName);
+        paramMap.put(PRM_CLUSTER_NAME, clusterName);
         
         final StringBuilder deleteSqlBuilder = new StringBuilder(DELETE_SQL);
         
         for (final Address address : includedAddresses) {
-            final String paramPrefix = "memberAddress" + paramMap.size();
+            final String paramPrefix = PRM_MEMBER_ADDRESS + paramMap.size();
             
-            deleteSqlBuilder.append(" AND (MEMBER_ADDRESS_CLASS <> :").append(paramPrefix).append("Class OR MEMBER_ADDRESS_DATA <> :").append(paramPrefix).append("Data)");
+            deleteSqlBuilder.append(" AND (")
+                .append(Table.COL_MEMBER_ADDRESS_CLASS).append(" <> :").append(paramPrefix).append(CLASS_PRM_SUFFIX)
+                .append(" OR ").append(Table.COL_MEMBER_ADDRESS_DATA).append(" <> :").append(paramPrefix).append(DATA_PRM_SUFFIX)
+            .append(")");
+            
             setStreamableParam(paramMap, paramPrefix, address);
         }
         
@@ -151,9 +229,22 @@ public class JdbcPingDao implements PingDao, InitializingBean {
         logger.debug("Purged {} addresses from '{}' cluster while retaining: {}", purged, clusterName, includedAddresses);
     }
     
+    protected boolean isReady() {
+        boolean r = this.ready;
+        if (!r) {
+            r = JdbcUtils.doesTableExist(this.jdbcOperations, Table.NAME);
+            
+            if (r) {
+                this.ready = r;
+            }
+        }
+        
+        return r;
+    }
+    
     @SuppressWarnings("unchecked")
     protected <T extends Streamable> T getStreamableParam(ResultSet rs, String columnPrefix) throws SQLException {
-        final String className = rs.getString(columnPrefix + "_CLASS");
+        final String className = rs.getString(columnPrefix + Table.CLASS_COL_SUFFIX);
         final Class<? extends Streamable> cl;
         try {
             cl = (Class<? extends Streamable>) Class.forName(className);
@@ -162,7 +253,7 @@ public class JdbcPingDao implements PingDao, InitializingBean {
             throw new RuntimeException("Failed to find class '" + className + "'", e);
         }
         
-        final byte[] data = rs.getBytes(columnPrefix + "_DATA");
+        final byte[] data = rs.getBytes(columnPrefix + Table.DATA_COL_SUFFIX);
         try {
             return (T)Util.streamableFromByteBuffer(cl, data);
         } 
@@ -172,14 +263,14 @@ public class JdbcPingDao implements PingDao, InitializingBean {
     }
     
     protected void setStreamableParam(Map<String, Object> paramMap, String paramPrefix, Streamable s) {
-        paramMap.put(paramPrefix + "Class", s.getClass().getName());
+        paramMap.put(paramPrefix + CLASS_PRM_SUFFIX, s.getClass().getName());
         try {
-            paramMap.put(paramPrefix + "Data", Util.streamableToByteBuffer(s));
+            paramMap.put(paramPrefix + DATA_PRM_SUFFIX, Util.streamableToByteBuffer(s));
         } 
         catch (Exception e) {
             throw new RuntimeException("Failed to convert '" + s + "' into a byte[] for persistence", e);
         }
-        paramMap.put(paramPrefix + "Str", s.toString());
+        paramMap.put(paramPrefix, s.toString());
     }
 
 }

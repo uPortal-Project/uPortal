@@ -75,5 +75,7 @@
         <mapping class="org.jasig.portal.i18n.dao.jpa.MessageImpl"/>
         <mapping class="org.jasig.portal.concurrency.locking.ClusterMutex"/>
         <mapping class="org.jasig.portal.version.dao.jpa.VersionImpl"/>
+        <mapping class="org.jasig.portal.jgroups.protocols.JdbcPingDao$Table"/>
+        <mapping class="org.jasig.portal.jgroups.auth.JdbcAuthDao$Table"/>
     </session-factory>
 </hibernate-configuration>

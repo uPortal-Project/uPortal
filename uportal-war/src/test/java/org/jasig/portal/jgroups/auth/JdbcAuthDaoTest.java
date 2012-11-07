@@ -34,7 +34,7 @@ public class JdbcAuthDaoTest extends BasePortalJpaDaoTest {
             @Override
             public String call() throws Exception {
                 final String t = authDao.getAuthToken(service);
-                assertEquals(100, t.length());
+                assertEquals(1000, t.length());
                 return t;
             }
         });
@@ -59,7 +59,7 @@ public class JdbcAuthDaoTest extends BasePortalJpaDaoTest {
             @Override
             public String call() throws Exception {
                 final String t = authDao.getAuthToken(service);
-                assertEquals(100, t.length());
+                assertEquals(1000, t.length());
                 return t;
             }
         });
