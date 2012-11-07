@@ -28,8 +28,11 @@ public class HashedDaoAuthToken extends AuthToken {
             }
             
             final String authToken = authDao.getAuthToken(this.getName());
-            av = Sha512DigestUtils.shaHex(authToken);
-            this.authValue = av;
+            
+            if (authToken != null) {
+                av = Sha512DigestUtils.shaHex(authToken);
+                this.authValue = av;
+            }
         }
         
         return av;

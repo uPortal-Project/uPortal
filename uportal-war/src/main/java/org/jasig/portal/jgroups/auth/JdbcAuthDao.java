@@ -1,9 +1,13 @@
 package org.jasig.portal.jgroups.auth;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collections;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.sql.DataSource;
 
 import org.hibernate.exception.ConstraintViolationException;
@@ -13,6 +17,7 @@ import org.jasig.portal.utils.RandomTokenGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.support.DataAccessUtils;
@@ -36,58 +41,83 @@ import com.google.common.collect.ImmutableMap;
  * @author Eric Dalquist
  */
 public class JdbcAuthDao implements AuthDao, InitializingBean {
-    private static final String TABLE_NAME = "UP_JGROUPS_AUTH";
-    
-    private static final String CREATE_TABLE_SQL =
-            "CREATE TABLE " + TABLE_NAME + " (" +
-                "SERVICE_NAME varchar(100)," +
-                "RANDOM_TOKEN varchar(500), " +
-                "PRIMARY KEY (SERVICE_NAME)" +
-            ")";
+    /**
+     * This class is ONLY used to provide for creation of the table/index required by the {@link JdbcAuthDao}.
+     * Due to the JPA -> Hibernate -> Ehcache -> JGroups -> DAO_PING -> JdbcAuthDao reference chain this class
+     * CANNOT directly reference the JPA entity manager or transaction manager
+     */
+    @Entity(name = Table.NAME)
+    public static class Table implements Serializable {
+        private static final long serialVersionUID = 1L;
+        
+        static final String NAME = "UP_JGROUPS_AUTH";
+        
+        static final String COL_SERVICE_NAME = "SERVICE_NAME";
+        static final String COL_RANDOM_TOKEN = "RANDOM_TOKEN";
+
+        @Id
+        @Column(name=COL_SERVICE_NAME, length=100)
+        private final String serviceName = null;
+        
+        @Column(name=COL_RANDOM_TOKEN, length=4000)
+        private final String randomToken = null;
+    }
+
+    private static final String PRM_SERVICE_NAME = "serviceName";
+    private static final String PRM_RANDOM_TOKEN = "randomToken";
     
     private static final String INSERT_SQL = 
-            "INSERT INTO " + TABLE_NAME + " " +
-            "(SERVICE_NAME, RANDOM_TOKEN) " +
-            "values (:serviceName, :randomToken)";
+            "INSERT INTO " + Table.NAME + " " +
+            "(" + Table.COL_SERVICE_NAME + ", " + Table.COL_RANDOM_TOKEN + ") " +
+            "values (:" + PRM_SERVICE_NAME + ", :" + PRM_RANDOM_TOKEN + ")";
 
     private static final String SELECT_SQL = 
-            "SELECT RANDOM_TOKEN " +
-            "FROM " + TABLE_NAME + " " +
-    		"WHERE SERVICE_NAME=:serviceName";
+            "SELECT " + Table.COL_RANDOM_TOKEN + " " +
+            "FROM " + Table.NAME + " " +
+    		"WHERE " + Table.COL_SERVICE_NAME + "=:" + PRM_SERVICE_NAME;
 
     
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
+    private int authTokenLength = 1000;
     private JdbcOperations jdbcOperations;
     private NamedParameterJdbcOperations namedParameterJdbcOperations;
+    private volatile boolean ready = false; 
     
     public void setJdbcOperations(JdbcOperations jdbcOperations) {
         this.jdbcOperations = jdbcOperations;
         this.namedParameterJdbcOperations = new NamedParameterJdbcTemplate(this.jdbcOperations);
     }
-    
 
+    @Value("${org.jasig.portal.jgroups.auth.token_length:1000}")
+    public void setAuthTokenLength(int authTokenLength) {
+        this.authTokenLength = authTokenLength;
+    }
+    
     @Override
     public void afterPropertiesSet() throws Exception {
-        final boolean tableExists = JdbcUtils.doesTableExist(this.jdbcOperations, TABLE_NAME);
-        if (!tableExists) {
-            logger.info("Creating jGroups PingDao table: {}", TABLE_NAME);
-            this.jdbcOperations.execute(CREATE_TABLE_SQL);
-        }
-        
         HashedDaoAuthToken.setAuthDao(this);
     }
     
     @Override
     public String getAuthToken(String serviceName) {
-        final String token = DataAccessUtils.singleResult(this.namedParameterJdbcOperations.queryForList(SELECT_SQL, Collections.singletonMap("serviceName", serviceName), String.class));
-        if (token != null) {
-            return token;
+        if (!isReady()) {
+            return null;
+        }
+
+        for (int count = 0; count < 10; count++) {
+            final String token = DataAccessUtils.singleResult(this.namedParameterJdbcOperations.queryForList(SELECT_SQL, Collections.singletonMap(PRM_SERVICE_NAME, serviceName), String.class));
+            if (token != null) {
+                return token;
+            }
+            
+            //No token found, try creating it
+            createToken(serviceName);
         }
         
-        createToken(serviceName);
+        logger.warn("Failed to get/create auth token for {} after 10 tries", serviceName);
         
-        return getAuthToken(serviceName);
+        return null;
     }
 
     protected void createToken(final String serviceName) {
@@ -105,8 +135,12 @@ public class JdbcAuthDao implements AuthDao, InitializingBean {
                         @Override
                         protected void doInTransactionWithoutResult(TransactionStatus status) {
                             logger.info("Creating jGroups auth token");
-                            final String authToken = RandomTokenGenerator.INSTANCE.generateRandomToken(100);
-                            final ImmutableMap<String, String> params = ImmutableMap.of("randomToken", authToken, "serviceName", serviceName);
+                            final String authToken = RandomTokenGenerator.INSTANCE.generateRandomToken(authTokenLength);
+                            
+                            final ImmutableMap<String, String> params = ImmutableMap.of(
+                                    PRM_SERVICE_NAME, serviceName, 
+                                    PRM_RANDOM_TOKEN, authToken);
+                            
                             namedParameterJdbcOperations.update(INSERT_SQL, params);
                         }
                     });
@@ -123,4 +157,17 @@ public class JdbcAuthDao implements AuthDao, InitializingBean {
         }
     }
 
+    
+    protected boolean isReady() {
+        boolean r = this.ready;
+        if (!r) {
+            r = JdbcUtils.doesTableExist(this.jdbcOperations, Table.NAME);
+            
+            if (r) {
+                this.ready = r;
+            }
+        }
+        
+        return r;
+    }
 }
