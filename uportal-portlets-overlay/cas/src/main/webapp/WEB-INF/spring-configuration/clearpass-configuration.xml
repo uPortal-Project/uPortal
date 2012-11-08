@@ -63,11 +63,14 @@
     </property>
   </bean>
 
-  <!-- Security configuration -->
+  <!-- Security configuration 
+  	   Add the 'casAuthenticationFilter' bean back in front of the filters property to enable clearPass access in the browser.
+  	   This will allow you to treat clearPass as a CAS service which would ultimately render the credentials on the screen.
+  -->
   <bean id="clearPassFilterChainProxy" class="org.springframework.security.web.FilterChainProxy">
     <sec:filter-chain-map request-matcher="ant">
       <sec:filter-chain pattern="/clearPass"
-                        filters="casAuthenticationFilter,casValidationFilter,httpServletRequestWrappingFilter"/>
+                        filters="casValidationFilter,httpServletRequestWrappingFilter"/>
     </sec:filter-chain-map>
   </bean>
 
