@@ -83,7 +83,7 @@ public class PortletPreferenceImpl implements IPortletPreference, Cloneable {
     @Column(name = "ENTITY_VERSION")
     private final long entityVersion;
     
-    @Column(name = "PREF_NAME")
+    @Column(name = "PREF_NAME", length=100000)
     @Lob
     private String name = null;
     
@@ -97,7 +97,7 @@ public class PortletPreferenceImpl implements IPortletPreference, Cloneable {
     )
     @IndexColumn(name = "VALUE_ORDER")
     @Lob
-    @Column(name = "PREF_VALUE")
+    @Column(name = "PREF_VALUE", length=100000)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
     private List<String> values = new ArrayList<String>(0);
