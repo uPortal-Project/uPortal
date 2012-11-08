@@ -22,7 +22,7 @@ package org.jasig.portal.cas.authentication.handler.support;
 import javax.sql.DataSource;
 
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;;
 
 /**
  * Retrieves password hashes from the uPortal UP_PERSON_DIR table
@@ -34,7 +34,7 @@ public class PortalPersonDirUserPasswordDao implements UserPasswordDao {
     private static final String PERSON_DIR_QUERY = "SELECT ENCRPTD_PSWD FROM UP_PERSON_DIR WHERE USER_NAME = ?";
 
     private DataSource dataSource;
-    private SimpleJdbcTemplate simpleJdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
     /**
      * @return the dataSource
@@ -48,7 +48,7 @@ public class PortalPersonDirUserPasswordDao implements UserPasswordDao {
      */
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
-        this.simpleJdbcTemplate = new SimpleJdbcTemplate(this.dataSource);
+        this.jdbcTemplate = new JdbcTemplate(this.dataSource);
     }
 
 
@@ -57,7 +57,7 @@ public class PortalPersonDirUserPasswordDao implements UserPasswordDao {
      */
     public String getPasswordHash(String userName) {
         try {
-            return this.simpleJdbcTemplate.queryForObject(PERSON_DIR_QUERY, String.class, userName);
+            return this.jdbcTemplate.queryForObject(PERSON_DIR_QUERY, String.class, userName);
         }
         catch (EmptyResultDataAccessException e) {
             return null;
