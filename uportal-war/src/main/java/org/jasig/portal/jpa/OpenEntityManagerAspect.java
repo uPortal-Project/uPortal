@@ -24,7 +24,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceException;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -36,12 +35,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.orm.jpa.EntityManagerFactoryUtils;
 import org.springframework.orm.jpa.EntityManagerHolder;
 import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 
@@ -50,7 +49,7 @@ import org.springframework.util.StringUtils;
  * 
  * @author Eric Dalquist
  * @see OpenEntityManager
- * @see OpenEntityManagerInViewFilter
+ * @see org.springframework.orm.jpa.JpaInterceptor
  */
 @Aspect
 @Component("openEntityManagerAspect")
@@ -73,36 +72,41 @@ public class OpenEntityManagerAspect implements ApplicationContextAware {
     
     @Around("anyPublicMethod() && @annotation(openEntityManager)")
     public Object openEntityManager(ProceedingJoinPoint pjp, OpenEntityManager openEntityManager) throws Throwable {
-		EntityManagerFactory emf = lookupEntityManagerFactory(openEntityManager);
-		boolean participate = false;
-
-		if (TransactionSynchronizationManager.hasResource(emf)) {
-			// Do not modify the EntityManager: just set the participate flag.
-			participate = true;
-		}
-		else {
-			logger.debug("Opening JPA EntityManager in OpenEntityManagerAspect");
-			try {
-				EntityManager em = createEntityManager(emf);
-				TransactionSynchronizationManager.bindResource(emf, new EntityManagerHolder(em));
-			}
-			catch (PersistenceException ex) {
-				throw new DataAccessResourceFailureException("Could not create JPA EntityManager", ex);
-			}
-		}
-
+        final EntityManagerFactory emf = getEntityManagerFactory(openEntityManager);
+        
+        EntityManager em = getTransactionalEntityManager(emf);
+        boolean isNewEm = false;
+        if (em == null) {
+            logger.debug("Opening JPA EntityManager in OpenEntityManagerAspect");
+            em = createEntityManager(emf);
+            isNewEm = true;
+            TransactionSynchronizationManager.bindResource(emf, new EntityManagerHolder(em));
+        }
+        else {
+            logger.debug("Using Existing JPA EntityManager in OpenEntityManagerAspect");
+        }
 		try {
 			return pjp.proceed();
 		}
-
 		finally {
-			if (!participate) {
-				EntityManagerHolder emHolder = (EntityManagerHolder)
-						TransactionSynchronizationManager.unbindResource(emf);
-				logger.debug("Closing JPA EntityManager in OpenEntityManagerAspect");
-				EntityManagerFactoryUtils.closeEntityManager(emHolder.getEntityManager());
-			}
+            if (isNewEm) {
+                logger.debug("Closing JPA EntityManager in OpenEntityManagerAspect");
+                TransactionSynchronizationManager.unbindResource(emf);
+                EntityManagerFactoryUtils.closeEntityManager(em);
+            }
 		}
+    }
+
+    /**
+     * Obtain the transactional EntityManager for this accessor's EntityManagerFactory, if any.
+     * @return the transactional EntityManager, or <code>null</code> if none
+     * @throws IllegalStateException if this accessor is not configured with an EntityManagerFactory
+     * @see EntityManagerFactoryUtils#getTransactionalEntityManager(javax.persistence.EntityManagerFactory)
+     * @see EntityManagerFactoryUtils#getTransactionalEntityManager(javax.persistence.EntityManagerFactory, java.util.Map)
+     */
+    protected EntityManager getTransactionalEntityManager(EntityManagerFactory emf) throws IllegalStateException{
+        Assert.state(emf != null, "No EntityManagerFactory specified");
+        return EntityManagerFactoryUtils.getTransactionalEntityManager(emf);
     }
 
 	/**
