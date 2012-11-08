@@ -119,6 +119,7 @@
 			</list>
 		</property>
         
+        <!-- Uncomment the following block to enable clearPass 
         <property name="authenticationMetaDataPopulators">
            <list>
               <bean class="org.jasig.cas.extension.clearpass.CacheCredentialsMetaDataPopulator">
@@ -126,6 +127,8 @@
               </bean>
            </list>
         </property>
+         -->
+         
 	</bean>
     
     <bean id="userPasswordDao" class="org.jasig.portal.cas.authentication.handler.support.PortalPersonDirUserPasswordDao" 
