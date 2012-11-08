@@ -90,7 +90,7 @@ public class PersistentPortalEvent implements Serializable {
     @Type(type="class")
     private final Class<PortalEvent> eventType;
     
-    @Column(name = "EVENT_DATA", nullable=false, updatable=false)
+    @Column(name = "EVENT_DATA", nullable=false, updatable=false, length=10000)
     @Lob
     private final String eventData; 
     
