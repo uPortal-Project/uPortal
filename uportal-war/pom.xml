@@ -168,6 +168,12 @@
         <dependency>
             <groupId>net.sf.json-lib</groupId>
             <artifactId>json-lib-ext-spring</artifactId>
+            <exclusions>
+            	<exclusion>
+            		<groupId>javax.servlet</groupId>
+  					<artifactId>servlet-api</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         
         <dependency>
@@ -447,7 +453,7 @@
 
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
+            <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>

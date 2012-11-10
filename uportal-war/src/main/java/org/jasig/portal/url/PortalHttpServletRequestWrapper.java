@@ -49,7 +49,6 @@ import org.jasig.portal.utils.web.AbstractHttpServletRequestWrapper;
  * attributes, user and role.
  *
  * @author Peter Kharchenko: pkharchenko at unicon.net
- * @version $Revision: 11911 $
  */
 public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestWrapper {
     /**
@@ -65,13 +64,13 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
     
     protected final Log logger = LogFactory.getLog(this.getClass());
     
-    private final Map<String, Object> additionalHeaders = new LinkedHashMap<String, Object>();
+    private final Map<String, String> additionalHeaders = new LinkedHashMap<String, String>();
     private final HttpServletResponse httpServletResponse;
     private final IUserInstanceManager userInstanceManager;
 
     /**
      * Construct a writable this.request wrapping a real this.request
-     * @param this.request Request to wrap, can not be null.
+     * @param request Request to wrap, can not be null.
      */
     public PortalHttpServletRequestWrapper(HttpServletRequest request, HttpServletResponse response, IUserInstanceManager userInstanceManager) {
         super(request);
@@ -116,8 +115,8 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
     }
 
     @Override
-    public Enumeration<?> getHeaders(String name) {
-        final Object value = this.additionalHeaders.get(name);
+    public Enumeration<String> getHeaders(String name) {
+        final String value = this.additionalHeaders.get(name);
         if (value == null) {
             return super.getHeaders(name);
         }
@@ -126,11 +125,11 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
     }
 
     @Override
-    public Enumeration<?> getHeaderNames() {
-        final Set<Object> headerNames = new LinkedHashSet<Object>();
+    public Enumeration<String> getHeaderNames() {
+        final Set<String> headerNames = new LinkedHashSet<String>();
         
-        for (final Enumeration<?> headerNamesEnum = super.getHeaderNames(); headerNamesEnum.hasMoreElements();) {
-            final Object name = headerNamesEnum.nextElement();
+        for (final Enumeration<String> headerNamesEnum = super.getHeaderNames(); headerNamesEnum.hasMoreElements();) {
+            final String name = headerNamesEnum.nextElement();
             headerNames.add(name);
         }
         
@@ -250,7 +249,6 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
     /* (non-Javadoc)
      * @see org.jasig.portal.url.AbstractHttpServletRequestWrapper#getLocales()
      */
-    @SuppressWarnings("unchecked")
     @Override
     public Enumeration<Locale> getLocales() {
         if (super.getSession(false) == null) {
@@ -262,4 +260,5 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
         final Locale[] locales = localeManager.getLocales();
         return new ArrayEnumerator<Locale>(locales);
     }
+
 }
