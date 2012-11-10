@@ -21,6 +21,7 @@ package org.jasig.portal.utils.web;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.Locale;
 
 import javax.servlet.ServletOutputStream;
@@ -37,7 +38,6 @@ import org.slf4j.LoggerFactory;
  * to ensure the container can not unwrap too far.
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class AbstractHttpServletResponseWrapper implements HttpServletResponse {
     public static final String PORTAL_ATTRIBUTE_PREFIX = "org.jasig.portal.";
@@ -55,6 +55,26 @@ public abstract class AbstractHttpServletResponseWrapper implements HttpServletR
         return this.httpServletResponse;
     }
 
+    @Override
+    public String getHeader(String name) {
+      return this.httpServletResponse.getHeader(name);
+    }
+
+    @Override
+    public Collection<String> getHeaderNames() {
+      return this.httpServletResponse.getHeaderNames();
+    }
+
+    @Override
+    public Collection<String> getHeaders(String name) {
+      return this.httpServletResponse.getHeaders(name);
+    }
+
+    @Override
+    public int getStatus() {
+      return this.httpServletResponse.getStatus();
+    }
+    
     @Override
     public void addCookie(Cookie cookie) {
         this.httpServletResponse.addCookie(cookie);

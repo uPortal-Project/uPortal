@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletResponseWrapper;
  * Wrapper for all portal responses
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class PortalHttpServletResponseWrapper extends HttpServletResponseWrapper {
     private final Object urlEncodingMutex = new Object();
@@ -38,12 +37,9 @@ public class PortalHttpServletResponseWrapper extends HttpServletResponseWrapper
     /*
      * encoding URLs is not thread-safe in Tomcat, sync around url encoding
      */
-
     @Override
     public String encodeRedirectUrl(String url) {
-        synchronized (this.urlEncodingMutex) {
-            return super.encodeRedirectUrl(url);
-        }
+        return this.encodeRedirectURL(url);
     }
 
     @Override
@@ -55,9 +51,7 @@ public class PortalHttpServletResponseWrapper extends HttpServletResponseWrapper
 
     @Override
     public String encodeUrl(String url) {
-        synchronized (this.urlEncodingMutex) {
-            return super.encodeUrl(url);
-        }
+        return this.encodeURL(url);
     }
 
     @Override

@@ -23,16 +23,25 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.AsyncContext;
+import javax.servlet.DispatcherType;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 
 import org.apache.commons.lang.Validate;
 
@@ -41,7 +50,6 @@ import org.apache.commons.lang.Validate;
  * to ensure the container can not unwrap too far.
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class AbstractHttpServletRequestWrapper implements HttpServletRequest {
     public static final String PORTAL_ATTRIBUTE_PREFIX = "org.jasig.portal.";
@@ -63,7 +71,7 @@ public abstract class AbstractHttpServletRequestWrapper implements HttpServletRe
     }
 
     @Override
-    public Enumeration getAttributeNames() {
+    public Enumeration<String> getAttributeNames() {
         return this.httpServletRequest.getAttributeNames();
     }
 
@@ -108,12 +116,12 @@ public abstract class AbstractHttpServletRequestWrapper implements HttpServletRe
     }
 
     @Override
-    public Enumeration getHeaderNames() {
+    public Enumeration<String> getHeaderNames() {
         return this.httpServletRequest.getHeaderNames();
     }
 
     @Override
-    public Enumeration getHeaders(String name) {
+    public Enumeration<String> getHeaders(String name) {
         return this.httpServletRequest.getHeaders(name);
     }
 
@@ -138,7 +146,7 @@ public abstract class AbstractHttpServletRequestWrapper implements HttpServletRe
     }
 
     @Override
-    public Enumeration getLocales() {
+    public Enumeration<Locale> getLocales() {
         return this.httpServletRequest.getLocales();
     }
 
@@ -163,12 +171,12 @@ public abstract class AbstractHttpServletRequestWrapper implements HttpServletRe
     }
 
     @Override
-    public Map getParameterMap() {
+    public Map<String, String[]> getParameterMap() {
         return this.httpServletRequest.getParameterMap();
     }
 
     @Override
-    public Enumeration getParameterNames() {
+    public Enumeration<String> getParameterNames() {
         return this.httpServletRequest.getParameterNames();
     }
 
@@ -207,10 +215,8 @@ public abstract class AbstractHttpServletRequestWrapper implements HttpServletRe
      * @see javax.servlet.ServletRequest#getRealPath(java.lang.String)
      */
     @Override
-    @Deprecated
-    @SuppressWarnings("deprecation")
     public String getRealPath(String path) {
-        return this.httpServletRequest.getRealPath(path);
+      return this.getServletContext().getRealPath(path);
     }
 
     @Override
@@ -294,14 +300,11 @@ public abstract class AbstractHttpServletRequestWrapper implements HttpServletRe
     }
 
     /**
-     * @deprecated
      * @see HttpServletRequest#isRequestedSessionIdFromUrl()
      */
     @Override
-    @Deprecated
-    @SuppressWarnings("deprecation")
     public boolean isRequestedSessionIdFromUrl() {
-        return this.httpServletRequest.isRequestedSessionIdFromUrl();
+        return this.isRequestedSessionIdFromURL();
     }
 
     @Override
@@ -337,5 +340,65 @@ public abstract class AbstractHttpServletRequestWrapper implements HttpServletRe
     @Override
     public void setCharacterEncoding(String env) throws UnsupportedEncodingException {
         this.httpServletRequest.setCharacterEncoding(env);
+    }
+
+    @Override
+    public AsyncContext getAsyncContext() {
+      return this.httpServletRequest.getAsyncContext();
+    }
+
+    @Override
+    public DispatcherType getDispatcherType() {
+      return this.httpServletRequest.getDispatcherType();
+    }
+
+    @Override
+    public ServletContext getServletContext() {
+      return this.httpServletRequest.getServletContext();
+    }
+
+    @Override
+    public boolean isAsyncStarted() {
+      return this.httpServletRequest.isAsyncStarted();
+    }
+
+    @Override
+    public boolean isAsyncSupported() {
+      return this.httpServletRequest.isAsyncSupported();
+    }
+
+    @Override
+    public AsyncContext startAsync() throws IllegalStateException {
+      return this.httpServletRequest.startAsync();
+    }
+
+    @Override
+    public AsyncContext startAsync(ServletRequest request, ServletResponse response) throws IllegalStateException {
+      return this.httpServletRequest.startAsync(request, response);
+    }
+
+    @Override
+    public boolean authenticate(HttpServletResponse response) throws IOException, ServletException {
+      return this.httpServletRequest.authenticate(response);
+    }
+
+    @Override
+    public Part getPart(String name) throws IOException, ServletException {
+      return this.httpServletRequest.getPart(name);
+    }
+
+    @Override
+    public Collection<Part> getParts() throws IOException, ServletException {
+      return this.httpServletRequest.getParts();
+    }
+
+    @Override
+    public void login(String uid, String password) throws ServletException {
+      this.httpServletRequest.login(uid, password);
+    }
+
+    @Override
+    public void logout() throws ServletException {
+      this.httpServletRequest.logout();
     }
 }
