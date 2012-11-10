@@ -197,8 +197,8 @@
         <xmlunit.version>1.3</xmlunit.version>
         <xstream.version>1.4.2</xstream.version>
         
-        <project.build.sourceVersion>1.6</project.build.sourceVersion>
-        <project.build.targetVersion>1.6</project.build.targetVersion>
+        <project.build.sourceVersion>1.7</project.build.sourceVersion>
+        <project.build.targetVersion>1.7</project.build.targetVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -1105,7 +1105,7 @@
                                 <version>2.2</version>
                               </requireMavenVersion>
                               <requireJavaVersion>
-                                <version>1.6</version>
+                                <version>1.7</version>
                               </requireJavaVersion>
                             </rules>
                         </configuration>
