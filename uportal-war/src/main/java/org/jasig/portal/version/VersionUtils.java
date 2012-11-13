@@ -22,6 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jasig.portal.version.om.Version;
+import org.jasig.portal.version.om.Version.Field;
 
 /**
  * Utilities for working with Version classes
@@ -65,16 +66,54 @@ public class VersionUtils {
     }
     
     /**
-     * Determine if an "update" can be done between the from and to versions.
+     * Determine how much of two versions match. Returns null if the versions do not match at all.
+     * 
+     * @return null for no match or the name of the most specific field that matches. 
+     */
+    public static Version.Field getMostSpecificMatchingField(Version v1, Version v2) {
+        if (v1.getMajor() != v2.getMajor()) {
+            return null;
+        }
+        
+        if (v1.getMinor() != v2.getMinor()) {
+            return Version.Field.MAJOR;
+        }
+        
+        if (v1.getPatch() != v2.getPatch()) {
+            return Version.Field.MINOR;
+        }
+        
+        final Integer l1 = v1.getLocal();
+        final Integer l2 = v2.getLocal();
+        if (l1 != l2 && (l1 == null || l2 == null || !l1.equals(l2))) {
+            return Version.Field.PATCH;
+        }
+        
+        return Version.Field.LOCAL;
+    }
+    
+    /**
+     * Determine if an "update" can be done between the from and to versions. The ability to update is defined as
+     * from == to OR (from.isBefore(to) AND mostSpecificMatchingField in (PATCH, MINOR))
      * 
      * @param from Version updating from
      * @param to Version updating to
      * @return true if the major and minor versions match and the from.patch value is less than or equal to the to.patch value
      */
     public static boolean canUpdate(Version from, Version to) {
-        return from.getMajor() == to.getMajor() &&
-                from.getMinor() == to.getMinor() &&
-                from.compareTo(to) <= 0;
+        final Field mostSpecificMatchingField = getMostSpecificMatchingField(from, to);
+        switch (mostSpecificMatchingField) {
+            case LOCAL: {
+                return true;
+            }
+            case PATCH:
+            case MINOR:{
+                return from.isBefore(to);
+            }
+            default: {
+                return false;
+            }
+        }
     }
     
     private static final class SimpleVersion extends AbstractVersion {

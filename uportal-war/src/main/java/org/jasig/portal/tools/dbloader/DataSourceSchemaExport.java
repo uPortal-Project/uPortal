@@ -77,6 +77,11 @@ public class DataSourceSchemaExport implements ISchemaExport, HibernateConfigura
     public boolean supports(String persistenceUnit) {
         return this.persistenceUnit.equals(persistenceUnit);
     }
+    
+    @Override
+    public String getPersistenceUnitName() {
+        return this.persistenceUnit;
+    }
 
     @Override
     public void setConfiguration(String persistenceUnit, HibernateConfiguration hibernateConfiguration) {

@@ -25,6 +25,11 @@ package org.jasig.portal.tools.dbloader;
  * @author Eric Dalquist
  */
 public interface ISchemaExport {
+    
+    /**
+     * @return The name of the JPA persistence unit this bean functions against
+     */
+    public String getPersistenceUnitName();
 
     /**
      * Drop all objects, does not fail if drop statements fail to execute
