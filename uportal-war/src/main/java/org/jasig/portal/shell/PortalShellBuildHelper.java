@@ -25,13 +25,11 @@ public interface PortalShellBuildHelper {
     void db(String target, String tablesFile, String dataFile, String scriptFile, boolean dropTables,
             boolean createTables, boolean populateTables);
 
-    void hibernateCreate(String target, String databaseQualifier, String schemaExportBeanName, boolean export,
-            String outputFile);
+    void hibernateCreate(String target, String databaseQualifier, boolean export, String outputFile);
 
-    void hibernateDrop(String target, String schemaExportBeanName, boolean export, String outputFile);
+    void hibernateDrop(String target, String databaseQualifier, boolean export, String outputFile);
 
-    void hibernateUpdate(String target, String databaseQualifier, String schemaExportBeanName, boolean export,
-            String outputFile);
+    void hibernateUpdate(String target, String databaseQualifier, boolean export, String outputFile);
 
     void dataList(String target, String type);
 
