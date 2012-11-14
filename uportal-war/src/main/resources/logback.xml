@@ -92,10 +92,6 @@
     <appender-ref ref="PORTAL"/>
   </root>
   
-  <logger name="org.springframework.jmx" additivity="false" level="DEBUG">
-    <appender-ref ref="PORTAL"/>
-  </logger>
-  
   <!-- Log use of the identity and attribute swapper -->
   <logger name="org.jasig.portal.portlets.swapper" additivity="false" level="${environment.build.log.rootLevel}">
     <appender-ref ref="SWAPPER"/>
