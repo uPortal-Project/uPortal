@@ -147,7 +147,10 @@ public final class LoginAggregationImpl
     }
 
     void countUser(String userName) {
-        checkState();
+        if (isComplete()) {
+            this.getLogger().warn("{} is already closed, the user name {} will be ignored on: {}", this.getClass().getSimpleName(), userName, this);
+            return;
+        }
         
         if (this.uniqueStrings == null) {
             this.uniqueStrings = new UniqueStrings();

@@ -182,7 +182,10 @@ public abstract class BaseTimedAggregationStatsImpl<K extends BaseAggregationKey
      * Add the value to the summary statistics
      */
     public final void addValue(double v) {
-        checkState();
+        if (isComplete()) {
+            this.getLogger().warn("{} is already closed, the new value of {} will be ignored on: {}", this.getClass().getSimpleName(), v, this);
+            return;
+        }
         
         //Lazily init the statistics object
         if (this.statisticalSummary == null) {
