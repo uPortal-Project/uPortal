@@ -593,6 +593,11 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao implemen
             }
             if (intervalCrossed) {
                 this.intervalsCrossed++;
+                
+                //If we have crossed more intervals than the interval batch size return false to stop aggregation before handling the triggering event
+                if (this.intervalsCrossed >= intervalAggregationBatchSize) {
+                    return false;
+                }
             }
             
             //Aggregate the event
@@ -601,8 +606,8 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao implemen
             //Update the status object with the event date
             this.lastEventDate.setValue(eventDate);
             
-            //If we have crossed more intervals than the interval batch size return true to stop aggregation
-            return this.intervalsCrossed < intervalAggregationBatchSize;
+            //Continue processing
+            return true;
         }
 
         private void initializeIntervalInfo(final DateTime eventDate) {
