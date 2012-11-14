@@ -23,7 +23,6 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.jasig.portal.events.LoginEvent;
 import org.jasig.portal.events.LogoutEvent;
 import org.jasig.portal.events.PortalEvent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,12 +57,16 @@ public class UsernameTaggedCacheEntryPurger implements ApplicationListener<Porta
 
     @Override
     public void onApplicationEvent(PortalEvent event) {
-        if (event instanceof LoginEvent || event instanceof LogoutEvent) {
+        if (event instanceof LogoutEvent) {
             final String userName = event.getUserName();
-            if (!ignoredUserNames.contains(userName)) {
-                final CacheEntryTag tag = createCacheEntryTag(userName);
-                this.taggedCacheEntryPurger.purgeCacheEntries(tag);
-            }
+            purgeTaggedCacheEntries(userName);
+        }
+    }
+
+    public void purgeTaggedCacheEntries(final String userName) {
+        if (!ignoredUserNames.contains(userName)) {
+            final CacheEntryTag tag = createCacheEntryTag(userName);
+            this.taggedCacheEntryPurger.purgeCacheEntries(tag);
         }
     }
 }

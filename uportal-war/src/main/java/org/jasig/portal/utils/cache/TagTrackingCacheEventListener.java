@@ -94,7 +94,7 @@ public class TagTrackingCacheEventListener extends CacheEventListenerAdapter imp
                     //Remove all cache keys from the cache
                     final Set<Object> taggedKeys = cacheKeys.asMap().remove(tag);
                     if (taggedKeys != null) {
-                        logger.debug("Removing all keys from {} for tag {}", new Object[] { cacheName, tag });
+                        logger.debug("Removing {} keys from {} for tag {}", taggedKeys.size(), cacheName, tag);
                         
                         cache.removeAll(taggedKeys);
                     }
@@ -132,7 +132,7 @@ public class TagTrackingCacheEventListener extends CacheEventListenerAdapter imp
             final Object key = element.getObjectKey();
             final LoadingCache<CacheEntryTag, Set<Object>> cacheKeys = taggedCacheKeys.getUnchecked(cacheName);
             
-            logger.debug("Tracking tags {} in cache {} for key {}", new Object[] { tags, cacheName, key });
+            logger.debug("Tracking {} tags in cache {} for key {}", tags.size(), cacheName, key);
             
             //Add all the tags to the tracking map
             for (final CacheEntryTag tag : tags) {
@@ -163,7 +163,7 @@ public class TagTrackingCacheEventListener extends CacheEventListenerAdapter imp
             if (cacheKeys != null) {
                 final Object key = element.getObjectKey();
                 
-                logger.debug("Tracking removing key {} from cache {} with tag {}", new Object[] { key, cacheName, tags });
+                logger.debug("Tracking removing key cache {} with tag {} : {}", cacheName, tags, key);
                 
                 for (final CacheEntryTag tag : tags) {
                     final Set<Object> taggedKeys = cacheKeys.getIfPresent(tag);
