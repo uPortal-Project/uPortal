@@ -451,7 +451,7 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao implemen
         final MutableInt events = new MutableInt();
         final MutableObject lastEventDate = new MutableObject(newestEventTime);
         
-        final boolean stoppedEarly;
+        boolean complete;
         try {
             currentThread.setName(currentName + "-" + lastAggregated + "_" + newestEventTime);
         
@@ -460,7 +460,7 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao implemen
             //Do aggregation, capturing the start and end dates
             eventAggregatorStatus.setLastStart(DateTime.now());
             
-            stoppedEarly = portalEventDao.aggregatePortalEvents(
+            complete = portalEventDao.aggregatePortalEvents(
             		lastAggregated, newestEventTime, this.eventAggregationBatchSize, 
             		new AggregateEventsHandler(events, lastEventDate, eventAggregatorStatus));
             
@@ -474,7 +474,7 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao implemen
         //Store the results of the aggregation
         eventAggregationManagementDao.updateEventAggregatorStatus(eventAggregatorStatus);
         
-        final boolean complete = !stoppedEarly || this.eventAggregationBatchSize <= 0 || events.intValue() < this.eventAggregationBatchSize;
+        complete = complete && (this.eventAggregationBatchSize <= 0 || events.intValue() < this.eventAggregationBatchSize);
         return new EventProcessingResult(events.intValue(), lastAggregated, eventAggregatorStatus.getLastEventDate(), complete);
     }
     
@@ -602,7 +602,7 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao implemen
             this.lastEventDate.setValue(eventDate);
             
             //If we have crossed more intervals than the interval batch size return true to stop aggregation
-            return this.intervalsCrossed >= intervalAggregationBatchSize;
+            return this.intervalsCrossed < intervalAggregationBatchSize;
         }
 
         private void initializeIntervalInfo(final DateTime eventDate) {

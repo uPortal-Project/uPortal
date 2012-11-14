@@ -187,7 +187,7 @@ public class PortalEventProcessingManagerImpl implements IPortalEventProcessingM
         EventProcessingResult aggrResult = null;
         do {
             if (result != null) {
-                logger.debug("doAggregateRawEvents signaled that not all events were aggregated in a single transaction, running again.");
+                logger.info("doAggregateRawEvents signaled that not all eligible events were aggregated in a single transaction, running aggregation again.");
                 
                 //Set aggr period to 0 to allow immediate re-run locally
                 aggregateLastRunDelay = 0;
@@ -213,7 +213,7 @@ public class PortalEventProcessingManagerImpl implements IPortalEventProcessingM
                 }
                 else if (aggrResult != null) {
                     if (logger.isInfoEnabled()) {
-                        logResult("Aggregated {} events created at {} events/second between {} and {} in {}ms - {} e/s a {}x speedup", aggrResult, start);
+                        logResult("Aggregated {} events created at {} events/second between {} and {} in {}ms - {} e/s a {}x speedup. {}", aggrResult, start);
                     }
                     
                     //If events were processed purge old aggregations from the cache and then clean unclosed aggregations
@@ -286,7 +286,7 @@ public class PortalEventProcessingManagerImpl implements IPortalEventProcessingM
         EventProcessingResult purgeResult = null;
         do {
             if (result != null) {
-                logger.debug("doPurgeRawEvents signaled that not all events were purged in a single transaction, running again.");
+                logger.debug("doPurgeRawEvents signaled that not all eligibe events were purged in a single transaction, running purge again.");
                 
                 //Set purge period to 0 to allow immediate re-run locally
                 purgeLastRunDelay = 0;
