@@ -213,7 +213,7 @@ public class PortalEventProcessingManagerImpl implements IPortalEventProcessingM
                 }
                 else if (aggrResult != null) {
                     if (logger.isInfoEnabled()) {
-                        logResult("Aggregated {} events created at {} events/second between {} and {} in {}ms - {} e/s a {}x speedup. {}", aggrResult, start);
+                        logResult("Aggregated {} events created at {} events/second between {} and {} in {}ms - {} e/s a {}x speedup.", aggrResult, start);
                     }
                     
                     //If events were processed purge old aggregations from the cache and then clean unclosed aggregations

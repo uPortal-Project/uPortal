@@ -185,7 +185,7 @@ public class JpaPortalEventStoreTest extends BaseRawEventsJpaDaoTest {
 						public Boolean apply(PortalEvent input) {
                             portalEvents.add(input);
                             nextStart.set(input.getTimestampAsDate());
-                            return Boolean.FALSE;
+                            return Boolean.TRUE;
                         }
                     });
                 } while (loadSize + startSize == portalEvents.size());
