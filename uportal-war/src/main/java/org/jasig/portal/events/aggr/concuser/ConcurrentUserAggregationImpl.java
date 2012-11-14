@@ -141,7 +141,10 @@ public final class ConcurrentUserAggregationImpl
     }
     
     void countSession(String eventSessionId) {
-        checkState();
+        if (isComplete()) {
+            this.getLogger().warn("{} is already closed, the event session {} will be ignored on: {}", this.getClass().getSimpleName(), eventSessionId, this);
+            return;
+        }
         
         if (this.uniqueStrings == null) {
             this.uniqueStrings = new UniqueStrings();
