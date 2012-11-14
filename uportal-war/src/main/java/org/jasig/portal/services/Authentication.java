@@ -38,12 +38,15 @@ import org.jasig.portal.security.IPrincipal;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.security.provider.ChainingSecurityContext;
+import org.jasig.portal.spring.PortalApplicationContextLocator;
 import org.jasig.portal.utils.MovingAverage;
 import org.jasig.portal.utils.MovingAverageSample;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
+import org.jasig.services.persondir.support.CachingPersonAttributeDaoImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 /**
@@ -163,6 +166,18 @@ public class Authentication {
             if (PropertiesManager.getPropertyAsBoolean("org.jasig.portal.services.Authentication.usePersonDirectory")) {
                 // Retrieve all of the attributes associated with the person logging in
                 final String username = this.getUsername(person);
+
+                // BEGIN Workaround UP-3613 : Shibboleth and attributes user caching 
+                // -> https://issues.jasig.org/browse/UP-3613
+                GroupService.finishedSession(person);
+                Map<String, CachingPersonAttributeDaoImpl> cachingAttributeDaos;
+                ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
+                cachingAttributeDaos = applicationContext.getBeansOfType(CachingPersonAttributeDaoImpl.class);
+                for (final CachingPersonAttributeDaoImpl cachingAttributeDao : cachingAttributeDaos.values()) {
+                    cachingAttributeDao.removeUserAttributes(username);
+                }
+                // END Workaround UP-3613
+                
                 final IPersonAttributes personAttributes = this.personAttributeDao.getPerson(username);
 
                 if (personAttributes != null) {
