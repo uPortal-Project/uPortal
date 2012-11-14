@@ -217,11 +217,11 @@ public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalE
             
             if (stopAggregation) {
             	this.logger.debug("Aggregation stop requested after processing event {}", portalEvent);
-            	return true;
+            	return false;
             }
         }
         
-        return false;
+        return true;
     }
     
     @Override

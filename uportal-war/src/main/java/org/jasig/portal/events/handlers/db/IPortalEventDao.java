@@ -62,7 +62,7 @@ public interface IPortalEventDao {
      * @param endTime The exclusive end time to get events for
      * @param maxEvents The maximum number events to retrieve. -1 means no limit
      * @param handler Function which will be called for each event.
-     * @return true if the handler returned true after handling an event.
+     * @return true if all events were handled successfully, false if the handler returns false for any event to signal processing should be stopped
      */
     boolean aggregatePortalEvents(DateTime startTime, DateTime endTime, int maxEvents, Function<PortalEvent, Boolean> handler);
     
