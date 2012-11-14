@@ -36,6 +36,8 @@ import org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base implementations for aggregations that are grouped by date, time, interval and group
@@ -46,6 +48,9 @@ import org.joda.time.DateTime;
 @MappedSuperclass
 public abstract class BaseAggregationImpl<K extends BaseAggregationKey> implements BaseAggregation<K> {
     private static final long serialVersionUID = 1L;
+    
+    @Transient
+    private Logger logger = null;
     
     @NaturalId
     @ManyToOne(targetEntity=TimeDimensionImpl.class)
@@ -138,7 +143,10 @@ public abstract class BaseAggregationImpl<K extends BaseAggregationKey> implemen
      * Set the duration of the interval
      */
     public final void setDuration(int duration) {
-        checkState();
+        if (isComplete()) {
+            this.getLogger().warn("{} is already closed, the new duration of {} will be ignored on: {}", this.getClass().getSimpleName(), duration, this);
+            return;
+        }
         this.duration = duration;
     }
     
@@ -165,16 +173,15 @@ public abstract class BaseAggregationImpl<K extends BaseAggregationKey> implemen
     protected abstract void completeInterval();
     
     /**
-     * Checks if the aggregation has been closed, throws an {@link IllegalStateException} if the {@link #completeInterval()} has
-     * been called at some point in the future
+     * @return The {@link Logger} to use for this event, lazy init as Loggers are rarely used for events
      */
-    protected final void checkState() {
-        if (this.complete == null) {
-            this.complete = this.isComplete();
+    protected final Logger getLogger() {
+        Logger l = this.logger;
+        if (l == null) {
+            l = LoggerFactory.getLogger(this.getClass());
+            this.logger = l;
         }
-        if (this.complete == Boolean.TRUE) {
-            throw new IllegalStateException("intervalComplete has been called, " + this.getClass().getName() + " can no longer be modified");
-        }
+        return l;
     }
 
     @Override
