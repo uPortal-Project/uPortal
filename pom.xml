@@ -142,7 +142,7 @@
         <dom4j.version>1.6.1</dom4j.version>
         <easymock.version>3.1</easymock.version>
         <ejb3-persistence.version>1.0.1.GA</ejb3-persistence.version>
-        <ehcache.version>2.6.0</ehcache.version>
+        <ehcache.version>2.6.2</ehcache.version>
         <ehcache-jgroups3replication.version>1.7.4</ehcache-jgroups3replication.version>
         <ehcache-spring-annotations.version>1.2.0</ehcache-spring-annotations.version>
         <ehcache-web.version>2.0.4</ehcache-web.version>
@@ -161,14 +161,14 @@
         <jasypt.version>1.9.0</jasypt.version>
         <jaxb2basics.version>0.6.4</jaxb2basics.version>
         <jdom.version>1.0</jdom.version>
-        <jgroups.version>3.2.0.Final</jgroups.version>
+        <jgroups.version>3.2.1.Final</jgroups.version>
         <jline.version>1.0</jline.version>
         <joda-time.version>2.1</joda-time.version>
         <json-lib-ext-spring.version>1.0.2</json-lib-ext-spring.version>
         <jsp-api.version>2.1.1</jsp-api.version>
         <jstl.version>1.1.2</jstl.version>
         <jtidy.version>4aug2000r7-dev</jtidy.version>
-        <junit.version>4.10</junit.version>
+        <junit.version>4.11</junit.version>
         <logback.version>1.0.7</logback.version>
         <mail.version>1.4.5</mail.version>
         <mockito.version>1.9.5</mockito.version>
