@@ -203,7 +203,7 @@
                             <xsl:when test="parameter[@name='mobileIconUrl'] and parameter[@name='mobileIconUrl']/@value != ''">
                                 <xsl:value-of select="parameter[@name='mobileIconUrl']/@value"/>
                             </xsl:when>
-                            <xsl:otherwise><xsl:value-of select="$CONTEXT_PATH"/>/media/skins/icons/default.png</xsl:otherwise>
+                            <xsl:otherwise><xsl:value-of select="$CONTEXT_PATH"/>/media/skins/icons/mobile/default.png</xsl:otherwise>
                         </xsl:choose>
                     </xsl:variable>
                     {
