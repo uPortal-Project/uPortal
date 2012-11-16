@@ -7,54 +7,43 @@ Additional information about uPortal is available on the uPortal home page
 (http://www.jasig.org/uportal) or in the uPortal wiki
 (https://wiki.jasig.org/display/UPC/Home)
 
-+------------------------------------------------------------------------------+
-| Requirements                                                                 |
-+------------------------------------------------------------------------------+
-JDK 1.6.0_26 or later - Just a JRE is not sufficient, a full JDK is required
-Servlet 2.5 Container - Tomcat 6.0 is recommended, there some configuration
+### Requirements
+* JDK 1.6.0_26 or later - Just a JRE is not sufficient, a full JDK is required
+* Servlet 2.5 Container - Tomcat 6.0 is recommended, there some configuration
     changes that must be made for Tomcat 6.0 which are documented in the uPortal
     manual. https://wiki.jasig.org/display/UPM40/Installing+Tomcat
-Maven 3.0.3 or later
-Ant 1.8.2 or later
+* Maven 3.0.3 or later
+* Ant 1.8.2 or later
 
-
-+------------------------------------------------------------------------------+
-| Building and Deploying                                                       |
-+------------------------------------------------------------------------------+
+### Building and Deploying
 uPortal uses Maven for its project configuration and build system. An Ant
 build.xml is also provided which handles the initialization and deployment
 related tasks. As a uPortal deployer you will likely only ever need to use the
 Ant tasks. Ant 1.8.2 or later is required
 
 Ant tasks (run "ant -p" for a full list) :
-    hsql - Starts a HSQL database instance. The default uPortal configuration
-        points to this database and it can be used for portal development.
 
-    initportal - Runs the 'deploy-ear' and 'init-db' ant targets, should be the
+* hsql - Starts a HSQL database instance. The default uPortal configuration
+        points to this database and it can be used for portal development.
+* initportal - Runs the 'deploy-ear' and 'init-db' ant targets, should be the
         first and only task run when setting up a new uPortal instance
         WARNING: This runs 'init-db' which DROPS and re-creates the uPortal
         database
-
-    deploy-ear - Ensures the latest changes have been compiled and packaged then
+* deploy-ear - Ensures the latest changes have been compiled and packaged then
         deploys uPortal, shared libraries and all packaged portlets to the
         container
-
-    initdb - Sets up the uPortal database. DROPS ALL EXISTING uPortal tables
+* initdb - Sets up the uPortal database. DROPS ALL EXISTING uPortal tables
         re-creates them and populates them with the default uPortal data
         WARNING: This DROPS and re-creates the uPortal database
-
-    deploy-war - Ensures the latest uPortal changes have been compiled and
+* deploy-war - Ensures the latest uPortal changes have been compiled and
         packaged then deploys the uPortal WAR to the container.
-
-    deployPortletApp - Deploys the specified portlet application to the
+* deployPortletApp - Deploys the specified portlet application to the
         container. This is the required process to deploy any portlet to a
         uPortal instance.
         ex: ant deployPortletApp -DportletApp=/path/to/portlet.war
 
 
-+------------------------------------------------------------------------------+
-| Help and Support                                                             |
-+------------------------------------------------------------------------------+
+### Help and Support
 The uportal-user@lists.ja-sig.org email address is the best place to go with
 questions related to configuring or deploying uPortal. Information about joining
 the list is available on the JA-SIG wiki:
@@ -63,9 +52,8 @@ the list is available on the JA-SIG wiki:
 The uPortal manual is a collaborative document on the wiki which has
 more detailed documentation: https://wiki.jasig.org/display/UPM40
 
-+------------------------------------------------------------------------------+
-| Other Notes                                                                  |
-+------------------------------------------------------------------------------+
+
+### Other Notes
 
 Initial Configuration
 ----------------------------------------
@@ -92,11 +80,11 @@ version of the portal is configured.
 
 Logging
 ---------------------------------------
-The /uportal-war/src/main/webapp/WEB-INF/log4j.properties Log4j configuration
-file will end up on the classpath for Commons Logging / log4j to find. You'll
+The /uportal-war/src/main/resources/logback.xml Logback configuration
+file will end up on the classpath for Logback to find. You'll
 need to either change that configuration then run deploy-war. You can configure
 the logging level, where the file should be, or even choose a different logging
-approach (log via XML to a ChainSaw instance, say).
+approach.
 
 Database configuration
 --------------------------------------
