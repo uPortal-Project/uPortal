@@ -5,12 +5,12 @@ project really) strong and successful.  While we try to keep requirements for
 contributing to a minimum, there are a few guidelines we ask that you mind.
 
 ## Getting Started
-If you are just getting started with Git, GitHub and/or contributing to Hibernate via
+If you are just getting started with Git, GitHub and/or contributing to uPortal via
 GitHub there are a few pre-requisite steps.
 
 * Make sure you have a [Jasig Jira account](https://issues.jasig.org)
 * Make sure you have a [GitHub account](https://github.com/signup/free)
-* [Fork](http://help.github.com/fork-a-repo) the Hibernate repository.  As discussed in
+* [Fork](http://help.github.com/fork-a-repo) the uPortal repository.  As discussed in
 the linked page, this also includes:
     * [Set](https://help.github.com/articles/set-up-git) up your local git install
     * Clone your fork
