@@ -3,13 +3,13 @@ For more detailed help please refer to the [uPortal Manual](https://wiki.jasig.o
 Additional information about uPortal is available on the [uPortal Home Page](http://www.jasig.org/uportal)
 or in the [uPortal Wiki](https://wiki.jasig.org/display/UPC/Home)
 
-# Requirements
+## Requirements
 * JDK 1.6.0_26 or later - Just a JRE is not sufficient, a full JDK is required
 * Servlet 2.5 Container - Tomcat 6.0 is recommended, there some configuration changes that must be made for Tomcat 6.0 which are documented in the [uPortal manual](https://wiki.jasig.org/display/UPM40/Installing+Tomcat).
 * Maven 3.0.3 or later
 * Ant 1.8.2
 
-# Building and Deploying
+## Building and Deploying
 uPortal uses Maven for its project configuration and build system. An Ant
 build.xml is also provided which handles the initialization and deployment
 related tasks. As a uPortal deployer you will likely only ever need to use the
@@ -44,12 +44,12 @@ detailed documentation: https://wiki.jasig.org/display/UPM40
 
 ## Other Notes
 
-## Initial Configuration
+#### Initial Configuration
 To deploy uPortal you must set the server.home variable in the
 build.properties file to the instance of Tomcat you want to deploy to.
 
 
-## Build approach
+#### Build approach
 The approach here is that there is a generic pom.xml and build.xml that you
 should not have to edit, alongside a build.properties that you absolutely must
 edit to reflect your local configuration. Edit build.properties to reflect such
@@ -57,19 +57,19 @@ configuration as where your Tomcat is, what context you would like uPortal to
 be deployed as, etc.
 
 
-## Initial Deployment
+#### Initial Deployment
 You must run the initportal target before uPortal is started the first time.
 This target will take care of compiling, deploying, database population and
 other initial tasks. Running initportal again is similiar to hitting a reset
 button on the portal. Any saved configuration in the portal is lost and a clean
 version of the portal is configured.
 
-## Logging
+#### Logging
 The /uportal-war/src/main/resources/logback.xml Logback configuration
 file will end up on the classpath for Logback to find. You'll
 need to either change that configuration then run deploy-war. You can configure
 the logging level, where the file should be, or even choose a different logging
 approach.
 
-## Database configuration
+#### Database configuration
 Database configuration is configured in /uportal-war/src/main/resources/properties/rdbm.properties
