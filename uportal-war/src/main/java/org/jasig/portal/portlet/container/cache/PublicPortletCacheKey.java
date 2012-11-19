@@ -19,11 +19,22 @@
 package org.jasig.portal.portlet.container.cache;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.portlet.PortletMode;
+import javax.portlet.WindowState;
+
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
+import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
+import org.jasig.portal.url.IPortalRequestInfo;
+import org.jasig.portal.url.IPortletRequestInfo;
+import org.jasig.portal.url.ParameterMap;
+import org.jasig.portal.url.UrlType;
 
 /**
  * Key for publicly scoped portlet data
@@ -32,7 +43,7 @@ public class PublicPortletCacheKey implements Serializable {
     private static final long serialVersionUID = 1L;
     
     private final IPortletDefinitionId portletDefinitionId;
-    private final Map<String, String[]> parameters;
+    private final Map<String, List<String>> parameters;
     private final boolean renderHeader;
     private final String resourceId;
     private final Locale locale;
@@ -41,32 +52,65 @@ public class PublicPortletCacheKey implements Serializable {
     
     private final int hash;
 
-    static PublicPortletCacheKey createPublicPortletRenderCacheKey(IPortletDefinitionId portletDefinitionId, IPortletWindow portletWindow,
-            Locale locale) {
-        return new PublicPortletCacheKey(portletDefinitionId, portletWindow, false, null, locale);
-    }
-
-    static PublicPortletCacheKey createPublicPortletRenderHeaderCacheKey(IPortletDefinitionId portletDefinitionId, IPortletWindow portletWindow,
-            Locale locale) {
-        return new PublicPortletCacheKey(portletDefinitionId, portletWindow, true, null, locale);
-    }
-
-    static PublicPortletCacheKey createPublicPortletResourceCacheKey(IPortletDefinitionId portletDefinitionId, IPortletWindow portletWindow,
-            String resourceId, Locale locale) {
-        if (resourceId == null) {
-            resourceId = "";
-        }
-        return new PublicPortletCacheKey(portletDefinitionId, portletWindow, false, resourceId, locale);
+    static PublicPortletCacheKey createPublicPortletRenderCacheKey(IPortletWindow portletWindow, IPortalRequestInfo portalRequestInfo, Locale locale) {
+        return new PublicPortletCacheKey(portletWindow, portalRequestInfo, false, locale);
     }
     
-    private PublicPortletCacheKey(IPortletDefinitionId portletDefinitionId, IPortletWindow portletWindow,
-            boolean renderHeader, String resourceId, Locale locale) {
-        this.portletDefinitionId = portletDefinitionId;
-        this.parameters = portletWindow.getRenderParameters();
+    static PublicPortletCacheKey createPublicPortletRenderHeaderCacheKey(IPortletWindow portletWindow, IPortalRequestInfo portalRequestInfo, Locale locale) {
+        return new PublicPortletCacheKey(portletWindow, portalRequestInfo, true, locale);
+    }
+    
+    static PublicPortletCacheKey createPublicPortletResourceCacheKey(IPortletWindow portletWindow, IPortalRequestInfo portalRequestInfo, Locale locale) {
+        return new PublicPortletCacheKey(portletWindow, portalRequestInfo, false, locale);
+    }
+    
+    private PublicPortletCacheKey(IPortletWindow portletWindow, IPortalRequestInfo portalRequestInfo, boolean renderHeader, Locale locale) {
+        final IPortletEntity portletEntity = portletWindow.getPortletEntity();
+        this.portletDefinitionId = portletEntity.getPortletDefinitionId();
+
+        WindowState reqWindowState = null;
+        PortletMode reqPortletMode = null;
+        
+        //First look for data in IPortletRequest info
+        final IPortletRequestInfo portletRequestInfo = portalRequestInfo.getPortletRequestInfo(portletWindow.getPortletWindowId());
+        if (portletRequestInfo != null) {
+            this.parameters = portletRequestInfo.getPortletParameters();
+            
+            reqWindowState = portletRequestInfo.getWindowState();
+            reqPortletMode = portletRequestInfo.getPortletMode();
+        }
+        //Only re-use render parameters on a render request
+        else if (portalRequestInfo.getUrlType() == UrlType.RENDER) {
+            this.parameters = ParameterMap.convertArrayMap(portletWindow.getRenderParameters());
+        }
+        else {
+            this.parameters = Collections.emptyMap();
+        }
+        
+        //Grab the resource id
+        if (portalRequestInfo.getUrlType() == UrlType.RESOURCE) {
+            this.resourceId = portletRequestInfo.getResourceId();
+        }
+        else {
+            this.resourceId = null;
+        }
+        
+        //Grab window state and portlet mode
+        if (reqWindowState == null) {
+            this.windowState = portletWindow.getWindowState().toString();
+        }
+        else {
+            this.windowState = reqWindowState.toString();
+        }
+        
+        if (reqPortletMode == null) {
+            this.portletMode = portletWindow.getPortletMode().toString();
+        }
+        else {
+            this.portletMode = reqPortletMode.toString();
+        }
+        
         this.renderHeader = renderHeader;
-        this.resourceId = resourceId;
-        this.windowState = portletWindow.getWindowState().toString();
-        this.portletMode = portletWindow.getPortletMode().toString();
         this.locale = locale;
         
         this.hash = internalHashCode();
@@ -76,7 +120,7 @@ public class PublicPortletCacheKey implements Serializable {
         return portletDefinitionId;
     }
 
-    public Map<String, String[]> getParameters() {
+    public Map<String, List<String>> getParameters() {
         return parameters;
     }
 
