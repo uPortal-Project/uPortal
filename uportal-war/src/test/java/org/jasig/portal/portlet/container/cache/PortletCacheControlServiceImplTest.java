@@ -167,6 +167,8 @@ public class PortletCacheControlServiceImplTest {
         when(portletWindow.getPortletMode()).thenReturn(PortletMode.VIEW);
         when(portletEntity.getPortletDefinitionId()).thenReturn(portletDefinitionId);
 		when(portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId)).thenReturn(portletDescriptor);
+
+        when(urlSyntaxProvider.getPortalRequestInfo(httpRequest)).thenReturn(portalRequestInfo);
 		
 		final CacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> cacheState = cacheControlService.getPortletRenderState(httpRequest, portletWindowId);
 		final CacheControl cacheControl = cacheState.getCacheControl();
@@ -183,8 +185,7 @@ public class PortletCacheControlServiceImplTest {
         
         cacheControlService.cachePortletRenderOutput(portletWindowId, nextHttpRequest, cacheState, cachedPortletData);
 		
-        
-        
+        when(urlSyntaxProvider.getPortalRequestInfo(nextHttpRequest)).thenReturn(portalRequestInfo);
         
         final CacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> afterCacheState = cacheControlService.getPortletRenderState(nextHttpRequest, portletWindowId);
 		// retrieve cachecontrol again, and return should have etag set
@@ -208,6 +209,8 @@ public class PortletCacheControlServiceImplTest {
 		when(portletEntity.getPortletDefinitionId()).thenReturn(portletDefinitionId);
 		
 		when(portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId)).thenReturn(portletDefinition);
+		
+		when(urlSyntaxProvider.getPortalRequestInfo(httpRequest)).thenReturn(portalRequestInfo);
 
 		cacheControlService.setPortletWindowRegistry(portletWindowRegistry);
 		cacheControlService.setPortletDefinitionRegistry(portletDefinitionRegistry);
@@ -233,6 +236,8 @@ public class PortletCacheControlServiceImplTest {
 		
 		when(portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId)).thenReturn(portletDescriptor);
 
+		when(urlSyntaxProvider.getPortalRequestInfo(httpRequest)).thenReturn(portalRequestInfo);
+
 		cacheControlService.setPortletWindowRegistry(portletWindowRegistry);
 		cacheControlService.setPortletDefinitionRegistry(portletDefinitionRegistry);
 
@@ -256,6 +261,8 @@ public class PortletCacheControlServiceImplTest {
         when(portletEntity.getPortletDefinitionId()).thenReturn(portletDefinitionId);
         
         when(portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId)).thenReturn(portletDescriptor);
+
+        when(urlSyntaxProvider.getPortalRequestInfo(httpRequest)).thenReturn(portalRequestInfo);
 
         when(this.urlSyntaxProvider.getPortalRequestInfo(httpRequest)).thenReturn(portalRequestInfo);
         when(portalRequestInfo.getPortletRequestInfoMap()).thenReturn(Collections.EMPTY_MAP);

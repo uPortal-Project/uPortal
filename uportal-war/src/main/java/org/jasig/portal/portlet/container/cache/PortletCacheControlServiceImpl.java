@@ -42,7 +42,6 @@ import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.rendering.PortletRenderResult;
 import org.jasig.portal.url.IPortalRequestInfo;
-import org.jasig.portal.url.IPortletRequestInfo;
 import org.jasig.portal.url.IUrlSyntaxProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -203,10 +202,9 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
         }
         
         //Generate the public render-header cache key
-        final IPortletEntity entity = portletWindow.getPortletEntity();
-        final IPortletDefinitionId definitionId = entity.getPortletDefinitionId();
+        final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
         final Locale locale = RequestContextUtils.getLocale(request);
-        final PublicPortletCacheKey publicCacheKey = PublicPortletCacheKey.createPublicPortletRenderHeaderCacheKey(definitionId, portletWindow, locale);
+        final PublicPortletCacheKey publicCacheKey = PublicPortletCacheKey.createPublicPortletRenderHeaderCacheKey(portletWindow, portalRequestInfo, locale);
         
         return this.<CachedPortletData<PortletRenderResult>, PortletRenderResult> getPortletState(request,
                 portletWindow,
@@ -227,10 +225,9 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
         }
         
         //Generate the public render cache key
-        final IPortletEntity entity = portletWindow.getPortletEntity();
-        final IPortletDefinitionId definitionId = entity.getPortletDefinitionId();
+        final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
         final Locale locale = RequestContextUtils.getLocale(request);
-        final PublicPortletCacheKey publicCacheKey = PublicPortletCacheKey.createPublicPortletRenderCacheKey(definitionId, portletWindow, locale);
+        final PublicPortletCacheKey publicCacheKey = PublicPortletCacheKey.createPublicPortletRenderCacheKey(portletWindow, portalRequestInfo, locale);
         
         return this.<CachedPortletData<PortletRenderResult>, PortletRenderResult> getPortletState(request,
                 portletWindow,
@@ -251,11 +248,9 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
         }
         
         //Generate the public resource cache key
-        final IPortletEntity entity = portletWindow.getPortletEntity();
-        final IPortletDefinitionId definitionId = entity.getPortletDefinitionId();
-        final String resourceId = getResourceId(portletWindowId, request);
+        final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
         final Locale locale = RequestContextUtils.getLocale(request);
-        final PublicPortletCacheKey publicCacheKey = PublicPortletCacheKey.createPublicPortletResourceCacheKey(definitionId, portletWindow, resourceId, locale);
+        final PublicPortletCacheKey publicCacheKey = PublicPortletCacheKey.createPublicPortletResourceCacheKey(portletWindow, portalRequestInfo, locale);
         
         return this.<CachedPortletResourceData<Long>, Long> getPortletState(request,
                 portletWindow,
@@ -401,7 +396,7 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
             return null;
         }
 
-        final CachedPortletResultHolder<T> cachedPortletData = (CachedPortletResultHolder<T>) publicCacheElement.getValue();
+        final CachedPortletResultHolder<T> cachedPortletData = (CachedPortletResultHolder<T>) publicCacheElement.getObjectValue();
         if (publicCacheElement.isExpired() && cachedPortletData.getEtag() == null) {
             logger.debug("Cached output for key {} is expired", cacheKey);
             outputCache.remove(cacheKey);
@@ -409,17 +404,7 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
         }
 
         logger.debug("Returning cached output with key {} for {}", cacheKey, portletWindow);
-        return (CachedPortletResultHolder<T>) publicCacheElement.getValue();
-    }    
-	
-    /**
-     * Get the resourceId for the portlet request
-     */
-    private String getResourceId(IPortletWindowId portletWindowId, HttpServletRequest httpRequest) {
-        final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(httpRequest);
-        final Map<IPortletWindowId, ? extends IPortletRequestInfo> portletRequestInfoMap = portalRequestInfo.getPortletRequestInfoMap();
-        final IPortletRequestInfo portletRequestInfo = portletRequestInfoMap.get(portletWindowId);
-        return portletRequestInfo != null ? portletRequestInfo.getResourceId() : null;
+        return (CachedPortletResultHolder<T>) publicCacheElement.getObjectValue();
     }
     
     @Override
