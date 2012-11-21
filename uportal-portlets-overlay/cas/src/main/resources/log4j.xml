@@ -22,18 +22,8 @@
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 
 <log4j:configuration debug="false" xmlns:log4j="http://jakarta.apache.org/log4j/">
-    <!--
-      This default ConsoleAppender is used to log all NON perf4j messages
-      to System.out
-    -->
-    <appender name="console" class="org.apache.log4j.ConsoleAppender">
-        <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d %p [%c] - &lt;%m&gt;%n"/>
-        </layout>
-    </appender>
-
     <appender name="cas" class="org.apache.log4j.RollingFileAppender">
-        <param name="File" value="../logs/cas.log" />
+        <param name="File" value="${environment.build.log.logfileDirectory}/cas.log" />
         <param name="MaxFileSize" value="512KB" />
         <param name="MaxBackupIndex" value="3" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -56,7 +46,7 @@
 
     <!-- This file appender is used to output aggregated performance statistics -->
     <appender name="fileAppender" class="org.apache.log4j.FileAppender">
-        <param name="File" value="perfStats.log"/>
+        <param name="File" value="${environment.build.log.logfileDirectory}/perfStats.log"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%m%n"/>
         </layout>
@@ -127,6 +117,6 @@
     -->
     <root>
         <level value="${environment.build.log.rootLevel}" />
-        <appender-ref ref="console" />
+        <appender-ref ref="cas" />
     </root>
 </log4j:configuration>
