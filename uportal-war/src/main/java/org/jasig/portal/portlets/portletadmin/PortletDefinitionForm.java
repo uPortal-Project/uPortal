@@ -174,7 +174,7 @@ public class PortletDefinitionForm implements Serializable {
 				attributes.add(new Attribute(value));
 			}
 			this.portletPreferences.put(pref.getName(), new StringListAttribute(pref.getValues()));
-            this.portletPreferenceReadOnly.put(pref.getName(), new BooleanAttribute(!pref.isReadOnly()));
+            this.portletPreferenceReadOnly.put(pref.getName(), new BooleanAttribute(pref.isReadOnly()));
 		}
             
 	}
