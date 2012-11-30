@@ -749,11 +749,6 @@
                 <version>${casclient.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jasig.cas3.extensions</groupId>
-                <artifactId>clearpass-integration-uportal</artifactId>
-                <version>${cas-clearpass.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.jasig.portal</groupId>
                 <artifactId>uportal-ear-deployer</artifactId>
                 <version>${uportal-ear-deployer.version}</version>

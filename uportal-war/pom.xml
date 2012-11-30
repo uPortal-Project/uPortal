@@ -559,12 +559,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jasig.cas3.extensions</groupId>
-            <artifactId>clearpass-integration-uportal</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
             <groupId>jline</groupId>
             <artifactId>jline</artifactId>
             <scope>runtime</scope>
