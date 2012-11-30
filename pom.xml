@@ -703,10 +703,10 @@
                 </exclusions>
             </dependency>
             <dependency>
-				<groupId>org.jasig.cas</groupId>
-				<artifactId>cas-server-extension-clearpass</artifactId>
-				<version>${cas-server.version}</version>
-			</dependency>
+              <groupId>org.jasig.cas</groupId>
+              <artifactId>cas-server-extension-clearpass</artifactId>
+              <version>${cas-server.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.jasig.portal</groupId>
                 <artifactId>uportal-ear-deployer</artifactId>
