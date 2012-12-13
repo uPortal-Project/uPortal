@@ -191,7 +191,7 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao implemen
         if (shutdown) {
             //Mark ourselves as interupted and throw an exception
             Thread.currentThread().interrupt();
-            throw new RuntimeException("uPortal is shutting down, throwing an exeption to stop processing");
+            throw new RuntimeException("uPortal is shutting down, throwing an exception to stop processing");
         }
     }
     

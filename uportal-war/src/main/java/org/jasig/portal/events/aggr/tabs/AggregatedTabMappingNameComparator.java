@@ -16,36 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.events.aggr.tabs;
 
-import java.util.Set;
+import org.jasig.portal.utils.ComparableExtractingComparator;
+import java.util.Comparator;
 
-/**
- * Used to map portal group keys to a more static group mapping object
- * 
- * @author Eric Dalquist
- * @version $Revision$
- */
-public interface AggregatedTabLookupDao {
-
-    /**
-     * Get the tab mapping object for the specified tab mapping id
-     */
-    AggregatedTabMapping getTabMapping(long tabMappingId);
-
-    /**
-     * Get the tab mapping object for the specified layout node id
-     */
-    AggregatedTabMapping getMappedTabForLayoutId(String layoutNodeId);
+public class AggregatedTabMappingNameComparator extends
+        ComparableExtractingComparator<AggregatedTabMapping, String> {
     
-    /**
-     * Get the tab mapping for the specified tab name
-     */
-    AggregatedTabMapping getTabMapping(String fragmentName, String tabName);
-    
-    /**
-     * All tabs that have aggregated data
-     */
-    Set<AggregatedTabMapping> getTabMappings();
+    public static Comparator<AggregatedTabMapping> INSTANCE = new AggregatedTabMappingNameComparator();
+
+    @Override
+    protected String getComparable(AggregatedTabMapping o) {
+        return o.getTabName()+"/"+o.getFragmentName();
+    }
 }
