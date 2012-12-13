@@ -47,8 +47,10 @@ public interface AggregatedTabMapping {
      * Returned by {@link #getFragmentName()} for tabs where no info could be found in the portal database
      */
     static final String MISSING_USER_FRAGMENT_NAME = "CATCH_ALL_MISSING_USER_OWNER";
-    
-    
+
+
+    long getId();
+
     /**
      * @return Name of the fragment owner for the tab
      */
