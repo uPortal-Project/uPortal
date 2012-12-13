@@ -41,7 +41,7 @@ public interface BaseAggregationDao<
      * @param start the start {@link DateTime} of the range, inclusive
      * @param end the end {@link DateTime} of the range, exclusive
      * @param key The {@link BaseAggregationKey#getDateDimension()} and {@link BaseAggregationKey#getTimeDimension()} fields on the key are ignored for this method
-     * @param aggregatedGroupMapping Groups in addition to the group specified by {@link BaseAggregationKey#getAggregatedGroup()} to get aggregations for
+     * @param aggregatedGroupMappings Groups in addition to the group specified by {@link BaseAggregationKey#getAggregatedGroup()} to get aggregations for
      */
     List<T> getAggregations(DateTime start, DateTime end, K key, AggregatedGroupMapping... aggregatedGroupMappings);
 

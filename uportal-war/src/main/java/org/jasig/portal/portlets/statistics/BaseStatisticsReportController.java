@@ -77,7 +77,7 @@ import com.google.visualization.datasource.datatable.value.ValueType;
  */
 public abstract class BaseStatisticsReportController<T extends BaseAggregation<K>, K extends BaseAggregationKey, F extends BaseReportForm> {
     /**
-     * List of intervals in the prefered report order. This is the order they are tested against
+     * List of intervals in the preferred report order. This is the order they are tested against
      * the results of {@link #getIntervals()}. The first hit is used to populate the default form. 
      */
     private static final List<AggregationInterval> PREFERRED_INTERVAL_ORDER = ImmutableList.of(
@@ -140,7 +140,7 @@ public abstract class BaseStatisticsReportController<T extends BaseAggregation<K
     }
     
     /**
-     * @return The default report request form to use, populates the inital form view
+     * @return The default report request form to use, populates the initial form view
      */
     @ModelAttribute("reportRequest")
     public final F getReportForm() {
@@ -261,9 +261,9 @@ public abstract class BaseStatisticsReportController<T extends BaseAggregation<K
     
     /**
      * Get the column descriptors to use for each group in the report. The order of the returned columns 
-     * is VERY important and must match the order of values as retuned by {@link #createRowValues(BaseAggregation, BaseReportForm)}
+     * is VERY important and must match the order of values as returned by {@link #createRowValues(BaseAggregation, BaseReportForm)}
      * 
-     * @param group The group to crate the column descriptors for
+     * @param group The group to create the column descriptors for
      * @param form The original query form
      * @return List of column descriptors for the group
      */

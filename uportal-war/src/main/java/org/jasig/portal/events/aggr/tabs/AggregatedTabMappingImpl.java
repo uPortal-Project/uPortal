@@ -86,6 +86,11 @@ public final class AggregatedTabMappingImpl implements AggregatedTabMapping, Ser
     }
 
     @Override
+    public long getId() {
+        return id;
+    }
+
+    @Override
     public String getFragmentName() {
         return this.fragmentName;
     }
