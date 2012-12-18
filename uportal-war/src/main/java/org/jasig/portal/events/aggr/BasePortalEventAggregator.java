@@ -45,8 +45,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public abstract class BasePortalEventAggregator<
             E extends PortalEvent, 
-            T extends BaseAggregationImpl<K>,
-            K extends BaseAggregationKey> 
+            T extends BaseAggregationImpl<K,?>,
+            K extends BaseAggregationKey>
     implements IPortalEventAggregator<E> {
     
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -78,7 +78,7 @@ public abstract class BasePortalEventAggregator<
      * 
      * @param intervalInfo The info about the interval the aggregation is for
      * @param aggregatedGroup The group the aggregation is for
-     * @param event The event the aggregation is for
+     * @param e The event the aggregation is for
      */
     protected abstract K createAggregationKey(E e, EventAggregationContext eventAggregationContext, AggregationIntervalInfo intervalInfo, AggregatedGroupMapping aggregatedGroup);
     

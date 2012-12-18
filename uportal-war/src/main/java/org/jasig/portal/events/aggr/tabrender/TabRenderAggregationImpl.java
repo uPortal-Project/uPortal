@@ -77,7 +77,7 @@ import org.jasig.portal.events.aggr.tabs.AggregatedTabMappingImpl;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public final class TabRenderAggregationImpl
-        extends BaseTimedAggregationStatsImpl<TabRenderAggregationKey> 
+        extends BaseTimedAggregationStatsImpl<TabRenderAggregationKey, TabRenderAggregationDiscriminator>
         implements TabRenderAggregation, Serializable {
     
     private static final long serialVersionUID = 1L;
@@ -95,6 +95,8 @@ public final class TabRenderAggregationImpl
     
     @Transient
     private TabRenderAggregationKey aggregationKey;
+    @Transient
+    private TabRenderAggregationDiscriminator aggregationDiscriminator;
     
     @SuppressWarnings("unused")
     private TabRenderAggregationImpl() {
@@ -136,6 +138,16 @@ public final class TabRenderAggregationImpl
             this.aggregationKey = key;
         }
         return key;
+    }
+
+    @Override
+    public TabRenderAggregationDiscriminator getAggregationDiscriminator() {
+        TabRenderAggregationDiscriminator discriminator = this.aggregationDiscriminator;
+        if (discriminator == null) {
+            discriminator = new TabRenderAggregationDiscriminatorImpl(this);
+            this.aggregationDiscriminator = discriminator;
+        }
+        return discriminator;
     }
 
     @Override

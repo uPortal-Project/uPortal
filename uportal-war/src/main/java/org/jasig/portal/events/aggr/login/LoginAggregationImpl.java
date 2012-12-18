@@ -77,7 +77,7 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public final class LoginAggregationImpl 
-        extends BaseAggregationImpl<LoginAggregationKey> 
+        extends BaseAggregationImpl<LoginAggregationKey, LoginAggregationDiscriminator>
         implements LoginAggregation, Serializable {
     private static final long serialVersionUID = 1L;
     
@@ -99,6 +99,8 @@ public final class LoginAggregationImpl
 
     @Transient
     private LoginAggregationKeyImpl aggregationKey;
+    @Transient
+    private LoginAggregationDiscriminator aggregationDiscriminator;
     
     @SuppressWarnings("unused")
     private LoginAggregationImpl() {
@@ -134,6 +136,16 @@ public final class LoginAggregationImpl
             this.aggregationKey = key;
         }
         return key;
+    }
+
+    @Override
+    public LoginAggregationDiscriminator getAggregationDiscriminator() {
+        LoginAggregationDiscriminator discriminator = this.aggregationDiscriminator;
+        if (discriminator == null) {
+            discriminator = new LoginAggregationDiscriminatorImpl(this);
+            this.aggregationDiscriminator = discriminator;
+        }
+        return discriminator;
     }
 
     @Override

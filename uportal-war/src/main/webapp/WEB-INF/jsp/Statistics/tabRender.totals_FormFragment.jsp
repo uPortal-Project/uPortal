@@ -23,7 +23,7 @@
                 <form:label path="tabs"><spring:message code="tabs"/></form:label>
                 <form:select path="tabs">
                     <c:forEach items="${ tabs }" var="tab">
-                        <form:option value="${ tab.id }" label="${tab.tabName}/${tab.fragmentName}"/>
+                        <form:option value="${ tab.id }" label="${tab.displayString}"/>
                     </c:forEach>
                 </form:select>
             </p>

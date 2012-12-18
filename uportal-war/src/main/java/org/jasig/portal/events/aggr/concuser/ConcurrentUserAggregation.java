@@ -28,7 +28,7 @@ import org.jasig.portal.events.aggr.BaseAggregation;
  * 
  * @author Eric Dalquist
  */
-public interface ConcurrentUserAggregation extends BaseAggregation<ConcurrentUserAggregationKey> {
+public interface ConcurrentUserAggregation extends BaseAggregation<ConcurrentUserAggregationKey, ConcurrentUserAggregationDiscriminator> {
     
     /**
      * @return Total number of users that were active for the duration of this aggregation.

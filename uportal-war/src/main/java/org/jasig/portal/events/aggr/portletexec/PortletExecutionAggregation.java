@@ -30,7 +30,8 @@ import org.jasig.portal.events.aggr.portlets.AggregatedPortletMapping;
  * @author Eric Dalquist
  */
 public interface PortletExecutionAggregation 
-        extends BaseAggregation<PortletExecutionAggregationKey>, TimedAggregationStatistics {
+        extends BaseAggregation<PortletExecutionAggregationKey, PortletExecutionAggregationDiscriminator>,
+        TimedAggregationStatistics {
 
     /**
      * @return The name of the tab

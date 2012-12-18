@@ -44,7 +44,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaAggrEventsTestContext.xml")
-public class JpaTabRenderAggregationDaoTest extends JpaBaseAggregationDaoTest<TabRenderAggregationImpl, TabRenderAggregationKey> {
+public class JpaTabRenderAggregationDaoTest
+        extends JpaBaseAggregationDaoTest<TabRenderAggregationImpl, TabRenderAggregationKey, TabRenderAggregationDiscriminator> {
     @Autowired
     private TabRenderAggregationPrivateDao renderAggregationDao;
     @Autowired

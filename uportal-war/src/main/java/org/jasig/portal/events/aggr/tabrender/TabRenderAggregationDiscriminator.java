@@ -16,18 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.events.aggr.tabs;
+package org.jasig.portal.events.aggr.tabrender;
 
-import org.jasig.portal.utils.ComparableExtractingComparator;
-import java.util.Comparator;
+import org.jasig.portal.events.aggr.BaseGroupedAggregationDiscriminator;
+import org.jasig.portal.events.aggr.tabs.AggregatedTabMapping;
 
-public class AggregatedTabMappingNameComparator extends
-        ComparableExtractingComparator<AggregatedTabMapping, String> {
-    
-    public static Comparator<AggregatedTabMapping> INSTANCE = new AggregatedTabMappingNameComparator();
+/**
+ * Interface to separate Tab Render Aggregation events into separate columns for reporting purposes.
+ *
+ * @author James Wennmacher, jameswennmacher@gmail.com
+ */
+public interface TabRenderAggregationDiscriminator extends BaseGroupedAggregationDiscriminator {
 
-    @Override
-    protected String getComparable(AggregatedTabMapping o) {
-        return o.getDisplayString();
-    }
+    /**
+     * @return The name of the tab
+     */
+    AggregatedTabMapping getTabMapping();
+
 }

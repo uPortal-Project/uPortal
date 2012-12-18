@@ -64,8 +64,9 @@ import com.google.common.base.Function;
  * @version $Revision$
  */
 public abstract class JpaBaseAggregationDaoTest<
-            T extends BaseAggregationImpl<K>,
-            K extends BaseAggregationKey> 
+            T extends BaseAggregationImpl<K, D>,
+            K extends BaseAggregationKey,
+            D extends BaseGroupedAggregationDiscriminator>
         extends BaseAggrEventsJpaDaoTest {
     
     @Autowired
