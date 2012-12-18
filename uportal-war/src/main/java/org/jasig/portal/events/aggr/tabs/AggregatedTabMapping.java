@@ -60,4 +60,9 @@ public interface AggregatedTabMapping {
      * @return Name of the mapped tab
      */
     String getTabName();
+
+    /**
+     * @return String suitable for displaying to user
+     */
+    String getDisplayString();
 }

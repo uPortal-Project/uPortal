@@ -40,7 +40,8 @@ import org.jasig.portal.events.aggr.stat.JpaStatisticalSummary;
  */
 @Access(AccessType.FIELD)
 @MappedSuperclass
-public abstract class BaseTimedAggregationStatsImpl<K extends BaseAggregationKey> extends BaseAggregationImpl<K> implements TimedAggregationStatistics, Serializable {
+public abstract class BaseTimedAggregationStatsImpl<K extends BaseAggregationKey, D extends BaseGroupedAggregationDiscriminator>
+        extends BaseAggregationImpl<K,D> implements TimedAggregationStatistics, Serializable {
     private static final long serialVersionUID = 1L;
         
     @Column(name = "TIME_COUNT", nullable = false)

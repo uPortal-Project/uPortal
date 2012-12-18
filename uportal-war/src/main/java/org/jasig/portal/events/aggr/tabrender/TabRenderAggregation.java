@@ -29,7 +29,7 @@ import org.jasig.portal.events.aggr.tabs.AggregatedTabMapping;
  * @author Eric Dalquist
  */
 public interface TabRenderAggregation
-        extends BaseAggregation<TabRenderAggregationKey>, TimedAggregationStatistics {
+        extends BaseAggregation<TabRenderAggregationKey, TabRenderAggregationDiscriminator>, TimedAggregationStatistics {
     
     /**
      * @return Number of times the tab was rendered

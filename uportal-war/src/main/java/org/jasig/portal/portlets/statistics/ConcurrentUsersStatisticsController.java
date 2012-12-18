@@ -19,16 +19,28 @@
 package org.jasig.portal.portlets.statistics;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.BaseAggregationDao;
+import org.jasig.portal.events.aggr.BaseAggregationDateTimeComparator;
+import org.jasig.portal.events.aggr.BaseGroupedAggregationDiscriminator;
+import org.jasig.portal.events.aggr.BaseGroupedAggregationDiscriminatorImpl;
 import org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregation;
 import org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationDao;
+import org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationDiscriminator;
+import org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationDiscriminatorImpl;
 import org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationKey;
 import org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationKeyImpl;
+import org.jasig.portal.events.aggr.groups.AggregatedGroupLookupDao;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.jasig.portal.utils.ComparableExtractingComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,13 +61,18 @@ import com.google.visualization.datasource.datatable.value.ValueType;
  */
 @Controller
 @RequestMapping("VIEW")
-public class ConcurrentUsersStatisticsController extends BaseStatisticsReportController<ConcurrentUserAggregation, ConcurrentUserAggregationKey, ConcurrentUserReportForm> {
+public class ConcurrentUsersStatisticsController extends
+        BaseStatisticsReportController<ConcurrentUserAggregation, ConcurrentUserAggregationKey,
+                ConcurrentUserAggregationDiscriminator, ConcurrentUserReportForm> {
     private static final String DATA_TABLE_RESOURCE_ID = "concurrentUserData";
     private final static String REPORT_NAME = "concurrent.users";
 
     @Autowired
     private ConcurrentUserAggregationDao<ConcurrentUserAggregation> concurrentUserAggregationDao;
-    
+
+    @Autowired
+    private AggregatedGroupLookupDao aggregatedGroupDao;
+
     @RenderMapping(value="MAXIMIZED", params="report=" + REPORT_NAME)
     public String getConcurrentUserView() throws TypeMismatchException {
         return "jsp/Statistics/reportGraph";
@@ -87,14 +104,58 @@ public class ConcurrentUsersStatisticsController extends BaseStatisticsReportCon
     }
 
     @Override
-    protected ConcurrentUserAggregationKey createAggregationsQueryKey(Set<AggregatedGroupMapping> groups, ConcurrentUserReportForm form) {
+    protected ComparableExtractingComparator<?, ?> getDiscriminatorComparator() {
+        return ConcurrentUserAggregationDiscriminatorImpl.Comparator.INSTANCE;
+    }
+
+    @Override
+//    protected Map<BaseGroupedAggregationDiscriminator, SortedSet<ConcurrentUserAggregation>> createColumnDiscriminatorMap(ConcurrentUserReportForm form) {
+//        return getDefaultGroupedColumnDiscriminatorMap(form);
+//    }
+    /**
+     * Default implementation to create a map of the report column discriminators based on the submitted form to
+     * collate the aggregation data into each column of a report.
+     * The map entries are a time-ordered sorted set of aggregation data points.
+     * Subclasses may override this method to obtain more from the form than just AggregatedGroupMappings as
+     * report columns.
+     *
+     * @param form Form submitted by the user
+     * @return Map of report column discriminators to sorted set of time-based aggregation data
+     */
+    //todo need to throw in a factory method to avoid duplicating this code.
+    protected Map<ConcurrentUserAggregationDiscriminator, SortedSet<ConcurrentUserAggregation>>
+    createColumnDiscriminatorMap (ConcurrentUserReportForm form){
+        List<Long> groups = form.getGroups();
+        //Collections used to track the queried groups and the results
+        final Map<ConcurrentUserAggregationDiscriminator, SortedSet<ConcurrentUserAggregation>> groupedAggregations =
+                new TreeMap<ConcurrentUserAggregationDiscriminator, SortedSet<ConcurrentUserAggregation>>(ConcurrentUserAggregationDiscriminatorImpl.Comparator.INSTANCE);
+
+        //Get concrete group mapping objects that are being queried for
+        for (final Long queryGroupId : groups) {
+            final ConcurrentUserAggregationDiscriminator groupMapping =
+                    new ConcurrentUserAggregationDiscriminatorImpl(this.aggregatedGroupDao.getGroupMapping(queryGroupId));
+
+            //Create the set the aggregations for this report column will be stored in, sorted chronologically
+            final SortedSet<ConcurrentUserAggregation> aggregations = new TreeSet<ConcurrentUserAggregation>(BaseAggregationDateTimeComparator.INSTANCE);
+
+            //Map the group to the set
+            groupedAggregations.put(groupMapping, aggregations);
+        }
+
+        return groupedAggregations;
+    }
+
+    @Override
+    protected Set<ConcurrentUserAggregationKey> createAggregationsQueryKeyset(Set<ConcurrentUserAggregationDiscriminator> groups, ConcurrentUserReportForm form) {
         final AggregationInterval interval = form.getInterval();
-        return new ConcurrentUserAggregationKeyImpl(interval, groups.iterator().next());
+        HashSet<ConcurrentUserAggregationKey> keys = new HashSet<ConcurrentUserAggregationKey>();
+        keys.add(new ConcurrentUserAggregationKeyImpl(interval, groups.iterator().next().getAggregatedGroup()));
+        return keys;
     }
     
     @Override
-    protected List<ColumnDescription> getColumnDescriptions(AggregatedGroupMapping group, ConcurrentUserReportForm form) {
-        final String groupName = group.getGroupName();
+    protected List<ColumnDescription> getColumnDescriptions(ConcurrentUserAggregationDiscriminator discriminator, ConcurrentUserReportForm form) {
+        final String groupName = discriminator.getAggregatedGroup().getGroupName();
         return Collections.singletonList(new ColumnDescription(groupName, ValueType.NUMBER, groupName));
     }
 

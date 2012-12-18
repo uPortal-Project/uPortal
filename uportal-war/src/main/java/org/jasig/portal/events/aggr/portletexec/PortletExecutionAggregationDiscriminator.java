@@ -16,18 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.events.aggr.tabs;
+package org.jasig.portal.events.aggr.portletexec;
 
-import org.jasig.portal.utils.ComparableExtractingComparator;
-import java.util.Comparator;
+import org.jasig.portal.events.aggr.BaseGroupedAggregationDiscriminator;
+import org.jasig.portal.events.aggr.portlets.AggregatedPortletMapping;
 
-public class AggregatedTabMappingNameComparator extends
-        ComparableExtractingComparator<AggregatedTabMapping, String> {
+/**
+ * Interface to separate Portlet Execution aggregation events into separate columns for reporting purposes.
+ *
+ * @author James Wennmacher, jameswennmacher@gmail.com
+ */
+public interface PortletExecutionAggregationDiscriminator extends BaseGroupedAggregationDiscriminator {
+    /**
+     * @return The name of the tab
+     */
+    AggregatedPortletMapping getPortletMapping();
     
-    public static Comparator<AggregatedTabMapping> INSTANCE = new AggregatedTabMappingNameComparator();
-
-    @Override
-    protected String getComparable(AggregatedTabMapping o) {
-        return o.getDisplayString();
-    }
+    /**
+     * @return The type of portlet execution 
+     */
+    PortletExecutionAggregationKey.ExecutionType getExecutionType();
+    
 }

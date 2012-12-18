@@ -25,14 +25,19 @@ import com.google.visualization.datasource.datatable.value.Value;
 import com.google.visualization.datasource.datatable.value.ValueType;
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.BaseAggregationDao;
+import org.jasig.portal.events.aggr.BaseAggregationDateTimeComparator;
+import org.jasig.portal.events.aggr.groups.AggregatedGroupLookupDao;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.events.aggr.tabrender.TabRenderAggregation;
 import org.jasig.portal.events.aggr.tabrender.TabRenderAggregationDao;
+import org.jasig.portal.events.aggr.tabrender.TabRenderAggregationDiscriminator;
+import org.jasig.portal.events.aggr.tabrender.TabRenderAggregationDiscriminatorImpl;
 import org.jasig.portal.events.aggr.tabrender.TabRenderAggregationKey;
 import org.jasig.portal.events.aggr.tabrender.TabRenderAggregationKeyImpl;
 import org.jasig.portal.events.aggr.tabs.AggregatedTabLookupDao;
 import org.jasig.portal.events.aggr.tabs.AggregatedTabMapping;
 import org.jasig.portal.events.aggr.tabs.AggregatedTabMappingNameComparator;
+import org.jasig.portal.utils.ComparableExtractingComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -41,10 +46,7 @@ import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * Tab render reports
@@ -53,12 +55,17 @@ import java.util.TreeSet;
  */
 @Controller
 @RequestMapping(value="VIEW")
-public class TabRenderStatisticsController extends BaseStatisticsReportController<TabRenderAggregation, TabRenderAggregationKey, TabRenderReportForm> {
+public class TabRenderStatisticsController extends
+        BaseStatisticsReportController<TabRenderAggregation, TabRenderAggregationKey,
+                TabRenderAggregationDiscriminator, TabRenderReportForm> {
     private static final String DATA_TABLE_RESOURCE_ID = "tabRenderData";
     private final static String REPORT_NAME = "tabRender.totals";
 
     @Autowired
     private TabRenderAggregationDao<TabRenderAggregation> tabRenderDao;
+
+    @Autowired
+    private AggregatedGroupLookupDao aggregatedGroupDao;
 
     @Autowired
     private AggregatedTabLookupDao aggregatedTabLookupDao;
@@ -118,20 +125,65 @@ public class TabRenderStatisticsController extends BaseStatisticsReportControlle
     }
 
     @Override
-    protected TabRenderAggregationKey createAggregationsQueryKey(Set<AggregatedGroupMapping> groups, TabRenderReportForm form) {
+    protected Set<TabRenderAggregationKey> createAggregationsQueryKeyset(
+            Set<TabRenderAggregationDiscriminator> columnDiscriminators, TabRenderReportForm form) {
+        // Create keys (that exclude the temporal date/time information) from the interval
+        // and the data in the column discriminators.
         final AggregationInterval interval = form.getInterval();
-        final AggregatedTabMapping tabMapping = aggregatedTabLookupDao.getTabMapping(form.getTabs().get(0));
-        return new TabRenderAggregationKeyImpl(interval, groups.iterator().next(), tabMapping);
+        final HashSet<TabRenderAggregationKey> keys = new HashSet<TabRenderAggregationKey>();
+        for (TabRenderAggregationDiscriminator discriminator : columnDiscriminators) {
+            keys.add(new TabRenderAggregationKeyImpl(interval, discriminator.getAggregatedGroup(),
+                    discriminator.getTabMapping()));
+        }
+        return keys;
     }
-    
+
     @Override
-    protected List<ColumnDescription> getColumnDescriptions(AggregatedGroupMapping group, TabRenderReportForm form) {
-        final String groupName = group.getGroupName();
-        final AggregatedTabMapping tabMapping = aggregatedTabLookupDao.getTabMapping(form.getTabs().get(0));
+    protected ComparableExtractingComparator<?, ?> getDiscriminatorComparator() {
+        return TabRenderAggregationDiscriminatorImpl.Comparator.INSTANCE;
+    }
 
-        return Collections.singletonList(new ColumnDescription(groupName + "-" + tabMapping.getFragmentName() + "-" + tabMapping.getTabName() + "-renders",
-                ValueType.NUMBER, groupName + "/" + tabMapping.getFragmentName() + "/" + tabMapping.getTabName() + " - Total Renders"));
+    protected Map<TabRenderAggregationDiscriminator, SortedSet<TabRenderAggregation>> createColumnDiscriminatorMap
+            (TabRenderReportForm form) {
+        //Collections used to track the queried groups and the results
+        final Map<TabRenderAggregationDiscriminator, SortedSet<TabRenderAggregation>> groupedAggregations =
+                new TreeMap<TabRenderAggregationDiscriminator,
+                        SortedSet<TabRenderAggregation>>(TabRenderAggregationDiscriminatorImpl.Comparator.INSTANCE);
 
+        //Get concrete group mapping objects that are being queried for
+        List<Long> groups = form.getGroups();
+        List<Long> tabs = form.getTabs();
+        for (final Long queryGroupId : groups) {
+            AggregatedGroupMapping groupMapping = this.aggregatedGroupDao.getGroupMapping(queryGroupId);
+            for (final Long tabId : tabs) {
+                AggregatedTabMapping tabMapping = this.aggregatedTabLookupDao.getTabMapping(tabId);
+                final TabRenderAggregationDiscriminator mapping =
+                        new TabRenderAggregationDiscriminatorImpl(groupMapping, tabMapping);
+                //Create the set the aggregations for this report column will be stored in, sorted chronologically
+                final SortedSet<TabRenderAggregation> aggregations =
+                        new TreeSet<TabRenderAggregation>(BaseAggregationDateTimeComparator.INSTANCE);
+
+                //Map the group to the set
+                groupedAggregations.put(mapping, aggregations);
+            }
+
+        }
+
+        return groupedAggregations;
+    }
+
+    @Override
+    protected List<ColumnDescription> getColumnDescriptions(TabRenderAggregationDiscriminator reportColumnDiscriminator,
+                                                            TabRenderReportForm form) {
+        AggregatedTabMapping tab = reportColumnDiscriminator.getTabMapping();
+        AggregatedGroupMapping group = reportColumnDiscriminator.getAggregatedGroup();
+        String groupNameToIncludeInHeader = form.getGroups().size() > 1 ?
+                " - " + reportColumnDiscriminator.getAggregatedGroup().getGroupName() : "";
+
+        final List<ColumnDescription> columnDescriptions = new ArrayList<ColumnDescription>();
+        columnDescriptions.add(new ColumnDescription(tab.getDisplayString() + groupNameToIncludeInHeader,
+                ValueType.NUMBER, tab.getDisplayString() + groupNameToIncludeInHeader));
+        return columnDescriptions;
     }
 
     @Override
