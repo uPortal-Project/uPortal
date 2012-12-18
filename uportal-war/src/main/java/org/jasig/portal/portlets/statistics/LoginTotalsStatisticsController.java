@@ -117,44 +117,19 @@ public class LoginTotalsStatisticsController extends
     }
 
     @Override
-//    protected Map<LoginAggregationDiscriminator, SortedSet<LoginAggregation>>
-//            createColumnDiscriminatorMap(LoginReportForm form) {
-//        return getDefaultGroupedColumnDiscriminatorMap(form);
-//    }
+    protected Map<LoginAggregationDiscriminator, SortedSet<LoginAggregation>>
+            createColumnDiscriminatorMap(LoginReportForm form) {
+        return getDefaultGroupedColumnDiscriminatorMap(form, LoginAggregationDiscriminatorImpl.class);
+    }
+
     /**
-     * Default implementation to create a map of the report column discriminators based on the submitted form to
+     * Create a map of the report column discriminators based on the submitted form to
      * collate the aggregation data into each column of a report.
      * The map entries are a time-ordered sorted set of aggregation data points.
-     * Subclasses may override this method to obtain more from the form than just AggregatedGroupMappings as
-     * report columns.
      *
      * @param form Form submitted by the user
      * @return Map of report column discriminators to sorted set of time-based aggregation data
      */
-    //todo need to throw in a factory method to avoid duplicating this code.
-    protected Map<LoginAggregationDiscriminator, SortedSet<LoginAggregation>>
-    createColumnDiscriminatorMap (LoginReportForm form){
-        List<Long> groups = form.getGroups();
-        //Collections used to track the queried groups and the results
-        final Map<LoginAggregationDiscriminator, SortedSet<LoginAggregation>> groupedAggregations =
-                new TreeMap<LoginAggregationDiscriminator, SortedSet<LoginAggregation>>(LoginAggregationDiscriminatorImpl.Comparator.INSTANCE);
-
-        //Get concrete group mapping objects that are being queried for
-        for (final Long queryGroupId : groups) {
-            final LoginAggregationDiscriminator groupMapping =
-                    new LoginAggregationDiscriminatorImpl(this.aggregatedGroupDao.getGroupMapping(queryGroupId));
-
-            //Create the set the aggregations for this report column will be stored in, sorted chronologically
-            final SortedSet<LoginAggregation> aggregations = new TreeSet<LoginAggregation>(BaseAggregationDateTimeComparator.INSTANCE);
-
-            //Map the group to the set
-            groupedAggregations.put(groupMapping, aggregations);
-        }
-
-        return groupedAggregations;
-    }
-
-
     @Override
     protected List<ColumnDescription> getColumnDescriptions(LoginAggregationDiscriminator columnDiscriminator, LoginReportForm form) {
         final String groupName = columnDiscriminator.getAggregatedGroup().getGroupName();
