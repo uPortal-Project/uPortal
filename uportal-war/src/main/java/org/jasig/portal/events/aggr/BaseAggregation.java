@@ -19,10 +19,10 @@
 
 package org.jasig.portal.events.aggr;
 
-import java.io.Serializable;
-
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.joda.time.DateTime;
+
+import java.io.Serializable;
 
 
 /**
@@ -31,7 +31,7 @@ import org.joda.time.DateTime;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface BaseAggregation<K extends BaseAggregationKey> extends Serializable {
+public interface BaseAggregation<K extends BaseAggregationKey, D extends BaseGroupedAggregationDiscriminator> extends Serializable {
     /**
      * @return The {@link DateTime} the aggregation is for, short cut for getting the same info from {@link #getDateDimension()} and {@link #getTimeDimension()}
      */
@@ -66,4 +66,12 @@ public interface BaseAggregation<K extends BaseAggregationKey> extends Serializa
      * @return The key for this aggregation
      */
     K getAggregationKey();
+
+    /**
+     * Return a discriminator used for organizing aggregation data into separate columns for reporting purposes
+     * @return aggregation discriminator
+     */
+    D getAggregationDiscriminator();
+
+
 }

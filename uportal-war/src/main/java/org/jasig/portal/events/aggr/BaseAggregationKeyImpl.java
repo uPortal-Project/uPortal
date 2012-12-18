@@ -35,7 +35,7 @@ public abstract class BaseAggregationKeyImpl implements BaseAggregationKey {
     
     private int hashCode = 0;
     
-    public BaseAggregationKeyImpl(BaseAggregation<?> baseAggregation) {
+    public BaseAggregationKeyImpl(BaseAggregation<?,?> baseAggregation) {
         this(
                 baseAggregation.getDateDimension(),
                 baseAggregation.getTimeDimension(),

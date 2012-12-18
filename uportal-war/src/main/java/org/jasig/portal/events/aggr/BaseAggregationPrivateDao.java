@@ -30,7 +30,7 @@ import org.joda.time.DateTime;
  * @param <K> The key type for the aggregation
  */
 public interface BaseAggregationPrivateDao<
-            T extends BaseAggregationImpl<K>, 
+            T extends BaseAggregationImpl<K,?>,
             K extends BaseAggregationKey>
         extends BaseAggregationDao<T, K> {
     

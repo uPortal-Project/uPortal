@@ -16,33 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.events.aggr;
 
-import java.util.Comparator;
+import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+
 
 /**
- * Sorts {@link BaseAggregation} instaces by Date and Time
+ * Base of all aggregation discriminators used to organize aggregation results into different report columns
  * 
- * @author Eric Dalquist
+ * @author James Wennmacher
+ * @version $Revision$
  */
-public class BaseAggregationDateTimeComparator implements Comparator<BaseAggregation<?,?>> {
-    public static final Comparator<BaseAggregation<?,?>> INSTANCE = new BaseAggregationDateTimeComparator();
-    
+public interface BaseGroupedAggregationDiscriminator {
 
-    @Override
-    public int compare(BaseAggregation<?,?> o1, BaseAggregation<?,?> o2) {
-        if (o1 == o2) {
-            return 0;
-        }
-        if (o1 == null) {
-            return -1;
-        }
-        final int dataCmp = o1.getDateDimension().getDate().compareTo(o2.getDateDimension().getDate());
-        if (dataCmp != 0) {
-            return dataCmp;
-        }
-
-        return o1.getTimeDimension().getTime().compareTo(o2.getTimeDimension().getTime());
-    }
+    /**
+     * @return The group this aggregation is for, null if it is for all users
+     */
+    AggregatedGroupMapping getAggregatedGroup();
 
 }

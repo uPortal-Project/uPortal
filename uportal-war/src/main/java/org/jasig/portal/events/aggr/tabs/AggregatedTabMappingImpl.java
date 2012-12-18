@@ -143,4 +143,9 @@ public final class AggregatedTabMappingImpl implements AggregatedTabMapping, Ser
     public String toString() {
         return "AggregatedTabMappingImpl [id=" + id + ", fragmentName=" + fragmentName + ", tabName=" + tabName + "]";
     }
+
+    @Override
+    public String getDisplayString() {
+        return getTabName() + " (" + getFragmentName() + ")";
+    }
 }
