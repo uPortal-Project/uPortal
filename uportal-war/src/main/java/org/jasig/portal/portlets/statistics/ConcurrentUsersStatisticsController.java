@@ -40,6 +40,7 @@ import org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationKey;
 import org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationKeyImpl;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupLookupDao;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl;
 import org.jasig.portal.utils.ComparableExtractingComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -108,41 +109,18 @@ public class ConcurrentUsersStatisticsController extends
         return ConcurrentUserAggregationDiscriminatorImpl.Comparator.INSTANCE;
     }
 
-    @Override
-//    protected Map<BaseGroupedAggregationDiscriminator, SortedSet<ConcurrentUserAggregation>> createColumnDiscriminatorMap(ConcurrentUserReportForm form) {
-//        return getDefaultGroupedColumnDiscriminatorMap(form);
-//    }
     /**
-     * Default implementation to create a map of the report column discriminators based on the submitted form to
+     * Create a map of the report column discriminators based on the submitted form to
      * collate the aggregation data into each column of a report.
      * The map entries are a time-ordered sorted set of aggregation data points.
-     * Subclasses may override this method to obtain more from the form than just AggregatedGroupMappings as
-     * report columns.
      *
      * @param form Form submitted by the user
      * @return Map of report column discriminators to sorted set of time-based aggregation data
      */
-    //todo need to throw in a factory method to avoid duplicating this code.
+    @Override
     protected Map<ConcurrentUserAggregationDiscriminator, SortedSet<ConcurrentUserAggregation>>
     createColumnDiscriminatorMap (ConcurrentUserReportForm form){
-        List<Long> groups = form.getGroups();
-        //Collections used to track the queried groups and the results
-        final Map<ConcurrentUserAggregationDiscriminator, SortedSet<ConcurrentUserAggregation>> groupedAggregations =
-                new TreeMap<ConcurrentUserAggregationDiscriminator, SortedSet<ConcurrentUserAggregation>>(ConcurrentUserAggregationDiscriminatorImpl.Comparator.INSTANCE);
-
-        //Get concrete group mapping objects that are being queried for
-        for (final Long queryGroupId : groups) {
-            final ConcurrentUserAggregationDiscriminator groupMapping =
-                    new ConcurrentUserAggregationDiscriminatorImpl(this.aggregatedGroupDao.getGroupMapping(queryGroupId));
-
-            //Create the set the aggregations for this report column will be stored in, sorted chronologically
-            final SortedSet<ConcurrentUserAggregation> aggregations = new TreeSet<ConcurrentUserAggregation>(BaseAggregationDateTimeComparator.INSTANCE);
-
-            //Map the group to the set
-            groupedAggregations.put(groupMapping, aggregations);
-        }
-
-        return groupedAggregations;
+        return getDefaultGroupedColumnDiscriminatorMap(form, ConcurrentUserAggregationDiscriminatorImpl.class);
     }
 
     @Override
