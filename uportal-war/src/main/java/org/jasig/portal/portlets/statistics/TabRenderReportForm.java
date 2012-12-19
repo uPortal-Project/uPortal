@@ -16,24 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.jasig.portal.portlets.statistics;
 
-package org.jasig.portal.events.aggr.login;
 
-import org.jasig.portal.events.LoginEvent;
-import org.jasig.portal.events.aggr.BaseAggregation;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * @author Eric Dalquist
- * @version $Revision$
- */
-public interface LoginAggregation extends BaseAggregation<LoginAggregationKey, LoginAggregationDiscriminator> {
-    /**
-     * @return Total number of {@link LoginEvent}s that occurred in the interval
-     */
-    int getLoginCount();
-    
-    /**
-     * @return Unique number of {@link LoginEvent}s that occurred in the interval, uniqueness is determined by {@link LoginEvent#getUserName()}
-     */
-    int getUniqueLoginCount();
+public class TabRenderReportForm extends BaseReportForm {
+
+    private List<Long> tabs = new ArrayList<Long>();
+
+    public final List<Long> getTabs() {
+        return tabs;
+    }
+
+    public final void setTabs(List<Long> tabs) {
+        this.tabs = tabs;
+    }
 }

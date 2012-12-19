@@ -46,7 +46,8 @@ import org.slf4j.LoggerFactory;
  */
 @Access(AccessType.FIELD)
 @MappedSuperclass
-public abstract class BaseAggregationImpl<K extends BaseAggregationKey> implements BaseAggregation<K> {
+public abstract class BaseAggregationImpl<K extends BaseAggregationKey, D extends BaseGroupedAggregationDiscriminator>
+        implements BaseAggregation<K, D> {
     private static final long serialVersionUID = 1L;
     
     @Transient
@@ -79,7 +80,7 @@ public abstract class BaseAggregationImpl<K extends BaseAggregationKey> implemen
     private Boolean complete = null;
     @Transient
     private DateTime dateTime = null;
-    
+
     
     protected BaseAggregationImpl() {
         this.timeDimension = null;
@@ -158,7 +159,7 @@ public abstract class BaseAggregationImpl<K extends BaseAggregationKey> implemen
         this.completeInterval();
         this.complete = Boolean.TRUE;
     }
-    
+
     /**
      * Called to check if the interval is "complete". Defined as all data for the interval has been handled and
      * the final aggregation step(s) have been done. Implies that {@link #completeInterval()} has been called at
@@ -203,7 +204,7 @@ public abstract class BaseAggregationImpl<K extends BaseAggregationKey> implemen
             return false;
         if (!(obj instanceof BaseAggregationImpl))
             return false;
-        BaseAggregation<?> other = (BaseAggregation<?>) obj;
+        BaseAggregation<?,?> other = (BaseAggregation<?,?>) obj;
         if (dateDimension == null) {
             if (other.getDateDimension() != null)
                 return false;

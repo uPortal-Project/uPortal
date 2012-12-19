@@ -16,23 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.events.aggr.portletexec;
 
-import org.jasig.portal.events.aggr.BaseAggregation;
-import org.jasig.portal.events.aggr.TimedAggregationStatistics;
-import org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregationKey.ExecutionType;
+import org.jasig.portal.events.aggr.BaseGroupedAggregationDiscriminator;
 import org.jasig.portal.events.aggr.portlets.AggregatedPortletMapping;
 
 /**
- * Tracks portlet execution stats
- * 
- * @author Eric Dalquist
+ * Interface to separate Portlet Execution aggregation events into separate columns for reporting purposes.
+ *
+ * @author James Wennmacher, jameswennmacher@gmail.com
  */
-public interface PortletExecutionAggregation 
-        extends BaseAggregation<PortletExecutionAggregationKey, PortletExecutionAggregationDiscriminator>,
-        TimedAggregationStatistics {
-
+public interface PortletExecutionAggregationDiscriminator extends BaseGroupedAggregationDiscriminator {
     /**
      * @return The name of the tab
      */
@@ -41,10 +35,6 @@ public interface PortletExecutionAggregation
     /**
      * @return The type of portlet execution 
      */
-    ExecutionType getExecutionType();
+    PortletExecutionAggregationKey.ExecutionType getExecutionType();
     
-    /**
-     * @return Number of times portlet was executed
-     */
-    int getExecutionCount();
 }

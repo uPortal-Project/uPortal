@@ -18,38 +18,30 @@
  */
 package org.jasig.portal.events.aggr.tabrender;
 
-import org.jasig.portal.events.aggr.AggregationInterval;
-import org.jasig.portal.events.aggr.BaseAggregationKeyImpl;
-import org.jasig.portal.events.aggr.DateDimension;
-import org.jasig.portal.events.aggr.TimeDimension;
+import org.jasig.portal.events.aggr.BaseGroupedAggregationDiscriminatorImpl;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.events.aggr.tabs.AggregatedTabMapping;
+import org.jasig.portal.utils.ComparableExtractingComparator;
 
 /**
- * Basic impl of {@link TabRenderAggregationKey}
- * 
- * @author Eric Dalquist
+ * Basic impl of {@link org.jasig.portal.events.aggr.tabrender.TabRenderAggregationKey}
+ *
+ * @author James Wennmacher, jameswennmacher@gmail.com
  */
-final public class TabRenderAggregationKeyImpl extends BaseAggregationKeyImpl implements TabRenderAggregationKey {
+final public class TabRenderAggregationDiscriminatorImpl
+        extends BaseGroupedAggregationDiscriminatorImpl implements TabRenderAggregationDiscriminator {
     private static final long serialVersionUID = 1L;
-    
+
     private final AggregatedTabMapping tabMapping;
     private int hashCode = 0;
-    
-    public TabRenderAggregationKeyImpl(TabRenderAggregation baseAggregation) {
-        super(baseAggregation);
-        this.tabMapping = baseAggregation.getTabMapping();
+
+    public TabRenderAggregationDiscriminatorImpl(TabRenderAggregation aggregationData) {
+        super(aggregationData.getAggregatedGroup());
+        tabMapping = aggregationData.getTabMapping();
     }
 
-    public TabRenderAggregationKeyImpl(AggregationInterval aggregationInterval,
-            AggregatedGroupMapping aggregatedGroupMapping, AggregatedTabMapping tabMapping) {
-        super(aggregationInterval, aggregatedGroupMapping);
-        this.tabMapping = tabMapping;
-    }
-
-    public TabRenderAggregationKeyImpl(DateDimension dateDimension, TimeDimension timeDimension,
-            AggregationInterval aggregationInterval, AggregatedGroupMapping aggregatedGroupMapping, AggregatedTabMapping tabMapping) {
-        super(dateDimension, timeDimension, aggregationInterval, aggregatedGroupMapping);
+    public TabRenderAggregationDiscriminatorImpl(AggregatedGroupMapping aggregatedGroupMapping, AggregatedTabMapping tabMapping) {
+        super(aggregatedGroupMapping);
         this.tabMapping = tabMapping;
     }
 
@@ -78,7 +70,7 @@ final public class TabRenderAggregationKeyImpl extends BaseAggregationKeyImpl im
             return false;
         if (getClass() != obj.getClass())
             return false;
-        TabRenderAggregationKey other = (TabRenderAggregationKey) obj;
+        TabRenderAggregationDiscriminator other = (TabRenderAggregationDiscriminator) obj;
         if (tabMapping == null) {
             if (other.getTabMapping() != null)
                 return false;
@@ -87,11 +79,23 @@ final public class TabRenderAggregationKeyImpl extends BaseAggregationKeyImpl im
             return false;
         return true;
     }
-    
+
+    // Compare discriminators based on the group name and tab information
+    public static class Comparator extends
+            ComparableExtractingComparator<TabRenderAggregationDiscriminator, String> {
+
+        public static Comparator INSTANCE = new Comparator();
+
+        @Override
+        protected String getComparable(TabRenderAggregationDiscriminator o) {
+            return o.getAggregatedGroup().getGroupName()
+                    + o.getTabMapping().getTabName()
+                    + o.getTabMapping().getFragmentName();
+        }
+
+    }
     @Override
     public String toString() {
-        return "TabRenderAggregationKey [dateDimension=" + getDateDimension() + ", timeDimension="
-                + getTimeDimension() + ", interval=" + getInterval() + ", aggregatedGroup=" + getAggregatedGroup()
-                + ", tabMapping=" + tabMapping + "]";
+        return "TabRenderAggregationKey [" + super.toString() + ", tabMapping=" + tabMapping + "]";
     }
 }

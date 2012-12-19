@@ -19,7 +19,9 @@
 
 package org.jasig.portal.events.aggr.tabrender;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -35,7 +37,6 @@ import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.events.aggr.tabs.AggregatedTabMapping;
 import org.jasig.portal.events.aggr.tabs.AggregatedTabMappingImpl;
-import org.jasig.portal.jpa.BaseJpaDao.NaturalIdQuery;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -48,7 +49,7 @@ public class JpaTabRenderAggregationDao extends
         JpaBaseAggregationDao<TabRenderAggregationImpl, TabRenderAggregationKey> implements
         TabRenderAggregationPrivateDao {
     
-    private ParameterExpression<AggregatedTabMappingImpl> tabMappingParameter;
+    private ParameterExpression<Set> tabMappingParameter;
 
     public JpaTabRenderAggregationDao() {
         super(TabRenderAggregationImpl.class);
@@ -57,7 +58,7 @@ public class JpaTabRenderAggregationDao extends
 
     @Override
     protected void createParameterExpressions() {
-        this.tabMappingParameter = this.createParameterExpression(AggregatedTabMappingImpl.class, "tabMapping");
+        this.tabMappingParameter = this.createParameterExpression(Set.class, "tabMapping");
     }
 
     @Override
@@ -74,15 +75,23 @@ public class JpaTabRenderAggregationDao extends
     @Override
     protected void addAggregationSpecificKeyPredicate(CriteriaBuilder cb, Root<TabRenderAggregationImpl> root,
             List<Predicate> keyPredicates) {
-        keyPredicates.add(cb.equal(root.get(TabRenderAggregationImpl_.aggregatedTab), tabMappingParameter));
+        keyPredicates.add(root.get(TabRenderAggregationImpl_.aggregatedTab).in(tabMappingParameter));
     }
 
     @Override
     protected void bindAggregationSpecificKeyParameters(TypedQuery<TabRenderAggregationImpl> query,
-            TabRenderAggregationKey key) {
-        query.setParameter(this.tabMappingParameter, (AggregatedTabMappingImpl)key.getTabMapping());
+            Set<TabRenderAggregationKey> keys) {
+        query.setParameter(this.tabMappingParameter, extractAggregateTabMappings(keys));
     }
-    
+
+    private Set<AggregatedTabMapping> extractAggregateTabMappings(Set<TabRenderAggregationKey> keys) {
+        Set<AggregatedTabMapping> portletMappings = new HashSet<AggregatedTabMapping>();
+        for (TabRenderAggregationKey key : keys) {
+            portletMappings.add(key.getTabMapping());
+        }
+        return portletMappings;
+    }
+
     @Override
     protected void bindAggregationSpecificKeyParameters(NaturalIdQuery<TabRenderAggregationImpl> query,
             TabRenderAggregationKey key) {

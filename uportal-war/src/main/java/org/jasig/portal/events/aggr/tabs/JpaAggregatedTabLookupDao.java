@@ -91,7 +91,8 @@ public class JpaAggregatedTabLookupDao extends BaseAggrEventsJpaDao implements A
             }
         });
     }
-    
+
+    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     @Override
     public AggregatedTabMapping getMappedTabForLayoutId(String layoutNodeId) {
         final Tuple<String, String> resolveTabName = this.resolveTabName(layoutNodeId);
@@ -196,5 +197,10 @@ public class JpaAggregatedTabLookupDao extends BaseAggrEventsJpaDao implements A
         final Tuple<String, String> tuple = new Tuple<String, String>(fragmentName, tabName);
         layoutNodeIdNameResolutionCache.put(new Element(targetedLayoutNodeId, tuple));
         return tuple;
+    }
+
+    @Override
+    public AggregatedTabMapping getTabMapping(long tabMappingId) {
+        return this.getEntityManager().find(AggregatedTabMappingImpl.class, tabMappingId);
     }
 }

@@ -33,7 +33,7 @@ import org.joda.time.DateTime;
  * @param <T> Aggregation type
  */
 public interface BaseAggregationDao<
-            T extends BaseAggregation<K>, 
+            T extends BaseAggregation<K,?>,
             K extends BaseAggregationKey> {
     /**
      * Aggregations in a date range for a specified interval and group(s) ordered by date/time
@@ -41,13 +41,24 @@ public interface BaseAggregationDao<
      * @param start the start {@link DateTime} of the range, inclusive
      * @param end the end {@link DateTime} of the range, exclusive
      * @param key The {@link BaseAggregationKey#getDateDimension()} and {@link BaseAggregationKey#getTimeDimension()} fields on the key are ignored for this method
-     * @param aggregatedGroupMapping Groups in addition to the group specified by {@link BaseAggregationKey#getAggregatedGroup()} to get aggregations for
+     * @param aggregatedGroupMappings Groups in addition to the group specified by {@link BaseAggregationKey#getAggregatedGroup()} to get aggregations for
      */
     List<T> getAggregations(DateTime start, DateTime end, K key, AggregatedGroupMapping... aggregatedGroupMappings);
 
     /**
+     * Aggregations in a date range for a specified interval and group(s) ordered by date/time
+     *
+     * @param start the start {@link DateTime} of the range, inclusive
+     * @param end the end {@link DateTime} of the range, exclusive
+     * @param keys A set of BaseAggregationKeys to get aggregations for.  The {@link BaseAggregationKey#getDateDimension()}
+     *            and {@link BaseAggregationKey#getTimeDimension()} fields on the key are ignored for this method.
+     *            The {@link BaseAggregationKey#getInterval()} from the first key is used (the rest assumed to be the same).
+     * @param aggregatedGroupMappings Groups in addition to the group specified by {@link BaseAggregationKey#getAggregatedGroup()} to get aggregations for
+     */
+    List<T> getAggregations(DateTime start, DateTime end, Set<K> keys, AggregatedGroupMapping... aggregatedGroupMappings);
+
+    /**
      * Get all aggregations regardless of associated {@link AggregatedGroupMapping} 
-     * @param key The {@link BaseAggregationKey#getAggregatedGroup()} field is ignored for this method
      * @return All aggregations for the date, time and interval
      */
     Map<K, T> getAggregationsForInterval(DateDimension dateDimension, TimeDimension timeDimension, AggregationInterval interval);
