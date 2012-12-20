@@ -28,7 +28,7 @@ import org.jasig.portal.utils.ComparableExtractingComparator;
  *
  * @author James Wennmacher, jameswennmacher@gmail.com
  */
-final class PortletExecutionAggregationDiscriminatorImpl extends BaseGroupedAggregationDiscriminatorImpl
+public final class PortletExecutionAggregationDiscriminatorImpl extends BaseGroupedAggregationDiscriminatorImpl
         implements PortletExecutionAggregationDiscriminator {
     private static final long serialVersionUID = 1L;
 
