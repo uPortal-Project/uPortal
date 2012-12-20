@@ -34,7 +34,7 @@ public interface AggregatedPortletLookupDao {
     AggregatedPortletMapping getMappedPortletForFname(String fname);
     
     /**
-     * All tabs that have aggregated data
+     * All portlets that have aggregated data
      */
     Set<AggregatedPortletMapping> getPortletMappings();
 }

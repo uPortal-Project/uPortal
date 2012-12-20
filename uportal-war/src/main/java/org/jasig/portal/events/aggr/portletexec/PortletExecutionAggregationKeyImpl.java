@@ -30,7 +30,7 @@ import org.jasig.portal.events.aggr.portlets.AggregatedPortletMapping;
  * 
  * @author Eric Dalquist
  */
-final class PortletExecutionAggregationKeyImpl extends BaseAggregationKeyImpl implements PortletExecutionAggregationKey {
+public final class PortletExecutionAggregationKeyImpl extends BaseAggregationKeyImpl implements PortletExecutionAggregationKey {
     private static final long serialVersionUID = 1L;
     
     private final AggregatedPortletMapping portletMapping;

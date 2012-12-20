@@ -88,9 +88,9 @@ public class TabRenderStatisticsController extends
     }
 
     /**
-     * Set the tab names to have selected by default
+     * Set the tab names to have first selected by default
      */
-    protected void setReportFormTabs(final TabRenderReportForm report) {
+    private void setReportFormTabs(final TabRenderReportForm report) {
         final Set<AggregatedTabMapping> tabs = this.getTabs();
         if (!tabs.isEmpty()) {
             report.getTabs().add(tabs.iterator().next().getId());

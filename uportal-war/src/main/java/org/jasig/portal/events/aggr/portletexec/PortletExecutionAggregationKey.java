@@ -54,7 +54,6 @@ public interface PortletExecutionAggregationKey extends BaseAggregationKey {
         RESOURCE(PortletResourceExecutionEvent.class);
         
         private final Class<? extends PortalEvent> supportedType;
-        
         private ExecutionType(Class<? extends PortalEvent> supportedType) {
             this.supportedType = supportedType;
         }
