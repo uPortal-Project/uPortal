@@ -173,11 +173,22 @@ public class TabRenderStatisticsController extends
     }
 
     @Override
+    protected String getReportTitleAugmentation(TabRenderReportForm form) {
+        if (form.getGroups().size() == 1) {
+            Long groupId = form.getGroups().iterator().next().longValue();
+            AggregatedGroupMapping groupMapping = this.aggregatedGroupDao.getGroupMapping(groupId);
+            return groupMapping.getGroupName();
+        }
+        return null;
+    }
+
+    @Override
     protected List<ColumnDescription> getColumnDescriptions(TabRenderAggregationDiscriminator reportColumnDiscriminator,
                                                             TabRenderReportForm form) {
         AggregatedTabMapping tab = reportColumnDiscriminator.getTabMapping();
         AggregatedGroupMapping group = reportColumnDiscriminator.getAggregatedGroup();
-        String groupNameToIncludeInHeader = form.getGroups().size() > 1 ?
+        String groupNameToIncludeInHeader =
+                showFullColumnHeaderDescriptions(form) || form.getGroups().size() > 1 ?
                 " - " + reportColumnDiscriminator.getAggregatedGroup().getGroupName() : "";
 
         final List<ColumnDescription> columnDescriptions = new ArrayList<ColumnDescription>();

@@ -45,8 +45,11 @@
     <!-- Portlet Section -->
     <div id="${n}" class="portlet-section" role="region">
       <spring:message var="reportNameStr" code="${reportName}"/>
-                
-      <div class="portlet-section-body">
+        <!-- hidden div to hold string to use for base report title when report parameters are changed -->
+        <div id="${n}_titleUnmodified" style="display: none"><spring:message code="${reportName}"/></div>
+        <div id="${n}_titleTemplate" style="display: none"><spring:message code="report.titleWithSingularFields" arguments="${reportNameStr}"/></div>
+
+        <div class="portlet-section-body">
         <div>
             <div id="${n}_chartLinkBar">
                 <button id="${n}_editChart"><spring:message code="edit.chart"/></button>
@@ -316,7 +319,14 @@ up.jQuery(function() {
          // Render the updated graph
          var table = new google.visualization.DataTable(data.table);
 
+         // Render the report title, or the title with the augmented text based on report parameters
+         var tableTitle = $("#${n}_titleUnmodified").text();
+         if (data.titleAugmentation) {
+             tableTitle = $("#${n}_titleTemplate").text().replace("$0",data.titleAugmentation);
+         }
+
          var chartWrapper = getChartWrapper();
+         chartWrapper.setOption('title',tableTitle);
          chartWrapper.setDataTable(table);
          chartWrapper.draw();
          

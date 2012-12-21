@@ -46,6 +46,7 @@ import com.google.visualization.datasource.datatable.value.DateValue;
 import com.google.visualization.datasource.datatable.value.TimeOfDayValue;
 import com.google.visualization.datasource.datatable.value.Value;
 import com.google.visualization.datasource.datatable.value.ValueType;
+import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.AggregationIntervalHelper;
 import org.jasig.portal.events.aggr.BaseAggregation;
@@ -163,7 +164,7 @@ public abstract class BaseStatisticsReportController<T extends BaseAggregation<K
      */
     @ModelAttribute("reportName")
     public abstract String getReportName();
-    
+
     /**
      * @return The {@link ResourceURL#setResourceID(String)} value used to get the {@link DataTable} for the report
      */
@@ -324,8 +325,56 @@ public abstract class BaseStatisticsReportController<T extends BaseAggregation<K
                 view = "json";
             }
         }
-        
-        return new ModelAndView(view, "table", table);
+        ModelAndView modelAndView = new ModelAndView(view, "table", table);
+        String titleAugmentation = getReportTitleAugmentation(form);
+        if (StringUtils.isNotBlank(titleAugmentation)) {
+            modelAndView.addObject("titleAugmentation", getReportTitleAugmentation(form));
+        }
+        return  modelAndView;
+    }
+
+    /**
+     * Return additional data to attach to the title of the form. This is used when
+     * the user selects a single value of a multi-valued set and
+     * you don't want to include the selected value in the report columns since they'd
+     * be redundant; e.g. why have a graph with data showing "PortletA - Everyone",
+     * "PortletB - Everyone", "PortletC - Everyone".
+     *
+     * Default behavior is to return null and not alter the report title.
+     *
+     * @param form the form
+     * @return Formatted string to attach to the title of the form.  Null to
+     *         not change the title of the report based on form selections.
+     */
+    protected String getReportTitleAugmentation(F form) {
+        return null;
+    }
+
+    /**
+     * Returns true to indicate report format is only data table and doesn't have
+     * report graph titles, etc. so the report columns needs to fully describe
+     * the data columns.  CSV and HTML tables require full column header
+     * descriptions.
+     *
+     * @param form the form
+     * @return True if report columns should have full header descriptions.
+     */
+    protected final boolean showFullColumnHeaderDescriptions(F form) {
+        boolean showFullHeaderDescriptions = false;
+        switch (form.getFormat()) {
+            case csv: {
+                showFullHeaderDescriptions = true;
+                break;
+            }
+            case html: {
+                showFullHeaderDescriptions = true;
+                break;
+            }
+            default: {
+                showFullHeaderDescriptions = false;
+            }
+        }
+        return showFullHeaderDescriptions;
     }
 
     /**

@@ -199,12 +199,34 @@ public class PortletExecutionStatisticsController extends
     }
 
     @Override
+    protected String getReportTitleAugmentation(PortletExecutionReportForm form) {
+        String augmentedTitle = null;
+        if (form.getGroups().size() == 1) {
+            Long groupId = form.getGroups().iterator().next().longValue();
+            AggregatedGroupMapping groupMapping = this.aggregatedGroupLookupDao.getGroupMapping(groupId);
+            augmentedTitle = groupMapping.getGroupName();
+        }
+        if (form.getExecutionTypeNames().size() == 1) {
+            String executionType = form.getExecutionTypeNames().iterator().next();
+            augmentedTitle = augmentedTitle != null ?
+                    augmentedTitle + ", " + executionType : executionType;
+        }
+        return augmentedTitle;
+    }
+
+    /**
+     * Create column descriptions for the portlet report.
+     * @param reportColumnDiscriminator
+     * @param form The original query form
+     * @return
+     */
+    @Override
     protected List<ColumnDescription> getColumnDescriptions(PortletExecutionAggregationDiscriminator reportColumnDiscriminator,
                                                             PortletExecutionReportForm form) {
         AggregatedPortletMapping portlet = reportColumnDiscriminator.getPortletMapping();
-        String groupNameToIncludeInHeader = form.getGroups().size() > 1 ?
+        String groupNameToIncludeInHeader = showFullColumnHeaderDescriptions(form) || form.getGroups().size() > 1 ?
                 " - " + reportColumnDiscriminator.getAggregatedGroup().getGroupName() : "";
-        String portletActionToIncludeInHeader = form.getExecutionTypeNames().size() > 1 ?
+        String portletActionToIncludeInHeader = showFullColumnHeaderDescriptions(form) || form.getExecutionTypeNames().size() > 1 ?
                 " (" + reportColumnDiscriminator.getExecutionType().getName() + ")" : "";
 
         final List<ColumnDescription> columnDescriptions = new ArrayList<ColumnDescription>();
