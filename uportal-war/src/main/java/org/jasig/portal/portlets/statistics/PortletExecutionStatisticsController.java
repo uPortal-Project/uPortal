@@ -102,7 +102,7 @@ public class PortletExecutionStatisticsController extends
     private void selectFormDefaultPortlet(final PortletExecutionReportForm report) {
         final Set<AggregatedPortletMapping> portlets = this.getPortlets();
         if (!portlets.isEmpty()) {
-            report.getPortlets().add(portlets.iterator().next().getFName());
+            report.getPortlets().add(portlets.iterator().next().getFname());
         }
     }
 
@@ -203,10 +203,12 @@ public class PortletExecutionStatisticsController extends
         AggregatedPortletMapping portlet = reportColumnDiscriminator.getPortletMapping();
         String groupNameToIncludeInHeader = form.getGroups().size() > 1 ?
                 " - " + reportColumnDiscriminator.getAggregatedGroup().getGroupName() : "";
+        String portletActionToIncludeInHeader = form.getExecutionTypeNames().size() > 1 ?
+                " (" + reportColumnDiscriminator.getExecutionType().getName() + ")" : "";
 
         final List<ColumnDescription> columnDescriptions = new ArrayList<ColumnDescription>();
-        columnDescriptions.add(new ColumnDescription(portlet.getName() + groupNameToIncludeInHeader,
-                ValueType.NUMBER, portlet.getName() + groupNameToIncludeInHeader));
+        columnDescriptions.add(new ColumnDescription(portlet.getFname() + portletActionToIncludeInHeader + groupNameToIncludeInHeader,
+                ValueType.NUMBER, portlet.getFname() + portletActionToIncludeInHeader + groupNameToIncludeInHeader));
         return columnDescriptions;
     }
 

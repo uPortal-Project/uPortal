@@ -29,6 +29,6 @@ public class AggregatedPortletMappingNameComparator extends
 
     @Override
     protected String getComparable(AggregatedPortletMapping o) {
-        return o.getFName();
+        return o.getFname();
     }
 }
