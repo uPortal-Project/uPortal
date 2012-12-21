@@ -100,7 +100,7 @@ public final class PortletExecutionAggregationDiscriminatorImpl extends BaseGrou
         @Override
         protected String getComparable(PortletExecutionAggregationDiscriminator o) {
             return o.getAggregatedGroup().getGroupName()
-                    + o.getPortletMapping().getFName()
+                    + o.getPortletMapping().getFname()
                     + o.getExecutionType().name();
         }
     }

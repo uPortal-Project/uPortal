@@ -23,7 +23,7 @@
                 <form:label path="portlets"><spring:message code="portlet"/></form:label>
                 <form:select path="portlets">
                     <c:forEach items="${ portlets }" var="portlet">
-                        <form:option value="${ portlet.fName }" label="${portlet.name}"/>
+                        <form:option value="${ portlet.fname }" label="${portlet.name}"/>
                     </c:forEach>
                 </form:select>
             </p>

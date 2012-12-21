@@ -32,7 +32,7 @@ public interface AggregatedPortletMapping {
      * @return fname of the mapped portlet
      * @see IPortletDefinition#getFName()
      */
-    String getFName();
+    String getFname();
     
     /**
      * @return the name of the mapped portlet
