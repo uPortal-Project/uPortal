@@ -18,17 +18,11 @@
  */
 package org.jasig.portal.portlets.statistics;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
+import com.google.visualization.datasource.base.TypeMismatchException;
+import com.google.visualization.datasource.datatable.ColumnDescription;
+import com.google.visualization.datasource.datatable.value.NumberValue;
+import com.google.visualization.datasource.datatable.value.Value;
+import com.google.visualization.datasource.datatable.value.ValueType;
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.BaseAggregationDao;
 import org.jasig.portal.events.aggr.BaseAggregationDateTimeComparator;
@@ -43,6 +37,7 @@ import org.jasig.portal.events.aggr.tabrender.TabRenderAggregationKeyImpl;
 import org.jasig.portal.events.aggr.tabs.AggregatedTabLookupDao;
 import org.jasig.portal.events.aggr.tabs.AggregatedTabMapping;
 import org.jasig.portal.events.aggr.tabs.AggregatedTabMappingNameComparator;
+import org.jasig.portal.utils.ComparableExtractingComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -51,11 +46,7 @@ import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 
-import com.google.visualization.datasource.base.TypeMismatchException;
-import com.google.visualization.datasource.datatable.ColumnDescription;
-import com.google.visualization.datasource.datatable.value.NumberValue;
-import com.google.visualization.datasource.datatable.value.Value;
-import com.google.visualization.datasource.datatable.value.ValueType;
+import java.util.*;
 
 /**
  * Tab render reports
@@ -182,12 +173,23 @@ public class TabRenderStatisticsController extends
     }
 
     @Override
+    protected String getReportTitleAugmentation(TabRenderReportForm form) {
+        if (form.getGroups().size() == 1) {
+            Long groupId = form.getGroups().iterator().next().longValue();
+            AggregatedGroupMapping groupMapping = this.aggregatedGroupDao.getGroupMapping(groupId);
+            return groupMapping.getGroupName();
+        }
+        return null;
+    }
+
+    @Override
     protected List<ColumnDescription> getColumnDescriptions(TabRenderAggregationDiscriminator reportColumnDiscriminator,
                                                             TabRenderReportForm form) {
         AggregatedTabMapping tab = reportColumnDiscriminator.getTabMapping();
         AggregatedGroupMapping group = reportColumnDiscriminator.getAggregatedGroup();
-        String groupNameToIncludeInHeader = form.getGroups().size() > 1 ?
-                " - " + group.getGroupName() : "";
+        String groupNameToIncludeInHeader =
+                showFullColumnHeaderDescriptions(form) || form.getGroups().size() > 1 ?
+                " - " + reportColumnDiscriminator.getAggregatedGroup().getGroupName() : "";
 
         final List<ColumnDescription> columnDescriptions = new ArrayList<ColumnDescription>();
         columnDescriptions.add(new ColumnDescription(tab.getDisplayString() + groupNameToIncludeInHeader,

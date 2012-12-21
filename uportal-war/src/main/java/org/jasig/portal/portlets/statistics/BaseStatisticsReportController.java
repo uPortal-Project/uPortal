@@ -18,6 +18,8 @@
  */
 package org.jasig.portal.portlets.statistics;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -30,28 +32,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.portlet.ResourceURL;
-
-import org.jasig.portal.events.aggr.AggregationInterval;
-import org.jasig.portal.events.aggr.AggregationIntervalHelper;
-import org.jasig.portal.events.aggr.BaseAggregation;
-import org.jasig.portal.events.aggr.BaseAggregationDao;
-import org.jasig.portal.events.aggr.BaseAggregationDateTimeComparator;
-import org.jasig.portal.events.aggr.BaseAggregationKey;
-import org.jasig.portal.events.aggr.BaseGroupedAggregationDiscriminator;
-import org.jasig.portal.events.aggr.groups.AggregatedGroupLookupDao;
-import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
-import org.jasig.portal.events.aggr.groups.AggregatedGroupMappingNameComparator;
-import org.joda.time.DateMidnight;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.DateTimeFormatterBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.portlet.ModelAndView;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
@@ -66,6 +46,28 @@ import com.google.visualization.datasource.datatable.value.DateValue;
 import com.google.visualization.datasource.datatable.value.TimeOfDayValue;
 import com.google.visualization.datasource.datatable.value.Value;
 import com.google.visualization.datasource.datatable.value.ValueType;
+import org.jasig.portal.events.aggr.AggregationInterval;
+import org.jasig.portal.events.aggr.AggregationIntervalHelper;
+import org.jasig.portal.events.aggr.BaseAggregation;
+import org.jasig.portal.events.aggr.BaseAggregationDao;
+import org.jasig.portal.events.aggr.BaseAggregationDateTimeComparator;
+import org.jasig.portal.events.aggr.BaseAggregationKey;
+import org.jasig.portal.events.aggr.BaseGroupedAggregationDiscriminator;
+import org.jasig.portal.events.aggr.groups.AggregatedGroupLookupDao;
+import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.jasig.portal.events.aggr.groups.AggregatedGroupMappingNameComparator;
+import org.jasig.portal.utils.ComparableExtractingComparator;
+import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.portlet.ModelAndView;
 
 /**
  * Base class for reporting on portal statistics. Does most of the heavy lifting for reporting against {@link BaseAggregation} subclasses.
@@ -164,7 +166,7 @@ public abstract class BaseStatisticsReportController<
      */
     @ModelAttribute("reportName")
     public abstract String getReportName();
-    
+
     /**
      * @return The {@link ResourceURL#setResourceID(String)} value used to get the {@link DataTable} for the report
      */
@@ -325,8 +327,56 @@ public abstract class BaseStatisticsReportController<
                 view = "json";
             }
         }
-        
-        return new ModelAndView(view, "table", table);
+        ModelAndView modelAndView = new ModelAndView(view, "table", table);
+        String titleAugmentation = getReportTitleAugmentation(form);
+        if (StringUtils.isNotBlank(titleAugmentation)) {
+            modelAndView.addObject("titleAugmentation", getReportTitleAugmentation(form));
+        }
+        return  modelAndView;
+    }
+
+    /**
+     * Return additional data to attach to the title of the form. This is used when
+     * the user selects a single value of a multi-valued set and
+     * you don't want to include the selected value in the report columns since they'd
+     * be redundant; e.g. why have a graph with data showing "PortletA - Everyone",
+     * "PortletB - Everyone", "PortletC - Everyone".
+     *
+     * Default behavior is to return null and not alter the report title.
+     *
+     * @param form the form
+     * @return Formatted string to attach to the title of the form.  Null to
+     *         not change the title of the report based on form selections.
+     */
+    protected String getReportTitleAugmentation(F form) {
+        return null;
+    }
+
+    /**
+     * Returns true to indicate report format is only data table and doesn't have
+     * report graph titles, etc. so the report columns needs to fully describe
+     * the data columns.  CSV and HTML tables require full column header
+     * descriptions.
+     *
+     * @param form the form
+     * @return True if report columns should have full header descriptions.
+     */
+    protected final boolean showFullColumnHeaderDescriptions(F form) {
+        boolean showFullHeaderDescriptions = false;
+        switch (form.getFormat()) {
+            case csv: {
+                showFullHeaderDescriptions = true;
+                break;
+            }
+            case html: {
+                showFullHeaderDescriptions = true;
+                break;
+            }
+            default: {
+                showFullHeaderDescriptions = false;
+            }
+        }
+        return showFullHeaderDescriptions;
     }
 
     /**
@@ -516,6 +566,7 @@ public abstract class BaseStatisticsReportController<
      * Creates an instance of a BaseGroupedAggregationDiscriminator or any descendants that only
      * require an AggregatedGroupMapping (e.g. won't work for TabRender or other reports that have
      * item other than group (user group) being queried on.
+     * @param klass Discriminator class extending {@link BaseGroupedAggregationDiscriminator}
      * @param groupMapping group mapping
      * @return Fully populated child instance of BaseGroupedAggregationDiscriminator
      */
