@@ -19,11 +19,6 @@
 
 package org.jasig.portal.events.aggr.portlets;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import org.jasig.portal.concurrency.CallableWithoutResult;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
@@ -33,6 +28,11 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Eric Dalquist
@@ -58,7 +58,7 @@ public class JpaAggregatedPortletLookupDaoTest extends BaseAggrEventsJpaDaoTest 
                 final AggregatedPortletMapping portletMapping = aggregatedPortletLookupDao.getMappedPortletForFname("fname");
                 
                 assertNotNull(portletMapping);
-                assertEquals("fname", portletMapping.getFName());
+                assertEquals("fname", portletMapping.getFname());
                 assertEquals("PortletName", portletMapping.getName());
             }
         });
@@ -69,7 +69,7 @@ public class JpaAggregatedPortletLookupDaoTest extends BaseAggrEventsJpaDaoTest 
                 final AggregatedPortletMapping portletMapping = aggregatedPortletLookupDao.getMappedPortletForFname("fname");
                 
                 assertNotNull(portletMapping);
-                assertEquals("fname", portletMapping.getFName());
+                assertEquals("fname", portletMapping.getFname());
                 assertEquals("PortletName", portletMapping.getName());
             }
         });
@@ -80,7 +80,7 @@ public class JpaAggregatedPortletLookupDaoTest extends BaseAggrEventsJpaDaoTest 
                 final AggregatedPortletMapping portletMapping = aggregatedPortletLookupDao.getMappedPortletForFname("fname_old");
                 
                 assertNotNull(portletMapping);
-                assertEquals("fname_old", portletMapping.getFName());
+                assertEquals("fname_old", portletMapping.getFname());
                 assertEquals("fname_old", portletMapping.getName());
             }
         });
@@ -91,7 +91,7 @@ public class JpaAggregatedPortletLookupDaoTest extends BaseAggrEventsJpaDaoTest 
                 final AggregatedPortletMapping portletMapping = aggregatedPortletLookupDao.getMappedPortletForFname("fname_old");
                 
                 assertNotNull(portletMapping);
-                assertEquals("fname_old", portletMapping.getFName());
+                assertEquals("fname_old", portletMapping.getFname());
                 assertEquals("fname_old", portletMapping.getName());
             }
         });

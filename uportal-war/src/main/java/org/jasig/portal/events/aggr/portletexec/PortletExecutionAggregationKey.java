@@ -61,5 +61,9 @@ public interface PortletExecutionAggregationKey extends BaseAggregationKey {
         public final boolean supports(Class<? extends PortalEvent> type) {
             return supportedType.isAssignableFrom(type);
         }
+
+        public String getName() {
+            return name();
+        }
     }
 }
