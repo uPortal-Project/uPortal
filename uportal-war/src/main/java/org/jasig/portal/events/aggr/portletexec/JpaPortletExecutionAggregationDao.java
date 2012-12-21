@@ -19,6 +19,7 @@
 
 package org.jasig.portal.events.aggr.portletexec;
 
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -51,7 +52,7 @@ public class JpaPortletExecutionAggregationDao extends
         PortletExecutionAggregationPrivateDao {
     
     private ParameterExpression<Set> portletMappingParameter;
-    private ParameterExpression<ExecutionType> executionTypeParameter;
+    private ParameterExpression<Set> executionTypeParameter;
 
     public JpaPortletExecutionAggregationDao() {
         super(PortletExecutionAggregationImpl.class);
@@ -61,7 +62,7 @@ public class JpaPortletExecutionAggregationDao extends
     @Override
     protected void createParameterExpressions() {
         this.portletMappingParameter = this.createParameterExpression(Set.class, "portletMapping");
-        this.executionTypeParameter = this.createParameterExpression(ExecutionType.class, "executionType");
+        this.executionTypeParameter = this.createParameterExpression(Set.class, "executionType");
     }
 
     @Override
@@ -79,7 +80,7 @@ public class JpaPortletExecutionAggregationDao extends
     protected void addAggregationSpecificKeyPredicate(CriteriaBuilder cb, Root<PortletExecutionAggregationImpl> root,
             List<Predicate> keyPredicates) {
         keyPredicates.add(root.get(PortletExecutionAggregationImpl_.aggregatedPortlet).in(portletMappingParameter));
-        keyPredicates.add(cb.equal(root.get(PortletExecutionAggregationImpl_.executionType), executionTypeParameter));
+        keyPredicates.add(root.get(PortletExecutionAggregationImpl_.executionType).in(executionTypeParameter));
     }
 
     // The execution type is obtained from the first PortletExecutionAggregationKey.
@@ -87,7 +88,7 @@ public class JpaPortletExecutionAggregationDao extends
     protected void bindAggregationSpecificKeyParameters(TypedQuery<PortletExecutionAggregationImpl> query,
             Set<PortletExecutionAggregationKey> keys) {
         query.setParameter(this.portletMappingParameter, extractAggregatePortletMappings(keys));
-        query.setParameter(this.executionTypeParameter, keys.iterator().next().getExecutionType());
+        query.setParameter(this.executionTypeParameter, extractExecutionTypes(keys));
     }
 
     private Set<AggregatedPortletMapping> extractAggregatePortletMappings(Set<PortletExecutionAggregationKey> keys) {
@@ -96,6 +97,14 @@ public class JpaPortletExecutionAggregationDao extends
             portletMappings.add(key.getPortletMapping());
         }
         return portletMappings;
+    }
+
+    private Set<ExecutionType> extractExecutionTypes(Set<PortletExecutionAggregationKey> keys) {
+        Set<ExecutionType> executionTypes = EnumSet.noneOf(ExecutionType.class);
+        for (PortletExecutionAggregationKey key : keys) {
+            executionTypes.add(key.getExecutionType());
+        }
+        return executionTypes;
     }
     
     @Override
