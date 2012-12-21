@@ -43,6 +43,7 @@ import org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregationDao;
 import org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregationDiscriminator;
 import org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregationDiscriminatorImpl;
 import org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregationKey;
+import org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregationKey.ExecutionType;
 import org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregationKeyImpl;
 import org.jasig.portal.events.aggr.portlets.AggregatedPortletLookupDao;
 import org.jasig.portal.events.aggr.portlets.AggregatedPortletMapping;
@@ -119,15 +120,15 @@ public class PortletExecutionStatisticsController extends
     }
 
     @ModelAttribute("executionTypes")
-    public PortletExecutionAggregationKey.ExecutionType[] getExecutionTypes() {
-        return PortletExecutionAggregationKey.ExecutionType.values();
+    public ExecutionType[] getExecutionTypes() {
+        return ExecutionType.values();
     }
 
     /**
      * Select the XXXX execution type by default for the form
      */
     private void selectFormExecutionType(final PortletExecutionReportForm report) {
-        report.getExecutionTypeNames().add(PortletExecutionAggregationKey.ExecutionType.RENDER.name());
+        report.getExecutionTypeNames().add(ExecutionType.RENDER.name());
     }
 
     @Override
@@ -182,7 +183,7 @@ public class PortletExecutionStatisticsController extends
                 for (String executionType : executionTypes) {
                     final PortletExecutionAggregationDiscriminator mapping =
                             new PortletExecutionAggregationDiscriminatorImpl(groupMapping, tabMapping,
-                                    PortletExecutionAggregationKey.ExecutionType.valueOf(executionType));
+                                    ExecutionType.valueOf(executionType));
                     //Create the set the aggregations for this report column will be stored in, sorted chronologically
                     final SortedSet<PortletExecutionAggregation> aggregations =
                             new TreeSet<PortletExecutionAggregation>(BaseAggregationDateTimeComparator.INSTANCE);

@@ -19,6 +19,7 @@
 package org.jasig.portal.events.aggr.portletexec;
 
 import org.jasig.portal.events.aggr.BaseGroupedAggregationDiscriminator;
+import org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregationKey.ExecutionType;
 import org.jasig.portal.events.aggr.portlets.AggregatedPortletMapping;
 
 /**
@@ -35,6 +36,6 @@ public interface PortletExecutionAggregationDiscriminator extends BaseGroupedAgg
     /**
      * @return The type of portlet execution 
      */
-    PortletExecutionAggregationKey.ExecutionType getExecutionType();
+    ExecutionType getExecutionType();
     
 }

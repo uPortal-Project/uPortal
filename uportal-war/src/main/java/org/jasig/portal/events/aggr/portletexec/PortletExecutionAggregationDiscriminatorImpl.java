@@ -20,6 +20,7 @@ package org.jasig.portal.events.aggr.portletexec;
 
 import org.jasig.portal.events.aggr.BaseGroupedAggregationDiscriminatorImpl;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregationKey.ExecutionType;
 import org.jasig.portal.events.aggr.portlets.AggregatedPortletMapping;
 import org.jasig.portal.utils.ComparableExtractingComparator;
 
@@ -33,7 +34,7 @@ public final class PortletExecutionAggregationDiscriminatorImpl extends BaseGrou
     private static final long serialVersionUID = 1L;
 
     private final AggregatedPortletMapping portletMapping;
-    private final PortletExecutionAggregationKey.ExecutionType executionType;
+    private final ExecutionType executionType;
     private int hashCode = 0;
 
     public PortletExecutionAggregationDiscriminatorImpl(PortletExecutionAggregation baseAggregation) {
@@ -54,7 +55,7 @@ public final class PortletExecutionAggregationDiscriminatorImpl extends BaseGrou
     }
     
     @Override
-    public final PortletExecutionAggregationKey.ExecutionType getExecutionType() {
+    public final ExecutionType getExecutionType() {
         return this.executionType;
     }
 
