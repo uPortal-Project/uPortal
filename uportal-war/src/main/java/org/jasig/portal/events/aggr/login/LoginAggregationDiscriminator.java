@@ -16,24 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.events.aggr.login;
 
-import org.jasig.portal.events.LoginEvent;
-import org.jasig.portal.events.aggr.BaseAggregation;
+import org.jasig.portal.events.aggr.BaseGroupedAggregationDiscriminator;
 
 /**
- * @author Eric Dalquist
- * @version $Revision$
+ * Interface to separate Login aggregation events into separate columns for reporting purposes.
+ *
+ * @author James Wennmacher, jameswennmacher@gmail.com
  */
-public interface LoginAggregation extends BaseAggregation<LoginAggregationKey, LoginAggregationDiscriminator> {
-    /**
-     * @return Total number of {@link LoginEvent}s that occurred in the interval
-     */
-    int getLoginCount();
-    
-    /**
-     * @return Unique number of {@link LoginEvent}s that occurred in the interval, uniqueness is determined by {@link LoginEvent#getUserName()}
-     */
-    int getUniqueLoginCount();
+public interface LoginAggregationDiscriminator extends BaseGroupedAggregationDiscriminator {
+
 }

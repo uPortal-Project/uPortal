@@ -114,6 +114,7 @@ public class JpaAggregatedGroupLookupDao extends BaseAggrEventsJpaDao implements
     
     private final Set<String> warnedGroupKeys = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 
+    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     @Override
     public AggregatedGroupMapping getGroupMapping(final String portalGroupKey) {
         final IEntityGroup group = compositeGroupService.findGroup(portalGroupKey);

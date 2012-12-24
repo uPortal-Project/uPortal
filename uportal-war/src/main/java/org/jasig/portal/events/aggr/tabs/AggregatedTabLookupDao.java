@@ -28,7 +28,12 @@ import java.util.Set;
  * @version $Revision$
  */
 public interface AggregatedTabLookupDao {
-    
+
+    /**
+     * Get the tab mapping object for the specified tab mapping id
+     */
+    AggregatedTabMapping getTabMapping(long tabMappingId);
+
     /**
      * Get the tab mapping object for the specified layout node id
      */

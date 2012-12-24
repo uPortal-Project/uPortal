@@ -42,7 +42,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaAggrEventsTestContext.xml")
-public class JpaLoginAggregationDaoTest extends JpaBaseAggregationDaoTest<LoginAggregationImpl, LoginAggregationKey> {
+public class JpaLoginAggregationDaoTest
+        extends JpaBaseAggregationDaoTest<LoginAggregationImpl, LoginAggregationKey, LoginAggregationDiscriminator> {
     @Autowired
     private LoginAggregationPrivateDao loginAggregationDao;
     

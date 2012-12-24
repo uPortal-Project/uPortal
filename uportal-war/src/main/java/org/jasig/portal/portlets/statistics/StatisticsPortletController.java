@@ -62,10 +62,10 @@ public class StatisticsPortletController {
     private int maxIntervals = 4000;
     
     @Autowired
-    public void setStatisticsReportControllers(Collection<BaseStatisticsReportController<?, ?, ?>> statisticsReportControllers) {
+    public void setStatisticsReportControllers(Collection<BaseStatisticsReportController<?, ?, ?, ?>> statisticsReportControllers) {
         this.statisticsReportControllerNames = new TreeSet<String>();
         
-        for (final BaseStatisticsReportController<?, ?, ?> controller : statisticsReportControllers) {
+        for (final BaseStatisticsReportController<?, ?, ?, ?> controller : statisticsReportControllers) {
             this.statisticsReportControllerNames.add(controller.getReportName());
         }
     }
