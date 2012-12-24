@@ -16,27 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.jasig.portal.portlets.statistics;
 
-package org.jasig.portal.events.aggr.portlets;
 
-import org.jasig.portal.portlet.om.IPortletDefinition;
+import java.util.HashSet;
+import java.util.Set;
 
-/**
- * A mapped portlet name
- * 
- * @author Eric Dalquist
- */
-public interface AggregatedPortletMapping {
-    
-    /**
-     * @return fname of the mapped portlet
-     * @see IPortletDefinition#getFName()
-     */
-    String getFname();
-    
-    /**
-     * @return the name of the mapped portlet
-     * @see IPortletDefinition#getName()
-     */
-    String getName();
+public class PortletExecutionReportForm extends BaseReportForm {
+
+    private Set<String> portlets = new HashSet<String>();
+    private Set<String> executionTypeNames = new HashSet<String>();
+
+    public final Set<String> getPortlets() {
+        return portlets;
+    }
+
+    public final void setPortlets(Set<String> portlets) {
+        this.portlets = portlets;
+    }
+
+    public Set<String> getExecutionTypeNames() {
+        return executionTypeNames;
+    }
+
+    public void setExecutionTypeNames(Set<String> executionTypeNames) {
+        this.executionTypeNames = executionTypeNames;
+    }
+
 }

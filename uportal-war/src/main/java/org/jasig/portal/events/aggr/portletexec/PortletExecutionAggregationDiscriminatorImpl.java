@@ -20,6 +20,7 @@ package org.jasig.portal.events.aggr.portletexec;
 
 import org.jasig.portal.events.aggr.BaseGroupedAggregationDiscriminatorImpl;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregationKey.ExecutionType;
 import org.jasig.portal.events.aggr.portlets.AggregatedPortletMapping;
 import org.jasig.portal.utils.ComparableExtractingComparator;
 
@@ -28,12 +29,12 @@ import org.jasig.portal.utils.ComparableExtractingComparator;
  *
  * @author James Wennmacher, jameswennmacher@gmail.com
  */
-final class PortletExecutionAggregationDiscriminatorImpl extends BaseGroupedAggregationDiscriminatorImpl
+public final class PortletExecutionAggregationDiscriminatorImpl extends BaseGroupedAggregationDiscriminatorImpl
         implements PortletExecutionAggregationDiscriminator {
     private static final long serialVersionUID = 1L;
 
     private final AggregatedPortletMapping portletMapping;
-    private final PortletExecutionAggregationKey.ExecutionType executionType;
+    private final ExecutionType executionType;
     private int hashCode = 0;
 
     public PortletExecutionAggregationDiscriminatorImpl(PortletExecutionAggregation baseAggregation) {
@@ -54,7 +55,7 @@ final class PortletExecutionAggregationDiscriminatorImpl extends BaseGroupedAggr
     }
     
     @Override
-    public final PortletExecutionAggregationKey.ExecutionType getExecutionType() {
+    public final ExecutionType getExecutionType() {
         return this.executionType;
     }
 
@@ -100,7 +101,7 @@ final class PortletExecutionAggregationDiscriminatorImpl extends BaseGroupedAggr
         @Override
         protected String getComparable(PortletExecutionAggregationDiscriminator o) {
             return o.getAggregatedGroup().getGroupName()
-                    + o.getPortletMapping().getFName()
+                    + o.getPortletMapping().getFname()
                     + o.getExecutionType().name();
         }
     }

@@ -88,9 +88,9 @@ public class TabRenderStatisticsController extends
     }
 
     /**
-     * Set the tab names to have selected by default
+     * Set the tab names to have first selected by default
      */
-    protected void setReportFormTabs(final TabRenderReportForm report) {
+    private void setReportFormTabs(final TabRenderReportForm report) {
         final Set<AggregatedTabMapping> tabs = this.getTabs();
         if (!tabs.isEmpty()) {
             report.getTabs().add(tabs.iterator().next().getId());
@@ -173,16 +173,35 @@ public class TabRenderStatisticsController extends
     }
 
     @Override
+    protected String getReportTitleAugmentation(TabRenderReportForm form) {
+        if (form.getTabs().size() == 1) {
+            Long tabId = form.getTabs().iterator().next().longValue();
+            AggregatedTabMapping tabMapping = this.aggregatedTabLookupDao.getTabMapping(tabId);
+            return tabMapping.getDisplayString();
+        }
+        if (form.getGroups().size() == 1) {
+            Long groupId = form.getGroups().iterator().next().longValue();
+            AggregatedGroupMapping groupMapping = this.aggregatedGroupDao.getGroupMapping(groupId);
+            return groupMapping.getGroupName();
+        }
+        return null;
+    }
+
+    @Override
     protected List<ColumnDescription> getColumnDescriptions(TabRenderAggregationDiscriminator reportColumnDiscriminator,
                                                             TabRenderReportForm form) {
         AggregatedTabMapping tab = reportColumnDiscriminator.getTabMapping();
         AggregatedGroupMapping group = reportColumnDiscriminator.getAggregatedGroup();
-        String groupNameToIncludeInHeader = form.getGroups().size() > 1 ?
-                " - " + reportColumnDiscriminator.getAggregatedGroup().getGroupName() : "";
+        String columnName = group.getGroupName();
+        if (showFullColumnHeaderDescriptions(form)
+                || (form.getTabs().size() > 1 && form.getGroups().size() > 1)) {
+            columnName = tab.getDisplayString() + " - " + group.getGroupName();
+        } else if (form.getTabs().size() > 1) {
+            columnName = tab.getDisplayString();
+        }
 
         final List<ColumnDescription> columnDescriptions = new ArrayList<ColumnDescription>();
-        columnDescriptions.add(new ColumnDescription(tab.getDisplayString() + groupNameToIncludeInHeader,
-                ValueType.NUMBER, tab.getDisplayString() + groupNameToIncludeInHeader));
+        columnDescriptions.add(new ColumnDescription(columnName, ValueType.NUMBER, columnName));
         return columnDescriptions;
     }
 

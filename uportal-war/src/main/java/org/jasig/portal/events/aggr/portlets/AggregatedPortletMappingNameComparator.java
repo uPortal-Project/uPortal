@@ -16,27 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.events.aggr.portlets;
 
-import org.jasig.portal.portlet.om.IPortletDefinition;
+import java.util.Comparator;
 
-/**
- * A mapped portlet name
- * 
- * @author Eric Dalquist
- */
-public interface AggregatedPortletMapping {
+import org.jasig.portal.utils.ComparableExtractingComparator;
+
+public class AggregatedPortletMappingNameComparator extends
+        ComparableExtractingComparator<AggregatedPortletMapping, String> {
     
-    /**
-     * @return fname of the mapped portlet
-     * @see IPortletDefinition#getFName()
-     */
-    String getFname();
-    
-    /**
-     * @return the name of the mapped portlet
-     * @see IPortletDefinition#getName()
-     */
-    String getName();
+    public static Comparator<AggregatedPortletMapping> INSTANCE = new AggregatedPortletMappingNameComparator();
+
+    @Override
+    protected String getComparable(AggregatedPortletMapping o) {
+        return o.getFname();
+    }
 }
