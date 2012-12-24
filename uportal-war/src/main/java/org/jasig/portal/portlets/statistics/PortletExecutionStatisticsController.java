@@ -198,6 +198,21 @@ public class PortletExecutionStatisticsController extends
         return groupedAggregations;
     }
 
+    /**
+     * Create report title.  Criteria that have a single value selected are put
+     * into the title.  Format and possible options are:
+     * <ul>
+     * <li>null (no change needed)</li>
+     * <li>portlet</li>
+     * <li>portlet (execution)</li>
+     * <li>group</li>
+     * <li>group (execution)</li>
+     * <li>execution</li>
+     * <li>portlet - group (also displayed if one of each criteria selected)</li>
+     * </ul>
+     * @param form the form
+     * @return report title
+     */
     @Override
     protected String getReportTitleAugmentation(PortletExecutionReportForm form) {
         int groupSize = form.getGroups().size();
@@ -227,6 +242,12 @@ public class PortletExecutionStatisticsController extends
                 augmentedTitle += " (" + firstExecutionType + ")";
             }
         }
+
+        // Last scenario:  multiple execution type and single portlet and group
+        if (executionTypeSize > 1 && portletSize == 1 && groupSize == 1) {
+            augmentedTitle = String.format("%s - %s", firstPortletName, firstGroupName);
+        }
+
         return augmentedTitle;
     }
 
@@ -236,10 +257,11 @@ public class PortletExecutionStatisticsController extends
      * singular will move to the report title and only those that have 2 or more values
      * selected on the form will be in the column title.
      * Format:  P (E) - G
-     *          X (E)
+     *          P (E)
+     *          G (E)
      *          E
-     * where P is portlet name, G is group name, E is Execution Type, X is either P or G.
-     *       (E) is present if only 1 execution type selected on the form
+     *          P - G
+     * where P is portlet name, G is group name, E is Execution Type
      *
      * @param reportColumnDiscriminator
      * @param form The original query form
@@ -265,11 +287,13 @@ public class PortletExecutionStatisticsController extends
             description = groupSize == 1 && portletSize > 1 ?
                     portletName : groupName;
 
-            // Does ExecutionType add to or replace default column name?
-            if (groupSize == 1 && portletSize == 1) {
-                description = executionTypeName;
-            } else if (executionTypeSize > 1) {
-                description += " (" + executionTypeName + ")";
+            // Does ExecutionType replace default column name or add to it?
+            if (executionTypeSize > 1) {
+                if (groupSize == 1 && portletSize == 1) {
+                    description = executionTypeName;
+                } else {
+                    description += " (" + executionTypeName + ")";
+                }
             }
             // Last scenario: 1 execution type and multiple portlet and group
             if (groupSize > 1 && portletSize > 1 && executionTypeSize == 1) {
