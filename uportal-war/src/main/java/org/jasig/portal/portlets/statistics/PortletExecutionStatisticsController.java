@@ -200,22 +200,47 @@ public class PortletExecutionStatisticsController extends
 
     @Override
     protected String getReportTitleAugmentation(PortletExecutionReportForm form) {
-        String augmentedTitle = null;
-        if (form.getGroups().size() == 1) {
-            Long groupId = form.getGroups().iterator().next().longValue();
-            AggregatedGroupMapping groupMapping = this.aggregatedGroupLookupDao.getGroupMapping(groupId);
-            augmentedTitle = groupMapping.getGroupName();
+        int groupSize = form.getGroups().size();
+        int portletSize = form.getPortlets().size();
+        int executionTypeSize = form.getExecutionTypeNames().size();
+
+        // If multiple of all selected, the report title does not change.
+        if (portletSize > 1 && executionTypeSize > 1 && groupSize > 1) {
+            return null;
         }
-        if (form.getExecutionTypeNames().size() == 1) {
-            String executionType = form.getExecutionTypeNames().iterator().next();
-            augmentedTitle = augmentedTitle != null ?
-                    augmentedTitle + ", " + executionType : executionType;
+
+        // Look up names in case we need them.  They should be in cache so no real performance hit.
+        String firstPortletName = this.aggregatedPortletLookupDao.getMappedPortletForFname(form.getPortlets().iterator().next()).getFname();
+        Long firstGroupId = form.getGroups().iterator().next().longValue();
+        String firstGroupName = this.aggregatedGroupLookupDao.getGroupMapping(firstGroupId).getGroupName();
+        String firstExecutionType = form.getExecutionTypeNames().iterator().next();
+
+        // Default to show portlet name else group name in title
+        String augmentedTitle = groupSize == 1 && portletSize > 1 ?
+                firstGroupName : firstPortletName;
+
+        // Use only the execution Type or append it.
+        if (executionTypeSize == 1) {
+            if (groupSize > 1 && portletSize > 1) {
+                augmentedTitle = firstExecutionType;
+            } else {
+                augmentedTitle += " (" + firstExecutionType + ")";
+            }
         }
         return augmentedTitle;
     }
 
     /**
-     * Create column descriptions for the portlet report.
+     * Create column descriptions for the portlet report.  The default column description is
+     * the group name possibly with the executionType, but those items that are
+     * singular will move to the report title and only those that have 2 or more values
+     * selected on the form will be in the column title.
+     * Format:  P (E) - G
+     *          X (E)
+     *          E
+     * where P is portlet name, G is group name, E is Execution Type, X is either P or G.
+     *       (E) is present if only 1 execution type selected on the form
+     *
      * @param reportColumnDiscriminator
      * @param form The original query form
      * @return
@@ -223,15 +248,37 @@ public class PortletExecutionStatisticsController extends
     @Override
     protected List<ColumnDescription> getColumnDescriptions(PortletExecutionAggregationDiscriminator reportColumnDiscriminator,
                                                             PortletExecutionReportForm form) {
-        AggregatedPortletMapping portlet = reportColumnDiscriminator.getPortletMapping();
-        String groupNameToIncludeInHeader = showFullColumnHeaderDescriptions(form) || form.getGroups().size() > 1 ?
-                " - " + reportColumnDiscriminator.getAggregatedGroup().getGroupName() : "";
-        String portletActionToIncludeInHeader = showFullColumnHeaderDescriptions(form) || form.getExecutionTypeNames().size() > 1 ?
-                " (" + reportColumnDiscriminator.getExecutionType().getName() + ")" : "";
+        int groupSize = form.getGroups().size();
+        int portletSize = form.getPortlets().size();
+        int executionTypeSize = form.getExecutionTypeNames().size();
+
+        String portletName = reportColumnDiscriminator.getPortletMapping().getFname();
+        String groupName = reportColumnDiscriminator.getAggregatedGroup().getGroupName();
+        String executionTypeName = reportColumnDiscriminator.getExecutionType().getName();
+
+        String description = null;
+        if (showFullColumnHeaderDescriptions(form) ||
+                (groupSize > 1 && portletSize > 1 && executionTypeSize > 1)) {
+            description = String.format("%s (%s) - %s", portletName, executionTypeName, groupName);
+        } else {
+            // Default to group name, else portlet name
+            description = groupSize == 1 && portletSize > 1 ?
+                    portletName : groupName;
+
+            // Does ExecutionType add to or replace default column name?
+            if (groupSize == 1 && portletSize == 1) {
+                description = executionTypeName;
+            } else if (executionTypeSize > 1) {
+                description += " (" + executionTypeName + ")";
+            }
+            // Last scenario: 1 execution type and multiple portlet and group
+            if (groupSize > 1 && portletSize > 1 && executionTypeSize == 1) {
+                description = String.format("%s - %s", portletName, groupName);
+            }
+        }
 
         final List<ColumnDescription> columnDescriptions = new ArrayList<ColumnDescription>();
-        columnDescriptions.add(new ColumnDescription(portlet.getFname() + portletActionToIncludeInHeader + groupNameToIncludeInHeader,
-                ValueType.NUMBER, portlet.getFname() + portletActionToIncludeInHeader + groupNameToIncludeInHeader));
+        columnDescriptions.add(new ColumnDescription(description, ValueType.NUMBER, description));
         return columnDescriptions;
     }
 
