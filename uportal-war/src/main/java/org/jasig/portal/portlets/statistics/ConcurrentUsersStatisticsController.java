@@ -19,19 +19,15 @@
 package org.jasig.portal.portlets.statistics;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.BaseAggregationDao;
-import org.jasig.portal.events.aggr.BaseAggregationDateTimeComparator;
-import org.jasig.portal.events.aggr.BaseGroupedAggregationDiscriminator;
-import org.jasig.portal.events.aggr.BaseGroupedAggregationDiscriminatorImpl;
 import org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregation;
 import org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationDao;
 import org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationDiscriminator;
@@ -40,8 +36,6 @@ import org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationKey;
 import org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationKeyImpl;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupLookupDao;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
-import org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl;
-import org.jasig.portal.utils.ComparableExtractingComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -105,7 +99,7 @@ public class ConcurrentUsersStatisticsController extends
     }
 
     @Override
-    protected ComparableExtractingComparator<?, ?> getDiscriminatorComparator() {
+    protected Comparator<? super ConcurrentUserAggregationDiscriminator> getDiscriminatorComparator() {
         return ConcurrentUserAggregationDiscriminatorImpl.Comparator.INSTANCE;
     }
 
@@ -120,7 +114,7 @@ public class ConcurrentUsersStatisticsController extends
     @Override
     protected Map<ConcurrentUserAggregationDiscriminator, SortedSet<ConcurrentUserAggregation>>
     createColumnDiscriminatorMap (ConcurrentUserReportForm form){
-        return getDefaultGroupedColumnDiscriminatorMap(form, ConcurrentUserAggregationDiscriminatorImpl.class);
+        return getDefaultGroupedColumnDiscriminatorMap(form);
     }
 
     @Override
@@ -149,4 +143,11 @@ public class ConcurrentUsersStatisticsController extends
         
         return Collections.<Value>singletonList(new NumberValue(concurrentUsers));
     }
+
+    @Override
+    protected ConcurrentUserAggregationDiscriminator createGroupedDiscriminatorInstance(AggregatedGroupMapping groupMapping) {
+        return new ConcurrentUserAggregationDiscriminatorImpl(groupMapping);
+    }
+    
+    
 }
