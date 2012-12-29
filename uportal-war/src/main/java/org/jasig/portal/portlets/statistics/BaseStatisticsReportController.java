@@ -18,8 +18,6 @@
  */
 package org.jasig.portal.portlets.statistics;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -32,6 +30,28 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.portlet.ResourceURL;
+
+import org.jasig.portal.events.aggr.AggregationInterval;
+import org.jasig.portal.events.aggr.AggregationIntervalHelper;
+import org.jasig.portal.events.aggr.BaseAggregation;
+import org.jasig.portal.events.aggr.BaseAggregationDao;
+import org.jasig.portal.events.aggr.BaseAggregationDateTimeComparator;
+import org.jasig.portal.events.aggr.BaseAggregationKey;
+import org.jasig.portal.events.aggr.BaseGroupedAggregationDiscriminator;
+import org.jasig.portal.events.aggr.groups.AggregatedGroupLookupDao;
+import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.jasig.portal.events.aggr.groups.AggregatedGroupMappingNameComparator;
+import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.portlet.ModelAndView;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
@@ -46,28 +66,6 @@ import com.google.visualization.datasource.datatable.value.DateValue;
 import com.google.visualization.datasource.datatable.value.TimeOfDayValue;
 import com.google.visualization.datasource.datatable.value.Value;
 import com.google.visualization.datasource.datatable.value.ValueType;
-import org.jasig.portal.events.aggr.AggregationInterval;
-import org.jasig.portal.events.aggr.AggregationIntervalHelper;
-import org.jasig.portal.events.aggr.BaseAggregation;
-import org.jasig.portal.events.aggr.BaseAggregationDao;
-import org.jasig.portal.events.aggr.BaseAggregationDateTimeComparator;
-import org.jasig.portal.events.aggr.BaseAggregationKey;
-import org.jasig.portal.events.aggr.BaseGroupedAggregationDiscriminator;
-import org.jasig.portal.events.aggr.groups.AggregatedGroupLookupDao;
-import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
-import org.jasig.portal.events.aggr.groups.AggregatedGroupMappingNameComparator;
-import org.jasig.portal.utils.ComparableExtractingComparator;
-import org.joda.time.DateMidnight;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.DateTimeFormatterBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.portlet.ModelAndView;
 
 /**
  * Base class for reporting on portal statistics. Does most of the heavy lifting for reporting against {@link BaseAggregation} subclasses.
@@ -79,8 +77,11 @@ import org.springframework.web.portlet.ModelAndView;
  * @param <K> The aggregation query key
  * @param <F> The form used to query for data
  */
-public abstract class BaseStatisticsReportController<T extends BaseAggregation<K,D>, K extends BaseAggregationKey,
-        D extends BaseGroupedAggregationDiscriminator, F extends BaseReportForm> {
+public abstract class BaseStatisticsReportController<
+                T extends BaseAggregation<K, D>, 
+                K extends BaseAggregationKey,
+                D extends BaseGroupedAggregationDiscriminator, 
+                F extends BaseReportForm> {
     /**
      * List of intervals in the preferred report order. This is the order they are tested against
      * the results of {@link #getIntervals()}. The first hit is used to populate the default form. 
@@ -280,7 +281,7 @@ public abstract class BaseStatisticsReportController<T extends BaseAggregation<K
      * Get a discriminator comparator for the appropriate type of statistics data we are reporting on.
      * @return
      */
-    protected abstract ComparableExtractingComparator<?,?> getDiscriminatorComparator();
+    protected abstract Comparator<? super D> getDiscriminatorComparator();
 
     /**
      * Create a map of the report column discriminators based on the submitted form to collate the aggregation
@@ -404,7 +405,7 @@ public abstract class BaseStatisticsReportController<T extends BaseAggregation<K
         
         //Build Map from discriminator column mapping to result iterator to allow putting results into
         //the correct column AND the correct time slot in the column
-        ComparableExtractingComparator comparator = getDiscriminatorComparator();
+        Comparator<? super D> comparator = getDiscriminatorComparator();
         final Map<D, PeekingIterator<T>> groupedAggregationIterators =
                 new TreeMap<D, PeekingIterator<T>>((comparator));
         for (final Entry<D, SortedSet<T>> groupedAggregationEntry : groupedAggregations.entrySet()) {
@@ -491,15 +492,15 @@ public abstract class BaseStatisticsReportController<T extends BaseAggregation<K
      * @return Map of report column discriminators to sorted set of time-based aggregation data
      */
     protected Map<D, SortedSet<T>>
-            getDefaultGroupedColumnDiscriminatorMap (F form, Class<? extends BaseGroupedAggregationDiscriminator> klass){
+            getDefaultGroupedColumnDiscriminatorMap (F form){
         List<Long> groups = form.getGroups();
         //Collections used to track the queried groups and the results
         final Map<D, SortedSet<T>> groupedAggregations =
-                new TreeMap<D, SortedSet<T>>((Comparator) getDiscriminatorComparator());
+                new TreeMap<D, SortedSet<T>>((Comparator<? super D>) getDiscriminatorComparator());
 
         //Get concrete group mapping objects that are being queried for
         for (final Long queryGroupId : groups) {
-            final D groupMapping = createGroupedDiscriminatorInstance(klass, this.aggregatedGroupDao.getGroupMapping(queryGroupId));
+            final D groupMapping = createGroupedDiscriminatorInstance(this.aggregatedGroupDao.getGroupMapping(queryGroupId));
 
             //Create the set the aggregations for this report column will be stored in, sorted chronologically
             final SortedSet<T> aggregations = new TreeSet<T>(BaseAggregationDateTimeComparator.INSTANCE);
@@ -515,29 +516,9 @@ public abstract class BaseStatisticsReportController<T extends BaseAggregation<K
      * Creates an instance of a BaseGroupedAggregationDiscriminator or any descendants that only
      * require an AggregatedGroupMapping (e.g. won't work for TabRender or other reports that have
      * item other than group (user group) being queried on.
-     * @param klass Discriminator class extending {@link BaseGroupedAggregationDiscriminator}
      * @param groupMapping group mapping
      * @return Fully populated child instance of BaseGroupedAggregationDiscriminator
      */
-    private D createGroupedDiscriminatorInstance(Class<? extends BaseGroupedAggregationDiscriminator> klass, AggregatedGroupMapping groupMapping) {
-        D object = null;
-        try {
-            Constructor classConstructor = klass.getConstructor(AggregatedGroupMapping.class);
-            object = (D) classConstructor.newInstance(groupMapping);
-        } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException("No constructor found for "
-                    + klass.getName() + ("AggregatedGroupMapping"));
-        } catch (InstantiationException e) {
-            throw new IllegalArgumentException("Unable to instantiate instance of class "
-                    + klass.getName());
-        } catch (IllegalAccessException e) {
-            throw new IllegalArgumentException("Unable to instantiate instance of class "
-                    + klass.getName());
-        } catch (InvocationTargetException e) {
-            throw new IllegalArgumentException("Unable to instantiate instance of class "
-                    + klass.getName());
-        }
-        return object;
-    }
+    protected abstract D createGroupedDiscriminatorInstance(AggregatedGroupMapping groupMapping);
 
 }
