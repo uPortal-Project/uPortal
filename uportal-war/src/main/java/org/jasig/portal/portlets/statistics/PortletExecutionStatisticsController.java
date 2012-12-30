@@ -20,6 +20,7 @@ package org.jasig.portal.portlets.statistics;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -28,11 +29,6 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import com.google.visualization.datasource.base.TypeMismatchException;
-import com.google.visualization.datasource.datatable.ColumnDescription;
-import com.google.visualization.datasource.datatable.value.NumberValue;
-import com.google.visualization.datasource.datatable.value.Value;
-import com.google.visualization.datasource.datatable.value.ValueType;
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.BaseAggregationDao;
 import org.jasig.portal.events.aggr.BaseAggregationDateTimeComparator;
@@ -48,7 +44,6 @@ import org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregationKeyIm
 import org.jasig.portal.events.aggr.portlets.AggregatedPortletLookupDao;
 import org.jasig.portal.events.aggr.portlets.AggregatedPortletMapping;
 import org.jasig.portal.events.aggr.portlets.AggregatedPortletMappingNameComparator;
-import org.jasig.portal.utils.ComparableExtractingComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -57,6 +52,12 @@ import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 
+import com.google.visualization.datasource.base.TypeMismatchException;
+import com.google.visualization.datasource.datatable.ColumnDescription;
+import com.google.visualization.datasource.datatable.value.NumberValue;
+import com.google.visualization.datasource.datatable.value.Value;
+import com.google.visualization.datasource.datatable.value.ValueType;
+
 /**
  * Portlet Execution reports
  * 
@@ -64,9 +65,13 @@ import org.springframework.web.portlet.bind.annotation.ResourceMapping;
  */
 @Controller
 @RequestMapping(value="VIEW")
-public class PortletExecutionStatisticsController extends
-        BaseStatisticsReportController<PortletExecutionAggregation, PortletExecutionAggregationKey,
-                PortletExecutionAggregationDiscriminator, PortletExecutionReportForm> {
+public class PortletExecutionStatisticsController
+        extends BaseStatisticsReportController<
+            PortletExecutionAggregation, 
+            PortletExecutionAggregationKey,
+            PortletExecutionAggregationDiscriminator, 
+            PortletExecutionReportForm> {
+
     private static final String DATA_TABLE_RESOURCE_ID = "portletExecutionData";
     private final static String REPORT_NAME = "portletExecution.totals";
 
@@ -161,7 +166,7 @@ public class PortletExecutionStatisticsController extends
     }
 
     @Override
-    protected ComparableExtractingComparator<?, ?> getDiscriminatorComparator() {
+    protected Comparator<? super PortletExecutionAggregationDiscriminator> getDiscriminatorComparator() {
         return PortletExecutionAggregationDiscriminatorImpl.Comparator.INSTANCE;
     }
 
