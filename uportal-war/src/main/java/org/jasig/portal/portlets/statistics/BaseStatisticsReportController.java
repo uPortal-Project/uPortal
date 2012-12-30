@@ -18,8 +18,6 @@
  */
 package org.jasig.portal.portlets.statistics;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -32,6 +30,28 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.portlet.ResourceURL;
+
+import org.apache.commons.lang.StringUtils;
+import org.jasig.portal.events.aggr.AggregationInterval;
+import org.jasig.portal.events.aggr.AggregationIntervalHelper;
+import org.jasig.portal.events.aggr.BaseAggregation;
+import org.jasig.portal.events.aggr.BaseAggregationDao;
+import org.jasig.portal.events.aggr.BaseAggregationKey;
+import org.jasig.portal.events.aggr.BaseGroupedAggregationDiscriminator;
+import org.jasig.portal.events.aggr.groups.AggregatedGroupLookupDao;
+import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.jasig.portal.events.aggr.groups.AggregatedGroupMappingNameComparator;
+import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.portlet.ModelAndView;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
@@ -46,28 +66,6 @@ import com.google.visualization.datasource.datatable.value.DateValue;
 import com.google.visualization.datasource.datatable.value.TimeOfDayValue;
 import com.google.visualization.datasource.datatable.value.Value;
 import com.google.visualization.datasource.datatable.value.ValueType;
-import org.jasig.portal.events.aggr.AggregationInterval;
-import org.jasig.portal.events.aggr.AggregationIntervalHelper;
-import org.jasig.portal.events.aggr.BaseAggregation;
-import org.jasig.portal.events.aggr.BaseAggregationDao;
-import org.jasig.portal.events.aggr.BaseAggregationDateTimeComparator;
-import org.jasig.portal.events.aggr.BaseAggregationKey;
-import org.jasig.portal.events.aggr.BaseGroupedAggregationDiscriminator;
-import org.jasig.portal.events.aggr.groups.AggregatedGroupLookupDao;
-import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
-import org.jasig.portal.events.aggr.groups.AggregatedGroupMappingNameComparator;
-import org.jasig.portal.utils.ComparableExtractingComparator;
-import org.joda.time.DateMidnight;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.DateTimeFormatterBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.portlet.ModelAndView;
 
 /**
  * Base class for reporting on portal statistics. Does most of the heavy lifting for reporting against {@link BaseAggregation} subclasses.
@@ -105,7 +103,7 @@ public abstract class BaseStatisticsReportController<
     private AggregationIntervalHelper intervalHelper;
     
     @Autowired
-    private AggregatedGroupLookupDao aggregatedGroupDao;
+    protected AggregatedGroupLookupDao aggregatedGroupDao;
     
     @org.springframework.beans.factory.annotation.Value("${org.jasig.portal.portlets.statistics.maxIntervals}")
     private int maxIntervals = 4000;
@@ -528,48 +526,4 @@ public abstract class BaseStatisticsReportController<
         }
         return groupMappings.toArray(new AggregatedGroupMapping[0]);
     }
-
-    /**
-     * Default implementation to create a map of the report column discriminators based on the submitted form to
-     * collate the aggregation data into each column of a report when the only grouping parameter is
-     * AggregatedGroupMapping.
-     *
-     * The map entries are a time-ordered sorted set of aggregation data points.
-     *
-     * @param form Form submitted by the user
-     * @param klass Class that derives from BaseGroupedAggregationDiscrminator to create as
-     *              map keys.
-     * @return Map of report column discriminators to sorted set of time-based aggregation data
-     */
-    protected Map<D, SortedSet<T>>
-            getDefaultGroupedColumnDiscriminatorMap (F form){
-        List<Long> groups = form.getGroups();
-        //Collections used to track the queried groups and the results
-        final Map<D, SortedSet<T>> groupedAggregations =
-                new TreeMap<D, SortedSet<T>>((Comparator<? super D>) getDiscriminatorComparator());
-
-        //Get concrete group mapping objects that are being queried for
-        for (final Long queryGroupId : groups) {
-            final D groupMapping = createGroupedDiscriminatorInstance(this.aggregatedGroupDao.getGroupMapping(queryGroupId));
-
-            //Create the set the aggregations for this report column will be stored in, sorted chronologically
-            final SortedSet<T> aggregations = new TreeSet<T>(BaseAggregationDateTimeComparator.INSTANCE);
-
-            //Map the group to the set
-            groupedAggregations.put(groupMapping, aggregations);
-        }
-
-        return groupedAggregations;
-    }
-
-    /**
-     * Creates an instance of a BaseGroupedAggregationDiscriminator or any descendants that only
-     * require an AggregatedGroupMapping (e.g. won't work for TabRender or other reports that have
-     * item other than group (user group) being queried on.
-     * @param klass Discriminator class extending {@link BaseGroupedAggregationDiscriminator}
-     * @param groupMapping group mapping
-     * @return Fully populated child instance of BaseGroupedAggregationDiscriminator
-     */
-    protected abstract D createGroupedDiscriminatorInstance(AggregatedGroupMapping groupMapping);
-
 }

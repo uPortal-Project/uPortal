@@ -57,9 +57,13 @@ import com.google.visualization.datasource.datatable.value.ValueType;
  */
 @Controller
 @RequestMapping(value="VIEW")
-public class LoginTotalsStatisticsController extends
-        BaseStatisticsReportController<LoginAggregation, LoginAggregationKey,
-                LoginAggregationDiscriminator, LoginReportForm> {
+public class LoginTotalsStatisticsController
+        extends BaseSimpleGroupedStatisticsReportController<
+            LoginAggregation, 
+            LoginAggregationKey,
+            LoginAggregationDiscriminator, 
+            LoginReportForm> {
+
     private static final String DATA_TABLE_RESOURCE_ID = "loginData";
     private final static String REPORT_NAME = "login.totals";
 

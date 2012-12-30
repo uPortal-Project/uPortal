@@ -56,9 +56,13 @@ import com.google.visualization.datasource.datatable.value.ValueType;
  */
 @Controller
 @RequestMapping("VIEW")
-public class ConcurrentUsersStatisticsController extends
-        BaseStatisticsReportController<ConcurrentUserAggregation, ConcurrentUserAggregationKey,
-                ConcurrentUserAggregationDiscriminator, ConcurrentUserReportForm> {
+public class ConcurrentUsersStatisticsController 
+        extends BaseSimpleGroupedStatisticsReportController<
+            ConcurrentUserAggregation, 
+            ConcurrentUserAggregationKey,
+            ConcurrentUserAggregationDiscriminator, 
+            ConcurrentUserReportForm> {
+
     private static final String DATA_TABLE_RESOURCE_ID = "concurrentUserData";
     private final static String REPORT_NAME = "concurrent.users";
 
