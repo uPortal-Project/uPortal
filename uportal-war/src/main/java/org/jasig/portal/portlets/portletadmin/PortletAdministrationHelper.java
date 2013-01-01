@@ -559,6 +559,8 @@ public class PortletAdministrationHelper implements ServletContextAware {
         }
         
         //Remove portlet preferences from the form object that were not part of this request or defined in the CPD
+        // - do it only if portlet doesn't support configMode
+        if(!this.supportsConfigMode(form)) {
         final Map<String, StringListAttribute> portletPreferences = form.getPortletPreferences();
         final Map<String, BooleanAttribute> portletPreferencesOverrides = form.getPortletPreferenceReadOnly();
         
@@ -566,7 +568,6 @@ public class PortletAdministrationHelper implements ServletContextAware {
             final Map.Entry<String, StringListAttribute> portletPreferenceEntry = portletPreferenceEntryItr.next();
             final String key = portletPreferenceEntry.getKey();
             final StringListAttribute valueAttr = portletPreferenceEntry.getValue();
-            
             if (!preferenceNames.contains(key) || valueAttr == null) {
                 portletPreferenceEntryItr.remove();
                 portletPreferencesOverrides.remove(key);
@@ -583,6 +584,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
                     portletPreferencesOverrides.remove(key);
                 }
             }
+        }
         }
         
         final Map<String, Attribute> parameters = form.getParameters();
