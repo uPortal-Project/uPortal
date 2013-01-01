@@ -200,12 +200,6 @@ public class UserAccountHelper {
         return parents;
     }
     
-    public boolean canImpersonateUser(IPerson currentUser, String target) {
-        EntityIdentifier ei = currentUser.getEntityIdentifier();
-        IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-        return ap.hasPermission("UP_USERS", "IMPERSONATE", target);
-    }
-    
     public boolean canEditUser(IPerson currentUser, String target) {
         
         // first check to see if this is a local user

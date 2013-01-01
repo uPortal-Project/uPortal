@@ -52,8 +52,6 @@
     <bean id="attributeSwapRequestValidator" class="org.jasig.portal.portlets.swapper.AttributeSwapRequestValidator">
         <property name="attributeSwapperHelper" ref="attributeSwapperHelper" />
     </bean>
-    <!-- Beans for the identity-swapper flow -->
-    <bean id="identitySwapperHelper" class="org.jasig.portal.portlets.swapper.IdentitySwapperHelperImpl" />
      
     <bean id="personValidator" class="org.jasig.portal.portlets.account.PersonFormValidator"/>
     

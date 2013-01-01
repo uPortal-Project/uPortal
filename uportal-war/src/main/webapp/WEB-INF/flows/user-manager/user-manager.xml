@@ -54,7 +54,7 @@
                 value="userAccountHelper.groupPersonAttributes(person, servletRequest)"/>
             <set name="viewScope.canEdit" value="userAccountHelper.canEditUser(user, person.name)"/>
             <set name="viewScope.canDelete" value="userAccountHelper.canDeleteUser(user, person.name)"/>
-            <set name="viewScope.canImpersonate" value="userAccountHelper.canImpersonateUser(user, person.name)"/>
+            <set name="viewScope.canImpersonate" value="identitySwapperManager.canImpersonateUser(user, person.name)"/>
             <set name="viewScope.parents" value="userAccountHelper.getParentGroups(person.name)"/>
         </on-entry>
         <transition on="editUser" to="editLocalAccount"/>
@@ -147,7 +147,11 @@
 
     <end-state id="swapIdentity">
         <on-entry>
-            <evaluate expression="identitySwapperHelper.swapAttributes(externalContext, person)" />
+            <set name="flashScope.servletRequest" 
+                value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
+            <set name="flashScope.user"
+                value="personManager.getPerson(servletRequest)"/>
+            <evaluate expression="identitySwapperManager.impersonateUser(externalContext.nativeRequest, user, person.name)" />
         </on-entry>
     </end-state>
     
