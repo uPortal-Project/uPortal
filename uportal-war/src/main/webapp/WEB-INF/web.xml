@@ -396,6 +396,10 @@
         <location>/500.html</location>
     </error-page>
 
+    <sessionConfig>
+      <tracking-mode>COOKIE</tracking-mode>
+    </sessionConfig>
+    
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
         <welcome-file>index.htm</welcome-file>
