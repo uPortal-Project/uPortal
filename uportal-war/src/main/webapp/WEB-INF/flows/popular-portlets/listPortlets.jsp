@@ -49,7 +49,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   <!-- Portlet Toolbar -->
   <div class="portlet-toolbar" role="toolbar">
     <spring:message code="previous"/>
-    <select id="${n}intervals" name="interval"></select>
+    <select id="${n}days" name="days">
+      <option value="1">1</option>
+      <option value="7">7</option>
+      <option value="30" selected="selected">30</option>
+      <option value="90">90</option>
+      <option value="365">365</option>
+    </select>
   </div> <!-- end: portlet-toolbar -->
         
 	<!-- Portlet Body -->
@@ -125,7 +131,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
 </form>
 </div> <!-- end: portlet -->
-    	
+<span class="label">* These values are provided by daily statistics aggregation</span>
 <script type="text/javascript">
 up.jQuery(function() {
 
@@ -145,16 +151,7 @@ up.jQuery(function() {
             type: 'POST',
             dataType: "json",
             success: function(data) { 
-                counts = data.counts;
-                var intervals = $("#${n}intervals");
-                var selected = intervals.val();
-                intervals.empty();
-                for(var i=0; i<data.intervals.length; i++) {
-                    intervals.append($("<option></option>").val(data.intervals[i]).text(data.intervals[i]));
-                    if(data.intervals[i] == selected) {
-                        intervals[0].selectedIndex = i;
-                    }
-                }
+                counts = data.counts; 
             },
             error: function(request, textStatus, error) {
                 alert("ERROR:  " + textStatus);
@@ -220,7 +217,9 @@ up.jQuery(function() {
     };
     pager = up.fluid.pager("#${n}popularPortlets", options);
 
-    $("#${n}intervals").change(updateTable);
+    $("#${n}days").change(updateTable);
+    $("#${n}fromDate").change(updateTable);
+
     $(".cal-datepicker").datepicker();
 
 });
