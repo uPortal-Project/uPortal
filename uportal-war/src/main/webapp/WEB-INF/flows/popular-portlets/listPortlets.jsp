@@ -49,19 +49,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   <!-- Portlet Toolbar -->
   <div class="portlet-toolbar" role="toolbar">
     <spring:message code="previous"/>
-    <select id="${n}days" name="days">
-      <option value="1">1</option>
-      <option value="7">7</option>
-      <option value="30" selected="selected">30</option>
-      <option value="90">90</option>
-      <option value="365">365</option>
-    </select>
-    <spring:message code="days"/>
-    <c:if test="${showAdminFeatures}">
-      <spring:message code="from"/>
-      <input id="${n}fromDate" name="fromDate" type="text" class="cal-datepicker" value="<spring:message code="today"/>"/>
-      <spring:message code="inclusive"/>
-    </c:if>
+    <select id="${n}intervals" name="interval"></select>
   </div> <!-- end: portlet-toolbar -->
         
 	<!-- Portlet Body -->
@@ -157,10 +145,19 @@ up.jQuery(function() {
             type: 'POST',
             dataType: "json",
             success: function(data) { 
-                counts = data.counts; 
+                counts = data.counts;
+                var intervals = $("#${n}intervals");
+                var selected = intervals.val();
+                intervals.empty();
+                for(var i=0; i<data.intervals.length; i++) {
+                    intervals.append($("<option></option>").val(data.intervals[i]).text(data.intervals[i]));
+                    if(data.intervals[i] == selected) {
+                        intervals[0].selectedIndex = i;
+                    }
+                }
             },
             error: function(request, textStatus, error) {
-                alert("ERROR:  " + textStatus); 
+                alert("ERROR:  " + textStatus);
             }
         });
         
@@ -223,9 +220,7 @@ up.jQuery(function() {
     };
     pager = up.fluid.pager("#${n}popularPortlets", options);
 
-    $("#${n}days").change(updateTable);
-    $("#${n}fromDate").change(updateTable);
-
+    $("#${n}intervals").change(updateTable);
     $(".cal-datepicker").datepicker();
 
 });
