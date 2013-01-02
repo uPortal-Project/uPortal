@@ -142,7 +142,7 @@
         <commons-logging.version>1.1.1</commons-logging.version>
         <commons-logging-api.version>1.1</commons-logging-api.version>
         <commons-pool.version>1.6</commons-pool.version>
-        <commons-math3.version>3.0</commons-math3.version>
+        <commons-math3.version>3.1</commons-math3.version>
         <dom4j.version>1.6.1</dom4j.version>
         <easymock.version>3.1</easymock.version>
         <ejb3-persistence.version>1.0.1.GA</ejb3-persistence.version>
@@ -152,21 +152,21 @@
         <ehcache-web.version>2.0.4</ehcache-web.version>
         <google-visualization.version>1.1.1</google-visualization.version>
         <guava.version>13.0.1</guava.version>
-        <groovy.version>2.0.5</groovy.version>
+        <groovy.version>2.0.6</groovy.version>
         <grouperClient.version>1.6.3</grouperClient.version>
-        <hibernate.version>4.1.8.Final</hibernate.version>
+        <hibernate.version>4.1.9.Final</hibernate.version>
         <hibernate-jpamodelgen.version>1.2.0.Final</hibernate-jpamodelgen.version>
         <hibernate-jpa-api.version>1.0.1.Final</hibernate-jpa-api.version>
         <hsqldb.version>2.2.9</hsqldb.version>
-        <icu4j.version>4.0.1</icu4j.version>
+        <icu4j.version>50.1.1</icu4j.version>
         <jackson.version>1.9.11</jackson.version>
         <jansi.version>1.8</jansi.version>
-        <javassist.version>3.16.1-GA</javassist.version>
+        <javassist.version>3.17.1-GA</javassist.version>
         <jasig-portlet-utils.version>1.0.1</jasig-portlet-utils.version> 
         <jasypt.version>1.9.0</jasypt.version>
         <jaxb2basics.version>0.6.4</jaxb2basics.version>
         <jdom.version>1.0</jdom.version>
-        <jgroups.version>3.2.1.Final</jgroups.version>
+        <jgroups.version>3.2.5.Final</jgroups.version>
         <jline.version>1.0</jline.version>
         <joda-time.version>2.1</joda-time.version>
         <json-lib-ext-spring.version>1.0.2</json-lib-ext-spring.version>
@@ -195,7 +195,7 @@
         <stax-api.version>1.0.1</stax-api.version>
         <staxmate.version>2.0.1</staxmate.version>
         <stringtemplate.version>4.0.2</stringtemplate.version>
-        <tomcat-jdbc.version>7.0.32</tomcat-jdbc.version>
+        <tomcat-jdbc.version>7.0.34</tomcat-jdbc.version>
         <uportal-ear-deployer.version>1.0.1</uportal-ear-deployer.version>
         <usertype.version>3.0.0.GA</usertype.version>
         <woodstox.version>4.1.4</woodstox.version>
