@@ -1,4 +1,4 @@
-package org.jasig.portal.web.skin;
+package org.jasig.portal.web;
 
 import java.io.IOException;
 
