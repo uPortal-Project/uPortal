@@ -31,8 +31,10 @@
      +-->
      
     <!--  base pooled datasource with common configuration -->
-    <bean id="basePooledDataSource" class="org.jasig.portal.utils.jdbc.TomcatDataSourceFactory" abstract="true">
+    <bean id="basePooledDataSource" class="org.jasig.portlet.utils.jdbc.TomcatDataSourceFactory" abstract="true">
     	<property name="baseObjectName" value="uPortal:section=DataSource,name=" />
+        <property name="mBeanServer" ref="mbeanServer" />
+      
         <property name="initialSize" value="1" />
         <property name="minIdle" value="1" />
         <property name="maxActive" value="75" />
@@ -49,6 +51,7 @@
         
         <property name="testWhileIdle" value="true" />
         <property name="testOnBorrow" value="true" />
+        <property name="delayedValidationQueryResolver" ref="delayedValidationQueryResolver" />
     </bean>
 
     <bean id="PortalDb" parent="basePooledDataSource">
@@ -88,7 +91,7 @@
         <property name="password" value="${AggrEventsJdbcPassword}" />
     </bean>    
     
-    <bean class="org.jasig.portal.utils.jdbc.DelayedValidationQueryResolverImpl">
+    <bean id="delayedValidationQueryResolver" class="org.jasig.portal.utils.jdbc.DelayedValidationQueryResolverImpl">
     	<property name="persistenceUnit">
     		<util:constant static-field="org.jasig.portal.jpa.BasePortalJpaDao.PERSISTENCE_UNIT_NAME"/>
     	</property>

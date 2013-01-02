@@ -272,6 +272,11 @@
         </dependency>
         
         <dependency>
+            <groupId>org.jasig.portlet.utils</groupId>
+            <artifactId>portlet-jdbc-util</artifactId>
+        </dependency>
+        
+        <dependency>
             <groupId>org.jasig.resourceserver</groupId>
             <artifactId>resource-server-api</artifactId>
         </dependency>
