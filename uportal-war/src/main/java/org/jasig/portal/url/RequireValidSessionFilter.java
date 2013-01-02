@@ -41,7 +41,7 @@ public class RequireValidSessionFilter extends OncePerRequestFilter {
     
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        final HttpSession session = request.getSession(true);
+        final HttpSession session = request.getSession(false);
         if (session != null && !session.isNew()) {
             //Session exists and is not new, don't bother filtering
             return true;
