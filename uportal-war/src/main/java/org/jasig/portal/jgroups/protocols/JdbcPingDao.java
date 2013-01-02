@@ -30,17 +30,20 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import org.apache.commons.codec.binary.Base64;
 import org.hibernate.annotations.Index;
 import org.jasig.portal.jpa.BasePortalJpaDao.PortalTransactional;
+import org.jasig.portal.logging.ConditionalExceptionLogger;
+import org.jasig.portal.logging.ConditionalExceptionLoggerImpl;
 import org.jasig.portal.utils.JdbcUtils;
 import org.jgroups.Address;
 import org.jgroups.PhysicalAddress;
 import org.jgroups.util.Streamable;
 import org.jgroups.util.Util;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
@@ -90,8 +93,8 @@ public class JdbcPingDao implements PingDao, InitializingBean {
         private final Class<? extends Address> memberAddressClass = null;
         
         @Id
-        @Column(name=COL_MEMBER_ADDRESS_DATA, length=1000)
-        private final byte[] memberAddressData = null;
+        @Column(name=COL_MEMBER_ADDRESS_DATA, length=2000)
+        private final String memberAddressData = null;
         
         
         @Column(name=COL_PHYSICAL_ADDRESS, length=500)
@@ -100,8 +103,8 @@ public class JdbcPingDao implements PingDao, InitializingBean {
         @Column(name=COL_PHYSICAL_ADDRESS_CLASS, length=200)
         private final Class<? extends Address> physicalAddressClass = null;
         
-        @Column(name=COL_PHYSICAL_ADDRESS_DATA, length=1000)
-        private final byte[] physicalAddressData = null;
+        @Column(name=COL_PHYSICAL_ADDRESS_DATA, length=2000)
+        private final String physicalAddressData = null;
     }
 
     
@@ -155,7 +158,7 @@ public class JdbcPingDao implements PingDao, InitializingBean {
             "WHERE " + Table.COL_CLUSTER_NAME + "=:" + PRM_CLUSTER_NAME;
 
     
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected final ConditionalExceptionLogger logger = new ConditionalExceptionLoggerImpl(LoggerFactory.getLogger(getClass()));
     
     private JdbcOperations jdbcOperations;
     private NamedParameterJdbcOperations namedParameterJdbcOperations;
@@ -179,17 +182,22 @@ public class JdbcPingDao implements PingDao, InitializingBean {
         }
         
         final Map<String, Object> paramMap = new HashMap<String, Object>();
-        paramMap.put(PRM_CLUSTER_NAME, clusterName);
-        setStreamableParam(paramMap, PRM_MEMBER_ADDRESS, address);
-        setStreamableParam(paramMap, PRM_PHYSICAL_ADDRESS, physicalAddress);
-        
-        final int rowCount = this.namedParameterJdbcOperations.update(UPDATE_SQL, paramMap);
-        if (rowCount == 0) {
-            this.namedParameterJdbcOperations.update(INSERT_SQL, paramMap);
-            logger.debug("Inserted cluster address: " + paramMap);
+        try {
+            paramMap.put(PRM_CLUSTER_NAME, clusterName);
+            setStreamableParam(paramMap, PRM_MEMBER_ADDRESS, address);
+            setStreamableParam(paramMap, PRM_PHYSICAL_ADDRESS, physicalAddress);
+            
+            final int rowCount = this.namedParameterJdbcOperations.update(UPDATE_SQL, paramMap);
+            if (rowCount == 0) {
+                this.namedParameterJdbcOperations.update(INSERT_SQL, paramMap);
+                logger.debug("Inserted cluster address: " + paramMap);
+            }
+            else {
+                logger.debug("Updated cluster address: " + paramMap);
+            }
         }
-        else {
-            logger.debug("Updated cluster address: " + paramMap);
+        catch (Exception e) {
+            logger.warnDebug("Failed to store cluster address: " + paramMap, e);
         }
     }
 
@@ -208,10 +216,15 @@ public class JdbcPingDao implements PingDao, InitializingBean {
                 final Map<Address, PhysicalAddress> result = new HashMap<Address, PhysicalAddress>();
                 
                 while (rs.next()) {
-                    final Address memberAddress = getStreamableParam(rs, Table.COL_MEMBER_ADDRESS);
-                    final PhysicalAddress physicalAddress = getStreamableParam(rs, Table.COL_PHYSICAL_ADDRESS);
-                    
-                    result.put(memberAddress, physicalAddress);
+                    try {
+                        final Address memberAddress = getStreamableParam(rs, Table.COL_MEMBER_ADDRESS);
+                        final PhysicalAddress physicalAddress = getStreamableParam(rs, Table.COL_PHYSICAL_ADDRESS);
+                        
+                        result.put(memberAddress, physicalAddress);
+                    }
+                    catch (Exception e) {
+                        logger.warnDebug("Ignoring address result due to data parsing error", e);
+                    }
                 }
                 
                 logger.debug("Found {} addresses in cluster: {}", result.size(), result);
@@ -243,8 +256,13 @@ public class JdbcPingDao implements PingDao, InitializingBean {
             setStreamableParam(paramMap, paramPrefix, address);
         }
         
-        final int purged = this.namedParameterJdbcOperations.update(deleteSqlBuilder.toString(), paramMap);
-        logger.debug("Purged {} addresses from '{}' cluster while retaining: {}", purged, clusterName, includedAddresses);
+        try {
+            final int purged = this.namedParameterJdbcOperations.update(deleteSqlBuilder.toString(), paramMap);
+            logger.debug("Purged {} addresses from '{}' cluster while retaining: {}", purged, clusterName, includedAddresses);
+        }
+        catch (DataIntegrityViolationException e) {
+            logger.warnDebug("Failed to purge old addresses for cluster '" + clusterName + "'", e);
+        }
     }
     
     protected boolean isReady() {
@@ -271,22 +289,25 @@ public class JdbcPingDao implements PingDao, InitializingBean {
             throw new RuntimeException("Failed to find class '" + className + "'", e);
         }
         
-        final byte[] data = rs.getBytes(columnPrefix + Table.DATA_COL_SUFFIX);
+        final String streamableData = rs.getString(columnPrefix + Table.DATA_COL_SUFFIX);
         try {
-            return (T)Util.streamableFromByteBuffer(cl, data);
-        } 
+            final byte[] streamableBytes = Base64.decodeBase64(streamableData);
+            return (T)Util.streamableFromByteBuffer(cl, streamableBytes);
+        }
         catch (Exception e) {
-            throw new RuntimeException("Failed to convert byte[] back into '" + cl + "'", e);
+            throw new RuntimeException("Failed to convert base64 string '" + streamableData + "' back into '" + cl + "'", e);
         }
     }
     
     protected void setStreamableParam(Map<String, Object> paramMap, String paramPrefix, Streamable s) {
         paramMap.put(paramPrefix + CLASS_PRM_SUFFIX, s.getClass().getName());
         try {
-            paramMap.put(paramPrefix + DATA_PRM_SUFFIX, Util.streamableToByteBuffer(s));
+            final byte[] streamableBytes = Util.streamableToByteBuffer(s);
+            final String streamableData = Base64.encodeBase64String(streamableBytes);
+            paramMap.put(paramPrefix + DATA_PRM_SUFFIX, streamableData);
         } 
         catch (Exception e) {
-            throw new RuntimeException("Failed to convert '" + s + "' into a byte[] for persistence", e);
+            throw new RuntimeException("Failed to convert '" + s + "' into a base64 string for persistence", e);
         }
         paramMap.put(paramPrefix, s.toString());
     }
