@@ -161,7 +161,8 @@
         <icu4j.version>4.0.1</icu4j.version>
         <jackson.version>1.9.11</jackson.version>
         <jansi.version>1.8</jansi.version>
-        <javassist.version>3.16.1-GA</javassist.version> 
+        <javassist.version>3.16.1-GA</javassist.version>
+        <jasig-portlet-utils.version>1.0.1</jasig-portlet-utils.version> 
         <jasypt.version>1.9.0</jasypt.version>
         <jaxb2basics.version>0.6.4</jaxb2basics.version>
         <jdom.version>1.0</jdom.version>
@@ -330,17 +331,6 @@
                 <groupId>commons-httpclient</groupId>
                 <artifactId>commons-httpclient</artifactId>
                 <version>${commons-httpclient.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-httpclient</groupId>
-                <artifactId>commons-httpclient</artifactId>
-                <version>${commons-httpclient.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
@@ -743,6 +733,17 @@
                 <groupId>org.jasig.portal</groupId>
                 <artifactId>uportal-ear-deployer</artifactId>
                 <version>${uportal-ear-deployer.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jasig.portlet.utils</groupId>
+                <artifactId>portlet-jdbc-util</artifactId>
+                <version>${jasig-portlet-utils.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.jasig.resourceserver</groupId>

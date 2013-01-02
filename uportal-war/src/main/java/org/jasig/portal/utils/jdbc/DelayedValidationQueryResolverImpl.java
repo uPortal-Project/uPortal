@@ -31,10 +31,10 @@ import javax.sql.DataSource;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.service.jdbc.dialect.spi.DialectResolver;
 import org.hibernate.service.spi.SessionFactoryServiceRegistry;
-import org.jasig.portal.concurrency.FunctionWithoutResult;
 import org.jasig.portal.hibernate.DelegatingHibernateIntegrator.HibernateConfiguration;
 import org.jasig.portal.hibernate.HibernateConfigurationAware;
 import org.jasig.portal.utils.Tuple;
+import org.jasig.portlet.utils.jdbc.DelayedValidationQueryResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.support.DatabaseMetaDataCallback;
@@ -44,7 +44,7 @@ import org.springframework.jdbc.support.MetaDataAccessException;
 public class DelayedValidationQueryResolverImpl implements DelayedValidationQueryResolver, HibernateConfigurationAware {
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 	
-	private final List<Tuple<DataSource, FunctionWithoutResult<String>>> delayedDataSources = new ArrayList<Tuple<DataSource,FunctionWithoutResult<String>>>();
+	private final List<Tuple<DataSource, ValidationQueryRegistrationHandler>> delayedDataSources = new ArrayList<Tuple<DataSource, ValidationQueryRegistrationHandler>>();
 	private ConcurrentMap<Class<? extends Dialect>, String> validationQueryMap;
 	private String persistenceUnit;
 	private DialectResolver dialectResolver;
@@ -70,26 +70,26 @@ public class DelayedValidationQueryResolverImpl implements DelayedValidationQuer
 		synchronized (this.delayedDataSources) {
 			this.dialectResolver = serviceRegistry.getService(DialectResolver.class);
 		
-			for (final Tuple<DataSource, FunctionWithoutResult<String>> delayedDataSource : this.delayedDataSources) {
+			for (final Tuple<DataSource, ValidationQueryRegistrationHandler> delayedDataSource : this.delayedDataSources) {
 				final String validationQuery = this.getValidationQuery(delayedDataSource.first);
-				delayedDataSource.second.apply(validationQuery);
+				delayedDataSource.second.setValidationQuery(validationQuery);
 			}
 			this.delayedDataSources.clear();
 		}
 	}
 	
 	@Override
-	public void registerValidationQueryCallback(DataSource dataSource, FunctionWithoutResult<String> validationQueryCallback) {
-		synchronized (this.delayedDataSources) {
-			if (this.dialectResolver != null) {
-				final String validationQuery = this.getValidationQuery(dataSource);
-				validationQueryCallback.apply(validationQuery);
-			}
-			else {
-				this.delayedDataSources.add(new Tuple<DataSource, FunctionWithoutResult<String>>(dataSource, validationQueryCallback));
-			}
-		}
-	}
+    public void registerValidationQueryCallback(DataSource dataSource, ValidationQueryRegistrationHandler validationQueryRegistrationHandler) {
+	    synchronized (this.delayedDataSources) {
+            if (this.dialectResolver != null) {
+                final String validationQuery = this.getValidationQuery(dataSource);
+                validationQueryRegistrationHandler.setValidationQuery(validationQuery);
+            }
+            else {
+                this.delayedDataSources.add(new Tuple<DataSource, ValidationQueryRegistrationHandler>(dataSource, validationQueryRegistrationHandler));
+            }
+        }
+    }
 	
 	protected String getValidationQuery(DataSource dataSource) {
 		final Dialect dialect = this.resolveDialect(dataSource);
