@@ -1,6 +1,7 @@
 package org.jasig.portal.security;
 
 import javax.portlet.PortletRequest;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -50,4 +51,11 @@ public interface IdentitySwapperManager {
      * @return The target of impersonation, null if there is no impersonation target
      */
     String getTargetUsername(HttpSession session);
+
+    /**
+     * 
+     * @param request needed to provide a session for the user
+     * @return a true/false the user is actually another user impersonating as this user.
+     */
+    boolean isImpersonating(HttpServletRequest request);
 }

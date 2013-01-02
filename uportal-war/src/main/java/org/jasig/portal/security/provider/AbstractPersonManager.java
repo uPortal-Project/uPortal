@@ -19,38 +19,11 @@
 
 package org.jasig.portal.security.provider;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.jasig.portal.security.IPersonManager;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class AbstractPersonManager implements IPersonManager {
-
-    /**
-       * Returns a primitive boolean to see if the user is an impersonation. 
-       */
-    @Override
-    public boolean isImpersonating(HttpServletRequest request) {
-          final HttpSession session = request.getSession();
-          final Boolean sessionVal = (Boolean)session.getAttribute(IS_IMPERSONATING);
-          if (sessionVal != null) {
-              return sessionVal;
-          } 
-          
-          return true;
-      }
-
-    /**
-       * sets if the user is actually another user impersonating as this user, to allow obfuscation of private non-technical information
-       */
-    @Override
-    public void setImpersonating(HttpServletRequest request, boolean isImpersonating) {
-          final HttpSession session = request.getSession();
-          session.setAttribute(IS_IMPERSONATING, isImpersonating);
-      }
 
 }

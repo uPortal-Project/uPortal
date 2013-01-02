@@ -269,13 +269,11 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
 
                     //Setup the swapped person
                     person.setUserName(targetUid);
-                    personManager.setImpersonating(request, true);
                 }
                 else {
                     swapperLog.warn("Reverting swapped identity from '" + targetUid + "' to '" + originalUid + "'");
 
                     person.setUserName(originalUid);
-                    personManager.setImpersonating(request, false);
                 }
 
                 //Setup the custom security context

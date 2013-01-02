@@ -2,6 +2,7 @@ package org.jasig.portal.security;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.jasig.portal.EntityIdentifier;
@@ -74,4 +75,12 @@ public class IdentitySwapperManagerImpl implements IdentitySwapperManager {
         return (String) session.getAttribute(SWAP_TARGET_UID);
     }
 
+    @Override
+    public boolean isImpersonating(HttpServletRequest request) {
+        final HttpSession session = request.getSession(false);
+        if (session == null) {
+            return false;
+        }
+        return this.getOriginalUsername(session) != null;
+    }
 }

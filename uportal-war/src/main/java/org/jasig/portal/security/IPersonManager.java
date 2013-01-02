@@ -30,27 +30,12 @@ public interface IPersonManager {
   // Can be used to store an instance of IPerson in the user's session
   public static final String PERSON_SESSION_KEY = "org.jasig.portal.security.IPerson";
 
-  public static final String IS_IMPERSONATING = "org.jasig.portal.security.IPersonManager.IS_IMPERSONATING";
-  
   /**
    * Returns an IPerson associated with the incoming request
    * @param request
    * @return IPerson associated with the incoming request
    */
   public IPerson getPerson(HttpServletRequest request) throws PortalSecurityException;
-  
-  /**
-   * 
-   * @param request needed to provide a session for the user
-   * @return a true/false the user is actually another user impersonating as this user.
-   */
-  public boolean isImpersonating(HttpServletRequest request);
-  
-  /**
-   * @param request needed to provide a session for the user
-   * @param isImpersonating 'true' to show that the user is impersonating another user now.
-   */
-  public void setImpersonating(HttpServletRequest request, boolean isImpersonating);
 }
 
 
