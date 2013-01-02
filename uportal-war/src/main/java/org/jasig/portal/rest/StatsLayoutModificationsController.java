@@ -77,6 +77,10 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class StatsLayoutModificationsController implements InitializingBean {
 
+    public static final AggregationInterval AGGREGATION_INTERVAL = AggregationInterval.DAY;
+    public static final String GROUP_SERVICE = "local";
+    public static final String GROUP_NAME = "Everyone";
+
     private static final int MIN_DAYS = 0;
     
     private DataSource dataSource;
@@ -252,7 +256,7 @@ public class StatsLayoutModificationsController implements InitializingBean {
         private final AggregatedPortletLookupDao aggregatedPortletLookupDao;
         private final AggregatedGroupLookupDao aggregatedGroupLookupDao;
         private final IPortletDefinitionDao portletDefinitionDao;
-        private final Map<AggregationInterval,List<CountingTuple>> cache;
+        private final Map<Integer,List<CountingTuple>> cache;
         
         public EventCountFactory(PortletLayoutAggregationDao<PortletLayoutAggregation> portletLayoutDao,
                                  AggregatedPortletLookupDao aggregatedPortletLookupDao,
@@ -290,139 +294,52 @@ public class StatsLayoutModificationsController implements InitializingBean {
 
         }
 
-        public List<CountingTuple> getEventCounts(AggregationInterval interval) {
-            List<CountingTuple> rslt = (List<CountingTuple>) cache.get(interval);
+        public List<CountingTuple> getEventCounts(Integer days) {
+            List<CountingTuple> rslt = (List<CountingTuple>) cache.get(days);
             if(rslt == null) {
-                rslt = buildEventCounts(interval);
-                cache.put(interval, rslt);
+                rslt = buildEventCounts(dateOnOrBefore, days);
+                cache.put(tuple, rslt);
             }
             return rslt;
         }
-        
-        private List<CountingTuple> buildEventCounts(AggregationInterval interval) {
-            DateTime[] dates = getDateRange(interval);
+
+        /*
+        This is probably far from the most efficient way of doing this but given our time constraints
+        we will use this and see how it performs.
+         */
+        private List<CountingTuple> buildEventCounts(Integer days) {
+            DateTime end = new DateTime();
+            DateTime begin = end.minusDays(days);
 
             Set<AggregatedPortletMapping> portletMappings = aggregatedPortletLookupDao.getPortletMappings();
-            AggregatedGroupMapping group = aggregatedGroupLookupDao.getGroupMapping("local","Everyone");
-            List<CountingTuple> completeList =  new ArrayList<CountingTuple>();
+            AggregatedGroupMapping group = aggregatedGroupLookupDao.getGroupMapping(GROUP_SERVICE,GROUP_NAME);
 
+            List<CountingTuple> completeList =  new ArrayList<CountingTuple>();
             for(AggregatedPortletMapping portletMapping : portletMappings) {
                 IPortletDefinition def = portletDefinitionDao.getPortletDefinitionByFname(portletMapping.getFname());
-                PortletLayoutAggregationKey key = new PortletLayoutAggregationKeyImpl(interval,group,portletMapping);
-                List<PortletLayoutAggregation> aggregations = portletLayoutDao.getAggregations(dates[0],dates[1],key,group);
+                PortletLayoutAggregationKey key = new PortletLayoutAggregationKeyImpl(AGGREGATION_INTERVAL,group,portletMapping);
+                List<PortletLayoutAggregation> aggregations = portletLayoutDao.getAggregations(begin,end,key,group);
 
                 if((aggregations != null) && (!aggregations.isEmpty())) {
-                    Collections.sort(aggregations,BaseAggregationDateTimeComparator.INSTANCE);
-                    DateTime now = new DateTime();
-                    DateTime compval = null;
-                    switch(interval) {
-                        case MINUTE: {
-                            compval = now.minusMinutes(1);
-                            break;
-                        }
-                        case FIVE_MINUTE: {
-                            compval = now.minusMinutes(5);
-                            break;
-                        }
-                        case HOUR: {
-                            compval = now.minusHours(1);
-                            break;
-                        }
-                        case DAY: {
-                            compval = now.minusDays(1);
-                            break;
-                        }
-                        case WEEK: {
-                            compval =  now.minusWeeks(1);
-                            break;
-                        }
-                        case MONTH: {
-                            compval = now.minusMonths(1);
-                            break;
-                        }
-                        case CALENDAR_QUARTER: {
-                            compval = now.minusMonths(3);
-                            break;
-                        }
-                        case YEAR: {
-                            compval = now.minusYears(1);
-                            break;
-                        }
-                        default: {
-                            compval = now.minusYears(1);
-                        }
-                    }
+                    Collections.sort(aggregations,Collections.reverseOrder(BaseAggregationDateTimeComparator.INSTANCE));
+                    int portletId = (int)def.getPortletDefinitionId().getLongId();
+                    int maxCount = 0;
+                    DateTime compval = new DateTime().minusDays(days);
 
-                    for(int index=aggregations.size()-1; index >= 0; index--) {
-                        PortletLayoutAggregation aggregation = aggregations.get(index);
+                    for(PortletLayoutAggregation aggregation : aggregations) {
                         if(!aggregation.getDateTime().isAfter(compval) && !aggregation.getDateTime().equals(compval)) {
                             break;
                         }
 
-                        int count = aggregation.getAddCount() - aggregation.getDeleteCount();
+                        int count = aggregation.getAddCount();// - aggregation.getDeleteCount();
                         if(count > 0) {
-                            int id = (int)def.getPortletDefinitionId().getLongId();
-                            completeList.add(new CountingTuple(id, def.getFName(), def.getTitle(), def.getDescription(), count));
+                            maxCount += count;
                         }
                     }
+                    completeList.add(new CountingTuple(portletId, def.getFName(), def.getTitle(), def.getDescription(), maxCount));
                 }
             }
             return completeList;
-        }
-
-        private DateTime[] getDateRange(AggregationInterval interval) {
-            DateTime[] dates =  new DateTime[2];
-
-            //Set the report end date as today
-            final DateTime today = new DateTime();
-            dates[1] = today;
-
-            //Determine the best start date based on the selected interval
-            final DateTime start;
-            switch (interval) {
-                case MINUTE: {
-                    start = today.minusDays(1);
-                    break;
-                }
-                case FIVE_MINUTE: {
-                    start = today.minusDays(2);
-                    break;
-                }
-                case HOUR: {
-                    start = today.minusWeeks(1);
-                    break;
-                }
-                case DAY: {
-                    start = today.minusMonths(1);
-                    break;
-                }
-                case WEEK: {
-                    start = today.minusMonths(3);
-                    break;
-                }
-                case MONTH: {
-                    start = today.minusYears(1);
-                    break;
-                }
-                case ACADEMIC_TERM: {
-                    start = today.minusYears(2);
-                    break;
-                }
-                case CALENDAR_QUARTER: {
-                    start = today.minusYears(2);
-                    break;
-                }
-                case YEAR: {
-                    start = today.minusYears(10);
-                    break;
-                }
-                default: {
-                    start = today.minusWeeks(1);
-                }
-            }
-
-            dates[0] = start;
-            return dates;
         }
     }
 }
