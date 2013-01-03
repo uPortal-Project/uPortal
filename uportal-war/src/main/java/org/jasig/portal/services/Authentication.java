@@ -37,6 +37,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPrincipal;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
+import org.jasig.portal.security.ThreadNamingRequestFilter;
 import org.jasig.portal.security.provider.ChainingSecurityContext;
 import org.jasig.portal.utils.MovingAverage;
 import org.jasig.portal.utils.MovingAverageSample;
@@ -69,9 +70,15 @@ public class Authentication {
     private static final MovingAverage authenticationTimes = new MovingAverage();
     public static MovingAverageSample lastAuthentication = new MovingAverageSample();
 
+    private ThreadNamingRequestFilter threadNamingRequestFilter;
     private IUserIdentityStore userIdentityStore;
     private IPortalAuthEventFactory portalEventFactory;
     private IPersonAttributeDao personAttributeDao;
+    
+    @Autowired
+    public void setThreadNamingRequestFilter(ThreadNamingRequestFilter threadNamingRequestFilter) {
+        this.threadNamingRequestFilter = threadNamingRequestFilter;
+    }
 
     @Autowired
     public void setPersonAttributeDao(@Qualifier("personAttributeDao") IPersonAttributeDao personAttributeDao) {
@@ -119,7 +126,11 @@ public class Authentication {
             // Add the authenticated username to the person object
             // the login name may have been provided or reset by the security provider
             // so this needs to be done after authentication.
-            person.setAttribute(IPerson.USERNAME, securityContext.getPrincipal().getUID());
+            final String uid = securityContext.getPrincipal().getUID();
+            person.setAttribute(IPerson.USERNAME, uid);
+            
+            threadNamingRequestFilter.updateCurrentUsername(uid);
+            
             // Retrieve the additional descriptor from the security context
             final IAdditionalDescriptor addInfo = person.getSecurityContext().getAdditionalDescriptor();
             // Process the additional descriptor if one was created
