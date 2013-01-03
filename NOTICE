@@ -82,6 +82,7 @@ This project includes:
   Hibernate Commons Annotations under GNU LESSER GENERAL PUBLIC LICENSE
   Hibernate JPA 2 Metamodel Generator under Apache License, Version 2.0
   HttpClient under Apache License
+  HttpCore under Apache License
   HyperSQL Database under HSQLDB License, a BSD open source license
   ICU4J under ICU License
   Jackson under The Apache Software License, Version 2.0
@@ -117,6 +118,7 @@ This project includes:
   oro under Apache License, Version 2.0
   Person Directory API under Apache License Version 2.0
   Person Directory Implementations under Apache License Version 2.0
+  Portlet JDBC Utilities under Apache License Version 2.0
   Quartz Enterprise Job Scheduler under Apache 2.0
   Resource Server API under Apache License Version 2.0
   Resource Server Core under Apache License Version 2.0
