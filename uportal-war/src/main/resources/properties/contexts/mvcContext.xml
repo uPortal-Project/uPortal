@@ -32,6 +32,7 @@
     <bean id="requireValidSessionFilter" class="org.jasig.portal.url.RequireValidSessionFilter" />
     <bean id="urlCanonicalizingFilter" class="org.jasig.portal.url.UrlCanonicalizingFilter" />
     <bean id="createPortletCookieFilter" class="org.jasig.portal.utils.web.CreatePortletCookieFilter"/>
+    <bean id="remoteCookieCheckFilter" class="org.jasig.portal.utils.web.RemoteCookieCheckFilter"/>
     <bean id="multipartResolver"
         class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
     
