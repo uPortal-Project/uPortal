@@ -149,9 +149,7 @@ public abstract class BaseStatisticsReportController<
      * @return The default report request form to use, populates the initial form view
      */
     @ModelAttribute("reportRequest")
-    public final F getReportForm() {
-        final F report = createReportFormRequest();
-        
+    public final F getReportForm(F report) {
         setReportFormDateRangeAndInterval(report);
         
         setReportFormGroups(report);
@@ -172,9 +170,13 @@ public abstract class BaseStatisticsReportController<
     public abstract String getReportDataResourceId();
 
     /**
-     * Set the groups to have selected by default
+     * Set the groups to have selected by default if not already set
      */
     protected void setReportFormGroups(final F report) {
+        if (!report.getGroups().isEmpty()) {
+            return;
+        }
+        
         final Set<AggregatedGroupMapping> groups = this.getGroups();
         if (!groups.isEmpty()) {
             report.getGroups().add(groups.iterator().next().getId());
@@ -182,68 +184,79 @@ public abstract class BaseStatisticsReportController<
     }
     
     /**
-     * Set the start/end date and the interval to have selected by default
+     * Set the start/end date and the interval to have selected by default if they
+     * are not already set
      */
     protected void setReportFormDateRangeAndInterval(final F report) {
         //Determine default interval based on the intervals available for this aggregation
-        report.setInterval(AggregationInterval.DAY);
-        final Set<AggregationInterval> intervals = this.getIntervals();
-        for (final AggregationInterval preferredInterval : PREFERRED_INTERVAL_ORDER) {
-            if (intervals.contains(preferredInterval)) {
-                report.setInterval(preferredInterval);
-                break;
+        if (report.getInterval() == null) {
+            report.setInterval(AggregationInterval.DAY);
+            final Set<AggregationInterval> intervals = this.getIntervals();
+            for (final AggregationInterval preferredInterval : PREFERRED_INTERVAL_ORDER) {
+                if (intervals.contains(preferredInterval)) {
+                    report.setInterval(preferredInterval);
+                    break;
+                }
             }
         }
         
         //Set the report end date as today
-        final DateMidnight today = new DateMidnight();
-        report.setEnd(today);
-        
-        //Determine the best start date based on the selected interval
-        final DateMidnight start;
-        switch (report.getInterval()) {
-            case MINUTE: {
-                start = today.minusDays(1);
-                break;
-            }
-            case FIVE_MINUTE: {
-                start = today.minusDays(2);
-                break;
-            }
-            case HOUR: {
-                start = today.minusWeeks(1);
-                break;
-            }
-            case DAY: {
-                start = today.minusMonths(1);
-                break;
-            }
-            case WEEK: {
-                start = today.minusMonths(3);
-                break;
-            }
-            case MONTH: {
-                start = today.minusYears(1);
-                break;
-            }
-            case ACADEMIC_TERM: {
-                start = today.minusYears(2);
-                break;
-            }
-            case CALENDAR_QUARTER: {
-                start = today.minusYears(2);
-                break;
-            }
-            case YEAR: {
-                start = today.minusYears(10);
-                break;
-            }
-            default: {
-                start = today.minusWeeks(1);
-            }
+        final DateMidnight reportEnd;
+        if (report.getEnd() == null) {
+            reportEnd = new DateMidnight();
+            report.setEnd(reportEnd);
+        }
+        else {
+            reportEnd = report.getEnd();
         }
         
-        report.setStart(start);
+        //Determine the best start date based on the selected interval
+        if (report.getStart() == null) {
+            final DateMidnight start;
+            switch (report.getInterval()) {
+                case MINUTE: {
+                    start = reportEnd.minusDays(1);
+                    break;
+                }
+                case FIVE_MINUTE: {
+                    start = reportEnd.minusDays(2);
+                    break;
+                }
+                case HOUR: {
+                    start = reportEnd.minusWeeks(1);
+                    break;
+                }
+                case DAY: {
+                    start = reportEnd.minusMonths(1);
+                    break;
+                }
+                case WEEK: {
+                    start = reportEnd.minusMonths(3);
+                    break;
+                }
+                case MONTH: {
+                    start = reportEnd.minusYears(1);
+                    break;
+                }
+                case ACADEMIC_TERM: {
+                    start = reportEnd.minusYears(2);
+                    break;
+                }
+                case CALENDAR_QUARTER: {
+                    start = reportEnd.minusYears(2);
+                    break;
+                }
+                case YEAR: {
+                    start = reportEnd.minusYears(10);
+                    break;
+                }
+                default: {
+                    start = reportEnd.minusWeeks(1);
+                }
+            }
+            
+            report.setStart(start);
+        }
     }
     
     /**

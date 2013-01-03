@@ -52,10 +52,16 @@
         <div class="portlet-section-body">
         <div>
             <div id="${n}_chartLinkBar">
-                <button id="${n}_editChart"><spring:message code="edit.chart"/></button>
                 <a id="${n}_downloadCsv">CSV</a>
                 <a id="${n}_downloadHtml" target="_blank">HTML</a>
                 <a id="${n}_downloadPng" download="${reportName}.png" target="_blank">PNG</a>
+                -
+                <a id="${n}_editChart" href="#"><spring:message code="edit.chart"/></a>
+                -
+                <portlet:renderURL var="currentReportUrl">
+                    <portlet:param name="report" value="${reportName}"/>
+                </portlet:renderURL>
+                <a id="${n}_permLink" href="${currentReportUrl}"><spring:message code="perm.link"/></a>
                 -
                 <portlet:renderURL var="reportListUrl"/>
                 <a href="${reportListUrl}"><spring:message code="report.list"/></a>
@@ -109,13 +115,15 @@
 </div>
 
 <script type="text/javascript">
+<rs:compressJs>
 google.load("visualization", "1.0", {
    packages : [ "corechart", "charteditor" ]
 });
 
 up.jQuery(function() {
    var $ = up.jQuery;
-   var reportUrl = '<portlet:resourceURL id="${reportDataResourceId}"/>';
+   var reportDataUrl = '<portlet:resourceURL id="${reportDataResourceId}"/>';
+   var reportUrl = '${currentReportUrl}';
    var privateChartWrapper = undefined;
    var resizeInterval = undefined;
    var intervalsCache = {};
@@ -146,8 +154,12 @@ up.jQuery(function() {
       }
    };
 
-   var buildUrl = function(queryString, queryData) {
-      var url = appendParams(reportUrl, queryString);
+   var buildUrl = function(url, queryString, queryData) {
+      url = appendParams(url, queryString);
+      if (queryData == undefined) {
+         return url;
+      }
+
       var params = $.param(queryData, true);
       return appendParams(url, params);
    };
@@ -289,7 +301,7 @@ up.jQuery(function() {
 
    $("#${n} .datepicker").datepicker();
    $("#${n}_reportForm").ajaxForm({
-      url : reportUrl,
+      url : reportDataUrl,
       type : 'GET',
       traditional : true,
       dataType : "json",
@@ -302,13 +314,15 @@ up.jQuery(function() {
 
          // Update report download links for the new query
          var queryString = form.serialize();
-         $("#${n}_downloadCsv").attr('href', buildUrl(queryString, {
+         $("#${n}_downloadCsv").attr('href', buildUrl(reportDataUrl, queryString, {
             format : "csv"
          }));
-         $("#${n}_downloadHtml").attr('href', buildUrl(queryString, {
+         $("#${n}_downloadHtml").attr('href', buildUrl(reportDataUrl, queryString, {
             format : "html"
          }));
          $("#${n}_downloadPng").attr('href', '');
+         $("#${n}_permLink").attr('href', buildUrl(reportUrl, queryString));
+         
          
 
          $(document.body).animate({
@@ -338,7 +352,7 @@ up.jQuery(function() {
       }
    });
 
-   $("#${n}_editChart").click(editChart);
+   $("#${n}_editChart").click(function() { editChart(); return false; });
    $("#${n}_downloadPng").mousedown(downloadPng);
 
    // Add validation listeners
@@ -352,4 +366,5 @@ up.jQuery(function() {
    });
 
 });
+</rs:compressJs>
 </script>
