@@ -34,8 +34,8 @@
         <property name="corePoolSize" value="${org.jasig.portal.task.exec.threadPool.initialThreads}" />
         <property name="maxPoolSize" value="${org.jasig.portal.task.exec.threadPool.maxThreads}" />
         <property name="queueCapacity" value="0" />
-        <property name="threadGroupName" value="uPortal-TaskExecutorThreadGroup" />
-        <property name="threadNamePrefix" value="uPortal-TaskExecutor-" />
+        <property name="threadGroupName" value="uP-TaskExecTG" />
+        <property name="threadNamePrefix" value="uP-TaskExec-" />
         <property name="threadPriority" value="${org.jasig.portal.task.exec.threadPool.threadPriority}" />
         <property name="keepAliveSeconds" value="${org.jasig.portal.task.exec.threadPool.keepAliveSeconds}" />
         <property name="daemon" value="true" />
@@ -47,8 +47,8 @@
         <property name="initialDelay" value="PT120S" />
         <property name="executorService" ref="uPortalTaskExecutor" />
         <property name="poolSize" value="${org.jasig.portal.task.sched.threadPool.poolSize}" />
-        <property name="threadGroupName" value="uPortal-TaskSchedulerThreadGroup" />
-        <property name="threadNamePrefix" value="uPortal-TaskScheduler-" />
+        <property name="threadGroupName" value="uP-TaskSchedTG" />
+        <property name="threadNamePrefix" value="uP-TaskSched-" />
         <property name="daemon" value="true" />
         <property name="rejectedExecutionHandler" ref="loggingAbortHandler" />
     </bean>
