@@ -14,7 +14,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jasig.portal</groupId>
     <artifactId>uportal-parent</artifactId>
-    <version>4.0.9-SNAPSHOT</version>
+    <version>4.0.9</version>
     <packaging>pom</packaging>
 
     <name>uPortal Parent</name>
