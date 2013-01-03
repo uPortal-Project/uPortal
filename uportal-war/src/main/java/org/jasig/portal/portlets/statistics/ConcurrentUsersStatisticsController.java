@@ -83,11 +83,6 @@ public class ConcurrentUsersStatisticsController
     }
     
     @Override
-    protected ConcurrentUserReportForm createReportFormRequest() {
-        return new ConcurrentUserReportForm();
-    }
-
-    @Override
     public String getReportName() {
         return REPORT_NAME;
     }

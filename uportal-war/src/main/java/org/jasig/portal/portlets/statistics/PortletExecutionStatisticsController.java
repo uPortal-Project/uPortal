@@ -94,18 +94,22 @@ public class PortletExecutionStatisticsController
         return renderAggregationReport(form);
     }
     
+    
     @Override
-    protected PortletExecutionReportForm createReportFormRequest() {
-        PortletExecutionReportForm form = new PortletExecutionReportForm();
-        selectFormDefaultPortlet(form);
-        selectFormExecutionType(form);
-        return form;
+    protected void initReportForm(PortletExecutionReportForm report) {
+        selectFormDefaultPortlet(report);
+        selectFormExecutionType(report);
     }
 
     /**
      * Select the first portlet name by default for the form
      */
     private void selectFormDefaultPortlet(final PortletExecutionReportForm report) {
+        if (!report.getPortlets().isEmpty()) {
+            //Portlets already selected, do nothin
+            return;
+        }
+        
         final Set<AggregatedPortletMapping> portlets = this.getPortlets();
         if (!portlets.isEmpty()) {
             report.getPortlets().add(portlets.iterator().next().getFname());
@@ -133,6 +137,11 @@ public class PortletExecutionStatisticsController
      * Select the XXXX execution type by default for the form
      */
     private void selectFormExecutionType(final PortletExecutionReportForm report) {
+        if (!report.getExecutionTypeNames().isEmpty()) {
+            //Already execution types set, do nothing
+            return;
+        }
+        
         report.getExecutionTypeNames().add(ExecutionType.RENDER.name());
     }
 
