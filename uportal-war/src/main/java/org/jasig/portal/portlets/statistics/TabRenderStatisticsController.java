@@ -94,16 +94,19 @@ public class TabRenderStatisticsController
     }
     
     @Override
-    protected TabRenderReportForm createReportFormRequest() {
-        TabRenderReportForm form = new TabRenderReportForm();
-        setReportFormTabs(form);
-        return form;
+    protected void initReportForm(TabRenderReportForm report) {
+        setReportFormTabs(report);
     }
 
     /**
      * Set the tab names to have first selected by default
      */
     private void setReportFormTabs(final TabRenderReportForm report) {
+        if (!report.getTabs().isEmpty()) {
+            //Tabs are already set, do nothing
+            return;
+        }
+        
         final Set<AggregatedTabMapping> tabs = this.getTabs();
         if (!tabs.isEmpty()) {
             report.getTabs().add(tabs.iterator().next().getId());

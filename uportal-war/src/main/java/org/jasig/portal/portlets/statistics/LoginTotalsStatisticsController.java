@@ -84,11 +84,6 @@ public class LoginTotalsStatisticsController
     }
     
     @Override
-    protected LoginReportForm createReportFormRequest() {
-        return new LoginReportForm();
-    }
-
-    @Override
     public String getReportName() {
         return REPORT_NAME;
     }

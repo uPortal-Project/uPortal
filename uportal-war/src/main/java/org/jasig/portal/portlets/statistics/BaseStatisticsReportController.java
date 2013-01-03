@@ -137,7 +137,7 @@ public abstract class BaseStatisticsReportController<
      * @see BaseAggregationDao#getAggregatedGroupMappings()
      */
     @ModelAttribute("groups")
-    public Set<AggregatedGroupMapping> getGroups() {
+    public final Set<AggregatedGroupMapping> getGroups() {
         final Set<AggregatedGroupMapping> groupMappings = this.getBaseAggregationDao().getAggregatedGroupMappings();
         
         final Set<AggregatedGroupMapping> sortedGroupMappings = new TreeSet<AggregatedGroupMapping>(AggregatedGroupMappingNameComparator.INSTANCE);
@@ -153,6 +153,8 @@ public abstract class BaseStatisticsReportController<
         setReportFormDateRangeAndInterval(report);
         
         setReportFormGroups(report);
+        
+        initReportForm(report);
 
         return report;
     }
@@ -172,7 +174,7 @@ public abstract class BaseStatisticsReportController<
     /**
      * Set the groups to have selected by default if not already set
      */
-    protected void setReportFormGroups(final F report) {
+    protected final void setReportFormGroups(final F report) {
         if (!report.getGroups().isEmpty()) {
             return;
         }
@@ -187,7 +189,7 @@ public abstract class BaseStatisticsReportController<
      * Set the start/end date and the interval to have selected by default if they
      * are not already set
      */
-    protected void setReportFormDateRangeAndInterval(final F report) {
+    protected final void setReportFormDateRangeAndInterval(final F report) {
         //Determine default interval based on the intervals available for this aggregation
         if (report.getInterval() == null) {
             report.setInterval(AggregationInterval.DAY);
@@ -260,9 +262,11 @@ public abstract class BaseStatisticsReportController<
     }
     
     /**
-     * @return The {@link BaseReportForm} implementation used to populate the initial view
+     * Optional for initializing the report form, note that implementers should check
+     * to see if the form has alredy been populated before overwriting fields.
      */
-    protected abstract F createReportFormRequest();
+    protected void initReportForm(F report) {
+    }
     
     /**
      * @return The dao for the aggregation
