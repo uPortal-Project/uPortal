@@ -33,6 +33,7 @@ import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.rendering.LazyPrintWriter;
 import org.jasig.portal.portlet.rendering.LazyServletOutputStream;
 import org.jasig.portal.portlet.rendering.PortletOutputHandler;
+import org.jasig.portal.utils.Servlet3WrapperUtils;
 
 /**
  * Wrapper for portlet responses that write out content: {@link MimeResponse}. As much as possible
@@ -56,8 +57,14 @@ public class PortletMimeHttpServletResponseWrapper extends PortletHttpServletRes
     private final CacheControl cacheControl;
     private ServletOutputStream servletOutputStream;
     private PrintWriter printWriter;
+    
+    public static HttpServletResponse create(HttpServletResponse httpServletResponse, IPortletWindow portletWindow,
+            PortletOutputHandler portletOutputHandler, CacheControl cacheControl) {
+        final HttpServletResponse proxy = new PortletMimeHttpServletResponseWrapper(httpServletResponse, portletWindow, portletOutputHandler, cacheControl);
+        return Servlet3WrapperUtils.addServlet3Wrapper(proxy, httpServletResponse);
+    }
 
-    public PortletMimeHttpServletResponseWrapper(HttpServletResponse httpServletResponse, IPortletWindow portletWindow,
+    protected PortletMimeHttpServletResponseWrapper(HttpServletResponse httpServletResponse, IPortletWindow portletWindow,
             PortletOutputHandler portletOutputHandler, CacheControl cacheControl) {
         super(httpServletResponse, portletWindow);
         this.portletOutputHandler = portletOutputHandler;

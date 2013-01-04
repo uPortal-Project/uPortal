@@ -158,7 +158,7 @@ final class PortletFailureExecutionWorker implements IPortletFailureExecutionWor
         }
         
         //Wrap the request to scope the attributes to just this execution
-        final PortletHttpServletRequestWrapper wrappedRequest = new PortletHttpServletRequestWrapper(request);
+        final HttpServletRequest wrappedRequest = PortletHttpServletRequestWrapper.create(request);
         wrappedRequest.setAttribute(PortletErrorController.REQUEST_ATTRIBUTE__CURRENT_FAILED_PORTLET_WINDOW_ID, failedPortletWindowId);
         wrappedRequest.setAttribute(PortletErrorController.REQUEST_ATTRIBUTE__CURRENT_EXCEPTION_CAUSE, cause);
         
