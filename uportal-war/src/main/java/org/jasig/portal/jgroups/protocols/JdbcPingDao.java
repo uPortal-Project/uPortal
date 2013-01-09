@@ -80,7 +80,7 @@ public class JdbcPingDao implements PingDao, InitializingBean {
         static final String COL_PHYSICAL_ADDRESS_DATA = COL_PHYSICAL_ADDRESS + DATA_COL_SUFFIX;
 
         @Id
-        @Column(name=COL_CLUSTER_NAME, length=200)
+        @Column(name=COL_CLUSTER_NAME, length=100)
         @Index(name="IDX_JGROUPS_PING")
         private final String clusterName = null;
         
@@ -89,21 +89,21 @@ public class JdbcPingDao implements PingDao, InitializingBean {
         private final String memberAddress = null;
         
         @Id
-        @Column(name=COL_MEMBER_ADDRESS_CLASS, length=200)
+        @Column(name=COL_MEMBER_ADDRESS_CLASS, length=100)
         private final Class<? extends Address> memberAddressClass = null;
         
         @Id
-        @Column(name=COL_MEMBER_ADDRESS_DATA, length=2000)
+        @Column(name=COL_MEMBER_ADDRESS_DATA, length=550)
         private final String memberAddressData = null;
         
         
         @Column(name=COL_PHYSICAL_ADDRESS, length=500)
         private final String physicalAddressName = null;
         
-        @Column(name=COL_PHYSICAL_ADDRESS_CLASS, length=200)
+        @Column(name=COL_PHYSICAL_ADDRESS_CLASS, length=100)
         private final Class<? extends Address> physicalAddressClass = null;
         
-        @Column(name=COL_PHYSICAL_ADDRESS_DATA, length=2000)
+        @Column(name=COL_PHYSICAL_ADDRESS_DATA, length=1000)
         private final String physicalAddressData = null;
     }
 
