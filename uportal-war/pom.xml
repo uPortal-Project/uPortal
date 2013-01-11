@@ -33,7 +33,7 @@
         <dependency>
             <groupId>org.jasig.ssp.platform</groupId>
             <artifactId>platform-java-api</artifactId>
-            <version>${project.version}</version>
+            <version>0.1.0</version>
             <scope>provided</scope>
         </dependency>
         

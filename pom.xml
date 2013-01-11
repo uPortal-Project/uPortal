@@ -189,7 +189,6 @@
     </properties>
 
     <modules>
-        <module>uportal-java-api</module>
         <module>uportal-war</module>
         <module>uportal-ear</module>
         <module>uportal-portlets-overlay</module>
