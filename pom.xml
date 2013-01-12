@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jasig.ssp.platform</groupId>
     <artifactId>platform-parent</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>SSP Platform Parent</name>
@@ -21,7 +21,7 @@
         <connection>scm:git:git://github.com/russlittle/SSP-Platform.git</connection>
         <developerConnection>scm:git:git@github.com:russlittle/SSP-Platform.git</developerConnection>
         <url>https://github.com/russlittle/SSP-Platform</url>
-      <tag>rel-ssp-1-0-0</tag>
+      <tag>ssp-rel-1-0-patches</tag>
   </scm>
 
     <issueManagement>
