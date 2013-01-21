@@ -37,6 +37,10 @@
      | create a new portlet
      +-->
     <view-state id="listChannels">
+        <on-entry>
+            <set name="viewScope.lifecycleStates" value="portletAdministrationHelper.getLifecycleStates()"/>
+        </on-entry>
+
         <!-- If we're editing an already-existing portlet, create a form and
             populate it with the selected portlet's data -->
         <transition on="editPortlet" to="edit-portlet">
