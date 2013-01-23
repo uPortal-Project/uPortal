@@ -67,7 +67,6 @@ var up = up || {};
         listeners: {
             onSuccess: null,
             onError: function(that, request, text, error) {
-                if (console) console.log(request, text, error);
                 that.locate("errorMessage").text(that.options.messages.error);
             }
         }
