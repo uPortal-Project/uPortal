@@ -283,7 +283,6 @@ var up = up || {};
      * @param {String} key - reference to currrently 'focused' entity. ex: group:local.17
      */
     var browseEntity = function (that, key) {
-    	console.log("browse");
         var entity, currentEntityName, browsingInclude, entityBrowserContent, memberList;
         
         // Cache.
