@@ -18,54 +18,41 @@
  */
 package org.jasig.portal.utils.cache;
 
-import java.util.Collections;
-import java.util.Set;
+import javax.servlet.http.HttpSession;
 
-import javax.annotation.Resource;
-
-import org.jasig.portal.events.LogoutEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
+import org.springframework.security.web.session.HttpSessionDestroyedEvent;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.ImmutableSet;
-
 /**
- * Purges cache entries tagged for a specific user when they login or logout
+ * Purges cache entries tagged for a specific session when the session is destroyed
  * 
  * @author Eric Dalquist
  */
 @Component
-public class UsernameTaggedCacheEntryPurger implements ApplicationListener<LogoutEvent> {
-    public static final String TAG_TYPE = "username";
+public class SessionIdTaggedCacheEntryPurger implements ApplicationListener<HttpSessionDestroyedEvent> {
+    public static final String TAG_TYPE = "httpSessionId";
     
-    public static CacheEntryTag createCacheEntryTag(String username) {
-        return new SimpleCacheEntryTag<String>(TAG_TYPE, username);
+    public static CacheEntryTag createCacheEntryTag(String sessionId) {
+        return new SimpleCacheEntryTag<String>(TAG_TYPE, sessionId);
     }
     
     private TaggedCacheEntryPurger taggedCacheEntryPurger;
-    private Set<String> ignoredUserNames = Collections.emptySet();
     
-    @Resource(name="UsernameCacheTagPurger_IgnoredUsernames")
-    public void setIgnoredUserNames(Set<String> ignoredUserNames) {
-        this.ignoredUserNames = ImmutableSet.copyOf(ignoredUserNames);
-    }
-
     @Autowired
     public void setTaggedCacheEntryPurger(TaggedCacheEntryPurger taggedCacheEntryPurger) {
         this.taggedCacheEntryPurger = taggedCacheEntryPurger;
     }
 
     @Override
-    public void onApplicationEvent(LogoutEvent event) {
-        final String userName = event.getUserName();
-        purgeTaggedCacheEntries(userName);
+    public void onApplicationEvent(HttpSessionDestroyedEvent event) {
+        final HttpSession session = event.getSession();
+        purgeTaggedCacheEntries(session.getId());
     }
 
-    public void purgeTaggedCacheEntries(final String username) {
-        if (!ignoredUserNames.contains(username)) {
-            final CacheEntryTag tag = createCacheEntryTag(username);
-            this.taggedCacheEntryPurger.purgeCacheEntries(tag);
-        }
+    public void purgeTaggedCacheEntries(final String sessionId) {
+        final CacheEntryTag tag = createCacheEntryTag(sessionId);
+        this.taggedCacheEntryPurger.purgeCacheEntries(tag);
     }
 }

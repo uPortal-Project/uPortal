@@ -23,11 +23,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 
-import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
@@ -35,11 +35,16 @@ import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IPortletRequestInfo;
 import org.jasig.portal.url.ParameterMap;
 import org.jasig.portal.url.UrlType;
+import org.jasig.portal.utils.cache.CacheEntryTag;
+import org.jasig.portal.utils.cache.SimpleCacheEntryTag;
+import org.jasig.portal.utils.cache.TaggedCacheEntry;
 
 /**
  * Key for publicly scoped portlet data
  */
-public class PublicPortletCacheKey implements Serializable {
+public class PublicPortletCacheKey implements Serializable, TaggedCacheEntry {
+    private static final String PORTLET_DEFINITION_ID_CACHE_ENTRY_TAG_NAME = PublicPortletCacheKey.class.getName() + ".PORTLET_DEFINITION_ID";
+
     private static final long serialVersionUID = 1L;
     
     private final IPortletDefinitionId portletDefinitionId;
@@ -49,8 +54,10 @@ public class PublicPortletCacheKey implements Serializable {
     private final Locale locale;
     private final String windowState;
     private final String portletMode;
+    private final Set<CacheEntryTag> cacheEntryTags;
     
     private final int hash;
+    
 
     static PublicPortletCacheKey createPublicPortletRenderCacheKey(IPortletWindow portletWindow, IPortalRequestInfo portalRequestInfo, Locale locale) {
         return new PublicPortletCacheKey(portletWindow, portalRequestInfo, false, locale);
@@ -102,7 +109,6 @@ public class PublicPortletCacheKey implements Serializable {
         else {
             this.windowState = reqWindowState.toString();
         }
-        
         if (reqPortletMode == null) {
             this.portletMode = portletWindow.getPortletMode().toString();
         }
@@ -113,9 +119,20 @@ public class PublicPortletCacheKey implements Serializable {
         this.renderHeader = renderHeader;
         this.locale = locale;
         
+        this.cacheEntryTags = Collections.singleton(createTag(this.portletDefinitionId));
+        
         this.hash = internalHashCode();
     }
     
+    public static CacheEntryTag createTag(IPortletDefinitionId definitionId) {
+        return new SimpleCacheEntryTag<IPortletDefinitionId>(PORTLET_DEFINITION_ID_CACHE_ENTRY_TAG_NAME, definitionId);
+    }
+    
+    @Override
+    public Set<CacheEntryTag> getTags() {
+        return cacheEntryTags;
+    }
+
     public IPortletDefinitionId getPortletDefinitionId() {
         return portletDefinitionId;
     }
