@@ -26,6 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Parameter;
@@ -45,6 +46,7 @@ import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.persondir.ILocalAccountDao;
 import org.jasig.portal.persondir.ILocalAccountPerson;
 import org.jasig.portal.persondir.LocalAccountQuery;
+import org.jasig.services.persondir.IPersonAttributeDao;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 
@@ -205,7 +207,11 @@ public class JpaLocalAccountDaoImpl extends BasePortalJpaDao implements ILocalAc
                 final ParameterExpression<String> valueParam = this.createParameterExpression(String.class, "attrValue" + paramCount);
                 
                 params.put(nameParam, entry.getKey());
-                params.put(valueParam, "%" + value.toLowerCase() + "%");
+                if ( value.contains(IPersonAttributeDao.WILDCARD) ) {
+                    params.put(valueParam, value.replaceAll(Pattern.quote(IPersonAttributeDao.WILDCARD), "%").toLowerCase());
+                } else {
+                    params.put(valueParam, "%" + value.toLowerCase() + "%");
+                }
                 
                 //Build the and(eq, like) predicate and add it to the list of predicates for the where clause
                 whereParts.add(
