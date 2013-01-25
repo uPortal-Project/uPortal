@@ -21,7 +21,6 @@ package org.jasig.portal.portlet.container.cache;
 import java.io.Serializable;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import javax.portlet.CacheControl;
 import javax.portlet.MimeResponse;
@@ -43,15 +42,12 @@ import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.rendering.PortletRenderResult;
 import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IUrlSyntaxProvider;
+import org.jasig.portal.utils.cache.TaggedCacheEntryPurger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationListener;
-import org.springframework.security.web.session.HttpSessionCreatedEvent;
-import org.springframework.security.web.session.HttpSessionDestroyedEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
@@ -64,23 +60,13 @@ import org.springframework.web.servlet.support.RequestContextUtils;
  * @version $Id$
  */
 @Service
-public class PortletCacheControlServiceImpl implements IPortletCacheControlService, ApplicationListener<ApplicationEvent> {
+public class PortletCacheControlServiceImpl implements IPortletCacheControlService {
     private static final String IF_NONE_MATCH = "If-None-Match";
     private static final String IF_MODIFIED_SINCE = "If-Modified-Since";
     
-	private static final String SESSION_ATTRIBUTE__PORTLET_RENDER_HEADER_CACHE_KEYS_MAP = PortletCacheControlServiceImpl.class.getName() + ".PORTLET_RENDER_HEADER_CACHE_KEYS_MAP";
-	private static final String SESSION_ATTRIBUTE__PORTLET_RENDER_CACHE_KEYS_MAP = PortletCacheControlServiceImpl.class.getName() + ".PORTLET_RENDER_CACHE_KEYS_MAP";
-	private static final String SESSION_ATTRIBUTE__PORTLET_RESOURCE_CACHE_KEYS_MAP = PortletCacheControlServiceImpl.class.getName() + ".PORTLET_RESOURCE_CACHE_KEYS_MAP";
-	
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	//Used to coordinate mass-purge of cached data for portlets at action/event requests
-	private final PublicPortletCacheKeyTracker publicPortletRenderHeaderCacheKeyTracker = new PublicPortletCacheKeyTracker();
-    private final PublicPortletCacheKeyTracker publicPortletRenderCacheKeyTracker = new PublicPortletCacheKeyTracker();
-	private final PublicPortletCacheKeyTracker publicPortletResourceCacheKeyTracker = new PublicPortletCacheKeyTracker();
-	private final PrivatePortletCacheKeyTracker privatePortletRenderHeaderCacheKeyTracker = new PrivatePortletCacheKeyTracker(SESSION_ATTRIBUTE__PORTLET_RENDER_HEADER_CACHE_KEYS_MAP);
-    private final PrivatePortletCacheKeyTracker privatePortletRenderCacheKeyTracker = new PrivatePortletCacheKeyTracker(SESSION_ATTRIBUTE__PORTLET_RENDER_CACHE_KEYS_MAP);
-	private final PrivatePortletCacheKeyTracker privatePortletResourceCacheKeyTracker = new PrivatePortletCacheKeyTracker(SESSION_ATTRIBUTE__PORTLET_RESOURCE_CACHE_KEYS_MAP);
+	private TaggedCacheEntryPurger taggedCacheEntryPurger;
 	
 	private IPortletWindowRegistry portletWindowRegistry;
 	private IPortletDefinitionRegistry portletDefinitionRegistry;
@@ -98,21 +84,21 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
     // default to 100 KB
     private int cacheSizeThreshold = 102400;
     
+    @Autowired
+    public void setTaggedCacheEntryPurger(TaggedCacheEntryPurger taggedCacheEntryPurger) {
+        this.taggedCacheEntryPurger = taggedCacheEntryPurger;
+    }
     
     @Autowired
     @Qualifier("org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.privateScopePortletRenderHeaderOutputCache")
     public void setPrivateScopePortletRenderHeaderOutputCache(Ehcache privateScopePortletRenderHeaderOutputCache) {
         this.privateScopePortletRenderHeaderOutputCache = privateScopePortletRenderHeaderOutputCache;
-        this.privateScopePortletRenderHeaderOutputCache.getCacheEventNotificationService()
-                .registerListener(privatePortletRenderHeaderCacheKeyTracker);
     }
 
     @Autowired
     @Qualifier("org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.publicScopePortletRenderHeaderOutputCache")
     public void setPublicScopePortletRenderHeaderOutputCache(Ehcache publicScopePortletRenderHeaderOutputCache) {
         this.publicScopePortletRenderHeaderOutputCache = publicScopePortletRenderHeaderOutputCache;
-        this.publicScopePortletRenderHeaderOutputCache.getCacheEventNotificationService()
-                .registerListener(publicPortletRenderHeaderCacheKeyTracker);
     }
     
     
@@ -120,32 +106,24 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
     @Qualifier("org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.privateScopePortletRenderOutputCache")
     public void setPrivateScopePortletRenderOutputCache(Ehcache privateScopePortletRenderOutputCache) {
         this.privateScopePortletRenderOutputCache = privateScopePortletRenderOutputCache;
-        this.privateScopePortletRenderOutputCache.getCacheEventNotificationService()
-                .registerListener(privatePortletRenderCacheKeyTracker);
     }
 
     @Autowired
     @Qualifier("org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.publicScopePortletRenderOutputCache")
     public void setPublicScopePortletRenderOutputCache(Ehcache publicScopePortletRenderOutputCache) {
         this.publicScopePortletRenderOutputCache = publicScopePortletRenderOutputCache;
-        this.publicScopePortletRenderOutputCache.getCacheEventNotificationService()
-                .registerListener(publicPortletRenderCacheKeyTracker);
     }
 
     @Autowired
     @Qualifier("org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.privateScopePortletResourceOutputCache")
     public void setPrivateScopePortletResourceOutputCache(Ehcache privateScopePortletResourceOutputCache) {
         this.privateScopePortletResourceOutputCache = privateScopePortletResourceOutputCache;
-        this.privateScopePortletResourceOutputCache.getCacheEventNotificationService()
-                .registerListener(privatePortletResourceCacheKeyTracker);
     }
 
     @Autowired
     @Qualifier("org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.publicScopePortletResourceOutputCache")
     public void setPublicScopePortletResourceOutputCache(Ehcache publicScopePortletResourceOutputCache) {
         this.publicScopePortletResourceOutputCache = publicScopePortletResourceOutputCache;
-        this.publicScopePortletResourceOutputCache.getCacheEventNotificationService()
-                .registerListener(publicPortletResourceCacheKeyTracker);
     }
     
 	/**
@@ -173,22 +151,6 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
 	@Autowired
 	public void setUrlSyntaxProvider(IUrlSyntaxProvider urlSyntaxProvider) {
         this.urlSyntaxProvider = urlSyntaxProvider;
-    }
-	
-    @Override
-    public void onApplicationEvent(ApplicationEvent event) {
-        if (event instanceof HttpSessionCreatedEvent) {
-            final HttpSession session = ((HttpSessionCreatedEvent) event).getSession();
-            this.privatePortletRenderHeaderCacheKeyTracker.initPrivateKeyCache(session);
-            this.privatePortletRenderCacheKeyTracker.initPrivateKeyCache(session);
-            this.privatePortletResourceCacheKeyTracker.initPrivateKeyCache(session);
-        }
-        else if (event instanceof HttpSessionDestroyedEvent) {
-            final HttpSession session = ((HttpSessionDestroyedEvent) event).getSession();
-            this.privatePortletRenderHeaderCacheKeyTracker.destroyPrivateKeyCache(session);
-            this.privatePortletRenderCacheKeyTracker.destroyPrivateKeyCache(session);
-            this.privatePortletResourceCacheKeyTracker.destroyPrivateKeyCache(session);
-        }
     }
 
     @Override
@@ -260,8 +222,13 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
                 true);
     }
     
-    private <D extends CachedPortletResultHolder<T>, T extends Serializable> CacheState<D, T> getPortletState(HttpServletRequest request,
-            IPortletWindow portletWindow, PublicPortletCacheKey publicCacheKey, Ehcache publicOutputCache, Ehcache privateOutputCache, boolean useHttpHeaders) {
+    private <D extends CachedPortletResultHolder<T>, T extends Serializable> CacheState<D, T> getPortletState(
+            HttpServletRequest request,
+            IPortletWindow portletWindow, 
+            PublicPortletCacheKey publicCacheKey, 
+            Ehcache publicOutputCache, 
+            Ehcache privateOutputCache, 
+            boolean useHttpHeaders) {
         
         //See if there is any cached data for the portlet header request
         final CacheState<D, T> cacheState = this.<D, T> getPortletCacheState(request,
@@ -520,64 +487,18 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
 		final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpRequest, portletWindowId);
         final IPortletEntity entity = portletWindow.getPortletEntity();
         final IPortletDefinitionId definitionId = entity.getPortletDefinitionId();
-        
-        logger.debug("Purging all cached data for {}", portletWindow);
-        
-        boolean removed = false;
-
-        //Remove all publicly cached render header data for the portlet
-        removed = this.purgePublicCache(this.publicPortletRenderHeaderCacheKeyTracker,
-                        this.publicScopePortletRenderHeaderOutputCache,
-                        definitionId) || removed;
-
-        //Remove all publicly cached render data for the portlet
-        removed = this.purgePublicCache(this.publicPortletRenderCacheKeyTracker,
-                        this.publicScopePortletRenderOutputCache,
-                        definitionId) || removed;
-
-        //Remove all publicly cached resource data for the portlet
-        removed = this.purgePublicCache(this.publicPortletResourceCacheKeyTracker,
-                        this.publicScopePortletResourceOutputCache,
-                        definitionId) || removed;
-
         final HttpSession session = httpRequest.getSession();
-
-        //Remove all privately cached render data
-        removed = this.purgePrivateCache(this.privatePortletRenderHeaderCacheKeyTracker,
-                        this.privateScopePortletRenderHeaderOutputCache,
-                        session,
-                        portletWindowId) || removed;
-
-        //Remove all privately cached render data
-        removed = this.purgePrivateCache(this.privatePortletRenderCacheKeyTracker,
-                        this.privateScopePortletRenderOutputCache,
-                        session,
-                        portletWindowId) || removed;
-
-        //Remove all privately cached render data
-        removed = removed
-                || this.purgePrivateCache(this.privatePortletResourceCacheKeyTracker,
-                        this.privateScopePortletResourceOutputCache,
-                        session,
-                        portletWindowId);
-
-        //If any keys were found remove them
-        return removed;
-	}
-	
-	protected boolean purgePublicCache(PublicPortletCacheKeyTracker tracker, Ehcache cache, IPortletDefinitionId definitionId) {
-        final Set<PublicPortletCacheKey> keys = tracker.getCacheKeys(definitionId);
-        final boolean removed = !keys.isEmpty();
-        cache.removeAll(keys);
         
-        return removed;
-	}
-    
-    protected boolean purgePrivateCache(PrivatePortletCacheKeyTracker tracker, Ehcache cache, HttpSession session, IPortletWindowId portletWindowId) {
-        final Set<PrivatePortletCacheKey> keys = tracker.getCacheKeys(session, portletWindowId);
-        final boolean removed = !keys.isEmpty();
-        cache.removeAll(keys);
+        int purgeCount = 0;
         
-        return removed;
-    }
+        //Remove all publicly cached data
+        purgeCount += this.taggedCacheEntryPurger.purgeCacheEntries(PublicPortletCacheKey.createTag(definitionId));
+        
+        //Remove all privately cached data
+        purgeCount += this.taggedCacheEntryPurger.purgeCacheEntries(PrivatePortletCacheKey.createTag(session.getId(), portletWindowId));
+        
+        logger.debug("Purging all cached data for {} removed {} keys", portletWindow, purgeCount);
+        
+        return purgeCount != 0;
+	}
 }

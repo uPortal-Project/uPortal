@@ -22,7 +22,9 @@ public interface TaggedCacheEntryPurger {
 
     /**
      * Remove all cache entries with keys that have the specified tag
+     * 
+     * @return The number of cache entries that were purged
      */
-    public abstract void purgeCacheEntries(CacheEntryTag tag);
+    int purgeCacheEntries(CacheEntryTag tag);
 
 }
