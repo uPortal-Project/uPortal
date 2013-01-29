@@ -18,7 +18,6 @@
  */
 package org.jasig.portal.portlets.statistics;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -29,6 +28,10 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import com.google.visualization.datasource.base.TypeMismatchException;
+import com.google.visualization.datasource.datatable.ColumnDescription;
+import com.google.visualization.datasource.datatable.value.NumberValue;
+import com.google.visualization.datasource.datatable.value.Value;
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.BaseAggregationDao;
 import org.jasig.portal.events.aggr.BaseAggregationDateTimeComparator;
@@ -44,19 +47,15 @@ import org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregationKeyIm
 import org.jasig.portal.events.aggr.portlets.AggregatedPortletLookupDao;
 import org.jasig.portal.events.aggr.portlets.AggregatedPortletMapping;
 import org.jasig.portal.events.aggr.portlets.AggregatedPortletMappingNameComparator;
+import org.jasig.portal.portlets.statistics.ReportTitleAndColumnDescriptionStrategy.TitleAndCount;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import org.springframework.web.portlet.bind.annotation.ResourceMapping;
-
-import com.google.visualization.datasource.base.TypeMismatchException;
-import com.google.visualization.datasource.datatable.ColumnDescription;
-import com.google.visualization.datasource.datatable.value.NumberValue;
-import com.google.visualization.datasource.datatable.value.Value;
-import com.google.visualization.datasource.datatable.value.ValueType;
 
 /**
  * Portlet Execution reports
@@ -76,6 +75,10 @@ public class PortletExecutionStatisticsController
     private final static String REPORT_NAME = "portletExecution.totals";
 
     @Autowired
+    private ReportTitleAndColumnDescriptionStrategy titleAndColumnDescriptionStrategy;
+
+    @Autowired
+    @Qualifier(value = "jpaPortletExecutionAggregationDao")
     private PortletExecutionAggregationDao<PortletExecutionAggregation> portletExecutionDao;
 
     @Autowired
@@ -83,7 +86,11 @@ public class PortletExecutionStatisticsController
 
     @Autowired
     private AggregatedPortletLookupDao aggregatedPortletLookupDao;
-    
+
+    public void setTitleAndColumnDescriptionStrategy(ReportTitleAndColumnDescriptionStrategy titleAndColumnDescriptionStrategy) {
+        this.titleAndColumnDescriptionStrategy = titleAndColumnDescriptionStrategy;
+    }
+
     @RenderMapping(value="MAXIMIZED", params="report=" + REPORT_NAME)
     public String getLoginView() throws TypeMismatchException {
         return "jsp/Statistics/reportGraph";
@@ -233,49 +240,24 @@ public class PortletExecutionStatisticsController
         int portletSize = form.getPortlets().size();
         int executionTypeSize = form.getExecutionTypeNames().size();
 
-        // If multiple of all selected, the report title does not change.
-        if (portletSize > 1 && executionTypeSize > 1 && groupSize > 1) {
-            return null;
-        }
-
         // Look up names in case we need them.  They should be in cache so no real performance hit.
         String firstPortletName = this.aggregatedPortletLookupDao.getMappedPortletForFname(form.getPortlets().iterator().next()).getFname();
         Long firstGroupId = form.getGroups().iterator().next().longValue();
         String firstGroupName = this.aggregatedGroupLookupDao.getGroupMapping(firstGroupId).getGroupName();
         String firstExecutionType = form.getExecutionTypeNames().iterator().next();
 
-        // Default to show portlet name else group name in title
-        String augmentedTitle = groupSize == 1 && portletSize > 1 ?
-                firstGroupName : firstPortletName;
+        TitleAndCount[] items = new TitleAndCount[] {
+                new TitleAndCount(firstPortletName, portletSize),
+                new TitleAndCount(firstExecutionType, executionTypeSize),
+                new TitleAndCount(firstGroupName, groupSize)
+        };
 
-        // Use only the execution Type or append it.
-        if (executionTypeSize == 1) {
-            if (groupSize > 1 && portletSize > 1) {
-                augmentedTitle = firstExecutionType;
-            } else {
-                augmentedTitle += " (" + firstExecutionType + ")";
-            }
-        }
-
-        // Last scenario:  multiple execution type and single portlet and group
-        if (executionTypeSize > 1 && portletSize == 1 && groupSize == 1) {
-            augmentedTitle = String.format("%s - %s", firstPortletName, firstGroupName);
-        }
-
-        return augmentedTitle;
+        return titleAndColumnDescriptionStrategy.getReportTitleAugmentation(items);
     }
 
     /**
-     * Create column descriptions for the portlet report.  The default column description is
-     * the group name possibly with the executionType, but those items that are
-     * singular will move to the report title and only those that have 2 or more values
-     * selected on the form will be in the column title.
-     * Format:  P (E) - G
-     *          P (E)
-     *          G (E)
-     *          E
-     *          P - G
-     * where P is portlet name, G is group name, E is Execution Type
+     * Create column descriptions for the portlet report using the configured report
+     * labelling strategy.
      *
      * @param reportColumnDiscriminator
      * @param form The original query form
@@ -292,32 +274,13 @@ public class PortletExecutionStatisticsController
         String groupName = reportColumnDiscriminator.getAggregatedGroup().getGroupName();
         String executionTypeName = reportColumnDiscriminator.getExecutionType().getName();
 
-        String description = null;
-        if (showFullColumnHeaderDescriptions(form) ||
-                (groupSize > 1 && portletSize > 1 && executionTypeSize > 1)) {
-            description = String.format("%s (%s) - %s", portletName, executionTypeName, groupName);
-        } else {
-            // Default to group name, else portlet name
-            description = groupSize == 1 && portletSize > 1 ?
-                    portletName : groupName;
+        TitleAndCount[] items = new TitleAndCount[] {
+                new TitleAndCount(portletName, portletSize),
+                new TitleAndCount(executionTypeName, executionTypeSize),
+                new TitleAndCount(groupName, groupSize)
+        };
 
-            // Does ExecutionType replace default column name or add to it?
-            if (executionTypeSize > 1) {
-                if (groupSize == 1 && portletSize == 1) {
-                    description = executionTypeName;
-                } else {
-                    description += " (" + executionTypeName + ")";
-                }
-            }
-            // Last scenario: 1 execution type and multiple portlet and group
-            if (groupSize > 1 && portletSize > 1 && executionTypeSize == 1) {
-                description = String.format("%s - %s", portletName, groupName);
-            }
-        }
-
-        final List<ColumnDescription> columnDescriptions = new ArrayList<ColumnDescription>();
-        columnDescriptions.add(new ColumnDescription(description, ValueType.NUMBER, description));
-        return columnDescriptions;
+        return titleAndColumnDescriptionStrategy.getColumnDescriptions(items, showFullColumnHeaderDescriptions(form), form);
     }
 
     @Override
@@ -325,4 +288,5 @@ public class PortletExecutionStatisticsController
         int count = aggr != null ? aggr.getExecutionCount() : 0;
         return Collections.<Value>singletonList(new NumberValue(count));
     }
+
 }

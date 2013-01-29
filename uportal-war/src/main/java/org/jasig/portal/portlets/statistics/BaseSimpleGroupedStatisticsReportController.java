@@ -32,7 +32,7 @@ import org.jasig.portal.events.aggr.BaseGroupedAggregationDiscriminator;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 
 /**
- * Extension of {@link BaseStatisticsReportController} for reports that only need to diferantiate columns
+ * Extension of {@link BaseStatisticsReportController} for reports that only need to differentiate columns
  * by group
  * 
  * @author Eric Dalquist
@@ -52,8 +52,6 @@ public abstract class BaseSimpleGroupedStatisticsReportController<
      * The map entries are a time-ordered sorted set of aggregation data points.
      *
      * @param form Form submitted by the user
-     * @param klass Class that derives from BaseGroupedAggregationDiscrminator to create as
-     *              map keys.
      * @return Map of report column discriminators to sorted set of time-based aggregation data
      */
     protected Map<D, SortedSet<T>>
