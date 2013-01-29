@@ -701,17 +701,14 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     @SuppressWarnings("unchecked")
     @Transactional
     public void importLayout(org.dom4j.Element layout) {
-//    	try {
-//    	OutputFormat format = OutputFormat.createPrettyPrint();
-//        XMLWriter writer = new XMLWriter( System.out, format );
-//        writer.write( layout );
-//        writer.close();
-//    	}catch (Exception e) {
-//    		e.printStackTrace();
-//    	}
-        
         if (layout.getNamespaceForPrefix("dlm") == null) {
             layout.add(new Namespace("dlm", "http://www.uportal.org/layout/dlm"));
+        }
+
+        //Remove comments from the DOM they break import
+        final List<org.dom4j.Node> comments = layout.selectNodes("//comment()");
+        for (final org.dom4j.Node comment : comments) {
+            comment.detach();
         }
         
         //Get a ref to the prefs element and then remove it from the layout
