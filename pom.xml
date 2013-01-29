@@ -210,6 +210,7 @@
         <module>uportal-portlets-overlay</module>
         <module>bootstrap</module>
         <module>uportal-search-api</module>
+        <module>uportal-platform-api</module>
     </modules>
 
     <dependencyManagement>

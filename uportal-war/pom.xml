@@ -498,7 +498,13 @@
             <artifactId>person-directory-api</artifactId>
             <scope>provided</scope>
         </dependency>
-        
+
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uportal-platform-api</artifactId>
+            <version>0.1.0</version>
+            <scope>provided</scope>
+        </dependency>
         
         <!-- ===== Runtime Dependencies ======================================= -->
         <dependency>
