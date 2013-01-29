@@ -18,7 +18,6 @@
  */
 package org.jasig.portal.portlets.statistics;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -29,6 +28,10 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import com.google.visualization.datasource.base.TypeMismatchException;
+import com.google.visualization.datasource.datatable.ColumnDescription;
+import com.google.visualization.datasource.datatable.value.NumberValue;
+import com.google.visualization.datasource.datatable.value.Value;
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.BaseAggregationDao;
 import org.jasig.portal.events.aggr.BaseAggregationDateTimeComparator;
@@ -44,18 +47,13 @@ import org.jasig.portal.events.aggr.tabs.AggregatedTabLookupDao;
 import org.jasig.portal.events.aggr.tabs.AggregatedTabMapping;
 import org.jasig.portal.events.aggr.tabs.AggregatedTabMappingNameComparator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import org.springframework.web.portlet.bind.annotation.ResourceMapping;
-
-import com.google.visualization.datasource.base.TypeMismatchException;
-import com.google.visualization.datasource.datatable.ColumnDescription;
-import com.google.visualization.datasource.datatable.value.NumberValue;
-import com.google.visualization.datasource.datatable.value.Value;
-import com.google.visualization.datasource.datatable.value.ValueType;
 
 /**
  * Tab render reports
@@ -64,25 +62,30 @@ import com.google.visualization.datasource.datatable.value.ValueType;
  */
 @Controller
 @RequestMapping(value="VIEW")
-public class TabRenderStatisticsController
-        extends BaseStatisticsReportController<
-            TabRenderAggregation, 
-            TabRenderAggregationKey,
-            TabRenderAggregationDiscriminator, 
-            TabRenderReportForm> {
-    
+public class TabRenderStatisticsController extends
+        BaseStatisticsReportController<TabRenderAggregation, TabRenderAggregationKey,
+                TabRenderAggregationDiscriminator, TabRenderReportForm> {
     private static final String DATA_TABLE_RESOURCE_ID = "tabRenderData";
     private final static String REPORT_NAME = "tabRender.totals";
 
     @Autowired
+    private ReportTitleAndColumnDescriptionStrategy titleAndColumnDescriptionStrategy;
+
+    @Autowired
+    @Qualifier(value = "jpaTabRenderAggregationDao")
     private TabRenderAggregationDao<TabRenderAggregation> tabRenderDao;
 
     @Autowired
+    @Qualifier(value = "jpaAggregatedGroupLookupDao")
     private AggregatedGroupLookupDao aggregatedGroupDao;
 
     @Autowired
     private AggregatedTabLookupDao aggregatedTabLookupDao;
-    
+
+    public void setTitleAndColumnDescriptionStrategy(ReportTitleAndColumnDescriptionStrategy titleAndColumnDescriptionStrategy) {
+        this.titleAndColumnDescriptionStrategy = titleAndColumnDescriptionStrategy;
+    }
+
     @RenderMapping(value="MAXIMIZED", params="report=" + REPORT_NAME)
     public String getLoginView() throws TypeMismatchException {
         return "jsp/Statistics/reportGraph";
@@ -190,35 +193,32 @@ public class TabRenderStatisticsController
 
     @Override
     protected String getReportTitleAugmentation(TabRenderReportForm form) {
-        if (form.getTabs().size() == 1) {
-            Long tabId = form.getTabs().iterator().next().longValue();
-            AggregatedTabMapping tabMapping = this.aggregatedTabLookupDao.getTabMapping(tabId);
-            return tabMapping.getDisplayString();
-        }
-        if (form.getGroups().size() == 1) {
-            Long groupId = form.getGroups().iterator().next().longValue();
-            AggregatedGroupMapping groupMapping = this.aggregatedGroupDao.getGroupMapping(groupId);
-            return groupMapping.getGroupName();
-        }
-        return null;
+        Long tabId = form.getTabs().iterator().next().longValue();
+        String firstTabname = this.aggregatedTabLookupDao.getTabMapping(tabId).getDisplayString();
+
+        Long groupId = form.getGroups().iterator().next().longValue();
+        String firstGroupName = this.aggregatedGroupDao.getGroupMapping(groupId).getGroupName();
+
+        ReportTitleAndColumnDescriptionStrategy.TitleAndCount[] items = new ReportTitleAndColumnDescriptionStrategy.TitleAndCount[] {
+                new ReportTitleAndColumnDescriptionStrategy.TitleAndCount(firstTabname, form.getTabs().size()),
+                new ReportTitleAndColumnDescriptionStrategy.TitleAndCount(firstGroupName, form.getGroups().size())
+        };
+
+        return titleAndColumnDescriptionStrategy.getReportTitleAugmentation(items);
     }
 
     @Override
     protected List<ColumnDescription> getColumnDescriptions(TabRenderAggregationDiscriminator reportColumnDiscriminator,
                                                             TabRenderReportForm form) {
-        AggregatedTabMapping tab = reportColumnDiscriminator.getTabMapping();
-        AggregatedGroupMapping group = reportColumnDiscriminator.getAggregatedGroup();
-        String columnName = group.getGroupName();
-        if (showFullColumnHeaderDescriptions(form)
-                || (form.getTabs().size() > 1 && form.getGroups().size() > 1)) {
-            columnName = tab.getDisplayString() + " - " + group.getGroupName();
-        } else if (form.getTabs().size() > 1) {
-            columnName = tab.getDisplayString();
-        }
+        String tabName = reportColumnDiscriminator.getTabMapping().getDisplayString();
+        String groupName = reportColumnDiscriminator.getAggregatedGroup().getGroupName();
 
-        final List<ColumnDescription> columnDescriptions = new ArrayList<ColumnDescription>();
-        columnDescriptions.add(new ColumnDescription(columnName, ValueType.NUMBER, columnName));
-        return columnDescriptions;
+        ReportTitleAndColumnDescriptionStrategy.TitleAndCount[] items = new ReportTitleAndColumnDescriptionStrategy.TitleAndCount[] {
+                new ReportTitleAndColumnDescriptionStrategy.TitleAndCount(tabName, form.getTabs().size()),
+                new ReportTitleAndColumnDescriptionStrategy.TitleAndCount(groupName, form.getGroups().size())
+        };
+
+        return titleAndColumnDescriptionStrategy.getColumnDescriptions(items, showFullColumnHeaderDescriptions(form), form);
     }
 
     @Override
@@ -226,4 +226,5 @@ public class TabRenderStatisticsController
         int count = aggr != null ? aggr.getRenderCount() : 0;
         return Collections.<Value>singletonList(new NumberValue(count));
     }
+
 }
