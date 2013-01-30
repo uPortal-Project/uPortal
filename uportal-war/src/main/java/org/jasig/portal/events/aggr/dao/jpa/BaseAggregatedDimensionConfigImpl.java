@@ -21,6 +21,7 @@ package org.jasig.portal.events.aggr.dao.jpa;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.MappedSuperclass;
 import javax.persistence.PostPersist;
@@ -39,6 +40,7 @@ import org.jasig.portal.utils.IncludeExcludeUtils;
  */
 @MappedSuperclass
 public abstract class BaseAggregatedDimensionConfigImpl<D> implements BaseAggregatedDimensionConfig<D> {
+    private static final long serialVersionUID = 1L;
     
     @Transient
     private final Map<D, Boolean> includedCache = new HashMap<D, Boolean>();
@@ -50,15 +52,17 @@ public abstract class BaseAggregatedDimensionConfigImpl<D> implements BaseAggreg
     }
 
     @Override
-    public boolean isIncluded(D dimension) {
+    public final boolean isIncluded(D dimension) {
         final Boolean cachedInclude = includedCache.get(dimension);
         if (cachedInclude != null) {
             return cachedInclude;
         }
         
-        final boolean included = IncludeExcludeUtils.included(dimension, this.getIncluded(), this.getExcluded());
-        includedCache.put(dimension, included);
-        return included;
+        final Set<D> included = this.getIncluded();
+        final Set<D> excluded = this.getExcluded();
+        final boolean include = (!included.isEmpty() || !excluded.isEmpty()) && IncludeExcludeUtils.included(dimension, included, excluded);
+        includedCache.put(dimension, include);
+        return include;
     }
 
     @Override
