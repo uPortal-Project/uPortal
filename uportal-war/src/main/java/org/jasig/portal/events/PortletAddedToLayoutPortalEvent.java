@@ -25,27 +25,23 @@ import org.jasig.portal.security.IPerson;
 
 
 
-public final class PortletAddedToLayoutPortalEvent extends LayoutPortalEvent {
+public final class PortletAddedToLayoutPortalEvent extends PortletLayoutPortalEvent {
     private static final long serialVersionUID = 1L;
     
     private final String parentFolderId;
-    private final String fname;
-    
+
     @SuppressWarnings("unused")
     private PortletAddedToLayoutPortalEvent() {
         super();
         this.parentFolderId = null;
-        this.fname = null;
     }
 
     PortletAddedToLayoutPortalEvent(PortalEventBuilder portalEventBuilder, IPerson layoutOwner, long layoutId,
             String parentFolderId, String fname) {
-        super(portalEventBuilder, layoutOwner, layoutId);
+        super(portalEventBuilder, layoutOwner, layoutId,fname);
         Validate.notNull(parentFolderId, "parentFolderId");
-        FunctionalNameType.validate(fname);
-        
+
         this.parentFolderId = parentFolderId;
-        this.fname = fname;
     }
 
     /**
@@ -55,13 +51,6 @@ public final class PortletAddedToLayoutPortalEvent extends LayoutPortalEvent {
         return this.parentFolderId;
     }
 
-    /**
-     * @return the fname
-     */
-    public String getFname() {
-        return this.fname;
-    }
-
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
@@ -69,6 +58,6 @@ public final class PortletAddedToLayoutPortalEvent extends LayoutPortalEvent {
     public String toString() {
         return super.toString() + 
                 ", parentFolderId=" + this.parentFolderId + 
-                ", fname=" + this.fname + "]";
+                ", fname=" + this.getFname() + "]";
     }
 }

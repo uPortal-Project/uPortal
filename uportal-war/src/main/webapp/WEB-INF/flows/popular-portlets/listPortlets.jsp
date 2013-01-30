@@ -56,12 +56,6 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       <option value="90">90</option>
       <option value="365">365</option>
     </select>
-    <spring:message code="days"/>
-    <c:if test="${showAdminFeatures}">
-      <spring:message code="from"/>
-      <input id="${n}fromDate" name="fromDate" type="text" class="cal-datepicker" value="<spring:message code="today"/>"/>
-      <spring:message code="inclusive"/>
-    </c:if>
   </div> <!-- end: portlet-toolbar -->
         
 	<!-- Portlet Body -->
@@ -137,7 +131,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
 </form>
 </div> <!-- end: portlet -->
-    	
+<span class="label">* These values are provided by daily statistics aggregation</span>
 <script type="text/javascript">
 up.jQuery(function() {
 
@@ -157,10 +151,10 @@ up.jQuery(function() {
             type: 'POST',
             dataType: "json",
             success: function(data) { 
-                counts = data.counts; 
+                counts = data.counts;
             },
             error: function(request, textStatus, error) {
-                alert("ERROR:  " + textStatus); 
+                alert("ERROR:  " + textStatus);
             }
         });
         
@@ -224,8 +218,6 @@ up.jQuery(function() {
     pager = up.fluid.pager("#${n}popularPortlets", options);
 
     $("#${n}days").change(updateTable);
-    $("#${n}fromDate").change(updateTable);
-
     $(".cal-datepicker").datepicker();
 
 });

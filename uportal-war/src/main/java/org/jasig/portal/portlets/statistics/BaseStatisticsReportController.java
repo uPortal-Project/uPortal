@@ -18,6 +18,8 @@
  */
 package org.jasig.portal.portlets.statistics;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
