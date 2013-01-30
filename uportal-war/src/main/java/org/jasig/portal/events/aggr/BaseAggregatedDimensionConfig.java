@@ -43,9 +43,13 @@ public interface BaseAggregatedDimensionConfig<D> extends Serializable {
     long getVersion();
     
     /**
+     * If no dimensions are included or excluded false will be returned. If at least one
+     * dimension is in the {@link #getIncluded()} or {@link #getExcluded()} sets then
+     * {@link IncludeExcludeUtils#included(Object, java.util.Collection, java.util.Collection)}
+     * is used.
+     * 
      * @param dimension The dimension to test
      * @return true if it is included
-     * @see IncludeExcludeUtils#included(Object, java.util.Collection, java.util.Collection)
      */
     boolean isIncluded(D dimension);
 
