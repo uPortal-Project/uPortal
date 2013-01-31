@@ -255,9 +255,6 @@ var up = up || {};
                 doRender(that);
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
-                if (console) {
-                    console.log("AJAX Failure: ", XMLHttpRequest, textStatus, errorThrown);
-                }
             }
         });
     };//end:function.
