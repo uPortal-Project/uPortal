@@ -20,7 +20,6 @@
 package org.jasig.portal.events.aggr;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -54,6 +53,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Sets;
 
 /**
@@ -356,15 +356,15 @@ public abstract class JpaBaseAggregationDao<
 
     // Create set of all aggregatedGroups in both keys and those passed in as a parameter
     // and set in query.
-    private Set<AggregatedGroupMapping> collectAllGroupsFromParams(Set<K> keys, AggregatedGroupMapping[] aggregatedGroupMappings) {
-        final Set<AggregatedGroupMapping> groups = new HashSet<AggregatedGroupMapping>();
+    protected final Set<AggregatedGroupMapping> collectAllGroupsFromParams(Set<K> keys, AggregatedGroupMapping[] aggregatedGroupMappings) {
+        final Builder<AggregatedGroupMapping> groupsBuilder = ImmutableSet.<AggregatedGroupMapping>builder();
         // Add all groups from the keyset
         for (K aggregationKey : keys) {
-            groups.add(aggregationKey.getAggregatedGroup());
+            groupsBuilder.add(aggregationKey.getAggregatedGroup());
         }
         // Add groups from parameters
-        groups.addAll(Arrays.asList(aggregatedGroupMappings));
-        return groups;
+        groupsBuilder.add(aggregatedGroupMappings);
+        return groupsBuilder.build();
     }
 
     @Override

@@ -18,10 +18,16 @@
  */
 package org.jasig.portal.portlets.statistics;
 
-import com.google.visualization.datasource.base.TypeMismatchException;
-import com.google.visualization.datasource.datatable.ColumnDescription;
-import com.google.visualization.datasource.datatable.value.Value;
-import com.google.visualization.datasource.datatable.value.ValueType;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.BaseAggregationDao;
 import org.jasig.portal.events.aggr.BaseAggregationDateTimeComparator;
@@ -36,22 +42,14 @@ import org.jasig.portal.events.aggr.portletlayout.PortletLayoutAggregationKeyImp
 import org.jasig.portal.events.aggr.portlets.AggregatedPortletLookupDao;
 import org.jasig.portal.events.aggr.portlets.AggregatedPortletMapping;
 import org.jasig.portal.events.aggr.portlets.AggregatedPortletMappingNameComparator;
-import org.jasig.portal.utils.ComparableExtractingComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.portlet.ModelAndView;
-import org.springframework.web.portlet.bind.annotation.RenderMapping;
-import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 
-import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import com.google.visualization.datasource.base.TypeMismatchException;
+import com.google.visualization.datasource.datatable.ColumnDescription;
+import com.google.visualization.datasource.datatable.value.Value;
+import com.google.visualization.datasource.datatable.value.ValueType;
 
 /**
  * @author Chris Waymire <cwaymire@unicon.net>
@@ -84,15 +82,10 @@ public abstract class BasePortletLayoutStatisticsController<F extends BasePortle
     public abstract String getReportDataResourceId();
 
     @Override
-    protected F createReportFormRequest() {
-        try {
-            F form = (F)((Class)((ParameterizedType)this.getClass().
-                getGenericSuperclass()).getActualTypeArguments()[0]).newInstance();
-            selectFormDefaultPortlet(form);
-            return form;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    protected void initReportForm(F report) {
+        super.initReportForm(report);
+        
+        selectFormDefaultPortlet(report);
     }
 
     /**
@@ -139,8 +132,9 @@ public abstract class BasePortletLayoutStatisticsController<F extends BasePortle
         return keys;
     }
 
+
     @Override
-    protected ComparableExtractingComparator<?, ?> getDiscriminatorComparator() {
+    protected Comparator<? super PortletLayoutAggregationDiscriminator> getDiscriminatorComparator() {
         return PortletLayoutAggregationDiscriminatorImpl.Comparator.INSTANCE;
     }
 

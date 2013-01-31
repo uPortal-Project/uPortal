@@ -18,7 +18,12 @@
  */
 package org.jasig.portal.events.aggr.portletlayout;
 
+import java.util.List;
+
+import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.BaseAggregationDao;
+import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.joda.time.DateTime;
 
 /**
  * DAO used to query information about portlet layout aggregates
@@ -26,5 +31,16 @@ import org.jasig.portal.events.aggr.BaseAggregationDao;
  * @author Chris Waymire <cwaymire@unicon.net>
  */
 public interface PortletLayoutAggregationDao<T extends PortletLayoutAggregation> extends BaseAggregationDao<T,PortletLayoutAggregationKey> {
-
+    /**
+     * Get a list of all aggregations for the date range and groups.
+     * 
+     * @param start Start date (inclusive)
+     * @param end End date (exclusive)
+     * @param interval The aggregation interval
+     * @param aggregatedGroupMapping The groups to get data for
+     * @param aggregatedGroupMappings The groups to get data for
+     * @return
+     */
+    List<T> getAggregationsForAllPortlets(DateTime start, DateTime end, AggregationInterval interval,
+            AggregatedGroupMapping aggregatedGroupMapping, AggregatedGroupMapping... aggregatedGroupMappings);
 }

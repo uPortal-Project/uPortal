@@ -132,11 +132,12 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 </form>
 </div> <!-- end: portlet -->
 <span class="label">* These values are provided by daily statistics aggregation</span>
+<portlet:resourceURL id="popularPortletCounts" var="popularPortletCountsUrl" />
 <script type="text/javascript">
 up.jQuery(function() {
 
     var $ = up.jQuery;
-    var portletDeepLinkUrl = '<c:url value="/render.userLayoutRootNode.uP?uP_fname=PORTLETFNAME"/>';
+    var portletDeepLinkUrl = '<c:url value="/p/PORTLETFNAME"/>';
     var pager;
 
     var fetchStats = function() {
@@ -145,10 +146,10 @@ up.jQuery(function() {
         $("#${n}loadingMessage").slideDown(500);
 
         $.ajax({
-            url: '<c:url value="/api/userLayoutModificationsCounts"/>',
+            url: '${popularPortletCountsUrl}',
             async: false,
             data: $("#${n}form").serialize(),
-            type: 'POST',
+            type: 'GET',
             dataType: "json",
             success: function(data) { 
                 counts = data.counts; 
