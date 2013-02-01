@@ -205,6 +205,7 @@
             <antcall target="db-hibernate-portal" />
             <antcall target="db-hibernate-raw-events" />
             <antcall target="db-hibernate-aggr-events" />
+            <antcall target="db-hibernate-portlets" />
         </up-shell-batch>
     </target>
 
@@ -318,6 +319,14 @@
     <target name="db-hibernate-aggr-events-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for aggregate portal event storage">
         <antcall target="db-hibernate-portal-update">
         	<param name="databaseQualifier" value="AggrEventsDb" />
+        </antcall>
+    </target>
+
+    <target name="db-hibernate-portlets" depends="prodPrompt" description="Drops then creates Hibernate managed tables for bundled portlets">
+        <echo>Creating tables for bundled portlets</echo>
+        <antcall target="mvn">
+            <param name="pomDir" value="${basedir}/uportal-portlets-overlay" />
+            <param name="goal" value="db-init" />
         </antcall>
     </target>
 
@@ -496,14 +505,13 @@
         </antcall>
     </target>
 
-	<target name="portlet-data-import" depends="prodPrompt" description="Imports the default portlet-specific data">
-	    <echo>Importing portlet-specific data</echo>
+    <target name="portlet-data-import" depends="prodPrompt" description="Imports the default portlet-specific data">
+        <echo>Importing portlet-specific data</echo>
         <antcall target="mvn">
             <param name="pomDir" value="${basedir}/uportal-portlets-overlay" />
-            <param name="goal" value="antrun:run" />
-            <param name="portlet-data-import" value="true"/>
+            <param name="goal" value="data-import" />
         </antcall>
-	</target>
+    </target>
 
     <target name="data-import" depends="prodPrompt" description="Imports the specified XML file or files">
         <if>
@@ -1415,18 +1423,13 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
         </condition>
         <property name="filters.arg" value="-Djasig.ignore" />
 
-        <condition property="portlet-data-import.arg" value="-Dportlet-data-import=${portlet-data-import}">
-            <isset property="portlet-data-import" />
-        </condition>
-        <property name="portlet-data-import.arg" value="-Djasig.ignore" />
-
         <artifact:mvn pom="${pomDir}/pom.xml" failonerror="true" fork="true" mavenHome="${maven.home}" maxmemory="512m">
             <arg value="-s${maven.settings}" />
             <arg value="${test.skip}" />
+            <arg value="-e" />
             <arg value="${offline}" />
             <arg value="${env.arg}" />
             <arg value="${filters.arg}" />
-            <arg value="${portlet-data-import.arg}" />
             <arg value="${goal}" />
             <arg value="${goal1}" />
             <arg value="${goal2}" />
