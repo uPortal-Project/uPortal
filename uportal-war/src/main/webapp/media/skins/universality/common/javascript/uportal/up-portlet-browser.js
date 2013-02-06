@@ -202,7 +202,9 @@ var up = up || {};
 
         // initialize the view subcomponents
         that.categoryListView = fluid.initSubcomponent(that, "categoryListView", [container, that, fluid.COMPONENT_OPTIONS]);
-        that.stateListView = fluid.initSubcomponent(that, "stateListView", [container, that, fluid.COMPONENT_OPTIONS]);
+        if(that.options['stateListView'] != null) {
+            that.stateListView = fluid.initSubcomponent(that, "stateListView", [container, that, fluid.COMPONENT_OPTIONS]);
+        }
         that.searchView = fluid.initSubcomponent(that, "searchView", [container, that, fluid.COMPONENT_OPTIONS]);
         that.portletListView = fluid.initSubcomponent(that, "portletListView", [container, that, fluid.COMPONENT_OPTIONS]);
 
