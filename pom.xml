@@ -14,7 +14,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jasig.portal</groupId>
     <artifactId>uportal-parent</artifactId>
-    <version>4.0.10-SNAPSHOT</version>
+    <version>4.0.10</version>
     <packaging>pom</packaging>
 
     <name>uPortal Parent</name>
@@ -25,7 +25,8 @@
         <connection>scm:git:git://github.com/Jasig/uPortal.git</connection>
         <developerConnection>scm:git:git@github.com:Jasig/uPortal.git</developerConnection>
         <url>https://github.com/Jasig/uPortal</url>
-    </scm>
+      <tag>uportal-4.0.10</tag>
+  </scm>
 
     <issueManagement>
         <url>${jasig-issues-base}/UP</url>
