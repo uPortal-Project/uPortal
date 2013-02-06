@@ -762,7 +762,6 @@
             <plugin>
                 <groupId>org.jasig.maven</groupId>
                 <artifactId>sass-maven-plugin</artifactId>
-                <version>1.0.1</version>
                 <configuration>
                     <baseOutputDirectory>${basedir}/src/main/webapp</baseOutputDirectory>
                 </configuration>
@@ -770,7 +769,6 @@
             <plugin>
                 <groupId>org.jasig.resourceserver</groupId>
                 <artifactId>resource-server-plugin</artifactId>
-                <version>${resource-server.version}</version>
                 <executions>
                     <execution>
                         <id>aggregate-universality-skins</id>
