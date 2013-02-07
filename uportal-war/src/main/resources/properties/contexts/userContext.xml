@@ -183,6 +183,10 @@
             			<property name="label" value="Support Staff" />
             			<property name="value" value="SSP_SUPPORT_STAFF" />
             		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="Student" />
+            			<property name="value" value="SSP_STUDENT" />
+            		</bean>            		
             	</list>
             </constructor-arg>
             <!-- String defaultValue -->

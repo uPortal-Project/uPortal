@@ -1,0 +1,10 @@
+
+<group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
+  <name>SSP_STUDENT</name>
+  <entity-type>org.jasig.portal.security.IPerson</entity-type>
+  <creator>system</creator>
+  <description>Parent group to which permissions in SSP are attached. Members of this group's child groups will have the permissions associated with the role.</description>
+  <children> 
+    <group>(is) SSP_STUDENT</group> 
+  </children>
+</group>

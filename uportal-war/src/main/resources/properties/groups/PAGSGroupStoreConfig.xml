@@ -68,6 +68,7 @@
       <member-key>SSP_FACULTY</member-key>
       <member-key>SSP_MANAGER</member-key>
       <member-key>SSP_SUPPORT_STAFF</member-key>
+      <member-key>SSP_STUDENT</member-key>
       <!-- Special Permissions -->
       <member-key>DATA_ACADEMIC_RESOURCE_CENTER</member-key>
       <member-key>DATA_COUNSELING_SERVICES</member-key>
@@ -207,6 +208,21 @@
       </test-group>
     </selection-test>
   </group>
+  
+  <group>
+    <group-key>SSP_STUDENT</group-key>
+    <group-name>(is) SSP_STUDENT</group-name>
+    <group-description>Users with an appropriate value in their SSP_ROLES attribute.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>SSP_ROLES</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>SSP_STUDENT</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>  
 
   <group>
     <group-key>DATA_ACADEMIC_RESOURCE_CENTER</group-key>
