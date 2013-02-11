@@ -67,8 +67,8 @@
                |  you can use a custom location by specifying PORTAL_HOME as a JVM startup argument 
                |  or as an environment variable.
                +-->
-              <value>file:/${CATALINA_HOME}/portal/overrides.properties</value>
-              <value>file:/${PORTAL_HOME}/overrides.properties</value>
+              <value>file:${CATALINA_HOME}/portal/overrides.properties</value>
+              <value>file:${PORTAL_HOME}/overrides.properties</value>
             </list>
         </property>
         <property name="ignoreResourceNotFound" value="true" />
