@@ -326,7 +326,9 @@
         <echo>Creating tables for bundled portlets</echo>
         <antcall target="mvn">
             <param name="pomDir" value="${basedir}/uportal-portlets-overlay" />
-            <param name="goal" value="db-init" />
+            <!-- In case target is run separately, insure the project is packaged so all filtered substitutions occur -->
+            <param name="goal" value="package" />
+            <param name="goal1" value="db-init" />
         </antcall>
     </target>
 
@@ -509,7 +511,9 @@
         <echo>Importing portlet-specific data</echo>
         <antcall target="mvn">
             <param name="pomDir" value="${basedir}/uportal-portlets-overlay" />
-            <param name="goal" value="data-import" />
+            <!-- In case target is run separately, insure the project is packaged so all filtered substitutions occur -->
+            <param name="goal" value="package" />
+            <param name="goal1" value="data-import" />
         </antcall>
     </target>
 
