@@ -21,7 +21,7 @@
 
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 
-<portlet:renderURL var="formUrl"/>
+<portlet:actionURL var="formUrl"/>
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet Section -->
