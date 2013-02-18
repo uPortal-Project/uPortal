@@ -108,6 +108,7 @@
     
         <!-- WAR Dependency Version Properties -->
         <BookmarksPortlet.version>1.0.11</BookmarksPortlet.version>
+        <CalendarPortlet.version>2.1.0-RC2</CalendarPortlet.version>
         <cas-server.version>3.5.1</cas-server.version>
         <cas-proxy-test-portlet.version>1.0.0-RC3</cas-proxy-test-portlet.version>
         <email-preview.version>2.0.3</email-preview.version>
