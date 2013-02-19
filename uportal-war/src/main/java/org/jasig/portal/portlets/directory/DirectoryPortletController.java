@@ -54,6 +54,7 @@ import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.portlet.ModelAndView;
@@ -207,6 +208,11 @@ public class DirectoryPortletController {
             response.setRenderParameter("query", query);
         }
 
+    }
+    
+    @ModelAttribute("maxResults")
+    public int getMaxResults() {
+        return lookupHelper.getMaxResults();
     }
     
     /**
