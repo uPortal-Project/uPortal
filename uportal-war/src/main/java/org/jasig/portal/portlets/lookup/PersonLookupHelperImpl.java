@@ -74,6 +74,10 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
         this.maxResults = maxResults;
     }
 
+    public int getMaxResults() {
+        return maxResults;
+    }
+
     /* (non-Javadoc)
      * @see org.jasig.portal.portlets.swapper.IPersonLookupHelper#getQueryAttributes(org.springframework.webflow.context.ExternalContext)
      */
