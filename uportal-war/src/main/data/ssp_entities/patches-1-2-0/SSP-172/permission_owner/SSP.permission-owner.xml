@@ -1,0 +1,18 @@
+
+<permission-owner xmlns="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns2="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns4="https://source.jasig.org/schemas/uportal" xmlns:ns5="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/user" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/permission-owner https://source.jasig.org/schemas/uportal/io/permission-owner/permission-owner-4.0.xsd">
+	<name>Student Success Plan</name>
+	<fname>SSP</fname>
+	<desc>Permissions controlling features in SSP</desc>
+	<activity>
+		<name>ACCOMMODATION_WRITE</name>
+		<fname>ACCOMMODATION_WRITE</fname>
+		<desc>ACCOMMODATION_WRITE</desc>
+		<targetProvider>portalSystemTargetProvider</targetProvider>
+	</activity>
+	<activity>
+		<name>ACCOMMODATION_READ</name>
+		<fname>ACCOMMODATION_READ</fname>
+		<desc>ACCOMMODATION_READ</desc>
+		<targetProvider>portalSystemTargetProvider</targetProvider>
+	</activity>
+</permission-owner>
