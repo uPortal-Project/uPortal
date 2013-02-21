@@ -44,7 +44,7 @@ public class SessionRESTController {
         this.personManager = personManager;
     }
 
-    @RequestMapping(value="/session", method = RequestMethod.GET)
+    @RequestMapping(value="/session.json", method = RequestMethod.GET)
     public ModelAndView isAuthenticated(HttpServletRequest request, HttpServletResponse response) {
         final ModelAndView mv = new ModelAndView();
         
@@ -61,7 +61,8 @@ public class SessionRESTController {
             attributes.put("displayName", person.getFullName());
             mv.addObject("person", attributes);
         }
-        
+
+        mv.setViewName("json");
         return mv;
 
     }
