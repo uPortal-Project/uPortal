@@ -108,6 +108,7 @@
     
         <!-- WAR Dependency Version Properties -->
         <BookmarksPortlet.version>1.0.11</BookmarksPortlet.version>
+        <CalendarPortlet.version>2.1.0-RC2</CalendarPortlet.version>
         <cas-server.version>3.5.1</cas-server.version>
         <cas-proxy-test-portlet.version>1.0.0-RC3</cas-proxy-test-portlet.version>
         <email-preview.version>2.0.3</email-preview.version>
@@ -194,6 +195,7 @@
         <stringtemplate.version>4.0.2</stringtemplate.version>
         <tomcat-jdbc.version>7.0.34</tomcat-jdbc.version>
         <uportal-ear-deployer.version>1.0.1</uportal-ear-deployer.version>
+        <uportalDataPlugin.version>1.0</uportalDataPlugin.version>
         <usertype.version>3.0.0.GA</usertype.version>
         <woodstox.version>4.1.4</woodstox.version>
         <xmlunit.version>1.3</xmlunit.version>
@@ -1301,6 +1303,13 @@
                     <groupId>org.jasig.portal</groupId>
                     <artifactId>maven-uportal-plugin</artifactId>
                     <version>1.0.0-M4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jasig.maven</groupId>
+                    <artifactId>uportaldata-maven-plugin</artifactId>
+                    <version>${uportalDataPlugin.version}</version>
+                    <!-- extensions must be set to true to pick up the custom phases -->
+                    <extensions>true</extensions>
                 </plugin>
                 <plugin>
                     <groupId>org.jvnet.jaxb2.maven2</groupId>
