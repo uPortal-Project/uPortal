@@ -92,6 +92,7 @@
         <jdbc.groupId>org.hsqldb</jdbc.groupId>
         <jdbc.artifactId>hsqldb</jdbc.artifactId>
         <jdbc.version>${hsqldb.version}</jdbc.version>
+
     
         <!--
          | Environment name and filters file for environment-specific build
@@ -115,7 +116,7 @@
         <cas-server.version>3.4.11</cas-server.version>
         <cas-clearpass.version>1.0.7.GA</cas-clearpass.version>
         <cas-proxy-test-portlet.version>1.0.0-RC3</cas-proxy-test-portlet.version>
-        <email-preview.version>2.0.1</email-preview.version>
+        <email-preview.version>2.0.3</email-preview.version>
         <FunctionalTestsPortlet.version>1.1.0</FunctionalTestsPortlet.version>
         <jasig-widget-portlets.version>1.0.3</jasig-widget-portlets.version>
         <googleportlet.version>0.4</googleportlet.version>
@@ -143,7 +144,7 @@
         <commons-dbcp.version>1.4</commons-dbcp.version>
         <commons-fileupload.version>1.2.2</commons-fileupload.version>
         <commons-httpclient.version>3.1</commons-httpclient.version>
-        <commons-httpcomponents.version>4.2.3</commons-httpcomponents.version>
+	<commons-httpcomponents.version>4.2.3</commons-httpcomponents.version>
         <commons-io.version>2.4</commons-io.version>
         <commons-lang.version>2.6</commons-lang.version>
         <commons-logging.version>1.1.1</commons-logging.version>
@@ -341,7 +342,7 @@
                 <artifactId>commons-httpclient</artifactId>
                 <version>${commons-httpclient.version}</version>
             </dependency>
-            <dependency>
+	    <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcore</artifactId>
                 <version>${commons-httpcomponents.version}</version>
