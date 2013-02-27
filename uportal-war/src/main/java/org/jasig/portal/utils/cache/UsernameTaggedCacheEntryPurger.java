@@ -23,12 +23,12 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.jasig.portal.events.LoginEvent;
 import org.jasig.portal.events.LogoutEvent;
-import org.jasig.portal.events.PortalEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Purges cache entries tagged for a specific user when they login or logout
@@ -36,11 +36,11 @@ import org.springframework.stereotype.Component;
  * @author Eric Dalquist
  */
 @Component
-public class UsernameTaggedCacheEntryPurger implements ApplicationListener<PortalEvent> {
+public class UsernameTaggedCacheEntryPurger implements ApplicationListener<LogoutEvent> {
     public static final String TAG_TYPE = "username";
     
     public static CacheEntryTag createCacheEntryTag(String username) {
-        return new SimpleCacheEntryTag(TAG_TYPE, username);
+        return new SimpleCacheEntryTag<String>(TAG_TYPE, username);
     }
     
     private TaggedCacheEntryPurger taggedCacheEntryPurger;
@@ -48,7 +48,7 @@ public class UsernameTaggedCacheEntryPurger implements ApplicationListener<Porta
     
     @Resource(name="UsernameCacheTagPurger_IgnoredUsernames")
     public void setIgnoredUserNames(Set<String> ignoredUserNames) {
-        this.ignoredUserNames = ignoredUserNames;
+        this.ignoredUserNames = ImmutableSet.copyOf(ignoredUserNames);
     }
 
     @Autowired
@@ -57,13 +57,15 @@ public class UsernameTaggedCacheEntryPurger implements ApplicationListener<Porta
     }
 
     @Override
-    public void onApplicationEvent(PortalEvent event) {
-        if (event instanceof LoginEvent || event instanceof LogoutEvent) {
-            final String userName = event.getUserName();
-            if (!ignoredUserNames.contains(userName)) {
-                final CacheEntryTag tag = createCacheEntryTag(userName);
-                this.taggedCacheEntryPurger.purgeCacheEntries(tag);
-            }
+    public void onApplicationEvent(LogoutEvent event) {
+        final String userName = event.getUserName();
+        purgeTaggedCacheEntries(userName);
+    }
+
+    public void purgeTaggedCacheEntries(final String username) {
+        if (!ignoredUserNames.contains(username)) {
+            final CacheEntryTag tag = createCacheEntryTag(username);
+            this.taggedCacheEntryPurger.purgeCacheEntries(tag);
         }
     }
 }

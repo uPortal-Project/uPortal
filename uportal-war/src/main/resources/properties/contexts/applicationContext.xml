@@ -45,36 +45,52 @@
         <context:exclude-filter type="regex" expression="org\.jasig\.portal\.rendering\."/>
     </context:component-scan>
     
-    <bean id="primaryPropertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <bean id="primaryPropertyPlaceholderConfigurer" class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
         <property name="locations">
             <list>
               <value>classpath:/properties/rdbm.properties</value>
               <value>classpath:/properties/security.properties</value>
               <value>classpath:/properties/portal.properties</value>
+              <!-- 
+               |  The following 2 files optionally allow deployers to set or override many uPortal 
+               |  configuration settings in a outside the control of the build/deploy cycle, SCM, 
+               |  and Tomcat.
+               |
+               |  Reasons for choosing that may include:
+               |    - Desire to keep sensitive information out of your Git repository
+               |    - Ability to change some common settings without a full build and deploy cycle
+               |
+               |  Any property defined in the above files that is referenced in the Spring context 
+               |  may be overridden in one (or both) of these files.
+               |
+               |  The default location for overrides is ${CATALINA_HOME}/portal/overrides.properties;  
+               |  you can use a custom location by specifying PORTAL_HOME as a JVM startup argument 
+               |  or as an environment variable.
+               +-->
+              <value>file:${CATALINA_HOME}/portal/overrides.properties</value>
+              <value>file:${PORTAL_HOME}/overrides.properties</value>
             </list>
         </property>
+        <property name="ignoreResourceNotFound" value="true" />
     </bean>
     
     <bean id="systemPropertySetter" class="org.jasig.portal.spring.context.SystemPropertySetter">
         <property name="systemProperties">
             <props>
-                <prop key="uPortal.cacheManager.jgroups.udp.mcast_addr">${uPortal.cacheManager.jgroups.udp.mcast_addr:}</prop>
-                <prop key="uPortal.cacheManager.jgroups.udp.mcast_port">${uPortal.cacheManager.jgroups.udp.mcast_port:}</prop>
-                <prop key="uPortal.cacheManager.jgroups.udp.bind_port">${uPortal.cacheManager.jgroups.udp.bind_port:}</prop>
-                <prop key="uPortal.cacheManager.jgroups.udp.ip_ttl">${uPortal.cacheManager.jgroups.udp.ip_ttl:}</prop>
                 <prop key="uPortal.cacheManager.jgroups.fd_sock.start_port">${uPortal.cacheManager.jgroups.fd_sock.start_port:}</prop>
+                <prop key="uPortal.cacheManager.jgroups.tcp.bind_port">${uPortal.cacheManager.jgroups.tcp.bind_port:}</prop>
             </props>
         </property>
     </bean>
     
     <util:map id="productVersions" value-type="org.jasig.portal.version.om.Version">
-    	<entry value="4.0.7">
+    	<entry value="4.0.10">
     		<key><util:constant static-field="org.jasig.portal.jpa.BasePortalJpaDao.PERSISTENCE_UNIT_NAME"/></key>
     	</entry>
-    	<entry value="4.0.7">
+    	<entry value="4.0.10">
     		<key><util:constant static-field="org.jasig.portal.jpa.BaseRawEventsJpaDao.PERSISTENCE_UNIT_NAME"/></key>
     	</entry>
-    	<entry value="4.0.7">
+    	<entry value="4.0.10">
     		<key><util:constant static-field="org.jasig.portal.jpa.BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME"/></key>
     	</entry>
     </util:map>

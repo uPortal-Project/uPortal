@@ -26,7 +26,7 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.security.IPersonManager;
+import org.jasig.portal.security.IdentitySwapperManager;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,16 +42,20 @@ public class UserImpersonationTransformerConfigurationSource implements Transfor
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     private String userImpersonatingParameter = "userImpersonating";
-    private IPersonManager personManager;
-    
+    private IdentitySwapperManager identitySwapperManager;
+
     @Autowired
-    public void setPersonManager(IPersonManager personManager) {
-        this.personManager = personManager;
+    public void setIdentitySwapperManager(IdentitySwapperManager identitySwapperManager) {
+        this.identitySwapperManager = identitySwapperManager;
     }
     
+    public void setUserImpersonatingParameter(String userImpersonatingParameter) {
+        this.userImpersonatingParameter = userImpersonatingParameter;
+    }
+
     @Override
     public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
-        final boolean impersonating = this.personManager.isImpersonating(request);
+        final boolean impersonating = this.identitySwapperManager.isImpersonating(request);
         
         return CacheKey.build(UserImpersonationTransformerConfigurationSource.class.getName(), userImpersonatingParameter, impersonating);
     }
@@ -63,7 +67,7 @@ public class UserImpersonationTransformerConfigurationSource implements Transfor
 
     @Override
     public Map<String, Object> getParameters(HttpServletRequest request, HttpServletResponse response) {
-        final boolean impersonating = this.personManager.isImpersonating(request);
+        final boolean impersonating = this.identitySwapperManager.isImpersonating(request);
         
         final Map<String, Object> parameters = Collections.<String, Object>singletonMap(userImpersonatingParameter, impersonating);
         this.logger.debug("Returning transformer parameters: {}", parameters);

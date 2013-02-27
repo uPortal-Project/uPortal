@@ -64,6 +64,11 @@
         <include>DAY</include>
         <include>MONTH</include>
     </aggregated-interval-config>
+    <aggregated-interval-config>
+        <aggregator-type>org.jasig.portal.events.aggr.portletlayout.PortletLayoutAggregator</aggregator-type>
+        <include>DAY</include>
+        <include>MONTH</include>
+    </aggregated-interval-config>
 
     <quarter-details>
         <id>0</id>

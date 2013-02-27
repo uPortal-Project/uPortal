@@ -23,14 +23,14 @@ package org.jasig.portal.utils.cache;
  * 
  * @author Eric Dalquist
  */
-public class SimpleCacheEntryTag implements CacheEntryTag {
+public class SimpleCacheEntryTag<V> implements CacheEntryTag {
 	private static final long serialVersionUID = 1L;
 	
 	private final String tagType;
-    private final String tagValue;
+    private final V tagValue;
     private final int hash;
     
-    public SimpleCacheEntryTag(String tagType, String tagValue) {
+    public SimpleCacheEntryTag(String tagType, V tagValue) {
         this.tagType = tagType;
         this.tagValue = tagValue;
         this.hash = internalHashCode();
@@ -41,7 +41,7 @@ public class SimpleCacheEntryTag implements CacheEntryTag {
         return this.tagType;
     }
 
-    public String getTagValue() {
+    public V getTagValue() {
         return tagValue;
     }
     
@@ -66,7 +66,7 @@ public class SimpleCacheEntryTag implements CacheEntryTag {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        SimpleCacheEntryTag other = (SimpleCacheEntryTag) obj;
+        SimpleCacheEntryTag<?> other = (SimpleCacheEntryTag<?>) obj;
         if (tagType == null) {
             if (other.tagType != null)
                 return false;

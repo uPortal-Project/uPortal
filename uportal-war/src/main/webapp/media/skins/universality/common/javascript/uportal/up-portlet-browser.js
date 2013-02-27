@@ -202,6 +202,9 @@ var up = up || {};
 
         // initialize the view subcomponents
         that.categoryListView = fluid.initSubcomponent(that, "categoryListView", [container, that, fluid.COMPONENT_OPTIONS]);
+        if(that.options['stateListView'] != null) {
+            that.stateListView = fluid.initSubcomponent(that, "stateListView", [container, that, fluid.COMPONENT_OPTIONS]);
+        }
         that.searchView = fluid.initSubcomponent(that, "searchView", [container, that, fluid.COMPONENT_OPTIONS]);
         that.portletListView = fluid.initSubcomponent(that, "portletListView", [container, that, fluid.COMPONENT_OPTIONS]);
 
@@ -220,6 +223,7 @@ var up = up || {};
         events: {
             onLoad: null,
             onCategorySelect: null,
+            onStateSelect: null,
             onPortletSearch: null,
             onPortletSelect: null,
             onPortletDrag: null
@@ -229,6 +233,10 @@ var up = up || {};
             onCategorySelect: function (that, category) {
                 that.state.currentCategory = category.id;
                 that.categoryListView.refresh();
+                that.portletListView.refresh();
+            },
+            onStateSelect: function (that, state) {
+                that.state.currentState = state;
                 that.portletListView.refresh();
             },
             onPortletSearch: function (that, searchTerm, submitted) {

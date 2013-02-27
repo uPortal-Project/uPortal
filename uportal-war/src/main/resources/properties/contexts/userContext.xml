@@ -90,6 +90,16 @@
                     <property name="pattern" value=".*Opera Mobile.*" />
                     <property name="profileName" value="mobileDefault" />
                 </bean>
+                <!-- Windows Phone  -->
+                <bean class="org.jasig.portal.layout.UserAgentProfileMapper.Mapping">
+                    <property name="pattern" value=".*Windows Phone.*" />
+                    <property name="profileName" value="mobileDefault" />
+                </bean>
+                <!-- IEMobile web browser -->
+                <bean class="org.jasig.portal.layout.UserAgentProfileMapper.Mapping">
+                    <property name="pattern" value=".*IEMobile.*" />
+                    <property name="profileName" value="mobileDefault" />
+                </bean>
             </list>
         </property>
     </bean>

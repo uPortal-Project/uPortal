@@ -87,7 +87,7 @@ public final class AggregatedPortletMappingImpl implements AggregatedPortletMapp
     }
 
     @Override
-    public String getFName() {
+    public String getFname() {
         return this.fname;
     }
 

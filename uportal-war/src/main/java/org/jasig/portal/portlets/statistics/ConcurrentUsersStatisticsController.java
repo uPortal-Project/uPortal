@@ -19,15 +19,22 @@
 package org.jasig.portal.portlets.statistics;
 
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.BaseAggregationDao;
 import org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregation;
 import org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationDao;
+import org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationDiscriminator;
+import org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationDiscriminatorImpl;
 import org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationKey;
 import org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationKeyImpl;
+import org.jasig.portal.events.aggr.groups.AggregatedGroupLookupDao;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -49,13 +56,22 @@ import com.google.visualization.datasource.datatable.value.ValueType;
  */
 @Controller
 @RequestMapping("VIEW")
-public class ConcurrentUsersStatisticsController extends BaseStatisticsReportController<ConcurrentUserAggregation, ConcurrentUserAggregationKey, ConcurrentUserReportForm> {
+public class ConcurrentUsersStatisticsController 
+        extends BaseSimpleGroupedStatisticsReportController<
+            ConcurrentUserAggregation, 
+            ConcurrentUserAggregationKey,
+            ConcurrentUserAggregationDiscriminator, 
+            ConcurrentUserReportForm> {
+
     private static final String DATA_TABLE_RESOURCE_ID = "concurrentUserData";
     private final static String REPORT_NAME = "concurrent.users";
 
     @Autowired
     private ConcurrentUserAggregationDao<ConcurrentUserAggregation> concurrentUserAggregationDao;
-    
+
+    @Autowired
+    private AggregatedGroupLookupDao aggregatedGroupDao;
+
     @RenderMapping(value="MAXIMIZED", params="report=" + REPORT_NAME)
     public String getConcurrentUserView() throws TypeMismatchException {
         return "jsp/Statistics/reportGraph";
@@ -66,11 +82,6 @@ public class ConcurrentUsersStatisticsController extends BaseStatisticsReportCon
         return renderAggregationReport(form);
     }
     
-    @Override
-    protected ConcurrentUserReportForm createReportFormRequest() {
-        return new ConcurrentUserReportForm();
-    }
-
     @Override
     public String getReportName() {
         return REPORT_NAME;
@@ -87,14 +98,35 @@ public class ConcurrentUsersStatisticsController extends BaseStatisticsReportCon
     }
 
     @Override
-    protected ConcurrentUserAggregationKey createAggregationsQueryKey(Set<AggregatedGroupMapping> groups, ConcurrentUserReportForm form) {
+    protected Comparator<? super ConcurrentUserAggregationDiscriminator> getDiscriminatorComparator() {
+        return ConcurrentUserAggregationDiscriminatorImpl.Comparator.INSTANCE;
+    }
+
+    /**
+     * Create a map of the report column discriminators based on the submitted form to
+     * collate the aggregation data into each column of a report.
+     * The map entries are a time-ordered sorted set of aggregation data points.
+     *
+     * @param form Form submitted by the user
+     * @return Map of report column discriminators to sorted set of time-based aggregation data
+     */
+    @Override
+    protected Map<ConcurrentUserAggregationDiscriminator, SortedSet<ConcurrentUserAggregation>>
+    createColumnDiscriminatorMap (ConcurrentUserReportForm form){
+        return getDefaultGroupedColumnDiscriminatorMap(form);
+    }
+
+    @Override
+    protected Set<ConcurrentUserAggregationKey> createAggregationsQueryKeyset(Set<ConcurrentUserAggregationDiscriminator> groups, ConcurrentUserReportForm form) {
         final AggregationInterval interval = form.getInterval();
-        return new ConcurrentUserAggregationKeyImpl(interval, groups.iterator().next());
+        HashSet<ConcurrentUserAggregationKey> keys = new HashSet<ConcurrentUserAggregationKey>();
+        keys.add(new ConcurrentUserAggregationKeyImpl(interval, groups.iterator().next().getAggregatedGroup()));
+        return keys;
     }
     
     @Override
-    protected List<ColumnDescription> getColumnDescriptions(AggregatedGroupMapping group, ConcurrentUserReportForm form) {
-        final String groupName = group.getGroupName();
+    protected List<ColumnDescription> getColumnDescriptions(ConcurrentUserAggregationDiscriminator discriminator, ConcurrentUserReportForm form) {
+        final String groupName = discriminator.getAggregatedGroup().getGroupName();
         return Collections.singletonList(new ColumnDescription(groupName, ValueType.NUMBER, groupName));
     }
 
@@ -110,4 +142,11 @@ public class ConcurrentUsersStatisticsController extends BaseStatisticsReportCon
         
         return Collections.<Value>singletonList(new NumberValue(concurrentUsers));
     }
+
+    @Override
+    protected ConcurrentUserAggregationDiscriminator createGroupedDiscriminatorInstance(AggregatedGroupMapping groupMapping) {
+        return new ConcurrentUserAggregationDiscriminatorImpl(groupMapping);
+    }
+    
+    
 }

@@ -19,11 +19,9 @@
 
 package org.jasig.portal.url;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.portlet.PortletMode;
 import javax.portlet.ResourceURL;
@@ -62,11 +60,7 @@ class PortletRequestInfoImpl implements IPortletRequestInfo {
                 return;
             }
             
-            for (final Entry<String, List<String>> paramEntry : this.portletParameters.entrySet()) {
-                paramEntry.setValue(Collections.unmodifiableList(paramEntry.getValue()));
-            }
-            
-            this.portletParameters = Collections.unmodifiableMap(this.portletParameters);
+            this.portletParameters = ParameterMap.immutableCopyOfListMap(this.portletParameters);
             
             readOnly = true;
         }

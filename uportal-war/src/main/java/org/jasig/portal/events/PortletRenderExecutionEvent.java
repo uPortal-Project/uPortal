@@ -75,7 +75,7 @@ public final class PortletRenderExecutionEvent extends PortletExecutionEvent {
      */
     public boolean isUsedPortalCache() {
         if (usedPortalCache == null) {
-            usedPortalCache = usedPortalCache != null ? usedPortalCache : false; 
+            usedPortalCache = cached != null ? cached : false; 
         }
         return this.usedPortalCache;
     }

@@ -20,15 +20,13 @@
 
 -->
 
-<user
-    xmlns="https://source.jasig.org/schemas/uportal/io/user"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0"
-    xsi:schemaLocation="
-        https://source.jasig.org/schemas/uportal/io/user https://source.jasig.org/schemas/uportal/io/user/user-4.0.xsd"
-    username="testUser"
->
+<user username="testUser" version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/user https://source.jasig.org/schemas/uportal/io/user/user-4.0.xsd" xmlns:ns2="https://source.jasig.org/schemas/uportal/io/event-aggregation" xmlns="https://source.jasig.org/schemas/uportal/io/user" xmlns:ns4="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns5="https://source.jasig.org/schemas/uportal" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:ns7="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns8="https://source.jasig.org/schemas/uportal/io/subscribed-fragment">
     <password>93750981y2rhqw9u</password>
     <lastPasswordChange>2002-05-30T15:30:10Z</lastPasswordChange>
+    <attribute>
+        <name>displayName</name>
+        <value></value>
+    </attribute>
     <attribute>
         <name>firstName</name>
         <value>Test</value>
@@ -36,9 +34,5 @@
     <attribute>
         <name>lastName</name>
         <value>User</value>
-    </attribute>
-    <attribute>
-        <name>displayName</name>
-        <value></value>
     </attribute>
 </user>

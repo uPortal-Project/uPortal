@@ -25,12 +25,12 @@ import java.util.Comparator;
  * 
  * @author Eric Dalquist
  */
-public class BaseAggregationDateTimeComparator implements Comparator<BaseAggregation<?>> {
-    public static final Comparator<BaseAggregation<?>> INSTANCE = new BaseAggregationDateTimeComparator();
+public class BaseAggregationDateTimeComparator implements Comparator<BaseAggregation<?,?>> {
+    public static final Comparator<BaseAggregation<?,?>> INSTANCE = new BaseAggregationDateTimeComparator();
     
 
     @Override
-    public int compare(BaseAggregation<?> o1, BaseAggregation<?> o2) {
+    public int compare(BaseAggregation<?,?> o1, BaseAggregation<?,?> o2) {
         if (o1 == o2) {
             return 0;
         }

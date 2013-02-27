@@ -39,6 +39,7 @@ import org.jasig.portal.portlets.swapper.IdentitySwapperPrincipal;
 import org.jasig.portal.portlets.swapper.IdentitySwapperSecurityContext;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
+import org.jasig.portal.security.IdentitySwapperManager;
 import org.jasig.portal.security.mvc.LoginController;
 import org.jasig.portal.services.Authentication;
 import org.jasig.portal.spring.security.PortalPersonUserDetails;
@@ -66,6 +67,12 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
     protected HashMap<String, String> principalTokens;
     protected Authentication authenticationService = null;
     private IPersonManager personManager;
+    private IdentitySwapperManager identitySwapperManager;
+    
+    @Autowired
+    public void setIdentitySwapperManager(IdentitySwapperManager identitySwapperManager) {
+        this.identitySwapperManager = identitySwapperManager;
+    }
 
     @Autowired
     public void setPersonManager(IPersonManager personManager) {
@@ -202,12 +209,15 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
         if (request.isRequestedSessionIdValid()) {
             try {
                 HttpSession s = request.getSession(false);
-                //Check if this is a swapped user hitting the Login servlet
-                originalUid = (String) s.getAttribute(LoginController.SWAP_ORIGINAL_UID);
+                
+                if (s != null) {
+                    //Check if this is a swapped user hitting the Login servlet
+                    originalUid = this.identitySwapperManager.getOriginalUsername(s);
+                }
 
                 //No original person in session so check for swap request
                 if (originalUid == null) {
-                    targetUid = (String) s.getAttribute(LoginController.SWAP_TARGET_UID);
+                    targetUid = this.identitySwapperManager.getTargetUsername(s);
                     if (targetUid != null) {
                         final IPerson person = personManager.getPerson(request);
                         originalUid = person.getName();
@@ -219,7 +229,9 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
                     targetUid = person.getName();
                 }
 
-                s.invalidate();
+                if (s != null) {
+                    s.invalidate();
+                }
             }
             catch (IllegalStateException ise) {
                 // ISE indicates session was already invalidated.
@@ -251,19 +263,17 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
             if (targetUid != null && originalUid != null) {
                 if (swap) {
                     swapperLog.warn("Swapping identity for '" + originalUid + "' to '" + targetUid + "'");
-
+                    
                     //Track the originating user
-                    s.setAttribute(LoginController.SWAP_ORIGINAL_UID, originalUid);
+                    this.identitySwapperManager.setOriginalUser(s, originalUid, targetUid);
 
                     //Setup the swapped person
                     person.setUserName(targetUid);
-                    personManager.setImpersonating(request, true);
                 }
                 else {
                     swapperLog.warn("Reverting swapped identity from '" + targetUid + "' to '" + originalUid + "'");
 
                     person.setUserName(originalUid);
-                    personManager.setImpersonating(request, false);
                 }
 
                 //Setup the custom security context

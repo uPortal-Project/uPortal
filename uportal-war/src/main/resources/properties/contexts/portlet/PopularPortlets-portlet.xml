@@ -22,26 +22,16 @@
 
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns="http://www.springframework.org/schema/beans" 
+       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="
-           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
            
-    <!-- Enables FlowHandlers -->
-    <bean class="org.springframework.webflow.mvc.portlet.FlowHandlerAdapter">
-        <property name="flowExecutor" ref="flowExecutor"/>
-    </bean>
-
-    <!-- Maps portlet modes to handlers --> 
-    <bean id="portletModeHandlerMapping" class="org.springframework.web.portlet.handler.PortletModeHandlerMapping">
+    <context:annotation-config/>
+    <context:component-scan base-package="org.jasig.portal.portlets.popular"/>
+    
+    <bean class="org.springframework.web.portlet.mvc.annotation.DefaultAnnotationHandlerMapping">
         <property name="interceptors" ref="minimizedStateHandlerInterceptor" />
-        <property name="portletModeMap">
-            <map>
-                <entry key="view">
-                    <bean class="org.jasig.portal.portlets.flow.ParamaterizableFlowHandler">
-                        <property name="flowId" value="popular-portlets" />
-                    </bean>
-                </entry>
-            </map>
-        </property>
     </bean>
     
     <bean parent="primaryPropertyPlaceholderConfigurer" />

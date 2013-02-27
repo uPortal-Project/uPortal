@@ -22,6 +22,7 @@ package org.jasig.portal.io.xml.user;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -298,6 +299,7 @@ public class UserImporterExporter extends
                 
                 externalAttributes.add(externalAttribute);
             }
+            Collections.sort(externalAttributes, AttributeComparator.INSTANCE);
 	    }
 	    
 	    return userType;

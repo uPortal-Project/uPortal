@@ -37,6 +37,7 @@ import org.jasig.portal.events.IPortalAuthEventFactory;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.security.IdentitySwapperManager;
 import org.jasig.portal.utils.ResourceLoader;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +61,12 @@ public class LogoutController implements InitializingBean {
     private Map<String, String> redirectMap;
     private IPortalAuthEventFactory portalEventFactory;
     private IPersonManager personManager;
+    private IdentitySwapperManager identitySwapperManager;
+    
+    @Autowired
+    public void setIdentitySwapperManager(IdentitySwapperManager identitySwapperManager) {
+        this.identitySwapperManager = identitySwapperManager;
+    }
 
     @Autowired
     public void setPersonManager(IPersonManager personManager) {
@@ -130,7 +137,7 @@ public class LogoutController implements InitializingBean {
                 log.error("Exception recording logout " + "associated with request " + request, e);
             }
 
-            final String originalUid = (String) session.getAttribute(LoginController.SWAP_ORIGINAL_UID);
+            final String originalUid = this.identitySwapperManager.getOriginalUsername(session);
             //Logging out from a swapped user, just redirect to the Login servlet
             if (originalUid != null) {
                 redirect = request.getContextPath() + "/Login";

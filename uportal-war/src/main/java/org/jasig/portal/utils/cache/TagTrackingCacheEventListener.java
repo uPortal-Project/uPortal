@@ -76,31 +76,38 @@ public class TagTrackingCacheEventListener extends CacheEventListenerAdapter imp
      * Remove all cache entries with keys that have the specified tag
      */
     @Override
-    public void purgeCacheEntries(CacheEntryTag tag) {
+    public int purgeCacheEntries(CacheEntryTag tag) {
         final String tagType = tag.getTagType();
         final Set<Ehcache> caches = taggedCaches.getIfPresent(tagType);
         
         //Tag exists in cache(s)
-        if (caches != null && !caches.isEmpty()) {
+        if (caches == null || caches.isEmpty()) {
+            return 0;
+        }
+        
+        int purgeCount = 0;
             
-            //Iterate over each cache to remove the tagged entries
-            for (final Ehcache cache : caches) {
-                final String cacheName = cache.getName();
+        //Iterate over each cache to remove the tagged entries
+        for (final Ehcache cache : caches) {
+            final String cacheName = cache.getName();
 
-                //See if there are any tagged cache keys for the cache
-                final LoadingCache<CacheEntryTag, Set<Object>> cacheKeys = taggedCacheKeys.getIfPresent(cacheName);
-                if (cacheKeys != null) {
+            //See if there are any tagged cache keys for the cache
+            final LoadingCache<CacheEntryTag, Set<Object>> cacheKeys = taggedCacheKeys.getIfPresent(cacheName);
+            if (cacheKeys != null) {
+                
+                //Remove all cache keys from the cache
+                final Set<Object> taggedKeys = cacheKeys.asMap().remove(tag);
+                if (taggedKeys != null) {
+                    final int keyCount = taggedKeys.size();
+                    purgeCount += keyCount;
+                    logger.debug("Removing {} keys from {} for tag {}", keyCount, cacheName, tag);
                     
-                    //Remove all cache keys from the cache
-                    final Set<Object> taggedKeys = cacheKeys.asMap().remove(tag);
-                    if (taggedKeys != null) {
-                        logger.debug("Removing all keys from {} for tag {}", new Object[] { cacheName, tag });
-                        
-                        cache.removeAll(taggedKeys);
-                    }
+                    cache.removeAll(taggedKeys);
                 }
             }
         }
+        
+        return purgeCount;
     }
     
     /**
@@ -132,7 +139,7 @@ public class TagTrackingCacheEventListener extends CacheEventListenerAdapter imp
             final Object key = element.getObjectKey();
             final LoadingCache<CacheEntryTag, Set<Object>> cacheKeys = taggedCacheKeys.getUnchecked(cacheName);
             
-            logger.debug("Tracking tags {} in cache {} for key {}", new Object[] { tags, cacheName, key });
+            logger.debug("Tracking {} tags in cache {} for key {}", tags.size(), cacheName, key);
             
             //Add all the tags to the tracking map
             for (final CacheEntryTag tag : tags) {
@@ -163,7 +170,7 @@ public class TagTrackingCacheEventListener extends CacheEventListenerAdapter imp
             if (cacheKeys != null) {
                 final Object key = element.getObjectKey();
                 
-                logger.debug("Tracking removing key {} from cache {} with tag {}", new Object[] { key, cacheName, tags });
+                logger.debug("Tracking removing key cache {} with tag {} : {}", cacheName, tags, key);
                 
                 for (final CacheEntryTag tag : tags) {
                     final Set<Object> taggedKeys = cacheKeys.getIfPresent(tag);

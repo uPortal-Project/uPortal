@@ -77,7 +77,7 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public final class LoginAggregationImpl 
-        extends BaseAggregationImpl<LoginAggregationKey> 
+        extends BaseAggregationImpl<LoginAggregationKey, LoginAggregationDiscriminator>
         implements LoginAggregation, Serializable {
     private static final long serialVersionUID = 1L;
     
@@ -99,6 +99,8 @@ public final class LoginAggregationImpl
 
     @Transient
     private LoginAggregationKeyImpl aggregationKey;
+    @Transient
+    private LoginAggregationDiscriminator aggregationDiscriminator;
     
     @SuppressWarnings("unused")
     private LoginAggregationImpl() {
@@ -137,6 +139,16 @@ public final class LoginAggregationImpl
     }
 
     @Override
+    public LoginAggregationDiscriminator getAggregationDiscriminator() {
+        LoginAggregationDiscriminator discriminator = this.aggregationDiscriminator;
+        if (discriminator == null) {
+            discriminator = new LoginAggregationDiscriminatorImpl(this);
+            this.aggregationDiscriminator = discriminator;
+        }
+        return discriminator;
+    }
+
+    @Override
     protected boolean isComplete() {
         return this.loginCount > 0 && this.uniqueStrings == null;
     }
@@ -147,7 +159,10 @@ public final class LoginAggregationImpl
     }
 
     void countUser(String userName) {
-        checkState();
+        if (isComplete()) {
+            this.getLogger().warn("{} is already closed, the user name {} will be ignored on: {}", this.getClass().getSimpleName(), userName, this);
+            return;
+        }
         
         if (this.uniqueStrings == null) {
             this.uniqueStrings = new UniqueStrings();

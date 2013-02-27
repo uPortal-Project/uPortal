@@ -28,6 +28,8 @@ import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.rendering.worker.IPortletExecutionContext.ExecutionType;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.IPersonManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,31 +41,40 @@ import org.springframework.stereotype.Service;
  */
 @Service("ThreadNamingPortletExecutionInterceptorAdaptor")
 public class ThreadNamingPortletExecutionInterceptorAdaptor extends PortletExecutionInterceptorAdaptor {
-    private static final String THREAD_NAME = ThreadNamingPortletExecutionInterceptorAdaptor.class.getName() + ".THREAD_NAME";
-    
+    private static final String THREAD_NAME = ThreadNamingPortletExecutionInterceptorAdaptor.class.getName()
+            + ".THREAD_NAME";
+
     private IPortletWindowRegistry portletWindowRegistry;
-    
+    private IPersonManager personManager;
+
+    @Autowired
+    public void setPersonManager(IPersonManager personManager) {
+        this.personManager = personManager;
+    }
+
     @Autowired
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         this.portletWindowRegistry = portletWindowRegistry;
     }
-    
+
     @Override
     public void preExecution(HttpServletRequest request, HttpServletResponse response, IPortletExecutionContext context) {
         final IPortletWindowId portletWindowId = context.getPortletWindowId();
         final String fname = this.getFname(request, portletWindowId);
-        
+        final String userName = this.getUserName(request);
+
         final Thread currentThread = Thread.currentThread();
         final String threadName = currentThread.getName();
         context.setExecutionAttribute(THREAD_NAME, threadName);
-        
+
         final ExecutionType executionType = context.getExecutionType();
-        currentThread.setName(threadName + "-" + executionType + "-[" + fname + "]");
+        currentThread.setName(threadName + "-" + userName + "-" + executionType + "-[" + fname + "]");
     }
-    
+
     @Override
-    public void postExecution(HttpServletRequest request, HttpServletResponse response, IPortletExecutionContext context, Exception e) {
-        final String threadName = (String)context.getExecutionAttribute(THREAD_NAME);
+    public void postExecution(HttpServletRequest request, HttpServletResponse response,
+            IPortletExecutionContext context, Exception e) {
+        final String threadName = (String) context.getExecutionAttribute(THREAD_NAME);
         final Thread currentThread = Thread.currentThread();
         currentThread.setName(threadName);
     }
@@ -74,9 +85,18 @@ public class ThreadNamingPortletExecutionInterceptorAdaptor extends PortletExecu
             logger.warn("Failed to resolve IPortletWindow for id: " + portletWindowId + ", the id will be used instead of the fname");
             return portletWindowId.toString();
         }
-        
+
         final IPortletEntity portletEntity = portletWindow.getPortletEntity();
         final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
         return portletDefinition.getFName();
-      }
+    }
+
+    protected String getUserName(HttpServletRequest request) {
+        final IPerson person = this.personManager.getPerson(request);
+        if (person == null) {
+            return null;
+        }
+
+        return person.getUserName();
+    }
 }

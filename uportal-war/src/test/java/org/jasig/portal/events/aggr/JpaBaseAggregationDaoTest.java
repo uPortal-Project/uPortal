@@ -64,8 +64,9 @@ import com.google.common.base.Function;
  * @version $Revision$
  */
 public abstract class JpaBaseAggregationDaoTest<
-            T extends BaseAggregationImpl<K>,
-            K extends BaseAggregationKey> 
+            T extends BaseAggregationImpl<K, D>,
+            K extends BaseAggregationKey,
+            D extends BaseGroupedAggregationDiscriminator>
         extends BaseAggrEventsJpaDaoTest {
     
     @Autowired
@@ -583,13 +584,9 @@ public abstract class JpaBaseAggregationDaoTest<
                 for (final T baseAggregationImpl : aggregations) {
                     final DateTime instant = baseAggregationImpl.getDateTime();
                     final AggregationIntervalInfo intervalInfo = aggregationIntervalHelper.getIntervalInfo(interval, instant);
-                    try {
-                        updateAggregation(intervalInfo, baseAggregationImpl, r);
-                        fail("Expected aggregation update to throw IllegalStateException");
-                    }
-                    catch (IllegalStateException e) {
-                        //expected
-                    }
+                    updateAggregation(intervalInfo, baseAggregationImpl, r);
+                    
+                    //TODO verify unchanged
                 }
             }
         });

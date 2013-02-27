@@ -103,6 +103,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             <select id="${n}categorySelectMenu">
               <option value=""><spring:message code="all"/></option>
             </select>
+            <label for="${n}stateSelectMenu"><spring:message code="show.portlet.state"/></label>
+            <select id="${n}stateSelectMenu">
+                <option value=""><spring:message code="all"/></option>
+            </select>
           </div>
           <div class="fl-col flc-pager-top view-pager">
             <ul id="pager-top" class="fl-pager-ui">
@@ -165,7 +169,63 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
         var portletTypes = { };
         <c:forEach items="${portletTypes}" var="type">portletTypes[${type.id}] = '${type.name}';</c:forEach>
-        
+
+        up.PortletAdministrationStateListView = function(container, overallThat, options) {
+            // construct the new component
+            var that = fluid.initView("up.PortletAdministrationStateListView", container, options);
+
+            // initialize a state map for this component
+            that.state = {};
+
+            var states = [];
+            states.push({
+                id: "",
+                name: "<spring:message code="all"/>"
+            });
+
+            <c:forEach items="${ lifecycleStates }" var="lifecycleState">
+            states.push({ id: "${lifecycleState}", name: "${lifecycleState}" })
+            </c:forEach>
+
+            var tree = { children: [] };
+
+            var s = overallThat.state.currentState || "";
+            var selection = {
+                ID: "stateSelect",
+                selection: s,
+                optionlist: [],
+                optionnames: [],
+                decorators: [
+                    { type: "jQuery", func: "change",
+                        args: function(){
+                            var state = null;
+                            if($(this).val()) {
+                                state = { id: $(this).val(), name: $(this).val() }
+                            } else {
+                                state = { id: "", name: $(this).val() }
+                            }
+                            overallThat.events.onStateSelect.fire(overallThat, state);
+                        }
+                    }
+                ]
+            };
+
+            $(states).each(function(idx, state){
+                selection.optionlist.push(state.id);
+                selection.optionnames.push(state.name.charAt(0).toUpperCase() + state.name.slice(1).toLowerCase());
+            });
+
+            tree.children.push(selection);
+
+            var cutpoints = [ { id: "stateSelect", selector: "#${n}stateSelectMenu" } ];
+
+            // render the component
+            that.state.templates = fluid.selfRender($(container).find(".view-filter"), tree, { cutpoints: cutpoints });
+            that.refresh = function() { };
+
+            return that;
+        };
+
         up.PortletAdministrationCategoryListView = function(container, overallThat, options) {
 
             // construct the new component
@@ -256,7 +316,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             var members = (overallThat.state.currentCategory && overallThat.state.currentCategory != "" ) ? overallThat.registry.getMemberPortlets(overallThat.state.currentCategory, true) : overallThat.registry.getAllPortlets();
             $(members).each(function(idx, portlet){
                 if (!overallThat.state.portletRegex || overallThat.state.portletRegex.test(portlet.title) || overallThat.state.portletRegex.test(portlet.description)) {
-                    portlets.push(portlet);
+                    if((overallThat.state.currentState == null) || ((overallThat.state.currentState.id === "") || (portlet.state.toUpperCase() === overallThat.state.currentState.id.toUpperCase()))) {
+                        portlets.push(portlet);
+                    }
                 }
             });
             portlets.sort(up.getStringPropertySortFunction("name"));
@@ -314,7 +376,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 var members = overallThat.state.currentCategory ? overallThat.registry.getMemberPortlets(overallThat.state.currentCategory, true) : overallThat.registry.getAllPortlets();
                 $(members).each(function(idx, portlet){
                     if (!overallThat.state.portletRegex || overallThat.state.portletRegex.test(portlet.name) || overallThat.state.portletRegex.test(portlet.description)) {
-                        portlets.push(portlet);
+                        if((overallThat.state.currentState == null) || ((overallThat.state.currentState.id === "") || (portlet.state.toUpperCase() === overallThat.state.currentState.id.toUpperCase()))) {
+                            portlets.push(portlet);
+                        }
                     }
                 });
                 portlets.sort(up.getStringPropertySortFunction("name"));
@@ -330,6 +394,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     portletRegistry: { 
                         type: "up.PortletRegistry",
                         options: { portletListUrl: "<c:url value="/api/portletList"><c:param name="type" value="manage"/></c:url>" } 
+                    },
+                    stateListView: {
+                        type: "up.PortletAdministrationStateListView"
                     },
                     categoryListView: {
                         type: "up.PortletAdministrationCategoryListView"

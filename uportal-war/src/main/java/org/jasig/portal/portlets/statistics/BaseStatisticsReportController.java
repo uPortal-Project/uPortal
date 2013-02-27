@@ -19,6 +19,8 @@
 package org.jasig.portal.portlets.statistics;
 
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -29,12 +31,27 @@ import java.util.TreeSet;
 
 import javax.portlet.ResourceURL;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.PeekingIterator;
+import com.google.visualization.datasource.base.TypeMismatchException;
+import com.google.visualization.datasource.datatable.ColumnDescription;
+import com.google.visualization.datasource.datatable.DataTable;
+import com.google.visualization.datasource.datatable.TableCell;
+import com.google.visualization.datasource.datatable.TableRow;
+import com.google.visualization.datasource.datatable.value.DateTimeValue;
+import com.google.visualization.datasource.datatable.value.DateValue;
+import com.google.visualization.datasource.datatable.value.TimeOfDayValue;
+import com.google.visualization.datasource.datatable.value.Value;
+import com.google.visualization.datasource.datatable.value.ValueType;
+import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.AggregationIntervalHelper;
 import org.jasig.portal.events.aggr.BaseAggregation;
 import org.jasig.portal.events.aggr.BaseAggregationDao;
 import org.jasig.portal.events.aggr.BaseAggregationDateTimeComparator;
 import org.jasig.portal.events.aggr.BaseAggregationKey;
+import org.jasig.portal.events.aggr.BaseGroupedAggregationDiscriminator;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupLookupDao;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMappingNameComparator;
@@ -50,21 +67,6 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.portlet.ModelAndView;
 
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.PeekingIterator;
-import com.google.visualization.datasource.base.TypeMismatchException;
-import com.google.visualization.datasource.datatable.ColumnDescription;
-import com.google.visualization.datasource.datatable.DataTable;
-import com.google.visualization.datasource.datatable.TableCell;
-import com.google.visualization.datasource.datatable.TableRow;
-import com.google.visualization.datasource.datatable.value.DateTimeValue;
-import com.google.visualization.datasource.datatable.value.DateValue;
-import com.google.visualization.datasource.datatable.value.TimeOfDayValue;
-import com.google.visualization.datasource.datatable.value.Value;
-import com.google.visualization.datasource.datatable.value.ValueType;
-
 /**
  * Base class for reporting on portal statistics. Does most of the heavy lifting for reporting against {@link BaseAggregation} subclasses.
  * Implementations should call {@link #renderAggregationReport(BaseReportForm)} from their resource request handling method. This will
@@ -75,9 +77,13 @@ import com.google.visualization.datasource.datatable.value.ValueType;
  * @param <K> The aggregation query key
  * @param <F> The form used to query for data
  */
-public abstract class BaseStatisticsReportController<T extends BaseAggregation<K>, K extends BaseAggregationKey, F extends BaseReportForm> {
+public abstract class BaseStatisticsReportController<
+                T extends BaseAggregation<K, D>, 
+                K extends BaseAggregationKey,
+                D extends BaseGroupedAggregationDiscriminator, 
+                F extends BaseReportForm> {
     /**
-     * List of intervals in the prefered report order. This is the order they are tested against
+     * List of intervals in the preferred report order. This is the order they are tested against
      * the results of {@link #getIntervals()}. The first hit is used to populate the default form. 
      */
     private static final List<AggregationInterval> PREFERRED_INTERVAL_ORDER = ImmutableList.of(
@@ -97,7 +103,7 @@ public abstract class BaseStatisticsReportController<T extends BaseAggregation<K
     private AggregationIntervalHelper intervalHelper;
     
     @Autowired
-    private AggregatedGroupLookupDao aggregatedGroupDao;
+    protected AggregatedGroupLookupDao aggregatedGroupDao;
     
     @org.springframework.beans.factory.annotation.Value("${org.jasig.portal.portlets.statistics.maxIntervals}")
     private int maxIntervals = 4000;
@@ -131,7 +137,7 @@ public abstract class BaseStatisticsReportController<T extends BaseAggregation<K
      * @see BaseAggregationDao#getAggregatedGroupMappings()
      */
     @ModelAttribute("groups")
-    public Set<AggregatedGroupMapping> getGroups() {
+    public final Set<AggregatedGroupMapping> getGroups() {
         final Set<AggregatedGroupMapping> groupMappings = this.getBaseAggregationDao().getAggregatedGroupMappings();
         
         final Set<AggregatedGroupMapping> sortedGroupMappings = new TreeSet<AggregatedGroupMapping>(AggregatedGroupMappingNameComparator.INSTANCE);
@@ -140,15 +146,15 @@ public abstract class BaseStatisticsReportController<T extends BaseAggregation<K
     }
     
     /**
-     * @return The default report request form to use, populates the inital form view
+     * @return The default report request form to use, populates the initial form view
      */
     @ModelAttribute("reportRequest")
-    public final F getReportForm() {
-        final F report = createReportFormRequest();
-        
+    public final F getReportForm(F report) {
         setReportFormDateRangeAndInterval(report);
         
         setReportFormGroups(report);
+        
+        initReportForm(report);
 
         return report;
     }
@@ -166,9 +172,13 @@ public abstract class BaseStatisticsReportController<T extends BaseAggregation<K
     public abstract String getReportDataResourceId();
 
     /**
-     * Set the groups to have selected by default
+     * Set the groups to have selected by default if not already set
      */
-    protected void setReportFormGroups(final F report) {
+    protected final void setReportFormGroups(final F report) {
+        if (!report.getGroups().isEmpty()) {
+            return;
+        }
+        
         final Set<AggregatedGroupMapping> groups = this.getGroups();
         if (!groups.isEmpty()) {
             report.getGroups().add(groups.iterator().next().getId());
@@ -176,102 +186,134 @@ public abstract class BaseStatisticsReportController<T extends BaseAggregation<K
     }
     
     /**
-     * Set the start/end date and the interval to have selected by default
+     * Set the start/end date and the interval to have selected by default if they
+     * are not already set
      */
-    protected void setReportFormDateRangeAndInterval(final F report) {
+    protected final void setReportFormDateRangeAndInterval(final F report) {
         //Determine default interval based on the intervals available for this aggregation
-        report.setInterval(AggregationInterval.DAY);
-        final Set<AggregationInterval> intervals = this.getIntervals();
-        for (final AggregationInterval preferredInterval : PREFERRED_INTERVAL_ORDER) {
-            if (intervals.contains(preferredInterval)) {
-                report.setInterval(preferredInterval);
-                break;
+        if (report.getInterval() == null) {
+            report.setInterval(AggregationInterval.DAY);
+            final Set<AggregationInterval> intervals = this.getIntervals();
+            for (final AggregationInterval preferredInterval : PREFERRED_INTERVAL_ORDER) {
+                if (intervals.contains(preferredInterval)) {
+                    report.setInterval(preferredInterval);
+                    break;
+                }
             }
         }
         
         //Set the report end date as today
-        final DateMidnight today = new DateMidnight();
-        report.setEnd(today);
-        
-        //Determine the best start date based on the selected interval
-        final DateMidnight start;
-        switch (report.getInterval()) {
-            case MINUTE: {
-                start = today.minusDays(1);
-                break;
-            }
-            case FIVE_MINUTE: {
-                start = today.minusDays(2);
-                break;
-            }
-            case HOUR: {
-                start = today.minusWeeks(1);
-                break;
-            }
-            case DAY: {
-                start = today.minusMonths(1);
-                break;
-            }
-            case WEEK: {
-                start = today.minusMonths(3);
-                break;
-            }
-            case MONTH: {
-                start = today.minusYears(1);
-                break;
-            }
-            case ACADEMIC_TERM: {
-                start = today.minusYears(2);
-                break;
-            }
-            case CALENDAR_QUARTER: {
-                start = today.minusYears(2);
-                break;
-            }
-            case YEAR: {
-                start = today.minusYears(10);
-                break;
-            }
-            default: {
-                start = today.minusWeeks(1);
-            }
+        final DateMidnight reportEnd;
+        if (report.getEnd() == null) {
+            reportEnd = new DateMidnight();
+            report.setEnd(reportEnd);
+        }
+        else {
+            reportEnd = report.getEnd();
         }
         
-        report.setStart(start);
+        //Determine the best start date based on the selected interval
+        if (report.getStart() == null) {
+            final DateMidnight start;
+            switch (report.getInterval()) {
+                case MINUTE: {
+                    start = reportEnd.minusDays(1);
+                    break;
+                }
+                case FIVE_MINUTE: {
+                    start = reportEnd.minusDays(2);
+                    break;
+                }
+                case HOUR: {
+                    start = reportEnd.minusWeeks(1);
+                    break;
+                }
+                case DAY: {
+                    start = reportEnd.minusMonths(1);
+                    break;
+                }
+                case WEEK: {
+                    start = reportEnd.minusMonths(3);
+                    break;
+                }
+                case MONTH: {
+                    start = reportEnd.minusYears(1);
+                    break;
+                }
+                case ACADEMIC_TERM: {
+                    start = reportEnd.minusYears(2);
+                    break;
+                }
+                case CALENDAR_QUARTER: {
+                    start = reportEnd.minusYears(2);
+                    break;
+                }
+                case YEAR: {
+                    start = reportEnd.minusYears(10);
+                    break;
+                }
+                default: {
+                    start = reportEnd.minusWeeks(1);
+                }
+            }
+            
+            report.setStart(start);
+        }
     }
     
     /**
-     * @return The {@link BaseReportForm} implementation used to populate the initial view
+     * Optional for initializing the report form, note that implementers should check
+     * to see if the form has alredy been populated before overwriting fields.
      */
-    protected abstract F createReportFormRequest();
+    protected void initReportForm(F report) {
+    }
     
     /**
      * @return The dao for the aggregation
      */
     protected abstract BaseAggregationDao<T, K> getBaseAggregationDao();
-    
+
+
     /**
-     * Create the key used to execute {@link BaseAggregationDao#getAggregations(DateTime, DateTime, BaseAggregationKey, AggregatedGroupMapping...)}
+     * Create a set of keys used to execute {@link BaseAggregationDao#getAggregations(DateTime, DateTime, Set, AggregatedGroupMapping...)}.
+     * Returns a set for those entities, such as Tab Render reports where the user can select one or more tabs to report on.
      * 
      * @param groups The groups being queried for
      * @param form The original query form
-     * @return The partial key to query with
+     * @return A set of partial keys to query with
      */
-    protected abstract K createAggregationsQueryKey(Set<AggregatedGroupMapping> groups, F form);
-    
+    protected abstract Set<K> createAggregationsQueryKeyset(Set<D> groups, F form);
+
+        /**
+        * Get the column descriptors to use for each group in the report. The order of the returned columns
+        * is VERY important and must match the order of values as returned by {@link #createRowValues(BaseAggregation, BaseReportForm)}
+        *
+        * @param group The group to create the column descriptors for
+        * @param form The original query form
+        * @return List of column descriptors for the group
+        */
+    protected abstract List<ColumnDescription> getColumnDescriptions(D group, F form);
+
     /**
-     * Get the column descriptors to use for each group in the report. The order of the returned columns 
-     * is VERY important and must match the order of values as retuned by {@link #createRowValues(BaseAggregation, BaseReportForm)}
-     * 
-     * @param group The group to crate the column descriptors for
-     * @param form The original query form
-     * @return List of column descriptors for the group
+     * Get a discriminator comparator for the appropriate type of statistics data we are reporting on.
+     * @return
      */
-    protected abstract List<ColumnDescription> getColumnDescriptions(AggregatedGroupMapping group, F form);
-    
+    protected abstract Comparator<? super D> getDiscriminatorComparator();
+
+    /**
+     * Create a map of the report column discriminators based on the submitted form to collate the aggregation
+     * data into each column of a report.  * The map entries are a time-ordered sorted set of aggregation data points.
+     * Subclasses may override this method to obtain more from the form than just AggregatedGroupMappings as
+     * report columns.
+     *
+     * @param form Form submitted by the user
+     * @return Map of report column discriminators to sorted set of time-based aggregation data
+     */
+    protected abstract Map<D, SortedSet<T>> createColumnDiscriminatorMap (F form);
+
     /**
      * Convert the aggregation into report values, the order of the values returned must match the column descriptions
-     * returned by {@link #getColumnDescriptions(AggregatedGroupMapping, BaseReportForm)}.
+     * returned by {@link #getColumnDescriptions(BaseGroupedAggregationDiscriminator, BaseReportForm)}.
      * 
      * @param aggr The aggregation data point to convert
      * @param form The original query form
@@ -300,8 +342,56 @@ public abstract class BaseStatisticsReportController<T extends BaseAggregation<K
                 view = "json";
             }
         }
-        
-        return new ModelAndView(view, "table", table);
+        ModelAndView modelAndView = new ModelAndView(view, "table", table);
+        String titleAugmentation = getReportTitleAugmentation(form);
+        if (StringUtils.isNotBlank(titleAugmentation)) {
+            modelAndView.addObject("titleAugmentation", getReportTitleAugmentation(form));
+        }
+        return  modelAndView;
+    }
+
+    /**
+     * Return additional data to attach to the title of the form. This is used when
+     * the user selects a single value of a multi-valued set and
+     * you don't want to include the selected value in the report columns since they'd
+     * be redundant; e.g. why have a graph with data showing "PortletA - Everyone",
+     * "PortletB - Everyone", "PortletC - Everyone".
+     *
+     * Default behavior is to return null and not alter the report title.
+     *
+     * @param form the form
+     * @return Formatted string to attach to the title of the form.  Null to
+     *         not change the title of the report based on form selections.
+     */
+    protected String getReportTitleAugmentation(F form) {
+        return null;
+    }
+
+    /**
+     * Returns true to indicate report format is only data table and doesn't have
+     * report graph titles, etc. so the report columns needs to fully describe
+     * the data columns.  CSV and HTML tables require full column header
+     * descriptions.
+     *
+     * @param form the form
+     * @return True if report columns should have full header descriptions.
+     */
+    protected final boolean showFullColumnHeaderDescriptions(F form) {
+        boolean showFullHeaderDescriptions = false;
+        switch (form.getFormat()) {
+            case csv: {
+                showFullHeaderDescriptions = true;
+                break;
+            }
+            case html: {
+                showFullHeaderDescriptions = true;
+                break;
+            }
+            default: {
+                showFullHeaderDescriptions = false;
+            }
+        }
+        return showFullHeaderDescriptions;
     }
 
     /**
@@ -319,9 +409,9 @@ public abstract class BaseStatisticsReportController<T extends BaseAggregation<K
 
         //Get the list of DateTimes used on the X axis in the report
         final List<DateTime> reportTimes = this.intervalHelper.getIntervalStartDateTimesBetween(interval, startDateTime, endDateTime, maxIntervals);
-        
-        final Map<AggregatedGroupMapping, SortedSet<T>> groupedAggregations = loadGroupMappings(form.getGroups());
-        
+
+        final Map<D, SortedSet<T>> groupedAggregations = createColumnDiscriminatorMap(form);
+
         //Determine the ValueType of the date/time column. Use the most specific column type possible
         final ValueType dateTimeColumnType;
         if (interval.isHasTimePart()) {
@@ -355,31 +445,35 @@ public abstract class BaseStatisticsReportController<T extends BaseAggregation<K
         table.addColumn(dateTimeColumn);
 
         //Setup columns in the DataTable 
-        final Set<AggregatedGroupMapping> queryGroups = groupedAggregations.keySet();
-        for (final AggregatedGroupMapping groupMapping : queryGroups) {
-            final Collection<ColumnDescription> columnDescriptions = this.getColumnDescriptions(groupMapping, form);
+        final Set<D> columnGroups = groupedAggregations.keySet();
+        for (final D columnMapping : columnGroups) {
+            final Collection<ColumnDescription> columnDescriptions = this.getColumnDescriptions(columnMapping, form);
             table.addColumns(columnDescriptions);
         }
         
-        //Query for all aggregation data in the time range for all groups
-        final K key = this.createAggregationsQueryKey(queryGroups, form);
+        //Query for all aggregation data in the time range for all groups.  Only the
+        //interval and discriminator data is used from the keys.
+        final Set<K> keys = createAggregationsQueryKeyset(columnGroups, form);
         final BaseAggregationDao<T, K> baseAggregationDao = this.getBaseAggregationDao();
         final Collection<T> aggregations = baseAggregationDao.getAggregations(
-                startDateTime, 
-                endDateTime, 
-                key,
-                queryGroups.toArray(new AggregatedGroupMapping[0]));
+                startDateTime,
+                endDateTime,
+                keys,
+                extractGroupsArray(columnGroups));
 
         //Organize the results by group and sort them chronologically by adding them to the sorted set
         for (final T aggregation : aggregations) {
-            final AggregatedGroupMapping aggregatedGroup = aggregation.getAggregatedGroup();
-            final SortedSet<T> results = groupedAggregations.get(aggregatedGroup);
+            final D discriminator = aggregation.getAggregationDiscriminator();
+            final SortedSet<T> results = groupedAggregations.get(discriminator);
             results.add(aggregation);
         }
         
-        //Build Map from group mapping to result iterator
-        final Map<AggregatedGroupMapping, PeekingIterator<T>> groupedAggregationIterators = new TreeMap<AggregatedGroupMapping, PeekingIterator<T>>(AggregatedGroupMappingNameComparator.INSTANCE);
-        for (final Entry<AggregatedGroupMapping, SortedSet<T>> groupedAggregationEntry : groupedAggregations.entrySet()) {
+        //Build Map from discriminator column mapping to result iterator to allow putting results into
+        //the correct column AND the correct time slot in the column
+        Comparator<? super D> comparator = getDiscriminatorComparator();
+        final Map<D, PeekingIterator<T>> groupedAggregationIterators =
+                new TreeMap<D, PeekingIterator<T>>((comparator));
+        for (final Entry<D, SortedSet<T>> groupedAggregationEntry : groupedAggregations.entrySet()) {
             groupedAggregationIterators.put(groupedAggregationEntry.getKey(), Iterators.peekingIterator(groupedAggregationEntry.getValue().iterator()));
         }
         
@@ -439,25 +533,14 @@ public abstract class BaseStatisticsReportController<T extends BaseAggregation<K
         return table;
     }
 
-    /**
-     * Convert the list of aggregated group ids to a map of {@link AggregatedGroupMapping}s to the {@link SortedSet} that
-     * will be used to collate the results
-     */
-    private Map<AggregatedGroupMapping, SortedSet<T>> loadGroupMappings(List<Long> groups) {
-        //Collections used to track the queried groups and the results
-        final Map<AggregatedGroupMapping, SortedSet<T>> groupedAggregations = new TreeMap<AggregatedGroupMapping, SortedSet<T>>(AggregatedGroupMappingNameComparator.INSTANCE);
-        
-        //Get concrete group mapping objects that are being queried for
-        for (final Long queryGroupId : groups) {
-            final AggregatedGroupMapping groupMapping = this.aggregatedGroupDao.getGroupMapping(queryGroupId);
-
-            //Create the set the aggregations for this group will be stored in, sorted chronologically 
-            final SortedSet<T> aggregations = new TreeSet<T>(BaseAggregationDateTimeComparator.INSTANCE);
-            
-            //Map the group to the set
-            groupedAggregations.put(groupMapping, aggregations);
+    // Return the set of AggregatedGroupMappings based upon the set of column groups.
+    // Since an AggregatedGroupMapping may occur multiple times in the column groups,
+    // use a Set to filter down to unique values.
+    private AggregatedGroupMapping[] extractGroupsArray(Set<D> columnGroups) {
+        Set<AggregatedGroupMapping> groupMappings = new HashSet<AggregatedGroupMapping>();
+        for (D discriminator : columnGroups) {
+            groupMappings.add(discriminator.getAggregatedGroup());
         }
-
-        return groupedAggregations;
+        return groupMappings.toArray(new AggregatedGroupMapping[0]);
     }
 }

@@ -123,8 +123,8 @@
         <property name="corePoolSize" value="${org.jasig.portal.io.threadPool.initialThreads}" />
         <property name="maxPoolSize" value="${org.jasig.portal.io.threadPool.maxThreads}" />
         <property name="queueCapacity" value="${org.jasig.portal.io.threadPool.queueSize}" />
-        <property name="threadGroupName" value="uPortal-ImportExportThreadGroup" />
-        <property name="threadNamePrefix" value="uPortal-ImportExport-" />
+        <property name="threadGroupName" value="uP-ImportExportTG" />
+        <property name="threadNamePrefix" value="uP-ImportExport-" />
         <property name="threadPriority" value="${org.jasig.portal.io.threadPool.threadPriority}" />
         <property name="keepAliveSeconds" value="${org.jasig.portal.io.threadPool.keepAliveSeconds}" />
         <property name="rejectedExecutionHandler">

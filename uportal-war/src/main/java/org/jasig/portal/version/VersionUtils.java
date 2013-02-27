@@ -22,17 +22,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jasig.portal.version.om.Version;
+import org.jasig.portal.version.om.Version.Field;
 
 /**
  * Utilities for working with Version classes
  */
 public class VersionUtils {
-    private static final Pattern VERSION_PATTERN = Pattern.compile("^(\\d+)\\.(\\d+)\\.(\\d+)(?:[\\.-].*)?$");
+    private static final Pattern VERSION_PATTERN = Pattern.compile("^(\\d+)\\.(\\d+)\\.(\\d+)(?:\\.(\\d+))?(?:[\\.-].*)?$");
     
     /**
      * Parse a version string into a Version object, if the string doesn't match the pattern null is returned.
      * <p>
-     * The regular expression used in parsing is: ^(\d+)\.(\d+)\.(\d+)(?:[\.-].*)?$
+     * The regular expression used in parsing is: ^(\d+)\.(\d+)\.(\d+)(?:\.(\d+))?(?:[\.-].*)?$
      * <p>
      * Examples that match correctly:
      * <ul>
@@ -56,20 +57,63 @@ public class VersionUtils {
         final int major = Integer.parseInt(versionMatcher.group(1));
         final int minor = Integer.parseInt(versionMatcher.group(2));
         final int patch = Integer.parseInt(versionMatcher.group(3));
+        final String local = versionMatcher.group(4);
+        if (local != null) {
+            return new SimpleVersion(major, minor, patch, Integer.valueOf(local));
+        }
+        
         return new SimpleVersion(major, minor, patch);
     }
     
     /**
-     * Determine if an "update" can be done between the from and to versions.
+     * Determine how much of two versions match. Returns null if the versions do not match at all.
+     * 
+     * @return null for no match or the name of the most specific field that matches. 
+     */
+    public static Version.Field getMostSpecificMatchingField(Version v1, Version v2) {
+        if (v1.getMajor() != v2.getMajor()) {
+            return null;
+        }
+        
+        if (v1.getMinor() != v2.getMinor()) {
+            return Version.Field.MAJOR;
+        }
+        
+        if (v1.getPatch() != v2.getPatch()) {
+            return Version.Field.MINOR;
+        }
+        
+        final Integer l1 = v1.getLocal();
+        final Integer l2 = v2.getLocal();
+        if (l1 != l2 && (l1 == null || l2 == null || !l1.equals(l2))) {
+            return Version.Field.PATCH;
+        }
+        
+        return Version.Field.LOCAL;
+    }
+    
+    /**
+     * Determine if an "update" can be done between the from and to versions. The ability to update is defined as
+     * from == to OR (from.isBefore(to) AND mostSpecificMatchingField in (PATCH, MINOR))
      * 
      * @param from Version updating from
      * @param to Version updating to
      * @return true if the major and minor versions match and the from.patch value is less than or equal to the to.patch value
      */
     public static boolean canUpdate(Version from, Version to) {
-        return from.getMajor() == to.getMajor() &&
-                from.getMinor() == to.getMinor() &&
-                from.getPatch() <= to.getPatch();
+        final Field mostSpecificMatchingField = getMostSpecificMatchingField(from, to);
+        switch (mostSpecificMatchingField) {
+            case LOCAL: {
+                return true;
+            }
+            case PATCH:
+            case MINOR:{
+                return from.isBefore(to);
+            }
+            default: {
+                return false;
+            }
+        }
     }
     
     private static final class SimpleVersion extends AbstractVersion {
@@ -78,11 +122,20 @@ public class VersionUtils {
 		private final int major;
         private final int minor;
         private final int patch;
+        private final Integer local;
         
         public SimpleVersion(int major, int minor, int patch) {
             this.major = major;
             this.minor = minor;
             this.patch = patch;
+            this.local = null;
+        }
+        
+        public SimpleVersion(int major, int minor, int patch, Integer local) {
+            this.major = major;
+            this.minor = minor;
+            this.patch = patch;
+            this.local = local;
         }
 
         @Override
@@ -98,6 +151,10 @@ public class VersionUtils {
         @Override
         public int getPatch() {
             return patch;
+        }
+
+        public Integer getLocal() {
+            return local;
         }
     }
 }

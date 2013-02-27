@@ -172,11 +172,9 @@
                         options.dataModel.push({ username: person.name, displayName: person.attributes.displayName[0] });
                     });
                     if (options.dataModel.length == 0) {
-                    	console.log("none");
                         $("#${n} .no-users-message").show();
                     	$("#${n} .results-pager").hide();
                     } else {
-                    	console.log(options.dataModel);
                         if (pager) {
                             up.refreshPager(pager, options.dataModel);
                         } else {

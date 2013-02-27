@@ -19,20 +19,32 @@
 package org.jasig.portal.portlet.container.cache;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Set;
 
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.utils.cache.CacheEntryTag;
+import org.jasig.portal.utils.cache.SessionIdTaggedCacheEntryPurger;
+import org.jasig.portal.utils.cache.SimpleCacheEntryTag;
+import org.jasig.portal.utils.cache.TaggedCacheEntry;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Key for privately scoped portlet data
  */
-public class PrivatePortletCacheKey implements Serializable {
+public class PrivatePortletCacheKey implements Serializable, TaggedCacheEntry {
+    private static final String SESSION_PORTLET_WINDOW_CACHE_ENTRY_TAG_NAME = PrivatePortletCacheKey.class.getName() + ".SESSION_ID__PORTLET_WINDOW_ID";
+    
     private static final long serialVersionUID = 1L;
     
     private final String sessionId;
     private final IPortletWindowId portletWindowId;
     private final IPortletEntityId portletEntityId;
     private final PublicPortletCacheKey publicPortletCacheKey;
+    private final Set<CacheEntryTag> cacheEntryTags;
     
     private final int hash;
     
@@ -43,9 +55,23 @@ public class PrivatePortletCacheKey implements Serializable {
         this.portletEntityId = portletEntityId;
         this.publicPortletCacheKey = publicPortletCacheKey;
         
+        this.cacheEntryTags = ImmutableSet.<CacheEntryTag>of(
+                SessionIdTaggedCacheEntryPurger.createCacheEntryTag(this.sessionId), 
+                createTag(this.sessionId, this.portletWindowId));
+        
         this.hash = internalHashCode();
     }
     
+    public static CacheEntryTag createTag(String sessionId, IPortletWindowId windowId) {
+        final List<Serializable> key = ImmutableList.of(sessionId, windowId);
+        return new SimpleCacheEntryTag<List<Serializable>>(SESSION_PORTLET_WINDOW_CACHE_ENTRY_TAG_NAME, key);
+    }
+    
+    @Override
+    public Set<CacheEntryTag> getTags() {
+        return this.cacheEntryTags;
+    }
+
     public String getSessionId() {
         return sessionId;
     }

@@ -52,9 +52,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class LoginController {
     public static final String REFERER_URL_PARAM = "refUrl";
     
-    public static final String SWAP_TARGET_UID = LoginController.class.getName() + ".SWAP_TARGET_UID";
-    public static final String SWAP_ORIGINAL_UID = LoginController.class.getName() + ".SWAP_ORIGINAL_UID";
-    
     public static final String AUTH_ATTEMPTED_KEY = "up_authenticationAttempted";
     public static final String AUTH_ERROR_KEY = "up_authenticationError";
     public static final String ATTEMPTED_USERNAME_KEY = "up_attemptedUserName";

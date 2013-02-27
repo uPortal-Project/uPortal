@@ -35,6 +35,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class Version402PortalDatabaseUpdateHelper implements IVersionedDatabaseUpdateHelper {
     private final Version version = VersionUtils.parseVersion("4.0.2");
+    
     private JdbcOperations jdbcOperations;
     
     @Autowired

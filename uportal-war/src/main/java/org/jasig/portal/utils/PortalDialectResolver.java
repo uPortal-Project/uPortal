@@ -23,7 +23,6 @@ import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 import org.hibernate.dialect.Dialect;
-import org.hibernate.dialect.MySQL5InnoDBDialect;
 import org.hibernate.dialect.SQLServer2005Dialect;
 import org.hibernate.service.jdbc.dialect.internal.AbstractDialectResolver;
 
@@ -40,7 +39,7 @@ public class PortalDialectResolver extends AbstractDialectResolver {
         final int databaseMinorVersion = metaData.getDatabaseMinorVersion();
         
         if ("MySQL".equals(databaseName) && 5 == databaseMajorVersion) {
-            return new MySQL5InnoDBDialect();
+            return new MySQL5InnoDBCompressedDialect();
         }
         
         if ("PostgreSQL".equals(databaseName) && 8 == databaseMajorVersion && databaseMinorVersion <= 1) {

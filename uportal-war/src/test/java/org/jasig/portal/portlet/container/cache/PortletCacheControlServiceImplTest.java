@@ -18,9 +18,9 @@
  */
 package org.jasig.portal.portlet.container.cache;
 
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -162,11 +162,14 @@ public class PortletCacheControlServiceImplTest {
 		
 		when(portletWindowRegistry.getPortletWindow(httpRequest, portletWindowId)).thenReturn(portletWindow);
 		when(portletWindowRegistry.getPortletWindow(nextHttpRequest, portletWindowId)).thenReturn(portletWindow);
+		when(portletWindow.getPortletWindowId()).thenReturn(portletWindowId);
 		when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
         when(portletWindow.getWindowState()).thenReturn(WindowState.NORMAL);
         when(portletWindow.getPortletMode()).thenReturn(PortletMode.VIEW);
         when(portletEntity.getPortletDefinitionId()).thenReturn(portletDefinitionId);
 		when(portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId)).thenReturn(portletDescriptor);
+
+        when(urlSyntaxProvider.getPortalRequestInfo(httpRequest)).thenReturn(portalRequestInfo);
 		
 		final CacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> cacheState = cacheControlService.getPortletRenderState(httpRequest, portletWindowId);
 		final CacheControl cacheControl = cacheState.getCacheControl();
@@ -183,8 +186,7 @@ public class PortletCacheControlServiceImplTest {
         
         cacheControlService.cachePortletRenderOutput(portletWindowId, nextHttpRequest, cacheState, cachedPortletData);
 		
-        
-        
+        when(urlSyntaxProvider.getPortalRequestInfo(nextHttpRequest)).thenReturn(portalRequestInfo);
         
         final CacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> afterCacheState = cacheControlService.getPortletRenderState(nextHttpRequest, portletWindowId);
 		// retrieve cachecontrol again, and return should have etag set
@@ -202,12 +204,15 @@ public class PortletCacheControlServiceImplTest {
 		when(portletDefinition.getCacheScope()).thenReturn("private");
 		
 		when(portletWindowRegistry.getPortletWindow(httpRequest, portletWindowId)).thenReturn(portletWindow);
+		when(portletWindow.getPortletWindowId()).thenReturn(portletWindowId);
         when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
         when(portletWindow.getWindowState()).thenReturn(WindowState.NORMAL);
         when(portletWindow.getPortletMode()).thenReturn(PortletMode.VIEW);
 		when(portletEntity.getPortletDefinitionId()).thenReturn(portletDefinitionId);
 		
 		when(portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId)).thenReturn(portletDefinition);
+		
+		when(urlSyntaxProvider.getPortalRequestInfo(httpRequest)).thenReturn(portalRequestInfo);
 
 		cacheControlService.setPortletWindowRegistry(portletWindowRegistry);
 		cacheControlService.setPortletDefinitionRegistry(portletDefinitionRegistry);
@@ -226,12 +231,15 @@ public class PortletCacheControlServiceImplTest {
 		when(portletDescriptor.getCacheScope()).thenReturn(MimeResponse.PUBLIC_SCOPE);
 		
 		when(portletWindowRegistry.getPortletWindow(httpRequest, portletWindowId)).thenReturn(portletWindow);
+		when(portletWindow.getPortletWindowId()).thenReturn(portletWindowId);
         when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
         when(portletWindow.getWindowState()).thenReturn(WindowState.NORMAL);
         when(portletWindow.getPortletMode()).thenReturn(PortletMode.VIEW);
 		when(portletEntity.getPortletDefinitionId()).thenReturn(portletDefinitionId);
 		
 		when(portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId)).thenReturn(portletDescriptor);
+
+		when(urlSyntaxProvider.getPortalRequestInfo(httpRequest)).thenReturn(portalRequestInfo);
 
 		cacheControlService.setPortletWindowRegistry(portletWindowRegistry);
 		cacheControlService.setPortletDefinitionRegistry(portletDefinitionRegistry);
@@ -250,12 +258,15 @@ public class PortletCacheControlServiceImplTest {
         when(portletDescriptor.getCacheScope()).thenReturn(MimeResponse.PUBLIC_SCOPE);
         
         when(portletWindowRegistry.getPortletWindow(httpRequest, portletWindowId)).thenReturn(portletWindow);
+        when(portletWindow.getPortletWindowId()).thenReturn(portletWindowId);
         when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
         when(portletWindow.getWindowState()).thenReturn(WindowState.NORMAL);
         when(portletWindow.getPortletMode()).thenReturn(PortletMode.VIEW);
         when(portletEntity.getPortletDefinitionId()).thenReturn(portletDefinitionId);
         
         when(portletDefinitionRegistry.getParentPortletDescriptor(portletDefinitionId)).thenReturn(portletDescriptor);
+
+        when(urlSyntaxProvider.getPortalRequestInfo(httpRequest)).thenReturn(portalRequestInfo);
 
         when(this.urlSyntaxProvider.getPortalRequestInfo(httpRequest)).thenReturn(portalRequestInfo);
         when(portalRequestInfo.getPortletRequestInfoMap()).thenReturn(Collections.EMPTY_MAP);
@@ -296,6 +307,7 @@ public class PortletCacheControlServiceImplTest {
         when(portletDescriptor.getCacheScope()).thenReturn(MimeResponse.PUBLIC_SCOPE);
         
         when(portletWindowRegistry.getPortletWindow(httpRequest, portletWindowId)).thenReturn(portletWindow);
+        when(portletWindow.getPortletWindowId()).thenReturn(portletWindowId);
         when(portletWindow.getPortletEntity()).thenReturn(portletEntity);
         when(portletWindow.getWindowState()).thenReturn(WindowState.NORMAL);
         when(portletWindow.getPortletMode()).thenReturn(PortletMode.VIEW);
