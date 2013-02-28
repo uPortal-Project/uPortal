@@ -139,7 +139,9 @@
         <antcall target="deploy-ear">
             <param name="removeExisting" value="true" />
         </antcall>
-        <antcall target="initdb" />
+        <antcall target="initdb">
+            <param name="skipPackage" value="true" />
+        </antcall>
         <echo message="Finished initializing uPortal" />
     </target>
 
@@ -148,7 +150,9 @@
         <up-shell-batch>
             <antcall target="db" />
             <antcall target="db-hibernate" />
-            <antcall target="db-import" />
+            <antcall target="db-import">
+                <param name="skipPackage" value="true" />
+            </antcall>
         </up-shell-batch>
         <echo message="Finished initializing database" />
     </target>
@@ -205,6 +209,7 @@
             <antcall target="db-hibernate-portal" />
             <antcall target="db-hibernate-raw-events" />
             <antcall target="db-hibernate-aggr-events" />
+            <antcall target="db-hibernate-portlets" />
         </up-shell-batch>
     </target>
 
@@ -321,6 +326,22 @@
         </antcall>
     </target>
 
+    <target name="db-hibernate-portlets" depends="prodPrompt" description="Drops then creates Hibernate managed tables for bundled portlets">
+        <echo>Creating tables for bundled portlets [skipPackage=${skipPackage}]</echo>
+
+        <condition property="packageArg" value="">
+            <equals arg1="${skipPackage}" arg2="true" />
+        </condition>
+        <property name="packageArg" value="package" />
+
+        <antcall target="mvn">
+            <param name="pomDir" value="${basedir}/uportal-portlets-overlay" />
+            <!-- In case target is run separately, insure the project is packaged so all filtered substitutions occur -->
+            <param name="goal" value="${packageArg}" />
+            <param name="goal1" value="db-init" />
+        </antcall>
+    </target>
+
     <target name="db" depends="prodPrompt" description="Loads legacy database tables and data. See: initdb">
         <property name="tablefile" value="/properties/db/tables.xml" />
         <property name="datafile" value="/properties/db/data.xml" />
@@ -402,7 +423,7 @@
                 </then>
             </if>
         </up-shell-batch>
-        <antcall target="portlet-data-import"/>
+        <antcall target="portlet-data-import" />
     </target>
 
     <target name="dbtest" description="Displays information about the database defined in rdbm.properties">
@@ -496,14 +517,21 @@
         </antcall>
     </target>
 
-	<target name="portlet-data-import" depends="prodPrompt" description="Imports the default portlet-specific data">
-	    <echo>Importing portlet-specific data</echo>
+    <target name="portlet-data-import" depends="prodPrompt" description="Imports the default portlet-specific data">
+        <echo>Importing portlet-specific data [skipPackage=${skipPackage}]</echo>
+
+        <condition property="packageArg" value="">
+            <equals arg1="${skipPackage}" arg2="true" />
+        </condition>
+        <property name="packageArg" value="package" />
+
         <antcall target="mvn">
             <param name="pomDir" value="${basedir}/uportal-portlets-overlay" />
-            <param name="goal" value="antrun:run" />
-            <param name="portlet-data-import" value="true"/>
+            <!-- In case target is run separately, insure the project is packaged so all filtered substitutions occur -->
+            <param name="goal" value="${packageArg}" />
+            <param name="goal1" value="data-import" />
         </antcall>
-	</target>
+    </target>
 
     <target name="data-import" depends="prodPrompt" description="Imports the specified XML file or files">
         <if>
@@ -1415,18 +1443,12 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
         </condition>
         <property name="filters.arg" value="-Djasig.ignore" />
 
-        <condition property="portlet-data-import.arg" value="-Dportlet-data-import=${portlet-data-import}">
-            <isset property="portlet-data-import" />
-        </condition>
-        <property name="portlet-data-import.arg" value="-Djasig.ignore" />
-
         <artifact:mvn pom="${pomDir}/pom.xml" failonerror="true" fork="true" mavenHome="${maven.home}" maxmemory="512m">
             <arg value="-s${maven.settings}" />
             <arg value="${test.skip}" />
             <arg value="${offline}" />
             <arg value="${env.arg}" />
             <arg value="${filters.arg}" />
-            <arg value="${portlet-data-import.arg}" />
             <arg value="${goal}" />
             <arg value="${goal1}" />
             <arg value="${goal2}" />
