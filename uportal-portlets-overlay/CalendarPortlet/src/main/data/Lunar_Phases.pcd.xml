@@ -1,0 +1,31 @@
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<predefined-calendar script="classpath:/org/jasig/portlet/calendar/io/import-PredefinedCalendarDefinition_v1-0.crn.xml">
+  <fname>lunar-phases</fname>
+  <className>httpIcalAdapter</className>
+  <name>Phases of the Moon</name>
+  <parameters>
+    <parameter name="url">https://www.google.com/calendar/ical/ht3jlfaac5lfd6263ulfh4tql8%40group.calendar.google.com/public/basic.ics</parameter>
+  </parameters>
+  <predefinedRoles>
+    <role>Everyone</role>
+  </predefinedRoles>
+</predefined-calendar>
