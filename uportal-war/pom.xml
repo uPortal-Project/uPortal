@@ -119,10 +119,20 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-jdbc</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-core</artifactId>
         </dependency>
         
         <dependency>
