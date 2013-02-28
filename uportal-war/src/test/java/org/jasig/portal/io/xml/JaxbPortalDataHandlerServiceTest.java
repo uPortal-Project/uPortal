@@ -19,24 +19,26 @@
 
 package org.jasig.portal.io.xml;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import javax.xml.stream.XMLInputFactory;
+import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
@@ -48,8 +50,9 @@ import org.jasig.portal.xml.XmlUtilities;
 import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -58,9 +61,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.oxm.Unmarshaller;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -71,8 +77,13 @@ import com.google.common.collect.ImmutableSet;
 public class JaxbPortalDataHandlerServiceTest {
     @InjectMocks private JaxbPortalDataHandlerService dataImportExportService = new JaxbPortalDataHandlerService();
     private XmlUtilities xmlUtilities;
+    
     @Mock private ResourceLoader resourceLoader;
     private ExecutorService threadPoolExecutor;
+    
+    @Rule
+    public TemporaryFolder tempFolder = new TemporaryFolder();
+
     
     @Before
     public void setup() throws Exception {
@@ -123,7 +134,11 @@ public class JaxbPortalDataHandlerServiceTest {
                 "**/*.fragment-definition"
         ));
         
-        dataImportExportService.setDataTypeImportOrder(Arrays.<IPortalDataType>asList(
+        dataImportExportService.setDataTypeImportOrder(getPortalDataTypes());
+    }
+
+    protected List<IPortalDataType> getPortalDataTypes() {
+        return ImmutableList.<IPortalDataType>of(
             new org.jasig.portal.io.xml.entitytype.EntityTypePortalDataType(),
             new org.jasig.portal.io.xml.ssd.StylesheetDescriptorPortalDataType(),
             new org.jasig.portal.io.xml.user.UserPortalDataType(),
@@ -138,25 +153,33 @@ public class JaxbPortalDataHandlerServiceTest {
             new org.jasig.portal.io.xml.layout.ProfilePortalDataType(),
             new org.jasig.portal.io.xml.layout.LayoutPortalDataType(),
             new org.jasig.portal.io.xml.dlm.FragmentDefinitionPortalDataType()
-        ));
+        );
+    }
+    
+    private interface MockDataImporterSetup {
+        void setup(IPortalDataType dataType, IDataImporter<? extends Object> dataImporter);
+    }
+    
+    protected List<IDataImporter<? extends Object>> setupAllImporters(MockDataImporterSetup setupCallback) {
+        final Builder<IDataImporter<? extends Object>> importersBuilder = ImmutableList.<IDataImporter<? extends Object>>builder();
+
+        for (final IPortalDataType portalDataType : getPortalDataTypes()) {
+
+            final IDataImporter importer = mock(IDataImporter.class);
+            when(importer.getImportDataKeys()).thenReturn(new HashSet<PortalDataKey>(portalDataType.getDataKeyImportOrder()));
+            if (setupCallback != null) {
+                setupCallback.setup(portalDataType, importer);
+            }
+            importersBuilder.add(importer);
+        }
+        
+        return importersBuilder.build();
     }
     
     @After
     public void teardown() {
         threadPoolExecutor.shutdown();
     }
-    
-    @Test
-    @Ignore
-    public void testBatchImport() throws Exception {
-        when(xmlUtilities.getXmlInputFactory()).thenReturn(XMLInputFactory.newFactory());
-        
-        final File dataDir = new File("/Users/edalquist/java/workspace/uPortal_trunk/uportal-war/src/main/data");
-        dataImportExportService.importData(dataDir, null, null);
-        
-        //TODO how to test this since an importer needs to be registered?
-    }
-    
     
     @Test
     public void testUpgradeThenImport() throws Exception {
@@ -189,6 +212,98 @@ public class JaxbPortalDataHandlerServiceTest {
         assertEquals("defaultTemplateUser", externalUser.getDefaultUser());
         assertEquals("(MD5)mhmjKvf2F3gPizS9DrA+CsFmqj74oTSb", externalUser.getPassword());
         assertNull(externalUser.getLastPasswordChange());
+    }
+    
+    @Test
+    public void testImportJarArchive() throws Exception {
+        final Unmarshaller unmarshaller = mock(Unmarshaller.class);
+        
+        final List<IDataImporter<? extends Object>> importers = setupAllImporters(new MockDataImporterSetup() {
+            @Override
+            public void setup(IPortalDataType dataType, IDataImporter<? extends Object> dataImporter) {
+                when(dataImporter.getUnmarshaller()).thenReturn(unmarshaller);
+            }
+        });
+        
+        this.dataImportExportService.setDataImporters(importers);
+        
+        final Resource archiveResource = new ClassPathResource("/org/jasig/portal/io/xml/import_archive.jar");
+        
+        final IPortalDataHandlerService.BatchImportOptions options = new IPortalDataHandlerService.BatchImportOptions();
+        options.setLogDirectoryParent(tempFolder.newFolder("jarArchiveImport"));
+        
+        this.dataImportExportService.importDataArchive(archiveResource, options);
+        
+        verify(unmarshaller, times(16)).unmarshal(any(Source.class));
+    }
+    
+    @Test
+    public void testImportZipArchive() throws Exception {
+        final Unmarshaller unmarshaller = mock(Unmarshaller.class);
+        
+        final List<IDataImporter<? extends Object>> importers = setupAllImporters(new MockDataImporterSetup() {
+            @Override
+            public void setup(IPortalDataType dataType, IDataImporter<? extends Object> dataImporter) {
+                when(dataImporter.getUnmarshaller()).thenReturn(unmarshaller);
+            }
+        });
+        
+        this.dataImportExportService.setDataImporters(importers);
+        
+        final Resource archiveResource = new ClassPathResource("/org/jasig/portal/io/xml/import_archive.zip");
+        
+        final IPortalDataHandlerService.BatchImportOptions options = new IPortalDataHandlerService.BatchImportOptions();
+        options.setLogDirectoryParent(tempFolder.newFolder("zipArchiveImport"));
+        
+        this.dataImportExportService.importDataArchive(archiveResource, options);
+        
+        verify(unmarshaller, times(16)).unmarshal(any(Source.class));
+    }
+    
+    @Test
+    public void testImportTarGzipArchive() throws Exception {
+        final Unmarshaller unmarshaller = mock(Unmarshaller.class);
+        
+        final List<IDataImporter<? extends Object>> importers = setupAllImporters(new MockDataImporterSetup() {
+            @Override
+            public void setup(IPortalDataType dataType, IDataImporter<? extends Object> dataImporter) {
+                when(dataImporter.getUnmarshaller()).thenReturn(unmarshaller);
+            }
+        });
+        
+        this.dataImportExportService.setDataImporters(importers);
+        
+        final Resource archiveResource = new ClassPathResource("/org/jasig/portal/io/xml/import_archive.tar.gz");
+        
+        final IPortalDataHandlerService.BatchImportOptions options = new IPortalDataHandlerService.BatchImportOptions();
+        options.setLogDirectoryParent(tempFolder.newFolder("targzipArchiveImport"));
+        
+        this.dataImportExportService.importDataArchive(archiveResource, options);
+        
+        verify(unmarshaller, times(16)).unmarshal(any(Source.class));
+    }
+    
+    @Test
+    public void testImportTGZArchive() throws Exception {
+        final Unmarshaller unmarshaller = mock(Unmarshaller.class);
+        
+        final List<IDataImporter<? extends Object>> importers = setupAllImporters(new MockDataImporterSetup() {
+            @Override
+            public void setup(IPortalDataType dataType, IDataImporter<? extends Object> dataImporter) {
+                when(dataImporter.getUnmarshaller()).thenReturn(unmarshaller);
+            }
+        });
+        
+        this.dataImportExportService.setDataImporters(importers);
+        
+        final Resource archiveResource = new ClassPathResource("/org/jasig/portal/io/xml/import_archive.tgz");
+        
+        final IPortalDataHandlerService.BatchImportOptions options = new IPortalDataHandlerService.BatchImportOptions();
+        options.setLogDirectoryParent(tempFolder.newFolder("tgzArchiveImport"));
+        
+        this.dataImportExportService.importDataArchive(archiveResource, options);
+        
+        verify(unmarshaller, times(16)).unmarshal(any(Source.class));
     }
 
     protected IDataUpgrader createXsltDataUpgrader(final ClassPathResource xslResource, final PortalDataKey dataKey) throws Exception {
