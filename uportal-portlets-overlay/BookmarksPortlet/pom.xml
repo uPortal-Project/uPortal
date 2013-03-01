@@ -58,6 +58,15 @@
                             <filtering>true</filtering>
                         </resource>
                     </webResources>
+                    <overlays>
+                        <overlay>
+                            <groupId>org.jasig.portlet</groupId>
+                            <artifactId>BookmarksPortlet</artifactId>
+                            <excludes>
+                                <exclude>WEB-INF/tags/uwfn.tld</exclude>
+                            </excludes>
+                        </overlay>
+                    </overlays>
                 </configuration>
             </plugin>
            <plugin>
