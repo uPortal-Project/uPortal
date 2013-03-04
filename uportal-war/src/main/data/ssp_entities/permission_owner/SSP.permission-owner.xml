@@ -309,28 +309,4 @@
     <desc>DATA_STAFF</desc>  
     <targetProvider>portalSystemTargetProvider</targetProvider> 
   </activity>
-  <activity> 
-    <name>SELF_HELP_GUIDE_ADMIN_READ</name>  
-    <fname>SELF_HELP_GUIDE_ADMIN_READ</fname>  
-    <desc>SELF_HELP_GUIDE_ADMIN_READ</desc>  
-    <targetProvider>portalSystemTargetProvider</targetProvider> 
-  </activity>  
-  <activity> 
-    <name>SELF_HELP_GUIDE_ADMIN_WRITE</name>  
-    <fname>SELF_HELP_GUIDE_ADMIN_WRITE</fname>  
-    <desc>SELF_HELP_GUIDE_ADMIN_WRITE</desc>  
-    <targetProvider>portalSystemTargetProvider</targetProvider> 
-  </activity> 
-  <activity> 
-    <name>SELF_HELP_GUIDE_ADMIN_DELETE</name>  
-    <fname>SELF_HELP_GUIDE_ADMIN_DELETE</fname>  
-    <desc>SELF_HELP_GUIDE_ADMIN_DELETE</desc>  
-    <targetProvider>portalSystemTargetProvider</targetProvider> 
-  </activity>
-  <activity> 
-    <name>MY_GPS_TOOL</name>  
-    <fname>MY_GPS_TOOL</fname>  
-    <desc>MY_GPS_TOOL</desc>  
-    <targetProvider>portalSystemTargetProvider</targetProvider> 
-  </activity>        
 </permission-owner>
