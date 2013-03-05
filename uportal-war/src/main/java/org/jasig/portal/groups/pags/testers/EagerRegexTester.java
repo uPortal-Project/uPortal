@@ -24,7 +24,36 @@ package org.jasig.portal.groups.pags.testers;
  * against a regular expression.  The match function attempts to find the 
  * next subsequence of the attribute that matches the pattern. 
  * <p>
+ * For example, if the pattern is specified as "<strong><code>^02([A-D])*</code></strong>":
+ * 
+ * <code>
+ * <table border='2' width='100%'>
+ *  <tr>
+ *    <td><strong>Input</strong></td><td><strong>Matches</strong></td>
+ *  </tr>
+ *  <tr>
+ *    <td>02A</td><td>Yes</td>
+ *  </tr>
+ *  <tr>
+ *    <td>02ABCD</td><td>Yes</td>
+ *  </tr>
+ *  <tr>
+ *    <td>A02D</td><td>No</td>
+ *  </tr>
+ *  <tr>
+ *    <td>02</td><td>Yes</td>
+ *  </tr>
+ *  <tr>
+ *    <td>02MisMatch</td><td>Yes</td>
+ *  </tr>
+ *  <tr>
+ *    <td>PatternWillNeverMatch</td><td>No</td>
+ *  </tr>
+ * </table>
+ * </code>
+ * 
  * @author Misagh Moayyed
+ * @see RegexTester
  */
 public class EagerRegexTester extends RegexTester {
     

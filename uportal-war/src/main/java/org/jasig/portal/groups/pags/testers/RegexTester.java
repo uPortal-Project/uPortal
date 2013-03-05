@@ -26,9 +26,37 @@ import java.util.regex.Pattern;
  * against a regular expression.  The match function attempts to match the 
  * entire region against the pattern specified. 
  * <p>
- * @author Dan Ellentuck
+ * For example, if the pattern is specified as "<strong><code>^02([A-D])*</code></strong>":
+ * 
+ * <code>
+ * <table border='2' width='100%'>
+ *  <tr>
+ *    <td><strong>Input</strong></td><td><strong>Matches</strong></td>
+ *  </tr>
+ *  <tr>
+ *    <td>02A</td><td>Yes</td>
+ *  </tr>
+ *  <tr>
+ *    <td>02ABCD</td><td>Yes</td>
+ *  </tr>
+ *  <tr>
+ *    <td>A02D</td><td>No</td>
+ *  </tr>
+ *  <tr>
+ *    <td>02</td><td>Yes</td>
+ *  </tr>
+ *  <tr>
+ *    <td>02MisMatch</td><td>No</td>
+ *  </tr>
+ *  <tr>
+ *    <td>PatternWillNeverMatch</td><td>No</td>
+ *  </tr>
+ * </table>
+ * </code>
+ * @author Dan Ellentucke
+ * @author Misagh Moayyed
+ * @see EagerRegexTester
  */
-
 public class RegexTester extends StringTester {
     protected final Pattern pattern;
 
@@ -41,5 +69,4 @@ public class RegexTester extends StringTester {
     public boolean test(String att) {
         return pattern.matcher(att).matches();
     }
-
 }
