@@ -19,12 +19,10 @@
 
 package org.jasig.portal.groups.pags.testers;
 
-import java.util.regex.Pattern;
-
 /**
- * A tester for matching the possibly multiple values of an attribute 
- * against a regular expression.  The match function attempts to match the 
- * entire region against the pattern specified. 
+ * A tester for matching multiple values of an attribute 
+ * against a regular expression.  The match function attempts to find the 
+ * next subsequence of the attribute that matches the pattern. 
  * <p>
  * For example, if the pattern is specified as "<strong><code>^02([A-D])*</code></strong>":
  * 
@@ -46,27 +44,26 @@ import java.util.regex.Pattern;
  *    <td>02</td><td>Yes</td>
  *  </tr>
  *  <tr>
- *    <td>02MisMatch</td><td>No</td>
+ *    <td>02MisMatch</td><td>Yes</td>
  *  </tr>
  *  <tr>
  *    <td>PatternWillNeverMatch</td><td>No</td>
  *  </tr>
  * </table>
  * </code>
- * @author Dan Ellentucke
+ * 
  * @author Misagh Moayyed
- * @see EagerRegexTester
+ * @see RegexTester
  */
-public class RegexTester extends StringTester {
-    protected final Pattern pattern;
-
-    public RegexTester(String attribute, String test) {
+public class EagerRegexTester extends RegexTester {
+    
+    public EagerRegexTester(String attribute, String test) {
         super(attribute, test);
-        this.pattern = Pattern.compile(test);
     }
 
     @Override
     public boolean test(String att) {
-        return pattern.matcher(att).matches();
+        return pattern.matcher(att).find();
     }
+
 }
