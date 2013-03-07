@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.persistence.FlushModeType;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -135,6 +136,7 @@ public class JpaAggregatedTabLookupDao extends BaseAggrEventsJpaDao implements A
     @Override
     public Set<AggregatedTabMapping> getTabMappings() {
         final TypedQuery<AggregatedTabMappingImpl> cachedQuery = this.createCachedQuery(this.findAllTabMappingsQuery);
+        cachedQuery.setFlushMode(FlushModeType.COMMIT);
         
         return new LinkedHashSet<AggregatedTabMapping>(cachedQuery.getResultList());
     }
@@ -143,7 +145,7 @@ public class JpaAggregatedTabLookupDao extends BaseAggrEventsJpaDao implements A
         //Check the cache first
         final Element element = layoutNodeIdNameResolutionCache.get(targetedLayoutNodeId);
         if (element != null) {
-            return (Tuple<String, String>)element.getValue();
+            return (Tuple<String, String>)element.getObjectValue();
         }
 
         final String fragmentName;
