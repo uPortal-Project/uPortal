@@ -132,10 +132,10 @@
         p:data-source-ref="dataSource" />
     
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
-        <property name="driverClassName" value="${hibernate.connection.driver_class}" />
-        <property name="url" value="${hibernate.connection.url}" />
-        <property name="username" value="${hibernate.connection.username}" />
-        <property name="password" value="${hibernate.connection.password}" />
+        <property name="driverClassName" value="${environment.build.hibernate.connection.driver_class}" />
+        <property name="url" value="${environment.build.hibernate.connection.url}" />
+        <property name="username" value="${environment.build.hibernate.connection.username}" />
+        <property name="password" value="${environment.build.hibernate.connection.password}" />
         
         <property name="minIdle" value="1" />
         <property name="maxIdle" value="2" />
