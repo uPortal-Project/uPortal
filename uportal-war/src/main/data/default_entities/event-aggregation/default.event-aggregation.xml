@@ -69,7 +69,12 @@
         <include>DAY</include>
         <include>MONTH</include>
     </aggregated-interval-config>
-
+    <aggregated-interval-config>
+        <aggregator-type>org.jasig.portal.events.aggr.action.SearchRequestAggregator</aggregator-type>
+        <include>FIVE_MINUTE</include>
+        <include>HOUR</include>
+        <include>DAY</include>
+    </aggregated-interval-config>
     <quarter-details>
         <id>0</id>
         <start>--01-01</start>

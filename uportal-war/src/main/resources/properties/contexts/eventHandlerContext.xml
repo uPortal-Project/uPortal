@@ -134,4 +134,5 @@
     <bean id="portletExecutionAggregatorResource" class="org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregator">
         <property name="executionType" value="RESOURCE" />
     </bean>
+    <bean id="searchRequestAggregator" class="org.jasig.portal.events.aggr.action.SearchRequestAggregator"/>
 </beans>
