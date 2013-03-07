@@ -59,6 +59,7 @@
         <mapping class="org.jasig.portal.events.aggr.tabrender.TabRenderAggregationImpl"/>
         <mapping class="org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregationImpl"/>
         <mapping class="org.jasig.portal.events.aggr.portletlayout.PortletLayoutAggregationImpl"/>
+        <mapping class="org.jasig.portal.events.aggr.action.SearchRequestAggregationImpl"/>
         <mapping class="org.jasig.portal.events.aggr.UniqueStrings"/>
         <mapping class="org.jasig.portal.events.aggr.UniqueStringsSegment"/>
     </session-factory>

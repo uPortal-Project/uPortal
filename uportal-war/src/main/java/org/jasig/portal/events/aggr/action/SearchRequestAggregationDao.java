@@ -16,8 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package org.jasig.portal.events.aggr.concuser;
+package org.jasig.portal.events.aggr.action;
 
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.BaseAggregationDao;
@@ -27,15 +26,12 @@ import org.joda.time.DateTime;
 import java.util.List;
 
 /**
- * DAO used to query information about login aggregates: Total Logins and Unique Logins per date,time,interval,group
- * 
- * @author Eric Dalquist
+ * @author Chris Waymire (chris@waymire.net)
  */
-public interface ConcurrentUserAggregationDao<T extends ConcurrentUserAggregation> 
-        extends BaseAggregationDao<T, ConcurrentUserAggregationKey> {
+public interface SearchRequestAggregationDao<T extends SearchRequestAggregation>
+        extends BaseAggregationDao<T,SearchRequestAggregationKey> {
 
-
-    public List<ConcurrentUserAggregationImpl> getAggregations(DateTime start, DateTime end, AggregationInterval interval,
-                                                                     AggregatedGroupMapping aggregatedGroupMapping, AggregatedGroupMapping... aggregatedGroupMappings);
+    public List<SearchRequestAggregationImpl> getAggregations(DateTime start, DateTime end, AggregationInterval interval,
+                                                                    AggregatedGroupMapping aggregatedGroupMapping, AggregatedGroupMapping... aggregatedGroupMappings);
 
 }

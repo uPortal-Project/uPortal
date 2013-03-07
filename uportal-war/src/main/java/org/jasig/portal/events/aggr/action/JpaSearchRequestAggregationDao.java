@@ -17,19 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.events.aggr.concuser;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+package org.jasig.portal.events.aggr.action;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
@@ -47,32 +35,45 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 /**
- * DAO for Concurrent User Aggregations
- * 
- * @author Eric Dalquist
+ * @author Chris Waymire (chris@waymire.net)
  */
 @Repository
-public class JpaConcurrentUserAggregationDao extends
-        JpaBaseAggregationDao<ConcurrentUserAggregationImpl, ConcurrentUserAggregationKey> implements
-        ConcurrentUserAggregationPrivateDao {
+public class JpaSearchRequestAggregationDao extends
+        JpaBaseAggregationDao<SearchRequestAggregationImpl, SearchRequestAggregationKey> implements
+        SearchRequestAggregationPrivateDao {
 
-    public JpaConcurrentUserAggregationDao() {
-        super(ConcurrentUserAggregationImpl.class);
+    private ParameterExpression<Set> searchTermParameter;
+
+    protected CriteriaQuery<SearchRequestAggregationImpl> findAllSearchRequestAggregationsByDateRangeQuery;
+
+    public JpaSearchRequestAggregationDao() {
+        super(SearchRequestAggregationImpl.class);
     }
-
-    protected CriteriaQuery<ConcurrentUserAggregationImpl> findAllConcurrentUserAggregationsByDateRangeQuery;
 
     @Override
     protected void createCriteriaQueries() {
-        this.findAllConcurrentUserAggregationsByDateRangeQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<ConcurrentUserAggregationImpl>>() {
+        this.findAllSearchRequestAggregationsByDateRangeQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<SearchRequestAggregationImpl>>() {
             @Override
-            public CriteriaQuery<ConcurrentUserAggregationImpl> apply(CriteriaBuilder cb) {
-                final CriteriaQuery<ConcurrentUserAggregationImpl> criteriaQuery = cb.createQuery(ConcurrentUserAggregationImpl.class);
+            public CriteriaQuery<SearchRequestAggregationImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<SearchRequestAggregationImpl> criteriaQuery = cb.createQuery(SearchRequestAggregationImpl.class);
 
-                final Root<ConcurrentUserAggregationImpl> ba = criteriaQuery.from(ConcurrentUserAggregationImpl.class);
-                final Join<ConcurrentUserAggregationImpl, DateDimensionImpl> dd = ba.join(BaseAggregationImpl_.dateDimension, JoinType.LEFT);
-                final Join<ConcurrentUserAggregationImpl, TimeDimensionImpl> td = ba.join(BaseAggregationImpl_.timeDimension, JoinType.LEFT);
+                final Root<SearchRequestAggregationImpl> ba = criteriaQuery.from(SearchRequestAggregationImpl.class);
+                final Join<SearchRequestAggregationImpl, DateDimensionImpl> dd = ba.join(BaseAggregationImpl_.dateDimension, JoinType.LEFT);
+                final Join<SearchRequestAggregationImpl, TimeDimensionImpl> td = ba.join(BaseAggregationImpl_.timeDimension, JoinType.LEFT);
 
 
                 final List<Predicate> keyPredicates = new ArrayList<Predicate>();
@@ -101,40 +102,57 @@ public class JpaConcurrentUserAggregationDao extends
     }
 
     @Override
-    protected void addFetches(Root<ConcurrentUserAggregationImpl> root) {
-        root.fetch(ConcurrentUserAggregationImpl_.uniqueStrings, JoinType.LEFT);        
-    }
-    
-    @Override
-    protected void addUnclosedPredicate(CriteriaBuilder cb, Root<ConcurrentUserAggregationImpl> root,
-            List<Predicate> keyPredicates) {
-        keyPredicates.add(cb.isNotNull(root.get(ConcurrentUserAggregationImpl_.uniqueStrings)));
+    protected void createParameterExpressions() {
+        this.searchTermParameter = this.createParameterExpression(Set.class,"searchTerm");
     }
 
     @Override
-    protected ConcurrentUserAggregationImpl createAggregationInstance(ConcurrentUserAggregationKey key) {
+    protected void addFetches(Root<SearchRequestAggregationImpl> root) {
+    }
+
+    @Override
+    protected void addUnclosedPredicate(CriteriaBuilder cb, Root<SearchRequestAggregationImpl> root,
+                                        List<Predicate> keyPredicates) {
+        keyPredicates.add(cb.isFalse(root.get(SearchRequestAggregationImpl_.complete)));
+    }
+
+    @Override
+    protected SearchRequestAggregationImpl createAggregationInstance(SearchRequestAggregationKey key) {
         final TimeDimension timeDimension = key.getTimeDimension();
         final DateDimension dateDimension = key.getDateDimension();
         final AggregationInterval interval = key.getInterval();
         final AggregatedGroupMapping aggregatedGroup = key.getAggregatedGroup();
-        return new ConcurrentUserAggregationImpl(timeDimension, dateDimension, interval, aggregatedGroup);
+        final String searchTerm = key.getSearchTerm();
+        return new SearchRequestAggregationImpl(timeDimension, dateDimension, interval, aggregatedGroup,searchTerm);
     }
 
     @Override
-    protected ConcurrentUserAggregationKey getAggregationKey(ConcurrentUserAggregationImpl instance) {
+    protected SearchRequestAggregationKey getAggregationKey(SearchRequestAggregationImpl instance) {
         return instance.getAggregationKey();
     }
 
     @Override
-    public final List<ConcurrentUserAggregationImpl> getAggregations(DateTime start, DateTime end, AggregationInterval interval,
-                                                                                  AggregatedGroupMapping aggregatedGroupMapping, AggregatedGroupMapping... aggregatedGroupMappings) {
+    protected void bindAggregationSpecificKeyParameters(TypedQuery<SearchRequestAggregationImpl> query,
+                                                        Set<SearchRequestAggregationKey> keys) {
+        query.setParameter(this.searchTermParameter,extractSearchTerms(keys));
+    }
+
+    @Override
+    protected void bindAggregationSpecificKeyParameters(NaturalIdQuery<SearchRequestAggregationImpl> query,
+                                                        SearchRequestAggregationKey key) {
+        query.using(SearchRequestAggregationImpl_.searchTerm, key.getSearchTerm());
+    }
+
+    @Override
+    public final List<SearchRequestAggregationImpl> getAggregations(DateTime start, DateTime end, AggregationInterval interval,
+                                                                     AggregatedGroupMapping aggregatedGroupMapping, AggregatedGroupMapping... aggregatedGroupMappings) {
         if (!start.isBefore(end)) {
             throw new IllegalArgumentException("Start must be before End: " + start + " - " + end);
         }
         final LocalDate startDate = start.toLocalDate();
         final LocalDate endDate = end.toLocalDate();
 
-        final TypedQuery<ConcurrentUserAggregationImpl> query = this.createQuery(this.findAllConcurrentUserAggregationsByDateRangeQuery);
+        final TypedQuery<SearchRequestAggregationImpl> query = this.createQuery(this.findAllSearchRequestAggregationsByDateRangeQuery);
 
         query.setParameter(this.startDate, startDate);
         query.setParameter(this.startTime, start.toLocalTime());
@@ -149,5 +167,13 @@ public class JpaConcurrentUserAggregationDao extends
         query.setParameter(this.aggregatedGroupsParameter, groups);
 
         return query.getResultList();
+    }
+
+    private Set<String> extractSearchTerms(Set<SearchRequestAggregationKey> keys) {
+        Set<String> searchTerms = new HashSet<String>();
+        for (SearchRequestAggregationKey key : keys) {
+            searchTerms.add(key.getSearchTerm());
+        }
+        return searchTerms;
     }
 }
