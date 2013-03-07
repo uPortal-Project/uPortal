@@ -55,8 +55,8 @@ public class RequestParameterProcessorInterceptor extends HandlerInterceptorAdap
      * @throws IllegalArgumentException if the List is null or contains null elements
      */
     public void setDynamicRequestParameterProcessors(List<IRequestParameterProcessor> dynamicRequestParameterProcessors) {
-        Validate.notNull(dynamicRequestParameterProcessors, "IDynamicRequestParameterProcessor List can not be null");
-        Validate.noNullElements(dynamicRequestParameterProcessors, "IDynamicRequestParameterProcessor List can not contain a null element");
+        Validate.notNull(dynamicRequestParameterProcessors, "IRequestParameterProcessor List can not be null");
+        Validate.noNullElements(dynamicRequestParameterProcessors, "IRequestParameterProcessor List can not contain a null element");
         
         this.dynamicRequestParameterProcessors = dynamicRequestParameterProcessors;
     }
