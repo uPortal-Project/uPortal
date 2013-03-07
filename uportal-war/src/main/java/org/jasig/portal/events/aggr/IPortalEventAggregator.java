@@ -50,6 +50,11 @@ public interface IPortalEventAggregator<E extends PortalEvent> {
     boolean supports(Class<? extends PortalEvent> type);
     
     /**
+     * @return true if this aggregator supports the specified event
+     */
+    boolean supports(PortalEvent event);
+    
+    /**
      * Add the specified event to the aggregate
      * 
      * @param e The event to aggregate

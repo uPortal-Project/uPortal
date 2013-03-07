@@ -82,6 +82,11 @@ public abstract class BasePortalEventAggregator<
      */
     protected abstract K createAggregationKey(E e, EventAggregationContext eventAggregationContext, AggregationIntervalInfo intervalInfo, AggregatedGroupMapping aggregatedGroup);
     
+    @Override
+    public boolean supports(PortalEvent event) {
+        return supports(event.getClass());
+    }
+
     @AggrEventsTransactional
     @Override
     public final void aggregateEvent(E e, EventSession eventSession,
