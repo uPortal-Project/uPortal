@@ -22,6 +22,7 @@ package org.jasig.portal.events.aggr.portlets;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import javax.persistence.FlushModeType;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -118,6 +119,7 @@ public class JpaAggregatedPortletLookupDao extends BaseAggrEventsJpaDao implemen
     @Override
     public Set<AggregatedPortletMapping> getPortletMappings() {
         final TypedQuery<AggregatedPortletMappingImpl> cachedQuery = this.createCachedQuery(this.findAllPortletMappingsQuery);
+        cachedQuery.setFlushMode(FlushModeType.COMMIT);
         
         return new LinkedHashSet<AggregatedPortletMapping>(cachedQuery.getResultList());
     }
