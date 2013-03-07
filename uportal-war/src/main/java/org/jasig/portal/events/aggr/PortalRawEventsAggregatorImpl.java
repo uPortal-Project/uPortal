@@ -652,7 +652,7 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao implemen
             
             //Give each aggregator a chance at the event
             for (final IPortalEventAggregator<PortalEvent> portalEventAggregator : portalEventAggregators) {
-                if (portalEventAggregator.supports(item.getClass())) {
+                if (checkSupports(portalEventAggregator, item)) {
                     final Class<? extends IPortalEventAggregator<?>> aggregatorType = PortalRawEventsAggregatorImpl.this.getClass(portalEventAggregator);
                     
                     //Get aggregator specific interval info map
@@ -674,6 +674,19 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao implemen
                     //Aggregation magic happens here!
                     portalEventAggregator.aggregateEvent(item, eventSession, eventAggregationContext, aggregatorIntervalInfo);
                 }
+            }
+        }
+
+        /**
+         * @deprecated This method exists until uPortal 4.1 when IPortalEventAggregator#supports(Class) can be deleted
+         */
+        @Deprecated
+        protected boolean checkSupports(IPortalEventAggregator<PortalEvent> portalEventAggregator, PortalEvent item) {
+            try {
+                return portalEventAggregator.supports(item);
+            }
+            catch (AbstractMethodError e) {
+                return portalEventAggregator.supports(item.getClass());
             }
         }
 
