@@ -19,12 +19,7 @@
 
 package org.jasig.portal.events.aggr.concuser;
 
-import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.BaseAggregationDao;
-import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
-import org.joda.time.DateTime;
-
-import java.util.List;
 
 /**
  * DAO used to query information about login aggregates: Total Logins and Unique Logins per date,time,interval,group
@@ -33,9 +28,5 @@ import java.util.List;
  */
 public interface ConcurrentUserAggregationDao<T extends ConcurrentUserAggregation> 
         extends BaseAggregationDao<T, ConcurrentUserAggregationKey> {
-
-
-    public List<ConcurrentUserAggregationImpl> getAggregations(DateTime start, DateTime end, AggregationInterval interval,
-                                                                     AggregatedGroupMapping aggregatedGroupMapping, AggregatedGroupMapping... aggregatedGroupMappings);
 
 }

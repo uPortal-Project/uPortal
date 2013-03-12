@@ -34,13 +34,12 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 -->
 
 <style type="text/css">
-    .fl-col {
-        width:200px;
-        height:150px;
+    .portal-activity .box-outer {
+        height:160px;
         background-color: #2E2E2E;
     }
 
-    .fl-col .box-header {
+    .portal-activity .fl-col .box-header {
         width:100%;
         height:20px;
         background-color:black;
@@ -50,46 +49,46 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         color:white;
     }
 
-    .box-total {
+    .portal-activity .box-total {
         color:white;
         font-weight:bold;
         font-size:xx-large;
         text-align:center;
     }
 
-    .box-data {
+    .portal-activity .box-data {
         margin-top:15px;
         color:white;
     }
 
-    .box-data TABLE {
+    .portal-activity .box-data table {
         margin-left: auto;
         margin-right:auto;
         border-collapse: collapse;
     }
 
-    .box-data TABLE td {
+    .portal-activity .box-data table td {
         line-height: .3em;
     }
 
-    .popular-search {
+    .portal-activity .popular-search {
         clear:both;
         margin-top:15px;
     }
 
-    .popular-search .title {
+    .portal-activity .popular-search .title {
         margin-top:15px;
         font-weight:bold;
     }
 
-    a:link,a:visited,a:hover,a:active {
+    .portal-activity a:link, .portal-activity a:visited, .portal-activity a:hover, .portal-activity a:active {
         color: inherit;
         text-decoration: none;
     }
 </style>
 
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
+<div class="fl-widget portlet portal-activity" role="section">
     <form id="${n}form">
 
         <!-- Portlet Body -->
@@ -102,8 +101,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     <span style="font-weight:bold;"><spring:message code="portal.activity.who"/></span>
                     <br/><br/>
                     <div class="fl-container-flex fl-centered">
-                        <div class="fl-container-flex fl-col-flex5 fl-fix content">
-                            <div class="fl-col">
+                        <div class="fl-container-flex fl-col-flex3 fl-fix content">
+                            <div class="fl-col box-outer">
                                 <div class="box-header"><spring:message code="portal.activity.now"/></div>
                                 <div class="box-total">${usageNow.total}</div>
                                 <div class="box-data">
@@ -117,7 +116,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                     </table>
                                 </div>
                             </div>
-                            <div class="fl-col">
+                            <div class="fl-col box-outer">
                                 <div class="box-header"><spring:message code="portal.activity.today"/></div>
                                 <div class="box-total">${usageToday.total}</div>
                                 <div class="box-data">
@@ -131,7 +130,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                     </table>
                                 </div>
                             </div>
-                            <div class="fl-col">
+                            <div class="fl-col box-outer">
                                 <div class="box-header"><spring:message code="portal.activity.yesterday"/></div>
                                 <div class="box-total">${usageYesterday.total}</div>
                                 <div class="box-data">
