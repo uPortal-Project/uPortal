@@ -43,9 +43,10 @@
           <value>40%</value>
         </structure-attribute>
         <channel fname="uportal-links" unremovable="false" hidden="false" immutable="false" ID="n9"/>
-        <channel fname="please-register" unremovable="false" hidden="false" immutable="false" ID="n10"/>
+        <channel fname="portal-activity" unremovable="false" hidden="false" immutable="false" ID="n10"/>
+        <channel fname="please-register" unremovable="false" hidden="false" immutable="false" ID="n11"/>
       </folder>
     </folder>
-    <folder ID="s11" hidden="false" immutable="false" name="Footer folder" type="footer" unremovable="false"/>
+    <folder ID="s12" hidden="false" immutable="false" name="Footer folder" type="footer" unremovable="false"/>
   </folder>
 </layout>

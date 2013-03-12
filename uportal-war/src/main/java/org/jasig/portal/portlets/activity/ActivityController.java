@@ -25,9 +25,14 @@ import org.jasig.portal.events.aggr.action.SearchRequestAggregationDao;
 import org.jasig.portal.events.aggr.action.SearchRequestAggregationImpl;
 import org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregation;
 import org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationDao;
-import org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationImpl;
+import org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationKey;
+import org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationKeyImpl;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupLookupDao;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.jasig.portal.events.aggr.login.LoginAggregation;
+import org.jasig.portal.events.aggr.login.LoginAggregationDao;
+import org.jasig.portal.events.aggr.login.LoginAggregationKey;
+import org.jasig.portal.events.aggr.login.LoginAggregationKeyImpl;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
@@ -35,25 +40,18 @@ import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
-import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
-import javax.portlet.RenderRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * @author Chris Waymire (chris@waymire.net)
@@ -76,6 +74,7 @@ public class ActivityController {
     private AggregatedGroupLookupDao aggregatedGroupLookupDao;
     private SearchRequestAggregationDao<SearchRequestAggregation> searchRequestAggregationDao;
     private ConcurrentUserAggregationDao<ConcurrentUserAggregation> concurrentUserAggregationDao;
+    private LoginAggregationDao<LoginAggregation> loginAggregationDao;
 
     @Autowired
     public void setAggregatedGroupLookupDao(AggregatedGroupLookupDao aggregatedGroupLookupDao)
@@ -93,6 +92,12 @@ public class ActivityController {
     public void setConcurrentUserAggregationDao(ConcurrentUserAggregationDao<ConcurrentUserAggregation> concurrentUserAggregationDao)
     {
         this.concurrentUserAggregationDao = concurrentUserAggregationDao;
+    }
+
+    @Autowired
+    public void setLoginAggregationDao(LoginAggregationDao<LoginAggregation> loginAggregationDao)
+    {
+        this.loginAggregationDao = loginAggregationDao;
     }
 
     @RenderMapping
@@ -129,10 +134,9 @@ public class ActivityController {
             }
             case TODAY:
             {
-                end = new DateTime();
-                begin = new DateMidnight().toDateTime().minusSeconds(1);
-                //begin = end.minusHours(end.getHourOfDay()-1).minusMinutes(end.getMinuteOfHour()).minusSeconds(end.getSecondOfMinute());
-                interval = AggregationInterval.FIVE_MINUTE;
+                begin = new DateMidnight().toDateTime();
+                end = begin.plusDays(1);
+                interval = AggregationInterval.DAY;
                 break;
             }
             case YESTERDAY:
@@ -158,31 +162,68 @@ public class ActivityController {
         int absTotal = 0;
         int subTotal = 0;
 
-        for(AggregatedGroupMapping group : concurrentUserAggregationDao.getAggregatedGroupMappings())
+        switch(timeframe)
         {
-            final List<ConcurrentUserAggregationImpl> aggregations = concurrentUserAggregationDao.getAggregations(begin,end,interval,group);
-            int groupTotal = 0;
-            PortalGroupActivity groupActivity;
-            for (final ConcurrentUserAggregationImpl aggregation : aggregations)
-            {
-                groupTotal += aggregation.getConcurrentUsers();
-                absTotal += aggregation.getConcurrentUsers();
-            }
-            if (group.getGroupName().equalsIgnoreCase(masterGroup))
-            {
-                masterTotal = groupTotal;
-            } else {
-                subTotal += groupTotal;
-            }
-
-            if(!group.getGroupName().equals(masterGroup))
-            {
-                if (displayGroups.isEmpty() || displayGroups.contains(group.getGroupName()))
+            case NOW:
+                for(AggregatedGroupMapping group : concurrentUserAggregationDao.getAggregatedGroupMappings())
                 {
-                    groupActivity = new PortalGroupActivity(group.getGroupName(), groupTotal);
-                    groupActivities.add(groupActivity);
+
+                    ConcurrentUserAggregationKey key = new ConcurrentUserAggregationKeyImpl(interval, group);
+                    final List<ConcurrentUserAggregation> aggregations = concurrentUserAggregationDao.getAggregations(begin, end, key);
+                    
+                    // NB:  We only care about the most recent entry (??)
+                    if (aggregations.size() != 0) {
+                        final ConcurrentUserAggregation aggregation = aggregations.get(0);
+                        int groupTotal = aggregation.getConcurrentUsers();
+                        absTotal += aggregation.getConcurrentUsers();
+                        if (group.getGroupName().equalsIgnoreCase(masterGroup))
+                        {
+                            masterTotal = groupTotal;
+                        } else {
+                            subTotal += groupTotal;
+                        }
+
+                        if(!group.getGroupName().equals(masterGroup))
+                        {
+                            if (displayGroups.isEmpty() || displayGroups.contains(group.getGroupName()))
+                            {
+                                final PortalGroupActivity groupActivity = new PortalGroupActivity(group.getGroupName(), groupTotal);
+                                groupActivities.add(groupActivity);
+                            }
+                        }
+                    }
                 }
-            }
+                break;
+            default:
+                for(AggregatedGroupMapping group : loginAggregationDao.getAggregatedGroupMappings())
+                {
+                    
+                    final LoginAggregationKey key = new LoginAggregationKeyImpl(interval, group);
+                    final List<LoginAggregation> aggregations = loginAggregationDao.getAggregations(begin,end,key);
+                    
+                    // NB:  We only care about the most recent entry (??)
+                    if (aggregations.size() != 0) {
+                        final LoginAggregation aggregation = aggregations.get(0);
+                        int groupTotal = aggregation.getLoginCount();
+                        absTotal += aggregation.getLoginCount();
+                        if (group.getGroupName().equalsIgnoreCase(masterGroup))
+                        {
+                            masterTotal = groupTotal;
+                        } else {
+                            subTotal += groupTotal;
+                        }
+
+                        if(!group.getGroupName().equals(masterGroup))
+                        {
+                            if (displayGroups.isEmpty() || displayGroups.contains(group.getGroupName()))
+                            {
+                                PortalGroupActivity groupActivity = new PortalGroupActivity(group.getGroupName(), groupTotal);
+                                groupActivities.add(groupActivity);
+                            }
+                        }
+                    }
+                }
+                break;
         }
 
         if(displayOther)

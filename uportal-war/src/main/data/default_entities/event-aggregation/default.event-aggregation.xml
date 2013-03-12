@@ -36,6 +36,10 @@
             <groupService>local</groupService>
             <groupName>Everyone</groupName>
         </include>
+        <include>
+            <groupService>local</groupService>
+            <groupName>Students</groupName>
+        </include>
     </aggregated-group-config>
     
     <!-- 
