@@ -122,7 +122,7 @@ public class LoginController {
                     Enumeration<String> e = request.getParameterNames();
                     while (e.hasMoreElements()) {
                         String paramName = e.nextElement();
-                        if (!paramName.equals("uP_fname")) {
+                        if (!paramName.equals("uP_fname") && !paramName.equals("userName") && !paramName.equals("password")) {
                             urlBuilder.addParameter(paramName, request.getParameterValues(paramName));
                         }
                     }
