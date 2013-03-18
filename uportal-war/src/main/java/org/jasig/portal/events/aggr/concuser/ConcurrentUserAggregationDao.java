@@ -28,4 +28,5 @@ import org.jasig.portal.events.aggr.BaseAggregationDao;
  */
 public interface ConcurrentUserAggregationDao<T extends ConcurrentUserAggregation> 
         extends BaseAggregationDao<T, ConcurrentUserAggregationKey> {
+
 }

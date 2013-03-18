@@ -43,6 +43,7 @@ import org.jasig.portal.io.xml.AbstractJaxbDataHandler;
 import org.jasig.portal.io.xml.IPortalData;
 import org.jasig.portal.io.xml.IPortalDataType;
 import org.jasig.portal.io.xml.PortalDataKey;
+import org.jasig.portal.utils.EnumNameComparator;
 import org.jasig.portal.utils.SafeFilenameUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.MonthDay;
@@ -264,14 +265,17 @@ public class EventAggregationConfigurationImporterExporter extends
 	        for (final AggregationInterval interval : aggregatedIntervalConfig.getIncluded()) {
 	            extIncludes.add(convert(interval));
 	        }
+	        Collections.sort(extIncludes, EnumNameComparator.INSTANCE);
 	        
 	        final List<ExternalAggregationInterval> extExcludes = externalIntervalConfig.getExcludes();
 	        for (final AggregationInterval interval : aggregatedIntervalConfig.getExcluded()) {
 	            extExcludes.add(convert(interval));
             }
+	        Collections.sort(extExcludes, EnumNameComparator.INSTANCE);
 	        
             aggregatedIntervalConfigs.add(externalIntervalConfig);
         }
+	    Collections.sort(aggregatedIntervalConfigs, ExternalAggregatedDimensionConfigComparator.INSTANCE);
         
 	    //Copy group configs
 	    final List<ExternalAggregatedGroupConfig> aggregatedGroupConfigs = externalData.getAggregatedGroupConfigs();
@@ -283,14 +287,17 @@ public class EventAggregationConfigurationImporterExporter extends
             for (final AggregatedGroupMapping Group : aggregatedGroupConfig.getIncluded()) {
                 extIncludes.add(convert(Group));
             }
+            Collections.sort(extIncludes, ExternalAggregatedGroupMappingComparator.INSTANCE);
             
             final List<ExternalAggregatedGroupMapping> extExcludes = externalGroupConfig.getExcludes();
             for (final AggregatedGroupMapping Group : aggregatedGroupConfig.getExcluded()) {
                 extExcludes.add(convert(Group));
             }
+            Collections.sort(extExcludes, ExternalAggregatedGroupMappingComparator.INSTANCE);
             
             aggregatedGroupConfigs.add(externalGroupConfig);
         }
+        Collections.sort(aggregatedGroupConfigs, ExternalAggregatedDimensionConfigComparator.INSTANCE);
         
         //Copy term details
         final List<ExternalTermDetail> externalTermDetails = externalData.getTermDetails();
@@ -301,6 +308,7 @@ public class EventAggregationConfigurationImporterExporter extends
             externalTermDetail.setEnd(academicTermDetail.getEnd().toGregorianCalendar());
             externalTermDetails.add(externalTermDetail);
         }
+        Collections.sort(externalTermDetails, ExternalTermDetailComparator.INSTANCE);
         
         //Copy quarter details
         final List<ExternalQuarterDetail> quarterDetails = externalData.getQuarterDetails();
@@ -311,6 +319,7 @@ public class EventAggregationConfigurationImporterExporter extends
             externalQuarterDetail.setEnd(quarterDetail.getEnd().toString());
             quarterDetails.add(externalQuarterDetail);
         }
+        Collections.sort(quarterDetails, ExternalQuarterDetailComparator.INSTANCE);
 
 	    return externalData;
 	}

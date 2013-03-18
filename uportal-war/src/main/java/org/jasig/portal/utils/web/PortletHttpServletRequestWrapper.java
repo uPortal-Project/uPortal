@@ -27,6 +27,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.jasig.portal.utils.Servlet3WrapperUtils;
+
 
 /**
  * Scopes set request attributes to just this request.
@@ -43,7 +45,12 @@ public class PortletHttpServletRequestWrapper extends AbstractHttpServletRequest
     
     private final Map<String, Object> attributes = new LinkedHashMap<String, Object>();
     
-    public PortletHttpServletRequestWrapper(HttpServletRequest httpServletRequest) {
+    public static HttpServletRequest create(HttpServletRequest request) {
+        final HttpServletRequest proxy = new PortletHttpServletRequestWrapper(request);
+        return Servlet3WrapperUtils.addServlet3Wrapper(proxy, request);
+    }
+    
+    private PortletHttpServletRequestWrapper(HttpServletRequest httpServletRequest) {
         super(httpServletRequest);
     }
 

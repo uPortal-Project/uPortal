@@ -44,10 +44,13 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalIdCache;
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.BaseAggregationImpl;
+import org.jasig.portal.events.aggr.BaseGroupedAggregationDiscriminator;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.UniqueStrings;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.jasig.portal.events.aggr.login.LoginAggregationDiscriminator;
+import org.jasig.portal.events.aggr.login.LoginAggregationDiscriminatorImpl;
 
 /**
  * @author Eric Dalquist
@@ -77,7 +80,7 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public final class ConcurrentUserAggregationImpl 
-        extends BaseAggregationImpl<ConcurrentUserAggregationKey> 
+        extends BaseAggregationImpl<ConcurrentUserAggregationKey, ConcurrentUserAggregationDiscriminator>
         implements ConcurrentUserAggregation, Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -97,6 +100,8 @@ public final class ConcurrentUserAggregationImpl
     
     @Transient
     private ConcurrentUserAggregationKey aggregationKey;
+    @Transient
+    private ConcurrentUserAggregationDiscriminator aggregationDiscriminator;
     
     @SuppressWarnings("unused")
     private ConcurrentUserAggregationImpl() {
@@ -131,6 +136,16 @@ public final class ConcurrentUserAggregationImpl
     }
 
     @Override
+    public ConcurrentUserAggregationDiscriminator getAggregationDiscriminator() {
+        ConcurrentUserAggregationDiscriminator discriminator = this.aggregationDiscriminator;
+        if (discriminator == null) {
+            discriminator = new ConcurrentUserAggregationDiscriminatorImpl(this);
+            this.aggregationDiscriminator = discriminator;
+        }
+        return discriminator;
+    }
+
+    @Override
     protected boolean isComplete() {
         return this.concurrentUsers > 0 && this.uniqueStrings == null;
     }
@@ -141,7 +156,10 @@ public final class ConcurrentUserAggregationImpl
     }
     
     void countSession(String eventSessionId) {
-        checkState();
+        if (isComplete()) {
+            this.getLogger().warn("{} is already closed, the event session {} will be ignored on: {}", this.getClass().getSimpleName(), eventSessionId, this);
+            return;
+        }
         
         if (this.uniqueStrings == null) {
             this.uniqueStrings = new UniqueStrings();

@@ -191,7 +191,7 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao implemen
         if (shutdown) {
             //Mark ourselves as interupted and throw an exception
             Thread.currentThread().interrupt();
-            throw new RuntimeException("uPortal is shutting down, throwing an exeption to stop processing");
+            throw new RuntimeException("uPortal is shutting down, throwing an exception to stop processing");
         }
     }
     
@@ -451,7 +451,7 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao implemen
         final MutableInt events = new MutableInt();
         final MutableObject lastEventDate = new MutableObject(newestEventTime);
         
-        final boolean stoppedEarly;
+        boolean complete;
         try {
             currentThread.setName(currentName + "-" + lastAggregated + "_" + newestEventTime);
         
@@ -460,7 +460,7 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao implemen
             //Do aggregation, capturing the start and end dates
             eventAggregatorStatus.setLastStart(DateTime.now());
             
-            stoppedEarly = portalEventDao.aggregatePortalEvents(
+            complete = portalEventDao.aggregatePortalEvents(
             		lastAggregated, newestEventTime, this.eventAggregationBatchSize, 
             		new AggregateEventsHandler(events, lastEventDate, eventAggregatorStatus));
             
@@ -474,7 +474,7 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao implemen
         //Store the results of the aggregation
         eventAggregationManagementDao.updateEventAggregatorStatus(eventAggregatorStatus);
         
-        final boolean complete = !stoppedEarly || this.eventAggregationBatchSize <= 0 || events.intValue() < this.eventAggregationBatchSize;
+        complete = complete && (this.eventAggregationBatchSize <= 0 || events.intValue() < this.eventAggregationBatchSize);
         return new EventProcessingResult(events.intValue(), lastAggregated, eventAggregatorStatus.getLastEventDate(), complete);
     }
     
@@ -593,6 +593,11 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao implemen
             }
             if (intervalCrossed) {
                 this.intervalsCrossed++;
+                
+                //If we have crossed more intervals than the interval batch size return false to stop aggregation before handling the triggering event
+                if (this.intervalsCrossed >= intervalAggregationBatchSize) {
+                    return false;
+                }
             }
             
             //Aggregate the event
@@ -601,8 +606,8 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao implemen
             //Update the status object with the event date
             this.lastEventDate.setValue(eventDate);
             
-            //If we have crossed more intervals than the interval batch size return true to stop aggregation
-            return this.intervalsCrossed >= intervalAggregationBatchSize;
+            //Continue processing
+            return true;
         }
 
         private void initializeIntervalInfo(final DateTime eventDate) {
@@ -647,7 +652,7 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao implemen
             
             //Give each aggregator a chance at the event
             for (final IPortalEventAggregator<PortalEvent> portalEventAggregator : portalEventAggregators) {
-                if (portalEventAggregator.supports(item.getClass())) {
+                if (checkSupports(portalEventAggregator, item)) {
                     final Class<? extends IPortalEventAggregator<?>> aggregatorType = PortalRawEventsAggregatorImpl.this.getClass(portalEventAggregator);
                     
                     //Get aggregator specific interval info map
@@ -669,6 +674,19 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao implemen
                     //Aggregation magic happens here!
                     portalEventAggregator.aggregateEvent(item, eventSession, eventAggregationContext, aggregatorIntervalInfo);
                 }
+            }
+        }
+
+        /**
+         * @deprecated This method exists until uPortal 4.1 when IPortalEventAggregator#supports(Class) can be deleted
+         */
+        @Deprecated
+        protected boolean checkSupports(IPortalEventAggregator<PortalEvent> portalEventAggregator, PortalEvent item) {
+            try {
+                return portalEventAggregator.supports(item);
+            }
+            catch (AbstractMethodError e) {
+                return portalEventAggregator.supports(item.getClass());
             }
         }
 

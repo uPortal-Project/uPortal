@@ -90,6 +90,11 @@
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>commons-io</groupId>
@@ -267,13 +272,30 @@
         </dependency>
         
         <dependency>
+            <groupId>org.jasig.portlet.utils</groupId>
+            <artifactId>portlet-jdbc-util</artifactId>
+        </dependency>
+        
+        <dependency>
             <groupId>org.jasig.resourceserver</groupId>
             <artifactId>resource-server-api</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>jcl-over-slf4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         
         <dependency>
             <groupId>org.jasig.resourceserver</groupId>
             <artifactId>resource-server-utils</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>jcl-over-slf4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -296,6 +318,11 @@
             <artifactId>usertype.spi</artifactId>
         </dependency>
         
+        <dependency>
+            <groupId>org.jgroups</groupId>
+            <artifactId>jgroups</artifactId>
+        </dependency>
+    
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -748,7 +775,6 @@
             <plugin>
                 <groupId>org.jasig.maven</groupId>
                 <artifactId>sass-maven-plugin</artifactId>
-                <version>1.0.0</version>
                 <configuration>
                     <baseOutputDirectory>${basedir}/src/main/webapp</baseOutputDirectory>
                 </configuration>
@@ -756,7 +782,6 @@
             <plugin>
                 <groupId>org.jasig.resourceserver</groupId>
                 <artifactId>resource-server-plugin</artifactId>
-                <version>${resource-server.version}</version>
                 <executions>
                     <execution>
                         <id>aggregate-universality-skins</id>

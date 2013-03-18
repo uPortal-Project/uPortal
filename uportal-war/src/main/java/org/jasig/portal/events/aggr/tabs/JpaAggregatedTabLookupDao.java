@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.persistence.FlushModeType;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -91,7 +92,8 @@ public class JpaAggregatedTabLookupDao extends BaseAggrEventsJpaDao implements A
             }
         });
     }
-    
+
+    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     @Override
     public AggregatedTabMapping getMappedTabForLayoutId(String layoutNodeId) {
         final Tuple<String, String> resolveTabName = this.resolveTabName(layoutNodeId);
@@ -134,6 +136,7 @@ public class JpaAggregatedTabLookupDao extends BaseAggrEventsJpaDao implements A
     @Override
     public Set<AggregatedTabMapping> getTabMappings() {
         final TypedQuery<AggregatedTabMappingImpl> cachedQuery = this.createCachedQuery(this.findAllTabMappingsQuery);
+        cachedQuery.setFlushMode(FlushModeType.COMMIT);
         
         return new LinkedHashSet<AggregatedTabMapping>(cachedQuery.getResultList());
     }
@@ -142,7 +145,7 @@ public class JpaAggregatedTabLookupDao extends BaseAggrEventsJpaDao implements A
         //Check the cache first
         final Element element = layoutNodeIdNameResolutionCache.get(targetedLayoutNodeId);
         if (element != null) {
-            return (Tuple<String, String>)element.getValue();
+            return (Tuple<String, String>)element.getObjectValue();
         }
 
         final String fragmentName;
@@ -196,5 +199,10 @@ public class JpaAggregatedTabLookupDao extends BaseAggrEventsJpaDao implements A
         final Tuple<String, String> tuple = new Tuple<String, String>(fragmentName, tabName);
         layoutNodeIdNameResolutionCache.put(new Element(targetedLayoutNodeId, tuple));
         return tuple;
+    }
+
+    @Override
+    public AggregatedTabMapping getTabMapping(long tabMappingId) {
+        return this.getEntityManager().find(AggregatedTabMappingImpl.class, tabMappingId);
     }
 }

@@ -19,12 +19,17 @@
 
 package org.jasig.portal.portlet.container;
 
+import java.nio.charset.Charset;
 import java.util.Locale;
 
 import javax.portlet.ResourceResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.LocaleUtils;
+import org.apache.http.HeaderElement;
+import org.apache.http.entity.ContentType;
+import org.apache.http.message.BasicHeaderValueParser;
 import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletResourceResponseContext;
 import org.jasig.portal.portlet.container.properties.IRequestPropertiesManager;
@@ -75,10 +80,10 @@ public class PortletResourceResponseContextImpl extends PortletMimeResponseConte
     protected boolean managerSetProperty(String key, String value) {
         final boolean handled = super.managerSetProperty(key, value);
         if (!handled) {
-            if (ResourceResponse.HTTP_STATUS_CODE.equals(key)) {
-                this.portletResourceOutputHandler.setStatus(Integer.parseInt(value));
+            if (handleResourceHeader(key, value)) {
                 return true;
             }
+            
             this.portletResourceOutputHandler.setHeader(key, value);
         }
         return true;
@@ -88,12 +93,48 @@ public class PortletResourceResponseContextImpl extends PortletMimeResponseConte
     protected boolean managerAddProperty(String key, String value) {
         final boolean handled = super.managerAddProperty(key, value);
         if (!handled) {
-            if (ResourceResponse.HTTP_STATUS_CODE.equals(key)) {
-                this.portletResourceOutputHandler.setStatus(Integer.parseInt(value));
+            if (handleResourceHeader(key, value)) {
                 return true;
             }
+            
             this.portletResourceOutputHandler.addHeader(key, value);
         }
         return true;
+    }
+    
+    /**
+     * Handles resource response specific headers. Returns true if the header was consumed by this method and requires no further processing
+     * 
+     * @return
+     */
+    protected boolean handleResourceHeader(String key, String value) {
+        if (ResourceResponse.HTTP_STATUS_CODE.equals(key)) {
+            this.portletResourceOutputHandler.setStatus(Integer.parseInt(value));
+            return true;
+        }
+        if ("Content-Type".equals(key)) {
+            final ContentType contentType = ContentType.parse(value);
+            final Charset charset = contentType.getCharset();
+            if (charset != null) { 
+                this.portletResourceOutputHandler.setCharacterEncoding(charset.name());
+            }
+            this.portletResourceOutputHandler.setContentType(contentType.getMimeType());
+            return true;
+        }
+        if ("Content-Length".equals(key)) {
+            this.portletResourceOutputHandler.setContentLength(Integer.parseInt(value));
+            return true;
+        }
+        if ("Content-Language".equals(key)) {
+            final HeaderElement[] parts = BasicHeaderValueParser.parseElements(value, null);
+            if (parts.length > 0) {
+                final String localeStr = parts[0].getValue();
+                final Locale locale = LocaleUtils.toLocale(localeStr);
+                this.portletResourceOutputHandler.setLocale(locale);
+                return true;
+            }
+        }
+        
+        return false;
     }
 }

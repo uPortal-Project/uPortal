@@ -20,44 +20,37 @@
 -->
 
 <!--
-  Default stack using IP multicasting. It is similar to the "udp"
-  stack in stacks.xml, but doesn't use streaming state transfer and flushing
-  author: Bela Ban
+    TCP based stack, with flow control and message bundling. This is usually used when IP
+    multicasting cannot be used in a network, e.g. because it is disabled (routers discard multicast).
+    Note that TCP.bind_addr and TCPPING.initial_hosts should be set, possibly via system properties, e.g.
+    -Djgroups.bind_addr=192.168.5.2 and -Djgroups.tcpping.initial_hosts=192.168.5.2[7800]
+    author: Bela Ban
 -->
-
 <config xmlns="urn:org:jgroups"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="urn:org:jgroups http://www.jgroups.org/schema/JGroups-3.1.xsd">
-    <UDP
-         mcast_addr="${uPortal.cacheManager.jgroups.udp.mcast_addr}"
-         mcast_port="${uPortal.cacheManager.jgroups.udp.mcast_port:45588}"
-         bind_port="${uPortal.cacheManager.jgroups.udp.bind_port}"
-         tos="8"
-         ucast_recv_buf_size="20M"
-         ucast_send_buf_size="640K"
-         mcast_recv_buf_size="25M"
-         mcast_send_buf_size="640K"
-         loopback="true"
-         discard_incompatible_packets="true"
+    <TCP bind_port="${uPortal.cacheManager.jgroups.tcp.bind_port}"
+         loopback="false"
+         recv_buf_size="${tcp.recv_buf_size:20M}"
+         send_buf_size="${tcp.send_buf_size:640K}"
          max_bundle_size="64K"
          max_bundle_timeout="30"
-         ip_ttl="${uPortal.cacheManager.jgroups.udp.ip_ttl:8}"
          enable_bundling="true"
-         enable_diagnostics="true"
-         thread_naming_pattern="cl"
+         use_send_queues="true"
+         sock_conn_timeout="300"
 
          timer_type="new"
          timer.min_threads="4"
          timer.max_threads="10"
          timer.keep_alive_time="3000"
          timer.queue_max_size="500"
-
+         
          thread_pool.enabled="true"
-         thread_pool.min_threads="2"
-         thread_pool.max_threads="8"
+         thread_pool.min_threads="1"
+         thread_pool.max_threads="10"
          thread_pool.keep_alive_time="5000"
-         thread_pool.queue_enabled="true"
-         thread_pool.queue_max_size="10000"
+         thread_pool.queue_enabled="false"
+         thread_pool.queue_max_size="100"
          thread_pool.rejection_policy="discard"
 
          oob_thread_pool.enabled="true"
@@ -66,39 +59,30 @@
          oob_thread_pool.keep_alive_time="5000"
          oob_thread_pool.queue_enabled="false"
          oob_thread_pool.queue_max_size="100"
-         oob_thread_pool.rejection_policy="Run"/>
+         oob_thread_pool.rejection_policy="discard"/>
 
-    <PING timeout="2000"
-            num_initial_members="20"/>
-    <MERGE2 max_interval="30000"
-            min_interval="10000"/>
+    <org.jasig.portal.jgroups.protocols.DAO_PING timeout="3000" />
+    <MERGE2  min_interval="10000"
+             max_interval="30000"/>
     <FD_SOCK start_port="${uPortal.cacheManager.jgroups.fd_sock.start_port}"/>
-    <FD_ALL/>
+    <FD timeout="3000" max_tries="3" />
     <VERIFY_SUSPECT timeout="1500"  />
     <BARRIER />
-    <pbcast.NAKACK2 xmit_interval="1000"
-                    xmit_table_num_rows="100"
-                    xmit_table_msgs_per_row="2000"
-                    xmit_table_max_compaction_time="30000"
-                    max_msg_batch_size="500"
-                    use_mcast_xmit="false"
-                    discard_delivered_msgs="true"/>
-    <UNICAST  xmit_interval="2000"
-              xmit_table_num_rows="100"
-              xmit_table_msgs_per_row="2000"
-              xmit_table_max_compaction_time="60000"
-              conn_expiry_timeout="60000"
-              max_msg_batch_size="500"/>
+    <ENCRYPT encrypt_entire_message="false" sym_init="128" sym_algorithm="AES/ECB/PKCS5Padding" asym_init="512" asym_algorithm="RSA"/>
+    <pbcast.NAKACK2 use_mcast_xmit="false"
+                   discard_delivered_msgs="true"/>
+    <UNICAST />
     <pbcast.STABLE stability_delay="1000" desired_avg_gossip="50000"
                    max_bytes="4M"/>
+    <AUTH auth_class="org.jasig.portal.jgroups.auth.HashedDaoAuthToken"/>
     <pbcast.GMS print_local_addr="true" join_timeout="3000"
+
                 view_bundling="true"/>
     <UFC max_credits="2M"
          min_threshold="0.4"/>
     <MFC max_credits="2M"
          min_threshold="0.4"/>
     <FRAG2 frag_size="60K"  />
-    <RSVP resend_interval="2000" timeout="10000"/>
-    <pbcast.STATE_TRANSFER />
-    <!-- pbcast.FLUSH  /-->
+    <!--RSVP resend_interval="2000" timeout="10000"/-->
+    <pbcast.STATE_TRANSFER/>
 </config>

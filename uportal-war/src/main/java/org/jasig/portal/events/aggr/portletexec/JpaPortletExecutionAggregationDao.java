@@ -19,7 +19,10 @@
 
 package org.jasig.portal.events.aggr.portletexec;
 
+import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -39,7 +42,7 @@ import org.jasig.portal.events.aggr.portlets.AggregatedPortletMappingImpl;
 import org.springframework.stereotype.Repository;
 
 /**
- * DAO for Tab Render Aggregations
+ * DAO for Portlet Execution Aggregations
  * 
  * @author Eric Dalquist
  */
@@ -48,8 +51,8 @@ public class JpaPortletExecutionAggregationDao extends
         JpaBaseAggregationDao<PortletExecutionAggregationImpl, PortletExecutionAggregationKey> implements
         PortletExecutionAggregationPrivateDao {
     
-    private ParameterExpression<AggregatedPortletMappingImpl> portletMappingParameter;
-    private ParameterExpression<ExecutionType> executionTypeParameter;
+    private ParameterExpression<Set> portletMappingParameter;
+    private ParameterExpression<Set> executionTypeParameter;
 
     public JpaPortletExecutionAggregationDao() {
         super(PortletExecutionAggregationImpl.class);
@@ -58,8 +61,8 @@ public class JpaPortletExecutionAggregationDao extends
 
     @Override
     protected void createParameterExpressions() {
-        this.portletMappingParameter = this.createParameterExpression(AggregatedPortletMappingImpl.class, "portletMapping");
-        this.executionTypeParameter = this.createParameterExpression(ExecutionType.class, "executionType");
+        this.portletMappingParameter = this.createParameterExpression(Set.class, "portletMapping");
+        this.executionTypeParameter = this.createParameterExpression(Set.class, "executionType");
     }
 
     @Override
@@ -76,15 +79,32 @@ public class JpaPortletExecutionAggregationDao extends
     @Override
     protected void addAggregationSpecificKeyPredicate(CriteriaBuilder cb, Root<PortletExecutionAggregationImpl> root,
             List<Predicate> keyPredicates) {
-        keyPredicates.add(cb.equal(root.get(PortletExecutionAggregationImpl_.aggregatedPortlet), portletMappingParameter));
-        keyPredicates.add(cb.equal(root.get(PortletExecutionAggregationImpl_.executionType), executionTypeParameter));
+        keyPredicates.add(root.get(PortletExecutionAggregationImpl_.aggregatedPortlet).in(portletMappingParameter));
+        keyPredicates.add(root.get(PortletExecutionAggregationImpl_.executionType).in(executionTypeParameter));
     }
 
+    // The execution type is obtained from the first PortletExecutionAggregationKey.
     @Override
     protected void bindAggregationSpecificKeyParameters(TypedQuery<PortletExecutionAggregationImpl> query,
-            PortletExecutionAggregationKey key) {
-        query.setParameter(this.portletMappingParameter, (AggregatedPortletMappingImpl)key.getPortletMapping());
-        query.setParameter(this.executionTypeParameter, key.getExecutionType());
+            Set<PortletExecutionAggregationKey> keys) {
+        query.setParameter(this.portletMappingParameter, extractAggregatePortletMappings(keys));
+        query.setParameter(this.executionTypeParameter, extractExecutionTypes(keys));
+    }
+
+    private Set<AggregatedPortletMapping> extractAggregatePortletMappings(Set<PortletExecutionAggregationKey> keys) {
+        Set<AggregatedPortletMapping> portletMappings = new HashSet<AggregatedPortletMapping>();
+        for (PortletExecutionAggregationKey key : keys) {
+            portletMappings.add(key.getPortletMapping());
+        }
+        return portletMappings;
+    }
+
+    private Set<ExecutionType> extractExecutionTypes(Set<PortletExecutionAggregationKey> keys) {
+        Set<ExecutionType> executionTypes = EnumSet.noneOf(ExecutionType.class);
+        for (PortletExecutionAggregationKey key : keys) {
+            executionTypes.add(key.getExecutionType());
+        }
+        return executionTypes;
     }
     
     @Override

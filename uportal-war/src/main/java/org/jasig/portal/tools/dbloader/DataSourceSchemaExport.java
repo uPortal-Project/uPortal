@@ -35,7 +35,7 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.jdbc.internal.FormatStyle;
 import org.hibernate.engine.jdbc.internal.Formatter;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
-import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
+import org.hibernate.tool.hbm2ddl.FixedDatabaseMetadata;
 import org.jasig.portal.hibernate.DelegatingHibernateIntegrator.HibernateConfiguration;
 import org.jasig.portal.hibernate.HibernateConfigurationAware;
 import org.slf4j.Logger;
@@ -77,6 +77,11 @@ public class DataSourceSchemaExport implements ISchemaExport, HibernateConfigura
     public boolean supports(String persistenceUnit) {
         return this.persistenceUnit.equals(persistenceUnit);
     }
+    
+    @Override
+    public String getPersistenceUnitName() {
+        return this.persistenceUnit;
+    }
 
     @Override
     public void setConfiguration(String persistenceUnit, HibernateConfiguration hibernateConfiguration) {
@@ -88,50 +93,52 @@ public class DataSourceSchemaExport implements ISchemaExport, HibernateConfigura
     @Override
     public void drop(boolean export, String outputFile, boolean append) {
         final String[] dropSQL = configuration.generateDropSchemaScript(dialect);
-        perform(dropSQL, outputFile, append, false);
+        perform(dropSQL, export, outputFile, append, false);
     }
     
     @Override
     public void create(boolean export, String outputFile, boolean append) {
         final String[] createSQL = configuration.generateSchemaCreationScript(dialect);
-        perform(createSQL, outputFile, append, true);
+        perform(createSQL, export, outputFile, append, true);
     }
     
     @Override
     public void update(boolean export, String outputFile, boolean append) {
-        final DatabaseMetadata databaseMetadata = this.jdbcOperations.execute(new ConnectionCallback<DatabaseMetadata>() {
+        final String[] updateSQL = this.jdbcOperations.execute(new ConnectionCallback<String[]>() {
             @Override
-            public DatabaseMetadata doInConnection(Connection con) throws SQLException, DataAccessException {
-                return new DatabaseMetadata( con, dialect );
+            public String[] doInConnection(Connection con) throws SQLException, DataAccessException {
+                final FixedDatabaseMetadata databaseMetadata = new FixedDatabaseMetadata( con, dialect );
+                return configuration.generateSchemaUpdateScript(dialect, databaseMetadata);
             }
         });
         
-        final String[] updateSQL = configuration.generateSchemaUpdateScript(dialect, databaseMetadata);
-        perform(updateSQL, outputFile, append, true);
+        perform(updateSQL, export, outputFile, append, true);
     }
 
-    private void perform(String[] sqlCommands, String outputFile, boolean append, boolean failFast) {
+    private void perform(String[] sqlCommands, boolean executeSql, String outputFile, boolean append, boolean failFast) {
         final PrintWriter sqlWriter = getSqlWriter(outputFile, append);
         try {
             for (final String sqlCommand : sqlCommands) {
                 final String formatted = formatter.format(sqlCommand);
                 sqlWriter.println(formatted);
 
-                try {
-                    jdbcOperations.execute(sqlCommand);
-                    logger.info(sqlCommand);
-                }
-                catch (Exception e) {
-                    if (failFast) {
-                        logger.error("Failed to execute: {}\n\t{}", sqlCommand, e.getMessage());
-                        throw new RuntimeException("Failed to execute: " + sqlCommand, e);
+                if (executeSql) {
+                    try {
+                        jdbcOperations.execute(sqlCommand);
+                        logger.info(sqlCommand);
                     }
-                    else {
-                        if (logger.isDebugEnabled()) {
-                            logger.info("Failed to execute: " + sqlCommand, e);
+                    catch (Exception e) {
+                        if (failFast) {
+                            logger.error("Failed to execute: {}\n\t{}", sqlCommand, e.getMessage());
+                            throw new RuntimeException("Failed to execute: " + sqlCommand, e);
                         }
                         else {
-                            logger.info("Failed to execute (probably ignorable): {}", sqlCommand);
+                            if (logger.isDebugEnabled()) {
+                                logger.info("Failed to execute: " + sqlCommand, e);
+                            }
+                            else {
+                                logger.info("Failed to execute (probably ignorable): {}", sqlCommand);
+                            }
                         }
                     }
                 }

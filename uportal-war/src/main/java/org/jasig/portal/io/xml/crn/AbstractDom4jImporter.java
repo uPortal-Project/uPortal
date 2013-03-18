@@ -106,7 +106,7 @@ public abstract class AbstractDom4jImporter implements IDataImporter<Tuple<Strin
     }
 
     @Override
-    public Object unmarshal(Source source) throws IOException, XmlMappingException {
+    public Tuple<String, Element> unmarshal(Source source) throws IOException, XmlMappingException {
         //Convert the StAX XMLEventReader to a dom4j Element
         final Element node = convertToElement(source);
         return new Tuple<String, Element>(source.getSystemId(), node);

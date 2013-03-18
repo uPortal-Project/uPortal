@@ -33,7 +33,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.portlet.context.PortletRequestAttributes;
 
 /**
- * Provides access to the original portal and portlet requests using the {@link PortalHttpServletRequestWrapper#ATTRIBUTE__HTTP_SERVLET_REQUEST}
+ * Provides access to the original portal and portlet requests using the {@link PortalHttpServletRequestWrapperImpl#ATTRIBUTE__HTTP_SERVLET_REQUEST}
  * and {@link PortletHttpServletRequestWrapper#ATTRIBUTE__HTTP_SERVLET_REQUEST}
  * 
  * @author Eric Dalquist
@@ -60,7 +60,7 @@ public class PortalRequestUtilsImpl implements IPortalRequestUtils {
      */
     @Override
     public HttpServletRequest getOriginalPortalRequest(HttpServletRequest portletRequest) {
-        final HttpServletRequest portalRequest = (HttpServletRequest)portletRequest.getAttribute(PortalHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST);
+        final HttpServletRequest portalRequest = (HttpServletRequest)portletRequest.getAttribute(PortalHttpServletRequestWrapperImpl.ATTRIBUTE__HTTP_SERVLET_REQUEST);
         if (portalRequest != null) {
             return portalRequest;
         }
@@ -80,7 +80,7 @@ public class PortalRequestUtilsImpl implements IPortalRequestUtils {
 
     @Override
     public HttpServletRequest getOriginalPortalRequest(WebRequest request) {
-        final HttpServletRequest portalRequest = (HttpServletRequest)request.getAttribute(PortalHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST, WebRequest.SCOPE_REQUEST);
+        final HttpServletRequest portalRequest = (HttpServletRequest)request.getAttribute(PortalHttpServletRequestWrapperImpl.ATTRIBUTE__HTTP_SERVLET_REQUEST, WebRequest.SCOPE_REQUEST);
         if (portalRequest != null) {
             return portalRequest;
         }
@@ -94,27 +94,27 @@ public class PortalRequestUtilsImpl implements IPortalRequestUtils {
             }
         }
         
-        throw new IllegalArgumentException("The orginal portal HttpServletRequest is not available from the WebRequest using attribute '" + PortalHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_REQUEST + "'");
+        throw new IllegalArgumentException("The orginal portal HttpServletRequest is not available from the WebRequest using attribute '" + PortalHttpServletRequestWrapperImpl.ATTRIBUTE__HTTP_SERVLET_REQUEST + "'");
     }
 
     @Override
     public HttpServletResponse getOriginalPortalResponse(PortletRequest portletRequest) {
-        final HttpServletResponse portalResponse = (HttpServletResponse)portletRequest.getAttribute(PortalHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_RESPONSE);
+        final HttpServletResponse portalResponse = (HttpServletResponse)portletRequest.getAttribute(PortalHttpServletRequestWrapperImpl.ATTRIBUTE__HTTP_SERVLET_RESPONSE);
         if (portalResponse != null) {
             return portalResponse;
         }
         
-        throw new IllegalArgumentException("The orginal portal HttpServletResponse is not available from the PortletRequest using attribute '" + PortalHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_RESPONSE + "'");
+        throw new IllegalArgumentException("The orginal portal HttpServletResponse is not available from the PortletRequest using attribute '" + PortalHttpServletRequestWrapperImpl.ATTRIBUTE__HTTP_SERVLET_RESPONSE + "'");
     }
     
     @Override
     public HttpServletResponse getOriginalPortalResponse(HttpServletRequest portletRequest) {
-        final HttpServletResponse portalResponse = (HttpServletResponse)portletRequest.getAttribute(PortalHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_RESPONSE);
+        final HttpServletResponse portalResponse = (HttpServletResponse)portletRequest.getAttribute(PortalHttpServletRequestWrapperImpl.ATTRIBUTE__HTTP_SERVLET_RESPONSE);
         if (portalResponse != null) {
             return portalResponse;
         }
         
-        throw new IllegalArgumentException("The orginal portal HttpServletResponse is not available from the HttpServletRequest using attribute '" + PortalHttpServletRequestWrapper.ATTRIBUTE__HTTP_SERVLET_RESPONSE + "'");
+        throw new IllegalArgumentException("The orginal portal HttpServletResponse is not available from the HttpServletRequest using attribute '" + PortalHttpServletRequestWrapperImpl.ATTRIBUTE__HTTP_SERVLET_RESPONSE + "'");
     }
 
     /* (non-Javadoc)

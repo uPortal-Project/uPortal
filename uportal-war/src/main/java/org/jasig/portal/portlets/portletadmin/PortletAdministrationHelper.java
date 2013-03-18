@@ -559,28 +559,30 @@ public class PortletAdministrationHelper implements ServletContextAware {
         }
         
         //Remove portlet preferences from the form object that were not part of this request or defined in the CPD
-        final Map<String, StringListAttribute> portletPreferences = form.getPortletPreferences();
-        final Map<String, BooleanAttribute> portletPreferencesOverrides = form.getPortletPreferenceReadOnly();
-        
-        for (final Iterator<Entry<String, StringListAttribute>> portletPreferenceEntryItr = portletPreferences.entrySet().iterator(); portletPreferenceEntryItr.hasNext();) {
-            final Map.Entry<String, StringListAttribute> portletPreferenceEntry = portletPreferenceEntryItr.next();
-            final String key = portletPreferenceEntry.getKey();
-            final StringListAttribute valueAttr = portletPreferenceEntry.getValue();
+        // - do it only if portlet doesn't support configMode
+        if (!this.supportsConfigMode(form)) {
+            final Map<String, StringListAttribute> portletPreferences = form.getPortletPreferences();
+            final Map<String, BooleanAttribute> portletPreferencesOverrides = form.getPortletPreferenceReadOnly();
             
-            if (!preferenceNames.contains(key) || valueAttr == null) {
-                portletPreferenceEntryItr.remove();
-                portletPreferencesOverrides.remove(key);
-            } else {
-                final List<String> values = valueAttr.getValue();
-                for (final Iterator<String> iter = values.iterator(); iter.hasNext();) {
-                    String value = iter.next();
-                    if (value == null) {
-                        iter.remove();
-                    }
-                }
-                if (values.size() == 0) {
+            for (final Iterator<Entry<String, StringListAttribute>> portletPreferenceEntryItr = portletPreferences.entrySet().iterator(); portletPreferenceEntryItr.hasNext();) {
+                final Map.Entry<String, StringListAttribute> portletPreferenceEntry = portletPreferenceEntryItr.next();
+                final String key = portletPreferenceEntry.getKey();
+                final StringListAttribute valueAttr = portletPreferenceEntry.getValue();
+                if (!preferenceNames.contains(key) || valueAttr == null) {
                     portletPreferenceEntryItr.remove();
                     portletPreferencesOverrides.remove(key);
+                } else {
+                    final List<String> values = valueAttr.getValue();
+                    for (final Iterator<String> iter = values.iterator(); iter.hasNext();) {
+                        String value = iter.next();
+                        if (value == null) {
+                            iter.remove();
+                        }
+                    }
+                    if (values.size() == 0) {
+                        portletPreferenceEntryItr.remove();
+                        portletPreferencesOverrides.remove(key);
+                    }
                 }
             }
         }

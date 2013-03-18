@@ -36,6 +36,7 @@
     <!-- Beans for the person-lookup flow -->       
     <bean id="personLookupHelper" class="org.jasig.portal.portlets.lookup.PersonLookupHelperImpl">
         <property name="personAttributeDao" ref="personAttributeDao" />
+        <property name="maxResults" value="${org.jasig.portal.portlets.lookup.PersonLookup.maxResults}"/>
     </bean>
     
     <bean id="personQueryValidator" class="org.jasig.portal.portlets.lookup.PersonQueryValidator" />
@@ -52,8 +53,6 @@
     <bean id="attributeSwapRequestValidator" class="org.jasig.portal.portlets.swapper.AttributeSwapRequestValidator">
         <property name="attributeSwapperHelper" ref="attributeSwapperHelper" />
     </bean>
-    <!-- Beans for the identity-swapper flow -->
-    <bean id="identitySwapperHelper" class="org.jasig.portal.portlets.swapper.IdentitySwapperHelperImpl" />
      
     <bean id="personValidator" class="org.jasig.portal.portlets.account.PersonFormValidator"/>
     

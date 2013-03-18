@@ -26,7 +26,7 @@ import org.jasig.portal.events.aggr.BaseAggregation;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface LoginAggregation extends BaseAggregation<LoginAggregationKey> {
+public interface LoginAggregation extends BaseAggregation<LoginAggregationKey, LoginAggregationDiscriminator> {
     /**
      * @return Total number of {@link LoginEvent}s that occurred in the interval
      */

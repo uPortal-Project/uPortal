@@ -25,7 +25,8 @@
         <connection>scm:git:git://github.com/Jasig/uPortal.git</connection>
         <developerConnection>scm:git:git@github.com:Jasig/uPortal.git</developerConnection>
         <url>https://github.com/Jasig/uPortal</url>
-    </scm>
+      <tag>HEAD</tag>
+  </scm>
 
     <issueManagement>
         <url>${jasig-issues-base}/UP</url>
@@ -91,7 +92,6 @@
         <jdbc.groupId>org.hsqldb</jdbc.groupId>
         <jdbc.artifactId>hsqldb</jdbc.artifactId>
         <jdbc.version>${hsqldb.version}</jdbc.version>
-
     
         <!--
          | Environment name and filters file for environment-specific build
@@ -143,69 +143,73 @@
         <commons-dbcp.version>1.4</commons-dbcp.version>
         <commons-fileupload.version>1.2.2</commons-fileupload.version>
         <commons-httpclient.version>3.1</commons-httpclient.version>
+        <commons-httpcomponents.version>4.2.3</commons-httpcomponents.version>
         <commons-io.version>2.4</commons-io.version>
         <commons-lang.version>2.6</commons-lang.version>
         <commons-logging.version>1.1.1</commons-logging.version>
         <commons-logging-api.version>1.1</commons-logging-api.version>
         <commons-pool.version>1.6</commons-pool.version>
-        <commons-math3.version>3.0</commons-math3.version>
+        <commons-math3.version>3.1.1</commons-math3.version>
         <dom4j.version>1.6.1</dom4j.version>
         <easymock.version>3.1</easymock.version>
         <ejb3-persistence.version>1.0.1.GA</ejb3-persistence.version>
-        <ehcache.version>2.6.0</ehcache.version>
+        <ehcache.version>2.6.3</ehcache.version>
         <ehcache-jgroups3replication.version>1.7.4</ehcache-jgroups3replication.version>
         <ehcache-spring-annotations.version>1.2.0</ehcache-spring-annotations.version>
         <ehcache-web.version>2.0.4</ehcache-web.version>
         <google-visualization.version>1.1.1</google-visualization.version>
         <guava.version>13.0.1</guava.version>
-        <groovy.version>2.0.5</groovy.version>
+        <groovy.version>2.0.6</groovy.version>
         <grouperClient.version>1.6.3</grouperClient.version>
-        <hibernate.version>4.1.7.Final</hibernate.version>
+        <hibernate.version>4.1.9.Final</hibernate.version>
         <hibernate-jpamodelgen.version>1.2.0.Final</hibernate-jpamodelgen.version>
         <hibernate-jpa-api.version>1.0.1.Final</hibernate-jpa-api.version>
-        <hsqldb.version>2.2.8</hsqldb.version>
-        <icu4j.version>4.0.1</icu4j.version>
-        <jackson.version>1.9.10</jackson.version>
+        <hsqldb.version>2.2.9</hsqldb.version>
+        <icu4j.version>50.1.1</icu4j.version>
+        <jackson.version>1.9.11</jackson.version>
         <jansi.version>1.8</jansi.version>
-        <javassist.version>3.16.1-GA</javassist.version> 
+        <javassist.version>3.17.1-GA</javassist.version>
+        <jasig-portlet-utils.version>1.0.1</jasig-portlet-utils.version> 
         <jasypt.version>1.9.0</jasypt.version>
         <jaxb2basics.version>0.6.4</jaxb2basics.version>
         <jdom.version>1.0</jdom.version>
+        <jgroups.version>3.2.7.Final</jgroups.version>
         <jline.version>1.0</jline.version>
         <joda-time.version>2.1</joda-time.version>
         <json-lib-ext-spring.version>1.0.2</json-lib-ext-spring.version>
         <jsp-api.version>2.1.1</jsp-api.version>
         <jstl.version>1.1.2</jstl.version>
         <jtidy.version>4aug2000r7-dev</jtidy.version>
-        <junit.version>4.10</junit.version>
+        <junit.version>4.11</junit.version>
         <log4j.version>1.2.17</log4j.version>
         <mail.version>1.4.5</mail.version>
-        <mockito.version>1.9.0</mockito.version>
+        <mockito.version>1.9.5</mockito.version>
         <objenesis.version>1.2</objenesis.version>
-        <org.springframework.webflow.version>2.3.1.RELEASE</org.springframework.webflow.version>
+        <org.springframework.webflow.version>2.3.2.RELEASE</org.springframework.webflow.version>
         <oro.version>2.0.8</oro.version>
         <persistence-api.version>1.0</persistence-api.version>
-        <person-directory.version>1.5.1</person-directory.version>
+        <person-directory.version>1.5.2-M1</person-directory.version>
         <pluto.version>2.1.0-M3</pluto.version>
         <portlet-api.version>2.0</portlet-api.version>
         <quartz.version>1.8.4</quartz.version>
-        <resource-server.version>1.0.27</resource-server.version>
+        <resource-server.version>1.0.28</resource-server.version>
         <servlet-api.version>2.5</servlet-api.version>
-        <slf4j.version>1.7.1</slf4j.version>
-        <spring-framework.version>3.1.2.RELEASE</spring-framework.version>
+        <slf4j.version>1.7.2</slf4j.version>
+        <spring-framework.version>3.1.4.RELEASE</spring-framework.version>
         <spring-ldap.version>1.3.1.RELEASE</spring-ldap.version>
         <spring-security.version>3.1.3.RELEASE</spring-security.version>
         <standard.version>1.1.2</standard.version>
         <stax-api.version>1.0.1</stax-api.version>
         <staxmate.version>2.0.1</staxmate.version>
         <stringtemplate.version>4.0.2</stringtemplate.version>
-        <tomcat-jdbc.version>7.0.32</tomcat-jdbc.version>
+        <tomcat-jdbc.version>7.0.35</tomcat-jdbc.version>
         <uportal-ear-deployer.version>1.0.1</uportal-ear-deployer.version>
         <uportal-search-api.version>4.0.4</uportal-search-api.version>
-        <usertype.version>3.0.0.CR4</usertype.version>
+        <uportal-maven-plugin.version>1.0.0</uportal-maven-plugin.version>
+        <usertype.version>3.0.0.GA</usertype.version>
         <woodstox.version>4.1.4</woodstox.version>
         <xmlunit.version>1.3</xmlunit.version>
-        <xstream.version>1.4.2</xstream.version>
+        <xstream.version>1.4.4</xstream.version>
         
         <project.build.sourceVersion>1.6</project.build.sourceVersion>
         <project.build.targetVersion>1.6</project.build.targetVersion>
@@ -217,6 +221,7 @@
         <module>uportal-ear</module>
         <module>uportal-portlets-overlay</module>
         <module>bootstrap</module>
+        <module>uportal-search-api</module>
     </modules>
 
     <dependencyManagement>
@@ -337,6 +342,17 @@
                 <version>${commons-httpclient.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>${commons-httpcomponents.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>${commons-io.version}</version>
@@ -412,6 +428,11 @@
                 <groupId>org.javassist</groupId>
                 <artifactId>javassist</artifactId>
                 <version>${javassist.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jgroups</groupId>
+                <artifactId>jgroups</artifactId>
+                <version>${jgroups.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.ibm.icu</groupId>
@@ -721,6 +742,17 @@
                 <groupId>org.jasig.portal</groupId>
                 <artifactId>umobile-ear-deployer</artifactId>
                 <version>${umobile-ear-deployer.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jasig.portlet.utils</groupId>
+                <artifactId>portlet-jdbc-util</artifactId>
+                <version>${jasig-portlet-utils.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.jasig.resourceserver</groupId>
@@ -1131,11 +1163,11 @@
             <plugins>
                 <plugin>
                     <artifactId>maven-clean-plugin</artifactId>
-                    <version>2.4.1</version>
+                    <version>2.5</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>2.3.2</version>
+                    <version>3.0</version>
                     <configuration>
                         <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
@@ -1146,15 +1178,15 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-ear-plugin</artifactId>
-                    <version>2.7</version>
+                    <version>2.8</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>1.0.1</version>
+                    <version>1.2</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-install-plugin</artifactId>
-                    <version>2.3.1</version>
+                    <version>2.4</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-jar-plugin</artifactId>
@@ -1162,7 +1194,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>2.2.1</version>
+                    <version>2.4</version>
                     <configuration>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
                         <localCheckout>true</localCheckout>
@@ -1172,7 +1204,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>2.5</version>
+                    <version>2.6</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jasig.maven</groupId>
@@ -1207,15 +1239,15 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>2.1.2</version>
+                    <version>2.2.1</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.12</version>
+                    <version>2.13</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-war-plugin</artifactId>
-                    <version>2.2</version>
+                    <version>2.3</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.portals.pluto</groupId>
@@ -1228,9 +1260,26 @@
                     <version>1.7</version>
                 </plugin>
                 <plugin>
+                    <groupId>org.jasig.resourceserver</groupId>
+                    <artifactId>resource-server-plugin</artifactId>
+                    <version>${resource-server.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jasig.maven</groupId>
+                    <artifactId>sass-maven-plugin</artifactId>
+                    <version>1.0.2</version>
+                </plugin>
+                <plugin>
                     <groupId>org.jasig.portal</groupId>
                     <artifactId>maven-uportal-plugin</artifactId>
                     <version>1.0.0-M4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jasig.portal.maven</groupId>
+                    <artifactId>uportal-maven-plugin</artifactId>
+                    <version>${uportal-maven-plugin.version}</version>
+                    <!-- extensions must be set to true to pick up the custom phases -->
+                    <extensions>true</extensions>
                 </plugin>
                 <plugin>
                     <groupId>org.jvnet.jaxb2.maven2</groupId>

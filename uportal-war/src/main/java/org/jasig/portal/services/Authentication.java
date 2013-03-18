@@ -37,9 +37,11 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPrincipal;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
+import org.jasig.portal.security.ThreadNamingRequestFilter;
 import org.jasig.portal.security.provider.ChainingSecurityContext;
 import org.jasig.portal.utils.MovingAverage;
 import org.jasig.portal.utils.MovingAverageSample;
+import org.jasig.portal.utils.cache.UsernameTaggedCacheEntryPurger;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,9 +71,21 @@ public class Authentication {
     private static final MovingAverage authenticationTimes = new MovingAverage();
     public static MovingAverageSample lastAuthentication = new MovingAverageSample();
 
+    private ThreadNamingRequestFilter threadNamingRequestFilter;
     private IUserIdentityStore userIdentityStore;
     private IPortalAuthEventFactory portalEventFactory;
     private IPersonAttributeDao personAttributeDao;
+    private UsernameTaggedCacheEntryPurger usernameTaggedCacheEntryPurger;
+
+    @Autowired
+    public void setUsernameTaggedCacheEntryPurger(UsernameTaggedCacheEntryPurger usernameTaggedCacheEntryPurger) {
+        this.usernameTaggedCacheEntryPurger = usernameTaggedCacheEntryPurger;
+    }
+
+    @Autowired
+    public void setThreadNamingRequestFilter(ThreadNamingRequestFilter threadNamingRequestFilter) {
+        this.threadNamingRequestFilter = threadNamingRequestFilter;
+    }
 
     @Autowired
     public void setPersonAttributeDao(@Qualifier("personAttributeDao") IPersonAttributeDao personAttributeDao) {
@@ -119,7 +133,17 @@ public class Authentication {
             // Add the authenticated username to the person object
             // the login name may have been provided or reset by the security provider
             // so this needs to be done after authentication.
-            person.setAttribute(IPerson.USERNAME, securityContext.getPrincipal().getUID());
+            final String userName = securityContext.getPrincipal().getUID();
+            person.setAttribute(IPerson.USERNAME, userName);
+            
+            threadNamingRequestFilter.updateCurrentUsername(userName);
+            
+            //Clear all existing group data about the person
+            GroupService.finishedSession(person);
+            
+            //Clear all existing cached data about the person
+            this.usernameTaggedCacheEntryPurger.purgeTaggedCacheEntries(userName);
+            
             // Retrieve the additional descriptor from the security context
             final IAdditionalDescriptor addInfo = person.getSecurityContext().getAdditionalDescriptor();
             // Process the additional descriptor if one was created
@@ -159,10 +183,13 @@ public class Authentication {
                     }
                 }
             }
+            
+            
             // Populate the person object using the PersonDirectory if applicable
             if (PropertiesManager.getPropertyAsBoolean("org.jasig.portal.services.Authentication.usePersonDirectory")) {
                 // Retrieve all of the attributes associated with the person logging in
-                final String username = this.getUsername(person);
+                final String username = person.getUserName();
+
                 final IPersonAttributes personAttributes = this.personAttributeDao.getPerson(username);
 
                 if (personAttributes != null) {
@@ -212,17 +239,9 @@ public class Authentication {
                 throw new PortalSecurityException("Authentication Service: Exception retrieving UID");
             }
         }
-        
-        this.portalEventFactory.publishLoginEvent(request, this, person);
-    }
 
-    /**
-     * Return the username to be used for authorization (exit hook)
-     * @param person
-     * @return usernmae
-     */
-    protected String getUsername(final IPerson person) {
-        return (String) person.getAttribute(IPerson.USERNAME);
+        //Publish a login event for the person
+        this.portalEventFactory.publishLoginEvent(request, this, person);
     }
 
     /**

@@ -36,6 +36,7 @@ import org.apache.commons.io.output.NullWriter;
 import org.apache.commons.io.output.ProxyWriter;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.utils.DelegatingServletOutputStream;
+import org.jasig.portal.utils.Servlet3WrapperUtils;
 
 /**
  * Portlet response wrapper. Makes sure the portlet doesn't screw with the portal's response
@@ -50,8 +51,13 @@ public class PortletHttpServletResponseWrapper extends AbstractHttpServletRespon
     private final IPortletWindow portletWindow;
     private ServletOutputStream servletOutputStream;
     private PrintWriter printWriter;
+    
+    public static HttpServletResponse create(HttpServletResponse httpServletResponse, IPortletWindow portletWindow) {
+        final HttpServletResponse proxy = new PortletHttpServletResponseWrapper(httpServletResponse, portletWindow);
+        return Servlet3WrapperUtils.addServlet3Wrapper(proxy, httpServletResponse);
+    }
 
-    public PortletHttpServletResponseWrapper(HttpServletResponse httpServletResponse, IPortletWindow portletWindow) {
+    PortletHttpServletResponseWrapper(HttpServletResponse httpServletResponse, IPortletWindow portletWindow) {
         super(httpServletResponse);
         this.portletWindow = portletWindow;
     }

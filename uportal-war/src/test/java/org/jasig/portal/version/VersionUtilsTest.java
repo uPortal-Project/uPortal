@@ -19,7 +19,10 @@
 package org.jasig.portal.version;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
 
 import org.jasig.portal.version.om.Version;
 import org.junit.Test;
@@ -32,5 +35,68 @@ public class VersionUtilsTest {
         assertEquals(4, version.getMajor());
         assertEquals(0, version.getMinor());
         assertEquals(5, version.getPatch());
+        assertNull(version.getLocal());
+        
+        
+        version = VersionUtils.parseVersion("4.0.5.3");
+        assertNotNull(version);
+        assertEquals(4, version.getMajor());
+        assertEquals(0, version.getMinor());
+        assertEquals(5, version.getPatch());
+        assertEquals(Integer.valueOf(3), version.getLocal());
+    }
+    
+
+    @Test
+    public void testVersionUpgrade() {
+        Version v1 = VersionUtils.parseVersion("4.0.5");
+        Version v2 = VersionUtils.parseVersion("4.0.5");
+        
+        assertTrue(VersionUtils.canUpdate(v1, v2));
+        assertTrue(VersionUtils.canUpdate(v2, v1));
+        
+        v2 = VersionUtils.parseVersion("4.0.5.1");
+        assertTrue(VersionUtils.canUpdate(v1, v2));
+        assertFalse(VersionUtils.canUpdate(v2, v1));
+        
+        v1 = VersionUtils.parseVersion("4.0.5.2");
+        v2 = VersionUtils.parseVersion("4.0.5.3");
+        assertTrue(VersionUtils.canUpdate(v1, v2));
+        assertFalse(VersionUtils.canUpdate(v2, v1));
+        
+        v2 = VersionUtils.parseVersion("4.0.6");
+        assertTrue(VersionUtils.canUpdate(v1, v2));
+        assertFalse(VersionUtils.canUpdate(v2, v1));
+    }
+    
+
+    @Test
+    public void testGetMostSpecificMatchingField() {
+        Version v1 = VersionUtils.parseVersion("4.0.5");
+        Version v2 = VersionUtils.parseVersion("4.0.5");
+        
+        assertEquals(Version.Field.LOCAL, VersionUtils.getMostSpecificMatchingField(v1, v2));
+        assertEquals(Version.Field.LOCAL, VersionUtils.getMostSpecificMatchingField(v2, v1));
+        
+        v2 = VersionUtils.parseVersion("4.0.5.1");
+        assertEquals(Version.Field.PATCH, VersionUtils.getMostSpecificMatchingField(v1, v2));
+        assertEquals(Version.Field.PATCH, VersionUtils.getMostSpecificMatchingField(v2, v1));
+        
+        v1 = VersionUtils.parseVersion("4.0.5.2");
+        v2 = VersionUtils.parseVersion("4.0.5.3");
+        assertEquals(Version.Field.PATCH, VersionUtils.getMostSpecificMatchingField(v1, v2));
+        assertEquals(Version.Field.PATCH, VersionUtils.getMostSpecificMatchingField(v2, v1));
+        
+        v2 = VersionUtils.parseVersion("4.0.6");
+        assertEquals(Version.Field.MINOR, VersionUtils.getMostSpecificMatchingField(v1, v2));
+        assertEquals(Version.Field.MINOR, VersionUtils.getMostSpecificMatchingField(v2, v1));
+        
+        v2 = VersionUtils.parseVersion("4.1.0.0");
+        assertEquals(Version.Field.MAJOR, VersionUtils.getMostSpecificMatchingField(v1, v2));
+        assertEquals(Version.Field.MAJOR, VersionUtils.getMostSpecificMatchingField(v2, v1));
+        
+        v2 = VersionUtils.parseVersion("5.6.7");
+        assertNull(VersionUtils.getMostSpecificMatchingField(v1, v2));
+        assertNull(VersionUtils.getMostSpecificMatchingField(v2, v1));
     }
 }

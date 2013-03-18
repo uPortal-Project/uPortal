@@ -24,13 +24,20 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.portlet.ActionRequest;
+import javax.portlet.ActionResponse;
 import javax.portlet.Event;
 import javax.portlet.EventRequest;
 import javax.portlet.EventResponse;
+import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import javax.portlet.RenderRequest;
+import javax.portlet.WindowState;
+import javax.portlet.WindowStateException;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.portlet.container.properties.ThemeNameRequestPropertiesManager;
 import org.jasig.portal.portlets.lookup.PersonLookupHelperImpl;
 import org.jasig.portal.portlets.search.DirectoryAttributeType;
@@ -47,9 +54,11 @@ import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.portlet.ModelAndView;
+import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.EventMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 
@@ -57,6 +66,10 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
 @RequestMapping("VIEW")
 public class DirectoryPortletController {
     
+    private static final String MAXIMIZE_ON_SEARCH_PREFERENCE = "DirectoryPortletController.maximizeOnSearch";
+    
+    protected final Log log = LogFactory.getLog(getClass());
+
     private IPortalRequestUtils portalRequestUtils;
     
     @Autowired(required = true)
@@ -173,6 +186,33 @@ public class DirectoryPortletController {
         model.put("attributeNames", this.displayAttributes);
 
         return new ModelAndView(viewName, model);
+    }
+    
+    @ActionMapping
+    public void submitSearch(ActionRequest request, ActionResponse response, 
+            @RequestParam(value = "query", required = false) String query) {
+        
+        // Should we request to maximize?
+        PortletPreferences prefs = request.getPreferences();
+        boolean maximize = Boolean.parseBoolean(prefs.getValue(MAXIMIZE_ON_SEARCH_PREFERENCE, "true"));  // default is true
+        if (maximize) {
+            try {
+                response.setWindowState(WindowState.MAXIMIZED);
+            } catch (WindowStateException e) {
+                log.warn("Failed to set the window state to MAXIMIZED", e);
+            }
+        }
+        
+        // Forward the query parameter...
+        if (query != null) {
+            response.setRenderParameter("query", query);
+        }
+
+    }
+    
+    @ModelAttribute("maxResults")
+    public int getMaxResults() {
+        return lookupHelper.getMaxResults();
     }
     
     /**

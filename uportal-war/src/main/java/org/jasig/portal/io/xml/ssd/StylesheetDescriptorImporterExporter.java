@@ -215,6 +215,7 @@ public class StylesheetDescriptorImporterExporter extends AbstractJaxbDataHandle
             copyProperties(outputPropertyDescriptor, extOutputPropertyDescriptor);
             extOutputPropertyDescriptors.add(extOutputPropertyDescriptor);
         }
+        Collections.sort(extOutputPropertyDescriptors, ExternalStylesheetDataNameComparator.INSTANCE);
         
         final Collection<IStylesheetParameterDescriptor> stylesheetParameterDescriptors = stylesheetDescriptor.getStylesheetParameterDescriptors();
         final List<ExternalStylesheetParameterDescriptor> extStylesheetParameterDescriptors = externalStylesheetDescriptor.getStylesheetParameters();
@@ -223,6 +224,7 @@ public class StylesheetDescriptorImporterExporter extends AbstractJaxbDataHandle
             copyProperties(stylesheetParameterDescriptor, extStylesheetParameterDescriptor);
             extStylesheetParameterDescriptors.add(extStylesheetParameterDescriptor);
         }
+        Collections.sort(extStylesheetParameterDescriptors, ExternalStylesheetDataNameComparator.INSTANCE);
         
         final Collection<ILayoutAttributeDescriptor> layoutAttributeDescriptors = stylesheetDescriptor.getLayoutAttributeDescriptors();
         final List<ExternalLayoutAttributeDescriptor> extLayoutAttributeDescriptors = externalStylesheetDescriptor.getLayoutAttributes();
@@ -232,6 +234,7 @@ public class StylesheetDescriptorImporterExporter extends AbstractJaxbDataHandle
             extLayoutAttributeDescriptor.getTargetElements().addAll(layoutAttributeDescriptor.getTargetElementNames());
             extLayoutAttributeDescriptors.add(extLayoutAttributeDescriptor);
         }
+        Collections.sort(extLayoutAttributeDescriptors, ExternalStylesheetDataNameComparator.INSTANCE);
         
         return externalStylesheetDescriptor;
 	}

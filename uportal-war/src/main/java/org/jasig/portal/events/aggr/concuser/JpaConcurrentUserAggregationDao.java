@@ -42,10 +42,11 @@ import org.springframework.stereotype.Repository;
 public class JpaConcurrentUserAggregationDao extends
         JpaBaseAggregationDao<ConcurrentUserAggregationImpl, ConcurrentUserAggregationKey> implements
         ConcurrentUserAggregationPrivateDao {
+
     public JpaConcurrentUserAggregationDao() {
         super(ConcurrentUserAggregationImpl.class);
     }
-    
+
     @Override
     protected void addFetches(Root<ConcurrentUserAggregationImpl> root) {
         root.fetch(ConcurrentUserAggregationImpl_.uniqueStrings, JoinType.LEFT);        
@@ -70,4 +71,5 @@ public class JpaConcurrentUserAggregationDao extends
     protected ConcurrentUserAggregationKey getAggregationKey(ConcurrentUserAggregationImpl instance) {
         return instance.getAggregationKey();
     }
+
 }

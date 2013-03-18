@@ -30,7 +30,7 @@ import org.jasig.portal.events.aggr.tabs.AggregatedTabMapping;
  * 
  * @author Eric Dalquist
  */
-final class TabRenderAggregationKeyImpl extends BaseAggregationKeyImpl implements TabRenderAggregationKey {
+final public class TabRenderAggregationKeyImpl extends BaseAggregationKeyImpl implements TabRenderAggregationKey {
     private static final long serialVersionUID = 1L;
     
     private final AggregatedTabMapping tabMapping;

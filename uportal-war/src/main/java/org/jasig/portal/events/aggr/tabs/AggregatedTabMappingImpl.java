@@ -86,6 +86,11 @@ public final class AggregatedTabMappingImpl implements AggregatedTabMapping, Ser
     }
 
     @Override
+    public long getId() {
+        return id;
+    }
+
+    @Override
     public String getFragmentName() {
         return this.fragmentName;
     }
@@ -137,5 +142,10 @@ public final class AggregatedTabMappingImpl implements AggregatedTabMapping, Ser
     @Override
     public String toString() {
         return "AggregatedTabMappingImpl [id=" + id + ", fragmentName=" + fragmentName + ", tabName=" + tabName + "]";
+    }
+
+    @Override
+    public String getDisplayString() {
+        return getTabName() + " (" + getFragmentName() + ")";
     }
 }

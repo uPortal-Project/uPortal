@@ -45,6 +45,7 @@
             <version>${jdbc.version}</version>
             <scope>compile</scope>
         </dependency>
+
     </dependencies>
     
 
@@ -62,84 +63,110 @@
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
+                    <filters>
+                        <filter>${basedir}/../../${filters.file}</filter>
+                    </filters>
                     <dependentWarExcludes>
                         WEB-INF/lib/hsqldb-*.jar
                     </dependentWarExcludes>
-                    <webResources>
-                        <resource>
-                            <directory>${basedir}/src/main/webapp</directory>
-                            <includes>
-                                <include>WEB-INF/context/importExportContext.xml</include>
-                            </includes>
-                            <filtering>true</filtering>
-                        </resource>
-                    </webResources>
                 </configuration>
             </plugin>
-           <plugin>
+            <plugin>
                 <groupId>org.apache.portals.pluto</groupId>
                 <artifactId>maven-pluto-plugin</artifactId>
             </plugin>
+            <!-- Plug-in to add lifecycles to support db-init and data-import -->
+            <plugin>
+                <groupId>org.jasig.portal.maven</groupId>
+                <artifactId>uportal-maven-plugin</artifactId>
+                <!-- extensions must be set to true to pick up the custom phases -->
+                <extensions>true</extensions>
+            </plugin>
+            <!-- To drop and recreate the calendar db tables, use mvn db-init -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>hibernate3-maven-plugin</artifactId>
+                <version>2.2</version>
+                <executions>
+                    <execution>
+                        <phase>db-init</phase>
+                        <goals>
+                            <goal>hbm2ddl</goal>
+                        </goals>
+                        <configuration>
+                            <componentProperties>
+                                <propertyfile>${project.build.directory}/classes/datasource.properties</propertyfile>
+                                <drop>true</drop>
+                            </componentProperties>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>${jdbc.groupId}</groupId>
+                        <artifactId>${jdbc.artifactId}</artifactId>
+                        <version>${jdbc.version}</version>
+                        <scope>compile</scope>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jasig.portlet</groupId>
+                        <artifactId>CalendarPortlet</artifactId>
+                        <version>${CalendarPortlet.version}</version>
+                        <classifier>classes</classifier>
+                        <type>jar</type>
+                        <scope>compile</scope>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <!-- To import the calendar db tables, use mvn [-Ddir=dir] data-import -->
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>data-import</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>rhino</groupId>
+                        <artifactId>js</artifactId>
+                        <version>1.7R1</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jasig.portlet</groupId>
+                        <artifactId>CalendarPortlet</artifactId>
+                        <version>${CalendarPortlet.version}</version>
+                        <classifier>classes</classifier>
+                        <type>jar</type>
+                        <scope>compile</scope>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <tasks>
+                        <!-- Set default value of data location if it is not set -->
+                        <property name="dir" value="${basedir}/src/main/data"/>
+
+                        <property name="runtime_classpath" refid="maven.runtime.classpath" />
+                        <property name="plugin_classpath" refid="maven.plugin.classpath" />
+
+                        <java failonerror="true" classname="org.danann.cernunnos.runtime.Main">
+                            <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+                            <classpath>
+                                <pathelement path="${project.build.directory}/${project.artifactId}/WEB-INF"/>
+                                <pathelement path="${runtime_classpath}" />
+                                <pathelement path="${plugin_classpath}" />
+                            </classpath>
+
+                            <arg value="classpath://org/jasig/portlet/calendar/io/import.crn.xml" />
+                            <arg value="${dir}" />
+                            <arg value="classpath://context/importExportContext.xml" />
+                        </java>
+                    </tasks>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>portlet-data-import</id>
-            <activation>
-                <property>
-                    <name>portlet-data-import</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.jasig.portlet</groupId>
-                                <artifactId>CalendarPortlet</artifactId>
-                                <version>${CalendarPortlet.version}</version>
-                                <classifier>classes</classifier>
-                                <type>jar</type>
-                            </dependency>
-                            <dependency>
-                                <groupId>javax.servlet</groupId>
-                                <artifactId>servlet-api</artifactId>
-                                <version>2.4</version>
-                                <type>jar</type>
-                            </dependency>
-							<dependency>
-							    <groupId>rhino</groupId>
-							    <artifactId>js</artifactId>
-							    <version>1.7R1</version>
-							</dependency>
-							<dependency>
-							    <groupId>${jdbc.groupId}</groupId>
-							    <artifactId>${jdbc.artifactId}</artifactId>
-							    <version>${jdbc.version}</version>
-							</dependency>
-                        </dependencies>
-                        <configuration>
-                            <tasks>
-                                <property name="plugin_classpath" refid="maven.plugin.classpath" />
-
-                                <java failonerror="true" classname="org.danann.cernunnos.runtime.Main">
-                                    <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
-                                    <classpath>
-                                        <pathelement path="${plugin_classpath}" />
-                                    </classpath>
-                            
-                                    <arg value="classpath://org/jasig/portlet/calendar/io/import.crn.xml" />
-                                    <arg value="${basedir}/portlet-data" />
-                                    <arg value="${project.build.directory}/${artifactId}/WEB-INF/context/importExportContext.xml" />
-                                </java>
-                            </tasks>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
 </project>

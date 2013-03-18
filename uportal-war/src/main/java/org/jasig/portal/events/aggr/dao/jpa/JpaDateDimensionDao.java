@@ -22,6 +22,8 @@ package org.jasig.portal.events.aggr.dao.jpa;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.FlushModeType;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -176,6 +178,7 @@ public class JpaDateDimensionDao extends BaseAggrEventsJpaDao implements DateDim
     @Override
     public List<DateDimension> getDateDimensions() {
         final TypedQuery<DateDimensionImpl> query = this.createCachedQuery(this.findAllDateDimensionsQuery);
+        query.setFlushMode(FlushModeType.COMMIT);
         
         final List<DateDimensionImpl> portletDefinitions = query.getResultList();
         return new ArrayList<DateDimension>(portletDefinitions);
@@ -184,6 +187,7 @@ public class JpaDateDimensionDao extends BaseAggrEventsJpaDao implements DateDim
     @Override
     public List<DateDimension> getDateDimensionsBetween(DateMidnight start, DateMidnight end) {
         final TypedQuery<DateDimensionImpl> query = this.createCachedQuery(this.findAllDateDimensionsBetweenQuery);
+        query.setFlushMode(FlushModeType.COMMIT);
         query.setParameter(this.dateTimeParameter, start.toLocalDate());
         query.setParameter(this.endDateTimeParameter, end.toLocalDate());
         
@@ -194,6 +198,7 @@ public class JpaDateDimensionDao extends BaseAggrEventsJpaDao implements DateDim
     @Override
     public List<DateDimension> getDateDimensionsWithoutTerm() {
         final TypedQuery<DateDimensionImpl> query = this.createQuery(this.findAllDateDimensionsWithoutTermQuery);
+        query.setFlushMode(FlushModeType.COMMIT);
         
         final List<DateDimensionImpl> portletDefinitions = query.getResultList();
         return new ArrayList<DateDimension>(portletDefinitions);
@@ -201,9 +206,15 @@ public class JpaDateDimensionDao extends BaseAggrEventsJpaDao implements DateDim
 
     @Override
     public DateDimension getDateDimensionById(long key) {
-        final DateDimension dateDimension = this.getEntityManager().find(DateDimensionImpl.class, key);
-        
-        return dateDimension;
+        final EntityManager entityManager = this.getEntityManager();
+        final FlushModeType flushMode = entityManager.getFlushMode();
+        try {
+            entityManager.setFlushMode(FlushModeType.COMMIT);
+            return entityManager.find(DateDimensionImpl.class, key);
+        }
+        finally {
+            entityManager.setFlushMode(flushMode);
+        }
     }
 
     @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)

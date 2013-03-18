@@ -306,7 +306,42 @@
             <title>Statistics</title>
         </portlet-info>
     </portlet>
-    
+
+    <portlet>
+        <portlet-name>PortalActivity</portlet-name>
+        <display-name xml:lang="en">Portal Activity</display-name>
+        <portlet-class>org.springframework.web.portlet.ForwardingDispatcherPortlet</portlet-class>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>classpath:/properties/contexts/portlet/PortalActivity-portlet.xml</value>
+        </init-param>
+        <expiration-cache>0</expiration-cache>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>VIEW</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <portlet-info>
+            <title>Portal Activity</title>
+        </portlet-info>
+        <portlet-preferences>
+            <preference>
+                <name>PortalActivity.ActivityController.masterGroup</name>
+                <value>Everyone</value>
+            </preference>
+            <preference>
+                <name>PortalActivity.ActivityController.displayOther</name>
+                <value>true</value>
+            </preference>
+            <preference>
+                <name>PortalActivity.ActivityController.displayGroups</name>
+                <value>Students</value>
+                <value>Faculty</value>
+                <value>Staff</value>
+            </preference>
+        </portlet-preferences>
+    </portlet>
+
     <portlet>
         <portlet-name>Snooper</portlet-name>
         <display-name xml:lang="en">User Locale</display-name>
@@ -535,6 +570,13 @@
         <portlet-info>
             <title>Directory</title>
         </portlet-info>
+
+        <portlet-preferences>
+            <preference>
+                <name>DirectoryPortletController.maximizeOnSearch</name>
+                <value>true</value>
+            </preference>
+        </portlet-preferences>
         
         <supported-processing-event>
             <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchRequest</qname>

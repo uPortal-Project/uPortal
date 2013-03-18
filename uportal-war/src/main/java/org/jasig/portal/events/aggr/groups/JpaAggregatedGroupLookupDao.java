@@ -24,6 +24,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.persistence.FlushModeType;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -114,6 +115,7 @@ public class JpaAggregatedGroupLookupDao extends BaseAggrEventsJpaDao implements
     
     private final Set<String> warnedGroupKeys = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 
+    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     @Override
     public AggregatedGroupMapping getGroupMapping(final String portalGroupKey) {
         final IEntityGroup group = compositeGroupService.findGroup(portalGroupKey);
@@ -137,6 +139,7 @@ public class JpaAggregatedGroupLookupDao extends BaseAggrEventsJpaDao implements
     @Override
     public Set<AggregatedGroupMapping> getGroupMappings() {
         final TypedQuery<AggregatedGroupMappingImpl> cachedQuery = this.createCachedQuery(this.findAllGroupMappingsQuery);
+        cachedQuery.setFlushMode(FlushModeType.COMMIT);
         
         return new LinkedHashSet<AggregatedGroupMapping>(cachedQuery.getResultList());
     }

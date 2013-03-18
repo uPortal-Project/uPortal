@@ -95,6 +95,10 @@ public abstract class PortletExecutionEvent extends PortalEvent {
         return this.fname;
     }
 
+    public Map<String, List<String>> getParameters() {
+        return Collections.unmodifiableMap(this.parameters);
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */

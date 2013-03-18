@@ -23,6 +23,8 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcOperations;
@@ -36,6 +38,8 @@ import com.google.common.base.Functions;
  * @author Eric Dalquist
  */
 public final class JdbcUtils {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JdbcUtils.class);
+    
     private JdbcUtils() {
     }
     
@@ -48,6 +52,24 @@ public final class JdbcUtils {
      * @return The result returned from the callback
      */
     public static final <T> T dropTableIfExists(JdbcOperations jdbcOperations, final String table, final Function<JdbcOperations, T> preDropCallback) {
+        LOGGER.info("Dropping table: " + table);
+        
+        final boolean tableExists = doesTableExist(jdbcOperations, table);
+        
+        if (tableExists) {
+            final T ret = preDropCallback.apply(jdbcOperations);
+            jdbcOperations.execute("DROP TABLE " + table);
+            return ret;
+        }
+        
+        return null;
+    }
+
+    /**
+     * Check if the specified table exists
+     */
+    public static boolean doesTableExist(JdbcOperations jdbcOperations, final String table) {
+        
         final boolean tableExists = jdbcOperations.execute(new ConnectionCallback<Boolean>() {
             @Override
             public Boolean doInConnection(Connection con) throws SQLException,
@@ -65,14 +87,7 @@ public final class JdbcUtils {
                 return false;
             }
         });
-        
-        if (tableExists) {
-            final T ret = preDropCallback.apply(jdbcOperations);
-            jdbcOperations.execute("DROP TABLE " + table);
-            return ret;
-        }
-        
-        return null;
+        return tableExists;
     }
     
     /**

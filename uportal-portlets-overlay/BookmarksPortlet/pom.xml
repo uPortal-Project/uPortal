@@ -45,6 +45,9 @@
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
+                    <filters>
+                        <filter>${basedir}/../../${filters.file}</filter>
+                    </filters>
                     <dependentWarExcludes>
                         WEB-INF/lib/hsqldb-*.jar
                     </dependentWarExcludes>

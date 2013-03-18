@@ -22,7 +22,7 @@ package org.jasig.portal.events.aggr.portlets;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 
 /**
- * A mapped tab name
+ * A mapped portlet name
  * 
  * @author Eric Dalquist
  */
@@ -32,7 +32,7 @@ public interface AggregatedPortletMapping {
      * @return fname of the mapped portlet
      * @see IPortletDefinition#getFName()
      */
-    String getFName();
+    String getFname();
     
     /**
      * @return the name of the mapped portlet

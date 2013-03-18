@@ -42,6 +42,12 @@
     <bean id="stylesheetUserPreferencesDao" class="org.jasig.portal.layout.dao.jpa.JpaStylesheetUserPreferencesDao" />
     <bean id="userFragmentSubscriptionDao" class="org.jasig.portal.fragment.subscribe.dao.jpa.JpaUserFragmentSubscriptionDaoImpl" />
     <bean id="versionDao" class="org.jasig.portal.version.dao.jpa.JpaVersionDao" />
+    <bean id="pingDao" class="org.jasig.portal.jgroups.protocols.JdbcPingDao">
+        <property name="jdbcOperations" ref="jdbcOperations" />
+    </bean>
+    <bean id="authDao" class="org.jasig.portal.jgroups.auth.JdbcAuthDao">
+        <property name="jdbcOperations" ref="jdbcOperations" />
+    </bean>
     
     <bean id="localPropertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="properties">
@@ -49,6 +55,10 @@
                 <prop key="persistenceUnitName">PortalDb</prop>
             </props>
         </property>
+    </bean>
+    <bean id="jdbcOperations" class="org.springframework.jdbc.core.JdbcTemplate">
+        <qualifier value="PortalDb"/>
+        <property name="dataSource" ref="PortalDb" />
     </bean>
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <qualifier value="PortalDb" />

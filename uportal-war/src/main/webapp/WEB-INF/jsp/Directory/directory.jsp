@@ -21,7 +21,7 @@
 
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 
-<portlet:renderURL var="formUrl"/>
+<portlet:actionURL var="formUrl"/>
 <c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet -->
@@ -93,10 +93,15 @@
                             </div>
                         </c:forEach>
                     </div>
-                
+
                 </div>
             </div>
         </c:if>
+
+        <div class="portlet-msg-info portlet-content">
+            <h4><spring:message code="max.search.results"/>: <c:out value="${maxResults}"/></h4>
+            <p><spring:message code="try.narrowing.your.search"/></p>
+        </div>
 
       </div>  
 

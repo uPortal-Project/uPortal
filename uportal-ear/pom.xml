@@ -29,7 +29,7 @@
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
-
+        
         <dependency>
             <groupId>org.jasig.umobile.server.portlets-overlay</groupId>
             <artifactId>cas-proxy-test-portlet</artifactId>

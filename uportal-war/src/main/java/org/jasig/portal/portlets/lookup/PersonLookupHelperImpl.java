@@ -68,6 +68,16 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
     }
 
 
+    private int maxResults;
+
+    public void setMaxResults(int maxResults) {
+        this.maxResults = maxResults;
+    }
+
+    public int getMaxResults() {
+        return maxResults;
+    }
+
     /* (non-Javadoc)
      * @see org.jasig.portal.portlets.swapper.IPersonLookupHelper#getQueryAttributes(org.springframework.webflow.context.ExternalContext)
      */
@@ -194,9 +204,8 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
         Collections.sort(list, new DisplayNameComparator());
         
         // limit the list to a maximum of 10 returned results
-        // TODO: make this limit configurable
-        if (list.size() > 10) {
-            list = list.subList(0, 9);
+        if (list.size() > maxResults) {
+            list = list.subList(0, maxResults);
         }
         
         return list;

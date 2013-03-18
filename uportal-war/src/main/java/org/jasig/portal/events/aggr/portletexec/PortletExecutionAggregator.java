@@ -74,6 +74,12 @@ public class PortletExecutionAggregator extends BasePortalEventAggregator<Portle
     }
 
     @Override
+    public boolean supports(PortalEvent event)
+    {
+        return super.supports(event);
+    }
+
+    @Override
     protected BaseAggregationPrivateDao<PortletExecutionAggregationImpl, PortletExecutionAggregationKey> getAggregationDao() {
         return this.portletExecutionAggregationDao;
     }

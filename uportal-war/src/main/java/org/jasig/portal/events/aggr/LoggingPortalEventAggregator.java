@@ -38,6 +38,10 @@ public class LoggingPortalEventAggregator implements IPortalEventAggregator<Port
     public boolean supports(Class<? extends PortalEvent> type) {
         return true;
     }
+    
+    public boolean supports(PortalEvent event) {
+        return true;
+    }
 
     @Override
     public void aggregateEvent(PortalEvent e, EventSession eventSession,

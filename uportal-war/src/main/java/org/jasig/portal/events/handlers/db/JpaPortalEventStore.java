@@ -204,7 +204,13 @@ public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalE
         for (final ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY); results.next(); ) {
             final PersistentPortalEvent persistentPortalEvent = (PersistentPortalEvent)results.get(0);
             final PortalEvent portalEvent = this.toPortalEvent(persistentPortalEvent.getEventData(), persistentPortalEvent.getEventType());
-            final Boolean stopAggregation = handler.apply(portalEvent);
+            final Boolean eventHandled = handler.apply(portalEvent);
+            if (!eventHandled) {
+                this.logger.debug("Aggregation stop requested before processing event {}", portalEvent);
+                return false;
+            }
+            
+            //Mark the event as aggregated and store the mark
             persistentPortalEvent.setAggregated(true);
             session.persist(persistentPortalEvent);
             
@@ -214,14 +220,9 @@ public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalE
                 session.flush();
                 session.clear();
             }
-            
-            if (stopAggregation) {
-            	this.logger.debug("Aggregation stop requested after processing event {}", portalEvent);
-            	return true;
-            }
         }
         
-        return false;
+        return true;
     }
     
     @Override

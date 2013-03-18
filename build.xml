@@ -139,7 +139,9 @@
         <antcall target="deploy-ear">
             <param name="removeExisting" value="true" />
         </antcall>
-        <antcall target="initdb" />
+        <antcall target="initdb">
+            <param name="skipPackage" value="true" />
+        </antcall>
         <echo message="Finished initializing uPortal" />
     </target>
 
@@ -148,7 +150,9 @@
         <up-shell-batch>
             <antcall target="db" />
             <antcall target="db-hibernate" />
-            <antcall target="db-import" />
+            <antcall target="db-import">
+                <param name="skipPackage" value="true" />
+            </antcall>
         </up-shell-batch>
         <echo message="Finished initializing database" />
     </target>
@@ -205,6 +209,7 @@
             <antcall target="db-hibernate-portal" />
             <antcall target="db-hibernate-raw-events" />
             <antcall target="db-hibernate-aggr-events" />
+            <antcall target="db-hibernate-portlets" />
         </up-shell-batch>
     </target>
 
@@ -217,7 +222,6 @@
     </target>
 
     <target name="db-hibernate-portal" depends="prodPrompt" description="Drops then creates Hibernate managed tables for the portal">
-        <property name="schemaExportBean" value="portalDbHibernateExport" />
     	<property name="databaseQualifier" value="PortalDb" />
         <property name="export" value="true" />
         <property name="drop" value="true" />
@@ -231,9 +235,9 @@
             <equals arg1="${drop}" arg2="true" />
             <then>
                 <echo file="${portal-shell-script}" append="true">
-                    //hibernateDrop(String target, String schemaExportBeanName, boolean export, String outputFile)
+                    //hibernateDrop(String target, String databaseQualifier, boolean export, String outputFile)
                     portalShellBuildHelper.hibernateDrop("db-hibernate",
-                        '${schemaExportBean}',
+                        '${databaseQualifier}',
                         Boolean.parseBoolean('${export}'),
                         /${outputFileEscaped}/);
                 </echo>
@@ -243,13 +247,11 @@
     		<equals arg1="${create}" arg2="true" />
             <then>
                 <echo file="${portal-shell-script}" append="true">
-                    //hibernateCreate(String target, String schemaExportBeanName, boolean export, String outputFile)
+                    //hibernateCreate(String target, String databaseQualifier, boolean export, String outputFile)
                     portalShellBuildHelper.hibernateCreate("db-hibernate",
-                        '${schemaExportBean}',
+                	    '${databaseQualifier}',
                         Boolean.parseBoolean('${export}'),
                         /${outputFileEscaped}/);
-                	
-                	versionedDataUpdater.postInitDatabase('${databaseQualifier}');
                 </echo>
             </then>
         </if>
@@ -260,7 +262,6 @@
     </target>
 
     <target name="db-hibernate-portal-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for the portal schema">
-        <property name="schemaExportBean" value="portalDbHibernateExport" />
     	<property name="databaseQualifier" value="PortalDb" />
         <property name="export" value="true" />
         <property name="outputFile" value=" " />
@@ -272,15 +273,12 @@
         	logger.info("");
         	logger.info("");
         	logger.info("Update Database " + '${databaseQualifier}');
-        	versionedDataUpdater.preUpdateDatabase('${databaseQualifier}');
         	
-        	//hibernateUpdate(String target, String schemaExportBeanName, boolean export, String outputFile)
+        	//hibernateUpdate(String target, String databaseQualifier, boolean export, String outputFile)
             portalShellBuildHelper.hibernateUpdate("db-hibernate-update",
-                '${schemaExportBean}',
+        	    '${databaseQualifier}',
                 Boolean.parseBoolean('${export}'),
                 /${outputFileEscaped}/);
-        	
-        	versionedDataUpdater.postUpdateDatabase('${databaseQualifier}');
         </echo>
 
         <antcall target="up-shell">
@@ -306,29 +304,41 @@
 
     <target name="db-hibernate-raw-events" depends="prodPrompt" description="Drops then creates Hibernate managed tables used for raw portal event storage">
         <antcall target="db-hibernate-portal">
-            <param name="schemaExportBean" value="rawEventsDbHibernateExport" />
         	<param name="databaseQualifier" value="RawEventsDb" />
         </antcall>
     </target>
 
     <target name="db-hibernate-raw-events-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for raw portal event storage">
         <antcall target="db-hibernate-portal-update">
-            <param name="schemaExportBean" value="rawEventsDbHibernateExport" />
         	<param name="databaseQualifier" value="RawEventsDb" />
         </antcall>
     </target>
 
     <target name="db-hibernate-aggr-events" depends="prodPrompt" description="Drops then creates Hibernate managed tables used for aggregate portal event storage">
         <antcall target="db-hibernate-portal">
-            <param name="schemaExportBean" value="aggrEventsDbHibernateExport" />
         	<param name="databaseQualifier" value="AggrEventsDb" />
         </antcall>
     </target>
 
     <target name="db-hibernate-aggr-events-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for aggregate portal event storage">
         <antcall target="db-hibernate-portal-update">
-            <param name="schemaExportBean" value="aggrEventsDbHibernateExport" />
         	<param name="databaseQualifier" value="AggrEventsDb" />
+        </antcall>
+    </target>
+
+    <target name="db-hibernate-portlets" depends="prodPrompt" description="Drops then creates Hibernate managed tables for bundled portlets">
+        <echo>Creating tables for bundled portlets [skipPackage=${skipPackage}]</echo>
+
+        <condition property="packageArg" value="-Djasig.ignore">
+            <equals arg1="${skipPackage}" arg2="true" />
+        </condition>
+        <property name="packageArg" value="package" />
+
+        <antcall target="mvn">
+            <param name="pomDir" value="${basedir}/uportal-portlets-overlay" />
+            <!-- In case target is run separately, insure the project is packaged so all filtered substitutions occur -->
+            <param name="goal" value="${packageArg}" />
+            <param name="goal1" value="db-init" />
         </antcall>
     </target>
 
@@ -413,7 +423,7 @@
                 </then>
             </if>
         </up-shell-batch>
-        <antcall target="portlet-data-import"/>
+        <antcall target="portlet-data-import" />
     </target>
 
     <target name="dbtest" description="Displays information about the database defined in rdbm.properties">
@@ -507,20 +517,22 @@
         </antcall>
     </target>
 
-	<target name="portlet-data-import" depends="prodPrompt" description="Imports the default portlet-specific data">
-	    <echo>Importing portlet-specific data</echo>
+    <target name="portlet-data-import" depends="prodPrompt" description="Imports the default portlet-specific data">
+        <echo>Importing portlet-specific data [skipPackage=${skipPackage}]</echo>
+
+    	<condition property="packageArg" value="-Djasig.ignore">
+            <equals arg1="${skipPackage}" arg2="true" />
+        </condition>
+        <property name="packageArg" value="package" />
+
         <antcall target="mvn">
-            <param name="pomDir" value="${basedir}/uportal-portlets-overlay/CalendarPortlet" />
-            <param name="goal" value="antrun:run" />
-            <param name="portlet-data-import" value="true"/>
+            <param name="pomDir" value="${basedir}/uportal-portlets-overlay" />
+            <!-- In case target is run separately, insure the project is packaged so all filtered substitutions occur -->
+            <param name="goal" value="${packageArg}" />
+            <param name="goal1" value="data-import" />
         </antcall>
-        <antcall target="mvn">
-            <param name="pomDir" value="${basedir}/uportal-portlets-overlay/NewsReaderPortlet" />
-            <param name="goal" value="antrun:run" />
-            <param name="portlet-data-import" value="true"/>
-        </antcall>
-	</target>
-    
+    </target>
+
     <target name="data-import" depends="prodPrompt" description="Imports the specified XML file or files">
         <if>
             <not>
@@ -1314,7 +1326,7 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
         <element name="war-sub-tasks" optional="false" implicit="true" />
 
         <sequential>
-            <!--uportal-search-api-macro-->
+            <uportal-search-api-macro>
                 <fileset id="uportal-parent.pom.fsid" file="${basedir}/pom.xml" />
 
                 <maven-artifact-macro project-name="uportal-war" project-path="${uportal-war.dir}" checkfilesid="uportal-parent.pom.fsid">
@@ -1335,7 +1347,7 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
                      +-->
                     <war-sub-tasks />
                 </maven-artifact-macro>
-            <!--/uportal-search-api-macro-->
+            </uportal-search-api-macro>
         </sequential>
     </macrodef>
 
@@ -1430,18 +1442,12 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
         </condition>
         <property name="filters.arg" value="-Djasig.ignore" />
 
-        <condition property="portlet-data-import.arg" value="-Dportlet-data-import=${portlet-data-import}">
-            <isset property="portlet-data-import" />
-        </condition>
-        <property name="portlet-data-import.arg" value="-Djasig.ignore" />
-
         <artifact:mvn pom="${pomDir}/pom.xml" failonerror="true" fork="true" mavenHome="${maven.home}" maxmemory="512m">
             <arg value="-s${maven.settings}" />
             <arg value="${test.skip}" />
             <arg value="${offline}" />
             <arg value="${env.arg}" />
             <arg value="${filters.arg}" />
-            <arg value="${portlet-data-import.arg}" />
             <arg value="${goal}" />
             <arg value="${goal1}" />
             <arg value="${goal2}" />

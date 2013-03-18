@@ -80,7 +80,7 @@ import org.jasig.portal.events.aggr.portlets.AggregatedPortletMappingImpl;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public final class PortletExecutionAggregationImpl 
-        extends BaseTimedAggregationStatsImpl<PortletExecutionAggregationKey> 
+        extends BaseTimedAggregationStatsImpl<PortletExecutionAggregationKey, PortletExecutionAggregationDiscriminator>
         implements PortletExecutionAggregation, Serializable {
     
     private static final long serialVersionUID = 1L;
@@ -103,6 +103,8 @@ public final class PortletExecutionAggregationImpl
     
     @Transient
     private PortletExecutionAggregationKey aggregationKey;
+    @Transient
+    private PortletExecutionAggregationDiscriminator aggregationDiscriminator;
     
     @SuppressWarnings("unused")
     private PortletExecutionAggregationImpl() {
@@ -152,6 +154,16 @@ public final class PortletExecutionAggregationImpl
             this.aggregationKey = key;
         }
         return key;
+    }
+
+    @Override
+    public PortletExecutionAggregationDiscriminator getAggregationDiscriminator() {
+        PortletExecutionAggregationDiscriminator discriminator = this.aggregationDiscriminator;
+        if (discriminator == null) {
+            discriminator = new PortletExecutionAggregationDiscriminatorImpl(this);
+            this.aggregationDiscriminator = discriminator;
+        }
+        return discriminator;
     }
 
     @Override

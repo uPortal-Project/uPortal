@@ -18,41 +18,137 @@
  */
 package org.jasig.portal.version.dao.jpa;
 
+import javax.persistence.PersistenceException;
+import javax.persistence.Tuple;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Root;
+
 import org.hibernate.exception.SQLGrammarException;
 import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.jpa.OpenEntityManager;
 import org.jasig.portal.version.dao.VersionDao;
 import org.jasig.portal.version.om.Version;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
+
+import com.google.common.base.Function;
 
 @Repository("versionDao")
 public class JpaVersionDao extends BasePortalJpaDao implements VersionDao {
+    private CriteriaQuery<Tuple> findCoreVersionNumbers;
+    private CriteriaQuery<Integer> findLocalVersionNumber;
+    private ParameterExpression<String> productParameter;
 
     @Override
+    public void afterPropertiesSet() throws Exception {
+        this.productParameter = this.createParameterExpression(String.class, "product");
+        
+        this.findCoreVersionNumbers = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<Tuple>>() {
+            @Override
+            public CriteriaQuery<Tuple> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<Tuple> criteriaQuery = cb.createTupleQuery();
+                final Root<VersionImpl> versionRoot = criteriaQuery.from(VersionImpl.class);
+                criteriaQuery.multiselect(
+                        versionRoot.get(VersionImpl_.major).alias(VersionImpl_.major.getName()),
+                        versionRoot.get(VersionImpl_.minor).alias(VersionImpl_.minor.getName()),
+                        versionRoot.get(VersionImpl_.patch).alias(VersionImpl_.patch.getName()));
+                criteriaQuery.where(
+                        cb.equal(versionRoot.get(VersionImpl_.product), productParameter)
+                    );
+                
+                return criteriaQuery;
+            }
+        });
+        
+        this.findLocalVersionNumber = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<Integer>>() {
+            @Override
+            public CriteriaQuery<Integer> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<Integer> criteriaQuery = cb.createQuery(VersionImpl_.local.getBindableJavaType());
+                final Root<VersionImpl> versionRoot = criteriaQuery.from(VersionImpl.class);
+                criteriaQuery.select(versionRoot.get(VersionImpl_.local).alias(VersionImpl_.local.getName()));
+                criteriaQuery.where(
+                        cb.equal(versionRoot.get(VersionImpl_.product), productParameter)
+                    );
+                
+                return criteriaQuery;
+            }
+        });
+    }
+    
+    
+    @Override
     @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
-    public VersionImpl getVersion(String product) {
+    public Version getVersion(String product) {
         NaturalIdQuery<VersionImpl> query = this.createNaturalIdQuery(VersionImpl.class);
         query.using(VersionImpl_.product, product);
         try { 
             return query.load();
         }
         catch (SQLGrammarException e) {
+            return getSimpleVersion(product);
+        }
+    }
+
+
+    /**
+     * Load a Version object with direct field queries. Used to deal with DB upgrades where not all of the fields
+     * have been loaded
+     */
+    private Version getSimpleVersion(String product) {
+        final Tuple coreNumbers;
+        try {
+            final TypedQuery<Tuple> coreNumbersQuery = this.createQuery(this.findCoreVersionNumbers);
+            coreNumbersQuery.setParameter(this.productParameter, product);
+            coreNumbers = DataAccessUtils.singleResult(coreNumbersQuery.getResultList());
+        }
+        catch (SQLGrammarException e) {
             logger.warn("UP_VERSION table doesn't exist, returning null for version of " + product);
             return null;
         }
+        
+        if (coreNumbers == null) {
+            //Table exists but no version data for the product
+            return null;
+        }
+        
+        
+        //Pull out the maj/min/pat values
+        final Integer major = coreNumbers.get(VersionImpl_.major.getName(), VersionImpl_.major.getBindableJavaType());
+        final Integer minor = coreNumbers.get(VersionImpl_.minor.getName(), VersionImpl_.minor.getBindableJavaType());
+        final Integer patch = coreNumbers.get(VersionImpl_.patch.getName(), VersionImpl_.patch.getBindableJavaType());
+
+        //See if the optional local version value exists
+        Integer local;
+        try {
+            final TypedQuery<Integer> localNumberQuery = this.createQuery(this.findLocalVersionNumber);
+            localNumberQuery.setParameter(this.productParameter, product);
+            local = DataAccessUtils.singleResult(localNumberQuery.getResultList());
+        }
+        catch (PersistenceException e) {
+            local = null;
+        }
+        
+        return new VersionImpl(product, major, minor, patch, local);
     }
 
     @Override
     @PortalTransactional
-    public Version setVersion(String product, int major, int minor, int patch) {
-        VersionImpl version = getVersion(product);
+    public Version setVersion(String product, int major, int minor, int patch, Integer local) {
+        final NaturalIdQuery<VersionImpl> query = this.createNaturalIdQuery(VersionImpl.class);
+        query.using(VersionImpl_.product, product);
+        VersionImpl version = query.load();
+        
         if (version == null) {
-            version = new VersionImpl(product, major, minor, patch);
+            version = new VersionImpl(product, major, minor, patch, local);
         }
         else {
             version.setMajor(major);
             version.setMinor(minor);
             version.setPatch(patch);
+            version.setLocal(local);
         }
         
         this.getEntityManager().persist(version);
@@ -63,8 +159,6 @@ public class JpaVersionDao extends BasePortalJpaDao implements VersionDao {
     @Override
     @PortalTransactional
     public Version setVersion(String product, Version version) {
-        return this.setVersion(product, version.getMajor(), version.getMinor(), version.getPatch());
+        return this.setVersion(product, version.getMajor(), version.getMinor(), version.getPatch(), version.getLocal());
     }
-    
-    
 }

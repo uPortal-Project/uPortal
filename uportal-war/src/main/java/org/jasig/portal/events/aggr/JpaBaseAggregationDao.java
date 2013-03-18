@@ -22,6 +22,7 @@ package org.jasig.portal.events.aggr;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +53,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Sets;
 
 /**
@@ -64,7 +66,7 @@ import com.google.common.collect.Sets;
  * @param <K> The entity primary key
  */
 public abstract class JpaBaseAggregationDao<
-            T extends BaseAggregationImpl<K>, 
+            T extends BaseAggregationImpl<K,?>,
             K extends BaseAggregationKey> 
         extends BaseAggrEventsJpaDao 
         implements BaseAggregationPrivateDao<T, K> {
@@ -120,7 +122,7 @@ public abstract class JpaBaseAggregationDao<
     /**
      * Bind the non-standard key parameters from the extension of {@link BaseAggregationKey} for standard queries
      */
-    protected void bindAggregationSpecificKeyParameters(TypedQuery<T> query, K key) {
+    protected void bindAggregationSpecificKeyParameters(TypedQuery<T> query, Set<K> keys) {
     }
     
     /**
@@ -313,9 +315,17 @@ public abstract class JpaBaseAggregationDao<
         
         this.createCriteriaQueries();
     }
-    
+
     @Override
     public final List<T> getAggregations(DateTime start, DateTime end, K key,
+                                         AggregatedGroupMapping... aggregatedGroupMappings) {
+        Set<K> keys = new HashSet<K>();
+        keys.add(key);
+        return getAggregations(start, end, keys, aggregatedGroupMappings);
+    }
+
+        @Override
+    public final List<T> getAggregations(DateTime start, DateTime end, Set<K> keys,
             AggregatedGroupMapping... aggregatedGroupMappings) {
         if (!start.isBefore(end)) {
             throw new IllegalArgumentException("Start must be before End: " + start + " - " + end);
@@ -331,18 +341,30 @@ public abstract class JpaBaseAggregationDao<
         query.setParameter(this.endDate, endDate);
         query.setParameter(this.endTime, end.toLocalTime());
         query.setParameter(this.endPlusOneDate, endDate.plusDays(1));
-        
+
+        // Get the first key to use for the interval
+        K key = keys.iterator().next();
         query.setParameter(this.intervalParameter, key.getInterval());
         
-        this.bindAggregationSpecificKeyParameters(query, key);
+        this.bindAggregationSpecificKeyParameters(query, keys);
 
-        final Set<AggregatedGroupMapping> groups = ImmutableSet.<AggregatedGroupMapping>builder()
-                .add(key.getAggregatedGroup())
-                .add(aggregatedGroupMappings)
-                .build();
+        final Set<AggregatedGroupMapping> groups = collectAllGroupsFromParams(keys, aggregatedGroupMappings);
         query.setParameter(this.aggregatedGroupsParameter, groups);
         
         return query.getResultList();
+    }
+
+    // Create set of all aggregatedGroups in both keys and those passed in as a parameter
+    // and set in query.
+    protected final Set<AggregatedGroupMapping> collectAllGroupsFromParams(Set<K> keys, AggregatedGroupMapping[] aggregatedGroupMappings) {
+        final Builder<AggregatedGroupMapping> groupsBuilder = ImmutableSet.<AggregatedGroupMapping>builder();
+        // Add all groups from the keyset
+        for (K aggregationKey : keys) {
+            groupsBuilder.add(aggregationKey.getAggregatedGroup());
+        }
+        // Add groups from parameters
+        groupsBuilder.add(aggregatedGroupMappings);
+        return groupsBuilder.build();
     }
 
     @Override

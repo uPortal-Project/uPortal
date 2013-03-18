@@ -36,6 +36,10 @@
             <groupService>local</groupService>
             <groupName>Everyone</groupName>
         </include>
+        <include>
+            <groupService>local</groupService>
+            <groupName>Students</groupName>
+        </include>
     </aggregated-group-config>
     
     <!-- 
@@ -64,7 +68,17 @@
         <include>DAY</include>
         <include>MONTH</include>
     </aggregated-interval-config>
-
+    <aggregated-interval-config>
+        <aggregator-type>org.jasig.portal.events.aggr.portletlayout.PortletLayoutAggregator</aggregator-type>
+        <include>DAY</include>
+        <include>MONTH</include>
+    </aggregated-interval-config>
+    <aggregated-interval-config>
+        <aggregator-type>org.jasig.portal.events.aggr.action.SearchRequestAggregator</aggregator-type>
+        <include>FIVE_MINUTE</include>
+        <include>HOUR</include>
+        <include>DAY</include>
+    </aggregated-interval-config>
     <quarter-details>
         <id>0</id>
         <start>--01-01</start>
