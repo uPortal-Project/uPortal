@@ -71,11 +71,19 @@ public class PortalHttpServletRequestWrapperImpl extends AbstractHttpServletRequ
     private final IUserInstanceManager userInstanceManager;
     
     /**
+     * Needed with the Servlet 3.0 bridge so that returned references to "this" are actually
+     * referneces to the wrapper
+     */
+    private HttpServletRequest servlet3Wrapper;
+    
+    /**
      * This is just needed as a temporary bridge to allow uPortal 4.0 to run on a Servlet 3.0 container
      */
     public static PortalHttpServletRequestWrapper create(HttpServletRequest request, HttpServletResponse response, IUserInstanceManager userInstanceManager) {
-        final PortalHttpServletRequestWrapper proxy = new PortalHttpServletRequestWrapperImpl(request, response, userInstanceManager);
-        return Servlet3WrapperUtils.addServlet3Wrapper(proxy, request);
+        final PortalHttpServletRequestWrapperImpl proxy = new PortalHttpServletRequestWrapperImpl(request, response, userInstanceManager);
+        final PortalHttpServletRequestWrapper wrapper = Servlet3WrapperUtils.addServlet3Wrapper(proxy, request);
+        proxy.servlet3Wrapper = wrapper;
+        return wrapper;
     }
 
     /**
@@ -89,6 +97,7 @@ public class PortalHttpServletRequestWrapperImpl extends AbstractHttpServletRequ
 
         this.httpServletResponse = response;
         this.userInstanceManager = userInstanceManager;
+        this.servlet3Wrapper = this;
     }
 
     @Override
@@ -167,7 +176,10 @@ public class PortalHttpServletRequestWrapperImpl extends AbstractHttpServletRequ
     @Override
     public Object getAttribute(String name) {
         if (ATTRIBUTE__HTTP_SERVLET_REQUEST.equals(name)) {
-            return this;
+            /*
+             * servlet3Wrapper is a stand in for "this" to make sure that the actual servlet3 wrapper is always used 
+             */
+            return this.servlet3Wrapper;
         }
         if (ATTRIBUTE__HTTP_SERVLET_RESPONSE.equals(name)) {
             return this.httpServletResponse;
