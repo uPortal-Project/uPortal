@@ -42,6 +42,7 @@ This project includes:
   Apache Pluto Portlet Container under The Apache Software License, Version 2.0
   Apache Pluto Portlet Tag Library under The Apache Software License, Version 2.0
   Apache Pluto Utilities under The Apache Software License, Version 2.0
+  Apache Tika core under The Apache Software License, Version 2.0
   ASM Analysis under BSD
   ASM Commons under BSD
   ASM Core under BSD
@@ -56,6 +57,7 @@ This project includes:
   Commons CLI under The Apache Software License, Version 2.0
   Commons Codec under The Apache Software License, Version 2.0
   Commons Collections under The Apache Software License, Version 2.0
+  Commons Compress under The Apache Software License, Version 2.0
   Commons DBCP under The Apache Software License, Version 2.0
   Commons FileUpload under The Apache Software License, Version 2.0
   Commons IO under The Apache Software License, Version 2.0
@@ -168,6 +170,7 @@ This project includes:
   XML Pull Parsing API under Public Domain
   XMLUnit for Java under BSD License
   XStream Core under BSD style
+  XZ for Java under Public Domain
 
  
 This project also includes code under copywrite of the following institutions:
