@@ -17,16 +17,16 @@
     <dependencies>
         <!-- ===== Compile Time Dependencies ============================== -->
         <dependency>
-            <groupId>org.jasig.portlet</groupId>
-            <artifactId>NotificationPortlet</artifactId>
+            <groupId>org.jasig.portlet.notification</groupId>
+            <artifactId>notification-portlet-webapp</artifactId>
             <version>${NotificationPortlet.version}</version>
             <type>war</type>
         </dependency>
         
         <!-- ===== Provided Dependencies ============================== -->
         <dependency>
-            <groupId>org.jasig.portlet</groupId>
-            <artifactId>NotificationPortlet</artifactId>
+            <groupId>org.jasig.portlet.notification</groupId>
+            <artifactId>notification-portlet-webapp</artifactId>
             <version>${NotificationPortlet.version}</version>
             <classifier>classes</classifier>
             <type>jar</type>

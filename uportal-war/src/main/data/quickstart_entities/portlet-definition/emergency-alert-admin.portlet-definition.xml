@@ -27,8 +27,8 @@
     <type>Portlet</type>
     <timeout>20000</timeout>
     <portlet-descriptor>
-        <ns2:webAppName>/jasig-widget-portlets</ns2:webAppName>
-        <ns2:portletName>emergency-alerts-admin</ns2:portletName>
+        <ns2:webAppName>/NotificationPortlet</ns2:webAppName>
+        <ns2:portletName>EmergencyAlertAdmin</ns2:portletName>
     </portlet-descriptor>
     <category>Demonstration</category>
     <group>Portal Administrators</group>
@@ -68,14 +68,4 @@
         <name>blockImpersonation</name>
         <value>false</value>
     </parameter>
-    <portlet-preference>
-        <name>HttpXmlAlertService.enabledByDefault</name>
-        <readOnly>true</readOnly>
-        <value>false</value>
-    </portlet-preference>
-    <portlet-preference>
-        <name>HttpXmlAlertService.feedUrl</name>
-        <readOnly>true</readOnly>
-        <value>http://localhost:8080/jasig-widget-portlets/notifications-test.xml</value>
-    </portlet-preference>
 </portlet-definition>

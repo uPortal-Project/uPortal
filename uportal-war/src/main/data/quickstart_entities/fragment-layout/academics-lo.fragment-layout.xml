@@ -38,7 +38,7 @@
           <name>width</name>
           <value>50%</value>
         </structure-attribute>
-        <channel fname="notification-demo" unremovable="false" hidden="false" immutable="false" ID="n10"/>
+        <channel fname="notification" unremovable="false" hidden="false" immutable="false" ID="n10"/>
         <channel fname="google-docs" unremovable="false" hidden="false" immutable="false" ID="n9"/>
       </folder>
     </folder>
