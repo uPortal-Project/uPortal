@@ -91,7 +91,8 @@
         <jdbc.groupId>org.hsqldb</jdbc.groupId>
         <jdbc.artifactId>hsqldb</jdbc.artifactId>
         <jdbc.version>${hsqldb.version}</jdbc.version>
-    
+
+        <global.filters.file>filters/allEnvironments.properties</global.filters.file>
         <!--
          | Environment name and filters file for environment-specific build
          | settings.  By default <environment.name> is blank, and the filters 
@@ -105,7 +106,7 @@
          +-->
         <env>local</env>
         <filters.file>filters/${env}.properties</filters.file>
-    
+
         <!-- WAR Dependency Version Properties -->
         <BookmarksPortlet.version>1.0.11</BookmarksPortlet.version>
         <CalendarPortlet.version>2.1.0-RC2</CalendarPortlet.version>

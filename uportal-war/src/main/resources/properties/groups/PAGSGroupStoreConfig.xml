@@ -98,8 +98,38 @@
       </test-group>
     </selection-test>
   </group>
-  
-  <!--==================== Other Examples ====================-->
+
+    <group>
+        <group-key>mobile_device_access</group-key>
+        <group-name>Mobile Device Access</group-name>
+        <group-description>User Access by a mobile device</group-description>
+        <selection-test>
+            <test-group>
+                <test>
+                    <attribute-name>AgentDevice</attribute-name>
+                    <tester-class>org.jasig.portal.groups.pags.testers.RegexTester</tester-class>
+                    <test-value>${org.jasig.portal.mobile.user.agent}</test-value>
+                </test>
+            </test-group>
+        </selection-test>
+    </group>
+
+    <group>
+        <group-key>desktop_device_access</group-key>
+        <group-name>Desktop Device Access</group-name>
+        <group-description>User Access by a non-mobile device (desktop)</group-description>
+        <selection-test>
+            <test-group>
+                <test>
+                    <attribute-name>AgentDevice</attribute-name>
+                    <tester-class>org.jasig.portal.groups.pags.testers.InvertedRegexTester</tester-class>
+                    <test-value>${org.jasig.portal.mobile.user.agent}</test-value>
+                </test>
+            </test-group>
+        </selection-test>
+    </group>
+
+    <!--==================== Other Examples ====================-->
 
 
 <!--
