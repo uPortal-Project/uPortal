@@ -22,12 +22,28 @@
             <version>${NewsReaderPortlet.version}</version>
             <type>war</type>
         </dependency>
-        
+
+        <dependency>
+            <groupId>org.jasig.portlet</groupId>
+            <artifactId>NewsReaderPortlet</artifactId>
+            <version>${NewsReaderPortlet.version}</version>
+            <classifier>classes</classifier>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>${jdbc.groupId}</groupId>
             <artifactId>${jdbc.artifactId}</artifactId>
             <version>${jdbc.version}</version>
             <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${servlet-api.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
     
@@ -54,6 +70,103 @@
            <plugin>
                 <groupId>org.apache.portals.pluto</groupId>
                 <artifactId>maven-pluto-plugin</artifactId>
+            </plugin>
+            <!-- Plug-in to add lifecycles to support db-init and data-import -->
+            <plugin>
+                <groupId>org.jasig.portal.maven</groupId>
+                <artifactId>uportal-maven-plugin</artifactId>
+                <!-- extensions must be set to true to pick up the custom phases -->
+                <extensions>true</extensions>
+            </plugin>
+            <!-- To drop and recreate the calendar db tables, use mvn db-init -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>hibernate3-maven-plugin</artifactId>
+                <version>2.2</version>
+                <executions>
+                    <execution>
+                        <phase>db-init</phase>
+                        <goals>
+                            <goal>hbm2ddl</goal>
+                        </goals>
+                        <configuration>
+                            <componentProperties>
+                                <propertyfile>${project.build.directory}/classes/datasource.properties</propertyfile>
+                                <drop>true</drop>
+                            </componentProperties>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>${jdbc.groupId}</groupId>
+                        <artifactId>${jdbc.artifactId}</artifactId>
+                        <version>${jdbc.version}</version>
+                        <scope>compile</scope>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jasig.portlet</groupId>
+                        <artifactId>NewsReaderPortlet</artifactId>
+                        <version>${NewsReaderPortlet.version}</version>
+                        <classifier>classes</classifier>
+                        <type>jar</type>
+                        <scope>compile</scope>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <!-- To import the newsreader db tables, use mvn [-Ddir=dir] data-import -->
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>data-import</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>rhino</groupId>
+                        <artifactId>js</artifactId>
+                        <version>1.7R1</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jasig.portlet</groupId>
+                        <artifactId>NewsReaderPortlet</artifactId>
+                        <version>${NewsReaderPortlet.version}</version>
+                        <classifier>classes</classifier>
+                        <type>jar</type>
+                        <scope>compile</scope>
+                    </dependency>
+                    <dependency>
+                        <groupId>javax.servlet</groupId>
+                        <artifactId>servlet-api</artifactId>
+                        <version>2.4</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <tasks>
+                        <!-- Set default value of data location if it is not set -->
+                        <property name="dir" value="${basedir}/src/main/data"/>
+
+                        <property name="runtime_classpath" refid="maven.runtime.classpath" />
+                        <property name="plugin_classpath" refid="maven.plugin.classpath" />
+
+                        <java failonerror="true" classname="org.danann.cernunnos.runtime.Main" fork="true">
+                            <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+                            <classpath>
+                                <pathelement path="${project.build.directory}/${project.artifactId}/WEB-INF"/>
+                                <pathelement path="${runtime_classpath}" />
+                                <pathelement path="${plugin_classpath}" />
+                            </classpath>
+
+                            <arg value="classpath://org/jasig/portlet/newsreader/io/import.crn.xml" />
+                            <arg value="${dir}" />
+                            <arg value="${project.build.directory}/${project.artifactId}/WEB-INF/context/importExportContext.xml" />
+                        </java>
+                    </tasks>
+                </configuration>
             </plugin>
         </plugins>
     </build>
