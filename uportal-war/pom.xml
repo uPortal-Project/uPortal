@@ -636,6 +636,7 @@
                     <include>properties/rdbm.properties</include>
                     <include>properties/security.properties</include>
                     <include>properties/contexts/userContext.xml</include>
+                    <include>properties/groups/PAGSGroupStoreConfig.xml</include>
                     <include>logback.xml</include>
                 </includes>
             </resource>
@@ -650,6 +651,7 @@
                     <exclude>properties/rdbm.properties</exclude>
                     <exclude>properties/security.properties</exclude>
                     <exclude>properties/contexts/userContext.xml</exclude>
+                    <exclude>properties/groups/PAGSGroupStoreConfig.xml</exclude>
                 </excludes>
             </resource>
             <resource>

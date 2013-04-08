@@ -95,6 +95,15 @@
         <property name="remoteUserAttribute" value="remoteUser" />
         <property name="serverNameAttribute" value="serverName" />
         <property name="processingPosition" value="BOTH" />
+        <property name="headerAttributeMapping">
+            <util:map>
+                <entry key="User-Agent">
+                    <util:set>
+                        <value>agentDevice</value>
+                    </util:set>
+                </entry>
+            </util:map>
+        </property>
     </bean>
 
     <!--

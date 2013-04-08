@@ -91,7 +91,7 @@
         <jdbc.groupId>org.hsqldb</jdbc.groupId>
         <jdbc.artifactId>hsqldb</jdbc.artifactId>
         <jdbc.version>${hsqldb.version}</jdbc.version>
-    
+
         <!--
          | Environment name and filters file for environment-specific build
          | settings.  By default <environment.name> is blank, and the filters 
@@ -105,7 +105,7 @@
          +-->
         <env>local</env>
         <filters.file>filters/${env}.properties</filters.file>
-    
+
         <!-- WAR Dependency Version Properties -->
         <BookmarksPortlet.version>1.0.11</BookmarksPortlet.version>
         <CalendarPortlet.version>2.1.0-RC2</CalendarPortlet.version>
@@ -202,6 +202,14 @@
         <woodstox.version>4.1.4</woodstox.version>
         <xmlunit.version>1.3</xmlunit.version>
         <xstream.version>1.4.2</xstream.version>
+
+        <!-- 
+         | uPortal uses this expression to determine whether the user is on a 
+         | mobile device, such as a phone or a tablet, or a desktop/laptop 
+         | browser;  users may also choose the mobile/non-mobile experience when 
+         | they log in. 
+         +-->
+        <mobile.user.agent.regex>(.*iPhone.*)|(.*Android.*)|(.*IEMobile.*)|(.*Safari.*Pre.*)|(.*Nokia.*AppleWebKit.*)|(.*Black[Bb]erry.*)|(.*Opera Mobile.*)|(.*Windows Phone.*)|(.*Fennec.*)|(.*Minimo.*)</mobile.user.agent.regex>
         
         <project.build.sourceVersion>1.6</project.build.sourceVersion>
         <project.build.targetVersion>1.6</project.build.targetVersion>
