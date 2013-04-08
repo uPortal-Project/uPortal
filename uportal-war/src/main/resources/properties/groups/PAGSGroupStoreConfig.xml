@@ -60,6 +60,9 @@
     <group-description>Root group for all PAGS groups.  Convenience for adding PAGS groups to a local group.</group-description>
     <members>
       <member-key>all_users</member-key>
+      <member-key>authenticated_users</member-key>
+      <member-key>desktop_device_access</member-key>
+      <member-key>mobile_device_access</member-key>
     </members>
   </group>
 
@@ -98,8 +101,38 @@
       </test-group>
     </selection-test>
   </group>
-  
-  <!--==================== Other Examples ====================-->
+
+  <group>
+    <group-key>mobile_device_access</group-key>
+    <group-name>Mobile Device Access</group-name>
+    <group-description>User Access by a mobile device</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>agentDevice</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.RegexTester</tester-class>
+          <test-value>${mobile.user.agent.regex}</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+  <group>
+    <group-key>desktop_device_access</group-key>
+    <group-name>Desktop Device Access</group-name>
+    <group-description>User Access by a non-mobile device (desktop)</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>agentDevice</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.InvertedRegexTester</tester-class>
+          <test-value>${mobile.user.agent.regex}</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+    <!--==================== Other Examples ====================-->
 
 
 <!--
