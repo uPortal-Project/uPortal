@@ -63,9 +63,11 @@ public class ActivityController {
     private static final String PREFERENCE_MASTER_GROUP = PREFERENCE_PREFIX + "masterGroup";
     private static final String PREFERENCE_DISPLAY_GROUPS = PREFERENCE_PREFIX + "displayGroups";
     private static final String PREFERENCE_DISPLAY_OTHER = PREFERENCE_PREFIX + "displayOther";
+    private static final String PREFERENCE_UNIQUE_LOGINS = PREFERENCE_PREFIX + "uniqueLogins";
     private static final String DEFAULT_PREFERENCE_MASTER_GROUP = "Everyone";
     private static final String[] DEFAULT_PREFERENCE_DISPLAY_GROUPS = new String[]{ };
     private static final String DEFAULT_PREFERENCE_DISPLAY_OTHER = "true";
+    private static final String DEFAULT_PREFERENCE_UNIQUE_LOGINS = "true";
 
     private static final int NOW = 1;
     private static final int TODAY = 2;
@@ -195,6 +197,9 @@ public class ActivityController {
                 }
                 break;
             default:
+                String uniqueLoginsPref = prefs.getValue(PREFERENCE_UNIQUE_LOGINS,DEFAULT_PREFERENCE_UNIQUE_LOGINS);
+                Boolean uniqueLogins = Boolean.valueOf(uniqueLoginsPref);
+
                 for(AggregatedGroupMapping group : loginAggregationDao.getAggregatedGroupMappings())
                 {
                     
@@ -204,8 +209,8 @@ public class ActivityController {
                     // NB:  We only care about the most recent entry (??)
                     if (aggregations.size() != 0) {
                         final LoginAggregation aggregation = aggregations.get(0);
-                        int groupTotal = aggregation.getLoginCount();
-                        absTotal += aggregation.getLoginCount();
+                        int groupTotal = getAggregationLoginCount(aggregation,uniqueLogins);
+                        absTotal += groupTotal;
                         if (group.getGroupName().equalsIgnoreCase(masterGroup))
                         {
                             masterTotal = groupTotal;
@@ -269,4 +274,8 @@ public class ActivityController {
         return results.size() > 10 ? results.subList(0,9) : results;
     }
 
+    private int getAggregationLoginCount(LoginAggregation aggregation,boolean unique)
+    {
+        return unique ? aggregation.getUniqueLoginCount() : aggregation.getLoginCount();
+    }
 }
