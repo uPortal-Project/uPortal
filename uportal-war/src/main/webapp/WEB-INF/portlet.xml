@@ -339,6 +339,10 @@
                 <value>Faculty</value>
                 <value>Staff</value>
             </preference>
+            <preference>
+                <name>PortalActivity.ActivityController.uniqueLogins</name>
+                <value>true</value>
+            </preference>
         </portlet-preferences>
     </portlet>
 
