@@ -72,6 +72,7 @@
         <mapping class="org.jasig.portal.fragment.subscribe.dao.jpa.UserFragmentSubscriptionImpl" />
         <mapping class="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl"/>
         <mapping class="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl"/>
+        <mapping class="org.jasig.portal.security.sso.JpaSsoTicket"/>
         <mapping class="org.jasig.portal.i18n.dao.jpa.MessageImpl"/>
         <mapping class="org.jasig.portal.concurrency.locking.ClusterMutex"/>
         <mapping class="org.jasig.portal.version.dao.jpa.VersionImpl"/>
