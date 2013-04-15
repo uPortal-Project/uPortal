@@ -77,4 +77,6 @@
             </bean>
         </property>
     </bean>
+
+    <bean id="ssoRemoteUserFilter" class="org.jasig.portal.security.sso.RemoteUserFilterBean" />
 </beans>
