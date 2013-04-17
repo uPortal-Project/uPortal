@@ -61,7 +61,7 @@
             ScriptAttributes.RESPONSE.setAttribute('isNew', isNew);
         </script>
         <subtasks>
-            <log logger-name="org.jasig.portal.groups.smartldap.init" >SmartLdap adding record for group:  ${groovy(record.getGroup().getName())}</log>
+            <log level="debug" logger-name="org.jasig.portal.groups.smartldap.init" >SmartLdap adding record for group:  ${groovy(record.getGroup().getName())}</log>
             <if test="${groovy(isNew &amp;&amp; resolveMemberGroups)}">
                 <for-each items="${resolveDnList}" attribute-name="resolveDn">
                     <!-- Be sure we don't waste a lot of time with unnecessary queries --> 

@@ -77,12 +77,12 @@ public final class SimpleAttributesMapper implements AttributesMapper {
 			throw new IllegalStateException(msg);
 		}
 		
-		if (log.isInfoEnabled()) {
+		if (log.isDebugEnabled()) {
 			String msg = "SimpleAttributesMapper.mapFromAttributes() :: settings:  keyAttributeName='" 
 							+ keyAttributeName + "', groupNameAttributeName='" 
 							+ groupNameAttributeName + "', groupNameAttributeName='" 
 							+ groupNameAttributeName + "'";
-			log.info(msg);
+			log.debug(msg);
 		}
 		
 		LdapRecord rslt;
