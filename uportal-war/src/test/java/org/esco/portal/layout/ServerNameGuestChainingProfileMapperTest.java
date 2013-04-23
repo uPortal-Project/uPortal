@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.esco.portal.layout.ServerNameGuestChainingProfileMapper;
 import org.jasig.portal.layout.IProfileMapper;
-import org.jasig.portal.layout.ServerNameGuestChainingProfileMapper;
 import org.jasig.portal.layout.SessionAttributeProfileMapperImpl;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.PersonImpl;
