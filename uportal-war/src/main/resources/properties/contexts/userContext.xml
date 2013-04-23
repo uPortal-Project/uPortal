@@ -21,18 +21,27 @@
 -->
 
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns="http://www.springframework.org/schema/beans" 
+       xmlns="http://www.springframework.org/schema/beans"
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
-    
-    <!-- 
+
+    <!--
      | The concrete IPersonManager implementation to be used
      +-->
    	<bean id="personManager" class="org.jasig.portal.security.provider.SimplePersonManager" />
-
+   	<!--
+   	 | Use this bean to extend guest user properties with attributes from the request set by the requestAttributeSourceFilter
+   	 +-->
+   	<!--
+   	<bean id="personManager" class="org.esco.portal.security.provider.ExtendedPersonManager" >
+   		<property name="merger">
+            <bean class="org.jasig.services.persondir.support.merger.ReplacingAttributeAdder" />
+        </property>
+   		<property name="descriptors" ref="requestAdditionalDescriptors" />
+   	</bean> -->
 
     <util:map id="profileKeyMappings">
         <entry key="desktop" value="default"/>
@@ -48,7 +57,7 @@
             </util:list>
         </property>
     </bean>
-    
+
     <bean id="sessionAttributeProfileMapper" class="org.jasig.portal.layout.SessionAttributeProfileMapperImpl"
         p:mappings-ref="profileKeyMappings"/>
 
@@ -64,7 +73,7 @@
         </property>
     </bean>
 
-    <!-- The following attribute names are used in searching for users through 
+    <!-- The following attribute names are used in searching for users through
         person-directory, such as from within the Directory framework portlet. -->
     <util:list id="directoryQueryAttributes">
         <value>givenName</value>
@@ -109,16 +118,16 @@
             <constructor-arg value="attribute.displayName.telephoneNumber"/>
         </bean>
     </util:list>
-    
+
     <!-- Spring mail-sending service -->
     <bean id="passwordResetMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
         <property name="host" value="${org.jasig.portal.email.host:localhost}" />
         <property name="port" value="${org.jasig.portal.email.port:25}" />
         <property name="protocol" value="${org.jasig.portal.email.protocol:smtp}" />
     </bean>
-    
+
     <bean id="portalEmailAddress" class="java.lang.String">
         <constructor-arg value="${org.jasig.portal.email.fromAddress}"/>
     </bean>
-    
+
 </beans>
