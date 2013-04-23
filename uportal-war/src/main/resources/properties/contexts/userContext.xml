@@ -54,6 +54,28 @@
             <util:list>
                 <ref bean="sessionAttributeProfileMapper" />
                 <ref bean="userAgentProfileMapper" />
+                 <!--
+                 | Define a profilMapper for user guest associated to the serverName attribute,
+                 | This example configuration is applyed only if user-agent isn't a mobile.
+                 | You need to define and import a new profil for each entries on default users
+                 | Add "guest-[server name]-" prefix to the subfname found
+                 +-->
+                <!--
+                <bean class="org.esco.portal.layout.ServerNameGuestChainingProfileMapper">
+                	<property name="authorizedServerNames">
+                		<util:map>
+                			< Only server names listed here are authorized ! (the value replace the server name) />
+                			<entry key="www.univ1.fr" value="univ1" />
+                			<entry key="www.univ2.fr" value="univ2" />
+                		</util:map>
+                	</property>
+                	<property name="subMappers">
+                		<util:list>
+                			< Move here the mappers you want to customize for each server name guest. />
+                		</util:list>
+                	</property>
+                </bean>
+                -->
             </util:list>
         </property>
     </bean>
