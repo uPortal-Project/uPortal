@@ -21,12 +21,16 @@ package org.jasig.portal.redirect;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang.StringUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,6 +44,7 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.HandlerMapping;
 
 /**
  * PortletRedirectionController issues a 302 redirect from an abstract service
@@ -76,22 +81,30 @@ public class PortletRedirectionController {
         this.services = services;
     }
 
-    @RequestMapping("/{serviceKey}")
-    public void redirect(HttpServletRequest request, HttpServletResponse response, @PathVariable String serviceKey) throws IOException {
+    @RequestMapping(value={"{serviceKey}/*/**","{serviceKey}"})
+    public void redirectExtra(HttpServletRequest request, HttpServletResponse response, @PathVariable String serviceKey) throws IOException {
         
+        String path = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+/*
+        String bestMatchPattern = (String ) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
+        AntPathMatcher apm = new AntPathMatcher();
+        String extraPath = apm.extractPathWithinPattern(bestMatchPattern, path);
+*/
+        List<String> pathElements = Arrays.asList(path.split("/"));
+
         final IRedirectionUrl url = services.get(serviceKey);
         if (url == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
 
-        String redirectUrl = getUrlString(url, request);
+        String redirectUrl = getUrlString(url, request, pathElements);
 
         // send a redirect
         response.sendRedirect(redirectUrl);
 
     }
-    
-    protected String getUrlString(IRedirectionUrl url, HttpServletRequest request) {
+
+    protected String getUrlString(IRedirectionUrl url, HttpServletRequest request, List<String> extraPath) {
         
         if (url instanceof ExternalRedirectionUrl) {
             ExternalRedirectionUrl externalUrl = (ExternalRedirectionUrl) url;
@@ -125,6 +138,30 @@ public class PortletRedirectionController {
                         }
                     }
                 }
+                
+                if (!extraPath.isEmpty()) {
+                    
+                    List<String> paramNames = externalUrl.getPathParameters();
+                    
+                    ListIterator<String> itt = paramNames.listIterator();
+                    while(itt.hasNext() && !extraPath.isEmpty()) {
+                        int index = itt.nextIndex();
+                        
+                        String param = itt.next();
+                        String value;
+                        if (itt.hasNext()){
+                            value = extraPath.remove(0);
+                        } else {
+                            value = StringUtils.join(extraPath, "/");
+                        }
+                        urlStr.append(separator);
+                        urlStr.append(param);
+                        urlStr.append("=");
+                        urlStr.append(URLEncoder.encode(value, "UTF-8"));
+                        separator = "&";
+                    }
+                }
+
                 return urlStr.toString();
                 
             } catch (UnsupportedEncodingException ex){
@@ -159,6 +196,27 @@ public class PortletRedirectionController {
                     portletUrlBuilder.addParameter(param.getValue(), values);
                 }
             }
+            
+            if (!extraPath.isEmpty()) {
+                    List<String> paramNames = portletUrl.getPathParameters();
+                    
+                    ListIterator<String> itt = paramNames.listIterator();
+                    while(itt.hasNext() && !extraPath.isEmpty()) {
+                     
+                        String param = itt.next();
+                        String value;
+                        if (itt.hasNext()){
+                            value = extraPath.remove(0);
+                        } else {
+                            value = StringUtils.join(extraPath, "/");
+                        }
+                        
+                        if (StringUtils.isEmpty(value)) {
+                            break;
+                        } else
+                            portletUrlBuilder.addParameter(param, value);
+                    }
+                }
     
             return portalUrlBuilder.getUrlString();
         }

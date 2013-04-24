@@ -18,6 +18,7 @@
  */
 package org.jasig.portal.redirect;
 
+import java.util.ArrayList;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -63,7 +64,7 @@ public class PortletRedirectionControllerTest {
         url.setDynamicParameters(dynamicParameters);
                 
         String expected = "http://somewhere.com/something?action=show&list=v1&list=v2&username=student";
-        String actual = controller.getUrlString(url, request);
+        String actual = controller.getUrlString(url, request, new ArrayList<String>());
         assertEquals(expected, actual);
     }
 
