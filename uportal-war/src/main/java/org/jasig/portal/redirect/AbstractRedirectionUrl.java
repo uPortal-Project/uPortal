@@ -18,7 +18,9 @@
  */
 package org.jasig.portal.redirect;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,6 +33,7 @@ public abstract class AbstractRedirectionUrl implements IRedirectionUrl {
 
     private Map<String, String[]> additionalParameters = new HashMap<String, String[]>();
     private Map<String, String> dynamicParameters = new HashMap<String, String>();
+    private List<String> pathParameters = new ArrayList<String>();
 
     /**
      * Get a map of additional parameters to be added to the url.  This
@@ -82,4 +85,26 @@ public abstract class AbstractRedirectionUrl implements IRedirectionUrl {
     }
 
 
+    /**
+     * Get a map of dynamic parameters to be copied from the incoming URL
+     * to the target url, mapping the parameter name in the 
+     * incoming URL to the parameter name in the target URL.
+     * 
+     * @return
+     */
+    public List<String> getPathParameters() {
+        return pathParameters;
+    }
+
+    /**
+     * Set a map of dynamic parameters to be copied from the incoming URL
+     * to the target url, mapping the parameter name in the 
+     * incoming URL to the parameter name in the target URL.
+     * 
+     * @param
+     */
+    public void setPathParameters(List<String> pathParameters) {
+        this.pathParameters = pathParameters;
+    }
+    
 }
