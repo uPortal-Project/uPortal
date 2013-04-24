@@ -63,7 +63,7 @@ public class PortletRedirectionControllerTest {
         url.setDynamicParameters(dynamicParameters);
                 
         String expected = "http://somewhere.com/something?action=show&list=v1&list=v2&username=student";
-        String actual = controller.getUrlString(url, request);
+        String actual = controller.getUrlString(url, request, null);
         assertEquals(expected, actual);
     }
 
