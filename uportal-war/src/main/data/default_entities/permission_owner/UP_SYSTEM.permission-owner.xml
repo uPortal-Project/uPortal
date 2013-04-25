@@ -31,4 +31,16 @@
         to be granted to superusers.</desc>
         <targetProvider>portalSystemTargetProvider</targetProvider>
     </activity>
+    <activity>
+        <name>Customize</name>
+        <fname>CUSTOMIZE</fname>
+        <desc>Allows access to the Customize menu in the UI</desc>
+        <targetProvider>portalSystemTargetProvider</targetProvider>
+    </activity>
+    <activity>
+        <name>Add Tab</name>
+        <fname>ADD_TAB</fname>
+        <desc>Allow the user to add a layout tab</desc>
+        <targetProvider>portalSystemTargetProvider</targetProvider>
+    </activity>
 </permission-owner>

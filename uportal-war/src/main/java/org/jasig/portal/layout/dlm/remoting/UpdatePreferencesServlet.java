@@ -42,6 +42,7 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.UserPreferencesManager;
 import org.jasig.portal.fragment.subscribe.IUserFragmentSubscription;
 import org.jasig.portal.fragment.subscribe.dao.IUserFragmentSubscriptionDao;
+import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.layout.IStylesheetUserPreferencesService;
 import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
 import org.jasig.portal.layout.IUserLayoutManager;
@@ -56,9 +57,12 @@ import org.jasig.portal.layout.node.UserLayoutChannelDescription;
 import org.jasig.portal.layout.node.UserLayoutFolderDescription;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
+import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.RestrictedPerson;
+import org.jasig.portal.services.AuthorizationService;
+import org.jasig.portal.services.GroupService;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +87,10 @@ public class UpdatePreferencesServlet {
 
     private static final String TAB_GROUP_PARAMETER = "tabGroup";  // matches incoming JS
     private static final String TAB_GROUP_DEFAULT = "DEFAULT_TABGROUP";  // matches default in structure transform
+    
+    private static final String ADDTAB_PERMISSION_OWNER = "UP_SYSTEM";
+    private static final String ADDTAB_PERMISSION_ACTIVITY = "ADD_TAB";
+    private static final String ADDTAB_PERMISSION_TARGET = "ALL";
 
     protected final Log log = LogFactory.getLog(getClass());
 	
@@ -627,6 +635,14 @@ public class UpdatePreferencesServlet {
         UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
         IUserLayoutManager ulm = upm.getUserLayoutManager();
 
+        // Verify that the user has permission to add this tab
+        final IAuthorizationPrincipal authPrincipal = this.getUserPrincipal(per.getUserName());
+        if (!authPrincipal.hasPermission(ADDTAB_PERMISSION_OWNER, ADDTAB_PERMISSION_ACTIVITY, ADDTAB_PERMISSION_TARGET)) {
+            log.warn("Attempt to add a tab through the REST API by unauthorized user '" + per.getUserName() + "'");
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return null;
+        }
+        
 		// construct a brand new tab
 		String id = "tbd";
         String tabName = request.getParameter("tabName");
@@ -715,7 +731,6 @@ public class UpdatePreferencesServlet {
 	public ModelAndView renameTab(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         IUserInstance ui = userInstanceManager.getUserInstance(request);
-        IPerson per = getPerson(ui, response);
         UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
         IUserLayoutManager ulm = upm.getUserLayoutManager();
 
@@ -855,7 +870,17 @@ public class UpdatePreferencesServlet {
 
 	}
 
-	/**
+    protected IAuthorizationPrincipal getUserPrincipal(final String userName) {
+        final IEntity user = GroupService.getEntity(userName, IPerson.class);
+        if (user == null) {
+            return null;
+        }
+        
+        final AuthorizationService authService = AuthorizationService.instance();
+        return authService.newPrincipal(user);
+    }
+
+    /**
 	 * A folder is a column if its parent is a tab element
 	 * 
 	 * @param folder the folder in question

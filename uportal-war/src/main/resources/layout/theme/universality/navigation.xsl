@@ -111,7 +111,7 @@
           <!-- Tabs -->
           <div id="portalNavigationInner" class="{$CONTEXT}">
             <ul id="portalNavigationList" class="fl-tabs flc-reorderer-column">
-              <xsl:if test="$AUTHENTICATED='true' and $USE_ADD_TAB='true' and not(//focused)">
+              <xsl:if test="upAuth:hasPermission('UP_SYSTEM', 'ADD_TAB', 'ALL') and $USE_ADD_TAB='true' and not(//focused)">
                 <li class="portal-navigation-add-item">
                   <a href="javascript:;" title="{upMsg:getMessage('add.tab', $USER_LANG)}" class="portal-navigation-add"><xsl:value-of select="upMsg:getMessage('add.tab', $USER_LANG)"/></a>
                 </li>
@@ -141,7 +141,7 @@
                 <h2>
                     <xsl:value-of select="upMsg:getMessage('navigation', $USER_LANG)"/>
                 </h2>
-                <xsl:if test="$AUTHENTICATED='true' and $USE_ADD_TAB='true' and not(//focused)">
+                <xsl:if test="upAuth:hasPermission('UP_SYSTEM', 'ADD_TAB', 'ALL') and $USE_ADD_TAB='true' and not(//focused)">
                     <a href="javascript:;" title="upMsg:getMessage('add.tab', $USER_LANG)" class="portal-navigation-add"><xsl:value-of select="upMsg:getMessage('add.tab', $USER_LANG)"/></a>
                 </xsl:if>
           	</div>
