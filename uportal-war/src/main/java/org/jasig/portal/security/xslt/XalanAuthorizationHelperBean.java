@@ -19,6 +19,8 @@
 
 package org.jasig.portal.security.xslt;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.groups.IEntity;
@@ -26,8 +28,10 @@ import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,13 +47,25 @@ public class XalanAuthorizationHelperBean implements IXalanAuthorizationHelper {
     protected final Log logger = LogFactory.getLog(this.getClass());
 
     private IPortletDefinitionRegistry portletDefinitionRegistry;
-    
+    private IPortalRequestUtils portalRequestUtils;
+    private IPersonManager personManager;
+        
     /**
      * @param portletDefinitionRegistry the portletDefinitionRegistry to set
      */
     @Autowired
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
+    }
+
+    @Autowired
+    public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
+        this.portalRequestUtils = portalRequestUtils;
+    }
+
+    @Autowired(required = true)
+    public void setPersonManager(IPersonManager personManager) {
+        this.personManager = personManager;
     }
 
     /* (non-Javadoc)
@@ -86,7 +102,26 @@ public class XalanAuthorizationHelperBean implements IXalanAuthorizationHelper {
         
         return userPrincipal.canRender(portletId);
     }
-    
+
+    @Override
+    public boolean hasPermission(final String owner, final String activity, final String target) {
+        
+        // owner & activity are required (but not target)
+        if (owner == null || activity == null) {
+            return false;
+        }
+
+        final HttpServletRequest currentRequest = portalRequestUtils.getCurrentPortalRequest();
+        final IPerson currentUser = personManager.getPerson((HttpServletRequest) currentRequest);
+        final IAuthorizationPrincipal authPrincipal = this.getUserPrincipal(currentUser.getUserName());
+        
+        final boolean rslt = authPrincipal != null
+                ? authPrincipal.hasPermission(owner, activity, target)
+                : false;
+        return rslt;
+
+    }
+
     protected IAuthorizationPrincipal getUserPrincipal(final String userName) {
         final IEntity user = GroupService.getEntity(userName, IPerson.class);
         if (user == null) {
@@ -96,4 +131,5 @@ public class XalanAuthorizationHelperBean implements IXalanAuthorizationHelper {
         final AuthorizationService authService = AuthorizationService.instance();
         return authService.newPrincipal(user);
     }
+
 }
