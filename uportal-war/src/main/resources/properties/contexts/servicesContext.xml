@@ -192,6 +192,11 @@
                         <entry key="action" value="findByUsername"/>
                     </map>
                 </property>
+                <property name="pathParameters">
+                    <list>
+                        <value>username</value>
+                    </list>
+                </property>
             </bean>
         </entry>
         <entry key="location">

@@ -42,7 +42,6 @@ import org.jasig.portal.url.IPortletUrlBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.HandlerMapping;
@@ -82,43 +81,30 @@ public class PortletRedirectionController {
         this.services = services;
     }
 
-    @RequestMapping("/{serviceKey}/**")
+    @RequestMapping(value={"{serviceKey}/*/**","{serviceKey}"})
     public void redirectExtra(HttpServletRequest request, HttpServletResponse response, @PathVariable String serviceKey) throws IOException {
         
         String path = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+/*
         String bestMatchPattern = (String ) request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
         AntPathMatcher apm = new AntPathMatcher();
         String extraPath = apm.extractPathWithinPattern(bestMatchPattern, path);
+*/
+        List<String> pathElements = Arrays.asList(path.split("/"));
 
-        
         final IRedirectionUrl url = services.get(serviceKey);
         if (url == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
 
-        String redirectUrl = getUrlString(url, request, extraPath);
+        String redirectUrl = getUrlString(url, request, pathElements);
 
         // send a redirect
         response.sendRedirect(redirectUrl);
 
     }
-    
-    @RequestMapping("/{serviceKey}")
-    public void redirect(HttpServletRequest request, HttpServletResponse response, @PathVariable String serviceKey) throws IOException {
-        
-        final IRedirectionUrl url = services.get(serviceKey);
-        if (url == null) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-        }
 
-        String redirectUrl = getUrlString(url, request, null);
-
-        // send a redirect
-        response.sendRedirect(redirectUrl);
-
-    }
-    
-    protected String getUrlString(IRedirectionUrl url, HttpServletRequest request, String extraPath) {
+    protected String getUrlString(IRedirectionUrl url, HttpServletRequest request, List<String> extraPath) {
         
         if (url instanceof ExternalRedirectionUrl) {
             ExternalRedirectionUrl externalUrl = (ExternalRedirectionUrl) url;
@@ -153,22 +139,20 @@ public class PortletRedirectionController {
                     }
                 }
                 
-                if (!StringUtils.isEmpty(extraPath)) {
-                    List<String> values = Arrays.asList(extraPath.split("/"));
+                if (!extraPath.isEmpty()) {
+                    
                     List<String> paramNames = externalUrl.getPathParameters();
                     
                     ListIterator<String> itt = paramNames.listIterator();
-                    while(itt.hasNext()) {
+                    while(itt.hasNext() && !extraPath.isEmpty()) {
                         int index = itt.nextIndex();
-                        
-                        if (values.isEmpty()) break;
                         
                         String param = itt.next();
                         String value;
                         if (itt.hasNext()){
-                            value = values.remove(0);
+                            value = extraPath.remove(0);
                         } else {
-                            value = StringUtils.join(values, "/");
+                            value = StringUtils.join(extraPath, "/");
                         }
                         urlStr.append(separator);
                         urlStr.append(param);
@@ -213,24 +197,24 @@ public class PortletRedirectionController {
                 }
             }
             
-            if (!StringUtils.isEmpty(extraPath)) {
-                    List<String> values = Arrays.asList(extraPath.split("/"));
+            if (!extraPath.isEmpty()) {
                     List<String> paramNames = portletUrl.getPathParameters();
                     
                     ListIterator<String> itt = paramNames.listIterator();
-                    while(itt.hasNext()) {
-                        int index = itt.nextIndex();
-                        
-                        if (values.isEmpty()) break;
-                        
+                    while(itt.hasNext() && !extraPath.isEmpty()) {
+                     
                         String param = itt.next();
                         String value;
                         if (itt.hasNext()){
-                            value = values.remove(0);
+                            value = extraPath.remove(0);
                         } else {
-                            value = StringUtils.join(values, "/");
+                            value = StringUtils.join(extraPath, "/");
                         }
-                        portletUrlBuilder.addParameter(param, value);
+                        
+                        if (StringUtils.isEmpty(value)) {
+                            break;
+                        } else
+                            portletUrlBuilder.addParameter(param, value);
                     }
                 }
     
