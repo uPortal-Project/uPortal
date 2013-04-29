@@ -861,7 +861,7 @@
     <!--<div id="portalPageFooterNav">
         <xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'footerNav']/parent::*"/>
     </div>-->
- 	<p class="copyright">Student Success Plan  |  Copyright 2012, JA-SIG, Inc.  |  All rights reserved.</p>
+ 	<p class="copyright">Student Success Plan  |  Copyright 2013, JA-SIG, Inc.  |  All rights reserved.</p>
 		
     
   </xsl:template>
