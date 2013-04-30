@@ -364,7 +364,7 @@
 | only available to authenticated users.
 -->
     <xsl:template name="gallery">
-    	<xsl:if test="$AUTHENTICATED = 'true'">
+    	<xsl:if test="upAuth:hasPermission('UP_SYSTEM', 'CUSTOMIZE', 'ALL')">
         <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
         <div class="up-gallery">
             <h2 class="handle">
