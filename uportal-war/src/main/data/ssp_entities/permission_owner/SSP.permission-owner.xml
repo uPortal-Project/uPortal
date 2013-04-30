@@ -309,16 +309,4 @@
     <desc>DATA_STAFF</desc>  
     <targetProvider>portalSystemTargetProvider</targetProvider> 
   </activity>
-  <activity> 
-    <name>PERSON_MAP_READ</name>  
-    <fname>PERSON_MAP_READ</fname>  
-    <desc>PERSON_MAP_READ</desc>  
-    <targetProvider>portalSystemTargetProvider</targetProvider> 
-  </activity>
-  <activity> 
-    <name>PERSON_MAP_WRITE</name>  
-    <fname>PERSON_MAP_WRITE</fname>  
-    <desc>PERSON_MAP_WRITE</desc>  
-    <targetProvider>portalSystemTargetProvider</targetProvider> 
-  </activity>    
 </permission-owner>
