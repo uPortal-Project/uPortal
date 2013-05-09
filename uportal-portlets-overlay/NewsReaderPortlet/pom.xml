@@ -71,13 +71,6 @@
                 <groupId>org.apache.portals.pluto</groupId>
                 <artifactId>maven-pluto-plugin</artifactId>
             </plugin>
-            <!-- Plug-in to add lifecycles to support db-init and data-import -->
-            <plugin>
-                <groupId>org.jasig.portal.maven</groupId>
-                <artifactId>uportal-maven-plugin</artifactId>
-                <!-- extensions must be set to true to pick up the custom phases -->
-                <extensions>true</extensions>
-            </plugin>
             <!-- To drop and recreate the calendar db tables, use mvn db-init -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

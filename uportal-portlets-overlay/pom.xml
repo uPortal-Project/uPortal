@@ -61,5 +61,14 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <!-- Plug-in to add lifecycles to support db-init and data-import -->
+            <plugin>
+                <groupId>org.jasig.portal.maven</groupId>
+                <artifactId>uportal-maven-plugin</artifactId>
+                <!-- extensions must be set to true to pick up the custom phases -->
+                <extensions>true</extensions>
+            </plugin>
+        </plugins>
     </build>
 </project>
