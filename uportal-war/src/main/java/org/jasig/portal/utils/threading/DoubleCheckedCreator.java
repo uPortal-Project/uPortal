@@ -34,7 +34,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public abstract class DoubleCheckedCreator<T> {
-    protected final Log logger = LogFactory.getLog(this.getClass());
+	private static String LOGGER_NAME = DoubleCheckedCreator.class.getName();
     
     private final ReadWriteLock readWriteLock;
     protected final Lock readLock;
@@ -81,6 +81,7 @@ public abstract class DoubleCheckedCreator<T> {
      * @return A retrieved or created object.
      */
     public final T get(Object... args) {
+    	final Log logger = LogFactory.getLog(LOGGER_NAME);
         //Grab a read lock to try retrieving the object
         this.readLock.lock();
         try {
@@ -88,8 +89,8 @@ public abstract class DoubleCheckedCreator<T> {
             //See if the object already exists and is valid
             final T value = this.retrieve(args);
             if (!this.invalid(value, args)) {
-                if (this.logger.isDebugEnabled()) {
-                    this.logger.debug("Using retrieved Object='" + value + "'");
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Using retrieved Object='" + value + "'");
                 }
                 
                 return value;
@@ -111,12 +112,12 @@ public abstract class DoubleCheckedCreator<T> {
                 //Object is not valid, create it
                 value = this.create(args);
                 
-                if (this.logger.isDebugEnabled()) {
-                    this.logger.debug("Created new Object='" + value + "'");
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Created new Object='" + value + "'");
                 }
             }
-            else if (this.logger.isDebugEnabled()) {
-                this.logger.debug("Using retrieved Object='" + value + "'");
+            else if (logger.isDebugEnabled()) {
+                logger.debug("Using retrieved Object='" + value + "'");
             }
             
             return value;
