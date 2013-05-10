@@ -33,6 +33,8 @@ import org.jasig.portal.services.GroupService;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -49,6 +51,8 @@ public class UserGroupSkinMappingTransformerConfigurationSource extends SkinMapp
     private IUserInstanceManager userInstanceManager;
     private Map<String, String> groupToSkinMap = Collections.emptyMap();
     
+    private static final String LOGGER_NAME = UserGroupSkinMappingTransformerConfigurationSource.class.getName();
+    
     @Autowired
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
         this.userInstanceManager = userInstanceManager;
@@ -62,6 +66,8 @@ public class UserGroupSkinMappingTransformerConfigurationSource extends SkinMapp
     }
 
     protected String getSkinName(HttpServletRequest request) {
+    	final Logger logger = LoggerFactory.getLogger(LOGGER_NAME);
+    	
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IPerson person = userInstance.getPerson();
 
@@ -73,7 +79,7 @@ public class UserGroupSkinMappingTransformerConfigurationSource extends SkinMapp
             final IGroupMember group = groupToSkinEntry.getKey();
             if (groupMember.isDeepMemberOf(group)) {
                 final String skin = groupToSkinEntry.getValue();
-                this.logger.debug("Setting skin override {} for {} because they are a member of {}",
+                logger.debug("Setting skin override {} for {} because they are a member of {}",
                         new Object[] { skin, person.getUserName(), group });
                 //Cache the resolution
                 return skin;
@@ -102,6 +108,7 @@ public class UserGroupSkinMappingTransformerConfigurationSource extends SkinMapp
         }
 
         protected IGroupMember findGroup(String group) {
+        	final Logger logger = LoggerFactory.getLogger(LOGGER_NAME);
             //Find group by ID
             final IGroupMember groupMember = GroupService.findGroup(group);
             if (groupMember != null) {
@@ -111,13 +118,13 @@ public class UserGroupSkinMappingTransformerConfigurationSource extends SkinMapp
             //No matching ID, search by name
             final EntityIdentifier[] results = GroupService.searchForGroups(group, GroupService.IS, IPerson.class);
             if (results == null || results.length == 0) {
-                this.logger.warn("Configured group '" + group + "' cannot be found for skin mapping. This mapping will be ignored");
+                logger.warn("Configured group '" + group + "' cannot be found for skin mapping. This mapping will be ignored");
                 return null;
             }
             
             //Warn if multiple results are found
             if (results.length > 1) {
-                this.logger.warn(results.length + " groups were found for skin mapping group '" + group + "'. The first result will be used. " + Arrays.toString(results));
+                logger.warn(results.length + " groups were found for skin mapping group '" + group + "'. The first result will be used. " + Arrays.toString(results));
             }
             
             return GroupService.getGroupMember(results[0]);

@@ -51,7 +51,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * @version $Revision$
  */
 public class PortalApplicationContextLocator implements ServletContextListener {
-    private static Log LOGGER = LogFactory.getLog(PortalApplicationContextLocator.class);
+	private static String LOGGER_NAME = PortalApplicationContextLocator.class.getName(); 
 
     private static final SingletonDoubleCheckedCreator<ConfigurableApplicationContext> applicationContextCreator = new PortalApplicationContextCreator();
     private static Throwable directCreatorThrowable;
@@ -121,17 +121,18 @@ public class PortalApplicationContextLocator implements ServletContextListener {
      * @return The {@link ApplicationContext} for the portal. 
      */
     public static ApplicationContext getApplicationContext() {
+    	Log logger = LogFactory.getLog(LOGGER_NAME);
         final ServletContext context = servletContext;
 
         if (context != null) {
-            LOGGER.debug("Using WebApplicationContext");
+        	logger.debug("Using WebApplicationContext");
 
             if (applicationContextCreator.isCreated()) {
                 final IllegalStateException createException = new IllegalStateException(
                         "A portal managed ApplicationContext has already been created but now a ServletContext is available and a WebApplicationContext will be returned. "
                                 + "This situation should be resolved by delaying calls to this class until after the web-application has completely initialized.");
-                LOGGER.error(createException, createException);
-                LOGGER.error("Stack trace of original ApplicationContext creator", directCreatorThrowable);
+                logger.error(createException, createException);
+                logger.error("Stack trace of original ApplicationContext creator", directCreatorThrowable);
                 throw createException;
             }
 
@@ -155,6 +156,8 @@ public class PortalApplicationContextLocator implements ServletContextListener {
      * this method does nothing but log an error message.
      */
     public static void shutdown() {
+    	Log logger = LogFactory.getLog(LOGGER_NAME);
+
         if (applicationContextCreator.isCreated()) {
             final ConfigurableApplicationContext applicationContext = applicationContextCreator.get();
             applicationContext.close();
@@ -162,7 +165,7 @@ public class PortalApplicationContextLocator implements ServletContextListener {
         else {
             final IllegalStateException createException = new IllegalStateException(
                     "No portal managed ApplicationContext has been created, there is nothing to shutdown.");
-            LOGGER.error(createException, createException);
+            logger.error(createException, createException);
         }
     }
 
@@ -174,11 +177,13 @@ public class PortalApplicationContextLocator implements ServletContextListener {
 
         @Override
         protected ConfigurableApplicationContext createSingleton(Object... args) {
+        	Log logger = LogFactory.getLog(LOGGER_NAME);
+        	
             if (Boolean.getBoolean("org.jasig.portal.test")) {
                 throw new IllegalStateException(PortalApplicationContextLocator.class.getName() + " MUST NOT be used in unit tests");
             }
             
-            LOGGER.info("Creating new lazily initialized GenericApplicationContext for the portal");
+            logger.info("Creating new lazily initialized GenericApplicationContext for the portal");
 
             final long startTime = System.currentTimeMillis();
 
@@ -192,7 +197,7 @@ public class PortalApplicationContextLocator implements ServletContextListener {
 
             directCreatorThrowable = new Throwable();
             directCreatorThrowable.fillInStackTrace();
-            LOGGER.info("Created new lazily initialized GenericApplicationContext for the portal in "
+            logger.info("Created new lazily initialized GenericApplicationContext for the portal in "
                     + (System.currentTimeMillis() - startTime) + "ms");
 
             return genericApplicationContext;
