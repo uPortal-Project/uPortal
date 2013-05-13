@@ -22,8 +22,12 @@ package org.jasig.portal.layout.dlm;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -131,7 +135,7 @@ public class PositionManager
              positionSet.getFirstChild() == null )
             return;
 
-        ArrayList order = new ArrayList();
+        List<NodeInfo> order = new ArrayList<NodeInfo>();
 
         applyOrdering        ( order, compViewParent, positionSet );
         applyNoReparenting   ( order, compViewParent, positionSet );
@@ -147,7 +151,7 @@ public class PositionManager
        are applied. If the position set changed then the original stored in the
        PLF is updated.
      */
-    static void evaluateAndApply( ArrayList order,
+    static void evaluateAndApply( List<NodeInfo> order,
                                   Element compViewParent,
                                   Element positionSet,
                                   IntegrationResult result )
@@ -169,7 +173,7 @@ public class PositionManager
        the position set should be made to match the order of those still
        having one.
      */
-    static void adjustPositionSet( ArrayList order,
+    static void adjustPositionSet( List<NodeInfo> order,
                                    Element positionSet,
                                    IntegrationResult result )
     {
@@ -216,7 +220,7 @@ public class PositionManager
        the order in the compViewParent's ui visible children and returns true
        if the ordering differs indicating that the positioning if needed.
      */
-    static boolean hasAffectOnCVP( ArrayList order,
+    static boolean hasAffectOnCVP( List<NodeInfo> order,
                                    Element compViewParent )
     {
         if ( order.size() == 0 )
@@ -258,7 +262,7 @@ public class PositionManager
        to the child nodes of the compViewParent. Nodes specified in the list
        but located elsewhere are pulled in.
      */
-    static void applyToNodes( ArrayList order,
+    static void applyToNodes( List<NodeInfo> order,
                               Element compViewParent )
     {
         // first set up a bogus node to assist with inserting
@@ -284,7 +288,7 @@ public class PositionManager
        from being located to the left (lower sibling order) of nodes having a
        higher precedence and moveAllowed="false".
      */
-    static void applyLowerPrecedence( ArrayList order,
+    static void applyLowerPrecedence( List<NodeInfo> order,
                                       Element compViewParent,
                                       Element positionSet )
     {
@@ -319,7 +323,7 @@ public class PositionManager
        with any nodes brought in from
        other parents appended at the end with their relative order preserved.
      */
-    static void applyNoHopping( ArrayList order,
+    static void applyNoHopping( List<NodeInfo> order,
                                 Element compViewParent,
                                 Element positionSet )
     {
@@ -353,7 +357,7 @@ public class PositionManager
        same precedence.
 
      */
-    static boolean isIllegalHoppingSpecified( ArrayList order )
+    static boolean isIllegalHoppingSpecified( List<NodeInfo> order )
     {
         for ( int i=0; i< order.size(); i++ )
         {
@@ -409,7 +413,7 @@ public class PositionManager
        If any such sibling is found then the node is not allowed to be
        reparented and is removed from the list.
      */
-    static void applyNoReparenting( ArrayList order,
+    static void applyNoReparenting( List<NodeInfo> order,
                                     Element compViewParent,
                                     Element positionSet )
     {
@@ -471,7 +475,7 @@ public class PositionManager
        nodes still exist in the composite view and then by any remaining
        children in the compViewParent.
      */
-    static void applyOrdering( ArrayList order,
+    static void applyOrdering( List<NodeInfo> order,
                                Element compViewParent,
                                Element positionSet )
     {
@@ -479,7 +483,7 @@ public class PositionManager
         // put their id's in a list of available children and record their
         // relative order in the CVP.
         
-        ArrayList available = new ArrayList();
+        final Map<String, NodeInfo> available = new LinkedHashMap<String, NodeInfo>();
 
         Element child = (Element) compViewParent.getFirstChild();
         Element next = null;
@@ -491,9 +495,15 @@ public class PositionManager
             
             if ( child.getAttribute( "hidden" ).equals( "false" ) &&
                  ( ! child.getAttribute( "chanID" ).equals( "" ) ||
-                   child.getAttribute( "type" ).equals( "regular" ) ) )
-                available.add( new NodeInfo( child,
-                                             indexInCVP++ ) );
+                   child.getAttribute( "type" ).equals( "regular" ) ) ) {
+                final NodeInfo nodeInfo = new NodeInfo( child,
+                                             indexInCVP++ );
+                
+                final NodeInfo prevNode = available.put( nodeInfo.id, nodeInfo );
+                if (prevNode != null) {
+                    throw new IllegalStateException("Infinite loop detected in layout. Triggered by " + nodeInfo.id + " with already visited node ids: " + available.keySet());
+                }
+            }
             child = next;
         }
 
@@ -520,20 +530,13 @@ public class PositionManager
                 // does not include an index in the CVP parent. In either case
                 // indicate the position directive responsible for placing this
                 // NodeInfo object in the list.
-
-                int idx = 0;
-                boolean found = false;
-
-                while ( ! found &&
-                        idx < available.size() )
-                {
-                    if ( ( (NodeInfo) available.get( idx ) ).node == child )
-                        found = true;
-                    else
-                        idx++;
+                
+                final String childId = child.getAttribute( Constants.ATT_ID );
+                NodeInfo ni = available.remove(childId);
+                if (ni == null) {
+                    ni = new NodeInfo( child );
                 }
-                NodeInfo ni = ( found ? (NodeInfo) available.remove( idx ) :
-                                new NodeInfo( child ) );
+                
                 ni.positionDirective = directive;
                 order.add( ni );
             }
@@ -543,8 +546,7 @@ public class PositionManager
         // now append any remaining ids from the available list maintaining
         // the order that they have there.
 
-        for ( int i = 0; i<available.size(); i++ )
-            order.add( available.get( i ) );
+        order.addAll(available.values());
     }
 
     /**

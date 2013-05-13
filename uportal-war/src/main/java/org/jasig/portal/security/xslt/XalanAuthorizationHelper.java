@@ -43,4 +43,9 @@ public class XalanAuthorizationHelper {
     public static boolean canRender(final String userName, final String channelFName) {
         return authorizationHelper.canRender(userName, channelFName);
     }
+
+    public static boolean hasPermission(final String owner, final String activity, final String target) {
+        return authorizationHelper.hasPermission(owner, activity, target);
+    }
+
 }

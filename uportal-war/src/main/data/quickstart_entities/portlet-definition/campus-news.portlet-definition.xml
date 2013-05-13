@@ -19,37 +19,25 @@
     under the License.
 
 -->
-<portlet-definition version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd" xmlns:ns2="https://source.jasig.org/schemas/uportal" xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns4="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/user" xmlns:ns5="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <title>Emergency Alert Admin</title>
-    <name>Emergency Alert Admin</name>
-    <fname>emergency-alert-admin</fname>
-    <desc>Allows an administrator to enable or diable the demonstration of the Jasig Emergency Alert portlet</desc>
+<portlet-definition xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns2="https://source.jasig.org/schemas/uportal" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:ns4="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns5="https://source.jasig.org/schemas/uportal/io/subscribed-fragment" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/event-aggregation" xmlns:ns7="https://source.jasig.org/schemas/uportal/io/user" xmlns:ns8="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd">
+    <title>Campus News</title>
+    <name>Campus News</name>
+    <fname>campus-news</fname>
+    <desc>Campus News</desc>
     <type>Portlet</type>
     <timeout>20000</timeout>
     <portlet-descriptor>
-        <ns2:webAppName>/NotificationPortlet</ns2:webAppName>
-        <ns2:portletName>EmergencyAlertAdmin</ns2:portletName>
+        <ns2:webAppName>/NewsReaderPortlet</ns2:webAppName>
+        <ns2:portletName>news</ns2:portletName>
     </portlet-descriptor>
-    <category>Demonstration</category>
-    <group>Portal Administrators</group>
+    <category>News</category>
+    <group>Everyone</group>
     <parameter>
         <name>alternate</name>
         <value>false</value>
     </parameter>
     <parameter>
-        <name>hasHelp</name>
-        <value>false</value>
-    </parameter>
-    <parameter>
-        <name>highlight</name>
-        <value>false</value>
-    </parameter>
-    <parameter>
-        <name>hasAbout</name>
-        <value>false</value>
-    </parameter>
-    <parameter>
-        <name>editable</name>
+        <name>blockImpersonation</name>
         <value>false</value>
     </parameter>
     <parameter>
@@ -57,7 +45,15 @@
         <value>true</value>
     </parameter>
     <parameter>
-        <name>showChrome</name>
+        <name>editable</name>
+        <value>true</value>
+    </parameter>
+    <parameter>
+        <name>hasAbout</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>hasHelp</name>
         <value>true</value>
     </parameter>
     <parameter>
@@ -65,7 +61,11 @@
         <value>false</value>
     </parameter>
     <parameter>
-        <name>blockImpersonation</name>
+        <name>highlight</name>
         <value>false</value>
+    </parameter>
+    <parameter>
+        <name>showChrome</name>
+        <value>true</value>
     </parameter>
 </portlet-definition>
