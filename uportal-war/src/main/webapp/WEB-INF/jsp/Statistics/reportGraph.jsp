@@ -360,11 +360,6 @@ up.jQuery(function() {
    $("#${n}_reportForm input[name=end]").change(validateIntervals);
    $("#${n}_reportForm select[name=interval]").change(validateIntervals);
 
-   // Render the graph once the google libraries have loaded
-   google.setOnLoadCallback(function() {
-      $("#${n}_reportForm").submit();
-   });
-
 });
 </rs:compressJs>
 </script>
