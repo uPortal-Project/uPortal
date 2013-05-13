@@ -1,6 +1,7 @@
 /.settings
 /.project
 /.classpath
+/bin
 /target
 /build.properties
 /data
