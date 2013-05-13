@@ -40,8 +40,6 @@ public class RemoteCookieCheckController {
 
     @RequestMapping(value=COOKIE_CHECK_REQUEST_MAPPING, method = RequestMethod.GET)
     public ModelAndView verifyCookiesEnabled(HttpServletRequest request, HttpServletResponse response) throws ServletException,IOException {
-        final ModelAndView mv = new ModelAndView();
-
         boolean cookieFound = false;
         Cookie[] cookies = request.getCookies();
 

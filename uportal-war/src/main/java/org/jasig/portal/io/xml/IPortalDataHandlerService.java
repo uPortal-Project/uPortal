@@ -144,6 +144,14 @@ public interface IPortalDataHandlerService {
     public void importData(File directory, String pattern, BatchImportOptions options);
     
     /**
+     * Import a batch of files from an archive.
+     * 
+     * @param archive Archive to import data files from
+     * @param options Optional set of options to better control the import
+     */
+    public void importDataArchive(Resource archive, BatchImportOptions options);
+    
+    /**
      * Import data from the specified resource, uses a {@link ResourceLoader} find the data file
      */
     public void importData(String resource);

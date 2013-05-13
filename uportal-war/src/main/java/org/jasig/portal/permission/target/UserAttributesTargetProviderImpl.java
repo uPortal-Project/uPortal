@@ -22,12 +22,7 @@ public class UserAttributesTargetProviderImpl implements
 
     @Override
     public IPermissionTarget getTarget(String key) {
-        final Set<String> attributes = personAttributeDao.getAvailableQueryAttributes();
-        if (attributes.contains(key)) {
-            return new PermissionTargetImpl(key, key);
-        } else {
-            return null;
-        }
+        return new PermissionTargetImpl(key, key);
     }
 
     @Override

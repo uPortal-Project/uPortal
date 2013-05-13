@@ -536,13 +536,14 @@
     <target name="data-import" depends="prodPrompt" description="Imports the specified XML file or files">
         <if>
             <not>
-                <or>
+                <xor>
                     <isset property="dir" />
                     <isset property="file" />
-                </or>
+                    <isset property="archive" />
+                </xor>
             </not>
             <then>
-                <fail>Either '-Ddir' or '-Dfile' must be specified for data import</fail>
+                <fail>Either '-Ddir' or '-Dfile' or '-Darchive' must be specified for data import</fail>
             </then>
         </if>
 
@@ -550,19 +551,22 @@
         <property name="pattern" value=" " />
         <property name="file" value=" " />
         <property name="dir" value=" " />
+    	<property name="archive" value=" " />
 
         <groovy-safe-path property="dirFullEscaped" input="${dir}" />
         <groovy-safe-path property="fileFullEscaped" input="${file}" />
+    	<groovy-safe-path property="archiveFullEscaped" input="${archive}" />
         <groovy-safe-path property="targetDirEscaped" input="${targetdir}" />
 
 
         <echo>Creating Data Import Script</echo>
         <echo file="${portal-shell-script}" append="true">
-            //dataImport(String target, String dataDir, String pattern, String file, String logDir)
+            //dataImport(String target, String dataDir, String pattern, String file, String archive, String logDir)
             portalShellBuildHelper.dataImport("data-import", 
                 /${dirFullEscaped}/,
                 /${pattern}/,
                 /${fileFullEscaped}/,
+                /${archiveFullEscaped}/,
                 /${targetDirEscaped}/);
         </echo>
 
