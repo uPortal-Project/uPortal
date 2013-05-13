@@ -19,6 +19,7 @@
 
 package org.jasig.portal.io.xml;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileFilter;
@@ -61,9 +62,27 @@ import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveInputStream;
+import org.apache.commons.compress.archivers.ar.ArArchiveInputStream;
+import org.apache.commons.compress.archivers.cpio.CpioArchiveInputStream;
+import org.apache.commons.compress.archivers.jar.JarArchiveInputStream;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.apache.commons.compress.compressors.CompressorInputStream;
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
+import org.apache.commons.compress.compressors.pack200.Pack200CompressorInputStream;
+import org.apache.commons.compress.compressors.xz.XZCompressorInputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.tika.detect.DefaultDetector;
+import org.apache.tika.detect.Detector;
+import org.apache.tika.io.CloseShieldInputStream;
+import org.apache.tika.io.TikaInputStream;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.mime.MediaType;
 import org.apache.tools.ant.DirectoryScanner;
 import org.jasig.portal.concurrency.CallableWithoutResult;
 import org.jasig.portal.utils.AntPatternFileFilter;
@@ -91,6 +110,7 @@ import org.w3c.dom.Node;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Files;
+import com.google.common.io.InputSupplier;
 
 /**
  * Pulls together {@link IPortalDataType}, {@link IDataUpgrader}, and {@link IDataImporter}
@@ -108,6 +128,15 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
 	private static final ThreadLocal<String> IMPORT_BASE_DIR = new ThreadLocal<String>();
 	
 	private static final String REPORT_FORMAT = "%s,%s,%.2fms\n";
+    
+	private static final MediaType MT_JAVA_ARCHIVE = MediaType.application("java-archive");
+	private static final MediaType MT_CPIO = MediaType.application("x-cpio");
+	private static final MediaType MT_AR = MediaType.application("x-archive");
+	private static final MediaType MT_TAR = MediaType.application("x-tar");
+	private static final MediaType MT_BZIP2 = MediaType.application("x-bzip2");
+	private static final MediaType MT_GZIP = MediaType.application("x-gzip");
+	private static final MediaType MT_PACK200 = MediaType.application("x-java-pack200");
+	private static final MediaType MT_XZ = MediaType.application("x-xz");
     
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
@@ -323,6 +352,150 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         this.resourceLoader = resourceLoader;
     }
     
+    @Override
+    public void importDataArchive(Resource archive, BatchImportOptions options) {
+        try {
+            importDataArchive(archive, archive.getInputStream(), options);
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Could not load InputStream for resource: " + archive, e);
+        }
+    }
+        
+    protected void importDataArchive(Resource archive, InputStream resourceStream, BatchImportOptions options) {
+        BufferedInputStream bufferedResourceStream = null;
+        try {
+            //Make sure the stream is buffered
+            if (resourceStream instanceof BufferedInputStream) {
+                bufferedResourceStream = (BufferedInputStream)resourceStream;
+            }
+            else {
+                bufferedResourceStream = new BufferedInputStream(resourceStream);
+            }
+            
+            //Buffer up to 100MB, bad things will happen if we bust this buffer.
+            //TODO see if there is a buffered stream that will write to a file once the buffer fills up
+            bufferedResourceStream.mark(100*1024*1024);
+            final MediaType type = getMediaType(bufferedResourceStream, archive.getFilename());
+            
+            if (MT_JAVA_ARCHIVE.equals(type)) {
+                final ArchiveInputStream archiveStream = new JarArchiveInputStream(bufferedResourceStream);
+                importDataArchive(archive, archiveStream, options);
+            }
+            else if (MediaType.APPLICATION_ZIP.equals(type)) {
+                final ArchiveInputStream archiveStream = new ZipArchiveInputStream(bufferedResourceStream);
+                importDataArchive(archive, archiveStream, options);
+            }
+            else if (MT_CPIO.equals(type)) {
+                final ArchiveInputStream archiveStream = new CpioArchiveInputStream(bufferedResourceStream);
+                importDataArchive(archive, archiveStream, options);
+            }
+            else if (MT_AR.equals(type)) {
+                final ArchiveInputStream archiveStream = new ArArchiveInputStream(bufferedResourceStream);
+                importDataArchive(archive, archiveStream, options);
+            }
+            else if (MT_TAR.equals(type)) {
+                final ArchiveInputStream archiveStream = new TarArchiveInputStream(bufferedResourceStream);
+                importDataArchive(archive, archiveStream, options);
+            }
+            else if (MT_BZIP2.equals(type)) {
+                final CompressorInputStream compressedStream = new BZip2CompressorInputStream(bufferedResourceStream);
+                importDataArchive(archive, compressedStream, options);
+            }
+            else if (MT_GZIP.equals(type)) {
+                final CompressorInputStream compressedStream = new GzipCompressorInputStream(bufferedResourceStream);
+                importDataArchive(archive, compressedStream, options);
+            }
+            else if (MT_PACK200.equals(type)) {
+                final CompressorInputStream compressedStream = new Pack200CompressorInputStream(bufferedResourceStream);
+                importDataArchive(archive, compressedStream, options);
+            }
+            else if (MT_XZ.equals(type)) {
+                final CompressorInputStream compressedStream = new XZCompressorInputStream(bufferedResourceStream);
+                importDataArchive(archive, compressedStream, options);
+            }
+            else {
+                throw new RuntimeException("Unrecognized archive media type: " + type);
+            }
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Could not load InputStream for resource: " + archive, e);
+        }
+        finally {
+            IOUtils.closeQuietly(bufferedResourceStream);
+        }
+    }
+    
+    /**
+     * Extracts the archive resource and then runs the batch-import process on it.
+     */
+    protected void importDataArchive(final Resource resource, final ArchiveInputStream resourceStream, BatchImportOptions options) {
+        
+        final File tempDir = Files.createTempDir();
+        try {
+            ArchiveEntry archiveEntry;
+            while ((archiveEntry = resourceStream.getNextEntry()) != null) {
+                final File entryFile = new File(tempDir, archiveEntry.getName());
+                if (archiveEntry.isDirectory()) {
+                    entryFile.mkdirs();
+                }
+                else {
+                    entryFile.getParentFile().mkdirs();
+                    
+                    Files.copy(new InputSupplier<InputStream>() {
+                        @Override
+                        public InputStream getInput() throws IOException {
+                            return new CloseShieldInputStream(resourceStream);
+                        }
+                    }, entryFile);
+                }
+            }
+            
+            importData(tempDir, null, options);
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Failed to extract data from '" +resource + "' to '" + tempDir + "' for batch import.", e);
+        }
+        finally {
+            FileUtils.deleteQuietly(tempDir);
+        }
+    }
+
+    protected void importXmlData(final Resource resource,
+            final BufferedInputStream resourceStream,
+            final PortalDataKey portalDataKey) {
+        try {
+            final String resourceUri = ResourceUtils.getResourceUri(resource);
+            this.importData(new StreamSource(resourceStream, resourceUri), portalDataKey);
+        }
+        finally {
+            IOUtils.closeQuietly(resourceStream);
+        }
+    }
+    
+    protected MediaType getMediaType(BufferedInputStream inputStream, String fileName) throws IOException {
+        final TikaInputStream tikaInputStreamStream = TikaInputStream.get(new CloseShieldInputStream(inputStream));
+        try {
+            final Detector detector = new DefaultDetector();
+            final Metadata metadata = new Metadata();
+            metadata.set(Metadata.RESOURCE_NAME_KEY, fileName);
+            
+            final MediaType type = detector.detect(tikaInputStreamStream, metadata);
+            logger.debug("Determined '{}' for '{}'", type, fileName);
+            return type;
+        }
+        catch (IOException e) {
+            logger.warn("Failed to determine media type for '" + fileName + "' assuming XML", e);
+            return null;
+        }
+        finally {
+            IOUtils.closeQuietly(tikaInputStreamStream);
+            
+            //Reset the buffered stream to make up for anything read by the detector
+            inputStream.reset();
+        }
+    }
+
     @Override
     public void importData(File directory, String pattern, final BatchImportOptions options) {
         if (!directory.exists()) {

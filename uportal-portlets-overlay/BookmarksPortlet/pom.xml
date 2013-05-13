@@ -48,9 +48,6 @@
                     <filters>
                         <filter>${basedir}/../../${filters.file}</filter>
                     </filters>
-                    <dependentWarExcludes>
-                        WEB-INF/lib/hsqldb-*.jar
-                    </dependentWarExcludes>
                     <webResources>
                         <resource>
                             <directory>${basedir}/src/main/webapp/WEB-INF</directory>
@@ -58,6 +55,16 @@
                             <filtering>true</filtering>
                         </resource>
                     </webResources>
+                    <overlays>
+                        <overlay>
+                            <groupId>org.jasig.portlet</groupId>
+                            <artifactId>BookmarksPortlet</artifactId>
+                            <excludes>
+                                <exclude>WEB-INF/tags/uwfn.tld</exclude>
+                                <exclude>WEB-INF/lib/hsqldb-*.jar</exclude>
+                            </excludes>
+                        </overlay>
+                    </overlays>
                 </configuration>
             </plugin>
            <plugin>

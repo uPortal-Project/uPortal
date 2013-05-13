@@ -75,13 +75,6 @@
                 <groupId>org.apache.portals.pluto</groupId>
                 <artifactId>maven-pluto-plugin</artifactId>
             </plugin>
-            <!-- Plug-in to add lifecycles to support db-init and data-import -->
-            <plugin>
-                <groupId>org.jasig.portal.maven</groupId>
-                <artifactId>uportal-maven-plugin</artifactId>
-                <!-- extensions must be set to true to pick up the custom phases -->
-                <extensions>true</extensions>
-            </plugin>
             <!-- To drop and recreate the calendar db tables, use mvn db-init -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -147,7 +140,7 @@
                 <configuration>
                     <tasks>
                         <!-- Set default value of data location if it is not set -->
-                        <property name="dir" value="${basedir}/src/main/data"/>
+                        <property name="dir" value="${basedir}/src/main/data" />
 
                         <property name="runtime_classpath" refid="maven.runtime.classpath" />
                         <property name="plugin_classpath" refid="maven.plugin.classpath" />
@@ -155,7 +148,7 @@
                         <java failonerror="true" classname="org.danann.cernunnos.runtime.Main">
                             <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
                             <classpath>
-                                <pathelement path="${project.build.directory}/${project.artifactId}/WEB-INF"/>
+                                <pathelement path="${project.build.directory}/${project.artifactId}/WEB-INF" />
                                 <pathelement path="${runtime_classpath}" />
                                 <pathelement path="${plugin_classpath}" />
                             </classpath>

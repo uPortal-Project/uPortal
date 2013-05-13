@@ -26,6 +26,7 @@ package org.jasig.portal.security.xslt;
  * @version $Revision$
  */
 public interface IXalanAuthorizationHelper {
+
     /**
      * Checks if the specified user can render the specified channel.
      * 
@@ -33,5 +34,19 @@ public interface IXalanAuthorizationHelper {
      * @param channelFName Looks up the {@link org.jasig.portal.ChannelDefinition} with the matching fname
      * @return true if the user has permission to render the channel, false for any other case.
      */
-    public boolean canRender(final String userName, final String channelFName);
+    boolean canRender(final String userName, final String channelFName);
+
+    /**
+     * Checks if the specified user can perform the specified action.  The 
+     * target parameter should be non-null where applicable, otherwise it is not 
+     * checked.
+     *
+     * @param owner The owner of the permission, e.g. <code>UP_USERS</code>
+     * @param activity The behavior the user may/may not perform
+     * @param target The object upon which the behavior may/may not be performed, if applicable
+     * @return True if the user has permission to perform the specified action 
+     * on the specified target
+     */
+    boolean hasPermission(String owner, String activity, String target);
+
 }

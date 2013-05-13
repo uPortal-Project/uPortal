@@ -257,13 +257,18 @@ public class PortalShellBuildHelperImpl implements PortalShellBuildHelper {
             }
         }
     }
-
+    
     @Override
     public void dataImport(String target, String dataDir, String pattern, String file, String logDir) {
+        dataImport(target, dataDir, pattern, file, null, logDir);
+    }
+
+    @Override
+    public void dataImport(String target, String dataDir, String pattern, String file, String archive, String logDir) {
         PortalShell.LOGGER.info("");
         PortalShell.LOGGER.info("");
 
-        if (StringUtils.isBlank(dataDir)) {
+        if (!StringUtils.isBlank(file)) {
             PortalShell.LOGGER.info("Importing Data from: " + file);
             try {
                 portalDataHandlerService.importData(new FileSystemResource(file));
@@ -272,7 +277,18 @@ public class PortalShellBuildHelperImpl implements PortalShellBuildHelper {
                 throw new RuntimeException(target + " for " + file + " failed", e);
             }
         }
-        else {
+        else if (!StringUtils.isBlank(archive)) {
+            PortalShell.LOGGER.info("Importing Data from: " + archive);
+            try {
+                portalDataHandlerService.importDataArchive(new FileSystemResource(archive),
+                        new IPortalDataHandlerService.BatchImportOptions().setLogDirectoryParent(logDir));
+            }
+            catch (Exception e) {
+                throw new RuntimeException(target + " for " + archive + " failed", e);
+            }
+            
+        }
+        else if (!StringUtils.isBlank(dataDir)) {
             PortalShell.LOGGER.info("Importing Data from: " + dataDir + " that matches " + pattern);
             pattern = StringUtils.trimToNull(pattern);
 
@@ -289,6 +305,9 @@ public class PortalShellBuildHelperImpl implements PortalShellBuildHelper {
                     throw new RuntimeException(target + " from " + dataDir + " failed", e);
                 }
             }
+        }
+        else {
+            throw new RuntimeException(target + " failed: One of dataDir, file, or archive must be specified");
         }
     }
 

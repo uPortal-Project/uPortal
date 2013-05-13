@@ -32,6 +32,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import java.io.IOException;
 
 public class RemoteCookieCheckFilter implements Filter {
@@ -59,8 +61,16 @@ public class RemoteCookieCheckFilter implements Filter {
             }
 
             if (!cookieFound) {
-                ((HttpServletRequest) request).getSession(true).setAttribute(REFERER_ATTRIBUTE,((HttpServletRequest) request).getRequestURI());
-                String url = ((HttpServletRequest) request).getContextPath() + "/api" + RemoteCookieCheckController.COOKIE_CHECK_REQUEST_MAPPING;
+                final HttpSession session = httpServletRequest.getSession(true);
+                
+                String requestURI = httpServletRequest.getRequestURI();
+                final String queryString = httpServletRequest.getQueryString();
+                if (queryString != null) {
+                    requestURI += "?" + queryString;
+                }
+                
+                session.setAttribute(REFERER_ATTRIBUTE, requestURI);
+                String url = httpServletRequest.getContextPath() + "/api" + RemoteCookieCheckController.COOKIE_CHECK_REQUEST_MAPPING;
                 ((HttpServletResponse) response).sendRedirect(url);
                 return;
             }

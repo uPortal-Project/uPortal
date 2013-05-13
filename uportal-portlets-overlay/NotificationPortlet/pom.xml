@@ -17,16 +17,16 @@
     <dependencies>
         <!-- ===== Compile Time Dependencies ============================== -->
         <dependency>
-            <groupId>org.jasig.portlet</groupId>
-            <artifactId>NotificationPortlet</artifactId>
+            <groupId>org.jasig.portlet.notification</groupId>
+            <artifactId>notification-portlet-webapp</artifactId>
             <version>${NotificationPortlet.version}</version>
             <type>war</type>
         </dependency>
         
         <!-- ===== Provided Dependencies ============================== -->
         <dependency>
-            <groupId>org.jasig.portlet</groupId>
-            <artifactId>NotificationPortlet</artifactId>
+            <groupId>org.jasig.portlet.notification</groupId>
+            <artifactId>notification-portlet-webapp</artifactId>
             <version>${NotificationPortlet.version}</version>
             <classifier>classes</classifier>
             <type>jar</type>
@@ -40,6 +40,14 @@
             <filter>../../${filters.file}</filter>
         </filters>
         <resources>
+            <resource>
+                <filtering>false</filtering>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <!-- This list needs to be identical to the one below...  -->
+                    <exclude>*.properties</exclude>
+                </excludes>
+            </resource>
             <resource>
                 <filtering>true</filtering>
                 <directory>src/main/resources</directory>
