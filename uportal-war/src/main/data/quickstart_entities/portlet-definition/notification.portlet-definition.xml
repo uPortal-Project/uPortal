@@ -50,7 +50,7 @@
     </parameter>
     <parameter>
         <name>mobileIconUrl</name>
-        <value>/uPortal/media/skins/icons/mobile/bullhorn.png</value>
+        <value>/media/skins/icons/mobile/bullhorn.png</value>
     </parameter>
     <parameter>
         <name>showChrome</name>
