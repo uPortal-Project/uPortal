@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
@@ -48,7 +49,7 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
 	private String creatorId;
 	private String description;
     private String principalString;
-	private List children = new ArrayList();
+	private List<JsonEntityBean> children = new ArrayList<JsonEntityBean>();
 	private boolean childrenInitialized = false;
 		
 	public JsonEntityBean() { }
@@ -121,10 +122,10 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
         this.principalString = principalString;
     }
     
-	public List getChildren() {
+	public List<JsonEntityBean> getChildren() {
 		return children;
 	}
-	public void setChildren(List children) {
+	public void setChildren(List<JsonEntityBean> children) {
 		this.children = children;
 	}
 	
@@ -133,7 +134,7 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
 	 * children.</p>
 	 * @param child Object to add
 	 */
-	public void addChild(Object child) {
+	public void addChild(JsonEntityBean child) {
 		children.add(child);
 	}
 	
@@ -204,7 +205,6 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
         return (new CompareToBuilder())
             .append(this.name, entity.getName())
             .append(this.entityType, entity.getEntityType())
-            .append(this.children, entity.getChildren())
             .append(this.creatorId, entity.getCreatorId())
             .append(this.description, entity.getDescription())
             .append(this.entityType, entity.getEntityType())
