@@ -80,7 +80,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
 	<!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-  	<h2 class="title" role="heading"><c:out value="${ fn:escapeXml(portlet.title )}"/></h2>
+  	<h2 class="title" role="heading">${ fn:escapeXml(portlet.title )}</h2>
   </div> <!-- end: portlet-titlebar -->
   
 	<!-- Portlet Content -->
@@ -107,30 +107,30 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           <tbody>
             <tr>
               <td class="fl-text-align-right"><spring:message code="portlet.title"/>:</td>
-              <td><a href="${ basicInfoUrl }" title="<c:out value="${ fn:escapeXml(portlet.title )}"/>" class="pa-edit"><c:out value="${ fn:escapeXml(portlet.title )}"/></a></td>
+              <td><a href="${ basicInfoUrl }" title="${ fn:escapeXml(portlet.title )}" class="pa-edit">${ fn:escapeXml(portlet.title )}</a></td>
             </tr>
             <tr>
               <td class="fl-text-align-right"><spring:message code="portlet.name"/>:</td>
-              <td><a href="${ basicInfoUrl }" title="<c:out value="${ fn:escapeXml(portlet.name )}"/>" class="pa-edit"><c:out value="${ fn:escapeXml(portlet.name )}"/></a></td>
+              <td><a href="${ basicInfoUrl }" title="${ fn:escapeXml(portlet.name )}" class="pa-edit">${ fn:escapeXml(portlet.name )}</a></td>
             </tr>
             <tr>
               <td class="fl-text-align-right"><spring:message code="portlet.functional.name"/>:</td>
-              <td><a href="${ basicInfoUrl }" title="<c:out value="${ fn:escapeXml(portlet.fname )}"/>" class="pa-edit"><c:out value="${ fn:escapeXml(portlet.fname )}"/></a></td>
+              <td><a href="${ basicInfoUrl }" title="${ fn:escapeXml(portlet.fname )}" class="pa-edit">${ fn:escapeXml(portlet.fname )}</a></td>
             </tr>
             <tr>
               <td class="fl-text-align-right"><spring:message code="portlet.description"/>:</td>
-              <td><a href="${ basicInfoUrl }" title="<c:out value="${ fn:escapeXml(portlet.description )}"/>" class="pa-edit"><c:out value="${ fn:escapeXml(portlet.description )}"/></a></td>
+              <td><a href="${ basicInfoUrl }" title="${ fn:escapeXml(portlet.description )}" class="pa-edit">${ fn:escapeXml(portlet.description )}</a></td>
             </tr> 
             <tr>
               <td class="fl-text-align-right"><spring:message code="portlet.timeout"/>:</td>
-              <td><a href="${ basicInfoUrl }" title="<c:out value="${ fn:escapeXml(portlet.timeout )}"/>" class="pa-edit"><c:out value="${ fn:escapeXml(portlet.timeout )}"/></a></td>
+              <td><a href="${ basicInfoUrl }" title="${ fn:escapeXml(portlet.timeout )}" class="pa-edit">${ fn:escapeXml(portlet.timeout )}</a></td>
             </tr>
             <tr>
               <td class="fl-text-align-right"><spring:message code="portlet.type"/>:</td>
               <td>
                 <c:forEach items="${ portletTypes }" var="type">
                   <c:if test="${ type.key.id == portlet.typeId }">
-                    <a href="${ chooseTypeUrl }" title="${ fn:escapeXml(portlet.typeId )}" class="pa-edit"><c:out value="${ fn:escapeXml(type.key.name )}"/></a>
+                    <a href="${ chooseTypeUrl }" title="${ fn:escapeXml(portlet.typeId )}" class="pa-edit">${ fn:escapeXml(type.key.name )}</a>
                   </c:if>
                 </c:forEach>
               </td>
@@ -284,7 +284,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
         <ul class="category-member">
           <c:forEach items="${ portlet.categories }" var="category">
-            <li><a href="${ chooseCategoryUrl }"><c:out value="${ fn:escapeXml(category.name )}"/></a></li>
+            <li><a href="${ chooseCategoryUrl }">${ fn:escapeXml(category.name )}</a></li>
           </c:forEach>
         </ul>
         
@@ -303,7 +303,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       
         <ul class="group-member">
         <c:forEach items="${ portlet.groups }" var="group">
-          <li><a href="${ chooseGroupUrl }"><c:out value="${ fn:escapeXml(group.name )}"/></a></li>
+          <li><a href="${ chooseGroupUrl }">${ fn:escapeXml(group.name )}</a></li>
         </c:forEach>
         </ul>
         

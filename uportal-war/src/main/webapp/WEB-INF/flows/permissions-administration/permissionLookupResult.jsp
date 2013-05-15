@@ -161,7 +161,7 @@ up.jQuery(function() {
              },
              success: function(data) {
                  $(data.assignments).each(function (idx, assignment) {
-                     if (assignment.activityKey == '<spring:escapeBody javaScriptEscape="true">${activity}</spring:escapeBody>') {
+                     if (assignment.activityKey == '<spring:escapeBody htmlEscape="false" javaScriptEscape="true">${activity}</spring:escapeBody>') {
                          rslt.push(assignment);
                      }
                  });
@@ -201,7 +201,7 @@ up.jQuery(function() {
                      target: editUrl.replace("OWNER", '${"${*.ownerKey}"}')
                                      .replace("ACTIVITY", '${"${*.activityKey}"}')
                                      .replace("TARGET", '${"${*.targetKey}"}'),
-                     linktext: "<spring:message code="edit"/>"
+                     linktext: '<spring:message code="edit" htmlEscape="false" javaScriptEscape="true"/>'
                  }
              }
         ],

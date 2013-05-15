@@ -237,8 +237,8 @@
                             addValueLink: "add-attribute-value-link"
                         },
                         messages: {
-                            remove: '<spring:message code="remove"/>',
-                            addValue: '<spring:message code="add.value"/>'
+                            remove: '<spring:message code="remove" htmlEscape="false" javaScriptEscape="true"/>',
+                            addValue: '<spring:message code="add.value" htmlEscape="false" javaScriptEscape="true"/>'
                         }
                     }
                 );
@@ -255,8 +255,8 @@
                             addValueLink: "add-attribute-value-link"
                         },
                         messages: {
-                            remove: '<spring:message code="remove"/>',
-                            addValue: '<spring:message code="add.value"/>'
+                            remove: '<spring:message code="remove" htmlEscape="false" javaScriptEscape="true"/>',
+                            addValue: '<spring:message code="add.value" htmlEscape="false" javaScriptEscape="true"/>'
                         }
                     }
                 );

@@ -55,8 +55,8 @@ up.jQuery(function() {
 
     $(document).ready(function(){
     	up.showHideToggle('#${n}stacktracecontainer', { 
-        	showmessage: '<spring:message code="errorportlet.toggleshow"/>',
-        	hidemessage: '<spring:message code="errorportlet.togglehide"/>'
+        	showmessage: '<spring:message code="errorportlet.toggleshow" htmlEscape="false" javaScriptEscape="true"/>',
+        	hidemessage: '<spring:message code="errorportlet.togglehide" htmlEscape="false" javaScriptEscape="true"/>'
     	});
     });
 
