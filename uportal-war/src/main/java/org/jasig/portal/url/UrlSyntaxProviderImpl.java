@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.portlet.PortletMode;
@@ -111,7 +112,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
     private static final String PORTAL_CANONICAL_URL = UrlSyntaxProviderImpl.class.getName() + ".PORTAL_CANONICAL_URL";
     private static final String PORTAL_REQUEST_INFO_ATTR = UrlSyntaxProviderImpl.class.getName() + ".PORTAL_REQUEST_INFO"; 
     private static final String PORTAL_REQUEST_PARSING_IN_PROGRESS_ATTR = UrlSyntaxProviderImpl.class.getName() + ".PORTAL_REQUEST_PARSING_IN_PROGRESS";
-    
+
     /**
      * Utility enum used for parsing parameters that can appear multiple times on one URL and may or may not
      * be suffixed with the portlet's window id
@@ -312,22 +313,22 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
         
         try {
             //Clone the parameter map so data can be removed from it as it is parsed to help determine what to do with non-namespaced parameters
-            @SuppressWarnings("unchecked")
             final Map<String, String[]> parameterMap = new ParameterMap(request.getParameterMap());
             
             final String requestPath = this.urlPathHelper.getPathWithinApplication(request);
+
             if (LEGACY_URL_PATHS.contains(requestPath)) {
                 return parseLegacyPortalUrl(request, parameterMap);
             }
-            
+
             final IUrlNodeSyntaxHelper urlNodeSyntaxHelper = this.urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request);
-            
+
             final PortalRequestInfoImpl portalRequestInfo = new PortalRequestInfoImpl();
             IPortletWindowId targetedPortletWindowId = null;
             PortletRequestInfoImpl targetedPortletRequestInfo = null;
             
             final String[] requestPathParts = SLASH_PATTERN.split(requestPath);
-            
+
             UrlState requestedUrlState = null;
             ParseStep parseStep = ParseStep.FOLDER;
             for (int pathPartIndex = 0; pathPartIndex < requestPathParts.length; pathPartIndex++) {
@@ -823,6 +824,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
         }
         
         final IPortalRequestInfo portalRequestInfo = this.getPortalRequestInfo(request);
+
         final UrlType urlType = portalRequestInfo.getUrlType();
         
         final IPortletWindowId targetedPortletWindowId = portalRequestInfo.getTargetedPortletWindowId();
@@ -869,7 +871,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                 }
             }
         }
-        
+
         return portalUrlBuilder.getUrlString();
     }
     
@@ -1177,4 +1179,115 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
 
         return contextPath;
     }
+
+    @Override
+    public boolean doesRequestPathReferToSpecificAndDifferentContentVsCanonicalPath(final String requestPath, final String canonicalPath) {
+
+        // Assertions.
+        if (requestPath == null) {
+            String msg = "Argument 'path1' cannot be null";
+            throw new IllegalArgumentException(msg);
+        }
+        if (canonicalPath == null) {
+            String msg = "Argument 'path2' cannot be null";
+            throw new IllegalArgumentException(msg);
+        }
+
+        /*
+         * If either is legacy, we can't make the determination.
+         * (Actually I wonder if this task would be possible;  too much to 
+         * attempt right now.)
+         */
+        if (LEGACY_URL_PATHS.contains(requestPath) || LEGACY_URL_PATHS.contains(canonicalPath)) {
+            return false;
+        }
+
+        final ContentTuple requestTuple = ContentTuple.parse(requestPath);
+
+        /*
+         * The requestPath must refer to something specific
+         */
+        if (requestTuple.getFolder() == null && requestTuple.getPortlet() == null) {
+            return false;
+        }
+
+        final ContentTuple canonicalTuple = ContentTuple.parse(canonicalPath);
+
+        /*
+         * At this point they must be the same
+         */
+        return !canonicalTuple.equals(requestTuple);
+
+    }
+
+    private static final class ContentTuple {
+
+        private static final Pattern FOLDER_PARSING_PATTERN = Pattern.compile(".*/f/([a-zA-Z0-9_]+)[\\./]?.*");
+        private static final Pattern PORTLET_PARSING_PATTERN = Pattern.compile(".*/p/([a-zA-Z0-9_]+)[\\./]?.*");
+
+        private final String folder;
+        private final String portlet;
+
+        public static ContentTuple parse(String path) {
+            String folder = null;  // default
+            Matcher fMatcher = FOLDER_PARSING_PATTERN.matcher(path);
+            if (fMatcher.matches()) {
+                folder = fMatcher.group(1);
+            }
+            String portlet = null;  // default
+            Matcher pMatcher = PORTLET_PARSING_PATTERN.matcher(path);
+            if (pMatcher.matches()) {
+                portlet = pMatcher.group(1);
+            }
+            return new ContentTuple(folder, portlet);
+        }
+
+        public String getFolder() {
+            return folder;
+        }
+
+        public String getPortlet() {
+            return portlet;
+        }
+
+        private ContentTuple(String folder, String portlet) {
+            this.folder = folder;
+            this.portlet = portlet;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result
+                    + ((folder == null) ? 0 : folder.hashCode());
+            result = prime * result
+                    + ((portlet == null) ? 0 : portlet.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            ContentTuple other = (ContentTuple) obj;
+            if (folder == null) {
+                if (other.folder != null)
+                    return false;
+            } else if (!folder.equals(other.folder))
+                return false;
+            if (portlet == null) {
+                if (other.portlet != null)
+                    return false;
+            } else if (!portlet.equals(other.portlet))
+                return false;
+            return true;
+        }
+
+    }
+
 }
