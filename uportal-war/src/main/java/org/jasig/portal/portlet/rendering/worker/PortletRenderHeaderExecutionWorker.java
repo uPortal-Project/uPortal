@@ -77,7 +77,7 @@ public class PortletRenderHeaderExecutionWorker extends
 	    
         final PortletRenderResult result = portletRenderer.doRenderHeader(portletWindowId, request, response, renderPortletOutputHandler);
         
-        this.output = renderPortletOutputHandler.getContentType();
+        this.output = renderPortletOutputHandler.getOutput();
         
         return result;
 	}
