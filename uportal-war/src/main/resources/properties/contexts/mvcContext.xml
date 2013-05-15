@@ -23,6 +23,7 @@
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns="http://www.springframework.org/schema/beans" 
        xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
            http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
@@ -39,6 +40,18 @@
         <!-- one of the properties available; the maximum file size in bytes -->
         <property name="maxUploadSize" value="100000"/>
     </bean>
+
+    <!-- The urlCanonicalizingFilter can (will) attempt to deep-link users, 
+         through authentication, to the content they are requesting, provided 
+         that...
+           - (1) the user is a guest
+           - (2) the canonicalUrl (place the portal wants to send the user) is 
+                 not the requested content
+           - (3) there is a strategy for external login (LoginRefUrlEncoder 
+                 bean) configured
+    -->
+    <bean id="casRefUrlEncoder" class="org.jasig.portal.url.CasLoginRefUrlEncoder"
+        p:casLoginUrl="${org.jasig.portal.channels.CLogin.CasLoginUrl}" />
 
     <!--
      | Message source for this context, loaded from localized "messages_xx" files

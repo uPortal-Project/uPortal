@@ -58,4 +58,14 @@ public interface IUrlSyntaxProvider {
      * @return A URL to be used in markup or as a redirect. The URL will be absolute, starting with a / or with a protocol such as http://
      */
     public String generateUrl(HttpServletRequest request, IPortalActionUrlBuilder portalActionUrlBuilder);
+    
+    /**
+     * Attempts to answer whether the two URLs <strong>definitely refer to 
+     * different</strong> content in the portal.  Returns FALSE if they refer to 
+     * the same content, or if the IUrlSyntaxProvider can't reasonably make that 
+     * determination. 
+     * 
+     * @return TRUE if the two URLs certainly refer to different content;  otherwise FALSE
+     */
+    public boolean doesRequestPathReferToSpecificAndDifferentContentVsCanonicalPath(String requestPath, String canonicalPath);
 }

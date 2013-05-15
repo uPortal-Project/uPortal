@@ -28,6 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.math.NumberUtils;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,17 +48,27 @@ public class UrlCanonicalizingFilter extends OncePerRequestFilter {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
     private IUrlSyntaxProvider urlSyntaxProvider;
+    private IPersonManager personManager;
     private IUserInstanceManager userInstanceManager;
     private int maximumRedirects = 5;
+    private LoginRefUrlEncoder loginRefUrlEncoder;
     
 
     @Autowired
     public void setUrlSyntaxProvider(IUrlSyntaxProvider urlSyntaxProvider) {
         this.urlSyntaxProvider = urlSyntaxProvider;
     }
-    @Autowired    
+    @Autowired
+    public void setPersonManager(IPersonManager personManager) {
+        this.personManager = personManager;
+    }
+    @Autowired
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
         this.userInstanceManager = userInstanceManager;
+    }
+    @Autowired(required=false)
+    public void setLoginRefUrlEncoder(LoginRefUrlEncoder loginRefUrlEncoder) {
+        this.loginRefUrlEncoder = loginRefUrlEncoder;
     }
     /**
      * Maximum number of consecutive redirects that are allowed. Defaults to 5.
@@ -78,16 +90,41 @@ public class UrlCanonicalizingFilter extends OncePerRequestFilter {
             else {
                 canonicalUri = canonicalUrl.substring(0, queryStringIndex);
             }
-            
+
             final String requestURI = request.getRequestURI();
-            
+
             final int redirectCount = this.getRedirectCount(request);
             if (!canonicalUri.equals(requestURI)) {
                 if (redirectCount < this.maximumRedirects) {
                     this.setRedirectCount(request, response, redirectCount + 1);
-                    
-                    final String encodeCanonicalUrl = response.encodeRedirectURL(canonicalUrl);
-                    response.sendRedirect(encodeCanonicalUrl);
+
+                    /*
+                     * This is the place where we should decide if...
+                     *   - (1) the user is a guest
+                     *   - (2) the canonicalUrl is not the requested content
+                     *   - (3) there is a strategy for external login
+                     *
+                     * If all of these are true, we should attempt to send the 
+                     * user to external login with a properly-encoded deep-linking 
+                     * service URL attached.
+                     */
+
+                    String encodedTargetUrl = null;
+
+                    IPerson person = personManager.getPerson(request);
+                    if (/* #1 */ person.isGuest()
+                            && /* #2 */ urlSyntaxProvider.doesRequestPathReferToSpecificAndDifferentContentVsCanonicalPath(requestURI, canonicalUri)
+                            && /* #3 */ loginRefUrlEncoder != null) {
+                        encodedTargetUrl = loginRefUrlEncoder.encodeLoginAndRefUrl(request);
+                    }
+
+                    if (encodedTargetUrl == null) {
+                        // For whatever reason, we haven't chosen to send the 
+                        // user through external login, so we use the canonicalUrl
+                        encodedTargetUrl = response.encodeRedirectURL(canonicalUrl);
+                    }
+
+                    response.sendRedirect(encodedTargetUrl);
                     logger.debug("Redirecting from {} to canonicalized URL {}, redirect {}", new Object[] {requestURI, canonicalUri, redirectCount});
                     return;
                 }
