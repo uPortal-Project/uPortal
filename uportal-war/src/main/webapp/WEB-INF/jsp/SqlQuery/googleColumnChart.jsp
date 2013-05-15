@@ -49,7 +49,7 @@
   function drawChart() {
     var data = new google.visualization.DataTable();
     <c:forEach items="${ results[0] }" var="cell" varStatus="status">
-        data.addColumn('<gvis:dataType value="${ cell.value }"/>', '<spring:escapeBody javaScriptEscape="true">${ cell.key }</spring:escapeBody>');
+        data.addColumn('<gvis:dataType value="${ cell.value }"/>', '<spring:escapeBody htmlEscape="false" javaScriptEscape="true">${ cell.key }</spring:escapeBody>');
     </c:forEach>
     data.addRows(${ fn:length(results) });
     <c:forEach items="${ results }" var="row" varStatus="status">

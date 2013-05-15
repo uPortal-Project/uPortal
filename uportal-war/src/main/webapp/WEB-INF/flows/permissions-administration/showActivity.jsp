@@ -154,8 +154,8 @@ up.jQuery(function() {
              url: "<c:url value="/api/permissionAssignments"/>",
              async: false,
              data: { 
-                 owner: '<spring:escapeBody javaScriptEscape="true">${ owner.fname }</spring:escapeBody>', 
-                 activity: '<spring:escapeBody javaScriptEscape="true">${ activity.fname }</spring:escapeBody>' 
+                 owner: '<spring:escapeBody htmlEscape="false" javaScriptEscape="true">${ owner.fname }</spring:escapeBody>', 
+                 activity: '<spring:escapeBody htmlEscape="false" javaScriptEscape="true">${ activity.fname }</spring:escapeBody>' 
              },
              dataType: "json",
              error: function(XMLHttpRequest, textStatus, errorThrown) {
