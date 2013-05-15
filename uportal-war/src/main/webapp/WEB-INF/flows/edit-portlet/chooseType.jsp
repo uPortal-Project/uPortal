@@ -82,8 +82,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                   <td align="center">
                     <form:radiobutton path="typeId" value="${ chanTypeEntry.key.id  }" cssClass="portlet-form-input-field"/>
                   </td>
-                  <td><c:out value="${ fn:escapeXml(chanTypeEntry.key.name )}"/></td>
-                  <td><c:out value="${ fn:escapeXml(chanTypeEntry.key.description )}"/></td>
+                  <td>${ fn:escapeXml(chanTypeEntry.key.name )}</td>
+                  <td>${ fn:escapeXml(chanTypeEntry.key.description )}</td>
                 </tr>
             </c:forEach>
           </tbody>

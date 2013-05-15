@@ -57,14 +57,14 @@
                 var type = '<gvis:dataType value="${ cell.value }"/>';
             </c:otherwise>
         </c:choose>
-        data.addColumn(type, '<spring:escapeBody javaScriptEscape="true">${ cell.key }</spring:escapeBody>');
+        data.addColumn(type, '<spring:escapeBody htmlEscape="false" javaScriptEscape="true">${ cell.key }</spring:escapeBody>');
     </c:forEach>
     data.addRows(${ fn:length(results) });
     <c:forEach items="${ results }" var="row" varStatus="status">
         <c:forEach items="${ row }" var="cell" varStatus="cellStatus">
             <c:choose>
             <c:when test="${ status.index == 0 and cellStatus.index == 0 }">
-                var value = String('<spring:escapeBody javaScriptEscape="true">${ cell.value }</spring:escapeBody>');
+                var value = String('<spring:escapeBody htmlEscape="false" javaScriptEscape="true">${ cell.value }</spring:escapeBody>');
             </c:when>
             <c:otherwise>
                 var value = <gvis:formatValue value="${ cell.value }"/>;
