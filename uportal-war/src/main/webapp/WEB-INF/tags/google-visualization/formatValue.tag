@@ -33,7 +33,7 @@
         ${ fn:escapeXml(value )}
     </c:when>
     <c:otherwise>
-        '<spring:escapeBody javaScriptEscape="true">${ value }</spring:escapeBody>'
+        '<spring:escapeBody htmlEscape="false" javaScriptEscape="true">${ value }</spring:escapeBody>'
     </c:otherwise>
 </c:choose>
 

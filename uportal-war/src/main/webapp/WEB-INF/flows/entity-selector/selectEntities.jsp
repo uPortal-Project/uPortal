@@ -307,8 +307,8 @@
                     entityRegistry: {
                         options: { entitiesUrl: "<c:url value="/api/entities"/>" }
                     },
-                    entityTypes: [<c:forEach items="${selectTypes}" var="type" varStatus="status">'<spring:escapeBody javaScriptEscape="true">${type}</spring:escapeBody>'${status.last ? '' : ','}</c:forEach>],
-                    selected: [<c:forEach items="${groups}" var="group" varStatus="status">'<spring:escapeBody javaScriptEscape="true">${group.entityType}:${group.id}</spring:escapeBody>'${ status.last ? '' : ',' }</c:forEach>],
+                    entityTypes: [<c:forEach items="${selectTypes}" var="type" varStatus="status">'<spring:escapeBody htmlEscape="false" javaScriptEscape="true">${type}</spring:escapeBody>'${status.last ? '' : ','}</c:forEach>],
+                    selected: [<c:forEach items="${groups}" var="group" varStatus="status">'<spring:escapeBody htmlEscape="false" javaScriptEscape="true">${group.entityType}:${group.id}</spring:escapeBody>'${ status.last ? '' : ',' }</c:forEach>],
                     initialFocusedEntity: '${rootEntity.entityType}:${rootEntity.id}',
                     selectMultiple: ${selectionMode},
                     requireSelection: ${ not empty requireSelection ? requireSelection : true },
@@ -330,14 +330,14 @@
                         buttonPrimary: "#${n}buttonPrimary"
                     },
                     messages: {
-                        selectButtonMessage: '<spring:escapeBody javaScriptEscape="true"><spring:message code="select"/></spring:escapeBody>',
-                        deselectButtonMessage: '<spring:escapeBody javaScriptEscape="true"><spring:message code="deselect"/></spring:escapeBody>',
-                        removeCrumb: '<spring:escapeBody javaScriptEscape="true"><spring:message code="remove"/></spring:escapeBody>',
-                        removeSelection: '<spring:escapeBody javaScriptEscape="true"><spring:message code="remove"/></spring:escapeBody>',
-                        addSelection: '<spring:escapeBody javaScriptEscape="true"><spring:message code="select"/></spring:escapeBody>',
-                        selected: '<spring:escapeBody javaScriptEscape="true"><spring:message code="selected"/></spring:escapeBody>',
-                        nothingSelected: '<spring:escapeBody javaScriptEscape="true"><spring:message code="nothing.selected"/></spring:escapeBody>',
-                        searchValue: '<spring:escapeBody javaScriptEscape="true"><spring:message code="please.enter.name"/></spring:escapeBody>'
+                        selectButtonMessage: '<spring:escapeBody htmlEscape="false" javaScriptEscape="true"><spring:message code="select"/></spring:escapeBody>',
+                        deselectButtonMessage: '<spring:escapeBody htmlEscape="false" javaScriptEscape="true"><spring:message code="deselect"/></spring:escapeBody>',
+                        removeCrumb: '<spring:escapeBody htmlEscape="false" javaScriptEscape="true"><spring:message code="remove"/></spring:escapeBody>',
+                        removeSelection: '<spring:escapeBody htmlEscape="false" javaScriptEscape="true"><spring:message code="remove"/></spring:escapeBody>',
+                        addSelection: '<spring:escapeBody htmlEscape="false" javaScriptEscape="true"><spring:message code="select"/></spring:escapeBody>',
+                        selected: '<spring:escapeBody htmlEscape="false" javaScriptEscape="true"><spring:message code="selected"/></spring:escapeBody>',
+                        nothingSelected: '<spring:escapeBody htmlEscape="false" javaScriptEscape="true"><spring:message code="nothing.selected"/></spring:escapeBody>',
+                        searchValue: '<spring:escapeBody htmlEscape="false" javaScriptEscape="true"><spring:message code="please.enter.name"/></spring:escapeBody>'
                     }
                 });
             });

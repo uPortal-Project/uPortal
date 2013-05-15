@@ -131,8 +131,8 @@
               addMessage: '#${ns}addMessage'
           },
           messages: {
-              messageTranslationSaved: '<spring:message code="message.translation.has.been.succesfully.saved" />',
-              portletTranslationSaved: '<spring:message code="portlet.definition.translation.has.been.succesfully.saved" />'
+              messageTranslationSaved: '<spring:message code="message.translation.has.been.succesfully.saved" htmlEscape="false" javaScriptEscape="true" />',
+              portletTranslationSaved: '<spring:message code="portlet.definition.translation.has.been.succesfully.saved" htmlEscape="false" javaScriptEscape="true" />'
           }
       });
   });

@@ -283,8 +283,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 					        dialog: $("#${n}addParameterDialog-" + $(this).attr("dialog")),
                             multivalued: false,
                             messages: {
-                              remove: '<spring:message code="remove"/>',
-                              addValue: '<spring:message code="add.value"/>'
+                              remove: '<spring:message code="remove" htmlEscape="false" javaScriptEscape="true"/>',
+                              addValue: '<spring:message code="add.value" htmlEscape="false" javaScriptEscape="true"/>'
                             }
 					      }
 					  );
@@ -298,8 +298,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                             form: $("#${n}addParameterForm"),
                             multivalued: true,
                             messages: {
-                              remove: '<spring:message code="remove"/>',
-                              addValue: '<spring:message code="add.value"/>'
+                              remove: '<spring:message code="remove" htmlEscape="false" javaScriptEscape="true"/>',
+                              addValue: '<spring:message code="add.value" htmlEscape="false" javaScriptEscape="true"/>'
                             }
                           }
                       );

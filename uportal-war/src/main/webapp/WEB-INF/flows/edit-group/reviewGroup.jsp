@@ -60,7 +60,7 @@
 
     <!-- Portlet Titlebar -->
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-        <h2 class="title" role="heading"><c:out value="${ fn:escapeXml(group.name )}"/></h2>
+        <h2 class="title" role="heading">${ fn:escapeXml(group.name )}</h2>
         <h3 class="subtitle">${ fn:escapeXml(group.description )}</h3>
         <div class="details">Created by ${ fn:escapeXml(group.creatorId )}</div>
         <div class="toolbar">

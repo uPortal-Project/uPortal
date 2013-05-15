@@ -120,7 +120,7 @@ up.jQuery(function() {
     var targetSuggest = up.Autocomplete(
             "#${n}targetSuggest", 
             {
-                initialText: "<spring:message code="target"/>",
+                initialText: '<spring:message code="target" htmlEscape="false" javaScriptEscape="true"/>',
                 searchFunction: function(searchterm) {
                     var targets = [];
                     $.ajax({

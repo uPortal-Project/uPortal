@@ -154,8 +154,8 @@ up.jQuery(function() {
              url: "<c:url value="/api/permissionAssignments"/>",
              async: false,
              data: { 
-                 owner: '<spring:escapeBody javaScriptEscape="true">${ owner.fname }</spring:escapeBody>', 
-                 activity: '<spring:escapeBody javaScriptEscape="true">${ activity.fname }</spring:escapeBody>' 
+                 owner: '<spring:escapeBody htmlEscape="false" javaScriptEscape="true">${ owner.fname }</spring:escapeBody>', 
+                 activity: '<spring:escapeBody htmlEscape="false" javaScriptEscape="true">${ activity.fname }</spring:escapeBody>' 
              },
              dataType: "json",
              error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -181,7 +181,7 @@ up.jQuery(function() {
                     target: editUrl.replace("OWNER", '${"${*.owner}"}')
                                     .replace("ACTIVITY", '${"${*.activity}"}')
                                     .replace("TARGET", '${"${*.target}"}'),
-                    linktext: "<spring:message code="edit"/>"
+                    linktext: '<spring:message code="edit" htmlEscape="false" javaScriptEscape="true"/>'
                 }
             },
             { key: "permissionDelete", valuebinding: "*.owner",
@@ -192,7 +192,7 @@ up.jQuery(function() {
                                     .replace("ACTIVITY", escape('${"${*.activity}"}'))
                                     .replace("TARGET", escape('${"${*.target}"}'))
                                     .replace("PERMISSIONTYPE", escape('${"${*.permissionType}"}')),
-                    linktext: "<spring:message code="delete"/>"
+                    linktext: '<spring:message code="delete" htmlEscape="false" javaScriptEscape="true"/>'
                 }
             }
         ],
