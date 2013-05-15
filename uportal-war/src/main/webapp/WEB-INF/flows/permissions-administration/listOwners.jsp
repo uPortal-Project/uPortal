@@ -158,7 +158,7 @@ up.jQuery(function() {
 
         var submitForm = function(form){
             if (!principalSuggest.getValue() || !permissionSuggest.getValue()) {
-                alert("<spring:message code="please.choose.principal.and.permission.from.the.autocomplete.menus"/>");
+                alert('<spring:message code="please.choose.principal.and.permission.from.the.autocomplete.menus" htmlEscape="false" javaScriptEscape="true"/>');
                 return false;
             }
             form.principal.value = principalSuggest.getValue();
@@ -193,7 +193,7 @@ up.jQuery(function() {
         var permissionSuggest = up.Autocomplete(
             "#${n}permissionSuggest", 
             {
-                initialText: "<spring:message code="permission"/>",
+                initialText: '<spring:message code="permission" htmlEscape="false" javaScriptEscape="true"/>',
                 searchFunction: function(searchterm) {
                     var principals = [];
                     $.ajax({

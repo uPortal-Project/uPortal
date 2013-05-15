@@ -201,7 +201,7 @@ up.jQuery(function() {
                      target: editUrl.replace("OWNER", '${"${*.ownerKey}"}')
                                      .replace("ACTIVITY", '${"${*.activityKey}"}')
                                      .replace("TARGET", '${"${*.targetKey}"}'),
-                     linktext: "<spring:message code="edit"/>"
+                     linktext: '<spring:message code="edit" htmlEscape="false" javaScriptEscape="true"/>'
                  }
              }
         ],

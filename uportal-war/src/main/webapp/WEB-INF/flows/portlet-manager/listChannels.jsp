@@ -180,7 +180,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             var states = [];
             states.push({
                 id: "",
-                name: "<spring:message code="all"/>"
+                name: '<spring:message code="all" htmlEscape="false" javaScriptEscape="true"/>'
             });
 
             <c:forEach items="${ lifecycleStates }" var="lifecycleState">
@@ -239,8 +239,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             var categories = [];
             categories.push({
                 id: "",
-                name: "<spring:message code="all"/>",
-                description: "<spring:message code="all.categories"/>",
+                name: '<spring:message code="all" htmlEscape="false" javaScriptEscape="true"/>',
+                description: '<spring:message code="all.categories" htmlEscape="false" javaScriptEscape="true"/>',
                 categories: [],
                 deepCategories: [],
                 portlets: [],
@@ -251,7 +251,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     categories.push(category);
                 }
             });
-            categories.sort(up.getStringPropertySortFunction("name", "<spring:message code="all"/>"));
+            categories.sort(up.getStringPropertySortFunction("name", '<spring:message code="all" htmlEscape="false" javaScriptEscape="true"/>'));
 
             var tree = { children: [] };
             
@@ -268,8 +268,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                             if ($(this).val() == "") {
                                 category = {
                                     id: "",
-                                    name: "<spring:message code="all"/>",
-                                    description: "<spring:message code="all.categories"/>",
+                                    name: '<spring:message code="all"  htmlEscape="false" javaScriptEscape="true"/>',
+                                    description: '<spring:message code="all.categories" htmlEscape="false" javaScriptEscape="true"/>',
                                     categories: [],
                                     deepCategories: [],
                                     portlets: [],
@@ -341,13 +341,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     { key: "editLink", valuebinding: "*.id",
                         components: {
                             target: editUrl.replace("PORTLETID", '${"${*.id}"}'),
-                            linktext: "<spring:message code="edit"/>"
+                            linktext: '<spring:message code="edit" htmlEscape="false" javaScriptEscape="true"/>'
                             }
                         },
                     { key: "deleteLink", valuebinding: "*.id",
                         components: {
                             target: removeUrl.replace("PORTLETID", '${"${*.id}"}'),
-                            linktext: "<spring:message code="delete"/>"
+                            linktext: '<spring:message code="delete" htmlEscape="false" javaScriptEscape="true"/>'
                             }
                         }
                 ],
@@ -405,7 +405,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                         type: "up.PortletAdministrationPortletListView"
                     },
                     searchView: {
-                        options: {searchInvitationMessage: '<spring:message code="search.for.stuff" />'}
+                        options: {searchInvitationMessage: '<spring:message code="search.for.stuff" htmlEscape="false" javaScriptEscape="true"/>'}
                     },
                     listeners: {
                         onLoad: function(that) {

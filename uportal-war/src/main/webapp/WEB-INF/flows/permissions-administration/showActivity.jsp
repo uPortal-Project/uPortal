@@ -181,7 +181,7 @@ up.jQuery(function() {
                     target: editUrl.replace("OWNER", '${"${*.owner}"}')
                                     .replace("ACTIVITY", '${"${*.activity}"}')
                                     .replace("TARGET", '${"${*.target}"}'),
-                    linktext: "<spring:message code="edit"/>"
+                    linktext: '<spring:message code="edit" htmlEscape="false" javaScriptEscape="true"/>'
                 }
             },
             { key: "permissionDelete", valuebinding: "*.owner",
@@ -192,7 +192,7 @@ up.jQuery(function() {
                                     .replace("ACTIVITY", escape('${"${*.activity}"}'))
                                     .replace("TARGET", escape('${"${*.target}"}'))
                                     .replace("PERMISSIONTYPE", escape('${"${*.permissionType}"}')),
-                    linktext: "<spring:message code="delete"/>"
+                    linktext: '<spring:message code="delete" htmlEscape="false" javaScriptEscape="true"/>'
                 }
             }
         ],
