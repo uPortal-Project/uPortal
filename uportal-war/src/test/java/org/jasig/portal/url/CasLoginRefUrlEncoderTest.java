@@ -4,8 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import javax.servlet.http.HttpServletRequest;
-
 import java.io.UnsupportedEncodingException;
 
 import static org.junit.Assert.assertEquals;
