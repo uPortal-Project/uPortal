@@ -40,6 +40,42 @@
                 <groupId>org.apache.portals.pluto</groupId>
                 <artifactId>maven-pluto-plugin</artifactId>
             </plugin>
+            <!-- To drop and recreate the attachments db tables, use mvn db-init -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>hibernate3-maven-plugin</artifactId>
+                <version>2.2</version>
+                <executions>
+                    <execution>
+                        <phase>db-init</phase>
+                        <goals>
+                            <goal>hbm2ddl</goal>
+                        </goals>
+                        <configuration>
+                            <componentProperties>
+                                <propertyfile>${project.build.directory}/classes/datasource.properties</propertyfile>
+                                <drop>true</drop>
+                            </componentProperties>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>${jdbc.groupId}</groupId>
+                        <artifactId>${jdbc.artifactId}</artifactId>
+                        <version>${jdbc.version}</version>
+                        <scope>compile</scope>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jasig.portlet</groupId>
+                        <artifactId>CalendarPortlet</artifactId>
+                        <version>${CalendarPortlet.version}</version>
+                        <classifier>classes</classifier>
+                        <type>jar</type>
+                        <scope>compile</scope>
+                    </dependency>
+                </dependencies>
+            </plugin>
         </plugins>
     </build>
 
