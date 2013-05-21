@@ -17,6 +17,7 @@
 
     <modules>
         <module>BookmarksPortlet</module>
+        <module>Announcements</module>
         <module>CalendarPortlet</module>
         <module>cas</module>
         <module>cas-proxy-test-portlet</module>

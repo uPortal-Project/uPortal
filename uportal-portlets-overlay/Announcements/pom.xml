@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>org.jasig.portal.portlets-overlay</groupId>
+        <artifactId>uportal-portlets-overlay</artifactId>
+        <version>4.1.0-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>Announcements</artifactId>
+    <packaging>war</packaging>
+
+    <name>Announcements Portlet</name>
+    <description>Overlay on Announcements Portlet.</description>
+
+    <dependencies>
+        <!-- ===== Compile Time Dependencies ============================== -->
+        <dependency>
+            <groupId>org.jasig.portlet</groupId>
+            <artifactId>Announcements</artifactId>
+            <version>${Announcements.version}</version>
+            <type>war</type>
+        </dependency>
+        
+        <dependency>
+            <groupId>${jdbc.groupId}</groupId>
+            <artifactId>${jdbc.artifactId}</artifactId>
+            <version>${jdbc.version}</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <filters>
+            <filter>../../${filters.file}</filter>
+        </filters>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+          <!-- specify UTF-8, ISO-8859-1 or any other file encoding -->
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <filters>
+                        <filter>${basedir}/../../${filters.file}</filter>
+                    </filters>
+                    <webResources>
+                        <resource>
+                            <directory>${basedir}/src/main/webapp/WEB-INF</directory>
+                            <targetPath>WEB-INF</targetPath>
+                            <filtering>true</filtering>
+                        </resource>
+                    </webResources>
+                </configuration>
+            </plugin>
+           <plugin>
+                <groupId>org.apache.portals.pluto</groupId>
+                <artifactId>maven-pluto-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>hibernate3-maven-plugin</artifactId>
+                <version>2.2</version>
+                <executions>
+                    <execution>
+                        <phase>db-init</phase>
+                        <goals>
+                            <goal>hbm2ddl</goal>
+                        </goals>
+                        <configuration>
+                            <componentProperties>
+                                <propertyfile>${project.build.directory}/classes/datasource.properties</propertyfile>
+                                <configurationfile>hibernate.cfg.xml</configurationfile>
+                                <drop>true</drop>
+                            </componentProperties>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>${jdbc.groupId}</groupId>
+                        <artifactId>${jdbc.artifactId}</artifactId>
+                        <version>${jdbc.version}</version>
+                        <scope>compile</scope>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jasig.portlet</groupId>
+                        <artifactId>Announcements</artifactId>
+                        <version>${Announcements.version}</version>
+                        <classifier>classes</classifier>
+                        <type>jar</type>
+                        <scope>compile</scope>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+</project>
