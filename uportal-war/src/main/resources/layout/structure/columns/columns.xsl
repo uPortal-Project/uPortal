@@ -32,6 +32,8 @@
 
 <!-- Used to build the tabGroupsList:  discover tab groups, add each to the list ONLY ONCE -->
 <xsl:key name="tabGroupKey" match="layout/folder/folder[@hidden='false' and @type='regular']" use="@tabGroup"/>
+<!-- Used to build the sidebarGroupsList:  discover sidebar groups, add each to the list ONLY ONCE -->
+<xsl:key name="sidebarGroupKey" match="layout/folder/folder[@hidden='false' and @type='sidebar']" use="@name"/>
 
   <xsl:variable name="activeTabIdx">
     <!-- if the activeTab is a number then it is the active tab index -->
@@ -49,7 +51,7 @@
   </xsl:variable>
 
   <xsl:variable name="activeTabID" select="/layout/folder/folder[@type='regular'and @hidden='false'][position() = $activeTabIdx]/@ID"/>
-  
+
   <!-- Evaluate the 'activeTabGroup' (optional feature) -->
   <xsl:variable name="activeTabGroup">
     <xsl:choose>
@@ -58,7 +60,7 @@
       </xsl:when>
       <xsl:otherwise>DEFAULT_TABGROUP</xsl:otherwise>
     </xsl:choose>
-  </xsl:variable> 
+  </xsl:variable>
 
 <xsl:template name="debug-info">
     <!-- This element is not (presently) consumed by the theme transform, but it can be written to the logs easy debugging -->
@@ -72,12 +74,12 @@
         <activeTabGroup><xsl:value-of select="$activeTabGroup"></xsl:value-of></activeTabGroup>
         <tabsInTabGroup><xsl:value-of select="count(/layout/folder/folder[@tabGroup=$activeTabGroup and @type='regular' and @hidden='false'])"/></tabsInTabGroup>
         <userImpersonation><xsl:value-of select="$userImpersonating"/></userImpersonation>
-    </debug>    
+    </debug>
 </xsl:template>
 
 <xsl:template match="layout">
   <xsl:for-each select="folder[@type='root']">
-  
+
   <xsl:choose>
     <xsl:when test="$userLayoutRoot != 'root' and $detached = 'true'">
       <layout_fragment>
@@ -90,10 +92,10 @@
       </layout_fragment>
     </xsl:when>
     <xsl:otherwise>
-  
+
   <layout>
-    <xsl:call-template name="debug-info"/>  
-  
+    <xsl:call-template name="debug-info"/>
+
     <xsl:if test="/layout/@dlm:fragmentName">
         <xsl:attribute name="dlm:fragmentName"><xsl:value-of select="/layout/@dlm:fragmentName"/></xsl:attribute>
     </xsl:if>
@@ -111,21 +113,21 @@
       		<xsl:for-each select="child::folder[attribute::type='footer']/descendant::channel">
         		<channel-header ID="{@ID}"/>
       		</xsl:for-each>
-      
+
       		<xsl:for-each select="child::folder[@type='header']">
           		<xsl:copy-of select=".//channel"/>
-      		</xsl:for-each> 
-      		<!-- END display channel-headers for each channel visible on the page -->  
+      		</xsl:for-each>
+      		<!-- END display channel-headers for each channel visible on the page -->
         </xsl:when>
       	<xsl:otherwise>
       		<!-- display only focused channel-header -->
       		<channel-header ID="{$userLayoutRoot}"/>
-      	</xsl:otherwise>  
+      	</xsl:otherwise>
       </xsl:choose>
-      
-      
+
+
     </header>
-    
+
     <xsl:call-template name="tabList"/>
 
     <content>
@@ -148,13 +150,15 @@
       </xsl:choose>
     </content>
 
+    <xsl:call-template name="sidebarList"/>
+
     <footer>
       <xsl:for-each select="child::folder[attribute::type='footer']">
 	      <xsl:copy-of select=".//channel"/>
       </xsl:for-each>
     </footer>
-    
-  </layout>    
+
+  </layout>
 
     </xsl:otherwise>
   </xsl:choose>
@@ -178,7 +182,7 @@
         </xsl:if>
       </xsl:for-each>
     </tabGroupsList>
-    <!-- The tabs -->  
+    <!-- The tabs -->
     <xsl:for-each select="/layout/folder/folder[@type='regular' and @hidden='false']">
       <tab>
         <!-- Copy folder attributes verbatim -->
@@ -238,6 +242,24 @@
       </tab>
     </xsl:for-each>
   </navigation>
+</xsl:template>
+
+<xsl:template name="sidebarList">
+  <sidebar>
+    <!-- To define sidebar elements - hidden from navigation but shown in sidebar and herited from DLM and ordered by precedence on tab-->
+    <xsl:for-each select="/layout/folder/folder[@type='sidebar' and @hidden='false' and generate-id() = generate-id(key('sidebarGroupKey',@name)[1])]">
+      <xsl:sort select="number(@dlm:precedence)" order="descending"/>
+      <sidebarGroup name="{@name}">
+        <xsl:for-each select="key('sidebarGroupKey',@name)">
+          <xsl:sort select="number(@dlm:precedence)" order="descending"/>
+                 <xsl:for-each select="descendant::channel">
+                   <xsl:sort select="number(@dlm:precedence)" order="descending"/>
+                   <sidebarChannel name="{@name}" title="{@title}" ID="{@ID}" fname="{@fname}" description="{@description}"/>
+                 </xsl:for-each>
+        </xsl:for-each>
+      </sidebarGroup>
+    </xsl:for-each>
+  </sidebar>
 </xsl:template>
 
 <xsl:template match="folder[@hidden='false']">
