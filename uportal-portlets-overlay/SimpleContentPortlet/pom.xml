@@ -52,8 +52,14 @@
                             <goal>hbm2ddl</goal>
                         </goals>
                         <configuration>
+                            <components>
+                                <component>
+                                    <name>hbm2ddl</name>
+                                    <implementation>jpaconfiguration</implementation>
+                                </component>
+                            </components>
                             <componentProperties>
-                                <propertyfile>${project.build.directory}/classes/datasource.properties</propertyfile>
+                                <propertyfile>${project.build.directory}/classes/hibernate.properties</propertyfile>
                                 <drop>true</drop>
                             </componentProperties>
                         </configuration>
@@ -67,9 +73,9 @@
                         <scope>compile</scope>
                     </dependency>
                     <dependency>
-                        <groupId>org.jasig.portlet</groupId>
-                        <artifactId>CalendarPortlet</artifactId>
-                        <version>${CalendarPortlet.version}</version>
+                        <groupId>org.jasig.portlet.simplecontent</groupId>
+                        <artifactId>SimpleContentPortlet</artifactId>
+                        <version>${SimpleContentPortlet.version}</version>
                         <classifier>classes</classifier>
                         <type>jar</type>
                         <scope>compile</scope>
