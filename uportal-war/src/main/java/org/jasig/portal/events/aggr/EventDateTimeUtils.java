@@ -75,7 +75,7 @@ public final class EventDateTimeUtils {
      * </ul>
      * 
      * @param quarters
-     * @return A list of the quarters sorted by natual id
+     * @return A new list of the quarters sorted by natual id
      */
     public static List<QuarterDetail> validateQuarters(Collection<QuarterDetail> quarters) {
         if (quarters.size() != 4) {

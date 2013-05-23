@@ -20,12 +20,13 @@
 package org.jasig.portal.events.aggr.dao.jpa;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -66,7 +67,6 @@ public class JpaEventAggregationManagementDao extends BaseAggrEventsJpaDao imple
     private CriteriaQuery<AggregatedIntervalConfigImpl> findIntervalConfigForAggregatorQuery;
     private CriteriaQuery<QuarterDetailImpl> findAllQuarterDetailsQuery;
     private CriteriaQuery<AcademicTermDetailImpl> findAllAcademicTermDetailsQuery;
-    private String deleteAllQuarterDetailsQuery;
 
     private ParameterExpression<Class> aggregatorTypeParameter;
 
@@ -159,10 +159,6 @@ public class JpaEventAggregationManagementDao extends BaseAggrEventsJpaDao imple
                 return criteriaQuery;
             }
         });
-        
-        
-        this.deleteAllQuarterDetailsQuery = 
-                "DELETE FROM " + QuarterDetailImpl.class.getName() + " e ";
     }
 
     @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
@@ -321,13 +317,29 @@ public class JpaEventAggregationManagementDao extends BaseAggrEventsJpaDao imple
     @AggrEventsTransactional
     public void setQuarterDetails(List<QuarterDetail> newQuarterDetails) {
         newQuarterDetails = EventDateTimeUtils.validateQuarters(newQuarterDetails);
-        
-        final EntityManager entityManager = this.getEntityManager();
-        final Query deleteAllQuery = entityManager.createQuery(deleteAllQuarterDetailsQuery);
-        deleteAllQuery.executeUpdate();
 
-        for (final QuarterDetail quarterDetail : newQuarterDetails) {
-            entityManager.persist(quarterDetail);
+        final EntityManager entityManager = this.getEntityManager();
+        
+        final TypedQuery<QuarterDetailImpl> query = this.createCachedQuery(this.findAllQuarterDetailsQuery);
+        final Set<QuarterDetailImpl> existingQuarterDetails = new HashSet<QuarterDetailImpl>(query.getResultList());
+
+        for (final Iterator<QuarterDetail> newQuarterDetailsItr = newQuarterDetails.iterator(); newQuarterDetailsItr.hasNext();) {
+            final QuarterDetail quarterDetail = newQuarterDetailsItr.next();
+            
+            //If QD exists in both new and existing remove it from both
+            if (existingQuarterDetails.remove(quarterDetail)) {
+                newQuarterDetailsItr.remove();
+            }
+        }
+        
+        //Delete all existing QDs that were not in the new list
+        for (final QuarterDetailImpl existingQuarterDetail : existingQuarterDetails) {
+            entityManager.remove(existingQuarterDetail);
+        }
+        
+        //Add all new QDs that were not in the existing set
+        for (final QuarterDetail newQuarterDetail : newQuarterDetails) {
+            entityManager.persist(newQuarterDetail);
         }
     }
 

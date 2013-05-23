@@ -81,6 +81,7 @@ public class QuarterDetailImpl implements QuarterDetail, Serializable {
     @Type(type="monthDay")
     private final MonthDay end;
 
+    @NaturalId
     @Column(name="QUARTER_NUMBER", nullable=false)
     private final int quarterId;
     
