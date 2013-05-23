@@ -36,7 +36,7 @@
    	 | Use this bean to extend guest user properties with attributes from the request set by the requestAttributeSourceFilter
    	 +-->
    	<!--
-   	<bean id="personManager" class="org.esco.portal.security.provider.ExtendedPersonManager" >
+   	<bean id="personManager" class="org.jasig.portal.security.provider.ExtendedPersonManager" >
    		<property name="merger">
             <bean class="org.jasig.services.persondir.support.merger.ReplacingAttributeAdder" />
         </property>
@@ -61,7 +61,7 @@
                  | Add "guest-[server name]-" prefix to the subfname found
                  +-->
                 <!--
-                <bean class="org.esco.portal.layout.ServerNameGuestChainingProfileMapper">
+                <bean class="org.jasig.portal.layout.ServerNameGuestChainingProfileMapper">
                 	<property name="authorizedServerNames">
                 		<util:map>
                 			< Only server names listed here are authorized ! (the value replace the server name) />

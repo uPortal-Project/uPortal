@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.esco.portal.layout;
+package org.jasig.portal.layout;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,7 +24,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.layout.IProfileMapper;
 import org.jasig.portal.security.IPerson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

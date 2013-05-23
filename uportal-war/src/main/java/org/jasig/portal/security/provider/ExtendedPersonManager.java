@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.esco.portal.security.provider;
+package org.jasig.portal.security.provider;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -27,7 +27,6 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.PortalSecurityException;
-import org.jasig.portal.security.provider.AbstractPersonManager;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.jasig.services.persondir.support.merger.IAttributeMerger;
 import org.jasig.services.persondir.support.merger.MultivaluedAttributeMerger;
