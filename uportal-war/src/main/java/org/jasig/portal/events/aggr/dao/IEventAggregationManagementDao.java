@@ -28,7 +28,6 @@ import org.jasig.portal.events.aggr.AggregatedIntervalConfig;
 import org.jasig.portal.events.aggr.IEventAggregatorStatus;
 import org.jasig.portal.events.aggr.IPortalEventAggregator;
 import org.jasig.portal.events.aggr.QuarterDetail;
-import org.joda.time.DateMidnight;
 
 /**
  * Operations central to the management of portal event aggregation
@@ -117,12 +116,11 @@ public interface IEventAggregationManagementDao {
     List<QuarterDetail> getQuartersDetails();
     
     /**
-     * Erase the existing quarter configuration and use the provided.
+     * Update the the quarter list to match the specified list
+     * 
      * @param quarterDetail Must contain four sequential quarters with no gaps between dates
      */
     void setQuarterDetails(List<QuarterDetail> quarterDetail);
-    
-    
     
     /**
      * An immutable list of the currently configured academic terms sorted by its natural ordering
@@ -130,18 +128,9 @@ public interface IEventAggregationManagementDao {
     List<AcademicTermDetail> getAcademicTermDetails();
     
     /**
-     * Adds a new academic term, if the term overlaps with an existing term an exception
-     * will be thrown.
+     * Update the academic term list to match the specified list
+     * 
+     * @param academicTermDetails Must contain a list on non-overlapping terms
      */
-    void addAcademicTermDetails(DateMidnight start, DateMidnight end, String termName);
-    
-    /**
-     * Update the specified term details
-     */
-    void updateAcademicTermDetails(AcademicTermDetail academicTermDetail);
-    
-    /**
-     * Delete the specified term details
-     */
-    void deleteAcademicTermDetails(AcademicTermDetail academicTermDetail);
+    void setAcademicTermDetails(List<AcademicTermDetail> academicTermDetails);
 }

@@ -45,7 +45,6 @@ import org.jasig.portal.events.aggr.QuarterDetail;
 import org.jasig.portal.events.aggr.dao.IEventAggregationManagementDao;
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
 import org.jasig.portal.jpa.OpenEntityManager;
-import org.joda.time.DateMidnight;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.TransactionStatus;
@@ -318,8 +317,6 @@ public class JpaEventAggregationManagementDao extends BaseAggrEventsJpaDao imple
     public void setQuarterDetails(List<QuarterDetail> newQuarterDetails) {
         newQuarterDetails = EventDateTimeUtils.validateQuarters(newQuarterDetails);
 
-        final EntityManager entityManager = this.getEntityManager();
-        
         final TypedQuery<QuarterDetailImpl> query = this.createCachedQuery(this.findAllQuarterDetailsQuery);
         final Set<QuarterDetailImpl> existingQuarterDetails = new HashSet<QuarterDetailImpl>(query.getResultList());
 
@@ -331,6 +328,8 @@ public class JpaEventAggregationManagementDao extends BaseAggrEventsJpaDao imple
                 newQuarterDetailsItr.remove();
             }
         }
+        
+        final EntityManager entityManager = this.getEntityManager();
         
         //Delete all existing QDs that were not in the new list
         for (final QuarterDetailImpl existingQuarterDetail : existingQuarterDetails) {
@@ -348,35 +347,38 @@ public class JpaEventAggregationManagementDao extends BaseAggrEventsJpaDao imple
         final TypedQuery<AcademicTermDetailImpl> query = this.createCachedQuery(this.findAllAcademicTermDetailsQuery);
         return new ArrayList<AcademicTermDetail>(query.getResultList());
     }
-
-    @Override
-    @org.springframework.transaction.annotation.Transactional(value=BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME, noRollbackFor = IllegalArgumentException.class)
-    public void addAcademicTermDetails(DateMidnight start, DateMidnight end, String termName) {
-        //Check if term dates overlap and fail if they do
-        final List<AcademicTermDetail> academicTermDetail = this.getAcademicTermDetails();
-        AcademicTermDetail existingTerm = EventDateTimeUtils.findDateRangeSorted(start, academicTermDetail);
-        if (existingTerm != null) {
-            throw new IllegalArgumentException("Cannot create new term, the start date of " + start + " overlaps with existing term: " + existingTerm);
-        }
-        
-        existingTerm = EventDateTimeUtils.findDateRangeSorted(end.minusDays(1), academicTermDetail);
-        if (existingTerm != null) {
-            throw new IllegalArgumentException("Cannot create new term, the end date of " + end + " overlaps with existing term: " + existingTerm);
-        }
-        
-        final AcademicTermDetailImpl newTerm = new AcademicTermDetailImpl(start, end, termName);
-        this.getEntityManager().persist(newTerm);
-    }
+    
+    
 
     @Override
     @AggrEventsTransactional
-    public void updateAcademicTermDetails(AcademicTermDetail academicTermDetail) {
-        this.getEntityManager().persist(academicTermDetail);
-    }
+    public void setAcademicTermDetails(List<AcademicTermDetail> newAcademicTermDetails) {
+        newAcademicTermDetails = EventDateTimeUtils.validateAcademicTerms(newAcademicTermDetails);
+        
 
-    @Override
-    @AggrEventsTransactional
-    public void deleteAcademicTermDetails(AcademicTermDetail academicTermDetail) {
-        this.getEntityManager().remove(academicTermDetail);
+        final TypedQuery<AcademicTermDetailImpl> query = this.createCachedQuery(this.findAllAcademicTermDetailsQuery);
+        final Set<AcademicTermDetailImpl> existingAcademicTermDetails = new HashSet<AcademicTermDetailImpl>(query.getResultList());
+        
+        for (final Iterator<AcademicTermDetail> newAcademicTermDetailsItr = newAcademicTermDetails.iterator(); newAcademicTermDetailsItr.hasNext();) {
+            final AcademicTermDetail AcademicTermDetail = newAcademicTermDetailsItr.next();
+            
+            //If ATD exists in both new and existing remove it from both
+            if (existingAcademicTermDetails.remove(AcademicTermDetail)) {
+                newAcademicTermDetailsItr.remove();
+            }
+        }
+        
+        final EntityManager entityManager = this.getEntityManager();
+        
+        //Delete all existing ATDs that were not in the new list
+        for (final AcademicTermDetailImpl existingAcademicTermDetail : existingAcademicTermDetails) {
+            entityManager.remove(existingAcademicTermDetail);
+        }
+        
+        //Add all new ATDs that were not in the existing set
+        for (final AcademicTermDetail newAcademicTermDetail : newAcademicTermDetails) {
+            entityManager.persist(newAcademicTermDetail);
+        }
+        
     }
 }

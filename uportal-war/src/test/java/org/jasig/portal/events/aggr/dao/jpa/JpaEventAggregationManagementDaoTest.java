@@ -26,6 +26,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -52,6 +53,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.TransactionSystemException;
 
 /**
  */
@@ -214,36 +216,54 @@ public class JpaEventAggregationManagementDaoTest extends BaseAggrEventsJpaDaoTe
                 final List<AcademicTermDetail> academicTermDetail = eventAggregationManagementDao.getAcademicTermDetails();
                 assertEquals(0, academicTermDetail.size());
                 
-                eventAggregationManagementDao.addAcademicTermDetails(new DateMidnight(2012, 1, 1), new DateMidnight(2012, 6, 1), "Spring 2012");
-                eventAggregationManagementDao.addAcademicTermDetails(new DateMidnight(2012, 6, 1), new DateMidnight(2012, 9, 1), "Summer 2012");
-                eventAggregationManagementDao.addAcademicTermDetails(new DateMidnight(2012, 9, 1), new DateMidnight(2013, 1, 1), "Fall 2012");
+                List<AcademicTermDetail> academicTermDetails = new ArrayList<AcademicTermDetail>();
+                
+                academicTermDetails.add(new AcademicTermDetailImpl(new DateMidnight(2012, 1, 1), new DateMidnight(2012, 6, 1), "Spring 2012"));
+                academicTermDetails.add(new AcademicTermDetailImpl(new DateMidnight(2012, 6, 1), new DateMidnight(2012, 9, 1), "Summer 2012"));
+                academicTermDetails.add(new AcademicTermDetailImpl(new DateMidnight(2012, 9, 1), new DateMidnight(2013, 1, 1), "Fall 2012"));
+                
+                
+                eventAggregationManagementDao.setAcademicTermDetails(academicTermDetails);
             }
         });
-        
+
+        try {
+            this.executeInTransaction(new CallableWithoutResult() {
+                @Override
+                protected void callWithoutResult() {
+                    final List<AcademicTermDetail> academicTermDetail = eventAggregationManagementDao.getAcademicTermDetails();
+                    assertEquals(3, academicTermDetail.size());
+                    
+                    academicTermDetail.add(new AcademicTermDetailImpl(new DateMidnight(2012, 1, 1), new DateMidnight(2013, 6, 1), "Spring 2013"));
+                    
+                    try {
+                        eventAggregationManagementDao.setAcademicTermDetails(academicTermDetail);
+                        fail();
+                    }
+                    catch (IllegalArgumentException e) {
+                        //expected
+                    }
+                }
+            });
+            
+            fail();
+        }
+        catch (TransactionSystemException e) {
+            //Expected
+        }
+                    
+                    
         this.executeInTransaction(new CallableWithoutResult() {
             @Override
             protected void callWithoutResult() {
                 final List<AcademicTermDetail> academicTermDetail = eventAggregationManagementDao.getAcademicTermDetails();
                 assertEquals(3, academicTermDetail.size());
                 
-                try {
-                    eventAggregationManagementDao.addAcademicTermDetails(new DateMidnight(2012, 1, 1), new DateMidnight(2013, 6, 1), "Spring 2013");
-                    fail();
-                }
-                catch (IllegalArgumentException e) {
-                    //expected
-                }
-                try {
-                    eventAggregationManagementDao.addAcademicTermDetails(new DateMidnight(2011, 1, 1), new DateMidnight(2012, 6, 1), "Fall 2011");
-                    fail();
-                }
-                catch (IllegalArgumentException e) {
-                    //expected
-                }
                 
                 academicTermDetail.get(0).setTermName("New Term");
-                eventAggregationManagementDao.updateAcademicTermDetails(academicTermDetail.get(0));
-                eventAggregationManagementDao.deleteAcademicTermDetails(academicTermDetail.get(2));
+                academicTermDetail.remove(2);
+                
+                eventAggregationManagementDao.setAcademicTermDetails(academicTermDetail);
             }
         });
         

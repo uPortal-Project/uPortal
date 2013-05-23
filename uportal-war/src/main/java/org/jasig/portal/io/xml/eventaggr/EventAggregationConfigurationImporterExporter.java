@@ -36,6 +36,7 @@ import org.jasig.portal.events.aggr.EventDateTimeUtils;
 import org.jasig.portal.events.aggr.IPortalEventAggregator;
 import org.jasig.portal.events.aggr.QuarterDetail;
 import org.jasig.portal.events.aggr.dao.IEventAggregationManagementDao;
+import org.jasig.portal.events.aggr.dao.jpa.AcademicTermDetailImpl;
 import org.jasig.portal.events.aggr.dao.jpa.QuarterDetailImpl;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupLookupDao;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
@@ -50,7 +51,9 @@ import org.joda.time.MonthDay;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 
 /**
  * @author Eric Dalquist
@@ -197,18 +200,16 @@ public class EventAggregationConfigurationImporterExporter extends
         this.aggregationManagementDao.setQuarterDetails(quarterDetails);
         
 
-        //Purge existing term details
-        for (final AcademicTermDetail academicTermDetail : this.aggregationManagementDao.getAcademicTermDetails()) {
-            aggregationManagementDao.deleteAcademicTermDetails(academicTermDetail);
-        }
-        
-        //Add new term details
-        for (final ExternalTermDetail externalTermDetail : data.getTermDetails()) {
-            this.aggregationManagementDao.addAcademicTermDetails(
+        //Set academic term if configured
+        final List<AcademicTermDetail> academicTerms = Lists.transform(data.getTermDetails(), new Function<ExternalTermDetail, AcademicTermDetail>() {
+            public AcademicTermDetail apply(ExternalTermDetail externalTermDetail) {
+                return new AcademicTermDetailImpl(
                     new DateMidnight(externalTermDetail.getStart()), 
                     new DateMidnight(externalTermDetail.getEnd()), 
                     externalTermDetail.getName());
-        }
+            }
+        });
+        this.aggregationManagementDao.setAcademicTermDetails(academicTerms);
 	}
 	
 	protected List<QuarterDetail> convertQuarterDetail(List<ExternalQuarterDetail> externalQuarterDetails) {
@@ -358,9 +359,7 @@ public class EventAggregationConfigurationImporterExporter extends
             this.aggregationManagementDao.deleteAggregatedGroupConfig(aggregatedGroupConfig);
         }
 		
-		for (final AcademicTermDetail academicTermDetail : this.aggregationManagementDao.getAcademicTermDetails()) {
-		    this.aggregationManagementDao.deleteAcademicTermDetails(academicTermDetail);
-		}
+        this.aggregationManagementDao.setAcademicTermDetails(Collections.<AcademicTermDetail>emptyList());
 		
 		this.aggregationManagementDao.setQuarterDetails(EventDateTimeUtils.createStandardQuarters());
 		
