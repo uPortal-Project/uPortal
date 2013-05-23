@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.RandomAccess;
 
 import org.jasig.portal.events.aggr.dao.jpa.QuarterDetailImpl;
+import org.joda.time.DateMidnight;
 import org.joda.time.MonthDay;
 import org.joda.time.ReadableInstant;
 
@@ -70,12 +71,12 @@ public final class EventDateTimeUtils {
      * Validates the collection of quarters is valid. Validity is defined as:
      * <ul>
      *  <li>Contains 4 QuarterDetail</li>
-     *  <li>Once placed in a SortedSet the start of the current quarter is equal to the end of the previous quarter</li>
-     *  <li>Once placed in a SortedSet the quarterId values go from 0 to 3 in order</li>
+     *  <li>Once placed in order the start of the current quarter is equal to the end of the previous quarter</li>
+     *  <li>Once placed in order the quarterId values go from 0 to 3 in order</li>
      * </ul>
      * 
      * @param quarters
-     * @return A new list of the quarters sorted by natual id
+     * @return A new list of the quarters sorted by natural id
      */
     public static List<QuarterDetail> validateQuarters(Collection<QuarterDetail> quarters) {
         if (quarters.size() != 4) {
@@ -100,6 +101,33 @@ public final class EventDateTimeUtils {
         }
         
         return sortedQuarters;
+    }
+    
+    /**
+     * Validates the collection of terms is valid. Validity is defined as:
+     * <ul>
+     *  <li>Once placed in order no two terms overlap</li>
+     * </ul>
+     * 
+     * @param academicTerms
+     * @return A new list of the terms sorted by natural id order
+     */
+    public static List<AcademicTermDetail> validateAcademicTerms(Collection<AcademicTermDetail> academicTerms) {
+        final List<AcademicTermDetail> sortedTerms = new ArrayList<AcademicTermDetail>(academicTerms);
+        Collections.sort(sortedTerms);
+        
+        AcademicTermDetail prevTermDetail = null;
+        for (final AcademicTermDetail termDetail : sortedTerms) {
+            if (prevTermDetail != null) {
+                if (termDetail.getStart().isBefore(prevTermDetail.getEnd())) {
+                    throw new IllegalArgumentException(termDetail + " overlaps with " + prevTermDetail);
+                }
+            }
+            
+            prevTermDetail = termDetail;
+        }
+        
+        return sortedTerms;
     }
     
     /**

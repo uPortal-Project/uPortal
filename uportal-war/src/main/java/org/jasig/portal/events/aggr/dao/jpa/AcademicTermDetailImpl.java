@@ -45,6 +45,8 @@ import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.ReadableInstant;
 
+import com.google.common.collect.ComparisonChain;
+
 /**
  * @author Eric Dalquist
  * @version $Revision$
@@ -160,7 +162,10 @@ public class AcademicTermDetailImpl implements AcademicTermDetail, Serializable 
 
     @Override
     public int compareTo(AcademicTermDetail o) {
-        return this.getStart().compareTo(o.getStart());
+        return ComparisonChain.start()
+                .compare(this.getStart(), o.getStart())
+                .compare(this.getEnd(), o.getEnd())
+                .result();
     }
 
     @Override
