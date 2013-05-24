@@ -115,21 +115,4 @@
             </list>
         </property>
     </bean>
-    
-    <!-- EhCache management and statistics -->
-    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-        <property name="targetClass" value="net.sf.ehcache.management.ManagementService" />
-        <property name="targetMethod" value="registerMBeans" />
-        <property name="arguments">
-            <list>
-                <ref bean="eventAggrCacheManager" />
-                <ref bean="mbeanServer" />
-                <value>true</value>
-                <value>true</value>
-                <value>true</value>
-                <value>true</value>
-                <value>true</value>
-            </list>
-        </property>
-    </bean>
 </beans>

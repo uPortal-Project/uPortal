@@ -63,7 +63,6 @@
         <!-- local tasks -->
         <task:scheduled ref="portalEventDaoQueuingEventHandler" method="flush" fixed-delay="997"/> <!-- ~1 second period -->
         <task:scheduled ref="cacheManagerExpiredElementEvictor" method="evictExpiredElements" fixed-delay="61900"/> <!-- ~1 minute period -->
-        <task:scheduled ref="eventAggrCacheManagerExpiredElementEvictor" method="evictExpiredElements" fixed-delay="61300"/> <!-- ~1 minute period -->
         
         <!-- clustered tasks -->
         <task:scheduled ref="portletCookieService" method="purgeExpiredCookies" fixed-delay="${org.jasig.portal.portlet.container.services.PortletCookieServiceImpl.purgeExpiredCookiesPeriod}"/>

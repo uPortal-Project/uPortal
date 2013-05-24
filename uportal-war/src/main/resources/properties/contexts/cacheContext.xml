@@ -30,10 +30,6 @@
     <bean class="org.jasig.portal.utils.cache.EhcacheManagerBeanConfigurer">
         <property name="cacheManager" ref="cacheManager" />
     </bean>
-    <bean class="org.jasig.portal.utils.cache.EhcacheManagerBeanConfigurer">
-        <property name="cacheManager" ref="eventAggrCacheManager" />
-        <property name="skipDuplicates" value="true" />
-    </bean>
     
     <!-- 
      | The per-cache settings are configured in /uportal-war/src/main/resources/properties/ehcache.xml
@@ -50,16 +46,6 @@
     </bean>
     <bean id="authDao" class="org.jasig.portal.jgroups.auth.JdbcAuthDao">
         <property name="jdbcOperations" ref="jdbcOperations" />
-    </bean>
-    
-    <!-- 
-     | The per-cache settings are configured in /uportal-war/src/main/resources/properties/ehcache_aggr_events.xml
-     +-->
-    <bean id="eventAggrCacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
-        <property name="configLocation" value="classpath:/properties/ehcache_aggr_events.xml" />
-    </bean>
-    <bean id="eventAggrCacheManagerExpiredElementEvictor" class="org.jasig.portal.utils.cache.ExpiredElementEvictor">
-        <property name="cacheManager" ref="eventAggrCacheManager"></property>
     </bean>
     
     <!-- 
