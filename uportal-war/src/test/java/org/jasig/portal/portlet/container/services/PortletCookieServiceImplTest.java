@@ -32,6 +32,7 @@ import org.jasig.portal.portlet.dao.IPortletCookieDao;
 import org.jasig.portal.portlet.om.IPortalCookie;
 import org.jasig.portal.portlet.om.IPortletCookie;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -247,17 +248,17 @@ public class PortletCookieServiceImplTest {
 	 */
 	class MockPortalCookie implements IPortalCookie {
 
-		private Date created = new Date();
-		private Date expires = DateUtils.addHours(new Date(), 1);
+		private DateTime created = DateTime.now();
+		private DateTime expires = DateTime.now().plusHours(1);
 		private Set<IPortletCookie> portletCookies = new HashSet<IPortletCookie>();
 		private String value;
 		
 		@Override
-		public Date getCreated() {
+		public DateTime getCreated() {
 			return this.created;
 		}
 		@Override
-		public Date getExpires() {
+		public DateTime getExpires() {
 			return this.expires;
 		}
 		@Override
@@ -269,10 +270,10 @@ public class PortletCookieServiceImplTest {
 			return this.value;
 		}
 		@Override
-		public void setExpires(Date expires) {
+		public void setExpires(DateTime expires) {
 			this.expires = expires;
 		}
-		public void setCreated(Date created) {
+		public void setCreated(DateTime created) {
 			this.created = created;
 		}
 
