@@ -19,7 +19,6 @@
 
 package org.jasig.portal.portlet.dao.jpa;
 
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import javax.persistence.Cacheable;
@@ -37,12 +36,13 @@ import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 import javax.servlet.http.Cookie;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Type;
 import org.jasig.portal.portlet.om.IPortalCookie;
 import org.jasig.portal.portlet.om.IPortletCookie;
+import org.joda.time.DateTime;
 
 /**
  * JPA annotated {@link IPortletCookie} implementation.
@@ -103,7 +103,8 @@ class PortletCookieImpl implements IPortletCookie {
 	@Column(name = "COOKIE_DOMAIN", length=500, nullable = true, updatable = true)
 	private String domain;
 	@Column(name = "EXPIRES", nullable = false, updatable = true)
-    private Date expires;
+	@Type(type = "dateTime")
+    private DateTime expires;
 	
 	@Column(name = "COOKIE_PATH", length=1000, nullable = true, updatable = true)
 	private String path;
@@ -144,7 +145,7 @@ class PortletCookieImpl implements IPortletCookie {
     public void updateFromCookie(Cookie cookie) {
         this.setComment(cookie.getComment());
         this.setDomain(cookie.getDomain());
-        this.setExpires(DateUtils.addSeconds(new Date(), cookie.getMaxAge()));
+        this.setExpires(DateTime.now().plusSeconds(cookie.getMaxAge()));
         this.setPath(cookie.getPath());
         this.setSecure(cookie.getSecure());
         this.setValue(cookie.getValue());
@@ -167,7 +168,7 @@ class PortletCookieImpl implements IPortletCookie {
 	 * @return
 	 */
 	@Override
-	public Date getExpires() {
+	public DateTime getExpires() {
         return this.expires;
     }
     /**
@@ -223,7 +224,7 @@ class PortletCookieImpl implements IPortletCookie {
      * @see org.jasig.portal.portlet.om.IPortletCookie#setExpires(java.util.Date)
      */
 	@Override
-    public void setExpires(Date expires) {
+    public void setExpires(DateTime expires) {
         this.expires = expires;
     }
 	/**
@@ -272,7 +273,7 @@ class PortletCookieImpl implements IPortletCookie {
 		    maxAge = -1;
 		}
 		else {
-		    maxAge = (int)TimeUnit.MILLISECONDS.toSeconds(this.expires.getTime() - System.currentTimeMillis());
+		    maxAge = (int)TimeUnit.MILLISECONDS.toSeconds(this.expires.getMillis() - System.currentTimeMillis());
 		}
 		cookie.setMaxAge(maxAge);
 		cookie.setPath(this.path);

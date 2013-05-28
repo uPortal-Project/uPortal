@@ -20,7 +20,6 @@
 package org.jasig.portal.portlet.container.services;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -44,6 +43,7 @@ import org.jasig.portal.portlet.dao.IPortletCookieDao;
 import org.jasig.portal.portlet.om.IPortalCookie;
 import org.jasig.portal.portlet.om.IPortletCookie;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +83,7 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
     private String domain = null;
     private String path = "/";
     private int maxAge = DEFAULT_MAX_AGE;
-    private long maxAgeUpdateInterval = TimeUnit.MINUTES.toMillis(5);
+    private int maxAgeUpdateInterval = (int)TimeUnit.MINUTES.toMillis(5);
     private boolean portalCookieAlwaysSecure = false;
     private long purgeExpiredCookiesPeriod = 0;
     
@@ -140,7 +140,7 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
      * @param maxAgeUpdateInterval How frequently (in ms) the maxAge date on the portal cookie should be updated. Defaults to 5 minutes.
      * Only portal cookies older than 5 minutes will be updated in the client's browser and the db with a new maxAge
      */
-    public void setMaxAgeUpdateInterval(long maxAgeUpdateInterval) {
+    public void setMaxAgeUpdateInterval(int maxAgeUpdateInterval) {
         this.maxAgeUpdateInterval = maxAgeUpdateInterval;
     }
 
@@ -165,8 +165,8 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
         final Cookie cookie = this.convertToCookie(portalCookie, this.portalCookieAlwaysSecure || request.isSecure());
         
         //Update the expiration date of the portal cookie stored in the DB if the update interval has passed
-        final Date expires = portalCookie.getExpires();
-        if ((System.currentTimeMillis() - this.maxAgeUpdateInterval) > (expires.getTime() - TimeUnit.SECONDS.toMillis(this.maxAge))) {
+        final DateTime expires = portalCookie.getExpires();
+        if (DateTime.now().minusMillis(this.maxAgeUpdateInterval).isAfter(expires.minusSeconds(this.maxAge))) {
             this.portletCookieDao.updatePortalCookieExpiration(portalCookie, cookie.getMaxAge());
             
             // Update expiration dates of portlet cookies stored in session
@@ -182,12 +182,11 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
     * @param request
     */
    protected void removeExpiredPortletCookies(HttpServletRequest request) {
-	   final Date now = new Date();
 	   Map<String, SessionOnlyPortletCookieImpl> sessionOnlyCookies = getSessionOnlyPortletCookieMap(request);
 	   for(Entry<String, SessionOnlyPortletCookieImpl> entry: sessionOnlyCookies.entrySet()) {
 		   String key = entry.getKey();
 		   SessionOnlyPortletCookieImpl sessionOnlyCookie = entry.getValue();
-		   if(sessionOnlyCookie.getExpires().before(now)){
+		   if(sessionOnlyCookie.getExpires().isBeforeNow()){
 			   sessionOnlyCookies.remove(key);
 		   }
 	   }
@@ -213,9 +212,8 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
         //Get cookies that have been set by portlets, suppressing expired
         Set<IPortletCookie> portletCookies = new HashSet<IPortletCookie>();
         if(portalCookie != null) {
-        	Date now = new Date();
         	for(IPortletCookie portletCookie: portalCookie.getPortletCookies()) {
-        		if(portletCookie.getExpires().after(now)) {
+        		if(portletCookie.getExpires().isAfterNow()) {
         			portletCookies.add(portletCookie);
         		}
         	}
@@ -277,7 +275,7 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
                     new FunctionWithoutResult<ClusterMutex>() {
                         @Override
                         protected void applyWithoutResult(ClusterMutex input) {
-                            portletCookieDao.purgeExpiredCookies();
+                            portletCookieDao.purgeExpiredCookies(maxAge);
                         }
                     });
             return result.getLockStatus() ==  LockStatus.EXECUTED;

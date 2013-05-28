@@ -19,8 +19,9 @@
 
 package org.jasig.portal.portlet.om;
 
-import java.util.Date;
 import java.util.Set;
+
+import org.joda.time.DateTime;
 
 /**
  * Interface describing the parent cookie used to relate all
@@ -42,20 +43,20 @@ public interface IPortalCookie {
 	 * 
 	 * @return the timestamp when this cookie was created
 	 */
-	Date getCreated();
+	DateTime getCreated();
 	
 	/**
 	 * 
 	 * @return the timestamp when this cookie is due to expire
 	 */
-	Date getExpires();
+	DateTime getExpires();
 	
 	/**
 	 * Update the expiration timestamp.
 	 *  
 	 * @param expires
 	 */
-	void setExpires(Date expires);
+	void setExpires(DateTime expires);
 	
 	/**
 	 * 

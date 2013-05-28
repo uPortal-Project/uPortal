@@ -65,6 +65,8 @@ public interface IPortletCookieDao {
 	/**
      * Intended for periodic execution, this method will delete all {@link IPortalCookie}s and {@link IPortletCookie}s
      * from persistence that have expired.
+     * 
+     * @param maxAge The max number of seconds the portal cookie should live for.
      */
-    public void purgeExpiredCookies();
+    public void purgeExpiredCookies(int maxAge);
 }

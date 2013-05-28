@@ -20,14 +20,13 @@
 package org.jasig.portal.portlet.container.services;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.jasig.portal.portlet.om.IPortletCookie;
+import org.joda.time.DateTime;
 
 /**
  * {@link IPortletCookie} implementation for {@link IPortletCookie}s that
@@ -50,7 +49,7 @@ class SessionOnlyPortletCookieImpl implements IPortletCookie, Serializable {
 	private String path;
 	private int version = 0;
 	private boolean secure;
-	private Date expires;
+	private DateTime expires;
 	
 	/**
 	 * 
@@ -120,7 +119,7 @@ class SessionOnlyPortletCookieImpl implements IPortletCookie, Serializable {
 		    return -1;
 		}
 		else {
-		   return (int)TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - this.expires.getTime());
+		   return (int)TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - this.expires.getMillis());
 		}
 	}
 	/**
@@ -130,7 +129,7 @@ class SessionOnlyPortletCookieImpl implements IPortletCookie, Serializable {
 		if(maxAge < 0) {
 			this.expires = null;
 		} else {
-			this.expires = DateUtils.addSeconds(new Date(), maxAge);
+			this.expires = DateTime.now().plusSeconds(maxAge);
 		}
 	}
 	/**
@@ -172,13 +171,13 @@ class SessionOnlyPortletCookieImpl implements IPortletCookie, Serializable {
 	/**
 	 * @return the expires
 	 */
-	public Date getExpires() {
+	public DateTime getExpires() {
 		return expires;
 	}
 	/**
 	 * @param expires the expires to set
 	 */
-	public void setExpires(Date expires) {
+	public void setExpires(DateTime expires) {
 		this.expires = expires;
 	}
 	
@@ -205,7 +204,7 @@ class SessionOnlyPortletCookieImpl implements IPortletCookie, Serializable {
 	public void updateFromCookie(Cookie cookie) {
 		this.setComment(cookie.getComment());
         this.setDomain(cookie.getDomain());
-        this.setExpires(DateUtils.addSeconds(new Date(), cookie.getMaxAge()));
+        this.setExpires(DateTime.now().plusSeconds(cookie.getMaxAge()));
         this.setPath(cookie.getPath());
         this.setSecure(cookie.getSecure());
         this.setValue(cookie.getValue());
