@@ -20,10 +20,10 @@
 package org.jasig.portal.portlet.dao.jpa;
 
 import java.security.SecureRandom;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -35,12 +35,12 @@ import javax.persistence.criteria.Root;
 import javax.servlet.http.Cookie;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.time.DateUtils;
 import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.jpa.OpenEntityManager;
 import org.jasig.portal.portlet.dao.IPortletCookieDao;
 import org.jasig.portal.portlet.om.IPortalCookie;
 import org.jasig.portal.portlet.om.IPortletCookie;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
@@ -58,17 +58,26 @@ public class JpaPortletCookieDaoImpl extends BasePortalJpaDao implements IPortle
 	private final SecureRandom secureRandom = new SecureRandom();
 
 	private String deletePortalCookieQueryString;
+	private String deleteEmptyPortalCookieQueryString;
 	private String deletePortletCookieQueryString;
 	private CriteriaQuery<PortletCookieImpl> findExpiredByParentPortletCookiesQuery;
-    private ParameterExpression<Date> nowParameter;
+    private ParameterExpression<DateTime> nowParameter;
+    
+    protected static final int DEFAULT_EMPTY_MAX_AGE = (int)TimeUnit.DAYS.toSeconds(1);
+    private int emptyCookieMaxAge = DEFAULT_EMPTY_MAX_AGE;
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.nowParameter = this.createParameterExpression(Date.class, "now");
+        this.nowParameter = this.createParameterExpression(DateTime.class, "now");
         
         this.deletePortalCookieQueryString = 
                 "DELETE FROM " + PortalCookieImpl.class.getName() + " e " +
                 "WHERE e." + PortalCookieImpl_.expires.getName() + " <= :" + this.nowParameter.getName();
+        
+        this.deleteEmptyPortalCookieQueryString = 
+                "DELETE FROM " + PortalCookieImpl.class.getName() + " e " +
+                "WHERE e." + PortalCookieImpl_.expires.getName() + " <= :" + this.nowParameter.getName() + " AND " + 
+                        "e." + PortalCookieImpl_.portletCookies.getName() + " IS EMPTY";
         
         this.deletePortletCookieQueryString = 
                 "DELETE FROM " + PortletCookieImpl.class.getName() + " e " +
@@ -107,7 +116,7 @@ public class JpaPortletCookieDaoImpl extends BasePortalJpaDao implements IPortle
 		} while (this.getPortalCookie(uniqueId) != null);
 		
 		//Calculate the expiration date for the cookie
-		final Date expiration = DateUtils.addSeconds(new Date(), maxAge);
+		final DateTime expiration = DateTime.now().plusSeconds(maxAge);
 		
 		//Create and persist
 		final IPortalCookie portalCookie = new PortalCookieImpl(uniqueId, expiration);
@@ -129,7 +138,7 @@ public class JpaPortletCookieDaoImpl extends BasePortalJpaDao implements IPortle
     public IPortalCookie updatePortalCookieExpiration(IPortalCookie portalCookie, int maxAge) {
         
         //Calculate expiration date and update the portal cookie
-        Date expiration = DateUtils.addSeconds(new Date(), maxAge);
+        final DateTime expiration = DateTime.now().plusSeconds(maxAge);
         portalCookie.setExpires(expiration);
         
         this.getEntityManager().persist(portalCookie);
@@ -139,19 +148,16 @@ public class JpaPortletCookieDaoImpl extends BasePortalJpaDao implements IPortle
     
 	@Override
 	@PortalTransactional
-	public void purgeExpiredCookies() {
-		final Date now = new Date();
+	public void purgeExpiredCookies(int maxAge) {
+		final DateTime now = DateTime.now();
 		
 		logger.debug("begin portlet cookie expiration");
-		
-        final EntityManager entityManager = this.getEntityManager();
+
+		final EntityManager entityManager = this.getEntityManager();
         final Query deletePortletCookieQuery = entityManager.createQuery(this.deletePortletCookieQueryString);
         deletePortletCookieQuery.setParameter(this.nowParameter.getName(), now);
         final int deletedPortletCookies = deletePortletCookieQuery.executeUpdate();
-        
-        if(logger.isDebugEnabled()) {
-            logger.debug("finished purging " + deletedPortletCookies + " directly expired portlet cookies");
-        }
+        logger.debug("finished purging {} directly expired portlet cookies", deletedPortletCookies);
         
         final TypedQuery<PortletCookieImpl> expiredByParentCookiesQuery = this.createQuery(findExpiredByParentPortletCookiesQuery);
         expiredByParentCookiesQuery.setParameter(this.nowParameter.getName(), now);
@@ -159,20 +165,22 @@ public class JpaPortletCookieDaoImpl extends BasePortalJpaDao implements IPortle
         for (final PortletCookieImpl portletCookieImpl : indirectlyExpiredCookies) {
             entityManager.remove(portletCookieImpl);
         }
-        
-        if(logger.isDebugEnabled()) {
-            logger.debug("finished purging " + indirectlyExpiredCookies.size() + " indirectly expired portlet cookies");
-        }
+        logger.debug("finished purging {} indirectly expired portlet cookies", indirectlyExpiredCookies.size());
 
-		logger.debug("begin portal cookie expiration");
-		
+
+        logger.debug("begin portal cookie expiration");
+        
 		final Query deletePortalCookieQuery = entityManager.createQuery(this.deletePortalCookieQueryString);
         deletePortalCookieQuery.setParameter(this.nowParameter.getName(), now);
         final int deletedPortalCookies = deletePortalCookieQuery.executeUpdate();
         
-		if(logger.isDebugEnabled()) {
-			logger.debug("finished purging " + deletedPortalCookies + " portal cookies, begin portlet cookie expiration");
-		}
+		logger.debug("finished purging {} portal cookies", deletedPortalCookies);
+		
+		final Query deleteEmptyPortalCookieQuery = entityManager.createQuery(this.deleteEmptyPortalCookieQueryString);
+		deleteEmptyPortalCookieQuery.setParameter(this.nowParameter.getName(), now.minusSeconds(maxAge).plusSeconds(emptyCookieMaxAge));
+		final int deletedEmptyPortalCookies = deleteEmptyPortalCookieQuery.executeUpdate();
+		
+		logger.debug("finished purging {} empty portal cookies", deletedEmptyPortalCookies);
 	}
 
 	/*

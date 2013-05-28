@@ -19,9 +19,9 @@
 
 package org.jasig.portal.portlet.om;
 
-import java.util.Date;
-
 import javax.servlet.http.Cookie;
+
+import org.joda.time.DateTime;
 
 /**
  * Internal interface for a JSR-286 Portlet cookie.
@@ -67,7 +67,7 @@ public interface IPortletCookie {
 	 * @see Cookie#getMaxAge()
 	 * @return the cookie max age (in minutes)
 	 */
-	Date getExpires();
+	DateTime getExpires();
 	
 	/**
 	 * @see Cookie#getSecure()
@@ -118,7 +118,7 @@ public interface IPortletCookie {
 	 * @see Cookie#setMaxAge(int)
 	 * @param domain
 	 */
-	void setExpires(Date expires);
+	void setExpires(DateTime expires);
 	
 	/**
 	 * Set the cookie secure flag.

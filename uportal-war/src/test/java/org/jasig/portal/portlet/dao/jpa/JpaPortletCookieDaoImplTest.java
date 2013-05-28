@@ -88,12 +88,12 @@ public class JpaPortletCookieDaoImplTest extends BasePortalJpaDaoTest {
                 final IPortalCookie portalCookie = portletCookieDao.getPortalCookie(value);
                 assertNotNull(portalCookie);
                 
-                long expirationDelay = portalCookie.getExpires().getTime() - System.currentTimeMillis();
+                long expirationDelay = portalCookie.getExpires().getMillis() - System.currentTimeMillis();
                 if (expirationDelay > 0) {
                     Thread.sleep(Math.max(500, expirationDelay));
                 }
                 
-                portletCookieDao.purgeExpiredCookies();
+                portletCookieDao.purgeExpiredCookies(1);
                 
                 return null;
             }
