@@ -96,69 +96,73 @@ public final class SsoController {
     @RequestMapping
     public ModelAndView issueUrl(HttpServletRequest req, HttpServletResponse res) throws IOException {
 
-        // Verify secure connection if we must have one
-        if (requireSecure && !req.isSecure()) {
-            return sendError(res, HttpServletResponse.SC_FORBIDDEN,
-                    "The SSO handshake requires a secure connection (SSL)");
-        }
+		if(null != sharedSecret && !("".equals(sharedSecret))){
 
-        // Inputs
-        Inputs inputs = null;
-        try {
-            inputs = Inputs.parse(req);
-        } catch (Exception e) {
-            return sendError(res, HttpServletResponse.SC_BAD_REQUEST,
-                    "One or more required inputs was not specified");
-        }
+	        // Verify secure connection if we must have one
+	        if (requireSecure && !req.isSecure()) {
+	            return sendError(res, HttpServletResponse.SC_FORBIDDEN,
+	                    "The SSO handshake requires a secure connection (SSL)");
+	        }
 
-        // Verify the request is authorized
-        try {
-            if (!validateToken(inputs.getUsername(), inputs.getToken(), inputs.getTimeStamp())) {
-                return sendError(res, HttpServletResponse.SC_FORBIDDEN, "Not authorized");
-            }
-        } catch (Exception e) {
-            return sendError(res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Authorization check error");
-        }
+	        // Inputs
+	        Inputs inputs = null;
+	        try {
+	            inputs = Inputs.parse(req);
+	        } catch (Exception e) {
+	            return sendError(res, HttpServletResponse.SC_BAD_REQUEST,
+	                    "One or more required inputs was not specified");
+	        }
 
-        //Verify if TimeStamp range needs to be checked
-        if(checkTimeStampRange){
-            try {
-                if (!validateTimeStampRange(inputs.getTimeStamp())) {
-                    return sendError(res, HttpServletResponse.SC_FORBIDDEN, "Timestamp out of range");
-                }
-            } catch (Exception e) {
-                return sendError(res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Authorization check error");
-            }
-        }
+	        // Verify the request is authorized
+	        try {
+	            if (!validateToken(inputs.getUsername(), inputs.getToken(), inputs.getTimeStamp())) {
+	                return sendError(res, HttpServletResponse.SC_FORBIDDEN, "Not authorized");
+	            }
+	        } catch (Exception e) {
+	            return sendError(res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Authorization check error");
+	        }
 
-        // Generate a ticket
-        log.info("Generating SSO ticket for user '{}'", inputs.getUsername());
-        ISsoTicket ticket = ticketDao.issueTicket(inputs.getUsername());
+	        //Verify if TimeStamp range needs to be checked
+	        if(checkTimeStampRange){
+	            try {
+	                if (!validateTimeStampRange(inputs.getTimeStamp())) {
+	                    return sendError(res, HttpServletResponse.SC_FORBIDDEN, "Timestamp out of range");
+	                }
+	            } catch (Exception e) {
+	                return sendError(res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Authorization check error");
+	            }
+	        }
 
-        // refUrl (redirect destination after login)
-        final StringBuilder redirect = new StringBuilder();
-        if(null != inputs.getView() && EA_VIEW.equals(inputs.getView())){
-            redirect.append(req.getContextPath()).append(EA_PORTLET_PATH)
-            .append("?").append(ACTION_KEY).append("=").append(ACTION_VALUE)
-            .append("&").append(SCHOOL_ID_KEY).append("=").append(URLEncoder.encode(inputs.getStudentSchoolId(), "UTF-8"))
-            .append("&").append(FORMATTED_COURSE_ID_KEY).append("=").append(URLEncoder.encode(inputs.getFormattedCourse(), "UTF-8"));
-        }else{
-            redirect.append(req.getContextPath());
-        }
+	        // Generate a ticket
+	        log.info("Generating SSO ticket for user '{}'", inputs.getUsername());
+	        ISsoTicket ticket = ticketDao.issueTicket(inputs.getUsername());
 
-        // loginUrl
-        final URL contextUrl = new URL(req.getRequestURL().toString());
-        final URL loginUrl = new URL(contextUrl, req.getContextPath() + LOGIN_SERVLET_PATH);
-        final StringBuilder login = new StringBuilder();
-        login.append(loginUrl.toExternalForm())
-            .append("?").append(RemoteUserFilterBean.TICKET_PARAMETER).append("=").append(ticket.getUuid())
-            .append("&").append(LoginController.REFERER_URL_PARAM).append("=").append(URLEncoder.encode(redirect.toString(), "UTF-8"));
+	        // refUrl (redirect destination after login)
+	        final StringBuilder redirect = new StringBuilder();
+	        if(null != inputs.getView() && EA_VIEW.equals(inputs.getView())){
+	            redirect.append(req.getContextPath()).append(EA_PORTLET_PATH)
+	            .append("?").append(ACTION_KEY).append("=").append(ACTION_VALUE)
+	            .append("&").append(SCHOOL_ID_KEY).append("=").append(URLEncoder.encode(inputs.getStudentSchoolId(), "UTF-8"))
+	            .append("&").append(FORMATTED_COURSE_ID_KEY).append("=").append(URLEncoder.encode(inputs.getFormattedCourse(), "UTF-8"));
+	        }else{
+	            redirect.append(req.getContextPath());
+	        }
 
-        final Map<String,Object> rslt = new HashMap<String,Object>();
-        rslt.put(SUCCESS_FIELD, true);
-        rslt.put(URL_FIELD, login.toString());
-        return new ModelAndView("json", rslt);
+	        // loginUrl
+	        final URL contextUrl = new URL(req.getRequestURL().toString());
+	        final URL loginUrl = new URL(contextUrl, req.getContextPath() + LOGIN_SERVLET_PATH);
+	        final StringBuilder login = new StringBuilder();
+	        login.append(loginUrl.toExternalForm())
+	            .append("?").append(RemoteUserFilterBean.TICKET_PARAMETER).append("=").append(ticket.getUuid())
+	            .append("&").append(LoginController.REFERER_URL_PARAM).append("=").append(URLEncoder.encode(redirect.toString(), "UTF-8"));
 
+	        final Map<String,Object> rslt = new HashMap<String,Object>();
+	        rslt.put(SUCCESS_FIELD, true);
+	        rslt.put(URL_FIELD, login.toString());
+	        return new ModelAndView("json", rslt);
+		}else{
+			return sendError(res, HttpServletResponse.SC_FORBIDDEN, "SSO key not configured");
+		}
     }
 
     /*
