@@ -30,8 +30,9 @@
     
     <!-- 
      | The concrete IPersonManager implementation to be used
+     | drew (2012/07/26):  Use of RemoteUserSecurityContextFactory requires RemoteUserPersonManager
      +-->
-   	<bean id="personManager" class="org.jasig.portal.security.provider.SimplePersonManager" />
+   	<bean id="personManager" class="org.jasig.portal.security.provider.RemoteUserPersonManager" />
 
 
     <util:map id="profileKeyMappings">
