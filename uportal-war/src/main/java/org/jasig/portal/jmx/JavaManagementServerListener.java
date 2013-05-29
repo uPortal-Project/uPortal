@@ -51,15 +51,15 @@ public class JavaManagementServerListener implements ServletContextListener {
     public static final String JMX_RMI_PORT_2       = "org.jasig.portal.servlet.JavaManagementServerListener.portTwo";
     public static final String FAIL_ON_EXCEPTION    = "org.jasig.portal.servlet.JavaManagementServerListener.failOnException";
     
-    protected final Log logger = LogFactory.getLog(this.getClass());
+    private static final String LOGGER_NAME = JavaManagementServerListener.class.getName();
 
     private JavaManagementServerBean javaManagementServerBean;
-    
 
     /**
      * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
      */
     public void contextInitialized(ServletContextEvent event) {
+    	Log logger = LogFactory.getLog(LOGGER_NAME);
         final ServletContext servletContext = event.getServletContext();
         
         //Create the bean
@@ -80,7 +80,7 @@ public class JavaManagementServerListener implements ServletContextListener {
             this.javaManagementServerBean.setPortOne(portOne);
         }
         catch (NumberFormatException nfe) {
-            this.logger.warn("init-parameter '" + JMX_RMI_PORT_1 + "' is required and must contain a number. '" + portOneStr + "' is not a valid number.", nfe);
+            logger.warn("init-parameter '" + JMX_RMI_PORT_1 + "' is required and must contain a number. '" + portOneStr + "' is not a valid number.", nfe);
         }
         
         //Get the second rmi port from the init parameters
@@ -90,7 +90,7 @@ public class JavaManagementServerListener implements ServletContextListener {
             this.javaManagementServerBean.setPortTwo(portTwo);
         }
         catch (NumberFormatException nfe) {
-            this.logger.debug("Failed to convert init-parameter '" + JMX_RMI_PORT_2 + "' with value '" + portTwoStr + "' to a number, defaulting portTwo to portOne + 1", nfe);
+            logger.debug("Failed to convert init-parameter '" + JMX_RMI_PORT_2 + "' with value '" + portTwoStr + "' to a number, defaulting portTwo to portOne + 1", nfe);
         }
         
         this.javaManagementServerBean.startServer();

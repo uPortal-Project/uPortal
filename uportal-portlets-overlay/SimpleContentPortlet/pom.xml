@@ -40,6 +40,48 @@
                 <groupId>org.apache.portals.pluto</groupId>
                 <artifactId>maven-pluto-plugin</artifactId>
             </plugin>
+            <!-- To drop and recreate the attachments db tables, use mvn db-init -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>hibernate3-maven-plugin</artifactId>
+                <version>2.2</version>
+                <executions>
+                    <execution>
+                        <phase>db-init</phase>
+                        <goals>
+                            <goal>hbm2ddl</goal>
+                        </goals>
+                        <configuration>
+                            <components>
+                                <component>
+                                    <name>hbm2ddl</name>
+                                    <implementation>jpaconfiguration</implementation>
+                                </component>
+                            </components>
+                            <componentProperties>
+                                <propertyfile>${project.build.directory}/classes/hibernate.properties</propertyfile>
+                                <drop>true</drop>
+                            </componentProperties>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>${jdbc.groupId}</groupId>
+                        <artifactId>${jdbc.artifactId}</artifactId>
+                        <version>${jdbc.version}</version>
+                        <scope>compile</scope>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jasig.portlet.simplecontent</groupId>
+                        <artifactId>SimpleContentPortlet</artifactId>
+                        <version>${SimpleContentPortlet.version}</version>
+                        <classifier>classes</classifier>
+                        <type>jar</type>
+                        <scope>compile</scope>
+                    </dependency>
+                </dependencies>
+            </plugin>
         </plugins>
     </build>
 

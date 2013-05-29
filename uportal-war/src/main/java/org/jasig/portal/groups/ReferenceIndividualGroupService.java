@@ -329,6 +329,10 @@ protected Iterator findLocalMemberGroups(IEntityGroup eg) throws GroupsException
     for ( Iterator it = getGroupStore().findMemberGroups(eg); it.hasNext(); )
     {
         group = (IEntityGroup) it.next();
+        if(group == null) {
+        	log.warn("A null IEntityGroup object was part of a list groupStore.findMemberGroups");
+        	continue;
+        }
         group.setLocalGroupService(this);
         groups.add(group);
         if (cacheInUse())
